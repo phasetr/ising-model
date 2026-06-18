@@ -22,6 +22,7 @@
 \newunicodechar{Λ}{\ensuremath{\Lambda}}
 \newunicodechar{ρ}{\ensuremath{\rho}}
 \newunicodechar{σ}{\ensuremath{\sigma}}
+\newunicodechar{η}{\ensuremath{\eta}}
 \newunicodechar{≤}{\ensuremath{\le}}
 \newunicodechar{≥}{\ensuremath{\ge}}
 \newunicodechar{ℓ}{\ensuremath{\ell}}
@@ -6762,6 +6763,55 @@ prove a Perron--Frobenius eigenvector, spectral-radius maximality, the
 dominant-channel cancellation for spin observables, open-slab geometry,
 thermodynamic limits, or final hyperplane exponential decay.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
+\paragraph{Hermitian spectral data and min-separation marked bounds (\S17.1, Issue~\#3511).}
+The finite spectral route now also records the cyclic estimate that is natural
+before passing to an infinite-volume or long-cylinder limit.  The constructor
+\texttt{RealOrthogonalSpectralData.ofHermitian} turns mathlib's Hermitian
+spectral theorem into explicit real orthogonal spectral data, and
+\texttt{layerSymmetricTransferOrthogonalSpectralData} applies this to the
+balanced layer matrix when the transition weight is symmetric.  In these real
+orthogonal coordinates the transported marking matrix
+\[
+  G = P^T D_f P
+\]
+is symmetric (\texttt{markedMatrix\_transpose},
+\texttt{markedMatrix\_comm}).
+
+The one-sided cancellation used by the previous finite certificate,
+\(G_{i\ast}G_{\ast i}=0\) for every \(i\), is intentionally left as a strong
+conditional hypothesis.  For a finite periodic cylinder, the more natural
+dominant-channel condition is only the removal of the non-decaying
+dominant-dominant term:
+\[
+  G_{\ast\ast}=0.
+\]
+Under the same dominant spectral data
+\(\lambda_\ast=s>0\) and
+\(|\lambda_i|\le \theta s\) for \(i\ne\ast\), every remaining summand in
+\[
+  \sum_{i,j}G_{ij}G_{ji}\lambda_j^a\lambda_i^b
+\]
+has a subdominant eigenvalue on at least one of the two cyclic arcs.  Hence
+\[
+  \left|\sum_{i,j}G_{ij}G_{ji}\lambda_j^a\lambda_i^b\right|
+  \le
+  \left(\sum_{i,j}|G_{ij}G_{ji}|\right)s^{a+b}\theta^{\min(a,b)} .
+\]
+This is the theorem
+\texttt{marked\_sum\_abs\_le\_spectralPrefactor\_min}.  The structure
+\texttt{LayerBalancedMinSpectralGapCertificate} packages the corresponding
+balanced finite certificate, with constructors from explicit spectral data and
+from the Hermitian spectral-theorem data.  Its consumers give the cyclic
+two-arc bound for \texttt{layerTwoPoint}; if \(a\le b\), the theorem
+\texttt{layerTwoPoint\_abs\_le\_left\_of\_balancedMinSpectralGapCertificate}
+rewrites the result as the familiar one-sided factor \(\theta^a\).
+
+This is still a conditional finite spectral estimate.  It does not prove
+Perron--Frobenius existence, spectral-radius maximality, the condition
+\(G_{\ast\ast}=0\) for spin observables, open-slab geometry, thermodynamic
+limits, or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
