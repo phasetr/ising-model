@@ -6478,6 +6478,39 @@ the 1D chain. This completes the exact solution of the 1D Ising chain in a field
 matrix $\to$ eigenvalues $\to$ partition function $\to$ free energy $\to$
 magnetization $\to$ susceptibility (Issue~\#3538).
 
+\paragraph{General finite layer transfer matrix (\S17.1, Issue~\#3511).}
+The higher-dimensional transfer-matrix route begins with an abstract finite
+layer state space $\Omega$. Given a one-layer weight $u:\Omega\to R$ and a
+transition weight $k:\Omega\to\Omega\to R$, the file
+\texttt{TransferMatrix/LayerTransfer.lean} defines
+\[
+  \texttt{layerTransferMatrix}\;u\;k\;(a,b) = u(b)\,k(a,b).
+\]
+For a periodic layer configuration $c:\mathrm{Fin}(m+1)\to\Omega$, the induced
+closed-walk weight is
+\[
+  \prod_i u(c_{i+1})\,k(c_i,c_{i+1})
+  \quad(\texttt{layerClosedWalkWeight\_eq\_prod}).
+\]
+The finite layer partition trace is the trace of the transfer-matrix power, and
+the closed-walk trace identity gives
+\[
+  \operatorname{Tr}(T^{m+1})
+   = \sum_{c:\mathrm{Fin}(m+1)\to\Omega}
+      \prod_i u(c_{i+1})\,k(c_i,c_{i+1})
+  \quad(\texttt{layerTransferPartition\_trace\_eq\_sum\_prod}).
+\]
+The same file also packages the one-insertion trace
+$\operatorname{Tr}(D_fT^n)$ and the two-insertion trace
+$\operatorname{Tr}(D_fT^aD_fT^b)$ through the marked layer weight
+\texttt{layerMarkedClosedWalkWeight}; this wrapper uses the positive separation
+hypothesis $0<b$ to hide the redundant nonzero total-length instance. These are
+finite matrix identities over a
+commutative semiring and contain no spectral gap, Perron--Frobenius theorem,
+lattice hyperplane identification, thermodynamic limit, or exponential-decay
+estimate. Those are the later hyperplane and spectral steps of Issue~\#3511.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
