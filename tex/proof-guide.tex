@@ -7438,6 +7438,47 @@ geometry, thermodynamic limits, or the final hyperplane decay estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Finite free-layer Walsh bridge (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/FreeLayerWalshSpectralWindow.lean}
+\]
+adds the arbitrary finite free-layer Walsh infrastructure.  A layer state is
+encoded by its down-spin set \(A\subseteq S\), and the Walsh columns are
+\[
+  Q_{\omega,A}=|\Omega|^{-1/2}\prod_{x\in A}\sigma_x(\omega),
+  \qquad \Omega=\texttt{LayerState}\,S.
+\]
+The orthogonality identities \(Q^TQ=1\) and \(QQ^T=1\) are proved from the
+spin-product cancellation lemmas.  The free-layer product matrix is
+\[
+  T_S(a)_{\omega,\eta}
+    = \prod_{x\in S} T(a)_{\omega_x,\eta_x},
+\]
+and the zero-field empty transverse graph with identity transition pairs is
+identified with this product matrix.  The Walsh eigenvalue vocabulary is
+\[
+  \lambda_A(a)=\lambda_+(a)^{|S|-|A|}\lambda_-(a)^{|A|},
+\]
+with the top channel \(A=\varnothing\) giving \(\lambda_+(a)^{|S|}\).
+
+This PR stops at the reusable Walsh basis and physical free-layer bridge.  It
+also provides conditional spectral-data and balanced min-gap certificate
+wrappers: once the explicit Walsh diagonalization and the non-top estimate
+\[
+  |\lambda_A(a)|\le \tanh(a)\lambda_+(a)^{|S|}
+\]
+are supplied, the certificate follows under the honest threshold
+\[
+  \tanh(p.\beta p.J)<(2^{|S|}-1)^{-1}.
+\]
+The full arbitrary finite Walsh diagonalization and subdominant estimate remain
+follow-up proof obligations.  This does not prove the interacting cubic-layer
+spectral window, \(\theta<1\) sufficiency for larger state spaces, open-slab
+geometry, thermodynamic limits, or the final hyperplane decay estimate.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
