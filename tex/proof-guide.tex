@@ -6717,6 +6717,52 @@ Perron--Frobenius existence, spectral-radius maximality, open-slab geometry,
 thermodynamic limits, and final hyperplane exponential decay for later
 Issue~\#3511 work.
 
+\paragraph{Dominant finite spectral-basis bounds (\S17.1, Issue~\#3511).}
+The next finite step remains inside the same orthogonal spectral-basis setting.
+It proves that concrete dominance and cancellation hypotheses imply the
+trace-bound inputs required by the balanced certificate.  Suppose a dominant
+index \(\ast\) is chosen with \(\lambda_\ast=s>0\), \(0\le \theta<1\), and
+\[
+  i\ne \ast \quad\Longrightarrow\quad |\lambda_i|\le \theta s .
+\]
+Then the remaining eigenvalues give the finite lower bound
+\[
+  \sum_i \lambda_i^N
+    \ge s^N-(|\Omega|-1)(\theta s)^N
+    \ge \bigl(1-(|\Omega|-1)\theta\bigr)s^N ,
+  \qquad N>0,
+\]
+where the last inequality uses \(0\le\theta\le1\).  The Lean theorem
+\texttt{partition\_lower\_of\_dominant\_bounds} records this estimate with
+\texttt{finiteSpectralPartitionPrefactor}.  For the marked trace, let
+\(G=P^T D_f P\) and assume the one-sided dominant-channel cancellation
+\[
+  G_{i\ast}G_{\ast i}=0 \qquad\text{for all } i.
+\]
+Then the terms with \(j=\ast\) vanish in the marked-trace formula, while all
+remaining terms satisfy
+\[
+  |G_{ij}G_{ji}\lambda_j^a\lambda_i^b|
+  \le |G_{ij}G_{ji}|\,s^{a+b}\theta^a .
+\]
+Thus
+\[
+  \left|\sum_{i,j}G_{ij}G_{ji}\lambda_j^a\lambda_i^b\right|
+  \le
+  \left(\sum_{i,j}|G_{ij}G_{ji}|\right)s^{a+b}\theta^a .
+\]
+This is formalised by the marked-trace spectral-prefactor theorem.  The
+balanced certificate constructor with suffix
+\texttt{orthogonalDominantBounds} combines the partition and marked estimates
+into a balanced certificate.
+The positivity bridge to mathlib's graph-theoretic matrix vocabulary records
+that entrywise positive balanced layer matrices are primitive and irreducible.
+These statements are still conditional finite spectral estimates: they do not
+prove a Perron--Frobenius eigenvector, spectral-radius maximality, the
+dominant-channel cancellation for spin observables, open-slab geometry,
+thermodynamic limits, or final hyperplane exponential decay.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
