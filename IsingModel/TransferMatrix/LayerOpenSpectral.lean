@@ -181,6 +181,254 @@ noncomputable def openMarkedPathTripleNumerator
         pathWeight M σ * pathWeight M τ * pathWeight M ρ
     else 0
 
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- Glue two open paths into one open path, keeping their shared endpoint once.
+This tail-based version has convenient endpoint behaviour; its path-weight
+factorization is proved from `pathWeight_append`. -/
+def openPathGlue {a b : ℕ} (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω) :
+    Fin (a + b + 1) → Ω :=
+  fun i => Fin.append σ (Fin.tail τ) (Fin.cast (by omega) i)
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- A two-path glue starts at the first path. -/
+theorem openPathGlue_apply_zero {a b : ℕ}
+    (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω) :
+    openPathGlue σ τ 0 = σ 0 := by
+  unfold openPathGlue
+  have hidx :
+      Fin.cast (by omega) (0 : Fin (a + b + 1)) =
+        Fin.castAdd b (0 : Fin (a + 1)) := by
+    ext
+    simp
+  rw [hidx, Fin.append_left]
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- At the end of the first path, a two-path glue has the first path's endpoint. -/
+theorem openPathGlue_apply_first_last {a b : ℕ}
+    (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω) :
+    openPathGlue σ τ ⟨a, by omega⟩ = σ (Fin.last a) := by
+  unfold openPathGlue
+  have hidx :
+      Fin.cast (by omega) (⟨a, by omega⟩ : Fin (a + b + 1)) =
+        Fin.castAdd b (Fin.last a) := by
+    ext
+    simp
+  rw [hidx, Fin.append_left]
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The tail-based two-path glue is the same path as the `init`-plus-whole-path
+glue used by `pathWeight_append`, provided the endpoints agree. -/
+theorem openPathGlue_eq_append_init {a b : ℕ}
+    (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω)
+    (hστ : σ (Fin.last a) = τ 0) :
+    openPathGlue σ τ =
+      fun i : Fin (a + b + 1) =>
+        (Fin.append (Fin.init σ) τ) (Fin.cast (by omega) i) := by
+  funext i
+  unfold openPathGlue
+  have hsource : ∀ j : Fin ((a + 1) + b),
+      Fin.append σ (Fin.tail τ) j =
+        (Fin.append (Fin.init σ) τ) (Fin.cast (by omega) j) := by
+    intro j
+    refine Fin.addCases (fun jL => ?_) (fun jR => ?_) j
+    · rw [Fin.append_left]
+      by_cases hj : (jL : ℕ) = a
+      · have hlast : jL = Fin.last a := by
+          ext
+          exact hj
+        subst hlast
+        have hcast :
+            Fin.cast (by omega) (Fin.castAdd b (Fin.last a : Fin (a + 1))) =
+              Fin.natAdd a (0 : Fin (b + 1)) := by
+          ext
+          simp
+        rw [hcast, Fin.append_right, hστ]
+      · have hlt : (jL : ℕ) < a := by
+          have hle : (jL : ℕ) ≤ a := Nat.le_of_lt_succ jL.isLt
+          exact Nat.lt_of_le_of_ne hle hj
+        have hcast :
+            Fin.cast (by omega) (Fin.castAdd b jL) =
+              Fin.castAdd (b + 1) (⟨jL, hlt⟩ : Fin a) := by
+          ext
+          simp
+        rw [hcast, Fin.append_left, Fin.init_def]
+        congr 1
+    · rw [Fin.append_right]
+      have hcast :
+          Fin.cast (by omega) (Fin.natAdd (a + 1) jR) =
+            Fin.natAdd a (jR.succ) := by
+        ext
+        simp
+        omega
+      rw [hcast, Fin.append_right, Fin.tail_def]
+  rw [hsource]
+  congr 1
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- Path weights multiply under the tail-based two-path glue. -/
+theorem pathWeight_openPathGlue (M : Matrix Ω Ω ℝ) {a b : ℕ}
+    (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω)
+    (hστ : σ (Fin.last a) = τ 0) :
+    pathWeight M (openPathGlue σ τ) = pathWeight M σ * pathWeight M τ := by
+  rw [openPathGlue_eq_append_init σ τ hστ]
+  convert pathWeight_append M σ τ hστ.symm using 1
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The final point of a glued two-path open path is the final point of the
+second path. -/
+theorem openPathGlue_apply_last {a b : ℕ}
+    (σ : Fin (a + 1) → Ω) (τ : Fin (b + 1) → Ω)
+    (hστ : σ (Fin.last a) = τ 0) :
+    openPathGlue σ τ (Fin.last (a + b)) = τ (Fin.last b) := by
+  by_cases hb : b = 0
+  · subst hb
+    unfold openPathGlue
+    have hidx :
+        Fin.cast (by omega) (Fin.last (a + 0)) =
+          Fin.castAdd 0 (Fin.last a : Fin (a + 1)) := by
+      ext
+      simp
+    rw [hidx, Fin.append_left, hστ]
+    rfl
+  · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hb
+    unfold openPathGlue
+    have hidx :
+        Fin.cast (by omega) (Fin.last (a + (m + 1))) =
+          Fin.natAdd (a + 1) (Fin.last m) := by
+      ext
+      simp
+    rw [hidx, Fin.append_right, Fin.tail_def]
+    rfl
+
+/-- Glue three open paths into one open path, keeping the two shared endpoints
+only once.  The constraints are supplied to the lemmas using this map, rather
+than to the definition itself. -/
+def openMarkedTripleGlue {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω) : Fin (left + sep + right + 1) → Ω :=
+  openPathGlue (openPathGlue σ τ) ρ
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The glued open path starts at the first path. -/
+theorem openMarkedTripleGlue_apply_zero {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω) :
+    openMarkedTripleGlue σ τ ρ 0 = σ 0 := by
+  unfold openMarkedTripleGlue
+  rw [openPathGlue_apply_zero, openPathGlue_apply_zero]
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The left marked position of the glued open path is the join of the first
+and middle paths. -/
+theorem openMarkedTripleGlue_apply_left {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω) :
+    openMarkedTripleGlue σ τ ρ (layerOpenLeftIndex left sep right) =
+      σ (Fin.last left) := by
+  have hidx :
+      (layerOpenLeftIndex left sep right : Fin (left + sep + right + 1)) =
+        ⟨left, by omega⟩ := by
+    ext
+    simp [layerOpenLeftIndex]
+  unfold openMarkedTripleGlue
+  rw [hidx]
+  unfold openPathGlue
+  have houter :
+      Fin.cast (by omega) (⟨left, by omega⟩ : Fin (left + sep + right + 1)) =
+        Fin.castAdd right (⟨left, by omega⟩ : Fin (left + sep + 1)) := by
+    ext
+    simp
+  have hinner :
+      Fin.cast (by omega) (⟨left, by omega⟩ : Fin (left + sep + 1)) =
+        Fin.castAdd sep (Fin.last left) := by
+    ext
+    simp
+  rw [houter, Fin.append_left, hinner, Fin.append_left]
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The right marked position of the glued open path is the join of the middle
+and final paths. -/
+theorem openMarkedTripleGlue_apply_right {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω)
+    (hστ : σ (Fin.last left) = τ 0) :
+    openMarkedTripleGlue σ τ ρ (layerOpenRightIndex left sep right) =
+      τ (Fin.last sep) := by
+  by_cases hsep : sep = 0
+  · subst hsep
+    have hidx :
+        layerOpenRightIndex left 0 right = layerOpenLeftIndex left 0 right := by
+      ext
+      simp [layerOpenRightIndex, layerOpenLeftIndex]
+    rw [hidx, openMarkedTripleGlue_apply_left, hστ]
+    rfl
+  · obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hsep
+    have hidx :
+        (layerOpenRightIndex left (m + 1) right :
+          Fin (left + (m + 1) + right + 1)) =
+          ⟨left + (m + 1), by omega⟩ := by
+      ext
+      simp [layerOpenRightIndex]
+    unfold openMarkedTripleGlue
+    rw [hidx, openPathGlue_apply_first_last,
+      openPathGlue_apply_last σ τ hστ]
+
+/-- The left segment of a single open marked path. -/
+def openMarkedTripleLeft {left sep right : ℕ}
+    (c : Fin (left + sep + right + 1) → Ω) : Fin (left + 1) → Ω :=
+  fun i => c (Fin.cast (by omega) (Fin.castAdd (sep + right) i))
+
+/-- The middle segment of a single open marked path. -/
+def openMarkedTripleMiddle {left sep right : ℕ}
+    (c : Fin (left + sep + right + 1) → Ω) : Fin (sep + 1) → Ω :=
+  fun i => c (Fin.cast (by omega) (Fin.natAdd left (Fin.castAdd right i)))
+
+/-- The right segment of a single open marked path. -/
+def openMarkedTripleRight {left sep right : ℕ}
+    (c : Fin (left + sep + right + 1) → Ω) : Fin (right + 1) → Ω :=
+  fun i => c (Fin.cast (by omega) (Fin.natAdd (left + sep) i))
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The left and middle segments reconstructed from a single path glue at the
+left marked point. -/
+theorem openMarkedTripleLeft_last_eq_middle_zero {left sep right : ℕ}
+    (c : Fin (left + sep + right + 1) → Ω) :
+    openMarkedTripleLeft c (Fin.last left) = openMarkedTripleMiddle c 0 := by
+  unfold openMarkedTripleLeft openMarkedTripleMiddle
+  congr 1
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The middle and right segments reconstructed from a single path glue at the
+right marked point. -/
+theorem openMarkedTripleMiddle_last_eq_right_zero {left sep right : ℕ}
+    (c : Fin (left + sep + right + 1) → Ω) :
+    openMarkedTripleMiddle c (Fin.last sep) = openMarkedTripleRight c 0 := by
+  unfold openMarkedTripleMiddle openMarkedTripleRight
+  congr 1
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The three-path glue is the iterated two-path glue. -/
+theorem openMarkedTripleGlue_eq_openPathGlue {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω) :
+    openMarkedTripleGlue σ τ ρ = openPathGlue (openPathGlue σ τ) ρ := by
+  rfl
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- Path weights multiply under the three-path glue. -/
+theorem pathWeight_openMarkedTripleGlue (M : Matrix Ω Ω ℝ) {left sep right : ℕ}
+    (σ : Fin (left + 1) → Ω) (τ : Fin (sep + 1) → Ω)
+    (ρ : Fin (right + 1) → Ω)
+    (hστ : σ (Fin.last left) = τ 0)
+    (hτρ : τ (Fin.last sep) = ρ 0) :
+    pathWeight M (openMarkedTripleGlue σ τ ρ) =
+      pathWeight M σ * pathWeight M τ * pathWeight M ρ := by
+  rw [openMarkedTripleGlue_eq_openPathGlue]
+  have hmid : openPathGlue σ τ (Fin.last (left + sep)) = ρ 0 := by
+    rw [openPathGlue_apply_last σ τ hστ, hτρ]
+  rw [pathWeight_openPathGlue M (openPathGlue σ τ) ρ hmid,
+    pathWeight_openPathGlue M σ τ hστ]
+
 /-- The four-endpoint matrix-power sum expands to the three glued open-path
 sum. -/
 theorem openMarkedMatrixPowerSum_eq_pathTripleNumerator
