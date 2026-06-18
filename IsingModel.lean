@@ -279,6 +279,7 @@ import IsingModel.TransferMatrix.LayerPerron
 import IsingModel.TransferMatrix.LayerPerronExistence
 import IsingModel.TransferMatrix.LayerCardinalitySmallRatio
 import IsingModel.TransferMatrix.CubicLayerCardinalitySmallRatio
+import IsingModel.TransferMatrix.LayerSpectralWindowSmallRatio
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
