@@ -281,6 +281,7 @@ import IsingModel.TransferMatrix.LayerCardinalitySmallRatio
 import IsingModel.TransferMatrix.CubicLayerCardinalitySmallRatio
 import IsingModel.TransferMatrix.LayerSpectralWindowSmallRatio
 import IsingModel.TransferMatrix.LayerInfiniteTemperatureSpectralWindow
+import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
