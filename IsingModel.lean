@@ -286,6 +286,7 @@ import IsingModel.TransferMatrix.TwoSiteFreeLayerSpectralWindow
 import IsingModel.TransferMatrix.FreeLayerWalshSpectralWindow
 import IsingModel.TransferMatrix.LayerCylinderSpectralDecay
 import IsingModel.TransferMatrix.LayerOpenSlab
+import IsingModel.TransferMatrix.LayerOpenSpectral
 import IsingModel.TransferMatrix.LayerOpenSlabGraph
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
