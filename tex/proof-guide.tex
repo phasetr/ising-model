@@ -7388,6 +7388,56 @@ layer state spaces, and does not prove open-slab geometry, thermodynamic
 limits, or the final hyperplane decay estimate.  Reference: Glimm--Jaffe,
 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Two-site free-layer spectral-window bridge (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/TwoSiteFreeLayerSpectralWindow.lean}
+\]
+extends the explicit positive-temperature layer spectral-window route beyond
+one transverse site for the free two-site layer \(S=\texttt{Fin}\,2\).  The
+physical assumptions are zero field, empty transverse graph, and identity
+transition pairs.  Under these assumptions the balanced physical layer matrix
+is the reindexed Kronecker product
+\[
+  T(p.\beta p.J)\otimes T(p.\beta p.J),
+\]
+formalized by
+\[
+  \texttt{layerSymmetricTransferMatrix\_fin2\_bot\_eq\_reindex\_kronecker}.
+\]
+The tensor normalized-Hadamard basis diagonalizes this matrix:
+\[
+  \lambda_{ij}(a)=\lambda_i(a)\lambda_j(a),
+  \qquad i,j\in\{0,1\}.
+\]
+The top mode is \((0,0)\).  Since
+\(\lambda_-(a)=\tanh(a)\lambda_+(a)\), every non-top tensor mode has
+absolute value at most
+\[
+  \tanh(a)\lambda_+(a)^2,
+\]
+with the \((1,1)\) mode using \(\tanh(a)^2\le\tanh(a)\) for \(a\ge0\).
+This is the theorem
+\[
+  \texttt{twoSiteFreeTransferSpectralWindow\_tanh}.
+\]
+After reindexing to layer states and recording flip-evenness of the top tensor
+Hadamard column, the bridge
+\[
+  \texttt{twoSiteFreeLayerBalancedMinGapCertificate\_tanh}
+\]
+gives the balanced min-gap certificate under the honest four-state smallness
+condition
+\[
+  \tanh(p.\beta p.J)<\frac13.
+\]
+This is a concrete free two-site layer result.  It does not prove the
+interacting cubic-layer spectral window, an arbitrary finite-layer Walsh
+diagonalization, \(\theta<1\) sufficiency for larger state spaces, open-slab
+geometry, thermodynamic limits, or the final hyperplane decay estimate.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
