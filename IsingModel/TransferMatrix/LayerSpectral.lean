@@ -579,6 +579,15 @@ theorem boundaryMarkedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
     Finset.sum_nonneg fun j _ =>
       Finset.sum_nonneg fun l _ => abs_nonneg _
 
+/-- Marking by the constant-one function gives the identity in spectral
+coordinates. -/
+@[simp]
+theorem markedMatrix_one {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) :
+    E.markedMatrix (fun _ => (1 : ℝ)) = 1 := by
+  unfold markedMatrix
+  simp [E.orthogonal_left]
+
 /-- The marked matrix `Qᵀ diag(f) Q` is symmetric for real orthogonal spectral
 coordinates. -/
 theorem markedMatrix_transpose {M : Matrix Ω Ω ℝ}
@@ -786,6 +795,124 @@ theorem boundaryMarkedProduct_eq_spectralSum {M : Matrix Ω Ω ℝ}
                 Matrix.diagonal (fun i => E.eigenvalue i ^ right)) x_1 x) *
               E.boundaryCoordinates vR x := by
           rw [Finset.sum_comm]
+
+/-- A finite boundary-vector power product `vLᵀ M^n vR`. -/
+noncomputable def boundaryPowerProduct
+    (M : Matrix Ω Ω ℝ) (vL vR : Ω → ℝ) (n : ℕ) : ℝ :=
+  boundaryMarkedProduct M vL (fun _ => (1 : ℝ)) vR n 0 0
+
+/-- The boundary-vector power product in explicit orthogonal spectral
+coordinates. -/
+theorem boundaryPowerProduct_eq_spectralSum {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (vL vR : Ω → ℝ) (n : ℕ) :
+    boundaryPowerProduct M vL vR n =
+      ∑ i, E.boundaryCoordinates vL i * E.eigenvalue i ^ n *
+        E.boundaryCoordinates vR i := by
+  rw [boundaryPowerProduct, E.boundaryMarkedProduct_eq_spectralSum]
+  simp [Matrix.one_apply, mul_assoc]
+
+/-- The finite open-boundary spectral denominator prefactor attached to a
+boundary vector and a chosen dominant channel. -/
+noncomputable def boundarySpectralPartitionPrefactor {M : Matrix Ω Ω ℝ}
+  (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) (top : Ω) (theta : ℝ) : ℝ :=
+  (E.boundaryCoordinates v top) ^ 2 -
+    (∑ i ∈ Finset.univ.erase top, (E.boundaryCoordinates v i) ^ 2) * theta
+
+/-- Boundary-vector spectral dominance gives a lower bound for a finite
+boundary-power denominator. -/
+theorem boundary_partition_lower_of_dominant_bounds {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (v : Ω → ℝ)
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_le_one : theta ≤ 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (n : ℕ) :
+    E.boundarySpectralPartitionPrefactor v top theta * scale ^ n ≤
+      ∑ i, (E.boundaryCoordinates v i) ^ 2 * E.eigenvalue i ^ n := by
+  let b : Ω → ℝ := E.boundaryCoordinates v
+  let rest : Finset Ω := Finset.univ.erase top
+  have hscale_nonneg : 0 ≤ scale := scale_pos.le
+  have htheta_scale_nonneg : 0 ≤ theta * scale :=
+    mul_nonneg theta_nonneg hscale_nonneg
+  have hrest_coeff_nonneg :
+      0 ≤ ∑ i ∈ rest, b i ^ 2 := by
+    exact Finset.sum_nonneg fun i _ => sq_nonneg (b i)
+  by_cases hn : n = 0
+  · subst n
+    have hpref_le_top :
+        E.boundarySpectralPartitionPrefactor v top theta ≤ b top ^ 2 := by
+      dsimp [boundarySpectralPartitionPrefactor, b, rest]
+      exact sub_le_self _ (mul_nonneg hrest_coeff_nonneg theta_nonneg)
+    have htop_le_sum :
+        b top ^ 2 ≤ ∑ i, b i ^ 2 := by
+      exact Finset.single_le_sum
+        (fun i _ => sq_nonneg (b i)) (Finset.mem_univ top)
+    calc
+      E.boundarySpectralPartitionPrefactor v top theta * scale ^ 0
+          = E.boundarySpectralPartitionPrefactor v top theta := by simp
+      _ ≤ b top ^ 2 := hpref_le_top
+      _ ≤ ∑ i, b i ^ 2 := htop_le_sum
+      _ = ∑ i, b i ^ 2 * E.eigenvalue i ^ 0 := by simp
+  · have hn_pos : 0 < n := Nat.pos_of_ne_zero hn
+    have htheta_pow_le : theta ^ n ≤ theta := by
+      simpa using pow_le_pow_of_le_one theta_nonneg theta_le_one hn_pos
+    have hscale_pow_nonneg : 0 ≤ scale ^ n := pow_nonneg hscale_nonneg n
+    have hrest_term :
+        ∀ i ∈ rest,
+          -(b i ^ 2 * (theta * scale) ^ n) ≤ b i ^ 2 * E.eigenvalue i ^ n := by
+      intro i hi
+      have hitop : i ≠ top := (Finset.mem_erase.mp hi).1
+      have hpow_abs : |E.eigenvalue i ^ n| ≤ (theta * scale) ^ n := by
+        rw [abs_pow]
+        exact pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le i hitop) n
+      have hneg := neg_le_of_abs_le hpow_abs
+      simpa [mul_assoc] using
+        mul_le_mul_of_nonneg_left hneg (sq_nonneg (b i))
+    have hrest_sum :
+        ∑ i ∈ rest, -(b i ^ 2 * (theta * scale) ^ n)
+          ≤ ∑ i ∈ rest, b i ^ 2 * E.eigenvalue i ^ n :=
+      Finset.sum_le_sum hrest_term
+    have hrest_sum' :
+        -((∑ i ∈ rest, b i ^ 2) * (theta * scale) ^ n)
+          ≤ ∑ i ∈ rest, b i ^ 2 * E.eigenvalue i ^ n := by
+      simpa [Finset.sum_neg_distrib, Finset.sum_mul, mul_assoc] using hrest_sum
+    have hrest_pow_le :
+        (∑ i ∈ rest, b i ^ 2) * (theta * scale) ^ n
+          ≤ (∑ i ∈ rest, b i ^ 2) * theta * scale ^ n := by
+      rw [mul_pow]
+      calc
+        (∑ i ∈ rest, b i ^ 2) * (theta ^ n * scale ^ n)
+            ≤ (∑ i ∈ rest, b i ^ 2) * (theta * scale ^ n) := by
+              exact mul_le_mul_of_nonneg_left
+                (mul_le_mul_of_nonneg_right htheta_pow_le hscale_pow_nonneg)
+                hrest_coeff_nonneg
+        _ = (∑ i ∈ rest, b i ^ 2) * theta * scale ^ n := by ring
+    have htop_rest_lower :
+        b top ^ 2 * scale ^ n -
+            (∑ i ∈ rest, b i ^ 2) * (theta * scale) ^ n
+          ≤ b top ^ 2 * scale ^ n +
+              ∑ i ∈ rest, b i ^ 2 * E.eigenvalue i ^ n := by
+      linarith
+    have hpref_le :
+        E.boundarySpectralPartitionPrefactor v top theta * scale ^ n
+          ≤ b top ^ 2 * scale ^ n -
+              (∑ i ∈ rest, b i ^ 2) * (theta * scale) ^ n := by
+      dsimp [boundarySpectralPartitionPrefactor, b, rest]
+      nlinarith
+    calc
+      E.boundarySpectralPartitionPrefactor v top theta * scale ^ n
+          ≤ b top ^ 2 * scale ^ n -
+              (∑ i ∈ rest, b i ^ 2) * (theta * scale) ^ n := hpref_le
+      _ ≤ b top ^ 2 * scale ^ n +
+              ∑ i ∈ rest, b i ^ 2 * E.eigenvalue i ^ n := htop_rest_lower
+      _ = (∑ i ∈ rest, b i ^ 2 * E.eigenvalue i ^ n) +
+              b top ^ 2 * scale ^ n := by ring
+      _ = ∑ i, b i ^ 2 * E.eigenvalue i ^ n := by
+        rw [← Finset.sum_erase_add (Finset.univ)
+          (fun i => b i ^ 2 * E.eigenvalue i ^ n) (Finset.mem_univ top)]
+        simp [rest, dominant_eigenvalue]
 
 /-- The balanced marked trace written in explicit orthogonal spectral data. -/
 theorem marked_trace_eq_sum {M : Matrix Ω Ω ℝ}
