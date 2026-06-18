@@ -7230,6 +7230,60 @@ for multi-site layers.  Open-slab geometry, thermodynamic limits, and the final
 hyperplane decay estimate remain later work.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Layer spectral-window small-ratio bridge (\S17.1, Issue~\#3511).}
+The inverse-cardinality bridge can also be used with an explicit spectral
+window supplied by a later calculation, rather than with the canonical
+subdominant ratio chosen abstractly from the finite Perron--Frobenius argument.
+The Lean file
+\[
+  \texttt{TransferMatrix/LayerSpectralWindowSmallRatio.lean}
+\]
+records first that the expanded inverse-cardinality thresholds are genuinely
+stronger than \(\theta<1\):
+\[
+  \theta < (2^{|S|}-1)^{-1} \quad\Longrightarrow\quad \theta < 1
+\]
+for nonempty transverse layers, and
+\[
+  \theta < \bigl(2^{(2R+1)^d}-1\bigr)^{-1}
+  \quad\Longrightarrow\quad \theta < 1
+\]
+for cubic transverse boxes.  These are the arithmetic helpers
+\[
+  \begin{gathered}
+  \texttt{inv\_two\_pow\_cardSubOne\_le\_one\_of\_nonempty},\quad
+  \texttt{lt\_one\_of\_lt\_inv\_two\_pow\_cardSubOne},\\
+  \texttt{inv\_cubicLayerSite\_cardSubOne\_le\_one},\quad
+  \texttt{lt\_one\_of\_lt\_inv\_cubicLayerSite\_cardSubOne}.
+  \end{gathered}
+\]
+The layer wrappers
+\begin{center}
+{\scriptsize\texttt{layerBalancedMinGapCert\_orthogonal\_spectralWindow\_layerCardSmall}}\\[2pt]
+{\scriptsize\texttt{layerBalancedMinGapCert\_hermitian\_spectralWindow\_layerCardSmall}}
+\end{center}
+take a concrete window
+\[
+  |\lambda_i| \le \theta\,\lambda_{\max}\qquad (i\ne\max)
+\]
+together with
+\[
+  \theta < (2^{|S|}-1)^{-1},
+\]
+then enter the signed-positive max-index spin-certificate route.  The cubic
+wrappers
+\begin{center}
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_orthogonal\_spectralWindow}}\\[2pt]
+{\scriptsize\texttt{cubicLayerBalancedMinGapCertificate\_hermitian\_spectralWindow}}
+\end{center}
+specialize the same mechanism to \(\texttt{CubicLayerSite}\,d\,R\).  This is an
+interface for future explicit spectral estimates: it does not prove a physical
+cubic-layer spectral window, does not prove a Walsh diagonalization, does not
+make \(\theta<1\) sufficient for multi-site layers, and does not prove
+open-slab geometry, thermodynamic limits, or the final hyperplane decay
+estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
