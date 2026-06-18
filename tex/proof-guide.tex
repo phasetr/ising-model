@@ -6610,6 +6610,33 @@ Open slab/box geometry, Perron--Frobenius theory, thermodynamic limits, and
 exponential decay remain later Issue~\#3511 steps. Reference: Glimm--Jaffe,
 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{Cubic transverse boxes as layer cylinders (\S17.1, Issue~\#3511).}
+\texttt{TransferMatrix/CubicLayerCylinder.lean} specialises the abstract
+finite periodic layer-cylinder bridge to a concrete transverse cubic box in the
+integer lattice. The transverse site type is
+\[
+  \texttt{CubicLayerSite}\;d\;R =
+  \uparrow(\texttt{Ambient.cubicBox}\;d\;R),
+\]
+and the transverse graph is
+\[
+  \texttt{cubicLayerGraph}\;d\;R =
+  \texttt{Ambient.inducedGraph}\;(\texttt{latticeGraph}\;d)\;
+    (\texttt{Ambient.cubicBox}\;d\;R).
+\]
+Adjacent periodic layers are coupled by the identity transition pairs
+\texttt{cubicLayerTransitionPairs}, so \texttt{cubicLayerCylinderGraph} is
+exactly \texttt{layerCylinderGraph} for this concrete transverse graph and
+transition set. The project-level bridges are the corresponding specialisations
+of the general graph-stack theorems:
+\texttt{boltzmannWeight\_cubicLayerCylinderGraph\_eq\_layerCylinderStackWeight},
+\texttt{partitionFunction\_cubicLayerCylinderGraph\_eq\_isingLayerCylinderPartition},
+and
+\texttt{correlation\_cubicLayerCylinderGraph\_same\_transverse\_eq\_trace\_ratio}.
+The result is still a finite periodic cylinder over a finite transverse box;
+open longitudinal slabs/boxes, Perron--Frobenius theory, thermodynamic limits,
+and exponential decay remain later Issue~\#3511 steps.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
