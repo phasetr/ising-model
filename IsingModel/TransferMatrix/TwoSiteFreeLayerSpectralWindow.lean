@@ -57,6 +57,7 @@ noncomputable def twoSiteFreeHadamardMatrix :
     Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℝ :=
   normalizedHadamardMatrix ⊗ₖ normalizedHadamardMatrix
 
+/-- The tensor Hadamard matrix is left-orthogonal. -/
 theorem twoSiteFreeHadamardMatrix_orthogonal_left :
     twoSiteFreeHadamardMatrixᵀ * twoSiteFreeHadamardMatrix =
       (1 : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℝ) := by
@@ -66,6 +67,7 @@ theorem twoSiteFreeHadamardMatrix_orthogonal_left :
   rw [normalizedHadamardMatrix_transpose, normalizedHadamardMatrix_mul_self]
   rw [Matrix.one_kronecker_one]
 
+/-- The tensor Hadamard matrix is right-orthogonal. -/
 theorem twoSiteFreeHadamardMatrix_orthogonal_right :
     twoSiteFreeHadamardMatrix * twoSiteFreeHadamardMatrixᵀ =
       (1 : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℝ) := by
@@ -115,7 +117,6 @@ noncomputable def twoSiteFreeTransferOrthogonalSpectralData (a : ℝ) :
   orthogonal_right := twoSiteFreeHadamardMatrix_orthogonal_right
   diagonalizes := twoSiteFreeTransferMatrix_diagonalizes a
 
-set_option linter.flexible false in
 /-- At zero field, the free two-site balanced layer matrix is the Kronecker
 product of two one-site transfer matrices. -/
 theorem layerSymmetricTransferMatrix_fin2_bot_eq_reindex_kronecker
@@ -128,13 +129,20 @@ theorem layerSymmetricTransferMatrix_fin2_bot_eq_reindex_kronecker
           isingTransferMatrix1D (p.β * p.J)) := by
   ext ω η
   rw [Matrix.reindex_apply]
-  simp [layerSymmetricTransferMatrix, layerInternalWeight, hp, layerTransitionWeight,
-    layerIdentityTransitionPairs, isingTransferMatrix1D_spinEquivFin2,
-    layerStateFin2EquivFin2Prod]
-  rw [← Real.exp_add]
-  congr 1
+  suffices
+      Real.exp
+          (p.β * p.J *
+            ∑ xy ∈ Finset.image (fun x => (x, x)) Finset.univ,
+              Spin.sign ℝ (ω xy.1) * Spin.sign ℝ (η xy.2)) =
+        Real.exp ((p.β * p.J) * (Spin.sign ℝ (ω 0) * Spin.sign ℝ (η 0))) *
+          Real.exp ((p.β * p.J) * (Spin.sign ℝ (ω 1) * Spin.sign ℝ (η 1))) by
+    simpa [layerSymmetricTransferMatrix, layerInternalWeight, hp, layerTransitionWeight,
+      layerIdentityTransitionPairs, isingTransferMatrix1D_spinEquivFin2,
+      layerStateFin2EquivFin2Prod, Fin.sum_univ_two] using this
   rw [Finset.sum_image]
-  · simp [Fin.sum_univ_two]
+  · simp only [Fin.sum_univ_two, Fin.isValue]
+    rw [← Real.exp_add]
+    congr 1
     ring
   · intro x _ y _ hxy
     exact (Prod.ext_iff.mp hxy).1
@@ -166,11 +174,11 @@ noncomputable def twoSiteFreeLayerOrthogonalSpectralData
 
 /-! ## The concrete spectral window -/
 
+/-- The explicit tensor top index has top eigenvalue squared. -/
 theorem twoSiteFreeTransferEigenvalue_top (a : ℝ) :
     twoSiteFreeTransferEigenvalue a (0, 0) = transferEigenvalueTop a ^ 2 := by
   simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue, sq]
 
-set_option linter.flexible false in
 /-- The two-site free transfer spectral data has spectral window `tanh a` away
 from the explicit tensor top index `(0,0)`, for `a ≥ 0`. -/
 theorem twoSiteFreeTransferSpectralWindow_tanh {a : ℝ} (ha : 0 ≤ a) :
@@ -181,31 +189,50 @@ theorem twoSiteFreeTransferSpectralWindow_tanh {a : ℝ} (ha : 0 ≤ a) :
   rcases i with ⟨i, j⟩
   fin_cases i <;> fin_cases j
   · exact False.elim (hi rfl)
-  · simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue, sq]
-    have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
-    rw [abs_of_pos (transferEigenvalueTop_pos a), abs_of_nonneg hbot_nonneg]
-    rw [transferEigenvalueBot_eq_tanh_mul_top]
-    ring_nf
-    exact le_rfl
-  · simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue, sq]
-    have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
-    rw [abs_of_nonneg hbot_nonneg, abs_of_pos (transferEigenvalueTop_pos a)]
-    rw [transferEigenvalueBot_eq_tanh_mul_top]
-    ring_nf
-    exact le_rfl
-  · simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue, sq]
-    rw [transferEigenvalueBot_eq_tanh_mul_top]
+  · have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
+    calc
+      |twoSiteFreeTransferEigenvalue a (0, 1)| =
+          |transferEigenvalueTop a * transferEigenvalueBot a| := by
+            simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue]
+      _ = transferEigenvalueTop a * transferEigenvalueBot a := by
+            rw [abs_of_nonneg (mul_nonneg (transferEigenvalueTop_pos a).le hbot_nonneg)]
+      _ = Real.tanh a * (transferEigenvalueTop a ^ 2) := by
+            rw [transferEigenvalueBot_eq_tanh_mul_top]
+            ring
+      _ ≤ Real.tanh a * (transferEigenvalueTop a ^ 2) := le_rfl
+  · have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
+    calc
+      |twoSiteFreeTransferEigenvalue a (1, 0)| =
+          |transferEigenvalueBot a * transferEigenvalueTop a| := by
+            simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue]
+      _ = transferEigenvalueBot a * transferEigenvalueTop a := by
+            rw [abs_of_nonneg (mul_nonneg hbot_nonneg (transferEigenvalueTop_pos a).le)]
+      _ = Real.tanh a * (transferEigenvalueTop a ^ 2) := by
+            rw [transferEigenvalueBot_eq_tanh_mul_top]
+            ring
+      _ ≤ Real.tanh a * (transferEigenvalueTop a ^ 2) := le_rfl
+  · have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
     have htanh_nonneg : 0 ≤ Real.tanh a := by
       rw [Real.tanh_eq_sinh_div_cosh]
       exact div_nonneg (Real.sinh_nonneg_iff.mpr ha) (Real.cosh_pos a).le
     have htanh_le_one : Real.tanh a ≤ 1 := le_of_lt (Real.tanh_lt_one a)
-    have htop_nonneg : 0 ≤ transferEigenvalueTop a := (transferEigenvalueTop_pos a).le
-    have htop_sq_nonneg : 0 ≤ transferEigenvalueTop a * transferEigenvalueTop a :=
-      mul_nonneg htop_nonneg htop_nonneg
+    have htop_sq_nonneg : 0 ≤ transferEigenvalueTop a ^ 2 := sq_nonneg _
     have htanh_sq_le : Real.tanh a * Real.tanh a ≤ Real.tanh a := by
       nlinarith [mul_le_mul_of_nonneg_left htanh_le_one htanh_nonneg]
-    nlinarith
+    calc
+      |twoSiteFreeTransferEigenvalue a (1, 1)| =
+          |transferEigenvalueBot a * transferEigenvalueBot a| := by
+            simp [twoSiteFreeTransferEigenvalue, oneSiteTransferEigenvalue]
+      _ = transferEigenvalueBot a * transferEigenvalueBot a := by
+            rw [abs_of_nonneg (mul_nonneg hbot_nonneg hbot_nonneg)]
+      _ = (Real.tanh a * Real.tanh a) * (transferEigenvalueTop a ^ 2) := by
+            rw [transferEigenvalueBot_eq_tanh_mul_top]
+            ring
+      _ ≤ Real.tanh a * (transferEigenvalueTop a ^ 2) := by
+            exact mul_le_mul_of_nonneg_right htanh_sq_le htop_sq_nonneg
 
+/-- The reindexed physical two-site free layer has the expected top
+eigenvalue. -/
 theorem twoSiteFreeLayerOrthogonalSpectralData_top_eigenvalue
     (p : IsingParams ℝ) (hp : p.h = 0) :
     (twoSiteFreeLayerOrthogonalSpectralData p hp).eigenvalue
@@ -231,7 +258,6 @@ theorem twoSiteFreeLayerSpectralWindow_tanh
   simpa [twoSiteFreeLayerOrthogonalSpectralData, RealOrthogonalSpectralData.reindex,
     twoSiteFreeTransferOrthogonalSpectralData] using hbase
 
-set_option linter.flexible false in
 /-- The explicit top tensor-Hadamard column is invariant under global spin flip. -/
 theorem twoSiteFreeLayerOrthogonalSpectralData_top_flip_even
     (p : IsingParams ℝ) (hp : p.h = 0) :
@@ -242,13 +268,12 @@ theorem twoSiteFreeLayerOrthogonalSpectralData_top_flip_even
         (twoSiteFreeLayerOrthogonalSpectralData p hp).changeOfBasis
           ω (layerStateFin2EquivFin2Prod.symm (0, 0)) := by
   intro ω
-  simp [twoSiteFreeLayerOrthogonalSpectralData, RealOrthogonalSpectralData.reindex,
-    twoSiteFreeTransferOrthogonalSpectralData, twoSiteFreeHadamardMatrix]
   have hQ : ∀ i : Fin 2, normalizedHadamardMatrix i 0 = 1 / Real.sqrt 2 := by
     intro i
     simpa [isingTransferMatrix1DOrthogonalSpectralData] using
       isingTransferMatrix1DOrthogonalSpectralData_top_column (p.β * p.J) i
-  rw [hQ, hQ, hQ, hQ]
+  simp [twoSiteFreeLayerOrthogonalSpectralData, RealOrthogonalSpectralData.reindex,
+    twoSiteFreeTransferOrthogonalSpectralData, twoSiteFreeHadamardMatrix, hQ]
 
 /-! ## Small-ratio certificate -/
 
