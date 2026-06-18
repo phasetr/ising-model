@@ -6670,6 +6670,19 @@ Perron--Frobenius existence, spectral radius, open-slab geometry, thermodynamic
 limits, and final
 hyperplane exponential decay remain later Issue~\#3511 steps.
 
+\paragraph{Balanced spectral certificates (\S17.1, Issue~\#3511).}
+The same finite certificate language is also available directly on the
+balanced matrix \(S\).  A balanced certificate records the scale, ratio, and
+prefactors together with a lower bound on \(\operatorname{Tr}(S^N)\) and an
+upper bound on the balanced marked trace.  Positivity of \(u\) transports this
+data back to the ordinary transfer matrix \(T\), because the diagonal
+similarity preserves both traces used in the cyclic two-point ratio.  Thus the
+future symmetric spectral argument can work on \(S\), while the consumer
+theorems still apply to the original finite layer observable.  The constructors
+only package explicit trace-bound hypotheses; they do not prove
+Perron--Frobenius existence, a spectral-radius theorem, open-slab geometry,
+thermodynamic limits, or final hyperplane decay.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
