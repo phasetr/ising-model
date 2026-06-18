@@ -3,16 +3,18 @@ import IsingModel.TransferMatrix.LayerPerron
 /-!
 # Signed positive dominant columns for finite layer transfer matrices
 
-This file records the sign-invariant interface needed for the finite
-Perron--Frobenius step.  A real orthogonal spectral column is only determined up
-to sign, so the useful statement is that a chosen column is positive after
-multiplication by a scalar sign with square one.
+This file records the sign-invariant interface and the finite maximal-column
+construction needed for the Perron-facing layer route.  A real orthogonal
+spectral column is only determined up to sign, so the useful statement is that a
+chosen column is positive after multiplication by a scalar sign with square one.
 
 The file connects such signed-positive columns to the positive-column radius,
 simplicity, strict-ratio, and spin-cancellation API developed in
-`LayerPerron.lean`.  It does not yet prove the Perron--Frobenius existence
-theorem that a maximal spectral column is signed-positive, nor does it
-discharge the finite-cardinality prefactor condition in the certificates.
+`LayerPerron.lean`, and proves that the finite maximal spectral column has such
+an orientation for an entrywise positive matrix with explicit real orthogonal
+spectral data.  It still does not discharge the finite-cardinality prefactor
+condition in the certificates, open-slab geometry, thermodynamic limits, or
+final hyperplane exponential decay.
 
 ## References
 
@@ -26,6 +28,173 @@ namespace TransferMatrix
 open Matrix
 
 variable {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+
+/-- The squared Euclidean norm of a finite real vector, written as a finite
+sum so it can be used without normed-space coercions in the transfer-matrix
+spectral calculations. -/
+noncomputable def vectorSqNorm (v : Ω → ℝ) : ℝ :=
+  ∑ i, v i ^ 2
+
+/-- The real quadratic form associated to a finite matrix, written as a double
+sum. -/
+noncomputable def matrixQuadraticForm (M : Matrix Ω Ω ℝ) (v : Ω → ℝ) : ℝ :=
+  ∑ i, ∑ j, v i * M i j * v j
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- A product is bounded by the product of absolute values. -/
+theorem mul_le_abs_mul_abs (a b : ℝ) : a * b ≤ |a| * |b| := by
+  have ha_pos : a ≤ |a| := le_abs_self a
+  have ha_neg : -a ≤ |a| := neg_le_abs a
+  have hb_pos : b ≤ |b| := le_abs_self b
+  have hb_neg : -b ≤ |b| := neg_le_abs b
+  nlinarith [mul_nonneg (sub_nonneg.mpr ha_pos) (sub_nonneg.mpr hb_pos),
+    mul_nonneg (sub_nonneg.mpr ha_neg) (sub_nonneg.mpr hb_neg)]
+
+omit [DecidableEq Ω] in
+/-- Applying an entrywise positive matrix to a nonnegative nonzero vector gives
+a strictly positive vector. -/
+theorem matrixEntrywisePositive_mulVec_pos_of_nonnegative_nonzero [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} {v : Ω → ℝ}
+    (hM : MatrixEntrywisePositive M) (hv_nonneg : VectorNonnegative v)
+    (hv_ne : v ≠ 0) :
+    VectorPositive (M.mulVec v) := by
+  obtain ⟨k, hk⟩ : ∃ k, v k ≠ 0 := by
+    by_contra h
+    apply hv_ne
+    ext k
+    by_contra hk
+    exact h ⟨k, hk⟩
+  have hvk_pos : 0 < v k := lt_of_le_of_ne (hv_nonneg k) (Ne.symm hk)
+  intro i
+  rw [Matrix.mulVec, dotProduct]
+  exact Finset.sum_pos' (fun j _ => mul_nonneg (hM i j).le (hv_nonneg j))
+    ⟨k, Finset.mem_univ k, mul_pos (hM i k) hvk_pos⟩
+
+omit [DecidableEq Ω] in
+/-- A nonnegative nonzero eigenvector of an entrywise positive matrix is
+strictly positive. -/
+theorem matrixEntrywisePositive_eigenvector_pos_of_nonnegative_nonzero
+    [Nonempty Ω] {M : Matrix Ω Ω ℝ} {lam : ℝ} {v : Ω → ℝ}
+    (hM : MatrixEntrywisePositive M)
+    (hv_eig : M.mulVec v = lam • v)
+    (hv_nonneg : VectorNonnegative v) (hv_ne : v ≠ 0) :
+    VectorPositive v := by
+  have hMv_pos : VectorPositive (M.mulVec v) :=
+    matrixEntrywisePositive_mulVec_pos_of_nonnegative_nonzero hM hv_nonneg hv_ne
+  intro i
+  have hvi_ne : v i ≠ 0 := by
+    intro hzero
+    have hMv_zero : M.mulVec v i = 0 := by
+      have h := congr_fun hv_eig i
+      simpa [Pi.smul_apply, smul_eq_mul, hzero] using h
+    exact (hMv_pos i).ne' hMv_zero
+  exact lt_of_le_of_ne (hv_nonneg i) (Ne.symm hvi_ne)
+
+omit [DecidableEq Ω] in
+/-- Replacing a vector by its coordinatewise absolute value does not decrease
+the quadratic form of an entrywise positive matrix. -/
+theorem matrixQuadraticForm_le_abs {M : Matrix Ω Ω ℝ}
+    (hM : MatrixEntrywisePositive M) (v : Ω → ℝ) :
+    matrixQuadraticForm M v
+      ≤ matrixQuadraticForm M (fun i => |v i|) := by
+  unfold matrixQuadraticForm
+  apply Finset.sum_le_sum
+  intro i _
+  apply Finset.sum_le_sum
+  intro j _
+  have hle : v i * v j ≤ |v i| * |v j| :=
+    mul_le_abs_mul_abs (v i) (v j)
+  have hle' : M i j * (v i * v j) ≤ M i j * (|v i| * |v j|) :=
+    mul_le_mul_of_nonneg_left hle (hM i j).le
+  nlinarith
+
+omit [DecidableEq Ω] in
+/-- The difference between the absolute-value quadratic form and the original
+quadratic form is the finite sum of the entrywise sign-defects. -/
+theorem matrixQuadraticForm_abs_sub {M : Matrix Ω Ω ℝ} (v : Ω → ℝ) :
+    matrixQuadraticForm M (fun i => |v i|) - matrixQuadraticForm M v =
+      ∑ i, ∑ j, M i j * (|v i| * |v j| - v i * v j) := by
+  unfold matrixQuadraticForm
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl
+  intro j _
+  ring
+
+omit [DecidableEq Ω] in
+/-- Equality in the absolute-value quadratic-form comparison forces every
+coordinate pair to have zero sign-defect. -/
+theorem abs_defect_eq_zero_of_matrixQuadraticForm_abs_eq
+    {M : Matrix Ω Ω ℝ} {v : Ω → ℝ}
+    (hM : MatrixEntrywisePositive M)
+    (heq :
+      matrixQuadraticForm M (fun i => |v i|) = matrixQuadraticForm M v)
+    (i j : Ω) :
+    |v i| * |v j| - v i * v j = 0 := by
+  let defect : Ω → Ω → ℝ := fun i j => |v i| * |v j| - v i * v j
+  have hdef_nonneg : ∀ i j, 0 ≤ defect i j := by
+    intro i j
+    exact sub_nonneg.mpr (mul_le_abs_mul_abs (v i) (v j))
+  have hsum_zero : ∑ i, ∑ j, M i j * defect i j = 0 := by
+    have h := matrixQuadraticForm_abs_sub (M := M) v
+    dsimp [defect]
+    rw [heq] at h
+    simpa using h.symm
+  have hterm_nonneg : ∀ i j, 0 ≤ M i j * defect i j := by
+    intro i j
+    exact mul_nonneg (hM i j).le (hdef_nonneg i j)
+  have hterm_le_zero : M i j * defect i j ≤ 0 := by
+    calc
+      M i j * defect i j ≤ ∑ j', M i j' * defect i j' :=
+        Finset.single_le_sum (fun j' _ => hterm_nonneg i j')
+          (Finset.mem_univ j)
+      _ ≤ ∑ i', ∑ j', M i' j' * defect i' j' :=
+        Finset.single_le_sum
+          (fun i' _ => Finset.sum_nonneg fun j' _ => hterm_nonneg i' j')
+          (Finset.mem_univ i)
+      _ = 0 := hsum_zero
+  have hterm_zero : M i j * defect i j = 0 :=
+    le_antisymm hterm_le_zero (hterm_nonneg i j)
+  rcases mul_eq_zero.mp hterm_zero with hMzero | hdef
+  · exact False.elim ((hM i j).ne' hMzero)
+  · exact hdef
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- If all sign-defects against one nonzero coordinate vanish, then the vector
+can be oriented to be coordinatewise nonnegative. -/
+theorem exists_sign_vectorNonnegative_of_abs_defect_zero
+    {v : Ω → ℝ} {i0 : Ω}
+    (hi0 : v i0 ≠ 0)
+    (hdef : ∀ j, |v i0| * |v j| - v i0 * v j = 0) :
+    ∃ s : ℝ, s * s = 1 ∧ VectorNonnegative (fun j => s * v j) := by
+  by_cases hi0_nonneg : 0 ≤ v i0
+  · refine ⟨1, by norm_num, ?_⟩
+    intro j
+    by_cases hj : v j = 0
+    · simp [hj]
+    · have hi0_pos : 0 < v i0 := lt_of_le_of_ne hi0_nonneg (Ne.symm hi0)
+      have h := hdef j
+      have hmul : |v j| = v j := by
+        have hzero : |v i0| * |v j| = v i0 * v j := by linarith
+        rw [abs_of_pos hi0_pos] at hzero
+        exact mul_left_cancel₀ hi0 hzero
+      simpa using (abs_eq_self.mp hmul)
+  · refine ⟨-1, by norm_num, ?_⟩
+    intro j
+    by_cases hj : v j = 0
+    · simp [hj]
+    · have hi0_neg : v i0 < 0 := lt_of_not_ge hi0_nonneg
+      have h := hdef j
+      have hmul : |v j| = -v j := by
+        have hzero : |v i0| * |v j| = v i0 * v j := by linarith
+        rw [abs_of_neg hi0_neg] at hzero
+        have hzero' : v i0 * (-|v j|) = v i0 * v j := by nlinarith
+        have hcancel : -|v j| = v j := mul_left_cancel₀ hi0 hzero'
+        linarith
+      have hvj_nonpos : v j ≤ 0 := abs_eq_neg_self.mp hmul
+      nlinarith
 
 namespace RealOrthogonalSpectralData
 
@@ -45,6 +214,201 @@ theorem eigenvalue_le_maxEigenIndex [Nonempty Ω] {M : Matrix Ω Ω ℝ}
   (Classical.choose_spec
     (Finset.exists_max_image (Finset.univ : Finset Ω) E.eigenvalue
       Finset.univ_nonempty)).2 i (Finset.mem_univ i)
+
+/-- Spectral coordinates of a vector in the explicit real orthogonal basis. -/
+noncomputable def spectralCoord {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) (i : Ω) : ℝ :=
+  ∑ x, E.changeOfBasis x i * v x
+
+omit [DecidableEq Ω] in
+/-- Move the third index of a finite triple sum to the outside. -/
+theorem triple_sum_comm (f : Ω → Ω → Ω → ℝ) :
+    (∑ i, ∑ j, ∑ k, f i j k) = ∑ k, ∑ i, ∑ j, f i j k := by
+  calc
+    (∑ i, ∑ j, ∑ k, f i j k) = ∑ j, ∑ i, ∑ k, f i j k := by
+      rw [Finset.sum_comm]
+    _ = ∑ j, ∑ k, ∑ i, f i j k := by
+      apply Finset.sum_congr rfl
+      intro j _
+      rw [Finset.sum_comm]
+    _ = ∑ k, ∑ j, ∑ i, f i j k := by
+      rw [Finset.sum_comm]
+    _ = ∑ k, ∑ i, ∑ j, f i j k := by
+      apply Finset.sum_congr rfl
+      intro k _
+      rw [Finset.sum_comm]
+
+omit [DecidableEq Ω] in
+/-- Square of a finite sum as a double sum. -/
+theorem sq_sum_eq_double_sum (a : Ω → ℝ) :
+    (∑ i, a i) ^ 2 = ∑ i, ∑ j, a i * a j := by
+  rw [pow_two]
+  calc
+    (∑ i, a i) * ∑ j, a j = ∑ i, a i * ∑ j, a j := by
+      rw [Finset.sum_mul]
+    _ = ∑ i, ∑ j, a i * a j := by
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [Finset.mul_sum]
+
+omit [DecidableEq Ω] in
+/-- Pull a scalar through the square of a finite sum in double-sum form. -/
+theorem double_sum_mul_eq_mul_sq_sum (lam : ℝ) (a : Ω → ℝ) :
+    ∑ i, ∑ j, lam * a i * a j = lam * (∑ i, a i) ^ 2 := by
+  calc
+    ∑ i, ∑ j, lam * a i * a j
+        = ∑ i, (lam * a i) * ∑ j, a j := by
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [Finset.mul_sum]
+    _ = (∑ i, lam * a i) * ∑ j, a j := by
+          rw [Finset.sum_mul]
+    _ = lam * (∑ i, a i) ^ 2 := by
+          rw [← Finset.mul_sum]
+          ring
+
+/-- Entrywise expansion of the matrix represented by real orthogonal spectral
+data. -/
+theorem matrix_apply_eq_sum {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (i j : Ω) :
+    M i j = ∑ k,
+      E.changeOfBasis i k * E.eigenvalue k * E.changeOfBasis j k := by
+  have h := congr_fun (congr_fun E.diagonalizes i) j
+  rw [Matrix.mul_apply] at h
+  convert h using 1
+  apply Finset.sum_congr rfl
+  intro k _
+  simp [Matrix.mul_diagonal, Matrix.transpose_apply, mul_assoc]
+
+/-- Quadratic form expansion in the explicit real orthogonal spectral basis. -/
+theorem matrixQuadraticForm_eq_sum_spectralCoord_sq {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) :
+    matrixQuadraticForm M v =
+      ∑ k, E.eigenvalue k * (E.spectralCoord v k) ^ 2 := by
+  unfold matrixQuadraticForm spectralCoord
+  simp_rw [E.matrix_apply_eq_sum]
+  calc
+    (∑ i, ∑ j,
+        v i
+          * (∑ k, E.changeOfBasis i k * E.eigenvalue k * E.changeOfBasis j k)
+          * v j)
+        = ∑ i, ∑ j, ∑ k,
+            E.eigenvalue k * (E.changeOfBasis i k * v i)
+              * (E.changeOfBasis j k * v j) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          apply Finset.sum_congr rfl
+          intro j _
+          rw [Finset.mul_sum, Finset.sum_mul]
+          apply Finset.sum_congr rfl
+          intro k _
+          ring
+    _ = ∑ k, ∑ i, ∑ j,
+          E.eigenvalue k * (E.changeOfBasis i k * v i)
+            * (E.changeOfBasis j k * v j) := by
+          exact triple_sum_comm (Ω := Ω)
+            (fun i j k => E.eigenvalue k * (E.changeOfBasis i k * v i)
+              * (E.changeOfBasis j k * v j))
+    _ = ∑ k, E.eigenvalue k * (∑ i, E.changeOfBasis i k * v i) ^ 2 := by
+          apply Finset.sum_congr rfl
+          intro k _
+          exact double_sum_mul_eq_mul_sq_sum (Ω := Ω) (E.eigenvalue k)
+            (fun i => E.changeOfBasis i k * v i)
+
+/-- Orthogonal spectral coordinates preserve the squared Euclidean norm. -/
+theorem sum_spectralCoord_sq {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) :
+    (∑ k, (E.spectralCoord v k) ^ 2) = vectorSqNorm v := by
+  unfold spectralCoord vectorSqNorm
+  calc
+    (∑ k, (∑ i, E.changeOfBasis i k * v i) ^ 2)
+        = ∑ k, ∑ i, ∑ j,
+            (E.changeOfBasis i k * v i) * (E.changeOfBasis j k * v j) := by
+          apply Finset.sum_congr rfl
+          intro k _
+          rw [sq_sum_eq_double_sum]
+    _ = ∑ i, ∑ j, ∑ k,
+          (E.changeOfBasis i k * v i) * (E.changeOfBasis j k * v j) := by
+          exact (triple_sum_comm (Ω := Ω)
+            (fun i j k => (E.changeOfBasis i k * v i)
+              * (E.changeOfBasis j k * v j))).symm
+    _ = ∑ i, ∑ j, ((E.changeOfBasis * E.changeOfBasisᵀ) i j) * v i * v j := by
+          apply Finset.sum_congr rfl
+          intro i _
+          apply Finset.sum_congr rfl
+          intro j _
+          rw [Matrix.mul_apply]
+          rw [Finset.sum_mul]
+          rw [Finset.sum_mul]
+          apply Finset.sum_congr rfl
+          intro k _
+          simp [Matrix.transpose_apply]
+          ring
+    _ = ∑ i, v i ^ 2 := by
+          rw [E.orthogonal_right]
+          simp [Matrix.one_apply, pow_two]
+
+/-- The squared norm of a spectral-data column is one. -/
+theorem vectorSqNorm_changeOfBasis_column {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (i : Ω) :
+    vectorSqNorm (fun x => E.changeOfBasis x i) = 1 := by
+  unfold vectorSqNorm
+  have h := congr_fun (congr_fun E.orthogonal_left i) i
+  simpa [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply, pow_two,
+    mul_comm] using h
+
+omit [DecidableEq Ω] in
+/-- The squared norm is unchanged by coordinatewise absolute values. -/
+theorem vectorSqNorm_abs (v : Ω → ℝ) :
+    vectorSqNorm (fun i => |v i|) = vectorSqNorm v := by
+  unfold vectorSqNorm
+  simp [sq_abs]
+
+/-- Rayleigh upper bound by the maximal spectral-data eigenvalue. -/
+theorem matrixQuadraticForm_le_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M) (v : Ω → ℝ) :
+    matrixQuadraticForm M v
+      ≤ E.eigenvalue E.maxEigenIndex * vectorSqNorm v := by
+  rw [E.matrixQuadraticForm_eq_sum_spectralCoord_sq v]
+  calc
+    ∑ k, E.eigenvalue k * (E.spectralCoord v k) ^ 2
+        ≤ ∑ k, E.eigenvalue E.maxEigenIndex * (E.spectralCoord v k) ^ 2 := by
+          exact Finset.sum_le_sum fun k _ =>
+            mul_le_mul_of_nonneg_right (E.eigenvalue_le_maxEigenIndex k)
+              (sq_nonneg _)
+    _ = E.eigenvalue E.maxEigenIndex * ∑ k, (E.spectralCoord v k) ^ 2 := by
+          rw [Finset.mul_sum]
+    _ = E.eigenvalue E.maxEigenIndex * vectorSqNorm v := by
+          rw [E.sum_spectralCoord_sq v]
+
+omit [DecidableEq Ω] in
+/-- The quadratic form of a right eigenvector is its eigenvalue times its
+squared norm. -/
+theorem matrixQuadraticForm_eq_eigenvalue_mul_sqNorm
+    {M : Matrix Ω Ω ℝ} (v : Ω → ℝ) {lam : ℝ}
+    (hv_eig : M.mulVec v = lam • v) :
+    matrixQuadraticForm M v = lam * vectorSqNorm v := by
+  unfold matrixQuadraticForm vectorSqNorm
+  calc
+    ∑ i, ∑ j, v i * M i j * v j
+        = ∑ i, v i * M.mulVec v i := by
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [Matrix.mulVec, dotProduct, Finset.mul_sum]
+          apply Finset.sum_congr rfl
+          intro j _
+          ring
+    _ = ∑ i, v i * (lam * v i) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          have h := congr_fun hv_eig i
+          simpa [Pi.smul_apply, smul_eq_mul] using congrArg (fun t => v i * t) h
+    _ = ∑ i, lam * v i ^ 2 := by
+          apply Finset.sum_congr rfl
+          intro i _
+          ring
+    _ = lam * ∑ i, v i ^ 2 := by
+          rw [Finset.mul_sum]
 
 /-- A spectral-data column that becomes strictly positive after multiplying by
 a scalar sign.  Orthogonal eigenvectors are only fixed up to sign, so this is
@@ -103,6 +467,84 @@ theorem smul_signedColumn_eq_smul_raw {M : Matrix Ω Ω ℝ}
   simpa [Pi.smul_apply, smul_eq_mul, mul_assoc, mul_comm, mul_left_comm] using hx
 
 end SignedPositiveColumn
+
+/-- For an entrywise positive matrix with explicit real orthogonal spectral
+data, the finite maximal eigenvalue column has a signed-positive orientation. -/
+noncomputable def signedPositiveColumn_maxEigenIndex [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
+    (hM : MatrixEntrywisePositive M) :
+    E.SignedPositiveColumn E.maxEigenIndex := by
+  let top : Ω := E.maxEigenIndex
+  let v : Ω → ℝ := fun x => E.changeOfBasis x top
+  have hv_ne : v ≠ 0 := by
+    dsimp [v, top]
+    exact E.changeOfBasis_column_ne_zero E.maxEigenIndex
+  have hexists_i0 : ∃ i, v i ≠ 0 := by
+    by_contra h
+    apply hv_ne
+    ext i
+    by_contra hi
+    exact h ⟨i, hi⟩
+  let i0 : Ω := Classical.choose hexists_i0
+  have hi0 : v i0 ≠ 0 := Classical.choose_spec hexists_i0
+  have hv_eig : M.mulVec v = E.eigenvalue top • v := by
+    dsimp [v, top]
+    exact E.mulVec_changeOfBasis_column E.maxEigenIndex
+  have hnorm_v : vectorSqNorm v = 1 := by
+    dsimp [v, top]
+    exact E.vectorSqNorm_changeOfBasis_column E.maxEigenIndex
+  have hq_v :
+      matrixQuadraticForm M v = E.eigenvalue top := by
+    rw [matrixQuadraticForm_eq_eigenvalue_mul_sqNorm v hv_eig, hnorm_v]
+    ring
+  have hnorm_abs :
+      vectorSqNorm (fun i => |v i|) = 1 := by
+    rw [vectorSqNorm_abs, hnorm_v]
+  have hq_abs_le_top :
+      matrixQuadraticForm M (fun i => |v i|) ≤ E.eigenvalue top := by
+    have hle := E.matrixQuadraticForm_le_maxEigenIndex (fun i => |v i|)
+    simpa [top, hnorm_abs] using hle
+  have hq_abs_eq :
+      matrixQuadraticForm M (fun i => |v i|) = matrixQuadraticForm M v := by
+    exact le_antisymm (by simpa [hq_v] using hq_abs_le_top)
+      (matrixQuadraticForm_le_abs hM v)
+  have hdef_i0 : ∀ j, |v i0| * |v j| - v i0 * v j = 0 := by
+    intro j
+    exact abs_defect_eq_zero_of_matrixQuadraticForm_abs_eq hM hq_abs_eq i0 j
+  let signData :=
+    exists_sign_vectorNonnegative_of_abs_defect_zero hi0 hdef_i0
+  let s : ℝ := Classical.choose signData
+  have hs_data :
+      s * s = 1 ∧ VectorNonnegative (fun j => s * v j) :=
+    Classical.choose_spec signData
+  have hs_sq : s * s = 1 := hs_data.1
+  have hs_nonneg : VectorNonnegative (fun j => s * v j) := hs_data.2
+  have hs_ne : s ≠ 0 := by
+    intro hs_zero
+    have : (0 : ℝ) = 1 := by
+      simp [hs_zero] at hs_sq
+    norm_num at this
+  let w : Ω → ℝ := fun x => s * v x
+  have hw_nonneg : VectorNonnegative w := hs_nonneg
+  have hw_ne : w ≠ 0 := by
+    intro hw_zero
+    apply hv_ne
+    ext i
+    have h := congr_fun hw_zero i
+    dsimp [w] at h
+    have h' : s * v i = s * 0 := by
+      simpa using h
+    exact mul_left_cancel₀ hs_ne h'
+  have hw_eig : M.mulVec w = E.eigenvalue top • w := by
+    change M.mulVec (s • v) = E.eigenvalue top • (s • v)
+    rw [Matrix.mulVec_smul, hv_eig]
+    ext i
+    simp [Pi.smul_apply, smul_eq_mul, mul_assoc, mul_comm]
+  refine ⟨s, hs_sq, ?_⟩
+  have hw_pos : VectorPositive w :=
+    matrixEntrywisePositive_eigenvector_pos_of_nonnegative_nonzero hM hw_eig
+      hw_nonneg hw_ne
+  simpa [w, v, top] using hw_pos
 
 /-- A signed-positive top column has a positive eigenvalue. -/
 theorem eigenvalue_pos_of_signedPositiveColumn [Nonempty Ω]
@@ -192,6 +634,20 @@ theorem exists_subdominant_abs_ratio_of_signedPositiveColumn [Nonempty Ω]
 end RealOrthogonalSpectralData
 
 /-! ## Layer wrappers for signed-positive columns -/
+
+/-- The maximal column of the Hermitian spectral data for a positive balanced
+layer transfer matrix has a signed-positive orientation. -/
+noncomputable def layerSymmetricTransfer_signedPositiveColumn_maxEigenIndex
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω) :
+    let E := layerSymmetricTransferOrthogonalSpectralData u k hk_symm
+    E.SignedPositiveColumn E.maxEigenIndex := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let E := layerSymmetricTransferOrthogonalSpectralData u k hk_symm
+  exact E.signedPositiveColumn_maxEigenIndex
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
 
 /-- A signed-positive balanced-layer spectral column bounds every spectral-data
 eigenvalue in absolute value. -/

@@ -6976,11 +6976,61 @@ signed-positive spin constructors first orient the dominant spectral column,
 derive the flip-even cancellation from the positive simple eigenvector
 argument, and then feed the existing min-separation certificate constructor.
 This is still a conditional bridge: it records the sign-invariant output shape
-needed from the finite Perron--Frobenius theorem, but it does not yet prove
-that the maximal Hermitian spectral column has such an orientation, nor does it
-discharge the quantitative prefactor condition, open-slab geometry,
-thermodynamic limits, or final hyperplane exponential decay.  Reference:
-Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+needed from the finite Perron--Frobenius theorem.  The actual maximal-column
+orientation is now supplied by the following Rayleigh-quotient construction;
+the interface itself still does not discharge the quantitative prefactor
+condition, open-slab geometry, thermodynamic limits, or final hyperplane
+exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
+\paragraph{Signed-positive maximal spectral column (\S17.1, Issue~\#3511).}
+The finite Perron-facing existence step for the balanced layer route is now
+proved in the sign-invariant form required by the orthogonal spectral-data API.
+For an entrywise positive real matrix \(M\) with explicit orthogonal spectral
+data \(M=Q\operatorname{diag}(\lambda)Q^T\), the index
+\texttt{RealOrthogonalSpectralData.maxEigenIndex} chooses a finite maximizer
+of the spectral-data eigenvalue family.  The helper
+\texttt{RealOrthogonalSpectralData.matrixQuadraticForm\_eq\_sum\_spectralCoord\_sq}
+expands \(w^T M w\) as
+\[
+  \sum_k \lambda_k (Q^T w)_k^2,
+\]
+and \texttt{RealOrthogonalSpectralData.sum\_spectralCoord\_sq} records the
+orthogonal norm identity.  Hence
+\texttt{RealOrthogonalSpectralData.matrixQuadraticForm\_le\_maxEigenIndex}
+gives the Rayleigh upper bound
+\[
+  w^T M w \le \lambda_\ast \sum_i w_i^2.
+\]
+
+Let \(q_\ast\) be the maximal spectral column.  The entrywise positivity of
+\(M\) gives
+\[
+  q_\ast^T M q_\ast \le |q_\ast|^T M |q_\ast|
+\]
+through \texttt{matrixQuadraticForm\_le\_abs}.  The Rayleigh upper bound for
+\(|q_\ast|\), together with \(\|\,|q_\ast|\,\|_2=\|q_\ast\|_2=1\), squeezes
+this inequality to equality.  The defect identity
+\texttt{matrixQuadraticForm\_abs\_sub} writes the difference as
+\[
+  \sum_{i,j} M_{ij}\bigl(|q_i||q_j|-q_i q_j\bigr).
+\]
+Each summand is nonnegative and each \(M_{ij}\) is strictly positive, so
+\texttt{abs\_defect\_eq\_zero\_of\_matrixQuadraticForm\_abs\_eq} forces all
+coordinate sign-defects to vanish.  Choosing one nonzero coordinate then gives
+a sign \(s\), \(s^2=1\), with \(s q_\ast\ge 0\)
+(\texttt{exists\_sign\_vectorNonnegative\_of\_abs\_defect\_zero}).  Finally,
+an entrywise positive matrix sends any nonnegative nonzero vector to a strictly
+positive vector, and the eigenvector equation rules out zero coordinates of
+\(s q_\ast\).  This proves
+\texttt{RealOrthogonalSpectralData.signedPositiveColumn\_maxEigenIndex} and
+the balanced-layer wrapper
+\texttt{layerSymmetricTransfer\_signedPositiveColumn\_maxEigenIndex}.  The
+result is deliberately sign-invariant: it does not assert that the raw column
+chosen by the spectral theorem is positive.  It also does not prove the
+quantitative finite prefactor smallness, open-slab geometry, thermodynamic
+limits, or final hyperplane exponential decay.  Reference: Glimm--Jaffe,
+2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
