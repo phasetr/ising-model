@@ -7723,13 +7723,32 @@ The theorem
   \texttt{openMarkedMatrixPowerSum\_eq\_pathTripleNumerator}
 \]
 proves, using \texttt{pow\_apply\_eq\_sum} and finite-sum reordering, that the
-four-endpoint matrix-power sum is exactly this three-path expansion.  This is
-still not the final single-path reindexing.  The equality with the existing open
-path numerator \(\texttt{layerOpenTransferTwoPointNumerator}\) requires the
-remaining path-gluing lemma.  Consequently no spectral-basis formula, no new
-Perron--Frobenius input, and no stronger open-boundary certificate is claimed
-here.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
-pp.~311--312.
+four-endpoint matrix-power sum is exactly this three-path expansion.  The
+open-path glue and split lemmas then perform the final finite reindexing:
+\[
+  \texttt{openMarkedPathTripleNumerator\_eq\_singlePathSum}
+\]
+identifies the constrained three-path sum with the single open-path sum carrying
+marks at \(\texttt{layerOpenLeftIndex}\) and \(\texttt{layerOpenRightIndex}\).
+Consequently
+\[
+  \begin{gathered}
+  \texttt{layerOpenTwoPointMatrixPowerNumerator\_eq\_}\\
+  \texttt{transferTwoPointNumerator},\\[2pt]
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_}\\
+  \texttt{transferTwoPointNumerator}
+  \end{gathered}
+\]
+identify both finite matrix expressions with the existing open path numerator
+\[
+  \texttt{layerOpenTransferTwoPointNumerator}.
+\]
+This completes the finite
+matrix/path bridge for the marked open numerator, but it still does not prove a
+marked spectral-basis formula, new Perron--Frobenius input, a stronger
+open-boundary certificate, thermodynamic-limit decay, or the final hyperplane
+decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
