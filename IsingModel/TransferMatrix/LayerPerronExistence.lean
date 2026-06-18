@@ -953,6 +953,84 @@ noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEig
     (layerSymmetricTransferOrthogonalSpectralData u k hk)
     partitionPrefactor_small dominant_markedDiagonal_zero
 
+/-- Orthogonal max-index certificate whose finite prefactor smallness is
+discharged by a one-element state space. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex_cardOne
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (hcard : Fintype.card Ω = 1)
+    (dominant_markedDiagonal_zero :
+      E.markedMatrix f E.maxEigenIndex E.maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex u k f hu hk_pos E
+    (finiteSpectralPartitionPrefactor_small_of_card_eq_one Ω hcard)
+    dominant_markedDiagonal_zero
+
+/-- Orthogonal max-index certificate whose finite prefactor smallness is
+discharged by an inverse-cardinality bound on the canonical subdominant
+ratio. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex_ratioSmall
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (hcard : 1 < Fintype.card Ω)
+    (hratio :
+      E.subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+        < (((Fintype.card Ω - 1 : ℕ) : ℝ))⁻¹)
+    (dominant_markedDiagonal_zero :
+      E.markedMatrix f E.maxEigenIndex E.maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndex u k f hu hk_pos E
+    (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne Ω hcard hratio)
+    dominant_markedDiagonal_zero
+
+/-- Hermitian max-index certificate whose finite prefactor smallness is
+discharged by a one-element state space. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndex_cardOne
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (hk : ∀ a b, k a b = k b a)
+    (hcard : Fintype.card Ω = 1)
+    (dominant_markedDiagonal_zero :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).markedMatrix f
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndex
+    u k f hu hk_pos hk
+    (finiteSpectralPartitionPrefactor_small_of_card_eq_one Ω hcard)
+    dominant_markedDiagonal_zero
+
+/-- Hermitian max-index certificate whose finite prefactor smallness is
+discharged by an inverse-cardinality bound on the canonical subdominant
+ratio. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndex_ratioSmall
+    [Nonempty Ω]
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk_pos : ∀ a b, 0 < k a b)
+    (hk : ∀ a b, k a b = k b a)
+    (hcard : 1 < Fintype.card Ω)
+    (hratio :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+        < (((Fintype.card Ω - 1 : ℕ) : ℝ))⁻¹)
+    (dominant_markedDiagonal_zero :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).markedMatrix f
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex
+        (layerSymmetricTransferOrthogonalSpectralData u k hk).maxEigenIndex = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndex
+    u k f hu hk_pos hk
+    (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne Ω hcard hratio)
+    dominant_markedDiagonal_zero
+
 /-- Spin-observable constructor using the maximal signed-positive spectral
 column.  The signed-positive column gives flip-even dominant-channel
 cancellation before entering the min-separation certificate route. -/
@@ -1007,6 +1085,85 @@ noncomputable def
       (by
         simpa [layerSymmetricTransfer_subdominantRatio_maxEigenIndex, E] using
           partitionPrefactor_small)
+
+/-- Orthogonal max-index spin certificate whose finite prefactor smallness is
+discharged by a one-element layer-state space. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin_cardOne
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (hcard : Fintype.card (LayerState S) = 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin
+    u k x hu hk_pos hu_flip hk_flip E
+    (finiteSpectralPartitionPrefactor_small_of_card_eq_one (LayerState S) hcard)
+
+/-- Orthogonal max-index spin certificate whose finite prefactor smallness is
+discharged by an inverse-cardinality bound on the canonical subdominant
+ratio. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin_ratioSmall
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (hcard : 1 < Fintype.card (LayerState S))
+    (hratio :
+      E.subdominantRatio_maxEigenIndex
+          (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+        < (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ))⁻¹) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin
+    u k x hu hk_pos hu_flip hk_flip E
+    (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
+      (LayerState S) hcard hratio)
+
+/-- Hermitian max-index spin certificate whose finite prefactor smallness is
+discharged by a one-element layer-state space. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin_cardOne
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ ω η, k ω η = k η ω)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (hcard : Fintype.card (LayerState S) = 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin
+    u k x hu hk_pos hk hu_flip hk_flip
+    (finiteSpectralPartitionPrefactor_small_of_card_eq_one (LayerState S) hcard)
+
+/-- Hermitian max-index spin certificate whose finite prefactor smallness is
+discharged by an inverse-cardinality bound on the canonical subdominant
+ratio. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin_ratioSmall
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ ω η, k ω η = k η ω)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (hcard : 1 < Fintype.card (LayerState S))
+    (hratio :
+      layerSymmetricTransfer_subdominantRatio_maxEigenIndex u k hu hk_pos hk
+        < (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ))⁻¹) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin
+    u k x hu hk_pos hk hu_flip hk_flip
+    (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
+      (LayerState S) hcard hratio)
 
 end TransferMatrix
 

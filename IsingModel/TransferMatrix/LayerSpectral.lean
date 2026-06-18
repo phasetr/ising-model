@@ -414,6 +414,25 @@ theorem finiteSpectralPartitionPrefactor_pos (Ω : Type*) [Fintype Ω] {theta : 
   rw [finiteSpectralPartitionPrefactor, sub_pos]
   exact hsmall
 
+/-- If the finite state space has exactly one element, the finite-cardinality
+partition-prefactor smallness condition is automatic. -/
+theorem finiteSpectralPartitionPrefactor_small_of_card_eq_one
+    (Ω : Type*) [Fintype Ω] {theta : ℝ} (hcard : Fintype.card Ω = 1) :
+    (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1 := by
+  rw [hcard]
+  norm_num
+
+/-- A quantitative inverse-cardinality bound on `theta` implies the
+finite-cardinality partition-prefactor smallness condition. -/
+theorem finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
+    (Ω : Type*) [Fintype Ω] {theta : ℝ} (hcard : 1 < Fintype.card Ω)
+    (htheta : theta < (((Fintype.card Ω - 1 : ℕ) : ℝ))⁻¹) :
+    (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1 := by
+  have hpos_nat : 0 < Fintype.card Ω - 1 := Nat.sub_pos_of_lt hcard
+  have hpos : 0 < ((Fintype.card Ω - 1 : ℕ) : ℝ) := by exact_mod_cast hpos_nat
+  have hmul := mul_lt_mul_of_pos_left htheta hpos
+  simpa [mul_inv_cancel₀ hpos.ne'] using hmul
+
 /-- Trace of a power of a finite real Hermitian matrix as the sum of
 powers of its Hermitian spectral-theorem eigenvalues. -/
 theorem trace_pow_eq_sum_hermitian_eigenvalues_pow
