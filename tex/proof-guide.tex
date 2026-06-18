@@ -7808,8 +7808,12 @@ For the open slab, the balanced boundary vector is
   b_i=\sum_x \sqrt{u(x)}\,Q_{x i},
 \]
 coming from the diagonal similarity between
-\(\texttt{layerTransferMatrix}\) and
-\(\texttt{layerSymmetricTransferMatrix}\).  The declarations
+\[
+  \texttt{layerTransferMatrix}
+  \qquad\text{and}\qquad
+  \texttt{layerSymmetricTransferMatrix}.
+\]
+The declarations
 \[
   \begin{gathered}
   \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_}\\
@@ -7840,6 +7844,63 @@ bridge: it does not prove an open denominator spectral lower bound,
 Perron--Frobenius input, an interacting cubic-layer spectral window,
 thermodynamic-limit decay, or the final hyperplane decay estimate.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
+\paragraph{Open-boundary spectral denominator bridge (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenSpectralDenominator.lean}
+\]
+adds the matching finite denominator bridge for the open-boundary spectral
+route.  In the generic orthogonal spectral API, the constant-one marked product
+is exposed as
+\[
+  \texttt{boundaryPowerProduct}\,M\,v_L\,v_R\,n
+  =
+  v_L^T M^n v_R,
+\]
+with spectral expansion
+\[
+  \texttt{boundaryPowerProduct\_eq\_spectralSum}.
+\]
+For a single boundary vector \(v\), chosen top channel, scale, and ratio
+\(\theta\), the finite denominator prefactor is
+\[
+  \texttt{boundarySpectralPartitionPrefactor}
+  =
+  b_{\mathrm{top}}^2
+  -
+  \theta\sum_{i\ne \mathrm{top}} b_i^2 .
+\]
+The lower-bound theorem
+\[
+  \texttt{boundary\_partition\_lower\_of\_dominant\_bounds}
+\]
+shows that this prefactor times \(\texttt{scale}^n\) is bounded above by the
+spectral denominator sum, assuming the dominant eigenvalue identity and the
+subdominant absolute bound.  The case \(n=0\) is handled separately, so the
+statement is valid for every finite open length.
+
+For the open slab, the declarations
+\[
+  \begin{gathered}
+  \texttt{layerOpenMatrixPartition\_eq\_balancedBoundaryPower},\\
+  \texttt{layerOpenMatrixPartition\_eq\_boundarySpectralSum},\\
+  \texttt{layerOpenMatrixPartition\_lower\_of\_orthogonalBoundaryDominantBounds}
+  \end{gathered}
+\]
+identify the open matrix partition with the balanced boundary-vector power
+product and turn the generic denominator estimate into the needed
+\(\texttt{layerOpenMatrixPartition}\) lower bound.  The constructor
+\[
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_orthogonalBoundaryDominantBounds}
+\]
+feeds this denominator bridge into the existing open numerator certificate
+constructor.  This remains conditional on the spectral dominance hypotheses,
+positivity of the boundary prefactor, and the numerator central-channel
+cancellation; it does not prove Perron--Frobenius existence, an interacting
+cubic-layer spectral window, thermodynamic-limit decay, or the final hyperplane
+decay estimate.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
 
 \paragraph{Finite open-boundary spectral-decay consumer (\S17.1, Issue~\#3511).}
 The module \texttt{LayerOpenSpectralDecay} consumes the finite open
@@ -7875,6 +7936,22 @@ open matrix-partition denominator lower bound, eigenvalue scale bounds,
 subdominant bound, and central-channel cancellation remain explicit hypotheses;
 this does not prove Perron--Frobenius input, an interacting cubic-layer spectral
 window, thermodynamic-limit decay, or the final hyperplane decay estimate.
+The same module also provides the spectral-denominator variants
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{layerOrthogonalBoundaryDominantBounds\_spectralDenominator},\\[2pt]
+  \texttt{correlation\_layerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{boundarySpectralDenominator},\\[2pt]
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{boundarySpectralDenominator}.
+  \end{gathered}
+\]
+These wrappers replace the explicit matrix-partition lower-bound and global
+eigenvalue-scale hypotheses by the dominant eigenvalue identity, the
+subdominant absolute bound, and positivity of
+\(\texttt{boundarySpectralPartitionPrefactor}\).  The denominator in the final
+ratio is therefore the explicit boundary spectral partition prefactor.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
