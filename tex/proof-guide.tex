@@ -7783,6 +7783,64 @@ Perron--Frobenius input, an interacting cubic-layer spectral window,
 thermodynamic-limit decay, or the final hyperplane decay estimate.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary boundary-vector spectral numerator bound (\S17.1, Issue~\#3511).}
+The spectral numerator bridge is now available in a finite, conditional form.
+For an orthogonal spectral datum \(M=Q\Lambda Q^T\), the generic declarations in
+\[
+  \texttt{TransferMatrix/LayerSpectral.lean}
+\]
+define boundary coordinates
+\[
+  b_i=\sum_x v(x)Q_{x i}
+\]
+and prove the two-mark boundary-vector expansion
+\[
+  v_L^T M^{left}D_fM^{sep}D_fM^{right}v_R
+  =
+  \sum_{i,j,\ell}
+    b^L_i\lambda_i^{left}G_{ij}\lambda_j^{sep}
+    G_{j\ell}\lambda_\ell^{right}b^R_\ell,
+  \qquad
+  G=Q^T D_f Q .
+\]
+For the open slab, the balanced boundary vector is
+\[
+  b_i=\sum_x \sqrt{u(x)}\,Q_{x i},
+\]
+coming from the diagonal similarity between
+\(\texttt{layerTransferMatrix}\) and
+\(\texttt{layerSymmetricTransferMatrix}\).  The declarations
+\[
+  \begin{gathered}
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_}\\
+  \texttt{balancedBoundaryMarkedProduct},\\[2pt]
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_eq\_}\\
+  \texttt{boundarySpectralSum},\\[2pt]
+  \texttt{layerOpenTwoPointMatrixProductNumerator\_abs\_le\_}\\
+  \texttt{boundarySpectralPrefactor}
+  \end{gathered}
+\]
+connect the open marked matrix-product numerator to this spectral sum and bound
+it by a finite coefficient prefactor times
+\[
+  \texttt{scale}^{left+sep+right}\,\texttt{theta}^{sep}.
+\]
+The bound assumes a full eigenvalue scale estimate, a subdominant estimate away
+from the chosen top channel, and explicit cancellation of the central dominant
+channel.  The constructor
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_matrixPartition\_}\\
+  \texttt{orthogonalBoundaryDominantBounds}
+  \end{gathered}
+\]
+packages this numerator estimate with a supplied open matrix-partition
+denominator lower bound.  This is still only a conditional finite numerator
+bridge: it does not prove an open denominator spectral lower bound,
+Perron--Frobenius input, an interacting cubic-layer spectral window,
+thermodynamic-limit decay, or the final hyperplane decay estimate.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
