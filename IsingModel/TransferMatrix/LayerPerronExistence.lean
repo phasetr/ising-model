@@ -3,16 +3,18 @@ import IsingModel.TransferMatrix.LayerPerron
 /-!
 # Signed positive dominant columns for finite layer transfer matrices
 
-This file records the sign-invariant interface needed for the finite
-Perron--Frobenius step.  A real orthogonal spectral column is only determined up
-to sign, so the useful statement is that a chosen column is positive after
-multiplication by a scalar sign with square one.
+This file records the sign-invariant interface and the finite maximal-column
+construction needed for the Perron-facing layer route.  A real orthogonal
+spectral column is only determined up to sign, so the useful statement is that a
+chosen column is positive after multiplication by a scalar sign with square one.
 
 The file connects such signed-positive columns to the positive-column radius,
 simplicity, strict-ratio, and spin-cancellation API developed in
-`LayerPerron.lean`.  It does not yet prove the Perron--Frobenius existence
-theorem that a maximal spectral column is signed-positive, nor does it
-discharge the finite-cardinality prefactor condition in the certificates.
+`LayerPerron.lean`, and proves that the finite maximal spectral column has such
+an orientation for an entrywise positive matrix with explicit real orthogonal
+spectral data.  It still does not discharge the finite-cardinality prefactor
+condition in the certificates, open-slab geometry, thermodynamic limits, or
+final hyperplane exponential decay.
 
 ## References
 
