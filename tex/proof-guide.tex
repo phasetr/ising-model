@@ -6683,6 +6683,40 @@ only package explicit trace-bound hypotheses; they do not prove
 Perron--Frobenius existence, a spectral-radius theorem, open-slab geometry,
 thermodynamic limits, or final hyperplane decay.
 
+\paragraph{Finite orthogonal layer spectral input (\S17.1, Issue~\#3511).}
+The next finite spectral bridge connects the balanced matrix \(S\) to the
+ordinary real Hermitian spectral theorem.  When \(k\) is symmetric, the balanced
+matrix is Hermitian.  The Lean file therefore exposes the spectral-theorem
+eigenvalues and eigenbasis for \(S\), proves that the eigenbasis diagonalizes
+the balanced transfer matrix, and records the finite trace identity
+\[
+  \operatorname{Tr}(S^N)=\sum_i \lambda_i^N .
+\]
+For arguments that prefer explicit algebraic data rather than a direct
+dependency on the Hermitian spectral theorem, the structure
+\texttt{RealOrthogonalSpectralData} packages an orthogonal diagonalization
+\[
+  M=P\,\operatorname{diag}(\lambda)\,P^T .
+\]
+It gives the corresponding formula for powers, the partition trace, and the
+two-insertion marked trace after transporting the marking matrix to the
+spectral basis:
+\[
+  \operatorname{Tr}(D_f M^a D_f M^b)
+  = \sum_{i,j} G_{ij}G_{ji}\lambda_j^a\lambda_i^b,
+  \qquad G=P^T D_f P .
+\]
+The constructor
+\texttt{layerBalancedSpectralGapCertificate\_of\_orthogonalSpectralData}
+uses these finite spectral-basis formulas together with explicit partition and
+one-sided marked-trace bounds to produce a balanced certificate.  The one-sided
+cyclic marked-trace estimate is an assumption of the constructor, not a
+consequence proved from positivity in this PR.  Thus the development supplies
+finite spectral input behind the certificate while still leaving
+Perron--Frobenius existence, spectral-radius maximality, open-slab geometry,
+thermodynamic limits, and final hyperplane exponential decay for later
+Issue~\#3511 work.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
