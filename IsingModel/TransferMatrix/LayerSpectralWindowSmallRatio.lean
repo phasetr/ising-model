@@ -42,7 +42,8 @@ theorem inv_two_pow_cardSubOne_le_one_of_nonempty
   exact inv_le_one_of_one_le₀ hden
 
 /-- The expanded inverse-cardinality threshold implies the ordinary strict
-`theta < 1` bound, but only as a consequence of the stronger threshold. -/
+`theta < 1` bound.  It coincides with `theta < 1` in the one-site case and is
+stronger for larger transverse layers. -/
 theorem lt_one_of_lt_inv_two_pow_cardSubOne
     (S : Type*) [Fintype S] [Nonempty S] {theta : ℝ}
     (htheta : theta < (((2 ^ Fintype.card S - 1 : ℕ) : ℝ))⁻¹) :
@@ -56,8 +57,9 @@ theorem inv_cubicLayerSite_cardSubOne_le_one (d R : ℕ) :
   simpa [cubicLayerSite_card d R] using
     inv_two_pow_cardSubOne_le_one_of_nonempty (CubicLayerSite d R)
 
-/-- The cubic transverse-box inverse-cardinality threshold implies
-`theta < 1`, again only as a consequence of the stronger threshold. -/
+/-- The cubic transverse-box inverse-cardinality threshold implies `theta < 1`.
+It coincides with `theta < 1` for one-site cubic boxes and is stronger for
+larger boxes. -/
 theorem lt_one_of_lt_inv_cubicLayerSite_cardSubOne
     (d R : ℕ) {theta : ℝ}
     (htheta : theta < (((2 ^ ((2 * R + 1) ^ d) - 1 : ℕ) : ℝ))⁻¹) :

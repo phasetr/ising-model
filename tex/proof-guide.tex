@@ -7238,8 +7238,8 @@ The Lean file
 \[
   \texttt{TransferMatrix/LayerSpectralWindowSmallRatio.lean}
 \]
-records first that the expanded inverse-cardinality thresholds are genuinely
-stronger than \(\theta<1\):
+records first that the expanded inverse-cardinality thresholds are at most
+\(1\), so they imply \(\theta<1\):
 \[
   \theta < (2^{|S|}-1)^{-1} \quad\Longrightarrow\quad \theta < 1
 \]
@@ -7248,7 +7248,8 @@ for nonempty transverse layers, and
   \theta < \bigl(2^{(2R+1)^d}-1\bigr)^{-1}
   \quad\Longrightarrow\quad \theta < 1
 \]
-for cubic transverse boxes.  These are the arithmetic helpers
+for cubic transverse boxes.  In the one-site case this threshold is exactly
+\(1\); for larger layers it is stronger.  These are the arithmetic helpers
 \[
   \begin{gathered}
   \texttt{inv\_two\_pow\_cardSubOne\_le\_one\_of\_nonempty},\quad
