@@ -7076,6 +7076,37 @@ not a consequence of the signed-positive maximal-column theorem.  Thus this
 step removes the manual choice of dominant index and finite ratio from the
 certificate interface, while still leaving open-slab geometry, thermodynamic
 limits, and final hyperplane exponential decay for later Issue~\#3511 work.
+
+\paragraph{Finite prefactor smallness bridge (\S17.1, Issue~\#3511).}
+The max-index certificate route now has a small arithmetic bridge for the
+finite-cardinality denominator prefactor.  The Lean lemmas
+\[
+  \texttt{finiteSpectralPartitionPrefactor\_small\_of\_card\_eq\_one}
+  \quad\text{and}\quad
+  \texttt{finiteSpectralPartitionPrefactor\_small\_of\_lt\_inv\_cardSubOne}
+\]
+derive
+\[
+  (|\Omega|-1)\theta < 1
+\]
+from strictly stronger quantitative hypotheses.  In the one-state case the
+multiplier \(|\Omega|-1\) is zero.  In the nontrivial finite case the bridge
+requires
+\[
+  \theta < (|\Omega|-1)^{-1}.
+\]
+This is only a sufficient-condition bridge: it deliberately does not claim that
+\(\theta<1\) implies the finite prefactor condition.  The wrappers
+\begin{center}
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex\_cardOne}}\\
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex\_ratioSmall}}\\
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_layerHermitianMaxEigenIndex\_cardOne}}\\
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_layerHermitianMaxEigenIndex\_ratioSmall}}
+\end{center}
+and their spin-flip analogues feed these sufficient conditions into the
+existing max-index constructors.  The remaining physical task is to prove an
+appropriate quantitative small-ratio estimate for concrete layer systems, then
+connect the finite cyclic certificates to open slabs and thermodynamic limits.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
