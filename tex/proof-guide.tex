@@ -7032,6 +7032,53 @@ quantitative finite prefactor smallness, open-slab geometry, thermodynamic
 limits, or final hyperplane exponential decay.  Reference: Glimm--Jaffe,
 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Max-index signed-positive certificate constructors (\S17.1, Issue~\#3511).}
+The maximal-column construction is now connected directly to the finite
+balanced min-separation certificate API.  For entrywise positive \(M\) and
+explicit orthogonal spectral data \(E\), the wrappers
+\[
+  \begin{gathered}
+  \texttt{eigenvalue\_pos\_maxEigenIndex},\quad
+  \texttt{eigenvalue\_abs\_le\_maxEigenIndex},\\
+  \texttt{eigenspace\_simple\_maxEigenIndex},\quad
+  \texttt{eigenvalue\_abs\_lt\_maxEigenIndex}
+  \end{gathered}
+\]
+specialise the signed-positive-column Perron consequences to
+\(\ast=E.\texttt{maxEigenIndex}\).  The finite ratio
+\texttt{RealOrthogonalSpectralData.subdominantRatio\_maxEigenIndex} is chosen
+from \texttt{exists\_subdominant\_abs\_ratio\_of\_signedPositiveColumn}; its
+accessor lemmas record
+\[
+  0\le\theta<1,\qquad
+  |\lambda_i|\le\theta\lambda_\ast \quad (i\ne\ast).
+\]
+The layer wrapper
+\texttt{layerSymmetricTransfer\_subdominantRatio\_maxEigenIndex} exposes this
+choice for the Hermitian balanced transfer matrix.
+
+The certificate constructors
+\begin{center}
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_layerHermitianMaxEigenIndex}}
+\end{center}
+set
+\[
+  \texttt{top}:=E.\texttt{maxEigenIndex},\qquad
+  \texttt{scale}:=\lambda_\ast,\qquad
+  \texttt{theta}:=\theta.
+\]
+Their spin-flip variants use the signed-positive maximal column to derive
+flip-even dominant-channel cancellation before invoking the existing
+min-separation certificate route.  The finite prefactor condition
+\((|\Omega|-1)\theta<1\) remains an explicit quantitative hypothesis; it is
+not a consequence of the signed-positive maximal-column theorem.  Thus this
+step removes the manual choice of dominant index and finite ratio from the
+certificate interface, while still leaving open-slab geometry, thermodynamic
+limits, and final hyperplane exponential decay for later Issue~\#3511 work.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
