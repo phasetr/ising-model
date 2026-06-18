@@ -505,6 +505,97 @@ theorem layerSymmetricTransferMatrix_bot_identity_eq_freeLayerTransferMatrix
 
 /-! ## Spectral-window consequences -/
 
+/-- A non-top Walsh index has a nonempty down-spin set. -/
+theorem layerStateDownSet_nonempty_of_ne_freeLayerWalshTop
+    {χ : LayerState S} (hχ : χ ≠ freeLayerWalshTop (S := S)) :
+    (layerStateDownSet χ).Nonempty := by
+  classical
+  by_contra hnonempty
+  have hset : layerStateDownSet χ = ∅ :=
+    Finset.not_nonempty_iff_eq_empty.mp hnonempty
+  have htop : χ = freeLayerWalshTop (S := S) := by
+    calc
+      χ = layerStateDownSetEquivFinset.symm (layerStateDownSet χ) :=
+        (layerStateDownSetEquivFinset.left_inv χ).symm
+      _ = layerStateDownSetEquivFinset.symm ∅ := by rw [hset]
+      _ = freeLayerWalshTop (S := S) := rfl
+  exact hχ htop
+
+/-- A non-top Walsh index has a positive down-spin-set cardinality. -/
+theorem layerStateDownSet_card_pos_of_ne_freeLayerWalshTop
+    {χ : LayerState S} (hχ : χ ≠ freeLayerWalshTop (S := S)) :
+    0 < (layerStateDownSet χ).card := by
+  exact Finset.card_pos.mpr
+    (layerStateDownSet_nonempty_of_ne_freeLayerWalshTop (S := S) hχ)
+
+omit [DecidableEq S] in
+/-- The absolute free-layer Walsh eigenvalue is the corresponding power of
+`tanh a` times the all-top eigenvalue. -/
+theorem freeLayerWalshEigenvalue_abs_eq_tanh_pow_mul_top_pow
+    {a : ℝ} (ha : 0 ≤ a) (χ : LayerState S) :
+    |freeLayerWalshEigenvalue (S := S) a χ| =
+      Real.tanh a ^ (layerStateDownSet χ).card *
+        transferEigenvalueTop a ^ Fintype.card S := by
+  classical
+  let A : Finset S := layerStateDownSet χ
+  have hA_le : A.card ≤ Fintype.card S := Finset.card_le_univ A
+  have htop_nonneg : 0 ≤ transferEigenvalueTop a :=
+    le_of_lt (transferEigenvalueTop_pos a)
+  have hbot_nonneg : 0 ≤ transferEigenvalueBot a :=
+    transferEigenvalueBot_nonneg_of_nonneg ha
+  have heig_nonneg : 0 ≤ freeLayerWalshEigenvalue (S := S) a χ := by
+    dsimp [freeLayerWalshEigenvalue]
+    exact mul_nonneg (pow_nonneg htop_nonneg _) (pow_nonneg hbot_nonneg _)
+  calc
+    |freeLayerWalshEigenvalue (S := S) a χ|
+        = freeLayerWalshEigenvalue (S := S) a χ := by
+            rw [abs_of_nonneg heig_nonneg]
+    _ = transferEigenvalueTop a ^ (Fintype.card S - A.card) *
+          (Real.tanh a * transferEigenvalueTop a) ^ A.card := by
+            simp [freeLayerWalshEigenvalue, A, transferEigenvalueBot_eq_tanh_mul_top]
+    _ = transferEigenvalueTop a ^ (Fintype.card S - A.card) *
+          (Real.tanh a ^ A.card * transferEigenvalueTop a ^ A.card) := by
+            rw [mul_pow]
+    _ = Real.tanh a ^ A.card *
+          (transferEigenvalueTop a ^ (Fintype.card S - A.card) *
+            transferEigenvalueTop a ^ A.card) := by
+            ring
+    _ = Real.tanh a ^ A.card *
+          transferEigenvalueTop a ^ ((Fintype.card S - A.card) + A.card) := by
+            rw [← pow_add]
+    _ = Real.tanh a ^ (layerStateDownSet χ).card *
+          transferEigenvalueTop a ^ Fintype.card S := by
+            rw [Nat.sub_add_cancel hA_le]
+
+/-- The arbitrary finite free-layer Walsh spectral window with
+`theta = tanh a`. -/
+theorem freeLayerWalshSpectralWindow_tanh
+    {a : ℝ} (ha : 0 ≤ a) :
+    ∀ i, i ≠ freeLayerWalshTop (S := S) →
+      |freeLayerWalshEigenvalue (S := S) a i| ≤
+        Real.tanh a * transferEigenvalueTop a ^ Fintype.card S := by
+  intro i hi
+  have htanh_nonneg : 0 ≤ Real.tanh a := by
+    rw [Real.tanh_eq_sinh_div_cosh]
+    exact div_nonneg (Real.sinh_nonneg_iff.mpr ha)
+      (le_of_lt (Real.cosh_pos a))
+  have htanh_le_one : Real.tanh a ≤ 1 := le_of_lt (Real.tanh_lt_one a)
+  have hcard_pos : 0 < (layerStateDownSet i).card :=
+    layerStateDownSet_card_pos_of_ne_freeLayerWalshTop (S := S) hi
+  have hpow :
+      Real.tanh a ^ (layerStateDownSet i).card ≤ Real.tanh a :=
+    pow_le_of_le_one htanh_nonneg htanh_le_one (Nat.ne_of_gt hcard_pos)
+  have htop_pow_nonneg :
+      0 ≤ transferEigenvalueTop a ^ Fintype.card S :=
+    pow_nonneg (le_of_lt (transferEigenvalueTop_pos a)) _
+  calc
+    |freeLayerWalshEigenvalue (S := S) a i|
+        = Real.tanh a ^ (layerStateDownSet i).card *
+            transferEigenvalueTop a ^ Fintype.card S := by
+            exact freeLayerWalshEigenvalue_abs_eq_tanh_pow_mul_top_pow (S := S) ha i
+    _ ≤ Real.tanh a * transferEigenvalueTop a ^ Fintype.card S := by
+            exact mul_le_mul_of_nonneg_right hpow htop_pow_nonneg
+
 /-- The finite free-layer Walsh transfer data. -/
 noncomputable def freeLayerTransferOrthogonalSpectralData
     (a : ℝ) :
@@ -589,6 +680,22 @@ noncomputable def freeLayerBalancedMinGapCertificate_tanh_of_walshBounds
   · simpa [E, top, freeLayerPhysicalOrthogonalSpectralData,
       freeLayerTransferOrthogonalSpectralData] using
         freeLayerWalshMatrix_top_flip_even (S := S)
+
+/-- Finite free-layer balanced min-gap certificate from the proved Walsh
+spectral window. -/
+noncomputable def freeLayerBalancedMinGapCertificate_tanh
+    [Nonempty S] (p : IsingParams ℝ) (hp : p.h = 0) (hβJ : 0 < p.β * p.J)
+    (hsmall :
+      Real.tanh (p.β * p.J) <
+        (((2 ^ Fintype.card S - 1 : ℕ) : ℝ))⁻¹)
+    (x : S) :
+    LayerBalancedMinSpectralGapCertificate
+      (layerInternalWeight (⊥ : SimpleGraph S) p)
+      (layerTransitionWeight (layerIdentityTransitionPairs S) p)
+      (layerSpinAt x) :=
+  freeLayerBalancedMinGapCertificate_tanh_of_walshBounds
+    (S := S) p hp hβJ hsmall
+    (freeLayerWalshSpectralWindow_tanh (S := S) (le_of_lt hβJ)) x
 
 end TransferMatrix
 
