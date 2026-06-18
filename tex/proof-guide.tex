@@ -6500,15 +6500,16 @@ the closed-walk trace identity gives
       \prod_i u(c_{i+1})\,k(c_i,c_{i+1})
   \quad(\texttt{layerTransferPartition\_trace\_eq\_sum\_prod}).
 \]
-The same file also packages the one- and two-insertion trace forms
-$\operatorname{Tr}(D_fT^n)$ and $\operatorname{Tr}(D_fT^aD_fT^b)$ through
-\texttt{layerTransferOnePointTrace\_eq\_sum} and
-\texttt{layerTransferCorrelation\_matrixElement\_eq\_sum\_prod}. These are finite
-matrix identities over a commutative semiring and contain no spectral gap,
-Perron--Frobenius theorem, lattice hyperplane identification, thermodynamic
-limit, or exponential-decay estimate. Those are the later hyperplane and
-spectral steps of Issue~\#3511. Reference: Glimm--Jaffe, 2nd ed., \S17.1,
-pp.~304--306.
+The same file also packages the one-insertion trace
+$\operatorname{Tr}(D_fT^n)$ and the two-insertion trace
+$\operatorname{Tr}(D_fT^aD_fT^b)$ through the marked layer weight
+\texttt{layerMarkedClosedWalkWeight}; this wrapper uses the positive separation
+hypothesis $0<b$ to hide the redundant nonzero total-length instance. These are
+finite matrix identities over a
+commutative semiring and contain no spectral gap, Perron--Frobenius theorem,
+lattice hyperplane identification, thermodynamic limit, or exponential-decay
+estimate. Those are the later hyperplane and spectral steps of Issue~\#3511.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$

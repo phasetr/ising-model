@@ -87,6 +87,13 @@ theorem layerTransferOnePointTrace_eq_sum
       = ∑ a : Ω, f a * (layerTransferMatrix u k ^ n) a a := by
   exact trace_diagonal_mul_pow (layerTransferMatrix u k) f n
 
+/-- The marked closed-walk layer weight with the nonzero total length inferred
+from the positive second separation `hb : 0 < b`. -/
+def layerMarkedClosedWalkWeight (u : Ω → R) (k : Ω → Ω → R) (f : Ω → R)
+    {a b : ℕ} (hb : 0 < b) (c : Fin (a + b) → Ω) : R := by
+  haveI : NeZero (a + b) := ⟨by omega⟩
+  exact markedClosedWalkWeight (layerTransferMatrix u k) f hb c
+
 /-- The unnormalised two-insertion layer trace
 `Tr(D_f T^a D_f T^b)`, the matrix numerator shape for later layer
 correlation representations. -/
@@ -99,34 +106,38 @@ def layerTransferCorrelation_matrixElement (u : Ω → R) (k : Ω → Ω → R)
 trace is the sum over marked closed walks with the same transfer matrix. -/
 theorem layerTransferCorrelation_matrixElement_eq_sum_markedClosedWalk
     (u : Ω → R) (k : Ω → Ω → R) (f : Ω → R) {a b : ℕ}
-    [NeZero a] [NeZero (a + b)] (hb : 0 < b) :
+    [NeZero a] (hb : 0 < b) :
     layerTransferCorrelation_matrixElement u k f a b
       = ∑ c : Fin (a + b) → Ω,
-          markedClosedWalkWeight (layerTransferMatrix u k) f hb c := by
+          layerMarkedClosedWalkWeight u k f hb c := by
+  haveI : NeZero (a + b) := ⟨by omega⟩
   exact trace_diagonal_pow_diagonal_pow_eq_sum_markedClosedWalk
     (layerTransferMatrix u k) f hb
 
 omit [Fintype Ω] [DecidableEq Ω] in
 /-- Product-expanded form of the marked layer closed-walk weight. -/
-theorem markedClosedWalkWeight_layerTransferMatrix_eq_prod
+theorem layerMarkedClosedWalkWeight_eq_prod
     (u : Ω → R) (k : Ω → Ω → R) (f : Ω → R) {a b : ℕ}
-    [NeZero (a + b)] (hb : 0 < b) (c : Fin (a + b) → Ω) :
-    markedClosedWalkWeight (layerTransferMatrix u k) f hb c
-      = f (c 0) * f (c ⟨a, Nat.lt_add_of_pos_right hb⟩)
+    (hb : 0 < b) (c : Fin (a + b) → Ω) :
+    layerMarkedClosedWalkWeight u k f hb c
+      = letI : NeZero (a + b) := ⟨by omega⟩
+        f (c 0) * f (c ⟨a, Nat.lt_add_of_pos_right hb⟩)
           * ∏ i : Fin (a + b), u (c (i + 1)) * k (c i) (c (i + 1)) := by
+  dsimp [layerMarkedClosedWalkWeight]
   rfl
 
 /-- Product-expanded form of the two-insertion layer trace. -/
 theorem layerTransferCorrelation_matrixElement_eq_sum_prod
     (u : Ω → R) (k : Ω → Ω → R) (f : Ω → R) {a b : ℕ}
-    [NeZero a] [NeZero (a + b)] (hb : 0 < b) :
+    [NeZero a] (hb : 0 < b) :
     layerTransferCorrelation_matrixElement u k f a b
       = ∑ c : Fin (a + b) → Ω,
+          letI : NeZero (a + b) := ⟨by omega⟩
           f (c 0) * f (c ⟨a, Nat.lt_add_of_pos_right hb⟩)
             * ∏ i : Fin (a + b), u (c (i + 1)) * k (c i) (c (i + 1)) := by
   rw [layerTransferCorrelation_matrixElement_eq_sum_markedClosedWalk u k f hb]
   refine Finset.sum_congr rfl
-    (fun c _ => markedClosedWalkWeight_layerTransferMatrix_eq_prod u k f hb c)
+    (fun c _ => layerMarkedClosedWalkWeight_eq_prod u k f hb c)
 
 end TransferMatrix
 
