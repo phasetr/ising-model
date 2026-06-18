@@ -1,4 +1,5 @@
 import IsingModel.TransferMatrix.LayerGibbs
+import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Tactic.NoncommRing
 
@@ -283,6 +284,156 @@ theorem layerSymmetricTransferMatrix_transpose
   simp [layerSymmetricTransferMatrix, hk b a]
   ring
 
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The balanced layer transfer matrix is Hermitian when the transition weight is
+symmetric.  This is the entry point to mathlib's finite Hermitian spectral
+theorem. -/
+theorem layerSymmetricTransferMatrix_isHermitian
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) :
+    (layerSymmetricTransferMatrix u k).IsHermitian := by
+  rw [Matrix.IsHermitian]
+  ext a b
+  simp [Matrix.conjTranspose, layerSymmetricTransferMatrix, hk b a]
+  ring
+
+/-! ## Finite Hermitian spectral bridge -/
+
+/-- Trace of a power of a finite real Hermitian matrix as the sum of
+powers of its Hermitian spectral-theorem eigenvalues. -/
+theorem trace_pow_eq_sum_hermitian_eigenvalues_pow
+    {M : Matrix Ω Ω ℝ} (hM : M.IsHermitian) (N : ℕ) :
+    (M ^ N).trace = ∑ i, hM.eigenvalues i ^ N := by
+  conv_lhs => rw [hM.spectral_theorem, Unitary.conjStarAlgAut_apply]
+  rw [trace_matrix_conj_pow (Matrix.diagonal (RCLike.ofReal ∘ hM.eigenvalues))
+    (hM.eigenvectorUnitary : Matrix Ω Ω ℝ)
+    (star (hM.eigenvectorUnitary : Matrix Ω Ω ℝ))]
+  · simp [Matrix.diagonal_pow, Matrix.trace]
+  · exact Unitary.coe_mul_star_self hM.eigenvectorUnitary
+  · exact Unitary.coe_star_mul_self hM.eigenvectorUnitary
+
+/-- Explicit finite real orthogonal diagonalization data for a matrix.
+
+This is intentionally data, not a Perron--Frobenius theorem: later arguments may
+obtain such data from mathlib's Hermitian spectral theorem or from a more
+specialised finite transfer-matrix analysis. -/
+structure RealOrthogonalSpectralData (M : Matrix Ω Ω ℝ) where
+  /-- Eigenvalues in the chosen orthogonal basis. -/
+  eigenvalue : Ω → ℝ
+  /-- Orthogonal change-of-basis matrix whose columns are eigenvectors. -/
+  changeOfBasis : Matrix Ω Ω ℝ
+  /-- Left inverse relation for the orthogonal change of basis. -/
+  orthogonal_left : changeOfBasisᵀ * changeOfBasis = 1
+  /-- Right inverse relation for the orthogonal change of basis. -/
+  orthogonal_right : changeOfBasis * changeOfBasisᵀ = 1
+  /-- Diagonalization of the matrix in the chosen orthogonal basis. -/
+  diagonalizes : M = changeOfBasis * Matrix.diagonal eigenvalue * changeOfBasisᵀ
+
+namespace RealOrthogonalSpectralData
+
+/-- The marking matrix transported to the orthogonal spectral basis. -/
+noncomputable def markedMatrix {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : Matrix Ω Ω ℝ :=
+  E.changeOfBasisᵀ * Matrix.diagonal f * E.changeOfBasis
+
+/-- Powers of a matrix with explicit orthogonal diagonalization. -/
+theorem pow_eq {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (N : ℕ) :
+    M ^ N = E.changeOfBasis * Matrix.diagonal (fun i => E.eigenvalue i ^ N)
+      * E.changeOfBasisᵀ := by
+  conv_lhs => rw [E.diagonalizes]
+  simpa [Matrix.diagonal_pow] using
+    matrix_conj_pow (Matrix.diagonal E.eigenvalue) E.changeOfBasis
+    E.changeOfBasisᵀ E.orthogonal_right E.orthogonal_left N
+
+/-- Trace of a power from explicit orthogonal diagonalization data. -/
+theorem trace_pow_eq_sum {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (N : ℕ) :
+    (M ^ N).trace = ∑ i, E.eigenvalue i ^ N := by
+  rw [E.pow_eq N]
+  rw [trace_matrix_conj (Matrix.diagonal fun i => E.eigenvalue i ^ N)
+    E.changeOfBasis E.changeOfBasisᵀ E.orthogonal_right E.orthogonal_left]
+  simp [Matrix.trace]
+
+/-- Trace of two diagonal-power insertions in a fixed spectral basis. -/
+theorem trace_marked_diagonal_pow_eq_sum
+    (G : Matrix Ω Ω ℝ) (lam : Ω → ℝ) (a b : ℕ) :
+    (G * Matrix.diagonal (fun i => lam i ^ a)
+        * G * Matrix.diagonal (fun i => lam i ^ b)).trace
+      = ∑ i, ∑ j, G i j * G j i * lam j ^ a * lam i ^ b := by
+  rw [Matrix.trace]
+  apply Finset.sum_congr rfl
+  intro i _
+  rw [Matrix.diag_apply]
+  rw [Matrix.mul_diagonal]
+  rw [Matrix.mul_apply]
+  rw [Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro j _
+  rw [Matrix.mul_diagonal]
+  ring
+
+/-- The balanced marked trace written in explicit orthogonal spectral data. -/
+theorem marked_trace_eq_sum {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (a b : ℕ) :
+    (Matrix.diagonal f * M ^ a * Matrix.diagonal f * M ^ b).trace
+      = ∑ i, ∑ j,
+          E.markedMatrix f i j * E.markedMatrix f j i
+            * E.eigenvalue j ^ a * E.eigenvalue i ^ b := by
+  rw [E.pow_eq a, E.pow_eq b]
+  rw [show
+      Matrix.diagonal f
+          * (E.changeOfBasis * Matrix.diagonal (fun i => E.eigenvalue i ^ a)
+              * E.changeOfBasisᵀ)
+          * Matrix.diagonal f
+          * (E.changeOfBasis * Matrix.diagonal (fun i => E.eigenvalue i ^ b)
+              * E.changeOfBasisᵀ)
+        =
+          (Matrix.diagonal f * E.changeOfBasis
+            * Matrix.diagonal (fun i => E.eigenvalue i ^ a)
+            * E.changeOfBasisᵀ * Matrix.diagonal f * E.changeOfBasis
+            * Matrix.diagonal (fun i => E.eigenvalue i ^ b))
+            * E.changeOfBasisᵀ by
+        noncomm_ring]
+  rw [Matrix.trace_mul_comm]
+  simp [markedMatrix, Matrix.mul_assoc]
+  simpa [markedMatrix, Matrix.mul_assoc] using
+    trace_marked_diagonal_pow_eq_sum (E.markedMatrix f) E.eigenvalue a b
+
+end RealOrthogonalSpectralData
+
+/-- The finite Hermitian spectral-theorem eigenvalues of the balanced layer
+transfer matrix.  They are indexed by the layer-state type. -/
+noncomputable def layerSymmetricTransferEigenvalues
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) :
+    Ω → ℝ :=
+  (layerSymmetricTransferMatrix_isHermitian u k hk).eigenvalues
+
+/-- The finite Hermitian spectral-theorem orthonormal eigenbasis of the balanced
+layer transfer matrix. -/
+noncomputable def layerSymmetricTransferEigenvectorBasis
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) :
+    OrthonormalBasis Ω ℝ (EuclideanSpace ℝ Ω) :=
+  (layerSymmetricTransferMatrix_isHermitian u k hk).eigenvectorBasis
+
+/-- The balanced layer spectral basis diagonalizes the balanced transfer matrix. -/
+theorem layerSymmetricTransferMatrix_mulVec_eigenvectorBasis
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) (j : Ω) :
+    layerSymmetricTransferMatrix u k
+        *ᵥ ⇑(layerSymmetricTransferEigenvectorBasis u k hk j)
+      = (layerSymmetricTransferEigenvalues u k hk j)
+        • ⇑(layerSymmetricTransferEigenvectorBasis u k hk j) := by
+  exact (layerSymmetricTransferMatrix_isHermitian u k hk).mulVec_eigenvectorBasis j
+
+/-- The balanced finite layer partition trace is the sum of powers of the
+finite Hermitian spectral-theorem eigenvalues of the balanced transfer matrix. -/
+theorem layerSymmetricTransferPartitionTrace_eq_sum_eigenvalues_pow
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) (N : ℕ) :
+    layerSymmetricTransferPartitionTrace u k N
+      = ∑ i, layerSymmetricTransferEigenvalues u k hk i ^ N := by
+  rw [layerSymmetricTransferPartitionTrace, layerSymmetricTransferEigenvalues]
+  exact trace_pow_eq_sum_hermitian_eigenvalues_pow
+    (layerSymmetricTransferMatrix_isHermitian u k hk) N
+
 /-- Diagonal similarity between the ordinary layer transfer matrix and the
 balanced layer transfer matrix:
 `T = D⁻¹ S D`. -/
@@ -535,6 +686,42 @@ def layerBalancedSpectralGapCertificate_of_traceBounds
   partitionPrefactor_pos := partitionPrefactor_pos
   partition_lower := partition_lower
   marked_abs_le := marked_abs_le
+
+/-- Constructor for a balanced spectral-gap certificate from explicit
+orthogonal spectral data and explicit spectral-basis bounds.
+
+The hypotheses are deliberately stated as finite spectral-basis inequalities:
+this does not assert Perron--Frobenius existence, identify a spectral radius, or
+derive the one-sided cyclic marked-trace decay automatically. -/
+def layerBalancedSpectralGapCertificate_of_orthogonalSpectralData
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower_spectral : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ ∑ i, E.eigenvalue i ^ N)
+    (marked_abs_le_spectral : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |∑ i, ∑ j,
+          E.markedMatrix f i j * E.markedMatrix f j i
+            * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ a) :
+    LayerBalancedSpectralGapCertificate u k f := by
+  refine
+    layerBalancedSpectralGapCertificate_of_traceBounds u k f scale theta
+      prefactor partitionPrefactor scale_pos theta_nonneg theta_lt_one
+      prefactor_nonneg partitionPrefactor_pos ?_ ?_
+  · intro N hN
+    rw [layerSymmetricTransferPartitionTrace,
+      RealOrthogonalSpectralData.trace_pow_eq_sum E N]
+    exact partition_lower_spectral hN
+  · intro a b ha hb
+    rw [layerSymmetricTransferCorrelationTrace,
+      RealOrthogonalSpectralData.marked_trace_eq_sum E f a b]
+    exact marked_abs_le_spectral ha hb
 
 /-- Constructor for an ordinary spectral-gap certificate from explicit balanced
 trace bounds, transported across the diagonal similarity. -/
