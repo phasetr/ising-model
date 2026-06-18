@@ -7110,6 +7110,50 @@ connect the finite cyclic certificates to open slabs and thermodynamic limits.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{One-site transverse small-ratio bridge (\S17.1, Issue~\#3511).}
+The finite prefactor condition has a concrete two-state specialization for
+one-site transverse layers.  Lean records the layer-state cardinality by
+\[
+  \texttt{layerState\_card\_eq\_two\_pow}
+  \quad\text{and}\quad
+  \texttt{layerState\_card\_eq\_two\_of\_card\_eq\_one},
+\]
+namely
+\[
+  |\texttt{LayerState}\,S| = 2^{|S|}.
+\]
+Thus, when \(|S|=1\), the layer state space has exactly two states.  In that
+case the finite prefactor smallness condition becomes
+\[
+  (2-1)\theta < 1,
+\]
+so it is exactly the strict ratio bound \(\theta<1\).  The arithmetic lemmas
+\[
+  \begin{gathered}
+  \texttt{finiteSpectralPartitionPrefactor}\\
+  \texttt{\_small\_of\_card\_eq\_two}
+  \end{gathered}
+  \quad\text{and}\quad
+  \begin{gathered}
+  \texttt{finiteSpectralPartitionPrefactor}\\
+  \texttt{\_small\_of}\\
+  \texttt{\_layerState\_card\_eq\_one}
+  \end{gathered}
+\]
+formalize this two-state reduction.  The wrappers
+\begin{center}
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_}}\\
+{\scriptsize\texttt{orthogonalMaxEigenIndexFlipSpin\_oneSite}}\\[2pt]
+{\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_}}\\
+{\scriptsize\texttt{layerHermitianMaxEigenIndexFlipSpin\_oneSite}}
+\end{center}
+use the already-proved strict max-index subdominant-ratio estimate to discharge
+the prefactor for one-site transverse spin observables.  This is only the
+one-site transverse specialization: for larger finite layer state spaces,
+\(\theta<1\) is still not enough.  Open-slab geometry, thermodynamic limits, and
+the final hyperplane decay estimate remain later work.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$

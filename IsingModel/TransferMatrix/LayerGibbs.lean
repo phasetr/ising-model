@@ -150,6 +150,21 @@ theorem layerTwoPoint_eq_trace_ratio
 /-- A finite hyperplane layer state is a spin configuration on its cross-section. -/
 abbrev LayerState (S : Type*) := Config S
 
+/-- Cardinality of the finite layer-state space: a layer state is one spin for
+each transverse site. -/
+theorem layerState_card_eq_two_pow (S : Type*) [Fintype S] [DecidableEq S] :
+    Fintype.card (LayerState S) = 2 ^ Fintype.card S := by
+  have hspin : Fintype.card Spin = 2 := rfl
+  simp [LayerState, Config, hspin]
+
+/-- If the transverse layer has one site, then the layer-state space has the two
+spin values at that site. -/
+theorem layerState_card_eq_two_of_card_eq_one (S : Type*) [Fintype S] [DecidableEq S]
+    (hcard : Fintype.card S = 1) :
+    Fintype.card (LayerState S) = 2 := by
+  rw [layerState_card_eq_two_pow S, hcard]
+  norm_num
+
 /-- The global spin flip as an equivalence of finite layer states. -/
 def layerStateFlipEquiv (S : Type*) : LayerState S ≃ LayerState S where
   toFun := Config.flip
