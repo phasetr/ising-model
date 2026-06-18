@@ -422,6 +422,27 @@ theorem finiteSpectralPartitionPrefactor_small_of_card_eq_one
   rw [hcard]
   norm_num
 
+/-- If the finite state space has exactly two elements, the finite-cardinality
+partition-prefactor smallness condition is exactly the strict ratio bound
+`theta < 1`. -/
+theorem finiteSpectralPartitionPrefactor_small_of_card_eq_two
+    (Ω : Type*) [Fintype Ω] {theta : ℝ} (hcard : Fintype.card Ω = 2)
+    (htheta : theta < 1) :
+    (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1 := by
+  rw [hcard]
+  norm_num at htheta ⊢
+  exact htheta
+
+/-- For a one-site transverse layer, `LayerState S` has two states, so the
+finite-cardinality partition-prefactor smallness condition follows from the
+strict ratio bound `theta < 1`. -/
+theorem finiteSpectralPartitionPrefactor_small_of_layerState_card_eq_one
+    (S : Type*) [Fintype S] [DecidableEq S] {theta : ℝ}
+    (hcard : Fintype.card S = 1) (htheta : theta < 1) :
+    (((Fintype.card (LayerState S) - 1 : ℕ) : ℝ) * theta) < 1 :=
+  finiteSpectralPartitionPrefactor_small_of_card_eq_two (LayerState S)
+    (layerState_card_eq_two_of_card_eq_one S hcard) htheta
+
 /-- A quantitative inverse-cardinality bound on `theta` implies the
 finite-cardinality partition-prefactor smallness condition. -/
 theorem finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
