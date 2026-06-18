@@ -747,6 +747,20 @@ noncomputable def layerSymmetricTransfer_subdominantRatio_maxEigenIndex
   exact E.subdominantRatio_maxEigenIndex
     (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
 
+/-- The canonical finite subdominant ratio for the Hermitian balanced layer
+transfer matrix is strictly smaller than one. -/
+theorem layerSymmetricTransfer_subdominantRatio_maxEigenIndex_lt_one
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk_symm : ∀ ω η, k ω η = k η ω) :
+    layerSymmetricTransfer_subdominantRatio_maxEigenIndex u k hu hk_pos hk_symm < 1 := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let E := layerSymmetricTransferOrthogonalSpectralData u k hk_symm
+  simpa [layerSymmetricTransfer_subdominantRatio_maxEigenIndex, E] using
+    E.subdominantRatio_maxEigenIndex_lt_one
+      (layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos)
+
 /-- A signed-positive balanced-layer spectral column bounds every spectral-data
 eigenvalue in absolute value. -/
 theorem layerSymmetricTransfer_eigenvalue_abs_le_of_signedPositiveColumn
@@ -1126,6 +1140,28 @@ noncomputable def
     (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
       (LayerState S) hcard hratio)
 
+/-- Orthogonal max-index spin certificate for a one-site transverse layer.  In
+this two-state layer case, the already proved strict canonical ratio `< 1`
+discharges the finite prefactor smallness condition. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin_oneSite
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (hcard : Fintype.card S = 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) := by
+  letI : Nonempty (LayerState S) := ⟨default⟩
+  let hM := layerSymmetricTransferMatrix_entrywisePositive u k hu hk_pos
+  exact
+    layerBalancedMinSpectralGapCertificate_of_orthogonalMaxEigenIndexFlipSpin
+      u k x hu hk_pos hu_flip hk_flip E
+      (finiteSpectralPartitionPrefactor_small_of_layerState_card_eq_one S hcard
+        (E.subdominantRatio_maxEigenIndex_lt_one hM))
+
 /-- Hermitian max-index spin certificate whose finite prefactor smallness is
 discharged by a one-element layer-state space. -/
 noncomputable def
@@ -1164,6 +1200,26 @@ noncomputable def
     u k x hu hk_pos hk hu_flip hk_flip
     (finiteSpectralPartitionPrefactor_small_of_lt_inv_cardSubOne
       (LayerState S) hcard hratio)
+
+/-- Hermitian max-index spin certificate for a one-site transverse layer.  In
+this two-state layer case, the already proved strict canonical ratio `< 1`
+discharges the finite prefactor smallness condition. -/
+noncomputable def
+    layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin_oneSite
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hk : ∀ ω η, k ω η = k η ω)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (hcard : Fintype.card S = 1) :
+    LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerBalancedMinSpectralGapCertificate_of_layerHermitianMaxEigenIndexFlipSpin
+    u k x hu hk_pos hk hu_flip hk_flip
+    (finiteSpectralPartitionPrefactor_small_of_layerState_card_eq_one S hcard
+      (layerSymmetricTransfer_subdominantRatio_maxEigenIndex_lt_one
+        u k hu hk_pos hk))
 
 end TransferMatrix
 
