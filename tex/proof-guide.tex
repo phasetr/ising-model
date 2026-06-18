@@ -6637,6 +6637,39 @@ The result is still a finite periodic cylinder over a finite transverse box;
 open longitudinal slabs/boxes, Perron--Frobenius theory, thermodynamic limits,
 and exponential decay remain later Issue~\#3511 steps.
 
+\paragraph{Finite positive layer spectral scaffold (\S17.1, Issue~\#3511).}
+The layer spectral file records the finite algebra needed before the
+higher-dimensional Perron--Frobenius step.  Four predicates give the basic
+entrywise-matrix and vector positivity vocabulary.  Positive one-layer and
+transition weights make the layer transfer matrix entrywise positive; products
+and positive powers of entrywise positive finite matrices stay positive, so
+positive powers have positive trace.  A strictly positive right eigenpair has
+positive eigenvalue, but no existence or uniqueness theorem is asserted here.
+
+For a positive layer weight \(u\), the generally non-symmetric transfer matrix
+\(T_{ab}=u_b k_{ab}\) is diagonally similar to the balanced matrix
+\[
+  S_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}.
+\]
+Writing \(D=\operatorname{diag}(\sqrt u)\), the formal identity is
+\[
+  T = D^{-1} S D
+\]
+as recorded by the diagonal-similarity theorem in the Lean file.  Consequently
+the partition trace and the two-insertion marked trace are unchanged by
+replacing \(T\) by \(S\).  If the transition weight \(k\) is symmetric, then
+\(S\) is symmetric, giving the future spectral route a symmetric finite matrix
+without changing the cyclic layer observables.
+
+Finally, \texttt{LayerSpectralGapCertificate} packages later spectral input as
+a positive scale, a subdominant ratio \(\theta<1\), a lower bound on
+\(\operatorname{Tr}(T^N)\), and an upper bound on the marked trace.  The
+consumer theorems turn such a certificate into an exponential bound for the
+finite cyclic layer two-point trace ratio.  This is a certificate scaffold only:
+Perron--Frobenius existence, spectral radius, open-slab geometry, thermodynamic
+limits, and final
+hyperplane exponential decay remain later Issue~\#3511 steps.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
