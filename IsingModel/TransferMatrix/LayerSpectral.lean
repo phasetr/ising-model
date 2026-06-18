@@ -1,6 +1,7 @@
 import IsingModel.TransferMatrix.LayerGibbs
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
 import Mathlib.Tactic.NoncommRing
 
 /-!
@@ -88,6 +89,29 @@ theorem matrixEntrywisePositive_pow_of_pos [Nonempty Ω] {M : Matrix Ω Ω ℝ}
         matrixEntrywisePositive_pow_of_pos hM (Nat.succ_pos m)
       rw [pow_succ]
       exact matrixEntrywisePositive_mul hprev hM
+
+/-- An entrywise positive finite matrix is primitive in mathlib's graph-theoretic
+matrix vocabulary.  This is only a positivity/primitive bridge, not a
+Perron--Frobenius eigenvalue theorem. -/
+theorem matrixEntrywisePositive_isPrimitive {M : Matrix Ω Ω ℝ}
+    (hM : MatrixEntrywisePositive M) :
+    M.IsPrimitive where
+  nonneg := matrixEntrywisePositive_nonnegative hM
+  exists_pos_pow := by
+    refine ⟨1, Nat.zero_lt_one, ?_⟩
+    intro i j
+    simpa using hM i j
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- An entrywise positive matrix is irreducible in mathlib's graph-theoretic
+matrix vocabulary. -/
+theorem matrixEntrywisePositive_isIrreducible {M : Matrix Ω Ω ℝ}
+    (hM : MatrixEntrywisePositive M) :
+    M.IsIrreducible := by
+  refine ⟨matrixEntrywisePositive_nonnegative hM, ?_⟩
+  intro i j
+  letI : Quiver Ω := Matrix.toQuiver M
+  exact ⟨Quiver.Hom.toPath (PLift.up (hM i j)), by simp⟩
 
 /-- A positive power of an entrywise positive matrix has positive trace when the
 index type is nonempty. -/
@@ -266,6 +290,35 @@ theorem layerSymmetricTransferMatrix_pos
     (Real.sqrt_pos.mpr (hu b))
 
 omit [Fintype Ω] [DecidableEq Ω] in
+/-- The balanced layer transfer matrix is entrywise positive when the layer and
+transition weights are positive. -/
+theorem layerSymmetricTransferMatrix_entrywisePositive
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk : ∀ a b, 0 < k a b) :
+    MatrixEntrywisePositive (layerSymmetricTransferMatrix u k) :=
+  layerSymmetricTransferMatrix_pos u k hu hk
+
+/-- The balanced layer transfer matrix is primitive when the layer and transition
+weights are positive.  This records the finite positive-matrix bridge but does
+not assert a Perron--Frobenius eigenpair. -/
+theorem layerSymmetricTransferMatrix_isPrimitive
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk : ∀ a b, 0 < k a b) :
+    (layerSymmetricTransferMatrix u k).IsPrimitive :=
+  matrixEntrywisePositive_isPrimitive
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk)
+
+omit [Fintype Ω] [DecidableEq Ω] in
+/-- The balanced layer transfer matrix is irreducible when the layer and
+transition weights are positive. -/
+theorem layerSymmetricTransferMatrix_isIrreducible
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ)
+    (hu : ∀ a, 0 < u a) (hk : ∀ a b, 0 < k a b) :
+    (layerSymmetricTransferMatrix u k).IsIrreducible :=
+  matrixEntrywisePositive_isIrreducible
+    (layerSymmetricTransferMatrix_entrywisePositive u k hu hk)
+
+omit [Fintype Ω] [DecidableEq Ω] in
 /-- The ordinary layer transfer matrix is positive entrywise when the layer and
 transition weights are positive. -/
 theorem layerTransferMatrix_pos
@@ -297,6 +350,18 @@ theorem layerSymmetricTransferMatrix_isHermitian
   ring
 
 /-! ## Finite Hermitian spectral bridge -/
+
+/-- The finite-cardinality partition prefactor obtained from a crude dominant
+spectral-term lower bound. -/
+def finiteSpectralPartitionPrefactor (Ω : Type*) [Fintype Ω] (theta : ℝ) : ℝ :=
+  1 - (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta)
+
+/-- Positivity criterion for the finite-cardinality partition prefactor. -/
+theorem finiteSpectralPartitionPrefactor_pos (Ω : Type*) [Fintype Ω] {theta : ℝ}
+    (hsmall : (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1) :
+    0 < finiteSpectralPartitionPrefactor Ω theta := by
+  rw [finiteSpectralPartitionPrefactor, sub_pos]
+  exact hsmall
 
 /-- Trace of a power of a finite real Hermitian matrix as the sum of
 powers of its Hermitian spectral-theorem eigenvalues. -/
@@ -334,6 +399,19 @@ namespace RealOrthogonalSpectralData
 noncomputable def markedMatrix {M : Matrix Ω Ω ℝ}
     (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : Matrix Ω Ω ℝ :=
   E.changeOfBasisᵀ * Matrix.diagonal f * E.changeOfBasis
+
+/-- The finite absolute coefficient prefactor in the spectral marked-trace
+bound. -/
+noncomputable def markedSpectralPrefactor {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : ℝ :=
+  ∑ i, ∑ j, |E.markedMatrix f i j * E.markedMatrix f j i|
+
+/-- The marked spectral prefactor is nonnegative. -/
+theorem markedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) :
+    0 ≤ E.markedSpectralPrefactor f := by
+  exact Finset.sum_nonneg fun i _ =>
+    Finset.sum_nonneg fun j _ => abs_nonneg _
 
 /-- Powers of a matrix with explicit orthogonal diagonalization. -/
 theorem pow_eq {M : Matrix Ω Ω ℝ}
@@ -398,6 +476,196 @@ theorem marked_trace_eq_sum {M : Matrix Ω Ω ℝ}
   simp [markedMatrix, Matrix.mul_assoc]
   simpa [markedMatrix, Matrix.mul_assoc] using
     trace_marked_diagonal_pow_eq_sum (E.markedMatrix f) E.eigenvalue a b
+
+/-- A nonnegative dominant spectral term gives a lower bound on the partition
+spectral sum. -/
+theorem partition_sum_lower_of_eigenvalue_nonnegative {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (top : Ω) (scale : ℝ)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (eigenvalue_nonnegative : ∀ i, 0 ≤ E.eigenvalue i)
+    {N : ℕ} (_hN : 0 < N) :
+    scale ^ N ≤ ∑ i, E.eigenvalue i ^ N := by
+  have hterms : ∀ i ∈ (Finset.univ : Finset Ω), 0 ≤ E.eigenvalue i ^ N := by
+    intro i _
+    exact pow_nonneg (eigenvalue_nonnegative i) N
+  have htop :=
+    Finset.single_le_sum hterms (Finset.mem_univ top)
+  simpa [dominant_eigenvalue] using htop
+
+/-- A dominant index and a subdominant absolute bound imply the global
+absolute eigenvalue bound. -/
+theorem eigenvalue_abs_le_scale_of_dominant_bounds {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_le_one : theta ≤ 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale) :
+    ∀ i, |E.eigenvalue i| ≤ scale := by
+  intro i
+  by_cases hitop : i = top
+  · subst i
+    simp [dominant_eigenvalue, abs_of_pos scale_pos]
+  · calc
+      |E.eigenvalue i| ≤ theta * scale := subdominant_abs_le i hitop
+      _ ≤ scale := by
+        exact (mul_le_iff_le_one_left scale_pos).2 theta_le_one
+
+/-- A dominant eigenvalue and a uniform subdominant absolute bound give a finite
+lower bound for the partition spectral sum. -/
+theorem partition_sum_lower_of_dominant_bounds {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    {N : ℕ} (_hN : 0 < N) :
+    scale ^ N - (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N)
+      ≤ ∑ i, E.eigenvalue i ^ N := by
+  let rest : Finset Ω := Finset.univ.erase top
+  have htheta_scale_nonneg : 0 ≤ theta * scale :=
+    mul_nonneg theta_nonneg scale_pos.le
+  have hrest_term :
+      ∀ i ∈ rest, -((theta * scale) ^ N) ≤ E.eigenvalue i ^ N := by
+    intro i hi
+    have hitop : i ≠ top := (Finset.mem_erase.mp hi).1
+    have hpow_abs : |E.eigenvalue i ^ N| ≤ (theta * scale) ^ N := by
+      rw [abs_pow]
+      exact pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le i hitop) N
+    exact neg_le_of_abs_le hpow_abs
+  have hrest_sum :
+      ∑ i ∈ rest, -((theta * scale) ^ N)
+        ≤ ∑ i ∈ rest, E.eigenvalue i ^ N :=
+    Finset.sum_le_sum hrest_term
+  have hrest_sum' :
+      -(((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N)
+        ≤ ∑ i ∈ rest, E.eigenvalue i ^ N := by
+    simpa [rest, Finset.sum_const, nsmul_eq_mul,
+      Finset.card_erase_of_mem (Finset.mem_univ top)] using hrest_sum
+  have hadd := add_le_add_left hrest_sum' (scale ^ N)
+  calc
+    scale ^ N - (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N)
+        = scale ^ N
+          + -(((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N) := by ring
+    _ ≤ scale ^ N + ∑ i ∈ rest, E.eigenvalue i ^ N := by
+      simpa [add_comm, add_left_comm, add_assoc] using hadd
+    _ = (∑ i ∈ rest, E.eigenvalue i ^ N) + scale ^ N := by ring
+    _ = ∑ i, E.eigenvalue i ^ N := by
+      rw [← Finset.sum_erase_add (Finset.univ) (fun i => E.eigenvalue i ^ N)
+        (Finset.mem_univ top)]
+      simp [rest, dominant_eigenvalue]
+
+/-- The finite-cardinality dominant-bound partition estimate in certificate
+prefactor form. -/
+theorem partition_lower_of_dominant_bounds {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_le_one : theta ≤ 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    {N : ℕ} (hN : 0 < N) :
+    finiteSpectralPartitionPrefactor Ω theta * scale ^ N
+      ≤ ∑ i, E.eigenvalue i ^ N := by
+  have hN_one : 1 ≤ N := hN
+  have htheta_pow_le : theta ^ N ≤ theta := by
+    simpa using pow_le_pow_of_le_one theta_nonneg theta_le_one hN_one
+  have hscale_pow_nonneg : 0 ≤ scale ^ N := pow_nonneg scale_pos.le N
+  have hcard_mul :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N)
+        ≤ (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) * scale ^ N := by
+    rw [mul_pow]
+    calc
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta ^ N * scale ^ N))
+          ≤ ((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale ^ N) := by
+            exact mul_le_mul_of_nonneg_left
+              (mul_le_mul_of_nonneg_right htheta_pow_le hscale_pow_nonneg)
+              (Nat.cast_nonneg _)
+      _ = (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) * scale ^ N := by ring
+  have hprefactor_le :
+      finiteSpectralPartitionPrefactor Ω theta * scale ^ N
+        ≤ scale ^ N - (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N) := by
+    calc
+      finiteSpectralPartitionPrefactor Ω theta * scale ^ N
+          = scale ^ N
+            - (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) * scale ^ N := by
+              rw [finiteSpectralPartitionPrefactor]
+              ring
+      _ ≤ scale ^ N - (((Fintype.card Ω - 1 : ℕ) : ℝ) * (theta * scale) ^ N) :=
+            sub_le_sub_left hcard_mul (scale ^ N)
+  exact hprefactor_le.trans
+    (partition_sum_lower_of_dominant_bounds E top scale theta scale_pos
+      theta_nonneg dominant_eigenvalue subdominant_abs_le hN)
+
+/-- Spectral dominance and cancellation of the dominant marked column give the
+one-sided marked-trace bound in the separation exponent. -/
+theorem marked_sum_abs_le_spectralPrefactor {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (top : Ω)
+    (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (eigenvalue_abs_le_scale : ∀ i, |E.eigenvalue i| ≤ scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_markedColumn_zero :
+      ∀ i, E.markedMatrix f i top * E.markedMatrix f top i = 0)
+    {a b : ℕ} (_ha : 0 < a) :
+    |∑ i, ∑ j,
+        E.markedMatrix f i j * E.markedMatrix f j i
+          * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+      ≤ E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ a := by
+  let coeff : Ω → Ω → ℝ :=
+    fun i j => E.markedMatrix f i j * E.markedMatrix f j i
+  let term : Ω → Ω → ℝ :=
+    fun i j => coeff i j * E.eigenvalue j ^ a * E.eigenvalue i ^ b
+  have hscale_nonneg : 0 ≤ scale := scale_pos.le
+  have htheta_scale_nonneg : 0 ≤ theta * scale :=
+    mul_nonneg theta_nonneg hscale_nonneg
+  have hsum :
+      |∑ i, ∑ j, term i j| ≤ ∑ i, ∑ j, |term i j| := by
+    calc
+      |∑ i, ∑ j, term i j| ≤ ∑ i, |∑ j, term i j| :=
+        Finset.abs_sum_le_sum_abs (fun i => ∑ j, term i j) Finset.univ
+      _ ≤ ∑ i, ∑ j, |term i j| := by
+        exact Finset.sum_le_sum fun i _ =>
+          Finset.abs_sum_le_sum_abs (fun j => term i j) Finset.univ
+  have hterm : ∀ i j, |term i j| ≤
+      |coeff i j| * (scale ^ (a + b) * theta ^ a) := by
+    intro i j
+    by_cases hj : j = top
+    · subst j
+      have hcoeff : coeff i top = 0 := dominant_markedColumn_zero i
+      simp [term, coeff, hcoeff]
+    · have hjpow : |E.eigenvalue j| ^ a ≤ (theta * scale) ^ a :=
+        pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le j hj) a
+      have hipow : |E.eigenvalue i| ^ b ≤ scale ^ b :=
+        pow_le_pow_left₀ (abs_nonneg _) (eigenvalue_abs_le_scale i) b
+      have hpow_mul :
+          |E.eigenvalue j| ^ a * |E.eigenvalue i| ^ b
+            ≤ (theta * scale) ^ a * scale ^ b :=
+        mul_le_mul hjpow hipow (pow_nonneg (abs_nonneg _) b)
+          (pow_nonneg htheta_scale_nonneg a)
+      have hpow_eq :
+          (theta * scale) ^ a * scale ^ b = scale ^ (a + b) * theta ^ a := by
+        rw [mul_pow, pow_add]
+        ring
+      calc
+        |term i j|
+            = |coeff i j| * (|E.eigenvalue j| ^ a * |E.eigenvalue i| ^ b) := by
+              simp [term, abs_mul, abs_pow, mul_assoc]
+        _ ≤ |coeff i j| * ((theta * scale) ^ a * scale ^ b) :=
+              mul_le_mul_of_nonneg_left hpow_mul (abs_nonneg _)
+        _ = |coeff i j| * (scale ^ (a + b) * theta ^ a) := by
+              rw [hpow_eq]
+  calc
+    |∑ i, ∑ j,
+        E.markedMatrix f i j * E.markedMatrix f j i
+          * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+        = |∑ i, ∑ j, term i j| := rfl
+    _ ≤ ∑ i, ∑ j, |term i j| := hsum
+    _ ≤ ∑ i, ∑ j, |coeff i j| * (scale ^ (a + b) * theta ^ a) := by
+      exact Finset.sum_le_sum fun i _ =>
+        Finset.sum_le_sum fun j _ => hterm i j
+    _ = E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ a := by
+      simp [markedSpectralPrefactor, coeff, Finset.sum_mul, mul_assoc]
 
 end RealOrthogonalSpectralData
 
@@ -722,6 +990,82 @@ def layerBalancedSpectralGapCertificate_of_orthogonalSpectralData
     rw [layerSymmetricTransferCorrelationTrace,
       RealOrthogonalSpectralData.marked_trace_eq_sum E f a b]
     exact marked_abs_le_spectral ha hb
+
+/-- Constructor for a balanced spectral-gap certificate from explicit
+orthogonal spectral data, a chosen dominant spectral index, finite spectral
+dominance, and one-sided marked-column cancellation.
+
+This proves the partition and marked-trace bounds from component spectral
+hypotheses.  It does not assert the existence of a Perron--Frobenius eigenvector,
+identify the spectral radius, or derive the cancellation hypothesis from the
+observable. -/
+noncomputable def layerBalancedSpectralGapCertificate_of_orthogonalSpectralDominance
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (eigenvalue_nonnegative : ∀ i, 0 ≤ E.eigenvalue i)
+    (eigenvalue_abs_le_scale : ∀ i, |E.eigenvalue i| ≤ scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_markedColumn_zero :
+      ∀ i, E.markedMatrix f i top * E.markedMatrix f top i = 0) :
+    LayerBalancedSpectralGapCertificate u k f :=
+  layerBalancedSpectralGapCertificate_of_orthogonalSpectralData u k f E
+    scale theta (E.markedSpectralPrefactor f) 1
+    scale_pos theta_nonneg theta_lt_one
+    (E.markedSpectralPrefactor_nonneg f) one_pos
+    (fun hN => by
+      simpa using
+        RealOrthogonalSpectralData.partition_sum_lower_of_eigenvalue_nonnegative
+          E top scale dominant_eigenvalue eigenvalue_nonnegative hN)
+    (fun ha _hb =>
+      RealOrthogonalSpectralData.marked_sum_abs_le_spectralPrefactor
+        E f top scale theta scale_pos theta_nonneg eigenvalue_abs_le_scale
+        subdominant_abs_le dominant_markedColumn_zero ha)
+
+/-- Constructor for a balanced spectral-gap certificate from explicit
+orthogonal spectral data, a chosen dominant spectral index, a subdominant
+absolute spectral bound, and one-sided marked-column cancellation.
+
+The partition prefactor is the finite-cardinality bound
+`1 - (Fintype.card Ω - 1) * theta`, so this constructor also assumes that this
+quantity is positive.  This remains a conditional finite spectral-basis bound:
+it does not prove Perron--Frobenius existence, spectral-radius maximality, or
+the cancellation hypothesis. -/
+noncomputable def layerBalancedSpectralGapCertificate_of_orthogonalDominantBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_markedColumn_zero :
+      ∀ i, E.markedMatrix f i top * E.markedMatrix f top i = 0) :
+    LayerBalancedSpectralGapCertificate u k f :=
+  layerBalancedSpectralGapCertificate_of_orthogonalSpectralData u k f E
+    scale theta (E.markedSpectralPrefactor f)
+    (finiteSpectralPartitionPrefactor Ω theta)
+    scale_pos theta_nonneg theta_lt_one
+    (E.markedSpectralPrefactor_nonneg f)
+    (finiteSpectralPartitionPrefactor_pos Ω partitionPrefactor_small)
+    (fun hN =>
+      RealOrthogonalSpectralData.partition_lower_of_dominant_bounds
+        E top scale theta scale_pos theta_nonneg theta_lt_one.le
+        dominant_eigenvalue subdominant_abs_le hN)
+    (fun ha _hb =>
+      RealOrthogonalSpectralData.marked_sum_abs_le_spectralPrefactor
+        E f top scale theta scale_pos theta_nonneg
+        (RealOrthogonalSpectralData.eigenvalue_abs_le_scale_of_dominant_bounds
+          E top scale theta scale_pos theta_lt_one.le dominant_eigenvalue
+          subdominant_abs_le)
+        subdominant_abs_le dominant_markedColumn_zero ha)
 
 /-- Constructor for an ordinary spectral-gap certificate from explicit balanced
 trace bounds, transported across the diagonal similarity. -/
