@@ -395,6 +395,24 @@ structure RealOrthogonalSpectralData (M : Matrix Ω Ω ℝ) where
 
 namespace RealOrthogonalSpectralData
 
+/-- Construct explicit real orthogonal spectral data from mathlib's Hermitian
+spectral theorem.  This remains a finite spectral-theorem bridge, not a
+Perron--Frobenius dominance statement. -/
+noncomputable def ofHermitian {M : Matrix Ω Ω ℝ} (hM : M.IsHermitian) :
+    RealOrthogonalSpectralData M where
+  eigenvalue := hM.eigenvalues
+  changeOfBasis := (hM.eigenvectorUnitary : Matrix Ω Ω ℝ)
+  orthogonal_left := by
+    rw [← Matrix.conjTranspose_eq_transpose_of_trivial
+      (A := (hM.eigenvectorUnitary : Matrix Ω Ω ℝ))]
+    exact Unitary.coe_star_mul_self hM.eigenvectorUnitary
+  orthogonal_right := by
+    rw [← Matrix.conjTranspose_eq_transpose_of_trivial
+      (A := (hM.eigenvectorUnitary : Matrix Ω Ω ℝ))]
+    exact Unitary.coe_mul_star_self hM.eigenvectorUnitary
+  diagonalizes := by
+    simpa [Unitary.conjStarAlgAut_apply] using hM.spectral_theorem
+
 /-- The marking matrix transported to the orthogonal spectral basis. -/
 noncomputable def markedMatrix {M : Matrix Ω Ω ℝ}
     (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) : Matrix Ω Ω ℝ :=
@@ -412,6 +430,32 @@ theorem markedSpectralPrefactor_nonneg {M : Matrix Ω Ω ℝ}
     0 ≤ E.markedSpectralPrefactor f := by
   exact Finset.sum_nonneg fun i _ =>
     Finset.sum_nonneg fun j _ => abs_nonneg _
+
+/-- The marked matrix `Qᵀ diag(f) Q` is symmetric for real orthogonal spectral
+coordinates. -/
+theorem markedMatrix_transpose {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) :
+    (E.markedMatrix f)ᵀ = E.markedMatrix f := by
+  have hentry :
+      ∀ i j, E.markedMatrix f i j =
+        ∑ x, E.changeOfBasis x i * f x * E.changeOfBasis x j := by
+    intro i j
+    rw [markedMatrix, Matrix.mul_apply]
+    apply Finset.sum_congr rfl
+    intro x _
+    rw [Matrix.mul_diagonal]
+    simp [mul_assoc]
+  ext i j
+  rw [Matrix.transpose_apply, hentry j i, hentry i j]
+  exact Finset.sum_congr rfl fun x _ => by ring
+
+/-- Symmetry of the marked matrix entries in real orthogonal spectral
+coordinates. -/
+theorem markedMatrix_comm {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (i j : Ω) :
+    E.markedMatrix f i j = E.markedMatrix f j i := by
+  have h := congr_fun (congr_fun (E.markedMatrix_transpose f) i) j
+  simpa using h.symm
 
 /-- Powers of a matrix with explicit orthogonal diagonalization. -/
 theorem pow_eq {M : Matrix Ω Ω ℝ}
@@ -667,6 +711,121 @@ theorem marked_sum_abs_le_spectralPrefactor {M : Matrix Ω Ω ℝ}
     _ = E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ a := by
       simp [markedSpectralPrefactor, coeff, Finset.sum_mul, mul_assoc]
 
+/-- Spectral dominance and cancellation of only the dominant-dominant marked
+entry give a two-sided cyclic marked-trace bound.  This is the natural finite
+cycle estimate: after the non-decaying `(top, top)` channel is removed, each
+remaining spectral term has a subdominant eigenvalue on at least one arc. -/
+theorem marked_sum_abs_le_spectralPrefactor_min {M : Matrix Ω Ω ℝ}
+    (E : RealOrthogonalSpectralData M) (f : Ω → ℝ) (top : Ω)
+    (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_le_one : theta ≤ 1)
+    (eigenvalue_abs_le_scale : ∀ i, |E.eigenvalue i| ≤ scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_markedDiagonal_zero : E.markedMatrix f top top = 0)
+    {a b : ℕ} :
+    |∑ i, ∑ j,
+        E.markedMatrix f i j * E.markedMatrix f j i
+          * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+      ≤ E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ min a b := by
+  let coeff : Ω → Ω → ℝ :=
+    fun i j => E.markedMatrix f i j * E.markedMatrix f j i
+  let term : Ω → Ω → ℝ :=
+    fun i j => coeff i j * E.eigenvalue j ^ a * E.eigenvalue i ^ b
+  have hscale_nonneg : 0 ≤ scale := scale_pos.le
+  have htheta_scale_nonneg : 0 ≤ theta * scale :=
+    mul_nonneg theta_nonneg hscale_nonneg
+  have htheta_min_nonneg : 0 ≤ theta ^ min a b :=
+    pow_nonneg theta_nonneg _
+  have hsum :
+      |∑ i, ∑ j, term i j| ≤ ∑ i, ∑ j, |term i j| := by
+    calc
+      |∑ i, ∑ j, term i j| ≤ ∑ i, |∑ j, term i j| :=
+        Finset.abs_sum_le_sum_abs (fun i => ∑ j, term i j) Finset.univ
+      _ ≤ ∑ i, ∑ j, |term i j| := by
+        exact Finset.sum_le_sum fun i _ =>
+          Finset.abs_sum_le_sum_abs (fun j => term i j) Finset.univ
+  have hterm : ∀ i j, |term i j| ≤
+      |coeff i j| * (scale ^ (a + b) * theta ^ min a b) := by
+    intro i j
+    by_cases hj : j = top
+    · subst j
+      by_cases hi : i = top
+      · subst i
+        have hcoeff : coeff top top = 0 := by
+          simp [coeff, dominant_markedDiagonal_zero]
+        simp [term, hcoeff]
+      · have hjpow : |E.eigenvalue top| ^ a ≤ scale ^ a :=
+          pow_le_pow_left₀ (abs_nonneg _) (eigenvalue_abs_le_scale top) a
+        have hipow : |E.eigenvalue i| ^ b ≤ (theta * scale) ^ b :=
+          pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le i hi) b
+        have hpow_mul :
+            |E.eigenvalue top| ^ a * |E.eigenvalue i| ^ b
+              ≤ scale ^ a * (theta * scale) ^ b :=
+          mul_le_mul hjpow hipow (pow_nonneg (abs_nonneg _) b)
+            (pow_nonneg hscale_nonneg a)
+        have htheta_pow_le_min : theta ^ b ≤ theta ^ min a b :=
+          pow_le_pow_of_le_one theta_nonneg theta_le_one (Nat.min_le_right a b)
+        have hpow_eq :
+            scale ^ a * (theta * scale) ^ b = scale ^ (a + b) * theta ^ b := by
+          rw [mul_pow, pow_add]
+          ring
+        have hpow_target :
+            scale ^ a * (theta * scale) ^ b
+              ≤ scale ^ (a + b) * theta ^ min a b := by
+          rw [hpow_eq]
+          exact mul_le_mul_of_nonneg_left htheta_pow_le_min
+            (pow_nonneg hscale_nonneg (a + b))
+        calc
+          |term i top|
+              = |coeff i top| * (|E.eigenvalue top| ^ a * |E.eigenvalue i| ^ b) := by
+                simp [term, abs_mul, abs_pow, mul_assoc]
+          _ ≤ |coeff i top| * (scale ^ a * (theta * scale) ^ b) :=
+                mul_le_mul_of_nonneg_left hpow_mul (abs_nonneg _)
+          _ ≤ |coeff i top| * (scale ^ (a + b) * theta ^ min a b) :=
+                mul_le_mul_of_nonneg_left hpow_target (abs_nonneg _)
+    · have hjpow : |E.eigenvalue j| ^ a ≤ (theta * scale) ^ a :=
+        pow_le_pow_left₀ (abs_nonneg _) (subdominant_abs_le j hj) a
+      have hipow : |E.eigenvalue i| ^ b ≤ scale ^ b :=
+        pow_le_pow_left₀ (abs_nonneg _) (eigenvalue_abs_le_scale i) b
+      have hpow_mul :
+          |E.eigenvalue j| ^ a * |E.eigenvalue i| ^ b
+            ≤ (theta * scale) ^ a * scale ^ b :=
+        mul_le_mul hjpow hipow (pow_nonneg (abs_nonneg _) b)
+          (pow_nonneg htheta_scale_nonneg a)
+      have htheta_pow_le_min : theta ^ a ≤ theta ^ min a b :=
+        pow_le_pow_of_le_one theta_nonneg theta_le_one (Nat.min_le_left a b)
+      have hpow_eq :
+          (theta * scale) ^ a * scale ^ b = scale ^ (a + b) * theta ^ a := by
+        rw [mul_pow, pow_add]
+        ring
+      have hpow_target :
+          (theta * scale) ^ a * scale ^ b
+            ≤ scale ^ (a + b) * theta ^ min a b := by
+        rw [hpow_eq]
+        exact mul_le_mul_of_nonneg_left htheta_pow_le_min
+          (pow_nonneg hscale_nonneg (a + b))
+      calc
+        |term i j|
+            = |coeff i j| * (|E.eigenvalue j| ^ a * |E.eigenvalue i| ^ b) := by
+              simp [term, abs_mul, abs_pow, mul_assoc]
+        _ ≤ |coeff i j| * ((theta * scale) ^ a * scale ^ b) :=
+              mul_le_mul_of_nonneg_left hpow_mul (abs_nonneg _)
+        _ ≤ |coeff i j| * (scale ^ (a + b) * theta ^ min a b) :=
+              mul_le_mul_of_nonneg_left hpow_target (abs_nonneg _)
+  calc
+    |∑ i, ∑ j,
+        E.markedMatrix f i j * E.markedMatrix f j i
+          * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+        = |∑ i, ∑ j, term i j| := rfl
+    _ ≤ ∑ i, ∑ j, |term i j| := hsum
+    _ ≤ ∑ i, ∑ j, |coeff i j| * (scale ^ (a + b) * theta ^ min a b) := by
+      exact Finset.sum_le_sum fun i _ =>
+        Finset.sum_le_sum fun j _ => hterm i j
+    _ = E.markedSpectralPrefactor f * scale ^ (a + b) * theta ^ min a b := by
+      simp [markedSpectralPrefactor, coeff, Finset.sum_mul, mul_assoc]
+
 end RealOrthogonalSpectralData
 
 /-- The finite Hermitian spectral-theorem eigenvalues of the balanced layer
@@ -701,6 +860,14 @@ theorem layerSymmetricTransferPartitionTrace_eq_sum_eigenvalues_pow
   rw [layerSymmetricTransferPartitionTrace, layerSymmetricTransferEigenvalues]
   exact trace_pow_eq_sum_hermitian_eigenvalues_pow
     (layerSymmetricTransferMatrix_isHermitian u k hk) N
+
+/-- Explicit real orthogonal spectral data for the balanced layer transfer
+matrix, obtained from the finite Hermitian spectral theorem. -/
+noncomputable def layerSymmetricTransferOrthogonalSpectralData
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (hk : ∀ a b, k a b = k b a) :
+    RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k) :=
+  RealOrthogonalSpectralData.ofHermitian
+    (layerSymmetricTransferMatrix_isHermitian u k hk)
 
 /-- Diagonal similarity between the ordinary layer transfer matrix and the
 balanced layer transfer matrix:
@@ -899,6 +1066,40 @@ def LayerBalancedSpectralGapCertificate.toLayerSpectralGapCertificate
       u k f hu]
     exact h.marked_abs_le ha hb
 
+/-- A balanced finite spectral-gap certificate with the two-arc cyclic
+marked-trace estimate `theta ^ min a b`.
+
+This is weaker than a one-sided separation estimate but requires only the
+dominant-dominant marked channel to vanish.  It is the natural finite cyclic
+bound before taking a thermodynamic limit or imposing an arc-ordering. -/
+structure LayerBalancedMinSpectralGapCertificate
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ) where
+  /-- The positive dominant transfer scale. -/
+  scale : ℝ
+  /-- The nonnegative subdominant ratio. -/
+  theta : ℝ
+  /-- The numerator prefactor. -/
+  prefactor : ℝ
+  /-- The denominator prefactor in the partition lower bound. -/
+  partitionPrefactor : ℝ
+  /-- Positivity of the dominant transfer scale. -/
+  scale_pos : 0 < scale
+  /-- Nonnegativity of the subdominant ratio. -/
+  theta_nonneg : 0 ≤ theta
+  /-- Strict spectral-gap ratio bound. -/
+  theta_lt_one : theta < 1
+  /-- Nonnegativity of the numerator prefactor. -/
+  prefactor_nonneg : 0 ≤ prefactor
+  /-- Positivity of the partition prefactor. -/
+  partitionPrefactor_pos : 0 < partitionPrefactor
+  /-- Lower bound on the balanced cyclic partition trace. -/
+  partition_lower : ∀ {N : ℕ}, 0 < N →
+    partitionPrefactor * scale ^ N ≤ layerSymmetricTransferPartitionTrace u k N
+  /-- Two-arc upper bound on the balanced marked two-insertion trace. -/
+  marked_abs_le_min : ∀ {a b : ℕ}, 0 < a → 0 < b →
+    |layerSymmetricTransferCorrelationTrace u k f a b|
+      ≤ prefactor * scale ^ (a + b) * theta ^ min a b
+
 /-- Constructor for an ordinary spectral-gap certificate from explicit
 transfer-trace bounds. -/
 def layerSpectralGapCertificate_of_traceBounds
@@ -954,6 +1155,34 @@ def layerBalancedSpectralGapCertificate_of_traceBounds
   partitionPrefactor_pos := partitionPrefactor_pos
   partition_lower := partition_lower
   marked_abs_le := marked_abs_le
+
+/-- Constructor for a balanced min-separation spectral-gap certificate from
+explicit balanced trace bounds. -/
+def layerBalancedMinSpectralGapCertificate_of_traceBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ layerSymmetricTransferPartitionTrace u k N)
+    (marked_abs_le_min : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |layerSymmetricTransferCorrelationTrace u k f a b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ min a b) :
+    LayerBalancedMinSpectralGapCertificate u k f where
+  scale := scale
+  theta := theta
+  prefactor := prefactor
+  partitionPrefactor := partitionPrefactor
+  scale_pos := scale_pos
+  theta_nonneg := theta_nonneg
+  theta_lt_one := theta_lt_one
+  prefactor_nonneg := prefactor_nonneg
+  partitionPrefactor_pos := partitionPrefactor_pos
+  partition_lower := partition_lower
+  marked_abs_le_min := marked_abs_le_min
 
 /-- Constructor for a balanced spectral-gap certificate from explicit
 orthogonal spectral data and explicit spectral-basis bounds.
@@ -1067,6 +1296,97 @@ noncomputable def layerBalancedSpectralGapCertificate_of_orthogonalDominantBound
           subdominant_abs_le)
         subdominant_abs_le dominant_markedColumn_zero ha)
 
+/-- Constructor for a balanced min-separation spectral-gap certificate from
+explicit orthogonal spectral data and explicit spectral-basis bounds. -/
+def layerBalancedMinSpectralGapCertificate_of_orthogonalSpectralData
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (scale theta prefactor partitionPrefactor : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (prefactor_nonneg : 0 ≤ prefactor)
+    (partitionPrefactor_pos : 0 < partitionPrefactor)
+    (partition_lower_spectral : ∀ {N : ℕ}, 0 < N →
+      partitionPrefactor * scale ^ N ≤ ∑ i, E.eigenvalue i ^ N)
+    (marked_abs_le_min_spectral : ∀ {a b : ℕ}, 0 < a → 0 < b →
+      |∑ i, ∑ j,
+          E.markedMatrix f i j * E.markedMatrix f j i
+            * E.eigenvalue j ^ a * E.eigenvalue i ^ b|
+        ≤ prefactor * scale ^ (a + b) * theta ^ min a b) :
+    LayerBalancedMinSpectralGapCertificate u k f := by
+  refine
+    layerBalancedMinSpectralGapCertificate_of_traceBounds u k f scale theta
+      prefactor partitionPrefactor scale_pos theta_nonneg theta_lt_one
+      prefactor_nonneg partitionPrefactor_pos ?_ ?_
+  · intro N hN
+    rw [layerSymmetricTransferPartitionTrace,
+      RealOrthogonalSpectralData.trace_pow_eq_sum E N]
+    exact partition_lower_spectral hN
+  · intro a b ha hb
+    rw [layerSymmetricTransferCorrelationTrace,
+      RealOrthogonalSpectralData.marked_trace_eq_sum E f a b]
+    exact marked_abs_le_min_spectral ha hb
+
+/-- Constructor for a balanced min-separation spectral-gap certificate from
+explicit orthogonal spectral data, a chosen dominant spectral index, a
+subdominant absolute spectral bound, and dominant-dominant marked-channel
+cancellation. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue : E.eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * scale)
+    (dominant_markedDiagonal_zero : E.markedMatrix f top top = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalSpectralData u k f E
+    scale theta (E.markedSpectralPrefactor f)
+    (finiteSpectralPartitionPrefactor Ω theta)
+    scale_pos theta_nonneg theta_lt_one
+    (E.markedSpectralPrefactor_nonneg f)
+    (finiteSpectralPartitionPrefactor_pos Ω partitionPrefactor_small)
+    (fun hN =>
+      RealOrthogonalSpectralData.partition_lower_of_dominant_bounds
+        E top scale theta scale_pos theta_nonneg theta_lt_one.le
+        dominant_eigenvalue subdominant_abs_le hN)
+    (fun _ha _hb =>
+      RealOrthogonalSpectralData.marked_sum_abs_le_spectralPrefactor_min
+        E f top scale theta scale_pos theta_nonneg theta_lt_one.le
+        (RealOrthogonalSpectralData.eigenvalue_abs_le_scale_of_dominant_bounds
+          E top scale theta scale_pos theta_lt_one.le dominant_eigenvalue
+          subdominant_abs_le)
+        subdominant_abs_le dominant_markedDiagonal_zero)
+
+/-- Constructor for a balanced min-separation spectral-gap certificate using
+the Hermitian spectral theorem data attached to the balanced transfer matrix. -/
+noncomputable def layerBalancedMinSpectralGapCertificate_of_layerHermitianDominantBounds
+    (u : Ω → ℝ) (k : Ω → Ω → ℝ) (f : Ω → ℝ)
+    (hk : ∀ a b, k a b = k b a)
+    (top : Ω) (scale theta : ℝ)
+    (scale_pos : 0 < scale)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (partitionPrefactor_small :
+      (((Fintype.card Ω - 1 : ℕ) : ℝ) * theta) < 1)
+    (dominant_eigenvalue :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue top = scale)
+    (subdominant_abs_le : ∀ i, i ≠ top →
+      |(layerSymmetricTransferOrthogonalSpectralData u k hk).eigenvalue i|
+        ≤ theta * scale)
+    (dominant_markedDiagonal_zero :
+      (layerSymmetricTransferOrthogonalSpectralData u k hk).markedMatrix f top top = 0) :
+    LayerBalancedMinSpectralGapCertificate u k f :=
+  layerBalancedMinSpectralGapCertificate_of_orthogonalDominantBounds u k f
+    (layerSymmetricTransferOrthogonalSpectralData u k hk) top scale theta
+    scale_pos theta_nonneg theta_lt_one partitionPrefactor_small
+    dominant_eigenvalue subdominant_abs_le dominant_markedDiagonal_zero
+
 /-- Constructor for an ordinary spectral-gap certificate from explicit balanced
 trace bounds, transported across the diagonal similarity. -/
 def layerSpectralGapCertificate_of_balancedTraceBounds
@@ -1116,6 +1436,75 @@ theorem layerSpinTwoPoint_abs_le_of_balancedSpectralGapCertificate
     simpa using
       (layerSpinTwoPoint_abs_le_of_spectralGapCertificate u k x
         (h.toLayerSpectralGapCertificate hu) hb)
+
+/-- A balanced min-separation spectral-gap certificate gives the two-arc cyclic
+decay bound for the normalised layer two-point trace ratio. -/
+theorem layerTwoPoint_abs_le_min_of_balancedMinSpectralGapCertificate
+    {u : Ω → ℝ} {k : Ω → Ω → ℝ} {f : Ω → ℝ}
+    (hu : ∀ a, 0 < u a)
+    (h : LayerBalancedMinSpectralGapCertificate u k f)
+    {a b : ℕ} [NeZero a] (hb : 0 < b) :
+    |layerTwoPoint u k f (a := a) (b := b) hb|
+      ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ min a b := by
+  have ha : 0 < a := Nat.pos_of_ne_zero (NeZero.ne a)
+  have hN : 0 < a + b := Nat.add_pos_left ha b
+  have hscaleN : 0 < h.scale ^ (a + b) := pow_pos h.scale_pos (a + b)
+  have hθmin : 0 ≤ h.theta ^ min a b := pow_nonneg h.theta_nonneg _
+  have hlower_pos : 0 < h.partitionPrefactor * h.scale ^ (a + b) :=
+    mul_pos h.partitionPrefactor_pos hscaleN
+  have hden_lower : h.partitionPrefactor * h.scale ^ (a + b)
+      ≤ layerTransferPartitionTrace u k (a + b) := by
+    rw [layerTransferPartitionTrace_eq_layerSymmetricTransferPartitionTrace u k hu]
+    exact h.partition_lower hN
+  have hden_pos : 0 < layerTransferPartitionTrace u k (a + b) :=
+    lt_of_lt_of_le hlower_pos hden_lower
+  have hmarked : |layerTransferCorrelation_matrixElement u k f a b|
+      ≤ h.prefactor * h.scale ^ (a + b) * h.theta ^ min a b := by
+    rw [layerTransferCorrelation_matrixElement_eq_layerSymmetricTransferCorrelationTrace
+      u k f hu]
+    exact h.marked_abs_le_min ha hb
+  rw [layerTwoPoint_eq_trace_ratio, abs_div, abs_of_pos hden_pos]
+  calc
+    |layerTransferCorrelation_matrixElement u k f a b| /
+        layerTransferPartitionTrace u k (a + b)
+        = |layerTransferCorrelation_matrixElement u k f a b|
+          * (layerTransferPartitionTrace u k (a + b))⁻¹ := by
+            rw [div_eq_mul_inv]
+    _ ≤ (h.prefactor * h.scale ^ (a + b) * h.theta ^ min a b)
+          * (h.partitionPrefactor * h.scale ^ (a + b))⁻¹ := by
+            exact mul_le_mul hmarked ((inv_le_inv₀ hden_pos hlower_pos).mpr hden_lower)
+              (inv_nonneg.mpr hden_pos.le)
+              (mul_nonneg (mul_nonneg h.prefactor_nonneg hscaleN.le) hθmin)
+    _ = (h.prefactor / h.partitionPrefactor) * h.theta ^ min a b := by
+            field_simp [(ne_of_gt h.partitionPrefactor_pos), (ne_of_gt hscaleN)]
+
+/-- If the marked separation is no longer than the complementary arc, the
+two-arc min-separation bound becomes the usual one-sided separation bound. -/
+theorem layerTwoPoint_abs_le_left_of_balancedMinSpectralGapCertificate
+    {u : Ω → ℝ} {k : Ω → Ω → ℝ} {f : Ω → ℝ}
+    (hu : ∀ a, 0 < u a)
+    (h : LayerBalancedMinSpectralGapCertificate u k f)
+    {a b : ℕ} [NeZero a] (hb : 0 < b) (hab : a ≤ b) :
+    |layerTwoPoint u k f (a := a) (b := b) hb|
+      ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ a := by
+  simpa [Nat.min_eq_left hab] using
+    (layerTwoPoint_abs_le_min_of_balancedMinSpectralGapCertificate
+      (u := u) (k := k) (f := f) hu h (a := a) (b := b) hb)
+
+/-- Spin-observable wrapper for the balanced min-separation certificate bound. -/
+theorem layerSpinTwoPoint_abs_le_min_of_balancedMinSpectralGapCertificate
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ)
+    (x : S)
+    (hu : ∀ a, 0 < u a)
+    (h : LayerBalancedMinSpectralGapCertificate u k (layerSpinAt x))
+    {a b : ℕ} [NeZero a] (hb : 0 < b) :
+    |layerSpinTwoPoint u k x (a := a) (b := b) hb|
+      ≤ (h.prefactor / h.partitionPrefactor) * h.theta ^ min a b :=
+  by
+    simpa using
+      (layerTwoPoint_abs_le_min_of_balancedMinSpectralGapCertificate
+        (u := u) (k := k) (f := layerSpinAt x) hu h (a := a) (b := b) hb)
 
 end TransferMatrix
 
