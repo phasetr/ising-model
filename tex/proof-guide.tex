@@ -6886,6 +6886,37 @@ open-slab geometry, thermodynamic limits, or final hyperplane exponential
 decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Positive-column eigenvalue-radius bound (\S17.1, Issue~\#3511).}
+The next finite Perron-facing step is a weak Collatz--Wielandt comparison.
+The lemma {\scriptsize\texttt{exists\_positive\_vector\_abs\_bound\_attained}}
+chooses the least coordinatewise scale \(C\) against a strictly positive
+vector \(v\), so that \(|w_i|\le C v_i\), and records a coordinate where
+equality holds.  If \(M\) is entrywise positive, \(Mv=\lambda v\) with
+\(v>0\), and \(Mw=\mu w\), the attaining coordinate gives
+\[
+  |\mu|\,C v_i
+    = |(Mw)_i|
+    \le \sum_j M_{ij}|w_j|
+    \le \sum_j M_{ij}C v_j
+    = \lambda\,C v_i .
+\]
+Since \(C v_i>0\), this proves \(|\mu|\le\lambda\).  This is formalised as
+{\scriptsize\texttt{abs\_eigenvalue\_le\_of\_entrywisePositive\_positive\_eigenpair}}.
+
+For explicit orthogonal spectral data, columns are nonzero right eigenvectors,
+and a positive top column has a positive eigenvalue.  The wrappers
+{\scriptsize\texttt{RealOrthogonalSpectralData.eigenvalue\_abs\_le\_of\_positive\_column}}
+and
+{\scriptsize\texttt{layerSymmetricTransfer\_eigenvalue\_abs\_le\_of\_positive\_column}}
+therefore show that such a top column bounds every spectral-data eigenvalue in
+absolute value.  The scale-fixed finite-certificate constructors then take the
+transfer scale to be this top eigenvalue, leaving the strict subdominant
+\(\theta\)-bound and the marked-channel cancellation as explicit hypotheses.
+This still does not prove Perron--Frobenius existence, uniqueness of the
+positive column, a strict subdominant gap, open-slab geometry, thermodynamic
+limits, or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
