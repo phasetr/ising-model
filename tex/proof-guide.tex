@@ -7520,6 +7520,54 @@ estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Finite layer-cylinder spectral-decay consumer (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerCylinderSpectralDecay.lean}
+\]
+turns the existing balanced min-gap certificates into project-level
+correlation inequalities on finite periodic layer cylinders.  The physical
+one-layer and transition weights are strictly positive because they are
+exponentials:
+\[
+  \texttt{layerInternalWeight\_pos},
+  \qquad
+  \texttt{layerTransitionWeight\_pos}.
+\]
+The one-layer positivity lemma discharges the input needed to transport
+balanced spectral estimates to ordinary layer traces.  The main abstract consumer is
+\[
+  \texttt{layerCylinderSpinTwoPoint\_abs\_le\_min\_of\_balancedMinSpectralGapCertificate},
+\]
+which gives
+\[
+  |G_{a,b}|
+    \le
+    \frac{\texttt{prefactor}}{\texttt{partitionPrefactor}}\,
+      \theta^{\min(a,b)}
+\]
+for the concrete cyclic layer-cylinder spin two-point function.  Composing
+with the explicit graph-to-layer bridge gives
+\[
+  \texttt{correlation\_layerCylinderGraph\_same\_transverse\_abs\_le\_min\_of\_balancedMinSpectralGapCertificate}.
+\]
+Thus a finite balanced certificate now appears as an inequality for the
+project-level Gibbs correlation on the finite cylinder graph itself.  The file
+also records the cubic specialization
+\[
+  \texttt{correlation\_cubicLayerCylinderGraph\_same\_transverse\_abs\_le\_min\_of\_cert}
+\]
+and the direct free-layer Walsh consumer
+\[
+  \texttt{correlation\_freeLayerCylinderGraph\_same\_transverse\_abs\_le\_tanh},
+\]
+whose decay rate is \(\tanh(p.\beta p.J)\) under the finite Walsh smallness
+condition.  This is still a finite periodic-cylinder result.  It does not
+prove an interacting cubic-layer spectral window, open-slab or free-boundary
+geometry, thermodynamic limits, or the final hyperplane decay estimate.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
