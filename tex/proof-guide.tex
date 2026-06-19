@@ -8946,6 +8946,24 @@ and the parity input: it does not construct the window uniformly or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Quadratic-form spectral gap for the explicit subdominant ratio
+(\S17.1, Issue~\#3511).}
+The explicit subdominant ratio bound is reduced to a \emph{quadratic-form gap} on
+the subspace orthogonal to the maximal spectral column, using only the orthogonal
+diagonalization (no Courant--Fischer).  Each non-maximal spectral column is a unit
+eigenvector with vanishing spectral coordinate at the maximal index, so applying a
+Rayleigh bound \(|\langle v, Mv\rangle|\le\rho\,\|v\|^2\) (valid for all \(v\) with
+\(\mathrm{spectralCoord}\,v\,\mathrm{top}=0\)) to the \(i\)-th unit column yields
+\(|\lambda_i|\le\rho\) for every \(i\neq\mathrm{top}\).  With
+\(\rho=\theta\,\lambda_{\max}\) and \(\theta\ge0\), composing with the explicit-ratio
+hook gives \(r_{\mathrm{abs}}\le\theta\).  This converts the
+transverse-volume-uniform target from an eigenvalue list into a single Rayleigh
+bound on the top-orthogonal subspace — precisely what a later
+Dobrushin/Hilbert-projective-metric estimate must produce.  Layer and cubic
+wrappers are provided.  This is finite and conditional on the quadratic-form gap:
+it does not construct that gap or prove a thermodynamic limit.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
