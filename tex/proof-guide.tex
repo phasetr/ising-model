@@ -8723,6 +8723,40 @@ does not prove simple spectrum, signed positivity, the open-boundary decay
 discharge, a thermodynamic limit, or final hyperplane decay.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Two-site interacting layer simple spectrum and spectral window
+(\S17.1, Issue~\#3511).}
+We supply the structural inputs of the open-boundary simple-parity route for the
+interacting \(K_2\) layer.  For \(0<a=\beta J\) the four eigenvalues are strictly
+ordered
+\[
+  \mathrm{top}>\mathrm{flipOdd}>\mathrm{swapOdd}>\mathrm{evenBot}>0 .
+\]
+Indeed \(\mathrm{top}-\mathrm{flipOdd}\ge 2e^{-a}>0\) from \(\mathrm{rad}\ge\Delta\);
+\(\mathrm{flipOdd}=e^{2a}\,\mathrm{swapOdd}\) so \(\mathrm{flipOdd}>\mathrm{swapOdd}\);
+and the determinant relation
+\[
+  \mathrm{top}\cdot\mathrm{evenBot}=\mathrm{flipOdd}\cdot\mathrm{swapOdd}
+    =e^{4a}+e^{-4a}-2
+\]
+(from \(\mathrm{rad}^2=\Delta^2+16\) and \(e^{3a}e^{-3a}=e^{a}e^{-a}=1\)) gives
+\(\mathrm{evenBot}=\mathrm{flipOdd}\,\mathrm{swapOdd}/\mathrm{top}>0\) and, since
+\(\mathrm{top}>\mathrm{flipOdd}\), also \(\mathrm{evenBot}<\mathrm{swapOdd}\).
+Hence the spectral data has a simple spectrum
+(\(\texttt{twoSiteInteractingTransferOrthogonalSpectralData\_simpleSpectrum}\) and
+its physical-layer wrapper).  The dominant rotation column
+\((c,s,s,c)/\sqrt2\) is strictly positive because \(c,s>0\)
+(\(\mathrm{rad}>|\Delta|\)), so it is signed-positive.  The subdominant decay
+parameter is \(\theta=\mathrm{flipOdd}/\mathrm{top}\) (not \(\tanh a\)), with
+\(\theta<1\), \(\theta\,\mathrm{top}=\mathrm{flipOdd}\), and every non-top
+eigenvalue bounded by \(\theta\,\mathrm{top}\) in absolute value.  This file
+supplies the \texttt{SimpleSpectrum}, signed-positive, and subdominant-window
+inputs; the open boundary-window cap and the open-slab decay discharge are a
+later step (the interacting balanced boundary vector is not constant, so the cap
+argument differs from the one-site and free cases).  It does not prove the
+open-slab decay bound, a thermodynamic limit, or final hyperplane decay.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
