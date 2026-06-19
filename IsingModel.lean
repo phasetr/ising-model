@@ -294,6 +294,7 @@ import IsingModel.TransferMatrix.LayerOpenPerron
 import IsingModel.TransferMatrix.FreeLayerWalshOpenPerron
 import IsingModel.TransferMatrix.FreeLayerWalshOpenDecay
 import IsingModel.TransferMatrix.FreeLayerWalshOpenInfiniteVolume
+import IsingModel.TransferMatrix.FreeLayerWalshOpenAxisDecay
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
