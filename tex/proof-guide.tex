@@ -8114,6 +8114,64 @@ subdominant spectral window, thermodynamic limits, and final hyperplane decay
 outside the proved scope.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary spectral boundary window (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenBoundaryWindow.lean}
+\]
+turns the remaining open-boundary denominator smallness input into a finite
+boundary-coordinate threshold.  For a boundary vector \(v\), a spectral datum
+\(E\), and a channel \(\mathrm{top}\), write
+\[
+  R_{\mathrm{top}}=\sum_{i\ne\mathrm{top}} b_i^2,
+  \qquad b_i=\sum_x v_x Q_{xi}.
+\]
+The Lean definition
+\[
+  \texttt{boundarySpectralWindowThreshold}
+\]
+is \(1\) when \(R_{\mathrm{top}}=0\), and otherwise is
+\[
+  b_{\mathrm{top}}^2/R_{\mathrm{top}}.
+\]
+The capped version \(\min(1,\text{threshold})\) is
+\[
+  \texttt{boundarySpectralWindowCap}.
+\]
+If the top boundary coordinate has positive square and
+\(\theta\) is below this cap, then both \(\theta<1\) and
+\[
+  R_{\mathrm{top}}\theta<b_{\mathrm{top}}^2
+\]
+hold.  The formal lemmas
+\[
+  \begin{gathered}
+  \texttt{boundaryPrefactor\_small\_of\_lt\_boundarySpectralWindowCap},\\
+  \texttt{boundarySpectralPartitionPrefactor\_pos\_of\_lt\_}\\
+  \texttt{boundarySpectralWindowCap}
+  \end{gathered}
+\]
+feed this inequality into the existing open denominator prefactor.  The layer
+wrappers
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinGapCert\_of\_signedPositiveBoundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_maxEigenIndexBoundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_subdominant\_signedPositiveFlipParitySpin\_}\\
+  \texttt{boundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_maxEigenIndexFlipParitySpin\_boundaryWindow}
+  \end{gathered}
+\]
+replace the explicit boundary-prefactor smallness hypothesis in the existing
+signed-positive and max-index open routes.  Their open-slab and cubic consumers
+therefore expose the same finite estimates with this boundary-window
+hypothesis in place of the raw smallness inequality.  This is still a
+conditional finite bridge: the subdominant spectral window and, for the parity
+route, the parity-adapted spectral datum remain inputs.  It does not prove an
+interacting cubic-layer spectral window, a thermodynamic limit, or final
+hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
