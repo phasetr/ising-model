@@ -8296,6 +8296,64 @@ These theorems are finite, zero-field, and longitudinal-axis only.  They do not
 assert decay for the full cubic lattice graph with transverse edges, do not
 prove an interacting spectral window, and do not take a thermodynamic limit.
 
+\paragraph{Free-layer axis-graph cubic-exhaustion infinite-volume decay
+(\S17.1/\S17.5, Issue~\#3511 PR~\#4044).}
+The infinite-volume axis consumer in
+\texttt{FreeLayerWalshOpenAxisInfiniteVolume.lean} passes the finite
+axis-graph cubic-box estimates through the concrete cubic exhaustion.  The
+ambient two-point observable is
+\[
+  \texttt{freeLayerAxisTwoPoint}\ d\ x\ \texttt{sep}
+  =
+  \{\texttt{freeLayerAxisPoint}\ d\ 0\ x,\,
+    \texttt{freeLayerAxisPoint}\ d\ \texttt{sep}\ x\}.
+\]
+For each stage \(N\), the proofs split on whether this pair is contained in
+\((\texttt{Ambient.cubicExhaustion}\ (d+1)).\texttt{volume}\ N\).  In the
+contained case, membership of the endpoint at time \(0\) gives
+\(x\in\texttt{Ambient.cubicBox}\ d\ N\), membership of the endpoint at
+\(\texttt{sep}\) gives \(\texttt{sep}\le N\).  The helper
+\[
+  \texttt{Ambient.liftFinset\_pair}
+\]
+identifies the lifted observable with
+\(\texttt{freeLayerOpenCubicAxisTwoPoint}\).  The finite consumers from
+\texttt{FreeLayerWalshOpenAxisDecay.lean} then give
+\[
+\begin{gathered}
+  \texttt{abs\_correlationAlongExhaustion\_}\\
+  \texttt{freeLayerAxisGraph\_axis\_le\_tanh},\\
+  \texttt{abs\_correlationAlongExhaustion\_}\\
+  \texttt{freeLayerAxisGraph\_axis\_le\_exp\_neg\_mass}.
+\end{gathered}
+\]
+If the pair is not contained in the stage, the along-exhaustion convention
+rewrites the correlation to zero.  Finally,
+\(\texttt{Ambient.correlationInfinite\_eq\_ciSup}\), \(\texttt{ciSup\_le}\),
+and the stage \(0\) lower side of the absolute-value bound turn these pointwise
+stage bounds into
+\[
+\begin{gathered}
+  \texttt{abs\_correlationInfinite\_}\\
+  \texttt{freeLayerAxisGraph\_axis\_le\_tanh},\\
+  \texttt{abs\_correlationInfinite\_}\\
+  \texttt{freeLayerAxisGraph\_axis\_le\_exp\_neg\_mass}.
+\end{gathered}
+\]
+The one-sided wrappers
+\[
+\begin{gathered}
+  \texttt{correlationInfinite\_freeLayerAxisGraph\_axis\_le\_tanh},\\
+  \texttt{correlationInfinite\_}\\
+  \texttt{freeLayerAxisGraph\_axis\_le\_exp\_neg\_mass}
+\end{gathered}
+\]
+then follow from \(\texttt{le\_abs\_self}\).
+This is still a zero-field free-layer result for the longitudinal-only
+\(\texttt{freeLayerAxisGraph}\).  It does not assert decay for the full
+\(\texttt{latticeGraph}\ (d+1)\) and does not prove an interacting transverse
+spectral window.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
