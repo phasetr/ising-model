@@ -162,6 +162,83 @@ theorem layerSymmetricTransferMatrix_fin2_complete_eq_reindex_twoSiteInteracting
   congr 1
   ring
 
+/-! ## Eigenvalues and the orthogonal change of basis -/
+
+/-- The four eigenvalues of the interacting two-site transfer matrix: the even
+sector splits into a dominant and subdominant root, and the two odd sectors give
+`e^{3a}-e^{-a}` and `e^{a}-e^{-3a}`. -/
+noncomputable def twoSiteInteractingTransferEigenvalue (a : ℝ) (i : Fin 2 × Fin 2) : ℝ :=
+  if i = (0, 0) then (twoSiteK2EvenA a + twoSiteK2EvenB a + twoSiteK2Rad a) / 2
+  else if i = (0, 1) then Real.exp (3 * a) - Real.exp (-a)
+  else if i = (1, 0) then Real.exp a - Real.exp (-(3 * a))
+  else (twoSiteK2EvenA a + twoSiteK2EvenB a - twoSiteK2Rad a) / 2
+
+/-- The orthogonal change-of-basis matrix.  The top and even-bottom columns are
+the rotated even-sector modes; the two odd columns are the flip-odd and swap-odd
+modes.  All columns carry the normalization `1/√2`. -/
+noncomputable def twoSiteInteractingChangeOfBasis (a : ℝ) :
+    Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℝ :=
+  Matrix.of fun i j =>
+    (1 / Real.sqrt 2) *
+      ((if j = (0, 0) then
+          ((twoSiteK2RotC a + twoSiteK2RotS a)
+            + (twoSiteK2RotC a - twoSiteK2RotS a) * (spin1D i.1 * spin1D i.2)) / 2
+        else 0)
+      + (if j = (0, 1) then (spin1D i.1 + spin1D i.2) / 2 else 0)
+      + (if j = (1, 0) then (spin1D i.1 - spin1D i.2) / 2 else 0)
+      + (if j = (1, 1) then
+          ((twoSiteK2RotC a - twoSiteK2RotS a)
+            - (twoSiteK2RotC a + twoSiteK2RotS a) * (spin1D i.1 * spin1D i.2)) / 2
+        else 0))
+
+/-- `(1/√2)² = 1/2`. -/
+private theorem one_div_sqrt_two_sq : (1 / Real.sqrt 2) * (1 / Real.sqrt 2) = 1 / 2 := by
+  rw [div_mul_div_comm, one_mul, Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+
+/-- The change-of-basis matrix is orthogonal: `Qᵀ Q = 1`. -/
+theorem twoSiteInteractingChangeOfBasis_orthogonal_left (a : ℝ) :
+    (twoSiteInteractingChangeOfBasis a)ᵀ * twoSiteInteractingChangeOfBasis a = 1 := by
+  have hcs := twoSiteK2RotC_sq_add_RotS_sq a
+  have hsqrt2 := one_div_sqrt_two_sq
+  ext k l
+  rw [Matrix.mul_apply, Fintype.sum_prod_type]
+  simp only [Matrix.transpose_apply, twoSiteInteractingChangeOfBasis, Matrix.of_apply,
+    Matrix.one_apply, Fin.sum_univ_two, spin1D, Matrix.cons_val_zero, Matrix.cons_val_one]
+  fin_cases k <;> fin_cases l <;>
+    simp_all <;>
+    nlinarith [hcs, hsqrt2, Real.sqrt_nonneg 2]
+
+/-- The change-of-basis matrix is orthogonal: `Q Qᵀ = 1`. -/
+theorem twoSiteInteractingChangeOfBasis_orthogonal_right (a : ℝ) :
+    twoSiteInteractingChangeOfBasis a * (twoSiteInteractingChangeOfBasis a)ᵀ = 1 :=
+  mul_eq_one_comm.mpr (twoSiteInteractingChangeOfBasis_orthogonal_left a)
+
+/-- Each interacting-transfer-matrix entry as a single exponential in `a`. -/
+theorem twoSiteInteractingTransferMatrix_apply (a : ℝ) (i j : Fin 2 × Fin 2) :
+    twoSiteInteractingTransferMatrix a i j =
+      Real.exp (((spin1D i.1 * spin1D i.2 + spin1D j.1 * spin1D j.2) / 2
+        + (spin1D i.1 * spin1D j.1 + spin1D i.2 * spin1D j.2)) * a) := by
+  rw [twoSiteInteractingTransferMatrix, Matrix.of_apply]
+  congr 1
+  ring
+
+/-- Division-free form of the squared rotation cosine. -/
+theorem twoSiteK2RotC_sq_mul (a : ℝ) :
+    (twoSiteK2RotC a) ^ 2 * (2 * twoSiteK2Rad a) = twoSiteK2Rad a + twoSiteK2Delta a := by
+  rw [twoSiteK2RotC_sq]
+  field_simp [ne_of_gt (twoSiteK2Rad_pos a)]
+
+/-- Division-free form of the squared rotation sine. -/
+theorem twoSiteK2RotS_sq_mul (a : ℝ) :
+    (twoSiteK2RotS a) ^ 2 * (2 * twoSiteK2Rad a) = twoSiteK2Rad a - twoSiteK2Delta a := by
+  rw [twoSiteK2RotS_sq]
+  field_simp [ne_of_gt (twoSiteK2Rad_pos a)]
+
+/-- Division-free form of the rotation cross term: `c · s · rad = 2`. -/
+theorem twoSiteK2RotC_mul_RotS_mul_Rad (a : ℝ) :
+    twoSiteK2RotC a * twoSiteK2RotS a * twoSiteK2Rad a = 2 := by
+  rw [twoSiteK2RotC_mul_RotS, div_mul_cancel₀ _ (ne_of_gt (twoSiteK2Rad_pos a))]
+
 end TransferMatrix
 
 end IsingModel
