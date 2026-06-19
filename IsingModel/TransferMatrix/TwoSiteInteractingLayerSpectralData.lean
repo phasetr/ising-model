@@ -51,6 +51,14 @@ theorem twoSiteK2Rad_pos (a : ℝ) : 0 < twoSiteK2Rad a := by
 theorem twoSiteK2Rad_sq (a : ℝ) : (twoSiteK2Rad a) ^ 2 = (twoSiteK2Delta a) ^ 2 + 16 := by
   rw [twoSiteK2Rad, Real.sq_sqrt (by positivity)]
 
+/-- The dominant even eigenvalue `top = (A + B + rad)/2`. -/
+noncomputable def twoSiteK2Top (a : ℝ) : ℝ :=
+  (twoSiteK2EvenA a + twoSiteK2EvenB a + twoSiteK2Rad a) / 2
+
+/-- The subdominant even eigenvalue `evenBot = (A + B - rad)/2`. -/
+noncomputable def twoSiteK2EvenBot (a : ℝ) : ℝ :=
+  (twoSiteK2EvenA a + twoSiteK2EvenB a - twoSiteK2Rad a) / 2
+
 /-- The discriminant radius is at least the absolute gap, so `rad + Δ ≥ 0`. -/
 theorem twoSiteK2_rad_add_delta_nonneg (a : ℝ) :
     0 ≤ twoSiteK2Rad a + twoSiteK2Delta a := by
@@ -103,7 +111,8 @@ theorem twoSiteK2RotC_sq_add_RotS_sq (a : ℝ) :
 theorem twoSiteK2RotC_mul_RotS (a : ℝ) :
     twoSiteK2RotC a * twoSiteK2RotS a = 2 / twoSiteK2Rad a := by
   have hrad := twoSiteK2Rad_pos a
-  rw [twoSiteK2RotC, twoSiteK2RotS, ← Real.sqrt_mul (by positivity [twoSiteK2_rad_add_delta_nonneg a])]
+  rw [twoSiteK2RotC, twoSiteK2RotS,
+    ← Real.sqrt_mul (by positivity [twoSiteK2_rad_add_delta_nonneg a])]
   rw [show (twoSiteK2Rad a + twoSiteK2Delta a) / (2 * twoSiteK2Rad a) *
         ((twoSiteK2Rad a - twoSiteK2Delta a) / (2 * twoSiteK2Rad a))
       = ((twoSiteK2Rad a) ^ 2 - (twoSiteK2Delta a) ^ 2) / (4 * (twoSiteK2Rad a) ^ 2) from by
@@ -168,10 +177,10 @@ theorem layerSymmetricTransferMatrix_fin2_complete_eq_reindex_twoSiteInteracting
 sector splits into a dominant and subdominant root, and the two odd sectors give
 `e^{3a}-e^{-a}` and `e^{a}-e^{-3a}`. -/
 noncomputable def twoSiteInteractingTransferEigenvalue (a : ℝ) (i : Fin 2 × Fin 2) : ℝ :=
-  if i = (0, 0) then (twoSiteK2EvenA a + twoSiteK2EvenB a + twoSiteK2Rad a) / 2
+  if i = (0, 0) then twoSiteK2Top a
   else if i = (0, 1) then Real.exp (3 * a) - Real.exp (-a)
   else if i = (1, 0) then Real.exp a - Real.exp (-(3 * a))
-  else (twoSiteK2EvenA a + twoSiteK2EvenB a - twoSiteK2Rad a) / 2
+  else twoSiteK2EvenBot a
 
 /-- The orthogonal change-of-basis matrix.  The top and even-bottom columns are
 the rotated even-sector modes; the two odd columns are the flip-odd and swap-odd
@@ -238,6 +247,153 @@ theorem twoSiteK2RotS_sq_mul (a : ℝ) :
 theorem twoSiteK2RotC_mul_RotS_mul_Rad (a : ℝ) :
     twoSiteK2RotC a * twoSiteK2RotS a * twoSiteK2Rad a = 2 := by
   rw [twoSiteK2RotC_mul_RotS, div_mul_cancel₀ _ (ne_of_gt (twoSiteK2Rad_pos a))]
+
+/-- Even-sector bridge: `c²·top + s²·evenBot = A`. -/
+theorem twoSiteK2_bridge_A (a : ℝ) :
+    (twoSiteK2RotC a) ^ 2 * twoSiteK2Top a + (twoSiteK2RotS a) ^ 2 * twoSiteK2EvenBot a
+      = twoSiteK2EvenA a := by
+  have hrad := twoSiteK2Rad_pos a
+  rw [twoSiteK2Top, twoSiteK2EvenBot, twoSiteK2RotC_sq, twoSiteK2RotS_sq, twoSiteK2Delta]
+  field_simp
+  ring
+
+/-- Even-sector bridge: `s²·top + c²·evenBot = B`. -/
+theorem twoSiteK2_bridge_B (a : ℝ) :
+    (twoSiteK2RotS a) ^ 2 * twoSiteK2Top a + (twoSiteK2RotC a) ^ 2 * twoSiteK2EvenBot a
+      = twoSiteK2EvenB a := by
+  have hrad := twoSiteK2Rad_pos a
+  rw [twoSiteK2Top, twoSiteK2EvenBot, twoSiteK2RotC_sq, twoSiteK2RotS_sq, twoSiteK2Delta]
+  field_simp
+  ring
+
+/-- Even-sector cross bridge: `c·s·top - c·s·evenBot = 2`. -/
+theorem twoSiteK2_bridge_cross (a : ℝ) :
+    twoSiteK2RotC a * twoSiteK2RotS a * twoSiteK2Top a
+      - twoSiteK2RotC a * twoSiteK2RotS a * twoSiteK2EvenBot a = 2 := by
+  rw [twoSiteK2Top, twoSiteK2EvenBot]
+  rw [show twoSiteK2RotC a * twoSiteK2RotS a *
+        ((twoSiteK2EvenA a + twoSiteK2EvenB a + twoSiteK2Rad a) / 2) -
+      twoSiteK2RotC a * twoSiteK2RotS a *
+        ((twoSiteK2EvenA a + twoSiteK2EvenB a - twoSiteK2Rad a) / 2)
+      = twoSiteK2RotC a * twoSiteK2RotS a * twoSiteK2Rad a from by ring]
+  exact twoSiteK2RotC_mul_RotS_mul_Rad a
+
+/-- Rotation eigenvector identity `c·(rad − Δ) = 4 s`. -/
+theorem twoSiteK2_rotC_mul (a : ℝ) :
+    twoSiteK2RotC a * (twoSiteK2Rad a - twoSiteK2Delta a) = 4 * twoSiteK2RotS a := by
+  have h1nn : 0 ≤ twoSiteK2RotC a * (twoSiteK2Rad a - twoSiteK2Delta a) :=
+    mul_nonneg (twoSiteK2RotC_nonneg a) (twoSiteK2_rad_sub_delta_nonneg a)
+  have h2nn : 0 ≤ 4 * twoSiteK2RotS a := by have := twoSiteK2RotS_nonneg a; linarith
+  have hsq : (twoSiteK2RotC a * (twoSiteK2Rad a - twoSiteK2Delta a)) ^ 2
+      = (4 * twoSiteK2RotS a) ^ 2 := by
+    have key : (twoSiteK2RotC a * (twoSiteK2Rad a - twoSiteK2Delta a)) ^ 2 * (2 * twoSiteK2Rad a)
+        = (4 * twoSiteK2RotS a) ^ 2 * (2 * twoSiteK2Rad a) := by
+      have e1 := twoSiteK2RotC_sq_mul a
+      have e2 := twoSiteK2RotS_sq_mul a
+      linear_combination (twoSiteK2Rad a - twoSiteK2Delta a) ^ 2 * e1 - 16 * e2
+        + (twoSiteK2Rad a - twoSiteK2Delta a) * twoSiteK2Rad_sq a
+    exact mul_right_cancel₀ (mul_ne_zero two_ne_zero (ne_of_gt (twoSiteK2Rad_pos a))) key
+  nlinarith [hsq, h1nn, h2nn]
+
+/-- Rotation eigenvector identity `s·(rad + Δ) = 4 c`. -/
+theorem twoSiteK2_rotS_mul (a : ℝ) :
+    twoSiteK2RotS a * (twoSiteK2Rad a + twoSiteK2Delta a) = 4 * twoSiteK2RotC a := by
+  have h1nn : 0 ≤ twoSiteK2RotS a * (twoSiteK2Rad a + twoSiteK2Delta a) :=
+    mul_nonneg (twoSiteK2RotS_nonneg a) (twoSiteK2_rad_add_delta_nonneg a)
+  have h2nn : 0 ≤ 4 * twoSiteK2RotC a := by have := twoSiteK2RotC_nonneg a; linarith
+  have hsq : (twoSiteK2RotS a * (twoSiteK2Rad a + twoSiteK2Delta a)) ^ 2
+      = (4 * twoSiteK2RotC a) ^ 2 := by
+    have key : (twoSiteK2RotS a * (twoSiteK2Rad a + twoSiteK2Delta a)) ^ 2 * (2 * twoSiteK2Rad a)
+        = (4 * twoSiteK2RotC a) ^ 2 * (2 * twoSiteK2Rad a) := by
+      have e1 := twoSiteK2RotC_sq_mul a
+      have e2 := twoSiteK2RotS_sq_mul a
+      linear_combination (twoSiteK2Rad a + twoSiteK2Delta a) ^ 2 * e2 - 16 * e1
+        + (twoSiteK2Rad a + twoSiteK2Delta a) * twoSiteK2Rad_sq a
+    exact mul_right_cancel₀ (mul_ne_zero two_ne_zero (ne_of_gt (twoSiteK2Rad_pos a))) key
+  nlinarith [hsq, h1nn, h2nn]
+
+/-! ## Diagonalization -/
+
+set_option maxHeartbeats 800000 in
+-- The 16-entry `fin_cases` diagonalization, with `norm_num`/`field_simp`/`linarith`
+-- closing each case, exceeds the default heartbeat budget.
+/-- The columns of the rotation basis are eigenvectors:
+`M · Q = Q · diag(λ)`. -/
+theorem twoSiteInteractingTransferMatrix_mul_changeOfBasis (a : ℝ) :
+    twoSiteInteractingTransferMatrix a * twoSiteInteractingChangeOfBasis a
+      = twoSiteInteractingChangeOfBasis a *
+          Matrix.diagonal (twoSiteInteractingTransferEigenvalue a) := by
+  have hh1 := twoSiteK2_rotC_mul a
+  have hh2 := twoSiteK2_rotS_mul a
+  simp only [twoSiteK2Delta, twoSiteK2EvenA, twoSiteK2EvenB] at hh1 hh2
+  have ec1 : Real.exp (a * 3) = Real.exp (3 * a) := by rw [mul_comm]
+  have ec2 : Real.exp (-(a * 3)) = Real.exp (-(3 * a)) := by rw [mul_comm]
+  ext i k
+  rw [Matrix.mul_apply, Matrix.mul_diagonal]
+  simp only [twoSiteInteractingTransferMatrix_apply, twoSiteInteractingChangeOfBasis,
+    twoSiteInteractingTransferEigenvalue, twoSiteK2Top, twoSiteK2EvenBot, twoSiteK2EvenA,
+    twoSiteK2EvenB, Matrix.of_apply, Fintype.sum_prod_type, Fin.sum_univ_two]
+  fin_cases i <;> fin_cases k <;>
+    norm_num [spin1D, ↓reduceIte, Prod.ext_iff] <;>
+    field_simp <;>
+    (try simp only [ec1, ec2]) <;>
+    linarith [hh1, hh2]
+
+/-- The interacting transfer matrix is diagonalized by the orthogonal rotation
+basis. -/
+theorem twoSiteInteractingTransferMatrix_diagonalizes (a : ℝ) :
+    twoSiteInteractingTransferMatrix a =
+      twoSiteInteractingChangeOfBasis a *
+        Matrix.diagonal (twoSiteInteractingTransferEigenvalue a) *
+        (twoSiteInteractingChangeOfBasis a)ᵀ := by
+  calc twoSiteInteractingTransferMatrix a
+      = twoSiteInteractingTransferMatrix a *
+          (twoSiteInteractingChangeOfBasis a * (twoSiteInteractingChangeOfBasis a)ᵀ) := by
+        rw [twoSiteInteractingChangeOfBasis_orthogonal_right, Matrix.mul_one]
+    _ = (twoSiteInteractingTransferMatrix a * twoSiteInteractingChangeOfBasis a) *
+          (twoSiteInteractingChangeOfBasis a)ᵀ := by rw [Matrix.mul_assoc]
+    _ = twoSiteInteractingChangeOfBasis a *
+          Matrix.diagonal (twoSiteInteractingTransferEigenvalue a) *
+          (twoSiteInteractingChangeOfBasis a)ᵀ := by
+        rw [twoSiteInteractingTransferMatrix_mul_changeOfBasis]
+
+/-! ## Packaged spectral data -/
+
+/-- Explicit real orthogonal spectral data for the interacting two-site
+transfer matrix. -/
+noncomputable def twoSiteInteractingTransferOrthogonalSpectralData (a : ℝ) :
+    RealOrthogonalSpectralData (twoSiteInteractingTransferMatrix a) where
+  eigenvalue := twoSiteInteractingTransferEigenvalue a
+  changeOfBasis := twoSiteInteractingChangeOfBasis a
+  orthogonal_left := twoSiteInteractingChangeOfBasis_orthogonal_left a
+  orthogonal_right := twoSiteInteractingChangeOfBasis_orthogonal_right a
+  diagonalizes := twoSiteInteractingTransferMatrix_diagonalizes a
+
+/-- Explicit real orthogonal spectral data for the physical interacting two-site
+layer at zero field. -/
+noncomputable def twoSiteInteractingLayerOrthogonalSpectralData
+    (p : IsingParams ℝ) (hp : p.h = 0) :
+    RealOrthogonalSpectralData
+      (layerSymmetricTransferMatrix
+        (layerInternalWeight (SimpleGraph.completeGraph (Fin 2)) p)
+        (layerTransitionWeight (layerIdentityTransitionPairs (Fin 2)) p)) where
+  eigenvalue :=
+    ((twoSiteInteractingTransferOrthogonalSpectralData (p.β * p.J)).reindex
+      layerStateFin2EquivFin2Prod.symm).eigenvalue
+  changeOfBasis :=
+    ((twoSiteInteractingTransferOrthogonalSpectralData (p.β * p.J)).reindex
+      layerStateFin2EquivFin2Prod.symm).changeOfBasis
+  orthogonal_left :=
+    ((twoSiteInteractingTransferOrthogonalSpectralData (p.β * p.J)).reindex
+      layerStateFin2EquivFin2Prod.symm).orthogonal_left
+  orthogonal_right :=
+    ((twoSiteInteractingTransferOrthogonalSpectralData (p.β * p.J)).reindex
+      layerStateFin2EquivFin2Prod.symm).orthogonal_right
+  diagonalizes := by
+    rw [layerSymmetricTransferMatrix_fin2_complete_eq_reindex_twoSiteInteracting p hp]
+    exact
+      ((twoSiteInteractingTransferOrthogonalSpectralData (p.β * p.J)).reindex
+        layerStateFin2EquivFin2Prod.symm).diagonalizes
 
 end TransferMatrix
 
