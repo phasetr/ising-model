@@ -294,6 +294,7 @@ import IsingModel.TransferMatrix.LayerOpenPerron
 import IsingModel.TransferMatrix.LayerOpenBoundaryWindow
 import IsingModel.TransferMatrix.LayerOpenSubdominantWindow
 import IsingModel.TransferMatrix.LayerOpenBoundaryNormWindow
+import IsingModel.TransferMatrix.LayerOpenPhysicalNormWindow
 import IsingModel.TransferMatrix.FreeLayerWalshOpenPerron
 import IsingModel.TransferMatrix.FreeLayerWalshOpenDecay
 import IsingModel.TransferMatrix.FreeLayerWalshOpenInfiniteVolume
