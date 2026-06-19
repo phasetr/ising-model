@@ -8165,6 +8165,60 @@ interacting cubic spectral window, a thermodynamic limit, or final hyperplane
 decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Sharp finite free-layer open prefactor (\S17.1 and \S17.5,
+Issue~\#3511).}
+The free-layer open estimate can be sharpened further because the residual
+Walsh prefactor is exactly one.  The singleton Walsh index
+\[
+  \texttt{freeLayerWalshSingleton}\ x
+\]
+is characterized by down-spin set \(\{x\}\), and the fixed-site spin observable
+is the singleton Walsh character:
+\[
+  \texttt{layerSpinAt\_eq\_spinProduct\_singleton}.
+\]
+Multiplying the top Walsh column by this observable gives the singleton Walsh
+column,
+\[
+  \texttt{freeLayerPhysical\_top\_column\_mul\_layerSpinAt},
+\]
+so orthogonality gives the marked-matrix selection rule
+\[
+  \texttt{freeLayerPhysical\_markedMatrix\_layerSpinAt\_top\_eq\_ite}.
+\]
+The marked matrix sends the top channel only to the singleton channel.  Since
+the free open boundary vector has no non-top Walsh coordinate, the denominator
+prefactor and the marked numerator prefactor are the same top-coordinate square:
+\[
+  \texttt{freeLayerPhysical\_boundarySpectralPartitionPrefactor\_eq\_top\_sq},
+  \qquad
+  \texttt{freeLayerPhysical\_boundaryMarkedSpectralPrefactor\_eq\_top\_sq}.
+\]
+The square is positive by signed positivity of the top Walsh column, hence
+\[
+  \texttt{freeLayerPhysical\_openPrefactorRatio\_eq\_one}.
+\]
+Composing this identity with the previous finite open certificate yields the
+coefficient-one finite open-slab estimate
+\[
+  \texttt{correlation\_freeLayerOpenSlabGraph\_same\_transverse\_abs\_le\_tanh\_clean},
+\]
+namely
+\[
+  \left|\langle \sigma_{(\ell,x)}
+    \sigma_{(\ell+\mathrm{sep},x)}\rangle\right|
+    \le \tanh(\beta J)^{\mathrm{sep}}.
+\]
+Using the one-dimensional mass identity
+\(\tanh(\beta J)^n=\exp(-\texttt{correlationMass}(\beta J)n)\) gives
+\[
+  \texttt{correlation\_freeLayerOpenSlabGraph\_same\_transverse\_abs\_le\_exp\_neg\_mass}.
+\]
+This paragraph is still finite-volume and free-layer only.  It does not assert
+an interacting transverse-layer spectral window, a thermodynamic limit, or
+final hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
