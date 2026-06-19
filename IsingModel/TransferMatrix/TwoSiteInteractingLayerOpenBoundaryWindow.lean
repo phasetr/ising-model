@@ -120,6 +120,69 @@ theorem twoSiteInteractingLayer_boundaryCoordinates_swapOdd_zero
     (twoSiteInteractingLayer_boundaryVector_flip_even p hp)
     (twoSiteInteractingLayer_swapOdd_columnFlipOdd p hp)
 
+/-! ## The surviving top boundary coordinate -/
+
+/-- The balanced boundary vector in spin form. -/
+theorem twoSiteInteractingLayer_boundaryVector_eq
+    (p : IsingParams ℝ) (hp : p.h = 0) (ω : LayerState (Fin 2)) :
+    layerOpenBalancedBoundaryVector
+        (layerInternalWeight (SimpleGraph.completeGraph (Fin 2)) p) ω
+      = Real.exp ((p.β * p.J) * (Spin.sign ℝ (ω 0) * Spin.sign ℝ (ω 1)) / 2) := by
+  rw [layerOpenBalancedBoundaryVector, layerInternalWeight_completeGraph_fin2 p hp,
+    ← Real.exp_half]
+
+/-- The top rotation column of the physical layer in spin form. -/
+theorem twoSiteInteractingLayer_top_col_eq
+    (p : IsingParams ℝ) (hp : p.h = 0) (ω : LayerState (Fin 2)) :
+    (twoSiteInteractingLayerOrthogonalSpectralData p hp).changeOfBasis ω
+        twoSiteInteractingLayerTop
+      = (1 / Real.sqrt 2) * ((twoSiteK2RotC (p.β * p.J) + twoSiteK2RotS (p.β * p.J))
+          + (twoSiteK2RotC (p.β * p.J) - twoSiteK2RotS (p.β * p.J)) *
+            (Spin.sign ℝ (ω 0) * Spin.sign ℝ (ω 1))) / 2 := by
+  rw [twoSiteInteractingLayerTop]
+  simp only [twoSiteInteractingLayerOrthogonalSpectralData,
+    RealOrthogonalSpectralData.reindex, Matrix.reindex_apply, Matrix.submatrix_apply,
+    Equiv.symm_symm, Equiv.apply_symm_apply]
+  simp only [twoSiteInteractingTransferOrthogonalSpectralData,
+    twoSiteInteractingChangeOfBasis, Matrix.of_apply, layerStateFin2EquivFin2Prod,
+    Equiv.coe_fn_mk, spin1D_spinEquivFin2, Prod.mk.injEq, Fin.reduceEq, and_true, and_false,
+    ↓reduceIte]
+  ring
+
+/-- The spins of a reindexed layer state are the `spin1D` coordinates. -/
+theorem twoSiteInteractingLayer_sign_symm (i : Fin 2 × Fin 2) :
+    Spin.sign ℝ ((layerStateFin2EquivFin2Prod.symm i) 0) = spin1D i.1 ∧
+    Spin.sign ℝ ((layerStateFin2EquivFin2Prod.symm i) 1) = spin1D i.2 := by
+  refine ⟨?_, ?_⟩ <;>
+  · simp only [layerStateFin2EquivFin2Prod, Equiv.coe_fn_symm_mk]
+    rw [← spin1D_spinEquivFin2]
+    congr 1 <;> simp
+
+/-- Explicit value of the surviving top boundary coordinate. -/
+theorem twoSiteInteractingLayer_boundaryCoordinates_top
+    (p : IsingParams ℝ) (hp : p.h = 0) :
+    (twoSiteInteractingLayerOrthogonalSpectralData p hp).boundaryCoordinates
+        (layerOpenBalancedBoundaryVector
+          (layerInternalWeight (SimpleGraph.completeGraph (Fin 2)) p))
+        twoSiteInteractingLayerTop
+      = Real.sqrt 2 * (twoSiteK2RotC (p.β * p.J) * Real.exp ((p.β * p.J) / 2)
+          + twoSiteK2RotS (p.β * p.J) * Real.exp (-(p.β * p.J) / 2)) := by
+  rw [RealOrthogonalSpectralData.boundaryCoordinates]
+  rw [← Equiv.sum_comp layerStateFin2EquivFin2Prod.symm
+    (fun ω => layerOpenBalancedBoundaryVector
+      (layerInternalWeight (SimpleGraph.completeGraph (Fin 2)) p) ω *
+      (twoSiteInteractingLayerOrthogonalSpectralData p hp).changeOfBasis ω
+        twoSiteInteractingLayerTop)]
+  simp only [twoSiteInteractingLayer_boundaryVector_eq p hp,
+    twoSiteInteractingLayer_top_col_eq p hp, (twoSiteInteractingLayer_sign_symm _).1,
+    (twoSiteInteractingLayer_sign_symm _).2]
+  have hd : (1 : ℝ) / Real.sqrt 2 = Real.sqrt 2 / 2 := by
+    rw [div_eq_div_iff (ne_of_gt (Real.sqrt_pos.2 (by norm_num))) two_ne_zero, one_mul,
+      Real.mul_self_sqrt (by norm_num)]
+  simp only [Fintype.sum_prod_type, Fin.sum_univ_two, spin1D, Matrix.cons_val_zero,
+    Matrix.cons_val_one, mul_one, mul_neg, neg_neg, hd]
+  ring
+
 end TransferMatrix
 
 end IsingModel
