@@ -291,6 +291,7 @@ import IsingModel.TransferMatrix.LayerOpenSpectralDenominator
 import IsingModel.TransferMatrix.LayerOpenSlabGraph
 import IsingModel.TransferMatrix.LayerOpenSpectralDecay
 import IsingModel.TransferMatrix.LayerOpenPerron
+import IsingModel.TransferMatrix.FreeLayerWalshOpenPerron
 import IsingModel.TransferMatrix.PathGraphEdges
 import IsingModel.TransferMatrix.PathGraphTwoPoint
 import IsingModel.TransferMatrix.PathGraphPairTwoPoint
