@@ -9007,6 +9007,24 @@ unconditional: it does not construct a strict spectral gap or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Diagonal bounds for the transfer-matrix quadratic form (\S17.1,
+Issue~\#3511).}
+The diagonal companion to the off-diagonal split controls the diagonal
+contribution by the extremal diagonal entries:
+\[
+  \min_i M_{ii}\,\|v\|^2\le\sum_i M_{ii}\,v_i^2\le\max_i M_{ii}\,\|v\|^2,
+  \qquad
+  \Bigl|\sum_i M_{ii}\,v_i^2\Bigr|\le\max_i|M_{ii}|\,\|v\|^2.
+\]
+These are unconditional and need neither symmetry nor spectral data (each follows
+by multiplying the extremal-entry inequality by \(v_i^2\ge0\) and summing, with
+the absolute form via \(|\sum|\le\sum|\cdot|\)).  Combined with the off-diagonal
+mass bound, they subtract the diagonal and top contributions on the
+top-orthogonal subspace toward a strict spectral gap.  This is finite and
+unconditional: it does not construct a strict spectral gap or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
