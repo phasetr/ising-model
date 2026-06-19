@@ -8600,6 +8600,46 @@ spectral window, thermodynamic-limit passage, or final hyperplane exponential
 decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Simple-spectrum canonical boundary-window consumers (\S17.1,
+Issue~\#3511).}
+The preceding canonical boundary-window consumers still require columnwise
+simplicity of the selected eigenspaces as a local input.  We replace this by
+the more elementary, checkable hypothesis that the spectral data has a
+\emph{simple spectrum}, i.e.\ its eigenvalue function is injective:
+\[
+  \texttt{RealOrthogonalSpectralData.SimpleSpectrum}
+    \;:=\; \texttt{Function.Injective}\ E.\texttt{eigenvalue}.
+\]
+The bridge
+\[
+  \texttt{columnSimpleEigenspaces\_of\_simpleSpectrum}
+\]
+shows that a simple spectrum implies columnwise simple eigenspaces.  Let
+\(M=Q\,\mathrm{diag}(\lambda)\,Q^{\mathsf T}\) be the orthogonal
+diagonalization and let \(w\) satisfy \(M w=\lambda_i\,w\).  Writing the
+spectral coordinates \(c:=Q^{\mathsf T}w\) and using \(Q^{\mathsf T}Q=1\), the
+eigenvector equation becomes the diagonal equation
+\(\mathrm{diag}(\lambda)\,c=\lambda_i\,c\), i.e.\
+\((\lambda_j-\lambda_i)\,c_j=0\) for every coordinate \(j\).  Injectivity of
+\(\lambda\) gives \(\lambda_j\neq\lambda_i\) whenever \(j\neq i\), so
+\(c_j=0\) off the selected index and \(w=c_i\,Q_{\cdot,i}\) is a scalar
+multiple of the selected column.  The flip-parity wrappers
+\(\texttt{columnFlipParity\_of\_commuting\_involution\_simpleSpectrum}\) and
+\(\texttt{layerSymmetricTransfer\_columnFlipParity\_of\_simpleSpectrum}\) reuse
+the existing column-simple parity bridge.  Consequently the canonical
+boundary-window consumers
+\(\texttt{layerOpenMinGapCert\_of\_Ioc\_canonicalBoundaryWindow\_}\)
+\(\texttt{localSimpleSpectrum}\), its cubic version, and the
+one-sided-interval, absolute-neighborhood, and eventual open-slab and cubic
+open-slab variants take local punctured \texttt{SimpleSpectrum} instead of
+\texttt{ColumnSimpleEigenspaces}, delegating to the simple-parity consumers
+after the conversion.  This is finite and conditional: it does not prove
+spectral-data continuity, perturbative stability, that an interacting
+cubic-layer family has a simple spectrum, an interacting spectral window,
+thermodynamic-limit passage, or final hyperplane exponential decay.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
