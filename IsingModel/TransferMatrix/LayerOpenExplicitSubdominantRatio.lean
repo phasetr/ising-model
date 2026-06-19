@@ -85,8 +85,10 @@ theorem subdominantAbsRatio_maxEigenIndex_lt_one [Nonempty Ω] {M : Matrix Ω Ω
     exact (div_lt_one htop_pos).mpr (E.eigenvalue_abs_lt_maxEigenIndex hM i hi_ne)
   · exact zero_lt_one
 
-/-- A quantitative eigenvalue estimate `∀ i ≠ top, |λ_i| ≤ θ·λ_top` bounds the
-explicit subdominant absolute ratio by `θ`.  This is the hook for a
+/-- A quantitative eigenvalue estimate `∀ i ≠ top, |λ_i| ≤ θ·λ_top` (with
+`0 ≤ θ`) bounds the explicit subdominant absolute ratio by `θ`.  The
+nonnegativity of `θ` is needed for the single-eigenvalue-index case, where the
+ratio is `0` and the estimate is vacuous.  This is the hook for a
 transverse-volume-uniform Dobrushin/Perron-gap estimate. -/
 theorem subdominantAbsRatio_maxEigenIndex_le_of_eigenvalue_abs_le [Nonempty Ω]
     {M : Matrix Ω Ω ℝ} (E : RealOrthogonalSpectralData M)
