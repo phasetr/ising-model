@@ -8757,6 +8757,40 @@ open-slab decay bound, a thermodynamic limit, or final hyperplane decay.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Two-site interacting open boundary-window discharge (\S17.1,
+Issue~\#3511).}
+We complete the interacting \(K_2\) open-boundary discharge.  The balanced
+boundary vector \(v(\omega)=\sqrt{\text{internalWeight}(\omega)}
+=e^{(\beta J/2)\,s(\omega_0)s(\omega_1)}\) is not constant but is flip-even, and
+the two odd rotation columns are flip-odd, so their boundary coordinates vanish.
+Only the even-bottom coordinate survives, so by Parseval the off-top boundary
+mass equals \(\lVert v\rVert^2-(\text{coord}_{\mathrm{top}})^2\).  The top
+coordinate is
+\[
+  \text{coord}_{\mathrm{top}}
+    =\sqrt2\,\bigl(c\,e^{\beta J/2}+s\,e^{-\beta J/2}\bigr),
+  \qquad
+  \lVert v\rVert^2=2\bigl(e^{\beta J}+e^{-\beta J}\bigr),
+\]
+and \(\lVert v\rVert^2\le 2(\text{coord}_{\mathrm{top}})^2\) because the
+difference reduces, via \(c^2-s^2=\Delta/\mathrm{rad}\),
+\(c\,s\,\mathrm{rad}=2\), and \(e^{\beta J}-e^{-\beta J}=2\sinh\beta J\), to
+\((\Delta\sinh\beta J+4)/\mathrm{rad}>0\) for \(0<\beta J\) (with \(\Delta>0\)).
+Hence the off-top mass is at most \((\text{coord}_{\mathrm{top}})^2\), the
+boundary-window cap is \(1\), and it strictly exceeds
+\(\theta=\mathrm{flipOdd}/\mathrm{top}\).  Feeding the simple-spectrum,
+signed-positive, and spectral-window inputs through the columnwise-simple
+boundary-window consumer gives the first unconditional finite interacting
+open-slab same-transverse-site bound,
+\[
+  \bigl|\langle\sigma_{(\ell,x)}\,\sigma_{(\ell+\mathrm{sep},x)}\rangle\bigr|
+    \le (\text{prefactor})\cdot\theta^{\mathrm{sep}},\qquad 0<\beta J,
+\]
+in prefactor form with decay parameter \(\theta\) (not \(\tanh\)).  It does not
+prove a closed-form decay rate, a thermodynamic limit, or final hyperplane
+decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
