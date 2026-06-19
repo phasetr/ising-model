@@ -8350,6 +8350,33 @@ parity-adapted data in degenerate eigenspaces, a thermodynamic-limit passage,
 or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{High-temperature open physical norm-window bridge (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenHighTemperatureNormWindow.lean}
+\]
+packages the next finite step after the beta-zero computation.  For a fixed
+finite layer and a chosen family of spectral data, write
+\(\rho(\beta)\) for the canonical max-index subdominant ratio and
+\(C(\beta)\) for the physical open-boundary norm-window cap.  The beta-zero
+module proves
+\[
+  \rho(0) < C(0).
+\]
+The high-temperature bridge assumes only the scalar convergence inputs
+\(\rho(\beta)\to\rho(0)\) and \(C(\beta)\to C(0)\) as \(\beta\to0\).  Since
+strict inequalities are open under convergence, it obtains the same inequality
+eventually near \(0\), then converts this neighborhood into an absolute-value
+bound and finally into a one-sided interval \(0\le\beta\le\beta_{\max}\).
+The cubic wrappers specialize the same conditional bridge to cubic transverse
+layers.  This is still a finite conditional statement: it does not prove the
+continuity hypotheses for spectral-theorem data, eigenbasis perturbation,
+stability of the maximal index, simple-eigenspace or parity input, an
+interacting cubic-layer spectral window, thermodynamic-limit passage, or final
+hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Open-boundary simple-eigenspace parity bridge (\S17.1,
 Issue~\#3511).}
 The module
