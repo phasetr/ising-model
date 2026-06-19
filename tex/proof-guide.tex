@@ -8307,6 +8307,49 @@ spectral data, prove an interacting cubic-layer spectral window, pass to a
 thermodynamic limit, or prove final hyperplane exponential decay.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Infinite-temperature open physical norm window (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenInfiniteTemperatureNormWindow.lean}
+\]
+closes the preceding finite physical norm-window inequality on the slice
+\(p.\beta=0\).  The constant-vector facts
+\[
+  \texttt{vectorSqNorm\_one},\qquad
+  \texttt{allOnesMatrix\_mulVec\_one}
+\]
+identify the constant-one vector as the cardinality eigenvector of the
+all-ones matrix.  For any spectral datum whose matrix is equal to the all-ones
+matrix, the max-index all-ones eigenvalue lemma and the corresponding boundary
+coordinate lemma show that the maximal boundary coordinate squared is exactly
+the cardinality of the index type.  On the physical layer side,
+\[
+  \texttt{layerOpenBalancedBoundaryVector\_beta\_zero}
+\]
+makes the balanced open boundary vector constant one, while
+\[
+  \texttt{sum\_layerInternalWeight\_beta\_zero}
+\]
+computes the one-layer internal partition sum as the number of layer states.
+Consequently
+\[
+  \texttt{layerOpenPhysicalBoundaryNormWindowCap\_beta\_zero}
+\]
+proves that the physical norm-window cap at the maximal Perron column is
+exactly \(1\).  The canonical Perron ratio is already strictly below \(1\), so
+\[
+  \texttt{subdominantRatioMax\_lt\_layerOpenPhysicalNormCap\_beta\_zero}
+\]
+closes the finite physical norm-window input at \(p.\beta=0\); the cubic
+specializations record the same cap and ratio conclusions for cubic transverse
+boxes.  This is only a finite
+infinite-temperature input.  It does not prove a high-temperature
+neighborhood, an interacting cubic-layer spectral window, arbitrary
+parity-adapted data in degenerate eigenspaces, a thermodynamic-limit passage,
+or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Open-boundary simple-eigenspace parity bridge (\S17.1,
 Issue~\#3511).}
 The module
@@ -8342,12 +8385,8 @@ and the global-spin-flip involution give
 \[
   \texttt{layerSymmetricTransfer\_columnFlipParity\_of\_columnSimple}.
 \]
-The open physical norm-window certificate
-\[
-  \texttt{layerOpenMinGapCert\_of\_layerMaxEigenIndexSimpleParityCanonicalRatio}\\
-  \texttt{PhysicalNormWindow}
-\]
-and the open-slab/cubic consumers with suffix
+The corresponding open physical norm-window certificate and the open-slab/cubic
+consumers with suffix
 \[
   \texttt{physicalNormWindow\_simpleParity}
 \]
