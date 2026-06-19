@@ -142,6 +142,34 @@ theorem layerOpenBoundaryCoordinate_sq_pos_of_signedPositiveColumn
     (layerOpenBalancedBoundaryVector u) top
     (layerOpenBalancedBoundaryVector_pos u hu) hpos
 
+/-! ## Open spin-flip central-channel cancellation -/
+
+/-- A flip-parity-adapted spectral basis supplies the open central marked-channel
+cancellation for the layer spin observable.  The left boundary coordinate kills
+odd columns, while the odd spin observable kills the even-even marked entry
+against the even top column. -/
+theorem layerOpenBoundaryMarkedCentral_zero_of_layerSpinAt_flipParity
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (x : S)
+    {M : Matrix (LayerState S) (LayerState S) ℝ}
+    (E : RealOrthogonalSpectralData M) (top : LayerState S)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (htop_even : E.ColumnFlipEven (layerStateFlipEquiv S) top)
+    (hparity : E.ColumnFlipParity (layerStateFlipEquiv S)) :
+    ∀ i l,
+      E.boundaryCoordinates (layerOpenBalancedBoundaryVector u) i *
+        E.markedMatrix (layerSpinAt x) i top *
+        E.markedMatrix (layerSpinAt x) top l *
+        E.boundaryCoordinates (layerOpenBalancedBoundaryVector u) l = 0 :=
+  E.boundaryMarkedCentral_zero_of_equiv_evenBoundary_columnParity
+    (layerSpinAt x)
+    (layerOpenBalancedBoundaryVector u)
+    (layerOpenBalancedBoundaryVector u)
+    top (layerStateFlipEquiv S)
+    (fun ω => layerSpinAt_flip x ω)
+    (layerOpenBalancedBoundaryVector_flip_of_u_flip u hu_flip)
+    htop_even hparity
+
 /-- Constructor for an open min-gap certificate with the transfer scale fixed
 to a signed-positive dominant spectral column.  The open boundary denominator
 prefactor is discharged from the explicit boundary-coordinate smallness
@@ -254,6 +282,77 @@ noncomputable def
     boundaryPrefactor_small subdominant_abs_le central_dominant_channel_zero
     dominant_column_signed_pos
 
+/-- Constructor for an open min-gap certificate for a spin observable, with
+scale fixed to a signed-positive dominant spectral column and central-channel
+cancellation supplied by a flip-parity-adapted spectral basis. -/
+noncomputable def
+    layerOpenMinGapCert_of_subdominant_signedPositiveFlipParitySpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (u : LayerState S → ℝ) (k : LayerState S → LayerState S → ℝ) (x : S)
+    (hu : ∀ ω, 0 < u ω) (hk_pos : ∀ ω η, 0 < k ω η)
+    (hu_flip : ∀ ω, u (layerStateFlipEquiv S ω) = u ω)
+    (hk_flip : ∀ ω η,
+      k (layerStateFlipEquiv S ω) (layerStateFlipEquiv S η) = k ω η)
+    (E : RealOrthogonalSpectralData (layerSymmetricTransferMatrix u k))
+    (top : LayerState S) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (boundaryPrefactor_small :
+      (∑ i ∈ Finset.univ.erase top,
+          (E.boundaryCoordinates (layerOpenBalancedBoundaryVector u) i) ^ 2) *
+          theta <
+        (E.boundaryCoordinates (layerOpenBalancedBoundaryVector u) top) ^ 2)
+    (subdominant_abs_le :
+      ∀ i, i ≠ top → |E.eigenvalue i| ≤ theta * E.eigenvalue top)
+    (hparity : E.ColumnFlipParity (layerStateFlipEquiv S))
+    (dominant_column_signed_pos : E.SignedPositiveColumn top) :
+    LayerOpenMinSpectralGapCertificate u k (layerSpinAt x) :=
+  layerOpenMinSpectralGapCertificate_of_orthogonalSubdominantBounds_signedPositiveColumn
+    u k (layerSpinAt x) hu hk_pos E top theta theta_nonneg theta_lt_one
+    boundaryPrefactor_small subdominant_abs_le
+    (layerOpenBoundaryMarkedCentral_zero_of_layerSpinAt_flipParity
+      u x E top hu_flip
+      (layerSymmetricTransfer_signedPositiveColumn_flip_even
+        u k hu hk_pos hu_flip hk_flip E top dominant_column_signed_pos)
+      hparity)
+    dominant_column_signed_pos
+
+/-- Physical layer wrapper for open spin-observable min-gap certificates whose
+central-channel cancellation is discharged by a flip-parity-adapted spectral
+basis.  The zero-field hypothesis supplies the even open boundary vector. -/
+noncomputable def
+    layerOpenMinGapCert_of_layerSubdominant_signedPositiveFlipParitySpin
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
+    (p : IsingParams ℝ) (hp : p.h = 0) (x : S)
+    (spec : RealOrthogonalSpectralData
+      (layerSymmetricTransferMatrix
+        (layerInternalWeight H p) (layerTransitionWeight transitionPairs p)))
+    (top : LayerState S) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (boundaryPrefactor_small :
+      (∑ i ∈ Finset.univ.erase top,
+          (spec.boundaryCoordinates
+            (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) i) ^ 2) *
+          theta <
+        (spec.boundaryCoordinates
+          (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) top) ^ 2)
+    (subdominant_abs_le :
+      ∀ i, i ≠ top → |spec.eigenvalue i| ≤ theta * spec.eigenvalue top)
+    (hparity : spec.ColumnFlipParity (layerStateFlipEquiv S))
+    (dominant_column_signed_pos : spec.SignedPositiveColumn top) :
+    LayerOpenMinSpectralGapCertificate
+      (layerInternalWeight H p) (layerTransitionWeight transitionPairs p)
+      (layerSpinAt x) :=
+  layerOpenMinGapCert_of_subdominant_signedPositiveFlipParitySpin
+    (layerInternalWeight H p) (layerTransitionWeight transitionPairs p) x
+    (fun _ => Real.exp_pos _) (fun _ _ => Real.exp_pos _)
+    (layerInternalWeight_flip_of_h_zero H p hp)
+    (layerTransitionWeight_flip_flip transitionPairs p)
+    spec top theta theta_nonneg theta_lt_one
+    boundaryPrefactor_small subdominant_abs_le hparity dominant_column_signed_pos
+
 /-- Project-level finite open-slab same-transverse-site correlation decay from
 signed-positive open-boundary dominance data. -/
 theorem
@@ -304,6 +403,54 @@ theorem
       H transitionPairs p x spec top theta theta_nonneg theta_lt_one
       boundaryPrefactor_small subdominant_abs_le central_dominant_channel_zero
       dominant_column_signed_pos
+  exact
+    correlation_layerOpenSlabGraph_same_transverse_abs_le_of_openMinSpectralGapCertificate
+      (S := S) H transitionPairs p x cert left sep right hsep
+
+/-- Project-level finite open-slab same-transverse-site correlation decay from
+signed-positive open-boundary dominance data and a flip-parity-adapted spectral
+basis, which discharges the central-channel cancellation hypothesis. -/
+theorem
+    correlation_layerOpenSlabGraph_same_transverse_abs_le_of_signedPositiveFlipParity
+    {S : Type*} [Fintype S] [DecidableEq S]
+    (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
+    (p : IsingParams ℝ) (hp : p.h = 0) (x : S)
+    (spec : RealOrthogonalSpectralData
+      (layerSymmetricTransferMatrix
+        (layerInternalWeight H p) (layerTransitionWeight transitionPairs p)))
+    (top : LayerState S) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (boundaryPrefactor_small :
+      (∑ i ∈ Finset.univ.erase top,
+          (spec.boundaryCoordinates
+            (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) i) ^ 2) *
+          theta <
+        (spec.boundaryCoordinates
+          (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) top) ^ 2)
+    (subdominant_abs_le :
+      ∀ i, i ≠ top → |spec.eigenvalue i| ≤ theta * spec.eigenvalue top)
+    (hparity : spec.ColumnFlipParity (layerStateFlipEquiv S))
+    (dominant_column_signed_pos : spec.SignedPositiveColumn top)
+    (left sep right : ℕ) (hsep : 0 < sep) :
+    |correlation (layerOpenSlabGraph (S := S) H transitionPairs (left + sep + right)) p
+      ({Prod.mk (layerOpenLeftIndex left sep right) x,
+        Prod.mk (layerOpenRightIndex left sep right) x} :
+          Finset (LayerOpenSlabSite (left + sep + right) S))|
+      ≤
+        (spec.boundaryMarkedSpectralPrefactor (layerSpinAt x)
+          (layerOpenBalancedBoundaryVector (layerInternalWeight H p))
+          (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) /
+            spec.boundarySpectralPartitionPrefactor
+              (layerOpenBalancedBoundaryVector (layerInternalWeight H p)) top theta) *
+          theta ^ sep := by
+  let cert :
+      LayerOpenMinSpectralGapCertificate
+        (layerInternalWeight H p) (layerTransitionWeight transitionPairs p)
+        (layerSpinAt x) :=
+    layerOpenMinGapCert_of_layerSubdominant_signedPositiveFlipParitySpin
+      H transitionPairs p hp x spec top theta theta_nonneg theta_lt_one
+      boundaryPrefactor_small subdominant_abs_le hparity dominant_column_signed_pos
   exact
     correlation_layerOpenSlabGraph_same_transverse_abs_le_of_openMinSpectralGapCertificate
       (S := S) H transitionPairs p x cert left sep right hsep
@@ -363,6 +510,54 @@ theorem
       (cubicLayerTransitionPairs d R) p x spec top theta theta_nonneg
       theta_lt_one boundaryPrefactor_small subdominant_abs_le
       central_dominant_channel_zero dominant_column_signed_pos left sep right hsep
+
+/-- Cubic transverse open slabs inherit the signed-positive flip-parity
+open-boundary dominance consumer from the generic open-slab theorem. -/
+theorem
+    correlation_cubicLayerOpenSlabGraph_same_transverse_abs_le_of_signedPositiveFlipParity
+    (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
+    (spec : RealOrthogonalSpectralData
+      (layerSymmetricTransferMatrix
+        (layerInternalWeight (cubicLayerGraph d R) p)
+        (layerTransitionWeight (cubicLayerTransitionPairs d R) p)))
+    (top : LayerState (CubicLayerSite d R)) (theta : ℝ)
+    (theta_nonneg : 0 ≤ theta)
+    (theta_lt_one : theta < 1)
+    (boundaryPrefactor_small :
+      (∑ i ∈ Finset.univ.erase top,
+          (spec.boundaryCoordinates
+            (layerOpenBalancedBoundaryVector
+              (layerInternalWeight (cubicLayerGraph d R) p)) i) ^ 2) *
+          theta <
+        (spec.boundaryCoordinates
+          (layerOpenBalancedBoundaryVector
+            (layerInternalWeight (cubicLayerGraph d R) p)) top) ^ 2)
+    (subdominant_abs_le :
+      ∀ i, i ≠ top → |spec.eigenvalue i| ≤ theta * spec.eigenvalue top)
+    (hparity : spec.ColumnFlipParity (layerStateFlipEquiv (CubicLayerSite d R)))
+    (dominant_column_signed_pos : spec.SignedPositiveColumn top)
+    (left sep right : ℕ) (hsep : 0 < sep) :
+    |correlation (cubicLayerOpenSlabGraph d R (left + sep + right)) p
+      ({Prod.mk (layerOpenLeftIndex left sep right) x,
+        Prod.mk (layerOpenRightIndex left sep right) x} :
+          Finset (LayerOpenSlabSite (left + sep + right) (CubicLayerSite d R)))|
+      ≤
+        (spec.boundaryMarkedSpectralPrefactor (layerSpinAt x)
+          (layerOpenBalancedBoundaryVector
+            (layerInternalWeight (cubicLayerGraph d R) p))
+          (layerOpenBalancedBoundaryVector
+            (layerInternalWeight (cubicLayerGraph d R) p)) /
+            spec.boundarySpectralPartitionPrefactor
+              (layerOpenBalancedBoundaryVector
+                (layerInternalWeight (cubicLayerGraph d R) p)) top theta) *
+          theta ^ sep := by
+  rw [cubicLayerOpenSlabGraph]
+  exact
+    correlation_layerOpenSlabGraph_same_transverse_abs_le_of_signedPositiveFlipParity
+      (S := CubicLayerSite d R) (cubicLayerGraph d R)
+      (cubicLayerTransitionPairs d R) p hp x spec top theta theta_nonneg
+      theta_lt_one boundaryPrefactor_small subdominant_abs_le hparity
+      dominant_column_signed_pos left sep right hsep
 
 end TransferMatrix
 

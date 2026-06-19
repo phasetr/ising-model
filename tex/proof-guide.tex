@@ -8046,6 +8046,74 @@ claim a physical interacting cubic-layer spectral window, a thermodynamic
 limit, or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd
 ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary flip-parity central cancellation (\S17.1,
+Issue~\#3511).}
+The open-boundary numerator estimate requires coefficientwise cancellation of
+the central marked channel,
+\[
+  b_i\,G_{i,\mathrm{top}}\,G_{\mathrm{top},\ell}\,b_\ell=0
+  \qquad\text{for every }i,\ell,
+\]
+where \(b_i=\sum_x v_xQ_{xi}\) and
+\[
+  G_{ij}=\sum_x Q_{xi}f(x)Q_{xj}.
+\]
+The module \texttt{TransferMatrix/LayerSpectral.lean} now records the finite
+parity vocabulary
+\[
+  \texttt{ColumnFlipEven},\qquad
+  \texttt{ColumnFlipOdd},\qquad
+  \texttt{ColumnFlipParity}
+\]
+for an orthogonal spectral datum.  The selection rules say that an even
+boundary vector has zero coordinate against an odd column, while an odd
+observable has zero marked-matrix entry between two even columns and between
+two odd columns:
+\[
+  \begin{gathered}
+  \texttt{boundaryCoordinates\_zero\_of\_equiv\_even\_odd},\\
+  \texttt{markedMatrix\_zero\_of\_equiv\_odd\_even\_even},\\
+  \texttt{markedMatrix\_zero\_of\_equiv\_odd\_odd\_odd}.
+  \end{gathered}
+\]
+Consequently,
+\[
+  \texttt{boundaryMarkedCentral\_zero\_of\_equiv\_evenBoundary\_columnParity}
+\]
+proves the full open central-channel cancellation when the left boundary vector
+is even, the observable is odd, the top column is even, and the whole spectral
+basis is adapted to the flip parity.  For the open layer route,
+\[
+  \texttt{layerOpenBoundaryMarkedCentral\_zero\_of\_layerSpinAt\_flipParity}
+\]
+specializes this to the balanced boundary vector and the spin observable.  The
+constructors
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinGapCert\_of\_subdominant\_signedPositiveFlipParitySpin},\\
+  \texttt{layerOpenMinGapCert\_of\_layerSubdominant\_signedPositiveFlipParitySpin}
+  \end{gathered}
+\]
+then remove the explicit central-channel hypothesis from the signed-positive
+open route under zero-field flip invariance and the parity-adapted basis
+condition.  Their open-slab and cubic consumers are
+\[
+  \begin{gathered}
+  \texttt{correlation\_layerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{signedPositiveFlipParity},\\
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{signedPositiveFlipParity}.
+  \end{gathered}
+\]
+Top-column flip-evenness alone is not enough for this coefficientwise open
+cancellation: the non-top columns also have to be separated into even and odd
+flip sectors, or an equivalent selection rule must be supplied.  Thus this
+paragraph does not assert that arbitrary Hermitian spectral-theorem data is
+parity-adapted, and it still leaves boundary-prefactor smallness, the
+subdominant spectral window, thermodynamic limits, and final hyperplane decay
+outside the proved scope.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
