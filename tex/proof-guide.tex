@@ -8529,6 +8529,50 @@ cubic-layer spectral window, a thermodynamic-limit passage, or final
 hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Local high-temperature boundary-window simple-parity consumers
+(\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenHighTemperatureBoundaryWindowSimple.lean}
+\]
+adds the high-temperature local-input layer for the explicit
+\(\mathrm{top},\theta\) boundary-window route.  For a chosen spectral-data
+family and chosen functions
+\[
+  \mathrm{top}:\mathbb R\to\texttt{LayerState}\ S,
+  \qquad
+  \theta:\mathbb R\to\mathbb R,
+\]
+it forms the scalar boundary cap
+\[
+  C(\beta)=
+  \texttt{layerOpenBoundarySpectralWindowCap}\,
+    \texttt{(layerInternalWeight}\ H\ \{p\ \texttt{with}\ \beta:=\beta\})\,
+    E_\beta\,\mathrm{top}(\beta).
+\]
+The scalar bridge proves that if
+\[
+  \texttt{ContinuousAt}\ \theta\ 0,\qquad
+  \texttt{ContinuousAt}\ C\ 0,\qquad
+  \theta(0)<C(0),
+\]
+then \(\theta(\beta)<C(\beta)\) holds eventually near \(0\), on an
+absolute-value neighborhood, and on a closed one-sided interval
+\(0\le\beta\le\beta_{\max}\).  The consumer theorems then intersect this
+window with local punctured inputs for nonnegativity of \(\theta\), the
+subdominant spectral bound, columnwise simple eigenspaces, and signed-positive
+top column.  The resulting smaller interval
+\(0<\beta\le\beta_{\max}\) feeds the existing explicit
+boundary-window simple-parity open-slab and cubic open-slab consumers.  The
+absolute-neighborhood and eventual variants keep signed positivity as
+\(\texttt{Nonempty}\) data, because \(\texttt{SignedPositiveColumn}\) carries an
+orientation sign.  This is still a finite conditional consumer: it does not
+prove spectral-data continuity, eigenbasis perturbation, maximal-index
+stability, concrete local simplicity or signed positivity, an interacting
+cubic-layer spectral window, thermodynamic-limit passage, or final hyperplane
+exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
