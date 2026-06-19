@@ -8219,6 +8219,50 @@ an interacting transverse-layer spectral window, a thermodynamic limit, or
 final hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Free-layer open cubic-box transport (\S17.1/\S17.5, Issue~\#3511).}
+The finite coefficient-one estimate above applies to the open slab with empty
+transverse graph.  Therefore its ambient finite-volume bridge must not use the
+full cubic lattice graph, which has transverse nearest-neighbour edges.  The
+module \texttt{TransferMatrix/FreeLayerWalshOpenInfiniteVolume.lean} instead
+defines the longitudinal-only ambient graph
+\[
+  \texttt{freeLayerAxisGraph}\ d,
+\]
+where two points of \(\mathbb Z^{d+1}\) are adjacent precisely when their first
+coordinates differ by one and all transverse coordinates agree.  The map
+\[
+  (i,x)\longmapsto (i-N,x)
+\]
+identifies the \(2N\)-step finite open free-layer slab over
+\(\texttt{cubicBox}\ d\ N\) with the induced finite volume on
+\(\texttt{cubicBox}\ (d+1)\ N\).  In Lean this is the equivalence
+\[
+  \texttt{freeLayerOpenSlabCubicBoxEquiv},
+\]
+and the graph identity
+\[
+  \texttt{freeLayerOpenSlabGraph\_map\_cubicBoxEquiv}
+\]
+states that transporting the finite open slab by this equivalence gives exactly
+\[
+  \texttt{Ambient.inducedGraph}\ (\texttt{freeLayerAxisGraph}\ d)\,
+    (\texttt{Ambient.cubicBox}\ (d+1)\ N).
+\]
+Consequently correlations transport by the existing graph-isomorphism
+invariance:
+\[
+  \texttt{correlation\_induced\_freeLayerAxisGraph\_cubicBox\_eq\_openSlab},
+\]
+together with its absolute-value form and the inequality wrapper
+\[
+  \texttt{abs\_correlation\_induced\_freeLayerAxisGraph\_cubicBox\_le\_of\_openSlab}.
+\]
+This is a finite transport bridge for the free-layer axis graph only.  It does
+not assert decay for the full \(\texttt{latticeGraph}\ (d+1)\), does not solve
+the interacting transverse-layer spectral-window problem, and does not complete
+the thermodynamic-limit step.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
