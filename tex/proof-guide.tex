@@ -8172,6 +8172,54 @@ interacting cubic-layer spectral window, a thermodynamic limit, or final
 hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary canonical subdominant window (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenSubdominantWindow.lean}
+\]
+fixes the open-boundary decay parameter to the canonical finite max-index
+subdominant ratio
+\[
+  \texttt{RealOrthogonalSpectralData.subdominantRatio\_maxEigenIndex}.
+\]
+Thus the remaining finite spectral-window input is the single inequality
+\[
+  \texttt{subdominantRatio\_maxEigenIndex}
+  <
+  \texttt{layerOpenBoundarySpectralWindowCap}
+\]
+for the balanced open boundary vector and the max-index channel.  The
+constructors
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinGapCert\_of\_maxEigenIndexCanonicalRatioBoundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_maxEigenIndexFlipParityCanonicalRatio}\\
+  \texttt{BoundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_layerMaxEigenIndexFlipParityCanonicalRatio}\\
+  \texttt{BoundaryWindow}
+  \end{gathered}
+\]
+use the already-proved nonnegativity and non-top eigenvalue bounds for this
+canonical ratio, and then feed the boundary-window inequality into the
+open-boundary certificate route.  The corresponding open-slab and cubic
+consumers are
+\[
+  \begin{gathered}
+  \texttt{correlation\_layerOpenSlabGraph\_abs\_le\_of\_}\\
+  \texttt{canonicalRatioBoundaryWindow},\\
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_abs\_le\_of\_}\\
+  \texttt{canonicalRatioBoundaryWindow}.
+  \end{gathered}
+\]
+This removes the explicit \(\theta\), \(\theta\ge 0\), and subdominant
+eigenvalue-bound hypotheses from the max-index open-boundary consumer.  It
+still leaves the boundary-window inequality and parity-adapted spectral data as
+finite inputs, and it does not prove an interacting cubic-layer spectral
+window, a thermodynamic limit, or final hyperplane exponential decay.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
