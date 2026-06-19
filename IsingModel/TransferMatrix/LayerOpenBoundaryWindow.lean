@@ -439,7 +439,7 @@ theorem
 /-- Cubic transverse open slabs inherit the boundary-window flip-parity
 open-boundary dominance consumer from the generic open-slab theorem. -/
 theorem
-    correlation_cubicOpenSlab_same_transverse_abs_le_of_signedPositiveBoundaryWindow
+    correlation_cubicLayerOpenSlabGraph_abs_le_of_signedPositiveFlipParityBoundaryWindow
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
     (spec : RealOrthogonalSpectralData
       (layerSymmetricTransferMatrix
@@ -482,7 +482,7 @@ theorem
 flip-parity open-boundary dominance consumer from the generic open-slab
 theorem. -/
 theorem
-    correlation_cubicOpenSlab_same_transverse_abs_le_of_maxEigenIndexBoundaryWindow
+    correlation_cubicLayerOpenSlabGraph_abs_le_of_maxEigenIndexFlipParityBoundaryWindow
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
     (spec : RealOrthogonalSpectralData
       (layerSymmetricTransferMatrix
