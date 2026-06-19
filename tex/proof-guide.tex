@@ -8987,6 +8987,26 @@ it does not construct a strict spectral gap or prove a thermodynamic limit.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Off-diagonal split of the transfer-matrix quadratic form (\S17.1,
+Issue~\#3511).}
+Separating the diagonal refines the row-sum bound: for symmetric \(M\),
+\[
+  \Bigl|\langle v, Mv\rangle-\sum_i M_{ii}\,v_i^2\Bigr|
+    \le\Bigl(\max_i\sum_{j\neq i}|M_{ij}|\Bigr)\|v\|^2.
+\]
+The proof reuses the row-sum bound on the off-diagonal part
+\(M^{\mathrm{off}}_{ij}:=[i\neq j]\,M_{ij}\) (the matrix with the diagonal
+zeroed): \(M^{\mathrm{off}}\) is symmetric, its absolute row sum is the
+off-diagonal absolute row sum of \(M\), and its quadratic form equals
+\(\langle v,Mv\rangle-\sum_i M_{ii}v_i^2\), so the previous bound applies
+verbatim and avoids the \(j\neq i\) double-sum bookkeeping.  This is the
+structural step before the strict gap: on the subspace orthogonal to the
+entrywise-positive top eigenvector, the diagonal and top contributions are
+subtracted, leaving the off-diagonal mass (a later file).  This is finite and
+unconditional: it does not construct a strict spectral gap or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
