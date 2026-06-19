@@ -8263,6 +8263,39 @@ the interacting transverse-layer spectral-window problem, and does not complete
 the thermodynamic-limit step.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Finite free-layer axis-graph cubic-box decay consumer
+(\S17.1/\S17.5, Issue~\#3511 PR~\#4043).}
+The finite consumer in
+\texttt{FreeLayerWalshOpenAxisDecay.lean} combines the sharp free-layer open
+estimate with the finite cubic-box transport bridge.  The two-point set
+\[
+  \texttt{freeLayerOpenCubicSlabTwoPoint}\ d\ N\ \texttt{sep}\ h_{\texttt{sep}}\ x
+\]
+selects the centre layer and the layer at longitudinal separation
+\(\texttt{sep}\) in the \(2N\)-step open slab, and
+\(\texttt{freeLayerOpenCubicAxisTwoPoint}\) transports it through
+\(\texttt{freeLayerOpenSlabCubicBoxEquiv}\) to the induced cubic-box volume of
+\(\texttt{freeLayerAxisGraph}\).  The finite open-slab wrappers
+\[
+\begin{gathered}
+  \texttt{correlation\_freeLayerOpenSlabGraph\_cubicBox\_same\_transverse\_abs\_le\_tanh\_clean},\\
+  \texttt{correlation\_freeLayerOpenSlabGraph\_cubicBox\_same\_transverse\_abs\_le\_exp\_neg\_mass}
+\end{gathered}
+\]
+specialize the clean open estimate with \(\texttt{left}=N\) and
+\(\texttt{right}=N-\texttt{sep}\); the length equality
+\(N+\texttt{sep}+(N-\texttt{sep})=2N\) is handled by a private slab-length
+cast helper.  Transport then gives the induced-axis estimates
+\[
+\begin{gathered}
+  \texttt{correlation\_induced\_freeLayerAxisGraph\_cubicBox\_same\_transverse\_abs\_le\_tanh\_clean},\\
+  \texttt{correlation\_induced\_freeLayerAxisGraph\_cubicBox\_same\_transverse\_abs\_le\_exp\_neg\_mass}.
+\end{gathered}
+\]
+These theorems are finite, zero-field, and longitudinal-axis only.  They do not
+assert decay for the full cubic lattice graph with transverse edges, do not
+prove an interacting spectral window, and do not take a thermodynamic limit.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
