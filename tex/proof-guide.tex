@@ -8409,6 +8409,33 @@ eigenspaces, an interacting cubic-layer spectral window, thermodynamic-limit
 passage, or final hyperplane exponential decay.  Reference: Glimm--Jaffe,
 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Local high-temperature simple-parity physical norm-window consumers
+(\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenHighTemperatureLocalSimpleParity.lean}
+\]
+keeps the same finite physical norm-window route but weakens the
+simple-eigenspace input from a global hypothesis to a local punctured
+high-temperature hypothesis.  If the scalar continuity hypotheses give a
+one-sided interval on which the physical norm-window inequality holds, and if
+\[
+  \texttt{RealOrthogonalSpectralData.ColumnSimpleEigenspaces}
+\]
+holds on a second local set near but away from \(\beta=0\), then the module
+intersects these neighborhoods and obtains a smaller punctured interval
+\(0<\beta\le\beta_{\max}\).
+It provides variants where the simple-eigenspace input is supplied on a
+punctured one-sided interval, on a punctured absolute-value neighborhood, or
+eventually in \(\mathcal N(0)\) with the endpoint excluded.  On the resulting
+interval the existing finite open-slab and cubic open-slab same-transverse-site
+consumers apply pointwise.  This remains a local conditional consumer: it does
+not prove spectral-data continuity, eigenbasis perturbation, stability of the
+maximal index, concrete columnwise simple eigenspaces, an interacting
+cubic-layer spectral window, thermodynamic-limit passage, or final hyperplane
+exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Open-boundary simple-eigenspace parity bridge (\S17.1,
 Issue~\#3511).}
 The module
