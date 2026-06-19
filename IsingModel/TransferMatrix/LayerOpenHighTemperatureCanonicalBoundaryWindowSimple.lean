@@ -232,7 +232,7 @@ theorem exists_pos_Icc_subdominantRatioMax_lt_openBoundaryWindowCap_of_continuou
 inequality and columnwise simple-eigenspace input hold, the max-index
 simple-parity route gives a finite open spin-observable min-gap certificate at
 each `β` in the interval. -/
-noncomputable def layerOpenMinGapCert_of_Ioc_canonicalRatioBoundaryWindow_localSimpleParity
+noncomputable def layerOpenMinGapCert_of_Ioc_canonicalBoundaryWindow_localSimpleParity
     {S : Type*} [Fintype S] [DecidableEq S]
     (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
     (p : IsingParams ℝ) (hp : p.h = 0) (βmax : ℝ)
@@ -291,7 +291,7 @@ noncomputable def layerOpenMinGapCert_of_Ioc_canonicalRatioBoundaryWindow_localS
 one-sided interval, finite open-slab same-transverse-site decay holds on a
 possibly smaller punctured one-sided high-temperature interval. -/
 theorem
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_IocSimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_IocSimpleParity
     {S : Type*} [Fintype S] [DecidableEq S]
     (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
     (p : IsingParams ℝ) (hp : p.h = 0)
@@ -380,7 +380,7 @@ theorem
 absolute-value neighborhood, finite open-slab same-transverse-site decay holds
 on a punctured one-sided high-temperature interval. -/
 theorem
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_absSimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_absSimpleParity
     {S : Type*} [Fintype S] [DecidableEq S]
     (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
     (p : IsingParams ℝ) (hp : p.h = 0)
@@ -469,7 +469,7 @@ theorem
 but away from `β = 0`, finite open-slab same-transverse-site decay holds on a
 punctured one-sided high-temperature interval. -/
 theorem
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventuallySimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventualSimpleParity
     {S : Type*} [Fintype S] [DecidableEq S]
     (H : SimpleGraph S) [Fintype H.edgeSet] (transitionPairs : Finset (S × S))
     (p : IsingParams ℝ) (hp : p.h = 0)
@@ -519,7 +519,7 @@ theorem
                     (ratio β) ^ sep := by
   intro ratio cap hratio hcap hsimple_eventually
   exact
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_absSimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_absSimpleParity
       H transitionPairs p hp spec hratio hcap
       (exists_pos_punctured_abs_lt_of_eventually_nhds_zero_canonical
         hsimple_eventually)
@@ -528,7 +528,7 @@ theorem
 
 /-- Cubic specialization of the pointwise canonical-ratio boundary-window
 local simple-parity certificate constructor. -/
-noncomputable def cubicLayerOpenMinGapCert_of_Ioc_canonicalRatioBoundaryWindow_localSimpleParity
+noncomputable def cubicLayerOpenMinGapCert_of_Ioc_canonicalBoundaryWindow_localSimpleParity
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (βmax : ℝ)
     (spec : (β : ℝ) →
       RealOrthogonalSpectralData
@@ -560,14 +560,14 @@ noncomputable def cubicLayerOpenMinGapCert_of_Ioc_canonicalRatioBoundaryWindow_l
       (layerTransitionWeight (cubicLayerTransitionPairs d R)
         ({ p with β := β } : IsingParams ℝ))
       (layerSpinAt x) :=
-  layerOpenMinGapCert_of_Ioc_canonicalRatioBoundaryWindow_localSimpleParity
+  layerOpenMinGapCert_of_Ioc_canonicalBoundaryWindow_localSimpleParity
     (cubicLayerGraph d R) (cubicLayerTransitionPairs d R) p hp βmax spec
     hwindow hsimple β hβ x
 
 /-- Cubic version of
-`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_IocSimpleParity`. -/
+`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_IocSimpleParity`. -/
 theorem
-    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_IocSimpleParity
+    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_IocSimpleParity
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0)
     (spec : (β : ℝ) →
       RealOrthogonalSpectralData
@@ -621,7 +621,7 @@ theorem
                       (ratio β) ^ sep := by
   intro ratio cap hratio hcap βlocal hβlocal hsimple
   rcases
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_IocSimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_IocSimpleParity
       (cubicLayerGraph d R) (cubicLayerTransitionPairs d R) p hp spec
       hratio hcap βlocal hβlocal hsimple with
     ⟨βmax, hβmax_pos, hbound⟩
@@ -630,9 +630,9 @@ theorem
   simpa [cubicLayerOpenSlabGraph] using hbound β hβ x left sep right hsep
 
 /-- Cubic version of
-`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_absSimpleParity`. -/
+`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_absSimpleParity`. -/
 theorem
-    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_absSimpleParity
+    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_absSimpleParity
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0)
     (spec : (β : ℝ) →
       RealOrthogonalSpectralData
@@ -685,7 +685,7 @@ theorem
                     (ratio β) ^ sep := by
   intro ratio cap hratio hcap hsimple_abs
   rcases
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalRatioBoundaryWindow_absSimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_absSimpleParity
       (cubicLayerGraph d R) (cubicLayerTransitionPairs d R) p hp spec
       hratio hcap hsimple_abs with
     ⟨βmax, hβmax_pos, hbound⟩
@@ -694,9 +694,9 @@ theorem
   simpa [cubicLayerOpenSlabGraph] using hbound β hβ x left sep right hsep
 
 /-- Cubic version of
-`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventuallySimpleParity`. -/
+`exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventualSimpleParity`. -/
 theorem
-    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventuallySimple
+    exists_pos_Ioc_cubicOpenSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventualSimpleParity
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0)
     (spec : (β : ℝ) →
       RealOrthogonalSpectralData
@@ -748,7 +748,7 @@ theorem
                     (ratio β) ^ sep := by
   intro ratio cap hratio hcap hsimple_eventually
   rcases
-    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventuallySimpleParity
+    exists_pos_Ioc_openSlab_abs_le_of_continuousAt_canonicalBoundaryWindow_eventualSimpleParity
       (cubicLayerGraph d R) (cubicLayerTransitionPairs d R) p hp spec
       hratio hcap hsimple_eventually with
     ⟨βmax, hβmax_pos, hbound⟩
