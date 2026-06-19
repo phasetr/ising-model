@@ -8307,6 +8307,58 @@ spectral data, prove an interacting cubic-layer spectral window, pass to a
 thermodynamic limit, or prove final hyperplane exponential decay.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary simple-eigenspace parity bridge (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenParitySimple.lean}
+\]
+adds a finite structural way to supply the open flip-parity hypothesis.  For
+explicit real orthogonal spectral data \(E=(\lambda_i,Q_i)\), the predicate
+\[
+  \texttt{RealOrthogonalSpectralData.ColumnSimpleEigenspaces}
+\]
+says that each selected column \(Q_i\) spans its eigenspace:
+\[
+  Mw=\lambda_i w \quad\Longrightarrow\quad
+  w=cQ_i .
+\]
+If an involution \(\tau\) commutes with the matrix action,
+\[
+  M(v\circ\tau)=(Mv)\circ\tau,
+\]
+then \(Q_i\circ\tau\) is again a \(\lambda_i\)-eigenvector.  Columnwise
+simplicity gives \(Q_i(\tau x)=cQ_i(x)\).  Applying \(\tau\) twice and using
+that an orthogonal spectral column is nonzero gives \(c^2=1\), hence
+\(c=1\) or \(c=-1\).  Therefore every column is flip-even or flip-odd:
+\[
+  \texttt{columnFlipParity\_of\_commuting\_involution\_columnSimple}.
+\]
+For balanced layer transfer matrices, the existing flip-commutation lemma
+\[
+  \texttt{layerSymmetricTransferMatrix\_mulVec\_comp\_equiv}
+\]
+and the global-spin-flip involution give
+\[
+  \texttt{layerSymmetricTransfer\_columnFlipParity\_of\_columnSimple}.
+\]
+The open physical norm-window certificate
+\[
+  \texttt{layerOpenMinGapCert\_of\_layerMaxEigenIndexSimpleParityCanonicalRatio}\\
+  \texttt{PhysicalNormWindow}
+\]
+and the open-slab/cubic consumers with suffix
+\[
+  \texttt{physicalNormWindow\_simpleParity}
+\]
+therefore replace the direct \(\texttt{ColumnFlipParity}\) input by this
+columnwise simple-eigenspace hypothesis.  This is only a sufficient finite
+bridge.  It does not assert that arbitrary Hermitian spectral-theorem data is
+parity-adapted inside degenerate eigenspaces, and it still does not prove the
+physical norm-window inequality, an interacting cubic-layer spectral window, a
+thermodynamic-limit passage, or final hyperplane exponential decay.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
