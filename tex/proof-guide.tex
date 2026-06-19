@@ -8810,6 +8810,34 @@ This is finite: it does not prove a closed-form rate beyond \(-\log\theta\), a
 thermodynamic limit, or final hyperplane decay.  Reference: Glimm--Jaffe,
 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Two-site interacting open slab as a lattice strip (\S17.1,
+Issue~\#3511).}
+We identify the interacting \(K_2\) open slab with a piece of the ambient
+lattice.  The open-slab graph
+\(\texttt{layerOpenSlabGraph}\,(K_2)\,(\mathrm{id})\,n\) is transported, by the
+site equivalence \(\texttt{twoSiteOpenStripEquiv}\), to the induced finite volume
+of the nearest-neighbour graph \(\texttt{latticeGraph}\,2\) on the two-row strip
+\[
+  \texttt{twoSiteOpenStrip}\,n=\{z:\mathrm{Fin}\,2\to\mathbb Z\mid
+    0\le z_0\le n,\ 0\le z_1\le1\},
+\]
+with \(z_0\) the longitudinal layer coordinate and \(z_1\) the transverse rung.
+Unlike the free-layer transport (a longitudinal-only axis graph), the
+interacting layer carries a transverse edge, so the ambient graph is the full
+\(\texttt{latticeGraph}\,2\): two open-slab sites are adjacent exactly when they
+form a transverse rung (same layer, distinct transverse sites, from \(K_2\)) or a
+longitudinal step (consecutive layers, same transverse site, from the identity
+transition), which matches \(\sum_i|z_a^i-z_b^i|=1\) on the strip points.  The
+graph identification \(\texttt{twoSiteOpenSlabGraph\_map\_stripEquiv}\) yields the
+correlation transport
+\(\texttt{correlation\_induced\_latticeGraph\_two\_strip\_eq\_openSlab}\), carrying
+finite interacting open-slab correlations into the project's induced
+lattice-graph form (mirroring the free-layer
+\(\texttt{correlation\_induced\_freeLayerAxisGraph\_cubicBox\_eq\_openSlab}\)).
+This is a finite graph identification: it does not pass to a thermodynamic limit
+or prove final hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
