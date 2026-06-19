@@ -8677,6 +8677,52 @@ transverse-layer spectral window, a thermodynamic limit, or final hyperplane
 exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Two-site interacting layer spectral data (\S17.1, Issue~\#3511).}
+The free-layer Walsh route diagonalizes only layers without a transverse edge.
+We construct the first \emph{interacting} transverse-edge layer and diagonalize
+it explicitly.  Take \(S=\mathbb{F}_2=\{0,1\}\) with internal graph
+\(K_2=\texttt{completeGraph}\,(\mathrm{Fin}\,2)\) and the identity longitudinal
+transition.  Ordering the spin pairs as \((0,0),(0,1),(1,0),(1,1)\), the
+balanced layer matrix equals the explicit \(4\times4\) matrix
+\[
+  M(a)=\begin{pmatrix}
+    e^{3a} & 1 & 1 & e^{-a}\\
+    1 & e^{a} & e^{-3a} & 1\\
+    1 & e^{-3a} & e^{a} & 1\\
+    e^{-a} & 1 & 1 & e^{3a}
+  \end{pmatrix},\qquad a=\beta J,
+\]
+with the identification
+\(\texttt{layerSymmetricTransferMatrix\_fin2\_complete\_eq\_reindex\_twoSiteInteracting}\).
+The matrix decomposes into an even-even sector and the flip-odd and swap-odd
+one-dimensional sectors.  Writing \(A=e^{3a}+e^{-a}\), \(B=e^{a}+e^{-3a}\),
+\(\Delta=A-B\) and \(\mathrm{rad}=\sqrt{\Delta^2+16}\), the even sector is
+diagonalized by a square-root rotation
+\[
+  c=\sqrt{\tfrac{\mathrm{rad}+\Delta}{2\,\mathrm{rad}}},\qquad
+  s=\sqrt{\tfrac{\mathrm{rad}-\Delta}{2\,\mathrm{rad}}},
+\]
+satisfying \(c^2+s^2=1\), \(c\,s\,\mathrm{rad}=2\), and the eigenvector
+identities \(c(\mathrm{rad}-\Delta)=4s\), \(s(\mathrm{rad}+\Delta)=4c\)
+(\(\texttt{twoSiteK2\_rotC\_mul}\), \(\texttt{twoSiteK2\_rotS\_mul}\); each is
+proved by squaring, using \(\mathrm{rad}^2=\Delta^2+16\), and the nonnegativity
+of both sides).  The four eigenvalues are
+\[
+  \mathrm{top},\ \mathrm{evenBot}=\tfrac{A+B\pm\mathrm{rad}}{2},\quad
+  \mathrm{flipOdd}=e^{3a}-e^{-a},\quad \mathrm{swapOdd}=e^{a}-e^{-3a}.
+\]
+The orthogonal change of basis has the top and even-bottom columns
+\((c,s,s,c)/\sqrt2\) and \((-s,c,c,-s)/\sqrt2\) and the odd columns
+\((1,0,0,-1)/\sqrt2\), \((0,1,-1,0)/\sqrt2\).  One checks orthogonality in both
+directions, the column eigenvector equation \(M\,Q=Q\,\Lambda\), and hence
+\(M=Q\,\Lambda\,Q^{\mathsf T}\)
+(\(\texttt{twoSiteInteractingTransferMatrix\_diagonalizes}\)), packaged as
+\(\texttt{RealOrthogonalSpectralData}\) for the abstract matrix and the physical
+zero-field layer.  This file packages only finite explicit spectral data; it
+does not prove simple spectrum, signed positivity, the open-boundary decay
+discharge, a thermodynamic limit, or final hyperplane decay.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
