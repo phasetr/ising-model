@@ -2,6 +2,7 @@ import IsingModel.TransferMatrix.TwoSiteFreeLayerSpectralWindow
 import IsingModel.TransferMatrix.LayerCardinalitySmallRatio
 import IsingModel.Inequalities.NonnegCorrelations
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Finset.SymmDiff
 
 /-!
@@ -606,6 +607,44 @@ noncomputable def freeLayerTransferOrthogonalSpectralData
   orthogonal_right := freeLayerWalshMatrix_orthogonal_right (S := S)
   diagonalizes := freeLayerTransferMatrix_diagonalizes (S := S) a
 
+omit [Fintype S] [DecidableEq S] in
+/-- Spin products acquire the parity sign of their support under global layer
+spin flip. -/
+theorem spinProduct_layerStateFlipEquiv (A : Finset S) (ω : LayerState S) :
+    spinProduct A (layerStateFlipEquiv S ω) =
+      (-1 : ℝ) ^ A.card * spinProduct A ω := by
+  simp only [layerStateFlipEquiv_apply, spinProduct, Config.flip]
+  simp_rw [Spin.toSign_flip, Int.cast_neg]
+  exact Finset.prod_neg _
+
+/-- A Walsh column acquires the parity sign of its index under global layer
+spin flip. -/
+theorem freeLayerWalshColumn_flip (A : Finset S) (ω : LayerState S) :
+    freeLayerWalshColumn A (layerStateFlipEquiv S ω) =
+      (-1 : ℝ) ^ A.card * freeLayerWalshColumn A ω := by
+  simp only [freeLayerWalshColumn, spinProduct_layerStateFlipEquiv]
+  ring
+
+/-- Even Walsh columns are invariant under global layer spin flip. -/
+theorem freeLayerWalshColumn_flip_even_of_card_even
+    {A : Finset S} (hA : Even A.card) :
+    ∀ ω : LayerState S,
+      freeLayerWalshColumn A (layerStateFlipEquiv S ω) =
+        freeLayerWalshColumn A ω := by
+  intro ω
+  rw [freeLayerWalshColumn_flip, hA.neg_one_pow]
+  ring
+
+/-- Odd Walsh columns change sign under global layer spin flip. -/
+theorem freeLayerWalshColumn_flip_odd_of_card_odd
+    {A : Finset S} (hA : Odd A.card) :
+    ∀ ω : LayerState S,
+      freeLayerWalshColumn A (layerStateFlipEquiv S ω) =
+        -freeLayerWalshColumn A ω := by
+  intro ω
+  rw [freeLayerWalshColumn_flip, hA.neg_one_pow]
+  ring
+
 /-- The finite free-layer Walsh top column is invariant under global spin
 flip. -/
 theorem freeLayerWalshMatrix_top_flip_even :
@@ -615,6 +654,56 @@ theorem freeLayerWalshMatrix_top_flip_even :
         freeLayerWalshMatrix (S := S) ω (freeLayerWalshTop (S := S)) := by
   intro ω
   simp [freeLayerWalshMatrix, freeLayerWalshColumn]
+
+/-- A Walsh spectral-data column with even down-set cardinality is flip-even. -/
+theorem freeLayerTransferOrthogonalSpectralData_columnFlipEven_of_even_downSet
+    (a : ℝ) {χ : LayerState S} (hχ : Even (layerStateDownSet χ).card) :
+    (freeLayerTransferOrthogonalSpectralData (S := S) a).ColumnFlipEven
+      (layerStateFlipEquiv S) χ := by
+  intro ω
+  exact freeLayerWalshColumn_flip_even_of_card_even (S := S) hχ ω
+
+/-- A Walsh spectral-data column with odd down-set cardinality is flip-odd. -/
+theorem freeLayerTransferOrthogonalSpectralData_columnFlipOdd_of_odd_downSet
+    (a : ℝ) {χ : LayerState S} (hχ : Odd (layerStateDownSet χ).card) :
+    (freeLayerTransferOrthogonalSpectralData (S := S) a).ColumnFlipOdd
+      (layerStateFlipEquiv S) χ := by
+  intro ω
+  exact freeLayerWalshColumn_flip_odd_of_card_odd (S := S) hχ ω
+
+/-- The finite free-layer Walsh spectral basis is adapted to global spin-flip
+parity. -/
+theorem freeLayerTransferOrthogonalSpectralData_columnFlipParity (a : ℝ) :
+    (freeLayerTransferOrthogonalSpectralData (S := S) a).ColumnFlipParity
+      (layerStateFlipEquiv S) := by
+  intro χ
+  rcases Nat.even_or_odd (layerStateDownSet χ).card with hχ | hχ
+  · exact Or.inl
+      (freeLayerTransferOrthogonalSpectralData_columnFlipEven_of_even_downSet
+        (S := S) a hχ)
+  · exact Or.inr
+      (freeLayerTransferOrthogonalSpectralData_columnFlipOdd_of_odd_downSet
+        (S := S) a hχ)
+
+/-- The finite free-layer Walsh top spectral column is signed-positive. -/
+noncomputable def freeLayerTransferOrthogonalSpectralData_top_signedPositiveColumn
+    (a : ℝ) :
+    (freeLayerTransferOrthogonalSpectralData (S := S) a).SignedPositiveColumn
+      (freeLayerWalshTop (S := S)) := by
+  refine ⟨1, by ring, ?_⟩
+  intro ω
+  have hcard_pos : 0 < (Fintype.card (LayerState S) : ℝ) := by
+    exact_mod_cast Fintype.card_pos
+  have hinv_pos : 0 < (Fintype.card (LayerState S) : ℝ)⁻¹ :=
+    inv_pos.mpr hcard_pos
+  change 0 < 1 *
+    freeLayerWalshMatrix (S := S) ω (freeLayerWalshTop (S := S))
+  rw [one_mul]
+  dsimp [freeLayerWalshMatrix, freeLayerWalshColumn]
+  have htop : layerStateDownSet (freeLayerWalshTop (S := S)) = ∅ := by
+    exact layerStateDownSetEquivFinset.right_inv ∅
+  rw [htop, spinProduct_empty, mul_one]
+  exact Real.sqrt_pos.mpr hinv_pos
 
 /-- Physical finite free-layer Walsh spectral data. -/
 noncomputable def freeLayerPhysicalOrthogonalSpectralData
@@ -634,6 +723,26 @@ noncomputable def freeLayerPhysicalOrthogonalSpectralData
   diagonalizes := by
     rw [layerSymmetricTransferMatrix_bot_identity_eq_freeLayerTransferMatrix p hp]
     exact (freeLayerTransferOrthogonalSpectralData (S := S) (p.β * p.J)).diagonalizes
+
+/-- The physical zero-field free-layer Walsh spectral basis is adapted to
+global spin-flip parity. -/
+theorem freeLayerPhysicalOrthogonalSpectralData_columnFlipParity
+    (p : IsingParams ℝ) (hp : p.h = 0) :
+    (freeLayerPhysicalOrthogonalSpectralData (S := S) p hp).ColumnFlipParity
+      (layerStateFlipEquiv S) := by
+  simpa [freeLayerPhysicalOrthogonalSpectralData] using
+    freeLayerTransferOrthogonalSpectralData_columnFlipParity
+      (S := S) (p.β * p.J)
+
+/-- The physical zero-field free-layer Walsh top spectral column is
+signed-positive. -/
+noncomputable def freeLayerPhysicalOrthogonalSpectralData_top_signedPositiveColumn
+    (p : IsingParams ℝ) (hp : p.h = 0) :
+    (freeLayerPhysicalOrthogonalSpectralData (S := S) p hp).SignedPositiveColumn
+      (freeLayerWalshTop (S := S)) := by
+  exact
+    { freeLayerTransferOrthogonalSpectralData_top_signedPositiveColumn
+        (S := S) (p.β * p.J) with }
 
 /-- Conditional finite free-layer balanced min-gap certificate from the explicit
 Walsh subdominant bound.

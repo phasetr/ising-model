@@ -8114,6 +8114,57 @@ subdominant spectral window, thermodynamic limits, and final hyperplane decay
 outside the proved scope.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
+Issue~\#3511).}
+For the finite zero-field free layer, the Walsh basis gives a concrete
+parity-adapted spectral datum for the open route.  If \(A\subset S\) indexes a
+Walsh character, then global spin flip acts by
+\[
+  \sigma^A(\mathrm{flip}\,\omega)=(-1)^{|A|}\sigma^A(\omega),
+\]
+formalized as
+\[
+  \texttt{spinProduct\_layerStateFlipEquiv}.
+\]
+Consequently each Walsh column is either flip-even or flip-odd according to
+the parity of \(|A|\), yielding
+\[
+  \texttt{freeLayerTransferOrthogonalSpectralData\_columnFlipParity}
+\]
+and its physical zero-field wrapper.  The top Walsh column, indexed by
+\(\varnothing\), is strictly positive after choosing sign \(+1\):
+\[
+  \texttt{freeLayerPhysicalOrthogonalSpectralData\_top\_signedPositiveColumn}.
+\]
+The open free boundary is also explicit.  At \(h=0\),
+\[
+  \texttt{layerOpenBalancedBoundaryVector\_bot\_h\_zero}
+\]
+identifies the balanced boundary vector with the constant vector \(1\).
+Orthogonality of nontrivial Walsh characters then gives
+\[
+  \texttt{freeLayerPhysical\_boundaryCoordinates\_nonTop\_zero},
+\]
+so the open denominator prefactor smallness condition is closed for
+\(\theta=\tanh(\beta J)\):
+\[
+  \texttt{freeLayerPhysical\_boundaryPrefactor\_small\_tanh}.
+\]
+Combining these facts with the existing finite Walsh subdominant window
+\(\lvert\lambda_i\rvert\le\tanh(\beta J)\lambda_{\mathrm{top}}\) produces the
+finite open certificate
+\[
+  \texttt{freeLayerOpenMinGapCertificate\_tanh}
+\]
+and the project-level same-transverse-site open-slab bound
+\[
+  \texttt{correlation\_freeLayerOpenSlabGraph\_same\_transverse\_abs\_le\_tanh}.
+\]
+This is still a finite free-layer statement.  It does not assert a physical
+interacting cubic spectral window, a thermodynamic limit, or final hyperplane
+decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
