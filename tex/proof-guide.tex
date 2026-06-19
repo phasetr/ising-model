@@ -7953,6 +7953,99 @@ subdominant absolute bound, and positivity of
 \(\texttt{boundarySpectralPartitionPrefactor}\).  The denominator in the final
 ratio is therefore the explicit boundary spectral partition prefactor.
 
+\paragraph{Open-boundary Perron-facing dominance constructors (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenPerron.lean}
+\]
+adds a finite Perron-facing wrapper layer for the open-boundary denominator
+route.  The balanced open boundary vector is
+\[
+  v_x=\sqrt{u(x)}.
+\]
+The theorem \texttt{layerOpenBalancedBoundaryVector\_pos} proves \(v_x>0\)
+from \(u(x)>0\), and
+\texttt{layerOpenBalancedBoundaryVector\_flip\_of\_u\_flip} records the
+corresponding global spin-flip invariance when \(u\) is flip-invariant.
+
+For an orthogonal spectral basis \(Q\), write
+\[
+  b_i=\sum_x v_x Q_{x i}.
+\]
+The denominator prefactor from the previous paragraph is
+\[
+  b_{\mathrm{top}}^2
+  -
+  \theta\sum_{i\ne \mathrm{top}} b_i^2.
+\]
+The lemma
+\[
+  \texttt{boundarySpectralPartitionPrefactor\_pos\_of\_small}
+\]
+therefore packages the direct sufficient condition
+\[
+  \theta\sum_{i\ne \mathrm{top}} b_i^2 < b_{\mathrm{top}}^2
+\]
+as positivity of the boundary spectral partition prefactor.
+
+The signed-positive Perron input says that a sign \(s\), with \(s^2=1\),
+orients the top spectral column so that
+\[
+  sQ_{x,\mathrm{top}}>0
+  \qquad\text{for every }x .
+\]
+For a positive boundary vector this gives
+\[
+  s\,b_{\mathrm{top}}
+  =
+  \sum_x v_x\,sQ_{x,\mathrm{top}}
+  >0,
+\]
+so \(b_{\mathrm{top}}\ne0\) and \(b_{\mathrm{top}}^2>0\).  These facts are
+formalized by
+\[
+  \begin{gathered}
+  \texttt{sign\_mul\_boundaryCoordinates\_pos\_of\_}\\
+  \texttt{vectorPositive\_signedPositiveColumn},\\
+  \texttt{boundaryCoordinates\_ne\_zero\_of\_}\\
+  \texttt{vectorPositive\_signedPositiveColumn},\\
+  \texttt{boundaryCoordinates\_sq\_pos\_of\_}\\
+  \texttt{vectorPositive\_signedPositiveColumn}.
+  \end{gathered}
+\]
+The open-specific wrappers specialize these statements to
+\(\texttt{layerOpenBalancedBoundaryVector}\).
+
+The constructors
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{orthogonalSubdominantBounds\_signedPositiveColumn},\\
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex},\\
+  \texttt{layerOpenMinSpectralGapCertificate\_of\_}\\
+  \texttt{layerOrthogonalSubdominantBounds\_signedPositiveColumn}
+  \end{gathered}
+\]
+fix the scale to the signed-positive dominant eigenvalue, obtain scale
+positivity from the existing Perron-facing API, and discharge denominator
+prefactor positivity from the explicit smallness condition above.  The
+project-level consumers
+\[
+  \begin{gathered}
+  \texttt{correlation\_layerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{signedPositiveBoundaryDominance},\\
+  \texttt{correlation\_cubicLayerOpenSlabGraph\_same\_transverse\_abs\_le\_of\_}\\
+  \texttt{signedPositiveBoundaryDominance}
+  \end{gathered}
+\]
+expose the resulting finite open-slab and cubic estimates.  The quantitative
+boundary-prefactor smallness, the subdominant spectral window, and the central
+marked-channel cancellation remain explicit inputs.  This paragraph does not
+claim a physical interacting cubic-layer spectral window, a thermodynamic
+limit, or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Diagonalization and matrix powers (\S17.1, Issue~\#3511 PR~2).}
 The Hadamard matrix $H = \bigl(\begin{smallmatrix} 1 & 1 \\ 1 & -1 \end{smallmatrix}\bigr)$
 (\texttt{hadamardMatrix}) satisfies $H^2 = 2\,\mathbb 1$
