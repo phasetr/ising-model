@@ -8640,6 +8640,43 @@ thermodynamic-limit passage, or final hyperplane exponential decay.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{One-site open boundary-window discharge (\S17.1, Issue~\#3511).}
+The simple-spectrum boundary-window machinery above is conditional.  We
+discharge it concretely for the smallest genuine transfer matrix.  Take the
+one-site transverse layer \(S=\mathrm{PUnit}\) with internal graph
+\(\bot\) and the identity longitudinal transition; its balanced layer matrix is
+the ordinary \(2\times2\) one-dimensional Ising transfer matrix.  Its two
+eigenvalues are the top eigenvalue and
+\[
+  \texttt{transferEigenvalueBot}
+    = \tanh(\beta J)\,\texttt{transferEigenvalueTop}
+    < \texttt{transferEigenvalueTop},
+\]
+so the eigenvalue function is injective and the spectral data has a simple
+spectrum
+(\(\texttt{isingTransferMatrix1DOrthogonalSpectralData\_simpleSpectrum}\),
+\(\texttt{oneSiteLayerOrthogonalSpectralData\_simpleSpectrum}\)).  The top
+Hadamard column is the constant \(1/\sqrt2\), hence signed-positive with sign
+\(+1\), and the constant balanced open boundary vector has vanishing off-top
+boundary coordinate because the off-top Hadamard column sums to zero over the
+two layer states.  Therefore the off-top boundary mass is zero and the open
+boundary-window cap equals \(1\)
+(\(\texttt{oneSiteLayerBoundarySpectralWindowCap\_eq\_one}\)).  Feeding the
+simple spectrum through the PR~\#4057 bridge
+\(\texttt{columnSimpleEigenspaces\_of\_simpleSpectrum}\) and the explicit
+signed-positive simple-parity boundary-window consumer,
+\(\texttt{correlation\_oneSiteLayerOpenSlabGraph\_abs\_le\_of\_simpleSpectrum}\)
+gives an unconditional finite one-site open-slab same-transverse-site
+correlation bound with decay parameter \(\tanh(\beta J)\) for
+\(0<\beta J\).  The sharp coefficient-one form of this same one-site inequality
+already follows from the \(S=\mathrm{PUnit}\) specialization of the free-layer
+Walsh open decay; the present contribution is the first concrete witness that
+the abstract simple-spectrum boundary-window discharge fires on a real
+longitudinal transfer matrix.  This is finite: it does not prove an interacting
+transverse-layer spectral window, a thermodynamic limit, or final hyperplane
+exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
