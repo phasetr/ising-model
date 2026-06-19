@@ -8964,6 +8964,29 @@ wrappers are provided.  This is finite and conditional on the quadratic-form gap
 it does not construct that gap or prove a thermodynamic limit.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Row-sum Rayleigh bound for the transfer-matrix quadratic form
+(\S17.1, Issue~\#3511).}
+A first building block toward constructing the quadratic-form gap is an
+unconditional Schur/Gershgorin-type Rayleigh bound: for a symmetric matrix whose
+absolute row sums are all at most \(C\),
+\[
+  |\langle v, Mv\rangle|
+    \le\sum_{i,j}|M_{ij}|\,|v_i|\,|v_j|
+    \le\sum_{i,j}|M_{ij}|\,\frac{v_i^2+v_j^2}{2}
+    =\sum_i\Bigl(\sum_j|M_{ij}|\Bigr)v_i^2
+    \le C\,\|v\|^2,
+\]
+where the middle equality folds the column sum into the row sum by symmetry
+(\(M=M^{\mathsf T}\)) and the AM--GM step is \(2|v_i||v_j|\le v_i^2+v_j^2\).  The
+maximal-row-sum form and the hook into the quadratic-form-gap reduction (yielding
+\(r_{\mathrm{abs}}\le\theta\) when \(\max_i\sum_j|M_{ij}|\le\theta\,\lambda_{\max}\))
+are provided.  This bound holds for all vectors, hence bounds the top eigenvalue
+too and does not by itself produce a strict gap; a later off-diagonal-mass
+splitting on the top-orthogonal subspace will.  This is finite and unconditional:
+it does not construct a strict spectral gap or prove a thermodynamic limit.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
