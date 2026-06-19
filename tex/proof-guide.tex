@@ -8889,6 +8889,37 @@ it does not construct the window uniformly, prove a thermodynamic limit, or
 prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Cubic transverse open slab as an ambient lattice box (\S17.1,
+Issue~\#3511).}
+The arbitrary finite transverse layer decay specializes to the cubic transverse
+layer \(\texttt{cubicLayerGraph}\,d\,R\) and transports onto a concrete ambient
+finite volume.  The cubic open slab graph is identified with the induced
+subgraph of the full nearest-neighbour lattice graph
+\(\texttt{latticeGraph}\,(d+1)\) on the longitudinal box
+\(\texttt{cubicLayerOpenBox}\,d\,R\,n=\{z:\mathbb{Z}^{d+1}\mid 0\le z_0\le n,\
+z_{1..d}\in[-R,R]^d\}\).  Crucially, the cubic transverse layer carries genuine
+transverse nearest-neighbour edges (\(\texttt{cubicLayerGraph}\,d\,R=
+\texttt{induce}\,(\texttt{latticeGraph}\,d)\,[-R,R]^d\)), so the ambient graph is
+the \emph{full} lattice graph: transverse lattice edges and longitudinal rungs.
+The adjacency match follows from the \(\ell^1\) splitting
+\(\sum_{i\le d}|z_i-w_i|=|z_0-w_0|+\sum_{1\le j\le d}|z_j-w_j|\)
+(\(\texttt{Fin.sum\_univ\_succ}\)), and the correlation transport then gives, at
+zero field,
+\[
+  \bigl|\langle\sigma\,\sigma\rangle\bigr|
+    \le\Bigl(\tfrac{\text{boundaryMarkedSpectralPrefactor}}
+                   {\text{boundarySpectralPartitionPrefactor}}\Bigr)
+        \cdot\theta_{\max}^{\,\mathrm{sep}}
+\]
+on \(\texttt{induce}\,(\texttt{latticeGraph}\,(d+1))\,
+(\texttt{cubicLayerOpenBox}\,d\,R\,(\mathrm{left}+\mathrm{sep}+\mathrm{right}))\),
+with the transition-weight symmetry discharged automatically and conditional only
+on the boundary-window gap and a columnwise-simple-eigenspace parity input.  This
+generalizes the \(\mathrm{Fin}\,2\) two-row strip transport to a transverse cube
+of any dimension.  This is finite: it does not pass to a thermodynamic limit or
+prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
