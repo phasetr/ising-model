@@ -8920,6 +8920,30 @@ of any dimension.  This is finite: it does not pass to a thermodynamic limit or
 prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Explicit subdominant ratio for open-slab decay (\S17.1,
+Issue~\#3511).}
+The canonical decay ratio is obtained by a non-constructive choice, so a
+quantitative eigenvalue estimate \(\forall i\neq\mathrm{top},\
+|\lambda_i|\le\theta\,\lambda_{\mathrm{top}}\) does not bound it directly.  We
+therefore define the \emph{explicit} subdominant absolute ratio
+\[
+  r_{\mathrm{abs}}
+    :=\max_{i\neq\mathrm{top}}\frac{|\lambda_i|}{\lambda_{\mathrm{top}}}
+\]
+(with \(r_{\mathrm{abs}}:=0\) when there is a single eigenvalue index), satisfying
+\(0\le r_{\mathrm{abs}}<1\), the defining bound
+\(\forall i\neq\mathrm{top},\ |\lambda_i|\le r_{\mathrm{abs}}\,
+\lambda_{\mathrm{top}}\), and the key monotonicity hook: if
+\(\forall i\neq\mathrm{top},\ |\lambda_i|\le\theta\,\lambda_{\mathrm{top}}\) then
+\(r_{\mathrm{abs}}\le\theta\).  The open-slab decay consumers are reproduced with
+\(r_{\mathrm{abs}}\) as decay parameter (general transverse layer and cubic
+ambient-box forms), so that a later transverse-volume-uniform high-temperature
+estimate \(\theta(\beta,J,d)\) — independent of the box radius — bounds the
+decay rate uniformly.  This is finite and conditional on the boundary-window gap
+and the parity input: it does not construct the window uniformly or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
