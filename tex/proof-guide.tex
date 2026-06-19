@@ -8377,6 +8377,38 @@ interacting cubic-layer spectral window, thermodynamic-limit passage, or final
 hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{High-temperature simple-parity physical norm-window consumers
+(\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenHighTemperatureSimpleParity.lean}
+\]
+turns the preceding scalar high-temperature bridge into a consumer-facing
+finite API.  The first group of theorems replaces the scalar convergence
+assumptions by the more direct hypotheses
+\[
+  \texttt{ContinuousAt}\ \rho\ 0,
+  \qquad
+  \texttt{ContinuousAt}\ C\ 0,
+\]
+using \(\texttt{ContinuousAt.tendsto}\) to feed the earlier
+\(\texttt{Tendsto}\)-based result.  Thus the strict physical norm-window
+inequality holds on a one-sided interval \(0\le\beta\le\beta_{\max}\).
+On that interval, the pointwise inequality is exactly the input required by the
+existing physical norm-window simple-parity route.  Assuming the chosen
+spectral data satisfy
+\[
+  \texttt{RealOrthogonalSpectralData.ColumnSimpleEigenspaces}
+\]
+at each \(\beta\), the module constructs the finite open min-gap certificate
+pointwise and exposes finite open-slab and cubic open-slab same-transverse-site
+correlation bounds throughout the interval.  This is a composition theorem, not
+a perturbation theorem: it does not prove continuity of spectral data,
+eigenbasis perturbation, stability of the maximal index, columnwise simple
+eigenspaces, an interacting cubic-layer spectral window, thermodynamic-limit
+passage, or final hyperplane exponential decay.  Reference: Glimm--Jaffe,
+2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Open-boundary simple-eigenspace parity bridge (\S17.1,
 Issue~\#3511).}
 The module
