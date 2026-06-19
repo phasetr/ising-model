@@ -8860,6 +8860,35 @@ This is finite: it does not pass to a thermodynamic limit or prove final
 hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Finite arbitrary transverse layer open-slab decay via Hermitian
+spectral data (\S17.1, Issue~\#3511).}
+The closed-form \(K_2\) route generalizes from the two-element transverse fiber
+to an arbitrary finite transverse layer \(S\).  Instead of an explicit
+diagonalization, the spectral datum is supplied by the real spectral theorem for
+the symmetric balanced transfer matrix (requiring only transition-weight
+symmetry), and the decay parameter is fixed to the canonical maximal-index
+subdominant ratio \(\theta=\theta_{\max}\).  Because the balanced transfer
+matrix is entrywise positive, its maximal column is automatically
+signed-positive and \(\theta_{\max}\) automatically bounds every non-maximal
+eigenvalue in absolute value, with \(0\le\theta_{\max}<1\).  Beyond the
+zero-field condition \(h=0\), the only remaining inputs are the boundary-window
+gap \(\theta_{\max}<\mathrm{cap}\) and a columnwise-simple-eigenspace (or
+simple-spectrum) parity input.  Under these,
+at zero field (\(h=0\)),
+\[
+  \bigl|\langle\sigma\,\sigma\rangle\bigr|
+    \le\Bigl(\tfrac{\text{boundaryMarkedSpectralPrefactor}}
+                   {\text{boundarySpectralPartitionPrefactor}}\Bigr)
+        \cdot\theta_{\max}^{\,\mathrm{sep}}
+\]
+holds on \(\texttt{layerOpenSlabGraph}\,H\,\texttt{transitionPairs}\,
+(\mathrm{left}+\mathrm{sep}+\mathrm{right})\) for arbitrary finite \(S\), with a
+cubic-transverse-layer specialization to \(\texttt{cubicLayerGraph}\,d\,R\).
+This is finite and conditional on the boundary-window gap and the parity input:
+it does not construct the window uniformly, prove a thermodynamic limit, or
+prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
