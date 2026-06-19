@@ -8838,6 +8838,28 @@ This is a finite graph identification: it does not pass to a thermodynamic limit
 or prove final hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Two-site interacting open strip decay on the ambient lattice (\S17.1,
+Issue~\#3511).}
+Using the graph/correlation transport above, the finite interacting \(K_2\)
+open-slab decay is restated directly on the induced finite volume of the ambient
+\(\texttt{latticeGraph}\,2\) on \(\texttt{twoSiteOpenStrip}\).  The two correlated
+endpoints become the strip points \(((\mathrm{left}),(x))\) and
+\(((\mathrm{left}+\mathrm{sep}),(x))\), and the transport of any finite open-slab
+bound is the one-line lemma
+\(\texttt{abs\_correlation\_induced\_latticeGraph\_two\_strip\_le\_of\_openSlab}\).
+Hence the prefactor and mass forms
+\[
+  \bigl|\langle\sigma\,\sigma\rangle\bigr|\le(\text{prefactor})\cdot\theta^{\mathrm{sep}},
+  \qquad
+  \bigl|\langle\sigma\,\sigma\rangle\bigr|\le(\text{prefactor})\cdot e^{-m\,\mathrm{sep}}
+\]
+with \(\theta=\mathrm{flipOdd}/\mathrm{top}\) and \(m=-\log\theta\) hold at zero
+field (\(h=0\)) for \(0<\beta J\) on
+\(\texttt{Ambient.inducedGraph}\,(\texttt{latticeGraph}\,2)\,(\texttt{twoSiteOpenStrip}\,N)\).
+This is finite: it does not pass to a thermodynamic limit or prove final
+hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
