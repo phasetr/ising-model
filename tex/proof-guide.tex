@@ -8265,6 +8265,48 @@ inequality for an interacting cubic layer, pass to a thermodynamic limit, or
 prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary physical norm window (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenPhysicalNormWindow.lean}
+\]
+specializes the canonical norm-window cap to physical layer weights while
+displaying the denominator as the finite one-layer internal partition sum
+\[
+  \sum_{\omega : \texttt{LayerState}\ S}
+    \texttt{layerInternalWeight}\ H\ p\ \omega .
+\]
+The cap
+\[
+  \texttt{layerOpenPhysicalBoundaryNormWindowCap}
+\]
+is definitionally the previous generic cap
+\[
+  \texttt{layerOpenBoundaryNormWindowCap}
+    \ (\texttt{layerInternalWeight}\ H\ p)
+\]
+after specialization.  Hence
+\[
+  \texttt{theta\_lt\_layerOpenBoundarySpectralWindowCap\_of\_lt\_}\\
+  \texttt{physicalNormWindowCap}
+\]
+is only the existing norm-window-to-boundary-window conversion with this
+physical denominator exposed.  The certificate constructor
+\[
+  \texttt{layerOpenMinGapCert\_of\_layerMaxEigenIndexFlipParityCanonicalRatio}\\
+  \texttt{PhysicalNormWindow}
+\]
+and the open-slab and cubic consumers with suffix
+\[
+  \texttt{PhysicalNormWindow}
+\]
+therefore reuse the canonical norm-window route unchanged.  This identifies
+the finite physical inequality that remains to be proved in later interacting
+estimates, but it does not prove that inequality, construct parity-adapted
+spectral data, prove an interacting cubic-layer spectral window, pass to a
+thermodynamic limit, or prove final hyperplane exponential decay.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
