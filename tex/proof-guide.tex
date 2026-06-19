@@ -8220,6 +8220,51 @@ window, a thermodynamic limit, or final hyperplane exponential decay.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Open-boundary canonical norm window (\S17.1, Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenBoundaryNormWindow.lean}
+\]
+adds a finite sufficient condition for the open-boundary boundary-coordinate
+window.  The identities
+\[
+  \texttt{RealOrthogonalSpectralData.boundaryCoordinates\_eq\_spectralCoord},
+  \quad
+  \texttt{RealOrthogonalSpectralData.sum\_boundaryCoordinates\_sq}
+\]
+identify the boundary coordinates with the existing orthogonal spectral
+coordinates, and
+\[
+  \texttt{RealOrthogonalSpectralData.boundaryCoordinateRestSq\_le\_vectorSqNorm}
+\]
+bounds the off-top boundary-coordinate mass by the full squared norm of the
+boundary vector.  For the balanced open boundary vector this norm is
+\[
+  \texttt{vectorSqNorm\_layerOpenBalancedBoundaryVector}:
+  \quad
+  \|\sqrt{u}\|_2^2=\sum_a u_a.
+\]
+Thus the norm-window cap
+\[
+  \texttt{layerOpenBoundaryNormWindowCap}
+\]
+is a convenient stronger hypothesis implying the existing boundary-window cap,
+formalized by
+\[
+  \texttt{theta\_lt\_layerOpenBoundarySpectralWindowCap\_of\_lt\_normWindowCap}
+\]
+and its signed-positive-column variant.  The canonical-ratio constructors and
+open-slab consumers with suffix
+\[
+  \texttt{BoundaryNormWindow}
+\]
+therefore reuse the existing boundary-window route after a single finite
+norm-window-to-boundary-window conversion.  This remains finite and conditional:
+it does not construct parity-adapted spectral data, prove the norm-window
+inequality for an interacting cubic layer, pass to a thermodynamic limit, or
+prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
