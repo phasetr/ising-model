@@ -8359,6 +8359,51 @@ physical norm-window inequality, an interacting cubic-layer spectral window, a
 thermodynamic-limit passage, or final hyperplane exponential decay.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Open-boundary boundary-window simple-parity consumers (\S17.1,
+Issue~\#3511).}
+The module
+\[
+  \texttt{TransferMatrix/LayerOpenBoundaryWindowSimple.lean}
+\]
+connects the preceding simple-eigenspace parity bridge directly to the
+explicit open-boundary boundary-window route.  The constructors
+\[
+  \begin{gathered}
+  \texttt{layerOpenMinGapCert\_of\_subdominant\_signedPositiveSimpleParitySpin\_}\\
+  \texttt{boundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_layerSubdominant\_signedPositiveSimpleParitySpin\_}\\
+  \texttt{boundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_maxEigenIndexSimpleParitySpin\_boundaryWindow},\\
+  \texttt{layerOpenMinGapCert\_of\_layerMaxEigenIndexSimpleParitySpin\_}\\
+  \texttt{boundaryWindow}
+  \end{gathered}
+\]
+first derive
+\[
+  \texttt{ColumnFlipParity}
+\]
+from
+\[
+  \texttt{ColumnSimpleEigenspaces}
+\]
+using
+\[
+  \texttt{layerSymmetricTransfer\_columnFlipParity\_of\_columnSimple},
+\]
+and then reuse the existing flip-parity boundary-window certificates.  The
+open-slab and cubic consumers expose both the explicit signed-positive
+\(\mathrm{top},\theta\) form and the max-index form, with suffix
+\[
+  \texttt{SimpleParity\_boundaryWindow}.
+\]
+This changes only how the finite parity input is supplied: the subdominant
+spectral window, the boundary-window inequality, and signed-positive top
+channel remain hypotheses.  It does not prove arbitrary degenerate-eigenspace
+parity adaptation, a physical norm-window inequality, an interacting
+cubic-layer spectral window, a thermodynamic-limit passage, or final
+hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
