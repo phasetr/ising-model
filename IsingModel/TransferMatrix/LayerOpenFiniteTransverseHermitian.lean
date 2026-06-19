@@ -16,7 +16,8 @@ subdominant ratio `RealOrthogonalSpectralData.subdominantRatio_maxEigenIndex`.
 Because the balanced transfer matrix is entrywise positive, the maximal column is
 automatically signed-positive (finite Perron-facing orientation) and the
 canonical subdominant ratio automatically bounds every non-maximal eigenvalue in
-absolute value and is strictly below one.  The only remaining user inputs are:
+absolute value and is strictly below one.  Beyond the zero-field condition
+`p.h = 0`, the only remaining user inputs are:
 
 * `hk_symm`: symmetry of the transition weight (needed for the spectral theorem);
 * `hwindow`: the canonical subdominant ratio lies strictly below the open
