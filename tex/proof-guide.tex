@@ -17279,6 +17279,21 @@ independent per-vertex sums, the latter being the per-vertex Kotecky--Preiss
 activity sums.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
 Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Monotonicity of spanning-tree edge subsets (\S18.5).}
+A spanning tree of a subgraph $G\le H$ is a spanning tree of $H$: its edges lie in
+$G.\mathrm{edgeFinset}\subseteq H.\mathrm{edgeFinset}$, and the connectivity and
+edge-count $|S|=|V|-1$ conditions are unchanged, so
+$\mathrm{spanningTreeEdgeSubsets}\,G\subseteq\mathrm{spanningTreeEdgeSubsets}\,H$
+(\texttt{spanningTreeEdgeSubsets\_mono}, via \texttt{mem\_spanningTreeEdgeSubsets} and
+\texttt{SimpleGraph.edgeFinset\_subset\_edgeFinset})
+(\texttt{ClusterExpansion/Penrose/SpanningTreeMono.lean}).  Hence for non-negative
+$F$ a weighted spanning-tree sum is monotone in the graph
+(\texttt{sum\_spanningTree\_le\_of\_le}), and in particular is dominated by the sum
+over the spanning trees of the complete graph $\top$
+(\texttt{sum\_spanningTree\_le\_top}), where the parent-code factorisation applies.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik
+\S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values

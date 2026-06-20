@@ -7,6 +7,7 @@ import IsingModel.ClusterExpansion.Penrose.IntervalPartition
 import IsingModel.ClusterExpansion.Penrose.TreeGraphBound
 import IsingModel.ClusterExpansion.Penrose.CompleteGraphTreeBound
 import IsingModel.ClusterExpansion.Penrose.WeightedTreeSum
+import IsingModel.ClusterExpansion.Penrose.SpanningTreeMono
 import IsingModel.ClusterExpansion.Penrose.SpanningTreeSummable
 
 /-!
