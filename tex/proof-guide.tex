@@ -17174,6 +17174,37 @@ bounds are volume-uniform (max-degree only).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4 (Theorem~5.4, the
 Kotecky--Preiss criterion), \S5.7.1 for the Ising polymer application.
 
+\paragraph{Kotecky--Preiss hypothesis discharged at high temperature
+(FV Theorem~5.4, \S18.5).}
+Sharpening the activity bound to the \emph{tail} geometric series discharges the
+Kotecky--Preiss hypothesis with weight $a(P)=|P|$
+(\texttt{ClusterExpansion/PolymerActivityKP.lean}).  Since polymers are nonempty
+(edge-count $\ge1$), the per-vertex activity sum starts at $\ell=1$, so
+\[
+  \sum_{Q\ni v}u^{|Q|}
+    \le\sum_{\ell\ge1}(\Delta^2 u)^{\ell}
+    =\frac{\Delta^2 u}{1-\Delta^2 u}
+  \qquad(\Delta^2 u<1)
+\]
+(\texttt{rootedPolymerActivity\_le\_geometric\_tail}; the $\ell=0$ fibre is empty,
+$\sum'$ via \texttt{Summable.tsum\_eq\_zero\_add}).  Moreover every support vertex of
+an even subgraph has even degree $\ge2$, so the handshake
+$2|\mathrm{supp}\,P|\le\sum_v\deg_P(v)=2|P|$ gives
+$|\mathrm{supp}\,P|\le|P|$
+(\texttt{polymerSupport\_card\_le\_card\_of\_mem\_allPolymers}, via
+\texttt{sum\_filter\_card\_eq\_two\_mul\_card}).  In the high-temperature regime
+$\Delta^2 e|t|\le\frac12$ the tail factor satisfies
+$\Delta^2 e|t|\,(1-\Delta^2 e|t|)^{-1}\le1$, whence
+\[
+  \sum_{Q\sim P}e^{|Q|}|t|^{|Q|}
+    \le|\mathrm{supp}\,P|\cdot\frac{\Delta^2 e|t|}{1-\Delta^2 e|t|}
+    \le|\mathrm{supp}\,P|\le|P|
+\]
+(\texttt{incompatibilityActivity\_expWeighted\_le\_card\_of\_half}).  This is the
+exact volume-uniform input that a Kotecky--Preiss cluster-expansion convergence
+theorem (FV Theorem~5.4) consumes.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
