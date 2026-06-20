@@ -9203,6 +9203,27 @@ the Dobrushin coefficient, give a transverse-volume-uniform gap, or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Site factorization of the identity-transition projective cross-ratio
+(\S17.1, Issue~\#3511).}
+The identity-transition layer kernel factorizes over the transverse sites,
+\(k(\omega,\eta)=\exp\bigl(\beta J\sum_x s(\omega_x)s(\eta_x)\bigr)\), so its
+projective cross-ratio is a single exponential of a sum over sites:
+\[
+  \mathrm{cr}(k;\omega,\omega',\eta,\eta')
+    =\exp\Bigl(\beta J\sum_x(s(\omega_x)-s(\omega'_x))(s(\eta_x)-s(\eta'_x))\Bigr).
+\]
+By the scaling invariance, the Doob transform of the balanced cubic transfer
+matrix has the same cross-ratio -- site-additive, independent of both the layer
+weight \(u\) and the Perron vector \(w\).  Thus the log cross-ratio is additive
+over transverse sites (each contributing at most \(4|\beta J|\)), so the
+\emph{global} projective diameter grows linearly in the number of transverse
+sites.  This is precisely why a transverse-volume-uniform gap cannot come from the
+global Dobrushin/diameter bound alone: a uniform estimate must exploit the
+site-tensorized structure (a local/tensorized contraction, a later research arc).
+These are finite algebraic identities: they do not give a
+transverse-volume-uniform gap or prove a thermodynamic limit.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
