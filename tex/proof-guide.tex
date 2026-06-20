@@ -17917,6 +17917,28 @@ per-vertex $\Delta^2 e|t|$ smallness factor into the leaf-peel column sums, towa
 sharpened (summable-over-$n$) peel bound.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Relaxing the tree child-count factorial sum to all parent functions (\S18.5).}
+The convergent cluster-expansion closing needs a summable bound on
+$\sum_{T:\mathrm{ST}(K_{n+1})}\prod_v(\mathrm{childCount}\,T\,v)!$
+(\texttt{ClusterExpansion/Penrose/ParentCodeFactorialSum.lean}).  Because the
+complete-graph spanning-tree parent code injects spanning trees into parent functions
+$\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)$ ($\mathrm{completeGraphTreeParentCode\_injective}$),
+and the child count
+$\mathrm{rootedParentChildCount}\,(\mathrm{completeGraphTreeParentCode}\,n\,T)\,\mathrm{univ}$
+is exactly the parent-function fiber size,
+$\mathrm{sum\_completeGraphTrees\_prod\_childCount\_factorial\_le}$ gives
+\[
+  \sum_{T}\prod_v(\mathrm{childCount}\,T\,v)!
+    \le\sum_{p:\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)}\prod_v(\#\{i\mid p\,i=v\})!,
+\]
+by \texttt{Finset.sum\_image} on the injection and \texttt{Finset.sum\_le\_sum\_of\_subset}
+(monotone in $\mathbb{N}$).  This Pr\"ufer-free relaxation isolates the combinatorial
+evaluation of the parent-function sum---which equals
+$(2n)!/n!=n!\binom{2n}{n}\le4^n n!$ (via $\mathrm{Nat.centralBinom\_le\_four\_pow}$)---from
+the tree-specific machinery, the route to a $4r/(1-r)^2<1$ summable cluster-expansion
+convergence.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
