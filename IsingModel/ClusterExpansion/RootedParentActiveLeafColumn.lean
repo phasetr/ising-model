@@ -12,9 +12,9 @@ remainder polymer assigned to the leaf's parent.  The resulting inner sum is the
 
 `leafColumnSum_le` bounds it by the incompatibility-neighbourhood moment estimate
 (`incompatibilityActivity_cardPow_expWeighted_le`, #4102): for `P ∈ allPolymers G` and
-`Δ²·e·|t| < 1`, `leafColumnSum G P d t ≤ |P|·d!/(1 − Δ²e|t|)^{d+1}`.  The factor `|P|` is exactly the
-moment bump that the leaf-peel induction folds into the remainder weight at the
-parent vertex.
+`Δ²·e·|t| < 1`, `leafColumnSum G P d t ≤ |P|·d!/(1 − Δ²e|t|)^{d+1}`.  The factor `|P|`
+is exactly the moment bump that the leaf-peel induction folds into the remainder weight
+at the parent vertex.
 
 ## References
 
