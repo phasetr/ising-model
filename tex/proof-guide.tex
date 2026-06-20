@@ -8951,6 +8951,18 @@ boundary-window gap, the columnwise-simple-eigenspace parity input, and $0<\text
 Finite; it does not construct the uniform window or pass to a thermodynamic limit.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Uniform stage bound implies infinite-volume bound (\S17.1, Issue~\#3511).}
+The general bridge from any uniform finite-volume decay bound to the infinite-volume
+correlation (\texttt{AmbientLattice/CorrelationInfinite/Bounds.lean}):
+$\mathrm{abs\_correlationInfinite\_le\_of\_forall\_abs\_correlationAlongExhaustion\_le}$ shows
+that if every exhaustion stage satisfies
+$|\mathrm{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,N|\le C$, then
+$|\mathrm{correlationInfinite}\,G\,\Lambda\,p\,A|\le C$ (the supremum is $\le C$ by
+\texttt{ciSup\_le}, and $\ge -C$ from the stage-$0$ lower bound).  This generalises the
+unconditional $\mathrm{abs\_correlationInfinite\_le\_one}$ (the $C=1$ case) and is the
+reusable tool the transfer-matrix infinite-volume consumers feed their per-stage decay
+bounds into.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Explicit subdominant ratio for open-slab decay (\S17.1,
 Issue~\#3511).}
 The canonical decay ratio is obtained by a non-constructive choice, so a

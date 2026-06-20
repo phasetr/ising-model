@@ -40,6 +40,21 @@ theorem abs_correlationInfinite_le_one
     (abs_le.mp (abs_correlationAlongExhaustion_le_one G Λ p A 0)).1
   exact h0.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) 0)
 
+/-- **Uniform stage bound ⟹ infinite-volume bound.**  If every exhaustion stage
+satisfies `|correlationAlongExhaustion G Λ p A N| ≤ C`, then the infinite-volume
+correlation satisfies `|correlationInfinite G Λ p A| ≤ C`.  The supremum is `≤ C` by
+`ciSup_le`, and `≥ -C` from the stage-`0` lower bound; this generalises
+`abs_correlationInfinite_le_one` (the case `C = 1`) and is the bridge from any uniform
+finite-volume decay bound to the infinite-volume correlation. -/
+theorem abs_correlationInfinite_le_of_forall_abs_correlationAlongExhaustion_le
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (A : Finset V) {C : ℝ}
+    (h : ∀ N, |correlationAlongExhaustion G Λ p A N| ≤ C) :
+    |correlationInfinite G Λ p A| ≤ C := by
+  refine abs_le.mpr ⟨?_, ciSup_le fun N => (le_abs_self _).trans (h N)⟩
+  exact (abs_le.mp (h 0)).1.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) 0)
+
 /-- **`-1 ≤ correlationInfinite`** (unconditional).
 Lower side of `abs_correlationInfinite_le_one`. -/
 theorem neg_one_le_correlationInfinite
