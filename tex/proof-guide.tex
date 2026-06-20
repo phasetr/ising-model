@@ -17430,6 +17430,25 @@ $\mathrm{Fin.cons}$ (\texttt{Fin.consEquiv}); the set equality is established by
 \texttt{Finset.sum\_map} and \texttt{Finset.sum\_product}.  Reference: Glimm--Jaffe,
 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Arbitrary-coordinate separation of a constant \texttt{piFinset} sum
+(\S18.5).}
+Generalising to an arbitrary pivot $p:\mathrm{Fin}(n+1)$ (the leaf-peel peels an
+arbitrary leaf, not just the root index $0$)
+(\texttt{ClusterExpansion/PiFinsetSeparationPivot.lean}):
+\[
+  \sum_{\omega\in\mathrm{piFinset}(\lambda\_.s)}f(\omega)
+    =\sum_{x\in s}\ \sum_{\omega'\in\mathrm{piFinset}(\lambda\_.s)}
+      f(p.\mathrm{insertNth}\,x\,\omega')
+\]
+(\texttt{sum\_piFinset\_const\_insertNth}).  The $\mathrm{piFinset}$ is the image of
+$s\times\mathrm{piFinset}$ under the injection $p.\mathrm{insertNth}$
+(\texttt{Fin.insertNthEquiv}); the proof mirrors the first-coordinate case
+(\texttt{ext}; forward $x=\omega\,p$, $\omega'=\mathrm{Fin.removeNth}\,p\,\omega$ via
+\texttt{Fin.insertNth\_self\_removeNth}; backward via \texttt{Fin.forall\_iff\_succAbove}
+and \texttt{insertNth\_apply\_same}/\texttt{\_succAbove}), then \texttt{Finset.sum\_map}
+and \texttt{Finset.sum\_product}.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
