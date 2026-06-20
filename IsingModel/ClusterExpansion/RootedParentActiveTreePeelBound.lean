@@ -9,8 +9,9 @@ Chaining the Fubini swap (`penroseTreeSum_le_subtype_parentConstraint`, #4118), 
 `Fin (n + 1)`-labelling identity (`rootedParentActiveSum_univ_zero_eq`, #4117), and the
 leaf-peel bound for the complete-graph parent code
 (`rootedParentActiveSum_completeGraphTreeParentCode_univ_zero_le_peelBound`, #4115)
-bounds the Penrose tree-graph sum (the right-hand side of the Mayer-term bound #4095) by
-the sum over complete-graph spanning-tree shapes of the child-count peel bound.
+bounds the Penrose tree-graph sum (the tree-sum factor in the right-hand side of the
+Mayer-term bound #4095, i.e. the per-`(n+1)` weight excluding the `(n+1)!⁻¹` prefactor)
+by the sum over complete-graph spanning-tree shapes of the child-count peel bound.
 
 * `penroseTreeSum_le_sum_peelBound`.
 
