@@ -247,6 +247,7 @@ import IsingModel.Concrete.SlabBrick
 import IsingModel.Concrete.CenteredSlab
 import IsingModel.ClusterExpansion
 import IsingModel.ClusterExpansion.Penrose
+import IsingModel.ClusterExpansion.PolymerCounting
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
