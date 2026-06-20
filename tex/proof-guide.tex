@@ -18169,6 +18169,20 @@ the convergent cluster-expansion sum (the total contribution of the non-trivial 
 orders), quantifying the term-summability.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Volume-uniform (per-site) Mayer expansion sum bound (\S18.5).}
+Dividing the explicit Mayer expansion sum bound by the volume $|V|=\mathrm{card}\,\iota$
+(\texttt{ClusterExpansion/MayerTsumPerSite.lean}):
+$\mathrm{tsum\_abs\_mayerExpansionTerm\_succ\_div\_card\_le}$ (nonempty $\iota$,
+$\Delta^2 e|t|<1$, $\rho:=4r/(1-r)^2<1$),
+\[
+  \frac{1}{|V|}\sum_n|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|\le\frac{1}{(1-r)(1-\rho)},
+\]
+with right-hand side \emph{independent of the volume}.  Since the Kotecky--Preiss
+condition $4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1$ depends only on the maximum degree
+$\Delta$ (volume-uniform on bounded-degree graphs), this is the volume-uniform convergence
+of the per-site cluster-expansion contribution.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
