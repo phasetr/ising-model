@@ -4,7 +4,7 @@ import IsingModel.TransferMatrix.CubicLayerOpenBoxTransport
 # Mass-form decay on the ambient cubic open box (GJ §17.1)
 
 The arbitrary finite transverse layer open-box decay of `CubicLayerOpenBoxTransport.lean`
-(the Phase-6 induced-lattice box-transport theorem
+(the induced-lattice box-transport theorem
 `correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_of_...`) is stated with the
 geometric factor `ratio^sep` (the canonical maximal-index
 subdominant ratio `cubicLayerHermitianRatio d R p`).  This file recasts it in the
@@ -57,7 +57,9 @@ theorem cubicLayerHermitianRatio_pow_eq_exp_neg_mass (d R : ℕ) (p : IsingParam
 open-box decay recast with the mass exponential `exp(-mass·sep)`, `mass = -log(ratio)`.
 Adds the hypothesis `0 < cubicLayerHermitianRatio d R p` (so that the mass is well-defined
 and positive).  Like the `ratio^sep` form, this is finite and conditional on the boundary
-window gap and the columnwise-simple-eigenspace parity input, at zero field. -/
+window gap and the columnwise-simple-eigenspace parity input, at zero field; it does not
+construct the uniform-in-transverse-volume window and does not pass to a thermodynamic
+limit. -/
 theorem correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_exp_neg_mass
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
     (hwindow :
