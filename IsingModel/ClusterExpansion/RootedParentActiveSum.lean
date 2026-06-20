@@ -75,4 +75,31 @@ theorem rootedParentActiveParent_coe {par : Fin n → Fin (n + 1)} {A : Finset (
     (hclosed : RootedParentActiveClosed par A) {j : Fin n} (hj : j ∈ A) :
     (rootedParentActiveParent hclosed hj : Fin (n + 1)) = par j := rfl
 
+/-- For the empty active set, the only active vertex is the root `0`. -/
+instance : Unique (RootedParentActive (∅ : Finset (Fin n))) where
+  default := ⟨0, by simp⟩
+  uniq := by
+    rintro ⟨v, hv⟩
+    rw [rootedParentActiveVertices_empty, Finset.mem_singleton] at hv
+    exact Subtype.ext hv
+
+/-- **Base case of the active sum.**  On the empty active set there are no
+constraints and only the root vertex `0`, so the active sum reduces to the
+root-only moment-weighted activity `∑_P |P|^{k 0}·(e|t|)^{|P|}`. -/
+theorem rootedParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (par : Fin n → Fin (n + 1))
+    (hclosed : RootedParentActiveClosed par (∅ : Finset (Fin n)))
+    (k : Fin (n + 1) → ℕ) (t : ℝ) :
+    rootedParentActiveSum G par ∅ hclosed k t
+      = ∑ P ∈ allPolymers G, (P.card : ℝ) ^ k 0 * (Real.exp 1 * |t|) ^ P.card := by
+  rw [rootedParentActiveSum]
+  refine Finset.sum_bij' (fun ω _ => ω default) (fun P _ => fun _ => P)
+    (fun ω hω => ?_) (fun P hP => ?_) (fun ω hω => ?_) (fun P hP => ?_) (fun ω hω => ?_)
+  · exact (Fintype.mem_piFinset.mp hω) default
+  · exact Fintype.mem_piFinset.mpr (fun _ => hP)
+  · funext v; rw [Unique.eq_default v]
+  · rfl
+  · rw [if_pos (by simp), Fintype.prod_unique]
+    rfl
+
 end IsingModel
