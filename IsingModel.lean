@@ -249,6 +249,7 @@ import IsingModel.ClusterExpansion
 import IsingModel.ClusterExpansion.Penrose
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.PiFinsetSeparation
+import IsingModel.ClusterExpansion.PiFinsetSeparationPivot
 import IsingModel.ClusterExpansion.PolymerCounting
 import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.PolymerActivityKP
