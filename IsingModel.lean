@@ -252,6 +252,7 @@ import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
+import IsingModel.ClusterExpansion.Penrose.CompleteTreePolymerConstraint
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.MayerTreeSumActivity
