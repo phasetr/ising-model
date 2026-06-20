@@ -260,6 +260,7 @@ import IsingModel.ClusterExpansion.RootedParentLeafExistence
 import IsingModel.ClusterExpansion.RootedParentActiveSum
 import IsingModel.ClusterExpansion.RootedParentActiveSplit
 import IsingModel.ClusterExpansion.RootedParentActiveLeafPeel
+import IsingModel.ClusterExpansion.RootedParentActiveSplitApply
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
 import IsingModel.ClusterExpansion.Penrose.CompleteTreePolymerConstraint
