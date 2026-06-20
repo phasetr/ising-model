@@ -17708,6 +17708,33 @@ $\mathrm{rootedParentActiveSum\_empty}$) yields the full moment-weighted bound.
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{The leaf-peel induction (child-count peel bound) (\S18.5).}
+Iterating the leaf-peel inequality down to the empty active set yields a closed-form
+bound on $\mathrm{rootedParentActiveSum}$
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeelInduction.lean}).  The invariant,
+avoiding any bump bookkeeping, is that the exponent a vertex $v$ carries when it is
+finally peeled is statically $k(v)+\mathrm{childCount}(v)$, where
+$\mathrm{rootedParentChildCount}\,\mathrm{par}\,A\,v:=\#\{i\in A\mid\mathrm{par}\,i=v\}$ is
+the active out-degree.  With
+$\mathrm{rootedParentPeelFactor}\,G\,t\,d:=d!/(1-\Delta^2 e|t|)^{d+1}$ and
+\[
+  \mathrm{rootedParentActivePeelBound}\,G\,\mathrm{par}\,A\,k\,t:=
+    \Bigl(\prod_{j\in A}\mathrm{rootedParentPeelFactor}\,G\,t\,(k(\mathrm{succ}\,j)+\mathrm{childCount}(\mathrm{succ}\,j))\Bigr)
+      \cdot\!\!\sum_{P}|P|^{\,k(0)+\mathrm{childCount}(0)}(e|t|)^{|P|},
+\]
+$\mathrm{rootedParentActiveSum\_le\_childCount\_bound}$ (assuming every nonempty active
+set has a leaf, e.g.\ a rank-decreasing parent, and $\Delta^2 e|t|<1$) gives
+$\mathrm{rootedParentActiveSum}\le\mathrm{rootedParentActivePeelBound}$, by strong
+induction on $|A|$.  The helpers are $\mathrm{rootedParentChildCount\_leaf\_succ}$
+($=0$ at a leaf's successor), $\mathrm{rootedParentChildCount\_erase}$ (erasing $j$ drops
+$\mathrm{par}\,j$'s count by one), and the recursion identity
+$\mathrm{rootedParentActivePeelBound\_erase\_update}$, in which the $\mathrm{Function.update}$
+bump at $\mathrm{par}\,j$ exactly compensates the child-count drop (the key equation
+$k'(v)+\mathrm{childCount}(A\setminus\{j\})(v)=k(v)+\mathrm{childCount}(A)(v)$ for all $v$,
+with \texttt{Finset.mul\_prod\_erase}).  This completes the rooted-tree leaf-peel
+machinery.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
