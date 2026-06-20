@@ -17614,6 +17614,30 @@ elsewhere (\texttt{..\_recon\_some}).  These supply the per-vertex identificatio
 by the full coordinate split of $\mathrm{rootedParentActiveSum}$.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The leaf column sum and its Kotecky--Preiss bound (\S18.5).}
+Once the leaf coordinate is peeled out of $\mathrm{rootedParentActiveSum}$, the leaf
+value $x$ ranges over $\mathrm{allPolymers}\,G$ under the single constraint $x\sim P$,
+with $P$ the remainder polymer at the leaf's parent
+(\texttt{ClusterExpansion/RootedParentActiveLeafColumn.lean}):
+\[
+  \mathrm{leafColumnSum}\,G\,P\,d\,t
+    :=\sum_{x\in\mathrm{allPolymers}\,G}
+        \bigl[x\sim P\bigr]\,|x|^d(e|t|)^{|x|}.
+\]
+This constrained sum equals the unconstrained moment sum over the incompatibility
+neighbourhood $\mathrm{incompatiblePolymers}\,G\,P$ (\texttt{leafColumnSum\_eq}, via
+\texttt{Finset.sum\_filter} and \texttt{Finset.filter\_congr} using
+\texttt{PolymersIncompatible.symm}), hence by the moment estimate
+$\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_le}$, for
+$P\in\mathrm{allPolymers}\,G$ and $\Delta^2 e|t|<1$,
+\[
+  \mathrm{leafColumnSum}\,G\,P\,d\,t
+    \le|P|\cdot\frac{d!}{(1-\Delta^2 e|t|)^{d+1}}
+\]
+(\texttt{leafColumnSum\_le}).  The factor $|P|$ is exactly the moment bump the leaf-peel
+induction folds into the remainder weight at the parent vertex.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
