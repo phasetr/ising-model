@@ -17412,6 +17412,24 @@ sum by the geometric-moment series $\sum_{\ell}\ell^{d}(\Delta^2 u)^{\ell}$ via
 $d=0$ case is the per-vertex activity bound.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{First-coordinate separation of a constant \texttt{piFinset} sum
+(\S18.5).}
+The rooted-tree Kotecky--Preiss leaf-peel induction sums over polymer sequences
+$\omega:\mathrm{Fin}(n+1)\to X$ in a constant $\mathrm{piFinset}$ one coordinate at a
+time (\texttt{ClusterExpansion/PiFinsetSeparation.lean}):
+\[
+  \sum_{\omega\in\mathrm{piFinset}(\lambda\_.s)}f(\omega)
+    =\sum_{x\in s}\ \sum_{\omega'\in\mathrm{piFinset}(\lambda\_.s)}
+      f(\mathrm{cons}\,x\,\omega')
+\]
+(\texttt{sum\_piFinset\_const\_succ}).  The $\mathrm{piFinset}$ on $\mathrm{Fin}(n+1)$
+is the image of $s\times\mathrm{piFinset}$ on $\mathrm{Fin}\,n$ under the injection
+$\mathrm{Fin.cons}$ (\texttt{Fin.consEquiv}); the set equality is established by
+\texttt{ext} (forward $x=\omega\,0$, $\omega'=\mathrm{Fin.tail}\,\omega$, glued by
+\texttt{Fin.cons\_self\_tail}; backward by \texttt{Fin.cases} on the index), then
+\texttt{Finset.sum\_map} and \texttt{Finset.sum\_product}.  Reference: Glimm--Jaffe,
+2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
