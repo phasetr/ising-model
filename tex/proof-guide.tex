@@ -9140,6 +9140,25 @@ estimates: they do not bound \(\delta\) quantitatively, prove a strict gap, or a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Doeblin minorization and a strict Dobrushin bound (\S17.1,
+Issue~\#3511).}
+The Dobrushin coefficient is bounded below \(1\) by the Doeblin mass
+\(\sum_j\min_i P_{ij}\).  Using \(|a-b|=a+b-2\min(a,b)\) and the row sums,
+\[
+  \tfrac12\sum_j|P_{ij}-P_{i'j}|=1-\sum_j\min(P_{ij},P_{i'j})
+    \le 1-\sum_j\min_k P_{kj},
+\]
+hence \(\delta(P)\le 1-\sum_j\min_i P_{ij}\).  For an entrywise positive
+stochastic matrix the Doeblin mass is strictly positive, so \(\delta(P)<1\); in
+particular the Doob transform of an entrywise positive matrix has \(\delta<1\).
+With the eigenvalue bound this gives a strict second-eigenvalue gap for the
+stochastic Doob matrix.  The bound is not yet uniform in the transverse box size:
+a uniform high-temperature lower bound on the Doob entries (the quantitative
+Perron-vector estimate) is a later file.  These are finite, unconditional
+estimates: they do not give a transverse-volume-uniform gap or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete

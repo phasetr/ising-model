@@ -324,6 +324,7 @@ import IsingModel.TransferMatrix.LayerQuadraticFormDeflation
 import IsingModel.TransferMatrix.LayerQuadraticFormDeflationEntries
 import IsingModel.TransferMatrix.LayerDoobTransform
 import IsingModel.TransferMatrix.LayerDobrushinContraction
+import IsingModel.TransferMatrix.LayerDoeblin
 import IsingModel.TransferMatrix.FreeLayerWalshOpenPerron
 import IsingModel.TransferMatrix.FreeLayerWalshOpenDecay
 import IsingModel.TransferMatrix.FreeLayerWalshOpenInfiniteVolume
