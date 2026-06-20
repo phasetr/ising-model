@@ -17037,6 +17037,23 @@ infinite-volume limit are later work.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386 (the cluster-expansion convergence mechanism for
 the pressure / free energy).
 
+\paragraph{High-temperature discharge of the interacting Mayer expansion
+(\S18.5).}
+The two convergence hypotheses of \texttt{freeEnergy\_eq\_tsum\_mayer\_of\_activity}
+are discharged from explicit finite-graph high-temperature smallness
+(\texttt{MayerCore/InteractingFreeEnergyMayerHighTemp.lean}): the log-convergence
+$|\varepsilon(t)|<1$ follows from $(1+t)^{|E|}<2$ (with $t=\tanh\beta J\ge0$,
+since $0\le\varepsilon\le(1+t)^{|E|}-1$), and the activity condition
+$e\sum_P|t|^{|P|}<1$ follows from $e\,|\mathrm{allPolymers}\,G|\,\tanh(\beta J)<1$
+(since $\sum_P\tanh(\beta J)^{|P|}\le|\mathrm{allPolymers}\,G|\,\tanh(\beta J)$).
+Both conditions are trivially satisfied as $\beta J\to0$, so
+\texttt{freeEnergy\_eq\_tsum\_mayer\_of\_high\_temp} (with a ferromagnetic form)
+gives the interacting free energy as its convergent cluster expansion in the
+genuine high-temperature regime, with no separate convergence hypotheses.  This is
+a finite-volume statement; the volume-uniform / infinite-volume analyticity of the
+pressure is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~378--386.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
