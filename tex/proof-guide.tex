@@ -18137,6 +18137,23 @@ Kotecky--Preiss criterion, the convergence of the pressure series, or the thermo
 limit.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Convergence of the Mayer expansion series (\S18.5).}
+From the absolute summability of the Mayer expansion terms, under the same sufficient
+high-temperature condition $4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1$
+(\texttt{ClusterExpansion/MayerSeriesConvergence.lean}):
+$\mathrm{summable\_mayerExpansionTerm\_of\_tail\_condition}$ gives
+$\mathrm{Summable}\,(n\mapsto\mathrm{mayerExpansionTerm}\,G\,n\,t)$ (not merely
+absolutely, via \texttt{Summable.of\_abs}), and
+$\mathrm{tendsto\_mayerPartialSum\_of\_tail\_condition}$ gives
+\[
+  \mathrm{mayerPartialSum}\,G\,N\,t=\sum_{n=0}^{N}\mathrm{mayerExpansionTerm}\,G\,n\,t
+    \xrightarrow{N\to\infty}\sum_n\mathrm{mayerExpansionTerm}\,G\,n\,t
+\]
+(\texttt{HasSum.tendsto\_sum\_nat} composed with \texttt{tendsto\_add\_atTop\_nat}~$1$ for
+the $\mathrm{range}(N+1)$ indexing).  This discharges the deferred convergence note on
+$\mathrm{mayerPartialSum}$ in the explicit high-temperature regime.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
