@@ -8936,6 +8936,21 @@ positivity $0<\mathrm{ratio}$ (the canonical subdominant ratio is only known to 
 $0\le\mathrm{ratio}<1$).  Finite; no thermodynamic limit.  Reference: Glimm--Jaffe, 2nd
 ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Mass-form cubic open-box decay with the explicit ratio (\S17.1, Issue~\#3511).}
+The explicit-ratio companion of the canonical mass form
+(\texttt{TransferMatrix/CubicLayerOpenBoxExplicitMass.lean}): the explicit-ratio cubic
+open-box decay is recast in the mass form $\exp(-\mathrm{mass}\cdot\mathrm{sep})$,
+$\mathrm{mass}=-\log(\text{explicit ratio})$.  Since the explicit ratio is controlled
+directly by any quantitative eigenvalue estimate, this is the mass-form consumer that a
+transverse-volume-uniform high-temperature estimate will feed.  With
+$\mathrm{cubicLayerHermitianExplicitMass}$, $\mathrm{cubicLayerHermitianExplicitMass\_pos}$
+and $\mathrm{cubicLayerHermitianExplicitRatio\_pow\_eq\_exp\_neg\_mass}$,
+$\mathrm{correlation\_induced\_latticeGraph\_cubicLayerOpenBox\_abs\_le\_exp\_neg\_explicitMass}$
+gives the decay with the explicit mass exponential, at zero field, conditional on the
+boundary-window gap, the columnwise-simple-eigenspace parity input, and $0<\text{ratio}$.
+Finite; it does not construct the uniform window or pass to a thermodynamic limit.
+Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Explicit subdominant ratio for open-slab decay (\S17.1,
 Issue~\#3511).}
 The canonical decay ratio is obtained by a non-constructive choice, so a
