@@ -18057,6 +18057,28 @@ The $(\Delta^2 e|t|)^n$ factor---one per non-root vertex of the spanning tree---
 geometric $(4r)^n$ decay.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The peel bound in factorial-product form (\S18.5).}
+Bounding the root moment factor of the child-count peel bound by the root moment bound
+and collecting the per-vertex $(1-r)$ powers ($r=\Delta^2 e|t|$) recasts the peel bound
+(full active set, exponent $0$) as a factorial product
+(\texttt{ClusterExpansion/RootedParentActivePeelBoundFactorial.lean}):
+$\mathrm{rootedParentActivePeelBound\_univ\_zero\_le\_card\_mul\_prod\_childCount\_factorial\_div}$
+($0<1-\Delta^2 e|t|$),
+\[
+  \mathrm{rootedParentActivePeelBound}\,G\,\mathrm{par}\,\mathrm{univ}\,(\lambda\_.0)\,t
+    \le\frac{|V|\cdot\prod_v(\mathrm{childCount}\,v)!}{(1-\Delta^2 e|t|)^{2n+1}}.
+\]
+The product of peel factors $\prod_j\bigl(d_{\mathrm{succ}\,j}!/(1-r)^{d_{\mathrm{succ}\,j}+1}\bigr)$
+collects (\texttt{Finset.prod\_div\_distrib}, \texttt{Finset.prod\_pow\_eq\_pow\_sum}) into
+$(\prod_j d_{\mathrm{succ}\,j}!)/(1-r)^{\sum_j(d_{\mathrm{succ}\,j}+1)}$; the root moment
+factor is bounded by the root moment bound; and the per-vertex exponents sum to $2n+1$
+since the child counts sum to $n$ (one parent-edge per non-root vertex) ($\sum_v\mathrm{childCount}\,v=n$ by
+\texttt{Finset.card\_eq\_sum\_card\_fiberwise} and \texttt{Fin.sum\_univ\_succ}), with
+$\prod_v d_v!=d_0!\prod_j d_{\mathrm{succ}\,j}!$ (\texttt{Fin.prod\_univ\_succ}).  This is
+the form that pairs with the spanning-tree factorial bound
+$\sum_T\prod_v(\mathrm{childCount}\,v)!\le4^n n!$.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
