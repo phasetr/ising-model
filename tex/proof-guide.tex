@@ -17638,6 +17638,32 @@ $P\in\mathrm{allPolymers}\,G$ and $\Delta^2 e|t|<1$,
 induction folds into the remainder weight at the parent vertex.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Per-labelling leaf isolation (\S18.5).}
+The assembly that peels the leaf coordinate out of $\mathrm{rootedParentActiveSum}$
+(\texttt{ClusterExpansion/RootedParentActiveLeafInner.lean}).  After
+$\mathrm{sum\_piFinset\_const\_optionEquiv}$ reconstructs a labelling as
+$\omega=\lambda a.\,(\mathrm{rootedParentActiveSplitEquiv}\,h_j\,a).\mathrm{elim}\,x\,\eta$
+with leaf value $x\in\mathrm{allPolymers}\,G$ and remainder labelling $\eta$ of
+$\mathrm{RootedParentActive}\,(A\setminus\{j\})$,
+$\mathrm{rootedParentActiveSum\_leaf\_inner}$ proves
+\[
+  \sum_{x\in\mathrm{allPolymers}\,G}(\text{reconstructed summand})
+    =(\text{remainder summand})\cdot
+      \mathrm{leafColumnSum}\,G\,(\eta\langle\mathrm{par}\,j,\_\rangle)\,(k(\mathrm{succ}\,j))\,t,
+\]
+where the remainder summand is exactly the $\mathrm{rootedParentActiveSum}$ summand for
+$A\setminus\{j\}$ at $\eta$.  Per $x$, the product factors via
+\texttt{prod\_rootedParentActive\_eq\_mul} and the reconstruction-evaluation lemmas into
+the leaf weight times the remainder product, and the constraint factors via
+\texttt{forall\_mem\_constraint\_iff\_erase} and the reconstruction-evaluation lemmas
+into the leaf constraint $x\sim\eta\langle\mathrm{par}\,j,\_\rangle$ and the remainder
+constraints (membership proofs matched by \texttt{Subtype.ext rfl}); the $\mathrm{if}$/sum
+algebra (\texttt{Finset.mul\_sum}, $\mathrm{if}$-factoring) then collects the leaf factor
+into $\mathrm{leafColumnSum}$.  This is the per-$\eta$ step of the full coordinate split;
+summing over $\eta$ gives the leaf-peel decomposition of
+$\mathrm{rootedParentActiveSum}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
