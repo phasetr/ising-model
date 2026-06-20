@@ -17073,6 +17073,27 @@ per-volume conditions) is what a genuine infinite-volume Mayer pressure identity
 requires; that is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~378--386.
 
+\paragraph{Rooted polymer counting, volume-uniform max-degree bound (\S18.5).}
+The volume-uniform combinatorial input to the Kotecky--Preiss criterion
+(\texttt{ClusterExpansion/PolymerCounting.lean}): a polymer is a connected edge
+set, so the polymers of size $\ell$ rooted at $v$ inject (FV \S3.7.3, via
+\texttt{card\_connected\_edge\_sets\_le}) into the closed walks of length $2\ell$
+from $v$, whence
+\[
+  |\{P : v\in\mathrm{supp}\,P,\ |P|=\ell\}|
+    \le|\,\mathrm{finsetWalkLength}\,G\,(2\ell)\,v\,v\,|
+    \le \Delta^{2\ell},
+\]
+where $\Delta=\mathrm{maxDegree}\,G$
+(\texttt{rootedPolymersOfCard\_card\_le\_maxDegree\_pow}, chaining the walk
+injection with \texttt{walksFromCount\_le\_pow}).  Crucially this count depends
+only on the maximum degree, not on the volume -- the first reusable
+volume-uniform object for the \S18.5 infinite-volume cluster expansion (unlike the
+per-volume conditions of the high-temperature wrappers).  The per-vertex activity
+geometric bound $\sum_{P\ni v}t^{|P|}\le(1-\Delta^2 t)^{-1}$ and the volume-uniform
+Mayer convergence are the next assembly.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
