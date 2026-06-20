@@ -17227,6 +17227,29 @@ $\mathrm{fromEdgeSet}\,T\le\dots$
 edge set).  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
 Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Parent-edge Kotecky--Preiss weight bound (rooted-tree induction input,
+\S18.5).}
+Combining the rooted-tree orientation with the discharged Kotecky--Preiss
+hypothesis gives the per-edge input the tree-graph induction applies along every
+spanning-tree edge (\texttt{ClusterExpansion/Penrose/PolymerSeqTreeKP.lean}).  For a
+tree subgraph $H\le\mathrm{polymerSeqIncompatibilityGraph}\,\omega$ of a sequence
+into $\mathrm{allPolymers}\,G$, every non-root vertex $v$ has
+$\omega\,v\in\mathrm{incompatiblePolymers}\,G\,(\omega\,(\mathrm{parent}\,v))$
+(\texttt{polymerSeqTree\_child\_mem\_incompatiblePolymers}, the orientation recast in
+the finite set the activity sum ranges over).  Hence at high temperature
+$\Delta^2 e|t|\le\frac12$, selecting that single term of the Kotecky--Preiss sum,
+\[
+  e^{|\omega v|}|t|^{|\omega v|}
+    \le\sum_{Q\sim\omega(\mathrm{parent}\,v)}e^{|Q|}|t|^{|Q|}
+    \le|\omega(\mathrm{parent}\,v)|
+\]
+(\texttt{polymerSeqTree\_childActivityWeight\_le\_parentCard}, via
+\texttt{Finset.single\_le\_sum} and
+\texttt{incompatibilityActivity\_expWeighted\_le\_card\_of\_half}).  This is the
+literal per-edge input of the rooted-tree induction proving volume-uniform
+cluster-expansion convergence (FV Theorem~5.4).  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
