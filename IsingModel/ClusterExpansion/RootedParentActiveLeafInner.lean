@@ -11,8 +11,8 @@ vertices of `A` as `ω = fun a => (rootedParentActiveSplitEquiv hj a).elim x η`
 leaf value `x ∈ allPolymers G` and a remainder labelling `η` of the active vertices of
 `A.erase j`.  This file performs the per-`η` isolation: summing the reconstructed
 summand over the leaf value `x` factors as the remainder summand (the summand of
-`rootedParentActiveSum` for `A.erase j` at `η`) times the leaf column sum at the leaf's
-parent polymer.
+`rootedParentActiveSum` for `A.erase j` at `η`) times the leaf column sum at the
+remainder value `η ⟨par j, _⟩` assigned to the leaf's parent vertex.
 
 * `rootedParentActiveSum_leaf_inner`: for a leaf `j`, `∑_{x} (reconstructed summand)`
   `= (remainder summand) · leafColumnSum G (η ⟨par j, _⟩) (k (succ j)) t`.
@@ -35,7 +35,8 @@ remainder labelling `η` of the active vertices of `A.erase j`, and a leaf value
 ranging over `allPolymers G`, the reconstructed summand
 `fun a => (rootedParentActiveSplitEquiv hleaf.1 a).elim x η` summed over `x` factors as
 the remainder summand (the summand of `rootedParentActiveSum` for `A.erase j` at `η`)
-times the leaf column sum at the leaf's parent polymer `η ⟨par j, _⟩`.  The leaf value
+times the leaf column sum at the remainder value `η ⟨par j, _⟩` assigned to the
+leaf's parent vertex.  The leaf value
 contributes its own constraint and weight factor (collected into `leafColumnSum`); the
 remaining constraints and weights pass through to the remainder. -/
 theorem rootedParentActiveSum_leaf_inner (G : SimpleGraph ι) [DecidableRel G.Adj]
