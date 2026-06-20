@@ -13,8 +13,9 @@ induction step with an extra `Δ²e|t|` factor:
 ` ≤ (Δ²e|t|)·(k (succ j))!/(1−Δ²e|t|)^{k (succ j)+1}`
 `   · rootedParentActiveSum G par (A.erase j) _ (update k (par j) (k (par j)+1)) t`.
 
-The extra `Δ²e|t|` per peeled vertex is what makes the iterated bound summable over the
-Mayer order `n` (one factor per non-root vertex).
+The extra `Δ²e|t|` per peeled vertex (one factor per non-root vertex) is needed for the
+later summability argument over the Mayer order `n` (together with the `4^n·n!` tree
+control, the root moment bound, and the high-temperature condition).
 
 * `rootedParentActiveSum_leaf_peel_tail_le`.
 
