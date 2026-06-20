@@ -17339,6 +17339,26 @@ parent-edge reduction and the weighted spanning-tree factorisation.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{Complete-tree parent edges are incompatibility edges (KP induction
+setup, \S18.5).}
+The rooted-tree Kotecky--Preiss induction fixes a spanning-tree shape $T$ of
+$K_{n+1}$ (so the rooted parent code $\mathrm{completeGraphTreeParentCode}$ is
+available) and sums over the polymer sequences $\omega$ for which $T$ is a spanning
+tree of $\mathrm{incompat}(\omega)$
+(\texttt{ClusterExpansion/Penrose/CompleteTreePolymerConstraint.lean}).  For such
+$\omega$, every parent edge is an incompatibility edge,
+$\mathrm{PolymersIncompatible}(\omega(\mathrm{succ}\,i))(\omega(\mathrm{parentCode}\,T\,i))$
+(\texttt{completeTree\_parent\_incompatible\_of\_mem\_spanningTreeIncompat}): the
+parent edge $s(\mathrm{succ}\,i,\mathrm{parentCode}\,T\,i)\in T$
+(\texttt{completeGraphTree\_edges\_eq\_parentCode\_image}) lies in the
+incompatibility graph's edge set.  Hence for non-negative $W$ the sum over
+$\omega$ with "$T$ a tree of $\mathrm{incompat}(\omega)$" is bounded by the sum over
+$\omega$ satisfying the per-edge constraint "every child is incompatible with its
+parent" (\texttt{sum\_filter\_treeIncompat\_le\_filter\_parentConstraint}), relaxing
+the spanning-tree constraint to per-edge incompatibility -- the starting point of the
+leaf-removal KP induction.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
