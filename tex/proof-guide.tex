@@ -18019,6 +18019,27 @@ summability argument over the Mayer order $n$ (with the $4^n n!$ tree control, r
 moment, and high-temperature condition).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The sharpened (tail) leaf-peel induction (\S18.5).}
+Iterating the tail leaf-peel inequality down to the empty active set, reusing the
+peel-bound recursion identity ($\mathrm{rootedParentActivePeelBound\_erase\_update}$),
+gives the child-count peel bound with an extra factor $(\Delta^2 e|t|)^{|A|}$
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeelTailInduction.lean}):
+$\mathrm{rootedParentActiveSum\_le\_pow\_mul\_childCount\_bound}$ (every nonempty active
+set has a leaf, $\Delta^2 e|t|<1$),
+\[
+  \mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,A\,\mathrm{hclosed}\,k\,t
+    \le(\Delta^2 e|t|)^{|A|}\cdot\mathrm{rootedParentActivePeelBound}\,G\,\mathrm{par}\,A\,k\,t,
+\]
+by strong induction on $|A|$.  Base $A=\varnothing$:
+$(\Delta^2 e|t|)^0\cdot\mathrm{peelBound}(\varnothing)=\mathrm{rootedParentActiveSum\_empty}$.
+Step: the tail inequality gives a factor $(\Delta^2 e|t|)\cdot\mathrm{peelFactor}$, the IH a
+factor $(\Delta^2 e|t|)^{|A|-1}$, and the recursion identity folds
+$\mathrm{peelFactor}\cdot\mathrm{peelBound}(A\setminus\{j\})$ into $\mathrm{peelBound}(A)$,
+with $(\Delta^2 e|t|)\cdot(\Delta^2 e|t|)^{|A|-1}=(\Delta^2 e|t|)^{|A|}$
+(\texttt{pow\_succ}).  The $(\Delta^2 e|t|)^{|A|}$ factor is the source of the geometric
+$(4r)^n$ decay in the cluster-expansion convergence.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
