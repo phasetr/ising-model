@@ -17684,6 +17684,30 @@ $|\eta\langle\mathrm{par}\,j,\_\rangle|$ moment bump into the remainder weight t
 the leaf-peel inequality, and then the strong induction on $|A|$.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The leaf-peel inequality for the active sum (\S18.5).}
+Bounding each $\mathrm{leafColumnSum}$ factor of the leaf-peel decomposition by
+$\mathrm{leafColumnSum\_le}$ and folding the resulting
+$|\eta\langle\mathrm{par}\,j,\_\rangle|$ moment bump into the remainder weight gives the
+leaf-peel inequality (\texttt{ClusterExpansion/RootedParentActiveLeafPeelBound.lean}):
+for a leaf $j$ and $\Delta^2 e|t|<1$,
+\[
+  \mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,A\,\mathrm{hclosed}\,k\,t
+    \le\frac{(k(\mathrm{succ}\,j))!}{(1-\Delta^2 e|t|)^{k(\mathrm{succ}\,j)+1}}\cdot
+      \mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,(A\setminus\{j\})\,\_\,
+        (\mathrm{update}\,k\,(\mathrm{par}\,j)\,(k(\mathrm{par}\,j)+1))\,t
+\]
+(\texttt{rootedParentActiveSum\_leaf\_peel\_le}).  The moment bump is realised by
+$\mathrm{Function.update}\,k\,(\mathrm{par}\,j)\,(k(\mathrm{par}\,j)+1)$: multiplying the
+remainder weight by $|\eta\langle\mathrm{par}\,j,\_\rangle|$ raises the exponent at the
+unique active vertex $\langle\mathrm{par}\,j,\_\rangle$ of $A\setminus\{j\}$ by one
+(\texttt{Finset.prod\_mul\_distrib}, \texttt{Fintype.prod\_ite\_eq'},
+\texttt{Function.update\_self}/\texttt{update\_of\_ne}, \texttt{pow\_succ}; the remainder
+summand is nonnegative, so \texttt{Finset.sum\_le\_sum} applies).  This is one step of the
+leaf-peel recursion; iterating it (strong induction on $|A|$, base case
+$\mathrm{rootedParentActiveSum\_empty}$) yields the full moment-weighted bound.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
