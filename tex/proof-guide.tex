@@ -9047,6 +9047,33 @@ subspace.  This is finite and unconditional: it does not construct a strict
 spectral gap or prove a thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Top-column deflation and the strict-gap reduction (\S17.1,
+Issue~\#3511).}
+Since the all-vector envelope bounds the top eigenvalue too, a strict gap needs
+the top-orthogonal subspace.  Deflating the top eigenpair,
+\(M^{\mathrm{defl}}:=M-\lambda_{\max}\,w\,w^{\mathsf T}\) with \(w\) the maximal
+spectral column, gives a symmetric matrix whose quadratic form differs from that
+of \(M\) by exactly the top contribution,
+\[
+  \langle v,Mv\rangle-\langle v,M^{\mathrm{defl}}v\rangle
+    =\lambda_{\max}\,(\mathrm{spectralCoord}\,v\,\mathrm{top})^2,
+\]
+so the two agree on \(\{v:\mathrm{spectralCoord}\,v\,\mathrm{top}=0\}\).  Applying
+the Gershgorin envelope to \(M^{\mathrm{defl}}\) (whose dominant eigenvalue is
+removed) and feeding the gap reduction yields
+\[
+  \max_i|M^{\mathrm{defl}}_{ii}|+\max_i\sum_{j\neq i}|M^{\mathrm{defl}}_{ij}|
+    \le\theta\,\lambda_{\max}
+  \ \Longrightarrow\ r_{\mathrm{abs}}\le\theta .
+\]
+This breaks the circularity: the hypothesis is the deflated matrix's entrywise
+Gershgorin quantity, not the second eigenvalue.  It reduces the strict gap to
+controlling the deflated entries -- i.e. the top eigenvector concretely (a later
+quantitative Perron--Frobenius / Dobrushin estimate).  This is finite and
+conditional: it does not construct a strict gap unconditionally or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
