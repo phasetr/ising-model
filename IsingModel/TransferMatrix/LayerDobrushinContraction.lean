@@ -162,6 +162,66 @@ theorem matrixDoobTransform_rowStochastic [Nonempty Ω] {M : Matrix Ω Ω ℝ}
   refine ⟨fun i j => (matrixDoobTransform_pos hM hlam hw i j).le, fun i => ?_⟩
   exact matrixDoobTransform_row_sum hw_eig hlam.ne' (fun i => (hw i).ne') i
 
+/-! ## Eigenvalue bound from the Dobrushin coefficient -/
+
+/-- Each pairwise difference is bounded by the oscillation. -/
+theorem sub_le_vectorOscillation [Nonempty Ω] (v : Ω → ℝ) (i i' : Ω) :
+    v i - v i' ≤ vectorOscillation v := by
+  have hsup := Finset.le_sup' v (Finset.mem_univ i)
+  have hinf := Finset.inf'_le v (Finset.mem_univ i')
+  rw [vectorOscillation]; linarith
+
+/-- One-sided homogeneity of the oscillation under real scalar multiplication. -/
+theorem vectorOscillation_smul_le [Nonempty Ω] (mu : ℝ) (v : Ω → ℝ) :
+    vectorOscillation (mu • v) ≤ |mu| * vectorOscillation v := by
+  refine vectorOscillation_le_of_forall_sub_le fun i i' => ?_
+  rcases lt_or_ge mu 0 with hmu | hmu
+  · rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, abs_of_neg hmu]
+    nlinarith [sub_le_vectorOscillation v i' i, hmu]
+  · rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, abs_of_nonneg hmu]
+    nlinarith [sub_le_vectorOscillation v i i', hmu]
+
+/-- The oscillation is homogeneous under real scalar multiplication. -/
+theorem vectorOscillation_smul [Nonempty Ω] (mu : ℝ) (v : Ω → ℝ) :
+    vectorOscillation (mu • v) = |mu| * vectorOscillation v := by
+  refine le_antisymm (vectorOscillation_smul_le mu v) ?_
+  rcases eq_or_ne mu 0 with hmu | hmu
+  · subst hmu; rw [abs_zero, zero_mul]; exact vectorOscillation_nonneg _
+  · have hle := vectorOscillation_smul_le mu⁻¹ (mu • v)
+    have hpoint : mu⁻¹ • (mu • v) = v := by
+      funext i
+      rw [Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul]
+      field_simp
+    rw [hpoint, abs_inv] at hle
+    have hmul := mul_le_mul_of_nonneg_left hle (abs_nonneg mu)
+    rwa [← mul_assoc, mul_inv_cancel₀ (abs_ne_zero.mpr hmu), one_mul] at hmul
+
+/-- A nonconstant eigenvector of a row-sum-one matrix has eigenvalue bounded in
+absolute value by the Dobrushin coefficient. -/
+theorem abs_eigenvalue_le_dobrushin_of_mulVec [Nonempty Ω] {P : Matrix Ω Ω ℝ}
+    (hrow : ∀ i, ∑ j, P i j = 1) {v : Ω → ℝ} {mu : ℝ}
+    (hv_eig : P.mulVec v = mu • v) (hv_osc : vectorOscillation v ≠ 0) :
+    |mu| ≤ matrixDobrushinCoefficient P := by
+  have hcontr := vectorOscillation_mulVec_le_dobrushin hrow v
+  rw [hv_eig, vectorOscillation_smul] at hcontr
+  have hpos : 0 < vectorOscillation v :=
+    lt_of_le_of_ne (vectorOscillation_nonneg v) (Ne.symm hv_osc)
+  exact le_of_mul_le_mul_right hcontr hpos
+
+/-- **Second-eigenvalue bound via the Doob transform.**  For a positive matrix
+`M` with a positive Perron eigenpair `(λ, w)`, any eigenvalue `μ` of `M` whose
+Doob-conjugated eigenvector `v / w` is nonconstant satisfies
+`|μ / λ| ≤ δ(Doob)`. -/
+theorem abs_eigenvalue_div_le_dobrushin_doob_of_mulVec [Nonempty Ω]
+    {M : Matrix Ω Ω ℝ} {lam mu : ℝ} {w v : Ω → ℝ}
+    (hM : MatrixEntrywisePositive M) (hlam : 0 < lam) (hw : VectorPositive w)
+    (hw_eig : M.mulVec w = lam • w) (hv_eig : M.mulVec v = mu • v)
+    (hv_osc : vectorOscillation (fun i => v i / w i) ≠ 0) :
+    |mu / lam| ≤ matrixDobrushinCoefficient (matrixDoobTransform M lam w) :=
+  abs_eigenvalue_le_dobrushin_of_mulVec
+    (matrixDoobTransform_rowStochastic hM hlam hw hw_eig).2
+    (matrixDoobTransform_mulVec hlam.ne' (fun i => (hw i).ne') hv_eig) hv_osc
+
 end TransferMatrix
 
 end IsingModel
