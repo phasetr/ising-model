@@ -17859,6 +17859,31 @@ $(n+1)^{n-1}$ and child-count factorials)---and the ensuing summability and conv
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{Sharpened (tail) per-vertex polymer-activity moment bound (\S18.5).}
+Since every polymer is nonempty ($|Q|\ge1$), the $\ell=0$ term of the underlying
+geometric series is absent, so the per-vertex moment bound
+($\mathrm{rootedPolymerActivity\_cardPow\_le}$) sharpens to carry an extra factor
+$\Delta^2 u$ (\texttt{ClusterExpansion/PolymerActivityTailMoment.lean}).  The analytic
+ingredient is the tail geometric-moment bound
+$\mathrm{tsum\_succ\_pow\_mul\_geometric\_succ\_le}$ ($0\le r<1$),
+\[
+  \sum_{\ell\ge0}(\ell+1)^d r^{\ell+1}\le r\cdot\frac{d!}{(1-r)^{d+1}},
+\]
+where each $(\ell+1)^d\le d!\binom{\ell+d}{d}$ directly
+(\texttt{Nat.pow\_sub\_le\_descFactorial}) and the factor $r$ is pulled out of
+$r^{\ell+1}$.  Fibering the per-vertex sum over the polymer size, dropping the empty
+$\ell=0$ fiber (\texttt{IsPolymer.nonempty}) and reindexing $\ell\mapsto\ell+1$
+(\texttt{Finset.sum\_range\_succ'}) gives
+$\mathrm{rootedPolymerActivity\_cardPow\_tail\_le}$ ($\Delta^2 u<1$),
+\[
+  \sum_{Q\ni v}|Q|^d u^{|Q|}\le(\Delta^2 u)\cdot\frac{d!}{(1-\Delta^2 u)^{d+1}}.
+\]
+This $\Delta^2 u$ factor---one per non-root vertex of the rooted-tree leaf-peel---is an
+ingredient for a convergent (summable-over-$n$) cluster-expansion bound (which also
+requires the tree/child-count combinatorics and a smallness condition), since the bare
+$d!/(1-\Delta^2 u)^{d+1}$ factors do not decay with the tree size.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
