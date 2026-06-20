@@ -9159,6 +9159,26 @@ estimates: they do not give a transverse-volume-uniform gap or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Subdominant ratio bounded by the Doob Dobrushin coefficient (\S17.1,
+Issue~\#3511).}
+The abstract spectral-gap machinery closes into an end-to-end strict bound: the
+explicit subdominant absolute ratio of a real orthogonally diagonalized entrywise
+positive matrix is bounded by the Dobrushin coefficient of its Doob transform,
+hence strictly below one.  The key point is that, for each non-maximal spectral
+column \(v_i\), the Doob-conjugated vector \(v_i/w_{\mathrm{top}}\) is nonconstant
+-- were it constant, \(v_i\) would be a scalar multiple of \(w_{\mathrm{top}}\),
+contradicting the orthonormality of the spectral basis.  Feeding this into the
+eigenvalue bound gives \(|\lambda_i/\lambda_{\max}|\le\delta(\mathrm{Doob})\) for
+every non-maximal eigenvalue, hence
+\(r_{\mathrm{abs}}\le\delta(\mathrm{Doob})\); with the strict Doeblin bound
+\(\delta(\mathrm{Doob})<1\), \(r_{\mathrm{abs}}<1\).  This is an alternative,
+abstract proof of the strict subdominant bound, expressed through
+\(\delta(\mathrm{Doob})\) -- the quantity a later high-temperature estimate makes
+uniform in the transverse box size; the bound here is not uniform.  These are
+finite, unconditional estimates: they do not give a transverse-volume-uniform gap
+or prove a thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
+pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
