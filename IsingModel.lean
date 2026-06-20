@@ -255,6 +255,7 @@ import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.MayerTreeSumActivity
+import IsingModel.ClusterExpansion.MayerCore.MayerTreeSumExpActivity
 import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
 import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayer
 import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayerHighTemp
