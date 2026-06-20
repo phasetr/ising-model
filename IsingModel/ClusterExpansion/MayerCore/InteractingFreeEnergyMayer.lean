@@ -23,8 +23,8 @@ volume-uniform / infinite-volume limit are later work.
 
 ## References
 
-* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.4, Proposition 18.4.2, p.~333.
-* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.5, Theorem 18.5.1, pp.~335--336.
+* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.4--§18.5, pp.~378--386 (the
+  cluster-expansion convergence mechanism for the pressure / free energy).
 -/
 
 namespace IsingModel
