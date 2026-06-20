@@ -287,6 +287,7 @@ import IsingModel.ClusterExpansion.MayerTermPeelBound
 import IsingModel.ClusterExpansion.MayerTermPeelBoundTail
 import IsingModel.ClusterExpansion.MayerTermTailSummability
 import IsingModel.ClusterExpansion.MayerSeriesConvergence
+import IsingModel.ClusterExpansion.MayerTsumBound
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
 import IsingModel.ClusterExpansion.Penrose.CompleteTreePolymerConstraint
