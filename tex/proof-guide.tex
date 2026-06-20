@@ -18127,11 +18127,14 @@ $\mathrm{mayerExpansionTerm\_succ\_abs\_le\_card\_div\_mul\_geometric}$ ($\Delta
 \]
 Hence $\mathrm{summable\_abs\_mayerExpansionTerm\_succ\_of\_tail\_condition}$ ($\Delta^2 e|t|<1$
 and $4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1$): the series
-$\sum_n|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|$ is summable---the \emph{cluster expansion
-converges absolutely} (Friedli--Velenik Theorem~5.4), via the geometric majorant
-($\mathrm{summable\_geometric\_of\_lt\_one}$ and $\mathrm{Summable.of\_nonneg\_of\_le}$).
-This completes the high-temperature convergence of the Ising cluster expansion under the
-explicit Kotecky--Preiss condition $4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1$.  Reference:
+$\sum_n|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|$ is summable, via the geometric majorant
+($\mathrm{summable\_geometric\_of\_lt\_one}$ and $\mathrm{Summable.of\_nonneg\_of\_le}$);
+a wrapper ($\mathrm{summable\_abs\_mayerExpansionTerm\_of\_tail\_condition}$) extends this to
+the full series including the head terms.  This is a \emph{sufficient-condition}
+high-temperature tail-summability result for the Mayer expansion terms on a fixed finite
+graph---a Kotecky--Preiss-type bound in the spirit of FV \S5.4---and is not the sharp
+Kotecky--Preiss criterion, the convergence of the pressure series, or the thermodynamic
+limit.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The

@@ -4,7 +4,7 @@ import IsingModel.ClusterExpansion.Penrose.TreeChildCountFactorialBound
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
-# Summability of the Mayer expansion (cluster-expansion convergence, GJ §18.5)
+# Summability of the Mayer expansion terms (GJ §18.5)
 
 Assembling the tail Mayer-term bound (`mayerExpansionTerm_succ_abs_le_sum_pow_peelBound`,
 #4133), the factorial-product form of the peel bound
@@ -15,12 +15,18 @@ yields the geometric per-order bound
 
 `|mayerExpansionTerm G (n + 1) t| ≤ |V|/(1−r)·(4r/(1−r)²)^n`  (`r = Δ²e|t|`),
 
-hence the absolute summability of the Mayer expansion when `4r/(1−r)² < 1` — the
-high-temperature convergence of the cluster expansion (FV Theorem 5.4).
+hence the absolute summability of the (finite-graph) Mayer expansion terms
+`n ↦ |mayerExpansionTerm G n t|` under the *sufficient* high-temperature condition
+`4r/(1−r)² < 1` — a Kotecky--Preiss-type convergence bound in the spirit of FV §5.4.
+
+This is a sufficient-condition tail-summability result on a fixed finite graph; it is not
+the sharp Kotecky--Preiss criterion, nor the convergence of the pressure / free-energy
+series, nor the thermodynamic limit.
 
 * `sum_pow_rootedParentActivePeelBound_le`.
 * `mayerExpansionTerm_succ_abs_le_card_div_mul_geometric`.
 * `summable_abs_mayerExpansionTerm_succ_of_tail_condition`.
+* `summable_abs_mayerExpansionTerm_of_tail_condition`.
 
 ## References
 
@@ -150,11 +156,12 @@ theorem mayerExpansionTerm_succ_abs_le_card_div_mul_geometric (G : SimpleGraph �
         mul_le_mul_of_nonneg_right hfact hgoal_nonneg
     _ = (Fintype.card ι : ℝ) / q * (4 * rr / q ^ 2) ^ n := one_mul _
 
-/-- **Absolute summability of the Mayer expansion (cluster-expansion convergence).**  If
-`Δ²e|t| < 1` and `4·Δ²e|t|/(1−Δ²e|t|)² < 1`, then `n ↦ |mayerExpansionTerm G (n + 1) t|`
-is summable: the cluster expansion converges absolutely (FV Theorem 5.4).  The geometric
-majorant `|V|/(1−r)·(4r/(1−r)²)^n` (`mayerExpansionTerm_succ_abs_le_card_div_mul_geometric`)
-is summable since its ratio is `< 1`. -/
+/-- **Absolute summability of the shifted Mayer expansion terms.**  If `Δ²e|t| < 1` and
+`4·Δ²e|t|/(1−Δ²e|t|)² < 1`, then `n ↦ |mayerExpansionTerm G (n + 1) t|` is summable.  This
+is a sufficient high-temperature condition (a Kotecky--Preiss-type bound), not the sharp
+criterion.  The geometric majorant `|V|/(1−r)·(4r/(1−r)²)^n`
+(`mayerExpansionTerm_succ_abs_le_card_div_mul_geometric`) is summable since its ratio is
+`< 1`. -/
 theorem summable_abs_mayerExpansionTerm_succ_of_tail_condition (G : SimpleGraph ι)
     [DecidableRel G.Adj] [Fintype G.edgeSet] {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
@@ -170,5 +177,20 @@ theorem summable_abs_mayerExpansionTerm_succ_of_tail_condition (G : SimpleGraph 
     (summable_geometric_of_lt_one hρ0 hρ).mul_left _
   refine Summable.of_nonneg_of_le (fun n => abs_nonneg _) (fun n => ?_) hgeo
   exact mayerExpansionTerm_succ_abs_le_card_div_mul_geometric G n hkp
+
+/-- **Absolute summability of the Mayer expansion terms.**  Under the same sufficient
+high-temperature condition, the full series `n ↦ |mayerExpansionTerm G n t|` (including the
+head terms) is summable: adding the single `n = 0` term to the summable shifted series
+preserves summability.  This is a sufficient-condition tail-summability result on a fixed
+finite graph, in the spirit of the Kotecky--Preiss criterion (FV §5.4); it is not the
+sharp criterion nor the convergence of the pressure series or the thermodynamic limit. -/
+theorem summable_abs_mayerExpansionTerm_of_tail_condition (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {t : ℝ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
+    (hρ : 4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1) :
+    Summable fun n : ℕ => |mayerExpansionTerm G n t| :=
+  (summable_nat_add_iff 1).mp
+    (summable_abs_mayerExpansionTerm_succ_of_tail_condition G hkp hρ)
 
 end IsingModel
