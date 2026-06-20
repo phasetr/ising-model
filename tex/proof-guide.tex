@@ -17595,6 +17595,25 @@ erased-subtype sum; the leaf sum is then controlled by the moment estimate
 $\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_le}$.  Reference: Glimm--Jaffe,
 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Forward action of the leaf-split equivalence (\S18.5).}
+The leaf-peel assembly reconstructs a labelling $\omega$ of the active vertices of $A$
+in the form $\omega(v)=(\mathrm{rootedParentActiveSplitEquiv}\,h_j\,v).\mathrm{elim}\,x\,\eta$
+produced by $\mathrm{sum\_piFinset\_const\_optionEquiv}$
+(\texttt{ClusterExpansion/RootedParentActiveSplitApply.lean}).  Reading off $\omega$ at
+each vertex needs the \emph{forward} action of the split equivalence (the
+$\mathrm{symm}$-coercions only record the inverse): the peeled vertex maps to
+$\mathrm{none}$ (\texttt{rootedParentActiveSplitEquiv\_child}, via
+\texttt{Equiv.apply\_symm\_apply}), and every active vertex $v$ with
+$\uparrow v\in\mathrm{rootedParentActiveVertices}\,(A\setminus\{j\})$ maps to
+$\mathrm{some}\,\langle\uparrow v,\_\rangle$
+(\texttt{rootedParentActiveSplitEquiv\_apply\_some}, via
+\texttt{Equiv.apply\_eq\_iff\_eq\_symm\_apply} and \texttt{Subtype.ext}).  The
+reconstruction-evaluation corollaries then read off $\omega(\mathrm{child}\,j)=x$ at the
+leaf (\texttt{..\_recon\_child}) and $\omega(v)=\eta\langle\uparrow v,\_\rangle$
+elsewhere (\texttt{..\_recon\_some}).  These supply the per-vertex identifications used
+by the full coordinate split of $\mathrm{rootedParentActiveSum}$.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
