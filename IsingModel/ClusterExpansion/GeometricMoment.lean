@@ -58,4 +58,47 @@ theorem tsum_pow_mul_geometric_le (d : ℕ) {r : ℝ} (hr0 : 0 ≤ r) (hr : r < 
   simp_rw [mul_assoc]
   rw [tsum_mul_left, tsum_choose_mul_geometric_of_norm_lt_one d hnorm, mul_one_div]
 
+/-- **Tail polynomial-moment bound for the geometric series.**  For `0 ≤ r < 1` and any
+`d`, the `d`-th moment of the geometric series restricted to `ℓ ≥ 1` (reindexed
+`ℓ ↦ ℓ + 1`) carries an extra factor `r`: `∑_ℓ (ℓ+1)^d r^{ℓ+1} ≤ r·d!/(1−r)^{d+1}`.  Each
+`(ℓ+1)^d` is dominated by `d!·\binom{ℓ+d}{d}` directly
+(`Nat.pow_sub_le_descFactorial`), and the factor `r` is pulled out of `r^{ℓ+1}`.  This is
+the sharpening used when the summed objects (e.g. nonempty rooted polymers) have size at
+least one, so the `ℓ = 0` term is absent. -/
+theorem tsum_succ_pow_mul_geometric_succ_le (d : ℕ) {r : ℝ} (hr0 : 0 ≤ r) (hr : r < 1) :
+    ∑' ℓ : ℕ, ((ℓ + 1 : ℕ) : ℝ) ^ d * r ^ (ℓ + 1)
+      ≤ r * ((d.factorial : ℝ) / (1 - r) ^ (d + 1)) := by
+  have hnorm : ‖r‖ < 1 := by rwa [Real.norm_eq_abs, abs_of_nonneg hr0]
+  have hterm : ∀ ℓ : ℕ, ((ℓ + 1 : ℕ) : ℝ) ^ d * r ^ (ℓ + 1)
+      ≤ r * ((d.factorial : ℝ) * ((ℓ + d).choose d : ℝ)) * r ^ ℓ := by
+    intro ℓ
+    have hnat : (ℓ + 1) ^ d ≤ d.factorial * (ℓ + d).choose d := by
+      have hpd := Nat.pow_sub_le_descFactorial (ℓ + d) d
+      have he : ℓ + d + 1 - d = ℓ + 1 := by omega
+      rw [he] at hpd
+      calc (ℓ + 1) ^ d ≤ (ℓ + d).descFactorial d := hpd
+        _ = d.factorial * (ℓ + d).choose d :=
+            Nat.descFactorial_eq_factorial_mul_choose (ℓ + d) d
+    have hb : ((ℓ + 1 : ℕ) : ℝ) ^ d ≤ (d.factorial : ℝ) * ((ℓ + d).choose d : ℝ) := by
+      calc ((ℓ + 1 : ℕ) : ℝ) ^ d = (((ℓ + 1) ^ d : ℕ) : ℝ) := by push_cast; ring
+        _ ≤ ((d.factorial * (ℓ + d).choose d : ℕ) : ℝ) := by exact_mod_cast hnat
+        _ = (d.factorial : ℝ) * ((ℓ + d).choose d : ℝ) := by push_cast; ring
+    rw [pow_succ]
+    calc ((ℓ + 1 : ℕ) : ℝ) ^ d * (r ^ ℓ * r)
+        = r * (((ℓ + 1 : ℕ) : ℝ) ^ d * r ^ ℓ) := by ring
+      _ ≤ r * (((d.factorial : ℝ) * ((ℓ + d).choose d : ℝ)) * r ^ ℓ) :=
+          mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hb (pow_nonneg hr0 ℓ)) hr0
+      _ = r * ((d.factorial : ℝ) * ((ℓ + d).choose d : ℝ)) * r ^ ℓ := by ring
+  have hsummL : Summable (fun ℓ : ℕ => ((ℓ + 1 : ℕ) : ℝ) ^ d * r ^ (ℓ + 1)) :=
+    (summable_nat_add_iff (f := fun n : ℕ => (n : ℝ) ^ d * r ^ n) 1).mpr
+      (summable_pow_mul_geometric_of_norm_lt_one d hnorm)
+  have hsummR : Summable
+      (fun ℓ : ℕ => r * ((d.factorial : ℝ) * ((ℓ + d).choose d : ℝ)) * r ^ ℓ) := by
+    simp_rw [mul_assoc]
+    exact ((summable_choose_mul_geometric_of_norm_lt_one d hnorm).mul_left _).mul_left _
+  refine (Summable.tsum_le_tsum hterm hsummL hsummR).trans_eq ?_
+  simp_rw [mul_assoc]
+  rw [tsum_mul_left, tsum_mul_left,
+    tsum_choose_mul_geometric_of_norm_lt_one d hnorm, mul_one_div]
+
 end IsingModel
