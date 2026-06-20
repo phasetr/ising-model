@@ -17205,6 +17205,28 @@ exact volume-uniform input that a Kotecky--Preiss cluster-expansion convergence
 theorem (FV Theorem~5.4) consumes.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Rooted-tree orientation of the polymer-sequence incompatibility graph
+(KP induction, \S18.5).}
+The Kotecky--Preiss / tree-graph proof (FV Theorem~5.4) sums over spanning trees
+of the incompatibility graph of a polymer sequence
+$\omega:\alpha\to\mathrm{Finset}(\mathrm{Sym}_2\,\iota)$ and induces along the
+rooted-tree parent edges; applying the per-polymer activity hypothesis there
+requires the parent polymer to be incompatible with its child
+(\texttt{ClusterExpansion/Penrose/PolymerSeqTreeOrientation.lean}).  Stated for any
+tree subgraph $G\le\mathrm{polymerSeqIncompatibilityGraph}\,\omega$ rooted at $r$:
+the rooted-tree parent of a non-root vertex $v$ is adjacent to $v$ in the
+incompatibility graph (\texttt{polymerSeqTree\_parent\_adj}, transporting the parent
+adjacency along $G\le\dots$), distinct from $v$
+(\texttt{polymerSeqTree\_parent\_ne}), and the underlying polymers are incompatible,
+$\mathrm{PolymersIncompatible}(\omega\,v)(\omega\,(\mathrm{parent}\,v))$
+(\texttt{polymerSeqTree\_parent\_incompatible}, via
+\texttt{polymerSeqIncompatibilityGraph\_adj}).  A spanning-tree edge subset
+$T\in\mathrm{spanningTreeEdgeSubsets}(\dots)$ gives such a subgraph
+$\mathrm{fromEdgeSet}\,T\le\dots$
+(\texttt{fromEdgeSet\_le\_polymerSeqIncompatibilityGraph}, from $T\subseteq$ the
+edge set).  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
