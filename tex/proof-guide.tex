@@ -9112,6 +9112,29 @@ algebraic identities for an abstract positive Perron eigenpair: they do not prov
 a quantitative contraction, a strict gap, or a thermodynamic limit.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Dobrushin oscillation contraction for row-stochastic matrices (\S17.1,
+Issue~\#3511).}
+The central Dobrushin estimate: a row-stochastic matrix \(P\) contracts the
+oscillation \(\mathrm{osc}(v)=\max_i v_i-\min_i v_i\) by its Dobrushin coefficient
+\(\delta(P)=\tfrac12\max_{i,i'}\sum_j|P_{ij}-P_{i'j}|\):
+\[
+  \mathrm{osc}(Pv)\le\delta(P)\,\mathrm{osc}(v).
+\]
+With the midpoint \(c=(\max v+\min v)/2\) and the row-sum identity
+\(\sum_j(P_{ij}-P_{i'j})=0\),
+\[
+  (Pv)_i-(Pv)_{i'}=\sum_j(P_{ij}-P_{i'j})(v_j-c)
+    \le\sum_j|P_{ij}-P_{i'j}|\cdot\tfrac{\mathrm{osc}(v)}{2}
+    \le 2\delta(P)\cdot\tfrac{\mathrm{osc}(v)}{2}=\delta(P)\,\mathrm{osc}(v).
+\]
+With the Doob normalization (whose transform is row-stochastic), the second
+eigenvalue of the stochastic Doob matrix is bounded by \(\delta\), so a uniform
+\(\delta<1\) yields a uniform spectral gap (the quantitative \(\delta<1\) from the
+layer entries is a later file).  These are finite, unconditional estimates: they
+do not bound \(\delta\) quantitatively, prove a strict gap, or a thermodynamic
+limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
