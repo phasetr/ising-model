@@ -17664,6 +17664,26 @@ summing over $\eta$ gives the leaf-peel decomposition of
 $\mathrm{rootedParentActiveSum}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The leaf-peel decomposition of the active sum (\S18.5).}
+Summing the per-labelling leaf isolation over the remainder labellings $\eta$ gives the
+full leaf-peel decomposition of $\mathrm{rootedParentActiveSum}$
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeelStep.lean}): for a leaf $j$,
+\[
+  \mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,A\,\mathrm{hclosed}\,k\,t
+    =\sum_{\eta}(\text{remainder summand at }\eta)\cdot
+      \mathrm{leafColumnSum}\,G\,(\eta\langle\mathrm{par}\,j,\_\rangle)\,(k(\mathrm{succ}\,j))\,t,
+\]
+where the remainder summand is the $\mathrm{rootedParentActiveSum}$ summand for
+$A\setminus\{j\}$ at $\eta$ (\texttt{rootedParentActiveSum\_leaf\_peel}).  The proof
+unfolds $\mathrm{rootedParentActiveSum}$, applies
+$\mathrm{sum\_piFinset\_const\_optionEquiv}$ to split the leaf coordinate off the
+active-vertex labelling, commutes the two sums (\texttt{Finset.sum\_comm}), and rewrites
+each inner sum by $\mathrm{rootedParentActiveSum\_leaf\_inner}$.  The next step bounds
+each $\mathrm{leafColumnSum}$ factor by $\mathrm{leafColumnSum\_le}$, folding the
+$|\eta\langle\mathrm{par}\,j,\_\rangle|$ moment bump into the remainder weight to obtain
+the leaf-peel inequality, and then the strong induction on $|A|$.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
