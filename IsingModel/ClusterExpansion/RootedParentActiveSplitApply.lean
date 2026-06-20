@@ -57,9 +57,10 @@ theorem rootedParentActiveSplitEquiv_recon_child {A : Finset (Fin n)} {j : Fin n
   rw [rootedParentActiveSplitEquiv_child]
   rfl
 
-/-- **Reconstruction at a non-leaf vertex.**  The labelling reconstructed from a leaf
-value `x` and a remainder labelling `η` takes the value `η ⟨↑v, _⟩` at every active
-vertex `v` whose underlying vertex is active in `A.erase j`. -/
+/-- **Reconstruction at a remainder vertex.**  The labelling reconstructed from a
+leaf value `x` and a remainder labelling `η` takes the value `η ⟨↑v, _⟩` at every
+active vertex `v` other than the peeled one — i.e. whose underlying vertex is active in
+`A.erase j` (such a `v` may itself be a leaf in the parent structure). -/
 theorem rootedParentActiveSplitEquiv_recon_some {A : Finset (Fin n)} {j : Fin n}
     (hj : j ∈ A) {X : Type*} (x : X) (η : RootedParentActive (A.erase j) → X)
     {v : RootedParentActive A}
