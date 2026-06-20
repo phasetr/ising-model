@@ -18108,6 +18108,35 @@ and the tree factorial bound gives the summable geometric $(4r/(1-r)^2)^n$ bound
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{Cluster-expansion convergence: summability of the Mayer expansion (\S18.5).}
+The convergence capstone, assembling the entire \S18.5 Kotecky--Preiss machinery
+(\texttt{ClusterExpansion/MayerTermTailSummability.lean}).  Summing the factorial-product
+peel bound over the spanning trees and applying the tree factorial bound
+$\sum_T\prod_v(\mathrm{childCount}\,v)!\le4^n n!$ gives
+$\mathrm{sum\_pow\_rootedParentActivePeelBound\_le}$:
+\[
+  \sum_T(\Delta^2 e|t|)^n\cdot\mathrm{peelBound}
+    \le\frac{(\Delta^2 e|t|)^n\,|V|\,4^n\,n!}{(1-\Delta^2 e|t|)^{2n+1}}.
+\]
+Composing with the tail Mayer-term bound and using $(n+1)!^{-1}n!=n!/(n+1)!\le1$ and
+$(1-r)^{2n+1}=((1-r)^2)^n(1-r)$ yields the geometric per-order bound
+$\mathrm{mayerExpansionTerm\_succ\_abs\_le\_card\_div\_mul\_geometric}$ ($\Delta^2 e|t|<1$),
+\[
+  |\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|
+    \le\frac{|V|}{1-\Delta^2 e|t|}\left(\frac{4\,\Delta^2 e|t|}{(1-\Delta^2 e|t|)^2}\right)^n.
+\]
+Hence $\mathrm{summable\_abs\_mayerExpansionTerm\_succ\_of\_tail\_condition}$ ($\Delta^2 e|t|<1$
+and $4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1$): the series
+$\sum_n|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|$ is summable, via the geometric majorant
+($\mathrm{summable\_geometric\_of\_lt\_one}$ and $\mathrm{Summable.of\_nonneg\_of\_le}$);
+a wrapper ($\mathrm{summable\_abs\_mayerExpansionTerm\_of\_tail\_condition}$) extends this to
+the full series including the head terms.  This is a \emph{sufficient-condition}
+high-temperature tail-summability result for the Mayer expansion terms on a fixed finite
+graph---a Kotecky--Preiss-type bound in the spirit of FV \S5.4---and is not the sharp
+Kotecky--Preiss criterion, the convergence of the pressure series, or the thermodynamic
+limit.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
