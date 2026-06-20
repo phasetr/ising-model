@@ -17816,6 +17816,29 @@ parent-constraint sums that $\mathrm{rootedParentActiveSum\_univ\_zero\_eq}$ ide
 with the rooted-tree active sum.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Penrose tree sum bounded by the summed child-count peel bound (\S18.5).}
+Chaining the Fubini swap, the $\mathrm{Fin}(n+1)$-labelling identity and the leaf-peel
+bound for the complete-graph parent code bounds the Penrose tree-graph sum (the
+per-$(n+1)$ weight of the Mayer-term bound) by the sum over complete-graph spanning-tree
+shapes of the child-count peel bound
+(\texttt{ClusterExpansion/RootedParentActiveTreePeelBound.lean}):
+$\mathrm{penroseTreeSum\_le\_sum\_peelBound}$ ($\Delta^2 e|t|<1$),
+\[
+  \sum_\omega\sum_{T\in\mathrm{ST}(\mathrm{incompat}\,\omega)}
+      |t|^{|\omega 0|}\prod_i e^{|\omega(\mathrm{succ}\,i)|}|t|^{|\omega(\mathrm{succ}\,i)|}
+    \le\sum_{T:\mathrm{ST}(\top)}
+        \mathrm{rootedParentActivePeelBound}\,G\,(\mathrm{par}_T)\,\mathrm{univ}\,(\lambda\_.0)\,t.
+\]
+Per shape, the Penrose root weight $|t|^{|\omega 0|}\le(e|t|)^{|\omega 0|}$ (since $1\le e$,
+\texttt{pow\_le\_pow\_left₀} and \texttt{le\_mul\_of\_one\_le\_left}) and
+$e^c|t|^c=(e|t|)^c$ (\texttt{mul\_pow}) turn the constrained activity sum into the
+$\mathrm{Fin}(n+1)$-labelling form (\texttt{Finset.sum\_filter}), identified with the
+rooted-tree active sum ($\mathrm{rootedParentActiveSum\_univ\_zero\_eq}$), which the
+leaf-peel induction bounds by the child-count peel bound.  The remaining step multiplies
+by $(n+1)!^{-1}$ to bound $|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|$ and sums the peel
+bound over spanning-tree shapes.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
