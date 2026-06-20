@@ -17094,6 +17094,31 @@ geometric bound $\sum_{P\ni v}t^{|P|}\le(1-\Delta^2 t)^{-1}$ and the volume-unif
 Mayer convergence are the next assembly.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
 
+\paragraph{Per-vertex polymer activity bound, volume-uniform (\S18.5).}
+Summing the volume-uniform rooted polymer count against the activity weight
+$t^{|P|}$ (\texttt{ClusterExpansion/PolymerActivity.lean}).  With
+$\mathrm{rootedPolymerActivity}\,G\,v\,t:=\sum_{P:\,v\in\mathrm{supp}\,P}t^{|P|}$,
+the headline \texttt{rootedPolymerActivity\_le\_geometric} states that for
+$0\le t$ and $\Delta^2 t<1$ (where $\Delta=\mathrm{maxDegree}\,G$)
+\[
+  \sum_{P\ni v}t^{|P|}
+    =\sum_{\ell\ge0}\!\!\sum_{\substack{v\in\mathrm{supp}\,P\\|P|=\ell}}\!\!t^{\ell}
+    \le\sum_{\ell\ge0}\Delta^{2\ell}t^{\ell}
+    =\sum_{\ell\ge0}(\Delta^2 t)^{\ell}
+    =\frac1{1-\Delta^2 t}.
+\]
+The proof partitions $\mathrm{rootedPolymers}\,G\,v$ by cardinality
+(\texttt{Finset.sum\_fiberwise\_of\_maps\_to}), bounds each size-$\ell$ fibre by
+$(\mathrm{rootedPolymersOfCard}\,G\,v\,\ell).\mathrm{card}\cdot t^{\ell}
+\le\Delta^{2\ell}t^{\ell}=(\Delta^2 t)^{\ell}$ via
+\texttt{rootedPolymersOfCard\_card\_le\_maxDegree\_pow}, and dominates the finite
+sum by the convergent geometric series (\texttt{Summable.sum\_le\_tsum},
+\texttt{tsum\_geometric\_of\_lt\_one}).  The bound depends only on the maximum
+degree, not on the volume -- the per-vertex Kotecky--Preiss activity input that
+survives the infinite-volume limit, unlike the per-volume conditions of
+\texttt{InteractingFreeEnergyMayerHighTemp}.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
