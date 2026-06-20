@@ -17839,6 +17839,26 @@ by $(n+1)!^{-1}$ to bound $|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|$ and sums 
 bound over spanning-tree shapes.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Mayer expansion term bounded by the summed child-count peel bound (\S18.5).}
+Composing the Penrose tree-graph bound on the Mayer expansion term
+($\mathrm{mayerExpansionTerm\_succ\_abs\_le\_treeSum\_rootedExpActivity}$) with the
+leaf-peel bridge ($\mathrm{penroseTreeSum\_le\_sum\_peelBound}$) bounds the Mayer term by
+the summed child-count peel bound
+(\texttt{ClusterExpansion/MayerTermPeelBound.lean}):
+$\mathrm{mayerExpansionTerm\_succ\_abs\_le\_sum\_peelBound}$ ($\Delta^2 e|t|<1$),
+\[
+  |\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|
+    \le(n+1)!^{-1}\sum_{T:\mathrm{ST}(\top)}
+        \mathrm{rootedParentActivePeelBound}\,G\,(\mathrm{par}_T)\,\mathrm{univ}\,(\lambda\_.0)\,t,
+\]
+via \texttt{mul\_le\_mul\_of\_nonneg\_left} (the $(n+1)!^{-1}$ prefactor is nonnegative).
+The Mayer expansion term is now bounded by the closed-form leaf-peel machinery; the
+remaining step is the labelled-tree child-count closing---evaluating or bounding
+$\sum_{T}\mathrm{peelBound}$ against the $(n+1)!^{-1}$ prefactor (the tree count
+$(n+1)^{n-1}$ and child-count factorials)---and the ensuing summability and convergence.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
