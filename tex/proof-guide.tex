@@ -17374,6 +17374,26 @@ $\forall i,\ \mathrm{completeGraphTreeParentCode}\,n\,T\,i\ne\mathrm{succ}\,j$
 out first in the induction.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Polynomial-moment bound for the geometric series (\S18.5).}
+The tree-route Kotecky--Preiss leaf-peel induction sums a leaf polymer into its
+parent, leaving a $|\mathrm{parent}|$-power factor; iterating accumulates polynomial
+moments of the per-vertex polymer activity.  The analytic ingredient is the closed
+bound on the $d$-th moment of a geometric series
+(\texttt{ClusterExpansion/GeometricMoment.lean}): for $0\le r<1$,
+\[
+  \sum_{\ell}\ell^{d}r^{\ell}\le\frac{d!}{(1-r)^{d+1}}
+\]
+(\texttt{tsum\_pow\_mul\_geometric\_le}).  Each $\ell^{d}$ is dominated termwise by
+$d!\binom{\ell+d}{d}$ (since
+$\ell^{d}\le(\ell+1)^{d}\le(\ell+d)^{\underline{d}}=d!\binom{\ell+d}{d}$,
+\texttt{Nat.pow\_sub\_le\_descFactorial} and
+\texttt{Nat.descFactorial\_eq\_factorial\_mul\_choose}), and the negative-binomial
+geometric series sums to $(1-r)^{-(d+1)}$
+(\texttt{tsum\_choose\_mul\_geometric\_of\_norm\_lt\_one}); the termwise comparison uses
+\texttt{Summable.tsum\_le\_tsum} with
+\texttt{summable\_pow\_mul\_geometric\_of\_norm\_lt\_one}.  Reference: Glimm--Jaffe,
+2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
