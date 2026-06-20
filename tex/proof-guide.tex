@@ -17359,6 +17359,21 @@ the spanning-tree constraint to per-edge incompatibility -- the starting point o
 leaf-removal KP induction.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{A complete-graph spanning tree has a non-root leaf (\S18.5).}
+The rooted-tree Kotecky--Preiss induction peels leaves -- vertices that are nobody's
+parent in the rooted parent code (\texttt{ClusterExpansion/Penrose/CompleteTreeLeaf.lean}).
+For $n>0$, the vertex $v$ of a spanning tree of $K_{n+1}$ farthest from the root $0$
+(via \texttt{Finset.exists\_max\_image} of $H.\mathrm{dist}\,0$) is a non-root leaf:
+$v\ne0$ (otherwise every vertex has distance $0$, hence equals $0$ by
+\texttt{Connected.dist\_eq\_zero\_iff}, contradicting $n>0$), and if $v=\mathrm{succ}\,j$
+were the parent of some $\mathrm{succ}\,i$ then \texttt{treeParent\_spec} gives
+$\mathrm{dist}\,0\,(\mathrm{succ}\,i)=\mathrm{dist}\,0\,v+1>\mathrm{dist}\,0\,v$,
+contradicting maximality.  Hence
+$\forall i,\ \mathrm{completeGraphTreeParentCode}\,n\,T\,i\ne\mathrm{succ}\,j$
+(\texttt{completeGraphTreeParentCode\_exists\_nonroot\_leaf}); this leaf can be summed
+out first in the induction.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
