@@ -17449,6 +17449,23 @@ and \texttt{insertNth\_apply\_same}/\texttt{\_succAbove}), then \texttt{Finset.s
 and \texttt{Finset.sum\_product}.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Incompatibility-neighbourhood moment bound (\S18.5).}
+The moment generalisation of the Kotecky--Preiss neighbourhood bound, for the
+leaf-peel induction in which a leaf that has absorbed $d$ children carries a
+polynomial-moment factor $|Q|^{d}$
+(\texttt{ClusterExpansion/PolymerActivityKPMoment.lean}): for
+$P\in\mathrm{allPolymers}\,G$ and $\Delta^2 e|t|<1$,
+\[
+  \sum_{Q\sim P}|Q|^{d}(e|t|)^{|Q|}
+    \le|P|\cdot\frac{d!}{(1-\Delta^2 e|t|)^{d+1}}
+\]
+(\texttt{incompatibilityActivity\_cardPow\_expWeighted\_le}).  Each incompatible
+polymer is rooted at one of the $|\mathrm{supp}\,P|\le|P|$ support vertices
+(witness-count, \texttt{Finset.sum\_comm}, subset, mirroring the $d=0$ neighbourhood
+bound), and the per-vertex sum is the moment bound
+\texttt{rootedPolymerActivity\_cardPow\_le}.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
