@@ -13,7 +13,7 @@ bound (at the full active set, exponent `0`) as a factorial product:
 ` ≤ (|V|·∏_v (childCount v)!) / (1−r)^{2n+1}`,
 
 since the per-vertex exponents `(childCount v + 1)` sum to `n + (n + 1) = 2n + 1` (the
-child counts sum to the edge count `n`).  This is the form that pairs with the
+child counts sum to `n`).  This is the form that pairs with the
 spanning-tree factorial bound `∑_T ∏_v (childCount v)! ≤ 4^n·n!` (#4126).
 
 * `rootedParentActivePeelBound_univ_zero_le_card_mul_prod_childCount_factorial_div`.
@@ -35,7 +35,8 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ}
 and `0 < 1 − Δ²e|t|`, the child-count peel bound is at most
 `(|V|·∏_v (childCount v)!)/(1 − Δ²e|t|)^{2n+1}`.  The root moment factor is bounded by
 `sum_allPolymers_cardPow_expWeighted_le` (#4127), and the per-vertex `(1 − Δ²e|t|)` powers
-`childCount v + 1` sum to `2n + 1` because the child counts sum to the edge count `n`. -/
+`childCount v + 1` sum to `2n + 1` because the child counts sum to `n` (one parent-edge
+per non-root vertex). -/
 theorem rootedParentActivePeelBound_univ_zero_le_card_mul_prod_childCount_factorial_div
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] (par : Fin n → Fin (n + 1))
     {t : ℝ} (hpos : 0 < 1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) :
@@ -50,7 +51,7 @@ theorem rootedParentActivePeelBound_univ_zero_le_card_mul_prod_childCount_factor
     fun v => rootedParentChildCount par (Finset.univ : Finset (Fin n)) v with hd
   have hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1 := by linarith [hpos]
   have hqpos : 0 < q := hpos
-  -- The child counts sum to the edge count `n`.
+  -- The child counts sum to n (one parent-edge per non-root vertex).
   have hsum_child : (∑ v : Fin (n + 1), d v) = n := by
     simp only [hd, rootedParentChildCount]
     rw [← Finset.card_eq_sum_card_fiberwise (s := (Finset.univ : Finset (Fin n)))

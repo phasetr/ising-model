@@ -18072,7 +18072,7 @@ The product of peel factors $\prod_j\bigl(d_{\mathrm{succ}\,j}!/(1-r)^{d_{\mathr
 collects (\texttt{Finset.prod\_div\_distrib}, \texttt{Finset.prod\_pow\_eq\_pow\_sum}) into
 $(\prod_j d_{\mathrm{succ}\,j}!)/(1-r)^{\sum_j(d_{\mathrm{succ}\,j}+1)}$; the root moment
 factor is bounded by the root moment bound; and the per-vertex exponents sum to $2n+1$
-since the child counts sum to the edge count $n$ ($\sum_v\mathrm{childCount}\,v=n$ by
+since the child counts sum to $n$ (one parent-edge per non-root vertex) ($\sum_v\mathrm{childCount}\,v=n$ by
 \texttt{Finset.card\_eq\_sum\_card\_fiberwise} and \texttt{Fin.sum\_univ\_succ}), with
 $\prod_v d_v!=d_0!\prod_j d_{\mathrm{succ}\,j}!$ (\texttt{Fin.prod\_univ\_succ}).  This is
 the form that pairs with the spanning-tree factorial bound
