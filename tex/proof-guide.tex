@@ -17982,6 +17982,25 @@ tail factor and the $(n+1)!^{-1}$ Mayer prefactor, gives the $4r/(1-r)^2<1$ summ
 cluster-expansion convergence.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The root moment bound (\S18.5).}
+In the leaf-peel child-count peel bound the root vertex carries the moment sum
+$\sum_{P\in\mathrm{allPolymers}\,G}|P|^d(e|t|)^{|P|}$ (the base case of the leaf-peel
+recursion) (\texttt{ClusterExpansion/RootMomentBound.lean}).
+$\mathrm{sum\_allPolymers\_cardPow\_expWeighted\_le}$ ($\Delta^2 e|t|<1$),
+\[
+  \sum_{P\in\mathrm{allPolymers}\,G}|P|^d(e|t|)^{|P|}
+    \le|V|\cdot\frac{d!}{(1-\Delta^2 e|t|)^{d+1}},\qquad|V|=\mathrm{card}\,\iota.
+\]
+Every polymer is rooted at each of its $|\mathrm{supp}\,P|\ge1$ support vertices, so
+$\sum_P f(P)\le\sum_P|\mathrm{supp}\,P|\cdot f(P)=\sum_v\sum_{P\ni v}f(P)$
+($\mathrm{one\_le\_card\_polymerSupport\_of\_mem\_allPolymers}$,
+\texttt{Finset.sum\_filter}/\texttt{filter\_univ\_mem}, \texttt{Finset.sum\_comm}),
+bounded per vertex by $\mathrm{rootedPolymerActivity\_cardPow\_le}$ summed over the $|V|$
+vertices.  This bounds the root factor of the peel bound---the last analytic ingredient
+before the convergent capstone, combined with the $4^n n!$ tree control and the per-vertex
+$r$ tail factor.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
