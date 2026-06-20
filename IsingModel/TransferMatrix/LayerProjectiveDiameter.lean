@@ -41,7 +41,7 @@ namespace TransferMatrix
 
 open scoped BigOperators
 
-variable {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
+variable {Ω : Type*}
 
 /-- The projective cross-ratio `(A i a · A j b) / (A i b · A j a)`. -/
 noncomputable def matrixProjectiveCrossRatio (A : Matrix Ω Ω ℝ) (i j a b : Ω) : ℝ :=
