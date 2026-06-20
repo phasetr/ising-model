@@ -15,8 +15,9 @@ sum over *all* parent functions:
 `∑_{T} ∏_v (childCount T v)! ≤ ∑_{p : Fin n → Fin (n+1)} ∏_v (fiber count of p at v)!`.
 
 This relaxation (Prüfer-free) isolates the combinatorial evaluation of the parent-function
-sum (which equals `(2n)!/n! = n!·\binom{2n}{n} ≤ 4^n·n!`) from the tree-specific
-machinery.
+sum — which equals `(2n)!/n! = n!·\binom{2n}{n} ≤ 4^n·n!`, *to be proved in a later
+lemma* — from the tree-specific machinery.  This file proves only the relaxation
+inequality, not that evaluation.
 
 * `sum_completeGraphTrees_prod_childCount_factorial_le`.
 
