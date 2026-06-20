@@ -5,7 +5,7 @@ import IsingModel.ClusterExpansion.PolymerActivityMoment
 
 In the leaf-peel child-count peel bound the root vertex carries the moment sum
 `∑_{P ∈ allPolymers G} |P|^d (e|t|)^{|P|}` (the base case of the leaf-peel recursion).
-Bounding this requires summing the per-vertex moment bound over the lattice: since every
+Bounding this requires summing the per-vertex moment bound over the vertices: since every
 polymer is rooted at each of its `|supp P| ≥ 1` support vertices,
 
 `∑_{P ∈ allPolymers G} |P|^d (e|t|)^{|P|} ≤ |V|·d!/(1−Δ²e|t|)^{d+1}`,
