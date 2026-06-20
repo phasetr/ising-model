@@ -256,6 +256,7 @@ import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.PolymerActivityMoment
 import IsingModel.ClusterExpansion.PolymerActivityKPMoment
 import IsingModel.ClusterExpansion.RootedParentActive
+import IsingModel.ClusterExpansion.RootedParentLeafExistence
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
 import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
 import IsingModel.ClusterExpansion.Penrose.CompleteTreePolymerConstraint
