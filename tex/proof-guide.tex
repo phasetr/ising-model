@@ -17785,9 +17785,11 @@ The proof reindexes the active-vertex labellings via
 $\mathrm{sum\_piFinset\_const\_domEquiv}$ and $\mathrm{rootedParentActiveUnivEquiv}$, then
 per labelling rewrites the constraint (the $\mathrm{child}/\mathrm{parent}$ coercions
 $\mathrm{succ}\,i$/$\mathrm{par}\,i$, the $\mathrm{forall}$ over $\mathrm{univ}$) and the
-product (\texttt{Equiv.prod\_comp}, \texttt{pow\_zero}).  This is the exact form matching
-the Penrose tree-graph bound's summand (modulo the root $e$ weight and the per-tree sum);
-the next step is the Fubini swap identifying the Penrose tree sum with $\sum_T$ of this.
+product (\texttt{Equiv.prod\_comp}, \texttt{pow\_zero}).  This shares the parent-constraint/product skeleton of
+the Penrose tree-graph bound's summand, with an extra root $e$ weight (the Penrose root
+weight is $|t|^{|\omega 0|}$, here $(e|t|)^{|\omega 0|}$) and without the per-tree sum;
+the next step is the Fubini swap identifying the Penrose tree sum with $\sum_T$ of this
+(the root $e$ weight only strengthens the upper bound).
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
