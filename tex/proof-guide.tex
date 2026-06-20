@@ -18092,6 +18092,22 @@ tail tree leaf-peel bound, contributing the $(\Delta^2 e|t|)^n$ factor per shape
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{The Mayer term bounded by the $(\Delta^2 e|t|)^n$-weighted summed peel bound (\S18.5).}
+The tail sharpening of the Mayer-term peel bound
+(\texttt{ClusterExpansion/MayerTermPeelBoundTail.lean}): composing the Penrose tree-graph
+bound on the Mayer expansion term with the tail Penrose tree-sum bound,
+$\mathrm{mayerExpansionTerm\_succ\_abs\_le\_sum\_pow\_peelBound}$ ($\Delta^2 e|t|<1$),
+\[
+  |\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|
+    \le(n+1)!^{-1}\sum_{T:\mathrm{ST}(\top)}(\Delta^2 e|t|)^n\cdot
+        \mathrm{rootedParentActivePeelBound}\,G\,(\mathrm{par}_T)\,\mathrm{univ}\,(\lambda\_.0)\,t,
+\]
+via \texttt{mul\_le\_mul\_of\_nonneg\_left}.  The Mayer term is now bounded by the
+$(\Delta^2 e|t|)^n$-weighted peel-bound sum; combining with the peel-bound factorial form
+and the tree factorial bound gives the summable geometric $(4r/(1-r)^2)^n$ bound.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
