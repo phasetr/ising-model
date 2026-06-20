@@ -255,6 +255,7 @@ import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.PolymerActivityMoment
 import IsingModel.ClusterExpansion.PolymerActivityTailMoment
+import IsingModel.ClusterExpansion.RootMomentBound
 import IsingModel.ClusterExpansion.PolymerActivityKPMoment
 import IsingModel.ClusterExpansion.PolymerActivityKPMomentTail
 import IsingModel.ClusterExpansion.RootedParentActive
