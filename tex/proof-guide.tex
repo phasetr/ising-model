@@ -17939,6 +17939,33 @@ the tree-specific machinery, the route to a $4r/(1-r)^2<1$ summable cluster-expa
 convergence.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
 Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Parent-function fiber-factorial sum equals a rising factorial (\S18.5).}
+The closed-form evaluation of the parent-function sum left open by the relaxation
+(\texttt{ClusterExpansion/Penrose/FiberFactorialSum.lean}).  With
+$\mathrm{fiberCount}\,p\,v:=\#\{i\mid p\,i=v\}$ and
+$\mathrm{parentFiberFactorialSum}\,n\,m:=\sum_{p:\mathrm{Fin}\,n\to\mathrm{Fin}\,m}\prod_v(\mathrm{fiberCount}\,p\,v)!$,
+$\mathrm{parentFiberFactorialSum\_eq\_ascFactorial}$ gives
+\[
+  \sum_{p:\mathrm{Fin}\,n\to\mathrm{Fin}\,m}\prod_v(\#\{i\mid p\,i=v\})!
+    =\mathrm{ascFactorial}\,m\,n=m(m+1)\cdots(m+n-1),
+\]
+by induction on $n$: a function $\mathrm{Fin}(n+1)\to\mathrm{Fin}\,m$ splits via
+$\mathrm{Fin.snocEquiv}$ into a last value $a$ and an initial tuple $p'$; the fiber at $v$
+gains $+1$ iff $v=a$ ($\mathrm{fiberCount\_snoc}$), so the product gains a factor
+$\mathrm{fiberCount}\,p'\,a+1$ ($\mathrm{prod\_fiberCount\_factorial\_snoc}$, via
+\texttt{Finset.mul\_prod\_erase} and \texttt{Nat.factorial\_succ}), and summing over $a$
+multiplies by $\sum_a(\mathrm{fiberCount}\,p'\,a+1)=n+m$ ($\mathrm{sum\_fiberCount}=n$ by
+\texttt{Finset.card\_eq\_sum\_card\_fiberwise}), matching \texttt{Nat.ascFactorial\_succ}.
+Specialising to $m=n+1$,
+$\mathrm{parentFiberFactorialSum\_succ\_le\_four\_pow\_mul\_factorial}$ gives
+$(2n)!/n!=n!\binom{2n}{n}\le4^n n!$ (\texttt{Nat.factorial\_mul\_ascFactorial},
+\texttt{Nat.choose\_mul\_factorial\_mul\_factorial}, \texttt{Nat.centralBinom\_le\_four\_pow}).
+This is the Pr\"ufer-free combinatorial heart of the convergent closing: combined with the
+tree$\to$parent-function relaxation it gives
+$\sum_{T:\mathrm{ST}(\top)}\prod_v(\mathrm{childCount}\,T\,v)!\le4^n n!$, the $4^n$ control
+the $r^n$ tail factor needs.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
