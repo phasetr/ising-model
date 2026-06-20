@@ -18040,6 +18040,23 @@ with $(\Delta^2 e|t|)\cdot(\Delta^2 e|t|)^{|A|-1}=(\Delta^2 e|t|)^{|A|}$
 $(4r)^n$ decay in the cluster-expansion convergence.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The sharpened (tail) tree leaf-peel bound (\S18.5).}
+The tail analog of the tree specialisation
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeelTailTree.lean}): specialising the tail
+leaf-peel induction to the full active set (cardinality $n$, via
+\texttt{Finset.card\_univ} and \texttt{Fintype.card\_fin}) and the complete-graph
+spanning-tree parent code, discharging leaf existence via
+$\mathrm{completeGraphTreeParentCode\_exists\_active\_leaf}$, gives
+$\mathrm{rootedParentActiveSum\_completeGraphTreeParentCode\_univ\_zero\_le\_pow\_mul\_peelBound}$
+($\Delta^2 e|t|<1$),
+\[
+  \mathrm{rootedParentActiveSum}\,G\,(\mathrm{par}_T)\,\mathrm{univ}\,\_\,(\lambda\_.0)\,t
+    \le(\Delta^2 e|t|)^n\cdot\mathrm{peelBound}.
+\]
+The $(\Delta^2 e|t|)^n$ factor---one per non-root vertex of the spanning tree---feeds the
+geometric $(4r)^n$ decay.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
