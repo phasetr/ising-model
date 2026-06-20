@@ -17966,6 +17966,22 @@ $\sum_{T:\mathrm{ST}(\top)}\prod_v(\mathrm{childCount}\,T\,v)!\le4^n n!$, the $4
 the $r^n$ tail factor needs.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Tree child-count factorial sum $\le 4^n n!$ (\S18.5).}
+Composing the tree $\to$ parent-function relaxation with the closed-form parent-function
+evaluation (\texttt{ClusterExpansion/Penrose/TreeChildCountFactorialBound.lean}):
+$\mathrm{sum\_completeGraphTrees\_prod\_childCount\_factorial\_le\_four\_pow\_mul\_factorial}$,
+\[
+  \sum_{T:\mathrm{ST}(K_{n+1})}\prod_v(\mathrm{childCount}\,T\,v)!\le4^n\,n!.
+\]
+The bridge is that $\mathrm{rootedParentChildCount}\,p\,\mathrm{univ}$ and
+$\mathrm{fiberCount}\,n\,(n+1)\,p$ are the same function (both $\#\{i\mid p\,i=v\}$), so the
+relaxed parent-function sum is definitionally $\mathrm{parentFiberFactorialSum}\,n\,(n+1)$,
+evaluated as $(2n)!/n!\le4^n n!$.  This is the completed combinatorial control on the
+spanning-tree factorial weights---the $4^n$ factor that, combined with the per-vertex $r$
+tail factor and the $(n+1)!^{-1}$ Mayer prefactor, gives the $4r/(1-r)^2<1$ summable
+cluster-expansion convergence.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
