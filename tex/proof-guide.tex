@@ -18154,6 +18154,21 @@ the $\mathrm{range}(N+1)$ indexing).  This discharges the deferred convergence n
 $\mathrm{mayerPartialSum}$ in the explicit high-temperature regime.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Explicit bound on the Mayer expansion sum (\S18.5).}
+Summing the geometric per-order bound over $n$
+(\texttt{ClusterExpansion/MayerTsumBound.lean}):
+$\mathrm{tsum\_abs\_mayerExpansionTerm\_succ\_le}$ ($\Delta^2 e|t|<1$ and
+$\rho:=4r/(1-r)^2<1$, $r=\Delta^2 e|t|$),
+\[
+  \sum_n|\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|
+    \le\frac{|V|}{(1-r)(1-\rho)},
+\]
+via \texttt{Summable.tsum\_le\_tsum} with the per-order bound, \texttt{tsum\_mul\_left}, and
+\texttt{tsum\_geometric\_of\_lt\_one}.  This is the explicit Kotecky--Preiss-type bound on
+the convergent cluster-expansion sum (the total contribution of the non-trivial Mayer
+orders), quantifying the term-summability.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
