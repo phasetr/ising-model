@@ -17394,6 +17394,24 @@ geometric series sums to $(1-r)^{-(d+1)}$
 \texttt{summable\_pow\_mul\_geometric\_of\_norm\_lt\_one}.  Reference: Glimm--Jaffe,
 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Per-vertex polymer activity moment bound, volume-uniform (\S18.5).}
+Combining the volume-uniform rooted polymer count
+(\texttt{rootedPolymersOfCard\_card\_le\_maxDegree\_pow}, $\le\Delta^{2\ell}$) with the
+geometric-moment bound gives the per-vertex $d$-th activity moment
+(\texttt{ClusterExpansion/PolymerActivityMoment.lean}): for $0\le u$ and
+$\Delta^2 u<1$,
+\[
+  \sum_{Q\ni v}|Q|^{d}u^{|Q|}\le\frac{d!}{(1-\Delta^2 u)^{d+1}}
+\]
+(\texttt{rootedPolymerActivity\_cardPow\_le}).  Partition the rooted polymers by
+cardinality (\texttt{Finset.sum\_fiberwise\_of\_maps\_to}, mirroring the per-vertex
+activity bound), bound each size-$\ell$ fibre by
+$\Delta^{2\ell}\ell^{d}u^{\ell}=\ell^{d}(\Delta^2 u)^{\ell}$, and dominate the finite
+sum by the geometric-moment series $\sum_{\ell}\ell^{d}(\Delta^2 u)^{\ell}$ via
+\texttt{Summable.sum\_le\_tsum} and \texttt{tsum\_pow\_mul\_geometric\_le}.  The
+$d=0$ case is the per-vertex activity bound.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
