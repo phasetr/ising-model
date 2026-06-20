@@ -7,9 +7,10 @@ import Mathlib.Data.Nat.Choose.Central
 /-!
 # The parent-function fiber-factorial sum equals a rising factorial (GJ §18.5)
 
-The Prüfer-free cluster-expansion closing reduces the sum of child-count factorials over
+The Prüfer-free cluster-expansion closing relaxes the sum of child-count factorials over
 spanning trees to the sum over *all* parent functions `Fin n → Fin m` of the product of
-fiber-size factorials.  This file evaluates that sum in closed form:
+fiber-size factorials (that relaxation is `ParentCodeFactorialSum.lean`, #4124).  This
+file evaluates the parent-function sum in closed form:
 
 `∑_{p : Fin n → Fin m} ∏_v (#{i | p i = v})! = ascFactorial m n = m·(m+1)···(m+n-1)`.
 
