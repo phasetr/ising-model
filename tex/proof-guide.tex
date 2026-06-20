@@ -17498,6 +17498,25 @@ a leaf in every nonempty active set
 (\texttt{completeGraphTreeParentCode\_exists\_active\_leaf}).  Reference: Glimm--Jaffe,
 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The moment-weighted constrained active sum (\S18.5).}
+The central object of the rooted-tree Kotecky--Preiss leaf-peel induction
+(\texttt{ClusterExpansion/RootedParentActiveSum.lean}):
+$\mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,A\,\mathrm{hclosed}\,k\,t$ is the
+sum over labellings
+$\omega:\{v\mid v\in\mathrm{rootedParentActiveVertices}\,A\}\to\mathrm{allPolymers}\,G$
+of the active-vertex subtype, of the moment-weighted activity
+$\prod_v|\omega v|^{k v}(e|t|)^{|\omega v|}$, restricted to those with
+$\omega(\mathrm{succ}\,j)\sim\omega(\mathrm{par}\,j)$ for every active $j\in A$.  The
+coercions $\mathrm{rootedParentActiveChild}$ and $\mathrm{rootedParentActiveParent}$
+lift $\mathrm{succ}\,j$ and $\mathrm{par}\,j$ into the subtype via
+\texttt{succ\_mem\_rootedParentActiveVertices} and the active-closedness hypothesis.
+The subtype \texttt{piFinset} with the dependent-membership constraint and the moment
+weight elaborates with automatic decidability;
+\texttt{rootedParentActiveVertices\_empty} ($=\{0\}$) and the coercion lemmas are the
+basic API.  The base case ($A=\varnothing$), the active-subtype coordinate split, the
+leaf-peel inequality and the strong induction are subsequent work.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
