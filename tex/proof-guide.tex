@@ -18079,6 +18079,19 @@ the form that pairs with the spanning-tree factorial bound
 $\sum_T\prod_v(\mathrm{childCount}\,v)!\le4^n n!$.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{The Penrose tree sum bounded by the $(\Delta^2 e|t|)^n$-weighted peel bound (\S18.5).}
+The tail sharpening of the Penrose-tree-sum bound
+(\texttt{ClusterExpansion/RootedParentActiveTreePeelBoundTail.lean}): using the sharpened
+(tail) tree leaf-peel bound at the final step,
+$\mathrm{penroseTreeSum\_le\_sum\_pow\_peelBound}$ ($\Delta^2 e|t|<1$) gives that the
+Penrose tree-graph sum is at most
+$\sum_{T:\mathrm{ST}(\top)}(\Delta^2 e|t|)^n\cdot\mathrm{rootedParentActivePeelBound}\,G\,(\mathrm{par}_T)\,\mathrm{univ}\,(\lambda\_.0)\,t$.
+Identical to the un-sharpened bound (Fubini swap, root $e$-weight domination,
+$\mathrm{rootedParentActiveSum\_univ\_zero\_eq}$) except the final per-$T$ bound uses the
+tail tree leaf-peel bound, contributing the $(\Delta^2 e|t|)^n$ factor per shape.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
