@@ -10,8 +10,9 @@ sharpens to carry an extra factor `Δ²u`:
 
 `∑_{Q ∋ v} |Q|^d u^{|Q|} ≤ (Δ²u)·d!/(1−Δ²u)^{d+1}`.
 
-This `Δ²u` factor — one per non-root vertex of the rooted-tree leaf-peel — is what a
-convergent (summable-over-`n`) cluster-expansion bound needs, since the bare
+This `Δ²u` factor — one per non-root vertex of the rooted-tree leaf-peel — is an
+ingredient for a convergent (summable-over-`n`) cluster-expansion bound (which also
+requires the tree/child-count combinatorics and a smallness condition), since the bare
 `d!/(1−Δ²u)^{d+1}` factors do not decay with the tree size.
 
 * `rootedPolymerActivity_cardPow_tail_le`.
