@@ -17569,6 +17569,32 @@ each coordinate ranging over a fixed finset $s$ (\texttt{Finset.sum\_product'} a
 factor out of $\mathrm{rootedParentActiveSum}$.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Leaf-peel factorings of the active product and constraint (\S18.5).}
+The leaf-peel inductive step rests on two structural factorings
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeel.lean}).  First, the product over
+the active-vertex subtype factors through the peeled vertex
+(\texttt{prod\_rootedParentActive\_eq\_mul}): for $j\in A$ and any commutative monoid,
+\[
+  \prod_{v}g(v)
+    =g(\mathrm{child}\,j)\cdot
+      \prod_{w}g\bigl((\mathrm{rootedParentActiveSplitEquiv}\,h_j)^{-1}(\mathrm{some}\,w)\bigr),
+\]
+the leaf factor at $\mathrm{succ}\,j$ times the product over the active subtype of
+$A\setminus\{j\}$ transported back into $A$ (\texttt{Equiv.prod\_comp} and
+\texttt{Fintype.prod\_option}).  Second, the incompatibility constraints factor
+(\texttt{forall\_mem\_constraint\_iff\_erase}): the conditions
+$\omega(\mathrm{succ}\,i)\sim\omega(\mathrm{par}\,i)$ ranging over all active $i\in A$
+are equivalent to the single condition at $j$ together with those ranging over
+$A\setminus\{j\}$, by the $A=\{j\}\cup(A\setminus\{j\})$ \texttt{forall}-split (the
+membership proofs in $\mathrm{child}/\mathrm{parent}$ are irrelevant, so the
+$i\in A\setminus\{j\}$ conditions lifted via \texttt{Finset.mem\_of\_mem\_erase}
+coincide with those at $i\in A$).  Together with
+$\mathrm{sum\_piFinset\_const\_optionEquiv}$ these peel the leaf coordinate---value,
+own constraint and weight factor---out of $\mathrm{rootedParentActiveSum}$, leaving the
+erased-subtype sum; the leaf sum is then controlled by the moment estimate
+$\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_le}$.  Reference: Glimm--Jaffe,
+2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
