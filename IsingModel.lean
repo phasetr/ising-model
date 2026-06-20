@@ -250,6 +250,7 @@ import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
 import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayer
+import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayerHighTemp
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower
