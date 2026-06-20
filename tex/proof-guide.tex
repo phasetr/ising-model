@@ -17294,6 +17294,29 @@ over the spanning trees of the complete graph $\top$
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik
 \S5.4, Theorem~5.4.
 
+\paragraph{Mayer term bounded by the incompatibility-graph tree sum of activities
+(\S18.5).}
+The volume-uniform Kotecky--Preiss route bounds each Mayer term by a sum over the
+spanning trees of the polymer incompatibility graph of the activity product
+(\texttt{ClusterExpansion/MayerCore/MayerTreeSumActivity.lean}):
+\[
+  |\mathrm{mayerExpansionTerm}\,G\,n\,t|
+    \le\frac1{n!}\sum_{\omega}\ \sum_{T\ \text{tree of}\ \mathrm{incompat}(\omega)}\
+      \prod_i|t|^{|\omega i|}
+\]
+(\texttt{mayerExpansionTerm\_abs\_le\_treeSum\_activity}).  This keeps the
+incompatibility-graph tree range -- crucially \emph{not} collapsing to the
+volume-dependent $(\sum_P|t|^{|P|})^n$ of
+\texttt{mayerExpansionTerm\_abs\_le\_tree\_activity\_pow} -- so the per-edge
+Kotecky--Preiss weight bound can later be applied along the tree edges.  It combines
+the triangle inequality (\texttt{mayerExpansionTerm\_abs\_le}), the Penrose
+tree-graph Ursell bound $|\phi^T(\omega)|\le\mathrm{numSpanningTrees}(\mathrm{incompat}(\omega))/n!$
+(\texttt{ursellCoefficient\_abs\_le\_numSpanningTrees\_div\_factorial}), and the
+activity factorisation $|z(t,\omega)|=\prod_i|t|^{|\omega i|}$
+(\texttt{clusterSeqActivity\_abs}); the tree count is rewritten as a constant sum
+over the spanning-tree set to keep the trees explicit.  Reference: Glimm--Jaffe,
+2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
