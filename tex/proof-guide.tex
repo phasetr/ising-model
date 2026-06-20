@@ -8920,6 +8920,22 @@ of any dimension.  This is finite: it does not pass to a thermodynamic limit or
 prove final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Mass-form decay on the ambient cubic open box (\S17.1, Issue~\#3511).}
+The cubic open-box decay is recast in the mass form $\exp(-\mathrm{mass}\cdot\mathrm{sep})$
+with $\mathrm{mass}=-\log(\mathrm{ratio})$
+(\texttt{TransferMatrix/CubicLayerOpenBoxMass.lean}), mirroring the $K_2$ mass form.  With
+$\mathrm{cubicLayerHermitianMass}\,d\,R\,p:=-\log(\mathrm{cubicLayerHermitianRatio}\,d\,R\,p)$,
+$\mathrm{cubicLayerHermitianMass\_pos}$ ($0<\mathrm{mass}$ when $0<\mathrm{ratio}$, since
+$0\le\mathrm{ratio}<1$) and $\mathrm{cubicLayerHermitianRatio\_pow\_eq\_exp\_neg\_mass}$
+($\mathrm{ratio}^n=\exp(-\mathrm{mass}\cdot n)$ for $0<\mathrm{ratio}$, via
+\texttt{Real.exp\_nat\_mul} and \texttt{Real.exp\_log}),
+$\mathrm{correlation\_induced\_latticeGraph\_cubicLayerOpenBox\_abs\_le\_exp\_neg\_mass}$
+gives the cubic open-box decay with the mass exponential, at zero field, conditional on the
+boundary-window gap, the columnwise-simple-eigenspace parity input, and the strict
+positivity $0<\mathrm{ratio}$ (the canonical subdominant ratio is only known to satisfy
+$0\le\mathrm{ratio}<1$).  Finite; no thermodynamic limit.  Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Explicit subdominant ratio for open-slab decay (\S17.1,
 Issue~\#3511).}
 The canonical decay ratio is obtained by a non-constructive choice, so a
