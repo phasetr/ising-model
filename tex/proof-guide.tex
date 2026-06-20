@@ -17054,6 +17054,25 @@ a finite-volume statement; the volume-uniform / infinite-volume analyticity of t
 pressure is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~378--386.
 
+\paragraph{$\Lambda$-layer / along-exhaustion high-temperature Mayer expansion
+(\S18.5).}
+The same identity is wrapped to the $\Lambda$-layer and along-exhaustion stack
+(\texttt{AmbientLattice/SpecialCases/InteractingFreeEnergyMayerHighTemp.lean}): on
+a nonempty finite volume $\Lambda$ (resp. each exhaustion stage $n$) satisfying the
+induced-graph high-temperature conditions,
+\texttt{freeEnergy$\Lambda$\_eq\_tsum\_mayer\_of\_high\_temp} and
+\texttt{freeEnergyAlongExhaustion\_eq\_tsum\_mayer\_of\_high\_temp} (with
+ferromagnetic forms) give the per-site free energy as its convergent cluster
+expansion, by composing the finite-graph theorem at $\mathrm{inducedGraph}\,G\,
+\Lambda$.  These are \emph{per-volume} statements: the high-temperature conditions
+$(1+\tanh\beta J)^{|E_\Lambda|}<2$ and
+$e\,|\mathrm{allPolymers}(\mathrm{inducedGraph}\,G\,\Lambda)|\,\tanh(\beta J)<1$
+grow with $|\Lambda|$, so for fixed positive $\tanh(\beta J)$ they fail at large
+volume.  A volume-uniform Kotecky--Preiss / Dobrushin activity bound (not these
+per-volume conditions) is what a genuine infinite-volume Mayer pressure identity
+requires; that is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~378--386.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
