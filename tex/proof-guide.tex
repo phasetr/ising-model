@@ -9094,6 +9094,24 @@ deflated entries quantitatively, construct a strict gap, or prove a thermodynami
 limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Doob (Perron) stochastic normalization of the transfer matrix
+(\S17.1, Issue~\#3511).}
+Given a positive matrix \(M\) with a strictly positive Perron eigenvector \(w\)
+of eigenvalue \(\lambda>0\), the Doob transform
+\[
+  P_{ij}:=\frac{M_{ij}\,w_j}{\lambda\,w_i}
+\]
+is entrywise positive and row-stochastic (\(\sum_j P_{ij}=1\), from
+\(\sum_j M_{ij}w_j=\lambda w_i\)), and is similar to \(M/\lambda\): it conjugates
+eigenvectors, \(Mv=\mu v\Rightarrow P(v/w)=(\mu/\lambda)(v/w)\).  This is the
+structural reduction underlying a future quantitative Perron--Frobenius /
+Dobrushin estimate -- the spectral gap of \(M\) becomes that of the stochastic
+matrix \(P\), whose contraction is controlled by a Dobrushin /
+Hilbert-projective-metric coefficient (not proved here).  These are finite
+algebraic identities for an abstract positive Perron eigenpair: they do not prove
+a quantitative contraction, a strict gap, or a thermodynamic limit.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
