@@ -17317,6 +17317,28 @@ activity factorisation $|z(t,\omega)|=\prod_i|t|^{|\omega i|}$
 over the spanning-tree set to keep the trees explicit.  Reference: Glimm--Jaffe,
 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Inserting the Kotecky--Preiss $e$-weights into the Mayer tree-sum bound
+(\S18.5).}
+Continuing the rooted-tree assembly, split off the root vertex $0$ and insert the
+Kotecky--Preiss weight $e^{|Q|}\ge1$ on the non-root factors of the activity product
+(\texttt{ClusterExpansion/MayerCore/MayerTreeSumExpActivity.lean}).  Since
+$1\le e^{|Q|}$ and $|t|^{|Q|}\ge0$,
+\[
+  |\mathrm{mayerExpansionTerm}\,G\,(n+1)\,t|
+    \le\frac1{(n+1)!}\sum_{\omega}\sum_{T\ \text{tree of}\ \mathrm{incompat}(\omega)}
+      |t|^{|\omega 0|}\prod_{i:\,\mathrm{Fin}\,n}
+        e^{|\omega(\mathrm{succ}\,i)|}\,|t|^{|\omega(\mathrm{succ}\,i)|}
+\]
+(\texttt{mayerExpansionTerm\_succ\_abs\_le\_treeSum\_rootedExpActivity}, via
+\texttt{Fin.prod\_univ\_succ}, \texttt{one\_le\_pow}$_0$ with
+\texttt{Real.one\_le\_exp\_iff}, and \texttt{Finset.prod\_le\_prod}).  The non-root
+factors are now in exactly the per-edge Kotecky--Preiss weight form
+$e^{|Q|}|t|^{|Q|}$ of
+\texttt{polymerSeqTree\_childActivityWeight\_le\_parentCard}, ready for the
+parent-edge reduction and the weighted spanning-tree factorisation.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
