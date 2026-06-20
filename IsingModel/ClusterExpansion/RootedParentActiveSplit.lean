@@ -18,9 +18,10 @@ Combined through `Finset.subtypeInsertEquivOption`, these give the equivalence
 * `rootedParentActiveSplitEquiv`:
   `RootedParentActive A ≃ Option (RootedParentActive (A.erase j))`,
 
-which sends the leaf vertex `Fin.succ j` to `none` and every other active vertex to
-the corresponding vertex of `A.erase j`.  This is the combinatorial backbone of the
-coordinate split used to peel the leaf factor out of `rootedParentActiveSum`.
+which sends the peeled vertex `Fin.succ j` to `none` and every other active vertex to
+the corresponding vertex of `A.erase j`.  In the intended application `j` is a leaf of
+`A`; the equivalence itself only needs `j ∈ A`.  This is the combinatorial backbone of
+the coordinate split used to peel the leaf factor out of `rootedParentActiveSum`.
 
 ## References
 
@@ -100,10 +101,11 @@ theorem succ_notMem_rootedParentActiveVertices_erase {A : Finset (Fin n)} {j : F
   rw [succ_mem_rootedParentActiveVertices]
   exact Finset.notMem_erase j A
 
-/-- **The leaf-split equivalence.**  For an active vertex `j ∈ A`, the active-vertex
-subtype of `A` is equivalent to `Option` of the active-vertex subtype of `A.erase j`:
-the leaf vertex `Fin.succ j` corresponds to `none` and every other active vertex to
-the corresponding vertex of `A.erase j`. -/
+/-- **The leaf-split equivalence.**  For an active vertex `j ∈ A` (the leaf in the
+intended leaf-peel application), the active-vertex subtype of `A` is equivalent to
+`Option` of the active-vertex subtype of `A.erase j`: the peeled vertex `Fin.succ j`
+corresponds to `none` and every other active vertex to the corresponding vertex of
+`A.erase j`. -/
 noncomputable def rootedParentActiveSplitEquiv {A : Finset (Fin n)} {j : Fin n}
     (hj : j ∈ A) :
     RootedParentActive A ≃ Option (RootedParentActive (A.erase j)) :=
@@ -111,7 +113,8 @@ noncomputable def rootedParentActiveSplitEquiv {A : Finset (Fin n)} {j : Fin n}
         rw [rootedParentActiveVertices_insert_erase hj])).trans
     (Finset.subtypeInsertEquivOption succ_notMem_rootedParentActiveVertices_erase)
 
-/-- The leaf-split equivalence sends `none` back to the leaf vertex `Fin.succ j`. -/
+/-- The leaf-split equivalence sends `none` back to the peeled active vertex
+`Fin.succ j`. -/
 @[simp]
 theorem rootedParentActiveSplitEquiv_symm_none_coe {A : Finset (Fin n)} {j : Fin n}
     (hj : j ∈ A) :
