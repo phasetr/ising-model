@@ -250,6 +250,7 @@ import IsingModel.ClusterExpansion.Penrose
 import IsingModel.ClusterExpansion.PolymerCounting
 import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.PolymerActivityKP
+import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
