@@ -17016,6 +17016,26 @@ automatic (\texttt{tanh\_pow\_lt\_one\_of\_mem\_allPolymers}): polymers are non-
 ($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Glimm–Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386.
 
+\paragraph{Interacting Ising free energy as a Mayer expansion (\S18.5).}
+The interacting analogue (\texttt{MayerCore/InteractingFreeEnergyMayer.lean})
+removes the pairwise-vertex-disjoint restriction by using the general
+Mayer--Montroll identity \texttt{mayer\_identity\_general\_t} in place of the
+non-interacting capstone: under the convergence conditions
+$|\varepsilon(\tanh\beta J)|<1$ and
+$e\sum_P|\tanh\beta J|^{|P|}<1$ (and $0\le\beta J$, $0<|\iota|$),
+\[
+  \mathrm{freeEnergy}\,G\,\langle J,0,\beta\rangle
+    = \log 2 + \tfrac{|E|}{|\iota|}\log\cosh(\beta J)
+      + \tfrac{1}{|\iota|}\sum'_n \mathrm{mayerExpansionTerm}\,G\,n\,(\tanh(\beta J))
+\]
+(\texttt{freeEnergy\_eq\_tsum\_mayer\_of\_activity}, with a ferromagnetic
+$0\le J$, $0<\beta$ form).  This expresses the interacting finite-volume free
+energy directly through its convergent cluster terms -- the finite-volume step
+toward the \S18.5 infinite-volume analyticity of the pressure; the
+high-temperature discharge of the convergence hypotheses and the volume-uniform /
+infinite-volume limit are later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4
+Prop.~18.4.2 p.~333, \S18.5 Thm 18.5.1 pp.~335--336.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
