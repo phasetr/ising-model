@@ -17754,6 +17754,22 @@ summing over $T$ and reindexing the polymer-sequence labellings bridges the Maye
 the closed-form peel bound.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
 pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Reindexing full active-vertex labellings to $\mathrm{Fin}(n+1)$ (\S18.5).}
+To feed the rooted-tree active sum into the Penrose tree-graph bound (whose labellings
+are $\omega:\mathrm{Fin}(n+1)\to\mathrm{allPolymers}\,G$), the full active-vertex subtype
+is reindexed to $\mathrm{Fin}(n+1)$
+(\texttt{ClusterExpansion/RootedParentActiveUnivReindex.lean}).
+$\mathrm{sum\_piFinset\_const\_domEquiv}$ ($e:\alpha\simeq\beta$) shows a
+constant-\texttt{piFinset} sum is invariant under reindexing the coordinate type,
+$\sum_\omega f(\omega)=\sum_{\omega'}f(\omega'\circ e)$ (\texttt{Finset.sum\_bij'} with
+precomposition by $e$/$e^{-1}$), and
+$\mathrm{rootedParentActiveUnivEquiv}:\mathrm{RootedParentActive}\,\mathrm{univ}\simeq\mathrm{Fin}(n+1)$
+is the underlying coercion (via $\mathrm{rootedParentActiveVertices\_univ}$ and
+\texttt{Equiv.subtypeUnivEquiv}).  These let the univ rooted-tree active sum be rewritten
+as a sum over $\mathrm{Fin}(n+1)$-labellings, matching the polymer-sequence labellings of
+the Penrose bound.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
