@@ -320,6 +320,7 @@ import IsingModel.TransferMatrix.LayerQuadraticFormRowSum
 import IsingModel.TransferMatrix.LayerQuadraticFormDiag
 import IsingModel.TransferMatrix.LayerQuadraticFormOffDiag
 import IsingModel.TransferMatrix.LayerQuadraticFormGershgorin
+import IsingModel.TransferMatrix.LayerQuadraticFormDeflation
 import IsingModel.TransferMatrix.FreeLayerWalshOpenPerron
 import IsingModel.TransferMatrix.FreeLayerWalshOpenDecay
 import IsingModel.TransferMatrix.FreeLayerWalshOpenInfiniteVolume
