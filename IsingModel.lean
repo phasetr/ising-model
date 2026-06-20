@@ -18,6 +18,7 @@ import IsingModel.Inequalities.MonotonicityExtremal
 import IsingModel.Inequalities.VolumeMonotonicity
 import IsingModel.Asano
 import IsingModel.AmbientLattice
+import IsingModel.AmbientLattice.SpecialCases.InteractingFreeEnergyMayerHighTemp
 import IsingModel.AmbientLatticeSum
 import IsingModel.RandomCurrent
 import IsingModel.Inequalities.SimonLieb
