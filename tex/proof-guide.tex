@@ -17535,6 +17535,40 @@ the final target $\mathrm{allPolymersActivity}\,G\,(e|t|)=\sum_P(e|t|)^{|P|}$.  
 leaf-peel inequality and the strong induction are subsequent work.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Leaf-split of the active-vertex subtype (\S18.5).}
+The inductive step peels the leaf coordinate $\mathrm{succ}\,j$ off the active-vertex
+subtype (\texttt{ClusterExpansion/RootedParentActiveSplit.lean}).  The structural fact
+is that for an active vertex $j\in A$ the active vertices of $A$ are those of
+$A\setminus\{j\}$ together with the disjoint extra vertex $\mathrm{succ}\,j$:
+\[
+  \mathrm{rootedParentActiveVertices}\,A
+    =\{\mathrm{succ}\,j\}\cup\mathrm{rootedParentActiveVertices}\,(A\setminus\{j\}),
+  \qquad
+  \mathrm{succ}\,j\notin\mathrm{rootedParentActiveVertices}\,(A\setminus\{j\})
+\]
+(\texttt{rootedParentActiveVertices\_insert\_erase}, via \texttt{Finset.image\_insert},
+\texttt{Finset.insert\_erase}, \texttt{Finset.insert\_comm}; and
+\texttt{succ\_notMem\_rootedParentActiveVertices\_erase}).  Combined through
+\texttt{Finset.subtypeInsertEquivOption} and \texttt{Equiv.subtypeEquivRight}, these
+give the equivalence
+\[
+  \mathrm{rootedParentActiveSplitEquiv}\,h_j:
+    \mathrm{RootedParentActive}\,A
+      \simeq\mathrm{Option}\,(\mathrm{RootedParentActive}\,(A\setminus\{j\}))
+\]
+(the leaf vertex $\mapsto\mathrm{none}$, every other active vertex $\mapsto\mathrm{some}$).
+The accompanying analytic tool $\mathrm{sum\_piFinset\_const\_optionEquiv}$ splits a
+constant-\texttt{piFinset} sum along any $e:\alpha\simeq\mathrm{Option}\,\beta$:
+\[
+  \sum_{\omega:\alpha\to X}f(\omega)
+    =\sum_{x\in s}\ \sum_{\eta:\beta\to X}f\bigl(a\mapsto(e\,a).\mathrm{elim}\,x\,\eta\bigr),
+\]
+each coordinate ranging over a fixed finset $s$ (\texttt{Finset.sum\_product'} and
+\texttt{Finset.sum\_bij'} with the reconstruction $(e\,a).\mathrm{elim}\,x\,\eta$ and
+\texttt{Option.elim\_none\_some}).  This is the coordinate split that peels the leaf
+factor out of $\mathrm{rootedParentActiveSum}$.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
