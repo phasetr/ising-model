@@ -24,9 +24,10 @@ only on the maximum degree, **not** on the volume.
 
 ## References
 
-* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.4--§18.5, pp.~378--386.
-* Friedli--Velenik, *Statistical Mechanics of Lattice Systems*, §5.7.1
-  (Kotecky--Preiss criterion).
+* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.4--§18.5, pp.~332--336.
+* Friedli--Velenik, *Statistical Mechanics of Lattice Systems*, §5.4
+  (Theorem 5.4, the Kotecky--Preiss criterion); §5.7.1 for the Ising
+  polymer application.
 -/
 
 namespace IsingModel
