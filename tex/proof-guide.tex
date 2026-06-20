@@ -17735,6 +17735,25 @@ with \texttt{Finset.mul\_prod\_erase}).  This completes the rooted-tree leaf-pee
 machinery.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
 Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Leaf-peel bound for the complete-graph spanning-tree parent code (\S18.5).}
+Specialising the leaf-peel induction bound to the full active set $\mathrm{univ}$ and the
+complete-graph spanning-tree parent code $\mathrm{completeGraphTreeParentCode}$
+discharges the leaf-existence hypothesis (via
+$\mathrm{completeGraphTreeParentCode\_exists\_active\_leaf}$, the parent code strictly
+decreasing the tree distance from the root)
+(\texttt{ClusterExpansion/RootedParentActiveLeafPeelTree.lean}).  With
+$\mathrm{rootedParentActiveVertices\_univ}$ ($=\mathrm{univ}$, since $0$ and the
+$\mathrm{succ}\,i$ exhaust $\mathrm{Fin}(n+1)$) and $\mathrm{rootedParentActiveClosed\_univ}$
+(any parent function is active-closed on $\mathrm{univ}$),
+$\mathrm{rootedParentActiveSum\_completeGraphTreeParentCode\_univ\_zero\_le\_peelBound}$
+($\Delta^2 e|t|<1$) gives that the rooted-tree active sum at exponent $0$ for a spanning
+tree $T$ of the complete graph on $\mathrm{Fin}(n+1)$ is bounded by its child-count peel
+bound.  This is the exact shape the Penrose tree-graph bound on $|\mathrm{mayerExpansionTerm}|$
+($\mathrm{mayerExpansionTerm\_succ\_abs\_le\_treeSum\_rootedExpActivity}$) feeds into:
+summing over $T$ and reindexing the polymer-sequence labellings bridges the Mayer term to
+the closed-form peel bound.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
+pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
