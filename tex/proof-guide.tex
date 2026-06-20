@@ -17250,6 +17250,33 @@ literal per-edge input of the rooted-tree induction proving volume-uniform
 cluster-expansion convergence (FV Theorem~5.4).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Weighted spanning-tree sum dominated by a product of per-vertex sums
+(\S18.5).}
+The combinatorial heart of the Kotecky--Preiss tree-graph bound is a weighted
+version of $\mathrm{numSpanningTrees}(K_{n+1})\le(n+1)^{n-1}$, reusing the rooted
+parent-code injection $\mathrm{completeGraphTreeParentCode}$
+(\texttt{ClusterExpansion/Penrose/WeightedTreeSum.lean}).  Spanning trees of
+$K_{n+1}$ inject into parent functions $\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)$, so for
+any non-negative $F$,
+\[
+  \sum_{T\ \text{spanning tree}}F(\mathrm{parentCode}\,T)
+    \le\sum_{p:\,\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)}F(p)
+\]
+(\texttt{completeGraphTreeParentCode\_sum\_le\_sum\_all\_parentCodes}, via
+\texttt{Finset.sum\_image} with \texttt{completeGraphTreeParentCode\_injective} and
+\texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}).  Specialising to a product
+weight $F(p)=\prod_i c_i(p_i)$ and factorising the unconstrained parent sum over
+independent vertex choices (\texttt{Fintype.prod\_sum}),
+\[
+  \sum_{T}\prod_i c_i(\mathrm{parentCode}\,T\,i)
+    \le\prod_i\sum_{p}c_i(p)
+\]
+(\texttt{completeGraphTreeParentCode\_weighted\_sum\_le\_prod\_parentSums}).  This
+turns a sum over the constrained set of spanning trees into a product of
+independent per-vertex sums, the latter being the per-vertex Kotecky--Preiss
+activity sums.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
+Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
