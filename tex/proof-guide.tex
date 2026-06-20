@@ -9130,10 +9130,15 @@ With the midpoint \(c=(\max v+\min v)/2\) and the row-sum identity
 With the Doob normalization (whose transform is row-stochastic), the second
 eigenvalue of the stochastic Doob matrix is bounded by \(\delta\), so a uniform
 \(\delta<1\) yields a uniform spectral gap (the quantitative \(\delta<1\) from the
-layer entries is a later file).  These are finite, unconditional estimates: they
-do not bound \(\delta\) quantitatively, prove a strict gap, or a thermodynamic
-limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
-pp.~311--312.
+layer entries is a later file).  The eigenvalue corollary makes this precise:
+oscillation is homogeneous, \(\mathrm{osc}(\mu v)=|\mu|\,\mathrm{osc}(v)\), so any
+eigenvalue \(\mu\) of a row-stochastic \(P\) with nonconstant eigenvector
+satisfies \(|\mu|\le\delta(P)\); via the Doob conjugation, an eigenvalue \(\mu\)
+of \(M\) with nonconstant \(v/w\) satisfies
+\(|\mu/\lambda_{\max}|\le\delta(\mathrm{Doob})\).  These are finite, unconditional
+estimates: they do not bound \(\delta\) quantitatively, prove a strict gap, or a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
 
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
