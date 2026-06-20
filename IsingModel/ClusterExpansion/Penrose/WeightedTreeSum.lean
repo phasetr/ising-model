@@ -6,9 +6,11 @@ import IsingModel.ClusterExpansion.Penrose.CompleteGraphTreeBound
 The Kotecky--Preiss / tree-graph proof of cluster-expansion convergence (FV
 Theorem 5.4) bounds a sum over spanning trees of the polymer incompatibility graph
 by a product of per-vertex Kotecky--Preiss sums.  The combinatorial heart of that
-step is a *weighted* version of the spanning-tree count bound
-`numSpanningTrees (⊤ : SimpleGraph (Fin (n+1))) ≤ (n+1)^(n-1)`
-(`CompleteGraphTreeBound`): the rooted parent code
+step is a *weighted* version of the parent-code spanning-tree count bound
+`numSpanningTrees (⊤ : SimpleGraph (Fin (n+1))) ≤ (n+1)^n`
+(`CompleteGraphTreeBound`, i.e. `numSpanningTrees (⊤ Fin n) ≤ n^(n-1)`; this is the
+parent-function relaxation, weaker than Cayley's exact `(n+1)^(n-1)`): the rooted
+parent code
 `completeGraphTreeParentCode` injects spanning trees of the complete graph into
 parent functions `Fin n → Fin (n+1)`, so any non-negative weight summed over
 spanning trees is dominated by the same weight summed over *all* parent functions.

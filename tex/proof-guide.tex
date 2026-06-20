@@ -17253,7 +17253,9 @@ cluster-expansion convergence (FV Theorem~5.4).  Reference: Glimm--Jaffe, 2nd ed
 \paragraph{Weighted spanning-tree sum dominated by a product of per-vertex sums
 (\S18.5).}
 The combinatorial heart of the Kotecky--Preiss tree-graph bound is a weighted
-version of $\mathrm{numSpanningTrees}(K_{n+1})\le(n+1)^{n-1}$, reusing the rooted
+version of the parent-code count bound $\mathrm{numSpanningTrees}(K_{n+1})\le(n+1)^n$
+(the parent-function relaxation, weaker than Cayley's exact $(n+1)^{n-1}$), reusing
+the rooted
 parent-code injection $\mathrm{completeGraphTreeParentCode}$
 (\texttt{ClusterExpansion/Penrose/WeightedTreeSum.lean}).  Spanning trees of
 $K_{n+1}$ inject into parent functions $\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)$, so for
