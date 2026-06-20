@@ -17144,6 +17144,36 @@ activity is bounded by the volume-uniform constant,
 $\Delta=\mathrm{maxDegree}\,G$.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
 
+\paragraph{Weighted per-vertex and incompatibility-neighbourhood activity
+(Kotecky--Preiss inputs, \S18.5).}
+The Kotecky--Preiss criterion is a local condition on the \emph{weighted}
+activity $\sum_{P\ni v}|w(P)|\,e^{|P|}$
+(\texttt{ClusterExpansion/PolymerActivityKP.lean}).  Substituting $t\mapsto e|t|$
+in the per-vertex bound gives the weighted per-vertex input
+\[
+  \sum_{Q\ni v}e^{|Q|}\,|t|^{|Q|}
+    =\sum_{Q\ni v}(e\,|t|)^{|Q|}
+    \le\frac1{1-\Delta^2 e\,|t|}
+  \qquad(\Delta^2 e\,|t|<1)
+\]
+(\texttt{rootedPolymerActivity\_expWeighted\_le\_geometric}).  Writing
+$\mathrm{incompatiblePolymers}\,G\,P$ for the polymers incompatible with $P$
+(those sharing a support vertex, $\mathrm{PolymersIncompatible}$), every such $Q$
+is rooted at one of the $|\mathrm{supp}\,P|$ vertices of $P$
+(\texttt{PolymersIncompatible.iff\_exists\_shared\_vertex}), so
+\[
+  \sum_{Q\sim P}(e\,|t|)^{|Q|}
+    \le\sum_{v\in\mathrm{supp}\,P}\sum_{Q\ni v}(e\,|t|)^{|Q|}
+    \le|\mathrm{supp}\,P|\cdot\frac1{1-\Delta^2 e\,|t|}
+\]
+(\texttt{incompatibilityActivity\_expWeighted\_le}; witness count $\ge1$,
+\texttt{Finset.sum\_comm}, and the subset of $\mathrm{rootedPolymers}\,G\,v$).  This
+$\sum_{Q\sim P}(e|t|)^{|Q|}\le|\mathrm{supp}\,P|\,(1-\Delta^2 e|t|)^{-1}$ estimate
+is the direct input to the Kotecky--Preiss / rooted-cluster tree induction; both
+bounds are volume-uniform (max-degree only).  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4 (Theorem~5.4, the
+Kotecky--Preiss criterion), \S5.7.1 for the Ising polymer application.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
