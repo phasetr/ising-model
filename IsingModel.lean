@@ -247,6 +247,7 @@ import IsingModel.Concrete.SlabBrick
 import IsingModel.Concrete.CenteredSlab
 import IsingModel.ClusterExpansion
 import IsingModel.ClusterExpansion.Penrose
+import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.PolymerCounting
 import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.PolymerActivityKP
