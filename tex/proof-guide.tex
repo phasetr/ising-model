@@ -17770,6 +17770,29 @@ as a sum over $\mathrm{Fin}(n+1)$-labellings, matching the polymer-sequence labe
 the Penrose bound.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336;
 Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Univ rooted-tree active sum in $\mathrm{Fin}(n+1)$-labelling form (\S18.5).}
+Reindexing the full active-vertex labellings to $\mathrm{Fin}(n+1)$ rewrites the
+rooted-tree active sum over $\mathrm{univ}$ at exponent $0$ into the explicit
+polymer-sequence form (\texttt{ClusterExpansion/RootedParentActiveUnivForm.lean}):
+$\mathrm{rootedParentActiveSum\_univ\_zero\_eq}$ gives
+\[
+  \mathrm{rootedParentActiveSum}\,G\,\mathrm{par}\,\mathrm{univ}\,\_\,(\lambda\_.0)\,t
+    =\sum_{\omega:\mathrm{Fin}(n+1)\to\mathrm{allPolymers}\,G}
+      \bigl[\forall i,\ \omega(\mathrm{succ}\,i)\sim\omega(\mathrm{par}\,i)\bigr]
+        \prod_v(e|t|)^{|\omega v|}.
+\]
+The proof reindexes the active-vertex labellings via
+$\mathrm{sum\_piFinset\_const\_domEquiv}$ and $\mathrm{rootedParentActiveUnivEquiv}$, then
+per labelling rewrites the constraint (the $\mathrm{child}/\mathrm{parent}$ coercions
+$\mathrm{succ}\,i$/$\mathrm{par}\,i$, the $\mathrm{forall}$ over $\mathrm{univ}$) and the
+product (\texttt{Equiv.prod\_comp}, \texttt{pow\_zero}).  This shares the parent-constraint/product skeleton of
+the Penrose tree-graph bound's summand, with an extra root $e$ weight (the Penrose root
+weight is $|t|^{|\omega 0|}$, here $(e|t|)^{|\omega 0|}$) and without the per-tree sum;
+the next step is the Fubini swap identifying the Penrose tree sum with $\sum_T$ of this
+(the root $e$ weight only strengthens the upper bound).
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
