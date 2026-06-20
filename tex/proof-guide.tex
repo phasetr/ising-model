@@ -9179,6 +9179,30 @@ finite, unconditional estimates: they do not give a transverse-volume-uniform ga
 or prove a thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306 and \S17.5, pp.~311--312.
 
+\paragraph{Projective cross-ratio and its row/column scaling invariance (\S17.1,
+Issue~\#3511).}
+The Hilbert projective (Birkhoff) metric route is governed by the projective
+cross-ratio
+\[
+  \mathrm{cr}(A;i,j,a,b)=\frac{A_{ia}\,A_{jb}}{A_{ib}\,A_{ja}},
+\]
+whose defining feature is invariance under positive row/column scaling
+\(A_{ij}\mapsto r_i\,A_{ij}\,c_j\): every \(r\) and \(c\) factor cancels.  Two
+consequences isolate the gap-controlling quantity from the unknown Perron data:
+the balanced layer transfer matrix \(M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}\) has
+the cross-ratio of the bare kernel \(k\) (the \(\sqrt u\) cancel), and the Doob
+transform \(P_{ij}=M_{ij}w_j/(\lambda w_i)\) has the cross-ratio of \(M\) (the
+Perron vector \(w\) and eigenvalue \(\lambda\) cancel).  Hence the cross-ratio of
+the Doob matrix equals that of \(k\) alone, independent of both \(u\) and \(w\).
+This is route-independent infrastructure for any later Hilbert-metric /
+Birkhoff--Hopf contraction argument; the contraction theorem
+\(\delta\le\tanh(\Delta/4)\) and the (subtle, tensorized) uniform high-temperature
+estimate are not proved here, and the raw global projective diameter is not
+claimed uniformly small.  These are finite algebraic identities: they do not bound
+the Dobrushin coefficient, give a transverse-volume-uniform gap, or prove a
+thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
