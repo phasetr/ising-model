@@ -9025,6 +9025,28 @@ unconditional: it does not construct a strict spectral gap or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Gershgorin Rayleigh envelope for the transfer-matrix quadratic form
+(\S17.1, Issue~\#3511).}
+Combining the diagonal and off-diagonal bounds by the triangle inequality gives a
+two-sided Gershgorin Rayleigh envelope.  Writing
+\(\langle v,Mv\rangle=\sum_i M_{ii}v_i^2+(\langle v,Mv\rangle-\sum_i M_{ii}v_i^2)\)
+and \(\mathrm{offMass}:=\max_i\sum_{j\neq i}|M_{ij}|\),
+\[
+  \bigl(\min_i M_{ii}-\mathrm{offMass}\bigr)\|v\|^2
+    \le\langle v,Mv\rangle
+    \le\bigl(\max_i M_{ii}+\mathrm{offMass}\bigr)\|v\|^2,
+  \qquad
+  |\langle v,Mv\rangle|\le\bigl(\max_i|M_{ii}|+\mathrm{offMass}\bigr)\|v\|^2.
+\]
+A ratio hook feeds the absolute envelope into the quadratic-form-gap reduction
+(\(r_{\mathrm{abs}}\le\theta\) when \(\max_i|M_{ii}|+\mathrm{offMass}\le\theta\,
+\lambda_{\max}\)).  The envelope holds for all vectors, so it bounds the top
+eigenvalue too and is not by itself a strict gap; it is the Rayleigh form from
+which the top-eigenvalue contribution is subtracted on the top-orthogonal
+subspace.  This is finite and unconditional: it does not construct a strict
+spectral gap or prove a thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
