@@ -17483,6 +17483,21 @@ parent stays active after the erase (\texttt{RootedParentLeaf.parent\_mem\_erase
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
 Theorem~5.4.
 
+\paragraph{Leaf existence for the rooted-parent active-set induction (\S18.5).}
+The leaf-peel induction needs that a nonempty active set has a leaf
+(\texttt{ClusterExpansion/RootedParentLeafExistence.lean}).  Abstractly, this holds
+whenever the parent strictly decreases a $\mathrm{rank}$: if
+$\mathrm{rank}(\mathrm{par}\,i)<\mathrm{rank}(\mathrm{succ}\,i)$ for all $i$, then the
+active vertex of maximal $\mathrm{rank}\circ\mathrm{succ}$ is a leaf
+(\texttt{exists\_rootedParentLeaf\_of\_rank}; \texttt{Finset.exists\_max\_image} and
+\texttt{omega}, since any vertex it parented would have strictly larger rank).  For
+the complete-graph spanning-tree parent code the rank is the tree distance from the
+root, which the parent code strictly decreases
+(\texttt{completeGraphTreeParentCode\_rank\_lt}, via \texttt{treeParent\_spec}), giving
+a leaf in every nonempty active set
+(\texttt{completeGraphTreeParentCode\_exists\_active\_leaf}).  Reference: Glimm--Jaffe,
+2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
