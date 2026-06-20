@@ -17884,6 +17884,23 @@ requires the tree/child-count combinatorics and a smallness condition), since th
 $d!/(1-\Delta^2 u)^{d+1}$ factors do not decay with the tree size.  Reference:
 Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Sharpened (tail) incompatibility-neighbourhood moment bound (\S18.5).}
+Replacing the per-vertex moment bound in the incompatibility-neighbourhood moment bound
+($\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_le}$) by its tail version
+($\mathrm{rootedPolymerActivity\_cardPow\_tail\_le}$)---valid since every incompatible
+polymer is nonempty---carries an extra factor $\Delta^2 e|t|$
+(\texttt{ClusterExpansion/PolymerActivityKPMomentTail.lean}):
+$\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_tail\_le}$
+($P\in\mathrm{allPolymers}\,G$, $\Delta^2 e|t|<1$),
+\[
+  \sum_{Q\sim P}|Q|^d(e|t|)^{|Q|}\le|P|\cdot(\Delta^2 e|t|)\cdot\frac{d!}{(1-\Delta^2 e|t|)^{d+1}}.
+\]
+The reduction to per-support-vertex moment sums (each incompatible polymer rooted at a
+shared support vertex, $|\mathrm{supp}\,P|\le|P|$) is identical to the un-sharpened bound;
+only the per-vertex bound is replaced.  This supplies the per-vertex $\Delta^2 e|t|$
+smallness factor for the convergent leaf-peel closing.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
