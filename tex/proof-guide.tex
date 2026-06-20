@@ -9074,6 +9074,26 @@ conditional: it does not construct a strict gap unconditionally or prove a
 thermodynamic limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Entries and annihilation identity of the top deflation (\S17.1,
+Issue~\#3511).}
+The deflated Gershgorin quantity that controls the strict gap is expressed
+entrywise in the original matrix and the top eigenvector components
+\(w_x=\mathrm{changeOfBasis}\,x\,\mathrm{top}\):
+\[
+  (M^{\mathrm{defl}})_{ij}=M_{ij}-\lambda_{\max}\,w_i w_j,
+  \qquad
+  (M^{\mathrm{defl}})_{ii}=M_{ii}-\lambda_{\max}\,w_i^2 .
+\]
+The defining annihilation identity \(M^{\mathrm{defl}}\,w=0\) (from
+\(Mw=\lambda_{\max}w\) and \(\sum_x w_x^2=1\)) confirms that the maximal
+eigenvalue is removed by the deflation, isolating the genuinely remaining task: a
+quantitative entrywise bound on \(\lambda_{\max}\,w_i w_j\), i.e. a Perron--Frobenius
+/ Hilbert-projective-metric estimate on the top eigenvector, for a later file.
+These are finite, unconditional algebraic identities: they do not bound the
+deflated entries quantitatively, construct a strict gap, or prove a thermodynamic
+limit.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Free-layer Walsh open flip-parity certificate (\S17.1,
 Issue~\#3511).}
 For the finite zero-field free layer, the Walsh basis gives a concrete
