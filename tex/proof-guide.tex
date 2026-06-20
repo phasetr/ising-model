@@ -17119,6 +17119,31 @@ survives the infinite-volume limit, unlike the per-volume conditions of
 \texttt{InteractingFreeEnergyMayerHighTemp}.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
 
+\paragraph{Total and per-site polymer activity bound, volume-uniform (\S18.5).}
+Double-counting the per-vertex bound over all vertices
+(\texttt{ClusterExpansion/PolymerActivity.lean}).  With
+$\mathrm{allPolymersActivity}\,G\,t:=\sum_{P\in\mathrm{allPolymers}\,G}t^{|P|}$,
+exchanging the order of summation gives
+$\sum_{v}\sum_{P\ni v}t^{|P|}=\sum_{P}|\mathrm{supp}\,P|\,t^{|P|}$
+(\texttt{sum\_rootedPolymerActivity\_eq}, via \texttt{Finset.sum\_comm}).  Since
+every polymer is nonempty its support touches at least one vertex
+($1\le|\mathrm{supp}\,P|$, \texttt{one\_le\_card\_polymerSupport\_of\_mem\_allPolymers}),
+so for $0\le t$ and $\Delta^2 t<1$
+\[
+  \sum_{P}t^{|P|}
+    \le\sum_{P}|\mathrm{supp}\,P|\,t^{|P|}
+    =\sum_{v}\sum_{P\ni v}t^{|P|}
+    \le|\iota|\cdot\frac1{1-\Delta^2 t}
+\]
+(\texttt{allPolymersActivity\_le\_card\_mul\_geometric}), whence the per-site
+activity is bounded by the volume-uniform constant,
+\[
+  \frac1{|\iota|}\sum_{P}t^{|P|}\le\frac1{1-\Delta^2 t}
+\]
+(\texttt{allPolymersActivity\_div\_card\_le\_geometric}, for $\iota$ nonempty),
+$\Delta=\mathrm{maxDegree}\,G$.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
