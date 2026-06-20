@@ -5,7 +5,8 @@ import IsingModel.ClusterExpansion.MayerTermTailSummability
 
 The absolute summability of the Mayer expansion terms
 (`summable_abs_mayerExpansionTerm_of_tail_condition`, #4134) gives, under the sufficient
-high-temperature condition `4Δ²e|t|/(1−Δ²e|t|)² < 1`, the convergence of the Mayer series
+high-temperature conditions `Δ²e|t| < 1` and `4Δ²e|t|/(1−Δ²e|t|)² < 1`, the convergence
+of the Mayer series
 itself: the partial sums `mayerPartialSum G N t = ∑_{n=0}^{N} mayerExpansionTerm G n t`
 converge to `∑'_n mayerExpansionTerm G n t`.  This discharges the "convergence follows
 from Kotecky--Preiss-type bounds (deferred)" note on `mayerPartialSum`.
@@ -40,7 +41,8 @@ theorem summable_mayerExpansionTerm_of_tail_condition (G : SimpleGraph ι)
 /-- **Convergence of the Mayer partial sums.**  Under the sufficient high-temperature
 condition, the Mayer partial sums `mayerPartialSum G N t` converge to the Mayer series
 `∑'_n mayerExpansionTerm G n t`.  This discharges the deferred convergence note on
-`mayerPartialSum`: the limit exists in the explicit regime `4Δ²e|t|/(1−Δ²e|t|)² < 1`. -/
+`mayerPartialSum`: the limit exists in the explicit regime `Δ²e|t| < 1` and
+`4Δ²e|t|/(1−Δ²e|t|)² < 1`. -/
 theorem tendsto_mayerPartialSum_of_tail_condition (G : SimpleGraph ι)
     [DecidableRel G.Adj] [Fintype G.edgeSet] {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
