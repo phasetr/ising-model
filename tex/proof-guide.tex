@@ -17901,6 +17901,22 @@ only the per-vertex bound is replaced.  This supplies the per-vertex $\Delta^2 e
 smallness factor for the convergent leaf-peel closing.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Sharpened (tail) leaf column sum bound (\S18.5).}
+The tail sharpening of the leaf column sum bound
+(\texttt{ClusterExpansion/RootedParentActiveLeafColumnTail.lean}): using the tail
+incompatibility-neighbourhood moment bound
+($\mathrm{incompatibilityActivity\_cardPow\_expWeighted\_tail\_le}$) instead of the
+un-sharpened one carries an extra factor $\Delta^2 e|t|$.
+$\mathrm{leafColumnSum\_tail\_le}$ ($P\in\mathrm{allPolymers}\,G$, $\Delta^2 e|t|<1$),
+\[
+  \mathrm{leafColumnSum}\,G\,P\,d\,t
+    \le|P|\cdot(\Delta^2 e|t|)\cdot\frac{d!}{(1-\Delta^2 e|t|)^{d+1}},
+\]
+via $\mathrm{leafColumnSum\_eq}$ followed by the tail moment bound.  This propagates the
+per-vertex $\Delta^2 e|t|$ smallness factor into the leaf-peel column sums, toward a
+sharpened (summable-over-$n$) peel bound.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
