@@ -17466,6 +17466,23 @@ bound), and the per-vertex sum is the moment bound
 \texttt{rootedPolymerActivity\_cardPow\_le}.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Rooted-parent active-set scaffolding for the leaf-peel induction
+(\S18.5).}
+The rooted-tree Kotecky--Preiss leaf-peel induction recurses by removing a leaf of
+an active vertex set, rather than re-deriving the parent code of a shrinking tree
+(\texttt{ClusterExpansion/RootedParentActive.lean}).  With an active set
+$A\subseteq\mathrm{Fin}\,n$ of non-root vertices (the root is the extra vertex $0$ of
+$\mathrm{Fin}(n+1)$) and a parent function $\mathrm{par}:\mathrm{Fin}\,n\to\mathrm{Fin}(n+1)$:
+$\mathrm{rootedParentActiveVertices}\,A=\{0\}\cup\mathrm{succ}(A)$;
+$\mathrm{RootedParentActiveClosed}\,\mathrm{par}\,A$ (every active vertex's parent is
+active); $\mathrm{RootedParentLeaf}\,\mathrm{par}\,A\,j$ ($j\in A$ and no active vertex
+has $\mathrm{succ}\,j$ as parent).  The induction-step facts are that erasing a leaf
+preserves active-closedness (\texttt{RootedParentActiveClosed.erase\_leaf}: an active
+$i\ne j$ cannot have parent $\mathrm{succ}\,j$ since $j$ is a leaf) and that the leaf's
+parent stays active after the erase (\texttt{RootedParentLeaf.parent\_mem\_erase}).
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4,
+Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
