@@ -18513,6 +18513,24 @@ and the \(\texttt{\_full}\) form \(\|\sum'_n\texttt{mayerExpansionTermComplex}\,
 degree/\(r\)-monotonicity).  This is the equicontinuity/normal-family input for the \S18.6 Montel/Vitali
 holomorphic limit.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Per-site complex cluster free energy (holomorphic, bounded) (\S18.6, Issue~\#4149).}
+PR-D2.3a packages the cubic-stage family whose Montel/Vitali limit is the infinite-volume cluster
+free energy (\texttt{ClusterExpansion/MayerCore/CubicMayerClusterFreeEnergyComplex.lean}):
+\[
+  \texttt{cubicMayerClusterFreeEnergyComplex}\,d\,n\,z:=\frac{1}{|cubicBox\,d\,n|}
+    \sum_k{}'\texttt{mayerExpansionTermComplex}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+      (cubicBox\,d\,n))\,k\,z .
+\]
+It is holomorphic on \(\texttt{ball}\,0\,R\)
+(\(\texttt{\_differentiableOn}\)/\(\texttt{\_analyticOnNhd}\), from PR-B and
+\(\texttt{DifferentiableOn.div\_const}\), the \(\mathrm{maxDegree}\le2d\) KP discharged by
+\(\texttt{kpRegion\_downward\_closed}\)), and \emph{uniformly bounded in \(n\)}
+(\(\texttt{\_norm\_le}\): \(\|\texttt{cubicMayerClusterFreeEnergyComplex}\,d\,n\,z\|\le
+\texttt{kpBound}\,(2d)\,R\) on \(\texttt{ball}\,0\,R\), from PR-D2.2, the \(k=0\) vanishing, and
+\(\texttt{norm\_tsum\_le\_tsum\_norm}\)).  The holomorphic, ball-uniformly-bounded family feeding the
+equicontinuity/Ascoli/Vitali capstone.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
+pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
