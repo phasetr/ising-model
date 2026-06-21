@@ -18408,6 +18408,25 @@ This is PR-A of the \S18.6 plan (next: the complex Mayer tsum holomorphic on a b
 \(\texttt{Complex.differentiableOn\_tsum\_of\_summable\_norm}\), then the identity theorem on the
 per-site KP interval).  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340.
 
+\paragraph{Complex Mayer tsum holomorphic on a ball (Weierstrass) (\S18.6,
+Issue~\#4149).}
+PR-B: the complex Mayer series is holomorphic on the per-site Kotecky--Preiss ball by a
+uniform summable majorant (\texttt{ClusterExpansion/MayerCore/TermsComplexHolomorphic.lean}).
+The norm bound \(\|\texttt{mayerExpansionTermComplex}\,G\,n\,z\|\le
+\sum_\omega|\mathrm{ursellCoefficient}(\omega)|\,\texttt{clusterSeqActivity}\,\|z\|\,\omega\)
+(triangle \(+\;\|\prod_i z^{|\omega_i|}\|=\prod_i\|z\|^{|\omega_i|}\)) is exactly the
+term-absolute-sum that bounds \(|\texttt{mayerExpansionTerm}\,G\,n\,\|z\||\); reusing the existing
+tree/peel chain (entering through the term-abs-sum) gives the geometric bound
+\(\|\texttt{mayerExpansionTermComplex}\,G\,(n{+}1)\,z\|\le(|\iota|/(1-r))(4r/(1-r)^2)^n\),
+\(r=\Delta^2 e\|z\|\).  With monotonicity in \(r\) and the constant \(n=0\) head term, the
+\(\texttt{Complex.differentiableOn\_tsum\_of\_summable\_norm}\) M-test yields the headline
+\(\texttt{mayerExpansionTermComplex\_tsum\_differentiableOn\_ball}\):
+\(\texttt{DifferentiableOn}\,\mathbb C\,(z\mapsto\sum'_n\texttt{mayerExpansionTermComplex}\,G\,n\,z)\,
+(\texttt{ball}\,0\,R)\) under the per-site KP condition at \(R\).  Next (PR-C): the
+\(\texttt{ofReal\_tsum}\) bridge and the identity theorem on \(\texttt{Ico}\,0\,T'\) give the
+volume-uniform real identity \(\texttt{polymerFreeEnergy}=\sum'_n\texttt{mayerExpansionTerm}\).
+Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
