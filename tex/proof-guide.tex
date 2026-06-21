@@ -2407,8 +2407,10 @@ opposite sides of the region.  This proves the discrete-Jordan separation
 $\texttt{dual\_component\_separates\_primal}$ \emph{unconditionally}, and the assembly
 $\texttt{planarBondHypothesis\_of\_separates}$ then gives
 $\texttt{planarBondHypothesis} : \forall F,\ \mathrm{PlanarBondHypothesis}\,F$ -- discharging the
-single open obligation of $\texttt{PlanarBondReduction.lean}$, so the dual-cut edge-connectivity and
-the low-temperature Peierls contour count are now unconditional.
+single open obligation of $\texttt{PlanarBondReduction.lean}$, so the $\texttt{hbond}$ input to the
+dual-cut edge-connectivity and the low-temperature Peierls contour count is now unconditional (those
+consumers still take the connectivity inputs $\texttt{hF}/\texttt{hC}$, available for filled connected
+droplets).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
