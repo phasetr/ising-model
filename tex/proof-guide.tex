@@ -7584,8 +7584,8 @@ $\cosh(a+t)\cosh(a-t)=\cosh^2 t+\sinh^2 a\ge\cosh^2 t$
 (\texttt{cosh\_add\_mul\_cosh\_sub}, \texttt{tanh\_add\_sub\_tanh\_sub\_abs\_le},
 \texttt{isingSingleSiteUpProb\_flip\_neighbour\_dist\_le}, file
 \texttt{Dobrushin/SingleSiteInfluence.lean}). The nearest-neighbour Ising Dobrushin influence is
-therefore $\tanh(\beta J)$; Dobrushin's condition $\tanh(\beta J)\cdot\deg<1$ gives volume-uniform
-exponential decay (the remaining single-site-Dobrushin chain).
+therefore $\tanh(\beta J)$; Dobrushin's condition $\tanh(\beta J)\cdot\deg<1$ is the high-temperature
+hypothesis of the (not-yet-formalized) Dobrushin uniqueness theorem.
 
 \paragraph{The single-site Hamiltonian decomposition (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
 To realise the single-site conditional on the lattice, one computes the Hamiltonian under updating a
@@ -7642,7 +7642,7 @@ $\tanh((p-q)/2)=(e^{p}-e^{q})/(e^{p}+e^{q})$ close the computation. Hence
 \texttt{gibbsExpectationBC\_singleton\_sign\_eq\_tanh}). These formulas hold for arbitrary real
 $\beta,J,h$ (no high-temperature hypothesis), and are the per-site inputs to the single-site
 Dobrushin influence matrix $c_{xy}=\tanh(\beta J)\,[y\sim x]$, whose row sum $\tanh(\beta J)\deg<1$ at
-high temperature yields a transverse-volume-uniform exponential decay.
+high temperature is the hypothesis of the (not-yet-formalized) Dobrushin uniqueness theorem.
 
 \paragraph{The single-site Dobrushin influence matrix (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
 File \texttt{Dobrushin/SingleSiteInfluenceMatrix.lean}. Write the conditional up-probability as a
@@ -7665,7 +7665,7 @@ arbitrary single site). The influence matrix $c_{xy}=\texttt{isingInfluence}=\ta
 x]$ has row sum $\sum_y c_{xy}=\deg(x)\cdot\tanh(\beta J)$ (\texttt{isingInfluence\_rowSum}), and
 Dobrushin's uniqueness condition is $\tanh(\beta J)\deg(x)<1$ (\texttt{isingDobrushin\_condition},
 equivalent to the row sum being $<1$). This is the per-site input to the Dobrushin uniqueness theorem
-and the transverse-volume-uniform decay.
+(which, with its transverse-volume-uniform decay conclusion, is not yet formalized).
 
 \paragraph{High-temperature sufficiency of the Dobrushin condition (\S17.1, Issue~\#3511).} File
 \texttt{Dobrushin/DobrushinHighTemp.lean}. The Dobrushin condition $\tanh(\beta J)\deg(x)<1$ holds in

@@ -7,7 +7,8 @@ Toward a transverse-volume-uniform spectral gap, the correct route (the one-step
 Dobrushin coefficient is provably insufficient) is **single-site Dobrushin uniqueness**: the
 influence `c_{xy}` of a neighbour `y` on the single-site conditional Gibbs distribution at `x` is
 uniformly small at high temperature, and Dobrushin's condition `∑_y c_{xy} = tanh(βJ)·deg < 1`
-gives uniqueness with volume-uniform exponential decay.
+is the hypothesis of the Dobrushin uniqueness theorem (uniqueness with volume-uniform exponential
+decay; that theorem is not formalized here).
 
 This file proves the analytic heart: the single-site up-probability is `(1 + tanh a)/2`; flipping
 one neighbour (shifting the local field by `±t`, `t = βJ`) changes it by at most `tanh t`. The
