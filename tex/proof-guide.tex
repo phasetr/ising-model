@@ -18565,6 +18565,29 @@ energy \(\texttt{polymerFreeEnergy}_n(t)/|\Lambda_n|=\texttt{freeEnergy}_n\langl
 free-energy limit and the edge-density limit, then \(\texttt{Complex.continuous\_ofReal}\).  Reference:
 Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Whole-sequence Montel/Vitali limit of the cluster free energy (\S18.6, Issue~\#4149,
+crux).}
+PR-D2.3d is the Montel/Vitali capstone of the limit construction: the family \(F_n\) (holomorphic,
+ball-uniformly bounded, in a compact carrier) converges as a \emph{whole sequence} to a holomorphic
+limit \(F_\infty\), pinned on the real axis by D2.3c
+(\texttt{ClusterExpansion/MayerCore/CubicMayerClusterLimit.lean}).  Three lemmas: the real segment
+\(\uparrow(\texttt{Ioo}\,0\,T)\) accumulates at \(\uparrow(T/2)\) along \(\mathcal N_{\ne}\)
+(\(\texttt{frequently\_ofReal\_Ioo\_nhdsNE}\)); any locally-uniform subsequential limit is
+\(\texttt{AnalyticOnNhd}\,\mathbb C\) (\(\texttt{\_subseq\_limit\_analyticOnNhd}\), via
+\(\texttt{vitali\_bridge}\)); any subsequential limit equals \(\uparrow(f_\infty)\) on
+\(\texttt{Ioo}\,0\,T\) (\(\texttt{\_subseq\_limit\_realAxis}\), D2.3c + \(\texttt{tendsto\_nhds\_unique}\)).
+The headline \(\texttt{exists\_cubicMayerClusterFreeEnergyComplex\_limit}\) gives \(F_\infty\) with
+\(\texttt{DifferentiableOn}\,\mathbb C\,F_\infty\,(\texttt{ball}\,0\,R)\), whole-sequence
+\(\texttt{TendstoLocallyUniformlyOn}\), and \(F_\infty(\uparrow t)=\uparrow(f_\infty\,t)\) on
+\(\texttt{Ioo}\,0\,T\).  The whole-sequence step uses
+\(\texttt{IsCompact.tendsto\_nhds\_of\_unique\_mapClusterPt}\): every cluster point is a holomorphic
+subsequential limit agreeing with \(\uparrow(f_\infty)\) on the real segment, hence (identity theorem
+\(\texttt{eqOn\_of\_preconnected\_of\_frequently\_eq}\) on the preconnected ball) all cluster points
+coincide --- a unique cluster point \(\Rightarrow\) convergence, transported compact-open\(\to\)locally
+uniform.  The holomorphic infinite-volume cluster free energy on the high-temperature disc --- the
+analytic object for the \S18.6 coupling-analyticity capstone (D2.4).  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
