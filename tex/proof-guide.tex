@@ -18392,6 +18392,33 @@ $\Delta$ (volume-uniform on bounded-degree graphs), this is the volume-uniform c
 of the per-site cluster-expansion contribution.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
+(\S18.5).}
+The abstract per-site bound is lifted to the ambient induced-graph setting and
+specialised to \(\mathbb Z^d\) with a degree-uniform constant
+(\texttt{ClusterExpansion/MayerTsumPerSiteAmbient.lean}).  Writing
+\(\texttt{kpBound}\,\Delta\,t=((1-r)(1-4r/(1-r)^2))^{-1}\) with \(r=\Delta^2e|t|\):
+the induced lattice graph has \(\mathrm{maxDegree}\le2d\)
+(\(\texttt{induced\_latticeGraph\_maxDegree\_le}\)), the constant is monotone in the
+degree (\(\texttt{kpBound\_mono\_of\_degree\_le}\), via the increasing
+\(4r/(1-r)^2\) and \(\texttt{inv\_anti}_0\) on the decreasing positive product), and
+the KP region \(r<1\wedge 4r/(1-r)^2<1\) is downward-closed in \(r\)
+(\(\texttt{kpRegion\_downward\_closed}\)).  Hence the headline
+\(\texttt{latticeGraph\_kp\_tsum\_per\_site\_le}\) (hypotheses stated at \(\Delta=2d\)):
+\[
+  \frac{1}{|\Lambda|}\sum_n
+    |\mathrm{mayerExpansionTerm}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,
+      \Lambda)\,(n+1)\,t|
+    \le \texttt{kpBound}\,(2d)\,t,
+\]
+a per-site Mayer bound \emph{independent of the box \(\Lambda\)} (the actual
+\(\mathrm{maxDegree}\le2d\) discharges the KP hypotheses by downward-closure, then the
+degree-monotone constant dominates), with
+\(\texttt{latticeGraph\_kp\_tsum\_per\_site\_cubicExhaustion\_le}\) giving the same
+bound uniform over all stages of \(\mathrm{cubicExhaustion}\,d\) --- the
+volume-uniform analytic input for \S18.6.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
+
 \paragraph{Three-vertex alternating-sum classification (\S18.4).} The
 $\mathrm{alternatingConnectedSubgraphSum}$ of every graph on $\mathrm{Fin}\,3$
 (\texttt{AlternatingFinThree.lean}): the three path values
