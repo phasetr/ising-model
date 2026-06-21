@@ -2213,6 +2213,21 @@ $\texttt{false\_of\_box\_separating\_region\_boundaryDart}$ closes.  This isolat
 FV \S3.7.2 obligation to the single discrete-Jordan separation $\texttt{hsep}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{A dart's dual component is Eulerian
+  (\texttt{Peierls/DartDualComponentEulerian.lean})}
+
+\par\noindent\textbf{Role:} The crossing-parity argument behind the separation core needs $d$'s
+dual component to be a mod-2 cycle (even degree at every dual vertex).  The structural fact is that
+at any dual vertex $c$, \emph{all} dual-cut edges through $c$ pairwise share $c$, hence are
+$\mathrm{DartReachable}$ ($\texttt{dartReachable\_of\_shared}$) and lie in one component.  Thus the
+component's edges incident to $c$ either miss $c$ or equal the full dual cut's incident edges
+($\texttt{dartDualComponentEdges\_incident\_eq\_dartDualCut\_incident\_of\_mem}$), so the component's
+incidence degree at $c$ is $0$ or the full cut's value, hence even whenever the full dual cut is
+even at $c$ ($\texttt{dartDualComponentEdges\_incident\_even\_of\_dartDualCut\_incident\_even}$).
+This reduces the component's even-degree to the full dual cut's, the next concrete sub-goal toward
+the crossing-parity separation.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
