@@ -118,6 +118,7 @@ import IsingModel.Peierls.RightRayVerticalSquare
 import IsingModel.Peierls.RightRayVerticalXor
 import IsingModel.Peierls.RightRayVerticalStep
 import IsingModel.Peierls.RightRayVerticalParity
+import IsingModel.Peierls.FixedRayRegion
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
