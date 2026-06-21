@@ -7549,6 +7549,25 @@ specialization \texttt{finiteTransverseHermitian\_signedColumn\_ratio\_le\_of\_e
 $M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file \texttt{LayerPerronFlatness.lean}). The remaining P5
 step is to exhibit such a $\rho(\beta J)$ at high temperature, uniform in the transverse box radius.
 
+\paragraph{Column-oscillation reduction of the Doeblin mass (\S17.1, Issue~\#3511, P5).}
+The cleaner Doob route already gives $\texttt{cubicLayerHermitianExplicitRatio}<1$ per box (via
+$\delta(\mathrm{Doob})<1$); the transverse-volume-\emph{uniform} $\theta(\beta J)$ reduces to a
+uniform lower bound on the Doeblin mass $\sum_j\min_i P_{ij}$ of the Doob transform $P$. A crude
+per-entry floor $|\Omega|\cdot\min P_{ij}$ is useless ($P_{ij}\sim e^{-O(|S|)}$); the uniform handle
+is \emph{row similarity}. For a row-stochastic $P$ and any row $i$,
+\[
+  \mathrm{DoeblinMass}(P)=1-\sum_j\bigl(P_{ij}-\min_{i'}P_{i'j}\bigr)
+  \ge 1-\sum_j\bigl(\max_{i'}P_{i'j}-\min_{i'}P_{i'j}\bigr),
+\]
+so $\delta(P)\le\sum_j(\max_i P_{ij}-\min_i P_{ij})$
+(\texttt{matrixDoeblinMass\_eq\_one\_sub\_row\_excess},
+\texttt{matrixDoeblinMass\_ge\_one\_sub\_sum\_colOsc},
+\texttt{matrixDobrushinCoefficient\_le\_sum\_colOsc}, file
+\texttt{LayerDoeblinColumnOscillation.lean}). This honestly reduces the uniform Dobrushin /
+subdominant-ratio bound to a per-column row-variation sum on the Doob transform; the remaining core
+is the layer-specific estimate that those columns vary little at high temperature, uniformly in the
+transverse box radius.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
