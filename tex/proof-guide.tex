@@ -8935,6 +8935,29 @@ lattice susceptibility --- giving the exponential clustering of the interacting
 picture.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{\(K_2\) strip infinite-volume general (cross-site) two-point
+(\S17.1/\S17.5, Issue~\#4144).}
+The same-transverse-site axis decay (anchored at \(0\)) is generalized to the
+\emph{general} infinite-volume two-point of the \(K_2\) strip --- arbitrary
+longitudinal positions \(a,b\in\mathbb Z\) and transverse sites
+\(x,y\in\mathrm{Fin}\,2\) --- by feeding the cross-site finite decay into the
+centred-box machinery.  The prefactor
+\(\texttt{k2CrossStripPrefactor}\,p\,x\,y\) carries
+\(\texttt{boundaryTwoMarkedSpectralPrefactor}(\texttt{layerSpinAt}\,x)(\texttt{layerSpinAt}\,y)\)
+and reduces to the same-site one at \(x=y\).  Its symmetry
+\(\texttt{k2CrossStripPrefactor\_comm}\) (swapping the two marks reindexes the
+spectral triple sum \((i,j,l)\mapsto(l,j,i)\), valid since both boundary vectors
+coincide) lets the \(a>b\) case reduce to \(a<b\) by swapping the pair.  The
+headline \(\texttt{abs\_correlationInfinite\_stripGraph\_cross\_le}\) (\(h=0\),
+\(0<\beta J\), \(a\ne b\)):
+\[
+  \bigl|\langle\sigma_{(a,x)}\sigma_{(b,y)}\rangle_\infty\bigr|
+  \le \texttt{k2CrossStripPrefactor}\cdot e^{-m\,|a-b|},
+\]
+unconditional (fixed transverse width \(2\)) --- the full distinct-pair
+infinite-volume decay needed for the strip cluster property.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{Two-mark open-slab spectral decay and \(K_2\) cross-transverse-site
 finite decay (\S17.1, Issue~\#4144).}
 To bound \emph{cross}-transverse-site correlations
