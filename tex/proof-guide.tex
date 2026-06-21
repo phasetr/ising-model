@@ -7667,6 +7667,20 @@ Dobrushin's uniqueness condition is $\tanh(\beta J)\deg(x)<1$ (\texttt{isingDobr
 equivalent to the row sum being $<1$). This is the per-site input to the Dobrushin uniqueness theorem
 and the transverse-volume-uniform decay.
 
+\paragraph{High-temperature sufficiency of the Dobrushin condition (\S17.1, Issue~\#3511).} File
+\texttt{Dobrushin/DobrushinHighTemp.lean}. The Dobrushin condition $\tanh(\beta J)\deg(x)<1$ holds in
+the high-temperature regime. The key elementary inequality is $\tanh t\le t$ for $t\ge 0$
+(\texttt{tanh\_le\_self}; Mathlib has neither a $\tanh$ derivative nor a $\tanh\le\mathrm{id}$ lemma):
+equivalently $\sinh t\le t\cosh t$, proved by showing $g(t)=t\cosh t-\sinh t$ is monotone on
+$[0,\infty)$ (via \texttt{monotoneOn\_of\_deriv\_nonneg} with $g'(t)=t\sinh t\ge 0$) and $g(0)=0$.
+Consequently the Dobrushin interaction sum satisfies $\sum_y c_{xy}=\deg(x)\tanh(\beta J)\le\beta
+J\deg(x)$ (\texttt{isingInfluence\_rowSum\_le}, for $0\le\beta J$), so the threshold $\beta
+J\deg(x)<1$ implies $\tanh(\beta J)\deg(x)<1$ (\texttt{isingDobrushin\_condition\_of\_high\_temp}),
+and uniformly $\beta J\,\Delta(G)<1$ with $\Delta(G)=\texttt{G.maxDegree}$ implies the condition at
+every site (\texttt{isingDobrushin\_condition\_of\_high\_temp\_maxDegree}). This is the same
+$\beta J\deg<1$ threshold as the Simon--Lieb decay results. The abstract Dobrushin uniqueness/decay
+theorem that consumes this condition is not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
