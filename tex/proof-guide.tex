@@ -2138,6 +2138,25 @@ edge-connected component of $\mathrm{cutEdges}(F)$ equals $\mathrm{cutEdges}(A)$
 $A$ (finite rectangular-grid mod-2 planar duality).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Box bridge for the parity separation engine
+  (\texttt{Peierls/PlanarBondSeparationBridge.lean})}
+
+\par\noindent\textbf{Role:} The abstract engine needs a finite edge set, but
+$\mathrm{PlanarBondHypothesis}$ lives on the infinite $\mathrm{latticeGraph}\,2$.  Restricting to
+a finite box $\Lambda \supseteq F$ supplies the finiteness: $\mathrm{inducedGraph}(\mathrm{latticeGraph}\,2)\,\Lambda$
+has adjacency $\langle a\rangle\sim\langle b\rangle \iff a\sim b$
+($\texttt{inducedLattice\_adj\_iff}$).  An inside-$F$ walk lifts to the box subtype
+($\texttt{reachableWithin\_box\_liftFinset\_of\_reachableWithin}$); a boundary dart's two sites are
+box-adjacent ($\texttt{boundaryDart\_box\_adj\_left\_right}$) and its primal edge cuts
+$\texttt{liftFinset}\,F$ ($\texttt{boundaryDart\_box\_primalCut\_mem\_cutEdges\_lift}$).  Composing
+with the separation contradiction gives
+$\texttt{false\_of\_box\_separating\_region\_boundaryDart}$: a box separating region
+$A\subseteq{\uparrow}\Lambda$ with $\mathrm{cutEdges}(A)\subseteq\mathrm{cutEdges}(\texttt{liftFinset}\,F)$
+crossing $d$ but not $e$ refutes the bond hypothesis's inside/outside connectivity.  The remaining
+obligation is to construct such an $A$ from $\lnot\,\mathrm{DartReachable}\,F\,d\,e$ (the topological
+core).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
