@@ -18492,6 +18492,27 @@ transfers the bound:
 The real-axis target for the \S18.6 infinite-volume coupling analyticity (PR-D2.2\(+\)).
 Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Complex volume-uniform per-site Mayer bound (\S18.6, Issue~\#4149).}
+PR-D2.2 is the complex-norm analog of the real per-site Mayer bound --- the ball-uniform Montel
+input for the infinite-volume holomorphic limit
+(\texttt{ClusterExpansion/MayerCore/TermsComplexPerSiteBound.lean}).  Since
+\(\texttt{mayerExpansionTermComplex}\,G\,0\,z=0\) (the empty \(\omega\) has Ursell coefficient \(0\)),
+summing the complex geometric bound (\(\|\texttt{mayerExpansionTermComplex}\,G\,(n{+}1)\,z\|\le
+(|\iota|/(1-r))(4r/(1-r)^2)^n\), \(r=\Delta^2 e\|z\|\)) gives the per-site bound
+\((\sum'_n\|\texttt{mayerExpansionTermComplex}\,G\,(n{+}1)\,z\|)/|\iota|\le\texttt{kpBound}\,\Delta\,\|z\|\)
+and the \(\texttt{\_full}\) form \(\|\sum'_n\texttt{mayerExpansionTermComplex}\,G\,n\,z\|/|\iota|\le
+\texttt{kpBound}\,\Delta\,\|z\|\).  The \(\mathbb Z^d\) headline
+\(\texttt{latticeGraph\_kp\_tsum\_complex\_per\_site\_le\_on\_ball}\) (\(0\le R\), per-site KP at
+\(2d\)/\(R\), \(z\in\texttt{ball}\,0\,R\)):
+\[
+  \frac{1}{|\Lambda|}\sum_n\|\texttt{mayerExpansionTermComplex}\,(\mathrm{inducedGraph}\,
+    (\mathrm{latticeGraph}\,d)\,\Lambda)\,(n{+}1)\,z\|\le\texttt{kpBound}\,(2d)\,R,
+\]
+\emph{uniform in \(\Lambda\) and over the whole ball} (actual \(\mathrm{maxDegree}\le2d\) discharged by
+\(\texttt{kpRegion\_downward\_closed}\), dominated by \(\texttt{kpBound}\,(2d)\,R\) via the
+degree/\(r\)-monotonicity).  This is the equicontinuity/normal-family input for the \S18.6 Montel/Vitali
+holomorphic limit.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
