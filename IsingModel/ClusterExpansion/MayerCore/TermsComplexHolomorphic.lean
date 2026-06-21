@@ -30,7 +30,7 @@ not the sharp Kotecky--Preiss criterion, nor a statement about the thermodynamic
 
 ## References
 
-* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.4--§18.6, pp.~332--338.
+* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §18.5--§18.6, pp.~335--340.
 * Friedli--Velenik, *Statistical Mechanics of Lattice Systems*, §5.4
   (Theorem 5.4, the Kotecky--Preiss criterion).
 -/
