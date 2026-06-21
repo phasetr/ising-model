@@ -2278,6 +2278,23 @@ holds after mapping the box-primal edge back to the ambient lattice
 component's even-degree to its box-primal image $B$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The box-primal image of a dart's dual component is Eulerian
+  (\texttt{Peierls/DartDualComponentBoxIncidentEven.lean})}
+
+\par\noindent\textbf{Role:} Transports the even-degree of a dart's dual component (on the ambient
+dual edges $s(q.\mathrm{tail},q.\mathrm{head})$) to its box-primal image
+$B = \texttt{dartDualComponentBoxPrimalEdges}$, measured by dual incidence
+$c\in\texttt{dualEdge}(\mathrm{Sym2.map}\,\mathrm{val}\,e)$.  Both $B$ and the ambient component are
+images of the \emph{same} reachable dart finset under the injective maps $\texttt{boxPrimalCutEdge}$
+and $q\mapsto s(q.\mathrm{tail},q.\mathrm{head})$, and dualizing a box-primal edge recovers the
+ambient dual edge ($\texttt{dualEdge\_map\_val\_boxPrimalCutEdge}$), so the two incidence counts at any
+dual vertex agree ($\texttt{dartDualComponentBoxPrimalEdges\_dualIncident\_card\_eq}$, via
+$\mathrm{Finset.filter\_image}$).  Hence $B$ has even dual-incidence degree at every dual vertex
+($\texttt{dartDualComponentBoxPrimalEdges\_dualIncident\_even}$): $B$ is a mod-2 cycle in the box.  It
+remains to construct, by a fixed-ray parity, a region $S$ with $\mathrm{cutEdges}\,S = B$ and conclude
+the closed-walk parity from $\texttt{even\_cutCrossings\_iff}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
