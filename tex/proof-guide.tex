@@ -18531,6 +18531,22 @@ It is holomorphic on \(\texttt{ball}\,0\,R\)
 equicontinuity/Ascoli/Vitali capstone.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
 pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Montel compact carrier for the cluster free-energy family (\S18.6, Issue~\#4149).}
+PR-D2.3b is the Montel/Arzel\`a--Ascoli step: the holomorphic, ball-uniformly-bounded family
+\(F_n\) is relatively compact in the compact-open topology, so a subsequence will converge locally
+uniformly (D2.3d) (\texttt{ClusterExpansion/MayerCore/CubicMayerClusterMontel.lean}).  Each \(F_n\)
+restricted to \(\texttt{ball}\,0\,R\) is a continuous map
+\(\texttt{cubicMayerClusterFreeEnergyComplexRestrict}\,d\,n\in C(\uparrow(\texttt{ball}\,0\,R),\mathbb C)\)
+(\(\texttt{AnalyticOnNhd.continuousOn}+\texttt{ContinuousOn.restrict}\)); the family is equicontinuous
+(\(\texttt{equicontinuous\_restrict\_of\_analyticOnNhd\_of\_bounded}\) with \(C=\texttt{kpBound}\,(2d)\,R\)).
+The headline \(\texttt{cubicMayerClusterFreeEnergyComplex\_exists\_compact\_carrier}\) produces a compact
+\(A\subseteq C(\uparrow(\texttt{ball}\,0\,R),\mathbb C)\) with all \(F_n\) in \(A\), via
+\(\texttt{isCompact\_closureCarrier\_compactOpen\_complex\_of\_norm\_le\_equicontinuous}\)
+(\(A=\texttt{toFun}^{-1}\,\mathrm{closure}(\texttt{toFun}\,''\,\mathrm{range}\,Fc)\), the index\(\to\)set
+equicontinuity through \(\texttt{equicontinuous\_range\_coe}\)).  The compact carrier feeding the D2.3d
+subsequence extraction and Vitali limit.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
+pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
