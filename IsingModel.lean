@@ -307,6 +307,7 @@ import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterFreeEnergyComplex
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterMontel
 import IsingModel.ClusterExpansion.MayerCore.MayerIdentityPersiteKP
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterRealAxis
+import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterLimit
 import IsingModel.ClusterExpansion.MayerCore.LatticeFreeEnergyKPBound
 import IsingModel.ClusterExpansion.MayerCore.LatticeFreeEnergyInfiniteKPBound
 import IsingModel.TransferMatrix.OneDim
