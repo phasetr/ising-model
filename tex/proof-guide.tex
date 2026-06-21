@@ -2176,6 +2176,24 @@ separation contradiction; the remaining hard input is that $B$ actually separate
 from $d.\mathrm{right}$ (the discrete-Jordan core).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The box-primal image of a dart's dual component
+  (\texttt{Peierls/DartDualComponentImage.lean})}
+
+\par\noindent\textbf{Role:} Assembles the separating region of the discharge.  A dart's primal cut
+edge $s(\mathrm{left},\mathrm{right})$ becomes a box-subtype edge
+$\texttt{boxPrimalCutEdge}$, injective in the dart (mapping back by $\mathrm{Sym2.map}\,\mathrm{val}$
+and using $\texttt{dartPrimalEdge\_injective}$).  The set $B$ of box primal edges of the darts in
+$d$'s dual component $\texttt{dartDualComponentBoxPrimalEdges}$ then satisfies: membership in $B$ is
+exactly $\mathrm{DartReachable}\,F\,d\,e$; a non-reachable dart's edge avoids $B$; and
+$B \subseteq \mathrm{cutEdges}(\texttt{liftFinset}\,F)$.  Taking the region
+$A = \texttt{edgeSideComponent}\,B\,d.\mathrm{left}$, the cut inclusion
+$\mathrm{cutEdges}(A) \subseteq B \subseteq \mathrm{cutEdges}(\texttt{liftFinset}\,F)$ supplies the
+$\texttt{hsub}$ of the box separation contradiction, and a non-reachable $e$'s primal edge avoids
+$\mathrm{cutEdges}(A)$ (the $\texttt{he\_ncross}$ input).  The single remaining hard input is
+$\texttt{dual\_component\_separates\_primal}$: $d.\mathrm{right}\notin A$, i.e. $d$'s component
+separates its two sides (the discrete-Jordan core).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
