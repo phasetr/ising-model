@@ -421,6 +421,7 @@ import IsingModel.TransferMatrix.LayerQuadraticFormDeflationGap
 import IsingModel.TransferMatrix.LayerLambdaMaxLowerBound
 import IsingModel.TransferMatrix.LayerTopDeflationRowIdentity
 import IsingModel.TransferMatrix.LayerPerronFlatness
+import IsingModel.TransferMatrix.LayerDoeblinColumnOscillation
 import IsingModel.TransferMatrix.LayerDoobTransform
 import IsingModel.TransferMatrix.LayerDobrushinContraction
 import IsingModel.TransferMatrix.LayerDoeblin
