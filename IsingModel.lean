@@ -102,6 +102,7 @@ import IsingModel.Peierls.ConnectedDroplet
 import IsingModel.Peierls.ConnectedDropletBound
 import IsingModel.Peierls.DropletInjective
 import IsingModel.Peierls.CutCrossingParity
+import IsingModel.Peierls.PlanarBondParityCore
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
