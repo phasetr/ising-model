@@ -18392,6 +18392,22 @@ $\Delta$ (volume-uniform on bounded-degree graphs), this is the volume-uniform c
 of the per-site cluster-expansion contribution.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.5, pp.~332--336; Friedli--Velenik \S5.4, Theorem~5.4.
 
+\paragraph{Complex Mayer expansion term (holomorphic) (\S18.6, Issue~\#4149).}
+The per-site-KP Mayer--Montroll identity is targeted by analytic continuation, which needs
+the Mayer term as a holomorphic function.  Since
+\(\mathrm{mayerExpansionTerm}\,G\,n\,t=\sum_\omega\mathrm{ursellCoefficient}(\omega)\,
+\prod_i t^{|\omega_i|}\) is a polynomial in \(t\) (the Ursell coefficient is
+\(t\)-independent), it complexifies term-by-term
+(\texttt{ClusterExpansion/MayerCore/TermsComplex.lean}):
+\(\texttt{clusterSeqActivityComplex}\,z\,\omega=\prod_i z^{|\omega_i|}\),
+\(\texttt{mayerExpansionTermComplex}\,G\,n\,z=\sum_\omega(\mathrm{ursellCoefficient}(\omega):\mathbb C)\,
+\texttt{clusterSeqActivityComplex}\,z\,\omega\), with \(\texttt{\_ofReal}\) bridges and per-term
+entireness (\(\texttt{mayerExpansionTermComplex\_differentiable}\),
+\(\texttt{\_analyticOnNhd}\) on \(\mathbb C\) via \(\texttt{DifferentiableOn.analyticOnNhd}\)).
+This is PR-A of the \S18.6 plan (next: the complex Mayer tsum holomorphic on a ball via
+\(\texttt{Complex.differentiableOn\_tsum\_of\_summable\_norm}\), then the identity theorem on the
+per-site KP interval).  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
