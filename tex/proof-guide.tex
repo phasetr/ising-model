@@ -8899,6 +8899,38 @@ transverse width \(2\) sidesteps the transverse-volume-uniform spectral-gap
 obstruction.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{\(K_2\) strip infinite-volume exponential clustering and axis
+summability (\S17.1/\S17.5, Issue~\#3511).}
+The unconditional infinite-volume \(K_2\) strip bound
+\(\bigl|\langle\sigma_{(0,x)}\sigma_{(\mathrm{sep},x)}\rangle_\infty\bigr|\le
+(\text{prefactor})\cdot e^{-m\,\mathrm{sep}}\) (with
+\(m=\texttt{twoSiteInteractingMass}(\beta J)>0\)) is lifted into the \S17.5
+clustering/summability framework.  First \(\texttt{prefactor}\ge0\)
+(\(\texttt{k2StripPrefactor\_nonneg}\), from the \(\mathrm{sep}=1\) instance and
+\(e^{-m}>0\)) and \(e^{-m}<1\).  \textbf{Exponential clustering}
+\(\texttt{tendsto\_correlationInfinite\_stripGraph\_axis\_zero}\):
+\(\langle\sigma_{(0,x)}\sigma_{(\mathrm{sep},x)}\rangle_\infty\to0\) as
+\(\mathrm{sep}\to\infty\), by squeezing against
+\((\text{prefactor})\,e^{-m\,\mathrm{sep}}\to0\).  \textbf{Geometric summability}
+\(\sum_{\mathrm{sep}\ge0}(\text{prefactor})\,e^{-m\,\mathrm{sep}}
+=(\text{prefactor})/(1-e^{-m})\)
+(\(\texttt{summable\_/tsum\_k2StripPrefactor\_exp\_neg\_mass}\), via
+\(e^{-m\,\mathrm{sep}}=(e^{-m})^{\mathrm{sep}}\) and the geometric series).
+\textbf{Directional susceptibility}
+\(\texttt{tsum\_abs\_correlationInfinite\_stripGraph\_axis\_le}\):
+\[
+  \sum_{\mathrm{sep}\ge0}
+    \bigl|\langle\sigma_{(0,x)}\sigma_{(\mathrm{sep},x)}\rangle_\infty\bigr|
+  \le \bigl|\langle\sigma_{(0,x)}^2\rangle_\infty\bigr|
+      +\frac{\text{prefactor}}{1-e^{-m}},
+\]
+the \(\mathrm{sep}=0\) diagonal term kept explicit (comparison via the
+\(\mathrm{sep}+1\) shift).  This is the exponential clustering and finite
+directional susceptibility of the interacting \(K_2\) strip, mirroring the 1D
+\(\texttt{InfiniteVolumeOneDSusceptibility}\)/\(\texttt{InfiniteVolumeOneDMass}\)
+picture.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
+pp.~311--312.
+
 \paragraph{Finite arbitrary transverse layer open-slab decay via Hermitian
 spectral data (\S17.1, Issue~\#3511).}
 The closed-form \(K_2\) route generalizes from the two-element transverse fiber
