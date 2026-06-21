@@ -19,7 +19,7 @@ that each droplet is connected (`IsConnectedDroplet`) and filled (`IsFilled`).
 * `peierls_sum_le_filled` — the geometric tail bound on the filled droplet sum at low temperature.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
-(Cambridge, 2017), §3.7.2, (3.49), pp. 109–116.
+(Cambridge, 2017), §3.7.2, pp. 109–116.
 -/
 
 namespace IsingModel

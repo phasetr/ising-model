@@ -2464,7 +2464,7 @@ $\sum_{S\in D}\exp(-2\beta J\,|\mathrm{cut}\,S|)\le (32q)^n/(1-32q)$ with $q=\ex
 low-temperature regime $32q<1$.  This is the convergent unconditional route to the Peierls droplet
 sum, replacing the $\texttt{hone}/\texttt{hF}/\texttt{hC}$ hypotheses by droplet connectedness and
 filledness alone.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
@@ -3444,7 +3444,7 @@ over a box $\Lambda_d$, each through a fixed anchor vertex $z$, then $\#D \le (2
 walk-counting bound $\texttt{card\_connected\_edge\_sets\_inducedLatticeGraph\_le}$, the geometric
 inputs (injectivity, connectivity, anchor) isolated as hypotheses; the single-anchor form is summed
 over $r+1$ ray anchors downstream.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The dual edge determines the primal cut edge (\texttt{Peierls/DualToPrimal.lean})}
 
@@ -4451,7 +4451,7 @@ per-droplet anchored $\texttt{DartReachable}$ data and
 $\texttt{dualCutInBox\_isEdgeConnected\_of\_anchored}$, giving the count-consumer form for the direct
 edge-connectedness route.  The single-orbit (discrete Jordan) input enters only through the
 connectivity supply.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The contour count as a power bound (\texttt{Peierls/PeierlsContourCountPow.lean})}
 
@@ -4461,7 +4461,7 @@ $\texttt{hone}$, $\texttt{peierls\_contour\_count\_pow}$).  This is exactly the
 $\texttt{hcount} : \forall \ell,\ \#\{C : g\,C = \ell\} \le M^\ell$ hypothesis (with $M = 32$) of the
 geometric tail estimate $\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$, the bridge from the
 contour count to the low-temperature sum $\sum_r 32^r e^{-2\beta J r} \to 0$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The Peierls low-temperature droplet sum (\texttt{Peierls/PeierlsSum.lean})}
 
@@ -4472,7 +4472,7 @@ $\texttt{sum\_pow\_le\_geometric\_tail\_of\_count}$, the droplet sum $\sum_S e^{
 (low temperature) and $n$ lower-bounds the cut sizes ($e^{-2\beta J r} = (e^{-2\beta J})^r$ via
 $\texttt{Real.exp\_nat\_mul}$, $\texttt{peierls\_sum\_le}$).  As $\beta \to \infty$ this tail
 vanishes ($n \ge 1$), giving $m^*(\beta) > 0$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The finite-volume Peierls bound on the down-spin probability
   (\texttt{Peierls/PeierlsPlusGibbs.lean})}
@@ -4487,7 +4487,7 @@ orbit ($\texttt{hone}$).  The cut-size lower bound $n = 1$ comes from
 $\texttt{cutEdges\_nonempty\_of\_connected}$ (a droplet $S \ni i$, $g \notin S$ is a proper nonempty
 subset of a preconnected graph).  As $\beta \to \infty$ this vanishes --- the finite-volume input to
 $m^*(\beta) > 0$.  The single-orbit (discrete Jordan) input enters only through $\texttt{hone}$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The down-spin probability vanishes at low temperature
   (\texttt{Peierls/PeierlsTendsto.lean})}
@@ -4500,7 +4500,7 @@ hypotheses), $\mu^+_\Lambda(\sigma_i = -1) \to 0$ as $\beta \to \infty$
 $\texttt{peierls\_plusGibbs\_le}$ between $0$ and the vanishing geometric tail
 $\texttt{peierls\_low\_temp\_tail\_tendsto\_zero}$ (with $C = 32$).  The analytic core of
 $m^*(\beta) > 0$; the single-orbit input enters only through $\texttt{hone}$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Magnetization versus down-spin probability (\texttt{Peierls/PlusGibbsSign.lean})}
 
@@ -4544,7 +4544,7 @@ $\texttt{prop\_5\_4\_2\_plusGibbsExpectationLiminf\_bound}$ \emph{with the volum
 count}.  As $\beta \to \infty$ the bound vanishes, so $\mu^+(\sigma_i) \to 1$ --- the spontaneous
 magnetization is positive, $m^*(\beta) > 0$, the Peierls phase transition.  The single-orbit
 (discrete Jordan) input enters only through the per-stage $\texttt{hone}$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Positivity of the spontaneous magnetization
   (\texttt{Peierls/PeierlsMagnetizationPos.lean})}
@@ -4555,7 +4555,7 @@ $\beta$), the infinite-volume bound $1 - \mu^+(\sigma_i) \le 2\cdot 32 q / (1 - 
 ($\texttt{peierls\_plusGibbsLiminf\_pos}$).  This is the \emph{Peierls phase transition}: spontaneous
 magnetization $m^*(\beta) > 0$ at low temperature ($\beta_c < \infty$), modulo the per-stage
 single-orbit input $\texttt{hone}$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
@@ -4578,7 +4578,7 @@ $Z$) has $|D| \le |Z| \cdot (2\cdot 2)^{2r}$ ($\texttt{contour\_count\_le}$).  T
 (injectivity, connectivity, per-anchor membership, anchor set $Z$) are isolated as hypotheses; the
 single-orbit Jordan input enters only via $\texttt{IsEdgeConnected}\,(\texttt{cut}\,S)$.  With
 $|Z| = r$ this is the volume-independent bound $r \cdot 16^r \le 32^r$.
-Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The cut determines the region (\texttt{Peierls/CutDeterminesRegion.lean})}
 
