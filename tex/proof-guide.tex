@@ -7568,6 +7568,25 @@ subdominant-ratio bound to a per-column row-variation sum on the Doob transform;
 is the layer-specific estimate that those columns vary little at high temperature, uniformly in the
 transverse box radius.
 
+\paragraph{The single-site Ising influence bound (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
+The one-step full-layer Dobrushin coefficient is provably insufficient for a volume-uniform gap
+(its total-variation distance saturates to $1$ as $|S|\to\infty$). The correct route is
+\emph{single-site} Dobrushin uniqueness, whose analytic heart is the single-site influence. The
+single-site up-probability of a spin in local field $a=\beta(h+J\cdot\text{neighbour sum})$ is
+$\texttt{isingSingleSiteUpProb}(a)=e^a/(e^a+e^{-a})=(1+\tanh a)/2$
+(\texttt{isingSingleSiteUpProb\_eq\_tanh}). Flipping one neighbour shifts the field by $\pm t$ with
+$t=\beta J$, and
+\[
+  |\texttt{upProb}(a+t)-\texttt{upProb}(a-t)|=\tfrac12|\tanh(a+t)-\tanh(a-t)|\le\tanh t,
+\]
+since $\tanh(a+t)-\tanh(a-t)=\dfrac{\sinh 2t}{\cosh(a+t)\cosh(a-t)}$ and
+$\cosh(a+t)\cosh(a-t)=\cosh^2 t+\sinh^2 a\ge\cosh^2 t$
+(\texttt{cosh\_add\_mul\_cosh\_sub}, \texttt{tanh\_add\_sub\_tanh\_sub\_abs\_le},
+\texttt{isingSingleSiteUpProb\_flip\_neighbour\_dist\_le}, file
+\texttt{Dobrushin/SingleSiteInfluence.lean}). The nearest-neighbour Ising Dobrushin influence is
+therefore $\tanh(\beta J)$; Dobrushin's condition $\tanh(\beta J)\cdot\deg<1$ gives volume-uniform
+exponential decay (the remaining single-site-Dobrushin chain).
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
