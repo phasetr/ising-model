@@ -2424,8 +2424,47 @@ ambient lattice by induction (box adjacency to lattice adjacency via $\texttt{in
 $\texttt{reachableWithin\_ambient\_image\_of\_box}$ for the inside,
 $\texttt{reachableOutside\_of\_box\_compl}$ for the complement.  In particular a box connected droplet
 supplies the $\texttt{hF}$ input ($\texttt{reachableWithin\_ambient\_image\_of\_isConnectedDroplet}$).
-The local outside-$\texttt{hC}$ variant and the bond-route contour count $\to m^*>0$ chain remain.
+The local outside-$\texttt{hC}$ variant and the resulting unconditional contour count are completed
+in the next two subsections.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
+\subsection*{Unconditional edge-connectivity of a filled droplet's dual cut
+  (\texttt{Peierls/BondFilledEdgeConnected.lean})}
+
+\par\noindent\textbf{Role:} With $\texttt{planarBondHypothesis}$ discharged, the dual cut of a
+filled connected neighbour-closed droplet is edge-connected \emph{unconditionally}.  The inside
+connectivity $\texttt{hF}$ comes from the connected droplet; the only subtlety is the outside
+connectivity $\texttt{hC}$, which $\texttt{dartReachable\_of\_bond}$ applies \emph{solely} at
+boundary-dart right endpoints.  A boundary dart's right endpoint is a lattice neighbour of its left
+site $\in S$, hence a box vertex by $\mathrm{NeighbourClosed}$
+($\texttt{boundaryDart\_right\_mem\_of\_neighbourClosed}$); so the box-confined complement
+connectivity of a filled region ($\texttt{reachableWithin\_compl\_of\_isFilled}$) lifted along
+$\texttt{reachableOutside\_of\_box\_compl}$ already supplies the needed outside walks
+($\texttt{reachableOutside\_boundaryDart\_right\_of\_isFilled}$).  Threading this weakened
+$\texttt{hC}$ through the bond route ($\texttt{dartReachable\_of\_bond\_boundary\_hC}$ and the
+$\texttt{dartDualCut}/\texttt{dualCutSub}/\texttt{dualCutInBox}$ wrappers) gives
+$\texttt{dualCutInBox\_isEdgeConnected\_filled}$: edge-connectivity of the dual cut from only
+$\mathrm{NeighbourClosed}$, $\mathrm{IsConnectedDroplet}$, and $\mathrm{IsFilled}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
+\subsection*{The unconditional filled-droplet contour count
+  (\texttt{Peierls/PeierlsContourCountFilled.lean})}
+
+\par\noindent\textbf{Role:} The filled-droplet edge-connectivity discharges the contour-counting
+injection's connectivity slot outright, so the Peierls contour count holds for filled connected
+droplets with neither the single-orbit hypothesis $\texttt{hone}$ nor the ambient
+$\texttt{hF}/\texttt{hC}$ inputs.  $\texttt{peierls\_contour\_count\_filled}$ gives
+$|D|\le r\cdot(2\cdot2)^{2r}$ for a family of filled ($\mathrm{IsFilled}$) connected
+($\mathrm{IsConnectedDroplet}$) neighbour-closed droplets, the connectivity slot of the
+contour-counting injection being filled by $\texttt{dualCutInBox\_isEdgeConnected\_filled}$.
+Absorbing $\ell\le 2^\ell$ into $\ell\cdot16^\ell\le32^\ell$ yields the clean power bound
+$\texttt{peierls\_contour\_count\_pow\_filled}$: $\#\{S\in D : |\mathrm{cut}\,S|=\ell\}\le 32^\ell$.
+Feeding this into the geometric tail estimate gives $\texttt{peierls\_sum\_le\_filled}$:
+$\sum_{S\in D}\exp(-2\beta J\,|\mathrm{cut}\,S|)\le (32q)^n/(1-32q)$ with $q=\exp(-2\beta J)$ in the
+low-temperature regime $32q<1$.  This is the convergent unconditional route to the Peierls droplet
+sum, replacing the $\texttt{hone}/\texttt{hF}/\texttt{hC}$ hypotheses by droplet connectedness and
+filledness alone.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, (3.49), pp. 109--116.
 
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
