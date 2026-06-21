@@ -2228,6 +2228,22 @@ This reduces the component's even-degree to the full dual cut's, the next concre
 the crossing-parity separation.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual cut is Eulerian at every dual vertex
+  (\texttt{Peierls/DartDualCutEven.lean})}
+
+\par\noindent\textbf{Role:} Completes the even-degree property.  Each dual-cut edge through a dual
+vertex $c$ has the form $s(c, c + \mathrm{dir}.\mathrm{vec})$ for a unique direction, present exactly
+when $\mathrm{dir}\in\texttt{cutDirs}\,F\,c$ (one of the edge's two darts is valid,
+$\texttt{mem\_cutDirs\_iff}$; the head case uses $\texttt{dir\_add\_two\_mem\_cutDirs\_head}$ and
+$\texttt{Dir2.vec\_add\_two}$).  The map $\mathrm{dir}\mapsto s(c, c+\mathrm{dir}.\mathrm{vec})$ is
+injective, so the incidence set is the image of $\texttt{cutDirs}\,F\,c$
+($\texttt{dartDualCut\_incident\_eq\_cutDirs\_image}$) and the incidence degree equals
+$|\texttt{cutDirs}\,F\,c|$, which is even ($\texttt{card\_cut\_dirs\_even}$).  Combined with the
+incidence reduction of the previous section, every dart's dual component is Eulerian
+($\texttt{dartDualComponentEdges\_incident\_even}$), the mod-2 cycle property the crossing-parity
+separation needs.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
