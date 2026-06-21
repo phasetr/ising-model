@@ -4610,6 +4610,27 @@ connectedness ($\texttt{hBconn}$) and corner basepoint ($\texttt{hgB}$), with th
 are deferred to the next PR.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The Peierls phase transition for the canonical 2D Ising model
+  (\texttt{Peierls/CubicBoxShellConnected.lean})}
+
+\par\noindent\textbf{Role:} The capstone of FV \S3.7.2, closing the low-temperature programme: the
+genuine $+$-state spontaneous magnetization of the canonical $2$D Ising model is positive,
+\emph{unconditionally}.  The outer boundary shell $\texttt{cubicOuterBoundaryTwo}\,n$ is a connected
+droplet: every shell vertex reaches the north-east corner $(n,n)$ by walking along the sides, each
+leg fixing one coordinate at $\pm n$ (so the leg stays on the shell) and stepping the other one unit
+at a time ($\texttt{reachableWithin\_shell\_fix0}$, $\texttt{reachableWithin\_shell\_fix1}$,
+$\texttt{cubicOuterBoundaryTwo\_connected}$, the $\texttt{hBconn}$ supply), and the corner lies on
+the shell ($\texttt{cubicCornerNE\_mem\_outerBoundary}$, the $\texttt{hgB}$ supply).  Instantiating
+$\texttt{peierls\_plusGibbsLiminf\_pos\_filled}$ over the cubic exhaustion with the shell $B_n$, the
+corner $g_n$, the origin $i_n$, and the discharged
+$\texttt{hpre}/\texttt{hBconn}/\texttt{hgB}/\texttt{hdual}/\texttt{hne}$ supplies gives
+$\texttt{peierls\_spontaneous\_magnetization\_pos\_cubic}$: at low temperature
+($32q<1$, $2\cdot32q/(1-32q)<1$, $q=e^{-2\beta J}$) one has $0<m^*(\beta)$ with no remaining
+hypothesis — the discrete-Jordan core being $\texttt{planarBondHypothesis}$.  This is the Peierls
+phase transition $m^*(\beta)>0$ at low temperature, which implies $\beta_c<\infty$ for the $2$D
+Ising model.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
