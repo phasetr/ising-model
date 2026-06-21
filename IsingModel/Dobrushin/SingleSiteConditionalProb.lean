@@ -22,6 +22,7 @@ namespace Dobrushin
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+omit [DecidableEq ι] in
 /-- **The constant-coupling inhomogeneous Hamiltonian is the homogeneous Ising Hamiltonian**:
 `hamiltonianJ G (fun _ => J) h = hamiltonian G ⟨J, h, β⟩`. This bridges the boundary-condition
 Boltzmann weight (stated with `hamiltonianJ`) to the single-site Hamiltonian gap

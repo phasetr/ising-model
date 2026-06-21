@@ -447,3 +447,4 @@ import IsingModel.ComplexAnalyticity.ClosureCompactness
 import IsingModel.Dobrushin.SingleSiteInfluence
 import IsingModel.Dobrushin.SingleSiteConditional
 import IsingModel.Dobrushin.SingleSiteConditionalProb
+import IsingModel.Dobrushin.SingleSiteConditionalDistribution
