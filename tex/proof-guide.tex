@@ -2115,6 +2115,29 @@ a far vertex \emph{outside} the droplet thus crosses the boundary an odd number 
 traverse a cut edge, detecting that the origin is enclosed.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Mod-2 side-parity separation engine
+  (\texttt{Peierls/PlanarBondParityCore.lean})}
+
+\par\noindent\textbf{Role:} The combinatorial heart of the homological route to the planar bond
+hypothesis.  Fix vertex sets $A,F$ with $\mathrm{cutEdges}(A)\subseteq\mathrm{cutEdges}(F)$.  The
+indicator $\mathbf 1_A$ is a $\mathbb Z/2$ potential: along any chain of edges each keeping
+$A$-membership, the endpoints agree on $A$
+($\texttt{mem\_iff\_of\_reachable\_edges\_preserve}$).  An adjacent pair both inside $F$, or both
+outside $F$, keeps $A$-membership, since such an edge is not a cut edge of $F$ and hence not of
+$A$ ($\texttt{mem\_iff\_of\_cutEdges\_subset\_inside}/\texttt{\_outside}$); therefore a walk
+inside $F$ and a walk outside $F$ both preserve the $A$-potential
+($\texttt{mem\_iff\_of\_reachableWithin\_cutEdges\_subset}$,
+$\texttt{mem\_iff\_of\_reachableOutside\_cutEdges\_subset}$).  Consequently a crossing pair
+$(d_l,d_r)$ with $s(d_l,d_r)\in\mathrm{cutEdges}(A)$ (so $d_l\in A \leftrightarrow d_r\notin A$) and
+a non-crossing adjacent pair $(e_l,e_r)$ cannot have $d_l$ reach $e_l$ inside $F$ while $d_r$
+reaches $e_r$ outside $F$: the potential gives
+$d_l\in A \leftrightarrow e_l\in A \leftrightarrow e_r\in A \leftrightarrow d_r\in A$,
+contradicting the crossing flip ($\texttt{not\_separated\_of\_inside\_outside\_reachable}$).  The
+remaining input to discharge $\mathrm{PlanarBondHypothesis}$ is the topological core: each
+edge-connected component of $\mathrm{cutEdges}(F)$ equals $\mathrm{cutEdges}(A)$ for some region
+$A$ (finite rectangular-grid mod-2 planar duality).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
