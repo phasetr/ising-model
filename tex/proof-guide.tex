@@ -7605,6 +7605,20 @@ $\texttt{hamiltonian\_update\_up\_sub\_down}$ assembles the total (file
 \texttt{Dobrushin/SingleSiteConditional.lean}). With $(1+\tanh a)/2$ this yields the single-site
 conditional up-probability $(1+\tanh(\beta\cdot\text{local field}))/2$ in the next step.
 
+\paragraph{Single-site conditional infrastructure (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
+The boundary-condition Gibbs expectation over the single free site $\{x\}$ collapses to a two-term
+sum: the only configurations agreeing with $\eta$ off $\{x\}$ are $\eta$ updated at $x$ to
+$\uparrow$ or $\downarrow$, so $\sum_\sigma \mathbf 1_{\{\sigma\text{ agrees off }\{x\}\}}(\sigma)\,
+g(\sigma)=g(\eta[x\mapsto\uparrow])+g(\eta[x\mapsto\downarrow])$
+(\texttt{sum\_indicator\_agreesOff\_singleton}, by a \texttt{Finset.sum\_bij'} to $\mathrm{Spin}$).
+The inhomogeneous Hamiltonian with constant coupling equals the homogeneous one,
+$\texttt{hamiltonianJ}\,G\,(\lambda\_.J)\,h=\texttt{hamiltonian}\,G\,\langle J,h,\beta\rangle$
+(\texttt{hamiltonianJ\_const\_eq\_hamiltonian}), bridging the boundary-condition Boltzmann weight to
+the single-site energy gap (file \texttt{Dobrushin/SingleSiteConditionalProb.lean}). Combined with
+$(1+\tanh a)/2$ this gives the single-site conditional up-probability
+$(1+\tanh(\beta\cdot\text{local field}))/2$ via the weight ratio $e^{2\beta(J\sum_{y\sim x}
+\operatorname{sign}\eta_y+h)}$ in the next step.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
