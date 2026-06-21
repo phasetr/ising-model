@@ -2157,6 +2157,25 @@ obligation is to construct such an $A$ from $\lnot\,\mathrm{DartReachable}\,F\,d
 core).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The component of a vertex after deleting an edge set
+  (\texttt{Peierls/EdgeSideComponent.lean})}
+
+\par\noindent\textbf{Role:} The separating region of the homological route is built from a dual-cut
+component $B$ as the set of vertices reachable from a base point without traversing an edge of $B$.
+$\texttt{ReachableAvoidingEdges}\,G\,B\,x\,y$ is reachability through edges $s(a,b)\notin B$, and
+$\texttt{edgeSideComponent}\,G\,B\,x$ is the corresponding component of $x$.  An edge outside $B$
+keeps both endpoints in the component ($\texttt{edgeSideComponent\_mem\_iff\_of\_adj\_not\_block}$),
+so every edge leaving the component must lie in $B$:
+\[
+  \mathrm{cutEdges}\bigl(\texttt{edgeSideComponent}\,G\,B\,x\bigr) \subseteq B
+\]
+($\texttt{cutEdges\_edgeSideComponent\_subset}$).  Taking $B$ to be the primal edges of $d$'s
+dual-cut component and $x = d.\mathrm{left}$, this supplies the inclusion
+$\mathrm{cutEdges}(A)\subseteq\mathrm{cutEdges}(\texttt{liftFinset}\,F)$ required by the box
+separation contradiction; the remaining hard input is that $B$ actually separates $d.\mathrm{left}$
+from $d.\mathrm{right}$ (the discrete-Jordan core).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
