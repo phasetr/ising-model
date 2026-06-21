@@ -106,6 +106,7 @@ import IsingModel.Peierls.PlanarBondParityCore
 import IsingModel.Peierls.PlanarBondSeparationBridge
 import IsingModel.Peierls.EdgeSideComponent
 import IsingModel.Peierls.DartDualComponentImage
+import IsingModel.Peierls.PlanarBondAssembly
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
