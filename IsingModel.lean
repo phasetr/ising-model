@@ -450,3 +450,4 @@ import IsingModel.Dobrushin.SingleSiteConditionalProb
 import IsingModel.Dobrushin.SingleSiteConditionalDistribution
 import IsingModel.Dobrushin.SingleSiteInfluenceMatrix
 import IsingModel.Dobrushin.DobrushinHighTemp
+import IsingModel.Dobrushin.InfluenceMatrixDecay
