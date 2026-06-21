@@ -126,6 +126,7 @@ import IsingModel.Peierls.PeierlsContourCountFilled
 import IsingModel.Peierls.PeierlsMagnetizationPosFilled
 import IsingModel.Peierls.CubicBoxPreconnected
 import IsingModel.Peierls.CubicBoxBoundaryShell
+import IsingModel.Peierls.CubicBoxShellConnected
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
