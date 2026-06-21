@@ -47,6 +47,7 @@ theorem externalFieldEnergy_update_up_sub_down (h : ℝ) (x : ι) (η : Config �
   rw [hsplit, hsplit, sign_up, sign_down]
   ring
 
+omit [Fintype ι] in
 /-- **`edgeSpin` is unchanged by a single-site update away from the edge**: if `x ∉ e`, updating the
 configuration at `x` does not change the per-edge spin product on `e`. -/
 theorem edgeSpin_update_of_not_mem {x : ι} {s : Spin} {e : Sym2 ι} (he : x ∉ e) (η : Config ι) :
