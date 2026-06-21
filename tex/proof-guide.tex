@@ -2338,6 +2338,18 @@ $\texttt{primalSquareBoundaryEdges}\,x = \{\text{those four edges}\}$
 over the square's four sides, the ingredient of the vertical telescope (a later file).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The four unit-square sides have even total membership
+  (\texttt{Peierls/RightRayVerticalXor.lean})}
+
+\par\noindent\textbf{Role:} The parity ingredient of the vertical telescope.  The unit-square corners
+are pairwise distinct ($\texttt{unitSquare\_corner\_ne}$, by a coordinate argument), so the $B$-count
+of the four square edges is the sum of their four indicators
+($\texttt{unitSquare\_count\_eq}$, via $\texttt{primalSquareBoundaryEdges\_unitSquare}$ and
+$\mathrm{Finset.sum\_insert}$).  Hence, under the even square count, the four side indicators sum to
+an even number ($\texttt{unitSquare\_sides\_even}$), i.e. an even number of the four sides lie in
+$B$.  This is the per-square cancellation that drives the vertical step of the fixed-ray parity.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
