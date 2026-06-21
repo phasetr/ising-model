@@ -2350,6 +2350,20 @@ an even number ($\texttt{unitSquare\_sides\_even}$), i.e. an even number of the 
 $B$.  This is the per-square cancellation that drives the vertical step of the fixed-ray parity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The vertical-step invariance of the ray defect
+  (\texttt{Peierls/RightRayVerticalStep.lean})}
+
+\par\noindent\textbf{Role:} The additive form of the horizontal parity,
+$\texttt{count}\,x + \texttt{count}(x+e_0) + [\,s(x,x+e_0)\in B\,]$ even
+($\texttt{rightRayParity\_horizontal\_mod2}$), lets the vertical defect
+$\texttt{verticalDefect}\,B\,x = (\texttt{count}\,x + \texttt{count}(x+e_1) + [\,s(x,x+e_1)\in B\,])\bmod 2$ be shown invariant under a rightward step
+($\texttt{verticalDefect\_step}$): the defect difference between columns $x$ and $x+e_0$ is the
+mod-2 sum of the four sides of the unit square at $x$, even by $\texttt{unitSquare\_sides\_even}$.
+Combining the two horizontal-row parities with the square evenness, $\texttt{omega}$ closes the
+step.  The ray induction, the right-end stabilization, and the region $\mathrm{cutEdges}\,S = B$
+remain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
