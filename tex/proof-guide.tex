@@ -8935,6 +8935,40 @@ lattice susceptibility --- giving the exponential clustering of the interacting
 picture.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{Two-mark open-slab spectral decay and \(K_2\) cross-transverse-site
+finite decay (\S17.1, Issue~\#4144).}
+To bound \emph{cross}-transverse-site correlations
+\(\langle\sigma_{(\ell,x)}\sigma_{(\ell+\mathrm{sep},y)}\rangle\) with
+\(x\ne y\) --- needed to cover all distinct strip pairs for the strip cluster
+property --- the single-mark open-slab spectral decay (same spin operator at both
+endpoints) is generalized to \emph{two distinct marks} \(f,g\).  The two-mark
+prefactor is
+\(\texttt{boundaryTwoMarkedSpectralPrefactor}\,E\,f\,g\,v_L\,v_R
+=\sum_{i,j,l}\bigl|\,bc(v_L)_i\cdot(\mathrm{marked}\,f)_{ij}
+\cdot(\mathrm{marked}\,g)_{jl}\cdot bc(v_R)_l\bigr|\),
+and the entire path-glue and denominator/partition infrastructure is reused
+verbatim; only the right-endpoint cut is twinned \(f\to g\).  The correlation is
+tied to the two-mark numerator by
+\(\texttt{correlation\_layerOpenSlabGraph\_two\_transverse\_eq\_layerOpenSlabSpinTwoMarkedTwoPoint}\):
+the two endpoints are distinct because their \emph{layer} coordinates differ when
+\(0<\mathrm{sep}\) (independent of \(x,y\)), so the two-element-Finset
+\(\texttt{spinProduct}\) expands to
+\(\mathrm{sign}(\sigma_{(\ell,x)})\cdot\mathrm{sign}(\sigma_{(\ell+\mathrm{sep},y)})\).
+The headline general-layer bound
+\(\texttt{correlation\_layerOpenSlabGraph\_two\_transverse\_abs\_le\_of\_boundarySpectralDenominator}\)
+gives
+\(\bigl|\langle\sigma_{(\ell,x)}\sigma_{(\ell+\mathrm{sep},y)}\rangle\bigr|
+\le(\texttt{boundaryTwoMarkedSpectralPrefactor}/\texttt{partition})\cdot
+\theta^{\mathrm{sep}}\).  For \(K_2\)
+(\(\texttt{correlation\_twoSiteInteractingLayerOpenSlabGraph\_cross\_abs\_le\_of\_simpleSpectrum}\),
+\(h=0\), \(0<\beta J\), all \(x,y\in\mathrm{Fin}\,2\)) the two-mark central-channel
+cancellation is discharged in closed form by the \emph{left} mark's flip parity
+(\(\mathrm{marked}(\texttt{layerSpinAt}\,x)_{\mathrm{top},\mathrm{top}}=0\)) plus
+boundary flip-evenness; the right mark is unused in the cancellation.  Finite (and
+for general layers conditional on the boundary-window gap + parity; the \(K_2\)
+case unconditional).  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Finite arbitrary transverse layer open-slab decay via Hermitian
 spectral data (\S17.1, Issue~\#3511).}
 The closed-form \(K_2\) route generalizes from the two-element transverse fiber
