@@ -18547,6 +18547,24 @@ equicontinuity through \(\texttt{equicontinuous\_range\_coe}\)).  The compact ca
 subsequence extraction and Vitali limit.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
 pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Real-axis convergence of the cluster free energy (\S18.6, Issue~\#4149).}
+PR-D2.3c gives the real-axis values that pin the Montel limit
+(\texttt{ClusterExpansion/MayerCore/CubicMayerClusterRealAxis.lean}).  Writing the infinite-volume
+cluster free-energy density via the activity\(\leftrightarrow\)coupling map \(\tanh(\operatorname{artanh}t)=t\),
+\(\texttt{cubicInfiniteClusterFreeEnergyReal}\,d\,t:=\texttt{freeEnergyInfinite}\,(\mathrm{latticeGraph}\,d)\,
+(\mathrm{cubicExhaustion}\,d)\,\langle\operatorname{artanh}t,0,1\rangle-\log2-d\log\cosh(\operatorname{artanh}t)\),
+and \(\texttt{cubicMayerClusterFreeEnergyComplex}\,d\,n\,(\uparrow t)=
+\uparrow(\texttt{polymerFreeEnergy}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,(cubicBox\,d\,n))\,t/
+|cubicBox\,d\,n|)\) (\(\texttt{Complex.ofReal\_tsum}+\texttt{mayerExpansionTermComplex\_ofReal}\) + the
+per-site-KP identity), the headline
+\(\texttt{cubicMayerClusterFreeEnergyComplex\_tendsto\_realAxis}\) (\(t\in\texttt{Ioo}\,0\,T\), \(T\le1\)):
+\(F_n(\uparrow t)\to\uparrow(\texttt{cubicInfiniteClusterFreeEnergyReal}\,d\,t)\).  The real per-site free
+energy \(\texttt{polymerFreeEnergy}_n(t)/|\Lambda_n|=\texttt{freeEnergy}_n\langle\operatorname{artanh}t,0,1\rangle
+-\log2-(\text{edge density}_n)\log\cosh(\operatorname{artanh}t)\)
+(\(\texttt{freeEnergy\_eq\_polymerFreeEnergy}\), \(\texttt{Real.tanh\_artanh}\)) converges by the cubic
+free-energy limit and the edge-density limit, then \(\texttt{Complex.continuous\_ofReal}\).  Reference:
+Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
