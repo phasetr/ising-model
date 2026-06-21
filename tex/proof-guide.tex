@@ -18588,6 +18588,32 @@ uniform.  The holomorphic infinite-volume cluster free energy on the high-temper
 analytic object for the \S18.6 coupling-analyticity capstone (D2.4).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Infinite-volume free-energy coupling analyticity (\S18.6, Issue~\#4149, CAPSTONE).}
+The GJ \S18.6 capstone: the infinite-volume \(\mathbb Z^d\) Ising free-energy density is real-analytic
+in the coupling at high temperature, realised via the cluster expansion
+(\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingAnalyticity.lean}).  The scaling
+\(\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,G\,\Lambda\,
+\langle\beta J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\); at zero field the Boltzmann weight
+depends only on \(\beta J\), by \(\texttt{interactionEnergy}\) linearity and \(\texttt{externalFieldEnergy}\,0=0\),
+lifted to the \(\limsup\)) and the bridge
+\(\texttt{freeEnergyInfinite}\,\langle c,0,1\rangle=\log2+d\log\cosh c+\texttt{cubicInfiniteClusterFreeEnergyReal}\,d\,(\tanh c)\)
+(via \(\texttt{Real.artanh\_tanh}\)) reduce the free energy to the analytic infinite-volume cluster term.
+That term is real-analytic on \(\texttt{Ioo}\,0\,T\) (\(\texttt{cubicInfiniteClusterFreeEnergyReal\_analyticOnNhd}\):
+the holomorphic \(F_\infty\) restricted to the real axis, \(\texttt{AnalyticOnNhd.re\_ofReal}\)).  Composing with
+\(\texttt{analyticAt\_real\_tanh}\), \(\texttt{Real.analyticAt\_cosh}\), \(\texttt{AnalyticAt.log}\)
+(\(\cosh>0\)) gives the headline
+\(\texttt{freeEnergyInfinite\_latticeGraph\_cubicExhaustion\_analyticAt\_beta\_h\_zero}\) (\(0<\beta J\),
+\(\tanh\beta J<T\)):
+\[
+  \texttt{AnalyticAt}\,\mathbb R\,(\beta'\mapsto\texttt{freeEnergyInfinite}\,(\mathrm{latticeGraph}\,d)\,
+    (\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta'\rangle)\,\beta,
+\]
+with a \(J=1\) wrapper.  This \textbf{completes the GJ \S18.4--\S18.6 cluster-expansion programme to
+infinite-volume analyticity}: volume-uniform per-site-KP Mayer identity \(\to\) free-energy bounds
+\(\to\) infinite-volume real-axis bound \(\to\) the Montel/Vitali holomorphic limit \(\to\) this
+analyticity capstone.  Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335ff.; Friedli--Velenik \S5.4,
+\S5.7.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
