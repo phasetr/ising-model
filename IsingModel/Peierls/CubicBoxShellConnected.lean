@@ -234,7 +234,8 @@ temperature (`32 q < 1` and `2·32 q/(1-32 q) < 1` with `q = exp(-2βJ)`, i.e. `
 `+`-state spontaneous magnetization at the origin is **positive** along the cubic exhaustion
 `[-n, n]²`, with **no** remaining hypothesis — the boundary (`hBconn`/`hgB`), dual-support
 (`hdual`), and neighbour-closure (`hne`) inputs are all discharged by the canonical-box geometry,
-and the discrete-Jordan core by `planarBondHypothesis`. This is `m*(β) > 0`, `β_c < ∞`. -/
+and the discrete-Jordan core by `planarBondHypothesis`. This is `m*(β) > 0` at low
+temperature, which implies `β_c < ∞`. -/
 theorem peierls_spontaneous_magnetization_pos_cubic (J β : ℝ)
     (hr0 : 0 < 32 * Real.exp (-2 * β * J)) (hr1 : 32 * Real.exp (-2 * β * J) < 1)
     (hsmall : 2 * (32 * Real.exp (-2 * β * J) / (1 - 32 * Real.exp (-2 * β * J))) < 1) :
