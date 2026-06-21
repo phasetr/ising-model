@@ -9,8 +9,9 @@ for a positive eigenvector `v` (`M v = λ v`, `v > 0`, `λ > 0`), a uniform row 
 `M_ik ≤ ρ·M_jk` forces `v_i ≤ ρ·v_j`. Indeed `λ v_i = ∑_k M_ik v_k ≤ ρ ∑_k M_jk v_k = ρ λ v_j`.
 
 * `eigenvector_ratio_le_of_entry_ratio` — the abstract flatness mechanism.
-* `RealOrthogonalSpectralData.signedColumn_mulVec_eq` — the signed Perron column is an eigenvector.
-* `signedColumn_ratio_le_of_entry_ratio` — Perron-column flatness from the entry ratio.
+* `RealOrthogonalSpectralData.signedColumn_ratio_le_of_entry_ratio` — Perron-column flatness from the
+  entry ratio (via the existing `SignedPositiveColumn.mulVec_signedColumn` eigen-equation).
+* `finiteTransverseHermitian_signedColumn_ratio_le_of_entry_ratio` — the layer specialization.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1.
 -/
