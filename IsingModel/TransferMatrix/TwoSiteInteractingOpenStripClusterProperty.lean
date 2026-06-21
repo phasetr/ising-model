@@ -6,9 +6,9 @@ import IsingModel.LatticeExpSum
 # Cluster property for the `K2` open strip (GJ §17.1)
 
 The infinite-volume `K2` open-strip two-point correlation decays exponentially in
-the longitudinal separation (`abs_correlationInfinite_stripGraph_cross_le`, #4143).
+the longitudinal separation (`abs_correlationInfinite_stripGraph_cross_le`, #4146).
 At zero external field this exponential decay is summable over the ambient lattice
-`ℤ × Fin 2`, so the graph-general §5.1 cluster property
+`ℤ × Fin 2`, so the graph-general cluster property
 (`Ambient.clusterProperty`) holds for the strip exhaustion.
 
 The summability argument proceeds in three steps:
@@ -31,7 +31,8 @@ The summability argument proceeds in three steps:
 
 ## References
 
-* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §5.1, pp. 76--79.
+* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.1, pp. 304--306.
+* Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, pp. 311--312.
 * Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.1, pp. 304--306.
 -/
 
