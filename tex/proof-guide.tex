@@ -4557,6 +4557,24 @@ magnetization $m^*(\beta) > 0$ at low temperature ($\beta_c < \infty$), modulo t
 single-orbit input $\texttt{hone}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Unconditional positivity of the spontaneous magnetization
+  (\texttt{Peierls/PeierlsMagnetizationPosFilled.lean})}
+
+\par\noindent\textbf{Role:} The capstone.  With the filled-droplet Peierls sum unconditional
+($\texttt{peierls\_sum\_le\_filled}$), the whole down-spin / liminf / positivity chain drops the
+single-orbit hypothesis $\texttt{hone}$.  The droplets entering the Peierls sum are indexed by the
+filter $\{S : i\in S \wedge S\cap B = \varnothing \wedge \mathrm{IsConnectedDroplet}\,S \wedge
+\mathrm{IsFilled}\,g\,S\}$, so their connectedness and filledness — the only inputs the filled
+contour count needs beyond the box bookkeeping — are supplied for free from filter membership.
+Thus $\texttt{peierls\_plusGibbs\_le\_filled}$ ($\mu^+_\Lambda(\sigma_i=-1)\le 32q/(1-32q)$),
+$\texttt{peierls\_plusGibbsLiminf\_le\_filled}$ ($1-\mu^+(\sigma_i)\le 2\cdot32q/(1-32q)$), and
+$\texttt{peierls\_plusGibbsLiminf\_pos\_filled}$ ($0<\mu^+(\sigma_i)$ when $2\cdot32q/(1-32q)<1$)
+hold with no $\texttt{hone}$.  This completes the FV \S3.7.2 low-temperature Peierls argument:
+$m^*(\beta)>0$ at low temperature with \emph{no} discrete-Jordan single-orbit hypothesis, the planar
+bond lemma being discharged unconditionally; the only remaining inputs are the box-geometry
+bookkeeping $\texttt{hpre}/\texttt{hBconn}/\texttt{hgB}/\texttt{hdual}/\texttt{hne}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
