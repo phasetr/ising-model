@@ -2194,6 +2194,25 @@ $\texttt{dual\_component\_separates\_primal}$: $d.\mathrm{right}\notin A$, i.e. 
 separates its two sides (the discrete-Jordan core).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Assembly: the planar bond hypothesis from the separation core
+  (\texttt{Peierls/PlanarBondAssembly.lean})}
+
+\par\noindent\textbf{Role:} Composes the homological-route lemmas into a reduction of
+$\mathrm{PlanarBondHypothesis}\,F$ to a single geometric input.  The only bookkeeping is confining
+the ambient outside walk $\mathrm{ReachableOutside}\,F$ to a finite box: the walk has finite support
+($\texttt{ReachableOutside.exists\_finset\_support}$, by induction on the reflexive--transitive
+closure), and $\mathrm{BoundaryDart}\,F$ is finite, so a finite box
+$\Lambda \supseteq F \cup \mathrm{support} \cup \{\text{dart outside-sites}\}$ carries the
+box-confined walk.  Then $\texttt{planarBondHypothesis\_of\_separates}$ proves
+$\mathrm{PlanarBondHypothesis}\,F$ from the hypothesis $\texttt{hsep}$ (the separation
+$\langle d.\mathrm{right}\rangle \notin \texttt{edgeSideComponentDart}$): assuming
+$\lnot\,\mathrm{DartReachable}\,F\,d\,e$, the region $A$ has $d.\mathrm{left}\in A$
+($\texttt{base\_mem\_edgeSideComponent}$) and $d.\mathrm{right}\notin A$ ($\texttt{hsep}$), so $d$
+crosses $A$; the cut inclusion and $e$'s non-crossing come from the dual-component image, and
+$\texttt{false\_of\_box\_separating\_region\_boundaryDart}$ closes.  This isolates the entire
+FV \S3.7.2 obligation to the single discrete-Jordan separation $\texttt{hsep}$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
