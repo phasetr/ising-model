@@ -2413,6 +2413,20 @@ consumers still take the connectivity inputs $\texttt{hF}/\texttt{hC}$, availabl
 droplets).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Box-to-ambient connectivity bridges
+  (\texttt{Peierls/BondConnectivityBridge.lean})}
+
+\par\noindent\textbf{Role:} Toward the unconditional $m^*(\beta)>0$: $\texttt{dartReachable\_of\_bond}$
+consumes inside connectivity $\mathrm{ReachableWithin}\,(\mathrm{latticeGraph}\,2)\,F$ and outside
+connectivity $\mathrm{ReachableOutside}\,F$ on the \emph{ambient} lattice, whereas the filled-droplet
+connectivity facts are on the \emph{box} induced graph.  A box-confined reachability lifts to the
+ambient lattice by induction (box adjacency to lattice adjacency via $\texttt{inducedLattice\_adj\_iff}$):
+$\texttt{reachableWithin\_ambient\_image\_of\_box}$ for the inside,
+$\texttt{reachableOutside\_of\_box\_compl}$ for the complement.  In particular a box connected droplet
+supplies the $\texttt{hF}$ input ($\texttt{reachableWithin\_ambient\_image\_of\_isConnectedDroplet}$).
+The local outside-$\texttt{hC}$ variant and the bond-route contour count $\to m^*>0$ chain remain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
