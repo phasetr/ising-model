@@ -2394,6 +2394,25 @@ Combined with $\texttt{even\_cutCrossings\_iff}$ for closed walks, this will fee
 producing the discrete-Stokes parity $\texttt{hStokes}$ the separation core needs.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Discharge of the planar bond hypothesis
+  (\texttt{Peierls/PlanarBondDischarge.lean})}
+
+\par\noindent\textbf{Role:} Closes the homological/parity programme.  The box-primal image $B$ of a
+dart's dual component is even at every dual vertex
+($\texttt{dartDualComponentBoxPrimalEdges\_dualIncident\_even}$); the fixed-ray region realises $B$
+as a cut ($\texttt{cutEdges\_fixedRayRegion\_eq\_of\_square\_even}$); so every closed walk crosses $B$
+an even number of times ($\texttt{even\_cutCrossings\_iff}$ for $u = v$); the separation core
+($\texttt{dual\_component\_separates\_primal\_of\_even\_closed\_walk}$) places $d$'s two sides on
+opposite sides of the region.  This proves the discrete-Jordan separation
+$\texttt{dual\_component\_separates\_primal}$ \emph{unconditionally}, and the assembly
+$\texttt{planarBondHypothesis\_of\_separates}$ then gives
+$\texttt{planarBondHypothesis} : \forall F,\ \mathrm{PlanarBondHypothesis}\,F$ -- discharging the
+single open obligation of $\texttt{PlanarBondReduction.lean}$, so the $\texttt{hbond}$ input to the
+dual-cut edge-connectivity and the low-temperature Peierls contour count is now unconditional (those
+consumers still take the connectivity inputs $\texttt{hF}/\texttt{hC}$, available for filled connected
+droplets).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a

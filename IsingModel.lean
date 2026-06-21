@@ -119,6 +119,7 @@ import IsingModel.Peierls.RightRayVerticalXor
 import IsingModel.Peierls.RightRayVerticalStep
 import IsingModel.Peierls.RightRayVerticalParity
 import IsingModel.Peierls.FixedRayRegion
+import IsingModel.Peierls.PlanarBondDischarge
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
