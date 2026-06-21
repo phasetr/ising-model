@@ -8916,17 +8916,21 @@ clustering/summability framework.  First \(\texttt{prefactor}\ge0\)
 =(\text{prefactor})/(1-e^{-m})\)
 (\(\texttt{summable\_/tsum\_k2StripPrefactor\_exp\_neg\_mass}\), via
 \(e^{-m\,\mathrm{sep}}=(e^{-m})^{\mathrm{sep}}\) and the geometric series).
-\textbf{Directional susceptibility}
+\textbf{One-sided same-transverse-site axis sum}
 \(\texttt{tsum\_abs\_correlationInfinite\_stripGraph\_axis\_le}\):
 \[
   \sum_{\mathrm{sep}\ge0}
     \bigl|\langle\sigma_{(0,x)}\sigma_{(\mathrm{sep},x)}\rangle_\infty\bigr|
-  \le \bigl|\langle\sigma_{(0,x)}^2\rangle_\infty\bigr|
+  \le \bigl|\langle\sigma_{(0,x)}\rangle_\infty\bigr|
       +\frac{\text{prefactor}}{1-e^{-m}},
 \]
-the \(\mathrm{sep}=0\) diagonal term kept explicit (comparison via the
-\(\mathrm{sep}+1\) shift).  This is the exponential clustering and finite
-directional susceptibility of the interacting \(K_2\) strip, mirroring the 1D
+the \(\mathrm{sep}=0\) term kept explicit (its observable
+\(\texttt{stripAxisTwoPoint}\,x\,0\) is the single-site one, since the
+\(\texttt{Finset}\) \(\{(0,x),(0,x)\}\) collapses to \(\{(0,x)\}\); comparison via
+the \(\mathrm{sep}+1\) shift).  This is the one-sided, fixed-anchor,
+same-transverse-site axis-direction absolute sum --- not a full or two-sided
+lattice susceptibility --- giving the exponential clustering of the interacting
+\(K_2\) strip in the spirit of the 1D
 \(\texttt{InfiniteVolumeOneDSusceptibility}\)/\(\texttt{InfiniteVolumeOneDMass}\)
 picture.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
