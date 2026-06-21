@@ -2325,6 +2325,19 @@ between $x$ and $x+e_0$ iff $s(x, x+e_0) \in B$ ($\texttt{rightRayParity\_xor\_h
 vertical step (via the square-boundary telescope) and the region $\mathrm{cutEdges}\,S = B$ remain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The unit square at a dual vertex
+  (\texttt{Peierls/RightRayVerticalSquare.lean})}
+
+\par\noindent\textbf{Role:} Makes $\texttt{primalSquareBoundaryEdges}\,x$ explicit as the four edges
+of the unit square with lower-left corner $x$.  Computing the four
+$\texttt{primalCutEdge}\,x\,\mathrm{dir}$ ($\mathrm{dir} = 3,0,1,2$) gives the bottom $s(x, x+e_0)$,
+right $s(x+e_0, x+e_0+e_1)$, top $s(x+e_1, x+e_1+e_0)$, and left $s(x, x+e_1)$ edges
+($\texttt{primalCutEdge\_unitSquare\_bottom/right/top/left}$), so
+$\texttt{primalSquareBoundaryEdges}\,x = \{\text{those four edges}\}$
+($\texttt{primalSquareBoundaryEdges\_unitSquare}$).  The even square count then becomes an even count
+over the square's four sides, the ingredient of the vertical telescope (a later file).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
