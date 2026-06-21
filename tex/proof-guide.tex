@@ -7587,6 +7587,24 @@ $\cosh(a+t)\cosh(a-t)=\cosh^2 t+\sinh^2 a\ge\cosh^2 t$
 therefore $\tanh(\beta J)$; Dobrushin's condition $\tanh(\beta J)\cdot\deg<1$ gives volume-uniform
 exponential decay (the remaining single-site-Dobrushin chain).
 
+\paragraph{The single-site Hamiltonian decomposition (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
+To realise the single-site conditional on the lattice, one computes the Hamiltonian under updating a
+single site $x$ to $\uparrow$ versus $\downarrow$ (the rest fixed to $\eta$). Only the edges incident
+to $x$ and the field term at $x$ change, giving
+\[
+  H(\eta[x\mapsto\uparrow])-H(\eta[x\mapsto\downarrow])
+    = -2\Bigl(J\sum_{y\sim x}\operatorname{sign}(\eta_y)+h\Bigr),
+\]
+twice the local field at $x$. The field gap is $-2h$
+(\texttt{externalFieldEnergy\_update\_up\_sub\_down}); the interaction gap is
+$-2J\sum_{y\sim x}\operatorname{sign}(\eta_y)$
+(\texttt{interactionEnergy\_update\_up\_sub\_down}), proved by splitting the edge sum at $x$'s
+incident edges -- those not incident are unchanged (\texttt{edgeSpin\_update\_of\_not\_mem}) and the
+incident ones reindex to the neighbours via $\texttt{Sym2.Mem.other}$ -- and
+$\texttt{hamiltonian\_update\_up\_sub\_down}$ assembles the total (file
+\texttt{Dobrushin/SingleSiteConditional.lean}). With $(1+\tanh a)/2$ this yields the single-site
+conditional up-probability $(1+\tanh(\beta\cdot\text{local field}))/2$ in the next step.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
