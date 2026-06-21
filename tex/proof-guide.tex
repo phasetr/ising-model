@@ -7644,6 +7644,29 @@ $\beta,J,h$ (no high-temperature hypothesis), and are the per-site inputs to the
 Dobrushin influence matrix $c_{xy}=\tanh(\beta J)\,[y\sim x]$, whose row sum $\tanh(\beta J)\deg<1$ at
 high temperature yields a transverse-volume-uniform exponential decay.
 
+\paragraph{The single-site Dobrushin influence matrix (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
+File \texttt{Dobrushin/SingleSiteInfluenceMatrix.lean}. Write the conditional up-probability as a
+boundary functional $\texttt{singleSiteUpProbBC}(\eta)=\texttt{isingSingleSiteUpProb}(a(\eta))$ with
+$a(\eta)=\beta(J\sum_{y\sim x}\operatorname{sign}\eta_y+h)$. Two ingredients: (i) the sharp
+Lipschitz--$\tanh$ bound $|\texttt{upProb}(a)-\texttt{upProb}(a')|\le\tanh(|a-a'|/2)$
+(\texttt{isingSingleSiteUpProb\_dist\_le\_tanh\_half}), obtained by centering the symmetric flip bound
+$|\texttt{upProb}(\bar a+t)-\texttt{upProb}(\bar a-t)|\le\tanh t$ at $\bar a=(a+a')/2$; and (ii)
+monotonicity of $\tanh$ (\texttt{tanh\_le\_tanh\_of\_le}; not in Mathlib, proved from
+$\tanh b-\tanh a=\sinh(b-a)/(\cosh b\cosh a)\ge 0$). The local field depends on the boundary only
+through the neighbour spins, so if $\eta,\eta'$ agree off $\{y\}$ then: for $y\not\sim x$ (including
+$y=x$) the conditional law is unchanged (\texttt{singleSiteUpProbBC\_eq\_of\_not\_neighbour}); for
+$y\sim x$ the neighbour-sign sums differ by at most $2$, so $|a(\eta)-a(\eta')|\le 2\beta J$ and
+\[
+  |\texttt{singleSiteUpProbBC}(\eta)-\texttt{singleSiteUpProbBC}(\eta')|\le\tanh(\beta J)
+  \qquad(0\le\beta J)
+\]
+(\texttt{singleSiteUpProbBC\_neighbour\_dist\_le}, and \texttt{singleSiteUpProbBC\_dist\_le} for an
+arbitrary single site). The influence matrix $c_{xy}=\texttt{isingInfluence}=\tanh(\beta J)\,[y\sim
+x]$ has row sum $\sum_y c_{xy}=\deg(x)\cdot\tanh(\beta J)$ (\texttt{isingInfluence\_rowSum}), and
+Dobrushin's uniqueness condition is $\tanh(\beta J)\deg(x)<1$ (\texttt{isingDobrushin\_condition},
+equivalent to the row sum being $<1$). This is the per-site input to the Dobrushin uniqueness theorem
+and the transverse-volume-uniform decay.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
