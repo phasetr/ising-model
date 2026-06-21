@@ -2037,20 +2037,30 @@ formalized**, per the full inventory above:
    analyticity of the infinite-volume free energy — is now formalized:
    `Ambient.freeEnergyComplex_infiniteVolume_analyticOnNhd_leeYangDomain`
    (+ the fully instantiated ℤ^d cubic form), see the §4.6 rows above.
-3. **Prop 5.4.2 genuine `+`-BC infinite-volume version**:
-   `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)` in the genuine `+`
-   boundary-condition infinite-volume measure. The per-stage
-   bound (`prop_5_4_2_along_exhaustion`, PR #202) and the `limsup`
-   form (`prop_5_4_2_limsup_le`, PR #213) are available; a
-   canonical ∞-vol `+`-BC expectation construction is still
-   required to phrase the bound as an unconditional ∞-vol
-   expectation inequality.
+3. *(Resolved.)* **Prop 5.4.2 genuine `+`-BC infinite-volume version**:
+   `0 ≤ 1 − ⟨σᵢ⟩₊∞ ≤ exp(-cβ)` is now phrased unconditionally on the
+   canonical `liminf`-based infinite-volume `+`-expectation
+   `plusGibbsExpectationLiminf`: `prop_5_4_2_plusGibbsExpectationLiminf`
+   (`PeierlsInfinite.lean`) gives the full two-sided statement
+   `0 ≤ 1 − plusGibbsExpectationLiminf ≤ exp(-cβ)` (combining
+   `prop_5_4_2_plusGibbsExpectationLiminf_lower_bound` and
+   `prop_5_4_2_plusGibbsExpectationLiminf_bound`), built on the per-stage bound
+   (`prop_5_4_2_along_exhaustion`, PR #202) and the `limsup`
+   form (`prop_5_4_2_limsup_le`, PR #213).
 4. **§5.1 cluster property** at large separation for pure phases — conditional form `clusterProperty_latticeGraph_of_polynomialDecay` (Step 140, PR #958): holds under `HasPolynomialDecay`. Unconditional form (in all pure phases regardless of temperature) would require establishing polynomial decay from first principles.
 5. **§17.5 correlation length continuity** and **§17.8 anomalous
    dimension continuity** — require spectral theory of the transfer
-   matrix.
-6. **Chapter 18** full cluster expansion machinery (convergence at
-   small `tanh(βJ)`).
+   matrix. The fixed-width `K2`/two-site strip case is unconditional
+   (`TwoSiteInteractingOpenStripDecay.lean`, PRs #4061-#4064,
+   #4142-#4147); the `d ≥ 2` transverse-volume-uniform spectral
+   gap that the general continuity would need is **proven obstructed**
+   (PR #4081: Doob/Dobrushin cross-ratio site-additivity drives the
+   Dobrushin coefficient `δ → 1` with the transverse volume).
+6. *(Resolved.)* **Chapter 18** cluster expansion machinery: the Mayer
+   expansion identity, per-site Kotecký-Preiss convergence at small
+   `tanh(βJ)`, and the resulting infinite-volume free-energy/coupling
+   analyticity are formalized — see the §18.4–§18.6 rows above
+   (Issues #3954, #4149; PRs #3987–#3998, #4150–#4160).
 7. **§20.8 3D Ising roughening** — specialized interface analysis.
 
 ## References
