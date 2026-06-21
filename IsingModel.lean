@@ -110,6 +110,7 @@ import IsingModel.Peierls.PlanarBondAssembly
 import IsingModel.Peierls.DartDualComponentEulerian
 import IsingModel.Peierls.DartDualCutEven
 import IsingModel.Peierls.DualComponentSeparatesOfStokes
+import IsingModel.Peierls.DartDualComponentBoxEulerian
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected

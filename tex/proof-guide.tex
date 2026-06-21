@@ -2264,6 +2264,20 @@ $s(q.\mathrm{tail},q.\mathrm{head})$ of $d$'s component; the next brick must tra
 box-\emph{primal} crossing set $B$ and prove the closed-walk parity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The dual edge of a primal cut edge
+  (\texttt{Peierls/DartDualComponentBoxEulerian.lean})}
+
+\par\noindent\textbf{Role:} The primal/dual edge correspondence underlying the even-degree transport.
+On lattice edges, $\texttt{toGrid}$ inverts $\texttt{toSym2}$ ($\texttt{toGrid\_of\_toSym2}$, the
+$\texttt{gridEdge2Equiv}$ round trip), so $\texttt{dualEdge}(g.\texttt{toSym2}) = g.\mathrm{dual}.\texttt{toSym2}$
+($\texttt{dualEdge\_toSym2}$).  A dart's primal cut edge dualizes to its dual edge,
+$\texttt{dualEdge}(\texttt{primalCutEdge}\,t\,\mathrm{dir}) = s(t, t + \mathrm{dir}.\mathrm{vec})$
+($\texttt{dualEdge\_primalCutEdge}$, a per-direction $\mathrm{GridEdge2}$ computation), and the same
+holds after mapping the box-primal edge back to the ambient lattice
+($\texttt{dualEdge\_map\_val\_boxPrimalCutEdge}$).  This is the foundation for transporting the dual
+component's even-degree to its box-primal image $B$.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
