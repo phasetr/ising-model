@@ -17,13 +17,13 @@ the thermodynamic limit:
   `kpBound (2 d) t` is independent of the volume `Λ`.
 
 The ℤ^d-uniform bound uses the monotonicity of the Kotecky--Preiss constant `kpBound Δ t` in
-`r = Δ²e|t|` on the KP region (`kpBound_mono_of_le` / `kpBound_mono_of_degree_le`), together
+`r = Δ²e|t|` on the KP region (`kpBound_r_mono_of_le` / `kpBound_mono_of_degree_le`), together
 with the downward-closure of the KP region in `r` (`kpRegion_downward_closed`).
 
 * `induced_latticeGraph_maxDegree_le`
 * `induced_kp_tsum_per_site_le`
 * `induced_kp_tsum_per_site_alongExhaustion_le`
-* `kpBound`, `kpBound_mono_of_le`, `kpBound_mono_of_degree_le`
+* `kpBound`, `kpBound_r_mono_of_le`, `kpBound_mono_of_degree_le`
 * `latticeGraph_kp_tsum_per_site_le`
 * `latticeGraph_kp_tsum_per_site_cubicExhaustion_le`
 
