@@ -4575,6 +4575,23 @@ bond lemma being discharged unconditionally; the only remaining inputs are the b
 bookkeeping $\texttt{hpre}/\texttt{hBconn}/\texttt{hgB}/\texttt{hdual}/\texttt{hne}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Preconnectedness and neighbour-closure of the canonical cubic box
+  (\texttt{Peierls/CubicBoxPreconnected.lean})}
+
+\par\noindent\textbf{Role:} Toward a hypothesis-free $m^*(\beta)>0$, this supplies the per-stage
+geometric inputs of $\texttt{peierls\_plusGibbsLiminf\_pos\_filled}$ for the canonical cubic
+exhaustion $\mathrm{cubicBox}\,2\,n=[-n,n]^2$.  The origin lies in every box
+($\texttt{zero\_mem\_cubicBox\_two}$), and every box vertex reaches it by walking each coordinate
+down to $0$ one unit step at a time, each intermediate point staying in the box: a strong induction
+on $|x_0|+|x_1|$ steps a nonzero coordinate toward $0$
+($\texttt{inducedCubicBox\_two\_reachable\_zero}$), whence the induced $2$D cubic box graph is
+preconnected ($\texttt{inducedCubicBox\_two\_preconnected}$, the $\texttt{hpre}$ supply).  An
+interior droplet — image contained in a strictly smaller box $[-m,m]^2$ with $m+1\le n$ — is
+neighbour-closed in $[-n,n]^2$, since each lattice neighbour shifts a single coordinate by $\pm1$
+into $[-n,n]$ ($\texttt{neighbourClosed\_of\_image\_subset\_inner}$, the $\texttt{hne}$ supply for
+droplets disjoint from the outer boundary shell).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
