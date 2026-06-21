@@ -2259,7 +2259,9 @@ $s(d.\mathrm{left},d.\mathrm{right})\in B$ since $d$ lies in its own component â
 $d.\mathrm{right}\notin\texttt{edgeSideComponentDart}$
 ($\texttt{dual\_component\_separates\_primal\_of\_even\_closed\_walk}$).  The sole remaining input is
 the discrete-Stokes parity: a closed $\mathrm{latticeGraph}\,2$ walk crosses an even-degree edge set
-evenly (and $B$ is even-degree by the previous two sections).
+evenly.  The previous two sections give even-degree of the \emph{ambient} dual edges
+$s(q.\mathrm{tail},q.\mathrm{head})$ of $d$'s component; the next brick must transport this to the
+box-\emph{primal} crossing set $B$ and prove the closed-walk parity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
