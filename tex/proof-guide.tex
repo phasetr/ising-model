@@ -7499,8 +7499,23 @@ and the route wrappers
 specialization, reducing the explicit subdominant ratio to a top-deflated Gershgorin envelope
 $\le\theta\lambda_\ast$ via
 \texttt{subdominantAbsRatio\_maxEigenIndex\_le\_of\_topDeflatedGershgorin\_le}. The remaining
-\S17.1 core math (the next PR) is the high-temperature, transverse-volume-uniform bound discharging
+\S17.1 core math is the high-temperature, transverse-volume-uniform bound discharging
 this hypothesis with an explicit $\theta(\beta J)<1$ independent of the transverse box radius.
+
+\paragraph{Rayleigh lower bound on $\lambda_\ast$ (\S17.1, Issue~\#3511, P5).}
+The denominator $\lambda_\ast$ of the deflated-Gershgorin hypothesis
+$\mathrm{maxAbsDiag}(M_{\mathrm{def}})+\mathrm{offMass}(M_{\mathrm{def}})\le\theta\lambda_\ast$
+needs a \emph{lower} bound. Reversing the Rayleigh upper bound
+$\langle v,Mv\rangle\le\lambda_\ast\|v\|^2$ gives, for any nonzero $v$,
+$\lambda_\ast\ge\langle v,Mv\rangle/\|v\|^2$
+(\texttt{matrixQuadraticForm\_div\_vectorSqNorm\_le\_maxEigenIndex}, using
+$\|v\|^2=\sum_i v_i^2>0$ for $v\ne0$, \texttt{vectorSqNorm\_pos\_of\_ne\_zero}). At the constant-one
+vector this is $\lambda_\ast\ge\bigl(\sum_{a,b}M_{ab}\bigr)/|\Omega|$
+(\texttt{sum\_entries\_div\_card\_le\_maxEigenIndex}), a positive lower bound for the entrywise
+positive balanced layer transfer matrix
+(\texttt{finiteTransverseHermitian\_sum\_entries\_div\_card\_le\_maxEigenIndex}, file
+\texttt{LayerLambdaMaxLowerBound.lean}). The matching upper bound on the deflated-Gershgorin
+quantity, via the Perron column, is the remaining core step.
 
 The certificate constructors
 \begin{center}

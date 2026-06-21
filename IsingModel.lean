@@ -418,6 +418,7 @@ import IsingModel.TransferMatrix.LayerQuadraticFormGershgorin
 import IsingModel.TransferMatrix.LayerQuadraticFormDeflation
 import IsingModel.TransferMatrix.LayerQuadraticFormDeflationEntries
 import IsingModel.TransferMatrix.LayerQuadraticFormDeflationGap
+import IsingModel.TransferMatrix.LayerLambdaMaxLowerBound
 import IsingModel.TransferMatrix.LayerDoobTransform
 import IsingModel.TransferMatrix.LayerDobrushinContraction
 import IsingModel.TransferMatrix.LayerDoeblin
