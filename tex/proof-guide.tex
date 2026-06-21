@@ -4592,6 +4592,23 @@ into $[-n,n]$ ($\texttt{neighbourClosed\_of\_image\_subset\_inner}$, the $\textt
 droplets disjoint from the outer boundary shell).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Outer boundary shell and dual-support containment of the canonical cubic box
+  (\texttt{Peierls/CubicBoxBoundaryShell.lean})}
+
+\par\noindent\textbf{Role:} The remaining geometric supply for
+$\texttt{peierls\_plusGibbsLiminf\_pos\_filled}$ on $[-n,n]^2$.  A boundary dart of a region
+$F\subseteq[-m,m]^2$ has its left site in $F$, and its tail and head are within unit $L^\infty$
+distance of that left site (a per-direction check), so they lie in $[-(m+1),m+1]^2$; hence the dual
+support of a droplet whose vertices lie in $[-m,m]^2$ is contained in $[-(m+1),m+1]^2$
+($\texttt{dart\_tail\_head\_mem\_cubicBox\_succ}$,
+$\texttt{dualSupport\_subset\_cubicBox\_succ}$, the $\texttt{hdual}$ supply).  The outer boundary
+shell $\texttt{cubicOuterBoundaryTwo}\,n$ is the set of box vertices with some coordinate $\pm n$; a
+droplet of $[-(n+1),n+1]^2$ disjoint from the shell is confined to the interior $[-n,n]^2$
+($\texttt{image\_subset\_cubicBox\_of\_disjoint\_outerBoundary}$) and is therefore neighbour-closed
+($\texttt{neighbourClosed\_of\_disjoint\_outerBoundary}$, the $\texttt{hne}$ supply).  The shell's
+connectedness and the basepoint, with the final assembly, follow.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}
 
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
