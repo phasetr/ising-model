@@ -161,8 +161,9 @@ theorem isingInfluence_rowSum (β J : ℝ) (x : ι) :
 
 omit [Fintype G.edgeSet] in
 /-- **Dobrushin's uniqueness condition** in the single-site Ising influence form: the interaction
-sum `tanh(βJ)·deg(x)` is `< 1`. At high temperature this gives uniqueness of the infinite-volume
-Gibbs state and volume-uniform exponential decay of correlations. -/
+sum `tanh(βJ)·deg(x)` is `< 1`. This is the hypothesis of the Dobrushin uniqueness theorem
+(uniqueness of the infinite-volume Gibbs state and volume-uniform exponential decay of correlations;
+that theorem is not formalized here). -/
 def isingDobrushin_condition (β J : ℝ) (x : ι) : Prop :=
   Real.tanh (β * J) * G.degree x < 1
 

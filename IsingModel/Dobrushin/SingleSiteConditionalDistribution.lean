@@ -15,8 +15,8 @@ boundary condition `η`:
 * the conditional magnetization `⟨sign(σ_x)⟩` is `tanh(a)`.
 
 These are the per-site building blocks of the single-site Dobrushin influence matrix
-`c_{xy} = tanh(βJ)·[y∼x]`, whose row sum `tanh(βJ)·deg < 1` at high temperature gives Dobrushin
-uniqueness with volume-uniform exponential decay.
+`c_{xy} = tanh(βJ)·[y∼x]`, whose row sum `tanh(βJ)·deg < 1` at high temperature is the hypothesis of
+the Dobrushin uniqueness theorem (volume-uniform exponential decay; not formalized here).
 
 * `isingSingleSiteUpProb_eq_exp_ratio` — `isingSingleSiteUpProb((p−q)/2) = e^p/(e^p + e^q)`.
 * `tanh_eq_exp_ratio` — `tanh((p−q)/2) = (e^p − e^q)/(e^p + e^q)`.
