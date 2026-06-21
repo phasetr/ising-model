@@ -18427,6 +18427,29 @@ tree/peel chain (entering through the term-abs-sum) gives the geometric bound
 volume-uniform real identity \(\texttt{polymerFreeEnergy}=\sum'_n\texttt{mayerExpansionTerm}\).
 Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340.
 
+\paragraph{Volume-uniform per-site Kotecky--Preiss Mayer--Montroll identity (\S18.5/\S18.6,
+Issue~\#4149, capstone).}
+PR-C upgrades the Mayer--Montroll identity to the volume-uniform regime.  The existing
+\(\texttt{mayer\_identity\_general\_t}\) holds only under the \emph{volume-dependent} conditions
+\(e\cdot(\text{total activity})<1\) / \(|\Xi-1|<1\) (the naive \(\log(1+\varepsilon)\) Taylor
+radius), which fail at large volume.  Here the identity
+\(\texttt{polymerFreeEnergy}\,G\,t=\sum'_n\texttt{mayerExpansionTerm}\,G\,n\,t\) is extended to the
+whole per-site Kotecky--Preiss interval \(\texttt{Ico}\,0\,T\), \(T=(3-2\sqrt2)/(\Delta^2 e)\)
+(depending \emph{only} on \(\Delta\)), by \textbf{analytic continuation}: both sides are
+real-analytic on \(\texttt{Ico}\,0\,T\) and agree near \(0\)
+(\(\texttt{mayer\_identity\_general\_t\_eventually}\)), hence agree throughout by the identity
+theorem (\(\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_eventuallyEq}\),
+\(\texttt{isPreconnected\_Ico}\)).  LHS analyticity is \(\texttt{polymerFreeEnergy\_analyticOnNhd\_
+Ici\_zero}\) (\(\log\Xi\), \(\Xi\ge1>0\)); RHS analyticity
+(\(\texttt{polymerFreeEnergy\_analyticOnNhd\_mayer\_tsum\_Ioo}\)) writes the real Mayer tsum as
+\(t\mapsto(F\,\overline t)_{\mathrm{re}}\) for the holomorphic complex tsum \(F\) (PR-B) and applies
+\(\texttt{AnalyticOnNhd.re\_ofReal}\) (with \(\texttt{Complex.ofReal\_tsum}\) and
+\(\texttt{mayerExpansionTermComplex\_ofReal}\)).  Headline
+\(\texttt{polymerFreeEnergy\_eq\_tsum\_mayerExpansionTerm\_of\_persite\_kp}\) --- the
+volume-uniform Mayer-series representation of the polymer free energy, the input for the \S18.6
+infinite-volume free-energy analyticity.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
+pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
