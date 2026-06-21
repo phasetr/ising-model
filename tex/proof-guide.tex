@@ -2364,6 +2364,20 @@ step.  The ray induction, the right-end stabilization, and the region $\mathrm{c
 remain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The vertical parity of the rightward ray
+  (\texttt{Peierls/RightRayVerticalParity.lean})}
+
+\par\noindent\textbf{Role:} Completes the vertical step.  Since $B$ is finite, all its edge endpoints
+have bounded coordinate 0 ($\texttt{exists\_coord0\_bound}$, via $\mathrm{Finset.bddAbove}$); so far
+to the right ($M\le x_0$) the ray count is $0$, the vertical edge is not in $B$, and the defect
+vanishes ($\texttt{verticalDefect\_eq\_zero\_of\_bound}$).  The defect is invariant along the ray
+($\texttt{verticalDefect\_ray0}$, induction with $\texttt{verticalDefect\_step}$), so it vanishes
+everywhere ($\texttt{verticalDefect\_eq\_zero}$).  Hence the rightward-ray parity flips between $x$
+and $x+e_1$ iff $s(x,x+e_1)\in B$ ($\texttt{rightRayParity\_xor\_vertical}$) -- the vertical analogue
+of the horizontal flip, so both ray-parity flips are now characterised by $B$-membership.  The region
+$\texttt{fixedRayRegion}$ and $\mathrm{cutEdges}\,S = B$ remain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
