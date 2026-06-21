@@ -4606,7 +4606,8 @@ shell $\texttt{cubicOuterBoundaryTwo}\,n$ is the set of box vertices with some c
 droplet of $[-(n+1),n+1]^2$ disjoint from the shell is confined to the interior $[-n,n]^2$
 ($\texttt{image\_subset\_cubicBox\_of\_disjoint\_outerBoundary}$) and is therefore neighbour-closed
 ($\texttt{neighbourClosed\_of\_disjoint\_outerBoundary}$, the $\texttt{hne}$ supply).  The shell's
-connectedness and the basepoint, with the final assembly, follow.
+connectedness ($\texttt{hBconn}$) and corner basepoint ($\texttt{hgB}$), with the final assembly,
+are deferred to the next PR.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Counting by anchor cover (\texttt{Peierls/ContourCountCover.lean})}

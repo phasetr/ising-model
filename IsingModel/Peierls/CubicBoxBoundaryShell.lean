@@ -8,8 +8,11 @@ Continuing the canonical-box supply for `peierls_plusGibbsLiminf_pos_filled`, th
 remaining geometric inputs for `cubicBox 2 n = [-n, n]²`:
 
 * the dual support of a droplet stays in the one-larger box (`hdual` supply);
-* the outer boundary shell `cubicOuterBoundaryTwo n`, a connected boundary containing the corner
-  basepoint, with droplets disjoint from it confined to the interior (`hBconn`/`hgB`/`hne` supply).
+* the outer boundary shell `cubicOuterBoundaryTwo n`, with droplets disjoint from it confined to the
+  interior, hence neighbour-closed (`hne` supply).
+
+The shell's connectedness (`hBconn`) and corner basepoint (`hgB`), with the final assembly, are
+deferred to the next PR.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
