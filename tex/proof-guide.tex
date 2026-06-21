@@ -7517,6 +7517,24 @@ positive balanced layer transfer matrix
 \texttt{LayerLambdaMaxLowerBound.lean}). The matching upper bound on the deflated-Gershgorin
 quantity, via the Perron column, is the remaining core step.
 
+\paragraph{Top-deflation row cancellation identity (\S17.1, Issue~\#3511, P5).}
+The cancellation that makes the top-deflated Gershgorin envelope drop below $\lambda_\ast$ is encoded
+by the eigen-equation, not by any triangle inequality. Since $M_{\mathrm{def}}\,w=0$ for the Perron
+column $w=\texttt{changeOfBasis}\cdot\texttt{top}$
+(\texttt{matrixTopDeflation\_mulVec\_column\_eq\_zero}), splitting row $i$ into diagonal and
+off-diagonal parts gives
+\[
+  (M_{\mathrm{def}})_{ii} = -\sum_{j\ne i}(M_{\mathrm{def}})_{ij}\,\frac{w_j}{w_i}
+\]
+(\texttt{matrixTopDeflation\_diag\_eq\_neg\_weighted\_offDiag}, needing $w_i\ne0$), hence
+$|(M_{\mathrm{def}})_{ii}|\le\sum_{j\ne i}|(M_{\mathrm{def}})_{ij}|\,|w_j/w_i|$
+(\texttt{abs\_matrixTopDeflation\_diag\_le\_weighted\_offDiag}). The hypothesis $w_i\ne0$ is
+discharged for an entrywise positive matrix by the signed-positive Perron column
+(\texttt{changeOfBasis\_maxEigenIndex\_ne\_zero\_of\_entrywisePositive}, file
+\texttt{LayerTopDeflationRowIdentity.lean}). This reduces the deflated diagonal to the off-diagonal
+mass weighted by Perron ratios; a transverse-volume-uniform Perron flatness bound (controlling
+$\max w/\min w$) is the remaining core step.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
