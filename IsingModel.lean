@@ -114,6 +114,7 @@ import IsingModel.Peierls.DartDualComponentBoxEulerian
 import IsingModel.Peierls.DartDualComponentBoxIncidentEven
 import IsingModel.Peierls.PrimalSquareBoundary
 import IsingModel.Peierls.RightRayParity
+import IsingModel.Peierls.RightRayVerticalSquare
 import IsingModel.Peierls.FilledRegion
 import IsingModel.Peierls.FilledRegionIdempotent
 import IsingModel.Peierls.FilledRegionConnected
