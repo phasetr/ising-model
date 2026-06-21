@@ -2295,6 +2295,23 @@ remains to construct, by a fixed-ray parity, a region $S$ with $\mathrm{cutEdges
 the closed-walk parity from $\texttt{even\_cutCrossings\_iff}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Primal edges around a dual vertex
+  (\texttt{Peierls/PrimalSquareBoundary.lean})}
+
+\par\noindent\textbf{Role:} Identifies the primal lattice edges whose dual edge passes through a dual
+vertex $c$ as exactly the four $\texttt{primalCutEdge}\,c\,\mathrm{dir}$.  Any lattice edge through
+$c$ is $s(c, c + \mathrm{dir}.\mathrm{vec})$ for some direction
+($\texttt{exists\_dir\_eq\_of\_mem\_edgeSet}$; the four $\mathrm{Dir2}$ vectors are $\pm e_0, \pm e_1$
+definitionally, matching $\texttt{latticeGraph2\_adj\_cases}$), and dualizing
+$\texttt{primalCutEdge}\,c\,\mathrm{dir}$ gives $s(c, c + \mathrm{dir}.\mathrm{vec})\ni c$
+($\texttt{dualEdge\_primalCutEdge}$); injectivity of $\texttt{dualEdge}$ gives the converse, so
+$e\in\texttt{primalSquareBoundaryEdges}\,c \iff c\in\texttt{dualEdge}\,e$
+($\texttt{mem\_primalSquareBoundaryEdges\_iff\_dualIncident}$).  Hence the even dual-incidence of $B$
+is an even count of $B$-edges in the computable set $\texttt{primalSquareBoundaryEdges}\,c$
+($\texttt{primalSquareBoundaryEdges\_count\_even\_of\_dualIncident\_even}$), the form the rectangle
+telescope will use.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
