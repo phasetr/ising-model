@@ -8860,6 +8860,44 @@ This is finite: it does not pass to a thermodynamic limit or prove final
 hyperplane decay.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
 \S17.5, pp.~311--312.
 
+\paragraph{Infinite-volume \(K_2\) strip exponential decay (\S17.1,
+Issues~\#3511, \#4141).}
+We pass the length-uniform finite \(K_2\) open-strip decay to the thermodynamic
+limit, giving the first \emph{interacting} infinite-volume hyperplane
+exponential decay in the project.  The ambient lattice is the \(2\times\infty\)
+strip \(\mathbb Z\times\mathrm{Fin}\,2\), with strip graph
+\(\texttt{stripGraph}\) adjacent when two sites \((z,s)\), \((z',s')\) form a
+transverse rung (\(z=z'\), \(s\ne s'\)) or a longitudinal step
+(\(|z-z'|=1\), \(s=s'\)), and the centred longitudinal exhaustion
+\(\texttt{stripBox}\,N=[-N,N]\times\mathrm{Fin}\,2\)
+(\(\texttt{stripExhaustion}\)).  The shift \((z,s)\mapsto(z+N,s)\)
+(\(\texttt{stripBoxEquiv}\)) identifies the box with
+\(\texttt{twoSiteOpenStrip}\,(2N)\), and
+\(\texttt{stripGraph\_induce\_map\_eq}\) shows the induced strip graph maps onto
+\(\texttt{latticeGraph}\,2\) there (both adjacencies reduce to
+\(|z-z'|+|s-s'|=1\) on \(\mathrm{Fin}\,2\)).  A length-general explicit-pair
+bound \(\texttt{strip\_pair\_abs\_le}\) (the substitution
+\(M=c+\mathrm{sep}+r\) removes the natural-number subtraction in the dependent
+strip-length type) then drives the per-stage bound: at each exhaustion stage the
+correlation either transports --- via \(\texttt{correlation\_map\_equiv}\) --- to
+the finite strip decay, or vanishes, in both cases bounded by the same constant
+\((\text{prefactor})\cdot e^{-m\,\mathrm{sep}}\).  Feeding this uniform bound to
+the bridge
+\(\texttt{abs\_correlationInfinite\_le\_of\_forall\_abs\_correlationAlongExhaustion\_le}\)
+gives the headline
+\[
+  \bigl|\langle\sigma_{(0,x)}\,\sigma_{(\mathrm{sep},x)}\rangle_\infty\bigr|
+    \le (\text{prefactor})\cdot e^{-m\,\mathrm{sep}},
+  \qquad m=-\log\tfrac{\mathrm{flipOdd}}{\mathrm{top}}>0,
+\]
+at zero field (\(h=0\)) for \(0<\beta J\) and \(\mathrm{sep}>0\)
+(\(\texttt{abs\_correlationInfinite\_stripGraph\_axis\_le}\)).  Unlike the cubic
+open-box decay, this is \emph{unconditional}: the \(K_2\) boundary-window gap and
+columnwise-simple-eigenspace parity are discharged in closed form, and the fixed
+transverse width \(2\) sidesteps the transverse-volume-uniform spectral-gap
+obstruction.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and
+\S17.5, pp.~311--312.
+
 \paragraph{Finite arbitrary transverse layer open-slab decay via Hermitian
 spectral data (\S17.1, Issue~\#3511).}
 The closed-form \(K_2\) route generalizes from the two-element transverse fiber
