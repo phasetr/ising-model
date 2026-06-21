@@ -7681,6 +7681,22 @@ every site (\texttt{isingDobrushin\_condition\_of\_high\_temp\_maxDegree}). This
 $\beta J\deg<1$ threshold as the Simon--Lieb decay results. The abstract Dobrushin uniqueness/decay
 theorem that consumes this condition is not yet formalized.
 
+\paragraph{Exponential decay of the influence-matrix powers (\S17.1, Issue~\#3511).} File
+\texttt{Dobrushin/InfluenceMatrixDecay.lean}. View the influence matrix as $C\in\mathrm{Matrix}\,\iota\,\iota\,\mathbb{R}$,
+$C_{xy}=\texttt{isingInfluence}\,G\,\beta\,J\,x\,y$. The abstract fact (\texttt{matrix\_pow\_rowSum\_le})
+is: a matrix $M$ with nonnegative entries and all row sums $\le\alpha$ ($0\le\alpha$) satisfies
+$\sum_y (M^n)_{xy}\le\alpha^n$, by induction
+$\sum_z (M^{n+1})_{xz}=\sum_y M_{xy}\bigl(\sum_z (M^n)_{yz}\bigr)\le(\sum_y M_{xy})\alpha^n\le\alpha\cdot\alpha^n$.
+With the uniform Dobrushin coefficient $\alpha=\texttt{isingDobrushinCoeff}=\Delta(G)\tanh(\beta J)$
+(each row sum $\deg(x)\tanh(\beta J)\le\alpha$), this gives
+$\sum_y (C^n)_{xy}\le(\Delta(G)\tanh(\beta J))^n$ (\texttt{isingInfluenceMatrix\_pow\_rowSum\_le}, for
+$0\le\beta J$): the boundary influence decays geometrically in the number of steps $n$. At high
+temperature $\beta J\,\Delta(G)<1$ we have $\alpha<1$
+(\texttt{isingDobrushinCoeff\_lt\_one\_of\_high\_temp}), so the row sums of $C^n$ tend to $0$
+(\texttt{isingInfluenceMatrix\_pow\_rowSum\_tendsto\_zero}). This geometric decay underlies the
+Dobrushin comparison/uniqueness theorem, which (with the correlation decay it yields) is not yet
+formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
