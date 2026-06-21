@@ -9,7 +9,7 @@ influence `c_{xy}` of a neighbour `y` on the single-site conditional Gibbs distr
 uniformly small at high temperature, and Dobrushin's condition `∑_y c_{xy} = tanh(βJ)·deg < 1`
 gives uniqueness with volume-uniform exponential decay.
 
-This file proves the analytic heart: the single-site up-probability is `(1 + tanh a)/2`, and flipping
+This file proves the analytic heart: the single-site up-probability is `(1 + tanh a)/2`; flipping
 one neighbour (shifting the local field by `±t`, `t = βJ`) changes it by at most `tanh t`. The
 nearest-neighbour Ising influence is therefore `tanh(βJ)`.
 
