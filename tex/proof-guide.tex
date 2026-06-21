@@ -8935,6 +8935,32 @@ lattice susceptibility --- giving the exponential clustering of the interacting
 picture.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
+\paragraph{\(K_2\) strip cluster property (\S17.1/\S17.5, Issue~\#4144,
+capstone).}
+The graph-general cluster property
+\(\texttt{clusterProperty}\,\texttt{stripGraph}\,\texttt{stripExhaustion}\,
+\langle J,0,\beta\rangle\) for the interacting \(K_2\) (\(2\times\infty\)) strip
+--- the first interacting infinite-volume system realising the full \S17.5
+cluster property, unconditional (\(0\le J\), \(0<\beta\), \(0<\beta J\)).  By
+\(\texttt{clusterProperty\_of\_summable}\) it suffices that
+\(\sum_j\texttt{truncated2Infinite}\,i\,j\) converges for each \(i\); at zero
+field the magnetization vanishes so the truncated two-point equals the full
+two-point (\(\texttt{truncated2Infinite\_h\_zero}\)).  Per fiber
+(\(\texttt{summable\_abs\_correlationInfinite\_stripGraph\_cross\_fiber}\)): for
+\(i=(a,x)\) and transverse \(y\), \(\sum_{b\in\mathbb Z}
+|\langle\sigma_{(a,x)}\sigma_{(b,y)}\rangle_\infty|\) converges --- the
+off-diagonal \(b\ne a\) terms dominated by
+\(\texttt{k2CrossStripPrefactor}\cdot e^{-m|a-b|}\) (bilateral geometric via
+\(\texttt{summable\_exp\_neg\_int\_natAbs}\) and the shift \(b\mapsto a-b\)), the
+single diagonal \(b=a\) (same-column rung) majorised by the
+\((\texttt{k2CrossStripPrefactor}+1)\)-scaled bound using
+\(\texttt{abs\_correlationInfinite\_le\_one}\).  Lifted to \(\mathbb Z\times
+\mathrm{Fin}\,2\) by \(\texttt{summable\_prod\_of\_nonneg}\) (inner sum over the
+finite \(\mathrm{Fin}\,2\), outer over \(\mathbb Z\)).  This closes the \S17.1
+\(K_2\)-strip programme (1D exact \(\to\) finite slab \(\to\) infinite-volume
+two-point \(\to\) clustering \(\to\) cluster property).  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
+
 \paragraph{\(K_2\) strip infinite-volume general (cross-site) two-point
 (\S17.1/\S17.5, Issue~\#4144).}
 The same-transverse-site axis decay (anchored at \(0\)) is generalized to the
