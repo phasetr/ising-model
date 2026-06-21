@@ -300,6 +300,7 @@ import IsingModel.ClusterExpansion.MayerCore.MayerTreeSumExpActivity
 import IsingModel.ClusterExpansion.MayerCore.MayerTanhConvergence
 import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayer
 import IsingModel.ClusterExpansion.MayerCore.InteractingFreeEnergyMayerHighTemp
+import IsingModel.ClusterExpansion.MayerCore.TermsComplex
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower
