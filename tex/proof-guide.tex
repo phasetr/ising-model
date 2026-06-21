@@ -2312,6 +2312,19 @@ is an even count of $B$-edges in the explicit finite set $\texttt{primalSquareBo
 telescope will use.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{Crossing parity of a rightward ray
+  (\texttt{Peierls/RightRayParity.lean})}
+
+\par\noindent\textbf{Role:} The horizontal step of the fixed-ray region underlying
+$\mathrm{cutEdges}\,S = B$.  Each vertex $x$ is assigned the parity of the number of $B$-edges on the
+rightward ray $\texttt{ray0}\,x = (x, x+e_0, x+2e_0, \dots)$ (finite, since $B$ is).  A ray edge from
+$x$ is either the first edge $s(x, x+e_0)$ or a ray edge from $x+e_0$, disjointly
+($\texttt{rightRayEdge\_iff\_first\_or\_tail}$, $\texttt{not\_rightRayEdge\_tail\_first}$), so the
+count peels the first edge ($\texttt{rightRayCount\_eq\_first\_add\_tail}$).  Hence the parity flips
+between $x$ and $x+e_0$ iff $s(x, x+e_0) \in B$ ($\texttt{rightRayParity\_xor\_horizontal}$).  The
+vertical step (via the square-boundary telescope) and the region $\mathrm{cutEdges}\,S = B$ remain.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
