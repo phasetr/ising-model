@@ -2244,6 +2244,24 @@ incidence reduction of the previous section, every dart's dual component is Eule
 separation needs.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The separation core from a closed-walk parity hypothesis
+  (\texttt{Peierls/DualComponentSeparatesOfStokes.lean})}
+
+\par\noindent\textbf{Role:} Reduces the sole remaining geometric obligation
+$\texttt{dual\_component\_separates\_primal}$ to one discrete-Stokes input: every closed walk crosses
+$B$ an even number of times.  An avoiding reachability gives a walk all of whose edges avoid $B$
+($\texttt{exists\_walk\_of\_reachableAvoidingEdges}$), so it crosses $B$ zero times.  Hence, if
+$s(x,y)\in B$, $x\sim y$, and every closed walk at $x$ crosses $B$ evenly, then $x$ cannot reach $y$
+while avoiding $B$ ($\texttt{not\_reachableAvoidingEdges\_of\_even\_closed\_walk\_of\_blocked\_adj}$):
+the avoiding walk plus the direct $B$-edge would close an odd-crossing loop.  Applied to $d$'s
+component $B$ with $x=d.\mathrm{left}$, $y=d.\mathrm{right}$ — the direct edge
+$s(d.\mathrm{left},d.\mathrm{right})\in B$ since $d$ lies in its own component — this gives
+$d.\mathrm{right}\notin\texttt{edgeSideComponentDart}$
+($\texttt{dual\_component\_separates\_primal\_of\_even\_closed\_walk}$).  The sole remaining input is
+the discrete-Stokes parity: a closed $\mathrm{latticeGraph}\,2$ walk crosses an even-degree edge set
+evenly (and $B$ is even-degree by the previous two sections).
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
