@@ -7535,6 +7535,20 @@ discharged for an entrywise positive matrix by the signed-positive Perron column
 mass weighted by Perron ratios; a transverse-volume-uniform Perron flatness bound (controlling
 $\max w/\min w$) is the remaining core step.
 
+\paragraph{Perron eigenvector flatness from an entry-ratio bound (\S17.1, Issue~\#3511, P5).}
+The flatness mechanism: for a strictly positive eigenvector $v$ of $M$ with $Mv=\lambda v$,
+$\lambda>0$, a uniform row entry-ratio bound $M_{ik}\le\rho\,M_{jk}$ forces $v_i\le\rho\,v_j$, since
+\[
+  \lambda v_i = \sum_k M_{ik}v_k \le \rho\sum_k M_{jk}v_k = \rho\lambda v_j .
+\]
+(\texttt{eigenvector\_ratio\_le\_of\_entry\_ratio}.) Applied to the signed-positive maximal spectral
+column $v=\mathrm{sign}\cdot(\texttt{changeOfBasis}\cdot\texttt{maxEigenIndex})$ -- an eigenvector by
+\texttt{mulVec\_signedColumn} with $\lambda_\ast>0$ by \texttt{eigenvalue\_pos\_maxEigenIndex} -- this
+gives Perron-column flatness (\texttt{signedColumn\_ratio\_le\_of\_entry\_ratio}), with the layer
+specialization \texttt{finiteTransverseHermitian\_signedColumn\_ratio\_le\_of\_entry\_ratio} for
+$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file \texttt{LayerPerronFlatness.lean}). The remaining P5
+step is to exhibit such a $\rho(\beta J)$ at high temperature, uniform in the transverse box radius.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
