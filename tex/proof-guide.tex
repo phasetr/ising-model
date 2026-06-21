@@ -18452,6 +18452,27 @@ volume-uniform Mayer-series representation of the polymer free energy, the input
 infinite-volume free-energy analyticity.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
 pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Volume-uniform per-site lattice free-energy bound (\S18.6, Issue~\#4149).}
+PR-D1 composes the per-site-KP Mayer identity (PR-C) with the volume-uniform Mayer bound
+(\(\mathbb Z^d\)-uniform per-site bound) into a \emph{box-independent} bound on the
+cluster-expansion part of the lattice free energy
+(\texttt{ClusterExpansion/MayerCore/LatticeFreeEnergyKPBound.lean}).
+\(\texttt{latticeGraph\_freeEnergy\_deviation\_le\_kpBound}\) (\(0\le J\), \(0<\beta\), per-site KP
+at \(2d\)/\(T\), \(\tanh\beta J<T\)):
+\[
+  \bigl|\,\texttt{freeEnergy}\,(\mathrm{inducedGraph}\,(\mathrm{latticeGraph}\,d)\,\Lambda)\,
+    \langle J,0,\beta\rangle-\bigl(\log2+\tfrac{|E|}{|\Lambda|}\log\cosh(\beta J)\bigr)\bigr|
+  \le\texttt{kpBound}\,(2d)\,(\tanh\beta J).
+\]
+\(\texttt{freeEnergy\_eq\_polymerFreeEnergy}\) isolates the deviation as
+\(\texttt{polymerFreeEnergy}\,G\,(\tanh\beta J)/|\Lambda|\); the per-site-KP identity (PR-C, with the
+actual \(\mathrm{maxDegree}\le2d\) KP hypotheses discharged from the \(2d\) ones by
+\(\texttt{kpRegion\_downward\_closed}\)) rewrites it as \(\sum'_n\texttt{mayerExpansionTerm}\); the
+\(n=0\) term drops (\(\texttt{mayerExpansionTerm\_zero}\)), \(\texttt{norm\_tsum\_le\_tsum\_norm}\)
+gives \(|\sum'|\le\sum'|\cdot|\), and the \(\mathbb Z^d\) per-site bound closes it.  The RHS depends
+only on \(d\) and the temperature --- the volume-uniform input for the \S18.6 infinite-volume coupling
+analyticity.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
