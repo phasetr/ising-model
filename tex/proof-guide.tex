@@ -2378,6 +2378,22 @@ of the horizontal flip, so both ray-parity flips are now characterised by $B$-me
 $\texttt{fixedRayRegion}$ and $\mathrm{cutEdges}\,S = B$ remain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
+\subsection*{The fixed-ray region realises an even edge set as a cut
+  (\texttt{Peierls/FixedRayRegion.lean})}
+
+\par\noindent\textbf{Role:} The finite-grid mod-2 planar duality $\mathrm{cutEdges}\,S = B$, the core
+of the discrete-Stokes step.  $\texttt{fixedRayRegion}\,\Lambda\,B$ collects the vertices whose
+rightward ray crosses the ambient image of $B$ an odd number of times.  Across a box edge, region
+membership flips iff the edge is in $B$ ($\texttt{fixedRayRegion\_flip\_iff\_mem\_of\_adj}$): the four
+axis directions are the horizontal and vertical ray-parity flips, and the box/ambient membership
+bridge $\texttt{mem\_image\_val\_pair\_iff}$ uses injectivity of $\mathrm{Sym2.map}\,\mathrm{val}$.
+Hence $\mathrm{cutEdges}(\mathrm{inducedGraph}\,\Lambda)(\texttt{fixedRayRegion}\,\Lambda\,B) = B$
+($\texttt{cutEdges\_fixedRayRegion\_eq\_of\_square\_even}$), with the $\texttt{hSquare}$ hypothesis
+supplied from the box dual-incidence ($\texttt{image\_val\_square\_even\_of\_box\_dualIncident\_even}$).
+Combined with $\texttt{even\_cutCrossings\_iff}$ for closed walks, this will feed the next assembly
+producing the discrete-Stokes parity $\texttt{hStokes}$ the separation core needs.
+Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
+
 \subsection*{Hole-filled droplet region (\texttt{Peierls/FilledRegion.lean})}
 
 \par\noindent\textbf{Role:} A connected droplet $S$ may have holes, making $\mathrm{cut}(S)$ a
