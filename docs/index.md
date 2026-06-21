@@ -2053,14 +2053,17 @@ formalized**, per the full inventory above:
    matrix. The fixed-width `K2`/two-site strip case is unconditional
    (`TwoSiteInteractingOpenStripDecay.lean`, PRs #4061-#4064,
    #4142-#4147); the `d ≥ 2` transverse-volume-uniform spectral
-   gap that the general continuity would need is **proven obstructed**
-   (PR #4081: Doob/Dobrushin cross-ratio site-additivity drives the
-   Dobrushin coefficient `δ → 1` with the transverse volume).
+   gap that the general continuity would need is **not reachable by the
+   global Doob/Dobrushin/Hilbert-diameter route**: PR #4081 shows the
+   cross-ratio is site-additive, so that route drives the Dobrushin
+   coefficient `δ → 1` with the transverse volume; a uniform estimate
+   would have to exploit the site-tensorized structure instead.
 6. *(Resolved.)* **Chapter 18** cluster expansion machinery: the Mayer
    expansion identity, per-site Kotecký-Preiss convergence at small
    `tanh(βJ)`, and the resulting infinite-volume free-energy/coupling
    analyticity are formalized — see the §18.4–§18.6 rows above
-   (Issues #3954, #4149; PRs #3987–#3998, #4150–#4160).
+   (Issues #3954, #4149; KP ingredients and Mayer-series convergence
+   in PRs #4085–#4148, coupling analyticity in #4150–#4160).
 7. **§20.8 3D Ising roughening** — specialized interface analysis.
 
 ## References
