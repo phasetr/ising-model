@@ -18473,6 +18473,25 @@ gives \(|\sum'|\le\sum'|\cdot|\), and the \(\mathbb Z^d\) per-site bound closes 
 only on \(d\) and the temperature --- the volume-uniform input for the \S18.6 infinite-volume coupling
 analyticity.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{Infinite-volume real-axis KP free-energy bound (\S18.6, Issue~\#4149).}
+PR-D2.1 passes the volume-uniform per-site bound to the cubic thermodynamic limit
+(\texttt{ClusterExpansion/MayerCore/LatticeFreeEnergyInfiniteKPBound.lean}).  The cubic
+edge-density limit \(|E_n|/|B_n|\to d\)
+(\(\texttt{tendsto\_inducedLatticeGraph\_cubicBox\_edgeDensity}\)) is a squeeze: upper \(\le d\)
+(from \(2|E|=\sum_v\deg v\le 2d|V|\)) and lower from interior vertices having full degree \(2d\)
+(an interior vertex's \(2d\) neighbours \(v\pm e_j\) all stay in the box), giving
+\(2|E|\ge 2d\,|B_n|\) at stage \(n{+}1\) with box ratio \((2n+1)^d/(2n+3)^d\to1\).  The stagewise
+deviation (bounded by \(\texttt{kpBound}\) via PR-D1) converges --- by the cubic free-energy limit
+\(\texttt{freeEnergyAlongExhaustion\_latticeGraph\_cubicExhaustion\_tendsto}\) and the edge-density
+limit --- to \(\texttt{freeEnergyInfinite}-(\log2+d\log\cosh\beta J)\), so \(\texttt{le\_of\_tendsto}\)
+transfers the bound:
+\[
+  \bigl|\texttt{freeEnergyInfinite}\,(\mathrm{latticeGraph}\,d)\,(\mathrm{cubicExhaustion}\,d)\,
+    \langle J,0,\beta\rangle-(\log2+d\log\cosh\beta J)\bigr|\le\texttt{kpBound}\,(2d)\,(\tanh\beta J).
+\]
+The real-axis target for the \S18.6 infinite-volume coupling analyticity (PR-D2.2\(+\)).
+Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
