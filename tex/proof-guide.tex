@@ -7482,6 +7482,26 @@ The layer wrapper
 \texttt{layerSymmetricTransfer\_subdominantRatio\_maxEigenIndex} exposes this
 choice for the Hermitian balanced transfer matrix.
 
+\paragraph{Top-deflated Gershgorin spectral gap (\S17.1, Issue~\#3511, P5 foundation).}
+For a transverse-volume-\emph{uniform} subdominant ratio one cannot use the all-vector Gershgorin
+envelope $\max|\mathrm{diag}|+\mathrm{offMass}$ of the balanced transfer matrix
+$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$: that envelope is an \emph{upper} bound on the spectral
+radius $=\lambda_\ast$, so requiring it to be $\le\theta\lambda_\ast$ forces $\theta\ge1$
+(circular). The non-circular route deflates the maximal eigenpair first. The top-deflated matrix
+$M-\lambda_\ast\,w\,w^{\mathsf T}$ (with $w$ the Perron column) has the maximal eigenvalue removed,
+so its Gershgorin envelope can be strictly below $\lambda_\ast$. The file
+\texttt{LayerQuadraticFormDeflationGap.lean} records the symmetry
+$M^{\mathsf T}=M$ (\texttt{layerSymmetricTransferMatrix\_transpose\_self}), the explicit deflated
+entries $M_{ij}-\lambda_\ast w_i w_j$
+(\texttt{layerSymmetricTransfer\_topDeflation\_apply}/\texttt{\_diag}/\texttt{\_offDiagAbsRowSum}),
+and the route wrappers
+\texttt{finiteTransverseHermitianExplicitRatio\_le\_of\_topDeflatedGershgorin} and its cubic
+specialization, reducing the explicit subdominant ratio to a top-deflated Gershgorin envelope
+$\le\theta\lambda_\ast$ via
+\texttt{subdominantAbsRatio\_maxEigenIndex\_le\_of\_topDeflatedGershgorin\_le}. The remaining
+\S17.1 core math (the next PR) is the high-temperature, transverse-volume-uniform bound discharging
+this hypothesis with an explicit $\theta(\beta J)<1$ independent of the transverse box radius.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
