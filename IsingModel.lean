@@ -304,6 +304,7 @@ import IsingModel.ClusterExpansion.MayerCore.TermsComplex
 import IsingModel.ClusterExpansion.MayerCore.TermsComplexHolomorphic
 import IsingModel.ClusterExpansion.MayerCore.MayerIdentityPersiteKP
 import IsingModel.ClusterExpansion.MayerCore.LatticeFreeEnergyKPBound
+import IsingModel.ClusterExpansion.MayerCore.LatticeFreeEnergyInfiniteKPBound
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower
