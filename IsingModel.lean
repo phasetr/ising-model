@@ -449,6 +449,7 @@ import IsingModel.Dobrushin.SingleSiteConditional
 import IsingModel.Dobrushin.SingleSiteConditionalProb
 import IsingModel.Dobrushin.SingleSiteConditionalDistribution
 import IsingModel.Dobrushin.SingleSiteInfluenceMatrix
+import IsingModel.Dobrushin.SingleSiteObservableComparison
 import IsingModel.Dobrushin.DobrushinHighTemp
 import IsingModel.Dobrushin.InfluenceMatrixDecay
 import IsingModel.Dobrushin.InfluenceMatrixResolvent
