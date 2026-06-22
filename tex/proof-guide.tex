@@ -30946,6 +30946,31 @@ infinite-volume Gibbs-state uniqueness lift remains research-level, since liftin
 non-\texttt{Fintype} lattice loses the $\texttt{Fintype.card}\,\iota$ factor.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii, Ch.~8.
 
+\subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
+
+The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
+analyticity is supplied by a theorem of \emph{pure complex analysis} --- the Vitali--Porter
+convergence theorem --- which Mathlib does not provide.  Per the project scope policy, such a
+function-theory result is \emph{not} the responsibility of a lattice-Ising-model library: it is
+\textbf{isolated as a deliberately-unproven \texttt{axiom}} in
+\texttt{IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean}, namely
+\[
+  \texttt{vitaliPorter\_tendstoLocallyUniformlyOn} :
+\]
+for $U \subseteq \mathbb{C}$ open and preconnected and $F : \mathbb{N} \to \mathbb{C} \to \mathbb{C}$
+with each $F_n$ holomorphic on $U$, the family locally uniformly bounded on $U$, and $F_n$ converging
+pointwise on a subset $S \subseteq U$ with an accumulation point $z_0 \in U$, there is a holomorphic
+$f$ on $U$ with $F_n \to f$ locally uniformly on $U$ and $f = g$ on $S$.  This is the project's
+\emph{single} non-Ising axiom.  Its consumer
+$\texttt{correlationComplexAlongExhaustion\_analytic\_limit\_of\_volume\_uniform}$
+(\texttt{AmbientComplexAnalyticity/Vitali/CorrelationVitaliPorter.lean}) applies it to the per-stage
+complex correlations: the per-stage holomorphicity comes from the partition non-vanishing (\#4232),
+the pointwise convergence on the real axis from
+$\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$, and the locally-uniform bound is the
+Ising-side cluster-expansion input proven in later PRs.  The Ising content feeding the axiom is in
+scope and is proven; only the axiom itself is left unproven.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.6--18.7; Conway, \emph{Functions of One Complex Variable I}, VII \S2--3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
