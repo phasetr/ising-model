@@ -7724,6 +7724,22 @@ $R_{xy}=\delta_{xy}+\sum_z C_{xz}R_{zy}$ — split off the $n=0$ identity term
 finite $z$-sum with the series. The Neumann series solves $(I-C)R=I$; the matrix-inverse identity
 $R=(I-C)^{-1}$ and the Dobrushin comparison theorem itself are not yet formalized.
 
+\paragraph{Single-site conditional expectation of a general observable (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/SingleSiteObservableComparison.lean}. For the free site $\{x\}$ with the rest
+frozen to $\eta$, the boundary-condition Gibbs expectation of \emph{any} observable $f$ is the
+two-point convex combination
+$\langle f\rangle^\eta_{\{x\}}=p\,f(\eta[x\mapsto\uparrow])+(1-p)\,f(\eta[x\mapsto\downarrow])$ with
+$p=\texttt{singleSiteUpProbBC}\in[0,1]$ (\texttt{gibbsExpectationBC\_singleton\_eq}; arbitrary real
+$\beta,J,h$, via the collapse \texttt{sum\_F\_boltzmannBC\_singleton} and the up/down-probability
+identities). For an observable local at $x$ (\texttt{LocalAtSite}: $f$ depends only on $\sigma_x$),
+$0\le\beta J$, and boundary conditions agreeing off $\{y\}$, the difference factors as
+$\langle f\rangle^\eta-\langle f\rangle^{\eta'}=(p(\eta)-p(\eta'))(f_\uparrow-f_\downarrow)$, giving
+$|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
+\tanh(\beta J)\,|f(\eta[x\mapsto\uparrow])-f(\eta[x\mapsto\downarrow])|$
+(\texttt{gibbsExpectationBC\_singleton\_localObs\_dist\_le}) — the single-site influence bound lifted
+from the up-indicator to a general local observable, the per-site step of the comparison theorem. The
+full multi-site Dobrushin comparison theorem (telescoping over sites) is not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
