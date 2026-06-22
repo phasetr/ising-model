@@ -7865,6 +7865,21 @@ f+C_{xz}\operatorname{osc}_x f$, exactly the \texttt{heatBathOscStep}. Second PR
 assembly (Section~A of \#4214); next is the oscillation-vector fixed point $d_x\le b_x+\sum_y
 C_{xy}d_y$ and the capstone. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{The Dobrushin boundary weight and oscillation Lyapunov bound (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/BoundaryWeight.lean}. The boundary fixed-point structure underlying the comparison
+bound, independent of the Gibbs measure. The \emph{boundary weight} of the differing set $S$ is the
+resolvent harmonic weight $w_x=\sum_{y\in S}R_{xy}$. Summing the resolvent fixed point $R=I+CR$ over
+$S$ gives the boundary fixed point $w_x=\mathbf 1_{x\in S}+\sum_z C_{xz}w_z$
+(\texttt{dobrushinBoundaryWeight\_fixed\_point}), whence superharmonicity $\sum_z C_{xz}w_z\le w_x$
+and the indicator domination $\mathbf 1_{x\in S}\le w_x$. The weighted total $\sum_y v_y w_y$ is a
+\emph{Lyapunov function} of the oscillation-vector dynamics: one heat-bath step does not increase it
+(\texttt{heatBathOscStep\_boundaryWeight\_sum\_le}, by superharmonicity, $C_{xx}=0$ and $v_x\ge0$),
+hence over any sweep the weighted total is non-increasing. Combined with $\mathbf 1_{\cdot\in S}\le w$
+this gives the boundary-sum bound $\sum_{y\in S}(\texttt{heatBathListOscBound}\;xs\;v)_y\le\sum_x
+v_x w_x$ (\texttt{heatBathListOscBound\_boundary\_sum\_le\_boundaryWeight}). Third PR of the
+comparison assembly (Section~A of \#4214); the capstone connects this to the Gibbs measure and takes
+the sweep limit. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
