@@ -30971,6 +30971,28 @@ Ising-side cluster-expansion input proven in later PRs.  The Ising content feedi
 scope and is proven; only the axiom itself is left unproven.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.6--18.7; Conway, \emph{Functions of One Complex Variable I}, VII \S2--3.
 
+\subsection{Real-axis application: correlation analyticity from a volume-uniform bound
+(Issue \#4230 PR 4)}
+
+The \emph{Ising-side} step that feeds the axiom is fully proven in
+\texttt{AmbientComplexAnalyticity/Vitali/CorrelationRealAxisVitali.lean}.
+$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ shows that, for a
+ferromagnetic $p$ and an open preconnected $U \ni (p.\beta : \mathbb{C})$ on which the
+along-exhaustion complex partition function is nonvanishing (\texttt{hZ}) and the per-stage complex
+correlations are volume-uniformly bounded (\texttt{hbdd}), the per-stage correlations converge
+locally uniformly on $U$ to a holomorphic $f$ with $f(p.\beta) = \uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\,A)$.
+The proof constructs a positive real segment $S = \texttt{ofReal}\,''\,(p.\beta - \delta,\, p.\beta +
+\delta) \subseteq U$ (half-width $\delta = \min(\varepsilon, p.\beta)/2$ from
+$\texttt{Metric.isOpen\_iff}$); each interior point is a ferromagnetic real parameter (so $t > 0$),
+whence $\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$ gives pointwise convergence on
+$S$ to $\uparrow\texttt{correlationInfinite}$, and $(p.\beta : \mathbb{C})$ is an accumulation point
+of $S$ ($\texttt{accPt\_iff\_nhds}$, $\texttt{Complex.isometry\_ofReal.dist\_eq}$,
+$\texttt{Complex.ofReal\_inj}$).  The Vitali--Porter consumer then yields the locally-uniform
+holomorphic limit, identified at $p.\beta$ via the per-stage-holomorphicity assembly.  $\texttt{\#print
+axioms}$ lists only the isolated function-theory axiom; all Ising content is proven.  The remaining
+inputs $\texttt{hZ}$, $\texttt{hbdd}$ are Ising-side and are discharged from a high-temperature
+cluster-expansion bound in a follow-up PR.  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
