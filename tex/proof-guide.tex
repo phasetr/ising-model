@@ -7940,6 +7940,20 @@ interior part vanishes in the sweep limit ($\alpha^n\to0$), discharged by
 \texttt{ge\_of\_tendsto'}. References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii,
 \emph{Gibbs Measures}, Ch.~8.
 
+\paragraph{Dobrushin locality of single-site observables (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/Locality.lean}. For $f$ local at a single site $x_0$, the comparison sum collapses
+to the $x_0$ row ($\operatorname{osc}_x(f)=0$ for $x\ne x_0$, since changing the spin at $x$ leaves
+$\sigma_{x_0}$ unchanged), so
+\[
+  |\langle f\rangle^\eta_\Lambda-\langle f\rangle^{\eta'}_\Lambda|
+    \le\operatorname{osc}_{x_0}(f)\sum_{y\in S}R_{x_0 y}
+    \le\operatorname{osc}_{x_0}(f)\,(1-\alpha)^{-1}
+\]
+($\texttt{gibbsExpectationBC\_localObs\_dist\_le\_resolvent\_row}$ and
+$\texttt{\dots\_totalInfluence}$), the uniform Dobrushin locality estimate, the boundary
+sensitivity bounded by the total-influence factor $(1-\alpha)^{-1}$. Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
