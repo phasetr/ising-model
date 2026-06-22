@@ -19486,7 +19486,15 @@ and on the whole high-temperature interval
 \(\texttt{\dots\_analyticOnNhd\_unitCoupling\_of\_activity}\)) from the two thresholds
 \((2d)^2 eR<\tfrac16\), \((2d)^2 eT<\tfrac16\).  The derived-regularity corollaries (continuity,
 \(\texttt{contDiffOn}\), energy density, specific heat) and the coupling-direction analyticity still
-expose the KP pair --- a mechanical follow-up.  Reference: Glimm--Jaffe, 2nd ed.,
+expose the KP pair.  These are discharged in the companion file
+\texttt{ClusterExpansion/HighTempKoteckyPreissRegularity.lean} (9 wrappers): the \(\beta\)-direction
+regularity corollaries (continuity, \(\texttt{contDiffOn}\), internal energy density
+\(\partial_\beta f\), specific heat \(\partial_\beta^2 f\) --- no singularity) and the
+coupling-direction (\(J\)) analyticity family (pointwise, whole coupling interval, continuity,
+\(\texttt{contDiffOn}\), bond energy density \(\partial_J f\)), each a mechanical
+\(\texttt{kp\_tail\_conditions\_of\_lt}\) wrapper.  After these, every public \S18.6 high-temperature
+analyticity/regularity statement is free of the explicit \(\text{hkp}/\text{h}\rho\) hypotheses,
+depending only on \((2d)^2 e\,\{R,T\}<\tfrac16\).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.6, pp.~332--340; Friedli--Velenik \S5.4 (Theorem 5.4, Kotecky--Preiss).
 
 \paragraph{Volume-uniform per-site lattice free-energy bound (\S18.6, Issue~\#4149).}
