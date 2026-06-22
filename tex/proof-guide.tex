@@ -31019,4 +31019,27 @@ uniform convergence of the per-stage complex correlations on a high-temperature 
 volume-uniform cluster-expansion (Montel) bound --- is the genuine research-level core, deferred to
 follow-up PRs (Issue~\#4230).  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
+\subsection{Per-stage holomorphicity from volume-uniform partition non-vanishing
+(Issue \#4230 PR 2)}
+
+The conditional Vitali bridge above takes the per-stage differentiability $\texttt{hF}$ as a
+hypothesis.  Module \texttt{AmbientComplexAnalyticity/Vitali/CorrelationPerStageHolomorphic.lean}
+discharges it from a non-vanishing of the complex partition function.  Since
+$\texttt{correlationComplex}$ is analytic in $\beta$ wherever the complex partition function is
+nonzero ($\texttt{correlationComplex\_analyticAt\_beta}$),
+$\texttt{correlationComplexAlongExhaustion\_differentiableOn\_of\_ne\_zero}$ shows: on any open set
+$U$ where $\texttt{partitionFunctionComplexAlongExhaustion}\,G\,\Lambda\,J\,h\,\beta\,n \ne 0$ for
+every stage $n$ and every $\beta \in U$, the per-stage correlation
+$\beta \mapsto \texttt{correlationComplexAlongExhaustion}\,G\,\Lambda\,A\,J\,h\,\beta\,n$ is
+holomorphic on $U$ (stage $n$ being $\texttt{correlationComplex}$ on the induced subgraph once
+$A \subseteq \Lambda.\mathrm{volume}\,n$, and the constant $0$ before).  The volume-uniform
+non-vanishing on a high-temperature disc is available from
+\texttt{AmbientComplexAnalyticity/VolumeUniformHZ.lean} under the cluster-expansion bound
+hypotheses.  Feeding this into the conditional bridge,
+$\texttt{correlationComplexAlongExhaustion\_vitali\_identified\_at\_real\_of\_ne\_zero}$ obtains the
+holomorphicity-and-real-identification conclusion from only the partition non-vanishing and the
+locally uniform convergence $\texttt{hconv}$ --- the latter (the Montel / volume-uniform input)
+being the genuine research-level core deferred to follow-up PRs.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.6--18.7.
+
 \end{document}

@@ -453,6 +453,7 @@ import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSide
 import IsingModel.AmbientComplexAnalyticity.Basic.BranchBounds
 import IsingModel.AmbientComplexAnalyticity.Vitali.BranchUniformBounds
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationBridge
+import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationPerStageHolomorphic
 import IsingModel.ComplexAnalyticity.ClosureCompactness
 import IsingModel.Dobrushin.SingleSiteInfluence
 import IsingModel.Dobrushin.SingleSiteConditional
