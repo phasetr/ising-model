@@ -7740,6 +7740,28 @@ $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
 from the up-indicator to a general local observable, the per-site step of the comparison theorem. The
 full multi-site Dobrushin comparison theorem (telescoping over sites) is not yet formalized.
 
+\paragraph{Heat-bath single-site invariance (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/HeatBathInvariance.lean}. Define the single-site heat-bath operator
+$K_x f(\sigma)=\langle f\rangle^\sigma_{\{x\}}$ (\texttt{heatBath}; the single-site conditional
+expectation at $x$ with the rest of $\sigma$ as boundary). The finite-volume boundary-condition Gibbs
+measure is \emph{invariant} under $K_x$ for every free site $x\in\Lambda$:
+$\langle K_x f\rangle^\eta_\Lambda=\langle f\rangle^\eta_\Lambda$
+(\texttt{gibbsExpectationBC\_heatBath\_invariant}) — re-sampling the spin at $x$ from its conditional
+law does not change the measure (finite-volume heat-bath/DLR consistency). The proof rests on the
+$\{x\}$-coordinate split
+\[
+  \sum_\sigma \mathbf 1[\text{agreesOff }\Lambda\,\eta]\,g
+    =\sum_\tau \mathbf 1[\text{agreesOff }(\Lambda\setminus\{x\})\,\eta]\,
+      (g(\tau[x\mapsto\uparrow])+g(\tau[x\mapsto\downarrow]))
+\]
+(\texttt{sum\_indicator\_agreesOff\_erase}, via \texttt{Finset.sum\_bij'} onto a finite product) and
+on $K_x f$ ignoring the boundary value at $x$;
+it reduces to the per-coordinate identity
+$K_x f(\tau)\,(w(\tau\!\uparrow)+w(\tau\!\downarrow))
+=f(\tau\!\uparrow)w(\tau\!\uparrow)+f(\tau\!\downarrow)w(\tau\!\downarrow)$. This is the first
+telescoping step; the full multi-site Dobrushin comparison theorem (iterating $K_x$ over $\Lambda$
+with the influence matrix) is not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
