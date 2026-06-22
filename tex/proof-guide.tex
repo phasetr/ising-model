@@ -19451,6 +19451,27 @@ volume-uniform per-site-KP Mayer identity \(\to\) free-energy bounds \(\to\) inf
 real-axis bound \(\to\) the Montel/Vitali holomorphic limit \(\to\) this analyticity capstone.
 Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335ff.; Friedli--Velenik \S5.4, \S5.7.
 
+\paragraph{High-temperature interval analyticity and absence of phase transition (\S18.6).}
+File \texttt{ClusterExpansion/MayerCore/CubicMayerHighTempIntervalAnalyticity.lean}. The capstone
+above is stated at a single point \(\beta\); since \(\beta<\operatorname{artanh}T/J\) is exactly
+\(\tanh(\beta J)<T\) (using that \(\tanh\) is strictly monotone and
+\(\tanh(\operatorname{artanh}T)=T\)), it upgrades to analyticity on the whole high-temperature
+interval:
+\[
+  \texttt{AnalyticOnNhd}\,\mathbb R\,(\beta'\mapsto\texttt{freeEnergyInfinite}\dots\langle
+    J,0,\beta'\rangle)\,(\,(0,\ \operatorname{artanh}T/J)\,),
+\]
+\(\texttt{freeEnergyInfinite\_latticeGraph\_cubicExhaustion\_analyticOnNhd\_high\_temp}\) (with a
+\(J=1\) wrapper on \((0,\operatorname{artanh}T)\)). The physical consequences read off from the
+analytic calculus: the free-energy density is \(C^\infty\) (indeed \(C^\omega\)) on the interval
+(\(\texttt{\dots contDiffOn\_high\_temp}\), continuity \(\texttt{\dots continuousOn\_high\_temp}\)),
+and the internal energy density \(\partial f/\partial\beta\)
+(\(\texttt{\dots energyDensity\_analyticOnNhd\_high\_temp}\)) and specific heat
+\(\partial^2 f/\partial\beta^2\) (\(\texttt{\dots specificHeat\_analyticOnNhd\_high\_temp}\)) are
+real-analytic. Hence the infinite-volume thermodynamic functions are real-analytic throughout the
+high-temperature phase: \textbf{no phase transition at high temperature}. Reference: Glimm--Jaffe,
+2nd ed., \S18.6.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
