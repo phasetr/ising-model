@@ -72,7 +72,7 @@ omit [DecidableRel G.Adj] in
 /-- **Collapse of a single-site `{x}`-conditioned weighted sum**: for any observable `F`, the
 boundary-condition weighted sum over `{x}`-agreeing configurations reduces to the two single-site
 updates. A reusable bridge for the up/down/magnetization conditional formulas. -/
-private theorem sum_F_boltzmannBC_singleton (β J h : ℝ) (x : ι) (η : Config ι)
+theorem sum_F_boltzmannBC_singleton (β J h : ℝ) (x : ι) (η : Config ι)
     (F : Config ι → ℝ) :
     ∑ σ : Config ι, F σ * boltzmannWeightBC G β (fun _ => J) h {x} η σ
       = F (Function.update η x Spin.up)
