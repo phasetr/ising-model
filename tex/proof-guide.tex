@@ -7842,6 +7842,28 @@ the finite prefactor); the transverse-volume-uniform prefactor condition is a se
 infinite-volume or volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd ed., \S17.1,
 pp.~304--306.
 
+\paragraph{Quantitative (explicit-ratio) form of the decay (\S17.1).} File
+\texttt{TransferMatrix/LayerPerronExplicitRatioSpinDecay.lean}. The rate $\theta$ above is the
+\emph{opaque} \texttt{Classical.choose} witness \texttt{subdominantRatio\_maxEigenIndex}, which only
+satisfies $\theta<1$ and so cannot consume the quantitative high-temperature gap estimates; those all
+bound the \emph{explicit} maximum ratio \texttt{subdominantAbsRatio\_maxEigenIndex}
+$=\max_{i\ne\mathrm{top}}|\lambda_i|/\lambda_{\mathrm{top}}$. Since the balanced certificate
+constructor accepts an arbitrary rate together with the per-eigenvalue bound
+$\forall i\ne\mathrm{top},\ |\lambda_i|\le\theta\,\lambda_{\mathrm{top}}$, the decay is re-expressed
+quantitatively: \texttt{layerSpinPerronGapCertificate} and
+\texttt{layerSpinTwoPoint\_abs\_le\_perron\_of\_eigenvalue\_abs\_le} take \emph{any}
+$\theta\in[0,1)$ bounding the non-dominant eigenvalues with
+$(\,\mathrm{card}(\texttt{LayerState}\,S)-1\,)\,\theta<1$ and give $C\,\theta^{\min(a,b)}$. The rate is
+then discharged by the explicit ratio (\texttt{layerSpinPerronExplicitRatioCertificate}), by a
+top-orthogonal quadratic-form gap $|\langle v,Mv\rangle|\le\theta\,\lambda_{\mathrm{top}}\|v\|^2$
+(\texttt{layerSpinTwoPoint\_abs\_le\_perron\_of\_quadraticForm\_gap}), or by the circularity-free
+top-deflated Gershgorin envelope
+$\mathrm{maxAbsDiag}(M_{\mathrm{def}})+\mathrm{offMass}(M_{\mathrm{def}})\le
+\theta\,\lambda_{\mathrm{top}}$
+(\texttt{layerSpinTwoPoint\_abs\_le\_perron\_of\_topDeflatedGershgorin}), the high-temperature
+mechanism of \S17.1. The prefactor condition and route hypotheses remain explicit; no
+volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
