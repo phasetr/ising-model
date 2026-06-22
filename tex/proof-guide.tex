@@ -7820,6 +7820,26 @@ $x$, $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
 (\texttt{gibbsExpectationBC\_singleton\_localObs\_agreesOff\_dist\_le}). This is $b_x$ for the
 comparison assembly (final step, not yet formalized).
 
+\paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
+\texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
+Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
+unconditional: it constructs the dominant signed-positive Perron column and gives the strict spectral
+gap $\theta<1$. This is wired through to the finite-volume spin two-point decay:
+\texttt{layerSpinPerronCertificate} builds the balanced min-separation spectral-gap certificate for
+the layer spin observable with every spectral hypothesis discharged by Perron--Frobenius (dominant
+positive simple eigenvalue, strict gap, and the flip-even marked-channel cancellation under global
+spin-flip invariance of the weights), leaving only the finite prefactor smallness
+\[
+  (\,\mathrm{card}(\texttt{LayerState}\,S)-1\,)\,\theta<1 .
+\]
+Then \texttt{layerSpinTwoPoint\_abs\_le\_perron} gives
+\[
+  |\langle\sigma_x\sigma_x\rangle^{(a,b)}|\le C\,\theta^{\min(a,b)}
+\]
+with $\theta$ the Perron subdominant ratio. This is the finite-volume realization (modulo the finite
+prefactor); the transverse-volume-uniform prefactor condition is a separate input and no
+infinite-volume or volume-uniform decay is claimed.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
