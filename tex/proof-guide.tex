@@ -19463,6 +19463,32 @@ volume-uniform Mayer-series representation of the polymer free energy, the input
 infinite-volume free-energy analyticity.  Reference: Glimm--Jaffe, 2nd ed., \S18.5--\S18.6,
 pp.~335--340; Friedli--Velenik \S5.4.
 
+\paragraph{High-temperature discharge of the Kotecky--Preiss conditions (\S18.5/\S18.6,
+Issue~\#4214).}
+File \texttt{ClusterExpansion/HighTempKoteckyPreiss.lean}.  The \S18.5 Mayer-series convergence and
+\S18.6 free-energy analyticity are stated under the two Kotecky--Preiss tail conditions
+\(\text{(hkp)}\ \Delta^2 e|t|<1\) and \(\text{(h}\rho\text{)}\ 4\Delta^2 e|t|/(1-\Delta^2 e|t|)^2<1\)
+(\(\Delta=\mathrm{maxDegree}\), \(t\) the activity, \(e=\exp1\)).
+\(\texttt{kp\_tail\_conditions\_of\_lt}\) discharges \emph{both} from the single clean threshold
+\(r=\Delta^2 e|t|<\tfrac16\): indeed \(r<\tfrac16<1\) gives (hkp), and
+\(4r/(1-r)^2<1\Leftrightarrow 4r<(1-r)^2\Leftrightarrow 0<(1-6r)+r^2\), which holds since
+\(1-6r>0\) and \(r^2\ge0\).  The threshold \(\tfrac16\approx0.1667\) is a clean sufficient bound just
+below the tight value \(3-2\sqrt2\approx0.1716\), avoiding \(\sqrt2\).  Feeding the discharged pair
+into the conditional theorems gives unconditional (in the KP region) forms: \S18.5 summability and
+partial-sum convergence (\(\texttt{summable\_mayerExpansionTerm\_of\_activity\_lt}\),
+\(\texttt{tendsto\_mayerPartialSum\_of\_activity\_lt}\)); the per-site and \(\mathbb Z^d\) cubic
+per-site bounds (\(\texttt{tsum\_abs\_mayerExpansionTerm\_succ\_div\_card\_le\_of\_activity\_lt}\),
+\(\texttt{latticeGraph\_kp\_tsum\_per\_site\_of\_activity\_lt}\) from \((2d)^2 e|t|<\tfrac16\)); and
+the \S18.6 free-energy analyticity, pointwise
+(\(\texttt{freeEnergyInfinite\_latticeGraph\_cubicExhaustion\_analyticAt\_beta\_h\_zero\_of\_activity}\))
+and on the whole high-temperature interval
+(\(\texttt{\dots\_analyticOnNhd\_high\_temp\_of\_activity}\),
+\(\texttt{\dots\_analyticOnNhd\_unitCoupling\_of\_activity}\)) from the two thresholds
+\((2d)^2 eR<\tfrac16\), \((2d)^2 eT<\tfrac16\).  The derived-regularity corollaries (continuity,
+\(\texttt{contDiffOn}\), energy density, specific heat) and the coupling-direction analyticity still
+expose the KP pair --- a mechanical follow-up.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--\S18.6, pp.~332--336; Friedli--Velenik \S5.4 (Theorem 5.4, Kotecky--Preiss).
+
 \paragraph{Volume-uniform per-site lattice free-energy bound (\S18.6, Issue~\#4149).}
 PR-D1 composes the per-site-KP Mayer identity (PR-C) with the volume-uniform Mayer bound
 (\(\mathbb Z^d\)-uniform per-site bound) into a \emph{box-independent} bound on the
