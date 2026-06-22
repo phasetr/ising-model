@@ -7789,6 +7789,23 @@ for non-neighbours). At $y=x$ the oscillation vanishes (\texttt{siteOsc\_heatBat
 per-step inequality $d(K_x f)\le d(f)+C\cdot\text{column}$; iterating it over $\Lambda$ and feeding the
 resolvent $R=\sum_n C^n$ gives the comparison theorem (later PRs, not yet formalized).
 
+\paragraph{Resolvent comparison inequality (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/ResolventComparison.lean}. The matrix-analytic core: a nonnegative vector $d$
+satisfying the one-step Dobrushin inequality $d_x\le b_x+\sum_y C_{xy}d_y$ is bounded by the Neumann
+resolvent, $d_x\le\sum_y\bigl(\sum_n (C^n)_{xy}\bigr)b_y$ (\texttt{vector\_le\_resolvent\_of\_le\_add\_mul},
+for a nonnegative $C$ with per-entry-summable powers and row sums $\sum_y (C^n)_{xy}\to 0$). The proof
+iterates into the finite Neumann partial bound
+\[
+  d_x\le\sum_y\Bigl(\sum_{k<n}(C^k)_{xy}\Bigr)b_y+\sum_y (C^n)_{xy}d_y
+\]
+(monotone in $n$, base $d_x\le d_x$), then $n\to\infty$: the first term $\to\sum_y R_{xy}b_y$, the
+tail $\sum_y (C^n)_{xy}d_y\to 0$ (squeezed by $(\sum_z d_z)\sum_y (C^n)_{xy}\to 0$). The Ising
+specialization
+(\texttt{dobrushin\_resolvent\_comparison}, $C=\texttt{isingInfluenceMatrix}$,
+$R=\texttt{dobrushinResolvent}$) holds for $0\le\beta J$, $\beta J\,\Delta(G)<1$. With the heat-bath
+telescoping (which produces $d\le b+Cd$ from a boundary-condition difference) this gives the
+comparison theorem (final assembly, not yet formalized).
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
