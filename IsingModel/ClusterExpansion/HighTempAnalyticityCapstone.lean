@@ -33,8 +33,8 @@ so it meets the high-temperature threshold of `kp_tail_conditions_of_lt`.
   `exists_high_temp_couplingEnergy_analyticOnNhd_J` — `∃ J₀ > 0`, analyticity of the free energy and
   the bond energy density (`∂_J f`) in the coupling on `(0, J₀)`.
 * `exists_high_temp_no_phase_transition`, `exists_high_temp_no_phase_transition_J` — the combined
-  headlines: a *single* explicit threshold makes the free energy and all its first/second
-  derivatives (energy density, specific heat / bond energy density) simultaneously real-analytic.
+  headlines: a *single* explicit threshold makes the free energy together with `∂_β f`, `∂_β² f`
+  (resp. `∂_J f`) simultaneously real-analytic.
 
 ## References
 
