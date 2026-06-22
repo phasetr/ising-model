@@ -7711,6 +7711,19 @@ $\texttt{isingTotalInfluence}\le(1-\Delta(G)\tanh(\beta J))^{-1}$
 $\sum_{x,y}((I-C)^{-1})_{xy}\operatorname{osc}_x(f)$ of the Dobrushin comparison theorem, which is
 not yet formalized.
 
+\paragraph{The Dobrushin resolvent matrix and its fixed point (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/DobrushinResolvent.lean}. The entry-wise Neumann series
+$\texttt{dobrushinResolvent}\;R_{xy}=\sum_n (C^n)_{xy}$ converges (each entry $\le$ the row sum
+$\le\alpha^n$, \texttt{isingInfluenceMatrix\_summable\_pow\_apply}). It is nonnegative, has row sums
+$\sum_y R_{xy}=\texttt{isingTotalInfluence}\,x$ (\texttt{dobrushinResolvent\_rowSum}, via
+\texttt{Summable.tsum\_finsetSum}) and diagonal $R_{xx}\ge 1$ (the $n=0$ term,
+\texttt{one\_le\_dobrushinResolvent\_diag}). The substantive result
+(\texttt{dobrushinResolvent\_fixed\_point}) is the resolvent equation $R=I+C\,R$, i.e.
+$R_{xy}=\delta_{xy}+\sum_z C_{xz}R_{zy}$ — split off the $n=0$ identity term
+(\texttt{Summable.tsum\_eq\_zero\_add}), write $C^{n+1}=C\,C^n$ (\texttt{pow\_succ'}), and swap the
+finite $z$-sum with the series. The Neumann series solves $(I-C)R=I$; the matrix-inverse identity
+$R=(I-C)^{-1}$ and the Dobrushin comparison theorem itself are not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
