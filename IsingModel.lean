@@ -364,6 +364,7 @@ import IsingModel.TransferMatrix.CubicLayerCylinder
 import IsingModel.TransferMatrix.LayerSpectral
 import IsingModel.TransferMatrix.LayerPerron
 import IsingModel.TransferMatrix.LayerPerronExistence
+import IsingModel.TransferMatrix.LayerPerronSpinDecay
 import IsingModel.TransferMatrix.LayerCardinalitySmallRatio
 import IsingModel.TransferMatrix.CubicLayerCardinalitySmallRatio
 import IsingModel.TransferMatrix.LayerSpectralWindowSmallRatio
