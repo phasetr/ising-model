@@ -30987,4 +30987,36 @@ route \emph{supersedes} the obstructed transfer-matrix gap, and the obstruction 
 longer an obstacle to the infinite-volume high-temperature theory.  Reference: Glimm--Jaffe, 2nd ed.,
 \S17.1, \S18.5--18.7.
 
+\section{Conditional Vitali assembly for the infinite-volume two-point correlation
+(GJ \S18.6--18.7, Issue \#4230 / \#4214 item D)}
+
+The along-exhaustion analogue of the free-energy Vitali bridge, for the \emph{two-point
+correlation}.  The finite-volume complex correlation $\texttt{correlationComplex}$ is analytic in the
+inverse temperature $\beta$ wherever the complex partition function is nonzero
+($\texttt{correlationComplex\_analyticAt\_beta}$), and on the real axis it reduces to the real
+correlation ($\texttt{correlation\_ofReal\_eq\_correlationComplex}$).  Module
+\texttt{AmbientComplexAnalyticity/Vitali/CorrelationBridge.lean} bundles these along an exhaustion
+$\Lambda \uparrow V$.
+
+The object $\texttt{correlationComplexAlongExhaustion}\,G\,\Lambda\,A\,J\,h\,\beta\,n$ is the
+finite-volume complex correlation on the induced subgraph of the stage-$n$ volume (lifted observable
+$\texttt{liftFinset}\,A$, and $0$ before $A \subseteq \Lambda.\mathrm{volume}\,n$), the
+complex-parameter analogue of $\texttt{correlationAlongExhaustion}$.  At real parameters it is
+$\uparrow(\texttt{correlationAlongExhaustion}\,G\,\Lambda\,p\,A\,n)$
+($\texttt{\_at\_real\_eq\_ofReal}$, by cases on $A \subseteq \Lambda.\mathrm{volume}\,n$ using the
+real-axis reduction and $\texttt{correlationΛ\_apply}$), and for ferromagnetic $p$ it converges
+pointwise to $\uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\,A)$
+($\texttt{\_tendsto\_at\_real}$, composing $\texttt{Complex.continuous\_ofReal}$ with
+$\texttt{tendsto\_correlationAlongExhaustion\_correlationInfinite}$).
+
+The conditional Vitali assembly: given a locally uniform limit $f$ of the per-stage-holomorphic
+correlations on an open set $U$, $\texttt{\_vitali\_bridge}$ gives that $f$ is holomorphic on $U$
+(via $\texttt{vitali\_bridge}$), and $\texttt{\_limit\_eq\_correlationInfinite\_at\_real}$ identifies
+$f$ on the real axis with $\uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\,A)$
+($\texttt{tendsto\_nhds\_unique}$ of the locally-uniform pointwise limit and the real-axis limit).
+The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  The remaining input --- locally
+uniform convergence of the per-stage complex correlations on a high-temperature disc, from a
+volume-uniform cluster-expansion (Montel) bound --- is the genuine research-level core, deferred to
+follow-up PRs (Issue~\#4230).  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
+
 \end{document}

@@ -452,6 +452,7 @@ import IsingModel.TransferMatrix.ClusterExpansionSupersession
 import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions
 import IsingModel.AmbientComplexAnalyticity.Basic.BranchBounds
 import IsingModel.AmbientComplexAnalyticity.Vitali.BranchUniformBounds
+import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationBridge
 import IsingModel.ComplexAnalyticity.ClosureCompactness
 import IsingModel.Dobrushin.SingleSiteInfluence
 import IsingModel.Dobrushin.SingleSiteConditional
