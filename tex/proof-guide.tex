@@ -7846,6 +7846,25 @@ first term as the influence-matrix row sum, the shape consumed by
 \texttt{dobrushin\_resolvent\_comparison}. First PR of the comparison assembly (Section~A of
 \#4214). Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{The heat-bath Gibbs sweep and oscillation tracking (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/HeatBathSweep.lean}. The Gibbs-sampler telescoping infrastructure for the
+comparison theorem. Since the sweep order matters, the sweep is a left fold over a \texttt{List} of
+sites, $\texttt{heatBathList}\;xs\;f=K_{x_n}\circ\cdots\circ K_{x_1}(f)$. The finite-volume Gibbs
+measure is invariant under a sweep whose sites lie in $\Lambda$
+(\texttt{gibbsExpectationBC\_heatBathList\_invariant}, list induction over the single-site
+invariance). The \emph{oscillation-vector dynamics} $\texttt{heatBathOscStep}\;x\;v=(y\mapsto
+\text{if }y=x\text{ then }0\text{ else }v_y+C_{xy}v_x)$, iterated as \texttt{heatBathListOscBound},
+is monotone (\texttt{heatBathListOscBound\_mono}, nonnegative $C$). The key tracking estimate
+\[
+  \operatorname{osc}_y\!\big(\texttt{heatBathList}\;xs\;f\big)\le
+    \texttt{heatBathListOscBound}\;xs\;(z\mapsto\operatorname{osc}_z f)\;y
+\]
+(\texttt{siteOsc\_heatBathList\_le\_oscBound}) follows by list induction from
+$\operatorname{osc}_x(K_x f)=0$ and $\operatorname{osc}_z(K_x f)\le\operatorname{osc}_z
+f+C_{xz}\operatorname{osc}_x f$, exactly the \texttt{heatBathOscStep}. Second PR of the comparison
+assembly (Section~A of \#4214); next is the oscillation-vector fixed point $d_x\le b_x+\sum_y
+C_{xy}d_y$ and the capstone. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
