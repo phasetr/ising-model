@@ -30910,6 +30910,42 @@ is continuous with $\tanh 0 = 0$, the criterion holds at high temperature ($\bet
 the Ising cluster expansion \emph{converges absolutely at high temperature}.  The remaining step
 is the Mayer--Montroll identity $\log\Xi = \sum_n \texttt{mayerExpansionTerm}$ (Issue~\#1499 Phase C).
 
+\section{Finite-graph Dobrushin uniqueness: vanishing of the boundary influence
+(GJ \S17.1, Issue \#4214 \S A)}
+
+The capstone of the single-site Dobrushin comparison programme
+(\texttt{Dobrushin/ComparisonTheorem.lean}, \texttt{Dobrushin/ExponentialLocality.lean}).  The
+exponential spatial mixing bound
+\[
+  |\langle f\rangle^\eta_\Lambda - \langle f\rangle^{\eta'}_\Lambda|
+    \le \mathrm{siteOsc}_{x_0}(f)\cdot |S|\cdot \frac{\alpha^{R}}{1-\alpha},
+  \qquad S = \{y : \eta_y \ne \eta'_y\},\ \alpha = \Delta(G)\tanh(\beta J),
+\]
+holds uniformly in the volume $\Lambda$ whenever the disagreement set $S$ lies beyond graph distance
+$R$ from the observable site $x_0$.  On the \emph{finite} graph $\iota$ the disagreement cardinality
+satisfies $|S| \le |\iota| = \texttt{Fintype.card}\,\iota$, a fixed constant, so the radius-$R$ bound
+is dominated by $\mathrm{siteOsc}_{x_0}(f)\cdot|\iota|\cdot\alpha^{R}/(1-\alpha)$, which tends to $0$
+as $R\to\infty$ independently of $\eta,\eta',\Lambda$.
+
+The Lean module \texttt{Dobrushin/Uniqueness.lean} records this in two steps.  The
+cardinality-uniform bound $\texttt{gibbsExpectationBC\_localObs\_dist\_le\_card\_univ\_pow\_radius}$
+replaces $|S|$ by $\texttt{Fintype.card}\,\iota$ (via $\texttt{Finset.card\_filter\_le}$ and
+$\texttt{Finset.card\_univ}$, with $\texttt{siteOsc\_nonneg}$ and $\alpha^{R}/(1-\alpha)\ge 0$ for
+monotonicity).  The headline
+$\texttt{gibbsExpectationBC\_localObs\_boundary\_influence\_uniform\_small}$ states the
+\emph{Dobrushin uniqueness} conclusion: for every $\varepsilon>0$ there is a radius $R$ such that for
+all volumes $\Lambda$ and all boundary conditions $\eta,\eta'$ agreeing on the ball of radius $R$
+about $x_0$, $|\langle f\rangle^\eta_\Lambda - \langle f\rangle^{\eta'}_\Lambda|\le\varepsilon$ ---
+the finite-volume expectation of a local observable becomes independent of the boundary condition as
+the disagreement recedes.  The proof feeds the constant
+$c=\mathrm{siteOsc}_{x_0}(f)\cdot\texttt{Fintype.card}\,\iota$ into
+$\texttt{tendsto\_dobrushin\_radius\_bound\_atTop}$ (radius-bound $\to 0$) and extracts $R$ via
+$\texttt{Metric.tendsto\_atTop}$.  This is the finite-graph form of the Dobrushin uniqueness theorem
+(GJ \S17.1; Georgii, \emph{Gibbs Measures and Phase Transitions}, Ch.~8); the full $\mathbb{Z}^d$
+infinite-volume Gibbs-state uniqueness lift remains research-level, since lifting to the
+non-\texttt{Fintype} lattice loses the $\texttt{Fintype.card}\,\iota$ factor.  Reference:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii, Ch.~8.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
