@@ -41,9 +41,9 @@ theorem isingSingleSiteUpProb_le_one (a : ℝ) : isingSingleSiteUpProb a ≤ 1 :
 
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
-/-- **The single-site conditional expectation of a general observable** (GJ §17.1): for the free site
-`{x}` with the rest of the lattice frozen to `η`, the boundary-condition Gibbs expectation of any
-observable `f` is the two-point convex combination
+/-- **The single-site conditional expectation of a general observable** (GJ §17.1): for the free
+site `{x}` with the rest of the lattice frozen to `η`, the boundary-condition Gibbs expectation of
+any observable `f` is the two-point convex combination
 `⟨f⟩^η_{x} = p·f(η[x↦up]) + (1−p)·f(η[x↦down])` with `p = singleSiteUpProbBC`. -/
 theorem gibbsExpectationBC_singleton_eq (β J h : ℝ) (x : ι) (η : Config ι) (f : Config ι → ℝ) :
     gibbsExpectationBC G β (fun _ => J) h {x} η f
@@ -58,17 +58,16 @@ theorem gibbsExpectationBC_singleton_eq (β J h : ℝ) (x : ι) (η : Config ι)
       = gibbsExpectationBC G β (fun _ => J) h {x} η
           (fun σ => if σ x = Spin.down then (1 : ℝ) else 0) :=
     (gibbsExpectationBC_singleton_down_eq G β J h x η).symm
-  rw [hpu, hpd, gibbsExpectationBC, gibbsExpectationBC, gibbsExpectationBC,
+  rw [hpd, hpu, gibbsExpectationBC, gibbsExpectationBC, gibbsExpectationBC,
     sum_F_boltzmannBC_singleton, sum_F_boltzmannBC_singleton, sum_F_boltzmannBC_singleton]
-  simp only [Function.update_self, if_true, reduceCtorEq, if_false, one_mul, zero_mul, add_zero,
-    zero_add]
+  simp only [Function.update_self, reduceCtorEq, reduceIte]
   ring
 
 /-- **`f` is local at the site `x`**: its value depends on the configuration only through `σ_x`. -/
 def LocalAtSite (x : ι) (f : Config ι → ℝ) : Prop :=
   ∀ σ σ' : Config ι, σ x = σ' x → f σ = f σ'
 
-omit [Fintype G.edgeSet] in
+omit [DecidableRel G.Adj] in
 /-- **The single-site comparison bound for a local observable** (GJ §17.1): if `f` is local at `x`
 and the boundary conditions `η`, `η'` agree off `{y}`, then for `0 ≤ βJ` the single-site conditional
 expectations differ by at most `tanh(βJ)·|f(η[x↦up]) − f(η[x↦down])|`. This lifts the single-site
@@ -81,6 +80,7 @@ theorem gibbsExpectationBC_singleton_localObs_dist_le {β J : ℝ} (hβJ : 0 ≤
         - gibbsExpectationBC G β (fun _ => J) h {x} η' f|
       ≤ Real.tanh (β * J)
         * |f (Function.update η x Spin.up) - f (Function.update η x Spin.down)| := by
+  classical
   rw [gibbsExpectationBC_singleton_eq, gibbsExpectationBC_singleton_eq]
   have hup : f (Function.update η' x Spin.up) = f (Function.update η x Spin.up) :=
     hf _ _ (by rw [Function.update_self, Function.update_self])
