@@ -7975,6 +7975,31 @@ unfolding the noncomputable graph distance), whence, for $0\le\beta J$ and $\bet
 sensitivity of a local observable decays exponentially in the distance. Reference: Glimm--Jaffe, 2nd
 ed., \S17.1, pp.~304--306.
 
+\paragraph{Dobrushin exponential spatial mixing (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/ExponentialLocality.lean}. The payoff of the comparison theorem: composing the
+locality bound (the comparison collapsed to the observable site $x_0$) with the resolvent
+distance-decay $R_{x_0 y}\le\alpha^{d_G(x_0,y)}/(1-\alpha)$ gives exponential decay of the boundary
+influence on a local observable. Substituting the per-entry bound into the locality row,
+\[
+  |\langle f\rangle^\eta_\Lambda-\langle f\rangle^{\eta'}_\Lambda|
+    \le\operatorname{osc}_{x_0}(f)\sum_{y\in S}\frac{\alpha^{d_G(x_0,y)}}{1-\alpha}
+\]
+($\texttt{\dots\_resolvent\_pow\_dist}$); if every disagreement site $y\in S$ lies at distance
+$d_G(x_0,y)\ge R$ from $x_0$, then $\alpha^{d_G(x_0,y)}\le\alpha^R$ ($0\le\alpha<1$,
+\texttt{pow\_le\_pow\_of\_le\_one}) and summing the constant
+(\texttt{Finset.sum\_le\_card\_nsmul}) yields the headline
+\[
+  |\langle f\rangle^\eta_\Lambda-\langle f\rangle^{\eta'}_\Lambda|
+    \le\operatorname{osc}_{x_0}(f)\,|S|\,\frac{\alpha^R}{1-\alpha}
+    \qquad(\alpha=\Delta(G)\tanh(\beta J)),
+\]
+exponentially small in $R$ and uniform in the volume $\Lambda$
+($\texttt{\dots\_card\_mul\_pow\_radius}$, and $\texttt{\dots\_exponential\_spatial\_mixing}$ with
+the disagreement set $\{y:\eta_y\ne\eta'_y\}$ taken internally). The bound
+$c\,\alpha^R/(1-\alpha)\to 0$ as $R\to\infty$
+($\texttt{tendsto\_dobrushin\_radius\_bound\_atTop}$), the qualitative decay-of-influence content of
+Dobrushin uniqueness. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
