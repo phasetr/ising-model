@@ -46,7 +46,7 @@ to a follow-up; each is a mechanical wrapper of the analyticity statements disch
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.5, pp. 332–336.
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.6, pp. 332–340.
 * Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §5.4 (Theorem 5.4, Kotecký–Preiss).
 -/
 
