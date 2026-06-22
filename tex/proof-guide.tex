@@ -7769,9 +7769,25 @@ $\texttt{siteOsc}\;x\,f=\sup_\sigma|f(\sigma[x\mapsto\uparrow])-f(\sigma[x\mapst
 operator. Basic facts: $|f(\sigma[x\mapsto\uparrow])-f(\sigma[x\mapsto\downarrow])|\le\texttt{siteOsc}\,x\,f$
 (\texttt{abs\_sub\_update\_le\_siteOsc}), nonnegativity, an upper bound from a uniform per-configuration
 bound (\texttt{siteOsc\_le\_of\_forall}), and $\texttt{siteOsc}\,x\,(K_x f)=0$
-(\texttt{siteOsc\_heatBath\_self}; the heat-bath operator removes the oscillation at its own site). The
-oscillation propagation $\texttt{siteOsc}\,y\,(K_x f)\le\texttt{siteOsc}\,y\,f+C_{xy}\,\texttt{siteOsc}\,x\,f$
-and the resulting comparison theorem are not yet formalized.
+(\texttt{siteOsc\_heatBath\_self}; the heat-bath operator removes the oscillation at its own site).
+
+\paragraph{Oscillation propagation under the heat-bath operator (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/OscillationPropagation.lean}. The heart of the Dobrushin comparison theorem: for
+$0\le\beta J$,
+\[
+  \texttt{siteOsc}\,y\,(K_x f)\le\texttt{siteOsc}\,y\,f+C_{xy}\,\texttt{siteOsc}\,x\,f,
+  \qquad C_{xy}=\texttt{isingInfluence}=\tanh(\beta J)\,[y\sim x]
+\]
+(\texttt{siteOsc\_heatBath\_le}). For $y\neq x$, with $K_x f(\sigma)=p(\sigma)f(\sigma[x\mapsto\uparrow])
++(1-p(\sigma))f(\sigma[x\mapsto\downarrow])$, the difference under flipping $y$ decomposes as
+$p_+(f_+^\uparrow-f_-^\uparrow)+(1-p_+)(f_+^\downarrow-f_-^\downarrow)+(p_+-p_-)(f_-^\uparrow-f_-^\downarrow)$
+(\texttt{heatBath\_diff\_abs\_le\_aux}); the first two terms form a convex combination of
+$y$-oscillations ($\le\texttt{siteOsc}\,y\,f$ since $p\in[0,1]$, using the update commutation
+$(\sigma[y\mapsto s])[x\mapsto t]=(\sigma[x\mapsto t])[y\mapsto s]$), and the last is
+$|p_+-p_-|\,|f_-^\uparrow-f_-^\downarrow|\le C_{xy}\,\texttt{siteOsc}\,x\,f$ (the influence bound, $0$
+for non-neighbours). At $y=x$ the oscillation vanishes (\texttt{siteOsc\_heatBath\_self}). This is the
+per-step inequality $d(K_x f)\le d(f)+C\cdot\text{column}$; iterating it over $\Lambda$ and feeding the
+resolvent $R=\sum_n C^n$ gives the comparison theorem (later PRs, not yet formalized).
 
 The certificate constructors
 \begin{center}
