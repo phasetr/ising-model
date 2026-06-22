@@ -452,6 +452,7 @@ import IsingModel.Dobrushin.SingleSiteInfluenceMatrix
 import IsingModel.Dobrushin.SingleSiteObservableComparison
 import IsingModel.Dobrushin.HeatBathInvariance
 import IsingModel.Dobrushin.SiteOscillation
+import IsingModel.Dobrushin.OscillationPropagation
 import IsingModel.Dobrushin.DobrushinHighTemp
 import IsingModel.Dobrushin.InfluenceMatrixDecay
 import IsingModel.Dobrushin.InfluenceMatrixResolvent
