@@ -19497,6 +19497,28 @@ analyticity/regularity statement is free of the explicit \(\text{hkp}/\text{h}\r
 depending only on \((2d)^2 e\,\{R,T\}<\tfrac16\).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--\S18.6, pp.~332--340; Friedli--Velenik \S5.4 (Theorem 5.4, Kotecky--Preiss).
 
+\paragraph{Existence of a high-temperature analyticity threshold --- no phase transition (\S18.6,
+Issue~\#4214).}
+File \texttt{ClusterExpansion/HighTempAnalyticityCapstone.lean}.  The \S18.6 analyticity results live
+on an interval \((0,\operatorname{artanh}T/J)\) whose existence needs radii \(R,T\) meeting the
+Kotecky--Preiss threshold \((2d)^2 e\{R,T\}<\tfrac16\).  This file \emph{exhibits} an explicit such
+radius, \(\texttt{kpRadius}\,d=1/(7((2d)^2+1)e)\) (the \(+1\) keeps the denominator positive for every
+\(d\)), with
+\[
+  (2d)^2 e\cdot\texttt{kpRadius}\,d=\frac{(2d)^2}{7((2d)^2+1)}<\tfrac17<\tfrac16,
+  \qquad \texttt{kpRadius}\,d<1,
+\]
+and packages the analyticity as clean \textbf{existential} statements.
+\(\texttt{exists\_high\_temp\_freeEnergyInfinite\_analyticOnNhd}\): for every \(d\) and \(J>0\) there
+is \(\beta_0>0\) (\(=\operatorname{artanh}(\texttt{kpRadius}\,d)/J\), positive by
+\(\texttt{Real.artanh\_pos}\)) with the infinite-volume \(\mathbb Z^d\) Ising free energy real-analytic
+in \(\beta\) on \((0,\beta_0)\).  \(\texttt{exists\_high\_temp\_specificHeat\_analyticOnNhd}\): the
+specific heat \(\partial_\beta^2 f\) is real-analytic on \((0,\beta_0)\) --- no singularity, hence no
+phase transition at high temperature.  \(\texttt{exists\_high\_temp\_freeEnergyInfinite\_analyticOnNhd\_J}\):
+the coupling-direction analog \(\exists J_0>0\) for fixed \(\beta>0\).  The cleanest form of the \S18.6
+high-temperature analyticity headline.  Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335--340;
+Friedli--Velenik \S5.4.
+
 \paragraph{Volume-uniform per-site lattice free-energy bound (\S18.6, Issue~\#4149).}
 PR-D1 composes the per-site-KP Mayer identity (PR-C) with the volume-uniform Mayer bound
 (\(\mathbb Z^d\)-uniform per-site bound) into a \emph{box-independent} bound on the
