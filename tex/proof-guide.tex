@@ -7918,6 +7918,28 @@ limit (\texttt{interiorMass\_repeatedFullSweep\_tendsto\_zero}, by $\alpha^n\to0
 route is far shorter than a Gauss--Seidel/$C^n$ matrix bridge and discharges the interior term of the
 comparison capstone. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{The single-site Dobrushin comparison theorem (\S17.1, Issue~\#4214 capstone).} File
+\texttt{Dobrushin/ComparisonTheorem.lean}. The \textbf{capstone} of the GJ \S17.1 single-site
+Dobrushin comparison programme (PRs \#4215--\#4220, no \texttt{sorry}/\texttt{axiom}). Under the
+Dobrushin condition $\tanh(\beta J)\,\Delta(G)<1$, two finite-volume Gibbs expectations under
+boundary conditions $\eta,\eta'$ agreeing off $S$ satisfy
+\[
+  |\langle f\rangle^\eta_\Lambda-\langle f\rangle^{\eta'}_\Lambda|
+    \le\sum_{x}\operatorname{osc}_x(f)\,w_x
+    =\sum_{x}\sum_{y\in S}R_{xy}\,\operatorname{osc}_x(f),
+\]
+($\texttt{gibbsExpectationBC\_dist\_le\_dobrushinBoundaryWeight}$ and its resolvent form
+$\texttt{gibbsExpectationBC\_dist\_le\_resolvent\_sum}$), the literal Dobrushin comparison
+inequality with $R=(I-C)^{-1}$ the resolvent of $C_{xy}=\tanh(\beta J)[y\sim x]$ and
+$w_x=\sum_{y\in S}R_{xy}$. The proof composes the merged ingredients: sweep invariance gives
+$\langle f\rangle=\langle g_n\rangle$ for $g_n$ the $n$-fold sweep; the support-diameter Gibbs
+comparison bounds $|\langle g_n\rangle^\eta-\langle g_n\rangle^{\eta'}|$ by an interior $\Lambda$-sum
+plus a boundary $S$-sum; oscillation tracking dominates both by the oscillation-vector dynamics; the
+boundary-sum Lyapunov bound caps the boundary part by $\sum_x\operatorname{osc}_x(f)\,w_x$; the
+interior part vanishes in the sweep limit ($\alpha^n\to0$), discharged by
+\texttt{ge\_of\_tendsto'}. References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii,
+\emph{Gibbs Measures}, Ch.~8.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
