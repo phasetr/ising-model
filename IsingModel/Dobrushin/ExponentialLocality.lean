@@ -28,6 +28,13 @@ uniqueness argument.
   set taken internally as `{y | η y ≠ η' y}`.
 * `tendsto_dobrushin_radius_bound_atTop` — the bound vanishes exponentially as `R → ∞`.
 
+Two caveats on reading these as genuine spatial decay. First, the `R → ∞` vanishing applies with a
+*fixed* (or cardinality-controlled) disagreement set `S`; if `S = S_R` grows with `R` one
+additionally needs `|S_R|·α^R → 0`. Second, `G.dist x₀ y` is the junk value `0` for a `y`
+unreachable from `x₀` (so the radius hypothesis `R ≤ G.dist x₀ y` cannot hold for `R > 0` at such a
+`y`); this is not a soundness gap — the resolvent entry itself is `0`
+(`dobrushinResolvent_eq_zero_of_not_reachable`).
+
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
 -/
 
