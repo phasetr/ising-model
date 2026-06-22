@@ -7806,6 +7806,20 @@ $R=\texttt{dobrushinResolvent}$) holds for $0\le\beta J$, $\beta J\,\Delta(G)<1$
 telescoping (which produces $d\le b+Cd$ from a boundary-condition difference) this gives the
 comparison theorem (final assembly, not yet formalized).
 
+\paragraph{Multi-site boundary influence bound (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/BoundaryInfluence.lean}. The boundary-direct term $b_x$ of the comparison
+telescoping. The single-site conditional law is local
+(\texttt{singleSiteUpProbBC\_eq\_of\_agreesOn\_neighbour}: agreement on the neighbours of $x$ gives
+equal conditional up-probability), and two boundary configurations $\eta,\eta'$ agreeing off a set
+$S$ change it by at most $\#(S\cap\mathrm{nbr}(x))\tanh(\beta J)$
+(\texttt{singleSiteUpProbBC\_agreesOff\_dist\_le}, for $0\le\beta J$; proved by telescoping the
+single-flip influence bound over $S\cap\mathrm{nbr}(x)$ one site at a time via
+\texttt{Finset.induction\_on} with the second configuration generalized). For an observable local at
+$x$, $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
+\#(S\cap\mathrm{nbr}(x))\tanh(\beta J)\,\texttt{siteOsc}\,x\,f$
+(\texttt{gibbsExpectationBC\_singleton\_localObs\_agreesOff\_dist\_le}). This is $b_x$ for the
+comparison assembly (final step, not yet formalized).
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
