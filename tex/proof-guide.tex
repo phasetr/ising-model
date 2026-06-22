@@ -7697,6 +7697,20 @@ temperature $\beta J\,\Delta(G)<1$ we have $\alpha<1$
 Dobrushin comparison/uniqueness theorem, which (with the correlation decay it yields) is not yet
 formalized.
 
+\paragraph{The Dobrushin total influence (Neumann-series row sum) (\S17.1, Issue~\#3511).} File
+\texttt{Dobrushin/InfluenceMatrixResolvent.lean}. Summing the geometric decay, the abstract fact
+(\texttt{matrix\_summable\_pow\_rowSum}, \texttt{matrix\_tsum\_pow\_rowSum\_le}) is: for a nonnegative
+matrix with row sums $\le\alpha$ ($0\le\alpha<1$), the power row sums $\sum_y (M^n)_{xy}$ are summable
+(dominated by $\alpha^n$) and $\sum_n\sum_y (M^n)_{xy}\le(1-\alpha)^{-1}$. Define the total influence
+$\texttt{isingTotalInfluence}=\sum_n\sum_y (C^n)_{xy}$, the row sum of the Neumann series
+$\sum_n C^n$ (formally the resolvent of $I-C$; the matrix identity $(I-C)^{-1}=\sum_n C^n$ is not
+formalized). At high temperature $0\le\beta J$, $\beta J\,\Delta(G)<1$ it is summable with
+$\texttt{isingTotalInfluence}\le(1-\Delta(G)\tanh(\beta J))^{-1}$
+(\texttt{isingTotalInfluence\_le}) and $\ge 1$ (the identity $n=0$ term,
+\texttt{one\_le\_isingTotalInfluence}). This row sum is exactly the coefficient
+$\sum_{x,y}((I-C)^{-1})_{xy}\operatorname{osc}_x(f)$ of the Dobrushin comparison theorem, which is
+not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
