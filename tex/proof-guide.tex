@@ -7864,6 +7864,30 @@ $\mathrm{maxAbsDiag}(M_{\mathrm{def}})+\mathrm{offMass}(M_{\mathrm{def}})\le
 mechanism of \S17.1. The prefactor condition and route hypotheses remain explicit; no
 volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{Flatness reduction of the deflated Gershgorin envelope (\S17.1).} File
+\texttt{TransferMatrix/LayerTopDeflationFlatEnvelope.lean}. The top-deflated Gershgorin route
+requires the \emph{full} envelope $\mathrm{maxAbsDiag}(M_{\mathrm{def}})
++\mathrm{maxOffMass}(M_{\mathrm{def}})\le\theta\,\lambda_{\mathrm{top}}$. The diagonal half is
+removed using the row-cancellation identity $M_{\mathrm{def}}\,w=0$ for the Perron column $w$
+(\texttt{abs\_matrixTopDeflation\_diag\_le\_weighted\_offDiag}): the deflated diagonal is a
+Perron-weighted sum of its own off-diagonal row, so it is bounded by the off-diagonal mass scaled by
+the \emph{flatness ratio} $\rho=\sup_{i,j}|w_j/w_i|$ (\texttt{vectorAbsRatioSup}). This gives
+\[
+  \mathrm{maxAbsDiag}(M_{\mathrm{def}})\le\rho\,\mathrm{maxOffMass}(M_{\mathrm{def}}),
+  \qquad
+  \mathrm{envelope}(M_{\mathrm{def}})\le(1+\rho)\,\mathrm{maxOffMass}(M_{\mathrm{def}}),
+\]
+and the capstone
+\texttt{subdominantAbsRatio\_maxEigenIndex\_le\_of\_topDeflatedOffMass\_le\_flatness}:
+\[
+  \mathrm{maxOffMass}(M_{\mathrm{def}})\le\eta\,\lambda_{\mathrm{top}}
+  \ \Longrightarrow\
+  \texttt{subdominantAbsRatio}\le(1+\rho)\,\eta .
+\]
+The deflated diagonal is eliminated; the remaining inputs are the deflated off-diagonal mass and the
+Perron flatness ratio $\rho$ (which for the interacting layer is the genuinely analytic obstruction,
+not transverse-volume-uniform). Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
