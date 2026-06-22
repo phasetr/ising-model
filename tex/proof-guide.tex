@@ -19472,6 +19472,22 @@ real-analytic. Hence the infinite-volume thermodynamic functions are real-analyt
 high-temperature phase: \textbf{no phase transition at high temperature}. Reference: Glimm--Jaffe,
 2nd ed., \S18.6.
 
+\paragraph{Coupling-direction analyticity (\S18.6).} File
+\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingDirectionAnalyticity.lean}. Glimm--Jaffe \S18.6
+is literally about analyticity in the \emph{coupling}; the results above are in the inverse
+temperature \(\beta\). The coupling-direction (\(J\)) analyticity follows from the \(\beta\)-direction
+unit-coupling capstone through the zero-field scaling symmetry
+\(\texttt{freeEnergyInfinite}\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,\langle\beta
+J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\)): with \(g(c)=\texttt{freeEnergyInfinite}\,
+\langle c,0,1\rangle\), the \(J\)-section is \(g\circ(\cdot\,\beta)\), analytic by
+\(\texttt{AnalyticAt.comp}\) with the linear map \(J'\mapsto\beta J'\). This gives
+\(\texttt{\dots analyticAt\_J\_h\_zero}\) (at a high-temperature point \(0<\beta J\),
+\(\tanh(\beta J)<T\)), \(\texttt{\dots analyticOnNhd\_J\_high\_temp}\) on the coupling interval
+\(J\in(0,\operatorname{artanh}T/\beta)\), the continuity / \(C^\infty\) consequences, and the
+analyticity of the coupling derivative \(\partial f/\partial J\) (bond energy density,
+\(\texttt{\dots couplingEnergy\_analyticOnNhd\_J\_high\_temp}\)). Reference: Glimm--Jaffe, 2nd ed.,
+\S18.6.
+
 \paragraph{KP per-site Mayer bound on the ambient lattice (\(\mathbb Z^d\)-uniform)
 (\S18.5).}
 The abstract per-site bound is lifted to the ambient induced-graph setting and
