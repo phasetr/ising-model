@@ -7826,6 +7826,26 @@ $x$, $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
 (\texttt{gibbsExpectationBC\_singleton\_localObs\_agreesOff\_dist\_le}). This is $b_x$ for the
 comparison assembly (final step, not yet formalized).
 
+\paragraph{The general single-site Dobrushin comparison inequality (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/SingleSiteGeneralComparison.lean}. The comparison capstone applies the heat-bath
+operator $K_x$ to \emph{non-local} observables (partial Gibbs-sweep results), so the single-site
+comparison is needed for a general $f$, not just $f$ local at $x$. The building block is the
+\emph{observable telescoping} $|f\eta-f\eta'|\le\sum_{y\in S}\operatorname{osc}_y(f)$ for $\eta,\eta'$
+agreeing off $S$ (\texttt{agreesOff\_dist\_le\_sum\_siteOsc}, by flipping the differing spins one at
+a time, each bounded by \texttt{abs\_sub\_update\_spin\_le\_siteOsc}). Decomposing
+$K_x f=p\,f(\cdot[x\mapsto\uparrow])+(1-p)\,f(\cdot[x\mapsto\downarrow])$ and using the
+probability-difference bound gives the per-site Dobrushin inequality
+\[
+  |K_x f\,\eta-K_x f\,\eta'|\le \#(S\cap\mathrm{nbr}(x))\,\tanh(\beta J)\,\operatorname{osc}_x(f)
+    +\sum_{y\in S}\operatorname{osc}_y(f)
+\]
+(\texttt{heatBath\_agreesOff\_dist\_le}) --- the $C$-propagated $x$-oscillation plus the direct
+observable oscillation. Since $\sum_{y\in S}C_{xy}=\#(S\cap\mathrm{nbr}(x))\,\tanh(\beta J)$
+(\texttt{sum\_isingInfluence\_eq}), \texttt{heatBath\_agreesOff\_dist\_le\_influence} restates the
+first term as the influence-matrix row sum, the shape consumed by
+\texttt{dobrushin\_resolvent\_comparison}. First PR of the comparison assembly (Section~A of
+\#4214). Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
