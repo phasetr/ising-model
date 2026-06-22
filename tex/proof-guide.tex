@@ -19515,9 +19515,15 @@ is \(\beta_0>0\) (\(=\operatorname{artanh}(\texttt{kpRadius}\,d)/J\), positive b
 in \(\beta\) on \((0,\beta_0)\).  \(\texttt{exists\_high\_temp\_specificHeat\_analyticOnNhd}\): the
 specific heat \(\partial_\beta^2 f\) is real-analytic on \((0,\beta_0)\) --- no singularity, hence no
 phase transition at high temperature.  \(\texttt{exists\_high\_temp\_freeEnergyInfinite\_analyticOnNhd\_J}\):
-the coupling-direction analog \(\exists J_0>0\) for fixed \(\beta>0\).  The cleanest form of the \S18.6
-high-temperature analyticity headline.  Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335--340;
-Friedli--Velenik \S5.4.
+the coupling-direction analog \(\exists J_0>0\) for fixed \(\beta>0\).  The energy-density
+existentials \(\texttt{exists\_high\_temp\_energyDensity\_analyticOnNhd}\) (\(\partial_\beta f\)) and
+\(\texttt{exists\_high\_temp\_couplingEnergy\_analyticOnNhd\_J}\) (\(\partial_J f\)) cover the
+remaining first-derivative observables, and the combined headlines
+\(\texttt{exists\_high\_temp\_no\_phase\_transition}\) / \(\texttt{\dots\_J}\) state that a
+\emph{single} explicit threshold makes the free energy together with its first and second derivatives
+(energy density, specific heat / bond energy density) \emph{all simultaneously} real-analytic --- the
+complete ``no thermodynamic singularity'' statement of the high-temperature phase.  Reference:
+Glimm--Jaffe, 2nd ed., \S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
 \paragraph{Volume-uniform per-site lattice free-energy bound (\S18.6, Issue~\#4149).}
 PR-D1 composes the per-site-KP Mayer identity (PR-C) with the volume-uniform Mayer bound
