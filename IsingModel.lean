@@ -458,6 +458,7 @@ import IsingModel.Dobrushin.SingleSiteObservableComparison
 import IsingModel.Dobrushin.HeatBathInvariance
 import IsingModel.Dobrushin.SiteOscillation
 import IsingModel.Dobrushin.BoundaryInfluence
+import IsingModel.Dobrushin.SingleSiteGeneralComparison
 import IsingModel.Dobrushin.OscillationPropagation
 import IsingModel.Dobrushin.ResolventComparison
 import IsingModel.Dobrushin.DobrushinHighTemp
