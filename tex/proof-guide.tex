@@ -7899,6 +7899,25 @@ interior sum over $\Lambda$ plus a boundary sum over $S$
 (\texttt{gibbsExpectationBC\_dist\_le\_volume\_add\_boundary\_siteOsc}). No high-temperature
 condition or sweep limit is needed here. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{The interior-mass contraction of the heat-bath sweep (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/SweepContraction.lean}. The sweep-limit input to the capstone (PR4b). Under the
+Dobrushin condition $\tanh(\beta J)\,\Delta(G)<1$, one full heat-bath sweep over $\Lambda$ contracts
+the interior mass $M_\Lambda(v)=\sum_{x\in\Lambda}v_x$ of a nonnegative oscillation vector by the
+Dobrushin coefficient $\alpha=\Delta(G)\tanh(\beta J)<1$. This is a Lyapunov/potential argument: one
+step at $x\in\Lambda$ drops $M_\Lambda$ by at least $(1-\alpha)v_x$ (it zeroes $v_x$ and
+re-distributes at most $\alpha v_x$, since $\sum_y C_{xy}=\deg(x)\tanh\le\alpha$), and summing over a
+sweep — each site swept once, its value at sweep time at least its initial value because the
+propagation only grows unvisited sites — gives
+\[
+  M_\Lambda(\texttt{sweep}\;\Lambda.\mathrm{toList}\;v)\le\alpha\,M_\Lambda(v).
+\]
+Iterating ($\texttt{repeatedFullSweep}\;\Lambda\;n$, $n$ full sweeps) gives
+$M_\Lambda(\texttt{repeated}\;n)\le\alpha^n M_\Lambda(v)$
+(\texttt{interiorMass\_repeatedFullSweep\_le\_pow}), hence the interior mass vanishes in the sweep
+limit (\texttt{interiorMass\_repeatedFullSweep\_tendsto\_zero}, by $\alpha^n\to0$). This Lyapunov
+route is far shorter than a Gauss--Seidel/$C^n$ matrix bridge and discharges the interior term of the
+comparison capstone. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
