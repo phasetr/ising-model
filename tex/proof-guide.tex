@@ -7532,8 +7532,11 @@ $|(M_{\mathrm{def}})_{ii}|\le\sum_{j\ne i}|(M_{\mathrm{def}})_{ij}|\,|w_j/w_i|$
 discharged for an entrywise positive matrix by the signed-positive Perron column
 (\texttt{changeOfBasis\_maxEigenIndex\_ne\_zero\_of\_entrywisePositive}, file
 \texttt{LayerTopDeflationRowIdentity.lean}). This reduces the deflated diagonal to the off-diagonal
-mass weighted by Perron ratios; a transverse-volume-uniform Perron flatness bound (controlling
-$\max w/\min w$) is the remaining core step.
+mass weighted by Perron ratios (packaged generically in the flatness-envelope paragraph below as
+$\texttt{subdominantAbsRatio}\le(1+\rho)\,\eta$). The remaining input is the Perron flatness ratio
+$\rho=\sup_{i,j}|w_j/w_i|$ together with the deflated off-diagonal mass; for the interacting layer
+$\rho$ is \emph{not} transverse-volume-uniform (it scales like $\exp(\Theta(\beta J\,|S|))$), so this
+is the genuinely analytic high-temperature core, not a one-step finite estimate.
 
 \paragraph{Perron eigenvector flatness from an entry-ratio bound (\S17.1, Issue~\#3511, P5).}
 The flatness mechanism: for a strictly positive eigenvector $v$ of $M$ with $Mv=\lambda v$,
@@ -7546,8 +7549,11 @@ column $v=\mathrm{sign}\cdot(\texttt{changeOfBasis}\cdot\texttt{maxEigenIndex})$
 \texttt{mulVec\_signedColumn} with $\lambda_\ast>0$ by \texttt{eigenvalue\_pos\_maxEigenIndex} -- this
 gives Perron-column flatness (\texttt{signedColumn\_ratio\_le\_of\_entry\_ratio}), with the layer
 specialization \texttt{finiteTransverseHermitian\_signedColumn\_ratio\_le\_of\_entry\_ratio} for
-$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file \texttt{LayerPerronFlatness.lean}). The remaining P5
-step is to exhibit such a $\rho(\beta J)$ at high temperature, uniform in the transverse box radius.
+$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file \texttt{LayerPerronFlatness.lean}). This mechanism is
+correct and reusable, but the entry-ratio route is \emph{not} transverse-volume-uniform: the layer
+entry ratio $M_{ik}/M_{jk}=\sqrt{u_i}/\sqrt{u_j}$ scales like $\exp(\Theta(\beta J\,|S|))$, so it does
+not by itself produce a volume-uniform $\rho(\beta J)$. The uniform flatness input is the documented
+analytic obstruction (single-step methods are insufficient).
 
 \paragraph{Column-oscillation reduction of the Doeblin mass (\S17.1, Issue~\#3511, P5).}
 The cleaner Doob route already gives $\texttt{cubicLayerHermitianExplicitRatio}<1$ per box (via
@@ -7863,6 +7869,30 @@ $\mathrm{maxAbsDiag}(M_{\mathrm{def}})+\mathrm{offMass}(M_{\mathrm{def}})\le
 (\texttt{layerSpinTwoPoint\_abs\_le\_perron\_of\_topDeflatedGershgorin}), the high-temperature
 mechanism of \S17.1. The prefactor condition and route hypotheses remain explicit; no
 volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
+\paragraph{Flatness reduction of the deflated Gershgorin envelope (\S17.1).} File
+\texttt{TransferMatrix/LayerTopDeflationFlatEnvelope.lean}. The top-deflated Gershgorin route
+requires the \emph{full} envelope $\mathrm{maxAbsDiag}(M_{\mathrm{def}})
++\mathrm{maxOffMass}(M_{\mathrm{def}})\le\theta\,\lambda_{\mathrm{top}}$. The diagonal half is
+removed using the row-cancellation identity $M_{\mathrm{def}}\,w=0$ for the Perron column $w$
+(\texttt{abs\_matrixTopDeflation\_diag\_le\_weighted\_offDiag}): the deflated diagonal is a
+Perron-weighted sum of its own off-diagonal row, so it is bounded by the off-diagonal mass scaled by
+the \emph{flatness ratio} $\rho=\sup_{i,j}|w_j/w_i|$ (\texttt{vectorAbsRatioSup}). This gives
+\[
+  \mathrm{maxAbsDiag}(M_{\mathrm{def}})\le\rho\,\mathrm{maxOffMass}(M_{\mathrm{def}}),
+  \qquad
+  \mathrm{envelope}(M_{\mathrm{def}})\le(1+\rho)\,\mathrm{maxOffMass}(M_{\mathrm{def}}),
+\]
+and the capstone
+\texttt{subdominantAbsRatio\_maxEigenIndex\_le\_of\_topDeflatedOffMass\_le\_flatness}:
+\[
+  \mathrm{maxOffMass}(M_{\mathrm{def}})\le\eta\,\lambda_{\mathrm{top}}
+  \ \Longrightarrow\
+  \texttt{subdominantAbsRatio}\le(1+\rho)\,\eta .
+\]
+The deflated diagonal is eliminated; the remaining inputs are the deflated off-diagonal mass and the
+Perron flatness ratio $\rho$ (which for the interacting layer is the genuinely analytic obstruction,
+not transverse-volume-uniform). Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
 The certificate constructors
 \begin{center}
