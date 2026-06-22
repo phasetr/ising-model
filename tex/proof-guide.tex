@@ -7880,6 +7880,25 @@ v_x w_x$ (\texttt{heatBathListOscBound\_boundary\_sum\_le\_boundaryWeight}). Thi
 comparison assembly (Section~A of \#4214); the capstone connects this to the Gibbs measure and takes
 the sweep limit. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\paragraph{The full-volume Gibbs boundary comparison (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/GibbsBoundaryComparison.lean}. The Gibbs-side input to the capstone. The naive
+boundary-only bound $|\langle g\rangle^\eta_\Lambda-\langle g\rangle^{\eta'}_\Lambda|
+\le\sum_{y\in S}\operatorname{osc}_y(g)$ is \emph{false} (the boundary changes the Gibbs weight, not
+just the observable); the correct bound is over the support diameter $\Lambda\cup S$. Support
+configurations $\sigma$ (for $\eta$) and $\tau$ (for $\eta'$) agree off $\Lambda\cup S$
+(\texttt{agreesOff\_union\_of\_agreesOff\_boundary}), and from the definition
+\[
+  \langle g\rangle^\eta-\langle g\rangle^{\eta'}
+    =(Z_\eta Z_{\eta'})^{-1}\sum_{\sigma}\sum_{\tau}
+      w_\eta(\sigma)\,w_{\eta'}(\tau)\,(g\sigma-g\tau),
+\]
+bounding each weight-positive pair by the observable telescoping (weight-zero pairs vanish) gives
+$|\langle g\rangle^\eta_\Lambda-\langle g\rangle^{\eta'}_\Lambda|\le\sum_{z\in\Lambda\cup
+S}\operatorname{osc}_z(g)$ (\texttt{gibbsExpectationBC\_dist\_le\_sum\_siteOsc\_union}), split into an
+interior sum over $\Lambda$ plus a boundary sum over $S$
+(\texttt{gibbsExpectationBC\_dist\_le\_volume\_add\_boundary\_siteOsc}). No high-temperature
+condition or sweep limit is needed here. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
