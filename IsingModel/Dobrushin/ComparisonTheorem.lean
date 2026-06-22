@@ -4,9 +4,10 @@ import IsingModel.Dobrushin.GibbsBoundaryComparison
 /-!
 # The single-site Dobrushin comparison theorem (GJ §17.1, Issue #4214 §A capstone)
 
-The capstone of the GJ §17.1 single-site Dobrushin comparison programme. Under the Dobrushin
-condition `tanh(βJ)·Δ(G) < 1`, two finite-volume Gibbs expectations under boundary conditions
-`η, η'` agreeing off a set `S` differ by at most the resolvent-weighted oscillations of `f`,
+The capstone of the GJ §17.1 single-site Dobrushin comparison programme. Under the high-temperature
+condition `βJ·Δ(G) < 1` (whence the Dobrushin coefficient `tanh(βJ)·Δ(G) < 1`), two finite-volume
+Gibbs expectations under boundary conditions `η, η'` agreeing off a set `S` differ by at most the
+resolvent-weighted oscillations of `f`,
 \[
   |⟨f⟩^η_Λ − ⟨f⟩^{η'}_Λ|
     ≤ ∑_{x} \mathrm{siteOsc}_x(f)·w_x
@@ -40,9 +41,9 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
 /-- **The single-site Dobrushin comparison theorem** (GJ §17.1, capstone of Issue #4214 §A): under
-the Dobrushin condition `tanh(βJ)·Δ(G) < 1`, the finite-volume Gibbs expectations under boundary
-conditions agreeing off `S` differ by at most `∑_x siteOsc x f · w_x`, with `w_x = ∑_{y∈S} R_{xy}`
-the resolvent boundary weight. -/
+the high-temperature condition `βJ·Δ(G) < 1` (whence the Dobrushin coefficient `tanh(βJ)·Δ(G) < 1`),
+the Gibbs expectations under boundary conditions agreeing off `S` differ by at most
+`∑_x siteOsc x f · w_x`, with `w_x = ∑_{y∈S} R_{xy}` the resolvent boundary weight. -/
 theorem gibbsExpectationBC_dist_le_dobrushinBoundaryWeight {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) (h : ℝ) (Λ S : Finset ι) {η η' : Config ι}
     (hagree : agreesOff S η η') (f : Config ι → ℝ) :

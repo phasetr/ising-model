@@ -7685,7 +7685,7 @@ J\deg(x)<1$ implies $\tanh(\beta J)\deg(x)<1$ (\texttt{isingDobrushin\_condition
 and uniformly $\beta J\,\Delta(G)<1$ with $\Delta(G)=\texttt{G.maxDegree}$ implies the condition at
 every site (\texttt{isingDobrushin\_condition\_of\_high\_temp\_maxDegree}). This is the same
 $\beta J\deg<1$ threshold as the Simon--Lieb decay results. The abstract Dobrushin uniqueness/decay
-theorem that consumes this condition is not yet formalized.
+theorem that consumes this condition is now formalized (\texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{Exponential decay of the influence-matrix powers (\S17.1, Issue~\#3511).} File
 \texttt{Dobrushin/InfluenceMatrixDecay.lean}. View the influence matrix as $C\in\mathrm{Matrix}\,\iota\,\iota\,\mathbb{R}$,
@@ -7714,8 +7714,8 @@ formalized). At high temperature $0\le\beta J$, $\beta J\,\Delta(G)<1$ it is sum
 $\texttt{isingTotalInfluence}\le(1-\Delta(G)\tanh(\beta J))^{-1}$
 (\texttt{isingTotalInfluence\_le}) and $\ge 1$ (the identity $n=0$ term,
 \texttt{one\_le\_isingTotalInfluence}). This row sum is exactly the coefficient
-$\sum_{x,y}((I-C)^{-1})_{xy}\operatorname{osc}_x(f)$ of the Dobrushin comparison theorem, which is
-not yet formalized.
+$\sum_{x,y}((I-C)^{-1})_{xy}\operatorname{osc}_x(f)$ of the Dobrushin comparison theorem, which is now
+formalized (\texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{The Dobrushin resolvent matrix and its fixed point (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/DobrushinResolvent.lean}. The entry-wise Neumann series
@@ -7728,7 +7728,7 @@ $\sum_y R_{xy}=\texttt{isingTotalInfluence}\,x$ (\texttt{dobrushinResolvent\_row
 $R_{xy}=\delta_{xy}+\sum_z C_{xz}R_{zy}$ — split off the $n=0$ identity term
 (\texttt{Summable.tsum\_eq\_zero\_add}), write $C^{n+1}=C\,C^n$ (\texttt{pow\_succ'}), and swap the
 finite $z$-sum with the series. The Neumann series solves $(I-C)R=I$; the matrix-inverse identity
-$R=(I-C)^{-1}$ and the Dobrushin comparison theorem itself are not yet formalized.
+the Dobrushin comparison theorem itself is now formalized (\texttt{Dobrushin/ComparisonTheorem.lean}, \#4220); the matrix-inverse identity $R=(I-C)^{-1}$ is not separately formalized.
 
 \paragraph{Single-site conditional expectation of a general observable (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/SingleSiteObservableComparison.lean}. For the free site $\{x\}$ with the rest
@@ -7744,7 +7744,7 @@ $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
 \tanh(\beta J)\,|f(\eta[x\mapsto\uparrow])-f(\eta[x\mapsto\downarrow])|$
 (\texttt{gibbsExpectationBC\_singleton\_localObs\_dist\_le}) — the single-site influence bound lifted
 from the up-indicator to a general local observable, the per-site step of the comparison theorem. The
-full multi-site Dobrushin comparison theorem (telescoping over sites) is not yet formalized.
+full multi-site Dobrushin comparison theorem is now formalized (\texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{Heat-bath single-site invariance (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/HeatBathInvariance.lean}. Define the single-site heat-bath operator
@@ -7766,7 +7766,7 @@ it reduces to the per-coordinate identity
 $K_x f(\tau)\,(w(\tau\!\uparrow)+w(\tau\!\downarrow))
 =f(\tau\!\uparrow)w(\tau\!\uparrow)+f(\tau\!\downarrow)w(\tau\!\downarrow)$. This is the first
 telescoping step; the full multi-site Dobrushin comparison theorem (iterating $K_x$ over $\Lambda$
-with the influence matrix) is not yet formalized.
+with the influence matrix) is now formalized (\texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{Single-site oscillation (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/SiteOscillation.lean}. The Dobrushin per-site oscillation
@@ -7793,7 +7793,7 @@ $(\sigma[y\mapsto s])[x\mapsto t]=(\sigma[x\mapsto t])[y\mapsto s]$), and the la
 $|p_+-p_-|\,|f_-^\uparrow-f_-^\downarrow|\le C_{xy}\,\texttt{siteOsc}\,x\,f$ (the influence bound, $0$
 for non-neighbours). At $y=x$ the oscillation vanishes (\texttt{siteOsc\_heatBath\_self}). This is the
 per-step inequality $d(K_x f)\le d(f)+C\cdot\text{column}$; iterating it over $\Lambda$ and feeding the
-resolvent $R=\sum_n C^n$ gives the comparison theorem (later PRs, not yet formalized).
+resolvent $R=\sum_n C^n$ gives the comparison theorem (now formalized, \texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{Resolvent comparison inequality (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/ResolventComparison.lean}. The matrix-analytic core: a nonnegative vector $d$
@@ -7810,7 +7810,7 @@ specialization
 (\texttt{dobrushin\_resolvent\_comparison}, $C=\texttt{isingInfluenceMatrix}$,
 $R=\texttt{dobrushinResolvent}$) holds for $0\le\beta J$, $\beta J\,\Delta(G)<1$. With the heat-bath
 telescoping (which produces $d\le b+Cd$ from a boundary-condition difference) this gives the
-comparison theorem (final assembly, not yet formalized).
+comparison theorem (now formalized, \texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{Multi-site boundary influence bound (\S17.1, Issue~\#4201).} File
 \texttt{Dobrushin/BoundaryInfluence.lean}. The boundary-direct term $b_x$ of the comparison
@@ -7824,7 +7824,7 @@ single-flip influence bound over $S\cap\mathrm{nbr}(x)$ one site at a time via
 $x$, $|\langle f\rangle^\eta_{\{x\}}-\langle f\rangle^{\eta'}_{\{x\}}|\le
 \#(S\cap\mathrm{nbr}(x))\tanh(\beta J)\,\texttt{siteOsc}\,x\,f$
 (\texttt{gibbsExpectationBC\_singleton\_localObs\_agreesOff\_dist\_le}). This is $b_x$ for the
-comparison assembly (final step, not yet formalized).
+comparison assembly (now formalized, \texttt{Dobrushin/ComparisonTheorem.lean}, \#4220).
 
 \paragraph{The general single-site Dobrushin comparison inequality (\S17.1, Issue~\#4214).} File
 \texttt{Dobrushin/SingleSiteGeneralComparison.lean}. The comparison capstone applies the heat-bath
@@ -7921,7 +7921,7 @@ comparison capstone. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 \paragraph{The single-site Dobrushin comparison theorem (\S17.1, Issue~\#4214 capstone).} File
 \texttt{Dobrushin/ComparisonTheorem.lean}. The \textbf{capstone} of the GJ \S17.1 single-site
 Dobrushin comparison programme (PRs \#4215--\#4220, no \texttt{sorry}/\texttt{axiom}). Under the
-Dobrushin condition $\tanh(\beta J)\,\Delta(G)<1$, two finite-volume Gibbs expectations under
+high-temperature condition $\beta J\,\Delta(G)<1$ (whence the Dobrushin coefficient $\tanh(\beta J)\,\Delta(G)<1$), two finite-volume Gibbs expectations under
 boundary conditions $\eta,\eta'$ agreeing off $S$ satisfy
 \[
   |\langle f\rangle^\eta_\Lambda-\langle f\rangle^{\eta'}_\Lambda|
