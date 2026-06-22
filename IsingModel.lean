@@ -462,6 +462,7 @@ import IsingModel.Dobrushin.BoundaryWeight
 import IsingModel.Dobrushin.HeatBathSweep
 import IsingModel.Dobrushin.GibbsBoundaryComparison
 import IsingModel.Dobrushin.ComparisonTheorem
+import IsingModel.Dobrushin.Locality
 import IsingModel.Dobrushin.SweepContraction
 import IsingModel.Dobrushin.SingleSiteGeneralComparison
 import IsingModel.Dobrushin.OscillationPropagation
