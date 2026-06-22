@@ -7762,6 +7762,17 @@ $K_x f(\tau)\,(w(\tau\!\uparrow)+w(\tau\!\downarrow))
 telescoping step; the full multi-site Dobrushin comparison theorem (iterating $K_x$ over $\Lambda$
 with the influence matrix) is not yet formalized.
 
+\paragraph{Single-site oscillation (\S17.1, Issue~\#4201).} File
+\texttt{Dobrushin/SiteOscillation.lean}. The Dobrushin per-site oscillation
+$\texttt{siteOsc}\;x\,f=\sup_\sigma|f(\sigma[x\mapsto\uparrow])-f(\sigma[x\mapsto\downarrow])|$ (a
+\texttt{Finset.sup'} over the finite configuration space) is the quantity propagated by the heat-bath
+operator. Basic facts: $|f(\sigma[x\mapsto\uparrow])-f(\sigma[x\mapsto\downarrow])|\le\texttt{siteOsc}\,x\,f$
+(\texttt{abs\_sub\_update\_le\_siteOsc}), nonnegativity, an upper bound from a uniform per-configuration
+bound (\texttt{siteOsc\_le\_of\_forall}), and $\texttt{siteOsc}\,x\,(K_x f)=0$
+(\texttt{siteOsc\_heatBath\_self}; the heat-bath operator removes the oscillation at its own site). The
+oscillation propagation $\texttt{siteOsc}\,y\,(K_x f)\le\texttt{siteOsc}\,y\,f+C_{xy}\,\texttt{siteOsc}\,x\,f$
+and the resulting comparison theorem are not yet formalized.
+
 The certificate constructors
 \begin{center}
 {\scriptsize\texttt{layerBalancedMinSpectralGapCertificate\_of\_orthogonalMaxEigenIndex}}\\
