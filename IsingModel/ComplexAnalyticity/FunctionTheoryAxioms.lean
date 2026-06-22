@@ -4,8 +4,9 @@ import Mathlib.Topology.ClusterPt
 /-!
 # Isolated function-theory axioms (out of scope for the lattice-Ising library)
 
-This module collects **pure complex-analysis (function-theory) results** that are needed elsewhere in
-the project but that are **not about the Ising model** and that Mathlib does not (yet) provide.  Per
+This module collects **pure complex-analysis (function-theory) results** that are needed elsewhere
+in the project but that are **not about the Ising model** and that Mathlib does not (yet) provide.
+Per
 the project scope policy (`docs/index.md` § Axioms), such results are **isolated here as
 clearly-labelled `axiom`s and are deliberately not proven**: proving them would amount to building a
 bespoke complex-analysis library inside a lattice-model project, which is not this project's
@@ -31,8 +32,8 @@ open Filter Topology
 
 /-- **Vitali–Porter convergence theorem** (classical function theory; absent from Mathlib).
 
-Let `U ⊆ ℂ` be open and preconnected, and `F : ℕ → ℂ → ℂ` a sequence of functions each holomorphic on
-`U` (`DifferentiableOn ℂ (F n) U`).  Suppose the family is **locally uniformly bounded** on `U`:
+Let `U ⊆ ℂ` be open and preconnected, and `F : ℕ → ℂ → ℂ` a sequence of functions each holomorphic
+on `U` (`DifferentiableOn ℂ (F n) U`).  Suppose the family is **locally uniformly bounded** on `U`:
 every
 `z ∈ U` has a ball `Metric.ball z r ⊆ U` (`r > 0`) and a bound `M` with `‖F n w‖ ≤ M` for all `n`
 and all `w` in that ball.  Suppose moreover that `F n` converges pointwise, as `n → ∞`, on a subset
