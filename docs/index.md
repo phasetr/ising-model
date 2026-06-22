@@ -272,9 +272,16 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`
 > for faster targeted checks.
 
-All theorems are formally proved with **zero `sorry`** and **zero declared
-axioms** — the formalization is now fully axiom-free (modulo Mathlib).
-`polynomialDecay_contraction_factor_tendsto` (the last declared axiom) was
+All theorems are formally proved with **zero `sorry`**, and **every Ising-model
+axiom has been discharged** (modulo Mathlib). Per the project scope policy (see
+the [Axioms](#axioms) section), self-contained *complex-analysis* (function-theory)
+results that are out of scope for a lattice-model library — and absent from Mathlib
+— are isolated as clearly-labelled, deliberately-unproven `axiom`s in a dedicated
+module; the only such result currently planned is the **Vitali–Porter convergence
+theorem** (for the infinite-volume two-point correlation analyticity, Issue #4230),
+which is documented but **not yet introduced**, so the project is presently still
+axiom-free.
+`polynomialDecay_contraction_factor_tendsto` (the last Ising-side declared axiom) was
 discharged as a **theorem** (`TheoremEtaLe1/Contraction.lean`): the boundary edge
 count is `O(r^{d-1})` (a *surface* bound, `latticeBallBoundaryEdges_card_le_sphere`
 + `latticeSphere_card_le'`), each endpoint sits at distance `∈ {r, r+1}` where
@@ -1169,7 +1176,47 @@ ambient framework:
 
 ## Axioms
 
-**No declared axioms remain anywhere in the project** (modulo Mathlib):
+### Scope policy: complex-analysis (function-theory) results are isolated as axioms, not proven
+
+This project is a formalization of the **lattice Ising model** (rigorous statistical mechanics, GJ
+§17–18). Self-contained *complex-analysis* results — theorems of pure function theory that are not
+about the Ising model and that Mathlib does not (yet) provide — are **out of scope**: they are
+**isolated as clearly-labelled `axiom`s in a dedicated module and are deliberately not proven
+here**. Proving them would amount to building a bespoke complex-analysis library inside a
+lattice-model project, which is not this project's responsibility. The Ising-side content that
+*feeds* such an axiom (e.g. volume-uniform cluster-expansion bounds, real-axis convergence) **is**
+in scope and is proven.
+
+**Currently planned function-theory axiom** (for the infinite-volume two-point correlation
+analyticity, GJ §18.6/§18.7, Issue #4230 / master #4214 item D):
+
+- **Vitali–Porter convergence theorem** (classical function theory; absent from Mathlib). *Informal
+  statement to be axiomatized:* let `U ⊆ ℂ` be open and preconnected, and `F : ℕ → ℂ → ℂ` a sequence
+  with each `F n` holomorphic on `U` (`DifferentiableOn ℂ (F n) U`) and the family **locally
+  uniformly bounded** on `U`; if `F n` converges pointwise on a subset `S ⊆ U` that has an
+  accumulation point in `U`, then `F n` converges **locally uniformly** on `U` to a function `f`
+  that is holomorphic on `U` (and agrees with the pointwise limit on `S`).
+  This is exactly the bridge that turns the (Ising-side, to-be-proven) **volume-uniform bound** on
+  the per-stage complex correlations on a high-temperature disc, together with the **already-proven
+  real-axis pointwise convergence** to `correlationInfinite`
+  (`correlationComplexAlongExhaustion_tendsto_at_real`), into the locally-uniform-convergence
+  hypothesis `hconv` consumed by `correlationComplexAlongExhaustion_vitali_identified_at_real_of_ne_zero`
+  (PR #4232). It will live in a dedicated `…/FunctionTheoryAxioms.lean`-style module, labelled and
+  documented as an intentionally-unproven function-theory axiom, with the rationale above.
+
+  *Status: not yet introduced.* It is documented here and in Issue #4230 first; the `axiom`
+  declaration is the next step. Until then, the infinite-volume correlation-analyticity programme is
+  developed **conditionally** (the locally-uniform convergence is carried as an explicit hypothesis;
+  see the ∞-vol correlation Vitali rows above), so the project remains axiom-free in the meantime.
+
+Once introduced, the project will be **axiom-free except for the isolated, documented function-theory
+axiom(s) listed here** (modulo Mathlib). Every such axiom must be (i) pure function theory, unrelated
+to the Ising model; (ii) absent from Mathlib; (iii) confined to its dedicated module; (iv) listed in
+this section with its informal statement and the reason it is out of scope.
+
+### Discharged axioms (Ising-side; all proven)
+
+**All Ising-model axioms have been discharged** (modulo Mathlib):
 `cor_4_3_3_scaled` (PR #3912) and `phi4_single_site_nonneg` (PR #3917) made GJ
 §4.3 axiom-free, and the three §17.8 axioms behind `η ≤ 1` —
 `ball_boundary_tight_infinite`, `shellSup_contraction`, and
