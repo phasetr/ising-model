@@ -471,3 +471,4 @@ import IsingModel.Dobrushin.DobrushinHighTemp
 import IsingModel.Dobrushin.InfluenceMatrixDecay
 import IsingModel.Dobrushin.InfluenceMatrixResolvent
 import IsingModel.Dobrushin.DobrushinResolvent
+import IsingModel.Dobrushin.ResolventDecay

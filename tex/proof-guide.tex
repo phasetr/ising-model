@@ -7954,6 +7954,27 @@ $\texttt{\dots\_totalInfluence}$), the uniform Dobrushin locality estimate, the 
 sensitivity bounded by the total-influence factor $(1-\alpha)^{-1}$. Reference: Glimm--Jaffe, 2nd
 ed., \S17.1, pp.~304--306.
 
+\paragraph{Exponential distance-decay of the Dobrushin resolvent (\S17.1, Issue~\#4214).} File
+\texttt{Dobrushin/ResolventDecay.lean}. The quantitative content of Dobrushin uniqueness: the
+resolvent entry $R_{xy}=\sum_n (C^n)_{xy}$ decays exponentially in the graph distance
+$d_G(x,y)$. Since $C=\tanh(\beta J)\,A$ with $A=G.\mathrm{adjMatrix}$
+($\texttt{isingInfluenceMatrix\_eq\_smul\_adjMatrix}$), the entry
+$(C^n)_{xy}=\tanh(\beta J)^n\cdot\#\{\text{length-}n\text{ walks }x\to y\}$
+($\texttt{isingInfluenceMatrix\_pow\_apply}$, via \texttt{adjMatrix\_pow\_apply\_eq\_card\_walk});
+this vanishes for $n<d_G(x,y)$ as no such walk exists
+($\texttt{isingInfluenceMatrix\_pow\_apply\_eq\_zero\_of\_lt\_dist}$, via
+\texttt{SimpleGraph.dist\_le}). Shifting off the first $d_G(x,y)$ vanishing terms
+(\texttt{Summable.sum\_add\_tsum\_nat\_add}) leaves the geometric tail
+$\sum'_n (C^{n+d})_{xy}\le\alpha^d(1-\alpha)^{-1}$
+($\texttt{isingInfluenceMatrix\_tsum\_shift\_apply\_le}$, with $d$ kept a free variable to avoid
+unfolding the noncomputable graph distance), whence, for $0\le\beta J$ and $\beta J\,\Delta(G)<1$,
+\[
+  R_{xy}\le\alpha^{d_G(x,y)}\,(1-\alpha)^{-1},\qquad \alpha=\Delta(G)\tanh(\beta J)
+\]
+($\texttt{dobrushinResolvent\_le\_pow\_dist}$). Combined with the comparison theorem, the boundary
+sensitivity of a local observable decays exponentially in the distance. Reference: Glimm--Jaffe, 2nd
+ed., \S17.1, pp.~304--306.
+
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
 \texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
