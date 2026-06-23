@@ -511,3 +511,4 @@ import IsingModel.Dobrushin.ExponentialLocality
 import IsingModel.Dobrushin.Uniqueness
 import IsingModel.Dobrushin.InfiniteVolumeUniformInfluence
 import IsingModel.Dobrushin.InfiniteVolumeBoundaryInfluence
+import IsingModel.Dobrushin.InfiniteVolumeUniqueness
