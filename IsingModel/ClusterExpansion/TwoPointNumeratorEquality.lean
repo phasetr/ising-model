@@ -4,9 +4,13 @@ import IsingModel.ClusterExpansion.TwoPointNumeratorBound
 # Exact two-point numerator factorization
 
 This file upgrades the injective norm bound for the high-temperature two-point numerator to the
-exact complex-valued factorization.  The bijection sends a two-point subgraph `X` to its unique
-connecting component `C` and the even remainder `X \ C`; the inverse sends a compatible pair
-`(C, Y)` to `C ∪ Y`.
+exact complex-valued factorization (Issue #4230, item D of #4214).  The bijection sends a two-point
+subgraph `X` to its unique connecting component `C` and the even remainder `X \ C`; the inverse
+sends a compatible pair `(C, Y)` to `C ∪ Y`.  The complex `htSubgraphSumAvoiding G C t = ∑_{Y ⊥ C}
+t^{|Y|}` (not the real norm sum) is what the volume-uniform two-point ratio bound needs.
+
+References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §18.4–18.7; Friedli–Velenik,
+*Statistical Mechanics of Lattice Systems* (CUP, 2017), §3.7.3.
 -/
 
 namespace IsingModel
