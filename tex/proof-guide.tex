@@ -31506,6 +31506,30 @@ and the correlation--ratio identity needed to feed $\texttt{twoPointRatio\_norm\
 (PR 11) and obtain the volume-uniform correlation bound (the remaining capstone PRs).
 References: Glimm--Jaffe, 2nd ed., \S18.5--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Finite-graph high-temperature two-point correlation bound, degree-uniform
+(Issue \#4230 PR 21)}
+
+Assembling the prerequisites gives the per-graph input to the infinite-volume capstone, axiom-free
+in \texttt{ClusterExpansion/TwoPointCorrelationHTBound.lean}.  For any finite $G$ with
+$G.\texttt{maxDegree} \le \Delta$, $\texttt{correlationComplex\_two\_point\_norm\_le\_of\_high\_temp}$
+produces a small $\beta$-disc on which
+\[
+  \big\| \texttt{correlationComplex}\,G\,\{i,j\}\,(J)\,0\,\beta \big\| \le M,
+  \qquad M = \frac{e^{8}}{1 - a\,\Delta^2}, \quad a = R\,e^{8}, \quad R = \texttt{twoPointHTActivityRadius}\,\Delta,
+\]
+with the value $M$ chosen \emph{only from $\Delta$}, so the same $M$ works for every graph of bounded
+degree --- essential for applying it to each exhaustion stage.  The chain: at $t = \tanh(\beta J)$ on
+the disc, where $rr = \Delta^2 e\|t\| \le 1/6$ gives a coarse $\kappa \le 8$, the per-component bound
+$\|t\|^{|C|}\,\|\texttt{ZAvoid}_C/Q_\emptyset\| \le e^{8}\,(\|t\| e^{8})^{|C|}$ (from the complex-$z$
+KP bound of PR 20, the avoiding-ratio exponential of PR 14, and $|\!\operatorname{supp} C| \le |C|+1$)
+feeds $\texttt{twoPointRatio\_norm\_le\_geometric}$ (PR 11), giving $\|Q_{i,j}/Q_\emptyset\| \le M$; the
+public $\texttt{htSubgraphSum}$ tanh bridge (PR 20) converts to $\texttt{correlationComplex}$.  The
+$\beta$-disc is the intersection of the degree-uniform activity disc ($\|\tanh(\beta J)\| < R$ by
+continuity, $\tanh 0 = 0$) with the PR 6 expansion radius.  The final capstone PR applies this to the
+cubic exhaustion ($\Delta = 2d$ uniform) and feeds
+$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (the \#4235 Vitali
+consumer).  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
