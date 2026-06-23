@@ -31167,9 +31167,11 @@ $\texttt{tendsto\_gibbsExpectationBC\_originObs\_extremal\_limit}$ (stated for a
 both $\to$ the common value; squeeze ($\texttt{tendsto\_of\_tendsto\_of\_tendsto\_of\_le\_of\_le}$) and
 shift the index ($\texttt{tendsto\_add\_atTop\_iff\_nat}$).
 
-This \textbf{completes Master \#4214 item A}: the $\mathbb{Z}^d$ infinite-volume Gibbs expectation of a
-local observable exists at high temperature and is independent of the boundary condition (free, $+$,
-$-$, or any sequence), in both the screened and the full-box free-boundary conventions.  Axiom-free
+This \textbf{completes Master \#4214 item A}: for the monotone single-site origin observable, the
+$\mathbb{Z}^d$ infinite-volume Gibbs expectation exists at high temperature and is independent of the
+boundary condition (free, $+$, $-$, or any sequence), in both the screened and the full-box
+free-boundary conventions; for a general single-site $g$ the $\pm$-state coincidence $\mu^+=\mu^-$
+holds without the monotonicity needed for limit existence.  Axiom-free
 ($\texttt{\#print axioms} = [\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}]$; no
 Vitali).  References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Friedli--Velenik, \S3.4
 (Lemmas 3.22--3.23), \S6.5; Georgii, Ch.~8.
