@@ -31186,9 +31186,12 @@ component has empty boundary, $\texttt{oddBoundary\_eq\_empty\_of\_mem\_erase\_c
 vertex-disjoint from $C$, and $|X| = |C| + |X \setminus C|$ --- gives
 $\sum_X \|t\|^{|X|} = \sum_{\mathrm{image}} \le \sum_{\texttt{connectingPairs}}$ by
 $\texttt{Finset.sum\_image}$ and $\texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}$, and the pair
-sum factors over the filtered product.  Both real sums are bounded volume-uniformly in brick 5
-(geometric in $2d\|t\|$ over the anchored connecting clusters; even-avoiding-to-$Q_\emptyset$
-partition ratio via per-site Kotecký--Preiss).  References: Glimm--Jaffe, 2nd ed., \S18.4--18.7;
+sum factors over the filtered product.  The raw inner sum $\sum_{Y} \|t\|^{|Y|}$ is itself an
+extensive even-subgraph partition sum; what brick 5 bounds volume-uniformly is the \emph{normalized}
+quantity $\|Q_{i,j}/Q_\emptyset\|$: after dividing by $\|Q_\emptyset\|$, the anchored
+connecting-cluster outer sum is geometric in $2d\|t\|$, and the even-avoiding-to-$Q_\emptyset$
+partition \emph{ratio} $\big(\sum_{Y \text{ avoiding } C} \|t\|^{|Y|}\big) / \|Q_\emptyset\|$ is
+controlled by a per-site Kotecký--Preiss bound.  References: Glimm--Jaffe, 2nd ed., \S18.4--18.7;
 Friedli--Velenik, \S3.7.3.
 
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
