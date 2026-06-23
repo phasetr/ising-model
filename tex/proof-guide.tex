@@ -31214,6 +31214,31 @@ Axiom-free ($\texttt{\#print axioms} = [\texttt{propext}, \texttt{Classical.choi
 \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306;
 Friedli--Velenik, \S3.4, \S6.5; Georgii, Ch.~8.
 
+\subsection{Full-box free-boundary limit for a general local observable
+(Issue \#4264 PR 2)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/LocalObservableFreeLimit.lean}.  The free
+boundary analogue of the previous subsection, generalising \texttt{CubicBoxFreeLimit.lean} (\#4263)
+from the single-site origin observable to a general \emph{monotone} $O : \texttt{LocalObservable}\,d$.
+
+\paragraph{Headline.} $\texttt{tendsto\_gibbsExpectationBC\_localObs\_free\_limit}$: at high
+temperature, for monotone $O$, the free-boundary ($\Lambda' = \texttt{univ}$) Gibbs expectation of $O$
+on the growing cubic boxes converges to the common extremal value $\texttt{plusStateExpectation}\,J\,h
+\,\beta\,O\,hS$, for every boundary family $\eta$ (the free measure being boundary-condition
+independent by $\texttt{gibbsExpectationBC\_boundary\_congr}$, $\texttt{agreesOff}\,\texttt{univ}$
+vacuous).  Proof: the same two-sided volume-monotonicity squeeze as \#4263 --- at $\Lambda'=
+\texttt{univ}$ the free measure equals both $\pm$ boundary measures; freezing the inner-box shell to
+$+$/$-$ brackets it ($\texttt{gibbsExpectationBC\_\{plus\_volume\_antitone, minus\_volume\_monotone\}}$,
+both already general); both bracketing sequences are the $\pm$ instances of the general screened
+limit $\texttt{tendsto\_gibbsExpectationBC\_localObs\_extremal\_limit}$, both $\to$ the common value.
+Because the support radius $N$ is symbolic the box indices align directly, so (unlike \#4263) no index
+renormalisation is needed.  Together with \#4265 this \textbf{closes Issue \#4264}: the
+$\mathbb{Z}^d$ infinite-volume Dobrushin uniqueness --- coincidence, screened limit, and free-boundary
+limit --- now holds for a general local observable.  Axiom-free ($\texttt{\#print axioms} =
+[\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Friedli--Velenik, \S3.4 (Lemmas 3.22--3.23), \S6.5;
+Georgii, Ch.~8.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
