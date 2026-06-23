@@ -31474,8 +31474,9 @@ touching bound (PR 15), the support-vertex union, and the geometric $\texttt{tsu
 vanishing, with the $\mathrm{Fin}\,n \leftrightarrow \mathrm{Fin}(n{+}1)$ index shift handled by
 $\texttt{tsum\_eq\_zero\_add}$).  Composing with PR 14
 ($\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp\|M_G - M_{\texttt{Gavoid}}\|$) gives
-$\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$ --- the last input to
-$\texttt{hbdd}$.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
+$\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$, which (after
+$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) feeds $\texttt{hbdd}$ in the
+remaining 5c.6 step.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
 
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
