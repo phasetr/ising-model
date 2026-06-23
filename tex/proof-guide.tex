@@ -31194,6 +31194,53 @@ partition \emph{ratio} $\big(\sum_{Y \text{ avoiding } C} \|t\|^{|Y|}\big) / \|Q
 controlled by a per-site Kotecký--Preiss bound.  References: Glimm--Jaffe, 2nd ed., \S18.4--18.7;
 Friedli--Velenik, \S3.7.3.
 
+\subsection{Two-point ratio bound reduced to a per-component avoiding-ratio estimate
+(Issue \#4230 PR 11)}
+
+Brick 5 reduces the volume-uniform two-point bound $\texttt{hbdd}$ to a single local
+Kotecký--Preiss hypothesis, mirroring how
+$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (\#4235) reduced
+infinite-volume correlation analyticity to $\texttt{hbdd}$ itself.  Three ingredients, all
+axiom-free.
+
+\emph{(1) Exact complex factorization.}  Upgrading the brick-4 norm bound to an equality,
+$\texttt{htSubgraphSum\_pair\_eq\_sum\_connectingComponent}$ proves
+\[
+  Q_{i,j}(t) \;=\; \sum_{C \in \texttt{connectingComponents}\,G\,i\,j} t^{|C|}\,
+    \texttt{htSubgraphSumAvoiding}\,G\,C\,t,
+  \qquad \texttt{ZAvoid}_C(t) = \!\!\sum_{Y \text{ avoiding } C}\!\! t^{|Y|},
+\]
+via $\texttt{Finset.sum\_bij'}$ (forward $X \mapsto (C, X \setminus C)$, inverse
+$(C,Y) \mapsto C \cup Y$).  The right inverse $\texttt{connectingComponentOf}(C \cup Y) = C$ rests on
+two new combinatorial lemmas: $\texttt{oddBoundary\_union\_of\_vertexDisjoint}$
+($\partial(C \cup Y) = \partial C \cup \partial Y$ for vertex-disjoint $C,Y$) and
+$\texttt{mem\_polymerDecomposition\_of\_isEdgeConnected\_vertexDisjoint}$ ($C$ is a component of
+$C \cup Y$).  The \emph{complex} $\texttt{ZAvoid}_C$ (not the real norm sum) is essential: the
+extensive phase cancellation is shared between $\texttt{ZAvoid}_C$ and $Q_\emptyset$, so the ratio
+$\|\texttt{ZAvoid}_C/Q_\emptyset\|$ is volume-uniform whereas the raw real sums are not.
+
+\emph{(2) Volume-uniform anchored count.}
+$\texttt{connectingComponentsOfCard\_card\_le\_maxDegree\_pow}$ bounds the number of connecting
+components of size $\ell$ by $\Delta^{2\ell}$ ($\Delta = G.\texttt{maxDegree}$): each is a connected
+edge subset through $i$, so injects into the closed walks of length $2\ell$ from $i$ (reusing
+$\texttt{card\_connected\_edge\_sets\_le}$ and $\texttt{walksFromCount\_le\_pow}$, dropping the
+evenness of the polymer version).
+
+\emph{(3) Geometric fiber summation.}  $\texttt{sum\_le\_geometric\_closed\_of\_fiber\_card\_le}$ is
+a pure utility: a finite family graded by $\texttt{size}$, with weight $\le A\,a^{\texttt{size}}$ and
+each size-$n$ fiber of cardinality $\le B^n$, has total weight $\le A/(1 - aB)$ when $aB < 1$.
+
+Assembling these, the headline $\texttt{twoPointRatio\_norm\_le\_geometric}$ gives: if every
+connecting component satisfies $\|t\|^{|C|}\,\|\texttt{ZAvoid}_C/Q_\emptyset\| \le A\,a^{|C|}$ and
+$a\,\Delta^2 < 1$, then
+\[
+  \big\| Q_{i,j}/Q_\emptyset \big\| \;\le\; \frac{A}{1 - a\,\Delta^2},
+\]
+volume-uniformly.  The remaining hypothesis is the local Kotecký--Preiss avoiding-ratio estimate
+$\|\texttt{ZAvoid}_C(t)/Q_\emptyset(t)\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$ (with
+$A = \exp\kappa$, $a = \|t\|\exp\kappa$), the genuine cluster-expansion core to be discharged next.
+References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
