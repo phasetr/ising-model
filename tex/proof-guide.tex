@@ -31135,6 +31135,31 @@ D$) and $\texttt{Filter.EventuallyEq.deriv}$ transfer through $\exp(L) =$ the qu
 $L$ is supplied by the source-marked Mayer expansion (later bricks).  Reference: Glimm--Jaffe, 2nd
 ed., \S18.4--18.7.
 
+\subsection{Unique connecting component of a two-point subgraph (Issue \#4230 PR 9)}
+
+The volume-uniform bound on $Q_{i,j}/Q_\emptyset$ rests on the \emph{connecting-cluster} structure of
+the two-point numerator $Q_{i,j}(t) = \sum_{X:\,\partial X = \{i,j\}} t^{|X|}$: in the
+high-temperature / random-line representation (Friedli--Velenik, \S3.7.2), an open subgraph with
+$\partial X = \{i,j\}$ contains a \emph{unique} connected line joining the two sources, all other
+components being closed (even).  Brick 3 formalizes this, axiom-free, in
+\texttt{ClusterExpansion/TwoPointNumeratorFactorization.lean}.  The key combinatorial input is that
+the odd boundary distributes over the canonical connected-component decomposition
+$\texttt{polymerDecomposition}\,X$: since the components are pairwise vertex-disjoint, all $X$-edges
+incident to a vertex lie in a single component ($\texttt{degree\_eq\_degree\_component}$), whence
+$\texttt{oddBoundary\_biUnion\_polymerDecomposition}$ gives
+\[
+  \partial X \;=\; \bigsqcup_{C \in \texttt{polymerDecomposition}\,X} \partial C .
+\]
+Combined with the handshake parity ($|\partial C|$ even,
+$\texttt{oddBoundary\_card\_even}$), a component meeting $\{i,j\}$ must carry the whole pair as its
+boundary ($\texttt{oddBoundary\_eq\_pair\_of\_subset\_pair\_of\_mem}$).  The headline
+$\texttt{existsUnique\_component\_oddBoundary\_pair}$ then shows that every $X$ with
+$\partial X = \{i,j\}$ ($i \neq j$) has a unique component $C$ with $\partial C = \{i,j\}$ --- the
+open polymer linking the sources --- with uniqueness from vertex-disjointness (a second such
+component would also support $i$).  This is the entry point for factorizing $Q_{i,j}$ as
+(connecting cluster) $\times$ (even remainder) and the volume-uniform endpoint-anchored bound (later
+bricks).  References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.2.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
