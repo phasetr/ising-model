@@ -31009,6 +31009,67 @@ $\texttt{gibbsExpectationBC\_localObs\_boundary\_influence\_uniform\_small}$, wh
 $\texttt{Fintype.card}\,\iota$.  Axiom-free.  Next: PR~3 lifts this across the cubic exhaustion to the
 infinite-volume Gibbs-state uniqueness.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\subsection{Cross-exhaustion \texorpdfstring{$\mathbb{Z}^d$}{Zd} infinite-volume Dobrushin
+uniqueness (\texorpdfstring{$\mathbb{Z}^d$}{Zd} uniqueness lift PR 3, Issue \#4256)}
+
+File \texttt{IsingModel/Dobrushin/InfiniteVolumeUniqueness.lean}.  The per-box estimate of the
+previous subsection fixes a single volume $\Lambda$ \emph{before} producing the influence radius
+$R$.  The cross-exhaustion capstone produces \emph{one} radius $R(\varepsilon)$ valid simultaneously
+for \emph{every} stage $\texttt{cubicBox}\,d\,n$ of the cubic exhaustion, with the \emph{same}
+observable evaluated in every box.
+
+\paragraph{Observable transport.} A generic local observable $f : \texttt{Config}\,\uparrow\!\Lambda
+\to \mathbb{R}$ cannot be carried across stages because the subtype $\uparrow\!\Lambda$ changes with
+the box.  The resolution is to fix the \emph{single spin at the origin}: for $g : \texttt{Spin} \to
+\mathbb{R}$, set $\texttt{originObs}\,d\,g\,h_0 = (\sigma \mapsto g(\sigma\,\langle 0, h_0\rangle))$
+on $\texttt{Config}\,\uparrow\!\Lambda$.  The origin lies in every box
+($\texttt{origin\_mem\_cubicBox} : (0 : \mathrm{Fin}\,d \to \mathbb{Z}) \in \texttt{cubicBox}\,d\,n$,
+each coordinate $0 \in \mathrm{Icc}(-n)\,n$); the observable is local at the origin
+($\texttt{originObs\_localAtSite}$); and crucially its single-site oscillation is the
+\emph{box-independent constant}
+\[
+  \texttt{siteOsc}\,\langle 0, h_0\rangle\,(\texttt{originObs}\,d\,g\,h_0)
+    \;=\; |g(\uparrow) - g(\downarrow)|
+\]
+($\texttt{siteOsc\_originObs}$; $\texttt{le\_antisymm}$ of $\texttt{siteOsc\_le\_of\_forall}$ and
+$\texttt{abs\_sub\_update\_le\_siteOsc}$, the per-configuration value collapsing to the constant
+after $\texttt{Function.update\_self}$).  Since the per-box bound
+$\texttt{siteOsc} \cdot \texttt{resolventTail}\,d\,(2d\tanh\beta J)\,R$ carries no volume dependence,
+a single $R(\varepsilon)$ drawn from the box-independent
+$\texttt{Tendsto}\,(\texttt{resolventTail}\,d\,\alpha\,R \to 0)$ controls every stage.
+
+\paragraph{Headline.} $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion\_boundary\_influence%
+\_uniform}$: for $d \ge 1$, $0 \le \beta J$, $\beta J \cdot 2d < 1$, and every $\varepsilon > 0$
+there is one $R$ such that for \emph{every} stage $n$, Gibbs region $\Lambda'$, disagreement set $S$,
+and boundary conditions $\eta, \eta'$ agreeing off $S$ with every disagreement site at
+$\ell^1$-lattice distance $\ge R$ from the origin,
+\[
+  \bigl|\langle \texttt{originObs}\,g\rangle^{\eta}_{\Lambda'}
+        - \langle \texttt{originObs}\,g\rangle^{\eta'}_{\Lambda'}\bigr| \;\le\; \varepsilon,
+\]
+with $R$ depending only on $d, \beta, J, \varepsilon, |g(\uparrow)-g(\downarrow)|$ and \emph{not} on
+the stage $n$, $S$, or volume cardinality.  The proof drives the per-stage explicit bound
+$\texttt{gibbsExpectationBC\_originObs\_inducedLattice\_dist\_le\_resolventTail}$ (the previous
+subsection's estimate with $\texttt{siteOsc}$ rewritten to the constant) through the single
+box-independent $\texttt{Tendsto}$.  $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion%
+\_boundary\_influence\_ball}$ restates this with the disagreement set described intrinsically (two
+boundary conditions agreeing on the ball of radius $R$ about the origin) --- the most direct reading
+of ``the infinite-volume expectation of a local observable is independent of the boundary
+condition'', uniform in the volume.
+
+\paragraph{Honest scope.} This is the decay-of-influence (boundary-condition independence) half of
+Dobrushin uniqueness, now genuinely \emph{volume-uniform} and \emph{card-free}.  Existence of the
+boundary-condition-free \emph{limit} $\texttt{Tendsto}\,(n \mapsto \langle \texttt{originObs}\,g
+\rangle^{\eta_n}_{\texttt{cubicBox}\,d\,n})\,\texttt{atTop}\,(\mathcal{N}\,L)$ is \emph{not} asserted:
+$\texttt{gibbsExpectationBC}$ of a general single-site observable under an arbitrary boundary
+condition is not monotone in $n$, so the $\texttt{correlationInfinite} = \bigsqcup_n
+\texttt{correlationAlongExhaustion}$ / Ferromagnetic--GKS route does not apply, and a cross-box
+comparison requires a DLR restriction map that the single-box estimate deliberately avoids (the
+remaining research-level item of Issue \#4214 \S A).  Axiom-free ($\texttt{\#print axioms} =
+[\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References:
+Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii, \emph{Gibbs Measures and Phase Transitions},
+Ch.~8; Friedli--Velenik, \S6.5.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
