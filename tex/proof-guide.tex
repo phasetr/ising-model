@@ -31295,6 +31295,36 @@ $M_G - M_{\texttt{Gavoid}}$ is the touching-cluster difference whose norm the re
 fixed-vertex KP bound (subsequent PRs) controls by $\kappa\,|\!\operatorname{supp} C|$.
 References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Avoiding-to-vacuum ratio as an exponential of a Mayer-sum difference
+(Issue \#4230 PR 14)}
+
+Applying the existing complex Mayer--Montroll to \emph{both} $G$ and $\texttt{Gavoid}\,G\,C$ puts the
+avoiding-ratio bound in exponential form (axiom-free,
+\texttt{ClusterExpansion/AvoidingRatioExp.lean}).  First, at $C = \emptyset$ the avoiding identity
+collapses to $Q_\emptyset(z) = \sum_{\Gamma \in \texttt{vdCompatiblePolymerFamilies}\,G} \prod
+z^{|P|}$ (since $Y \perp \emptyset$ always and the avoiding family set is the full one), so with the
+complex Mayer--Montroll
+\[
+  Q_\emptyset(z) = \exp\!\Big(\sum_{n} \texttt{mayerExpansionTermComplex}\,G\,n\,z\Big)
+\]
+on the Kotecký--Preiss ball ($\texttt{htSubgraphSum\_empty\_eq\_exp\_tsum\_mayerExpansionTermComplex}$).
+The KP hypotheses transfer from $G$ to $\texttt{Gavoid}\,G\,C$ because
+$\Delta_{\texttt{Gavoid}} \le \Delta_G$ ($\texttt{gavoid\_kp\_conditions}$, via
+$\texttt{maxDegree\_Gavoid\_le}$ and degree-monotonicity of the KP region).  Writing
+$M_G = \sum_n \texttt{mayerExpansionTermComplex}\,G\,n\,z$ and likewise $M_{\texttt{Gavoid}}$, the
+headline $\texttt{norm\_htSubgraphSumAvoiding\_div\_htSubgraphSum\_empty\_le}$ is
+\[
+  \big\| \texttt{ZAvoid}_C(z) / Q_\emptyset(z) \big\|
+    \;=\; \big\| \exp(M_{\texttt{Gavoid}} - M_G) \big\|
+    \;=\; \exp\!\big((M_{\texttt{Gavoid}} - M_G).\mathrm{re}\big)
+    \;\le\; \exp\!\big(\| M_G - M_{\texttt{Gavoid}} \|\big),
+\]
+using $\texttt{Complex.exp\_sub}$, $\|\exp w\| = \exp(w.\mathrm{re})$, and
+$w.\mathrm{re} \le \|w\|$.  The avoiding-ratio estimate is thereby reduced to bounding the
+Mayer-cluster-sum difference $\|M_G - M_{\texttt{Gavoid}}\|$ --- the touching-cluster sum --- which
+the remaining rooted fixed-vertex KP bound controls by $\kappa\,|\!\operatorname{supp} C|$.
+References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
