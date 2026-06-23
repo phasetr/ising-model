@@ -30980,6 +30980,35 @@ $\beta J\cdot 2d < 1$ via $\tanh t \le t$.  Axiom-free.  Next: PR~2 packages the
 $\texttt{boundary\_influence\_uniform\_small}$ for $\texttt{latticeGraph}\,d$, PR~3 the infinite-volume
 Gibbs-state uniqueness.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
+\subsection{Card-free volume-uniform boundary influence (\texorpdfstring{$\mathbb{Z}^d$}{Zd}
+uniqueness lift, Issue \#4256 / \#4214 item~A, PR~2)}
+
+Composing the card-free far-field resolvent tail (PR~1) with the existing Dobrushin row-sum locality
+bound $\texttt{gibbsExpectationBC\_localObs\_dist\_le\_resolvent\_row}$ yields a boundary-influence
+estimate on the induced cubic-lattice graph $G_\Lambda$ that carries \emph{no}
+$\texttt{Fintype.card}$ or $|S|$ factor
+(\texttt{Dobrushin/InfiniteVolumeBoundaryInfluence.lean}).  The first theorem
+$\texttt{gibbsExpectationBC\_localObs\_inducedLattice\_dist\_le\_resolventTail}$ states: for $d \ge 1$,
+$0 \le \beta J$, $\beta J\cdot 2d < 1$, observable $f$ local at $x_0$, and boundary conditions
+$\eta, \eta'$ agreeing off a finite $S$ with $\texttt{latticeDistance}\,d\,x_0\,y \ge R$ for all $y \in
+S$,
+\[
+  \bigl|\langle f\rangle^{\eta}_{\Lambda'} - \langle f\rangle^{\eta'}_{\Lambda'}\bigr|
+    \;\le\; \texttt{siteOsc}\,x_0\,f \cdot \texttt{resolventTail}\,d\,(2d\tanh\beta J)\,R,
+\]
+the high-temperature hypothesis $\beta J\cdot \deg_{\max}(G_\Lambda) < 1$ being derived inline from
+$\texttt{induced\_latticeGraph\_maxDegree\_le} \le 2d$.  The second theorem
+$\texttt{gibbsExpectationBC\_localObs\_inducedLattice\_boundary\_influence\_uniform\_small}$ is the
+$\forall \varepsilon > 0\,\exists R$ vanishing form: for a fixed volume $\Lambda$, site $x_0$, and
+observable $f$, a radius $R$ depending only on $d, \beta, J, \varepsilon$, and $\texttt{siteOsc}\,x_0\,f$
+(not on $|S|$) makes the boundary influence $\le \varepsilon$ for \emph{all} Gibbs regions $\Lambda'$,
+disagreement sets $S$, and boundary conditions agreeing off $S$ with disagreement at distance $\ge R$;
+extracted from $\texttt{Metric.tendsto\_atTop}$ applied to $\texttt{siteOsc}\,x_0\,f \cdot
+\texttt{resolventTail}\,d\,\alpha\,R \to 0$.  This is the card-free analogue of the finite-graph
+$\texttt{gibbsExpectationBC\_localObs\_boundary\_influence\_uniform\_small}$, whose radius grows with
+$\texttt{Fintype.card}\,\iota$.  Axiom-free.  Next: PR~3 lifts this across the cubic exhaustion to the
+infinite-volume Gibbs-state uniqueness.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
