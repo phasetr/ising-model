@@ -31352,6 +31352,36 @@ $\sum_{\omega\ \text{touching}} |\texttt{ursellCoefficient}\,\omega| \prod_i \|z
 $\kappa\,|\!\operatorname{supp} C|$ via a rooted fixed-vertex Kotecký--Preiss estimate.
 References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Fixed-vertex foundations for the rooted KP bound: the
+\texorpdfstring{$|V| \to 1$}{|V| to 1} core (Issue \#4230 PR 16)}
+
+The rooted fixed-vertex Kotecký--Preiss bound (which will control the touching-cluster sum by
+$\kappa\,|\!\operatorname{supp} C|$, volume-uniform) rests on two foundational pieces, axiom-free in
+\texttt{ClusterExpansion/\{FixedVertexTouchingUnion,FixedVertexPeelBound\}.lean}.  First, the
+\emph{coordinate union bound} $\texttt{fixedVertexTouching\_termAbsSum\_succ\_le\_sum\_coord\_rooted}$
+reduces ``some coordinate touches $v$'' to single-coordinate (root) sums,
+\[
+  \sum_{\substack{\omega \\ \exists i,\ v \in \operatorname{supp}(\omega_i)}}
+    |\texttt{ursell}\,\omega| \prod_i \|z\|^{|\omega_i|}
+  \;\le\; \sum_i \sum_{\substack{\omega \\ v \in \operatorname{supp}(\omega_i)}}
+    |\texttt{ursell}\,\omega| \prod_i \|z\|^{|\omega_i|},
+\]
+by $\texttt{Finset.sum\_comm}$ and $\texttt{Finset.single\_le\_sum}$.  Second --- the heart of removing
+volume-dependence --- the fixed-root peel bound.  The existing
+$\texttt{rootedParentActivePeelBound}$ factors as a product of non-root leaf Kotecký--Preiss factors
+times a single \emph{root moment} $\sum_{P \in \texttt{allPolymers}\,G} |P|^{d_0}(e|t|)^{|P|}$, and
+the $|V| = \texttt{Fintype.card}\,\iota$ in its factorial bound enters \emph{only} there, as
+$\sum_{v} \texttt{rootedPolymerActivity\_cardPow\_le}\,G\,v$.  Defining
+$\texttt{fixedVertexRootedParentActivePeelBound}$ identically but with the root moment summed over
+$\texttt{rootedPolymers}\,G\,v$ (polymers through $v$) and reusing the per-vertex moment
+$\texttt{rootedPolymerActivity\_cardPow\_le}\,G\,v$ directly,
+$\texttt{fixedVertexRootedParentActivePeelBound\_univ\_zero\_le\_prod\_childCount\_factorial\_div}$
+gives the same factorial bound
+$\le \big(\prod_v (\texttt{childCount}\,v)!\big) / q^{2n+1}$ but with \emph{no} $|V|$ factor.  These
+feed the root-filtered clones of the Penrose tree-sum / peel chain (subsequent PRs), yielding the
+per-order bound $(1-rr)^{-1}(4rr/(1-rr)^2)^n$ and ultimately $\kappa\,|\!\operatorname{supp} C|$.
+References: Glimm--Jaffe, 2nd ed., \S18.5; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
