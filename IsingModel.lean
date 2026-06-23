@@ -281,6 +281,7 @@ import IsingModel.ClusterExpansion.TwoPointNumeratorEquality
 import IsingModel.ClusterExpansion.TwoPointRatioBound
 import IsingModel.ClusterExpansion.AvoidingPolymerGas
 import IsingModel.ClusterExpansion.AvoidingDeleteEdges
+import IsingModel.ClusterExpansion.AvoidingRatioExp
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation
