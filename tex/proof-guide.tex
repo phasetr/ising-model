@@ -31514,15 +31514,15 @@ in \texttt{ClusterExpansion/TwoPointCorrelationHTBound.lean}.  For any finite $G
 $G.\texttt{maxDegree} \le \Delta$, $\texttt{correlationComplex\_two\_point\_norm\_le\_of\_high\_temp}$
 produces a small $\beta$-disc on which
 \[
-  \big\| \texttt{correlationComplex}\,G\,\{i,j\}\,(J)\,0\,\beta \big\| \le M,
-  \qquad M = \frac{e^{8}}{1 - a\,\Delta^2}, \quad a = R\,e^{8}, \quad R = \texttt{twoPointHTActivityRadius}\,\Delta,
+  \big\| \texttt{correlationComplex}\,G\,\{i,j\}\,(J)\,0\,\beta \big\| \le \texttt{twoPointHTBoundValue}\,\Delta,
+  \quad \texttt{twoPointHTBoundValue}\,\Delta = \frac{e^{8}}{1 - \texttt{twoPointHTActivityRadius}\,\Delta \cdot e^{8} \cdot \Delta^2},
 \]
-with the value $M$ chosen \emph{only from $\Delta$}, so the same $M$ works for every graph of bounded
+an explicit value depending \emph{only on $\Delta$}, so the same value works for every graph of bounded
 degree --- essential for applying it to each exhaustion stage.  The chain: at $t = \tanh(\beta J)$ on
-the disc, where $rr = \Delta^2 e\|t\| \le 1/6$ gives a coarse $\kappa \le 8$, the per-component bound
+the disc, where $rr = \Delta^2 e\|t\| < 1/64$ gives a coarse $\kappa \le 8$ (the $1/6$ threshold is for the KP tail condition), the per-component bound
 $\|t\|^{|C|}\,\|\texttt{ZAvoid}_C/Q_\emptyset\| \le e^{8}\,(\|t\| e^{8})^{|C|}$ (from the complex-$z$
 KP bound of PR 20, the avoiding-ratio exponential of PR 14, and $|\!\operatorname{supp} C| \le |C|+1$)
-feeds $\texttt{twoPointRatio\_norm\_le\_geometric}$ (PR 11), giving $\|Q_{i,j}/Q_\emptyset\| \le M$; the
+feeds $\texttt{twoPointRatio\_norm\_le\_geometric}$ (PR 11), giving $\|Q_{i,j}/Q_\emptyset\| \le \texttt{twoPointHTBoundValue}\,\Delta$; the
 public $\texttt{htSubgraphSum}$ tanh bridge (PR 20) converts to $\texttt{correlationComplex}$.  The
 $\beta$-disc is the intersection of the degree-uniform activity disc ($\|\tanh(\beta J)\| < R$ by
 continuity, $\tanh 0 = 0$) with the PR 6 expansion radius.  The final capstone PR applies this to the

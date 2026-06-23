@@ -24,6 +24,10 @@ noncomputable def twoPointHTActivityRadius (Δ : ℕ) : ℝ :=
   min (1 / (64 * (((Δ : ℝ) ^ 2 + 1) * Real.exp 1)))
     (1 / (2 * (((Δ : ℝ) ^ 2 + 1) * Real.exp 8)))
 
+/-- The degree-uniform high-temperature two-point bound value (depends only on `Δ`). -/
+noncomputable def twoPointHTBoundValue (Δ : ℕ) : ℝ :=
+  Real.exp 8 / (1 - twoPointHTActivityRadius Δ * Real.exp 8 * (Δ : ℝ) ^ 2)
+
 /-- The activity radius is positive. -/
 theorem twoPointHTActivityRadius_pos (Δ : ℕ) : 0 < twoPointHTActivityRadius Δ := by
   unfold twoPointHTActivityRadius
@@ -63,6 +67,15 @@ theorem twoPointHTActivityRadius_hq_threshold (Δ : ℕ) :
     rw [div_lt_iff₀ (by positivity)]
     nlinarith [sq_nonneg (Δ : ℝ)]
   exact lt_of_le_of_lt hmain hstrict
+
+/-- The degree-uniform high-temperature two-point bound value is positive. -/
+theorem twoPointHTBoundValue_pos (Δ : ℕ) : 0 < twoPointHTBoundValue Δ := by
+  unfold twoPointHTBoundValue
+  have hq : twoPointHTActivityRadius Δ * Real.exp 8 * ((Δ : ℝ) ^ 2) < 1 :=
+    twoPointHTActivityRadius_hq_threshold Δ
+  have hden : 0 < 1 - twoPointHTActivityRadius Δ * Real.exp 8 * ((Δ : ℝ) ^ 2) := by
+    linarith
+  exact div_pos (Real.exp_pos 8) hden
 
 /-- On the smaller KP threshold `r < 1/64`, the Mayer-difference coefficient is at most `8`. -/
 private lemma kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
@@ -106,13 +119,13 @@ activity disc with the finite-graph high-temperature expansion disc for `correla
 theorem correlationComplex_two_point_norm_le_of_high_temp
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] {i j : ι} (hij : i ≠ j)
     (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
-    ∃ r > 0, ∃ M : ℝ, 0 < M ∧ ∀ β ∈ Metric.ball (0 : ℂ) r,
-      ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖ ≤ M := by
+    ∃ r > 0, ∀ β ∈ Metric.ball (0 : ℂ) r,
+      ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖
+        ≤ twoPointHTBoundValue Δ := by
   classical
   set R : ℝ := twoPointHTActivityRadius Δ with hRdef
   set A : ℝ := Real.exp 8 with hAdef
   set a : ℝ := R * Real.exp 8 with hadef
-  set M : ℝ := A / (1 - a * ((Δ : ℝ) ^ 2)) with hMdef
   have hRpos : 0 < R := by simpa [hRdef] using twoPointHTActivityRadius_pos Δ
   have hRnonneg : 0 ≤ R := le_of_lt hRpos
   have hApos : 0 < A := by
@@ -137,9 +150,6 @@ theorem correlationComplex_two_point_norm_le_of_high_temp
     have hle : a * ((G.maxDegree : ℝ) ^ 2) ≤ a * ((Δ : ℝ) ^ 2) := by gcongr
     exact lt_of_le_of_lt hle hqΔ
   have hdenΔpos : 0 < 1 - a * ((Δ : ℝ) ^ 2) := by linarith
-  have hMpos : 0 < M := by
-    rw [hMdef]
-    exact div_pos hApos hdenΔpos
   obtain ⟨rExp, hrExp, hExp⟩ :=
     correlationComplex_high_temp_expansion_h_zero_closed_on_ball_htSubgraphSum
       G ({i, j} : Finset ι) J
@@ -162,7 +172,7 @@ theorem correlationComplex_two_point_norm_le_of_high_temp
     exact htend.eventually (gt_mem_nhds hRpos)
   rw [Metric.eventually_nhds_iff_ball] at h_tanh_ev
   obtain ⟨rt, hrt, htanhr⟩ := h_tanh_ev
-  refine ⟨min rExp rt, lt_min hrExp hrt, M, hMpos, ?_⟩
+  refine ⟨min rExp rt, lt_min hrExp hrt, ?_⟩
   intro β hβ
   have hβdist : dist β 0 < min rExp rt := Metric.mem_ball.mp hβ
   have hβExp : β ∈ Metric.ball (0 : ℂ) rExp :=
@@ -238,18 +248,28 @@ theorem correlationComplex_two_point_norm_le_of_high_temp
           exact activity_exp_card_identity R C.card
   have hratioBound :=
     twoPointRatio_norm_le_geometric (G := G) (i := i) (j := j) hij t A a hAnonneg hanonneg hper hqG
-  have hcompare : A / (1 - a * ((G.maxDegree : ℝ) ^ 2)) ≤ M := by
+  have hcompare :
+      A / (1 - a * ((G.maxDegree : ℝ) ^ 2)) ≤ twoPointHTBoundValue Δ := by
     have hgΔ : a * ((G.maxDegree : ℝ) ^ 2) ≤ a * ((Δ : ℝ) ^ 2) := by gcongr
-    have hdenle : 1 - a * ((Δ : ℝ) ^ 2) ≤ 1 - a * ((G.maxDegree : ℝ) ^ 2) := by linarith
-    have hinv : (1 - a * ((G.maxDegree : ℝ) ^ 2))⁻¹ ≤ (1 - a * ((Δ : ℝ) ^ 2))⁻¹ := by
+    have hdenle : 1 - a * ((Δ : ℝ) ^ 2) ≤ 1 - a * ((G.maxDegree : ℝ) ^ 2) := by
+      linarith
+    have hinv : (1 - a * ((G.maxDegree : ℝ) ^ 2))⁻¹ ≤
+        (1 - a * ((Δ : ℝ) ^ 2))⁻¹ := by
       exact inv_anti₀ hdenΔpos hdenle
-    rw [hMdef, div_eq_mul_inv, div_eq_mul_inv]
-    exact mul_le_mul_of_nonneg_left hinv hAnonneg
+    have hmul : A * (1 - a * ((G.maxDegree : ℝ) ^ 2))⁻¹ ≤
+        A * (1 - a * ((Δ : ℝ) ^ 2))⁻¹ :=
+      mul_le_mul_of_nonneg_left hinv hAnonneg
+    calc
+      A / (1 - a * ((G.maxDegree : ℝ) ^ 2))
+          = A * (1 - a * ((G.maxDegree : ℝ) ^ 2))⁻¹ := by rw [div_eq_mul_inv]
+      _ ≤ A * (1 - a * ((Δ : ℝ) ^ 2))⁻¹ := hmul
+      _ = twoPointHTBoundValue Δ := by
+        rw [twoPointHTBoundValue, hAdef, hadef, hRdef, div_eq_mul_inv]
   calc
     ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖
       = ‖htSubgraphSum G ({i, j} : Finset ι) t / htSubgraphSum G (∅ : Finset ι) t‖ := by
         rw [hExp β hβExp]
     _ ≤ A / (1 - a * ((G.maxDegree : ℝ) ^ 2)) := hratioBound
-    _ ≤ M := hcompare
+    _ ≤ twoPointHTBoundValue Δ := hcompare
 
 end IsingModel
