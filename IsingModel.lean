@@ -291,6 +291,7 @@ import IsingModel.ClusterExpansion.FixedVertexTouchingPerOrder
 import IsingModel.ClusterExpansion.MayerSumDiffSupportBound
 import IsingModel.ClusterExpansion.MayerSumDiffSupportBoundComplex
 import IsingModel.ClusterExpansion.TwoPointCapstonePrereqs
+import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation
