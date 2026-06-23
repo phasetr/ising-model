@@ -31070,6 +31070,68 @@ remaining research-level item of Issue \#4214 \S A).  Axiom-free ($\texttt{\#pri
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii, \emph{Gibbs Measures and Phase Transitions},
 Ch.~8; Friedli--Velenik, \S6.5.
 
+\subsection{Extremal-state coincidence and infinite-volume limit existence
+(\texorpdfstring{$\mathbb{Z}^d$}{Zd} uniqueness limit-existence PR 1, Issue \#4261)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/CubicBoxExtremalCoincidence.lean}.  PR 3
+(previous subsection) delivered volume-uniform boundary-condition \emph{independence} but left open
+the \emph{existence} of the boundary-condition-free infinite-volume limit.  This subsection closes
+that gap in the \emph{screened} $\pm$-state convention via the extremal-state squeeze.
+
+\paragraph{Boundary-congruence lemma.} The general, reusable
+$\texttt{gibbsExpectationBC\_boundary\_congr}$: the boundary-condition Gibbs expectation depends on
+the boundary condition only through its values \emph{off} the Gibbs region $\Lambda$ (the
+$\texttt{agreesOff}\,\Lambda\,\eta\,\cdot$ indicator in $\texttt{boltzmannWeightBC}$).  Hence
+$\eta,\eta'$ agreeing off $\Lambda$ give equal expectations, proved from the pointwise
+$\texttt{boltzmannWeightBC\_boundary\_congr}$.
+
+\paragraph{Origin observable as a local observable.}
+$\texttt{originLocalObs}\,d\,g = \langle\{0\}, \tau \mapsto g(\tau\,\langle 0,\_\rangle)\rangle$, with
+$\texttt{originLocalObs\_lift\_eq}$ identifying its lift (via $\texttt{restrictConfig}$) with
+$\texttt{Dobrushin.originObs}$ by subtype proof irrelevance.  The screened $+$ and flipped-$+$ box
+expectations are rewritten as $\texttt{plusConfig}$/$\texttt{minusConfig}$-boundary Gibbs expectations
+of $\texttt{originObs}$ (lemmas $\texttt{plusBoxObsExpectation\_originObs\_eq}$,
+$\texttt{plusBoxObsExpectation\_flipObs\_originObs\_eq}$, the latter through the spin-flip symmetry
+$\texttt{gibbsExpectationBC\_minus\_eq\_plus\_neg\_h\_flip}$).
+
+\paragraph{Per-stage closeness.} $\texttt{abs\_plusBoxObs\_sub\_flipObs\_originObs\_le}$: for inner box
+$n$ and ambient box $n+1$,
+\[
+  \bigl|\langle\texttt{originObs}\rangle^{+}_{n,n+1}
+        - \langle\texttt{originObs}\rangle^{-}_{n,n+1}\bigr|
+    \;\le\; |g(\uparrow)-g(\downarrow)| \cdot \texttt{resolventTail}\,d\,(2d\tanh\beta J)\,n.
+\]
+The mixed configuration $\mu$ ($\texttt{down}$ inside $\texttt{cubicBox}\,d\,n$, $\texttt{up}$ on the
+shell) bridges $\texttt{plusConfig}$ and $\texttt{minusConfig}$: $\mu$ agrees with $\texttt{plusConfig}$
+off the inner box (boundary congruence) and with $\texttt{minusConfig}$ on it, so the disagreement set
+is the shell, every site at $\ell^1$-distance $\ge n+1$ from the origin
+($\texttt{latticeDistance\_ge\_of\_mem\_cubicBox\_succ\_not\_mem}$), whence the PR \#4258 per-stage
+bound applies.
+
+\paragraph{Coincidence headline.} $\texttt{plusStateExpectation\_eq\_minusStateExpectation%
+\_originObs}$: at high temperature ($0 \le \beta$, $0 \le J$, $\beta J \cdot 2d < 1$, $d \ge 1$) the
+cubic-exhaustion $\pm$-state functionals of $\texttt{originObs}\,d\,g$ coincide,
+$\mu^{+}(\texttt{originObs}\,g) = \mu^{-}(\texttt{originObs}\,g)$ --- the decay-of-influence
+$\Rightarrow$ uniqueness content of the Dobrushin theorem.  Proof: squeeze the per-stage difference to
+$0$ ($\texttt{squeeze\_zero\_norm}$ with $\texttt{tendsto\_resolventTail\_atTop}$) and apply
+$\texttt{tendsto\_nhds\_unique}$.  \emph{No monotonicity of $g$ is needed.}
+
+\paragraph{Limit existence.} $\texttt{tendsto\_gibbsExpectationBC\_originObs\_extremal\_limit}$: for a
+\emph{monotone} $g$ ($g(\downarrow) \le g(\uparrow)$) and any boundary-condition family $\eta$, the
+screened-box expectation of $\texttt{originObs}\,d\,g$ converges along the cubic exhaustion to the
+common extremal value $\texttt{plusStateExpectation}$.  The extremal sandwich
+$\texttt{gibbsExpectationBC\_extremal\_sandwich}$ traps each term between the $\pm$ box expectations,
+both tending to the common value by the coincidence; conclude by
+$\texttt{tendsto\_of\_tendsto\_of\_tendsto\_of\_le\_of\_le}$.
+
+\paragraph{Honest scope.} This is the \emph{screened} convention (inner box strictly inside the
+ambient box, where the boundary genuinely acts), the natural object of the existing $\pm$-state
+machinery and of GJ \S17.1.  The literal full-box free-boundary ($\Lambda' = \texttt{Finset.univ}$)
+limit is a separate free-region reconciliation and is \emph{not} delivered here (the extremal sandwich
+is vacuous at $\Lambda = \texttt{univ}$).  Axiom-free ($\texttt{\#print axioms} = [\texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
+\S17.1, pp.~304--306; Friedli--Velenik, \S3.4 (Lemma 3.23), \S6.5; Georgii, Ch.~8.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
