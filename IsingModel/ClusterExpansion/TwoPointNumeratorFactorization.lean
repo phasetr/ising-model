@@ -14,8 +14,10 @@ every edge subset `X` with odd-degree boundary `∂X = {i,j}` has **exactly one*
 `C` (in the canonical connected-component decomposition `polymerDecomposition X`) whose own boundary
 is the whole pair `∂C = {i,j}` — the *open polymer* linking `i` to `j` — while every other component
 is an even subgraph (`∂ = ∅`) vertex-disjoint from `C`.  This is the discrete analogue of the unique
-geometric line connecting the two sources in the high-temperature expansion (Friedli–Velenik,
-*Statistical Mechanics of Lattice Systems*, §3.7.2; Glimm–Jaffe, *Quantum Physics*, §18.4–18.7).
+*open cluster* connecting the two sources in the high-temperature expansion (the component `C` may
+itself contain cycles or several `i`–`j` paths; what is unique is the *component*, not a single
+line) (Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7.3; Glimm–Jaffe,
+*Quantum Physics*, §18.4–18.7).
 
 The key combinatorial input is that the **odd boundary distributes over the connected-component
 decomposition**: `∂X = ⊔_{C ∈ polymerDecomposition X} ∂C`
@@ -30,7 +32,7 @@ Combined with the handshake parity
 * `existsUnique_component_oddBoundary_pair` — the unique connecting component with boundary `{i,j}`.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §18.4–18.7; Friedli–Velenik,
-*Statistical Mechanics of Lattice Systems* (CUP, 2017), §3.7.2.
+*Statistical Mechanics of Lattice Systems* (CUP, 2017), §3.7.3.
 -/
 
 namespace IsingModel
@@ -165,9 +167,9 @@ theorem oddBoundary_eq_pair_of_subset_pair_of_mem
     simp at hv
   · exact hpair
 
-/-- **Unique connecting component** (GJ §18.4–18.7, FV §3.7.2): an edge subset `X` with two-point
+/-- **Unique connecting component** (GJ §18.4–18.7, FV §3.7.3): an edge subset `X` with two-point
 odd boundary `∂X = {i,j}` (`i ≠ j`) has a *unique* connected component `C ∈ polymerDecomposition X`
-with `∂C = {i,j}` — the open polymer linking the two sources.  Uniqueness is by vertex-disjointness
+with `∂C = {i,j}` — the open cluster linking the two sources.  Uniqueness is by vertex-disjointness
 of the components (a second such component would also support `i`). -/
 theorem existsUnique_component_oddBoundary_pair (G : SimpleGraph ι) [Fintype G.edgeSet]
     {X : Finset (Sym2 ι)} {i j : ι}
