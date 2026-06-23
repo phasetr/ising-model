@@ -31530,6 +31530,40 @@ cubic exhaustion ($\Delta = 2d$ uniform) and feeds
 $\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (the \#4235 Vitali
 consumer).  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Infinite-volume high-temperature analyticity of the two-point function (Route~B final
+capstone, Issue \#4230 item~D)}
+
+The route-B programme closes with
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ in
+\texttt{ClusterExpansion/TwoPointCorrelationInfiniteAnalytic.lean}.  For the cubic lattice
+$\texttt{latticeGraph}\,d$, any exhaustion $\Lambda$ of $\mathbb{Z}^d$, $J \ge 0$, and $i \ne j$, there
+is a radius $r > 0$ such that for every small real $\beta \in (0, r)$ the along-exhaustion complex
+two-point correlations
+$n \mapsto \texttt{correlationComplexAlongExhaustion}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\{i,j\}\,(J)\,0\,z\,n$
+converge locally uniformly on $\texttt{ball}\,0\,r$ to a function $f$ that is
+$\texttt{DifferentiableOn}\,\mathbb{C}$ there and satisfies
+$f(\beta) = \texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\langle J, 0, \beta\rangle\,\{i,j\}$
+at that real $\beta$.  Here the complex variable is the inverse temperature ($J$ is fixed real), so at
+high temperature the infinite-volume two-point function arises as a $\texttt{DifferentiableOn}\,\mathbb{C}$
+locally-uniform limit of the finite-volume complex correlations in the complex inverse temperature.
+
+\emph{Layer~1} re-derives the PR~6 ratio identity
+$\texttt{correlationComplex} = \texttt{htSubgraphSum}\,\{i,j\} / \texttt{htSubgraphSum}\,\emptyset$ on a
+\emph{degree-uniform} $\beta$-disc $\texttt{twoPointHTUniformRadius}\,(2d)\,J$ --- the intersection of
+the graph-independent disc $\cosh(\beta J) \ne 0$ with the $\Delta$-uniform activity disc
+$\|\tanh(\beta J)\| < \texttt{twoPointHTActivityRadius}\,(2d)$ --- the denominator being nonzero via
+$\texttt{htSubgraphSum\_empty\_eq\_exp\_tsum\_mayerExpansionTermComplex} = \exp(M_G) \ne 0$.  Bounding the
+ratio by $\texttt{twoPointHTBoundValue}\,(2d)$ (the PR~21 finite-graph bound) yields
+$\texttt{correlationComplexAlongExhaustion\_two\_point\_norm\_le\_uniform}$: a single disc on which
+\emph{all} exhaustion stages are bounded by the same $\Delta$-uniform value, since
+$\texttt{induced\_latticeGraph\_maxDegree\_le}$ caps every induced stage degree by $2d$ (uncovered stages
+are identically $0$).  \emph{Layer~2} feeds this $\texttt{hbdd}$ together with the volume-uniform
+partition non-vanishing $\texttt{hZ}$ (\#4238) into
+$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (\#4235), whose
+conclusion --- behind the single isolated, deliberately-unproven function-theory axiom
+$\texttt{FunctionTheory.vitaliPorter\_tendstoLocallyUniformlyOn}$ --- is the headline.  This completes
+Issue~\#4230 item~D.  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
