@@ -184,7 +184,7 @@ and ambient box `N+k+1`, with `O.S ⊆ cubicBox d N`, the `+` box expectation an
 (= `−`-boundary) box expectation of `O` differ by at most `(∑_{j∈O.S} siteOsc_j O.φ)·resolventTail d
 (2d·tanh βJ) (k+1)`.  The mixed-config `μ` bridges `plusConfig`/`minusConfig`; the disagreement set
 is the shell, every site at ℓ¹-distance `≥ k+1` from every support site
-(`latticeDistance_ge_of_mem_cubicBox_succ_not_mem`, reference an arbitrary support point). -/
+(`latticeDistance_ge_of_mem_cubicBox_succ_not_mem` applied with each support point as reference). -/
 theorem abs_plusBoxObs_sub_flipObs_le (d : ℕ) (hd : 1 ≤ d) {β J : ℝ}
     (hβ : 0 ≤ β) (hJ : 0 ≤ J) (hα : β * J * (2 * (d : ℝ)) < 1) (h : ℝ) (O : LocalObservable d)
     (N k : ℕ) (hSk : O.S ⊆ cubicBox d (N + k + 1)) (hSN : O.S ⊆ cubicBox d N) :
