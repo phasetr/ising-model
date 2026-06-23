@@ -283,6 +283,7 @@ import IsingModel.ClusterExpansion.AvoidingPolymerGas
 import IsingModel.ClusterExpansion.AvoidingDeleteEdges
 import IsingModel.ClusterExpansion.AvoidingRatioExp
 import IsingModel.ClusterExpansion.TouchingClusterDecomp
+import IsingModel.ClusterExpansion.FixedVertexTouchingUnion
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation
