@@ -277,6 +277,7 @@ import IsingModel.ClusterExpansion.SourceLogCoefficient
 import IsingModel.ClusterExpansion.TwoPointNumeratorFactorization
 import IsingModel.ClusterExpansion.TwoPointNumeratorBound
 import IsingModel.ClusterExpansion.TwoPointAnchoredCount
+import IsingModel.ClusterExpansion.TwoPointNumeratorEquality
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation
