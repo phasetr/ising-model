@@ -286,6 +286,7 @@ import IsingModel.ClusterExpansion.TouchingClusterDecomp
 import IsingModel.ClusterExpansion.FixedVertexTouchingUnion
 import IsingModel.ClusterExpansion.FixedVertexPeelBound
 import IsingModel.ClusterExpansion.FixedVertexChainEnds
+import IsingModel.ClusterExpansion.FixedVertexChainMid
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation

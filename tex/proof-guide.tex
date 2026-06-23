@@ -31382,6 +31382,37 @@ feed the root-filtered clones of the Penrose tree-sum / peel chain (subsequent P
 per-order bound $(1-rr)^{-1}(4rr/(1-rr)^2)^n$ and ultimately $\kappa\,|\!\operatorname{supp} C|$.
 References: Glimm--Jaffe, 2nd ed., \S18.5; Friedli--Velenik, \S3.7.3.
 
+\subsection{Per-order root-at-$v$ Mayer bound: the
+\texorpdfstring{$|V|$}{|V|}-free rooted KP chain (Issue \#4230 PR 17)}
+
+The complete root-filtered clone of the Penrose tree-sum / active-sum peel chain, axiom-free in
+\texttt{ClusterExpansion/\{FixedVertexChainEnds,FixedVertexChainMid\}.lean}, gives the per-order
+absolute Mayer sum over cluster sequences whose \emph{root} polymer contains a fixed vertex $v$,
+bounded \emph{uniformly in $|V|$}.  The headline
+$\texttt{fixedVertexRoot\_termAbsSum\_succ\_le\_div\_mul\_geometric}$ is
+\[
+  \sum_{\substack{\omega \in \texttt{piFinset}(\texttt{allPolymers}\,G)^{n+1} \\
+    v \in \operatorname{supp}(\omega_0)}}
+    |\texttt{ursell}\,\omega| \cdot \texttt{clusterSeqActivity}\,t\,\omega
+  \;\le\; \frac{1}{1-rr}\Big(\frac{4rr}{(1-rr)^2}\Big)^n,
+  \qquad rr = \Delta^2 e|t|.
+\]
+The chain is: $\texttt{fixedVertexRoot\_termAbsSum\_succ\_le\_treeSum\_rootedExpActivity}$ (the
+A-clone: the filtered tree-sum bound, restricting the outer $\omega$-sum to $v \in
+\operatorname{supp}(\omega_0)$) $\to$
+$\texttt{fixedVertexRoot\_penroseTreeSum\_le\_sum\_pow\_fixedVertexPeelBound}$ (the B-clone: the
+root-filtered active-sum peel chain --- a $\texttt{fixedVertexRootedParentActiveSum}$ whose empty
+base case sums the root polymer over $\texttt{rootedPolymers}\,G\,v$, with the leaf-peel of
+\emph{non-root} coordinates preserving the root filter all the way down) $\to$
+$\texttt{sum\_pow\_fixedVertexRootedParentActivePeelBound\_le}$ (the C-clone, reusing the $|V| \to 1$
+factorial bound of PR 16).  Composing with the same factorial / geometric algebra as the unfiltered
+$\texttt{termAbsSum\_succ\_le\_card\_div\_mul\_geometric}$ --- but with the $|V|$ factor now equal to
+$1$ --- yields the displayed per-order bound.  The remaining steps (the coordinate reindex giving the
+$(n+1)\cdot$root-at-$0$ union bound, the $\texttt{tsum}$ over $n$, and the sum over
+$v \in \operatorname{supp} C$) compose this into the local Kotecký--Preiss avoiding-ratio estimate
+$\kappa\,|\!\operatorname{supp} C|$.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6;
+Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
