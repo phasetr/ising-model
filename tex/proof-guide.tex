@@ -31176,6 +31176,44 @@ holds without the monotonicity needed for limit existence.  Axiom-free
 Vitali).  References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Friedli--Velenik, \S3.4
 (Lemmas 3.22--3.23), \S6.5; Georgii, Ch.~8.
 
+\subsection{Extremal-state coincidence for a general local observable (Issue \#4264)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/LocalObservableExtremalCoincidence.lean}.
+The origin-observable programme (\#4260--\#4263) is lifted to a \emph{general}
+$O : \texttt{LocalObservable}\,d$ (a function on a finite support $S \subseteq \mathbb{Z}^d$), faithful
+to GJ \S17.1 Dobrushin uniqueness for arbitrary local observables.
+
+\paragraph{Support-sum of oscillations.} The single-site oscillation $|g(\uparrow)-g(\downarrow)|$ is
+replaced by the box-independent constant $\sum_{j\in O.S}\texttt{siteOsc}_j\,O.\varphi$.  Restriction
+commutes with a box-site update ($\texttt{restrictConfig\_update\_of\_\{mem,not\_mem\}}$); the lifted
+observable's oscillation vanishes off the support ($\texttt{siteOsc\_lift\_eq\_zero\_of\_not\_mem}$)
+and is dominated on it ($\texttt{siteOsc\_lift\_le}$), so the total lifted oscillation is bounded by
+$\sum_{j\in O.S}\texttt{siteOsc}_j\,O.\varphi$ ($\texttt{sum\_siteOsc\_lift\_le}$, reindexed via the
+support-inclusion image), independent of the ambient box.
+
+\paragraph{Card-free multi-site bound.} $\texttt{gibbsExpectationBC\_localObs\_inducedLattice\_dist%
+\_le\_resolventTail}$: if $\eta,\eta'$ agree off a finite $S'$ every site of which is $\ge R$-far from
+\emph{every} support site, then
+$|\langle O_{\mathrm{lift}}\rangle^{\eta} - \langle O_{\mathrm{lift}}\rangle^{\eta'}| \le
+(\sum_{j\in O.S}\texttt{siteOsc}_j\,O.\varphi)\cdot\texttt{resolventTail}\,d\,(2d\tanh\beta J)\,R$,
+composing the general multi-site Dobrushin comparison
+$\texttt{gibbsExpectationBC\_dist\_le\_resolvent\_sum}$ (\texttt{ComparisonTheorem.lean}) with the
+per-row far-field tail $\texttt{dobrushinResolvent\_farSum\_le\_resolventTail}$ termwise (zero off
+support, row-bound on support).
+
+\paragraph{Headlines.} $\texttt{plusStateExpectation\_eq\_minusStateExpectation}$: at high temperature
+the cubic-exhaustion $\pm$-state functionals of \emph{any} $O$ coincide,
+$\mu^+(O)=\mu^-(O)$, with \emph{no monotonicity} of $O$ (per-stage closeness
+$\texttt{abs\_plusBoxObs\_sub\_flipObs\_le}$ via the mixed-config $\mu$ bridge --- reusing the already
+general $\texttt{plusBoxObsExpectation\_flipObs\_eq\_minusBC}$ /
+$\texttt{gibbsExpectationBC\_boundary\_congr}$ --- squeezed to $0$).
+$\texttt{tendsto\_gibbsExpectationBC\_localObs\_extremal\_limit}$: for a \emph{monotone} $O$, every
+boundary condition's screened-box expectation of $O$ converges to the common extremal value (extremal
+sandwich + coincidence).  The full-box free-boundary limit for general $O$ is the follow-up PR.
+Axiom-free ($\texttt{\#print axioms} = [\texttt{propext}, \texttt{Classical.choice},
+\texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306;
+Friedli--Velenik, \S3.4, \S6.5; Georgii, Ch.~8.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
