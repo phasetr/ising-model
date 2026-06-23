@@ -30946,6 +30946,40 @@ infinite-volume Gibbs-state uniqueness lift remains research-level, since liftin
 non-\texttt{Fintype} lattice loses the $\texttt{Fintype.card}\,\iota$ factor.  Reference:
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Georgii, Ch.~8.
 
+\subsection{Card-free volume-uniform far-field resolvent tail (\texorpdfstring{$\mathbb{Z}^d$}{Zd}
+uniqueness lift, Issue \#4256 / \#4214 item~A, PR~1)}
+
+The finite-graph Dobrushin uniqueness above carries a $\texttt{Fintype.card}\,\iota$ factor that blows
+up as $\Lambda \uparrow \mathbb{Z}^d$.  The first step of the infinite-volume lift
+(\texttt{Dobrushin/InfiniteVolumeUniformInfluence.lean}) replaces it by a \emph{distance-stratified}
+bound with \emph{no global vertex-count factor}.  Write $G_\Lambda :=
+\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\Lambda$ and $\alpha := 2d\tanh(\beta J)$.  The
+headline $\texttt{dobrushinResolvent\_farSum\_le\_resolventTail}$ states: for $d \ge 1$, $0 \le \beta J$,
+$\beta J\cdot 2d < 1$, a fixed root $x_0 \in \Lambda$, any finite $S \subseteq \Lambda$, and any $R$ with
+$\texttt{latticeDistance}\,d\,x_0\,y \ge R$ for all $y \in S$,
+\[
+  \sum_{y \in S} R^{G_\Lambda}_{x_0 y}
+    \;\le\; \texttt{resolventTail}\,d\,\alpha\,R
+    \;:=\; \sum_{k=0}^{\infty} 2\,(2(k+R)+1)^{d-1}\,\alpha^{k+R}\,(1-\alpha)^{-1},
+\]
+the right-hand side depending only on $d$, $\alpha$, and $R$ --- never on $|\Lambda|$ or $|S|$.  The proof
+is volume-uniform at every step: the per-$y$ resolvent decay $R^{G_\Lambda}_{x_0 y} \le
+\alpha^{\,d_{G_\Lambda}(x_0,y)}(1-\alpha)^{-1}$ (from $\texttt{dobrushinResolvent\_le\_pow\_dist}$ and
+$\texttt{isingDobrushinCoeff}\,G_\Lambda = \deg_{\max}\tanh(\beta J) \le 2d\tanh(\beta J) = \alpha$ via
+$\texttt{induced\_latticeGraph\_maxDegree\_le} \le 2d$; non-reachable $y$ give resolvent $0$); the
+graph-distance $\ge \ell^1$-distance bridge $\texttt{latticeDistance\_le\_induce\_dist}$ lowers the
+exponent (as $0 \le \alpha < 1$); fiberwise stratification by $\texttt{latticeDistance}$
+($\texttt{Finset.sum\_fiberwise\_of\_maps\_to}$); the surface-card bound $\#\{y : \texttt{dist} = r\} \le
+2(2r+1)^{d-1}$ ($\texttt{latticeSphere\_card\_le'}$ via the injection $y \mapsto y - x_0$ and
+$\texttt{latticeDistance\_translate\_eq}$); and the embedding of the finite distance-fiber sum into the
+shifted infinite tail ($\texttt{Summable.sum\_le\_tsum}$).  Summability reduces to
+$\texttt{summable\_pow\_mul\_geometric\_of\_norm\_lt\_one}$, and
+$\texttt{tendsto\_resolventTail\_atTop}$ gives $\texttt{resolventTail}\,d\,\alpha\,R \to 0$ as $R \to
+\infty$ --- the far-field boundary influence vanishes \emph{uniformly in the volume}, $\alpha < 1$ from
+$\beta J\cdot 2d < 1$ via $\tanh t \le t$.  Axiom-free.  Next: PR~2 packages the card-free
+$\texttt{boundary\_influence\_uniform\_small}$ for $\texttt{latticeGraph}\,d$, PR~3 the infinite-volume
+Gibbs-state uniqueness.  Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
