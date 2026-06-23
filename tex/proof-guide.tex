@@ -31325,6 +31325,33 @@ Mayer-cluster-sum difference $\|M_G - M_{\texttt{Gavoid}}\|$ --- the touching-cl
 the remaining rooted fixed-vertex KP bound controls by $\kappa\,|\!\operatorname{supp} C|$.
 References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Touching-cluster decomposition of the Mayer-term difference (Issue \#4230 PR 15)}
+
+This step exhibits $M_G - M_{\texttt{Gavoid}}$ (per Mayer term) as a sum over cluster sequences that
+touch $\operatorname{supp} C$ --- the object the final rooted KP bound controls --- axiom-free in
+\texttt{ClusterExpansion/TouchingClusterDecomp.lean}.  Since
+$\texttt{allPolymers}(\texttt{Gavoid}\,G\,C) \subseteq \texttt{allPolymers}\,G$
+($\texttt{allPolymers\_Gavoid\_subset}$), the product index sets satisfy
+$\texttt{Fintype.piFinset}(\texttt{allPolymers}\,\texttt{Gavoid}) \subseteq
+\texttt{Fintype.piFinset}(\texttt{allPolymers}\,G)$, so
+$\texttt{mayerExpansionTermComplex}\,(\texttt{Gavoid}\,G\,C)\,n\,z$ is a \emph{sub-sum} of
+$\texttt{mayerExpansionTermComplex}\,G\,n\,z$.  By $\texttt{Finset.sum\_sdiff\_eq\_sub}$ and the
+complement characterization $\texttt{mem\_piFinset\_sdiff\_iff\_exists\_touching}$ (a sequence lies
+in the difference iff every coordinate is a polymer of $G$ and \emph{some} coordinate is not
+vertex-disjoint from $C$, via $\texttt{subset\_edgeFinset\_Gavoid\_iff}$), the headline
+$\texttt{mayerExpansionTermComplex\_sub\_Gavoid\_eq\_touching\_sum}$ reads
+\[
+  M_G^{(n)} - M_{\texttt{Gavoid}}^{(n)} =
+    \sum_{\substack{\omega \in \texttt{piFinset}(\texttt{allPolymers}\,G) \\
+      \exists i,\ \neg\,(C \perp \omega_i)}}
+    \texttt{ursellCoefficient}\,\omega \cdot \prod_i z^{|\omega_i|},
+\]
+and $\texttt{norm\_mayerExpansionTermComplex\_sub\_Gavoid\_le}$ bounds its norm by
+$\sum_{\omega\ \text{touching}} |\texttt{ursellCoefficient}\,\omega| \prod_i \|z\|^{|\omega_i|}$
+($\texttt{norm\_sum\_le}$).  The remaining (deep) step sums this over $n$ and bounds it by
+$\kappa\,|\!\operatorname{supp} C|$ via a rooted fixed-vertex Kotecký--Preiss estimate.
+References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
