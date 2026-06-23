@@ -31241,6 +31241,31 @@ $\|\texttt{ZAvoid}_C(t)/Q_\emptyset(t)\| \le \exp(\kappa\,|\!\operatorname{supp}
 $A = \exp\kappa$, $a = \|t\|\exp\kappa$), the genuine cluster-expansion core to be discharged next.
 References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Avoiding polymer-gas factorization of \texorpdfstring{$\texttt{ZAvoid}_C$}{ZAvoid}
+(Issue \#4230 PR 12)}
+
+The local Kotecký--Preiss avoiding-ratio estimate
+$\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$ is approached by
+writing both $\texttt{ZAvoid}_C$ and $Q_\emptyset$ as polymer partition functions and taking the
+difference of their (Mayer) logarithms.  The first step, axiom-free in
+\texttt{ClusterExpansion/AvoidingPolymerGas.lean}, exposes $\texttt{ZAvoid}_C$ as a polymer gas:
+writing $\texttt{vdCompatiblePolymerFamiliesAvoiding}\,G\,C$ for the vertex-disjoint compatible
+polymer families all of whose polymers avoid $\operatorname{supp} C$,
+\[
+  \texttt{ZAvoid}_C(z) \;=\;
+    \sum_{\Gamma \in \texttt{vdCompatiblePolymerFamiliesAvoiding}\,G\,C}\ \prod_{P \in \Gamma} z^{|P|}
+\]
+($\texttt{htSubgraphSumAvoiding\_eq\_vdCompatiblePolymerFamiliesAvoiding\_sum}$), mirroring the
+vacuum identity $\texttt{evenSubgraphs\_sum\_eq\_vdPolymerFamilies\_sum}$ through the
+$\texttt{polymerDecomposition}$ bijection restricted to avoiding families.  The restriction is
+handled by $\texttt{vertexDisjoint\_biUnion\_iff}$ ($C$ is vertex-disjoint from $\bigcup \Gamma$ iff
+it is vertex-disjoint from each $P \in \Gamma$, from $\texttt{polymerSupport\_biUnion}$), and the
+weight identity uses a generic-$\texttt{CommMonoid}$ version of
+$\texttt{prod\_pow\_card\_biUnion}$ (the existing one was $\mathbb R$-only).
+This is the entry point for the sub-collection Mayer--Montroll
+$\texttt{ZAvoid}_C = \exp(M_{\mathrm{avoid}})$ and the local touching-cluster bound (subsequent PRs).
+References: Glimm--Jaffe, 2nd ed., \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
