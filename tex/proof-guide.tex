@@ -31132,6 +31132,48 @@ is vacuous at $\Lambda = \texttt{univ}$).  Axiom-free ($\texttt{\#print axioms} 
 \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
 \S17.1, pp.~304--306; Friedli--Velenik, \S3.4 (Lemma 3.23), \S6.5; Georgii, Ch.~8.
 
+\subsection{Full-box free-boundary infinite-volume limit
+(\texorpdfstring{$\mathbb{Z}^d$}{Zd} uniqueness, Issue \#4214 \S A final piece)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/CubicBoxFreeLimit.lean}.  The previous
+subsection delivered the limit in the screened $\pm$-state convention but left the literal full-box
+free-boundary ($\Lambda' = \texttt{Finset.univ}$, no frozen boundary) limit open.  This subsection
+closes it, completing Master \#4214 item A.
+
+\paragraph{Minus-state volume monotonicity.}
+$\texttt{gibbsExpectationBC\_minus\_volume\_monotone}$ is the $-$-dual of FV Lemma 3.22
+($\texttt{gibbsExpectationBC\_plus\_volume\_antitone}$): for a monotone observable,
+$\Lambda_1 \subseteq \Lambda_2 \Rightarrow \langle\varphi\rangle^{-}_{\Lambda_1} \le
+\langle\varphi\rangle^{-}_{\Lambda_2}$ (freezing more sites to $-$ lowers the expectation).  Proof via
+the spin-flip bridge $\texttt{gibbsExpectationBC\_minus\_eq\_plus\_neg\_h\_flip}$: both sides become
+$+$ expectations at field $-h$ of $\psi = \varphi \circ \texttt{flip}$, which is antitone
+($\varphi$ monotone, $\texttt{flip}$ antitone --- the new $\texttt{Spin.flip\_antitone}$ /
+$\texttt{Config.flip\_antitone}$), so $-\psi$ is monotone; applying the $+$ volume antitonicity to
+$-\psi$ flips the inequality, and the negation-linearity $\texttt{gibbsExpectationBC\_neg}$ (from
+$\texttt{gibbsExpectationBC\_const\_mul}$ with $c=-1$) undoes the sign.
+
+\paragraph{Headline.} $\texttt{tendsto\_gibbsExpectationBC\_originObs\_free\_limit}$: at high
+temperature ($0\le\beta$, $0\le J$, $\beta J\cdot 2d<1$, $d\ge1$) and for a monotone $g$, the
+free-boundary Gibbs expectation $\langle\texttt{originObs}\,d\,g\rangle^{\mathrm{free}}_{\texttt{cubicBox}
+\,d\,n}$ converges, as $n\to\infty$, to the common extremal value $\texttt{plusStateExpectation}$, for
+\emph{every} boundary family $\eta$ (the free measure is boundary-condition-independent by
+$\texttt{gibbsExpectationBC\_boundary\_congr}$, the $\texttt{agreesOff}\,\texttt{univ}$ hypothesis
+being vacuous).  Proof: a two-sided \emph{volume-monotonicity squeeze} --- the extremal sandwich is
+vacuous at $\Lambda=\texttt{univ}$, so it is the wrong tool.  At $\Lambda'=\texttt{univ}$ the free
+measure equals both $\pm$ boundary measures (boundary congruence); freezing the shell of an inner box
+to $+$/$-$ brackets it ($\texttt{gibbsExpectationBC\_\{plus\_volume\_antitone, minus\_volume\_monotone\}}$);
+both bracketing sequences are the $\pm$ instances of the previous subsection's limit
+$\texttt{tendsto\_gibbsExpectationBC\_originObs\_extremal\_limit}$ (stated for an arbitrary $\eta$),
+both $\to$ the common value; squeeze ($\texttt{tendsto\_of\_tendsto\_of\_tendsto\_of\_le\_of\_le}$) and
+shift the index ($\texttt{tendsto\_add\_atTop\_iff\_nat}$).
+
+This \textbf{completes Master \#4214 item A}: the $\mathbb{Z}^d$ infinite-volume Gibbs expectation of a
+local observable exists at high temperature and is independent of the boundary condition (free, $+$,
+$-$, or any sequence), in both the screened and the full-box free-boundary conventions.  Axiom-free
+($\texttt{\#print axioms} = [\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}]$; no
+Vitali).  References: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Friedli--Velenik, \S3.4
+(Lemmas 3.22--3.23), \S6.5; Georgii, Ch.~8.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
