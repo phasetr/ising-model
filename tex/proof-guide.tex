@@ -31444,6 +31444,40 @@ The $(n+1)\rho^n$ factor is absorbed by the geometric $\texttt{tsum}$
 $\kappa\,|\!\operatorname{supp} C|$.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6;
 Friedli--Velenik, \S3.7.3.
 
+\subsection{The local Kotecký--Preiss avoiding-ratio estimate
+\texorpdfstring{$\|M_G - M_{\texttt{Gavoid}}\| \le \kappa\,|\!\operatorname{supp} C|$}{||M_G - M_Gavoid|| <= kappa |supp C|}
+(Issue \#4230 PR 19)}
+
+Summing the per-order touching bound over $n$ gives the volume-uniform bound on the
+Mayer-cluster-sum difference --- the genuine local Kotecký--Preiss core that discharges the
+$\texttt{hbdd}$ hypothesis of $\texttt{twoPointRatio\_norm\_le\_geometric}$ (PR 11).  Axiom-free in
+\texttt{ClusterExpansion/MayerSumDiffSupportBound.lean}.  The geometric series
+$\sum_n (n+1)\rho^n = (1-\rho)^{-2}$ ($\texttt{tsum\_nat\_succ\_mul\_geometric\_eq\_inv\_sq}$, from
+$\texttt{tsum\_coe\_mul\_geometric\_of\_norm\_lt\_one}$ and $\texttt{tsum\_geometric\_of\_lt\_one}$)
+yields, via $\texttt{fixedVertexTouching\_tsum\_le}$,
+\[
+  \sum_{n} \sum_{\substack{\omega \\ \exists i,\ v \in \operatorname{supp}(\omega_i)}}
+    |\texttt{ursellCoefficient}\,\omega| \cdot \texttt{clusterSeqActivity}\,t\,\omega
+  \;\le\; \kappa := \frac{1}{1-rr}\cdot\frac{1}{(1-\rho)^2},
+  \qquad \rho = \frac{4rr}{(1-rr)^2}.
+\]
+Since a cluster sequence touching $C$ touches some $v \in \operatorname{supp} C$
+($\texttt{touchingCluster\_termAbsSum\_le\_support\_vertex\_sum}$,
+$\sum_{\omega\ \text{touching}\,C} \le \sum_{v \in \operatorname{supp} C} \sum_{\omega\ \text{touching}\,v}$),
+the headline $\texttt{norm\_mayerExpansionTermComplex\_tsum\_sub\_Gavoid\_le\_support\_card}$ is
+\[
+  \big\| (\textstyle\sum_n \texttt{mayer}\,G\,n) - (\sum_n \texttt{mayer}\,\texttt{Gavoid}\,n) \big\|
+  \;\le\; \kappa\,(\operatorname{supp} C).\mathrm{card},
+\]
+proved by $\texttt{Summable.tsum\_sub}$ and $\texttt{norm\_tsum\_le\_tsum\_norm}$, the per-$n$
+touching bound (PR 15), the support-vertex union, and the geometric $\texttt{tsum}$ (the $n=0$ term
+vanishing, with the $\mathrm{Fin}\,n \leftrightarrow \mathrm{Fin}(n{+}1)$ index shift handled by
+$\texttt{tsum\_eq\_zero\_add}$).  Composing with PR 14
+($\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp\|M_G - M_{\texttt{Gavoid}}\|$) gives
+$\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$, which (after
+$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) feeds $\texttt{hbdd}$ in the
+remaining 5c.6 step.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
