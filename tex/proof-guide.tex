@@ -31023,6 +31023,32 @@ $\texttt{VolumeUniformComplexHTBound}$ (a follow-up PR) this discharges, via
 $\texttt{volume\_uniform\_Z\_ne\_zero\_of\_HT\_bound\_and\_identity}$, the volume-uniform partition
 non-vanishing $\texttt{hZ}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6.
 
+\subsection{Complex Mayer--Montroll log identity (Issue \#4230 PR 5b)}
+
+The key ingredient for the lower bound $\texttt{VolumeUniformComplexHTBound}$ is proven (axiom-free)
+in \texttt{ClusterExpansion/MayerCore/ComplexMayerMontroll.lean}.
+$\texttt{vdPolymerFamilies\_sum\_pow\_eq\_exp\_tsum\_mayerExpansionTermComplex}$ is the
+complex-activity form of the Mayer--Montroll identity: on the Kotecký--Preiss ball
+$\overline{B}(0, R) \subseteq \mathbb{C}$,
+\[
+  \sum_{\Gamma} \prod_{P \in \Gamma} z^{|P|}
+    = \exp\!\Big(\sum_n \texttt{mayerExpansionTermComplex}\,G\,n\,z\Big).
+\]
+The proof is analytic continuation from the real Mayer--Montroll
+($\texttt{polymerFreeEnergy\_eq\_tsum\_mayerExpansionTerm\_of\_persite\_kp}$): the left side is a
+polynomial (analytic), the right side is $\exp$ of the analytic complex cluster sum
+($\texttt{mayerExpansionTermComplex\_tsum\_differentiableOn\_ball}$,
+$\texttt{DifferentiableOn.analyticOnNhd}$, $\texttt{AnalyticAt.cexp}$), and they agree at the real
+points $1/(k+1) \to 0$ (where the real polymer sum is positive,
+$\texttt{vdPolymerFamilies\_sum\_pos\_of\_nonneg}$, so equals
+$\exp(\texttt{polymerFreeEnergy}) = \exp(\sum \texttt{mayerExpansionTerm})$, transported by
+$\texttt{Complex.ofReal\_exp}$, $\texttt{Complex.ofReal\_tsum}$,
+$\texttt{mayerExpansionTermComplex\_ofReal}$), so the identity theorem
+($\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_frequently\_eq}$) extends to the whole ball.  From
+this, $\|\sum_\Gamma \prod_P \tanh(\beta J)^{|P|}\| = \exp(\mathrm{Re}\sum \text{mayer}) \ge
+\exp(-|\Lambda|\cdot\texttt{kpBound})$, the volume-uniform polymer-sum lower bound feeding
+$\texttt{VolumeUniformComplexHTBound}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
