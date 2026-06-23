@@ -31044,10 +31044,29 @@ $\texttt{vdPolymerFamilies\_sum\_pos\_of\_nonneg}$, so equals
 $\exp(\texttt{polymerFreeEnergy}) = \exp(\sum \texttt{mayerExpansionTerm})$, transported by
 $\texttt{Complex.ofReal\_exp}$, $\texttt{Complex.ofReal\_tsum}$,
 $\texttt{mayerExpansionTermComplex\_ofReal}$), so the identity theorem
-($\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_frequently\_eq}$) extends to the whole ball.  From
-this, $\|\sum_\Gamma \prod_P \tanh(\beta J)^{|P|}\| = \exp(\mathrm{Re}\sum \text{mayer}) \ge
-\exp(-|\Lambda|\cdot\texttt{kpBound})$, the volume-uniform polymer-sum lower bound feeding
-$\texttt{VolumeUniformComplexHTBound}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6.
+($\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_frequently\_eq}$) extends to the whole ball.  In fact, the partition non-vanishing is obtained \emph{directly} from this
+identity (next subsection), bypassing any norm lower bound.  Reference: Glimm--Jaffe, 2nd ed.,
+\S18.4--18.6.
+
+\subsection{Volume-uniform complex \texorpdfstring{$Z$}{Z} non-vanishing on
+\texorpdfstring{$\mathbb{Z}^d$}{Z d} (Issue \#4230 PR 5c)}
+
+The volume-uniform partition non-vanishing $\texttt{hZ}$ consumed by the correlation-analyticity
+assembly is discharged (axiom-free) in
+\texttt{AmbientComplexAnalyticity/VolumeUniformZNonvanishing.lean}.
+$\texttt{partitionFunctionComplexAlongExhaustion\_ne\_zero\_on\_ball\_uniform\_latticeGraph}$ gives a
+single radius $r > 0$ with $Z_{\mathbb{C}}^{\Lambda_n}(J, 0, \beta) \ne 0$ for every stage $n$ and
+$\beta \in B(0, r)$.  The argument is \emph{direct}: by the factorization (previous subsection)
+$Z_{\mathbb{C}} = 2^{|V_n|}\cosh(\beta J)^{|E_n|}\sum_\Gamma\prod_P\tanh(\beta J)^{|P|}$, and by the
+complex Mayer--Montroll identity the polymer sum equals $\exp(\sum\text{mayer})$, which is never
+zero; together with $\cosh(\beta J) \ne 0$ on the $\cosh$-disc and $2 \ne 0$, all three factors are
+nonzero.  The radius is $\min(r_1, \rho, r_t)$: $r_1$ the factorization radius (volume-uniform),
+$\rho$ the $n$-independent $\cosh$-disc, and $r_t$ so that $\|\tanh(\beta J)\| < R$ (continuity of
+$\tanh$ at $0$, $\tanh 0 = 0$), with $R = \texttt{kpRadius}\,d$ the $(2d)$-Kotecký--Preiss radius (the
+hypotheses transferred to each induced subgraph by $\texttt{kpRegion\_downward\_closed}$, since
+$\texttt{induced\_latticeGraph\_maxDegree\_le} \le 2d$).  This is the $\texttt{hZ}$ of the assembly;
+the only remaining Ising hypothesis for unconditional infinite-volume correlation analyticity is the
+volume-uniform correlation bound $\texttt{hbdd}$.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6.
 
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
