@@ -31478,6 +31478,34 @@ $\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$,
 $|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) feeds $\texttt{hbdd}$ in the
 remaining 5c.6 step.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
 
+\subsection{Capstone prerequisites: complex-\texorpdfstring{$z$}{z} KP bound, connected
+support-card bound, and the tanh bridge (Issue \#4230 PR 20)}
+
+Three prerequisites assemble the per-component bound for the final two-point $\texttt{hbdd}$
+capstone, axiom-free in
+\texttt{ClusterExpansion/\{MayerSumDiffSupportBoundComplex,TwoPointCapstonePrereqs\}.lean}.  First,
+the \emph{complex-$z$} generalization of the local Kotecký--Preiss avoiding-ratio estimate
+(PR 19 was stated only on the real axis), since the capstone evaluates at $z = \tanh(\beta J)$ which
+is complex for complex $\beta$: $\texttt{norm\_mayerExpansionTermComplex\_tsum\_sub\_Gavoid\_le\_support\_card\_complex}$
+gives $\|(\sum_n \texttt{mayer}\,G\,n\,z) - (\sum_n \texttt{mayer}\,\texttt{Gavoid}\,n\,z)\| \le
+\kappa(\|z\|)\,(\operatorname{supp} C).\mathrm{card}$ for any $z \in \mathbb C$ with $\Delta^2 e\|z\|$ in
+the KP range (the per-order chain depends only on $\|z\|$, so the proof clones PR 19 with
+$t := \|z\|$).  Second, $\texttt{polymerSupport\_card\_le\_card\_add\_one\_of\_isEdgeConnected}$: a
+nonempty edge-connected $C \subseteq G.\texttt{edgeFinset}$ has
+$|\!\operatorname{supp} C| \le |C| + 1$ (a connected graph on its support satisfies
+$|V| \le |E|+1$).  Third, $\texttt{correlationComplex\_high\_temp\_expansion\_h\_zero\_closed\_on\_ball\_htSubgraphSum}$,
+a public $\texttt{htSubgraphSum}$ form of the high-temperature expansion (PR 6): on a small
+$\beta$-disc,
+\[
+  \texttt{correlationComplex}\,G\,A\,(J)\,0\,\beta =
+    \texttt{htSubgraphSum}\,G\,A\,(\tanh \beta J) / \texttt{htSubgraphSum}\,G\,\emptyset\,(\tanh \beta J).
+\]
+Together with PR 14, these give the complex per-component bound
+$\|t\|^{|C|}\,\|\texttt{ZAvoid}_C/Q_\emptyset\| \le A\,a^{|C|}$ ($A = e^\kappa$, $a = \|t\| e^\kappa$)
+and the correlation--ratio identity needed to feed $\texttt{twoPointRatio\_norm\_le\_geometric}$
+(PR 11) and obtain the volume-uniform correlation bound (the remaining capstone PRs).
+References: Glimm--Jaffe, 2nd ed., \S18.5--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
