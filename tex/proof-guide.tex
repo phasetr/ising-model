@@ -31115,6 +31115,26 @@ is the $s^2$-coefficient ratio --- the entry point for the source-marked Mayer/c
 (later bricks) and the volume-uniform anchored bound.  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.4--18.7.
 
+\subsection{Two-point ratio as the source-log \texorpdfstring{$s^2$}{s2}-coefficient
+(Issue \#4230 PR 8)}
+
+The connected cluster expansion --- which yields the volume-uniform bound by endpoint anchoring ---
+acts on the \emph{logarithm} of the generating function, so brick 2 is the calculus bridge
+expressing the two-point ratio $Q_{i,j}/Q_\emptyset$ as the $s^2$-coefficient of that logarithm.
+Proven (axiom-free) in \texttt{ClusterExpansion/SourceLogCoefficient.lean}.
+$\texttt{twoPointRatio\_eq\_half\_secondDeriv\_normalizedQuad}$ computes
+$\tfrac12\,\partial_s^2\big((Q_\emptyset + Q_{i,j}s^2)/Q_\emptyset\big)\big|_{s=0} =
+Q_{i,j}/Q_\emptyset$ (the normalized quadratic $1 + (Q_{i,j}/Q_\emptyset)s^2$ has second derivative
+$2(Q_{i,j}/Q_\emptyset)$).  To avoid the branch cut of the principal $\texttt{Complex.log}$ (which
+would obstruct differentiability when $Q_\emptyset$ lies on the negative real axis), the logarithm is
+carried \emph{abstractly} as a function $L$ with $\exp(L(s)) = (Q_\emptyset + Q_{i,j}s^2)/Q_\emptyset$
+near $0$, $L(0) = 0$, $L'(0) = 0$ (no linear term, by the handshake parity), $L''(0) = D$; then
+$\texttt{twoPointRatio\_eq\_half\_secondDeriv\_sourceLog}$ gives $D/2 = Q_{i,j}/Q_\emptyset$, via
+$\texttt{deriv\_cexp}$ and the product rule ($(\exp\circ L)''(0) = \exp(L(0))(L'(0)^2 + L''(0)) =
+D$) and $\texttt{Filter.EventuallyEq.deriv}$ transfer through $\exp(L) =$ the quadratic.  The actual
+$L$ is supplied by the source-marked Mayer expansion (later bricks).  Reference: Glimm--Jaffe, 2nd
+ed., \S18.4--18.7.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 

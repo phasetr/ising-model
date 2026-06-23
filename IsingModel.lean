@@ -273,6 +273,7 @@ import IsingModel.Concrete.CenteredSlab
 import IsingModel.ClusterExpansion
 import IsingModel.ClusterExpansion.Penrose
 import IsingModel.ClusterExpansion.SourceGeneratingFunction
+import IsingModel.ClusterExpansion.SourceLogCoefficient
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.PiFinsetSeparation
 import IsingModel.ClusterExpansion.PiFinsetSeparationPivot
