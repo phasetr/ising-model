@@ -32068,27 +32068,36 @@ $m^-(x,z) \le m(x,z) \le \tfrac{(2\alpha+1)K}{\rho}\,m^-(x,z)$ with one HLS cons
 cubic lattice at high temperature, \emph{unconditional modulo two declared scope-excluded analytic
 axioms}.
 
-\par\noindent\textbf{Scope-excluded axioms.} Per the project scope policy (the same isolation used
-for the Vitali--Porter axiom $\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$), the two remaining
-analytic inputs of the sharp constant are declared as documented \texttt{axiom}s in
+\par\noindent\textbf{Scope-excluded axiom (one) plus an honest hypothesis.} Per the project scope
+policy (the same isolation used for the Vitali--Porter axiom
+$\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$), the \emph{single} genuinely out-of-scope
+analytic input of the sharp constant is declared as a documented \texttt{axiom} in
 $\texttt{Lemma\_17\_5\_2/SharpHLSScopeExcludedAxioms.lean}$:
 $\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$ (the locally-uniform convergence of
 the finite-stage $\beta$-derivatives $\partial_\beta c_n$ on $\mathrm{Ioo}\,0\,(1/(J\cdot 2d))$ --- the
-Montel / Vitali--Porter normal-families core) and
-$\texttt{lemma\_17\_5\_2\_validatingDecay\_latticeGraph}$ (the validating endpoint pseudo-mass
-exponential decay, lower side).  These belong to the same volume-uniform complex
+Montel / Vitali--Porter normal-families core).  It belongs to the same volume-uniform complex
 cluster-expansion class that master \#4214 item D obtained only via $\texttt{vitaliPorter}$;
 $\texttt{CEConditionalCapstone.lean:48-61}$ records that the only available concrete complex data
 (per-fixed-volume trivial-$Q$, disc radius $r=O(1/|\Lambda_k|)$) forces the Cauchy Lipschitz
-constants $C_k\to\infty$, so they cannot be produced from current Ising-side data.
+constants $C_k\to\infty$, so it cannot be produced from current Ising-side data.  The sandwich's
+\emph{lower} side is \textbf{not} axiomatized: the validating endpoint pseudo-mass decay is
+\emph{proven} from an explicit per-pair profile hypothesis
+$\texttt{pseudoMassG}\,\alpha\,\rho\,(-\log(\beta_2 J\cdot 2d)) \le \texttt{correlationInfinite}\,\{x,z\}$
+(the same input the non-sharp uniform sandwich carries) via
+$\texttt{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_pseudoMassG\_le\_corr}$, because the
+unconditional $\forall x\ne z$ form of that bound is \emph{false} --- the project's own no-go
+$\texttt{not\_forall\_cubicTanhProfileBound\_of\_betaJ\_pos\_high\_temp}$ (B3 \#4270) shows it fails for
+far pairs, where $\texttt{correlationInfinite}\to 0$ while the pseudo-mass $\to\infty$, which would
+force $\texttt{latticeMass}=\top$.
 
-\par\noindent\textbf{Capstone.} $\texttt{lemma\_17\_5\_2\_sandwich\_sharp\_latticeGraph}$
+\par\noindent\textbf{Capstone.} $\texttt{lemma\_17\_5\_2\_sandwich\_sharp\_cubicExhaustion}$
 ($\texttt{Lemma\_17\_5\_2/SharpHLSCapstone.lean}$) instantiates the conditional provider-shaped
 sandwich $\texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_infinite\_hls\_compact\_ratio\_bounds\_provider}$
-with the two axioms, removing every remaining hypothesis except the elementary high-temperature
-interval data.  $\texttt{\#print axioms}$ lists exactly
-$[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound},$ the two declared sharp-HLS
-axioms$]$ (not even $\texttt{vitaliPorter}$).  This discharges audit B4 \#4271 (sharp constant) and
+with the derivative-limit axiom and the profile-derived validating decay, removing every remaining
+hypothesis except the elementary high-temperature interval data and the per-pair profile bound.
+$\texttt{\#print axioms}$ lists exactly
+$[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound},\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}]$
+(one declared axiom, not even $\texttt{vitaliPorter}$).  This discharges audit B4 \#4271 (sharp constant) and
 B2 \#4269 (the CE route-input it required).  The Ising-side content feeding the constant --- the
 real-axis derivative bounds, the HLS convolution constant, the active-range and pseudo-mass
 calculus, the per-pair susceptibility ceiling (\#4277) --- is in scope and proven.  Reference:
