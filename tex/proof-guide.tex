@@ -32146,4 +32146,50 @@ Reference: Conway, \emph{Functions of One Complex Variable I}, VII.\S2--3 (Monte
 Glimm--Jaffe \S18.6--18.7.
 
 
+\subsection*{PR \#4289 PR 4a --- two-point $\beta$-derivative convergence on the convergence sub-window}
+
+\par\noindent\textbf{Role:} Toward discharging the last declared axiom
+$\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$, this proves the genuine,
+axiom-free sub-window form of its statement: locally-uniform convergence of the finite-volume
+\emph{real} $\beta$-derivatives of the two-point correlation
+($\texttt{ConvergenceRegion.derivativeLimit\_on\_real\_subinterval}$,
+$\texttt{ClusterExpansion/TwoPointDerivativeConvergenceRegion.lean}$).
+
+\par\noindent\textbf{Statement.} Let $U\,d\,J$ be the convergence region --- the connected
+component of $0$ in $\{\beta\in\mathbb C : \lVert\tanh(\beta J)\rVert <
+\texttt{twoPointHTActivityRadius}(2d)\ \wedge\ \cosh(\beta J)\neq 0\}$ --- on which the complex
+two-point correlations converge locally uniformly to a holomorphic limit $f$
+($\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_on\_U}$, axiom-free).  For any
+real interval $\texttt{Ioo}\,0\,c$ whose $\texttt{ofReal}$-image lies in $U\,d\,J$,
+\[
+  \exists g',\ \texttt{TendstoLocallyUniformlyOn}\ \big(n,\beta\mapsto
+    \partial_\beta\,\texttt{correlationAlongExhaustion}\,(\texttt{latticeGraph}\,d)\,\Lambda\,
+    \langle J,0,\beta\rangle\,\{i,j\}\,n\big)\ g'\ \texttt{atTop}\ (\texttt{Ioo}\,0\,c),
+\]
+with $g'=\big(\beta\mapsto(\partial_\beta f(\beta))_{\mathrm{re}}\big)$.
+
+\par\noindent\textbf{Proof.} The complex \emph{Weierstrass theorem}
+($\texttt{TendstoLocallyUniformlyOn.deriv}$ --- locally-uniform convergence of holomorphic
+functions implies that of their derivatives; the per-stage holomorphicity obligation is discharged
+by $\texttt{correlationComplexAlongExhaustion\_differentiableOn\_of\_ne\_zero}$ together with
+$\texttt{partitionFunctionComplexAlongExhaustion\_ne\_zero\_on\_U}$) promotes the complex
+correlation convergence on $U$ to locally-uniform convergence of the complex derivatives on $U$.
+Precomposing with $\texttt{ofReal}$ ($\texttt{TendstoLocallyUniformlyOn.comp}$, the $\texttt{MapsTo}$
+from the sub-window hypothesis) and post-composing with the uniformly-continuous real part
+($\texttt{Complex.uniformContinuous\_re.comp\_tendstoLocallyUniformlyOn}$) restricts to
+$\texttt{Ioo}\,0\,c$; the real/complex derivative bridge
+($\texttt{HasDerivAt.real\_of\_complex}$ with the real-axis reduction
+$\texttt{correlationComplexAlongExhaustion\_at\_real\_eq\_ofReal}$ and $\texttt{Complex.ofReal\_re}$)
+identifies the restricted complex-derivative real part with the real $\beta$-derivative stage by
+stage ($\texttt{TendstoLocallyUniformlyOn.congr}$).
+
+\par\noindent\textbf{Scope.} The cluster expansion converges only on $U$, whose real trace
+$\texttt{Ioo}\,0\,\beta^\ast$ (with $\tanh(\beta^\ast J)=\texttt{twoPointHTActivityRadius}(2d)$) is a
+\emph{proper} subinterval of the formal high-temperature interval $\texttt{Ioo}\,0\,(1/(J\cdot 2d))$.
+Consuming this in the \S17.5 sharp-HLS capstone therefore requires rescoping that capstone to
+$\texttt{Ioo}\,0\,\beta^\ast$ (Issue \#4289 PR 4b, which also removes the last declared axiom).
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 pp.~311--312, \S18.6--18.7.
+
+
 \end{document}
