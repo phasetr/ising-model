@@ -163,14 +163,19 @@ private theorem partitionFunctionComplex_high_temp_expansion_h_zero_htSubgraphSu
     exact (Filter.Eventually.frequently (hev.filter_mono inf_le_left))
   exact hf_anal.eqOn_of_preconnected_of_frequently_eq hg_anal hUconn h0U h_frequently
 
-/-- The high-temperature two-point/correlation ratio identity on the degree-uniform beta radius. -/
-private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_uniform_ball
+/-- **High-temperature two-point ratio identity on a connected `cosh≠0` / activity-radius domain.**
+On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
+`correlationComplex G A J 0 β = htSubgraphSum G A / htSubgraphSum G ∅` (in `tanh(βJ)`). The
+`ball 0`-version is the corollary `…_on_uniform_ball`. -/
+private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
-    (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
-    ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J),
-      correlationComplex G A (J : ℂ) 0 β =
-        htSubgraphSum G A (Complex.tanh (β * (J : ℂ))) /
-          htSubgraphSum G (∅ : Finset ι) (Complex.tanh (β * (J : ℂ))) := by
+    (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ)
+    {U : Set ℂ} (hUopen : IsOpen U) (hUpre : IsPreconnected U) (h0U : (0 : ℂ) ∈ U)
+    (hcoshU : ∀ z ∈ U, Complex.cosh (z * (J : ℂ)) ≠ 0)
+    (htanhU : ∀ z ∈ U, ‖Complex.tanh (z * (J : ℂ))‖ < twoPointHTActivityRadius Δ) :
+    Set.EqOn (fun β : ℂ => correlationComplex G A (J : ℂ) 0 β)
+      (fun β : ℂ => htSubgraphSum G A (Complex.tanh (β * (J : ℂ))) /
+        htSubgraphSum G (∅ : Finset ι) (Complex.tanh (β * (J : ℂ)))) U := by
   classical
   set R : ℝ := twoPointHTActivityRadius Δ with hRdef
   have hRpos : 0 < R := by simpa [hRdef] using twoPointHTActivityRadius_pos Δ
@@ -184,18 +189,6 @@ private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_u
   have hRkpG6 : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * R) < 1 / 6 := by
     linarith [hRkpG64]
   obtain ⟨hkpR, hρR⟩ := kp_tail_conditions_of_lt hRkpG6
-  set U : Set ℂ := Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J) with hU
-  have hUopen : IsOpen U := Metric.isOpen_ball
-  have hUpre : IsPreconnected U :=
-    (convex_ball (0 : ℂ) (twoPointHTUniformRadius Δ J)).isPreconnected
-  have h0U : (0 : ℂ) ∈ U :=
-    Metric.mem_ball_self (twoPointHTUniformRadius_pos Δ J)
-  have hcoshU : ∀ z ∈ U, Complex.cosh (z * (J : ℂ)) ≠ 0 := by
-    intro z hz
-    exact twoPointHTUniformRadius_cosh_ne Δ J z (by simpa [hU] using hz)
-  have htanhU : ∀ z ∈ U, ‖Complex.tanh (z * (J : ℂ))‖ < R := by
-    intro z hz
-    exact twoPointHTUniformRadius_tanh_lt Δ J z (by simpa [hU, hRdef] using hz)
   have hpartEq :=
     partitionFunctionComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
       (G := G) (J := J) hUopen hUpre h0U hcoshU
@@ -283,9 +276,23 @@ private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_u
               (Complex.tanh (((1 / (k + 1 : ℝ) : ℝ) : ℂ) * (J : ℂ))) := by
       exact (h_evU.mono fun k hk => h_real_eq _ hk).frequently
     exact h_principal.frequently h_freq_atTop
-  have hEqOn := hf_anal.eqOn_of_preconnected_of_frequently_eq hg_anal hUpre h0U h_frequently
-  intro β hβ
-  exact hEqOn (by simpa [hU] using hβ)
+  exact hf_anal.eqOn_of_preconnected_of_frequently_eq hg_anal hUpre h0U h_frequently
+
+/-- The `ball 0`-instance of the two-point ratio identity (corollary of the connected-domain
+version), on the degree-uniform high-temperature disc. -/
+private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_uniform_ball
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
+    ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J),
+      correlationComplex G A (J : ℂ) 0 β =
+        htSubgraphSum G A (Complex.tanh (β * (J : ℂ))) /
+          htSubgraphSum G (∅ : Finset ι) (Complex.tanh (β * (J : ℂ))) :=
+  correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected G A J Δ hΔ
+    Metric.isOpen_ball
+    (convex_ball (0 : ℂ) (twoPointHTUniformRadius Δ J)).isPreconnected
+    (Metric.mem_ball_self (twoPointHTUniformRadius_pos Δ J))
+    (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
+    (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
 
 /-- On the smaller KP threshold `r < 1/64`, the Mayer-difference coefficient is at most `8`. -/
 private lemma uniform_kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
