@@ -114,7 +114,7 @@ private lemma htSubgraphSum_tanh_analyticAt (G : SimpleGraph ι) [Fintype G.edge
 
 /-- The complex partition function high-temperature identity on any connected domain where
 `cosh (beta * J)` is nonzero. -/
-private theorem partitionFunctionComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
+theorem partitionFunctionComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
     (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℝ) {U : Set ℂ}
     (_hU : IsOpen U) (hUconn : IsPreconnected U) (h0U : (0 : ℂ) ∈ U)
     (hcoshU : ∀ z ∈ U, Complex.cosh (z * (J : ℂ)) ≠ 0) :
