@@ -60,7 +60,7 @@ theorem
       Λ J x z g' horder hg_cont hpoint
   exact
     lemma_17_5_2_infinite_hls_comparison_on_Icc_of_uniform_finite_deriv_bounds_provider
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h hprovider hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h hprovider hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite pseudo-mass Lipschitz package from
 Dini provider inputs**: Dini-order convergence supplies the derivative-limit

@@ -95,9 +95,12 @@ theorem
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
-    (β K : ℝ) (hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (β K : ℝ)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ : β ∈ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ᶠ n in Filter.atTop,
         |deriv (fun β' =>
@@ -111,7 +114,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β K isOpen_Ioo (subset_refl _) hβ h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β K hs_open hs_sub hβ h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 pointwise finite derivative bounds and a derivative-limit provider**. -/
@@ -122,9 +125,11 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     (β₁ β₂ K : ℝ)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ β ∈ Set.Icc β₁ β₂,
         ∀ᶠ n in Filter.atTop,
@@ -140,7 +145,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hs_open hs_sub hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 a uniform finite derivative bound and a derivative-limit provider**. -/
@@ -151,9 +156,11 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     (β₁ β₂ K : ℝ)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ᶠ n in Filter.atTop,
         ∀ β ∈ Set.Icc β₁ β₂,
@@ -169,7 +176,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hs_open hs_sub hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 finite HLS bounds to infinite Lipschitz from a
 derivative-limit provider**. -/
@@ -618,7 +625,7 @@ theorem
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (K := K)
       (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
-      hd hJ_pos hxz hIcc hderiv_provider hfinite
+      hd hJ_pos hxz isOpen_Ioo (subset_refl _) hIcc hderiv_provider hfinite
   exact ⟨K, hK_pos, hK_conv, hcomp, by simpa [N, m, path] using hpath_enn⟩
 
 set_option maxHeartbeats 1200000 in
