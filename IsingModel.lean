@@ -297,6 +297,7 @@ import IsingModel.ClusterExpansion.MayerSumDiffSupportBoundComplex
 import IsingModel.ClusterExpansion.TwoPointCapstonePrereqs
 import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
 import IsingModel.ClusterExpansion.TwoPointCorrelationInfiniteAnalytic
+import IsingModel.ClusterExpansion.TwoPointConvergenceRegion
 import IsingModel.ClusterExpansion.GeometricMoment
 import IsingModel.ClusterExpansion.GeometricFiberSum
 import IsingModel.ClusterExpansion.PiFinsetSeparation
