@@ -484,6 +484,7 @@ import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationPerStageHolomorphi
 import IsingModel.ComplexAnalyticity.FunctionTheoryAxioms
 import IsingModel.ComplexAnalyticity.VitaliPorter.Uniqueness
 import IsingModel.ComplexAnalyticity.VitaliPorter.Equicontinuity
+import IsingModel.ComplexAnalyticity.VitaliPorter.PerCompact
 import IsingModel.ComplexAnalyticity.CorrelationRatioForm
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationVitaliPorter
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationRealAxisVitali
