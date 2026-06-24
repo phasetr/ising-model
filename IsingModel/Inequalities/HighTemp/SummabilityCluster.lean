@@ -162,4 +162,86 @@ theorem clusterProperty_latticeGraph_of_high_temp
   rw [edgeFilter_card_eq_degree v]
   exact inducedLatticeGraph_degree_le d _ v
 
+/-- **Per-pair high-temperature correlation bound from finite susceptibility**:
+at `h = 0`, `0 ≤ βJ`, max degree `≤ D`, and `βJD < 1`, every infinite-volume pair
+correlation is bounded by the susceptibility ceiling,
+`correlationInfinite G Λ ⟨J,0,β⟩ {i,w} ≤ βJD/(1−βJD)`.
+
+Proof: a single nonnegative pair term is bounded by the whole susceptibility sum.
+Concretely, `correlationAlongExhaustion {i,w} n = ∑_{j ∈ {w}} correlationAlongExhaustion {i,j} n
+≤ susceptibilityAlongExhaustion i n ≤ βJD/(1−βJD)` (private
+`sum_correlationAlongExhaustion_le_susceptibilityAlongExhaustion` at the singleton `{w}`
+plus `susceptibilityAlongExhaustion_le_of_high_temp`), and `le_of_tendsto` on
+`tendsto_correlationAlongExhaustion_correlationInfinite` passes the bound to the limit.
+
+This is the missing **distance-1 (adjacent)** correlation bound: the Simon–Lieb peeling
+alone yields only `≤ 1` at distance 1, whereas the susceptibility ceiling is `< 1` in the
+strict window `βJD < 1/2`.
+
+Reference: Glimm–Jaffe §5.1 pp. 73–74; §17.5 pp. 311–312; Friedli–Velenik §3.7.3. -/
+theorem correlationInfinite_le_susceptibility_bound_of_high_temp
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
+    {D : ℕ} (hD : ∀ n, ∀ v : ↑(Λ.volume n),
+        (Finset.univ.filter
+          (fun e : (inducedGraph G (Λ.volume n)).edgeSet =>
+            v ∈ (e : Sym2 ↑(Λ.volume n)))).card ≤ D)
+    (hlt : β * J * ↑D < 1) (i w : V) :
+    correlationInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ) {i, w}
+      ≤ β * J * ↑D / (1 - β * J * ↑D) := by
+  classical
+  have hβJ : 0 ≤ β * J := mul_nonneg (le_of_lt hf.hβ) hf.hJ
+  have hten := tendsto_correlationAlongExhaustion_correlationInfinite G Λ
+    (⟨J, 0, β⟩ : IsingParams ℝ) hf {i, w}
+  apply le_of_tendsto hten
+  obtain ⟨N, hN⟩ := Λ.exhaust ({i, w} : Finset V)
+  apply Filter.eventually_atTop.mpr ⟨N, fun n hn => ?_⟩
+  have hi_n : i ∈ Λ.volume n := hN n hn (Finset.mem_insert_self i {w})
+  have hw_n : w ∈ Λ.volume n :=
+    hN n hn (Finset.mem_insert_of_mem (Finset.mem_singleton_self w))
+  have hsingle : correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) {i, w} n
+      = ∑ j ∈ ({w} : Finset V),
+          correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} n := by
+    rw [Finset.sum_singleton]
+  rw [hsingle]
+  calc ∑ j ∈ ({w} : Finset V),
+          correlationAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) {i, j} n
+      ≤ susceptibilityAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) i n :=
+        sum_correlationAlongExhaustion_le_susceptibilityAlongExhaustion G Λ hf hi_n
+          (fun j hj => by rw [Finset.mem_singleton] at hj; subst hj; exact hw_n)
+    _ ≤ β * J * ↑D / (1 - β * J * ↑D) :=
+        susceptibilityAlongExhaustion_le_of_high_temp G Λ hβJ hD hlt i n
+
+open IsingModel in
+/-- **ℤ^d per-pair high-temperature correlation bound**:
+for the `d`-dimensional lattice graph with cubic exhaustion, `Ferromagnetic ⟨J,0,β⟩`,
+and `βJ·2d < 1`, `correlationInfinite (latticeGraph d) (cubicExhaustion d) ⟨J,0,β⟩ {i,w}
+≤ βJ·2d/(1−βJ·2d)` for every pair `i, w`.
+
+Proof: `correlationInfinite_le_susceptibility_bound_of_high_temp` with `D = 2d`, using the
+same degree discharge (`edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`) as
+`clusterProperty_latticeGraph_of_high_temp`.
+
+Reference: Glimm–Jaffe §5.1; §17.5 pp. 311–312; Friedli–Velenik §3.7.3. -/
+theorem correlationInfinite_latticeGraph_le_susceptibility_bound_of_high_temp
+    {d : ℕ} {β J : ℝ} (hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ))
+    (hlt : β * J * (2 * (d : ℝ)) < 1) (i w : Fin d → ℤ) :
+    correlationInfinite (latticeGraph d) (cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {i, w}
+      ≤ β * J * (2 * (d : ℝ)) / (1 - β * J * (2 * (d : ℝ))) := by
+  have hcast : (↑(2 * d) : ℝ) = 2 * (d : ℝ) := by push_cast; ring
+  have hlt' : β * J * (↑(2 * d) : ℝ) < 1 := by rw [hcast]; exact hlt
+  have hbound :
+      correlationInfinite (latticeGraph d) (cubicExhaustion d)
+          (⟨J, 0, β⟩ : IsingParams ℝ) {i, w}
+        ≤ β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d)) := by
+    apply correlationInfinite_le_susceptibility_bound_of_high_temp
+      (latticeGraph d) (cubicExhaustion d) hf (D := 2 * d) _ hlt'
+    intro n v
+    classical
+    rw [edgeFilter_card_eq_degree v]
+    exact inducedLatticeGraph_degree_le d _ v
+  rwa [hcast] at hbound
+
 end IsingModel.Ambient
