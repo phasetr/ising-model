@@ -25,25 +25,29 @@ the cluster expansion, infinite-volume limits, free-energy and two-point-functio
 analyticity, and the §17.5 sharp Hardy–Littlewood–Sobolev constant) is formalized in
 book order.
 
-The project is **axiom-free except for two deliberately isolated, documented,
-scope-excluded analytic axioms** of the same complex-analysis / normal-families class,
-which are *not* about the Ising model and which Mathlib does not provide:
+The classical **Vitali–Porter convergence theorem** (normal families) — the function-theory
+input behind the infinite-volume two-point correlation analyticity (GJ §18.6/§18.7) — was
+formerly a declared axiom and is now **proved from Mathlib** inside the project: an in-project
+complex **Montel theorem** (Cauchy-estimate equicontinuity + per-compact Arzelà–Ascoli over a
+compact exhaustion + a diagonal extraction) together with the identity-theorem **uniqueness**
+core. The infinite-volume two-point correlation analyticity is therefore now **fully axiom-free**.
 
-- `FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn` — the classical
-  **Vitali–Porter convergence theorem**, used for the infinite-volume two-point
-  correlation analyticity (GJ §18.6/§18.7).
+The project is thus **axiom-free except for one deliberately isolated, documented,
+scope-excluded analytic axiom**, which is *not* about the Ising model and which Mathlib does not
+provide:
+
 - `Ambient.lemma_17_5_2_derivativeLimitProvider_latticeGraph` — the **locally-uniform
-  derivative-limit provider** (Montel / Vitali–Porter normal-families core), used for
-  the GJ §17.5 sharp HLS constant (Theorem 17.5.1 / Lemma 17.5.2).
+  derivative-limit provider** (Montel / Vitali–Porter normal-families core for the
+  *volume-uniform* complex correlations), used for the GJ §17.5 sharp HLS constant
+  (Theorem 17.5.1 / Lemma 17.5.2).
 
-Per the project scope policy these self-contained complex-analysis results are isolated
-as clearly-labelled, deliberately-unproven `axiom`s (proving them would mean building a
-bespoke complex-analysis library inside a lattice-model project); every Ising-side input
-that feeds them is in scope and proven. No other declared axioms remain.
+Per the project scope policy this self-contained complex-analysis result is isolated as a
+clearly-labelled `axiom`; every Ising-side input that feeds it is in scope and proven. No other
+declared axioms remain.
 
-For the complete list of formalized theorems, the two scope-excluded axioms (with their
-precise statements and the reason each is out of scope), and the Glimm–Jaffe
-chapter-by-chapter progress table, see the
+For the complete list of formalized theorems, the one remaining scope-excluded axiom (with its
+precise statement and the reason it is out of scope), and the Glimm–Jaffe chapter-by-chapter
+progress table, see the
 **[project page](https://phasetr.github.io/ising-model/)**.
 
 ## Documentation

@@ -32104,4 +32104,46 @@ calculus, the per-pair susceptibility ceiling (\#4277) --- is in scope and prove
 Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
 
 
+\subsection*{PR \#4281--\#4288 --- Vitali--Porter convergence theorem proved; the §18.6/18.7 axiom discharged (Issue \#4280)}
+
+\par\noindent\textbf{Role:} Eliminates the declared scope-excluded axiom
+$\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$ by \emph{proving} the classical Vitali--Porter
+convergence theorem from Mathlib, so the infinite-volume two-point correlation analyticity
+(GJ~\S18.6/18.7, master \#4214 item D) becomes fully axiom-free.
+
+\par\noindent\textbf{The complex Montel theorem} ($\texttt{VitaliPorter/MontelExtraction.lean}$,
+$\texttt{exists\_subseq\_tendstoLocallyUniformlyOn\_of\_locallyBounded}$): a locally uniformly bounded
+family of holomorphic functions on an open $U\subseteq\mathbb C$ has a subsequence converging locally
+uniformly on $U$ to a holomorphic limit.  Built from: (i) \emph{equicontinuity from Cauchy estimates}
+($\texttt{VitaliPorter/Equicontinuity.lean}$ --- a holomorphic $f$ bounded by $M$ on
+$\overline{B}(z_0,R)$ is $M/(R-r)$-Lipschitz on the inner disc, via $\texttt{Complex.cderiv\_eq\_deriv}
++\texttt{norm\_cderiv\_le}$ and the convex mean value); (ii) the \emph{per-compact Arzelà--Ascoli}
+extraction ($\texttt{VitaliPorter/PerCompact.lean}$ --- restrict to $\widehat K\to^b\mathbb C$,
+$\texttt{BoundedContinuousFunction.arzela\_ascoli}+\texttt{IsCompact.tendsto\_subseq}$); (iii) a
+\emph{compact exhaustion} of the open $U$ ($\texttt{VitaliPorter/Exhaustion.lean}$, via
+$\texttt{CompactExhaustion.choice}$ on $\widehat U$ pushed along $\texttt{Subtype.val}$); and (iv) a
+\emph{diagonal extraction} ($\texttt{VitaliDiagState}$ cumulative-extractor recursion whose diagonal
+$\psi\,n=\varphi\,n\,n$ is a tail-subsequence of every $\varphi\,m$, by a pointwise factorisation).
+
+\par\noindent\textbf{Vitali uniqueness} ($\texttt{VitaliPorter/Uniqueness.lean}$,
+$\texttt{vitali\_uniqueness}$): two holomorphic functions on an open preconnected $U$ agreeing with the
+same $g$ on a subset $S$ accumulating at $z_0\in U$ coincide on $U$ (identity theorem
+$\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_frequently\_eq}$).
+
+\par\noindent\textbf{Assembly} ($\texttt{VitaliPorter/Theorem.lean}$,
+$\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$): Montel yields one locally-uniform subsequence with
+holomorphic limit $f$, identified with $g$ on $S$ by the pointwise hypothesis; the \emph{whole}
+sequence then converges by the subsequence-uniqueness principle
+$\texttt{tendsto\_of\_subseq\_tendsto}$ in the compact-convergence space $C(\widehat U,\mathbb C)$ ---
+every subsequence has a further Montel subsequence whose limit again agrees with $g$ on $S$, hence
+equals $f$ by $\texttt{vitali\_uniqueness}$, so all subsequential limits coincide.  The axiom is
+removed from $\texttt{FunctionTheoryAxioms.lean}$ (now a re-export of the proved theorem).
+$\texttt{\#print axioms}$ on the item-D capstone
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ is now
+$[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.  The project's only remaining
+declared axiom is the \S17.5 $\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$.
+Reference: Conway, \emph{Functions of One Complex Variable I}, VII.\S2--3 (Montel/Vitali);
+Glimm--Jaffe \S18.6--18.7.
+
+
 \end{document}
