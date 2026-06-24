@@ -275,7 +275,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower
     have hcdiff_g :=
       correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
         (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-        hd hxz hJ_pos hderiv_lim β (hIcc hβ)
+        hd hxz hJ_pos isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)
     have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
     simpa [cInf, hderiv_eq] using hcdiff_g
   obtain ⟨K₀, hK₀, hK₀_conv⟩ := lemma_17_5_2_hls_convolution_constant α d hαd
@@ -378,7 +378,7 @@ theorem lemma_17_5_2_upper_bound_of_high_temp_ratio_lower
     exact pseudoMass_pow_succ_lipschitz α hrho hβ₁₂ hh_diff hc_diff hh_nonneg
       hg_eq hh_pos hc_pos
       (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-        hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite')
+        hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite')
   have hβ₂_pos : 0 < β₂ := (hIcc (Set.right_mem_Icc.mpr hβ₁₂)).1
   have hd_pos : 0 < d := lt_of_lt_of_le Nat.zero_lt_one hd
   have hbridge :

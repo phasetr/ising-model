@@ -98,7 +98,7 @@ theorem
     intro β hβ
     have hcdiff_g :=
       correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-        hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+        hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)
     have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
     simpa [cInf, hderiv_eq] using hcdiff_g
   obtain ⟨K, hK, hK_conv, hlip⟩ :=
@@ -108,7 +108,7 @@ theorem
   refine ⟨K, hK, hK_conv, fun hfinite => ?_⟩
   exact hlip
     (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite)
+      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite)
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a finite-HLS Lipschitz package**:
 once the finite-stage HLS bounds have been packaged into the infinite Lipschitz

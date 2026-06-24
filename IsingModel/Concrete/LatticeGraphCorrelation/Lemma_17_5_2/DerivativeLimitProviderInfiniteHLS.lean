@@ -49,7 +49,7 @@ theorem correlationInfinite_hasDerivAt_beta_of_derivative_limit_provider
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact ⟨g',
     correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ r_val s_val hrs J hJ_pos g' hderiv_lim⟩
+      hd Λ r_val s_val hrs J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim⟩
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from a
 derivative-limit provider and a bound on the limiting derivative**. -/
@@ -79,7 +79,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
-      hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim
+      hd Λ J hJ_pos x z hxz β K isOpen_Ioo (subset_refl _) hβ h g' hderiv_lim
       (hbound g' hderiv_lim)
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from finite
@@ -106,7 +106,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β K isOpen_Ioo (subset_refl _) hβ h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 pointwise finite derivative bounds and a derivative-limit provider**. -/
@@ -135,7 +135,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 a uniform finite derivative bound and a derivative-limit provider**. -/
@@ -164,7 +164,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K isOpen_Ioo (subset_refl _) hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 finite HLS bounds to infinite Lipschitz from a
 derivative-limit provider**. -/
@@ -260,7 +260,7 @@ theorem
     intro β hβ
     have hcdiff_g :=
       correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-        hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+        hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)
     have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
     simpa [cInf, hderiv_eq] using hcdiff_g
   exact
@@ -325,7 +325,7 @@ theorem
     intro β hβ
     exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+      hd hxz hJ_pos isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)).differentiableAt
   have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
     simpa [h] using
       pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
@@ -400,7 +400,7 @@ theorem
       intro β hβ
       exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
         (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-        hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+        hd hxz hJ_pos isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)).differentiableAt
   have hcomp' : ∀ β ∈ Set.Icc β₁ β₂,
       |deriv
         (fun β' =>
