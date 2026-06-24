@@ -31293,8 +31293,11 @@ high-temperature exponential decay $\texttt{hasExponentialDecay\_latticeGraph\_o
 $\texttt{HasPolynomialDecay}$ holds unconditionally at $0<J$, $0<\beta$, $\beta J\cdot2d<1$.  Feeding
 it into the conditional theorems yields the unconditional
 $\texttt{correlationInfinite\_exponential\_of\_betaJ\_two\_d\_lt\_one}$ (\S17.8 $\eta\le1$) and
-$\texttt{clusterProperty\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ (\S5.1 cluster property).  Only
-the high-temperature slice is discharged; at/below criticality polynomial decay is genuinely the
+$\texttt{clusterProperty\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ (\S5.1 cluster property).  The
+genuinely-new content is the promotion of $\texttt{HasPolynomialDecay}$ from hypothesis to theorem; the
+$\eta\le1$ capstone is logically a round-trip, and the \S5.1 cluster property was already unconditional
+at high temperature via the independent summability route $\texttt{clusterProperty\_latticeGraph\_of%
+\_high\_temp}$ (\#903).  Only the high-temperature slice is discharged; at/below criticality polynomial decay is genuinely the
 scaling hypothesis (GJ p.~77, \S5.2).  Axiom-free ($\texttt{\#print axioms} = [\texttt{propext},
 \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
 \S17.8 pp.~316--318, \S5.1; Friedli--Velenik, \S3.7.3.
