@@ -486,6 +486,7 @@ import IsingModel.ComplexAnalyticity.VitaliPorter.Uniqueness
 import IsingModel.ComplexAnalyticity.VitaliPorter.Equicontinuity
 import IsingModel.ComplexAnalyticity.VitaliPorter.PerCompact
 import IsingModel.ComplexAnalyticity.VitaliPorter.Exhaustion
+import IsingModel.ComplexAnalyticity.VitaliPorter.MontelExtraction
 import IsingModel.ComplexAnalyticity.CorrelationRatioForm
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationVitaliPorter
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationRealAxisVitali
