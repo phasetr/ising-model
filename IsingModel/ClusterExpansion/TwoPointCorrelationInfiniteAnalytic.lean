@@ -328,11 +328,17 @@ private lemma uniform_activity_exp_card_identity (R : ℝ) (n : ℕ) :
   rw [hmul, Real.exp_add, Real.exp_nat_mul, mul_pow]
   ring
 
-/-- **Finite-graph high-temperature two-point bound on a degree-uniform beta radius.** -/
-theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
+/-- **Degree-uniform two-point norm bound on a connected `cosh≠0` / activity-radius domain.**
+On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
+the two-point correlation is bounded by `twoPointHTBoundValue Δ`, uniformly over `U`. The `ball 0`
+version is the corollary `…_of_high_temp_uniform_radius`. -/
+theorem correlationComplex_two_point_norm_le_on_connected
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] {i j : ι} (hij : i ≠ j)
-    (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
-    ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J),
+    (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ)
+    {U : Set ℂ} (hUopen : IsOpen U) (hUpre : IsPreconnected U) (h0U : (0 : ℂ) ∈ U)
+    (hcoshU : ∀ z ∈ U, Complex.cosh (z * (J : ℂ)) ≠ 0)
+    (htanhU : ∀ z ∈ U, ‖Complex.tanh (z * (J : ℂ))‖ < twoPointHTActivityRadius Δ) :
+    ∀ β ∈ U,
       ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖
         ≤ twoPointHTBoundValue Δ := by
   classical
@@ -364,12 +370,11 @@ theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
     exact lt_of_le_of_lt hle hqΔ
   have hdenΔpos : 0 < 1 - a * ((Δ : ℝ) ^ 2) := by linarith
   have hExp :=
-    correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_uniform_ball
-      (G := G) ({i, j} : Finset ι) J Δ hΔ
+    correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
+      (G := G) ({i, j} : Finset ι) J Δ hΔ hUopen hUpre h0U hcoshU htanhU
   intro β hβ
   set t : ℂ := Complex.tanh (β * (J : ℂ)) with htdef
-  have htRlt : ‖t‖ < R := by
-    simpa [htdef, hRdef] using twoPointHTUniformRadius_tanh_lt Δ J β hβ
+  have htRlt : ‖t‖ < R := htanhU β hβ
   have htRle : ‖t‖ ≤ R := le_of_lt htRlt
   have htz : t ∈ Metric.ball (0 : ℂ) R := by
     rw [Metric.mem_ball, dist_zero_right]
@@ -457,9 +462,25 @@ theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
   calc
     ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖
       = ‖htSubgraphSum G ({i, j} : Finset ι) t / htSubgraphSum G (∅ : Finset ι) t‖ := by
-        rw [hExp β hβ]
+        rw [show correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β =
+          htSubgraphSum G ({i, j} : Finset ι) t / htSubgraphSum G (∅ : Finset ι) t from hExp hβ]
     _ ≤ A / (1 - a * ((G.maxDegree : ℝ) ^ 2)) := hratioBound
     _ ≤ twoPointHTBoundValue Δ := hcompare
+
+/-- The `ball 0`-instance of the two-point norm bound (corollary of the connected-domain version),
+on the degree-uniform high-temperature disc. -/
+theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] {i j : ι} (hij : i ≠ j)
+    (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
+    ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J),
+      ‖correlationComplex G ({i, j} : Finset ι) (J : ℂ) 0 β‖
+        ≤ twoPointHTBoundValue Δ :=
+  correlationComplex_two_point_norm_le_on_connected G hij J Δ hΔ
+    Metric.isOpen_ball
+    (convex_ball (0 : ℂ) (twoPointHTUniformRadius Δ J)).isPreconnected
+    (Metric.mem_ball_self (twoPointHTUniformRadius_pos Δ J))
+    (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
+    (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
 
 namespace Ambient
 
