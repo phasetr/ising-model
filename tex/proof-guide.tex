@@ -32192,4 +32192,41 @@ $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quo
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 pp.~311--312, \S18.6--18.7.
 
 
+\subsection*{PR \#4289 PR 4b --- the real high-temperature window and a provider on it}
+
+\par\noindent\textbf{Role:} Pins down the concrete real interval on which PR 4a's engine discharges
+the \S17.5 derivative-limit provider axiom-free
+($\texttt{ConvergenceRegion.window}$ and helpers,
+$\texttt{ClusterExpansion/TwoPointConvergenceWindow.lean}$).
+
+\par\noindent\textbf{The window.}
+$\texttt{window}\,d\,J:=\texttt{Ioo}\,0\,(\operatorname{artanh}(R\,d)/J)$ with
+$R\,d=\texttt{twoPointHTActivityRadius}(2d)$ --- the real trace of the convergence region $U\,d\,J$.
+Two structural facts:
+\begin{itemize}
+\item $\texttt{ofReal\_window\_mem\_U}$ (for $0<J$): every $\beta\in\texttt{window}\,d\,J$ embeds as
+  $(\beta:\mathbb C)\in U\,d\,J$, because $\beta J<\operatorname{artanh}(R\,d)$ forces
+  $\tanh(\beta J)<R\,d$ via $\operatorname{artanh}\circ\tanh=\mathrm{id}$
+  ($\texttt{Real.artanh\_tanh}+\texttt{Real.artanh\_lt\_artanh\_iff}$, sidestepping a global
+  $\texttt{StrictMono}\,\tanh$), with $\tanh(\beta J)>0$ so $\lVert\tanh(\beta J)\rVert=\tanh(\beta J)$.
+\item $\texttt{window\_subset\_highTemp}$ (for $0<J$, $d\ge 1$):
+  $\texttt{window}\,d\,J\subseteq\texttt{Ioo}\,0\,(1/(J\cdot 2d))$, the numeric crux
+  $\operatorname{artanh}(R\,d)\le 1/(2d)$.  It follows from
+  $R\,d\le \tfrac{1}{4d}\le\tanh(\tfrac{1}{2d})$: the radius is
+  $\le 1/(64((2d)^2{+}1)e)$, while
+  $\tanh(\tfrac{1}{2d})=\sinh/\cosh\ge(\tfrac{1}{2d})/\cosh(\tfrac{1}{2d})\ge\tfrac{1}{4d}$
+  using $s\le\sinh s$ and $\cosh s\le\cosh 1<2$ (via $\texttt{Real.exp\_one\_lt\_three}$); then
+  $\operatorname{artanh}$ monotone and $\operatorname{artanh}(\tanh(\tfrac{1}{2d}))=\tfrac{1}{2d}$.
+\end{itemize}
+
+\par\noindent\textbf{Provider on the window.} $\texttt{derivativeLimit\_on\_window}$ specialises PR 4a's
+$\texttt{derivativeLimit\_on\_real\_subinterval}$ to $\texttt{window}\,d\,J$ (membership by
+$\texttt{ofReal\_window\_mem\_U}$), yielding the locally-uniform two-point $\beta$-derivative
+convergence on the window --- the genuine sub-window form of the \S17.5 derivative-limit provider,
+with \textbf{no axiom}.  Threading it through the \S17.5 sharp-HLS consumer chain and \emph{removing
+the last declared axiom} is Issue \#4289 PR 4c.
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 pp.~311--312, \S18.6--18.7.
+
+
 \end{document}
