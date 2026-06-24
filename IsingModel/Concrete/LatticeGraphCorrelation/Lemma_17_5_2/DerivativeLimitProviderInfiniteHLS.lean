@@ -38,9 +38,11 @@ theorem correlationInfinite_hasDerivAt_beta_of_derivative_limit_provider
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
     (J : ℝ) (hJ_pos : 0 < J)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J r_val s_val) :
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J r_val s_val) :
     ∃ g' : ℝ → ℝ,
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+      ∀ β ∈ s,
         HasDerivAt
           (fun β' =>
             Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -49,7 +51,7 @@ theorem correlationInfinite_hasDerivAt_beta_of_derivative_limit_provider
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact ⟨g',
     correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ r_val s_val hrs J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim⟩
+      hd Λ r_val s_val hrs J hJ_pos g' hs_open hs_sub hderiv_lim⟩
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from a
 derivative-limit provider and a bound on the limiting derivative**. -/
@@ -59,9 +61,12 @@ theorem
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
-    (β K : ℝ) (hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (β K : ℝ)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ : β ∈ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hbound :
       ∀ g' : ℝ → ℝ,
         TendstoLocallyUniformlyOn
@@ -69,7 +74,7 @@ theorem
             deriv (fun β' =>
               Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                 (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) →
+          g' Filter.atTop s →
         |g' β| ≤
           K *
             Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -79,7 +84,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
-      hd Λ J hJ_pos x z hxz β K isOpen_Ioo (subset_refl _) hβ h g' hderiv_lim
+      hd Λ J hJ_pos x z hxz β K hs_open hs_sub hβ h g' hderiv_lim
       (hbound g' hderiv_lim)
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from finite
