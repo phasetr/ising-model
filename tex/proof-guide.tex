@@ -31264,6 +31264,41 @@ hypothesis-gap audit \#4267.  Axiom-free ($\texttt{\#print axioms} = [\texttt{pr
 finite-volume correlation-inequality layer only).  References: Glimm--Jaffe, 2nd ed., \S5.1,
 pp.~72--79; Friedli--Velenik, \S3.7.3.
 
+\subsection{High-temperature discharge of the polynomial-decay hypothesis (Issue \#4273)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/TheoremEtaLe1/MainTheorem.lean}.  GJ Theorem
+17.8.1 (p.~316) \emph{assumes} polynomial decay
+$\lim_{|x|\to\infty}\langle\sigma_0\sigma_x\rangle^{\infty}\,|x|^{d-1}=0$ (hypothesis (17.8.1), the
+project's $\texttt{HasPolynomialDecay}$) as the scaling hypothesis --- it does not prove it.  The
+conditional Lean theorems ($\texttt{correlationInfinite\_polynomial\_implies\_exponential}$, the
+$\eta\le1$ theorem; $\texttt{clusterProperty\_latticeGraph\_of\_polynomialDecay}$, \S5.1) are
+therefore \emph{faithful} to the book.  This subsection discharges the hypothesis \emph{where it is
+provable} --- the high-temperature regime.
+
+\paragraph{Exponential $\Rightarrow$ polynomial.} $\texttt{hasPolynomialDecay\_of\_hasExponentialDecay}$:
+at $h=0$, any positive-rate exponential decay of the truncated two-point function forces
+$\texttt{HasPolynomialDecay}$.  The dominating envelope $C\,e^{-\alpha\,\mathrm{dist}}\,
+\mathrm{dist}^{\,d-1}\to0$ (exponential beats any power,
+$\texttt{tendsto\_const\_mul\_exp\_neg\_mul\_pow\_atTop}$ from Mathlib's
+$\texttt{Real.tendsto\_pow\_mul\_exp\_neg\_atTop\_nhds\_zero}$) squeezes the signed
+$\langle\sigma_0\sigma_x\rangle^{\infty}\cdot\mathrm{dist}^{\,d-1}$ to $0$ along the cofinite filter
+($\texttt{truncated2Infinite\_h\_zero}$ identifies the truncated function with the correlation at
+$h=0$; $\texttt{tendsto\_latticeDistance\_atTop\_cofinite}$ on the punctured lattice pushes
+$\mathrm{dist}\to\infty$).
+
+\paragraph{Unconditional high-temperature capstones.}
+$\texttt{hasPolynomialDecay\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ composes the unconditional
+high-temperature exponential decay $\texttt{hasExponentialDecay\_latticeGraph\_of\_betaJ\_two\_d%
+\_lt\_one}$ (Simon--Lieb peeling, rate $-\log(\beta J\cdot2d)>0$) with the bridge, so
+$\texttt{HasPolynomialDecay}$ holds unconditionally at $0<J$, $0<\beta$, $\beta J\cdot2d<1$.  Feeding
+it into the conditional theorems yields the unconditional
+$\texttt{correlationInfinite\_exponential\_of\_betaJ\_two\_d\_lt\_one}$ (\S17.8 $\eta\le1$) and
+$\texttt{clusterProperty\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ (\S5.1 cluster property).  Only
+the high-temperature slice is discharged; at/below criticality polynomial decay is genuinely the
+scaling hypothesis (GJ p.~77, \S5.2).  Axiom-free ($\texttt{\#print axioms} = [\texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
+\S17.8 pp.~316--318, \S5.1; Friedli--Velenik, \S3.7.3.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation

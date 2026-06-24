@@ -1,9 +1,19 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.HighTempMassGap
 
 /-!
 # Theorem eta-le-1 split — Phases 8-10 main theorem and cluster property
 
 Part of the split eta<=1 polynomial-to-exponential decay layer (Issue #1850).
+
+This file also discharges the polynomial-decay hypothesis `HasPolynomialDecay` (GJ Theorem 17.8.1
+hypothesis (17.8.1), p. 316) **at high temperature** (Issue #4273): the project already proves
+unconditional high-temperature exponential decay, and exponential decay implies polynomial decay
+(exp beats any power), so `HasPolynomialDecay` becomes a **theorem** at `βJ·2d < 1`, making the
+§17.8 η≤1 theorem and the §5.1 cluster property unconditional high-temperature corollaries.  (GJ
+itself *assumes* (17.8.1) as the scaling hypothesis; the conditional theorems remain the faithful
+general form, and this discharge supplies the input where it is provable — the high-temperature
+regime.)
 -/
 
 namespace IsingModel
@@ -303,6 +313,109 @@ theorem clusterProperty_latticeGraph_of_polynomialDecay
   let ⟨_, hm, hexp⟩ := correlationInfinite_polynomial_implies_exponential d hd Λ p hf hh hpoly
   clusterProperty_latticeGraph_of_HasExponentialDecay d Λ p hm hexp
 
+/-! ## High-temperature discharge of the polynomial-decay hypothesis (Issue #4273, GJ §17.8/§5.1) -/
+
+/-- **Exponential decay beats polynomial growth**: `C·exp(−α t)·t^k → 0` as `t → +∞` for `α > 0`.
+The analytic engine behind "exponential decay ⟹ polynomial decay". -/
+private theorem tendsto_const_mul_exp_neg_mul_pow_atTop
+    (C : ℝ) {α : ℝ} (hα : 0 < α) (k : ℕ) :
+    Filter.Tendsto (fun t : ℝ => C * Real.exp (-α * t) * t ^ k) Filter.atTop (nhds 0) := by
+  have hbase := Real.tendsto_pow_mul_exp_neg_atTop_nhds_zero k
+  have hαt : Filter.Tendsto (fun t : ℝ => α * t) Filter.atTop Filter.atTop :=
+    Filter.tendsto_id.const_mul_atTop hα
+  have h := (hbase.comp hαt).const_mul (C / α ^ k)
+  rw [mul_zero] at h
+  refine h.congr (fun t => ?_)
+  have hαk : α ^ k ≠ 0 := pow_ne_zero k (ne_of_gt hα)
+  simp only [Function.comp_apply, neg_mul, mul_pow]
+  field_simp
+
+/-- **Exponential decay ⟹ polynomial decay** (GJ Theorem 17.8.1 hypothesis (17.8.1), p. 316).
+
+At zero field (`p.h = 0`), any positive-rate exponential decay of the truncated two-point function
+forces `HasPolynomialDecay`: `⟨σ₀ σ_x⟩^∞ · |x|^{d−1} → 0` along the cofinite filter.
+(`truncated2Infinite` at `h = 0` is the correlation `⟨σ₀ σ_x⟩^∞`; the dominating envelope
+`C·exp(−α·dist)·dist^{d−1} → 0` by `tendsto_const_mul_exp_neg_mul_pow_atTop`, squeezing to `0`.) -/
+theorem hasPolynomialDecay_of_hasExponentialDecay
+    (d : ℕ) (Λ : Exhaustion (Fin d → ℤ)) (p : IsingParams ℝ) (hh : p.h = 0)
+    {α : ℝ} (hα : 0 < α) (hexp : HasExponentialDecay d Λ p α) :
+    HasPolynomialDecay d Λ p := by
+  obtain ⟨C, _hC, hbound⟩ := hexp
+  have hp : p = (⟨p.J, 0, p.β⟩ : IsingParams ℝ) := by cases p; simp_all
+  -- The lattice distance to the basepoint tends to ∞ along cofinite on the punctured lattice.
+  have hdist : Filter.Tendsto
+      (fun x : {x : Fin d → ℤ // x ≠ 0} => (IsingModel.latticeDistance d 0 x.val : ℝ))
+      Filter.cofinite Filter.atTop :=
+    tendsto_natCast_atTop_atTop.comp
+      ((IsingModel.tendsto_latticeDistance_atTop_cofinite d 0).comp
+        Subtype.coe_injective.tendsto_cofinite)
+  -- The dominating exponential·polynomial envelope tends to 0.
+  have hg : Filter.Tendsto
+      (fun x : {x : Fin d → ℤ // x ≠ 0} =>
+        C * Real.exp (-α * (IsingModel.latticeDistance d 0 x.val : ℝ))
+          * (IsingModel.latticeDistance d 0 x.val : ℝ) ^ (d - 1))
+      Filter.cofinite (nhds 0) :=
+    (tendsto_const_mul_exp_neg_mul_pow_atTop C hα (d - 1)).comp hdist
+  -- Squeeze the signed quantity `corr · dist^{d-1}` between `±` the envelope.
+  have habs : ∀ x : {x : Fin d → ℤ // x ≠ 0},
+      |correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), x.val}
+          * (IsingModel.latticeDistance d 0 x.val : ℝ) ^ (d - 1)|
+        ≤ C * Real.exp (-α * (IsingModel.latticeDistance d 0 x.val : ℝ))
+          * (IsingModel.latticeDistance d 0 x.val : ℝ) ^ (d - 1) := by
+    intro x
+    have hcorr : correlationInfinite (IsingModel.latticeGraph d) Λ p {(0 : Fin d → ℤ), x.val}
+        = truncated2Infinite (IsingModel.latticeGraph d) Λ p 0 x.val := by
+      rw [hp, truncated2Infinite_h_zero]
+    rw [hcorr, abs_mul, abs_pow]
+    have hdnn : |(IsingModel.latticeDistance d 0 x.val : ℝ)| =
+        (IsingModel.latticeDistance d 0 x.val : ℝ) := abs_of_nonneg (by positivity)
+    rw [hdnn]
+    refine mul_le_mul_of_nonneg_right ?_ (by positivity)
+    exact hbound 0 x.val (Ne.symm x.property)
+  have hgneg : Filter.Tendsto
+      (fun x : {x : Fin d → ℤ // x ≠ 0} =>
+        -(C * Real.exp (-α * (IsingModel.latticeDistance d 0 x.val : ℝ))
+          * (IsingModel.latticeDistance d 0 x.val : ℝ) ^ (d - 1)))
+      Filter.cofinite (nhds 0) := by simpa using hg.neg
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' hgneg hg
+    (Filter.Eventually.of_forall (fun x => (abs_le.mp (habs x)).1))
+    (Filter.Eventually.of_forall (fun x => (abs_le.mp (habs x)).2))
+
+/-- **Unconditional high-temperature polynomial decay on ℤ^d** (GJ §17.8, discharging hypothesis
+(17.8.1) at `βJ·2d < 1`): for `0 < J`, `0 < β`, and `βJ·2d < 1`, the cubic-exhaustion
+infinite-volume two-point function satisfies `HasPolynomialDecay`.  Composes the unconditional
+high-temperature exponential decay `hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one` with
+the exponential-⟹-polynomial bridge. -/
+theorem hasPolynomialDecay_latticeGraph_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    HasPolynomialDecay d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  let ⟨hrate, hexp⟩ := hasExponentialDecay_latticeGraph_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht
+  hasPolynomialDecay_of_hasExponentialDecay d (cubicExhaustion d) _ rfl hrate hexp
+
+/-- **§17.8 η≤1 main theorem — UNCONDITIONAL at `βJ·2d < 1`** (GJ Theorem 17.8.1, p. 316): at high
+temperature the polynomial-decay hypothesis is discharged, so the infinite-volume two-point function
+decays exponentially with a positive rate, unconditionally. -/
+theorem correlationInfinite_exponential_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    ∃ m : ℝ, 0 < m ∧
+      HasExponentialDecay d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) m :=
+  correlationInfinite_polynomial_implies_exponential d hd (cubicExhaustion d)
+    (⟨J, 0, β⟩ : IsingParams ℝ) ⟨hJ_pos.le, le_refl 0, hβ_pos⟩ rfl
+    (hasPolynomialDecay_latticeGraph_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht)
+
+/-- **§5.1 cluster property — UNCONDITIONAL at `βJ·2d < 1`** (GJ §5.1): at high temperature the
+cluster property of the cubic-exhaustion infinite-volume Ising model holds unconditionally, the
+polynomial-decay hypothesis being discharged. -/
+theorem clusterProperty_latticeGraph_of_betaJ_two_d_lt_one
+    (d : ℕ) (hd : 1 ≤ d) {J β : ℝ} (hJ_pos : 0 < J) (hβ_pos : 0 < β)
+    (hht : β * J * (2 * d) < 1) :
+    Ambient.clusterProperty (IsingModel.latticeGraph d) (cubicExhaustion d)
+      (⟨J, 0, β⟩ : IsingParams ℝ) :=
+  clusterProperty_latticeGraph_of_polynomialDecay d hd (cubicExhaustion d)
+    (⟨J, 0, β⟩ : IsingParams ℝ) ⟨hJ_pos.le, le_refl 0, hβ_pos⟩ rfl
+    (hasPolynomialDecay_latticeGraph_of_betaJ_two_d_lt_one d hd hJ_pos hβ_pos hht)
 
 end Ambient
 end IsingModel
