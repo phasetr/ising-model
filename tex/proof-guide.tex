@@ -31239,6 +31239,31 @@ limit --- now holds for a general local observable.  Axiom-free ($\texttt{\#prin
 Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306; Friedli--Velenik, \S3.4 (Lemmas 3.22--3.23), \S6.5;
 Georgii, Ch.~8.
 
+\subsection{Unconditional high-temperature distance cluster decay (Issue \#4274)}
+
+File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/CorrelationDecay.lean}.  The earlier
+distance-cluster-decay wrapper $\texttt{truncated2Infinite\_latticeGraph\_tendsto\_atTop\_zero\_of%
+\_summable}$ is conditional on a $\texttt{Summable}$ hypothesis (a placeholder for the unconditional
+summability supplied by the Simon--Lieb stack).  This subsection discharges it at high temperature.
+
+\paragraph{Summability discharge.} $\texttt{truncated2Infinite\_latticeGraph\_summable\_of\_high\_temp}$:
+for any exhaustion $\Lambda$, ferromagnetic $\langle J,0,\beta\rangle$ ($0\le J$, $0<\beta$), and the
+Simon--Lieb high-temperature condition $\beta J\cdot 2d < 1$, the infinite-volume Ursell two-point
+function $j \mapsto U_2(i,j)$ is summable, via $\texttt{truncated2Infinite\_summable\_of\_high\_temp}$
+(partial sums controlled by the finite susceptibility bound $\beta J\cdot 2d/(1-\beta J\cdot 2d)$,
+FV \S3.7.3 / Simon--Lieb GKS-II) with the per-vertex incident-edge count $\le 2d$
+($\texttt{edgeFilter\_card\_eq\_degree} + \texttt{inducedLatticeGraph\_degree\_le}$, as in
+$\texttt{clusterProperty\_latticeGraph\_of\_high\_temp}$).
+
+\paragraph{Headline.} $\texttt{truncated2Infinite\_latticeGraph\_tendsto\_atTop\_zero\_of\_high\_temp}$
+(and its $\texttt{cofinite}$ companion): unconditionally at $\beta J\cdot 2d<1$, the infinite-volume
+Ursell two-point function $U_2(i,j) \to 0$ as the $\ell^1$-lattice distance
+$\texttt{latticeDistance}\,d\,i\,j \to \infty$.  This resolves the one tractable item (B7) of the
+hypothesis-gap audit \#4267.  Axiom-free ($\texttt{\#print axioms} = [\texttt{propext},
+\texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali --- the chain is the GKS/Simon--Lieb
+finite-volume correlation-inequality layer only).  References: Glimm--Jaffe, 2nd ed., \S5.1,
+pp.~72--79; Friedli--Velenik, \S3.7.3.
+
 \subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
