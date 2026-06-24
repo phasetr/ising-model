@@ -17,10 +17,33 @@ the field, and if any overlap arises I am happy to coordinate accordingly.
 
 ## Formalization status
 
-All theorems are formally proved with **zero `sorry`**.
+All library theorems are formally proved with **zero `sorry`**, **zero `admit`**, and
+**no `native_decide`** in proofs. The Glimm–Jaffe §17–18 programme (the rigorous
+statistical mechanics of the ferromagnetic Ising model — GKS/FKG correlation
+inequalities, Simon–Lieb decay, the random-walk / high-temperature representation,
+the cluster expansion, infinite-volume limits, free-energy and two-point-function
+analyticity, and the §17.5 sharp Hardy–Littlewood–Sobolev constant) is formalized in
+book order.
 
-For the complete list of formalized theorems, axioms, and the
-Glimm–Jaffe chapter-by-chapter progress table, see the
+The project is **axiom-free except for two deliberately isolated, documented,
+scope-excluded analytic axioms** of the same complex-analysis / normal-families class,
+which are *not* about the Ising model and which Mathlib does not provide:
+
+- `FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn` — the classical
+  **Vitali–Porter convergence theorem**, used for the infinite-volume two-point
+  correlation analyticity (GJ §18.6/§18.7).
+- `Ambient.lemma_17_5_2_derivativeLimitProvider_latticeGraph` — the **locally-uniform
+  derivative-limit provider** (Montel / Vitali–Porter normal-families core), used for
+  the GJ §17.5 sharp HLS constant (Theorem 17.5.1 / Lemma 17.5.2).
+
+Per the project scope policy these self-contained complex-analysis results are isolated
+as clearly-labelled, deliberately-unproven `axiom`s (proving them would mean building a
+bespoke complex-analysis library inside a lattice-model project); every Ising-side input
+that feeds them is in scope and proven. No other declared axioms remain.
+
+For the complete list of formalized theorems, the two scope-excluded axioms (with their
+precise statements and the reason each is out of scope), and the Glimm–Jaffe
+chapter-by-chapter progress table, see the
 **[project page](https://phasetr.github.io/ising-model/)**.
 
 ## Documentation
