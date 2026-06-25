@@ -4,9 +4,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeP
 /-!
 # Geometric bound on the new-shell-edge Ursell sum (Issue #2965, Phase C)
 
-The β-derivative increment formula `lemma_17_5_2_finite_derivative_increment_eq`
-splits the stage-`(k+1)` Ursell edge sum into the interior edges (shared with stage
-`k`) and the *new shell edges* of the `box_k`-slice. This module bounds the
+The β-derivative increment (the difference of the consecutive-stage finite Ursell
+edge sums) splits the stage-`(k+1)` Ursell edge sum into the interior edges (shared
+with stage `k`) and the *new shell edges* of the `box_k`-slice. This module bounds the
 new-shell-edge contribution geometrically: summing the per-edge Ursell bound
 `ursell_cubic_le_infiniteVolume_cross` over the cut shell, each straddle edge has a
 fresh endpoint `∈ box_{k+1} \ box_k` (`straddle_fresh_vertex`) whose infinite-volume
