@@ -19,13 +19,9 @@ View* (2nd ed., 1987).
 > `lake -R -Kenv=dev build IsingModel:docs` and open
 > `.lake/build/doc/index.html`.
 >
-> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` and
-> `IsingModel.AmbientLattice.SpecialCases` are thin public re-exports. Their
-> legacy compatibility shims are
-> `IsingModel.Concrete.LatticeGraphCorrelation.Legacy` and
-> `IsingModel.AmbientLattice.SpecialCases.Legacy`; those shims re-export the
-> split child modules for older import paths. New narrow APIs should prefer
-> dedicated child modules such as
+> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` is a thin
+> public re-export umbrella over its split child modules. New narrow APIs
+> should prefer dedicated child modules such as
 > `IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay`,
 > `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic` for
 > concrete anchored cubic pseudo-mass abbreviations, transport lemmas, and

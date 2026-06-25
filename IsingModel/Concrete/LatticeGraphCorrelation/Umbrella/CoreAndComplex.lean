@@ -1,6 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity
 import IsingModel.AmbientFKG
-import IsingModel.AmbientLattice.SpecialCases
 import IsingModel.ComplexAnalyticity
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED
