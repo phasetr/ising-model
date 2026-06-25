@@ -24,8 +24,8 @@ profile.
 
 This is the remaining analytic input consumed by the concrete HLS upper-bound
 assembly. -/
-def Lemma_17_5_2_DerivativeLimitProvider
-    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+def Lemma_17_5_2_DerivativeLimitProviderOn
+    {d : ℕ} (s : Set ℝ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (x z : Fin d → ℤ) : Prop :=
   ∃ g' : ℝ → ℝ,
     TendstoLocallyUniformlyOn
@@ -33,7 +33,17 @@ def Lemma_17_5_2_DerivativeLimitProvider
         deriv (fun β' =>
             Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
               (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-      g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+      g' Filter.atTop s
+
+/-- **GJ §17.5 Lemma 17.5.2 derivative-limit provider** (on the formal high-temperature interval):
+the special case of `Lemma_17_5_2_DerivativeLimitProviderOn` with the interval
+`Set.Ioo 0 (1/(J·2d))`.  Kept as a named abbreviation so the existing Cauchy/Dini provider
+construction routes are unaffected. -/
+def Lemma_17_5_2_DerivativeLimitProvider
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    (J : ℝ) (x z : Fin d → ℤ) : Prop :=
+  Lemma_17_5_2_DerivativeLimitProviderOn
+    (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) Λ J x z
 
 /-- **GJ §17.5 Lemma 17.5.2 automatic active-range upper bound from a
 derivative-limit provider**: the provider supplies the limiting derivative

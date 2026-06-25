@@ -115,7 +115,7 @@ theorem lemma_17_5_2_upper_bound_of_geometric_increments_on_covered_stages
       _ < 1 := h
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
-      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
+      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hβ₁ hβ₁₂ hlt
       (fun β hβ => hβ) hprovider
 
 /-- **GJ §17.5 Lemma 17.5.2 two-sided sandwich from geometric increment decay on
@@ -178,7 +178,7 @@ theorem lemma_17_5_2_sandwich_of_geometric_increments_on_covered_stages
       _ < 1 := h
   exact
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hβ₁ hβ₁₂ hlt
       (fun β hβ => hβ) hprovider hdecay
 
 /-- **GJ §17.5 Lemma 17.5.2 capstone from geometric increment decay on covered
@@ -469,7 +469,7 @@ theorem lemma_17_5_2_upper_bound_of_poly_geometric_increments_on_covered_stages
       _ < 1 := h
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
-      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁₂ hIcc hβ₁ hβ₁₂ hlt
+      hα hαd hd hrho Λ J hJ_pos x z hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hβ₁ hβ₁₂ hlt
       (fun β hβ => hβ) hprovider
 
 /-- **GJ §17.5 Lemma 17.5.2 capstone from a polynomial-prefactor geometric

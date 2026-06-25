@@ -202,11 +202,16 @@ Contour counting gives the Peierls bound.
     \texttt{phi4\_single\_\allowbreak site\_nonneg} is now a proven theorem; the
     Lebowitz/GHS axioms \texttt{lebowitz\_\allowbreak third/\allowbreak four}
     were found \emph{false as stated} and replaced by corrected theorems
-    (\texttt{lebowitz\_inductive} discharged); and the three §17.8 axioms behind
+    (\texttt{lebowitz\_inductive} discharged); the three §17.8 axioms behind
     $\eta\le1$ (\texttt{ball\_boundary\_tight\_infinite},
     \texttt{shellSup\_contraction},
     \texttt{polynomialDecay\_contraction\_factor\_tendsto}) are now all proven
-    theorems.
+    theorems; the §18.6/18.7 Vitali--Porter convergence axiom
+    \texttt{vitaliPorter\_tendstoLocallyUniformlyOn} was proved from Mathlib
+    (Issue~\#4280); and the last \S17.5 sharp-HLS derivative-limit provider axiom
+    \texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph} was discharged
+    via \texttt{ConvergenceRegion.derivativeLimit\_on\_window} (Issue~\#4296), so
+    the project is now \emph{fully} axiom-free.
   \item \textbf{Edge representation.} Edges are \texttt{Sym2 $\iota$}
     (unordered pairs). The edge spin product
     \texttt{edgeSpin $\sigma$ $e$} $= s(\sigma_i) \cdot s(\sigma_j)$
@@ -32227,6 +32232,54 @@ with \textbf{no axiom}.  Threading it through the \S17.5 sharp-HLS consumer chai
 the last declared axiom} is Issue \#4289 PR 4c.
 $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 pp.~311--312, \S18.6--18.7.
+
+
+\subsection*{PR \#4289 PR 4c --- the last declared axiom discharged: the project is fully axiom-free (Issue \#4296)}
+
+\par\noindent\textbf{Role:} Eliminates the project's \emph{last} declared axiom
+$\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$ (the \S17.5 sharp-HLS
+locally-uniform derivative-limit provider, introduced as a documented scope-excluded axiom in
+PR~\#4278), making the entire formalization \textbf{fully axiom-free} (every theorem reducing to
+$\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}$ only).
+
+\par\noindent\textbf{Mechanism.}  The axiom asserted locally-uniform convergence of the finite-stage
+$\beta$-derivatives on the \emph{whole} formal high-temperature interval
+$\texttt{Ioo}\,0\,(1/(J\cdot 2d))$, where no provider exists (the cluster expansion converges only on
+the proper sub-window; the full-interval version is the genuine no-go B2~\#4270).  PR 4a/4b had
+already produced the \emph{axiom-free} provider $\texttt{derivativeLimit\_on\_window}$ on the genuine
+convergence window $\texttt{ConvergenceRegion.window}\,d\,J\subseteq\texttt{Ioo}\,0\,(1/(J\cdot 2d))$.
+PR 4c separates the two hypothesis families on the \S17.5 sharp-HLS consumer chain:
+\begin{itemize}
+  \item the \emph{provider}/$\texttt{hderiv\_lim}$ (a convergence statement) --- a window-typed
+    provider is strictly weaker than an $\texttt{Ioo}$-typed one, so the carriers of this hypothesis
+    \emph{must} be generalized.  Exactly the $7$-lemma \emph{provider spine} inside
+    $\texttt{DerivativeLimitProviderInfiniteHLS.lean}$ (the $\texttt{inputs}$,
+    $\texttt{concrete\_hls\_comparison}$, $\texttt{path\_rate\_inputs}$, $\texttt{ratio\_lower}$,
+    $\texttt{uniform\_correlation\_lower}$, and the two $\texttt{compact\_ratio\_bounds}$ entry points)
+    were generalized to an arbitrary interval-parameter $s$ with
+    $\texttt{IsOpen}\,s$, $s\subseteq\texttt{Ioo}\,0\,(1/(J\cdot 2d))$ and
+    $\texttt{hIcc}:\texttt{Icc}\,\beta_1\,\beta_2\subseteq s$ (matching the already-generic foundation
+    of PR~\#4296 / the merged green base);
+  \item the \emph{subset} hypothesis $\texttt{hIcc}$ (a subset fact, \emph{not} a convergence
+    statement) --- every interval helper off the provider spine (active-range, Lipschitz,
+    pseudo-mass, HLS-constant, and the entire Cauchy/Dini construction families) stays literally
+    $\texttt{Ioo}$-typed; a spine lemma downcasts $\texttt{Icc}\subseteq s\subseteq\texttt{Ioo}$ via
+    $\texttt{hIcc.trans hs\_sub}$.  This avoids the over-abstraction of threading $s$ through the
+    $\sim$\,88-carrier transitive closure.
+\end{itemize}
+
+\par\noindent\textbf{Capstone rescope.}
+$\texttt{lemma\_17\_5\_2\_sandwich\_sharp\_cubicExhaustion}$ now takes
+$\texttt{Icc}\,\beta_1\,\beta_2\subseteq\texttt{ConvergenceRegion.window}\,d\,J$ (the honest range
+where the cluster expansion converges) and supplies the spine with
+$\texttt{derivativeLimit\_on\_window}$, $\texttt{isOpen}$ of the window, and
+$\texttt{window\_subset\_highTemp}$.  The axiom module
+$\texttt{SharpHLSScopeExcludedAxioms.lean}$ is deleted.
+$\texttt{\#print axioms lemma\_17\_5\_2\_sandwich\_sharp\_cubicExhaustion}
+=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$, and
+$\texttt{grep -rn 'axiom' IsingModel/}$ contains no declaration.  This closes audit
+B4~\#4271 / B2~\#4269 with \textbf{zero declared axioms}.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312; \S18.6--18.7.
 
 
 \end{document}
