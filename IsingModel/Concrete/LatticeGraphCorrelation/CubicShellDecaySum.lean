@@ -610,8 +610,8 @@ real-axis abs increment bound in the clean form
 
 with explicit `ρ_R := cf^{1/(r₀+2)} ∈ (0, 1)`. This is the direct
 poly·geometric shape compatible with the `R_inc_seq k := M · (2k+3)^d · ρ_R^k`
-input of `CERouteIccPolyGeometricIncrement_of_canonical_radius_sequence`
-(PR #3104, modulo a constant shift `ρ_R^{1−R}`). The cubic high-temperature
+input of the (now-removed, PR #4301) canonical-radius-sequence poly-geometric
+CE-route wrapper (PR #3104, modulo a constant shift `ρ_R^{1−R}`). The cubic high-temperature
 hypothesis automatically discharges `hsep` via the threshold `R + 1 ≤ k`,
 removing the only combinatorial side-condition. -/
 theorem abs_correlation_inducedGraph_cubic_succ_sub_le_geometric_high_temp (d : ℕ) (hd : 1 ≤ d)

@@ -21177,40 +21177,6 @@ the infinite HLS denominator comparison, or the path-rate all-rate bridge into
 the infinite-HLS pipeline no longer need to name the limiting derivative
 profile \(g'\).
 
-The compact-Cauchy criteria are also wired directly to that bridge layer.
-\texttt{DerivativeLimitProviderCauchyHLS.lean} packages nineteen entry points
-that
-first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from
-compact-interval metric Cauchy control alone, using completeness of
-\(\mathbb{R}\) to construct the pointwise derivative-profile limit, then feed
-the provider into the interval infinite-HLS comparison,
-the HLS-denominator-comparison to infinite-Lipschitz packages,
-concrete uniform-correlation-lower upper/sandwich/capstone wrappers on the self
-interval, concrete compact-ratio upper/sandwich/capstone wrappers and their
-self-interval variants, concrete path-rate upper/sandwich/capstone packages,
-finite-HLS-to-infinite Lipschitz package, path-rate enlarged package, and the
-enlarged upper/sandwich assemblies.  Thus a future concrete Cauchy estimate
-for the beta-derivative profiles can be consumed by the HLS-uniform capstone
-path without separately naming the intermediate provider witness.
-
-The Dini criteria are wired to the same infinite-HLS bridge layer.
-\texttt{DerivativeLimitProviderDiniHLS.lean} packages nineteen entry points
-that
-first construct \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider} from the
-named Dini-order derivative-profile input, pointwise convergence, and
-continuity of the limiting derivative profile, then feed that provider into the
-interval infinite-HLS comparison, the HLS-denominator-comparison to
-infinite-Lipschitz packages, concrete uniform-correlation-lower
-upper/sandwich/capstone wrappers on the self interval, concrete compact-ratio
-upper/sandwich/capstone
-wrappers and their self-interval variants, concrete path-rate
-upper/sandwich/capstone packages,
-finite-HLS-to-infinite Lipschitz package, path-rate enlarged package, and
-enlarged upper/sandwich assemblies.  This makes the Dini route directly
-consumable by the HLS-uniform capstone path while leaving the stagewise order,
-pointwise convergence, limiting-profile continuity, and finite derivative/HLS
-inputs visible.
-
 The same provider is now connected to the larger finite-HLS assembly layer.
 Twenty-two entry points feed \texttt{Lemma\_17\_5\_2\_DerivativeLimitProvider}
 into the concrete pseudo-mass finite-derivative-provider upper/sandwich
@@ -21225,55 +21191,8 @@ callers of the enlarged finite-HLS chain also no longer need to name the
 limiting derivative profile \(g'\), while the remaining analytic work is
 unchanged.
 
-The compact-Cauchy inputs are also named at the finite-HLS assembly boundary.
-\texttt{DerivativeProfileInputs.lean} names the compact-interval metric Cauchy
-hypothesis and keeps the pointwise derivative-profile limit hypothesis for
-legacy and Dini-facing callers.  \texttt{CauchyProvider.lean} proves the
-complete-metric Cauchy provider helper without importing downstream HLS
-assembly layers.  \texttt{CauchyFiniteHLS.lean} then feeds that provider into the
-concrete pseudo-mass finite-derivative-provider, direct abstract
-finite-derivative-provider, scalar-provider, ratio-lower,
-uniform-correlation-lower upper/sandwich/capstones and their self-interval variants,
-compact-ratio-bounds upper/sandwich assemblies,
-compact-ratio capstone assemblies, and self-interval compact-ratio
-upper/sandwich/capstone assemblies,
-as well as the concrete finite-derivative-provider rate/profile capstones.
-This keeps the concrete Cauchy estimate as the remaining analytic input while
-making it directly consumable by the finite-HLS capstone wrappers.
-
-The Dini inputs are wired to the same finite-HLS assembly boundary.
-\texttt{DiniProvider.lean} names the stagewise monotone-or-antitone
-derivative-profile input and packages it with pointwise convergence plus
-continuity of the limiting derivative profile as a derivative-limit provider.
-\texttt{DiniFiniteHLS.lean} then feeds that provider into the concrete
-pseudo-mass finite-derivative-provider, direct abstract
-finite-derivative-provider, scalar-provider, ratio-lower,
-uniform-correlation-lower upper/sandwich/capstones and their self-interval variants,
-compact-ratio-bounds upper/sandwich assemblies,
-compact-ratio capstone assemblies, and self-interval compact-ratio
-upper/sandwich/capstone assemblies,
-as well as the concrete finite-derivative-provider rate/profile capstones.
-This gives the finite-HLS layer the same direct Dini-shaped API already
-available through the provider-shaped and Cauchy-shaped entry points.
-
-The same named Cauchy inputs are now wired to the concrete capstone interface.
-\texttt{CauchyConcreteCapstone.lean} passes the compact-interval metric Cauchy
-hypothesis through the complete-metric provider helper and into ten concrete
-automatic-active entry points: compact upper bounds, rate-comparison
-sandwiches, profile-lower sandwiches, and the matching high-temperature
-capstones.  Thus downstream callers can work directly with the Cauchy-shaped
-analytic hypothesis while keeping the endpoint rate or profile lower input
-visible.
-
-The Dini route is wired to the same concrete capstone interface.
-\texttt{DiniConcreteCapstone.lean} feeds the named Dini provider into the same
-ten automatic-active upper, sandwich, and capstone wrappers.  This makes the
-Dini-shaped analytic hypotheses directly consumable by the concrete capstone
-layer while keeping the remaining stagewise order and endpoint rate/profile
-inputs explicit.
-
-Finally, the anchored cubic self-interval package connects these concrete
-wrappers to the existing cubic inputs.  For the upper-bound side, theorem
+Finally, the anchored cubic self-interval package connects the concrete
+self-interval wrappers to the existing cubic inputs.  For the upper-bound side, theorem
 \texttt{lemma\_17\_5\_2\_cubic\_origin\_upper\_bound\_on\_self\_Icc}
 specializes the concrete self-interval upper-bound package to the cubic
 exhaustion and anchored pair \(\{0,z\}\).  The companion
