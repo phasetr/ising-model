@@ -629,8 +629,8 @@ def CERouteIccDirectGeometricIncrement
               (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} (k + 1)) β) ≤
               M * ratio ^ k
 
-/-- **Direct poly-geometric-increment predicate**, parallel to
-`CERouteIccPolyGeometricIncrement` (in `CEConditionalCapstone.lean`) but
+/-- **Direct poly-geometric-increment predicate**, parallel to the
+(now-removed, PR #4301) CE-route poly-geometric increment bundle but
 bypassing the Cauchy decomposition. Named alias for the `hincr` shape
 expected by
 `lemma_17_5_2_{upper_bound,capstone}_of_poly_geometric_increments_on_covered_stages`. -/

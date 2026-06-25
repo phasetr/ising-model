@@ -35,9 +35,9 @@ increment (3) is the parallel open input from the Simon-Lieb hB side
 
 ## Scope: bundle is a structural bridge, not a proof of Lemma 17.5.2
 
-The CE-route bundles defined here (`CERouteIccGeometricIncrement`,
-`CERouteIccPolyGeometricIncrement`, and the derived one-step wrappers) are
-**structural bridges from a per-`(β, k)` complex circle bound to a summable
+The CE-route bundle defined here (`CERouteIccGeometricIncrement` and the
+derived one-step wrappers) is a
+**structural bridge from a per-`(β, k)` complex circle bound to a summable
 derivative increment** (consumed by `IncrementCapstone.lean`). The bundles
 are abstract: each entry point accepts user-supplied data (radius `r`, sphere
 bound `B`, ne-zero hypotheses, optionally `R_inc` / `C_k`) and verifies a
@@ -50,10 +50,10 @@ constants `C_k`, `C_{k+1}` are supplied via `correlationComplex_lipschitz_on_clo
 (PR #3124) using the Cauchy estimate `correlationComplex_norm_deriv_le_of_norm_le_on_sphere`
 (#3052), the resulting `C_k` are **bounded below by `M_real / z_min / R_cauchy`**.
 For the unconditional per-fixed-volume route at `h = 0` (trivial-Q smallness),
-the available disc radius `r = canonicalTrivialQRadiusPair Λ J k = O(1/|Λ_k|)`
+the available disc radius (the canonical trivial-Q radius `r = O(1/|Λ_k|)`)
 shrinks with the volume, and so does any Cauchy radius `R_cauchy ≤ r`, giving
 `C_k → ∞` rather than `0`. After the triangle decomposition
-`B ≤ R_inc + (C_k + C_{k+1}) · r` from `sphere_circle_bound_of_real_inc_and_lipschitz`,
+`B ≤ R_inc + (C_k + C_{k+1}) · r` (the real-increment-plus-Lipschitz sphere bound),
 the smallness reduces to `R_inc / r + (C_k + C_{k+1}) ≤ M · ratio^k → 0`,
 which the non-decaying `(C_k + C_{k+1})` term cannot satisfy. **No code in this
 file is mathematically unsatisfiable** — the bundles accept any abstract
