@@ -272,11 +272,11 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`
 > for faster targeted checks.
 
-All theorems are formally proved with **zero `sorry`**, and **every Ising-model
-axiom has been discharged** (modulo Mathlib). Per the project scope policy (see
-the [Axioms](#axioms) section), self-contained *complex-analysis* (function-theory)
-results that are out of scope for a lattice-model library — and absent from Mathlib
-— are isolated as clearly-labelled `axiom`s in dedicated modules.
+All theorems are formally proved with **zero `sorry`** and **zero declared axioms**
+(modulo Mathlib's `propext` / `Classical.choice` / `Quot.sound`). Historically, a few
+self-contained *complex-analysis* (function-theory) results that are out of scope for a
+lattice-model library — and absent from Mathlib — were temporarily isolated as
+clearly-labelled `axiom`s in dedicated modules; **all of these have since been discharged.**
 The **Vitali–Porter convergence theorem** (`vitaliPorter_tendstoLocallyUniformlyOn`),
 formerly such an axiom, has since been **proved from Mathlib** in
 `ComplexAnalyticity/VitaliPorter/Theorem.lean` — via an in-project complex **Montel
@@ -284,22 +284,25 @@ theorem** (`VitaliPorter/MontelExtraction.lean`: Cauchy-estimate equicontinuity 
 per-compact Arzelà–Ascoli over a compact exhaustion + a diagonal extraction) and the
 identity-theorem **uniqueness** core (`VitaliPorter/Uniqueness.lean`) — so the
 infinite-volume two-point correlation analyticity (Issue #4230, master #4214 item D) is
-now **fully axiom-free** (Issue #4280). The project now carries exactly **one** declared
-scope-excluded axiom:
-the **GJ §17.5 sharp-HLS derivative-limit provider**
-(`IsingModel.Ambient.lemma_17_5_2_derivativeLimitProvider_latticeGraph`,
-`Lemma_17_5_2/SharpHLSScopeExcludedAxioms.lean`) — the locally-uniform convergence of the
-finite-stage β-derivatives (Montel / Vitali–Porter normal-families core), the same
-volume-uniform complex cluster-expansion class that item D needed (audit B2 #4269 / B4
-#4271, Issue #4267). The sharp-HLS sandwich's *lower* side is **not** axiomatized: it is
-proven from an explicit per-pair profile hypothesis (`pseudoMassG α ρ (−log(βJ·2d)) ≤
-correlationInfinite {x,z}`, the same validating-decay input the non-sharp sandwich
-carries), because its unconditional `∀ x≠z` form is provably *false* (no-go B3 #4270:
-far pairs would force `latticeMass = ⊤`). This single axiom is documented with its precise
-statement and the reason it is out of scope; the Ising-side content that *feeds* it is
-in scope and proven. The project is thus **axiom-free except for this one isolated,
-documented scope-excluded axiom** (the §17.5 derivative-limit provider). The Vitali–Porter
-axiom that previously also appeared here is now a proved theorem.
+now **fully axiom-free** (Issue #4280). The project is now **fully axiom-free**: every
+theorem reduces to `propext`, `Classical.choice`, `Quot.sound` only, with **no declared
+axioms**. The last scope-excluded axiom — the **GJ §17.5 sharp-HLS derivative-limit
+provider** (formerly `IsingModel.Ambient.lemma_17_5_2_derivativeLimitProvider_latticeGraph`)
+— has been **discharged** (Issue #4289 / #4296): the locally-uniform convergence of the
+finite-stage β-derivatives is now proven, axiom-free, on the genuine cluster-expansion
+convergence window by `ConvergenceRegion.derivativeLimit_on_window`
+(`ClusterExpansion/TwoPointConvergenceWindow.lean`, #4295), and the sharp-HLS capstone
+`lemma_17_5_2_sandwich_sharp_cubicExhaustion` is scoped to that window
+(`Icc β₁ β₂ ⊆ ConvergenceRegion.window d J`, which downcasts to `Ioo 0 (1/(J·2d))` via
+`window_subset_highTemp`). This is the honest range where the cluster expansion converges;
+the full formal interval `Ioo 0 (1/(J·2d))` carries no provider (no-go B2 #4269). The
+sharp-HLS sandwich's *lower* side is **not** axiomatized: it is proven from an explicit
+per-pair profile hypothesis (`pseudoMassG α ρ (−log(βJ·2d)) ≤ correlationInfinite {x,z}`,
+the same validating-decay input the non-sharp sandwich carries), because its unconditional
+`∀ x≠z` form is provably *false* (no-go B3 #4270: far pairs would force `latticeMass = ⊤`).
+The Vitali–Porter axiom that previously also appeared here is now a proved theorem (#4280),
+and the §17.5 derivative-limit provider axiom is now discharged (#4296), so **zero declared
+axioms remain**.
 `polynomialDecay_contraction_factor_tendsto` (the last Ising-side declared axiom) was
 discharged as a **theorem** (`TheoremEtaLe1/Contraction.lean`): the boundary edge
 count is `O(r^{d-1})` (a *surface* bound, `latticeBallBoundaryEdges_card_le_sphere`

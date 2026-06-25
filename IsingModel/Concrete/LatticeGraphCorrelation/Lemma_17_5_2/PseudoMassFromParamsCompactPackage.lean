@@ -132,7 +132,7 @@ theorem lemma_17_5_2_upper_bound_of_concrete_pseudoMass_compact_ratio_bounds
     intro β hβ
     exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+      hd hxz hJ_pos isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)).differentiableAt
   have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
     simpa [h] using
       pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
