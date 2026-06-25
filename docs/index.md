@@ -272,11 +272,11 @@ View* (2nd ed., 1987).
 > `IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity`
 > for faster targeted checks.
 
-All theorems are formally proved with **zero `sorry`**, and **every Ising-model
-axiom has been discharged** (modulo Mathlib). Per the project scope policy (see
-the [Axioms](#axioms) section), self-contained *complex-analysis* (function-theory)
-results that are out of scope for a lattice-model library — and absent from Mathlib
-— are isolated as clearly-labelled `axiom`s in dedicated modules.
+All theorems are formally proved with **zero `sorry`** and **zero declared axioms**
+(modulo Mathlib's `propext` / `Classical.choice` / `Quot.sound`). Historically, a few
+self-contained *complex-analysis* (function-theory) results that are out of scope for a
+lattice-model library — and absent from Mathlib — were temporarily isolated as
+clearly-labelled `axiom`s in dedicated modules; **all of these have since been discharged.**
 The **Vitali–Porter convergence theorem** (`vitaliPorter_tendstoLocallyUniformlyOn`),
 formerly such an axiom, has since been **proved from Mathlib** in
 `ComplexAnalyticity/VitaliPorter/Theorem.lean` — via an in-project complex **Montel
