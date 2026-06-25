@@ -21441,7 +21441,7 @@ ambient general-$G$ versions from PR~\#1635.
 \texttt{freeEnergyAlongExhaustion} ContinuousAt + DifferentiableAt
 wrappers (ambient)
 (\S17.5--\S17.6, PR~\#1636).}
-\texttt{SpecialCases.lean}:
+\texttt{SpecialCases/} modules:
 \texttt{partitionFunctionAlongExhaustion\_\{continuousAt,
 differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero,
 beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
@@ -21460,7 +21460,7 @@ differentiableAt\}\_J\_gen} (2 thms in
 $\beta$ at general $h$) and
 \texttt{susceptibilityAlongExhaustion\_\{continuousAt,
 differentiableAt\}\_\{beta, field, J\}\_gen} (6 thms; in
-\texttt{SpecialCases.lean}). 14 new pointwise wrappers, each
+\texttt{SpecialCases/} modules). 14 new pointwise wrappers, each
 derived from the existing whole-$\mathbb{R}$ Continuous /
 Differentiable via \texttt{(continuous \_).continuousAt} or
 \texttt{(differentiable \_).differentiableAt}.
@@ -21485,7 +21485,7 @@ with $\mathbb{Z}^d$-specialized variants.
 + general-$G$ \texttt{susceptibilityAlongExhaustion}
 Continuous/Differentiable wrappers
 (\S17.5--\S17.6, PR~\#1633).} Ambient
-(\texttt{SpecialCases.lean}):
+(\texttt{SpecialCases/} modules):
 \texttt{magnetizationAlongExhaustion\_\{continuous,
 differentiable\}\_beta} (general $h$, 2) and
 \texttt{susceptibilityAlongExhaustion\_\{continuous,
@@ -21507,7 +21507,7 @@ Differentiable wrappers existed. This PR adds per-parameter
 versions at both ambient and $\mathbb{Z}^d$ concrete layers,
 mirroring the existing per-parameter coverage of
 \texttt{partitionFunctionAlongExhaustion}. Ambient
-(\texttt{SpecialCases.lean}):
+(\texttt{SpecialCases/} modules):
 \texttt{freeEnergyAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}}
 (6, with $\beta$ at general $h$).
 $\mathbb{Z}^d$ concrete (\texttt{LatticeGraphCorrelation.lean}):
@@ -23023,8 +23023,7 @@ statements
 \texttt{\_tanh\_analyticAt\_\{beta,J\}} (Step~608)) are lifted to
 the four volume layers, giving $16$ thin direct-instantiation
 wrappers in
-\texttt{IsingModel/AmbientLattice/Analyticity.lean},
-\texttt{AmbientLattice/SpecialCases.lean}, and
+\texttt{IsingModel/AmbientLattice/Analyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
 and concrete analytic wrappers from this family now live in
 \texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
