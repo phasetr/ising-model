@@ -460,7 +460,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hprovider
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc ha hab hlt hβ_mem hprovider
 
 set_option maxHeartbeats 1200000 in
 -- Adds the lower validating pseudo-mass decay side to the Cauchy
@@ -517,7 +517,7 @@ theorem
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hprovider
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc ha hab hlt hβ_mem hprovider
       hdecay
 
 set_option maxHeartbeats 1200000 in

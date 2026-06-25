@@ -32,22 +32,17 @@ complex **Montel theorem** (Cauchy-estimate equicontinuity + per-compact Arzelà
 compact exhaustion + a diagonal extraction) together with the identity-theorem **uniqueness**
 core. The infinite-volume two-point correlation analyticity is therefore now **fully axiom-free**.
 
-The project is thus **axiom-free except for one deliberately isolated, documented,
-scope-excluded analytic axiom**, which is *not* about the Ising model and which Mathlib does not
-provide:
+The project is now **fully axiom-free**: every theorem reduces to `propext`,
+`Classical.choice`, and `Quot.sound` only, with **no declared axioms**. The last
+scope-excluded axiom — the locally-uniform derivative-limit provider for the GJ §17.5 sharp HLS
+constant (Theorem 17.5.1 / Lemma 17.5.2) — has been **discharged** (Issue #4289 / #4296): it is
+replaced by the in-project `ConvergenceRegion.derivativeLimit_on_window`, which proves the
+locally-uniform convergence of the finite-stage β-derivatives on the genuine cluster-expansion
+convergence window (`window d J ⊆ Ioo 0 (1/(J·2d))`) with no axiom, and the sharp-HLS capstone is
+scoped to that window accordingly.
 
-- `Ambient.lemma_17_5_2_derivativeLimitProvider_latticeGraph` — the **locally-uniform
-  derivative-limit provider** (Montel / Vitali–Porter normal-families core for the
-  *volume-uniform* complex correlations), used for the GJ §17.5 sharp HLS constant
-  (Theorem 17.5.1 / Lemma 17.5.2).
-
-Per the project scope policy this self-contained complex-analysis result is isolated as a
-clearly-labelled `axiom`; every Ising-side input that feeds it is in scope and proven. No other
-declared axioms remain.
-
-For the complete list of formalized theorems, the one remaining scope-excluded axiom (with its
-precise statement and the reason it is out of scope), and the Glimm–Jaffe chapter-by-chapter
-progress table, see the
+For the complete list of formalized theorems, the axiom-freeness audit, and the Glimm–Jaffe
+chapter-by-chapter progress table, see the
 **[project page](https://phasetr.github.io/ising-model/)**.
 
 ## Documentation
