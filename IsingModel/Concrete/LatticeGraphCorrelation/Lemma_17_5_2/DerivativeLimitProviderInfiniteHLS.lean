@@ -38,9 +38,11 @@ theorem correlationInfinite_hasDerivAt_beta_of_derivative_limit_provider
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (r_val s_val : Fin d → ℤ) (hrs : r_val ≠ s_val)
     (J : ℝ) (hJ_pos : 0 < J)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J r_val s_val) :
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J r_val s_val) :
     ∃ g' : ℝ → ℝ,
-      ∀ β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))),
+      ∀ β ∈ s,
         HasDerivAt
           (fun β' =>
             Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -49,7 +51,7 @@ theorem correlationInfinite_hasDerivAt_beta_of_derivative_limit_provider
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact ⟨g',
     correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ r_val s_val hrs J hJ_pos g' hderiv_lim⟩
+      hd Λ r_val s_val hrs J hJ_pos g' hs_open hs_sub hderiv_lim⟩
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from a
 derivative-limit provider and a bound on the limiting derivative**. -/
@@ -59,9 +61,12 @@ theorem
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
-    (β K : ℝ) (hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (β K : ℝ)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ : β ∈ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hbound :
       ∀ g' : ℝ → ℝ,
         TendstoLocallyUniformlyOn
@@ -69,7 +74,7 @@ theorem
             deriv (fun β' =>
               Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
                 (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-          g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) →
+          g' Filter.atTop s →
         |g' β| ≤
           K *
             Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -79,7 +84,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_deriv_limit_bound
-      hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim
+      hd Λ J hJ_pos x z hxz β K hs_open hs_sub hβ h g' hderiv_lim
       (hbound g' hderiv_lim)
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite HLS denominator comparison from finite
@@ -90,9 +95,12 @@ theorem
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
-    (β K : ℝ) (hβ : β ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (β K : ℝ)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hβ : β ∈ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ᶠ n in Filter.atTop,
         |deriv (fun β' =>
@@ -106,7 +114,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β K hβ h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β K hs_open hs_sub hβ h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 pointwise finite derivative bounds and a derivative-limit provider**. -/
@@ -117,9 +125,11 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     (β₁ β₂ K : ℝ)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ β ∈ Set.Icc β₁ β₂,
         ∀ᶠ n in Filter.atTop,
@@ -135,7 +145,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hs_open hs_sub hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 interval infinite HLS denominator comparisons from
 a uniform finite derivative bound and a derivative-limit provider**. -/
@@ -146,9 +156,11 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     (β₁ β₂ K : ℝ)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (h : ℝ → ℝ)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hfinite :
       ∀ᶠ n in Filter.atTop,
         ∀ β ∈ Set.Icc β₁ β₂,
@@ -164,7 +176,7 @@ theorem
   obtain ⟨g', hderiv_lim⟩ := hderiv_provider
   exact
     lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hs_open hs_sub hIcc h g' hderiv_lim hfinite
 
 /-- **GJ §17.5 Lemma 17.5.2 finite HLS bounds to infinite Lipschitz from a
 derivative-limit provider**. -/
@@ -212,7 +224,7 @@ theorem
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_uniform_finite_deriv_bounds
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
-      hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      hαd hd hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hderiv_lim
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite-HLS Lipschitz package from a
@@ -260,7 +272,7 @@ theorem
     intro β hβ
     have hcdiff_g :=
       correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-        hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+        hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)
     have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
     simpa [cInf, hderiv_eq] using hcdiff_g
   exact
@@ -325,7 +337,7 @@ theorem
     intro β hβ
     exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
       (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-      hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+      hd hxz hJ_pos isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)).differentiableAt
   have hh_diff : ∀ β ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β) β := by
     simpa [h] using
       pseudoMassFromParamsAtPair_beta_hasDerivAt_deriv_on_Icc_of_corr_differentiableAt
@@ -375,8 +387,10 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ K : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hcomp : ∀ β ∈ Set.Icc β₁ β₂,
       Lemma_17_5_2_InfiniteHLSDenominatorComparison Λ J x z β α K
         (lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)) :
@@ -390,7 +404,7 @@ theorem
   have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
       Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
-    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz (hIcc.trans hs_sub)
   have hc_diff : ∀ β ∈ Set.Icc β₁ β₂,
       DifferentiableAt ℝ
         (fun β' =>
@@ -400,7 +414,7 @@ theorem
       intro β hβ
       exact (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
         (d := d) (Λ := Λ) (r_val := x) (s_val := z) (J := J) (g' := g')
-        hd hxz hJ_pos hderiv_lim β (hIcc hβ)).differentiableAt
+        hd hxz hJ_pos hs_open hs_sub hderiv_lim β (hIcc hβ)).differentiableAt
   have hcomp' : ∀ β ∈ Set.Icc β₁ β₂,
       |deriv
         (fun β' =>
@@ -433,8 +447,10 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ K : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hpath :
       ENNReal.ofReal (-Real.log (Real.tanh (β₂ * J))) ≤
         ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho) *
@@ -443,7 +459,7 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
               (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
     Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z
       (ENNReal.ofReal (((2 * α + 1 : ℕ) : ℝ) * K / rho)) := by
-  have hβ₂ : 0 < β₂ := (hIcc ⟨hβ₁₂, le_rfl⟩).1
+  have hβ₂ : 0 < β₂ := ((hIcc.trans hs_sub) ⟨hβ₁₂, le_rfl⟩).1
   have hd_pos : 0 < d := lt_of_lt_of_le Nat.zero_lt_one hd
   let h : ℝ → ℝ := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z
   have hlip :
@@ -456,7 +472,7 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
       lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_concrete_hls_comparison_provider
         (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
         (β₁ := β₁) (β₂ := β₂) (K := K) (rho := rho)
-        hα hd hrho hJ_pos hxz hβ₁₂ hIcc hderiv_provider hcomp'
+        hα hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc hderiv_provider hcomp'
   have hbridge :
       Lemma_17_5_2_InfiniteHLSLipschitzAllRateBridge
         hα hrho Λ J x z β₁ β₂ K h :=
@@ -484,10 +500,12 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     {L : ℝ} (hL_pos : 0 < L)
     (hratio :
       ∀ᶠ n in Filter.atTop,
@@ -523,7 +541,8 @@ theorem
   have hcorrβ₂ :
       Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
-    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc β₂ hβ₂_mem
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz
+      (hIcc.trans hs_sub) β₂ hβ₂_mem
   have hN_pos : 0 < N := by
     dsimp [N]
     exact_mod_cast Nat.succ_pos (2 * α)
@@ -613,7 +632,7 @@ theorem
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (K := K)
       (h := lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z)
-      hd hJ_pos hxz hIcc hderiv_provider hfinite
+      hd hJ_pos hxz hs_open hs_sub hIcc hderiv_provider hfinite
   exact ⟨K, hK_pos, hK_conv, hcomp, by simpa [N, m, path] using hpath_enn⟩
 
 set_option maxHeartbeats 1200000 in
@@ -630,10 +649,12 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     {L : ℝ} (hL_pos : 0 < L)
     (hratio :
       ∀ᶠ n in Filter.atTop,
@@ -654,14 +675,14 @@ theorem lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
     lemma_17_5_2_concrete_infinite_hls_path_rate_inputs_of_high_temp_ratio_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc ha hab hlt hβ_mem
       hderiv_provider hL_pos hratio
   refine ⟨K, hK, hK_conv, ?_⟩
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_inputs_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (K := K) (rho := rho)
-      hα hd hrho hJ_pos hxz hβ₁₂ hIcc hderiv_provider hpath
+      hα hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc hderiv_provider hpath
 
 set_option maxHeartbeats 1200000 in
 -- This is the two-sided form of the preceding ratio-lower upper-bound bridge.
@@ -710,7 +731,7 @@ theorem lemma_17_5_2_sandwich_of_concrete_infinite_hls_ratio_lower_provider
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc ha hab hlt hβ_mem
       hderiv_provider hL_pos hratio
   refine ⟨K, hK, hK_conv, ?_⟩
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper
@@ -730,10 +751,12 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     {C H : ℝ} (hC_pos : 0 < C) (hH_pos : 0 < H)
     (hcInf_lower : ∀ β ∈ Set.Icc β₁ β₂,
       C ≤
@@ -752,7 +775,7 @@ theorem
   have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
       Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
-    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz (hIcc.trans hs_sub)
   have hh_pos : ∀ β ∈ Set.Icc β₁ β₂,
       0 < lemma_17_5_2_concretePseudoMassBetaProfile hα hrho Λ J x z β := by
     intro β hβ
@@ -769,7 +792,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_ratio_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc ha hab hlt hβ_mem
       hderiv_provider hL_pos hratio
 
 set_option maxHeartbeats 1200000 in
@@ -820,7 +843,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc ha hab hlt hβ_mem
       hderiv_provider hC_pos hH_pos hcInf_lower hdenom_bound
   refine ⟨K, hK, hK_conv, ?_⟩
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper
@@ -864,7 +887,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hβ₁_pos hβ₁₂ hβ₂_lt
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hβ₁_pos hβ₁₂ hβ₂_lt
       (fun β hβ => hβ) hderiv_provider hC_pos hH_pos hcInf_lower
       hdenom_bound
 
@@ -1041,10 +1064,12 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z) :
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -1055,17 +1080,17 @@ theorem
   have hcorr : ∀ β ∈ Set.Icc β₁ β₂,
       Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} ∈ Set.Ioo (0 : ℝ) 2 :=
-    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz hIcc
+    lemma_17_5_2_active_range_on_Icc_of_high_temp_pair Λ hJ_pos hxz (hIcc.trans hs_sub)
   obtain ⟨C, H, hC_pos, hH_pos, hcInf_lower, hdenom_bound⟩ :=
     lemma_17_5_2_concrete_pseudoMass_compact_ratio_bounds_on_beta_interval
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hd hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem hrho hcorr
+      hα hd hJ_pos hxz hβ₁₂ (hIcc.trans hs_sub) ha hab hlt hβ_mem hrho hcorr
   exact
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_uniform_correlation_lower_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc ha hab hlt hβ_mem
       hderiv_provider hC_pos hH_pos hcInf_lower
       (by
         intro β hβ
@@ -1086,10 +1111,12 @@ theorem
     {J : ℝ} (hJ_pos : 0 < J)
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {β₁ β₂ a b : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc : Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     (ha : 0 < a) (hab : a ≤ b) (hlt : b * J * ↑(2 * d) < 1)
     (hβ_mem : ∀ β ∈ Set.Icc β₁ β₂, β ∈ Set.Icc a b)
-    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProvider Λ J x z)
+    (hderiv_provider : Lemma_17_5_2_DerivativeLimitProviderOn s Λ J x z)
     (hdecay : HasExponentialDecay d Λ (⟨J, 0, β₂⟩ : IsingParams ℝ)
       (pseudoMassFromParamsAtPair hα hrho d Λ
         (⟨J, 0, β₂⟩ : IsingParams ℝ) x z)) :
@@ -1111,7 +1138,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ hs_open hs_sub hIcc ha hab hlt hβ_mem
       hderiv_provider
   refine ⟨K, hK, hK_conv, ?_⟩
   exact lemma_17_5_2_sandwich_of_decay_and_upper hα hrho hdecay hupper
@@ -1146,7 +1173,7 @@ theorem
     lemma_17_5_2_upper_bound_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := β₁) (b := β₂) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc hβ₁_pos hβ₁₂ hβ₂_lt
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hβ₁_pos hβ₁₂ hβ₂_lt
       (fun β hβ => hβ) hderiv_provider
 
 set_option maxHeartbeats 1200000 in
@@ -1229,7 +1256,7 @@ theorem
     lemma_17_5_2_sandwich_of_concrete_infinite_hls_compact_ratio_bounds_provider
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (a := a) (b := b) (rho := rho)
-      hα hαd hd hrho hJ_pos hxz hβ₁₂ hIcc ha hab hlt hβ_mem
+      hα hαd hd hrho hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc ha hab hlt hβ_mem
       hderiv_provider hdecay
   have hupper :
       Lemma_17_5_2_UpperBound hα hrho Λ J β₂ x z

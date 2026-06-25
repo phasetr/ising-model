@@ -51,8 +51,9 @@ theorem
     (J : ℝ) (hJ_pos : 0 < J)
     (x z : Fin d → ℤ) (hxz : x ≠ z)
     {β₁ β₂ : ℝ} (hβ₁₂ : β₁ ≤ β₂)
-    (hIcc :
-      Set.Icc β₁ β₂ ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    {s : Set ℝ} (hs_open : IsOpen s)
+    (hs_sub : s ⊆ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))
+    (hIcc : Set.Icc β₁ β₂ ⊆ s)
     {rho : ℝ} (hrho : 0 < rho)
     {h : ℝ → ℝ} (g' : ℝ → ℝ)
     (hh_diff : ∀ β' ∈ Set.Icc β₁ β₂, HasDerivAt h (deriv h β') β')
@@ -73,7 +74,7 @@ theorem
           deriv (fun β' =>
             Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
               (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β)
-        g' Filter.atTop (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d))))) :
+        g' Filter.atTop s) :
     ∃ K : ℝ, 0 < K ∧
       (∀ x' y' : Fin d → ℤ,
         ∑' w : Fin d → ℤ,
@@ -98,7 +99,7 @@ theorem
     intro β hβ
     have hcdiff_g :=
       correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-        hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+        hd Λ x z hxz J hJ_pos g' hs_open hs_sub hderiv_lim β (hIcc hβ)
     have hderiv_eq : deriv cInf β = g' β := hcdiff_g.deriv
     simpa [cInf, hderiv_eq] using hcdiff_g
   obtain ⟨K, hK, hK_conv, hlip⟩ :=
@@ -108,7 +109,7 @@ theorem
   refine ⟨K, hK, hK_conv, fun hfinite => ?_⟩
   exact hlip
     (lemma_17_5_2_infinite_hls_denominator_comparison_on_Icc_of_uniform_finite_deriv_bounds
-      hd Λ J hJ_pos x z hxz β₁ β₂ K hIcc h g' hderiv_lim hfinite)
+      hd Λ J hJ_pos x z hxz β₁ β₂ K hs_open hs_sub hIcc h g' hderiv_lim hfinite)
 
 /-- **GJ §17.5 Lemma 17.5.2 upper bound from a finite-HLS Lipschitz package**:
 once the finite-stage HLS bounds have been packaged into the infinite Lipschitz

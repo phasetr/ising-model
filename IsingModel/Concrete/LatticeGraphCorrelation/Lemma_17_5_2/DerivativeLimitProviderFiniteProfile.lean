@@ -227,7 +227,7 @@ theorem lemma_17_5_2_correlationInfinite_deriv_abs_le_high_temp_on_Icc
   intro β hβ
   have hdiff :=
     correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ x z hxz J hJ_pos g' hderiv_lim β (hIcc hβ)
+      hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β (hIcc hβ)
   have hderiv :
       deriv (fun β' =>
         Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
@@ -364,7 +364,7 @@ theorem lemma_17_5_2_correlationInfinite_deriv_continuousOn_high_temp
   intro β hβ
   exact
     (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ x z hxz J hJ_pos g' hderiv_lim β hβ).deriv
+      hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β hβ).deriv
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite beta differentiability**: under a
 derivative-limit provider, the infinite-volume two-point function is
@@ -384,7 +384,7 @@ theorem lemma_17_5_2_correlationInfinite_differentiableOn_high_temp
   intro β hβ
   exact
     (correlationInfinite_hasDerivAt_beta_of_tendstoLocallyUniformlyOn_deriv
-      hd Λ x z hxz J hJ_pos g' hderiv_lim β hβ).differentiableAt
+      hd Λ x z hxz J hJ_pos g' isOpen_Ioo (subset_refl _) hderiv_lim β hβ).differentiableAt
       |>.differentiableWithinAt
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite `C^1` beta regularity**: under a
