@@ -224,7 +224,7 @@ theorem
     lemma_17_5_2_infinite_pseudoMass_pow_succ_lipschitz_of_uniform_finite_deriv_bounds
       (d := d) (α := α) (Λ := Λ) (J := J) (x := x) (z := z)
       (β₁ := β₁) (β₂ := β₂) (rho := rho) (h := h)
-      hαd hd hJ_pos hxz hβ₁₂ hIcc hrho g'
+      hαd hd hJ_pos hxz hβ₁₂ isOpen_Ioo (subset_refl _) hIcc hrho g'
       hh_diff hh_nonneg hg_eq hh_pos hc_pos hderiv_lim
 
 /-- **GJ §17.5 Lemma 17.5.2 infinite-HLS Lipschitz package from a
