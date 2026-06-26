@@ -367,7 +367,7 @@ boundary-window gap and a columnwise-simple-eigenspace parity input, at zero
 field.  This is finite: it does not pass to a thermodynamic limit or prove final
 hyperplane exponential decay. -/
 theorem
-    correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_of_hermitianCanonicalRatioSimpleParityWindow
+    correlation_cubicLayerOpenBox_abs_le_of_hermitianCanonicalRatioSimpleParityWindow
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
     (hwindow :
       cubicLayerHermitianRatio d R p <
