@@ -12,9 +12,12 @@ This module supplies the **tractable restricted upper bound** of Glimm--Jaffe
 `m⁻(σ) ≤ m(σ) ≤ C · m⁻(σ)` on the strict high-temperature window of the cubic
 exhaustion, both sides phrased against `globalPseudoMassDist`.
 
-The *full* high-temperature upper bound `m(σ) ≤ C · m⁻(σ)` needs the obstructed
-uniform Hardy--Littlewood--Sobolev constant (the obstruction tracked at #4081),
-so we target the **tractable restricted** version available from unconditional
+The *full* high-temperature (`βJ·2d < 1`) / arbitrary-exhaustion upper bound
+`m(σ) ≤ C · m⁻(σ)` needs a *pair-uniform full-window correlation-decay*
+(uniform Hardy--Littlewood--Sobolev) constant — the book obtains it from the
+transfer matrix, the route whose §17.1 spectral form is obstructed (#4081 is
+that related obstruction, not literally the single missing lemma here). So we
+target the **tractable restricted** version available from unconditional
 inputs:
 
 * the high-temperature lattice-mass ceiling
