@@ -78,7 +78,7 @@ theorem twoPointHTBoundValue_pos (Δ : ℕ) : 0 < twoPointHTBoundValue Δ := by
   exact div_pos (Real.exp_pos 8) hden
 
 /-- On the smaller KP threshold `r < 1/64`, the Mayer-difference coefficient is at most `8`. -/
-private lemma kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
+lemma kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
     (1 / (1 - r)) * (1 - 4 * r / (1 - r) ^ 2)⁻¹ ^ 2 ≤ 8 := by
   have hr_half : r < 1 / 2 := by linarith
   have hden_pos : 0 < 1 - r := by linarith
@@ -104,7 +104,7 @@ private lemma kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
     (by norm_num : (0 : ℝ) ≤ (2 : ℝ))]
 
 /-- The elementary exponential identity used to package the per-component bound. -/
-private lemma activity_exp_card_identity (R : ℝ) (n : ℕ) :
+lemma activity_exp_card_identity (R : ℝ) (n : ℕ) :
     R ^ n * Real.exp (8 * ((n : ℝ) + 1)) = Real.exp 8 * (R * Real.exp 8) ^ n := by
   rw [mul_add, mul_one]
   have hmul : 8 * (n : ℝ) = (n : ℝ) * 8 := by ring
