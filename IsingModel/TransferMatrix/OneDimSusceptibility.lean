@@ -58,9 +58,7 @@ theorem isingSusceptibility1D_eq_two_tsum_sub_one {a : ℝ} (ha : 0 < a) :
 
 /-- The susceptibility is strictly positive for `a = β J > 0`. -/
 theorem isingSusceptibility1D_pos {a : ℝ} (ha : 0 < a) : 0 < isingSusceptibility1D a := by
-  have htanh_pos : 0 < Real.tanh a := by
-    rw [Real.tanh_eq_sinh_div_cosh]
-    exact div_pos (Real.sinh_pos_iff.mpr ha) (Real.cosh_pos a)
+  have htanh_pos : 0 < Real.tanh a := real_tanh_pos ha
   have htanh_lt : Real.tanh a < 1 := Real.tanh_lt_one a
   rw [isingSusceptibility1D]
   apply div_pos <;> linarith

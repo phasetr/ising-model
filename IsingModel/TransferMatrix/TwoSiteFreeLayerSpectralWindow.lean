@@ -1,5 +1,6 @@
 import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 import Mathlib.LinearAlgebra.Matrix.Kronecker
+import IsingModel.RealTanhAux
 
 /-!
 # Two-site free-layer spectral window
@@ -212,9 +213,7 @@ theorem twoSiteFreeTransferSpectralWindow_tanh {a : ℝ} (ha : 0 ≤ a) :
             ring
       _ ≤ Real.tanh a * (transferEigenvalueTop a ^ 2) := le_rfl
   · have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
-    have htanh_nonneg : 0 ≤ Real.tanh a := by
-      rw [Real.tanh_eq_sinh_div_cosh]
-      exact div_nonneg (Real.sinh_nonneg_iff.mpr ha) (Real.cosh_pos a).le
+    have htanh_nonneg : 0 ≤ Real.tanh a := real_tanh_nonneg ha
     have htanh_le_one : Real.tanh a ≤ 1 := le_of_lt (Real.tanh_lt_one a)
     have htop_sq_nonneg : 0 ≤ transferEigenvalueTop a ^ 2 := sq_nonneg _
     have htanh_sq_le : Real.tanh a * Real.tanh a ≤ Real.tanh a := by
