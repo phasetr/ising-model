@@ -1,5 +1,6 @@
 import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 import IsingModel.TransferMatrix.LayerOpenBoundaryWindowSimple
+import IsingModel.RealTanhAux
 import IsingModel.TransferMatrix.LayerOpenSimpleSpectrum
 
 /-!
@@ -191,9 +192,7 @@ theorem correlation_oneSiteLayerOpenSlabGraph_abs_le_of_simpleSpectrum
               (layerInternalWeight (⊥ : SimpleGraph (PUnit.{1})) p))
             oneSiteLayerTop (Real.tanh (p.β * p.J))) *
           Real.tanh (p.β * p.J) ^ sep := by
-  have htanh_nonneg : 0 ≤ Real.tanh (p.β * p.J) := by
-    rw [Real.tanh_eq_sinh_div_cosh]
-    exact le_of_lt (div_pos (Real.sinh_pos_iff.mpr hβJ) (Real.cosh_pos _))
+  have htanh_nonneg : 0 ≤ Real.tanh (p.β * p.J) := real_tanh_nonneg hβJ.le
   have htanh_lt_cap :
       Real.tanh (p.β * p.J) <
         layerOpenBoundarySpectralWindowCap

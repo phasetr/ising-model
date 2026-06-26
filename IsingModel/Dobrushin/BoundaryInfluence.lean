@@ -1,4 +1,5 @@
 import IsingModel.Dobrushin.SiteOscillation
+import IsingModel.RealTanhAux
 
 /-!
 # The multi-site boundary influence bound (GJ §17.1, Issue #4201)
@@ -119,9 +120,7 @@ theorem gibbsExpectationBC_singleton_localObs_agreesOff_dist_le {β J : ℝ} (h�
         = (singleSiteUpProbBC G β J h x η - singleSiteUpProbBC G β J h x η')
           * (f (Function.update η x Spin.up) - f (Function.update η x Spin.down)) by ring,
     abs_mul]
-  have htanh : 0 ≤ Real.tanh (β * J) := by
-    calc (0 : ℝ) = Real.tanh 0 := Real.tanh_zero.symm
-      _ ≤ Real.tanh (β * J) := tanh_le_tanh_of_le hβJ
+  have htanh : 0 ≤ Real.tanh (β * J) := real_tanh_nonneg hβJ
   exact mul_le_mul (singleSiteUpProbBC_agreesOff_dist_le G hβJ h x hagree)
     (abs_sub_update_le_siteOsc x f η) (abs_nonneg _)
     (mul_nonneg (Nat.cast_nonneg _) htanh)

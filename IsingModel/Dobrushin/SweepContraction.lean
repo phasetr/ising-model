@@ -37,9 +37,7 @@ omit [Fintype G.edgeSet] in
 Δ(G)·tanh(βJ) = α`. -/
 theorem isingInfluence_rowSum_le_dobrushinCoeff {β J : ℝ} (hβJ : 0 ≤ β * J) (x : ι) :
     ∑ y, isingInfluence G β J x y ≤ isingDobrushinCoeff G β J := by
-  have htanh : 0 ≤ Real.tanh (β * J) := by
-    calc (0 : ℝ) = Real.tanh 0 := Real.tanh_zero.symm
-      _ ≤ Real.tanh (β * J) := tanh_le_tanh_of_le hβJ
+  have htanh : 0 ≤ Real.tanh (β * J) := real_tanh_nonneg hβJ
   have hrow : ∑ y, isingInfluence G β J x y
       = ((Finset.univ ∩ G.neighborFinset x).card : ℝ) * Real.tanh (β * J) :=
     sum_isingInfluence_eq G β J x Finset.univ

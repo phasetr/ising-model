@@ -75,7 +75,7 @@ theorem gibbsExpectationBC_localObs_inducedLattice_boundary_influence_uniform_sm
             - gibbsExpectationBC (Ambient.inducedGraph (latticeGraph d) Λ) β (fun _ => J) h Λ' η' f|
           ≤ ε := by
   have hα0 : 0 ≤ (2 * (d : ℝ)) * Real.tanh (β * J) :=
-    mul_nonneg (by positivity) (tanh_nonneg_of_nonneg hβJ)
+    mul_nonneg (by positivity) (real_tanh_nonneg hβJ)
   have hα1 : (2 * (d : ℝ)) * Real.tanh (β * J) < 1 := by
     have htanh := tanh_le_self hβJ
     have hnonneg : 0 ≤ 2 * (d : ℝ) := by positivity

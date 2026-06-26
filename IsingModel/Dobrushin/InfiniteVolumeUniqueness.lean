@@ -150,7 +150,7 @@ theorem gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform
               (fun _ => J) h Λ' η' (originObs d g (origin_mem_cubicBox d n))|
           ≤ ε := by
   have hα0 : 0 ≤ (2 * (d : ℝ)) * Real.tanh (β * J) :=
-    mul_nonneg (by positivity) (tanh_nonneg_of_nonneg hβJ)
+    mul_nonneg (by positivity) (real_tanh_nonneg hβJ)
   have hα1 : (2 * (d : ℝ)) * Real.tanh (β * J) < 1 := by
     have htanh := tanh_le_self hβJ
     have hnonneg : 0 ≤ 2 * (d : ℝ) := by positivity

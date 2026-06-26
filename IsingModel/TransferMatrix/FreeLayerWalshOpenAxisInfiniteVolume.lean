@@ -1,5 +1,6 @@
 import IsingModel.TransferMatrix.FreeLayerWalshOpenAxisDecay
 import IsingModel.AmbientLattice.CorrelationInfinite.Bounds
+import IsingModel.RealTanhAux
 
 /-!
 # Infinite-volume free-layer axis-graph decay
@@ -27,11 +28,6 @@ open scoped BigOperators
 def freeLayerAxisTwoPoint (d : ℕ) (x : Fin d → ℤ) (sep : ℕ) :
     Finset (Fin (d + 1) → ℤ) :=
   {freeLayerAxisPoint d 0 x, freeLayerAxisPoint d sep x}
-
-/-- Positivity of `tanh a` in the positive coupling-temperature regime. -/
-private theorem tanh_pos_of_pos {a : ℝ} (ha : 0 < a) : 0 < Real.tanh a := by
-  rw [Real.tanh_eq_sinh_div_cosh]
-  exact div_pos (Real.sinh_pos_iff.mpr ha) (Real.cosh_pos _)
 
 /-- Finite cubic-box axis decay in `tanh` form, with the transverse coordinate
 given as an ambient lattice point known to lie in the transverse cubic box. -/
@@ -150,7 +146,7 @@ theorem abs_correlationAlongExhaustion_freeLayerAxisGraph_axis_le_tanh
     conv_lhs =>
       arg 1
       rw [hzero]
-    simpa using pow_nonneg (tanh_pos_of_pos hβJ).le sep
+    simpa using pow_nonneg (real_tanh_pos hβJ).le sep
 
 /-- Stagewise cubic-exhaustion free-layer axis decay in mass form. -/
 theorem abs_correlationAlongExhaustion_freeLayerAxisGraph_axis_le_exp_neg_mass
