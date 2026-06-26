@@ -32,19 +32,6 @@ namespace IsingModel
 
 open Ambient Set Filter Topology
 
-/-- `Real.tanh` is strictly monotone (local copy; the global version lives in `PseudoMass/Profile`,
-which is not on this import path). Proved from `sinh (y − x) > 0` for `x < y`. -/
-private theorem real_tanh_strictMono : StrictMono Real.tanh := by
-  intro x y hxy
-  rw [Real.tanh_eq_sinh_div_cosh, Real.tanh_eq_sinh_div_cosh]
-  have hcx : 0 < Real.cosh x := Real.cosh_pos _
-  have hcy : 0 < Real.cosh y := Real.cosh_pos _
-  rw [div_lt_div_iff₀ hcx hcy]
-  have hsub_pos : 0 < Real.sinh (y - x) := Real.sinh_pos_iff.mpr (sub_pos.mpr hxy)
-  have heq : Real.sinh (y - x) =
-      Real.sinh y * Real.cosh x - Real.cosh y * Real.sinh x := Real.sinh_sub y x
-  linarith
-
 /-- **High-temperature interval analyticity** (GJ §18.6): for `J > 0` and KP parameters
 `T, R` satisfying the convergence conditions, the infinite-volume cubic-Ising free-energy density at
 zero field is real-analytic on the whole high-temperature interval `β ∈ (0, artanh T / J)`. The

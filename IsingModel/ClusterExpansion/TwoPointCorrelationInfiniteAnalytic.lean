@@ -294,40 +294,6 @@ private theorem correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_u
     (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
     (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
 
-/-- On the smaller KP threshold `r < 1/64`, the Mayer-difference coefficient is at most `8`. -/
-private lemma uniform_kpCoeff_le_eight {r : ℝ} (h0 : 0 ≤ r) (hr : r < 1 / 64) :
-    (1 / (1 - r)) * (1 - 4 * r / (1 - r) ^ 2)⁻¹ ^ 2 ≤ 8 := by
-  have hr_half : r < 1 / 2 := by linarith
-  have hden_pos : 0 < 1 - r := by linarith
-  have hden_sq_pos : 0 < (1 - r) ^ 2 := pow_pos hden_pos 2
-  have hden_sq_ge : (1 / 4 : ℝ) ≤ (1 - r) ^ 2 := by
-    nlinarith [h0, hr_half]
-  have hrho_le : 4 * r / (1 - r) ^ 2 ≤ (1 / 2 : ℝ) := by
-    rw [div_le_iff₀ hden_sq_pos]
-    nlinarith [hden_sq_ge, hr]
-  have hone_minus_rho_pos : 0 < 1 - 4 * r / (1 - r) ^ 2 := by linarith
-  have hinv1 : 1 / (1 - r) ≤ (2 : ℝ) := by
-    rw [div_le_iff₀ hden_pos]
-    nlinarith [hr_half]
-  have hinv2 : (1 - 4 * r / (1 - r) ^ 2)⁻¹ ≤ (2 : ℝ) := by
-    rw [inv_le_comm₀ hone_minus_rho_pos (by norm_num : (0 : ℝ) < 2)]
-    linarith
-  have hinv2_nonneg : 0 ≤ (1 - 4 * r / (1 - r) ^ 2)⁻¹ :=
-    inv_nonneg.mpr (le_of_lt hone_minus_rho_pos)
-  have hsquare : (1 - 4 * r / (1 - r) ^ 2)⁻¹ ^ 2 ≤ (4 : ℝ) := by
-    nlinarith [mul_le_mul hinv2 hinv2 hinv2_nonneg (by norm_num : (0 : ℝ) ≤ (2 : ℝ))]
-  nlinarith [mul_le_mul hinv1 hsquare
-    (by positivity : 0 ≤ (1 - 4 * r / (1 - r) ^ 2)⁻¹ ^ 2)
-    (by norm_num : (0 : ℝ) ≤ (2 : ℝ))]
-
-/-- The elementary exponential identity used to package the per-component bound. -/
-private lemma uniform_activity_exp_card_identity (R : ℝ) (n : ℕ) :
-    R ^ n * Real.exp (8 * ((n : ℝ) + 1)) = Real.exp 8 * (R * Real.exp 8) ^ n := by
-  rw [mul_add, mul_one]
-  have hmul : 8 * (n : ℝ) = (n : ℝ) * 8 := by ring
-  rw [hmul, Real.exp_add, Real.exp_nat_mul, mul_pow]
-  ring
-
 /-- **Degree-uniform two-point norm bound on a connected `cosh≠0` / activity-radius domain.**
 On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
 the two-point correlation is bounded by `twoPointHTBoundValue Δ`, uniformly over `U`. The `ball 0`
@@ -399,7 +365,7 @@ theorem correlationComplex_two_point_norm_le_on_connected
     set κ : ℝ := (1 / (1 - rr)) * (1 - 4 * rr / (1 - rr) ^ 2)⁻¹ ^ 2 with hκdef
     have hrr_nonneg : 0 ≤ rr := by positivity
     have hκle : κ ≤ 8 := by
-      simpa [κ, rr] using uniform_kpCoeff_le_eight hrr_nonneg (by simpa [rr] using httG64)
+      simpa [κ, rr] using kpCoeff_le_eight hrr_nonneg (by simpa [rr] using httG64)
     have hdiff :=
       norm_mayerExpansionTermComplex_tsum_sub_Gavoid_le_support_card_complex
         (G := G) (C := C) (z := t) hkpt hρt
@@ -439,7 +405,7 @@ theorem correlationComplex_two_point_norm_le_on_connected
           exact mul_le_mul htpow hratio8 (norm_nonneg _) (pow_nonneg hRnonneg _)
       _ = A * a ^ C.card := by
           rw [hAdef, hadef]
-          exact uniform_activity_exp_card_identity R C.card
+          exact activity_exp_card_identity R C.card
   have hratioBound :=
     twoPointRatio_norm_le_geometric (G := G) (i := i) (j := j) hij t A a hAnonneg hanonneg hper hqG
   have hcompare :
