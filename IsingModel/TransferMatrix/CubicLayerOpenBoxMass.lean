@@ -5,7 +5,7 @@ import IsingModel.TransferMatrix.CubicLayerOpenBoxTransport
 
 The arbitrary finite transverse layer open-box decay of `CubicLayerOpenBoxTransport.lean`
 (the induced-lattice box-transport theorem
-`correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_of_...`) is stated with the
+`correlation_cubicLayerOpenBox_abs_le_of_...`) is stated with the
 geometric factor `ratio^sep` (the canonical maximal-index
 subdominant ratio `cubicLayerHermitianRatio d R p`).  This file recasts it in the
 **mass form** `exp(-mass·sep)` with `mass = -log(ratio)`, mirroring the `K2` mass form
