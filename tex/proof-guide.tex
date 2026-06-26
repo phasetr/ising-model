@@ -11510,9 +11510,35 @@ validating pseudo-mass rate. Consequently
 $\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_le\_high\_temp\_rate}$
 gives $\mathrm{ENNReal.ofReal}(m^-_{x,z}) \le \mathrm{latticeMass}$, and
 $\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_le\_high\_temp\_rate}$
-gives positive lattice mass when the pseudo-mass is positive. The remaining
-substantive input is the quantitative comparison of the concrete pseudo-mass
-with the transferred Simon--Lieb rate.
+gives positive lattice mass when the pseudo-mass is positive.
+
+That ``remaining substantive input'' was, for the \emph{fixed-radius} pseudo-mass
+$\mathrm{pseudoMassFromParamsAtPair}$, a per-pair profile lower bound
+$\mathrm{pseudoMassG}\,\alpha\,r\,(-\log(\beta J\,2d)) \le
+\langle\sigma_x\sigma_z\rangle$ whose all-pairs form is provably false
+(no-go \#4270): with a single fixed $r$ for every pair, the would-be
+identity $m^- \le m$ is in fact \emph{false} ($m^- \to \infty$ as $r \to 0$).
+The book's $m^-$ is an inverse correlation length and uses the per-pair scale
+$r = |x-z|$.  The faithful, \emph{unconditional} lower bound
+$m^-(\sigma) \le m(\sigma)$ of GJ Lemma~17.5.2 is therefore proved against the
+distance-parametrized object: $\mathrm{pseudoMassFromParamsAtPairDist}$ (radius
+$r = \mathrm{latticeDistance}\,d\,x\,z$), its infimum
+$\mathrm{globalPseudoMassDist} = \inf$ over active distinct pairs, and the
+capstone $\mathrm{globalPseudoMassDist\_le\_latticeMass}$ (hypotheses only
+$1 \le \alpha$, $0 \le J$, $0 < \beta$):
+$\mathrm{ENNReal.ofReal}(\mathrm{globalPseudoMassDist}) \le \mathrm{latticeMass}$.
+The proof is Glimm--Jaffe's existential near-optimal-pair argument: for any rate
+$R$ above $\mathrm{latticeMass}$, $\neg\,\mathrm{HasExponentialDecay}\,R$ yields,
+at $C = 2$, a \emph{single} active pair with
+$\langle\sigma_i\sigma_j\rangle > 2\exp(-R\cdot\mathrm{dist})$; aligning the
+profile radius with that pair's distance gives
+$\mathrm{pseudoMassG}\,\alpha\,\mathrm{dist}\,R \le 2\exp(-R\cdot\mathrm{dist})
+< \langle\sigma_i\sigma_j\rangle$, hence the per-pair distance pseudo-mass is
+$\le R$, so $\inf \le R$; letting $R \downarrow \mathrm{latticeMass}$ closes it.
+A single large-correlation witness pair (not an all-pairs claim) is what
+sidesteps the no-go.
+(\texttt{Lemma\_17\_5\_2/GlobalPseudoMassDist.lean}; \texttt{\#print axioms}
+$= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
 The exhaustion-transfer refinements
 $\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
 $\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
