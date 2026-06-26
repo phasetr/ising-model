@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.MayerCore.Terms
+import IsingModel.RealTanhAux
 
 /-!
 # Cluster Expansion Mayer Core Zero and Bounds
@@ -228,13 +229,6 @@ theorem log_vdPolymerFamilies_sum_analyticOnNhd_Ici_zero
       (fun s : ℝ => Real.log (∑ Γ ∈ vdCompatiblePolymerFamilies G,
                                  ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
   fun _ ht => log_vdPolymerFamilies_sum_analyticAt G ht
-
-/-- **`Real.tanh` is non-negative under non-negative argument** (helper
-for Step 608): `0 ≤ x → 0 ≤ Real.tanh x`. Uses `Real.sinh_nonneg_iff`
-and `Real.cosh_pos`. -/
-theorem real_tanh_nonneg {x : ℝ} (hx : 0 ≤ x) : 0 ≤ Real.tanh x := by
-  rw [Real.tanh_eq_sinh_div_cosh]
-  exact div_nonneg (Real.sinh_nonneg_iff.mpr hx) (Real.cosh_pos x).le
 
 /-- **`Real.tanh` is strictly monotone** (shared §18.4 helper): `tanh` is
 strictly increasing on `ℝ`. Proved from `tanh = sinh / cosh` (`cosh > 0`) and
