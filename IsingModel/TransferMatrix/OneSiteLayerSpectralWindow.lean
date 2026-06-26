@@ -204,7 +204,8 @@ theorem isingTransferMatrix1DOrthogonalSpectralData_subdominant_abs_le_tanh_top
   fin_cases i
   · exact False.elim (hi rfl)
   · have hbot_nonneg := transferEigenvalueBot_nonneg_of_nonneg ha
-    simp [isingTransferMatrix1DOrthogonalSpectralData]
+    simp only [isingTransferMatrix1DOrthogonalSpectralData, Fin.mk_one, Fin.isValue,
+      Matrix.cons_val_one, Matrix.cons_val_fin_one, Matrix.cons_val_zero, ge_iff_le]
     rw [abs_of_nonneg hbot_nonneg, transferEigenvalueBot_eq_tanh_mul_top]
 
 /-! ## The one-site physical layer -/
@@ -320,9 +321,11 @@ theorem oneSiteLayerOrthogonalSpectralData_top_flip_even
           ω (layerStatePUnitEquivFin2.symm 0) := by
   intro ω
   cases hω : ω PUnit.unit <;>
-    simp [oneSiteLayerOrthogonalSpectralData, RealOrthogonalSpectralData.reindex,
-      layerStatePUnitEquivFin2, layerStatePUnitEquivSpin, layerStateFlipEquiv_apply,
-      hω] <;>
+    simp only [oneSiteLayerOrthogonalSpectralData, layerStatePUnitEquivFin2,
+      layerStatePUnitEquivSpin, Matrix.reindex_apply, Equiv.symm_symm, Equiv.coe_trans,
+      Equiv.coe_fn_mk, RealOrthogonalSpectralData.reindex, Equiv.trans_apply,
+      layerStateFlipEquiv_apply, Fin.isValue, Equiv.symm_trans_apply, Equiv.coe_fn_symm_mk,
+      Matrix.submatrix_apply, Function.comp_apply, Equiv.apply_symm_apply, hω] <;>
     rw [isingTransferMatrix1DOrthogonalSpectralData_top_column,
       isingTransferMatrix1DOrthogonalSpectralData_top_column]
 

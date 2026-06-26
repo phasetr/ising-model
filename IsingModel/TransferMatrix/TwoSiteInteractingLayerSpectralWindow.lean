@@ -244,8 +244,10 @@ theorem twoSiteInteractingTransferOrthogonalSpectralData_subdominant_abs_le {a :
   have hse := twoSiteK2SwapOdd_gt_EvenBot ha
   intro i hi
   fin_cases i <;>
-    simp_all [twoSiteInteractingTransferOrthogonalSpectralData,
-      twoSiteInteractingTransferEigenvalue, twoSiteK2FlipOdd, twoSiteK2SwapOdd] <;>
+    simp_all only [twoSiteK2FlipOdd, sub_pos, Real.exp_lt_exp, twoSiteK2SwapOdd, gt_iff_lt,
+      Fin.zero_eta, Fin.isValue, ne_eq, not_true_eq_false, Fin.mk_one, Prod.mk.injEq,
+      one_ne_zero, and_false, not_false_eq_true, twoSiteInteractingTransferOrthogonalSpectralData,
+      twoSiteInteractingTransferEigenvalue, ↓reduceIte, and_true, zero_ne_one, and_self] <;>
     rw [abs_of_pos (by linarith)] <;> linarith
 
 /-- The physical layer spectral window with decay parameter
