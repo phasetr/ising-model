@@ -148,7 +148,7 @@ theorem gibbsExpectationBC_localObs_inducedLattice_dist_le_resolventTail (d : �
           (fun σ => O.φ (restrictConfig hS σ))|
       ≤ (∑ j : ↑O.S, siteOsc j O.φ) * resolventTail d ((2 * (d : ℝ)) * Real.tanh (β * J)) R := by
   have hα0 : 0 ≤ (2 * (d : ℝ)) * Real.tanh (β * J) :=
-    mul_nonneg (by positivity) (tanh_nonneg_of_nonneg hβJ)
+    mul_nonneg (by positivity) (real_tanh_nonneg hβJ)
   have hα1 : (2 * (d : ℝ)) * Real.tanh (β * J) < 1 := by
     have htanh := tanh_le_self hβJ
     have hnonneg : 0 ≤ 2 * (d : ℝ) := by positivity
@@ -235,7 +235,7 @@ theorem plusStateExpectation_eq_minusStateExpectation (d : ℕ) (hd : 1 ≤ d) {
     plusStateExpectation J h β O hS = minusStateExpectation J h β O hS := by
   have hβJ : 0 ≤ β * J := mul_nonneg hβ hJ
   have hα0 : 0 ≤ (2 * (d : ℝ)) * Real.tanh (β * J) :=
-    mul_nonneg (by positivity) (tanh_nonneg_of_nonneg hβJ)
+    mul_nonneg (by positivity) (real_tanh_nonneg hβJ)
   have hα1 : (2 * (d : ℝ)) * Real.tanh (β * J) < 1 := by
     have htanh := tanh_le_self hβJ
     have hnonneg : 0 ≤ 2 * (d : ℝ) := by positivity

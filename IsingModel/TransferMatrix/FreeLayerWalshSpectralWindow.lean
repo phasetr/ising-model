@@ -576,10 +576,7 @@ theorem freeLayerWalshSpectralWindow_tanh
       |freeLayerWalshEigenvalue (S := S) a i| ≤
         Real.tanh a * transferEigenvalueTop a ^ Fintype.card S := by
   intro i hi
-  have htanh_nonneg : 0 ≤ Real.tanh a := by
-    rw [Real.tanh_eq_sinh_div_cosh]
-    exact div_nonneg (Real.sinh_nonneg_iff.mpr ha)
-      (le_of_lt (Real.cosh_pos a))
+  have htanh_nonneg : 0 ≤ Real.tanh a := real_tanh_nonneg ha
   have htanh_le_one : Real.tanh a ≤ 1 := le_of_lt (Real.tanh_lt_one a)
   have hcard_pos : 0 < (layerStateDownSet i).card :=
     layerStateDownSet_card_pos_of_ne_freeLayerWalshTop (S := S) hi

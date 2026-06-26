@@ -89,9 +89,7 @@ theorem heatBath_agreesOff_dist_le {β J : ℝ} (hβJ : 0 ≤ β * J) (h : ℝ) 
       ≤ ((S ∩ G.neighborFinset x).card : ℝ) * Real.tanh (β * J) * siteOsc x f
         + ∑ y ∈ S, siteOsc y f := by
   classical
-  have htanh_nonneg : 0 ≤ Real.tanh (β * J) := by
-    calc (0 : ℝ) = Real.tanh 0 := Real.tanh_zero.symm
-      _ ≤ Real.tanh (β * J) := tanh_le_tanh_of_le hβJ
+  have htanh_nonneg : 0 ≤ Real.tanh (β * J) := real_tanh_nonneg hβJ
   simp only [heatBath]
   rw [gibbsExpectationBC_singleton_eq G β J h x η f, gibbsExpectationBC_singleton_eq G β J h x η' f]
   set p := singleSiteUpProbBC G β J h x η with hp
