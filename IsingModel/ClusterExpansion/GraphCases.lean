@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity
+import IsingModel.ClusterExpansion.CycleGraphAlternatingSum
 
 /-!
 # Cluster expansion path and cycle graph alternating sums
@@ -241,143 +242,46 @@ Companion to the K_n and pathGraph cases. The cycleGraph has more
 edges than the path on the same vertex set, giving multiple connected
 spanning subgraphs (the full cycle plus its spanning trees of size n-1). -/
 
-/-- **Cycle graph on `Fin 3` `DecidableRel` instance**. -/
-private instance : DecidableRel (SimpleGraph.cycleGraph 3).Adj :=
-  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
-
-/-- **`cycleGraph 3` alternating connected-spanning sum = 2**:
-the cycle on Fin 3 has 3 edges (the triangle). Connected spanning
-subsets: 3 paths (size 2 each, remove any one edge) + the full
-triangle (size 3). Sum = `3 · (-1)^2 + (-1)^3 = 2`. Same as
-`alternatingConnectedSubgraphSum_K3` (PR #1518) since `cycleGraph 3`
-has the same edge structure as the complete graph K_3. -/
+/-- **`cycleGraph 3` alternating connected-spanning sum = 2** (Mayer Phase B
+base case): instance of the general closed form
+`alternatingConnectedSubgraphSum_cycleGraph` at `n = 3`,
+`(-1)^(3-1)·(3-1) = 2`. Same as `alternatingConnectedSubgraphSum_K3` since
+`cycleGraph 3` has the same edge structure as the complete graph `K_3`. -/
 theorem alternatingConnectedSubgraphSum_cycleGraph_three :
     alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 3) = 2 := by
-  classical
-  unfold alternatingConnectedSubgraphSum
-  have h_int :
-      (∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
-        (fun S : Finset (Sym2 (Fin 3)) =>
-          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 2 := by decide
-  unfold connectedSpanningEdgeSubsets
-  have h_cast :
-      (∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
-          (fun S : Finset (Sym2 (Fin 3)) =>
-            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
-        ((-1 : ℝ) ^ S.card)) =
-        (((∑ S ∈ (SimpleGraph.cycleGraph 3).edgeFinset.powerset.filter
-            (fun S : Finset (Sym2 (Fin 3)) =>
-              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
-          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
-    push_cast
-    rfl
-  rw [h_cast, h_int]
-  norm_num
+  have h := alternatingConnectedSubgraphSum_cycleGraph 3 (by norm_num)
+  norm_num at h
+  exact h
 
-/-- **Cycle graph on `Fin 4` `DecidableRel` instance**. -/
-private instance : DecidableRel (SimpleGraph.cycleGraph 4).Adj :=
-  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
-
-/-- **`cycleGraph 4` alternating connected-spanning sum = -3**:
-the cycle on Fin 4 has 4 edges. Connected spanning subsets: 4 paths
-(size 3 each, remove any one edge) + the full cycle (size 4).
-Sum = `4 · (-1)^3 + (-1)^4 = -4 + 1 = -3`. Distinct from K_4 case
-(PR #1519, value -6) since cycleGraph 4 has fewer connected spanning
-subsets than K_4 (the K_4 cases include subgraphs containing both
-diagonals). -/
+/-- **`cycleGraph 4` alternating connected-spanning sum = -3** (Mayer Phase B
+base case): instance of the general closed form
+`alternatingConnectedSubgraphSum_cycleGraph` at `n = 4`,
+`(-1)^(4-1)·(4-1) = -3`. -/
 theorem alternatingConnectedSubgraphSum_cycleGraph_four :
     alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 4) = -3 := by
-  classical
-  unfold alternatingConnectedSubgraphSum
-  have h_int :
-      (∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
-        (fun S : Finset (Sym2 (Fin 4)) =>
-          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -3 := by decide
-  unfold connectedSpanningEdgeSubsets
-  have h_cast :
-      (∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
-          (fun S : Finset (Sym2 (Fin 4)) =>
-            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
-        ((-1 : ℝ) ^ S.card)) =
-        (((∑ S ∈ (SimpleGraph.cycleGraph 4).edgeFinset.powerset.filter
-            (fun S : Finset (Sym2 (Fin 4)) =>
-              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
-          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
-    push_cast
-    rfl
-  rw [h_cast, h_int]
-  norm_num
+  have h := alternatingConnectedSubgraphSum_cycleGraph 4 (by norm_num)
+  norm_num at h
+  exact h
 
-/-- **Cycle graph on `Fin 5` `DecidableRel` instance**. -/
-private instance : DecidableRel (SimpleGraph.cycleGraph 5).Adj :=
-  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
-
-/-- **Cycle graph on `Fin 6` `DecidableRel` instance**. -/
-private instance : DecidableRel (SimpleGraph.cycleGraph 6).Adj :=
-  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
-
-set_option maxRecDepth 8000 in
-set_option maxHeartbeats 1000000 in
--- `decide` on `cycleGraph 6` (6 edges, 2^6 = 64 subsets) requires the
--- raised recursion / heartbeat budgets to enumerate spanning subsets.
-/-- **`cycleGraph 6` alternating connected-spanning sum = -5**:
-the cycle on Fin 6 has 6 edges. Connected spanning subsets: 6
-spanning trees (paths of size 5 each) + the full cycle (size 6).
-Sum = `6 · (-1)^5 + (-1)^6 = -6 + 1 = -5`. -/
+/-- **`cycleGraph 6` alternating connected-spanning sum = -5** (Mayer Phase B
+base case): instance of the general closed form
+`alternatingConnectedSubgraphSum_cycleGraph` at `n = 6`,
+`(-1)^(6-1)·(6-1) = -5`. -/
 theorem alternatingConnectedSubgraphSum_cycleGraph_six :
     alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 6) = -5 := by
-  classical
-  unfold alternatingConnectedSubgraphSum
-  have h_int :
-      (∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
-        (fun S : Finset (Sym2 (Fin 6)) =>
-          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -5 := by decide
-  unfold connectedSpanningEdgeSubsets
-  have h_cast :
-      (∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
-          (fun S : Finset (Sym2 (Fin 6)) =>
-            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
-        ((-1 : ℝ) ^ S.card)) =
-        (((∑ S ∈ (SimpleGraph.cycleGraph 6).edgeFinset.powerset.filter
-            (fun S : Finset (Sym2 (Fin 6)) =>
-              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
-          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
-    push_cast
-    rfl
-  rw [h_cast, h_int]
-  norm_num
+  have h := alternatingConnectedSubgraphSum_cycleGraph 6 (by norm_num)
+  norm_num at h
+  exact h
 
-set_option maxRecDepth 4000 in
-/-- **`cycleGraph 5` alternating connected-spanning sum = 4**:
-the cycle on Fin 5 has 5 edges. Connected spanning subsets: 5
-spanning trees (paths of size 4 each) + the full cycle (size 5).
-Sum = `5 · (-1)^4 + (-1)^5 = 5 - 1 = 4`. -/
+/-- **`cycleGraph 5` alternating connected-spanning sum = 4** (Mayer Phase B
+base case): instance of the general closed form
+`alternatingConnectedSubgraphSum_cycleGraph` at `n = 5`,
+`(-1)^(5-1)·(5-1) = 4`. -/
 theorem alternatingConnectedSubgraphSum_cycleGraph_five :
     alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 5) = 4 := by
-  classical
-  unfold alternatingConnectedSubgraphSum
-  have h_int :
-      (∑ S ∈ (SimpleGraph.cycleGraph 5).edgeFinset.powerset.filter
-        (fun S : Finset (Sym2 (Fin 5)) =>
-          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 4 := by decide
-  unfold connectedSpanningEdgeSubsets
-  have h_cast :
-      (∑ S ∈ (SimpleGraph.cycleGraph 5).edgeFinset.powerset.filter
-          (fun S : Finset (Sym2 (Fin 5)) =>
-            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
-        ((-1 : ℝ) ^ S.card)) =
-        (((∑ S ∈ (SimpleGraph.cycleGraph 5).edgeFinset.powerset.filter
-            (fun S : Finset (Sym2 (Fin 5)) =>
-              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
-          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
-    push_cast
-    rfl
-  rw [h_cast, h_int]
-  norm_num
+  have h := alternatingConnectedSubgraphSum_cycleGraph 5 (by norm_num)
+  norm_num at h
+  exact h
 
 
 end IsingModel
