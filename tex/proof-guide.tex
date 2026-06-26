@@ -11540,11 +11540,12 @@ sidesteps the no-go.
 (\texttt{Lemma\_17\_5\_2/GlobalPseudoMassDist.lean}; \texttt{\#print axioms}
 $= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
 
-\paragraph{Lemma 17.5.2 (a): continuity and strict positivity of the
+\paragraph{Lemma 17.5.2 (a)+(b): continuity and strict positivity of the
 finite-region pseudo-mass.}
 Glimm--Jaffe \S17.5 Lemma~17.5.2 (2nd ed., pp.~311--312) also asserts that the
-system pseudo-mass $m^-(\sigma,A)$ for a \emph{bounded} region $A$ is
-\emph{continuous} in the inverse temperature and strictly positive.  The book's
+system pseudo-mass $m^-(\sigma,A)$ for a \emph{bounded} region $A$ (with at
+least one distinct pair, $(\mathrm{finiteRegionDistinctPairs}\,A).\mathrm{Nonempty}$)
+is (a) \emph{continuous} in the inverse temperature and (b) strictly positive.  The book's
 continuous object is the \emph{finite} infimum over the distinct pairs of a
 fixed bounded $A$, not the infinite lower envelope
 $\mathrm{globalPseudoMassDist}$ (whose continuity is not automatic: an infinite

@@ -5,9 +5,10 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromCub
 /-!
 # GJ §17.5 Lemma 17.5.2 — continuity of the finite-region pseudo-mass `m⁻(σ, A)`
 
-This module formalizes part (a) of Glimm--Jaffe §17.5 Lemma 17.5.2: for a
-**bounded** region `A`, the system pseudo-mass `m⁻(σ, A)` is **continuous** in
-the inverse temperature.
+This module formalizes parts (a) and (b) of Glimm--Jaffe §17.5 Lemma 17.5.2: for
+a **bounded** region `A` (with at least one distinct pair), the system
+pseudo-mass `m⁻(σ, A)` is (a) **continuous** in the inverse temperature and
+(b) **strictly positive**.
 
 The book's continuous object is `m⁻(σ, A)` for a *fixed bounded* region `A`,
 namely the infimum over the **finitely many** distinct pairs `(x, z)` drawn from
