@@ -40,7 +40,7 @@ variable {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
 finite maximum of `|λ_i| / λ_top` over the non-maximal spectral indices (`0` when
 the matrix has a single eigenvalue index). -/
 noncomputable def subdominantAbsRatio_maxEigenIndex [Nonempty Ω] {M : Matrix Ω Ω ℝ}
-    (E : RealOrthogonalSpectralData M) (hM : MatrixEntrywisePositive M) : ℝ :=
+    (E : RealOrthogonalSpectralData M) (_hM : MatrixEntrywisePositive M) : ℝ :=
   if h : (Finset.univ.erase E.maxEigenIndex).Nonempty then
     (Finset.univ.erase E.maxEigenIndex).sup' h
       (fun i => |E.eigenvalue i| / E.eigenvalue E.maxEigenIndex)
@@ -214,7 +214,7 @@ ambient `latticeGraph (d+1)` on the cubic open box.  The decay parameter
 eigenvalue estimate, so this is the consumer a transverse-volume-uniform
 high-temperature estimate will feed. -/
 theorem
-    correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_of_hermitianExplicitRatioSimpleParityWindow
+    correlation_cubicLayerOpenBox_abs_le_of_hermitianExplicitRatioSimpleParityWindow
     (d R : ℕ) (p : IsingParams ℝ) (hp : p.h = 0) (x : CubicLayerSite d R)
     (hwindow :
       cubicLayerHermitianExplicitRatio d R p <

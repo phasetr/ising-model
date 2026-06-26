@@ -5,7 +5,7 @@ import IsingModel.TransferMatrix.CubicLayerOpenBoxMass
 # Mass-form decay on the ambient cubic open box, explicit ratio (GJ §17.1)
 
 The explicit-ratio cubic open-box decay
-(`correlation_induced_latticeGraph_cubicLayerOpenBox_abs_le_of_hermitianExplicitRatio...`
+(`correlation_cubicLayerOpenBox_abs_le_of_hermitianExplicitRatio...`
 in `LayerOpenExplicitSubdominantRatio.lean`) is the consumer that a
 transverse-volume-uniform high-temperature estimate feeds, since its decay parameter
 `cubicLayerHermitianExplicitRatio` is controlled directly by any quantitative eigenvalue
