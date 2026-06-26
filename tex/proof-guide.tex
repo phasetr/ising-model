@@ -11571,6 +11571,45 @@ version of $\mathrm{pseudoMass\_pos}$ ($\mathrm{Finset.lt\_inf}'\_\mathrm{iff}$)
 (\texttt{Lemma\_17\_5\_2/FiniteRegionPseudoMassDistContinuity.lean};
 \texttt{\#print axioms}
 $= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
+
+\paragraph{Lemma 17.5.2 upper bound on the FULL high-temperature window.}
+The restricted sandwich closes the upper side only on $\beta J\,2d < 1/2$.
+That $1/2$ was an \emph{artefact}: the pair-uniform lower bound
+$M \le \mathrm{pseudoMassFromParamsAtPairDist}$ is built from the Simon--Lieb
+trichotomy, whose \emph{adjacent} ($\mathrm{dist} = 1$) branch was discharged
+through the finite-susceptibility ceiling $\langle\sigma_0\sigma_w\rangle \le
+B := \beta J\,2d/(1-\beta J\,2d)$ together with the rate constraint
+$M \le -\log B$, which needs $B < 1$, i.e. $\beta J\,2d < 1/2$.  But the
+bridge's $\mathrm{bound}$ field only requires
+$\langle\sigma_0\sigma_w\rangle \le \mathrm{pseudoMassG}\,\alpha\,r\,(M\cdot
+\mathrm{dist}/r)$, which at $\mathrm{dist} = 1$ is
+$\langle\sigma_0\sigma_w\rangle \le 2\exp(-M)/(1+M^\alpha)$.  Since
+$\langle\sigma_0\sigma_w\rangle \le 1$ \emph{always}
+($\mathrm{correlationInfinite\_le\_one}$) and
+$2\exp(-M)/(1+M^\alpha) \ge 1$ for every $M \le 1/3$
+($\mathrm{pseudoMassG\_one\_le\_of\_le\_third}$: $(1+M^\alpha)\exp(M) \le
+(1+M)/(1-M) \le 2$ via $\mathrm{Real.add\_one\_le\_exp}$), the adjacent branch is
+discharged \emph{unconditionally} from the universal $\le 1$ ceiling
+($\mathrm{pseudoMassFromParamsAtPair\_zero\_le\_of\_corr\_le\_one\_adjacent}$).
+The non-adjacent ($\mathrm{dist} \ge 2$) branches already use Simon--Lieb decay
+on the whole $\beta J\,2d < 1$.  So the pair-uniform rate
+$M = \min(1/3,\ \mathrm{simonLiebRate}\,\beta J d / (2(\alpha+1)))$
+($\mathrm{globalPseudoMassDistFullRate}$) discharges all three branches on
+$\beta J\,2d < 1$ ($\mathrm{pseudoMassLatticeDistanceBridge\_of\_high\_temp\_full}$),
+giving $\mathrm{globalPseudoMassDist} \ge M$
+($\mathrm{globalPseudoMassDistFullRate\_le\_globalPseudoMassDist}$) and hence the
+\textbf{full-window} upper bound
+$\mathrm{latticeMass} \le (-\log(\tanh(\beta J))/M)\cdot
+\mathrm{globalPseudoMassDist}$
+($\mathrm{latticeMass\_le\_globalPseudoMassDist\_fullUpper}$), and the full-window
+faithful sandwich $m^-(\sigma) \le m(\sigma) \le C\cdot m^-(\sigma)$
+($\mathrm{globalPseudoMassDist\_fullSandwich}$) on the whole $\beta J\,2d < 1$.
+This is the \emph{qualitative} Lemma 17.5.2 upper bound (existence of a finite
+$C$); the \emph{sharp} $C$ (the transfer-matrix correlation length) remains out
+of scope.
+(\texttt{Lemma\_17\_5\_2/GlobalPseudoMassDistUpperFull.lean}; \texttt{\#print axioms}
+$= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
+
 The exhaustion-transfer refinements
 $\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
 $\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
