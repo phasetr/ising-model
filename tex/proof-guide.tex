@@ -7495,7 +7495,7 @@ radius $=\lambda_\ast$, so requiring it to be $\le\theta\lambda_\ast$ forces $\t
 (circular). The non-circular route deflates the maximal eigenpair first. The top-deflated matrix
 $M-\lambda_\ast\,w\,w^{\mathsf T}$ (with $w$ the Perron column) has the maximal eigenvalue removed,
 so its Gershgorin envelope can be strictly below $\lambda_\ast$. The file
-\texttt{LayerQuadraticFormDeflationGap.lean} records the symmetry
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}) records the symmetry
 $M^{\mathsf T}=M$ (\texttt{layerSymmetricTransferMatrix\_transpose\_self}), the explicit deflated
 entries $M_{ij}-\lambda_\ast w_i w_j$
 (\texttt{layerSymmetricTransfer\_topDeflation\_apply}/\texttt{\_diag}/\texttt{\_offDiagAbsRowSum}),
@@ -7519,7 +7519,7 @@ vector this is $\lambda_\ast\ge\bigl(\sum_{a,b}M_{ab}\bigr)/|\Omega|$
 (\texttt{sum\_entries\_div\_card\_le\_maxEigenIndex}), a positive lower bound for the entrywise
 positive balanced layer transfer matrix
 (\texttt{finiteTransverseHermitian\_sum\_entries\_div\_card\_le\_maxEigenIndex}, file
-\texttt{LayerLambdaMaxLowerBound.lean}). The matching upper bound on the deflated-Gershgorin
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). The matching upper bound on the deflated-Gershgorin
 quantity, via the Perron column, is the remaining core step.
 
 \paragraph{Top-deflation row cancellation identity (\S17.1, Issue~\#3511, P5).}
@@ -7536,7 +7536,7 @@ $|(M_{\mathrm{def}})_{ii}|\le\sum_{j\ne i}|(M_{\mathrm{def}})_{ij}|\,|w_j/w_i|$
 (\texttt{abs\_matrixTopDeflation\_diag\_le\_weighted\_offDiag}). The hypothesis $w_i\ne0$ is
 discharged for an entrywise positive matrix by the signed-positive Perron column
 (\texttt{changeOfBasis\_maxEigenIndex\_ne\_zero\_of\_entrywisePositive}, file
-\texttt{LayerTopDeflationRowIdentity.lean}). This reduces the deflated diagonal to the off-diagonal
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This reduces the deflated diagonal to the off-diagonal
 mass weighted by Perron ratios (packaged generically in the flatness-envelope paragraph below as
 $\texttt{subdominantAbsRatio}\le(1+\rho)\,\eta$). The remaining input is the Perron flatness ratio
 $\rho=\sup_{i,j}|w_j/w_i|$ together with the deflated off-diagonal mass; for the interacting layer
@@ -7554,7 +7554,7 @@ column $v=\mathrm{sign}\cdot(\texttt{changeOfBasis}\cdot\texttt{maxEigenIndex})$
 \texttt{mulVec\_signedColumn} with $\lambda_\ast>0$ by \texttt{eigenvalue\_pos\_maxEigenIndex} -- this
 gives Perron-column flatness (\texttt{signedColumn\_ratio\_le\_of\_entry\_ratio}), with the layer
 specialization \texttt{finiteTransverseHermitian\_signedColumn\_ratio\_le\_of\_entry\_ratio} for
-$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file \texttt{LayerPerronFlatness.lean}). This mechanism is
+$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file (removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This mechanism is
 correct and reusable, but the entry-ratio route is \emph{not} transverse-volume-uniform: the layer
 entry ratio $M_{ik}/M_{jk}=\sqrt{u_i}/\sqrt{u_j}$ scales like $\exp(\Theta(\beta J\,|S|))$, so it does
 not by itself produce a volume-uniform $\rho(\beta J)$. The uniform flatness input is the documented
@@ -7574,7 +7574,7 @@ so $\delta(P)\le\sum_j(\max_i P_{ij}-\min_i P_{ij})$
 (\texttt{matrixDoeblinMass\_eq\_one\_sub\_row\_excess},
 \texttt{matrixDoeblinMass\_ge\_one\_sub\_sum\_colOsc},
 \texttt{matrixDobrushinCoefficient\_le\_sum\_colOsc}, file
-\texttt{LayerDoeblinColumnOscillation.lean}). This honestly reduces the uniform Dobrushin /
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This honestly reduces the uniform Dobrushin /
 subdominant-ratio bound to a per-column row-variation sum on the Doob transform; the remaining core
 is the layer-specific estimate that those columns vary little at high temperature, uniformly in the
 transverse box radius.
@@ -8006,7 +8006,7 @@ $c\,\alpha^R/(1-\alpha)\to 0$ as $R\to\infty$
 Dobrushin uniqueness. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
 \paragraph{Perron--Frobenius finite-volume spin two-point decay (\S17.1).} File
-\texttt{TransferMatrix/LayerPerronSpinDecay.lean}. The
+\texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}. The
 Perron--Frobenius theorem for the entrywise-positive symmetric balanced layer transfer matrix is now
 unconditional: it constructs the dominant signed-positive Perron column and gives the strict spectral
 gap $\theta<1$. This is wired through to the finite-volume spin two-point decay:
@@ -8028,7 +8028,7 @@ infinite-volume or volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd
 pp.~304--306.
 
 \paragraph{Quantitative (explicit-ratio) form of the decay (\S17.1).} File
-\texttt{TransferMatrix/LayerPerronExplicitRatioSpinDecay.lean}. The rate $\theta$ above is the
+\texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}. The rate $\theta$ above is the
 \emph{opaque} \texttt{Classical.choose} witness \texttt{subdominantRatio\_maxEigenIndex}, which only
 satisfies $\theta<1$ and so cannot consume the quantitative high-temperature gap estimates; those all
 bound the \emph{explicit} maximum ratio \texttt{subdominantAbsRatio\_maxEigenIndex}
@@ -8050,7 +8050,7 @@ mechanism of \S17.1. The prefactor condition and route hypotheses remain explici
 volume-uniform decay is claimed. Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306.
 
 \paragraph{Flatness reduction of the deflated Gershgorin envelope (\S17.1).} File
-\texttt{TransferMatrix/LayerTopDeflationFlatEnvelope.lean}. The top-deflated Gershgorin route
+\texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}. The top-deflated Gershgorin route
 requires the \emph{full} envelope $\mathrm{maxAbsDiag}(M_{\mathrm{def}})
 +\mathrm{maxOffMass}(M_{\mathrm{def}})\le\theta\,\lambda_{\mathrm{top}}$. The diagonal half is
 removed using the row-cancellation identity $M_{\mathrm{def}}\,w=0$ for the Perron column $w$
@@ -8320,7 +8320,7 @@ and the balanced matrix becomes the all-ones matrix
 \]
 The new module
 \[
-  \texttt{TransferMatrix/LayerInfiniteTemperatureSpectralWindow.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 first proves the finite all-ones matrix facts.  Multiplication by the all-ones
 matrix sends \(v\) to the constant vector with value \(\sum_j v_j\)
@@ -8539,7 +8539,7 @@ pp.~311--312.
 \paragraph{Finite layer-cylinder spectral-decay consumer (\S17.1, Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerCylinderSpectralDecay.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 turns the existing balanced min-gap certificates into project-level
 correlation inequalities on finite periodic layer cylinders.  The physical
@@ -9327,7 +9327,7 @@ Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5, pp.~311--312.
 Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerOpenInfiniteTemperatureNormWindow.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 closes the preceding finite physical norm-window inequality on the slice
 \(p.\beta=0\).  The constant-vector facts
@@ -9370,7 +9370,7 @@ or final hyperplane exponential decay.  Reference: Glimm--Jaffe, 2nd ed.,
 Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerOpenHighTemperatureNormWindow.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 packages the next finite step after the beta-zero computation.  For a fixed
 finite layer and a chosen family of spectral data, write
@@ -9397,7 +9397,7 @@ pp.~304--306 and \S17.5, pp.~311--312.
 (\S17.1, Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerOpenHighTemperatureSimpleParity.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 turns the preceding scalar high-temperature bridge into a consumer-facing
 finite API.  The first group of theorems replaces the scalar convergence
@@ -9429,7 +9429,7 @@ passage, or final hyperplane exponential decay.  Reference: Glimm--Jaffe,
 (\S17.1, Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerOpenHighTemperatureLocalSimpleParity.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 keeps the same finite physical norm-window route but weakens the
 simple-eigenspace input from a global hypothesis to a local punctured
@@ -9549,7 +9549,7 @@ pp.~304--306 and \S17.5, pp.~311--312.
 (\S17.1, Issue~\#3511).}
 The module
 \[
-  \texttt{TransferMatrix/LayerOpenHighTemperatureBoundaryWindowSimple.lean}
+  \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
 adds the high-temperature local-input layer for the explicit
 \(\mathrm{top},\theta\) boundary-window route.  For a chosen spectral-data
