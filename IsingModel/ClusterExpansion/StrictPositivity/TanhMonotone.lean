@@ -18,25 +18,6 @@ combines `polymerFreeEnergy_lt_of_lt_of_polymers_nonempty` (PR #1559)
 with the strict monotonicity of `Real.tanh` (proved here as a local
 helper from `sinh_strictMono`). -/
 
-/-- **`Real.tanh` strict monotonicity** (project-local helper):
-proved from `sinh_strictMono` via the identity
-`tanh y - tanh x = sinh(y - x) / (cosh x · cosh y)` (with both cosh
-positive). Mathlib doesn't yet export `Real.tanh_strictMono`. -/
-private theorem real_tanh_strictMono : StrictMono Real.tanh := by
-  intro x y hxy
-  have hx_pos : 0 < Real.cosh x := Real.cosh_pos x
-  have hy_pos : 0 < Real.cosh y := Real.cosh_pos y
-  rw [Real.tanh_eq_sinh_div_cosh, Real.tanh_eq_sinh_div_cosh,
-      div_lt_div_iff₀ hx_pos hy_pos]
-  -- Goal: sinh x · cosh y < sinh y · cosh x
-  -- Use: sinh y · cosh x - sinh x · cosh y = sinh(y - x) > 0.
-  have h_sub : Real.sinh y * Real.cosh x - Real.sinh x * Real.cosh y =
-      Real.sinh (y - x) := by rw [Real.sinh_sub]; ring
-  have h_sinh_pos : 0 < Real.sinh (y - x) := by
-    rw [show (0 : ℝ) = Real.sinh 0 from Real.sinh_zero.symm]
-    exact Real.sinh_strictMono (sub_pos.mpr hxy)
-  linarith
-
 /-- **`polymerFreeEnergy(tanh(β·J))` strictly increasing in β at fixed
 `J > 0` under polymers exist** (§18.4 tanh-monotonicity bundle). -/
 theorem polymerFreeEnergy_tanh_lt_of_lt_in_beta_of_polymers_nonempty

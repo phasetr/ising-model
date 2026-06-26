@@ -26,19 +26,6 @@ namespace IsingModel
 
 open Ambient Set Filter Topology
 
-/-- `Real.tanh` is strictly monotone (local copy; the global version lives in `PseudoMass/Profile`,
-which is not on this import path). -/
-private theorem real_tanh_strictMono_coupling : StrictMono Real.tanh := by
-  intro x y hxy
-  rw [Real.tanh_eq_sinh_div_cosh, Real.tanh_eq_sinh_div_cosh]
-  have hcx : 0 < Real.cosh x := Real.cosh_pos _
-  have hcy : 0 < Real.cosh y := Real.cosh_pos _
-  rw [div_lt_div_iff₀ hcx hcy]
-  have hsub_pos : 0 < Real.sinh (y - x) := Real.sinh_pos_iff.mpr (sub_pos.mpr hxy)
-  have heq : Real.sinh (y - x) =
-      Real.sinh y * Real.cosh x - Real.cosh y * Real.sinh x := Real.sinh_sub y x
-  linarith
-
 /-- **Coupling-direction analyticity at a high-temperature point** (GJ §18.6): the infinite-volume
 cubic-Ising free-energy density at zero field is real-analytic in the **coupling** `J` at any point
 with `0 < β J` and `tanh (β J) < T`. Obtained from the `β`-direction unit-coupling capstone via the
@@ -99,7 +86,7 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticOnNhd_J_high_tem
   have hβJ_tanh : Real.tanh (β * J) < T := by
     have hlt : β * J < Real.artanh T := by
       rw [mul_comm]; exact (lt_div_iff₀ hβ).mp hJlt
-    calc Real.tanh (β * J) < Real.tanh (Real.artanh T) := real_tanh_strictMono_coupling hlt
+    calc Real.tanh (β * J) < Real.tanh (Real.artanh T) := real_tanh_strictMono hlt
       _ = T := Real.tanh_artanh hT_mem
   exact freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticAt_J_h_zero d hR hT hTR
     (le_of_lt hT1) hkp2dR hρ2dR hkp2dT hρ2dT hβJ_pos hβJ_tanh
