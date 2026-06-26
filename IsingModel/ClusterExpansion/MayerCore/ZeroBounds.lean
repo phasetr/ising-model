@@ -236,6 +236,24 @@ theorem real_tanh_nonneg {x : ℝ} (hx : 0 ≤ x) : 0 ≤ Real.tanh x := by
   rw [Real.tanh_eq_sinh_div_cosh]
   exact div_nonneg (Real.sinh_nonneg_iff.mpr hx) (Real.cosh_pos x).le
 
+/-- **`Real.tanh` is strictly monotone** (shared §18.4 helper): `tanh` is
+strictly increasing on `ℝ`. Proved from `tanh = sinh / cosh` (`cosh > 0`) and
+`sinh (y - x) > 0` for `x < y`. Mathlib does not yet export
+`Real.tanh_strictMono`, so this single project-local copy is reused across the
+`ClusterExpansion` tanh-monotonicity lemmas. -/
+theorem real_tanh_strictMono : StrictMono Real.tanh := by
+  intro x y hxy
+  have hx_pos : 0 < Real.cosh x := Real.cosh_pos x
+  have hy_pos : 0 < Real.cosh y := Real.cosh_pos y
+  rw [Real.tanh_eq_sinh_div_cosh, Real.tanh_eq_sinh_div_cosh,
+      div_lt_div_iff₀ hx_pos hy_pos]
+  have h_sub : Real.sinh y * Real.cosh x - Real.sinh x * Real.cosh y =
+      Real.sinh (y - x) := by rw [Real.sinh_sub]; ring
+  have h_sinh_pos : 0 < Real.sinh (y - x) := by
+    rw [show (0 : ℝ) = Real.sinh 0 from Real.sinh_zero.symm]
+    exact Real.sinh_strictMono (sub_pos.mpr hxy)
+  linarith
+
 /-- **`log (vdPolymerFamilies_sum tanh(β·J))` analyticAt in `β`**
 (Step 608): under `0 ≤ β·J`, the function
 `β' ↦ Real.log (∑_Γ ∏_{P ∈ Γ} tanh(β'·J)^|P|)` is `AnalyticAt ℝ` at `β`.
