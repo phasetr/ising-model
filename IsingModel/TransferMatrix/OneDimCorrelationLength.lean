@@ -1,4 +1,5 @@
 import IsingModel.TransferMatrix.OneDimTwoPoint
+import IsingModel.RealTanhAux
 
 /-!
 # Correlation length and mass of the 1D Ising chain (GJ §17.1, §17.5)
@@ -56,9 +57,7 @@ theorem correlationMass_eq_inv_length (a : ℝ) :
 `m = correlationMass a`, for `a = β J > 0` (so `tanh a > 0`). -/
 theorem tanh_pow_eq_exp_neg_mass {a : ℝ} (ha : 0 < a) (n : ℕ) :
     Real.tanh a ^ n = Real.exp (-(correlationMass a) * n) := by
-  have htanh_pos : 0 < Real.tanh a := by
-    rw [Real.tanh_eq_sinh_div_cosh]
-    exact div_pos (Real.sinh_pos_iff.mpr ha) (Real.cosh_pos a)
+  have htanh_pos : 0 < Real.tanh a := real_tanh_pos ha
   rw [correlationMass, neg_neg, mul_comm, ← Real.log_pow,
     Real.exp_log (pow_pos htanh_pos n)]
 

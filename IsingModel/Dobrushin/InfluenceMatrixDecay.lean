@@ -1,4 +1,5 @@
 import IsingModel.Dobrushin.DobrushinHighTemp
+import IsingModel.RealTanhAux
 
 /-!
 # Exponential decay of the Dobrushin influence-matrix powers (GJ §17.1)
@@ -65,18 +66,12 @@ noncomputable def isingDobrushinCoeff (β J : ℝ) : ℝ :=
   G.maxDegree * Real.tanh (β * J)
 
 omit [Fintype G.edgeSet] in
-/-- **`tanh(βJ) ≥ 0` for `0 ≤ βJ`**: `tanh 0 = 0 ≤ tanh(βJ)` by monotonicity. -/
-theorem tanh_nonneg_of_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) : 0 ≤ Real.tanh (β * J) := by
-  calc (0 : ℝ) = Real.tanh 0 := Real.tanh_zero.symm
-    _ ≤ Real.tanh (β * J) := tanh_le_tanh_of_le hβJ
-
-omit [Fintype G.edgeSet] in
 /-- **The influence matrix entries are nonnegative** (for `0 ≤ βJ`). -/
 theorem isingInfluenceMatrix_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) (x y : ι) :
     0 ≤ isingInfluenceMatrix G β J x y := by
   rw [isingInfluenceMatrix, isingInfluence]
   split
-  · exact tanh_nonneg_of_nonneg hβJ
+  · exact real_tanh_nonneg hβJ
   · exact le_refl 0
 
 omit [Fintype G.edgeSet] in
@@ -88,7 +83,7 @@ theorem isingInfluenceMatrix_rowSum_le {β J : ℝ} (hβJ : 0 ≤ β * J) (x : �
     isingInfluence_rowSum G β J x
   rw [hrow, isingDobrushinCoeff]
   exact mul_le_mul_of_nonneg_right (by exact_mod_cast G.degree_le_maxDegree x)
-    (tanh_nonneg_of_nonneg hβJ)
+    (real_tanh_nonneg hβJ)
 
 omit [Fintype G.edgeSet] in
 /-- **Geometric decay of the influence-matrix powers** (GJ §17.1): for `0 ≤ βJ`, the row sums of the
@@ -97,14 +92,14 @@ coefficient. The boundary influence on a site decays geometrically with the numb
 theorem isingInfluenceMatrix_pow_rowSum_le {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) (x : ι) :
     ∑ y, ((isingInfluenceMatrix G β J) ^ n) x y ≤ (isingDobrushinCoeff G β J) ^ n :=
   matrix_pow_rowSum_le (isingInfluenceMatrix_nonneg G hβJ)
-    (mul_nonneg (Nat.cast_nonneg _) (tanh_nonneg_of_nonneg hβJ))
+    (mul_nonneg (Nat.cast_nonneg _) (real_tanh_nonneg hβJ))
     (isingInfluenceMatrix_rowSum_le G hβJ) n x
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
 /-- **The Dobrushin coefficient is nonnegative** (for `0 ≤ βJ`). -/
 theorem isingDobrushinCoeff_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) :
     0 ≤ isingDobrushinCoeff G β J :=
-  mul_nonneg (Nat.cast_nonneg _) (tanh_nonneg_of_nonneg hβJ)
+  mul_nonneg (Nat.cast_nonneg _) (real_tanh_nonneg hβJ)
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
 /-- **The Dobrushin coefficient is below `1` at high temperature** (GJ §17.1): if `0 ≤ βJ` and

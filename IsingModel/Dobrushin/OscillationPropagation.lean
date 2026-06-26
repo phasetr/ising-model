@@ -61,7 +61,7 @@ theorem isingInfluence_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) (x y : ι) :
     0 ≤ isingInfluence G β J x y := by
   rw [isingInfluence]
   split
-  · exact tanh_nonneg_of_nonneg hβJ
+  · exact real_tanh_nonneg hβJ
   · exact le_refl 0
 
 /-- **Oscillation propagation under the heat-bath operator** (GJ §17.1): for `0 ≤ βJ`,

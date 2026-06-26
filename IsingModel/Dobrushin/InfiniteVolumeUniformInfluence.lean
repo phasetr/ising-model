@@ -191,7 +191,7 @@ private theorem isingDobrushinCoeff_induced_latticeGraph_le_uniform (d : ℕ)
       ≤ (2 * (d : ℝ)) * Real.tanh (β * J) := by
   have hdeg := induced_latticeGraph_maxDegree_le d Λ
   rw [isingDobrushinCoeff]
-  have htanh : 0 ≤ Real.tanh (β * J) := tanh_nonneg_of_nonneg hβJ
+  have htanh : 0 ≤ Real.tanh (β * J) := real_tanh_nonneg hβJ
   calc
     ((Ambient.inducedGraph (latticeGraph d) Λ).maxDegree : ℝ) * Real.tanh (β * J)
         ≤ ((2 * d : ℕ) : ℝ) * Real.tanh (β * J) := by
@@ -231,7 +231,7 @@ private theorem dobrushinResolvent_farSum_le_resolventTail_of_distance_control (
   let size : ↑Λ → ℕ := fun y => latticeDistance d x₀.val y.val
   have hα0 : 0 ≤ α := by
     dsimp [α]
-    exact mul_nonneg (by positivity) (tanh_nonneg_of_nonneg hβJ)
+    exact mul_nonneg (by positivity) (real_tanh_nonneg hβJ)
   have hα_le_beta : α ≤ β * J * (2 * (d : ℝ)) := by
     dsimp [α]
     have htanh := tanh_le_self hβJ
