@@ -10,6 +10,10 @@ These serve as regression tests for the computable parts of the definitions.
 -/
 
 set_option linter.hashCommand false
+-- Exhaustive `native_decide` regression tests over small `Fin` types (sanity
+-- checks, not library theorems); suppress the native-decide style linter here,
+-- matching `SentinelProps.lean`.
+set_option linter.style.nativeDecide false
 
 namespace IsingModel.Test
 
