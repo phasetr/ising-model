@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.StrictPositivity.TanhBounds
+import IsingModel.ClusterExpansion.CycleGraphAlternatingSum
 
 /-!
 # Cluster expansion strict positivity split — cycle-7 alternating sum and Mayer term vanishing
@@ -26,42 +27,15 @@ theorem mayerExpansionTerm_two_filter_connected_eq_incompat
   intro ω _
   exact polymerSeqIncompatibilityGraph_two_connected_iff_incompatible ω
 
-/-- **Cycle graph on `Fin 7` `DecidableRel` instance**. -/
-private instance : DecidableRel (SimpleGraph.cycleGraph 7).Adj :=
-  fun _ _ => decidable_of_iff _ SimpleGraph.cycleGraph_adj'.symm
-
-set_option maxRecDepth 16000 in
-set_option maxHeartbeats 4000000 in
--- `decide` on `cycleGraph 7` (7 edges, 2^7 = 128 subsets) requires
--- the raised recursion / heartbeat budgets; the larger n=8+ cases
--- exceed these limits and remain in Phase B blocker territory.
-/-- **`cycleGraph 7` alternating connected-spanning sum = 6**:
-the cycle on Fin 7 has 7 edges. Connected spanning subsets:
-7 spanning paths (size 6 each) + the full cycle (size 7).
-Sum = `7 · (-1)^6 + (-1)^7 = 7 - 1 = 6`. -/
+/-- **`cycleGraph 7` alternating connected-spanning sum = 6** (Mayer Phase B):
+instance of the general closed form `alternatingConnectedSubgraphSum_cycleGraph`
+at `n = 7`, `(-1)^(7-1)·(7-1) = 6`. The cycle on `Fin 7` has 7 connected spanning
+subsets of size 6 (single-edge deletions) plus the full cycle of size 7. -/
 theorem alternatingConnectedSubgraphSum_cycleGraph_seven :
     alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 7) = 6 := by
-  classical
-  unfold alternatingConnectedSubgraphSum
-  have h_int :
-      (∑ S ∈ (SimpleGraph.cycleGraph 7).edgeFinset.powerset.filter
-        (fun S : Finset (Sym2 (Fin 7)) =>
-          (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 7)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 6 := by decide
-  unfold connectedSpanningEdgeSubsets
-  have h_cast :
-      (∑ S ∈ (SimpleGraph.cycleGraph 7).edgeFinset.powerset.filter
-          (fun S : Finset (Sym2 (Fin 7)) =>
-            (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 7)))).Connected),
-        ((-1 : ℝ) ^ S.card)) =
-        (((∑ S ∈ (SimpleGraph.cycleGraph 7).edgeFinset.powerset.filter
-            (fun S : Finset (Sym2 (Fin 7)) =>
-              (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 7)))).Connected),
-          ((-1 : ℤ) ^ S.card)) : ℤ) : ℝ) := by
-    push_cast
-    rfl
-  rw [h_cast, h_int]
-  norm_num
+  have h := alternatingConnectedSubgraphSum_cycleGraph 7 (by norm_num)
+  norm_num at h
+  exact h
 
 /-- **`mayerExpansionTerm = 0` for graphs with no polymers** (§18.4
 sharpening): when `allPolymers G = ∅`, the n-th Mayer term vanishes
