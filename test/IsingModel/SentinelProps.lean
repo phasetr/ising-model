@@ -176,7 +176,10 @@ example : correlationFormal triangleGraph 2 {0} * correlationFormal triangleGrap
 example : edgeCouplingSum chainGraph2 (fun _ => Spin.up) = 1 := by native_decide
 
 /-- edgeCouplingSum for chainGraph2 (mixed up,down) = -1. -/
-example : edgeCouplingSum chainGraph2 (fun i : Fin 2 => [Spin.up, Spin.down].getD i.val Spin.up) = -1 := by native_decide
+example :
+    edgeCouplingSum chainGraph2
+        (fun i : Fin 2 => [Spin.up, Spin.down].getD i.val Spin.up) = -1 := by
+  native_decide
 
 /-- edgeCouplingSum for chainGraph3 (all-up) = 2. -/
 example : edgeCouplingSum chainGraph3 (fun _ => Spin.up) = 2 := by native_decide
@@ -185,9 +188,15 @@ example : edgeCouplingSum chainGraph3 (fun _ => Spin.up) = 2 := by native_decide
 example : spinProductZ (n := 2) {0, 1} (fun _ => Spin.up) = 1 := by native_decide
 
 /-- spinProductZ: product over {0} of mixed (up,down) = 1. -/
-example : spinProductZ (n := 2) {0} (fun i => [Spin.up, Spin.down].getD i.val Spin.up) = 1 := by native_decide
+example :
+    spinProductZ (n := 2) {0}
+        (fun i => [Spin.up, Spin.down].getD i.val Spin.up) = 1 := by
+  native_decide
 
 /-- spinProductZ: product over {1} of mixed (up,down) = -1. -/
-example : spinProductZ (n := 2) {1} (fun i => [Spin.up, Spin.down].getD i.val Spin.up) = -1 := by native_decide
+example :
+    spinProductZ (n := 2) {1}
+        (fun i => [Spin.up, Spin.down].getD i.val Spin.up) = -1 := by
+  native_decide
 
 end IsingModel.Test.SentinelProps
