@@ -11558,14 +11558,17 @@ built from the distance-parametrized per-pair pseudo-mass (radius
 $r=\mathrm{latticeDistance}\,d\,x\,z$).  The theorem
 $\mathrm{finiteRegionPseudoMassDist\_beta\_continuousAt\_of\_high\_temp}$ (and
 its $\mathrm{ContinuousOn}$ form) proves continuity in $\beta$ on the
-high-temperature window $\beta\in(0,1/(J\,2d))$: a finite
+high-temperature window $\beta\in(0,1/(J\,2d))$ for an \emph{arbitrary} exhaustion
+$\Lambda$ (the book's exhaustion-independent setting): a finite
 $\mathrm{Finset.inf}'$ of functions continuous at a point is continuous at that
 point ($\mathrm{ContinuousAt.finset\_inf}'\_\mathrm{apply}$), and each summand is
 the single-pair continuity
 $\mathrm{pseudoMassExt\_continuousAt}\circ
-\mathrm{correlationInfinite\_continuousAt\_beta\_of\_high\_temp}$, the
-active-range membership $(0,2)$ coming from
-$\mathrm{correlationInfinite\_pair\_active\_of\_betaJ\_pos}$.  Strict positivity
+\mathrm{correlationInfinite\_continuousAt\_beta\_of\_high\_temp}$ (already valid for
+any $\Lambda$), the active-range membership $(0,2)$ coming from
+$\mathrm{correlationInfinite\_pair\_active\_of\_betaJ\_pos\_exhaustion}$ (the cubic
+active lemma transported by $\mathrm{correlationInfinite\_indep\_exhaustion}$).
+Strict positivity
 $\mathrm{finiteRegionPseudoMassDist\_pos\_of\_betaJ\_pos}$ is the finite-infimum
 version of $\mathrm{pseudoMass\_pos}$ ($\mathrm{Finset.lt\_inf}'\_\mathrm{iff}$).
 (\texttt{Lemma\_17\_5\_2/FiniteRegionPseudoMassDistContinuity.lean};
