@@ -498,4 +498,80 @@ theorem tsum_nearx_region_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hαnn : 0 ≤ 
   rw [ENNReal.tsum_mul_right, mul_comm]
   exact mul_le_mul' le_rfl (tsum_ball_radial_le hd hα x K)
 
+/-- **Far region bound** of the sharp HLS convolution (`d < 2α`, `0 ≤ α`,
+`d ≥ 1`): the sum over `z` with `D < 2·dist(x,z)` and `D < 2·dist(y,z)`
+(`D := dist(x,y)`) of `ofReal((1+dist x z)^{−α})·ofReal((1+dist y z)^{−α})` is
+bounded by `ofReal(3^α) · ofReal(2^d·(K+1)^{d−2α}/(2α−d))` with `K := D/2`.
+
+In this region `dist(x,z) ≤ D + dist(y,z) < 3·dist(y,z)` (triangle + `D<2·dist(y,z)`),
+so `1+dist(x,z) ≤ 3(1+dist(y,z))`, hence the product is
+`≤ ofReal(3^α)·ofReal((1+dist x z)^{−2α})`; restricting to `K < dist(x,z)` and
+applying `tsum_tail_radial_le` closes it. -/
+theorem tsum_far_region_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ}
+    (hα2 : (d : ℝ) < 2 * α) (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        (if IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d x z ∧
+            IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d y z then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0)
+      ≤ ENNReal.ofReal ((3 : ℝ) ^ α) *
+          ENNReal.ofReal ((2 : ℝ) ^ d *
+            ((IsingModel.latticeDistance d x y / 2 : ℕ) + 1 : ℝ) ^ ((d : ℝ) - 2 * α) /
+              (2 * α - (d : ℝ))) := by
+  set D := IsingModel.latticeDistance d x y with hD
+  set K := D / 2 with hK
+  have hcover : ∀ z : Fin d → ℤ,
+      (if D < 2 * IsingModel.latticeDistance d x z ∧
+          D < 2 * IsingModel.latticeDistance d y z then
+        ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0)
+        ≤ ENNReal.ofReal ((3 : ℝ) ^ α) *
+            (if K < IsingModel.latticeDistance d x z then
+              ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-(2 * α)))
+              else 0) := by
+    intro z
+    by_cases hz : D < 2 * IsingModel.latticeDistance d x z ∧
+        D < 2 * IsingModel.latticeDistance d y z
+    · obtain ⟨hzx, hzy⟩ := hz
+      rw [if_pos ⟨hzx, hzy⟩, if_pos (show K < IsingModel.latticeDistance d x z by
+        rw [hK]; exact Nat.div_lt_of_lt_mul (by omega))]
+      set a : ℝ := 1 + (IsingModel.latticeDistance d x z : ℝ) with ha_def
+      set b : ℝ := 1 + (IsingModel.latticeDistance d y z : ℝ) with hb_def
+      have ha_pos : 0 < a := by rw [ha_def]; positivity
+      have hb_pos : 0 < b := by rw [hb_def]; positivity
+      -- comparability `a ≤ 3*b`.
+      have hab : a ≤ 3 * b := by
+        have htri := IsingModel.latticeDistance_triangle d x y z
+        have h1 : (IsingModel.latticeDistance d x z : ℝ)
+            ≤ 3 * (IsingModel.latticeDistance d y z : ℝ) := by
+          have : IsingModel.latticeDistance d x z ≤ 3 * IsingModel.latticeDistance d y z := by omega
+          exact_mod_cast this
+        rw [ha_def, hb_def]; linarith
+      -- `b^{-α} ≤ 3^α · a^{-α}`.
+      have hble : b ^ (-α) ≤ (3 : ℝ) ^ α * a ^ (-α) := by
+        have h3b : ((3 : ℝ) * b) ^ (-α) ≤ a ^ (-α) :=
+          Real.rpow_le_rpow_of_nonpos ha_pos hab (by linarith)
+        rw [Real.mul_rpow (by norm_num) hb_pos.le] at h3b
+        have h3 : (3 : ℝ) ^ (-α) = ((3 : ℝ) ^ α)⁻¹ := by
+          rw [← Real.rpow_neg (by norm_num)]
+        rw [h3] at h3b
+        have h3pos : (0 : ℝ) < (3 : ℝ) ^ α := by positivity
+        rw [inv_mul_le_iff₀ h3pos] at h3b
+        linarith [h3b]
+      -- product bound, in ℝ then lifted via ofReal.
+      rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul (by positivity)]
+      apply ENNReal.ofReal_le_ofReal
+      have ha2 : a ^ (-α) * a ^ (-α) = a ^ (-(2 * α)) := by
+        rw [← Real.rpow_add ha_pos]; congr 1; ring
+      calc a ^ (-α) * b ^ (-α)
+          ≤ a ^ (-α) * ((3 : ℝ) ^ α * a ^ (-α)) :=
+            mul_le_mul_of_nonneg_left hble (by positivity)
+        _ = (3 : ℝ) ^ α * (a ^ (-α) * a ^ (-α)) := by ring
+        _ = (3 : ℝ) ^ α * a ^ (-(2 * α)) := by rw [ha2]
+    · rw [if_neg hz]
+      exact zero_le _
+  refine (ENNReal.tsum_le_tsum hcover).trans ?_
+  rw [ENNReal.tsum_mul_left]
+  exact mul_le_mul' le_rfl (tsum_tail_radial_le hd hα2 x K)
+
 end IsingModel
