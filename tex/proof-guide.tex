@@ -32499,4 +32499,43 @@ B4~\#4271 / B2~\#4269 with \textbf{zero declared axioms}.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312; \S18.6--18.7.
 
 
+\subsection*{PR \#4330 --- Conditional infinite-volume HLS denominator comparison on the convergence window (GJ~\S17.5 Theorem 17.5.1, p.~312)}
+
+\par\noindent\textbf{Role:} Discharges the named predicate
+$\texttt{Lemma\_17\_5\_2\_InfiniteHLSDenominatorComparison}$ (the GJ p.~312 ``$\texttt{hcomp}$''
+$|c'(\beta)|\le K\,c(\beta)/m^{2\alpha}$) on the convergence window
+$\texttt{ConvergenceRegion.window}\,d\,J$, \emph{conditionally} on the per-pair correlation lower
+bound $\texttt{hprofile}:\texttt{pseudoMassG}\,\alpha\,\rho\,q\le c$, $q=-\log(\beta J\,2d)$.
+File $\texttt{SharpHLSDenominatorComparison.lean}$; this is the consumer of the sharp-HLS
+foundations \#4321--\#4329.
+
+\par\noindent\textbf{Method (reorganized to avoid the exponential/polynomial mismatch).}
+Rather than matching the polynomial decay of the derivative numerator to the exponential decay of
+$c$, both sides are bounded by pair-independent constants:
+\begin{itemize}
+  \item \emph{Numerator.} $|c'|$ is bounded above by the constant
+    $B:=J(\beta J\,2d/(1-\beta J\,2d))^2+J\cdot4d$ --- the existing high-temperature susceptibility
+    bound $\texttt{lemma\_17\_5\_2\_finite\_deriv\_abs\_le\_high\_temp\_on\_Icc\_all\_stages}$,
+    uniform in the exhaustion stage, passed to the limiting derivative profile through the
+    axiom-free window provider $\texttt{ConvergenceRegion.derivativeLimit\_on\_window}$ and
+    $\texttt{le\_of\_tendsto}$.
+  \item \emph{Denominator.} $\texttt{lemma\_17\_5\_2\_profile\_lower\_ratio\_lower\_cubic}$ turns
+    $\texttt{hprofile}$ into the pair-independent positive lower bound
+    $L:=\texttt{pseudoMassG}\,\alpha\,\rho\,q/q^{2\alpha}\le c/m^{2\alpha}$, using
+    $m\le q$ ($\texttt{pseudoMassFromParamsAtPair\_le\_high\_temp\_rate\_of\_pseudoMassG\_le\_corr}$)
+    and $\texttt{pseudoMassG}\ge0$.
+  \item \emph{Closing.} $K:=\max(1,B/L)$ gives $|c'|\le B\le K\,L\le K\,c/m^{2\alpha}$.
+\end{itemize}
+
+\par\noindent\textbf{Conditional / Partial (honesty).} The $\forall$-displacement form of
+$\texttt{hprofile}$ is \emph{provably false} (no-go \#4270,
+$\texttt{not\_forall\_cubicTanhProfileBound\_\dots}$): a fixed-radius profile cannot lower-bound an
+exponentially-decaying correlation at every displacement.  Hence $\texttt{hprofile}$ is a genuine
+\emph{per-pair} hypothesis (e.g.\ true at nearby pairs), and the theorem is a documented conditional
+matching the lower side of the existing \S17.5 sandwich.  The unconditional headline remains the
+faithful distance-parametrized $\texttt{globalPseudoMassDist\_fullSandwich}$ (\#4317).
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \end{document}
