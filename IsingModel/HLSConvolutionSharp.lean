@@ -611,4 +611,34 @@ theorem tsum_conv_le_sum_regions {d : ℕ} {α : ℝ} (x y : Fin d → ℤ) :
       exact le_self_add
     · rw [if_neg h1, if_neg h2, if_pos ⟨by omega, by omega⟩, zero_add, zero_add]
 
+/-- **Base-shift bound, nonpositive exponent.**  If `(1+D)/2 ≤ 1+k` and `D ≥ 0`,
+then for `α ≥ 0`,  `(1+k)^{−α} ≤ 2^α·(1+D)^{−α}`.
+
+This relates the near-region radius `1+k = 1+K` (with `K = D/2`) to the decay
+distance `1+D`: since the exponent is nonpositive the function is antitone, and
+`((1+D)/2)^{−α} = 2^α·(1+D)^{−α}`. -/
+theorem rpow_neg_half_le {α : ℝ} (hαnn : 0 ≤ α) {k D : ℝ} (hD : 0 ≤ D)
+    (hlow : (1 + D) / 2 ≤ 1 + k) :
+    (1 + k) ^ (-α) ≤ (2 : ℝ) ^ α * (1 + D) ^ (-α) := by
+  have hDpos : (0 : ℝ) < 1 + D := by linarith
+  have h1 : (1 + k) ^ (-α) ≤ ((1 + D) / 2) ^ (-α) :=
+    Real.rpow_le_rpow_of_nonpos (by linarith) hlow (by linarith)
+  have h2 : ((1 + D) / 2) ^ (-α) = (2 : ℝ) ^ α * (1 + D) ^ (-α) := by
+    rw [Real.div_rpow hDpos.le (by norm_num : (0 : ℝ) ≤ 2),
+      Real.rpow_neg hDpos.le, Real.rpow_neg (by norm_num : (0 : ℝ) ≤ 2),
+      div_eq_mul_inv, inv_inv, mul_comm]
+  rwa [h2] at h1
+
+/-- **Base-shift bound, nonnegative exponent.**  If `k+2 ≤ 2·(1+D)` and `k,D ≥ 0`,
+then for `β ≥ 0`,  `(k+2)^β ≤ 2^β·(1+D)^β`.
+
+This bounds the near-region ball radius `K+2` by `2·(1+D)`, used with the
+positive exponent `β = d−α`. -/
+theorem rpow_pos_two_mul_le {β : ℝ} (hβ : 0 ≤ β) {k D : ℝ} (hk : 0 ≤ k) (hD : 0 ≤ D)
+    (hhigh : k + 2 ≤ 2 * (1 + D)) :
+    (k + 2) ^ β ≤ (2 : ℝ) ^ β * (1 + D) ^ β := by
+  have h1 : (k + 2) ^ β ≤ (2 * (1 + D)) ^ β :=
+    Real.rpow_le_rpow (by linarith) hhigh hβ
+  rwa [Real.mul_rpow (by norm_num) (by linarith)] at h1
+
 end IsingModel
