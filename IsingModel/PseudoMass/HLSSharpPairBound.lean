@@ -1,5 +1,6 @@
 import IsingModel.PseudoMass.HLSCorrelationCapstone
 import IsingModel.HLSConvolutionSharp
+import IsingModel.Concrete.LatticeGraphBED.NeighborDegree
 
 /-!
 # Sharp distance-decaying HLS correlation pair-product bound (GJ §17.5 p. 312)
@@ -196,6 +197,122 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_sharp_decay
         apply mul_le_mul_of_nonneg_left (hChls x₀ y₀) (by positivity)
     _ = 4 * C ^ 2 * Chls *
           (1 + (latticeDistance d x₀ y₀ : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by ring
+
+/-- **Neighbour-shift bound for the negative-power kernel.**  For `α ≥ 0` and
+`v` adjacent to `u` in `latticeGraph d`, `(1+d(z,v))^{−α} ≤ 2^α·(1+d(z,u))^{−α}`.
+
+Adjacency means `d(u,v) = 1`, so `d(z,u) ≤ d(z,v)+1` (triangle), hence
+`(1+d(z,u))/2 ≤ 1+d(z,v)` and the antitone base shift `rpow_neg_half_le`
+applies. -/
+theorem pow_neg_neighbour_shift_le {d : ℕ} {α : ℝ} (hαnn : 0 ≤ α)
+    (z u v : Fin d → ℤ) (hadj : (IsingModel.latticeGraph d).Adj u v) :
+    (1 + (latticeDistance d z v : ℝ)) ^ (-α)
+      ≤ (2 : ℝ) ^ α * (1 + (latticeDistance d z u : ℝ)) ^ (-α) := by
+  have huv : latticeDistance d u v = 1 :=
+    (latticeGraph_adj_iff_latticeDistance_eq_one d u v).mp hadj
+  have hvu : latticeDistance d v u = 1 := by rw [latticeDistance_comm]; exact huv
+  have htri : latticeDistance d z u ≤ latticeDistance d z v + latticeDistance d v u :=
+    latticeDistance_triangle d z v u
+  have hle : (latticeDistance d z u : ℝ) ≤ (latticeDistance d z v : ℝ) + 1 := by
+    have hnat : latticeDistance d z u ≤ latticeDistance d z v + 1 := by rw [hvu] at htri; exact htri
+    exact_mod_cast hnat
+  have hlow : (1 + (latticeDistance d z u : ℝ)) / 2 ≤ 1 + (latticeDistance d z v : ℝ) := by linarith
+  exact rpow_neg_half_le hαnn (by positivity) hlow
+
+/-- **Neighbour-sum bound for the negative-power kernel.**  For `α ≥ 0`, summing
+the kernel over the `≤ 2d` neighbours of `u` is bounded by
+`2d·2^α·(1+d(z,u))^{−α}`.
+
+Each neighbour term is bounded by `2^α·(1+d(z,u))^{−α}`
+(`pow_neg_neighbour_shift_le`) and there are at most `2d` of them
+(`latticeGraph_degree_le`). -/
+theorem neighborFinset_sum_pow_neg_le {d : ℕ} {α : ℝ} (hαnn : 0 ≤ α) (z u : Fin d → ℤ) :
+    ∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+        (1 + (latticeDistance d z v : ℝ)) ^ (-α)
+      ≤ 2 * (d : ℝ) * ((2 : ℝ) ^ α * (1 + (latticeDistance d z u : ℝ)) ^ (-α)) := by
+  set M : ℝ := (2 : ℝ) ^ α * (1 + (latticeDistance d z u : ℝ)) ^ (-α) with hM
+  have hMnn : 0 ≤ M := by rw [hM]; positivity
+  have hbound : ∀ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+      (1 + (latticeDistance d z v : ℝ)) ^ (-α) ≤ M := by
+    intro v hv
+    exact pow_neg_neighbour_shift_le hαnn z u v ((SimpleGraph.mem_neighborFinset _ _ _).mp hv)
+  have hcard : ((IsingModel.latticeGraph d).neighborFinset u).card ≤ 2 * d := by
+    rw [SimpleGraph.card_neighborFinset_eq_degree]; exact latticeGraph_degree_le d u
+  calc ∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+          (1 + (latticeDistance d z v : ℝ)) ^ (-α)
+      ≤ ((IsingModel.latticeGraph d).neighborFinset u).card • M :=
+        Finset.sum_le_card_nsmul _ _ M hbound
+    _ = (((IsingModel.latticeGraph d).neighborFinset u).card : ℝ) * M := by rw [nsmul_eq_mul]
+    _ ≤ 2 * (d : ℝ) * M := by
+        apply mul_le_mul_of_nonneg_right _ hMnn
+        calc (((IsingModel.latticeGraph d).neighborFinset u).card : ℝ)
+            ≤ ((2 * d : ℕ) : ℝ) := by exact_mod_cast hcard
+          _ = 2 * (d : ℝ) := by push_cast; ring
+
+/-- **Neighbour-shifted sharp convolution bound.**  For `d/2 < α < d` there is
+`C > 0` such that for all `x z`,
+`∑'_u (1+d(x,u))^{−α}·(∑_{v∼u}(1+d(z,v))^{−α}) ≤ C·(1+d(x,z))^{−(2α−d)}`.
+
+The neighbour-sum is bounded by `2d·2^α·(1+d(z,u))^{−α}`
+(`neighborFinset_sum_pow_neg_le`), reducing the sum to the sharp pair convolution
+`hls_conv_sharp_decay_real`; `C = 2d·2^α·C_HLS`.  This is the analytic core that
+turns the GJ p. 312 nearest-neighbour edge cross-sum into a distance-decaying
+bound (the edge-sum → ordered-pair reduction is the subject of PR-next2b). -/
+theorem tsum_mul_neighborFinset_sum_pow_neg_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ}
+    (hαnn : 0 ≤ α) (hα : α < (d : ℝ)) (hα2 : (d : ℝ) < 2 * α) :
+    ∃ C : ℝ, 0 < C ∧ ∀ x z : Fin d → ℤ,
+      ∑' u : Fin d → ℤ, (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+          (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+            (1 + (latticeDistance d z v : ℝ)) ^ (-α))
+        ≤ C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * α - (d : ℝ))) := by
+  have hdpos : (0 : ℝ) < (d : ℝ) := by exact_mod_cast hd
+  obtain ⟨C0, hC0, hC0bd⟩ := hls_conv_sharp_decay_real hd hαnn hα hα2
+  refine ⟨2 * (d : ℝ) * (2 : ℝ) ^ α * C0, by positivity, fun x z => ?_⟩
+  have hbound : ∀ u : Fin d → ℤ,
+      (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+          (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+            (1 + (latticeDistance d z v : ℝ)) ^ (-α))
+        ≤ 2 * (d : ℝ) * (2 : ℝ) ^ α *
+            ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+              (1 + (latticeDistance d z u : ℝ)) ^ (-α)) := by
+    intro u
+    calc (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+            (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+              (1 + (latticeDistance d z v : ℝ)) ^ (-α))
+        ≤ (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+            (2 * (d : ℝ) * ((2 : ℝ) ^ α * (1 + (latticeDistance d z u : ℝ)) ^ (-α))) := by
+          exact mul_le_mul_of_nonneg_left (neighborFinset_sum_pow_neg_le hαnn z u) (by positivity)
+      _ = 2 * (d : ℝ) * (2 : ℝ) ^ α *
+            ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+              (1 + (latticeDistance d z u : ℝ)) ^ (-α)) := by ring
+  have hsum_pair := summable_pow_neg_pair_translate x z hα2
+  have hsum_rhs : Summable (fun u : Fin d → ℤ => 2 * (d : ℝ) * (2 : ℝ) ^ α *
+      ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+        (1 + (latticeDistance d z u : ℝ)) ^ (-α))) := hsum_pair.mul_left _
+  have hlhs_nn : ∀ u : Fin d → ℤ, 0 ≤
+      (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+        (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+          (1 + (latticeDistance d z v : ℝ)) ^ (-α)) := fun u => by positivity
+  have hlhs_sum : Summable (fun u : Fin d → ℤ =>
+      (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+        (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+          (1 + (latticeDistance d z v : ℝ)) ^ (-α))) :=
+    Summable.of_nonneg_of_le hlhs_nn hbound hsum_rhs
+  calc ∑' u : Fin d → ℤ, (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+          (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+            (1 + (latticeDistance d z v : ℝ)) ^ (-α))
+      ≤ ∑' u : Fin d → ℤ, 2 * (d : ℝ) * (2 : ℝ) ^ α *
+          ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+            (1 + (latticeDistance d z u : ℝ)) ^ (-α)) :=
+        hlhs_sum.tsum_le_tsum hbound hsum_rhs
+    _ = 2 * (d : ℝ) * (2 : ℝ) ^ α * ∑' u : Fin d → ℤ,
+          ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+            (1 + (latticeDistance d z u : ℝ)) ^ (-α)) := by rw [tsum_mul_left]
+    _ ≤ 2 * (d : ℝ) * (2 : ℝ) ^ α *
+          (C0 * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * α - (d : ℝ)))) := by
+        exact mul_le_mul_of_nonneg_left (hC0bd x z) (by positivity)
+    _ = 2 * (d : ℝ) * (2 : ℝ) ^ α * C0 *
+          (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * α - (d : ℝ))) := by ring
 
 end Ambient
 end IsingModel
