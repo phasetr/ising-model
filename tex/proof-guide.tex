@@ -29424,6 +29424,40 @@ $O(2d)$ incident-edge term.
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
 
+\subsubsection*{Decay of the GJ p.~312 dart cross-sum}
+
+The edge-Finset cross-sum $\to$ ordered-pair reduction is now formalized
+(axiom-free) in \texttt{IsingModel/PseudoMass/HLSSharpPairBound.lean}.
+
+\begin{theorem}[\texttt{darts\_cross\_sum\_le\_sharp\_decay}]
+Given a \texttt{PseudoMassLatticeDistanceBridge}, for $d/2<\alpha<d$ there is a
+uniform $K>0$ with, for all $x,z$ and exhaustion stage $n$
+($G_n=$ \texttt{inducedGraph (latticeGraph d) (volume n)}),
+\[
+  \sum_{\delta\in\mathrm{Dart}(G_n)}
+    \langle\varphi(x)\varphi(\delta_{\mathrm{fst}})\rangle\,
+    \langle\varphi(z)\varphi(\delta_{\mathrm{snd}})\rangle
+  \;\le\; K\,(1+d(x,z))^{-(2\alpha-d)} .
+\]
+\end{theorem}
+
+\textit{Proof.}  Each two-point function is bounded by its single-factor
+majorant $\langle\varphi(x)\varphi(w)\rangle\le 2C_f(1+d(x,w))^{-\alpha}$
+(\texttt{correlationInfinite\_le\_maj}: the bridge active-range and form bridge,
+with the singleton $x=w$ contributing $0$).  The dart sum factors over the first
+endpoint via the fiber decomposition $\sum_\delta = \sum_u\sum_{\delta_{\mathrm{fst}}=u}$;
+the subtype neighbours of $u$ inject (via $\cdot.\mathrm{val}$) into the ambient
+neighbour Finset, so the inner sum is $\le\sum_{w\sim u}(1+d(z,w))^{-\alpha}$;
+reindexing the subtype sum to $\mathbb{Z}^d$ (\texttt{Finset.sum\_coe\_sort}) and
+bounding by the tsum (\texttt{Summable.sum\_le\_tsum}) feeds the neighbour-shifted
+convolution \texttt{tsum\_mul\_neighborFinset\_sum\_pow\_neg\_le};
+$K=4C_f^2 C_{\mathrm{HLS}}$.  This is exactly the main term of
+\texttt{derivative\_profile\_cubic\_le\_infiniteVolume\_lebowitz} (its edge
+cross-sum equals this dart sum via
+\texttt{sum\_edgeFinset\_sym2\_lift\_prod\_eq\_sum\_dart}).
+
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
+
 \subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
 Combining Steps 117a--g with the HLS convolution constant and the remaining

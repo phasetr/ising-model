@@ -314,5 +314,240 @@ theorem tsum_mul_neighborFinset_sum_pow_neg_le {d : ℕ} (hd : 1 ≤ d) {α : �
     _ = 2 * (d : ℝ) * (2 : ℝ) ^ α * C0 *
           (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * α - (d : ℝ))) := by ring
 
+/-- **Single-factor pseudo-mass majorant in `(1+dist)^{−α}` form.**  For a
+`PseudoMassLatticeDistanceBridge`, every two-point function is dominated by
+`2·C_f·(1+d(x,w))^{−α}` with `C_f = max 1 (M^α)⁻¹·2^α`.
+
+For `x = w` the singleton correlation vanishes (`correlationInfinite_pair_self_h_zero`);
+for `x ≠ w`, the bridge's active-range + `correlationInfinite_le_two_div_…` give
+`≤ 2/(1+(m·r')^α)`, monotonicity in the denominator (using `M·d ≤ m·r'`) gives
+`≤ 2/(1+(M·d)^α)`, and the form bridge
+`one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow` converts to the
+`(1+d)^{−α}` shape. -/
+theorem correlationInfinite_le_maj
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
+    (d : ℕ) (J β : ℝ)
+    (bridge : PseudoMassLatticeDistanceBridge hα hr' d J β)
+    (x w : Fin d → ℤ) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, w}
+      ≤ 2 * (max 1 (bridge.M_inf ^ α)⁻¹ * (2 : ℝ) ^ α) *
+          (1 + (latticeDistance d x w : ℝ)) ^ (-(α : ℝ)) := by
+  set M := bridge.M_inf with hM
+  have hMpos : 0 < M := bridge.M_inf_pos
+  set Cf := max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α with hCf
+  have hdw_nn : (0 : ℝ) ≤ (latticeDistance d x w : ℝ) := by positivity
+  by_cases hxw : x = w
+  · subst hxw
+    rw [correlationInfinite_pair_self_h_zero d J β x]
+    positivity
+  · have hact := bridge.active x w hxw
+    have h51 := correlationInfinite_le_two_div_one_add_pow_pseudoMassFromParamsAtPair
+      hα hr' (Ambient.cubicExhaustion d) J β x w hact
+    have hbnd := bridge.bound x w hxw
+    set m := pseudoMassFromParamsAtPair hα hr' d (Ambient.cubicExhaustion d)
+        (⟨J, 0, β⟩ : IsingParams ℝ) x w with hm
+    have hMd_nn : (0 : ℝ) ≤ M * (latticeDistance d x w : ℝ) := by positivity
+    have hmono : 2 / (1 + (m * r') ^ α)
+        ≤ 2 / (1 + (M * (latticeDistance d x w : ℝ)) ^ α) := by
+      apply div_le_div_of_nonneg_left (by norm_num)
+      · have : (0 : ℝ) ≤ (M * (latticeDistance d x w : ℝ)) ^ α := pow_nonneg hMd_nn α
+        linarith
+      · have hpow : (M * (latticeDistance d x w : ℝ)) ^ α ≤ (m * r') ^ α :=
+          pow_le_pow_left₀ hMd_nn hbnd α
+        linarith
+    have hform := one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+      (M := M) (t := (latticeDistance d x w : ℝ)) (α := α) hMpos hdw_nn
+    have hrpow : 1 / (1 + (latticeDistance d x w : ℝ)) ^ α
+        = (1 + (latticeDistance d x w : ℝ)) ^ (-(α : ℝ)) :=
+      one_div_one_add_pow_eq_rpow_neg hdw_nn
+    calc Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, w}
+        ≤ 2 / (1 + (m * r') ^ α) := h51
+      _ ≤ 2 / (1 + (M * (latticeDistance d x w : ℝ)) ^ α) := hmono
+      _ = 2 * (1 / (1 + (M * (latticeDistance d x w : ℝ)) ^ α)) := by ring
+      _ ≤ 2 * (Cf * (1 / (1 + (latticeDistance d x w : ℝ)) ^ α)) := by
+          rw [hCf]; exact mul_le_mul_of_nonneg_left hform (by norm_num)
+      _ = 2 * Cf * (1 + (latticeDistance d x w : ℝ)) ^ (-(α : ℝ)) := by rw [hrpow]; ring
+
+/-- **Summability of the neighbour-sum kernel.**  For `d < 2α`,
+`u ↦ (1+d(x,u))^{−α}·(∑_{v∼u}(1+d(z,v))^{−α})` is summable, dominated by
+`2d·2^α·(1+d(x,u))^{−α}(1+d(z,u))^{−α}` (`neighborFinset_sum_pow_neg_le`). -/
+theorem summable_mul_neighborFinset_sum_pow_neg {d : ℕ} (x z : Fin d → ℤ) {α : ℝ}
+    (hαnn : 0 ≤ α) (hα2 : (d : ℝ) < 2 * α) :
+    Summable (fun u : Fin d → ℤ => (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+      (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+        (1 + (latticeDistance d z v : ℝ)) ^ (-α))) := by
+  have hmaj : Summable (fun u : Fin d → ℤ => 2 * (d : ℝ) * (2 : ℝ) ^ α *
+      ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+        (1 + (latticeDistance d z u : ℝ)) ^ (-α))) :=
+    (summable_pow_neg_pair_translate x z hα2).mul_left _
+  refine Summable.of_nonneg_of_le (fun u => by positivity) (fun u => ?_) hmaj
+  calc (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+          (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+            (1 + (latticeDistance d z v : ℝ)) ^ (-α))
+      ≤ (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+          (2 * (d : ℝ) * ((2 : ℝ) ^ α * (1 + (latticeDistance d z u : ℝ)) ^ (-α))) :=
+        mul_le_mul_of_nonneg_left (neighborFinset_sum_pow_neg_le hαnn z u) (by positivity)
+    _ = 2 * (d : ℝ) * (2 : ℝ) ^ α *
+          ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+            (1 + (latticeDistance d z u : ℝ)) ^ (-α)) := by ring
+
+/-- **Sharp distance-decay of the GJ p. 312 dart cross-sum.**  Given a
+`PseudoMassLatticeDistanceBridge`, for `d/2 < α < d` there is a uniform `K > 0`
+such that for all `x z` and exhaustion stage `n`,
+```
+∑_{δ : Dart(G_n)} ⟨φ(x)φ(δ.fst)⟩·⟨φ(z)φ(δ.snd)⟩ ≤ K·(1+d(x,z))^{−(2α−d)}
+```
+where `G_n = inducedGraph (latticeGraph d) (volume n)`.
+
+This is the decaying bound on the main term of
+`derivative_profile_cubic_le_infiniteVolume_lebowitz` (whose edge cross-sum equals
+this dart sum via `sum_edgeFinset_sym2_lift_prod_eq_sum_dart`).  Proof: bound each
+correlation by its `(1+dist)^{−α}` majorant (`correlationInfinite_le_maj`); the
+dart sum factors over the first endpoint into `∑_u (1+d(x,u))^{−α}·∑_{δ.fst=u}…`
+whose inner sum is `≤ ∑_{w∼u}(1+d(z,w))^{−α}` (the subtype neighbours inject into
+the ambient neighbour Finset); reindexing the subtype sum to `ℤ^d` and bounding by
+the tsum (`Finset.sum_le_tsum`) feeds `tsum_mul_neighborFinset_sum_pow_neg_le`;
+`K = 4·C_f²·C_HLS`. -/
+theorem darts_cross_sum_le_sharp_decay
+    {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
+    (d : ℕ) (hαd : d < 2 * α) (hαd2 : α < d) (J β : ℝ)
+    (bridge : PseudoMassLatticeDistanceBridge hα hr' d J β) :
+    ∃ K : ℝ, 0 < K ∧ ∀ (x z : Fin d → ℤ) (n : ℕ),
+      ∑ δ : (Ambient.inducedGraph (IsingModel.latticeGraph d)
+              ((Ambient.cubicExhaustion d).volume n)).Dart,
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, δ.fst.val} *
+            Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) {z, δ.snd.val}
+        ≤ K * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by
+  classical
+  set M := bridge.M_inf with hM
+  set Cf := max 1 (M ^ α)⁻¹ * (2 : ℝ) ^ α with hCf
+  have hCf_pos : 0 < Cf := by
+    rw [hCf]; exact mul_pos (lt_of_lt_of_le one_pos (le_max_left _ _)) (by positivity)
+  have hd_one : 1 ≤ d := le_of_lt (lt_of_le_of_lt hα hαd2)
+  obtain ⟨C0, hC0, hC0bd⟩ := tsum_mul_neighborFinset_sum_pow_neg_le (d := d) hd_one
+    (α := (α : ℝ)) (Nat.cast_nonneg α) (by exact_mod_cast hαd2) (by exact_mod_cast hαd)
+  have hsummable : ∀ x z : Fin d → ℤ, Summable (fun u : Fin d → ℤ =>
+      (1 + (latticeDistance d x u : ℝ)) ^ (-(α : ℝ)) *
+        (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u,
+          (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)))) := fun x z =>
+    summable_mul_neighborFinset_sum_pow_neg x z (Nat.cast_nonneg α) (by exact_mod_cast hαd)
+  refine ⟨4 * Cf ^ 2 * C0, by positivity, fun x z n => ?_⟩
+  set G := Ambient.inducedGraph (IsingModel.latticeGraph d)
+      ((Ambient.cubicExhaustion d).volume n) with hG
+  -- majorant abbreviations
+  set A : ↑((Ambient.cubicExhaustion d).volume n) → ℝ :=
+    fun u => (1 + (latticeDistance d x u.val : ℝ)) ^ (-(α : ℝ)) with hA
+  set B : ↑((Ambient.cubicExhaustion d).volume n) → ℝ :=
+    fun v => (1 + (latticeDistance d z v.val : ℝ)) ^ (-(α : ℝ)) with hB
+  have hA_nn : ∀ u, 0 ≤ A u := fun u => by rw [hA]; positivity
+  have hB_nn : ∀ v, 0 ≤ B v := fun v => by rw [hB]; positivity
+  -- Step 1: per-dart correlation ≤ majorant product (×(2Cf)²).
+  have hstep1 : ∑ δ : G.Dart,
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, δ.fst.val} *
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {z, δ.snd.val}
+      ≤ ∑ δ : G.Dart, (2 * Cf) ^ 2 * (A δ.fst * B δ.snd) := by
+    apply Finset.sum_le_sum
+    intro δ _
+    have hx := correlationInfinite_le_maj hα hr' d J β bridge x δ.fst.val
+    have hz := correlationInfinite_le_maj hα hr' d J β bridge z δ.snd.val
+    have hxnn := Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) bridge.hf {x, δ.fst.val}
+    have hznn := Ambient.correlationInfinite_nonneg (IsingModel.latticeGraph d)
+      (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) bridge.hf {z, δ.snd.val}
+    calc Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, δ.fst.val} *
+          Ambient.correlationInfinite (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {z, δ.snd.val}
+        ≤ (2 * Cf * A δ.fst) * (2 * Cf * B δ.snd) := by
+          rw [hA, hB, hCf]
+          exact mul_le_mul hx hz hznn (hxnn.trans hx)
+      _ = (2 * Cf) ^ 2 * (A δ.fst * B δ.snd) := by ring
+  -- Step 2: dart sum of majorant products ≤ (2Cf)² · ∑_u A u · (ambient neighbour B-sum).
+  have hstep2 : ∑ δ : G.Dart, (2 * Cf) ^ 2 * (A δ.fst * B δ.snd)
+      ≤ (2 * Cf) ^ 2 * ∑ u : ↑((Ambient.cubicExhaustion d).volume n),
+          A u * (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u.val,
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))) := by
+    rw [← Finset.mul_sum]
+    apply mul_le_mul_of_nonneg_left _ (by positivity)
+    rw [← Finset.sum_fiberwise_of_maps_to
+      (fun (δ : G.Dart) _ => Finset.mem_univ δ.fst) (fun δ => A δ.fst * B δ.snd)]
+    apply Finset.sum_le_sum
+    intro u _
+    have hfac : ∑ δ ∈ Finset.univ.filter (fun δ : G.Dart => δ.fst = u), A δ.fst * B δ.snd
+        = A u * ∑ δ ∈ Finset.univ.filter (fun δ : G.Dart => δ.fst = u), B δ.snd := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro δ hδ; rw [(Finset.mem_filter.mp hδ).2]
+    rw [hfac]
+    apply mul_le_mul_of_nonneg_left _ (hA_nn u)
+    -- inner: ∑_{δ.fst=u} B δ.snd ≤ ∑_{w∈ambient nbr u.val} (1+d(z,w))^{-α}
+    have hinj : ∀ δ₁ ∈ Finset.univ.filter (fun δ : G.Dart => δ.fst = u),
+        ∀ δ₂ ∈ Finset.univ.filter (fun δ : G.Dart => δ.fst = u),
+        (δ₁.snd.val) = (δ₂.snd.val) → δ₁ = δ₂ := by
+      intro δ₁ h₁ δ₂ h₂ h
+      exact SimpleGraph.Dart.ext _ _ (Prod.ext
+        ((Finset.mem_filter.mp h₁).2.trans (Finset.mem_filter.mp h₂).2.symm)
+        (Subtype.ext h))
+    calc ∑ δ ∈ Finset.univ.filter (fun δ : G.Dart => δ.fst = u), B δ.snd
+        = ∑ w ∈ (Finset.univ.filter (fun δ : G.Dart => δ.fst = u)).image (fun δ => δ.snd.val),
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)) := by
+          rw [Finset.sum_image hinj]
+      _ ≤ ∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u.val,
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)) := by
+          refine Finset.sum_le_sum_of_subset_of_nonneg ?_ (fun w _ _ => by positivity)
+          intro w hw
+          rw [Finset.mem_image] at hw
+          obtain ⟨δ, hδ, rfl⟩ := hw
+          rw [SimpleGraph.mem_neighborFinset]
+          have hadj : G.Adj δ.fst δ.snd := δ.adj
+          have hua : G.Adj u δ.snd := by rw [← (Finset.mem_filter.mp hδ).2]; exact hadj
+          simp only [hG, Ambient.inducedGraph, SimpleGraph.induce_adj] at hua
+          exact hua
+  -- Step 3: reindex subtype sum to ℤ^d, bound by tsum, apply HLS.
+  have hstep3 : (2 * Cf) ^ 2 * ∑ u : ↑((Ambient.cubicExhaustion d).volume n),
+          A u * (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u.val,
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)))
+      ≤ 4 * Cf ^ 2 * C0 * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by
+    have hcoe : ∑ u : ↑((Ambient.cubicExhaustion d).volume n),
+          A u * (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u.val,
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)))
+        = ∑ u' ∈ (Ambient.cubicExhaustion d).volume n,
+            (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+              (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+                (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))) := by
+      simp only [hA]
+      exact Finset.sum_coe_sort ((Ambient.cubicExhaustion d).volume n)
+        (fun u' => (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+          (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+            (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))))
+    rw [hcoe]
+    have hfinle : ∑ u' ∈ (Ambient.cubicExhaustion d).volume n,
+          (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+            (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+              (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)))
+        ≤ ∑' u' : Fin d → ℤ, (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+              (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+                (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))) :=
+      (hsummable x z).sum_le_tsum _ (fun u' _ => by positivity)
+    calc (2 * Cf) ^ 2 * ∑ u' ∈ (Ambient.cubicExhaustion d).volume n,
+            (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+              (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+                (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ)))
+        ≤ (2 * Cf) ^ 2 * ∑' u' : Fin d → ℤ, (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
+              (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
+                (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))) :=
+          mul_le_mul_of_nonneg_left hfinle (by positivity)
+      _ ≤ (2 * Cf) ^ 2 * (C0 * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))) :=
+          mul_le_mul_of_nonneg_left (hC0bd x z) (by positivity)
+      _ = 4 * Cf ^ 2 * C0 * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by
+          ring
+  exact (hstep1.trans hstep2).trans hstep3
+
 end Ambient
 end IsingModel
