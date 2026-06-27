@@ -67,4 +67,55 @@ theorem tsum_radial_eq_tsum_shell (d : ℕ) (f : ℕ → ℝ≥0∞) :
   rw [hcard]
   simp
 
+/-- **Shell-cardinality power reduction**: for `d ≥ 1` and any real exponent `s`,
+the shell-weighted kernel `(latticeSphere d n).card · (1 + n)^s` is dominated by
+`2^d · (1 + n)^{(d-1) + s}`.
+
+Proof: `(latticeSphere d n).card ≤ 2·(2n+1)^{d-1}` (`latticeSphere_card_le'`),
+`2n+1 ≤ 2·(1+n)` gives `(2n+1)^{d-1} ≤ 2^{d-1}·(1+n)^{d-1}`, so the card is
+`≤ 2^d·(1+n)^{d-1}`; multiplying by `(1+n)^s` and merging the powers
+(`Real.rpow_natCast`, `Real.rpow_add`) yields the claim. -/
+theorem latticeSphere_card_mul_rpow_le (d : ℕ) (hd : 1 ≤ d) (n : ℕ) (s : ℝ) :
+    ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ s
+      ≤ (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1 + s) := by
+  have h1n : (0 : ℝ) < 1 + (n : ℝ) := by positivity
+  -- Cardinality bound, cast to ℝ.
+  have hcard : ((latticeSphere d n).card : ℝ) ≤ (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1) := by
+    have hcard0 : (latticeSphere d n).card ≤ 2 * (2 * n + 1) ^ (d - 1) :=
+      latticeSphere_card_le' d n hd
+    have hcardR : ((latticeSphere d n).card : ℝ) ≤ 2 * ((2 * n + 1 : ℕ) : ℝ) ^ (d - 1) := by
+      have := (Nat.cast_le (α := ℝ)).mpr hcard0
+      push_cast at this ⊢
+      convert this using 2
+    -- `(2n+1) ≤ 2(1+n)`, so `(2n+1)^{d-1} ≤ (2(1+n))^{d-1} = 2^{d-1}(1+n)^{d-1}`.
+    have hstep : ((2 * n + 1 : ℕ) : ℝ) ^ (d - 1) ≤ (2 : ℝ) ^ (d - 1) * (1 + (n : ℝ)) ^ (d - 1) := by
+      have hb : ((2 * n + 1 : ℕ) : ℝ) ≤ 2 * (1 + (n : ℝ)) := by push_cast; linarith
+      calc ((2 * n + 1 : ℕ) : ℝ) ^ (d - 1)
+          ≤ (2 * (1 + (n : ℝ))) ^ (d - 1) :=
+            pow_le_pow_left₀ (by positivity) hb _
+        _ = (2 : ℝ) ^ (d - 1) * (1 + (n : ℝ)) ^ (d - 1) := by rw [mul_pow]
+    -- Convert the natural-power `(1+n)^{d-1}` to the real-power `(1+n)^{(d:ℝ)-1}`.
+    have hpow_cast : (1 + (n : ℝ)) ^ (d - 1) = (1 + (n : ℝ)) ^ ((d : ℝ) - 1) := by
+      rw [← Real.rpow_natCast (1 + (n : ℝ)) (d - 1)]
+      congr 1
+      have : (1 : ℕ) ≤ d := hd
+      push_cast [Nat.cast_sub this]
+      ring
+    have h2cast : (2 : ℝ) ^ d = 2 * (2 : ℝ) ^ (d - 1) := by
+      rw [← pow_succ']
+      congr 1
+      omega
+    calc ((latticeSphere d n).card : ℝ)
+        ≤ 2 * ((2 * n + 1 : ℕ) : ℝ) ^ (d - 1) := hcardR
+      _ ≤ 2 * ((2 : ℝ) ^ (d - 1) * (1 + (n : ℝ)) ^ (d - 1)) := by
+          exact mul_le_mul_of_nonneg_left hstep (by norm_num)
+      _ = (2 * (2 : ℝ) ^ (d - 1)) * (1 + (n : ℝ)) ^ (d - 1) := by ring
+      _ = (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1) := by rw [← h2cast, hpow_cast]
+  -- Multiply by `(1+n)^s ≥ 0` and merge the real powers.
+  calc ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ s
+      ≤ ((2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1)) * (1 + (n : ℝ)) ^ s :=
+        mul_le_mul_of_nonneg_right hcard (Real.rpow_nonneg h1n.le s)
+    _ = (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1 + s) := by
+        rw [mul_assoc, ← Real.rpow_add h1n]
+
 end IsingModel
