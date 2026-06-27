@@ -1,6 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDist
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromCubicTanh
+import IsingModel.AmbientLattice.CorrelationInfinite.ExhaustionIndependence
 
 /-!
 # GJ §17.5 Lemma 17.5.2 — continuity of the finite-region pseudo-mass `m⁻(σ, A)`
@@ -73,28 +74,49 @@ noncomputable def finiteRegionPseudoMassDist {α d : ℕ} (hα : 1 ≤ α)
   (finiteRegionDistinctPairs A).inf' hA
     (fun q => pseudoMassFromParamsAtPairDist hα Λ p q.1 q.2)
 
-/-- **Single-pair distance pseudo-mass is continuous in `β` at high temperature**:
-for a distinct cubic-lattice pair `(x, z)` and a high-temperature inverse
-temperature `β₀ ∈ Ioo 0 (1 / (J · 2d))`, the map
-`β ↦ pseudoMassFromParamsAtPairDist hα (cubicExhaustion d) ⟨J, 0, β⟩ x z` is
-continuous at `β₀`.
+/-- **Active-range membership of a distinct pair at positive temperature, any
+exhaustion**: for `0 < β`, `0 < β·J` and any exhaustion `Λ`, the infinite-volume
+two-point correlation of a distinct pair lies in the active range `Ioo 0 2`.
 
-Proof: the per-pair distance pseudo-mass is `pseudoMassExt` at the constant
-profile radius `r = latticeDistance d x z` composed with the correlation profile
-`β ↦ ⟨σ_x σ_z⟩^∞`.  The correlation is continuous at `β₀`
-(`correlationInfinite_continuousAt_beta_of_high_temp`) and lands in the active
-range `Ioo 0 2` for any `0 < β` at the cubic exhaustion
-(`correlationInfinite_pair_active_of_betaJ_pos`), where `pseudoMassExt` is
-continuous (`pseudoMassExt_continuousAt`); composition closes the goal.
+The cubic-exhaustion active-range lemma `correlationInfinite_pair_active_of_betaJ_pos`
+is transported to an arbitrary `Λ` by exhaustion-independence of the correlation
+(`correlationInfinite_indep_exhaustion`, ferromagnetic).
+
+References: Glimm--Jaffe §17.5, Lemma 17.5.2, p.~311. -/
+theorem correlationInfinite_pair_active_of_betaJ_pos_exhaustion
+    {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
+    {J β : ℝ} (hβ : 0 < β) (hβJ_pos : 0 < β * J)
+    (x z : Fin d → ℤ) (hxz : x ≠ z) :
+    Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ
+        (⟨J, 0, β⟩ : IsingParams ℝ) {x, z}
+      ∈ Set.Ioo (0 : ℝ) 2 := by
+  have hJ_pos : 0 < J := (mul_pos_iff_of_pos_left hβ).mp hβJ_pos
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) := ⟨hJ_pos.le, le_refl 0, hβ⟩
+  rw [correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d) Λ
+    (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) hf {x, z}]
+  exact correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos x z hxz
+
+/-- **Single-pair distance pseudo-mass is continuous in `β` at high temperature**
+(arbitrary exhaustion): for a distinct pair `(x, z)` and a high-temperature
+inverse temperature `β₀ ∈ Ioo 0 (1 / (J · 2d))`, the map
+`β ↦ pseudoMassFromParamsAtPairDist hα Λ ⟨J, 0, β⟩ x z` is continuous at `β₀` for
+any exhaustion `Λ`.
+
+The correlation profile is continuous at `β₀`
+(`correlationInfinite_continuousAt_beta_of_high_temp`, valid for any `Λ`) and lands
+in the active range `Ioo 0 2` (`correlationInfinite_pair_active_of_betaJ_pos_exhaustion`,
+via exhaustion-independence), where `pseudoMassExt` is continuous; composition
+closes the goal.
 
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, p.~311. -/
 theorem pseudoMassFromParamsAtPairDist_beta_continuousAt_of_high_temp
     {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     {J β₀ : ℝ} (hJ : 0 < J)
     (hβ₀ : β₀ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
     ContinuousAt
-      (fun β => pseudoMassFromParamsAtPairDist hα (Ambient.cubicExhaustion d)
+      (fun β => pseudoMassFromParamsAtPairDist hα Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) x z)
       β₀ := by
   -- Constant profile radius `r = latticeDistance d x z > 0`.
@@ -102,42 +124,41 @@ theorem pseudoMassFromParamsAtPairDist_beta_continuousAt_of_high_temp
     have hne : IsingModel.latticeDistance d x z ≠ 0 :=
       fun h => hxz ((IsingModel.latticeDistance_eq_zero_iff d x z).mp h)
     exact_mod_cast Nat.pos_of_ne_zero hne
-  -- Active-range membership at `β₀` (any `0 < β` works at the cubic exhaustion).
+  -- Active-range membership at `β₀` (any `0 < β`, any exhaustion via indep).
   have hβ₀_pos : 0 < β₀ := hβ₀.1
   have hβJ_pos : 0 < β₀ * J := mul_pos hβ₀_pos hJ
   have hmem₀ :
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, 0, β₀⟩ : IsingParams ℝ) {x, z}
+          Λ (⟨J, 0, β₀⟩ : IsingParams ℝ) {x, z}
         ∈ Set.Ioo (0 : ℝ) 2 :=
-    correlationInfinite_pair_active_of_betaJ_pos hβ₀_pos hβJ_pos x z hxz
+    correlationInfinite_pair_active_of_betaJ_pos_exhaustion Λ hβ₀_pos hβJ_pos x z hxz
   -- Rewrite the per-pair distance pseudo-mass as `pseudoMassExt ∘ correlation`.
   have hfun :
-      (fun β => pseudoMassFromParamsAtPairDist hα (Ambient.cubicExhaustion d)
+      (fun β => pseudoMassFromParamsAtPairDist hα Λ
           (⟨J, 0, β⟩ : IsingParams ℝ) x z)
         = (fun β => pseudoMassExt hα hdist_pos
             (Ambient.correlationInfinite (IsingModel.latticeGraph d)
-              (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})) := by
+              Λ (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})) := by
     funext β
-    exact pseudoMassFromParamsAtPairDist_of_ne hα (Ambient.cubicExhaustion d)
+    exact pseudoMassFromParamsAtPairDist_of_ne hα Λ
       (⟨J, 0, β⟩ : IsingParams ℝ) hxz hdist_pos
   rw [hfun]
   -- Compose continuity of `pseudoMassExt` with continuity of the correlation.
   change ContinuousAt
     ((pseudoMassExt hα hdist_pos) ∘
       (fun β => Ambient.correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})) β₀
+        Λ (⟨J, 0, β⟩ : IsingParams ℝ) {x, z})) β₀
   exact ContinuousAt.comp
     (pseudoMassExt_continuousAt hα hdist_pos hmem₀)
     (correlationInfinite_continuousAt_beta_of_high_temp hd
-      (Ambient.cubicExhaustion d) x z hxz J hJ β₀ hβ₀)
+      Λ x z hxz J hJ β₀ hβ₀)
 
 /-- **GJ §17.5 Lemma 17.5.2 (a): finite-region pseudo-mass `m⁻(σ, A)` is
 continuous in `β` at high temperature** (`ContinuousAt` form).
 
-For a bounded cubic-lattice region `A` with at least one distinct pair, the
-finite-region pseudo-mass `β ↦ finiteRegionPseudoMassDist hα (cubicExhaustion d)
-⟨J, 0, β⟩ A hA` is continuous at every high-temperature point
-`β₀ ∈ Ioo 0 (1 / (J · 2d))`.
+For a bounded region `A` with at least one distinct pair and any exhaustion `Λ`,
+the finite-region pseudo-mass `β ↦ finiteRegionPseudoMassDist hα Λ ⟨J, 0, β⟩ A hA`
+is continuous at every high-temperature point `β₀ ∈ Ioo 0 (1 / (J · 2d))`.
 
 Proof: a finite infimum of functions continuous at `β₀` is continuous at `β₀`
 (`ContinuousAt.finset_inf'`); each summand is the single-pair continuity
@@ -147,12 +168,13 @@ hypothesis comes from membership in `finiteRegionDistinctPairs`.
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, p.~311. -/
 theorem finiteRegionPseudoMassDist_beta_continuousAt_of_high_temp
     {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (A : Finset (Fin d → ℤ))
     (hA : (finiteRegionDistinctPairs A).Nonempty)
     {J β₀ : ℝ} (hJ : 0 < J)
     (hβ₀ : β₀ ∈ Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) :
     ContinuousAt
-      (fun β => finiteRegionPseudoMassDist hα (Ambient.cubicExhaustion d)
+      (fun β => finiteRegionPseudoMassDist hα Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) A hA)
       β₀ := by
   unfold finiteRegionPseudoMassDist
@@ -160,45 +182,47 @@ theorem finiteRegionPseudoMassDist_beta_continuousAt_of_high_temp
   intro q hq
   have hq_ne : q.1 ≠ q.2 := (mem_finiteRegionDistinctPairs.mp hq).2.2
   exact pseudoMassFromParamsAtPairDist_beta_continuousAt_of_high_temp
-    hα hd hq_ne hJ hβ₀
+    hα hd Λ hq_ne hJ hβ₀
 
 /-- **GJ §17.5 Lemma 17.5.2 (a): finite-region pseudo-mass `m⁻(σ, A)` is
 continuous in `β` on the high-temperature window** (`ContinuousOn` form).
 
 The finite-region pseudo-mass is continuous on the open high-temperature window
-`Ioo 0 (1 / (J · 2d))`, obtained by upgrading the pointwise `ContinuousAt`
-statement (each interior point has the window as a neighbourhood).
+`Ioo 0 (1 / (J · 2d))` for any exhaustion `Λ`, obtained by upgrading the pointwise
+`ContinuousAt` statement (each interior point has the window as a neighbourhood).
 
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, p.~311. -/
 theorem finiteRegionPseudoMassDist_beta_continuousOn_high_temp
     {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (A : Finset (Fin d → ℤ))
     (hA : (finiteRegionDistinctPairs A).Nonempty)
     {J : ℝ} (hJ : 0 < J) :
     ContinuousOn
-      (fun β => finiteRegionPseudoMassDist hα (Ambient.cubicExhaustion d)
+      (fun β => finiteRegionPseudoMassDist hα Λ
         (⟨J, 0, β⟩ : IsingParams ℝ) A hA)
       (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
   intro β₀ hβ₀
   exact (finiteRegionPseudoMassDist_beta_continuousAt_of_high_temp
-    hα hd A hA hJ hβ₀).continuousWithinAt
+    hα hd Λ A hA hJ hβ₀).continuousWithinAt
 
 /-- **GJ §17.5 Lemma 17.5.2 (b): finite-region pseudo-mass `m⁻(σ, A)` is strictly
-positive** at every `0 < β` (cubic exhaustion).
+positive** at every `0 < β`, for any exhaustion `Λ`.
 
-For a bounded cubic-lattice region `A` with at least one distinct pair, the
-finite-region pseudo-mass is `> 0`.  Each distinct cubic-lattice pair is active
-(`correlationInfinite_pair_active_of_betaJ_pos`), so its per-pair pseudo-mass is
-strictly positive (`pseudoMass_pos`); a finite infimum of strictly positive reals
-is strictly positive (`Finset.lt_inf'_iff`).
+For a bounded region `A` with at least one distinct pair, the finite-region
+pseudo-mass is `> 0`.  Each distinct pair is active
+(`correlationInfinite_pair_active_of_betaJ_pos_exhaustion`, via exhaustion-independence),
+so its per-pair pseudo-mass is strictly positive (`pseudoMass_pos`); a finite
+infimum of strictly positive reals is strictly positive (`Finset.lt_inf'_iff`).
 
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, p.~311. -/
 theorem finiteRegionPseudoMassDist_pos_of_betaJ_pos
     {α d : ℕ} (hα : 1 ≤ α)
+    (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (A : Finset (Fin d → ℤ))
     (hA : (finiteRegionDistinctPairs A).Nonempty)
     {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) :
-    0 < finiteRegionPseudoMassDist hα (Ambient.cubicExhaustion d)
+    0 < finiteRegionPseudoMassDist hα Λ
       (⟨J, 0, β⟩ : IsingParams ℝ) A hA := by
   have hβJ_pos : 0 < β * J := mul_pos hβ hJ
   unfold finiteRegionPseudoMassDist
@@ -211,10 +235,10 @@ theorem finiteRegionPseudoMassDist_pos_of_betaJ_pos
     exact_mod_cast Nat.pos_of_ne_zero hne
   have hmem :
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
-          (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {q.1, q.2}
+          Λ (⟨J, 0, β⟩ : IsingParams ℝ) {q.1, q.2}
         ∈ Set.Ioo (0 : ℝ) 2 :=
-    correlationInfinite_pair_active_of_betaJ_pos hβ hβJ_pos q.1 q.2 hq_ne
-  rw [pseudoMassFromParamsAtPairDist_of_ne hα (Ambient.cubicExhaustion d)
+    correlationInfinite_pair_active_of_betaJ_pos_exhaustion Λ hβ hβJ_pos q.1 q.2 hq_ne
+  rw [pseudoMassFromParamsAtPairDist_of_ne hα Λ
       (⟨J, 0, β⟩ : IsingParams ℝ) hq_ne hdist_pos,
     pseudoMassExt_of_mem hα hdist_pos hmem]
   exact pseudoMass_pos hα hdist_pos hmem
