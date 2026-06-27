@@ -68,7 +68,7 @@ structure PseudoMassLatticeDistanceBridge
 `{x, x} = {x}` (Finset insert idempotent) is a singleton of cardinality 1
 (odd), so the `h = 0` Z₂ symmetry gives
 `correlationInfinite ⟨J, 0, β⟩ {x, x} = 0`. -/
-private theorem correlationInfinite_pair_self_h_zero
+theorem correlationInfinite_pair_self_h_zero
     (d : ℕ) (J β : ℝ) (x : Fin d → ℤ) :
     Ambient.correlationInfinite (IsingModel.latticeGraph d)
         (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x, x} = 0 := by
