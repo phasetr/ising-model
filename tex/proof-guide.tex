@@ -29390,6 +29390,40 @@ $K=4C^2 C_{\mathrm{HLS}}$.  This sharpens the earlier constant-only bound
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
 
+\subsubsection*{Neighbour-shifted sharp convolution (edge cross-sum core)}
+
+The GJ p.~312 Lebowitz bound for the $\beta$-derivative of the two-point
+function is a sum over nearest-neighbour edges $\langle u,v\rangle$ of cross
+products $g(x,u)g(z,v)$.  To exhibit the decay of this edge cross-sum one needs a
+\emph{neighbour-shifted} convolution bound, formalized (axiom-free) in
+\texttt{IsingModel/PseudoMass/HLSSharpPairBound.lean}.
+
+\begin{theorem}[\texttt{tsum\_mul\_neighborFinset\_sum\_pow\_neg\_le}]
+For $d/2<\alpha<d$ there is $C>0$ with, for all $x,z$,
+\[
+  \sum_{u\in\mathbb{Z}^d} (1+d(x,u))^{-\alpha}
+    \Bigl(\sum_{v\sim u}(1+d(z,v))^{-\alpha}\Bigr)
+  \;\le\; C\,(1+d(x,z))^{-(2\alpha-d)} .
+\]
+\end{theorem}
+
+\textit{Proof.}  For $v\sim u$ adjacency gives $d(u,v)=1$, hence
+$d(z,u)\le d(z,v)+1$ and so $(1+d(z,u))/2\le 1+d(z,v)$; the antitone base shift
+yields $(1+d(z,v))^{-\alpha}\le 2^\alpha(1+d(z,u))^{-\alpha}$
+(\texttt{pow\_neg\_neighbour\_shift\_le}).  Summing over the $\le 2d$ neighbours
+of $u$ (degree bound \texttt{latticeGraph\_degree\_le}) gives
+$\sum_{v\sim u}(1+d(z,v))^{-\alpha}\le 2d\,2^\alpha(1+d(z,u))^{-\alpha}$
+(\texttt{neighborFinset\_sum\_pow\_neg\_le}), reducing the sum to the sharp pair
+convolution \texttt{hls\_conv\_sharp\_decay\_real}; $C=2d\,2^\alpha C_{\mathrm{HLS}}$.
+
+The remaining steps toward discharging the infinite-volume HLS denominator
+comparison are: the edge-Finset cross-sum $\to$ ordered-pair reduction with the
+correlation-to-majorant bridge (giving the decay of the $\beta$-derivative main
+term), and the GJ p.~312 $(h)^{2\alpha}$ normalization absorbing the
+$O(2d)$ incident-edge term.
+
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
+
 \subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
 Combining Steps 117a--g with the HLS convolution constant and the remaining
