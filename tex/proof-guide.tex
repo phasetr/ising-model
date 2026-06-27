@@ -32506,8 +32506,11 @@ $\texttt{Lemma\_17\_5\_2\_InfiniteHLSDenominatorComparison}$ (the GJ p.~312 ``$\
 $|c'(\beta)|\le K\,c(\beta)/m^{2\alpha}$) on the convergence window
 $\texttt{ConvergenceRegion.window}\,d\,J$, \emph{conditionally} on the per-pair correlation lower
 bound $\texttt{hprofile}:\texttt{pseudoMassG}\,\alpha\,\rho\,q\le c$, $q=-\log(\beta J\,2d)$.
-File $\texttt{SharpHLSDenominatorComparison.lean}$; this is the consumer of the sharp-HLS
-foundations \#4321--\#4329.
+File $\texttt{SharpHLSDenominatorComparison.lean}$; it belongs to the \#4320 sharp-HLS thread but,
+notably, the $\texttt{hcomp}$ discharge \emph{does not use} the sharp-HLS convolution
+$\texttt{darts\_cross\_sum\_le\_sharp\_decay}$ (\#4326--\#4329): the numerator is controlled by the
+pair-independent susceptibility bound $B$, so the foundations \#4321--\#4329 remain available for the
+unconditional (decay-based) route still gated on \S18.
 
 \par\noindent\textbf{Method (reorganized to avoid the exponential/polynomial mismatch).}
 Rather than matching the polynomial decay of the derivative numerator to the exponential decay of
