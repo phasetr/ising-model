@@ -29357,6 +29357,39 @@ Lipschitz control of $m^{-\,2\alpha+1}$ behind Theorem~17.5.1; the remaining
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1,
 pp.~311--312.
 
+\subsubsection*{Sharp HLS correlation pair-product bound (p.~312 cross-term)}
+
+The sharp convolution bound is applied to the GJ p.~312 cross-product term
+$\sum_z \langle\varphi(x_0)\varphi(z)\rangle\,
+\langle\varphi(y_0)\varphi(z)\rangle$ of the Lebowitz IIIb estimate.  Formalized
+in \texttt{IsingModel/PseudoMass/HLSSharpPairBound.lean}, axiom-free.
+
+\begin{theorem}[\texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_sharp\_decay}]
+Given a \texttt{PseudoMassLatticeDistanceBridge} (a volume-independent mass lower
+bound $M_\infty>0$ with $M_\infty\,d(x,z)\le m^-(x,z)\,r'$ for all distinct
+pairs), for $d/2<\alpha<d$ there is $K>0$ with
+\[
+  \sum_{z\in\mathbb{Z}^d}
+    \langle\varphi(x_0)\varphi(z)\rangle\,\langle\varphi(y_0)\varphi(z)\rangle
+  \;\le\; K\,(1+d(x_0,y_0))^{-(2\alpha-d)} .
+\]
+\end{theorem}
+
+\textit{Proof.}  The bridge majorant gives the pointwise bound
+$\langle\varphi(x_0)\varphi(z)\rangle\langle\varphi(y_0)\varphi(z)\rangle
+\le \tfrac{2}{1+(M_\infty d(x_0,z))^\alpha}\cdot
+\tfrac{2}{1+(M_\infty d(y_0,z))^\alpha}$, and the form bridge
+$\tfrac{1}{1+(Mt)^\alpha}\le C/(1+t)^\alpha$ (with
+$C=\max(1,M^{-\alpha})\,2^\alpha$) turns the summand into
+$4C^2(1+d(x_0,z))^{-\alpha}(1+d(y_0,z))^{-\alpha}$.  Summing and applying the
+real-valued sharp convolution bound (the $\mathbb{R}$ corollary
+\texttt{hls\_conv\_sharp\_decay\_real} of \texttt{hls\_conv\_sharp\_decay}, via
+$\mathbb{R}\to\mathbb{R}_{\ge0}^\infty$ transfer) yields the decay with
+$K=4C^2 C_{\mathrm{HLS}}$.  This sharpens the earlier constant-only bound
+\texttt{tsum\_correlationInfinite\_pair\_product\_le\_HLS\_const}.
+
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
+
 \subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
 Combining Steps 117a--g with the HLS convolution constant and the remaining
