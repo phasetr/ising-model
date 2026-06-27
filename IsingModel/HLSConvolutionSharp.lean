@@ -641,4 +641,77 @@ theorem rpow_pos_two_mul_le {β : ℝ} (hβ : 0 ≤ β) {k D : ℝ} (hk : 0 ≤ 
     Real.rpow_le_rpow (by linarith) hhigh hβ
   rwa [Real.mul_rpow (by norm_num) (by linarith)] at h1
 
+/-- **Near-region constant reduction (real).**  Under `d/2 < α < d`, the near-region
+value `(1+k)^{−α}·(2^d·((k+2)^{d−α}/(d−α)+1))` (with `k = K = D/2`) is dominated by
+`C_near·(1+D)^{d−2α}` with the explicit positive constant
+`C_near = 2^α·2^d·2^{d−α}/(d−α) + 2^d·2^α`.
+
+The dominant term uses both base shifts and the exponent identity
+`(1+D)^{−α}·(1+D)^{d−α} = (1+D)^{d−2α}`; the trailing `+1` term uses
+`(1+D)^{−α} ≤ (1+D)^{d−2α}` (`−α ≤ d−2α` since `α ≤ d`, base `≥ 1`). -/
+theorem near_real_decay_le {d : ℕ} {α : ℝ} (hαnn : 0 ≤ α) (hα : α < (d : ℝ))
+    {k D : ℝ} (hk : 0 ≤ k) (hD : 0 ≤ D)
+    (hlow : (1 + D) / 2 ≤ 1 + k) (hhigh : k + 2 ≤ 2 * (1 + D)) :
+    (1 + k) ^ (-α) * ((2 : ℝ) ^ d * ((k + 2) ^ ((d : ℝ) - α) / ((d : ℝ) - α) + 1))
+      ≤ ((2 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ ((d : ℝ) - α) / ((d : ℝ) - α)
+          + (2 : ℝ) ^ d * (2 : ℝ) ^ α) * (1 + D) ^ ((d : ℝ) - 2 * α) := by
+  have hDpos : (0 : ℝ) < 1 + D := by linarith
+  have hd1 : (0 : ℝ) < (d : ℝ) - α := by linarith
+  have hne : ((d : ℝ) - α) ≠ 0 := ne_of_gt hd1
+  have hk1 : (1 + k) ^ (-α) ≤ (2 : ℝ) ^ α * (1 + D) ^ (-α) := rpow_neg_half_le hαnn hD hlow
+  have hk2 : (k + 2) ^ ((d : ℝ) - α) ≤ (2 : ℝ) ^ ((d : ℝ) - α) * (1 + D) ^ ((d : ℝ) - α) :=
+    rpow_pos_two_mul_le (by linarith) hk hD hhigh
+  have e2 : (1 + D) ^ (-α) * (1 + D) ^ ((d : ℝ) - α) = (1 + D) ^ ((d : ℝ) - 2 * α) := by
+    rw [← Real.rpow_add hDpos]; congr 1; ring
+  have e4 : (1 + D) ^ (-α) ≤ (1 + D) ^ ((d : ℝ) - 2 * α) :=
+    Real.rpow_le_rpow_of_exponent_le (by linarith) (by linarith)
+  have hsplit : (1 + k) ^ (-α) * ((2 : ℝ) ^ d * ((k + 2) ^ ((d : ℝ) - α) / ((d : ℝ) - α) + 1))
+      = (1 + k) ^ (-α) * (2 : ℝ) ^ d * (k + 2) ^ ((d : ℝ) - α) / ((d : ℝ) - α)
+        + (1 + k) ^ (-α) * (2 : ℝ) ^ d := by
+    field_simp
+  have hRHS : ((2 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ ((d : ℝ) - α) / ((d : ℝ) - α)
+        + (2 : ℝ) ^ d * (2 : ℝ) ^ α) * (1 + D) ^ ((d : ℝ) - 2 * α)
+      = (2 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ ((d : ℝ) - α) * (1 + D) ^ ((d : ℝ) - 2 * α)
+          / ((d : ℝ) - α)
+        + (2 : ℝ) ^ d * (2 : ℝ) ^ α * (1 + D) ^ ((d : ℝ) - 2 * α) := by
+    field_simp
+  rw [hsplit, hRHS]
+  apply add_le_add
+  · rw [show (2 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ ((d : ℝ) - α) * (1 + D) ^ ((d : ℝ) - 2 * α)
+          = (2 : ℝ) ^ α * (1 + D) ^ (-α) * (2 : ℝ) ^ d
+              * ((2 : ℝ) ^ ((d : ℝ) - α) * (1 + D) ^ ((d : ℝ) - α)) by rw [← e2]; ring]
+    gcongr
+  · have ht2 : (1 + k) ^ (-α) ≤ (2 : ℝ) ^ α * (1 + D) ^ ((d : ℝ) - 2 * α) :=
+      hk1.trans (mul_le_mul_of_nonneg_left e4 (by positivity))
+    calc (1 + k) ^ (-α) * (2 : ℝ) ^ d
+        ≤ ((2 : ℝ) ^ α * (1 + D) ^ ((d : ℝ) - 2 * α)) * (2 : ℝ) ^ d := by gcongr
+      _ = (2 : ℝ) ^ d * (2 : ℝ) ^ α * (1 + D) ^ ((d : ℝ) - 2 * α) := by ring
+
+/-- **Far-region constant reduction (real).**  Under `d/2 < α`, the far-region value
+`3^α·(2^d·(k+1)^{d−2α}/(2α−d))` (with `k = K = D/2`) is dominated by
+`C_far·(1+D)^{d−2α}` with the explicit positive constant
+`C_far = 3^α·2^d·2^{2α−d}/(2α−d)`.
+
+Since `d−2α < 0` and `(1+D)/2 ≤ k+1`, the base shift gives
+`(k+1)^{d−2α} ≤ 2^{2α−d}·(1+D)^{d−2α}` (`rpow_neg_half_le` with exponent `2α−d`). -/
+theorem far_real_decay_le {d : ℕ} {α : ℝ} (hα2 : (d : ℝ) < 2 * α) {k D : ℝ}
+    (hD : 0 ≤ D) (hlow : (1 + D) / 2 ≤ 1 + k) :
+    (3 : ℝ) ^ α * ((2 : ℝ) ^ d * (k + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ)))
+      ≤ ((3 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ (2 * α - (d : ℝ)) / (2 * α - (d : ℝ)))
+          * (1 + D) ^ ((d : ℝ) - 2 * α) := by
+  have hden : (0 : ℝ) < 2 * α - (d : ℝ) := by linarith
+  have hαd : (0 : ℝ) ≤ 2 * α - (d : ℝ) := hden.le
+  have hshift : (k + 1) ^ ((d : ℝ) - 2 * α)
+      ≤ (2 : ℝ) ^ (2 * α - (d : ℝ)) * (1 + D) ^ ((d : ℝ) - 2 * α) := by
+    have h := rpow_neg_half_le hαd hD hlow
+    rwa [show (1 : ℝ) + k = k + 1 by ring, show -(2 * α - (d : ℝ)) = (d : ℝ) - 2 * α by ring] at h
+  rw [show (3 : ℝ) ^ α * ((2 : ℝ) ^ d * (k + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ)))
+        = (3 : ℝ) ^ α * (2 : ℝ) ^ d * (k + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ)) by ring,
+    show ((3 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ (2 * α - (d : ℝ)) / (2 * α - (d : ℝ)))
+          * (1 + D) ^ ((d : ℝ) - 2 * α)
+        = (3 : ℝ) ^ α * (2 : ℝ) ^ d
+            * ((2 : ℝ) ^ (2 * α - (d : ℝ)) * (1 + D) ^ ((d : ℝ) - 2 * α)) / (2 * α - (d : ℝ)) by
+      ring]
+  gcongr
+
 end IsingModel
