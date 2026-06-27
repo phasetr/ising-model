@@ -300,4 +300,51 @@ theorem radial_shell_ball_sum_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : α <
   rw [hNN] at hhead
   exact mul_le_mul_of_nonneg_left hhead h2d_pos.le
 
+/-- **Radial ball z-sum bound** (`α < d`, `d ≥ 1`): the `ℝ≥0∞` sum over the
+lattice points `z` with `latticeDistance d x z ≤ K` of `(1+dist)^{−α}` is bounded
+by `ENNReal.ofReal (2^d·((K+2)^{d−α}/(d−α)+1))`.
+
+Bridges the shell-index `radial_shell_ball_sum_le` to a z-indexed `ℝ≥0∞` sum (the
+form consumed by the convolution region split): the centre-arbitrary shell
+reorganization turns the z-sum into `∑_n card·(if n≤K then …)`, every partial sum
+of which is `≤ ∑_{n≤K} card·(1+n)^{−α} = ofReal(radial ball bound)`
+(via `ENNReal.tsum_le_of_sum_range_le`). -/
+theorem tsum_ball_radial_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : α < (d : ℝ))
+    (x : Fin d → ℤ) (K : ℕ) :
+    ∑' z : Fin d → ℤ,
+        (if IsingModel.latticeDistance d x z ≤ K then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) else 0)
+      ≤ ENNReal.ofReal ((2 : ℝ) ^ d * (((K : ℝ) + 2) ^ ((d : ℝ) - α) / ((d : ℝ) - α) + 1)) := by
+  rw [tsum_radial_eq_tsum_shell_center d x
+    (fun n => if n ≤ K then ENNReal.ofReal ((1 + (n : ℝ)) ^ (-α)) else 0)]
+  -- Rewrite each shell term `card · (if …)` as `if … then ofReal(card·…) else 0`.
+  have hkern : ∀ n : ℕ,
+      ((latticeSphere d n).card : ℝ≥0∞) *
+          (if n ≤ K then ENNReal.ofReal ((1 + (n : ℝ)) ^ (-α)) else 0)
+        = (if n ≤ K then
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-α))
+            else 0) := by
+    intro n
+    by_cases hn : n ≤ K
+    · rw [if_pos hn, if_pos hn,
+        ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_natCast]
+    · rw [if_neg hn, if_neg hn, mul_zero]
+  simp_rw [hkern]
+  refine ENNReal.tsum_le_of_sum_range_le (fun m => ?_)
+  -- Bound the partial sum by the full ball shell-sum, then by `ofReal(bound)`.
+  have hsub :
+      ∑ n ∈ Finset.range m,
+          (if n ≤ K then
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-α)) else 0)
+        ≤ ∑ n ∈ Finset.range (K + 1),
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-α)) := by
+    rw [← Finset.sum_filter]
+    refine Finset.sum_le_sum_of_subset ?_
+    intro n hn
+    rw [Finset.mem_filter, Finset.mem_range] at hn
+    rw [Finset.mem_range]; omega
+  refine hsub.trans ?_
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun n _ => by positivity)]
+  exact ENNReal.ofReal_le_ofReal (radial_shell_ball_sum_le hd hα K)
+
 end IsingModel
