@@ -714,4 +714,107 @@ theorem far_real_decay_le {d : ℕ} {α : ℝ} (hα2 : (d : ℝ) < 2 * α) {k D 
       ring]
   gcongr
 
+/-- **Sharp distance-dependent Hardy–Littlewood–Sobolev convolution bound on `ℤ^d`.**
+For `d/2 < α < d` there is a positive constant `C` such that for all `x y`,
+`∑_z (1+|x−z|)^{−α}·(1+|y−z|)^{−α} ≤ C·(1+|x−y|)^{−(2α−d)}`
+(everything in `ℝ≥0∞` via `ENNReal.ofReal`).
+
+This is the genuinely hard, non-obstructed analytic core behind the uniform
+Lipschitz control of `m⁻^{2α+1}` needed for the true-mass continuity statement
+GJ Theorem 17.5.1.  The proof covers `ℤ^d` by the near-`x`, near-`y` and far
+regions relative to `D = |x−y|` (`tsum_conv_le_sum_regions`), bounds each region
+by a radial sum (`tsum_nearx_region_le`, `tsum_far_region_le`) and reduces each
+to the common decay factor `(1+D)^{d−2α}` with explicit constants
+(`near_real_decay_le`, `far_real_decay_le`); the witness is `C = 2·C_near + C_far`. -/
+theorem hls_conv_sharp_decay {d : ℕ} (hd : 1 ≤ d) {α : ℝ}
+    (hαnn : 0 ≤ α) (hα : α < (d : ℝ)) (hα2 : (d : ℝ) < 2 * α) :
+    ∃ C : ℝ, 0 < C ∧ ∀ x y : Fin d → ℤ,
+      (∑' z : Fin d → ℤ,
+        ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)))
+        ≤ ENNReal.ofReal C *
+            ENNReal.ofReal
+              ((1 + (IsingModel.latticeDistance d x y : ℝ)) ^ (-(2 * α - (d : ℝ)))) := by
+  have hd1 : (0 : ℝ) < (d : ℝ) - α := by linarith
+  have hd2 : (0 : ℝ) < 2 * α - (d : ℝ) := by linarith
+  set Cnear : ℝ :=
+    (2 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ ((d : ℝ) - α) / ((d : ℝ) - α)
+      + (2 : ℝ) ^ d * (2 : ℝ) ^ α with hCnear
+  set Cfar : ℝ :=
+    (3 : ℝ) ^ α * (2 : ℝ) ^ d * (2 : ℝ) ^ (2 * α - (d : ℝ)) / (2 * α - (d : ℝ)) with hCfar
+  have hCnpos : 0 < Cnear := by
+    rw [hCnear]; exact add_pos (div_pos (by positivity) hd1) (by positivity)
+  have hCfpos : 0 < Cfar := by rw [hCfar]; exact div_pos (by positivity) hd2
+  refine ⟨2 * Cnear + Cfar, by linarith, fun x y => ?_⟩
+  have hDR : (0 : ℝ) ≤ (IsingModel.latticeDistance d x y : ℝ) := by positivity
+  have hKR : (0 : ℝ) ≤ ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ) := by positivity
+  have hlow : (1 + (IsingModel.latticeDistance d x y : ℝ)) / 2
+      ≤ 1 + ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ) := by
+    have h1 : IsingModel.latticeDistance d x y
+        ≤ 1 + 2 * (IsingModel.latticeDistance d x y / 2) := by omega
+    have h2 : (IsingModel.latticeDistance d x y : ℝ)
+        ≤ 1 + 2 * ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ) := by exact_mod_cast h1
+    linarith
+  have hhigh : ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ) + 2
+      ≤ 2 * (1 + (IsingModel.latticeDistance d x y : ℝ)) := by
+    have h1 : IsingModel.latticeDistance d x y / 2
+        ≤ 2 * IsingModel.latticeDistance d x y := by omega
+    have h2 : ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ)
+        ≤ 2 * (IsingModel.latticeDistance d x y : ℝ) := by exact_mod_cast h1
+    linarith
+  -- near-x region bound
+  have hnx : (∑' z : Fin d → ℤ,
+        (if 2 * IsingModel.latticeDistance d x z ≤ IsingModel.latticeDistance d x y then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0))
+        ≤ ENNReal.ofReal Cnear *
+            ENNReal.ofReal
+              ((1 + (IsingModel.latticeDistance d x y : ℝ)) ^ (-(2 * α - (d : ℝ)))) := by
+    refine (tsum_nearx_region_le hd hαnn hα x y).trans ?_
+    rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul hCnpos.le]
+    apply ENNReal.ofReal_le_ofReal
+    rw [neg_sub, hCnear]
+    exact near_real_decay_le hαnn hα hKR hDR hlow hhigh
+  -- near-y region bound (by symmetry, commuting the factors)
+  have hny : (∑' z : Fin d → ℤ,
+        (if 2 * IsingModel.latticeDistance d y z ≤ IsingModel.latticeDistance d x y then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0))
+        ≤ ENNReal.ofReal Cnear *
+            ENNReal.ofReal
+              ((1 + (IsingModel.latticeDistance d x y : ℝ)) ^ (-(2 * α - (d : ℝ)))) := by
+    have h := tsum_nearx_region_le hd hαnn hα y x
+    rw [IsingModel.latticeDistance_comm d y x] at h
+    refine le_trans (le_of_eq ?_) (h.trans ?_)
+    · refine tsum_congr (fun z => ?_)
+      by_cases hc : 2 * IsingModel.latticeDistance d y z ≤ IsingModel.latticeDistance d x y
+      · rw [if_pos hc, if_pos hc, mul_comm]
+      · rw [if_neg hc, if_neg hc]
+    · rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul hCnpos.le]
+      apply ENNReal.ofReal_le_ofReal
+      rw [neg_sub, hCnear]
+      exact near_real_decay_le hαnn hα hKR hDR hlow hhigh
+  -- far region bound
+  have hfar : (∑' z : Fin d → ℤ,
+        (if IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d x z ∧
+            IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d y z then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0))
+        ≤ ENNReal.ofReal Cfar *
+            ENNReal.ofReal
+              ((1 + (IsingModel.latticeDistance d x y : ℝ)) ^ (-(2 * α - (d : ℝ)))) := by
+    refine (tsum_far_region_le hd hα2 x y).trans ?_
+    rw [← ENNReal.ofReal_mul (by positivity), ← ENNReal.ofReal_mul hCfpos.le]
+    apply ENNReal.ofReal_le_ofReal
+    rw [neg_sub, hCfar]
+    exact far_real_decay_le hα2 hDR hlow
+  -- assemble
+  refine (tsum_conv_le_sum_regions x y).trans ?_
+  refine (add_le_add (add_le_add hnx hny) hfar).trans (le_of_eq ?_)
+  rw [← add_mul, ← add_mul,
+    ← ENNReal.ofReal_add hCnpos.le hCnpos.le,
+    ← ENNReal.ofReal_add (add_nonneg hCnpos.le hCnpos.le) hCfpos.le]
+  congr 2
+  ring
+
 end IsingModel
