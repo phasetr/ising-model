@@ -29458,6 +29458,40 @@ cross-sum equals this dart sum via
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
 
+\subsubsection*{$m^-$-scaled convolution and exponential cancellation (p.~312
+$c$-denominator)}
+
+The GJ p.~312 derivative estimate divides the cross-product sum by
+$\langle\varphi(x_0)\varphi(y_0)\rangle$; substituting the $m^-$ definition
+(numerator majorized, denominator an identity) leaves an $m^-$-scaled rational
+convolution after an exponential cancellation.  Both foundations are formalized
+(axiom-free) in \texttt{IsingModel/PseudoMass/HLSSharpPairBound.lean}.
+
+\begin{theorem}[\texttt{tsum\_one\_div\_one\_add\_scaled\_pow\_pair\_le}]
+For $t>0$ and $d/2<\alpha<d$ there is $C>0$ with, for all $x,y$,
+\[
+  \sum_{z}\frac{1}{1+(t\,d(x,z))^\alpha}\cdot\frac{1}{1+(t\,d(y,z))^\alpha}
+  \;\le\; C\,(1+d(x,y))^{-(2\alpha-d)} .
+\]
+\end{theorem}
+
+\textit{Proof.}  The form bridge
+\texttt{one\_div\_one\_add\_M\_t\_pow\_pair\_le\_const\_sq\_mul\_one\_div\_one\_add\_pow\_pow}
+with $M=t$ reduces each summand to
+$C_t^2(1+d(x,z))^{-\alpha}(1+d(y,z))^{-\alpha}$ with $C_t=\max(1,t^{-\alpha})2^\alpha$;
+\texttt{hls\_conv\_sharp\_decay\_real} then closes it, $C=C_t^2 C_{\mathrm{HLS}}$.
+
+\begin{theorem}[\texttt{exp\_neg\_scaled\_dist\_pair\_le\_one}]
+For $t\ge 0$, $\exp(-t\,(d(x,z)+d(y,z)-d(x,y)))\le 1$.
+\end{theorem}
+
+\textit{Proof.}  $d(x,z)+d(y,z)\ge d(x,y)$ by the triangle inequality, so the
+exponent is nonpositive.  This is the cancellation of the numerator exponentials
+$e^{-t\,d(x,z)}e^{-t\,d(y,z)}$ against the denominator exponential $e^{-t\,d(x,y)}$
+of the $m^-$ identity in the GJ p.~312 $c$-denominator step.
+
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
+
 \subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
 Combining Steps 117a--g with the HLS convolution constant and the remaining
