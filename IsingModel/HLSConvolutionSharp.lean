@@ -347,4 +347,105 @@ theorem tsum_ball_radial_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : α < (d :
   rw [← ENNReal.ofReal_sum_of_nonneg (fun n _ => by positivity)]
   exact ENNReal.ofReal_le_ofReal (radial_shell_ball_sum_le hd hα K)
 
+/-- **Radial shell-sum over a tail** (`d < 2α`, `d ≥ 1`): the shell-weighted
+`(1+n)^{−2α}` sum over radii `n > K` (here as a finite `Ioc K m` partial sum) is
+bounded by `2^d·(K+1)^{d−2α}/(2α−d)`, uniformly in `m`.
+
+Combines `latticeSphere_card_mul_rpow_le` (term-wise, `s=−2α`) with the tail
+integral comparison `sum_Ioc_nat_rpow_le` (at `e = d−1−2α < −1`), after reindexing
+`∑_{n∈Ioc K m} (1+n)^e = ∑_{j∈Ioc (K+1) (m+1)} j^e`. -/
+theorem radial_shell_tail_sum_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα2 : (d : ℝ) < 2 * α)
+    (K m : ℕ) :
+    ∑ n ∈ Finset.Ioc K m,
+        ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-(2 * α))
+      ≤ (2 : ℝ) ^ d * ((K : ℝ) + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ)) := by
+  set e : ℝ := (d : ℝ) - 1 - 2 * α with he_def
+  have he : e < -1 := by rw [he_def]; linarith
+  -- Term-wise card→power reduction.
+  have hterm : ∀ n ∈ Finset.Ioc K m,
+      ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-(2 * α))
+        ≤ (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ e := by
+    intro n _
+    have := latticeSphere_card_mul_rpow_le d hd n (-(2 * α))
+    rwa [show (d : ℝ) - 1 + -(2 * α) = e from by rw [he_def]; ring] at this
+  refine (Finset.sum_le_sum hterm).trans ?_
+  rw [← Finset.mul_sum]
+  -- Reindex `∑_{Ioc K m} (1+n)^e = ∑_{Ioc (K+1) (m+1)} j^e`.
+  have hreindex : ∑ n ∈ Finset.Ioc K m, (1 + (n : ℝ)) ^ e
+      = ∑ j ∈ Finset.Ioc (K + 1) (m + 1), ((j : ℝ)) ^ e := by
+    have hIoc : Finset.Ioc (K + 1) (m + 1) = Finset.Ico (K + 2) (m + 2) := by
+      ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+    have hIoc2 : Finset.Ioc K m = Finset.Ico (K + 1) (m + 1) := by
+      ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+    rw [hIoc, hIoc2, show K + 2 = (K + 1) + 1 from rfl,
+      show m + 2 = (m + 1) + 1 from rfl,
+      ← Finset.map_add_right_Ico (K + 1) (m + 1) 1, Finset.sum_map]
+    refine Finset.sum_congr rfl (fun n _ => ?_)
+    simp only [addRightEmbedding_apply]
+    congr 1
+    push_cast
+    ring
+  rw [hreindex]
+  -- Tail integral comparison at `R = K+1`, `M = m+1`.
+  by_cases hKm : K + 1 ≤ m + 1
+  · have htail := sum_Ioc_nat_rpow_le he (R := K + 1) (M := m + 1) (by omega) hKm
+    have hee : -(e + 1) = 2 * α - (d : ℝ) := by rw [he_def]; ring
+    have hcast : (((K + 1 : ℕ) : ℝ)) = (K : ℝ) + 1 := by push_cast; ring
+    rw [hee, hcast] at htail
+    have h2d_pos : (0 : ℝ) < (2 : ℝ) ^ d := by positivity
+    calc (2 : ℝ) ^ d * ∑ j ∈ Finset.Ioc (K + 1) (m + 1), ((j : ℝ)) ^ e
+        ≤ (2 : ℝ) ^ d * (((K : ℝ) + 1) ^ (e + 1) / (2 * α - (d : ℝ))) :=
+          mul_le_mul_of_nonneg_left htail h2d_pos.le
+      _ = (2 : ℝ) ^ d * ((K : ℝ) + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ)) := by
+          rw [show e + 1 = (d : ℝ) - 2 * α from by rw [he_def]; ring]; ring
+  · have hempty : Finset.Ioc (K + 1) (m + 1) = ∅ := Finset.Ioc_eq_empty (by omega)
+    rw [hempty, Finset.sum_empty, mul_zero]
+    apply div_nonneg
+    · positivity
+    · linarith
+
+/-- **Radial tail z-sum bound** (`d < 2α`, `d ≥ 1`): the `ℝ≥0∞` sum over lattice
+points `z` with `K < latticeDistance d x z` of `(1+dist)^{−2α}` is bounded by
+`ENNReal.ofReal (2^d·(K+1)^{d−2α}/(2α−d))`.
+
+The far-region engine bridge: centre-arbitrary shell reorganization +
+`ENNReal.tsum_le_of_sum_range_le`, each partial sum bounded by `radial_shell_tail_sum_le`. -/
+theorem tsum_tail_radial_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα2 : (d : ℝ) < 2 * α)
+    (x : Fin d → ℤ) (K : ℕ) :
+    ∑' z : Fin d → ℤ,
+        (if K < IsingModel.latticeDistance d x z then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-(2 * α))) else 0)
+      ≤ ENNReal.ofReal
+          ((2 : ℝ) ^ d * ((K : ℝ) + 1) ^ ((d : ℝ) - 2 * α) / (2 * α - (d : ℝ))) := by
+  rw [tsum_radial_eq_tsum_shell_center d x
+    (fun n => if K < n then ENNReal.ofReal ((1 + (n : ℝ)) ^ (-(2 * α))) else 0)]
+  have hkern : ∀ n : ℕ,
+      ((latticeSphere d n).card : ℝ≥0∞) *
+          (if K < n then ENNReal.ofReal ((1 + (n : ℝ)) ^ (-(2 * α))) else 0)
+        = (if K < n then
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-(2 * α)))
+            else 0) := by
+    intro n
+    by_cases hn : K < n
+    · rw [if_pos hn, if_pos hn,
+        ENNReal.ofReal_mul (by positivity), ENNReal.ofReal_natCast]
+    · rw [if_neg hn, if_neg hn, mul_zero]
+  simp_rw [hkern]
+  refine ENNReal.tsum_le_of_sum_range_le (fun m => ?_)
+  have hsub :
+      ∑ n ∈ Finset.range m,
+          (if K < n then
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-(2 * α)))
+            else 0)
+        ≤ ∑ n ∈ Finset.Ioc K m,
+            ENNReal.ofReal (((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-(2 * α))) := by
+    rw [← Finset.sum_filter]
+    refine Finset.sum_le_sum_of_subset ?_
+    intro n hn
+    rw [Finset.mem_filter, Finset.mem_range] at hn
+    rw [Finset.mem_Ioc]; omega
+  refine hsub.trans ?_
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun n _ => by positivity)]
+  exact ENNReal.ofReal_le_ofReal (radial_shell_tail_sum_le hd hα2 K m)
+
 end IsingModel
