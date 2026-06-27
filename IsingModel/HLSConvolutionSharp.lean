@@ -448,4 +448,54 @@ theorem tsum_tail_radial_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα2 : (d : ℝ
   rw [← ENNReal.ofReal_sum_of_nonneg (fun n _ => by positivity)]
   exact ENNReal.ofReal_le_ofReal (radial_shell_tail_sum_le hd hα2 K m)
 
+/-- **Near-x region bound** of the sharp HLS convolution (`α < d`, `d ≥ 1`): the
+sum over `z` with `2·dist(x,z) ≤ D := dist(x,y)` of
+`ofReal((1+dist x z)^{−α})·ofReal((1+dist y z)^{−α})` is bounded by
+`ofReal((1+K)^{−α}) · ofReal(2^d·((K+2)^{d−α}/(d−α)+1))` with `K := D/2`.
+
+In this region `dist(y,z) ≥ D − dist(x,z) ≥ K` (triangle inequality), so the
+`y`-factor is `≤ ofReal((1+K)^{−α})`; factoring it out (`ENNReal.tsum_mul_right`)
+leaves the radial ball sum `tsum_ball_radial_le`. -/
+theorem tsum_nearx_region_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hαnn : 0 ≤ α) (hα : α < (d : ℝ))
+    (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        (if 2 * IsingModel.latticeDistance d x z ≤ IsingModel.latticeDistance d x y then
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0)
+      ≤ ENNReal.ofReal ((1 + ((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ)) ^ (-α)) *
+          ENNReal.ofReal ((2 : ℝ) ^ d *
+            ((((IsingModel.latticeDistance d x y / 2 : ℕ) : ℝ) + 2) ^ ((d : ℝ) - α) /
+              ((d : ℝ) - α) + 1)) := by
+  have hα0 : (-α) ≤ 0 := by linarith
+  set D := IsingModel.latticeDistance d x y with hD
+  set K := D / 2 with hK
+  set C : ℝ≥0∞ := ENNReal.ofReal ((1 + (K : ℝ)) ^ (-α)) with hC
+  -- Pointwise: near-x term ≤ (ball indicator)·C.
+  have hcover : ∀ z : Fin d → ℤ,
+      (if 2 * IsingModel.latticeDistance d x z ≤ D then
+        ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0)
+        ≤ (if IsingModel.latticeDistance d x z ≤ K then
+            ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) else 0) * C := by
+    intro z
+    by_cases hz : 2 * IsingModel.latticeDistance d x z ≤ D
+    · rw [if_pos hz, if_pos (by omega : IsingModel.latticeDistance d x z ≤ K)]
+      -- y-factor ≤ C.
+      have hyge : K ≤ IsingModel.latticeDistance d y z := by
+        have htri := IsingModel.latticeDistance_triangle d x z y
+        rw [IsingModel.latticeDistance_comm d z y] at htri
+        omega
+      have hyle : ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) ≤ C := by
+        rw [hC]
+        apply ENNReal.ofReal_le_ofReal
+        apply Real.rpow_le_rpow_of_nonpos (by positivity) _ hα0
+        have : (K : ℝ) ≤ (IsingModel.latticeDistance d y z : ℝ) := by exact_mod_cast hyge
+        linarith
+      exact mul_le_mul' le_rfl hyle
+    · rw [if_neg hz]
+      exact zero_le _
+  refine (ENNReal.tsum_le_tsum hcover).trans ?_
+  rw [ENNReal.tsum_mul_right, mul_comm]
+  exact mul_le_mul' le_rfl (tsum_ball_radial_le hd hα x K)
+
 end IsingModel
