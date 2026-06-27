@@ -574,4 +574,41 @@ theorem tsum_far_region_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ}
   rw [ENNReal.tsum_mul_left]
   exact mul_le_mul' le_rfl (tsum_tail_radial_le hd hα2 x K)
 
+/-- **Three-region cover** of the sharp HLS convolution: the full sum is bounded
+by the sum of the near-x, near-y and far region sums.
+
+Every `z` lies in at least one region (`2·dist(x,z) ≤ D`, `2·dist(y,z) ≤ D`, or
+`D < 2·dist(x,z) ∧ D < 2·dist(y,z)` with `D := dist(x,y)`), and the summand is
+nonnegative, so the un-indicatored value is dominated pointwise by the sum of its
+three indicator copies; `ENNReal.tsum_le_tsum` + `ENNReal.tsum_add` lift this. -/
+theorem tsum_conv_le_sum_regions {d : ℕ} {α : ℝ} (x y : Fin d → ℤ) :
+    ∑' z : Fin d → ℤ,
+        ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+          ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α))
+      ≤ (∑' z : Fin d → ℤ,
+            (if 2 * IsingModel.latticeDistance d x z ≤ IsingModel.latticeDistance d x y then
+              ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+                ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0))
+        + (∑' z : Fin d → ℤ,
+            (if 2 * IsingModel.latticeDistance d y z ≤ IsingModel.latticeDistance d x y then
+              ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+                ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0))
+        + (∑' z : Fin d → ℤ,
+            (if IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d x z ∧
+                IsingModel.latticeDistance d x y < 2 * IsingModel.latticeDistance d y z then
+              ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+                ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) else 0)) := by
+  rw [← ENNReal.tsum_add, ← ENNReal.tsum_add]
+  refine ENNReal.tsum_le_tsum (fun z => ?_)
+  set t : ℝ≥0∞ :=
+    ENNReal.ofReal ((1 + (IsingModel.latticeDistance d x z : ℝ)) ^ (-α)) *
+      ENNReal.ofReal ((1 + (IsingModel.latticeDistance d y z : ℝ)) ^ (-α)) with ht
+  by_cases h1 : 2 * IsingModel.latticeDistance d x z ≤ IsingModel.latticeDistance d x y
+  · rw [if_pos h1]
+    exact le_self_add.trans le_self_add
+  · by_cases h2 : 2 * IsingModel.latticeDistance d y z ≤ IsingModel.latticeDistance d x y
+    · rw [if_neg h1, if_pos h2, zero_add]
+      exact le_self_add
+    · rw [if_neg h1, if_neg h2, if_pos ⟨by omega, by omega⟩, zero_add, zero_add]
+
 end IsingModel
