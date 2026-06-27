@@ -32541,4 +32541,44 @@ $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quo
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
 
 
+\subsection*{PR \#4331 --- Conditional interval Lipschitz of $(m^-)^{2\alpha+1}$ on the convergence window (GJ~\S17.5 Theorem 17.5.1 intermediate Lipschitz claim)}
+
+\par\noindent\textbf{Role:} Upgrades the pointwise $\texttt{hcomp}$ discharge of PR~\#4330 to the
+GJ~\S17.5 Theorem 17.5.1 \emph{intermediate Lipschitz estimate} per-pair, with a single constant:
+$\texttt{lemma\_17\_5\_2\_pseudoMass\_pow\_succ\_lipschitz\_on\_window\_of\_profile\_lower}$ gives, for
+$\texttt{Icc}\,\beta_1\,\beta_2\subseteq\texttt{ConvergenceRegion.window}\,d\,J$ and the interval
+profile lower bound $\texttt{hprofile}$ ($\forall\beta\in\texttt{Icc}$),
+$\exists K>0,\ |m^-(\beta_2)^{2\alpha+1}-m^-(\beta_1)^{2\alpha+1}|\le(2\alpha+1)K/\rho\cdot(\beta_2-\beta_1)$.
+File $\texttt{SharpHLSDenominatorComparison.lean}$.
+
+\par\noindent\textbf{The single constant $K$.} Feeds a fixed-$K$ interval $\texttt{hcomp}$ into the
+existing consumer
+$\texttt{pseudoMassFromParamsAtPair\_beta\_pow\_succ\_lipschitz\_on\_Icc\_of\_corr\_differentiableAt}$,
+combining:
+\begin{itemize}
+  \item the pair- and stage-uniform numerator bound $B:=J(\beta_2J\,2d/(1-\beta_2J\,2d))^2+J\cdot4d$
+    --- the susceptibility bound $\texttt{lemma\_17\_5\_2\_finite\_deriv\_abs\_le\_high\_temp\_on\_Icc\_all\_stages}$
+    passed to the limiting derivative through the axiom-free window provider
+    $\texttt{ConvergenceRegion.derivativeLimit\_on\_window}$ and
+    $\texttt{correlationInfinite\_hasDerivAt\_beta\_of\_tendstoLocallyUniformlyOn\_deriv}$,
+    with $\texttt{le\_of\_tendsto}$;
+  \item the \emph{interval-uniform} ratio lower bound $L_{\min}:=\texttt{pseudoMassG}\,\alpha\,\rho\,q_1/q_1^{2\alpha}$
+    ($q_1:=-\log(\beta_1J\,2d)$) from the per-$\beta$ bound
+    $\texttt{lemma\_17\_5\_2\_profile\_lower\_ratio\_lower\_cubic}$ (\#4330) plus monotonicity of $q$
+    and $\texttt{pseudoMassG\_antitoneOn}$ --- \emph{no compactness argument}: $q(\beta)\le q_1$ for
+    $\beta\ge\beta_1$, so $L_{\min}\le L(\beta)\le c/m^{2\alpha}$.
+\end{itemize}
+Then $K:=\max(1,B/L_{\min})$ closes $|c'(\beta)|\le B\le K L_{\min}\le K c/m^{2\alpha}$ for all
+$\beta\in\texttt{Icc}$.
+
+\par\noindent\textbf{Conditional / Partial + downstream obstruction.} $\texttt{hprofile}$ is a genuine
+per-pair hypothesis ($\forall$-displacement form false, \#4270); the unconditional headline is
+$\texttt{globalPseudoMassDist\_fullSandwich}$ (\#4317).  The \emph{system} pseudo-mass
+$\texttt{globalPseudoMassDist}$ (infinite lower envelope) continuity does \emph{not} follow:
+large-separation pairs blow up the per-pair Lipschitz constant $(2\alpha+1)K/\rho$, so this is the
+per-pair endpoint of the conditional Lipschitz chain.
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \end{document}
