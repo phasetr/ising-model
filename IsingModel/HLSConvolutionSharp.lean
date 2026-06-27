@@ -237,4 +237,50 @@ theorem sum_Ioc_zero_nat_rpow_le {e : ℝ} (he : -1 < e) {N : ℕ} (hN : 1 ≤ N
       linarith [hNN1]
     linarith [hle, hfrac]
 
+/-- **Radial shell-sum over a ball** (`α < d`, `d ≥ 1`): the shell-weighted
+inverse-power sum over radii `0..K` is bounded by `2^d·((K+2)^{d-α}/(d-α) + 1)`.
+
+Combines `latticeSphere_card_mul_rpow_le` (term-wise card→power reduction, with
+`s = -α`) with the head-sum integral comparison `sum_Ioc_zero_nat_rpow_le` (at
+`e = d-1-α > -1`), after reindexing `∑_{n ∈ range (K+1)} (1+n)^e = ∑_{m ∈ Ioc 0 (K+1)} m^e`. -/
+theorem radial_shell_ball_sum_le {d : ℕ} (hd : 1 ≤ d) {α : ℝ} (hα : α < (d : ℝ))
+    (K : ℕ) :
+    ∑ n ∈ Finset.range (K + 1),
+        ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-α)
+      ≤ (2 : ℝ) ^ d * (((K : ℝ) + 2) ^ ((d : ℝ) - α) / ((d : ℝ) - α) + 1) := by
+  set e : ℝ := (d : ℝ) - 1 - α with he_def
+  have he : -1 < e := by rw [he_def]; linarith
+  -- Term-wise card→power reduction.
+  have hterm : ∀ n ∈ Finset.range (K + 1),
+      ((latticeSphere d n).card : ℝ) * (1 + (n : ℝ)) ^ (-α)
+        ≤ (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ e := by
+    intro n _
+    have := latticeSphere_card_mul_rpow_le d hd n (-α)
+    rwa [show (d : ℝ) - 1 + -α = e from by rw [he_def]; ring] at this
+  refine (Finset.sum_le_sum hterm).trans ?_
+  rw [← Finset.mul_sum]
+  -- Reindex `∑_{range (K+1)} (1+n)^e = ∑_{Ioc 0 (K+1)} m^e`.
+  have hreindex : ∑ n ∈ Finset.range (K + 1), (1 + (n : ℝ)) ^ e
+      = ∑ m ∈ Finset.Ioc 0 (K + 1), ((m : ℝ)) ^ e := by
+    have hIoc : Finset.Ioc 0 (K + 1) = Finset.Ico 1 (K + 2) := by
+      ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+    rw [hIoc, show (1 : ℕ) = 0 + 1 from rfl, ← Finset.map_add_right_Ico 0 (K + 1) 1,
+      Finset.sum_map, Finset.range_eq_Ico]
+    refine Finset.sum_congr rfl (fun n _ => ?_)
+    simp only [addRightEmbedding_apply]
+    congr 1
+    push_cast
+    ring
+  rw [hreindex]
+  -- Head-sum bound at `N = K+1`.
+  have hhead := sum_Ioc_zero_nat_rpow_le he (N := K + 1) (by omega)
+  have hee : e + 1 = (d : ℝ) - α := by rw [he_def]; ring
+  have hNN : ((K : ℝ) + 1 + 1) = (K : ℝ) + 2 := by ring
+  rw [hee] at hhead
+  have hcast : (((K + 1 : ℕ) : ℝ)) = (K : ℝ) + 1 := by push_cast; ring
+  rw [hcast] at hhead
+  have h2d_pos : (0 : ℝ) < (2 : ℝ) ^ d := by positivity
+  rw [hNN] at hhead
+  exact mul_le_mul_of_nonneg_left hhead h2d_pos.le
+
 end IsingModel
