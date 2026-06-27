@@ -11610,6 +11610,27 @@ of scope.
 (\texttt{Lemma\_17\_5\_2/GlobalPseudoMassDistUpperFull.lean}; \texttt{\#print axioms}
 $= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
 
+\paragraph{Arbitrary-exhaustion full-window sandwich.}
+The book's Lemma 17.5.2 concerns the exhaustion-\emph{independent} infinite-volume
+system, so the full-window sandwich is lifted from the cubic exhaustion to an
+arbitrary exhaustion $\Lambda$
+($\mathrm{globalPseudoMassDist\_fullSandwich\_exhaustion}$).  The lift is purely
+exhaustion-independence: the infinite-volume two-point correlation
+$\mathrm{correlationInfinite}(\mathrm{latticeGraph}\,d,\Lambda,\langle J,0,\beta
+\rangle,\{x,z\})$ is $\Lambda$-independent
+($\mathrm{correlationInfinite\_indep\_exhaustion}$, ferromagnetic), so the
+faithful per-pair pseudo-mass
+($\mathrm{pseudoMassFromParamsAtPairDist\_indep\_exhaustion}$), the active-pair
+predicate ($\mathrm{activePseudoMassPair\_indep\_exhaustion}$) and hence their
+lower envelope ($\mathrm{globalPseudoMassDist\_indep\_exhaustion}$) all agree
+across exhaustions, while $\mathrm{latticeMass}\,d\,\Lambda$ is $\Lambda$-independent
+($\mathrm{latticeMass\_indep\_cubicExhaustion}$).  The upper constant
+$C = \mathrm{globalPseudoMassDistFullUpperConst}\,\alpha\,d\,J\,\beta$ depends only
+on $\alpha,d,J,\beta$, and the lower bound already held for any exhaustion
+(\#4314).  No new spectral input.
+(\texttt{Lemma\_17\_5\_2/GlobalPseudoMassDistExhaustion.lean}; \texttt{\#print axioms}
+$= [\mathrm{propext}, \mathrm{Classical.choice}, \mathrm{Quot.sound}]$. Issue \#4313.)
+
 The exhaustion-transfer refinements
 $\mathrm{HasExponentialDecay\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
 $\mathrm{latticeMass\_ge\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
