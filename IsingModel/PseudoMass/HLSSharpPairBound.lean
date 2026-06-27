@@ -115,9 +115,8 @@ the decay with `K = 4·C²·C_HLS`. -/
 theorem tsum_correlationInfinite_pair_product_le_HLS_sharp_decay
     {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
     (d : ℕ) (hαd : d < 2 * α) (hαd2 : α < d) (J β : ℝ)
-    (bridge : PseudoMassLatticeDistanceBridge hα hr' d J β)
-    (x₀ y₀ : Fin d → ℤ) :
-    ∃ K : ℝ, 0 < K ∧
+    (bridge : PseudoMassLatticeDistanceBridge hα hr' d J β) :
+    ∃ K : ℝ, 0 < K ∧ ∀ x₀ y₀ : Fin d → ℤ,
       ∑' z : Fin d → ℤ,
         Ambient.correlationInfinite (IsingModel.latticeGraph d)
             (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
@@ -132,7 +131,7 @@ theorem tsum_correlationInfinite_pair_product_le_HLS_sharp_decay
     mul_pos (lt_of_lt_of_le zero_lt_one (le_max_left _ _)) (pow_pos (by norm_num) α)
   obtain ⟨Chls, hChls_pos, hChls⟩ := hls_conv_sharp_decay_real (d := d) hd_one
     (α := (α : ℝ)) (by positivity) (by exact_mod_cast hαd2) (by exact_mod_cast hαd)
-  refine ⟨4 * C ^ 2 * Chls, by positivity, ?_⟩
+  refine ⟨4 * C ^ 2 * Chls, by positivity, fun x₀ y₀ => ?_⟩
   set f : (Fin d → ℤ) → ℝ := fun z =>
       Ambient.correlationInfinite (IsingModel.latticeGraph d)
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {x₀, z} *
