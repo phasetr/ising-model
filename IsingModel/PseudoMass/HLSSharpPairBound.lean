@@ -549,5 +549,88 @@ theorem darts_cross_sum_le_sharp_decay
           ring
   exact (hstep1.trans hstep2).trans hstep3
 
+/-- **`t`-scaled sharp HLS convolution.**  For `t > 0` and `d/2 < α < d`, the
+convolution of the `t`-scaled rational kernels decays sharply:
+`∑'_z 1/(1+(t·d(x,z))^α)·1/(1+(t·d(y,z))^α) ≤ C·(1+d(x,y))^{−(2α−d)}`.
+
+This is the form needed for the GJ p. 312 `c`-denominator handling, where the
+two-point functions are replaced by their `m⁻`-scaled rational majorants
+(`t = m⁻`).  Proof: the form bridge
+`one_div_one_add_M_t_pow_pair_le_const_sq_mul_one_div_one_add_pow_pow` (with
+`M = t`) reduces each summand to `C_t²·(1+d(x,z))^{−α}(1+d(y,z))^{−α}`, then
+`hls_conv_sharp_decay_real` closes it; `C = C_t²·C_HLS` with
+`C_t = max 1 (t^α)⁻¹·2^α`. -/
+theorem tsum_one_div_one_add_scaled_pow_pair_le {d : ℕ} (hd : 1 ≤ d) {α : ℕ}
+    (hαd : d < 2 * α) (hαd2 : α < d) {t : ℝ} (ht : 0 < t) :
+    ∃ C : ℝ, 0 < C ∧ ∀ x y : Fin d → ℤ,
+      ∑' z : Fin d → ℤ,
+        1 / (1 + (t * (latticeDistance d x z : ℝ)) ^ α) *
+          (1 / (1 + (t * (latticeDistance d y z : ℝ)) ^ α))
+        ≤ C * (1 + (latticeDistance d x y : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by
+  obtain ⟨C0, hC0, hC0bd⟩ := hls_conv_sharp_decay_real hd (Nat.cast_nonneg α)
+    (by exact_mod_cast hαd2) (by exact_mod_cast hαd)
+  set Ct := max 1 (t ^ α)⁻¹ * (2 : ℝ) ^ α with hCt
+  have hCt_pos : 0 < Ct := by
+    rw [hCt]; exact mul_pos (lt_of_lt_of_le one_pos (le_max_left _ _)) (by positivity)
+  refine ⟨Ct ^ 2 * C0, by positivity, fun x y => ?_⟩
+  have hpt : ∀ z : Fin d → ℤ,
+      1 / (1 + (t * (latticeDistance d x z : ℝ)) ^ α) *
+        (1 / (1 + (t * (latticeDistance d y z : ℝ)) ^ α))
+        ≤ Ct ^ 2 * ((1 + (latticeDistance d x z : ℝ)) ^ (-(α : ℝ)) *
+            (1 + (latticeDistance d y z : ℝ)) ^ (-(α : ℝ))) := by
+    intro z
+    have hdx_nn : (0 : ℝ) ≤ (latticeDistance d x z : ℝ) := by positivity
+    have hdy_nn : (0 : ℝ) ≤ (latticeDistance d y z : ℝ) := by positivity
+    have hpair := one_div_one_add_M_t_pow_pair_le_const_sq_mul_one_div_one_add_pow_pow
+      (M := t) (tx := (latticeDistance d x z : ℝ)) (ty := (latticeDistance d y z : ℝ))
+      (α := α) ht hdx_nn hdy_nn
+    rw [one_div_one_add_pow_eq_rpow_neg hdx_nn,
+      one_div_one_add_pow_eq_rpow_neg hdy_nn] at hpair
+    rw [hCt]; exact hpair
+  have hsum_rhs : Summable (fun z : Fin d → ℤ => Ct ^ 2 *
+      ((1 + (latticeDistance d x z : ℝ)) ^ (-(α : ℝ)) *
+        (1 + (latticeDistance d y z : ℝ)) ^ (-(α : ℝ)))) :=
+    (summable_pow_neg_pair_translate x y (by exact_mod_cast hαd)).mul_left _
+  have hlhs_nn : ∀ z : Fin d → ℤ, 0 ≤
+      1 / (1 + (t * (latticeDistance d x z : ℝ)) ^ α) *
+        (1 / (1 + (t * (latticeDistance d y z : ℝ)) ^ α)) := fun z => by positivity
+  have hlhs_sum : Summable (fun z : Fin d → ℤ =>
+      1 / (1 + (t * (latticeDistance d x z : ℝ)) ^ α) *
+        (1 / (1 + (t * (latticeDistance d y z : ℝ)) ^ α))) :=
+    Summable.of_nonneg_of_le hlhs_nn hpt hsum_rhs
+  calc ∑' z : Fin d → ℤ, 1 / (1 + (t * (latticeDistance d x z : ℝ)) ^ α) *
+          (1 / (1 + (t * (latticeDistance d y z : ℝ)) ^ α))
+      ≤ ∑' z : Fin d → ℤ, Ct ^ 2 *
+          ((1 + (latticeDistance d x z : ℝ)) ^ (-(α : ℝ)) *
+            (1 + (latticeDistance d y z : ℝ)) ^ (-(α : ℝ))) :=
+        hlhs_sum.tsum_le_tsum hpt hsum_rhs
+    _ = Ct ^ 2 * ∑' z : Fin d → ℤ,
+          ((1 + (latticeDistance d x z : ℝ)) ^ (-(α : ℝ)) *
+            (1 + (latticeDistance d y z : ℝ)) ^ (-(α : ℝ))) := by rw [tsum_mul_left]
+    _ ≤ Ct ^ 2 * (C0 * (1 + (latticeDistance d x y : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))) :=
+        mul_le_mul_of_nonneg_left (hC0bd x y) (by positivity)
+    _ = Ct ^ 2 * C0 * (1 + (latticeDistance d x y : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))) := by ring
+
+/-- **Exponential cancellation via the triangle inequality.**  For `t ≥ 0`,
+`exp(−t·(d(x,z)+d(y,z)−d(x,y))) ≤ 1`, since `d(x,z)+d(y,z) ≥ d(x,y)`.
+
+This is the key cancellation in the GJ p. 312 `c`-denominator handling: the
+numerator exponentials `e^{−t·d(x,z)}e^{−t·d(y,z)}` of the two-point majorants are
+cancelled against the denominator exponential `e^{−t·d(x,y)}` of the `m⁻`
+identity, leaving the `t`-scaled rational convolution
+(`tsum_one_div_one_add_scaled_pow_pair_le`). -/
+theorem exp_neg_scaled_dist_pair_le_one {d : ℕ} {t : ℝ} (ht : 0 ≤ t)
+    (x y z : Fin d → ℤ) :
+    Real.exp (-(t * ((latticeDistance d x z : ℝ) + (latticeDistance d y z : ℝ)
+        - (latticeDistance d x y : ℝ)))) ≤ 1 := by
+  apply Real.exp_le_one_iff.mpr
+  rw [neg_nonpos]
+  apply mul_nonneg ht
+  have htri : (latticeDistance d x y : ℝ)
+      ≤ (latticeDistance d x z : ℝ) + (latticeDistance d z y : ℝ) := by
+    exact_mod_cast latticeDistance_triangle d x z y
+  rw [latticeDistance_comm d z y] at htri
+  linarith
+
 end Ambient
 end IsingModel
