@@ -87,7 +87,7 @@ Uses the bridge to dominate `corr{x₀,z} · corr{y₀,z}` pointwise by
   correlation that vanishes by `correlationInfinite_pair_self_h_zero`.
 - Otherwise: combine Step 5.1 (#3154) with `bridge.bound` and the
   monotonicity of `2/(1+(·)^α)`. -/
-private theorem correlationInfinite_pair_product_le_pseudoMass_pair
+theorem correlationInfinite_pair_product_le_pseudoMass_pair
     {α : ℕ} (hα : 1 ≤ α) {r' : ℝ} (hr' : 0 < r')
     (d : ℕ) (J β : ℝ)
     (bridge : PseudoMassLatticeDistanceBridge hα hr' d J β)
