@@ -29314,6 +29314,49 @@ estimate feeding \texttt{lemma\_17\_5\_2\_upper\_bound\_of\_all\_decay\_rates\_l
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5 (pp.~345--347).
 
+\subsubsection*{Sharp distance-dependent HLS convolution (Theorem 17.5.1 core)}
+
+The constant-form bound above suffices for the finite high-temperature packages,
+but the true-mass continuity statement (Theorem~17.5.1) needs the
+\emph{sharp}, distance-decaying convolution bound.  This is now formalized,
+axiom-free, in \texttt{IsingModel/HLSConvolutionSharp.lean}.
+
+\begin{theorem}[\texttt{hls\_conv\_sharp\_decay}]
+For real $\alpha$ with $d/2 < \alpha < d$ there is a constant $C>0$ such that
+for all $x,y \in \mathbb{Z}^d$,
+\[
+  \sum_{z \in \mathbb{Z}^d}
+    (1+d(x,z))^{-\alpha}\,(1+d(y,z))^{-\alpha}
+  \;\le\; C\,(1+d(x,y))^{-(2\alpha-d)} .
+\]
+\end{theorem}
+
+\textit{Proof structure.}  Write $D=d(x,y)$ and $K=\lfloor D/2\rfloor$.  Cover
+$\mathbb{Z}^d$ by the near-$x$ region ($2\,d(x,z)\le D$), the near-$y$ region
+($2\,d(y,z)\le D$) and the far region ($D<2\,d(x,z)$ and $D<2\,d(y,z)$); every
+$z$ lies in at least one (\texttt{tsum\_conv\_le\_sum\_regions}).  In the
+near-$x$ region the triangle inequality gives $d(y,z)\ge K$, so the $y$-factor is
+$\le (1+K)^{-\alpha}$ and the residual radial ball sum is controlled by
+$2^d\bigl((K+2)^{d-\alpha}/(d-\alpha)+1\bigr)$ (\texttt{tsum\_nearx\_region\_le};
+near-$y$ symmetric).  In the far region comparability $d(x,z)<3\,d(y,z)$ gives the
+product $\le 3^{\alpha}(1+d(x,z))^{-2\alpha}$, with radial tail
+$\le 2^d (K+1)^{d-2\alpha}/(2\alpha-d)$ (\texttt{tsum\_far\_region\_le}).  Each
+region value is reduced to the common decay factor $(1+D)^{d-2\alpha}$ using the
+base shifts $(1+K)^{-\alpha}\le 2^{\alpha}(1+D)^{-\alpha}$ and
+$(K+2)^{\beta}\le 2^{\beta}(1+D)^{\beta}$ (from $(1+D)/2\le 1+K$ and
+$K+2\le 2(1+D)$, since $K=\lfloor D/2\rfloor$) together with the exponent
+identity $(1+D)^{-\alpha}(1+D)^{d-\alpha}=(1+D)^{d-2\alpha}$
+(\texttt{near\_real\_decay\_le}, \texttt{far\_real\_decay\_le}).  The witness is
+$C = 2\,C_{\mathrm{near}}+C_{\mathrm{far}}$.
+
+This sharp bound is the genuinely hard analytic core feeding the uniform
+Lipschitz control of $m^{-\,2\alpha+1}$ behind Theorem~17.5.1; the remaining
+\emph{true-mass} continuity step is transfer-principle-blocked
+(\#4081, general $d$).
+
+\textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1,
+pp.~311--312.
+
 \subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
 
 Combining Steps 117a--g with the HLS convolution constant and the remaining
