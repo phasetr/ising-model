@@ -1,5 +1,7 @@
 import IsingModel.PolyDecay
 import IsingModel.Concrete.LatticeSphereCard
+import Mathlib.Analysis.SumIntegralComparisons
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
 # Sharp distance-dependent Hardy–Littlewood–Sobolev convolution bound on ℤ^d
@@ -117,5 +119,52 @@ theorem latticeSphere_card_mul_rpow_le (d : ℕ) (hd : 1 ≤ d) (n : ℕ) (s : �
         mul_le_mul_of_nonneg_right hcard (Real.rpow_nonneg h1n.le s)
     _ = (2 : ℝ) ^ d * (1 + (n : ℝ)) ^ ((d : ℝ) - 1 + s) := by
         rw [mul_assoc, ← Real.rpow_add h1n]
+
+/-- **Finite-interval integral comparison for the tail sum**: for `e < -1` and
+`1 ≤ R ≤ M`, `∑_{j ∈ Ioc R M} j^e ≤ R^{e+1} / (-(e+1))`.
+
+Proof: reindex `Ioc R M = Ico (R+1) (M+1)` to match `AntitoneOn.sum_le_integral_Ico`
+(`t^e` antitone on `(0,∞)`), bounding the sum by `∫_R^M t^e`; evaluate the
+interval integral by `integral_rpow` as `(M^{e+1} - R^{e+1})/(e+1)`, and drop the
+nonnegative `M^{e+1}` term. -/
+theorem sum_Ioc_nat_rpow_le {e : ℝ} (he : e < -1) {R M : ℕ} (hR : 1 ≤ R) (hRM : R ≤ M) :
+    ∑ j ∈ Finset.Ioc R M, ((j : ℝ)) ^ e ≤ (R : ℝ) ^ (e + 1) / (-(e + 1)) := by
+  have hRpos : (0 : ℝ) < R := by exact_mod_cast hR
+  have hMnat : 0 < M := lt_of_lt_of_le Nat.one_pos (le_trans hR hRM)
+  have hMpos : (0 : ℝ) < M := by exact_mod_cast hMnat
+  have he0 : e ≤ 0 := by linarith
+  have he1 : (0 : ℝ) < -(e + 1) := by linarith
+  have hne1 : e + 1 ≠ 0 := by linarith
+  -- Reindex `Ioc R M = Ico (R+1) (M+1)`, then `Ico (R+1)(M+1)` as a `+1`-shift of `Ico R M`.
+  have hIoc : Finset.Ioc R M = Finset.Ico (R + 1) (M + 1) := by
+    ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+  have hmap : ∑ j ∈ Finset.Ioc R M, ((j : ℝ)) ^ e
+      = ∑ i ∈ Finset.Ico R M, (((i + 1 : ℕ) : ℝ)) ^ e := by
+    rw [hIoc, ← Finset.map_add_right_Ico R M 1, Finset.sum_map]
+    rfl
+  rw [hmap]
+  -- Antitone integral comparison.
+  have hanti : AntitoneOn (fun t : ℝ => t ^ e) (Set.Icc (R : ℝ) (M : ℝ)) :=
+    (Real.antitoneOn_rpow_Ioi_of_exponent_nonpos he0).mono
+      (fun t ht => lt_of_lt_of_le hRpos ht.1)
+  have hsum_le_int :
+      ∑ i ∈ Finset.Ico R M, (((i + 1 : ℕ) : ℝ)) ^ e
+        ≤ ∫ x in (R : ℝ)..(M : ℝ), x ^ e :=
+    AntitoneOn.sum_le_integral_Ico hRM hanti
+  refine hsum_le_int.trans ?_
+  -- Evaluate the interval integral.
+  have hne : e ≠ -1 := ne_of_lt he
+  have h0notmem : (0 : ℝ) ∉ Set.uIcc (R : ℝ) (M : ℝ) := by
+    rw [Set.uIcc_of_le (by exact_mod_cast hRM), Set.mem_Icc]
+    rintro ⟨h0, _⟩; linarith
+  rw [integral_rpow (Or.inr ⟨hne, h0notmem⟩)]
+  -- `(M^{e+1} - R^{e+1})/(e+1) ≤ R^{e+1}/(-(e+1))`.
+  have hMe : (0 : ℝ) ≤ (M : ℝ) ^ (e + 1) := Real.rpow_nonneg hMpos.le _
+  have heq : ((M : ℝ) ^ (e + 1) - (R : ℝ) ^ (e + 1)) / (e + 1)
+      = ((R : ℝ) ^ (e + 1) - (M : ℝ) ^ (e + 1)) / (-(e + 1)) := by
+    rw [div_neg, ← neg_div, neg_sub]
+  rw [heq]
+  gcongr
+  linarith [hMe]
 
 end IsingModel
