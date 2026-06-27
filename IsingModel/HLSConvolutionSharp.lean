@@ -69,6 +69,23 @@ theorem tsum_radial_eq_tsum_shell (d : ℕ) (f : ℕ → ℝ≥0∞) :
   rw [hcard]
   simp
 
+/-- **Shell reorganization centred at an arbitrary point** `x`: for any kernel
+`f : ℕ → ℝ≥0∞`, the radial sum `∑'_z f (latticeDistance d x z)` equals the
+shell sum `∑'_n (latticeSphere d n).card · f n`, independent of the centre `x`.
+
+Proof: `latticeDistance d x z = latticeDistance d 0 (z - x)`
+(`latticeDistance_translate_eq`), reindex `z ↦ z - x` by `Equiv.addRight (-x)`,
+then apply the origin-centred `tsum_radial_eq_tsum_shell`. -/
+theorem tsum_radial_eq_tsum_shell_center (d : ℕ) (x : Fin d → ℤ) (f : ℕ → ℝ≥0∞) :
+    ∑' z : Fin d → ℤ, f (IsingModel.latticeDistance d x z)
+      = ∑' n : ℕ, ((latticeSphere d n).card : ℝ≥0∞) * f n := by
+  have hshift : ∑' z : Fin d → ℤ, f (IsingModel.latticeDistance d x z)
+      = ∑' z : Fin d → ℤ, f (IsingModel.latticeDistance d 0 z) := by
+    simp_rw [latticeDistance_translate_eq d x]
+    exact (Equiv.addRight (-x)).tsum_eq
+      (fun z => f (IsingModel.latticeDistance d 0 z))
+  rw [hshift, tsum_radial_eq_tsum_shell d f]
+
 /-- **Shell-cardinality power reduction**: for `d ≥ 1` and any real exponent `s`,
 the shell-weighted kernel `(latticeSphere d n).card · (1 + n)^s` is dominated by
 `2^d · (1 + n)^{(d-1) + s}`.
