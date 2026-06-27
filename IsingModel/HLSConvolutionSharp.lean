@@ -167,4 +167,74 @@ theorem sum_Ioc_nat_rpow_le {e : ℝ} (he : e < -1) {R M : ℕ} (hR : 1 ≤ R) (
   gcongr
   linarith [hMe]
 
+/-- **Finite head-sum integral comparison** (`e > -1`): for `1 ≤ N`,
+`∑_{m ∈ Ioc 0 N} m^e ≤ (N+1)^{e+1}/(e+1) + 1`.
+
+Two cases: for `e ≥ 0` (monotone) `∑_{m∈Ico 1 (N+1)} m^e ≤ ∫_1^{N+1} t^e`; for
+`-1 < e < 0` (antitone, where `t^e` is antitone only on `(0,∞)`, NOT through 0)
+split off the `m = 1` term and apply `AntitoneOn.sum_le_integral_Ico` on `Icc 1 N`,
+`∫_1^N t^e`.  Both interval integrals are evaluated by `integral_rpow`. -/
+theorem sum_Ioc_zero_nat_rpow_le {e : ℝ} (he : -1 < e) {N : ℕ} (hN : 1 ≤ N) :
+    ∑ m ∈ Finset.Ioc 0 N, ((m : ℝ)) ^ e ≤ ((N : ℝ) + 1) ^ (e + 1) / (e + 1) + 1 := by
+  have hNpos : (0 : ℝ) < N := by exact_mod_cast hN
+  have he1 : (0 : ℝ) < e + 1 := by linarith
+  have hNN1 : (N : ℝ) ^ (e + 1) ≤ ((N : ℝ) + 1) ^ (e + 1) :=
+    Real.rpow_le_rpow hNpos.le (by linarith) he1.le
+  by_cases he0 : 0 ≤ e
+  · -- `e ≥ 0`: monotone on `Icc 1 (N+1)`.
+    have hIoc : Finset.Ioc 0 N = Finset.Ico 1 (N + 1) := by
+      ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+    rw [hIoc]
+    have hmono : MonotoneOn (fun t : ℝ => t ^ e)
+        (Set.Icc ((1 : ℕ) : ℝ) ((N + 1 : ℕ) : ℝ)) := by
+      intro a ha b hb hab
+      exact Real.rpow_le_rpow (le_trans (by norm_num) ha.1) hab he0
+    have hle := MonotoneOn.sum_le_integral_Ico (f := fun t : ℝ => t ^ e)
+      (by omega : (1 : ℕ) ≤ N + 1) hmono
+    refine hle.trans ?_
+    have h0notmem : (0 : ℝ) ∉ Set.uIcc ((1 : ℕ) : ℝ) ((N + 1 : ℕ) : ℝ) := by
+      rw [Set.uIcc_of_le (by exact_mod_cast (by omega : (1 : ℕ) ≤ N + 1)), Set.mem_Icc]
+      rintro ⟨h0, _⟩; norm_num at h0
+    rw [integral_rpow (Or.inl he)]
+    push_cast
+    rw [Real.one_rpow]
+    have : ((N : ℝ) + 1) ^ (e + 1) / (e + 1) - 1 / (e + 1)
+        ≤ ((N : ℝ) + 1) ^ (e + 1) / (e + 1) + 1 := by
+      have : (0 : ℝ) ≤ 1 / (e + 1) := by positivity
+      linarith
+    calc (((N : ℝ) + 1) ^ (e + 1) - 1) / (e + 1)
+        = ((N : ℝ) + 1) ^ (e + 1) / (e + 1) - 1 / (e + 1) := by ring
+      _ ≤ ((N : ℝ) + 1) ^ (e + 1) / (e + 1) + 1 := this
+  · -- `-1 < e < 0`: split off `m = 1`, antitone on `Icc 1 N`.
+    replace he0 : e < 0 := not_le.mp he0
+    have hsplit : Finset.Ioc 0 N = insert 1 (Finset.Ioc 1 N) := by
+      ext x; simp only [Finset.mem_Ioc, Finset.mem_insert]; omega
+    have h1notin : (1 : ℕ) ∉ Finset.Ioc 1 N := by simp
+    rw [hsplit, Finset.sum_insert h1notin, Nat.cast_one, Real.one_rpow]
+    -- bound `∑_{m∈Ioc 1 N} m^e` by `∫_1^N`.
+    have hmap : ∑ m ∈ Finset.Ioc 1 N, ((m : ℝ)) ^ e
+        = ∑ i ∈ Finset.Ico 1 N, (((i + 1 : ℕ) : ℝ)) ^ e := by
+      have hII : Finset.Ioc 1 N = Finset.Ico 2 (N + 1) := by
+        ext x; simp only [Finset.mem_Ioc, Finset.mem_Ico]; omega
+      rw [hII, show (2 : ℕ) = 1 + 1 from rfl, show N + 1 = N + 1 from rfl,
+        ← Finset.map_add_right_Ico 1 N 1, Finset.sum_map]
+      rfl
+    have hanti : AntitoneOn (fun t : ℝ => t ^ e) (Set.Icc ((1 : ℕ) : ℝ) ((N : ℕ) : ℝ)) :=
+      (Real.antitoneOn_rpow_Ioi_of_exponent_nonpos (le_of_lt he0)).mono
+        (fun t ht => lt_of_lt_of_le (by norm_num) ht.1)
+    have hle := AntitoneOn.sum_le_integral_Ico (f := fun t : ℝ => t ^ e) hN hanti
+    rw [hmap] at *
+    have hInt : ∫ x in ((1 : ℕ) : ℝ)..((N : ℕ) : ℝ), x ^ e
+        = ((N : ℝ) ^ (e + 1) - 1) / (e + 1) := by
+      have h0notmem : (0 : ℝ) ∉ Set.uIcc ((1 : ℕ) : ℝ) ((N : ℕ) : ℝ) := by
+        rw [Set.uIcc_of_le (by exact_mod_cast hN), Set.mem_Icc]
+        rintro ⟨h0, _⟩; norm_num at h0
+      rw [integral_rpow (Or.inl he)]; push_cast; rw [Real.one_rpow]
+    rw [hInt] at hle
+    have hfrac : ((N : ℝ) ^ (e + 1) - 1) / (e + 1)
+        ≤ ((N : ℝ) + 1) ^ (e + 1) / (e + 1) := by
+      gcongr
+      linarith [hNN1]
+    linarith [hle, hfrac]
+
 end IsingModel
