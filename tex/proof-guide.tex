@@ -32747,4 +32747,25 @@ Next (PR-1e): dart-sum assembly via the \#4329 fiber decomposition $+$ \#4336 co
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1e core: c-cancelling incident Lebowitz bound}
+
+\par\noindent\textbf{Role:} Replaces the loose incident-edge term of the tight Lebowitz
+$\beta$-derivative bound (which divides a constant by the exponentially small $c=\langle\sigma_r\sigma_s\rangle$
+and blows up) by GJ's bounded $2A$ mechanism.
+$\texttt{summand\_le\_symmDiff}$: the c-cancelling per-summand bound
+$\operatorname{corr}(A\triangle B)-\operatorname{corr}(A)\operatorname{corr}(B)\le\operatorname{corr}(A\triangle B)$,
+dropping the non-negative GKS-I product.
+$\texttt{correlation\_beta\_deriv\_le\_lebowitz\_cancelling}$: the c-cancelling variant of
+$\texttt{correlation\_beta\_deriv\_le\_lebowitz\_tight}$ where the incident (degenerate) edges
+contribute the \emph{reduced} correlation $\operatorname{corr}(\{r,s\}\triangle\{e\})$ instead of $1$:
+$\partial_\beta\langle\sigma_r\sigma_s\rangle\le
+J\sum_e\mathrm{leb}_e+J\sum_{e\text{ incident}}\operatorname{corr}(\{r,s\}\triangle\{e\})$.
+For an incident edge $\{r,v\}$ this is $\langle\sigma_s\sigma_v\rangle$, and
+$\langle\sigma_s\sigma_v\rangle/c$ stays bounded since $v\sim r$ gives $d(s,v)\ge d(r,s)-1$.
+Proof: mirror the tight Lebowitz proof, split $\texttt{edgeFinset}$ into incident/disjoint, apply
+$\texttt{summand\_le\_lebowitz\_of\_disjoint}$ on the disjoint part and $\texttt{summand\_le\_symmDiff}$
+on the incident part. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
