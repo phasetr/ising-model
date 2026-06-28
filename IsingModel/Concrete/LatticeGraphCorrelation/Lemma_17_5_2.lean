@@ -71,6 +71,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDe
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDerivInfiniteSharp
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityGlobalMassLowerIcc
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityPairMassUpperIcc
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityConvolutionMassUniform
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
