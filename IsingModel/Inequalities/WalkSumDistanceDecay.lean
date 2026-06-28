@@ -14,8 +14,9 @@ graph distance,
 
 `∑'_n walkSum G z i j n ≤ (z · Δ)^{dist(i,j)} / (1 − z · Δ)`,   `Δ = G.maxDegree`,  `z · Δ < 1`,
 
-so with `z = tanh(βJ)` and `Δ ≤ 2d` the two-point function decays at the sharp rate
-`−log(2d · tanh βJ)` (sharper than the Simon–Lieb `−log(βJ · 2d)`, since `tanh βJ < βJ`).  This is
+so with `z = tanh(βJ)` and `Δ ≤ 2d` the two-point function *would* decay (once the switching ratio
+`⟨⟩ ≤ ∑walk` of #4393 is supplied) at the sharp rate `−log(2d · tanh βJ)`, sharper than the
+Simon–Lieb `−log(βJ · 2d)` since `tanh βJ < βJ`.  This is
 the mechanical geometric-closure brick (Route A, brick A3) of the sharp-decay programme #4393; the
 remaining `⟨⟩ ≤ ∑walk` switching ratio is the research-level core.
 
