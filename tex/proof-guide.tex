@@ -32850,4 +32850,19 @@ $1/(1+\cdot)\le1$. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1h: incident-sum $/c$ bound}
+
+\par\noindent\textbf{Role:} Sums the per-edge incident $/c$ bound over the incident edges.
+$\texttt{incident\_edge\_card\_le}$: the incident-edge count is $\le 4d=\deg\langle x\rangle+\deg\langle
+z\rangle$ (the incident filter splits as a union of two incidence finsets, whose cardinalities are the
+degrees $\le 2d$ by $\texttt{inducedLatticeGraph\_degree\_le}$).
+$\texttt{incident\_sum\_corr\_fin\_div\_c\_le}$: for a non-adjacent binding pair $x\ne z$, the
+c-cancelling incident sum (from $\texttt{derivative\_profile\_cubic\_le\_lebowitz\_cancelling}$)
+divided by $c=\langle\varphi_x\varphi_z\rangle$ is bounded by
+$4d\,(1+(m^-d(x,z))^\alpha)e^{m^-}$ --- distribute $/c$ over the sum
+($\texttt{Finset.sum\_div}$), bound each term by the per-edge uniform constant (\#4343), and count the
+incident edges ($\le 4d$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
