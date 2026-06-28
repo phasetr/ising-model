@@ -33117,6 +33117,24 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV2: A$\uparrow$ bridge (finite-volume form)}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the $A\uparrow$ bridge:
+$\texttt{globalPseudoMassDist\_eq\_csInf\_finiteRegionFV\_cubic}$ shows
+$\texttt{globalPseudoMassDist}\,(\sigma)=\inf_n\texttt{finiteRegionPseudoMassDistFV}\,(\sigma,
+\mathrm{volume}\,n)$. $\ge$: the FV correlation is $\le$ the infinite-volume one
+($\texttt{correlationAlongExhaustion\_le\_correlationInfinite}$) and $\texttt{pseudoMassExt}$ is
+antitone, so $m^-_{FV}(x,z,n)\ge m^-_\infty(x,z)\ge\texttt{globalPseudoMassDist}$
+($\texttt{Finset.le\_inf'\_iff}$ $+$ $\texttt{globalPseudoMassDist\_le\_of\_active}$). $\le$: for any
+active pair, $m^-_{FV}(x,z,n)\to m^-_\infty(x,z)$
+($\texttt{tendsto\_correlationAlongExhaustion\_correlationInfinite}$ $+$
+$\texttt{pseudoMassExt\_continuousAt}$) and $\texttt{finiteRegionFV}(\mathrm{volume}\,n)\le
+m^-_{FV}(x,z,n)$ eventually, so $\texttt{ge\_of\_tendsto}$ gives $\inf\le m^-_\infty(x,z)$ for every
+pair, hence $\le\texttt{globalPseudoMassDist}$. With the conditional capstone (restated for the FV
+bridge) this reduces Thm 17.5.1 to the FV uniform-in-$A$ Lipschitz. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV1: finite-volume per-pair pseudo-mass and finite-region mass}
 
 \par\noindent\textbf{Role:} The finite-volume per-pair pseudo-mass and finite-region system
