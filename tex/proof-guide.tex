@@ -33117,6 +33117,23 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3b: finite-volume per-dart correlation ratio}
+
+\par\noindent\textbf{Role:} The faithful finite-volume mirror of the per-dart correlation ratio
+(\#4338). $\texttt{correlationAlongExhaustion\_dart\_ratio\_le\_finiteRegionFV}$: for a distinct
+in-box \emph{binding} pair $x\ne y$ ($\texttt{pseudoMassFromParamsAtPairFV}=m^-_{FV}(\sigma,A)$) and
+an adjacent dart $u\sim v$ in the box,
+$\langle\phi_x\phi_u\rangle_{\sigma,A}\langle\phi_y\phi_v\rangle_{\sigma,A}/
+\langle\phi_x\phi_y\rangle_{\sigma,A}\le
+2(1+(m^-_{FV}d(x,y))^\alpha)s(x,u)s(y,v)e^{m^-_{FV}}$. The numerator is majorized by the FV3a
+majorant; the denominator equals the profile at the binding pair via the FV3a identity and the FV
+binding $\texttt{hbind}$ (automatic at the in-box binding pair); then the \emph{pure} ratio algebra
+$\texttt{pseudoMassG\_ratio\_le}$ (\#4335) with the dart exp-cancellation
+$\texttt{exp\_neg\_scaled\_dart\_pair\_le\_exp}$ (\#4337), both reused verbatim. No $\exp$ blow-up:
+every in-box correlation decays at rate $\ge m^-_{FV}(\sigma,A)$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3a: finite-volume correlation majorant}
 
 \par\noindent\textbf{Role:} The brick that makes the finite-volume sharp $\beta$-derivative ratio
