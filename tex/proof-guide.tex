@@ -33117,6 +33117,26 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ \S18 / FFS Ch 12: sharp \texttt{tanh}-coefficient Simon--Lieb distance decay (bricks 2--3)}
+
+\par\noindent\textbf{Role:} The neighbour form and exponential distance decay of the sharp Simon--Lieb
+inequality (bricks 2--3 of the sharp-decay programme \#4393). \textbf{Brick 2}
+$\texttt{correlation\_inducedGraph\_simon\_lieb\_neighbor\_sharp}$:
+$\langle\sigma_i\sigma_j\rangle\le\tanh(\beta J)\sum_{u\sim i}K(j,u)$ with $K=\texttt{simonLiebKernel}$,
+obtained by reindexing the brick-1 edge sum to the neighbour sum via $\texttt{Finset.sum\_bij'}$ and
+$\texttt{correlation\_symmDiff\_eq\_simonLiebKernel}$. \textbf{Brick 3}
+$\texttt{correlation\_inducedGraph\_le\_tanh\_pow\_dist}$: the sharp exponential decay
+$\langle\sigma_i\sigma_j\rangle\le(\tanh(\beta J)\,D)^{d(i,j)-1}$ for a degree bound $D$ and
+$0<d(i,j)$ --- sharper than $\texttt{correlation\_inducedGraph\_le\_pow\_dist}$ (coefficient
+$\beta J\,D$), giving the rate $-\log(\tanh(\beta J)\,D)$ (with $D=2d$ on $\mathbb Z^d$:
+$-\log(2d\tanh\beta J)$). Proof by direct strong induction
+$\texttt{correlation\_inducedGraph\_le\_tanh\_pow\_of\_lt\_dist}$ (base $\langle\cdot\rangle\le1$; step
+via brick 2, $\texttt{Adj.diff\_dist\_adj}$, $\texttt{simonLiebKernel\_of\_ne}$, and the $\le D$
+neighbour count), mirroring $\texttt{simonLiebIterate\_le\_pow\_of\_lt\_dist}$ but consuming the sharp
+neighbour inequality directly. Axiom-free. Reference: Glimm--Jaffe \S18;
+Fernández--Fröhlich--Sokal, \emph{Random Walks\dots} (1992), Ch 12; Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ \S18 / FFS Ch 12: sharp \texttt{tanh}-coefficient Simon--Lieb edge inequality (brick 1)}
 
 \par\noindent\textbf{Role:} The \emph{sharp} edge form of the Simon--Lieb inequality at $h=0$, the
