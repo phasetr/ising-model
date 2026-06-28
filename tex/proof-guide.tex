@@ -32966,4 +32966,19 @@ factor $\le$ its infinite-volume value
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: combined $\beta$-derivative $/c$ bound (hcomp combine)}
+
+\par\noindent\textbf{Role:} Assembles all PR-1i ingredients into the GJ p.312 derivative-ratio
+estimate. $\texttt{combined\_derivative\_div\_c\_bound}$: for $1\le\alpha$, $1\le d$, $d<2\alpha<2d$,
+$0<J$, $0<\beta$, a non-adjacent binding pair $x\ne z$ with $\{x,z\}\subseteq\mathrm{box}$,
+$m^-(x,z)=\texttt{globalPseudoMassDist}>0$,
+$\exists C>0,\ \partial_\beta c_n/c\le
+J[2(1+(m^-r)^\alpha)e^{m^-}C(1+r)^{-(2\alpha-d)}]+J[4d(1+(m^-r)^\alpha)e^{m^-}]$
+($r=d(x,z)$, $c=\langle\varphi_x\varphi_z\rangle^\infty$). Composes the finite c-cancelling deriv
+bound (\#4340, $\div c$ via $\texttt{div\_le\_iff}_0$), the finite$\le$infinite cross bridge (\#4351),
+the dart-profile reduction (\#4347), the $m^-$-scaled HLS convolution (\#4350), and the tight incident
+$/c$ bound (\#4344). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
