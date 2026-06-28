@@ -33117,6 +33117,37 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1: on-axis inverse correlation length as a Fekete limit}
+
+\par\noindent\textbf{Role:} Toward true-mass continuity (issue \#4386), upgrade the on-axis
+abscissa upper bound from a $\liminf$ to a genuine $\lim$: the on-axis \emph{inverse correlation
+length is well-defined} (Glimm--Jaffe \S17.5; Friedli--Velenik \S3.7.3). Write
+$u(n)=-\log\langle\varphi_0\varphi_{n e_1}\rangle_\infty$ for the on-axis log-correlation sequence.
+The second Griffiths inequality (GKS-II,
+$\texttt{correlationInfinite\_latticeGraph\_cubicExhaustion\_gks\_second}$) gives
+supermultiplicativity of the two-point function,
+$\langle\varphi_0\varphi_{m e_1}\rangle\,\langle\varphi_{m e_1}\varphi_{(m+n)e_1}\rangle
+\le\langle\varphi_0\varphi_{(m+n)e_1}\rangle$ (using
+$\{m e_1,0\}\triangle\{m e_1,(m+n)e_1\}=\{(m+n)e_1,0\}$), and translation invariance
+($\texttt{\dots\_vaddFinset}$) turns $\langle\varphi_{m e_1}\varphi_{(m+n)e_1}\rangle$ into
+$\langle\varphi_0\varphi_{n e_1}\rangle$; taking $-\log$ makes $u$ \emph{subadditive}
+($\texttt{onAxisLogCorr\_subadditive}$). Since correlations lie in $[0,1]$, $u\ge0$
+($\texttt{onAxisLogCorr\_nonneg}$), so $n\mapsto u(n)/n$ is bounded below by $0$
+($\texttt{onAxisLogCorr\_div\_bddBelow}$); Fekete's lemma ($\texttt{Subadditive.tendsto\_lim}$)
+gives $u(n)/n\to\texttt{onAxisInverseCorrelationLength}:=\inf_n u(n)/n$
+($\texttt{onAxisLogCorr\_div\_tendsto}$). $\texttt{onAxisInverseCorrelationLength\_le\_neg\_log\_tanh}$:
+the limit is $\le-\log\tanh(\beta J)$ (each $u(k)/k\le-\log\tanh$ via the path lower bound
+$\langle\varphi_0\varphi_{k e_1}\rangle\ge\tanh(\beta J)^k$, $\texttt{le\_of\_tendsto}$). Headline
+$\texttt{latticeMass\_le\_ofReal\_onAxisInverseCorrelationLength}$:
+$\texttt{latticeMass}(\sigma)\le\texttt{ofReal}(\texttt{onAxisInverseCorrelationLength})$ --- the
+\#4389 rate $\tau(k)=u(k+1)/(k+1)$ is the $(\cdot+1)$-shift of $u(n)/n$, so its $\liminf$ equals the
+Fekete limit ($\texttt{Tendsto.liminf\_eq}$). The matching lower bound / sharpness (and hence
+continuity) is the Ornstein--Zernike / \S18 random-walk content (\#4386) and is \emph{not} delivered
+here. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312; Friedli--Velenik
+\S3.7.3.
+
+
 \subsection*{GJ Theorem 17.5.1: directional abscissa upper bound for the true mass}
 
 \par\noindent\textbf{Role:} Toward true-mass continuity (issue \#4386), the all-directions
