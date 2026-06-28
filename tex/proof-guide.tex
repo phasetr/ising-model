@@ -32768,4 +32768,22 @@ on the incident part. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1e: cubic c-cancelling finite-volume Lebowitz profile bound}
+
+\par\noindent\textbf{Role:} Carries the c-cancelling incident bound to the cubic finite-volume
+$\beta$-derivative profile.
+$\texttt{derivative\_profile\_cubic\_le\_lebowitz\_cancelling}$: the c-cancelling counterpart of
+$\texttt{derivative\_profile\_cubic\_le\_lebowitz\_tight}$ --- for $0\le J$, $0<\beta$, $x\ne z$,
+$\{x,z\}\subseteq\texttt{volume }n$,
+$\partial_\beta c_n\le
+J\sum_{\langle u,v\rangle\in E}[\langle\sigma_x\sigma_u\rangle\langle\sigma_z\sigma_v\rangle
++\langle\sigma_x\sigma_v\rangle\langle\sigma_z\sigma_u\rangle]
++J\sum_{e\text{ incident}}\operatorname{corr}(\{\langle x\rangle,\langle z\rangle\}\triangle\{e\})$,
+where the incident edges contribute the reduced correlation
+$\operatorname{corr}(\{\langle x\rangle,\langle z\rangle\}\triangle\{e\})$ instead of the coarse $1$.
+Wraps $\texttt{correlation\_beta\_deriv\_le\_lebowitz\_cancelling}$ via
+$\texttt{correlationAlongExhaustion\_of\_subset}$ $+$ $\texttt{liftFinset\_pair}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
