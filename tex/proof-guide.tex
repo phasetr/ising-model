@@ -32865,4 +32865,19 @@ incident edges ($\le 4d$). Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i prerequisite: zero-field single-site vanishing}
+
+\par\noindent\textbf{Role:} Kills the degenerate darts of the Lebowitz cross-sum.
+$\texttt{correlationInfinite\_latticeGraph\_singleton\_zero\_field}$: at zero external field $h=0$, the
+infinite-volume single-site correlation
+$\texttt{correlationInfinite}(\texttt{latticeGraph }d)\,\Lambda\,\langle J,0,\beta\rangle\,\{i\}=0$
+($\mathbb{Z}_2$ spin-flip symmetry). Converting \#4341's cross-sum to a dart sum
+($\texttt{sum\_edgeFinset\_sym2\_lift\_prod\_eq\_sum\_dart}$) produces degenerate darts with
+$g\{x,\langle x\rangle.\mathrm{val}\}=\texttt{correlationInfinite}\{x,x\}$, a singleton, which this
+vanishing eliminates. Proof: every exhaustion stage has zero single-site correlation, so the limit
+($\texttt{tendsto\_correlationAlongExhaustion\_correlationInfinite}$ $+$ uniqueness) is zero.
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}

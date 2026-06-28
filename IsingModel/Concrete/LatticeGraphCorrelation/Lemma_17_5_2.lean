@@ -54,6 +54,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicIncidentInf
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentDivC
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentSum
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuitySingletonZero
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
