@@ -33117,6 +33117,21 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1: directional abscissa upper bound for the true mass}
+
+\par\noindent\textbf{Role:} Toward true-mass continuity (issue \#4386), the all-directions
+generalization of the on-axis bound. $\texttt{latticeMass\_le\_ofReal\_liminf\_directionalRate}$: for
+any nonzero direction $v\ne0$, $\texttt{latticeMass}(\sigma)\le\mathrm{ofReal}(\liminf_k\tau_v(k))$
+with $\tau_v(k)=-\log\langle\varphi_0\varphi_{(k+1)v}\rangle_\infty/((k+1)\,d(0,v))$ the per-distance
+rate along the ray $\mathbb{N}\!\cdot\!v$. Since the true mass is the \emph{infimum over directions}
+of the directional inverse correlation length, this per-direction family is the upper half of the
+abscissa characterization (on-axis is $v=e_1$). Helper $\texttt{latticeDistance\_zero\_nsmul}$:
+$d(0,n\!\cdot\!v)=n\,d(0,v)$. Same technique as the on-axis case (decay bound at ray pairs of distance
+$(k+1)d(0,v)$, prefactor washes out, $\tau_v$ cobounded by $-\log\tanh$ via the tanh path lower
+bound). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1: on-axis abscissa upper bound for the true mass}
 
 \par\noindent\textbf{Role:} Toward true-mass $\texttt{latticeMass}$ continuity (issue \#4386).
