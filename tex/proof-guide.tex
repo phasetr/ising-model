@@ -33117,6 +33117,39 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV5: system pseudo-mass power Lipschitz on the window}
+
+\par\noindent\textbf{Role:} The rigorous Lipschitz-envelope core of GJ Theorem 17.5.1.
+$\texttt{globalPseudoMassDist\_pow\_succ\_lipschitz\_window}$: for the high-temperature window
+$[\beta_1,\beta_2]$ ($0<\beta_1\le\beta_2$, $\beta_2 J\,2d<1/2$) and $\alpha\ge d-1$ ($d/2<\alpha<d$),
+$\exists L>0,\ |\,\texttt{globalPseudoMassDist}(\sigma_{\beta_2})^{2\alpha+1}-
+\texttt{globalPseudoMassDist}(\sigma_{\beta_1})^{2\alpha+1}|\le L(\beta_2-\beta_1)$. The
+$\sigma/A$-uniform finite-region (FV) Lipschitz (PR-FV4c) passes through the FV $A\uparrow\mathbb{Z}^d$
+bridge ($\texttt{globalPseudoMassDist\_eq\_csInf\_finiteRegionFV\_cubic}$, \#4369) to the
+infinite-volume system mass $m^-(\sigma)=\texttt{globalPseudoMassDist}(\sigma)$. The helper
+$\texttt{globalPseudoMassDist\_pow\_succ\_lipschitz\_of\_uniform\_finiteRegionFV}$ is the FV form of
+\#4366. With Lemma 17.5.2 (the sandwich, \#4278/\#4297) this is GJ's ``from this the theorem follows
+by Lemma 17.5.2''. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
+\subsection*{GJ Theorem 17.5.1, PR-FV4c: the uniform-in-$A$ finite-region Lipschitz estimate}
+
+\par\noindent\textbf{Role:} The step the infinite-volume route could not reach (its per-pair
+constant $(2\alpha+1)K/\mathrm{dist}$ is uncontrolled as $\mathrm{diam}\,A\to\infty$).
+$\texttt{finiteRegionPseudoMassDistFV\_pow\_succ\_lipschitz\_uniform}$: for the window
+$[\beta_1,\beta_2]$ and $\alpha\ge d-1$, there is one $L>0$ ($=M$ from PR-FV4b) such that for every
+cubic stage $n$, $|m^-_{FV}(\sigma_{\beta_2},\mathrm{volume}\,n)^{2\alpha+1}-
+m^-_{FV}(\sigma_{\beta_1},\mathrm{volume}\,n)^{2\alpha+1}|\le L(\beta_2-\beta_1)$. Per stage, the
+inf-envelope fencing $\texttt{abs\_sub\_le\_of\_isInf\_binding\_deriv}$ (\#4363) over the
+distinct-pair family: the slope at each $\beta$ is bounded by the $\sigma/A$-uniform $M$ at the
+$\inf'$ achiever (binding pair); the envelope $(\texttt{finiteRegionPseudoMassDistFV})^{2\alpha+1}$
+is continuous (new helpers $\texttt{pseudoMassFromParamsAtPairFV\_beta\_continuousAt}$ and
+$\texttt{finiteRegionPseudoMassDistFV\_beta\_continuousAt}$ via
+$\texttt{ContinuousAt.finset\_inf'\_apply}$) and dominates each per-pair power. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV4b: the $\sigma/A$-uniform per-pair power-derivative bound}
 
 \par\noindent\textbf{Role:} The payoff of the finite-volume route.
