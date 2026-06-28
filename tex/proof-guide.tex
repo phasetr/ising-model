@@ -32810,4 +32810,25 @@ infinite-volume reduced cross sum --- GJ's bounded $2A$ mechanism. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1f: per-incident-dart correlation ratio (single factor)}
+
+\par\noindent\textbf{Role:} The single-factor (incident) analogs of the dart-pair ratio building
+blocks, for dividing each incident two-point function $g\{z,v\}$ (over $v\sim x$) by
+$c=\langle\varphi_x\varphi_z\rangle$.
+$\texttt{exp\_neg\_scaled\_incident\_le\_exp}$: for $v\sim x$,
+$\exp(-t(d(z,v)-d(x,z)))\le\exp t$ (triangle through the edge $\{x,v\}$, $d(x,z)\le 1+d(z,v)$).
+$\texttt{pseudoMassG\_single\_ratio\_le}$: the single-numerator profile ratio algebra --- with
+$P(r)=\texttt{pseudoMassG }\alpha\,r\,m=2e^{-mr}/(1+(mr)^\alpha)$, the $2$'s cancel:
+$P(a)/P(c)=(1+(mc)^\alpha)(1+(ma)^\alpha)^{-1}e^{-m(a-c)}
+\le(1+(mc)^\alpha)(1+(ma)^\alpha)^{-1}e^{m}$ for $m,a,c\ge0$ given the exp bound.
+$\texttt{correlationInfinite\_incident\_ratio\_le}$: the composed per-incident-dart ratio at a
+binding pair $x\ne z$ ($m^-(x,z)=\texttt{globalPseudoMassDist}$) with $v\sim x$, $z\ne v$:
+$\langle\varphi_z\varphi_v\rangle/\langle\varphi_x\varphi_z\rangle
+\le(1+(m^-d(x,z))^\alpha)(1+(m^-d(z,v))^\alpha)^{-1}e^{m^-}$ ---
+numerator majorized (\#4335), denominator $=$ profile at the binding pair, single-ratio algebra
+closes. The per-incident-dart analog of $\texttt{correlationInfinite\_dart\_ratio\_le}$ (\#4338).
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
