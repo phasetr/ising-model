@@ -33117,4 +33117,58 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-A: Lipschitz of a lower envelope via binding derivatives}
+
+\par\noindent\textbf{Role:} GJ p.312 differentiates the system pseudo-mass
+$m^-(\sigma)=\inf_{\text{pairs}}$ directly; an infimum is pinned to a binding pair at each point but
+is not itself differentiable. This pure real-analysis fencing lemma turns pointwise control of the
+binding derivative into a Lipschitz bound on the envelope.
+$\texttt{abs\_sub\_le\_of\_isInf\_binding\_deriv}$ (with one-sided helper
+$\texttt{le\_add\_mul\_sub\_of\_isInf\_binding\_deriv}$): if $g$ is continuous on $[a,b]$, lies below
+each $f_i$, and at every $x$ \emph{equals} some $f_i$ differentiable there with $|f_i'(x)|\le M$,
+then $|g(b)-g(a)|\le M(b-a)$. Engine: Mathlib
+$\texttt{image\_le\_of\_liminf\_slope\_right\_le\_deriv\_boundary}$ with affine boundary
+$B(x)=g(a)+M(x-a)$ --- the binding equality $g(x)=f_i(x)$ plus the domination $g\le f_i$ make the
+right-slope of $g$ at $x$ dominated by that of $f_i$, which tends to $f_i'(x)\le M$; the backward
+direction reflects via $t\mapsto a+b-t$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
+\subsection*{GJ Theorem 17.5.1, PR-B1: pointwise per-binding-pair pseudo-mass-power derivative}
+
+\par\noindent\textbf{Role:} The per-point ingredient consumed by the PR-A fencing lemma: at a
+globally-binding pair the per-pair pseudo-mass power has a controlled pointwise derivative.
+$\texttt{pseudoMassFromParamsAtPairDist\_pow\_succ\_hasDeriv\_abs\_le\_binding}$: for a non-adjacent
+binding pair $x\ne z$ ($m^-(x,z)=\texttt{globalPseudoMassDist}>0$) at $\beta\in$window,
+$\exists C>0,\ \exists dv,\ \mathrm{HasDerivAt}\,(\beta'\mapsto (m^-(x,z,\beta'))^{2\alpha+1})\,dv\,\beta
+\wedge |dv|\le (2\alpha+1)\,S\,(m^-)^{2\alpha}/d(x,z)$, with $S$ the sharp p.312 coefficient (\#4359).
+Feeds \#4359 ($|\partial_\beta c|\le S c$) into
+$\texttt{pseudoMassFromParamsAtPair\_beta\_pow\_succ\_deriv\_bound\_of\_corr\_hasDerivAt}$ with
+$K=S(m^-)^{2\alpha}$ (so $Kc/(m^-)^{2\alpha}=Sc$), then rewrites $\texttt{atPair}\to\texttt{atPairDist}$
+and $m^-$ via the bridge. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
+\subsection*{GJ Theorem 17.5.1, PR-C: global pseudo-mass-power Lipschitz (conditional capstone)}
+
+\par\noindent\textbf{Role:} Assembles PR-A and PR-B1 into the GJ p.312 conclusion that the system
+pseudo-mass power $\beta\mapsto (m^-(\beta))^{2\alpha+1}$ is Lipschitz.
+$\texttt{globalPseudoMassDist\_pow\_succ\_lipschitz\_on\_Icc\_of\_binding\_deriv}$: on
+$[\beta_1,\beta_2]$ ($0<\beta_1$), \emph{given} (1) continuity of the envelope and (2) at every
+$\beta$ a globally-binding active pair $x\ne z$ with $|\,\frac{d}{d\beta}(m^-(x,z,\cdot))^{2\alpha+1}|\le M$,
+the system power is $M$-Lipschitz. Direct application of PR-A: the family
+$f_q(\beta)=(m^-(q_1,q_2,\beta))^{2\alpha+1}$ ranges over \emph{distinct} pairs (a subtype --- diagonal
+pairs give $0$, breaking domination); domination $g\le f_q$ from
+$\texttt{globalPseudoMassDist\_le\_of\_active}$ (every distinct pair is active at $\beta>0$) raised to
+the $(2\alpha+1)$ power; PR-B1 supplies the derivative given a binding pair.
+\par\noindent\textbf{Conditional / Partial.} Two genuine gaps remain (Issue \#4320,
+``transfer-principle-blocked''): \emph{G1} binding-pair existence ($\inf$-over-pairs attainment; in
+the Ornstein--Zernike regime $m_{x,z}\downarrow m_\infty$ as $d(x,z)\to\infty$, so the infimum is
+approached but not attained by any finite pair), and \emph{G2} envelope continuity ($m^-$ a priori
+only upper-semicontinuous); plus the uniform bound $M$ (the p.312
+$(2\alpha+1)S(m^-)^{2\alpha}/d(x,z)\le M$, bounded for $\alpha\ge d-1$, with the $\beta$-uniform $C$
+still to be assembled). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \end{document}
