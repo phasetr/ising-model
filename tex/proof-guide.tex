@@ -33117,6 +33117,26 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{FFS Ch 12 / GJ \S18: geometric distance-decay of the walk-sum (sharp-decay brick A3)}
+
+\par\noindent\textbf{Role:} The mechanical geometric-closure brick (Route A, brick A3) of the
+sharp random-walk / Simon--Lieb representation
+$\langle\sigma_i\sigma_j\rangle\le\sum_n\texttt{walkSum}\,G\,(\tanh\beta J)\,i\,j\,n$ (the
+$\langle\cdot\rangle\le\sum_{\text{walk}}$ switching ratio is the research-level core, issue \#4393).
+With $\texttt{walkSum}\,G\,z\,i\,j\,n=z^n\cdot\#\{\text{length-}n\text{ walks }i\to j\}$:
+$\texttt{walkSum\_eq\_zero\_of\_lt\_dist}$ (no walks below the distance, $\texttt{SimpleGraph.dist\_le}$),
+$\texttt{walkSum\_le\_mul\_maxDegree\_pow}$ ($\texttt{walkSum}\le(z\Delta)^n$, $\Delta=\texttt{maxDegree}$,
+via $\texttt{walksFromCount\_le\_pow}$). Headline $\texttt{tsum\_walkSum\_le\_geometric}$: for
+$0\le z$, $z\Delta<1$,
+$\sum'_n\texttt{walkSum}\,G\,z\,i\,j\,n\le(z\Delta)^{\,d(i,j)}/(1-z\Delta)$ (shift past the
+vanishing prefix, $\texttt{Summable.sum\_add\_tsum\_nat\_add}$, then
+$\texttt{tsum\_geometric\_of\_lt\_one}$). With $z=\tanh(\beta J)$, $\Delta\le2d$ this \emph{would} give (once the \#4393 switching
+ratio is supplied) the sharp rate $-\log(2d\tanh\beta J)$, sharper than the Simon--Lieb
+$-\log(\beta J\,2d)$. Axiom-free.
+Reference: Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Triviality}
+(1992), Ch 12; Glimm--Jaffe \S18; Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ eq.~(17.5.1): directional inverse correlation length exists as a Fekete limit}
 
 \par\noindent\textbf{Role:} The all-directions generalization of the on-axis Fekete limit (\#4391),
