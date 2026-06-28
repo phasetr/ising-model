@@ -32910,4 +32910,17 @@ per-dart bound (\#4346) applies to every dart; the dart-independent constant fac
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: dart-sum-by-neighbor grouping}
+
+\par\noindent\textbf{Role:} General fiber-decomposition infrastructure to feed the cross-sum's
+dart-profile sum into the HLS convolution.
+$\texttt{sum\_dart\_eq\_sum\_neighborFinset}$: for a finite simple graph $G$ and $F:V\to V\to\mathbb{R}$,
+$\sum_{d:\mathrm{Dart}}F(d.\mathrm{fst},d.\mathrm{snd})=\sum_v\sum_{w\in\mathrm{neighborFinset}\,v}F(v,w)$.
+Groups the dart sum by $d.\mathrm{fst}$ ($\texttt{Finset.sum\_fiberwise\_of\_maps\_to}$), identifies
+each fibre with the neighbour set ($\texttt{dart\_fst\_fiber}$ $+$ $\texttt{dartOfNeighborSet}$
+injective), and converts the subtype sum to a $\texttt{neighborFinset}$ sum
+($\texttt{Finset.sum\_subtype}$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
