@@ -33117,6 +33117,24 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, bridge: $m^-(\sigma)$ is the cubic-exhaustion infimum of $m^-(\sigma,A)$}
+
+\par\noindent\textbf{Role:} The Lean form of GJ p.312's $m^-(\sigma)=\inf_A m^-(\sigma,A)=
+\lim_{A\uparrow\mathbb{R}^d}m^-(\sigma,A)$: the system pseudo-mass (an infimum over \emph{all} active
+distinct pairs) equals the infimum over the cubic stages of the finite-region pseudo-masses (each a
+\emph{finite, attained} $\inf'$ over the pairs inside the box).
+$\texttt{globalPseudoMassDist\_eq\_csInf\_finiteRegion\_cubic}$: for $0<J$, $0<\beta$,
+$\texttt{globalPseudoMassDist}\,(\sigma)=\inf_n \texttt{finiteRegionPseudoMassDist}\,(\sigma,
+\mathrm{volume}\,n)$ over the stages containing a distinct pair ($\texttt{cubicMassIndex}$).
+$\le$: the finite-region $\inf'$ is attained at an in-box pair, active at $\beta>0$, so
+$\texttt{globalPseudoMassDist}\le$ it ($\texttt{globalPseudoMassDist\_le\_of\_active}$), then
+$\texttt{le\_csInf}$. $\ge$: any active pair $(x,z)$ lies in $\mathrm{volume}\,N$ for large $N$
+($\texttt{Exhaustion.exhaust}$), so $\texttt{finiteRegion}(\mathrm{volume}\,N)\le$ its pseudo-mass
+($\texttt{Finset.inf'\_le}$), making the $\inf$ a lower bound of the global value set. This bridge
+lets the Step-2 inf-Lipschitz lemma act on the genuine $\texttt{globalPseudoMassDist}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, Step-2: an infimum of uniformly-Lipschitz functions is Lipschitz}
 
 \par\noindent\textbf{Role:} The pure real-analysis core of GJ's $A\uparrow\mathbb{R}^d$ step
