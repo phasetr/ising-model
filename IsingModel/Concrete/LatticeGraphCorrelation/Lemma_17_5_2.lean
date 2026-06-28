@@ -82,6 +82,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteVolumePair
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistFV
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDistCubicInfFV
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeMajorant
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeDartRatio
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
