@@ -33117,6 +33117,21 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3c: finite-volume unified per-dart $/c$ bound}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the unified per-dart $/c$ bound (\#4346).
+$\texttt{dart\_term\_div\_c\_le\_finiteRegionFV}$: for a distinct in-box binding pair $x\ne z$ and
+\emph{any} dart $dt$ of the induced cubic graph,
+$\langle\phi_x\phi_{dt.\mathrm{fst}}\rangle_{\sigma,A}\langle\phi_z\phi_{dt.\mathrm{snd}}\rangle_{\sigma,A}/
+\langle\phi_x\phi_z\rangle_{\sigma,A}\le
+2(1+(m^-_{FV}d(x,z))^\alpha)s(x,dt.\mathrm{fst})s(z,dt.\mathrm{snd})e^{m^-_{FV}}$. Degenerate darts
+($dt.\mathrm{fst}.\mathrm{val}=x$ or $dt.\mathrm{snd}.\mathrm{val}=z$) give a vanishing single-site
+factor ($\texttt{correlationAlongExhaustion\_latticeGraph\_h\_zero}$, odd cardinality), so
+$0\le\mathrm{RHS}$; non-degenerate darts are the FV per-dart ratio (PR-FV3b) with $\texttt{dt.adj}$.
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3b: finite-volume per-dart correlation ratio}
 
 \par\noindent\textbf{Role:} The faithful finite-volume mirror of the per-dart correlation ratio
