@@ -47,6 +47,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalPro
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalFiniteRegionLipschitz
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityRatioBound
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartScaledHLS
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartRatio
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
