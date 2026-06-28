@@ -33088,4 +33088,19 @@ $\texttt{min\_le\_min}$). Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1j-prep: interval-uniform per-pair $m^-$ upper bound}
+
+\par\noindent\textbf{Role:} Companion to the lower bound; gives $M_{\max}$ for the $m^{2\alpha}$ factor
+in the uniform Lipschitz constant.
+$\texttt{pseudoMassFromParamsAtPairDist\_le\_neg\_log\_tanh\_beta1\_on\_Icc}$: for a distinct pair
+$x\ne z$ and $\beta\in\mathrm{Icc}\,\beta_1\,\beta_2$ with $0<\beta_1$,
+$\mathrm{Icc}\subseteq\mathrm{window}$,
+$\texttt{pseudoMassFromParamsAtPairDist}\dots\langle J,0,\beta\rangle\,x\,z\le-\log\tanh(\beta_1 J)$ ---
+a single constant upper bound. Per-$\beta$ $m^-(x,z)\le-\log\tanh(\beta J)$ (faithful rate \#4333 $+$
+$\texttt{pseudoMass\_le\_iff\_pseudoMassG\_le}$); the rate is antitone in $\beta$
+($\texttt{Real.tanh\_strictMono}$ $+$ $\texttt{Real.log\_le\_log}$). With \#4360 the two-sided
+$m_{\min}\le m^-\le M_{\max}$ are now both available. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
