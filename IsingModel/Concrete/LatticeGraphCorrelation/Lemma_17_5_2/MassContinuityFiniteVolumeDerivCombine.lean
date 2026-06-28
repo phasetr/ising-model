@@ -27,20 +27,27 @@ namespace Ambient
 
 open Real
 
-/-- **Combined finite-volume β-derivative `/c` bound** (GJ p.312): for `1≤α`, `1≤d`, `d<2α<2d`,
-`0<J`, `0<β`, a non-adjacent in-box binding pair `x≠z`,
-`∃ C>0, ∂_β c_A / c ≤ J·[2(1+(m⁻_FV·r)^α)e^{m⁻_FV}·C(1+r)^{−(2α−d)}] + J·[4d(1+2^α)e^{m⁻_FV}]`
-(`r=d(x,z)`, `c=c_A=⟨φ_xφ_z⟩_{σ,A}`, `m⁻_FV=finiteRegionPseudoMassDistFV`).  Finite-volume mirror of
-#4356 with the cross part bridged from #4340's subtype-correlation output to the
-`correlationAlongExhaustion` form (then PR-FV3d + #4350) and the incident part PR-FV3g. -/
-theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
-    (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
+/-- **Core combined finite-volume β-derivative `/c` bound** (GJ p.312): the body of
+`combined_derivative_div_c_bound_tight_finiteRegionFV` with the cross-sum dart-profile convolution
+constant `C` supplied as a **parameter** (via `hCconv`) rather than obtained internally.  This lets
+both the per-scale version (`C` from `dart_profile_sum_le_convolution`) and the **mass-uniform**
+version (`C` from `dart_profile_sum_le_convolution_mass_uniform`, the same `C` for all `m⁻_FV ≥
+mmin`) share the body, the latter being what the uniform-in-`β` Lipschitz estimate needs. -/
+theorem combined_derivative_div_c_bound_core_finiteRegionFV {α d : ℕ} (hα : 1 ≤ α)
+    {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
     (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
     (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
-      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
-    ∃ C : ℝ, 0 < C ∧
+      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+    (C : ℝ)
+    (hCconv : ∀ x' z' : Fin d → ℤ,
+      ∑ dt : (inducedGraph (IsingModel.latticeGraph d) ((cubicExhaustion d).volume n)).Dart,
+          (1 / (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
+              * (latticeDistance d x' dt.fst.val : ℝ)) ^ α))
+            * (1 / (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
+              * (latticeDistance d z' dt.snd.val : ℝ)) ^ α))
+        ≤ C * (1 + (latticeDistance d x' z' : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))) :
       deriv (fun β' => Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
           (cubicExhaustion d) (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β
         / Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
@@ -65,9 +72,6 @@ theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα :
       · exact hx
       · exact hz
     exact (correlationAlongExhaustion_cubicExhaustion_pair_active hJ hβ hxz hxzsub).1
-  obtain ⟨C, hC, hCconv⟩ :=
-    dart_profile_sum_le_convolution (d := d) hd hαd hαd2 hm_pos (n := n)
-  refine ⟨C, hC, ?_⟩
   have hpow : (0 : ℝ) ≤ (m * (latticeDistance d x z : ℝ)) ^ α :=
     pow_nonneg (mul_nonneg hm_pos.le (by positivity)) α
   have hcoef_nn : (0 : ℝ) ≤ 2 * (1 + (m * (latticeDistance d x z : ℝ)) ^ α) * Real.exp m :=
@@ -162,6 +166,40 @@ theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα :
               + (1 + m ^ α) * Real.exp m / 2)))
           * Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n := by ring
+
+/-- **Combined finite-volume β-derivative `/c` bound** (GJ p.312): for `1≤α`, `1≤d`, `d<2α<2d`,
+`0<J`, `0<β`, an in-box binding pair `x≠z` (adjacent or not),
+`∃ C>0, ∂_β c_A / c ≤ J·[2(1+(m⁻_FV·r)^α)e^{m⁻_FV}·C(1+r)^{−(2α−d)}]
++ J·[4d((1+2^α)e^{m⁻_FV} + (1+(m⁻_FV)^α)e^{m⁻_FV}/2)]` (`r=d(x,z)`, `c=c_A=⟨φ_xφ_z⟩_{σ,A}`,
+`m⁻_FV=finiteRegionPseudoMassDistFV`).  The per-scale form: obtains `C` from the `m⁻_FV`-scaled
+convolution `dart_profile_sum_le_convolution` and applies the core. -/
+theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
+    (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
+    (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
+    (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
+      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
+    ∃ C : ℝ, 0 < C ∧
+      deriv (fun β' => Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+          (cubicExhaustion d) (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β
+        / Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
+            (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n
+      ≤ J * (2 * (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
+              * (latticeDistance d x z : ℝ)) ^ α)
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+            * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
+        + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+          + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+            / 2)) := by
+  have hm_pos : 0 < finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA :=
+    finiteRegionPseudoMassDistFV_pos hα hJ hβ hA
+  obtain ⟨C, hC, hCconv⟩ :=
+    dart_profile_sum_le_convolution (d := d) hd hαd hαd2 hm_pos (n := n)
+  exact ⟨C, hC, combined_derivative_div_c_bound_core_finiteRegionFV hα hJ hβ hA hxz hx hz hbind
+    C hCconv⟩
 
 end Ambient
 end IsingModel
