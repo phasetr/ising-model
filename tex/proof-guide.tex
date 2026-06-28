@@ -32615,4 +32615,38 @@ $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quo
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
 
 
+\subsection*{PR \#4333 --- UNCONDITIONAL faithful correlation profile lower bound on the window (GJ~\S17.5, discharges the \texttt{hprofile})}
+
+\par\noindent\textbf{Role:} Proves \emph{unconditionally} the faithful per-pair correlation lower
+bound that gated the \S17.5.1 conditional chain (\#4330--\#4332):
+$\texttt{pseudoMassG}\,\alpha\,(\operatorname{dist}x\,z)\,(-\log\tanh(\beta J))\le\langle\varphi_x\varphi_z\rangle^\infty$
+for every distinct pair $x\ne z$ on $\beta\in\texttt{ConvergenceRegion.window}\,d\,J$
+($\texttt{pseudoMassG\_dist\_tanh\_rate\_le\_correlationInfinite\_cubic}$ general pair;
+$\texttt{\_cubic\_zero}$ anchored). File $\texttt{UnconditionalProfileLower.lean}$.
+
+\par\noindent\textbf{Key:} use the \emph{faithful} inverse-correlation-length rate
+$q:=-\log\tanh(\beta J)$ (not the slower Simon--Lieb rate $-\log(\beta J\,2d)$ whose
+$\forall$-displacement form is false, \#4270).
+\begin{itemize}
+  \item $\texttt{pseudoMassG\_le\_exp\_neg\_of\_one\_le}$: $1\le t r\Rightarrow
+    \texttt{pseudoMassG}\,\alpha\,r\,t\le e^{-tr}$ (denominator $1+(tr)^\alpha\ge2$).
+  \item On the window $\tanh(\beta J)<R\,d\le e^{-1}$
+    ($\texttt{tanh\_betaJ\_lt\_exp\_neg\_one\_of\_window}$, via
+    $R\,d=\min(\dots)\le 1/(64((2d)^2+1)e)\le e^{-1}$), so $q\ge1$
+    ($\texttt{one\_le\_neg\_log\_tanh\_betaJ\_of\_window}$), hence $q\cdot\operatorname{dist}\ge1$ and
+    $\texttt{pseudoMassG}\,\alpha\,(\operatorname{dist})\,q\le e^{-q\,\operatorname{dist}}=\tanh(\beta J)^{\operatorname{dist}}$.
+  \item GKS \emph{direct-path} bound $\texttt{twoPointFunction\_ge\_tanh\_betaJ\_pow\_dist}$ gives
+    $\tanh(\beta J)^{\operatorname{dist}}\le\langle\varphi_0\varphi_z\rangle$; translation invariance
+    ($\texttt{correlationInfinite\_latticeGraph\_pair\_eq\_twoPointFunction}$,
+    $\texttt{latticeDistance\_translate\_eq}$) lifts to general pairs.
+\end{itemize}
+
+\par\noindent\textbf{Significance.} The per-pair $\texttt{hprofile}$ that gated the \S17.5.1
+conditional chain is now an unconditional theorem on the window; re-parametrizing that chain to the
+$-\log\tanh(\beta J)$ rate (next PR) yields the \emph{unconditional} finite-region
+$m^-(\sigma,A)^{2\alpha+1}$ Lipschitz.
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312; GKS direct path.
+
+
 \end{document}
