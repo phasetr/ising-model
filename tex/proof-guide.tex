@@ -33046,4 +33046,16 @@ box-vertex) $+$ $\texttt{Finset.sum\_coe\_sort}$ $+$ $\texttt{Summable.sum\_le\_
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1j: n-uniform combined $\beta$-derivative $/c$ bound}
+
+\par\noindent\textbf{Role:} The n-uniform version of \#4356, the finite-stage bound the $n\to\infty$
+limit consumes. $\texttt{combined\_derivative\_div\_c\_bound\_tight\_uniform}$:
+$\exists C>0,\ \forall n,\ \{x,z\}\subseteq\mathrm{vol}\,n\to
+\partial_\beta c_n/c\le J[2(1+(m^-r)^\alpha)e^{m^-}C(1+r)^{-(2\alpha-d)}]+J[4d(1+2^\alpha)e^{m^-}]$
+--- the \emph{same} $C$ for every stage $n$. $C$ from the n-uniform convolution (\#4357) and the
+$\forall n$ quantifier inside (the bounded incident \#4355 is already n-independent). Same proof
+structure as \#4356 with $C$ out front and per-$n$ $\texttt{hCbd}\,n\,x\,z$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
