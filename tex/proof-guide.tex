@@ -33103,4 +33103,18 @@ $m_{\min}\le m^-\le M_{\max}$ are now both available. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1j-final: mass-uniform HLS convolution bound}
+
+\par\noindent\textbf{Role:} The mass-uniform version of the HLS convolution (\#4336), needed because
+the GJ p.312 Lipschitz uses the convolution at the $\beta$-varying $m^-(\beta)$ and the per-scale
+$Ct=\max 1 (t^\alpha)^{-1}2^\alpha$ blows up as $t\to0$.
+$\texttt{tsum\_mul\_neighborFinset\_sum\_scaled\_le\_uniform}$: for $d<2\alpha<2d$ and fixed
+$m_{\min}>0$, $\exists C>0,\ \forall t\ge m_{\min},\ \forall x,z,\ \sum'_u s_t(x,u)\sum_{v\sim u}s_t(z,v)
+\le C(1+d(x,z))^{-(2\alpha-d)}$ --- the \emph{same} $C$ for every scale $t\ge m_{\min}$. With
+$t\ge m_{\min}$, $Ct\le Ctmax=\max 1 (m_{\min}^\alpha)^{-1}2^\alpha$ ($\texttt{inv\_anti}_0$ $+$
+$\texttt{pow\_le\_pow\_left}_0$), so the per-kernel domination holds at the scale-independent $Ctmax$,
+$C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
