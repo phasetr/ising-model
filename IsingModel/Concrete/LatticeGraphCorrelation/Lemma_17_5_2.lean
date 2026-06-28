@@ -50,6 +50,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartSum
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileCancelling
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicIncidentInfiniteBridge
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
