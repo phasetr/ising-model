@@ -42,6 +42,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformTransferL
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformSandwich
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UniformSandwichCubicTanh
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.SharpHLSDenominatorComparison
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistLipschitz
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
