@@ -33117,6 +33117,22 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3f: finite-volume per-edge incident $/c$ bound (bounded $2A$)}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the per-edge incident $/c$ bound (\#4354),
+GJ p.312's bounded $2A$. $\texttt{incident\_symmDiff\_corr\_fin\_div\_c\_le\_tight\_finiteRegionFV}$:
+for a non-adjacent in-box binding pair $x\ne z$ and an incident edge $\{u,v\}$,
+$\mathrm{corr_{fin}}(\{\langle x\rangle,\langle z\rangle\}\triangle\{u,v\})/
+\langle\phi_x\phi_z\rangle_{\sigma,A}\le(1+2^\alpha)e^{m^-_{FV}}$ --- a constant, independent of the
+edge and of $d(x,z)$. The $\mathrm{symmDiff}$ reduces (via $\texttt{symmDiff\_pair\_pair\_of\_ne}$)
+to a single $z$- or $x$-correlation, which is the same finite-volume correlation as the denominator
+(no infinite-volume bridge); the FV per-incident-dart ratio (PR-FV3e) plus the denominator ratio
+$\le 1+2^\alpha$ ($\texttt{pseudoMass\_denom\_ratio\_le}$, using $d(\text{reduced})\ge r-1$ from
+non-adjacency $r\ge2$) close the four incident cases ($z$-incident via the FV binding symmetry
+$\texttt{pseudoMassFromParamsAtPairFV\_comm}$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3e: finite-volume per-incident-dart correlation ratio}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the per-incident-dart ratio (\#4342), the
