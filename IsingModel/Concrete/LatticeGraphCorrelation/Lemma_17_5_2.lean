@@ -95,6 +95,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFi
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeMassUpper
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityConvolutionMassUniformDart
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDenomRatioGeneral
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuitySharpRFactor
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeUniformCombine
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeUniformPowDeriv
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
