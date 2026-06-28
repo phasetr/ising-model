@@ -58,6 +58,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuitySi
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartDivC
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityCrossSumProfile
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DartSumNeighborGrouping
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartProfileBoxVertex
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
