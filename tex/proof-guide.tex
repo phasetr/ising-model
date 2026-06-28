@@ -33117,6 +33117,24 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1: per-pair exponential-rate continuity (true-mass route foundation)}
+
+\par\noindent\textbf{Role:} Foundational brick of the true-mass continuity program (issue \#4386,
+route 2). The per-pair exponential decay \emph{rate} $\beta\mapsto-\log\langle\varphi_i\varphi_j
+\rangle_\infty/d(i,j)$ is continuous on the high-temperature window.
+$\texttt{perPairRate\_continuousAt\_high\_temp}$ (and $\texttt{\_continuousOn\_window}$): for a
+distinct pair $i\ne j$, $0<J$, continuity at every $\beta_0\in(0,1/(J\,2d))$, via correlation
+continuity ($\texttt{correlationInfinite\_continuousAt\_beta\_of\_high\_temp}$) and strict positivity
+($\texttt{correlationInfinite\_pos\_of\_betaJ\_pos\_pair}$), so $-\log$ is continuous, then divide by
+$d(i,j)$. $\texttt{perPairTruncRate\_continuousAt\_high\_temp}$: the same for the truncated 2-point
+object $\texttt{latticeMass}$ is built from (at $h=0$, $|\mathrm{trunc}_2|=\langle\varphi_i\varphi_j
+\rangle$ near $\beta_0$ by $\texttt{truncated2Infinite\_h\_zero}$ + eventual positivity,
+$\texttt{ContinuousAt.congr}$). This is the base for the abscissa / semicontinuity analysis of
+$\texttt{latticeMass}=\sup\{\alpha:\forall\text{ pairs }|\mathrm{trunc}|\le Ce^{-\alpha\,d}\}$ (each
+pair contributes a continuous rate; the true mass is a liminf-envelope of these). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1: true-mass (latticeMass) structure on the window}
 
 \par\noindent\textbf{Role:} What the \emph{true mass} $m=\texttt{latticeMass}$ (a different object
