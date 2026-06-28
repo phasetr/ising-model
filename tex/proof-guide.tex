@@ -33117,6 +33117,19 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV4b-prep: lower bound on the finite-volume finite-region mass}
+
+\par\noindent\textbf{Role:} The interval-uniform lower bound for the mass-uniform convolution
+constant. $\texttt{globalPseudoMassDist\_le\_finiteRegionPseudoMassDistFV}$: for $0<J$, $0<\beta$,
+$\texttt{globalPseudoMassDist}(\sigma)\le\texttt{finiteRegionPseudoMassDistFV}(\sigma,\mathrm{volume}\,n)$.
+The per-pair FV mass dominates the infinite per-pair mass ($\texttt{correlationΛ}\le
+\texttt{correlationInfinite}$ and $\texttt{pseudoMassExt}$ antitone); the infinite per-pair mass
+dominates the system inf ($\texttt{globalPseudoMassDist\_le\_of\_active}$); $\texttt{Finset.le\_inf'\_iff}$.
+With \#4360 ($\texttt{globalPseudoMassDist}\ge\texttt{globalPseudoMassDistRestrictedRate}$ on the
+strict window), this yields $m_{\min}\le m^-_{FV}(\sigma,\mathrm{volume}\,n)$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV4a: finite-volume per-pair pseudo-mass-power derivative bound}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of PR-B1 (\#4363).
