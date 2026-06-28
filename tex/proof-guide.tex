@@ -33117,6 +33117,21 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3e: finite-volume per-incident-dart correlation ratio}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the per-incident-dart ratio (\#4342), the
+building block of GJ p.312's bounded $2A$ incident error.
+$\texttt{correlationAlongExhaustion\_incident\_ratio\_le\_finiteRegionFV}$: for a distinct in-box
+binding pair $x\ne z$ and an incident dart $v\sim x$ ($z\ne v$, in box),
+$\langle\phi_z\phi_v\rangle_{\sigma,A}/\langle\phi_x\phi_z\rangle_{\sigma,A}\le
+(1+(m^-_{FV}d(x,z))^\alpha)(1/(1+(m^-_{FV}d(z,v))^\alpha))e^{m^-_{FV}}$. Numerator majorized by the
+FV3a majorant; denominator equals the profile at the binding pair via the FV3a identity and the FV
+binding $\texttt{hbind}$; then the pure single-factor ratio algebra
+$\texttt{pseudoMassG\_single\_ratio\_le}$ (\#4342) with the incident exp-cancellation
+$\texttt{exp\_neg\_scaled\_incident\_le\_exp}$ (\#4342), both reused verbatim. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3d: finite-volume cross-sum $/c$ $\to$ dart-profile sum}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the cross-sum $/c$ reduction (\#4347).
