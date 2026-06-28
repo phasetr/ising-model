@@ -32683,5 +32683,25 @@ $\texttt{globalPseudoMassDist}$ continuity (uniform-in-$A$, \#4320) and true-mas
 $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
 
+\subsection*{PR \#4335 --- GJ Theorem 17.5.1, PR-1 foundations: system-mass majorant + pseudo-mass identity}
+
+\par\noindent\textbf{Role:} Begins the genuine Glimm--Jaffe \S17.5 Theorem 17.5.1 (mass continuity,
+pp.~311--312) proof (correcting an earlier mistaken ``blocked'' note: GJ proves it via the sharp-HLS
+foundations \#4325--\#4329, giving an $A$-uniform Lipschitz constant, hcomp $K=\mathrm{const}\cdot\operatorname{dist}$).
+File $\texttt{MassContinuityRatioBound.lean}$:
+\begin{itemize}
+  \item $\texttt{correlationInfinite\_eq\_pseudoMassG\_pairDist}$ --- GJ (17.5.3) defining identity
+    $\langle\varphi_x\varphi_y\rangle=\texttt{pseudoMassG}\,\alpha\,(\operatorname{dist}x\,y)\,(m^-(x,y))$
+    ($\texttt{pseudoMass\_spec}$ on the active range); the p.312 denominator is handled by this
+    identity, not majorized.
+  \item $\texttt{correlationInfinite\_le\_pseudoMassG\_globalPseudoMassDist}$ --- GJ system-mass
+    majorant $\langle\varphi_x\varphi_w\rangle\le\texttt{pseudoMassG}\,\alpha\,(\operatorname{dist}x\,w)\,(\texttt{globalPseudoMassDist})$
+    (each correlation $=$ profile at its own per-pair mass; system mass $\le$ per-pair via
+    $\texttt{globalPseudoMassDist\_le\_of\_active}$; $\texttt{pseudoMassG\_antitoneOn}$).
+\end{itemize}
+These supply the numerator-majorization / denominator-identity of the p.312 derivative-ratio bound.
+Axiom-free. Roadmap PR-1..PR-5 in issue \#4320.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312.
+
 
 \end{document}
