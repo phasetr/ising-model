@@ -32786,4 +32786,28 @@ $\texttt{correlationAlongExhaustion\_of\_subset}$ $+$ $\texttt{liftFinset\_pair}
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1e: c-cancelling infinite-volume incident bridge}
+
+\par\noindent\textbf{Role:} Brings the c-cancelling incident term to the infinite-volume two-point
+function, for non-adjacent $x,z$ (GJ's large-separation regime, where $c=\langle\sigma_x\sigma_z\rangle$
+is exponentially small).
+$\texttt{incident\_symmDiff\_corr\_fin\_le\_infinite}$: the per-edge reduction --- for an incident
+edge $\{u,v\}$,
+$\operatorname{corr}_{\mathrm{fin}}(\{\langle x\rangle,\langle z\rangle\}\triangle\{u,v\})
+\le g\{x,u\}+g\{x,v\}+g\{z,u\}+g\{z,v\}$ where
+$g\{a,b\}=\texttt{correlationInfinite}\dots\{a,b\}$. Non-adjacency forces no edge to contain both
+$\langle x\rangle,\langle z\rangle$, so exactly one lies in $\{u,v\}$ and the symmetric difference
+collapses to a single two-point set (via $\texttt{symmDiff\_pair\_pair\_of\_ne}$, four cases),
+dominated by $\texttt{correlation\_inducedGraph\_cubic\_le\_correlationInfinite}$; the other three
+terms are non-negative.
+$\texttt{derivative\_profile\_cubic\_le\_infiniteVolume\_lebowitz\_cancelling}$: the c-cancelling
+counterpart of $\texttt{derivative\_profile\_cubic\_le\_infiniteVolume\_lebowitz}$,
+$\partial_\beta c_n\le
+J\sum_{\langle u,v\rangle\in E}[g\{x,u\}g\{z,v\}+g\{x,v\}g\{z,u\}]
++J\sum_{e\text{ incident}}(g\{x,u\}+g\{x,v\}+g\{z,u\}+g\{z,v\})$,
+replacing the incident count $J\lvert\text{incident}\rvert$ (which blows up under $/c$) by the
+infinite-volume reduced cross sum --- GJ's bounded $2A$ mechanism. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
