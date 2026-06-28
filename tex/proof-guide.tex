@@ -33117,6 +33117,29 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ \S17.5/\S18 / FFS Ch 12: sharp \texttt{tanh} lattice-mass lower bound (brick 4 --- programme complete)}
+
+\par\noindent\textbf{Role:} The infinite-volume completion of the sharp-decay programme (\#4393).
+$\texttt{correlationInfinite\_simon\_lieb\_sharp}$: the infinite-volume sharp Simon--Lieb inequality
+$\langle\varphi_i\varphi_j\rangle_\infty\le\tanh(\beta J)\sum_{k\sim i}\langle\varphi_k\varphi_j\rangle_\infty$,
+obtained by passing brick~2 through $\texttt{correlationInfinite\_eq\_ciSup}$ (per stage the finite
+kernel $K(j,u)=\langle\varphi_u\varphi_j\rangle$ is dominated by the infinite-volume correlation, and
+the induced-graph neighbours inject into the $G$-neighbours, the missing terms being nonnegative).
+$\texttt{correlationInfinite\_latticeGraph\_le\_tanh\_two\_d\_pow\_of\_dist\_gt}$:
+$\langle\varphi_i\varphi_j\rangle_\infty\le(\tanh\beta J\cdot2d)^{n}$ for $n+1\le d(i,j)$, by induction
+via the one-step $\texttt{\dots\_le\_of\_neighbors\_le\_sharp}$.
+$\texttt{hasExponentialDecay\_tanh\_of\_high\_temp}$: the rate-$(-\log(\tanh\beta J\cdot2d))$ decay bound
+($C=1/(\tanh\beta J\cdot2d)$, from the power bound at $n=d(i,j)-1$). Headline
+$\texttt{latticeMass\_ge\_neg\_log\_tanh\_of\_high\_temp}$:
+$\texttt{ofReal}(-\log(\tanh\beta J\cdot2d))\le\texttt{latticeMass}(\sigma)$ --- sharper than
+$\texttt{latticeMass\_ge\_neg\_log\_of\_high\_temp}$ (rate $-\log(\beta J\cdot2d)$, since
+$\tanh\beta J<\beta J$). This tightens the GJ \S17.5 Lemma~17.5.2 sandwich constant toward
+Theorem~17.5.1 (\#4386); the residual $\log(2d)$ gap to the upper bound $-\log\tanh$ needs the
+Ornstein--Zernike exact rate, so it does not by itself close Thm~17.5.1. Axiom-free. Reference:
+Glimm--Jaffe \S17.5/\S18; Fernández--Fröhlich--Sokal, \emph{Random Walks\dots} (1992), Ch 12;
+Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ \S18 / FFS Ch 12: sharp \texttt{tanh}-coefficient Simon--Lieb distance decay (bricks 2--3)}
 
 \par\noindent\textbf{Role:} The neighbour form and exponential distance decay of the sharp Simon--Lieb
