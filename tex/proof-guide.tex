@@ -32896,4 +32896,18 @@ Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: cross-sum $/c$ reduced to the dart-profile sum}
+
+\par\noindent\textbf{Role:} Reduces the Lebowitz cross-sum $/c$ to a pure profile dart-sum.
+$\texttt{cross\_sum\_div\_c\_le\_dart\_profile}$: for a distinct binding pair $x\ne z$, the
+c-cancelling cross-sum divided by $c=\langle\varphi_x\varphi_z\rangle$ is
+$\le 2(1+(m^-d(x,z))^\alpha)e^{m^-}\sum_{dt:\mathrm{Dart}}
+(1+(m^-d(x,dt.\mathrm{fst}))^\alpha)^{-1}(1+(m^-d(z,dt.\mathrm{snd}))^\alpha)^{-1}$.
+The handshake identity ($\texttt{sum\_edgeFinset\_sym2\_lift\_prod\_eq\_sum\_dart}$) turns the edge
+$\mathrm{Sym}_2$-sum into a dart sum; $\texttt{Finset.sum\_div}$ distributes $/c$; the uniform
+per-dart bound (\#4346) applies to every dart; the dart-independent constant factors out
+($\texttt{Finset.mul\_sum}$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
