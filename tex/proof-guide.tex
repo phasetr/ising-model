@@ -32994,4 +32994,19 @@ $\texttt{pow\_le\_pow\_left}_0$ $+$ $\texttt{nlinarith}$. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1l: GJ-faithful bounded per-edge incident $/c$ bound}
+
+\par\noindent\textbf{Role:} The GJ-faithful bounded incident $2A$, correcting \#4343.
+$\texttt{incident\_symmDiff\_corr\_fin\_div\_c\_le\_tight}$: for a non-adjacent binding pair $x\ne z$
+and an incident edge $\{u,v\}$,
+$\operatorname{corr}_{\mathrm{fin}}(\{\langle x\rangle,\langle z\rangle\}\triangle\{u,v\})/
+\langle\varphi_x\varphi_z\rangle\le(1+2^\alpha)e^{m^-}$ --- a \emph{constant} (independent of the edge
+and of $d(x,z)$). Corrects \#4343 (which dropped the per-incident-dart denominator, leaving the
+unbounded $(1+(m^-r)^\alpha)$): the denominator is kept and bounded by \#4353
+($\texttt{pseudoMass\_denom\_ratio\_le}$) using $r=d(x,z)\ge2$ (non-adjacency) and $d(z,v)\ge r-1$
+($v\sim x$, triangle). Same four-case structure as \#4343 with $\texttt{drop\_tight}$ replacing
+$\texttt{drop}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
