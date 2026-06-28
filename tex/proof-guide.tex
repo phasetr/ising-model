@@ -33117,6 +33117,18 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3g: finite-volume bounded incident-sum $/c$ bound}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the bounded incident-sum $/c$ bound
+(\#4355). $\texttt{incident\_sum\_corr\_fin\_div\_c\_le\_tight\_finiteRegionFV}$: for a non-adjacent
+in-box binding pair $x\ne z$, the finite-volume c-cancelling incident sum divided by
+$c=\langle\phi_x\phi_z\rangle_{\sigma,A}$ is bounded by the constant $4d(1+2^\alpha)e^{m^-_{FV}}$ ---
+GJ p.312's genuine bounded $2A$, independent of $d(x,z)$. $\texttt{Finset.sum\_div}$ plus the
+per-edge bound (PR-FV3f) plus the incident-edge count $\le 4d$ ($\texttt{incident\_edge\_card\_le}$).
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3f: finite-volume per-edge incident $/c$ bound (bounded $2A$)}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the per-edge incident $/c$ bound (\#4354),
