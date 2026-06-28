@@ -32880,4 +32880,20 @@ Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: unified per-dart $/c$ bound}
+
+\par\noindent\textbf{Role:} Bounds each dart term of the Lebowitz cross-sum (after the handshake
+conversion) divided by $c=\langle\varphi_x\varphi_z\rangle$, uniformly for every dart.
+$\texttt{dart\_term\_div\_c\_le}$: for a distinct binding pair $x\ne z$ and any dart $dt$,
+$\langle\varphi_x\varphi_{dt.\mathrm{fst}}\rangle\langle\varphi_z\varphi_{dt.\mathrm{snd}}\rangle/
+\langle\varphi_x\varphi_z\rangle
+\le 2(1+(m^-d(x,z))^\alpha)(1+(m^-d(x,dt.\mathrm{fst}))^\alpha)^{-1}
+(1+(m^-d(z,dt.\mathrm{snd}))^\alpha)^{-1}e^{m^-}$.
+Degenerate darts ($dt.\mathrm{fst}.\mathrm{val}=x$ or $dt.\mathrm{snd}.\mathrm{val}=z$) have a
+single-site factor that vanishes at zero field (\#4345), so the term is $0\le\text{RHS}$;
+non-degenerate darts are exactly the per-dart ratio (\#4338) with the dart adjacency $dt.\mathrm{adj}$.
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
