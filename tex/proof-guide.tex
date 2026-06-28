@@ -32649,4 +32649,39 @@ $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quo
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312; GKS direct path.
 
 
+\subsection*{PR \#4334 --- UNCONDITIONAL finite-region Lipschitz of $m^-(\sigma,A)^{2\alpha+1}$ (GJ~\S17.5 Lemma 17.5.2(a))}
+
+\par\noindent\textbf{Role:} Removes the \texttt{hprofile} hypothesis from the conditional
+finite-region Lipschitz (\#4332).
+$\texttt{finiteRegionPseudoMassDist\_pow\_succ\_lipschitz\_on\_window}$: for a fixed bounded region
+$A$ and $\texttt{Icc}\,\beta_1\,\beta_2\subseteq\texttt{window}\,d\,J$, \emph{with no profile
+hypothesis}, $\exists C>0,\ |m^-(\sigma_2,A)^{2\alpha+1}-m^-(\sigma_1,A)^{2\alpha+1}|\le C(\beta_2-\beta_1)$.
+File $\texttt{UnconditionalFiniteRegionLipschitz.lean}$.
+
+\par\noindent\textbf{Route.}
+\begin{itemize}
+  \item Rate-agnostic engine
+    $\texttt{pseudoMassFromParamsAtPair\_pow\_succ\_lipschitz\_on\_window\_of\_ratio\_lower}$ ---
+    \#4331's proof with the interval-uniform ratio lower bound $L_{\min}\le c/m^{2\alpha}$ abstracted
+    as a hypothesis (the numerator $B$, window provider, differentiability are rate-agnostic).
+  \item General-rate ratio lower bound
+    $\texttt{pseudoMassFromParamsAtPair\_ratio\_lower\_of\_pseudoMassG\_le\_corr}$ (\#4330
+    generalized via $\texttt{pseudoMass\_le\_iff\_pseudoMassG\_le}$).
+  \item Unconditional per-pair distance interval Lipschitz
+    $\texttt{pseudoMassFromParamsAtPairDist\_pow\_succ\_lipschitz\_on\_window}$: discharges
+    \texttt{hprofile} at the faithful rate $-\log\tanh(\beta J)$ via \#4333, with
+    $L_{\min}=\texttt{pseudoMassG}\,\alpha\,(\operatorname{dist})\,q_1/q_1^{2\alpha}$
+    ($q_1=-\log\tanh(\beta_1 J)$) interval-uniform by monotonicity of $q(\beta)$
+    ($\texttt{Real.tanh\_strictMono}$) and $\texttt{pseudoMassG\_antitoneOn}$.
+  \item Finite $\texttt{Finset.inf'}$ assembly (odd-power commutes with $\inf'$; $\inf'$ of finitely
+    many Lipschitz via $\texttt{choose!}$ + $\texttt{Finset.sup'}$ + achieved infimum), as in \#4332.
+\end{itemize}
+
+\par\noindent\textbf{Significance.} The \S17.5.1 finite-region Lipschitz is now \emph{unconditional}
+(the conditional \#4330--\#4332 are subsumed). Remaining: infinite-envelope
+$\texttt{globalPseudoMassDist}$ continuity (uniform-in-$A$, \#4320) and true-mass continuity (\#4081).
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
+
+
 \end{document}
