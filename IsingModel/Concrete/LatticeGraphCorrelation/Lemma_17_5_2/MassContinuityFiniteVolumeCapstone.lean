@@ -66,10 +66,11 @@ theorem globalPseudoMassDist_pow_succ_lipschitz_of_uniform_finiteRegionFV {α d 
     ⟨0, by rintro _ ⟨n, rfl⟩; exact pow_nonneg (hfr_nn β₂ hβ₂ n) _⟩
     hunif
 
-/-- **GJ §17.5 Theorem 17.5.1 — system pseudo-mass power is Lipschitz on the high-temperature
-window** (pp.~311--312): for the window `[β₁,β₂]` (`0<β₁≤β₂`, `β₂·J·2d<1/2`) and `α≥d−1`
-(`d/2<α<d`), `∃ L>0, |globalPseudoMassDist(σ_{β₂})^{2α+1} − globalPseudoMassDist(σ_{β₁})^{2α+1}|
-≤ L·(β₂−β₁)`.
+/-- **GJ §17.5 Theorem 17.5.1 — system pseudo-mass power endpoint Lipschitz bound on the
+high-temperature window** (pp.~311--312): for chosen endpoints `[β₁,β₂]` (`0<β₁≤β₂`, `β₂·J·2d<1/2`)
+and `α≥d−1` (`d/2<α<d`), `∃ L>0, |globalPseudoMassDist(σ_{β₂})^{2α+1} −
+globalPseudoMassDist(σ_{β₁})^{2α+1}| ≤ L·(β₂−β₁)` (the constant `L` may depend on the endpoints via
+the witness mass).
 This is the rigorous Lipschitz-envelope core of GJ Theorem 17.5.1: the σ/A-uniform finite-region
 Lipschitz (PR-FV4c) passes through the `A↑ℤ^d` bridge (#4369) to the infinite-volume system mass
 `m⁻(σ) = globalPseudoMassDist(σ)`.  Combined with Lemma 17.5.2 (the sandwich, #4278/#4297) this is
