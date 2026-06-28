@@ -33117,6 +33117,20 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3d: finite-volume cross-sum $/c$ $\to$ dart-profile sum}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the cross-sum $/c$ reduction (\#4347).
+$\texttt{cross\_sum\_div\_c\_le\_dart\_profile\_finiteRegionFV}$: for a distinct in-box binding pair
+$x\ne z$, the finite-volume c-cancelling Lebowitz cross-sum divided by
+$c=\langle\phi_x\phi_z\rangle_{\sigma,A}$ is bounded by
+$2(1+(m^-_{FV}d(x,z))^\alpha)e^{m^-_{FV}}$ times the dart-profile sum
+$\sum_{dt}s(x,dt.\mathrm{fst})s(z,dt.\mathrm{snd})$. The handshake identity
+$\texttt{sum\_edgeFinset\_sym2\_lift\_prod\_eq\_sum\_dart}$ turns the edge $\mathrm{Sym}_2$-sum into a
+dart sum; $\texttt{Finset.sum\_div}$ distributes $/c$; the unified per-dart $/c$ bound (PR-FV3c)
+bounds every dart; the dart-independent constant factors out. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3c: finite-volume unified per-dart $/c$ bound}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the unified per-dart $/c$ bound (\#4346).
