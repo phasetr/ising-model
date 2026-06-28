@@ -32953,4 +32953,17 @@ this yields $\text{cross-sum}/c\le 2e^{m^-}(1+(m^-r)^\alpha)\,C(1+r)^{-(2\alpha-
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: finite $\le$ infinite cross-sum bridge}
+
+\par\noindent\textbf{Role:} The missing link letting the $\mathrm{hcomp}$ combine use the finite deriv
+bound (\#4340) while routing its cross-sum through the infinite convolution machinery.
+$\texttt{cross\_sum\_finite\_le\_infinite}$: the finite-volume Lebowitz cross-sum (induced-graph
+factors $\langle\varphi_{\langle x\rangle}\varphi_u\rangle_{\mathrm{box}}$) is bounded termwise by the
+infinite-volume cross-sum ($\langle\varphi_x\varphi_{u.\mathrm{val}}\rangle^\infty$). Per edge each
+factor $\le$ its infinite-volume value
+($\texttt{correlation\_inducedGraph\_cubic\_le\_correlationInfinite}$), products monotone
+($\texttt{mul\_le\_mul}$, correlations non-negative). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
