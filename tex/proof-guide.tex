@@ -32717,5 +32717,21 @@ $\texttt{tsum\_mul\_neighborFinset\_sum\_pow\_neg\_le}$ (\#4327); $C=C_t^2C_{432
 This is the convolution at the heart of the GJ p.312 derivative-ratio bound. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
 
+\subsection*{PR \#4337 --- GJ Theorem 17.5.1, PR-1c: dart exp-cancellation + pseudoMassG profile-ratio algebra}
+
+\par\noindent\textbf{Role:} Per-dart building blocks of the GJ p.312 ratio (file
+$\texttt{MassContinuityDartRatio.lean}$):
+\begin{itemize}
+  \item $\texttt{exp\_neg\_scaled\_dart\_pair\_le\_exp}$ --- edge analog of \#4329: for adjacent
+    $u\sim v$, $\exp(-t(d(x,u)+d(y,v)-d(x,y)))\le\exp t$ (triangle through the edge,
+    $d(x,y)\le d(x,u)+1+d(y,v)$).
+  \item $\texttt{pseudoMassG\_ratio\_le}$ --- with $P(r)=\texttt{pseudoMassG}\,\alpha\,r\,m=2e^{-mr}/(1+(mr)^\alpha)$,
+    $P(a)P(b)/P(c)=2(1+(mc)^\alpha)s_a s_b e^{-m(a+b-c)}\le 2(1+(mc)^\alpha)s_a s_b e^{m}$
+    for $m,a,b,c\ge0$ ($s_r=1/(1+(mr)^\alpha)$), given the exp bound.
+\end{itemize}
+Combined with \#4335 (majorant/identity) and \#4336 (dart scaled convolution) these give the per-dart
+correlation ratio and the dart-sum/$c$ bound (PR-1d). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
+
 
 \end{document}
