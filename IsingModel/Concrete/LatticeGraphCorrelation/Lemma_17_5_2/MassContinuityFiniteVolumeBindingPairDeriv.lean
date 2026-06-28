@@ -28,19 +28,33 @@ namespace Ambient
 
 open Real Filter Topology
 
-/-- **Finite-volume per-pair pseudo-mass-power derivative bound (binding pair)** (GJ p.312): for a
-non-adjacent in-box binding pair `x ≠ z` (`pseudoMassFromParamsAtPairFV = m⁻_FV(σ,A)`), the per-pair
-pseudo-mass power `β' ↦ (m_FV(x,z,β'))^{2α+1}` is differentiable at `β` with
-`|deriv| ≤ (2α+1)·⟨sharp(C)⟩·(pseudoMassFromParamsAtPairFV)^{2α}/d(x,z)`.  Feeds PR-FV3i into the
-generic `pseudoMass_pow_succ_deriv_bound` with `K = ⟨sharp⟩·m^{2α}`. -/
-theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : ℕ} (hα : 1 ≤ α)
-    (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
+/-- **Core finite-volume per-pair pseudo-mass-power derivative bound** (GJ p.312): the chain-rule
+body of `pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding` with the convolution
+constant `C` and the FV sharp β-derivative bound `hsharp` supplied as **parameters**.  This lets the
+mass-uniform path feed the single `β`-independent `C` (from `combined_..._mass_uniform`, then the
+GKS-II abs step) into the chain rule, producing a uniform per-pair power-derivative bound. -/
+theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding_core {α d : ℕ} (hα : 1 ≤ α)
+    {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
     (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
     {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
     (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
-      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
-    ∃ C : ℝ, 0 < C ∧ ∃ dv : ℝ,
+      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+    (C : ℝ)
+    (hsharp : |deriv (fun β' => Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+          (cubicExhaustion d) (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β|
+        ≤ (J * (2 * (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
+                * (latticeDistance d x z : ℝ)) ^ α)
+              * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+              * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
+            + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
+                * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+              + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+                * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                / 2)))
+          * Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
+              (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n) :
+    ∃ dv : ℝ,
       HasDerivAt (fun β' => (pseudoMassFromParamsAtPairFV hα (⟨J, 0, β'⟩ : IsingParams ℝ) n x z)
           ^ (2 * α + 1)) dv β ∧
       |dv| ≤ ↑(2 * α + 1)
@@ -64,10 +78,6 @@ theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : �
     rcases hw with rfl | rfl
     · exact hx
     · exact hz
-  -- the FV sharp deriv bound.
-  obtain ⟨C, hC, hsharp⟩ := abs_deriv_correlationAlongExhaustion_le_sharp_finiteRegionFV hα hd hαd
-    hαd2 hJ hβ hA hxz hx hz hbind
-  refine ⟨C, hC, ?_⟩
   set Sval : ℝ := (J * (2 * (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
             * (latticeDistance d x z : ℝ)) ^ α)
           * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
@@ -144,6 +154,37 @@ theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : �
   obtain ⟨dv, hdv_deriv, hdv_bd⟩ := pseudoMass_pow_succ_deriv_bound α hpos hh hc_deriv hm_pos.le
     hg_eq hm_pos hcorr.1 hc_der
   exact ⟨dv, hdv_deriv, hdv_bd⟩
+
+/-- **Finite-volume per-pair pseudo-mass-power derivative bound (binding pair)** (GJ p.312): for an
+in-box binding pair `x ≠ z` (adjacent or not), `∃C>0, ∃dv, HasDerivAt (β'↦(m_FV(x,z,β'))^{2α+1}) dv
+β ∧ |dv| ≤ (2α+1)·⟨sharp(C)⟩·m^{2α}/d(x,z)`.  Obtains `C` and the FV sharp β-derivative bound from
+PR-FV3i, then applies the core. -/
+theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : ℕ} (hα : 1 ≤ α)
+    (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
+    (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
+    (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
+    (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
+      = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
+    ∃ C : ℝ, 0 < C ∧ ∃ dv : ℝ,
+      HasDerivAt (fun β' => (pseudoMassFromParamsAtPairFV hα (⟨J, 0, β'⟩ : IsingParams ℝ) n x z)
+          ^ (2 * α + 1)) dv β ∧
+      |dv| ≤ ↑(2 * α + 1)
+          * ((J * (2 * (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
+                  * (latticeDistance d x z : ℝ)) ^ α)
+                * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
+              + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
+                  * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+                  * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                  / 2)))
+            * (pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z) ^ (2 * α))
+          / (latticeDistance d x z : ℝ) := by
+  obtain ⟨C, hC, hsharp⟩ := abs_deriv_correlationAlongExhaustion_le_sharp_finiteRegionFV hα hd hαd
+    hαd2 hJ hβ hA hxz hx hz hbind
+  exact ⟨C, hC, pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding_core hα hJ hβ hA hxz
+    hx hz hbind C hsharp⟩
 
 end Ambient
 end IsingModel
