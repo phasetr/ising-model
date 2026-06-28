@@ -79,6 +79,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityUn
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDistCubicInf
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityGlobalPowLipschitz
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteVolumePairActive
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistFV
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
