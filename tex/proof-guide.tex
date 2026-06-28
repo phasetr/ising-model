@@ -33117,6 +33117,25 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, Step-2: an infimum of uniformly-Lipschitz functions is Lipschitz}
+
+\par\noindent\textbf{Role:} The pure real-analysis core of GJ's $A\uparrow\mathbb{R}^d$ step
+(p.312). GJ proves $m^-(\sigma,A)^{2\alpha+1}$ Lipschitz with constant \emph{uniform in the bounded
+region $A$}, then concludes for $m^-(\sigma)=\inf_A m^-(\sigma,A)$. Passing the uniform Lipschitz
+bound through the infimum over $A$ requires no differentiation and \emph{no attainment} of the
+infimum.
+$\texttt{abs\_csInf\_range\_sub\_csInf\_range\_le}$ (with corollary
+$\texttt{abs\_csInf\_envelope\_sub\_le\_of\_uniform\_lipschitz}$): for families
+$f_a,f_b:\iota\to\mathbb{R}$ with bounded-below ranges and $|f_b(i)-f_a(i)|\le L$ for all $i$,
+$|\inf(\mathrm{range}\,f_b)-\inf(\mathrm{range}\,f_a)|\le L$ (pure $\inf$ algebra:
+$\inf(\mathrm{range}\,f_a)-L$ is a lower bound of $\mathrm{range}\,f_b$, so
+$\inf(\mathrm{range}\,f_a)-L\le\inf(\mathrm{range}\,f_b)$ via $\texttt{le\_csInf}$; symmetric). This
+\emph{dissolves} the apparent ``binding-pair existence'' obstruction (Issue \#4320): the inf is taken
+over the \emph{finite, attained} regions $A$ of functions that are already uniformly Lipschitz, not
+over the un-attained inf over pairs. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-A: Lipschitz of a lower envelope via binding derivatives}
 
 \par\noindent\textbf{Role:} GJ p.312 differentiates the system pseudo-mass
