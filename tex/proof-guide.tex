@@ -33117,6 +33117,26 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1: true-mass (latticeMass) structure on the window}
+
+\par\noindent\textbf{Role:} What the \emph{true mass} $m=\texttt{latticeMass}$ (a different object
+from the pseudo-mass $m^-$) inherits on the high-temperature window, honestly localizing the gap to
+full Theorem 17.5.1.
+(A) $\texttt{latticeMass\_sandwich\_continuousOn\_window}$: $\texttt{latticeMass}$ is trapped between
+two $\texttt{ContinuousOn}$ functions, $\mathrm{ofReal}(\texttt{globalPseudoMassDist}\,\sigma)\le
+\texttt{latticeMass}\,\sigma\le\mathrm{ofReal}(-\log\tanh(\beta J))$ (lower continuous by the FV
+route; upper continuous via $\tanh=\sinh/\cosh>0$).
+(B) $\texttt{latticeMass\_pos\_lt\_top\_window}$: $0<\texttt{latticeMass}\,\sigma<\top$ (positivity
+from $0<m^-$ on the strict window \#4360; finiteness from the $-\log\tanh$ bound).
+(C) $\texttt{latticeMass\_countable\_not\_continuousWithinAt\_Ioi}$: $\texttt{latticeMass}$ is
+antitone in $\beta$ ($\texttt{latticeMass\_antitone\_beta}$), hence continuous at all but
+\emph{countably many} $\beta$ ($\texttt{AntitoneOn.countable\_not\_continuousWithinAt}$).
+The remaining gap to full Theorem 17.5.1 (continuity of $m$ everywhere) is that the band $[m^-,
+\mathrm{const}\cdot m^-]$ does not close ($\mathrm{const}>1$); closing it needs \S18
+cluster-expansion analyticity (issue \#4386). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV6: continuity of the system pseudo-mass on the window}
 
 \par\noindent\textbf{Role:} The explicit continuity statement of GJ Theorem 17.5.1's core.
