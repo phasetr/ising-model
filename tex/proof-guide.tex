@@ -33117,6 +33117,23 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1: on-axis abscissa upper bound for the true mass}
+
+\par\noindent\textbf{Role:} Toward true-mass $\texttt{latticeMass}$ continuity (issue \#4386).
+$\texttt{latticeMass\_le\_ofReal\_liminf\_onAxisRate}$: for $1\le d$, $0<J$, $0<\beta$,
+$\texttt{latticeMass}(\sigma)\le\mathrm{ofReal}(\liminf_k\tau(k))$ where
+$\tau(k)=-\log\langle\varphi_0\varphi_{(k+1)e_1}\rangle_\infty/(k+1)$ is the on-axis per-distance
+decay rate. This \emph{tightens} the unconditional $\texttt{latticeMass}\le\mathrm{ofReal}(-\log
+\tanh(\beta J))$ (each $\tau(k)\le-\log\tanh$). Every admissible decay rate $\alpha$ in the $\sup$
+defining $\texttt{latticeMass}$ satisfies, at the on-axis pair $(0,(k+1)e_1)$ of distance $k+1$,
+$\langle\varphi_0\varphi_{(k+1)e_1}\rangle\le Ce^{-\alpha(k+1)}$, so $\tau(k)\ge\alpha+(-\log
+C)/(k+1)\to\alpha$, whence $\liminf\tau\ge\alpha$ ($\texttt{liminf\_le\_liminf}$; fence
+$\to\alpha$ via $\texttt{Tendsto.div\_atTop}$; $\tau$ cobounded since $\tau\le-\log\tanh$ from the
+tanh path lower bound $\langle\cdot\rangle\ge\tanh^{\mathrm{dist}}$). This is the upper half of the
+abscissa characterization the semicontinuity analysis rests on. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1: per-pair exponential-rate continuity (true-mass route foundation)}
 
 \par\noindent\textbf{Role:} Foundational brick of the true-mass continuity program (issue \#4386,
