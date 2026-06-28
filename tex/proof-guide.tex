@@ -32703,5 +32703,19 @@ These supply the numerator-majorization / denominator-identity of the p.312 deri
 Axiom-free. Roadmap PR-1..PR-5 in issue \#4320.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312.
 
+\subsection*{PR \#4336 --- GJ Theorem 17.5.1, PR-1b: m⁻-scaled neighbour-shift (dart) HLS convolution}
+
+\par\noindent\textbf{Role:} The $t=m^-$ scaled, edge/dart form of the sharp HLS convolution (the
+Ising $\beta$-derivative Lebowitz bound is a nearest-neighbour edge cross-sum, not GJ's site sum).
+$\texttt{tsum\_mul\_neighborFinset\_sum\_scaled\_le}$: for $t>0$, $d/2<\alpha<d$,
+$\sum'_u \tfrac{1}{1+(t\,d(x,u))^\alpha}\bigl(\sum_{v\sim u}\tfrac{1}{1+(t\,d(z,v))^\alpha}\bigr)
+\le C\,(1+d(x,z))^{-(2\alpha-d)}$.
+Each scaled kernel reduces to $C_t(1+d)^{-\alpha}$
+($\texttt{one\_div\_one\_add\_M\_t\_pow\_le\_const\_mul\_one\_div\_one\_add\_pow\_pow}$), so the
+bound follows from the unscaled neighbour-shift convolution
+$\texttt{tsum\_mul\_neighborFinset\_sum\_pow\_neg\_le}$ (\#4327); $C=C_t^2C_{4327}$.
+This is the convolution at the heart of the GJ p.312 derivative-ratio bound. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
+
 
 \end{document}
