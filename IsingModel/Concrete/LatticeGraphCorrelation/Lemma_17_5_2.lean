@@ -48,6 +48,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalFin
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityRatioBound
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartScaledHLS
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartRatio
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartSum
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
