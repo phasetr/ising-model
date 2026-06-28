@@ -30,7 +30,7 @@ is non-negative (GKS-II) and `≤ c·⟨sharp⟩` (PR-FV3h), so its absolute val
 theorem abs_deriv_correlationAlongExhaustion_le_sharp_finiteRegionFV {α d : ℕ} (hα : 1 ≤ α)
     (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
     (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
-    {x z : Fin d → ℤ} (hxz : x ≠ z) (hxz_nonadj : ¬ (IsingModel.latticeGraph d).Adj x z)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
     (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
       = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
@@ -42,11 +42,14 @@ theorem abs_deriv_correlationAlongExhaustion_le_sharp_finiteRegionFV {α d : ℕ
             * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
             * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
           + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
-              * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA))))
+              * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+            + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+              * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+              / 2)))
         * Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n := by
   obtain ⟨C, hC, hbd⟩ :=
-    combined_derivative_div_c_bound_tight_finiteRegionFV hα hd hαd hαd2 hJ hβ hA hxz hxz_nonadj
+    combined_derivative_div_c_bound_tight_finiteRegionFV hα hd hαd hαd2 hJ hβ hA hxz
       hx hz hbind
   refine ⟨C, hC, ?_⟩
   have hxzsub : ({x, z} : Finset (Fin d → ℤ)) ⊆ (cubicExhaustion d).volume n := by
