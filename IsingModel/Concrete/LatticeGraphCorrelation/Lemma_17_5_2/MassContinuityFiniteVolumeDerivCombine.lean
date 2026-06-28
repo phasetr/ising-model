@@ -36,7 +36,7 @@ open Real
 theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα : 1 ≤ α) (hd : 1 ≤ d)
     (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
     (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
-    {x z : Fin d → ℤ} (hxz : x ≠ z) (hxz_nonadj : ¬ (IsingModel.latticeGraph d).Adj x z)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
     (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
       = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
@@ -50,7 +50,10 @@ theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα :
             * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
             * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
         + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
-            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA))) := by
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+          + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+            / 2)) := by
   classical
   set m : ℝ := finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA with hm_def
   have hm_pos : 0 < m := by rw [hm_def]; exact finiteRegionPseudoMassDistFV_pos hα hJ hβ hA
@@ -133,8 +136,7 @@ theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα :
     exact (cross_sum_div_c_le_dart_profile_finiteRegionFV hα hJ hβ hA hxz hx hz hbind).trans
       (mul_le_mul_of_nonneg_left (hCconv x z) hcoef_nn)
   -- incident `/c` bound.
-  have hinc := incident_sum_corr_fin_div_c_le_tight_finiteRegionFV hα hJ hβ hA hx hz hxz
-    hxz_nonadj hbind
+  have hinc := incident_sum_corr_fin_div_c_le_tight_finiteRegionFV hα hJ hβ hA hx hz hxz hbind
   rw [← hm_def] at hinc
   -- combine.
   rw [div_le_iff₀ hc_pos]
@@ -148,14 +150,16 @@ theorem combined_derivative_div_c_bound_tight_finiteRegionFV {α d : ℕ} (hα :
             * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ))))) *
           Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n)
-        + J * (((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α) * Real.exp m)) *
+        + J * (((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α) * Real.exp m
+              + (1 + m ^ α) * Real.exp m / 2)) *
           Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n) :=
         add_le_add (mul_le_mul_of_nonneg_left hSc hJ.le)
           (mul_le_mul_of_nonneg_left hSi hJ.le)
     _ = (J * (2 * (1 + (m * (latticeDistance d x z : ℝ)) ^ α) * Real.exp m
             * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
-          + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α) * Real.exp m)))
+          + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α) * Real.exp m
+              + (1 + m ^ α) * Real.exp m / 2)))
           * Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) (cubicExhaustion d)
             (⟨J, 0, β⟩ : IsingParams ℝ) {x, z} n := by ring
 
