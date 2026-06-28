@@ -33117,6 +33117,20 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3i: finite-volume sharp $\beta$-derivative bound}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the sharp $\beta$-derivative bound (\#4359),
+at fixed $n$ (no $n\to\infty$ limit).
+$\texttt{abs\_deriv\_correlationAlongExhaustion\_le\_sharp\_finiteRegionFV}$: for a non-adjacent
+in-box binding pair $x\ne z$, $\exists C>0,\ |\partial_\beta\langle\phi_x\phi_z\rangle_{\sigma,A}|\le
+\langle\mathrm{sharp}(C)\rangle\langle\phi_x\phi_z\rangle_{\sigma,A}$ with
+$\langle\mathrm{sharp}(C)\rangle=J[2(1+(m^-_{FV}r)^\alpha)e^{m^-_{FV}}C(1+r)^{-(2\alpha-d)}]+
+J[4d(1+2^\alpha)e^{m^-_{FV}}]$. The finite-stage derivative is GKS-II non-negative
+($\texttt{correlationAlongExhaustion\_latticeGraph\_beta\_deriv\_nonneg}$) and $\le c\cdot\mathrm{sharp}$
+(PR-FV3h via $\texttt{div\_le\_iff}_0$), giving the absolute bound directly. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3h: combined finite-volume $\beta$-derivative $/c$ bound}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the combined $\beta$-derivative $/c$ bound
