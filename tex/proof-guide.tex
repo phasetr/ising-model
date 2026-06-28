@@ -33117,6 +33117,23 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV1: finite-volume per-pair pseudo-mass and finite-region mass}
+
+\par\noindent\textbf{Role:} The finite-volume per-pair pseudo-mass and finite-region system
+pseudo-mass, the objects GJ's p.312 estimate is genuinely about (at the in-box binding pair the FV
+mass equals $m^-_{FV}(\sigma,A)$ exactly, so $\texttt{hbind}$ is free, and the cross-sum is local so
+the scale is consistent --- no $\exp$ blow-up). $\texttt{pseudoMassFromParamsAtPairFV}$ $=
+\texttt{pseudoMassExt}$ of $\texttt{correlationAlongExhaustion}\,(\sigma)\{x,z\}\,n$ at radius
+$\mathrm{dist}$ (diagonal $0$); $\texttt{finiteRegionPseudoMassDistFV} = \inf'$ over distinct pairs of
+$\mathrm{volume}\,n$. The finite-volume analogues of
+$\texttt{pseudoMassFromParamsAtPairDist}$/$\texttt{finiteRegionPseudoMassDist}$ (which use
+$\texttt{correlationInfinite}$). With $\texttt{\_nonneg}$, $\texttt{\_of\_ne}$, and positivity
+($\texttt{pseudoMassFromParamsAtPairFV\_pos}$, $\texttt{finiteRegionPseudoMassDistFV\_pos}$) from the
+PR-FV0 active range $+$ $\texttt{pseudoMassExt\_pos\_of\_mem}$ $+$ $\texttt{Finset.lt\_inf'\_iff}$.
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV0: finite-volume non-adjacent pair active range}
 
 \par\noindent\textbf{Role:} The first brick of the Step-1 finite-volume redesign. GJ's argument uses
