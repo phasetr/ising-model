@@ -33117,6 +33117,26 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV4b-adj: adjacency-general FV $\beta$-derivative chain}
+
+\par\noindent\textbf{Role:} GJ p.312 chooses the inf' binder $x_0\ne y_0$ \emph{without}
+non-adjacency, and adjacent pairs (largest correlation, hence smallest pseudo-mass) are the generic
+minimisers, so the finite-volume $\beta$-derivative chain (FV3f--FV4a) is generalized to drop the
+$\neg\mathrm{Adj}(x,z)$ hypothesis (handle $r=d(x,z)\ge1$). New primitives:
+$\texttt{pseudoMass\_denom\_ratio\_le\_general}$ ($(1+(mr)^\alpha)/(1+(ms)^\alpha)\le1+2^\alpha$ for
+any $r\le2s$, $0\le m$, $0\le r$, $0\le s$ --- the $2\le r$ form was unnecessarily strong; this
+covers adjacent $r=1$, $s\ge1$), and $\texttt{dart\_profile\_sum\_le\_convolution\_mass\_uniform}$
+($\exists C>0,\ \forall m\ge m_{\min},\ \forall n\,x\,z,\ \sum_{dt:\mathrm{Dart}_n}
+s_m(x,\cdot)s_m(z,\cdot)\le C(1+d)^{-(2\alpha-d)}$, mass-uniform over $m\ge m_{\min}$ and $n$, from
+\#4362). For an adjacent binder the edge $\{x,z\}$ is itself incident, with empty symmetric
+difference, contributing $1/c=(1+(m^-_{FV})^\alpha)e^{m^-_{FV}}/2$ (since $c=\texttt{pseudoMassG}\,
+\alpha\,1\,m^-_{FV}$ at binding); the per-edge constant becomes $(1+2^\alpha)e^{m^-_{FV}}+
+(1+(m^-_{FV})^\alpha)e^{m^-_{FV}}/2$ and the incident sum $4d\cdot(\text{that})$. The per-pair
+power-derivative bound $\texttt{pseudoMassFromParamsAtPairFV\_pow\_succ\_hasDeriv\_abs\_le\_binding}$
+now holds for \emph{every} distinct binding pair. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV4b-prep: upper bound on the finite-volume finite-region mass}
 
 \par\noindent\textbf{Role:} The interval-uniform upper bound for the GJ p.312 uniform-in-$A$

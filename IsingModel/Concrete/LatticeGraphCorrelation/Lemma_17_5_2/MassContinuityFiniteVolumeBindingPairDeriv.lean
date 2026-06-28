@@ -36,7 +36,7 @@ generic `pseudoMass_pow_succ_deriv_bound` with `K = ⟨sharp⟩·m^{2α}`. -/
 theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : ℕ} (hα : 1 ≤ α)
     (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) {n : ℕ}
     (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
-    {x z : Fin d → ℤ} (hxz : x ≠ z) (hxz_nonadj : ¬ (IsingModel.latticeGraph d).Adj x z)
+    {x z : Fin d → ℤ} (hxz : x ≠ z)
     (hx : x ∈ (cubicExhaustion d).volume n) (hz : z ∈ (cubicExhaustion d).volume n)
     (hbind : pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z
       = finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) :
@@ -49,7 +49,10 @@ theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : �
                 * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
                 * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
               + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
-                  * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA))))
+                  * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+                  * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+                  / 2)))
             * (pseudoMassFromParamsAtPairFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n x z) ^ (2 * α))
           / (latticeDistance d x z : ℝ) := by
   classical
@@ -63,14 +66,17 @@ theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding {α d : �
     · exact hz
   -- the FV sharp deriv bound.
   obtain ⟨C, hC, hsharp⟩ := abs_deriv_correlationAlongExhaustion_le_sharp_finiteRegionFV hα hd hαd
-    hαd2 hJ hβ hA hxz hxz_nonadj hx hz hbind
+    hαd2 hJ hβ hA hxz hx hz hbind
   refine ⟨C, hC, ?_⟩
   set Sval : ℝ := (J * (2 * (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA
             * (latticeDistance d x z : ℝ)) ^ α)
           * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
           * (C * (1 + (latticeDistance d x z : ℝ)) ^ (-(2 * (α : ℝ) - (d : ℝ)))))
         + J * ((4 * d : ℝ) * ((1 + (2 : ℝ) ^ α)
-            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA))))
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+          + (1 + (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA) ^ α)
+            * Real.exp (finiteRegionPseudoMassDistFV hα (⟨J, 0, β⟩ : IsingParams ℝ) n hA)
+            / 2)))
     with hSval_def
   -- the FV correlation derivative and active range.
   obtain ⟨c', hc_deriv⟩ :=
