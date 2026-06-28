@@ -65,6 +65,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDe
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDenomRatio
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentDivCTight
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentSumTight
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDerivCombineTight
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
