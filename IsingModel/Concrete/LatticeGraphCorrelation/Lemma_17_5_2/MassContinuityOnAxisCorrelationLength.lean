@@ -5,10 +5,12 @@ import IsingModel.TranslationInvariance.Truncated
 import Mathlib.Analysis.Subadditive
 
 /-!
-# GJ §17.5 Theorem 17.5.1 — on-axis inverse correlation length as a Fekete limit
+# GJ §17.5 eq. (17.5.1) — on-axis inverse correlation length exists as a Fekete limit
 
-Toward true-mass `latticeMass` continuity (#4386): the **on-axis inverse correlation length**
-exists as a genuine limit (not merely a `liminf`).  Writing
+Toward the true-mass continuity *Theorem* 17.5.1 (#4386): we establish the *existence* of the limit
+in GJ eq. (17.5.1) — the **on-axis inverse correlation length** exists as a genuine limit (not
+merely a `liminf`).  Limit existence / well-definedness is a prerequisite to the continuity theorem
+of the same number, which is *not* proved here.  Writing
 `u(n) = −log⟨φ₀ φ_{n e₁}⟩_∞` for the on-axis log-correlation sequence, the second Griffiths
 inequality (GKS-II, `correlationInfinite_latticeGraph_cubicExhaustion_gks_second`) gives
 **supermultiplicativity** of the two-point function,
@@ -31,7 +33,8 @@ must hook into.  The matching lower bound and hence full continuity are *not* de
 
 References:
 
-* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5 Theorem 17.5.1, §18, pp.~311--312.
+* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5 eq. (17.5.1) (definition of the mass as the limit
+  of `−ln⟨φ(x)φ(y)⟩/|x−y|`) and Theorem 17.5.1 (continuity of that mass), §18, pp.~311--312.
 * Friedli--Velenik, *Statistical Mechanics of Lattice Systems* (2017), §3.7.3 (correlation length).
 -/
 
@@ -227,8 +230,9 @@ theorem onAxisInverseCorrelationLength_le_neg_log_tanh (hd : 0 < d) {J β : ℝ}
   rw [onAxisLogCorr, div_le_iff₀ hkpos]
   nlinarith [hlog]
 
-/-- **On-axis abscissa upper bound for the true mass, as a true limit** (GJ §17.5 Thm 17.5.1, toward
-#4386): `latticeMass(σ) ≤ ofReal(onAxisInverseCorrelationLength)`.  Combines the on-axis abscissa
+/-- **On-axis abscissa upper bound for the true mass, as a true limit** (GJ §17.5 eq. (17.5.1)
+limit existence, toward Thm 17.5.1 / #4386):
+`latticeMass(σ) ≤ ofReal(onAxisInverseCorrelationLength)`.  Combines the on-axis abscissa
 bound #4389 (`latticeMass ≤ ofReal(liminf_k τ(k))`) with the Fekete limit `τ(k) → onAxis…Length`
 (so the `liminf` equals the limit).  This is the sharpened, well-defined-correlation-length form of
 the on-axis upper bound; the matching lower bound (sharpness / continuity) is the Ornstein–Zernike /
