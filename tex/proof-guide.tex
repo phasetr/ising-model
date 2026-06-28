@@ -33033,4 +33033,17 @@ constant. Same proof structure as \#4352 swapping the incident bound (\#4344$\to
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1j: n-uniform cross-sum convolution bound}
+
+\par\noindent\textbf{Role:} The n-uniform version of \#4350, needed to take the $n\to\infty$ limit of
+the finite-stage $\beta$-derivative bound with a fixed RHS.
+$\texttt{dart\_profile\_sum\_le\_convolution\_uniform}$:
+$\exists C>0,\ \forall n\,x\,z,\ \sum_{dt:\mathrm{Dart}_n}s(x,dt.\mathrm{fst})s(z,dt.\mathrm{snd})
+\le C(1+d(x,z))^{-(2\alpha-d)}$ --- the \emph{same} $C$ for every stage $n$ (the $n$-independent
+infinite-lattice tsum constant). Proof: obtain $C$ from the $n$-free
+$\texttt{tsum\_mul\_neighborFinset\_sum\_scaled\_le}$, then $\forall n$ via \#4349 (dart-profile $\le$
+box-vertex) $+$ $\texttt{Finset.sum\_coe\_sort}$ $+$ $\texttt{Summable.sum\_le\_tsum}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
