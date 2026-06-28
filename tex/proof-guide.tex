@@ -33117,6 +33117,25 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV0: finite-volume non-adjacent pair active range}
+
+\par\noindent\textbf{Role:} The first brick of the Step-1 finite-volume redesign. GJ's argument uses
+the finite-volume expectation $\langle\cdot\rangle_{\sigma,A}$ (= $\texttt{correlationΛ}$), where the
+binding pair's mass equals $m^-(\sigma,A)$ exactly (so $\texttt{hbind}$ is free). This requires the
+finite-volume two-point function to be in the active range for \emph{every} distinct pair, not just
+adjacent ones. $\texttt{correlationAlongExhaustion\_cubicExhaustion\_pair\_active}$: for $0<J$,
+$0<\beta$, distinct $x\ne z$ with $\{x,z\}\subseteq\mathrm{volume}\,n$,
+$\texttt{correlationAlongExhaustion}\,(\sigma)\{x,z\}\,n\in(0,2)$. Strict positivity for any distinct
+in-box pair comes from a walk inside the box ($\texttt{inducedGraph\_cubicBox\_reachable}$) and the
+second Griffiths inequality $\texttt{gks\_second}$:
+$\langle\sigma^a\sigma^c\rangle\langle\sigma^c\sigma^b\rangle\le\langle\sigma^a\sigma^b\rangle$ (as
+$\{a,c\}\triangle\{c,b\}=\{a,b\}$), the adjacent factors positive
+($\texttt{correlationΛ\_\dots\_pos\_of\_latticeAdj}$), by induction along the walk (the
+graph-agnostic $\texttt{correlation\_pair\_pos\_of\_walk}$); the upper bound from
+$\texttt{correlationΛ\_le\_one}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~311.
+
+
 \subsection*{GJ Theorem 17.5.1, conditional capstone: $m^-(\sigma)^{2\alpha+1}$ Lipschitz from uniform finite-region Lipschitz}
 
 \par\noindent\textbf{Role:} Assembles the $A\uparrow$ bridge and the Step-2 inf-Lipschitz lemma into
