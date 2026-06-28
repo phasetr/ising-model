@@ -105,6 +105,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityPerPairRate
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassAbscissa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassDirectionalAbscissa
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityOnAxisCorrelationLength
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
