@@ -33117,6 +33117,35 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ \S18 / FFS Ch 12: sharp \texttt{tanh}-coefficient Simon--Lieb edge inequality (brick 1)}
+
+\par\noindent\textbf{Role:} The \emph{sharp} edge form of the Simon--Lieb inequality at $h=0$, the
+new mathematical core of the sharp-decay programme (\#4393). For a finite graph $G$, $0\le\beta J$,
+distinct $i\ne j$:
+\[
+  \langle\sigma_i\sigma_j\rangle \le \tanh(\beta J)\sum_{e\ni i}
+    \langle\sigma^{\{i,j\}\triangle e}\rangle
+  \qquad(\texttt{correlation\_simon\_lieb\_sharp}).
+\]
+This is \emph{sharper} than the random-current edge form
+$\texttt{correlation\_inducedGraph\_simon\_lieb}$ (coefficient $\beta J\ge\tanh\beta J$). The key is
+to work at the \textbf{numerator} of the high-temperature expansion closed form
+$\texttt{correlation\_high\_temp\_expansion\_h\_zero\_closed}$:
+$\langle\sigma_A\rangle=N(A)/Z$ with $N(A)=\sum_{X\subseteq E,\,\partial X=A}\tanh^{|X|}$ and a
+\emph{shared} denominator $Z=N(\emptyset)>0$. In this $0/1$-occupancy (subset) representation each
+edge carries exactly one factor of $\tanh$ (not $(\beta J)^n/n!$), so the elementary numerator
+peeling $N(\{i,j\})\le\tanh\cdot\sum_{e\ni i}N(\{i,j\}\triangle e)$ (private $\texttt{htNum\_peel}$)
+via the injection $X\mapsto\langle e(X),X\setminus e(X)\rangle$ (any chosen incident edge;
+$\texttt{Finset.sum\_image}$ then $\texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}$) needs
+\textbf{no} random-current switching lemma. The erase-parity helper
+$\texttt{htBoundaryFilter\_erase\_mem}$ ($\partial(X\setminus e)=\partial X\triangle e$) uses
+$\texttt{filter\_mem\_card\_erase}$; incident-edge existence is
+$\texttt{evenSubgraph\_pair\_boundary\_exists\_edge\_incident\_to}$. Dividing by $Z>0$
+transfers the numerator bound to correlations. Axiom-free. Reference: Glimm--Jaffe \S18;
+Fernández--Fröhlich--Sokal, \emph{Random Walks\dots} (1992), Ch 12; Friedli--Velenik \S3.7.3
+eq.~(3.46), p.~117.
+
+
 \subsection*{FFS Ch 12 / GJ \S18: geometric distance-decay of the walk-sum (sharp-decay brick A3)}
 
 \par\noindent\textbf{Role:} The mechanical geometric-closure brick (Route A, brick A3) of the
