@@ -100,5 +100,16 @@ theorem finiteRegionPseudoMassDistFV_pos {α d : ℕ} (hα : 1 ≤ α) {J β : �
     · exact hq2
   exact pseudoMassFromParamsAtPairFV_pos hα hJ hβ hq_ne hsub
 
+/-- **Finite-volume finite-region pseudo-mass is `≤` any contributing in-box pair's FV pseudo-mass**
+(`Finset.inf'_le`): for `(x, z) ∈ finiteRegionDistinctPairs (volume n)`,
+`finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z`. -/
+theorem finiteRegionPseudoMassDistFV_le_of_mem {α d : ℕ} (hα : 1 ≤ α) (p : IsingParams ℝ)
+    (n : ℕ) (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
+    {x z : Fin d → ℤ}
+    (hmem : (x, z) ∈ finiteRegionDistinctPairs ((cubicExhaustion d).volume n)) :
+    finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z := by
+  unfold finiteRegionPseudoMassDistFV
+  exact Finset.inf'_le (fun q => pseudoMassFromParamsAtPairFV hα p n q.1 q.2) hmem
+
 end Ambient
 end IsingModel

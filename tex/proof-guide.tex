@@ -33117,6 +33117,23 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3a: finite-volume correlation majorant}
+
+\par\noindent\textbf{Role:} The brick that makes the finite-volume sharp $\beta$-derivative ratio
+work at the single scale $m^-_{FV}(\sigma,A)$. $\texttt{correlationAlongExhaustion\_eq\_pseudoMassG\_finiteVolume}$:
+$\langle\phi(x)\phi(z)\rangle_{\sigma,\mathrm{volume}\,n}=\texttt{pseudoMassG}\,\alpha\,(d(x,z))\,
+(\texttt{pseudoMassFromParamsAtPairFV})$ (from $\texttt{pseudoMass\_spec}$ and the FV per-pair
+definition, on the PR-FV0 active range). $\texttt{correlationAlongExhaustion\_le\_pseudoMassG\_finiteRegionFV}$:
+$\langle\phi(x)\phi(z)\rangle_{\sigma,A}\le\texttt{pseudoMassG}\,\alpha\,(d(x,z))\,(m^-_{FV}(\sigma,A))$
+--- the per-pair FV mass dominates the finite-region infimum
+($\texttt{finiteRegionPseudoMassDistFV\_le\_of\_mem}$) and $\texttt{pseudoMassG}$ is antitone in the
+mass ($\texttt{pseudoMassG\_antitoneOn}$), so the profile at the smaller $m^-_{FV}(\sigma,A)$
+dominates. Every in-box correlation thus decays at rate $\ge m^-_{FV}(\sigma,A)$, so the cross-sum is
+bounded by the $m^-_{FV}(\sigma,A)$-scaled HLS convolution with no $\exp$ blow-up (the attained-inf
+hypothesis $\texttt{hbind}$ is automatic). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV2: A$\uparrow$ bridge (finite-volume form)}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the $A\uparrow$ bridge:
