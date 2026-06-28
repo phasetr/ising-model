@@ -33117,6 +33117,32 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ eq.~(17.5.1): directional inverse correlation length exists as a Fekete limit}
+
+\par\noindent\textbf{Role:} The all-directions generalization of the on-axis Fekete limit (\#4391),
+toward the true-mass continuity Theorem~17.5.1 (issue \#4386). For any nonzero direction $v\ne0$,
+$a_v(n)=-\log\langle\varphi_0\varphi_{n\cdot v}\rangle_\infty$ is subadditive
+($\texttt{directionalLogCorr\_subadditive}$): GKS-II supermultiplicativity along the ray
+$\mathbb{N}\!\cdot\!v$ (via $\{m v,0\}\triangle\{m v,(m+n)v\}=\{(m+n)v,0\}$) plus translation
+invariance turn $\langle\varphi_{m v}\varphi_{(m+n)v}\rangle$ into $\langle\varphi_0\varphi_{n v}\rangle$;
+distinctness of the ray points comes from $\texttt{nsmul\_ne\_zero\_of\_dir}$
+($d(0,n\cdot v)=n\,d(0,v)\ge1$). Nonnegativity ($a_v\ge0$, correlations in $[0,1]$) gives
+$\texttt{BddBelow}$, so Fekete ($\texttt{directionalLogCorr\_div\_tendsto}$) yields
+$a_v(n)/n\to\inf_n a_v(n)/n$, and
+$\texttt{directionalInverseCorrelationLength}\,v:=(\inf_n a_v(n)/n)/d(0,v)$. Headline
+$\texttt{latticeMass\_le\_ofReal\_directionalInverseCorrelationLength}$:
+$\texttt{latticeMass}\le\texttt{ofReal}(\texttt{directionalInverseCorrelationLength}\,v)$ --- the
+\#4390 rate $\tau_v(k)=a_v(k+1)/((k+1)\,d(0,v))$ is the $(\cdot+1)$-shift of $a_v(n)/n$ divided by
+$d(0,v)$, so its $\liminf$ equals the Fekete limit ($\texttt{Tendsto.liminf\_eq}$). Capstone
+$\texttt{latticeMass\_le\_iInf\_ofReal\_directionalInverseCorrelationLength}$:
+$\texttt{latticeMass}\le\inf_{v\ne0}\texttt{ofReal}(\texttt{directionalInverseCorrelationLength}\,v)$
+($\texttt{le\_iInf}$) --- the full directional abscissa \emph{upper} characterization of the true
+mass, as true limits. The matching lower bound / sharpness is the Ornstein--Zernike / \S18 content
+(\#4386), not delivered here. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 eq.~(17.5.1) / Theorem~17.5.1, \S18, pp.~311--312;
+Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ eq.~(17.5.1): on-axis inverse correlation length exists as a Fekete limit}
 
 \par\noindent\textbf{Role:} Toward the true-mass continuity Theorem~17.5.1 (issue \#4386), establish
