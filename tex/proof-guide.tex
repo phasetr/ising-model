@@ -33117,6 +33117,21 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV3h: combined finite-volume $\beta$-derivative $/c$ bound}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of the combined $\beta$-derivative $/c$ bound
+(\#4356), entirely at the finite volume (no infinite-volume bridge, no $n\to\infty$ limit).
+$\texttt{combined\_derivative\_div\_c\_bound\_tight\_finiteRegionFV}$: for a non-adjacent in-box
+binding pair $x\ne z$, $\exists C>0,\ \partial_\beta c_A/c\le
+J[2(1+(m^-_{FV}r)^\alpha)e^{m^-_{FV}}C(1+r)^{-(2\alpha-d)}]+J[4d(1+2^\alpha)e^{m^-_{FV}}]$. The cross
+part bridges \#4340's subtype-correlation cross-sum to the $\texttt{correlationAlongExhaustion}$ form
+($\texttt{Finset.sum\_congr}$ $+$ $\texttt{Sym2.lift\_mk}$ $+$ a per-vertex bridge), then applies the
+FV cross-sum $/c$ bound (PR-FV3d) and the $m^-_{FV}$-scaled HLS convolution (\#4350); the incident
+part is PR-FV3g; combined via \#4340 and $\texttt{div\_le\_iff}_0$. Both fit GJ's
+$m^{-2\alpha}\,dm^-/d\sigma\le\mathrm{const}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3g: finite-volume bounded incident-sum $/c$ bound}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the bounded incident-sum $/c$ bound
