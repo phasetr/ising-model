@@ -9,10 +9,11 @@ numerator is a nearest-neighbour edge/dart cross-sum).  This file provides:
 
 * `exp_neg_scaled_dart_pair_le_exp` — the edge analog of `exp_neg_scaled_dist_pair_le_one` (#4329):
   for an adjacent pair `u ∼ v`, `exp(−t·(d(x,u)+d(y,v)−d(x,y))) ≤ exp t` (triangle, edge length 1);
-* `correlationInfinite_dart_ratio_le` — the per-dart correlation ratio: for a distinct binding pair
-  `x ≠ y` and an adjacent `u ∼ v`, `⟨φ_x φ_u⟩·⟨φ_y φ_v⟩ / c ≤ e^{m⁻}·(1+(m⁻·d(x,y))^α)·s_xu·s_yv`,
-  where `c = ⟨φ_x φ_y⟩`, `m⁻ = globalPseudoMassDist`, `s_ab = 1/(1+(m⁻·d(a,b))^α)`.  Uses the
-  system-mass majorant (#4335), the pseudo-mass identity (#4335), and the exp-cancellation.
+* `pseudoMassG_ratio_le` — the profile-ratio algebra: with `P(r) = pseudoMassG α r m`,
+  `P(a)·P(b)/P(c) = 2·(1+(mc)^α)·s_a·s_b·e^{−m(a+b−c)} ≤ 2·(1+(mc)^α)·s_a·s_b·e^{m}` for
+  `m,a,b,c ≥ 0` (`s_r = 1/(1+(mr)^α)`), given the exp bound.  Combined with the system-mass majorant
+  and the pseudo-mass identity (#4335) and the dart scaled convolution (#4336), this gives the GJ
+  p.312 per-dart correlation ratio and the dart-sum/`c` bound (the subject of PR-1d).
 
 References:
 
