@@ -32923,4 +32923,20 @@ injective), and converts the subtype sum to a $\texttt{neighborFinset}$ sum
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: dart-profile sum $\le$ box-vertex sum}
+
+\par\noindent\textbf{Role:} Bounds the cross-sum's dart-profile sum by a box-vertex sum whose inner
+neighbour sum ranges over the full lattice neighbours.
+$\texttt{dart\_profile\_sum\_le\_box\_vertex\_sum}$:
+$\sum_{dt}s(x,dt.\mathrm{fst})s(z,dt.\mathrm{snd})\le
+\sum_{v:\uparrow\mathrm{box}}s(x,v.\mathrm{val})\sum_{u\sim v.\mathrm{val}}s(z,u)$ with
+$s(a,b)=1/(1+(m^-d(a,b))^\alpha)$. Groups by $dt.\mathrm{fst}$ (\#4348), factors out $s(x,v.\mathrm{val})$
+($\texttt{Finset.mul\_sum}$), and bounds each induced-box neighbour sum by the lattice neighbour sum
+(box neighbours inject via $.\mathrm{val}$: $\texttt{Finset.sum\_image}$ $+$
+$\texttt{Finset.sum\_le\_sum\_of\_subset\_of\_nonneg}$, using
+$\texttt{inducedGraph}.\mathrm{Adj}\,v\,w\to\texttt{latticeGraph}.\mathrm{Adj}\,v.\mathrm{val}\,w.\mathrm{val}$).
+Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
