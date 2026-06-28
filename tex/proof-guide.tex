@@ -32581,4 +32581,38 @@ $\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quo
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
 
 
+\subsection*{PR \#4332 --- Conditional finite-region Lipschitz of $m^-(\sigma,A)^{2\alpha+1}$ (GJ~\S17.5 Lemma 17.5.2(a) continuity $\to$ Lipschitz)}
+
+\par\noindent\textbf{Role:} Upgrades the finite-region continuity to a Lipschitz estimate of the
+$(2\alpha+1)$-power, for each \emph{fixed} bounded region $A$:
+$\texttt{finiteRegionPseudoMassDist\_pow\_succ\_lipschitz\_on\_window\_of\_profile\_lower}$ gives,
+for $\texttt{Icc}\,\beta_1\,\beta_2\subseteq\texttt{window}\,d\,J$ and the faithful per-pair profile
+lower bounds (one per distinct pair of $A$),
+$\exists C>0,\ |m^-(\sigma_2,A)^{2\alpha+1}-m^-(\sigma_1,A)^{2\alpha+1}|\le C(\beta_2-\beta_1)$.
+File $\texttt{FiniteRegionPseudoMassDistLipschitz.lean}$; builds on PRs \#4330/\#4331.
+
+\par\noindent\textbf{Route.}
+\begin{itemize}
+  \item \emph{Bridge} $\texttt{pseudoMassFromParamsAtPairDist\_eq\_atPair\_cubic}$: the
+    distance-radius pseudo-mass equals the fixed-radius one at $r=\texttt{dist}$, on the cubic
+    exhaustion. Specializing to the cubic exhaustion makes the $\texttt{Fintype (edgeSet)}$ instances
+    canonical on both sides (for a general $\Lambda$ the synthesized-vs-passed instance mismatch makes
+    the $\texttt{pseudoMassExt}$ $\texttt{dite}$ defeq diverge; see \#4320).
+  \item \emph{Per-pair} $\texttt{pseudoMassFromParamsAtPairDist\_pow\_succ\_lipschitz\_…}$: PR~\#4331
+    instantiated at $\rho:=\texttt{latticeDistance}$, constant $(2\alpha+1)K/\texttt{dist}$.
+  \item \emph{Finite-region assembly}: $(\inf')^{2\alpha+1}=\inf'((\cdot)^{2\alpha+1})$ (odd power is
+    monotone, $\texttt{Finset.comp\_inf'\_eq\_inf'\_comp}$); the $\inf'$ of finitely many Lipschitz
+    functions is Lipschitz with constant $\texttt{Finset.sup'}$ of the per-pair constants
+    ($\texttt{choose!}$ + achieved infimum $\texttt{Finset.exists\_mem\_eq\_inf'}$ +
+    $\texttt{Finset.inf'\_le}$).
+\end{itemize}
+
+\par\noindent\textbf{Conditional / Partial.} Per-pair $\texttt{hprofile}$ (faithful distance form;
+$\forall$-displacement false, \#4270); the constant is per-$A$ --- uniform-in-$A$ / infinite-envelope
+$\texttt{globalPseudoMassDist}$ continuity does \emph{not} follow ($(2\alpha+1)K/\texttt{dist}$
+uncontrolled as $\operatorname{diam}A\to\infty$, \#4320).
+$\texttt{\#print axioms}=[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312.
+
+
 \end{document}
