@@ -32939,4 +32939,18 @@ Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1i: cross-sum dart-profile convolution bound}
+
+\par\noindent\textbf{Role:} Completes the decay of the cross-sum dart-profile sum.
+$\texttt{summable\_mul\_neighborFinset\_sum\_scaled}$ exposes the summability of the $m^-$-scaled HLS
+convolution summand (domination by $Ct^2\cdot$ the unscaled summand, which is summable).
+$\texttt{dart\_profile\_sum\_le\_convolution}$: for $d<2\alpha<2d$ and $m>0$,
+$\exists C>0,\ \forall x,z,\ \sum_{dt}s(x,dt.\mathrm{fst})s(z,dt.\mathrm{snd})\le
+C(1+d(x,z))^{-(2\alpha-d)}$, $s(a,b)=1/(1+(m\,d(a,b))^\alpha)$. Composes the dart-profile $\le$
+box-vertex bound (\#4349), box-vertex $\le$ infinite-lattice tsum ($\texttt{Finset.sum\_coe\_sort}$ $+$
+$\texttt{Summable.sum\_le\_tsum}$), and the $m^-$-scaled HLS convolution (\#4336). Combined with \#4347
+this yields $\text{cross-sum}/c\le 2e^{m^-}(1+(m^-r)^\alpha)\,C(1+r)^{-(2\alpha-d)}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
