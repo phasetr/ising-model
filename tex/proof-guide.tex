@@ -33117,6 +33117,21 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV4a: finite-volume per-pair pseudo-mass-power derivative bound}
+
+\par\noindent\textbf{Role:} The finite-volume analogue of PR-B1 (\#4363).
+$\texttt{pseudoMassFromParamsAtPairFV\_pow\_succ\_hasDeriv\_abs\_le\_binding}$: for a non-adjacent
+in-box binding pair $x\ne z$, $\exists C>0,\exists dv,\ \mathrm{HasDerivAt}\,(\beta'\mapsto
+(m_{FV}(x,z,\beta'))^{2\alpha+1})\,dv\,\beta\wedge|dv|\le(2\alpha+1)\langle\mathrm{sharp}(C)\rangle
+m^{2\alpha}/d(x,z)$. Feeds PR-FV3i ($|\partial_\beta c_A|\le\langle\mathrm{sharp}\rangle c_A$) into the
+generic $\texttt{pseudoMass\_pow\_succ\_deriv\_bound}$ with $K=\langle\mathrm{sharp}\rangle m^{2\alpha}$,
+using the FV profile identity (reused generic
+$\texttt{pseudoMassG\_pseudoMassExt\_eventuallyEq\_of\_eventually\_mem}$), the FV correlation
+derivative, and the chain-rule differentiability of $\texttt{pseudoMassFromParamsAtPairFV}$ (via
+$\texttt{pseudoMassExt\_hasStrictDerivAt}$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV3i: finite-volume sharp $\beta$-derivative bound}
 
 \par\noindent\textbf{Role:} The finite-volume analogue of the sharp $\beta$-derivative bound (\#4359),
