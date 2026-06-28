@@ -33117,6 +33117,26 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV4b: the $\sigma/A$-uniform per-pair power-derivative bound}
+
+\par\noindent\textbf{Role:} The payoff of the finite-volume route.
+$\texttt{pseudoMassFromParamsAtPairFV\_pow\_succ\_hasDeriv\_abs\_le\_uniform}$: for the
+high-temperature window $[\beta_1,\beta_2]$ ($0<\beta_1\le\beta_2$, $\beta_2 J\,2d<1/2$) and
+$\alpha\ge d-1$ (with $d/2<\alpha<d$), there is a \emph{single} $M>0$ such that for every $n$, every
+$\beta\in[\beta_1,\beta_2]$, and every in-box binding pair $x\ne z$,
+$\exists dv,\ \mathrm{HasDerivAt}\,(\beta'\mapsto(m_{FV}(x,z,\beta'))^{2\alpha+1})\,dv\,\beta\wedge
+|dv|\le M$. Assembly: the mass-uniform combine (one convolution $C$ for the whole window, since
+$m_{\min}\le m^-_{FV}$ on the window via \#4360+\#4380, fed to the new \texttt{\_core} combine) $\to$
+the GKS-II absolute-value step $\to$ the \texttt{\_core} per-pair power-derivative chain rule $\to$
+the rpow collapse $\texttt{pow\_succ\_sharp\_div\_r\_le\_uniform}$. The rpow lemmas
+($\texttt{sharp\_r\_factor\_le}$: $r^\alpha(1+r)^{-(2\alpha-d)}/r\le1$ via base-antitone
+$\texttt{Real.rpow\_le\_rpow\_of\_nonpos}$ and $r^{d-\alpha-1}\le1$;
+$\texttt{sharp\_profile\_factor\_le}$: $(1+(mr)^\alpha)(1+r)^{-(2\alpha-d)}/r\le1+M_w^\alpha$) use
+$\alpha\ge d-1$, $m^-_{FV}\le M_w$ (\#4381), $r\ge1$. The constant is $M=(2\alpha+1)(J\,2(1+M_w^\alpha)
+e^{M_w}C M_w^{2\alpha}+J\,4d((1+2^\alpha)e^{M_w}+(1+M_w^\alpha)e^{M_w}/2)M_w^{2\alpha})$. (With $\alpha:\mathbb{N}$, the constraints $d/2<\alpha<d$ and $\alpha\ge d-1$ force $\alpha=d-1$, $d\ge3$ --- an integer instance of GJ's real-$\alpha$ condition (17.5.4).) Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV4b-adj: adjacency-general FV $\beta$-derivative chain}
 
 \par\noindent\textbf{Role:} GJ p.312 chooses the inf' binder $x_0\ne y_0$ \emph{without}
