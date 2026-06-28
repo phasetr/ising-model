@@ -32831,4 +32831,23 @@ Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1g: per-edge incident $/c$ uniform bound}
+
+\par\noindent\textbf{Role:} The bounded $2A$ constant of GJ p.312 --- the incident error divided by
+$c=\langle\varphi_x\varphi_z\rangle$ stays bounded uniformly over all incident edges.
+$\texttt{pseudoMassFromParamsAtPairDist\_comm}$ (with $\texttt{pseudoMassExt\_congr\_r}$): symmetry
+$m^-(x,z)=m^-(z,x)$.
+$\texttt{incident\_symmDiff\_corr\_fin\_div\_c\_le}$: for a non-adjacent binding pair $x\ne z$ and an
+incident edge $\{u,v\}$,
+$\operatorname{corr}_{\mathrm{fin}}(\{\langle x\rangle,\langle z\rangle\}\triangle\{u,v\})
+/\langle\varphi_x\varphi_z\rangle\le(1+(m^-d(x,z))^\alpha)e^{m^-}$ uniformly. Crucially it keeps the
+\emph{tight single-term} reduction (the 4-term over-approximation \#4341 is too loose for $/c$, since a
+short-distance $\langle\varphi_x\varphi_w\rangle/c$ would blow up). Non-adjacency forces exactly one of
+$\langle x\rangle,\langle z\rangle$ into $\{u,v\}$ (four cases), the reduced pair is dominated by its
+infinite-volume value, and $/c$ is bounded by the per-incident-dart ratio (\#4342, with
+$\texttt{pseudoMassFromParamsAtPairDist\_comm}$ for the $z$-incident cases) together with
+$1/(1+\cdot)\le1$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
