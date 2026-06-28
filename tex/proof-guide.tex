@@ -33075,4 +33075,17 @@ $|g'\beta|\le c\langle\mathrm{sharp}\rangle$ ($\texttt{le\_of\_tendsto}$ $+$ eve
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1j-prep: interval-uniform $m^-$ lower bound}
+
+\par\noindent\textbf{Role:} The prerequisite for the uniform convolution constant $C$ (which
+$\sim(m^-)^{-\alpha}$ blows up as $m^-\to0$). $\texttt{globalPseudoMassDist\_ge\_restrictedRate\_beta2}$:
+for $\beta\in\mathrm{Icc}\,\beta_1\,\beta_2$ with $0<\beta_1$, $\beta_2 J(2d)<1/2$ (strict high-temp
+window), $\texttt{globalPseudoMassDistRestrictedRate}\,\alpha\,d\,J\,\beta_2\le m^-(\beta)$ --- a single
+positive constant lower bound uniform over the interval. Per-$\beta$ $m^-(\beta)\ge
+\mathrm{RestrictedRate}(\beta)$ (existing), and $\mathrm{RestrictedRate}$ is antitone in $\beta$
+($-\log(B/(1-B))$ and $\texttt{simonLiebRate}=-\log B$ both decrease as $B=\beta J2d$ increases;
+$\texttt{min\_le\_min}$). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
