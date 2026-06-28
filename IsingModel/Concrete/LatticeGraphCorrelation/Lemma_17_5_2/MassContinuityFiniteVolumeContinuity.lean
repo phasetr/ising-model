@@ -14,8 +14,12 @@ sub-interval `[a,b] ⊆ [β₁,β₂]`.  Hence `globalPseudoMassDist(·)^{2α+1}
 `LipschitzOnWith M` on `[β₁,β₂]`, so continuous; peeling the `(2α+1)`-power by the continuous rpow
 inverse on `[0,∞)` gives continuity of `globalPseudoMassDist` itself.
 
-With Lemma 17.5.2 (the sandwich, #4278/#4297) this is GJ Theorem 17.5.1 — the mass `m(σ)` is
-continuous on the single-phase / high-temperature window.
+This is the **pseudo-mass continuity** — the principal ingredient of GJ Theorem 17.5.1's proof
+(GJ: "we show `m⁻(σ,A)^{2α+1}` is Lipschitz … ; from this the theorem follows by Lemma 17.5.2").
+Combined with Lemma 17.5.2 (`0 ≤ m⁻ ≤ m ≤ const·m⁻`, #4278/#4297) it gives that the true mass `m(σ)`
+shares the zero set of `m⁻` and vanishes as `m⁻` does (the critical-point behaviour); note the
+`const ≠ 1` sandwich alone does **not** transfer `m⁻`-continuity to two-sided continuity of `m` at
+interior points.
 
 References:
 
@@ -149,8 +153,10 @@ The σ/A-uniform slope bound `M` (PR-FV4b) fences every sub-interval with the sa
 (`globalPseudoMassDist_pow_succ_abs_sub_le_subpair`), so `globalPseudoMassDist(·)^{2α+1}` is
 `LipschitzOnWith M.toNNReal` on `[β₁,β₂]`, hence continuous; peeling the `(2α+1)`-power by the
 continuous rpow inverse `(·)^{(2α+1)⁻¹}` on `[0,∞)` (`globalPseudoMassDist ≥ 0`,
-`continuousOn_of_subpair_pow_bound`) gives continuity of `globalPseudoMassDist`.  With Lemma 17.5.2
-(#4278/#4297) this is GJ Theorem 17.5.1. -/
+`continuousOn_of_subpair_pow_bound`) gives continuity of `globalPseudoMassDist`.  This is the
+pseudo-mass (`m⁻`) continuity — the principal ingredient of GJ Theorem 17.5.1's proof; with Lemma
+17.5.2 (`0 ≤ m⁻ ≤ m ≤ const·m⁻`, #4278/#4297) it controls the true mass `m` (same zero set,
+critical-point vanishing). -/
 theorem globalPseudoMassDist_continuousOn_window {α d : ℕ} (hα : 1 ≤ α)
     (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) (hαd1 : d ≤ α + 1)
     {J β₁ β₂ : ℝ} (hJ : 0 < J) (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)

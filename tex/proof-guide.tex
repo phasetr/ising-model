@@ -33132,9 +33132,11 @@ $[\beta_1,\beta_2]$ ($\texttt{continuousOn\_of\_subpair\_pow\_bound}$), hence co
 $(2\alpha+1)$-power is peeled by the continuous rpow inverse $(\cdot)^{(2\alpha+1)^{-1}}$ on
 $[0,\infty)$ ($\texttt{Real.pow\_rpow\_inv\_natCast}$, $\texttt{globalPseudoMassDist}\ge0$). Both peel
 helpers are stated for an abstract $G$ to avoid $\texttt{whnf}$ of the heavy
-$\texttt{globalPseudoMassDist}$ term. With Lemma 17.5.2 (the sandwich, \#4278/\#4297) this is GJ
-Theorem 17.5.1 --- the mass $m(\sigma)$ continuous on the single-phase / high-temperature window.
-Axiom-free.
+$\texttt{globalPseudoMassDist}$ term. This is the \emph{pseudo-mass} ($m^-$) continuity --- the
+principal ingredient of GJ Theorem 17.5.1's proof; with Lemma 17.5.2 ($0\le m^-\le m\le
+\mathrm{const}\cdot m^-$, \#4278/\#4297) it controls the true mass $m(\sigma)$ (same zero set,
+vanishing at criticality), though the $\mathrm{const}\ne1$ sandwich alone does not give two-sided
+continuity of $m$ at interior points. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312.
 
 
