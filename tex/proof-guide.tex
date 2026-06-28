@@ -32981,4 +32981,17 @@ $/c$ bound (\#4344). Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-1k: bounded pseudo-mass denominator ratio (GJ-faithful $2A$)}
+
+\par\noindent\textbf{Role:} The arithmetic enabler for the GJ-faithful \emph{bounded} incident $2A$
+term. $\texttt{pseudoMass\_denom\_ratio\_le}$: for $0\le m$, $2\le r$, $r-1\le s$,
+$(1+(m r)^\alpha)/(1+(m s)^\alpha)\le 1+2^\alpha$. For a non-adjacent binding pair ($r=d(x,z)\ge2$) an
+incident dart $v\sim x$ has $s=d(z,v)\ge r-1\ge r/2$, so $r\le 2s$ and $(m r)^\alpha\le2^\alpha(m
+s)^\alpha$. Per GJ p.312 the incident term must keep the per-incident-dart denominator (\#4342) and
+use this bound, giving a $\mathrm{dist}$-independent constant $2A$ rather than the unbounded
+$(1+(m^- r)^\alpha)$ (the correction to \#4343/\#4344). Proof: $r\le2s$ $+$
+$\texttt{pow\_le\_pow\_left}_0$ $+$ $\texttt{nlinarith}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \end{document}
