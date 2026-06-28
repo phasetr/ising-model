@@ -33117,6 +33117,22 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, conditional capstone: $m^-(\sigma)^{2\alpha+1}$ Lipschitz from uniform finite-region Lipschitz}
+
+\par\noindent\textbf{Role:} Assembles the $A\uparrow$ bridge and the Step-2 inf-Lipschitz lemma into
+GJ p.312's conclusion. $\texttt{globalPseudoMassDist\_pow\_succ\_lipschitz\_of\_uniform\_finiteRegion}$:
+on $[\beta_1,\beta_2]$ ($0<\beta_1\le\beta_2$), \emph{if} for every cubic stage $n$ the finite-region
+power $\texttt{finiteRegionPseudoMassDist}(\sigma,\mathrm{volume}\,n)^{2\alpha+1}$ is
+$L(\beta_2-\beta_1)$-Lipschitz with the \emph{same} $L$, \emph{then}
+$|m^-(\beta_2)^{2\alpha+1}-m^-(\beta_1)^{2\alpha+1}|\le L(\beta_2-\beta_1)$. The helper
+$\texttt{sInf\_range\_pow\_of\_nonneg}$ ($(\inf(\mathrm{range}\,f))^k=\inf(\mathrm{range}\,f^k)$ for
+$f\ge0$ bounded below, via $\texttt{pow\_le\_pow\_left}_0$ and an $\varepsilon\to0^+$ continuity
+limit $\texttt{ge\_of\_tendsto}$) rewrites both system powers as the $\inf$ of the finite-region
+power ranges; the bridge identifies them with $m^-(\beta)^{2\alpha+1}$; Step-2 finishes. \textbf{This
+reduces GJ Theorem 17.5.1 to Step-1 alone} (uniform-in-$A$ finite-region sharp Lipschitz). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, pp.~311--312.
+
+
 \subsection*{GJ Theorem 17.5.1, bridge: $m^-(\sigma)$ is the cubic-exhaustion infimum of $m^-(\sigma,A)$}
 
 \par\noindent\textbf{Role:} The Lean form of GJ p.312's $m^-(\sigma)=\inf_A m^-(\sigma,A)=
