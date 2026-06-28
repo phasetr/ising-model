@@ -33117,6 +33117,25 @@ $C=Ctmax^2 C_0$. Same proof structure as \#4336. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1, PR-FV4b-prep: upper bound on the finite-volume finite-region mass}
+
+\par\noindent\textbf{Role:} The interval-uniform upper bound for the GJ p.312 uniform-in-$A$
+Lipschitz constant. $\texttt{finiteRegionPseudoMassDistFV\_le\_witness}$: for $0<J$, $0<\beta_1\le
+\beta$, $\beta\in[\beta_1,\beta_2]$, $1\le n$,
+$\texttt{finiteRegionPseudoMassDistFV}\,h\alpha\,\langle J,0,\beta\rangle\,n\,hA\le
+\texttt{pseudoMassFromParamsAtPairFV}\,h\alpha\,\langle J,0,\beta_1\rangle\,1\,0\,(e_0)$, where
+$e_0=\texttt{Pi.single}\,\langle 0,hd\rangle\,1$. The fixed adjacent stage-1 witness pair $(0,e_0)$
+lies in every box $n\ge1$ ($\texttt{finiteRegionPseudoMassDistFV\_le\_of\_mem}$), and the FV
+correlation increases in $n$ ($\texttt{correlationAlongExhaustion\_latticeGraph\_cubicExhaustion\_monotone}$)
+and in $\beta$ ($\dots\texttt{\_monotone\_beta}$), so the per-pair FV mass decreases
+($\texttt{pseudoMassExt\_antitoneOn}$): $m^-_{FV}(\sigma,n)\le m_{FV}(\text{witness},n,\beta)\le
+m_{FV}(\text{witness},1,\beta)\le m_{FV}(\text{witness},1,\beta_1)=:M_{\text{witness}}$. The naive
+$\tanh/2^{\mathrm{edges}}$ edge bound fails ($2^{\mathrm{edges}}$ grows with $n$); the monotone route
+gives the uniform $M_{\max}$. With the lower bound (\#4380) this provides the two-sided
+$m_{\min}\le m^-_{FV}(\sigma,n)\le M_{\text{witness}}$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1 proof, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1, PR-FV4b-prep: lower bound on the finite-volume finite-region mass}
 
 \par\noindent\textbf{Role:} The interval-uniform lower bound for the mass-uniform convolution

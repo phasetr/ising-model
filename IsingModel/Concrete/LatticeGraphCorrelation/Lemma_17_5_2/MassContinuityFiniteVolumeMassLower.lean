@@ -9,9 +9,9 @@ The finite-volume finite-region pseudo-mass dominates the infinite-volume system
 `globalPseudoMassDist(σ) ≤ finiteRegionPseudoMassDistFV(σ, volume n)`, for `0 < J`, `0 < β`.
 
 The per-pair FV mass dominates the infinite-volume per-pair mass (`correlationΛ ≤
-correlationInfinite` + `pseudoMassExt` antitone), and the infinite-volume per-pair mass dominates the
-system inf (`globalPseudoMassDist_le_of_active`); the finite `inf'` inherits it.  With the strict
-lower bound `globalPseudoMassDist ≥ globalPseudoMassDistRestrictedRate` (#4360), this gives the
+correlationInfinite` + `pseudoMassExt` antitone), and the infinite-volume per-pair mass dominates
+the system inf (`globalPseudoMassDist_le_of_active`); the finite `inf'` inherits it.  With the
+strict lower bound `globalPseudoMassDist ≥ globalPseudoMassDistRestrictedRate` (#4360), this gives
 interval-uniform lower bound `mmin ≤ m⁻_FV(σ, volume n)` needed for the mass-uniform convolution
 constant of the GJ p.312 uniform Lipschitz estimate.
 
