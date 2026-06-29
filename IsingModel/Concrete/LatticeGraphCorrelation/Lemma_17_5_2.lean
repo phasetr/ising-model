@@ -108,6 +108,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLa
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityOnAxisCorrelationLength
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDirectionalCorrelationLength
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityCorrelationLengthUpperSemicontinuous
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassDirectionalLowerBound
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone
