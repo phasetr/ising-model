@@ -33268,6 +33268,33 @@ Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312; Fri
 \S3.7.3.
 
 
+\subsection*{GJ eq.~(17.5.1): the true mass equals the directional inverse-correlation-length infimum}
+
+\par\noindent\textbf{Role:} The matching \textbf{lower} bound to the directional abscissa upper
+characterization, hence the equality
+$\texttt{latticeMass} = \inf_{v\ne0}\mathrm{ofReal}(\texttt{directionalInverseCorrelationLength}\,v)$
+(GJ eq.~(17.5.1) mass characterization). It is \textbf{elementary} (no Ornstein--Zernike
+machinery): for each $v\ne0$ the Fekete limit (an infimum over $n\ge1$) is $\le$ its $n=1$ term, so
+$\texttt{directionalInverseCorrelationLength}(v)\cdot d(0,v) = \texttt{Subadditive.lim}\,a_v \le
+a_v(1) = -\log\langle\varphi_0\varphi_v\rangle$
+($\texttt{correlationInfinite\_origin\_le\_exp\_neg\_directionalInverseCorrelationLength}$, via
+$\texttt{Subadditive.lim\_le\_div}$). Bounding below by the direction-infimum $m_\infty$ and reducing
+a general pair $\{i,j\}$ to $\{0,j-i\}$ by translation invariance
+($\texttt{latticeDistance\_eq\_latticeDistance\_zero\_sub}$) yields \emph{uniform} decay
+$\langle\varphi_i\varphi_j\rangle \le \exp(-m_\infty\,d(i,j))$ with a single $C=1$, i.e.\
+$\texttt{HasExponentialDecay}\,m_\infty$
+($\texttt{hasExponentialDecay\_directionalInverseCorrelationLengthInf}$), so $\mathrm{ofReal}\,
+m_\infty \le \texttt{latticeMass}$. With the upper bound and $\texttt{ENNReal.ofReal\_iInf}$,
+$\texttt{le\_antisymm}$ gives the equality
+($\texttt{latticeMass\_eq\_iInf\_ofReal\_directionalInverseCorrelationLength}$). This corrects the
+earlier attribution of this lower bound to OZ content. \emph{Scope:} structural identity only --- it
+does \emph{not} give the OZ exact closed-form rate, a correlation lower bound / prefactor, or the
+$\beta$-continuity Theorem 17.5.1 (the usc half follows from the envelope upper-semicontinuity, the
+lsc half remains open). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 eq.~(17.5.1) / Theorem 17.5.1, pp.~311--312;
+Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ eq.~(17.5.1) / FV \S3.7.3: upper-semicontinuity of the inverse correlation length}
 
 \par\noindent\textbf{Role:} A correlation-length \emph{regularity} result --- \emph{not} Theorem
