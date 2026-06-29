@@ -170,5 +170,38 @@ theorem directionalInverseCorrelationLength_upperSemicontinuousOn_window (hd : 1
   exact (continuous_id.div_const (latticeDistance d 0 v : ℝ)).comp_upperSemicontinuousOn hinf
     (fun a b hab => by simp only [id_eq]; gcongr)
 
+/-- **Upper-semicontinuity of the direction-infimum inverse correlation length on the window**
+(GJ §17.5 / FV §3.7.3 correlation-length regularity; the envelope that `#4392` uses to bound the
+true mass).  The infimum over all nonzero directions `v` of `directionalInverseCorrelationLength v`
+— the real-valued analogue of the `latticeMass`-bounding envelope `⨅_{v≠0}
+ofReal(directionalInverseCorrelationLength v)` — is upper-semicontinuous in `β` on the
+high-temperature window: an infimum over directions of the per-direction upper-semicontinuous
+functions (`directionalInverseCorrelationLength_upperSemicontinuousOn_window`,
+`upperSemicontinuousOn_ciInf`), bounded below by `0` (each directional length is `≥ 0`: a `⨅` of
+nonnegative normalised log-correlations divided by the positive distance `d(0,v)`).  As with the
+per-direction case this is *not* upper-semicontinuity of the true mass `latticeMass`. -/
+theorem iInf_directionalInverseCorrelationLength_upperSemicontinuousOn_window (hd : 1 ≤ d) {J : ℝ}
+    (hJ : 0 < J) :
+    UpperSemicontinuousOn
+      (fun β => ⨅ v : {v : Fin d → ℤ // v ≠ 0},
+        (⨅ n : ↥(Set.Ici (1 : ℕ)), directionalLogCorr J β v.1 (n : ℕ) / ((n : ℕ) : ℝ))
+          / (latticeDistance d 0 v.1 : ℝ))
+      (Set.Ioo (0 : ℝ) (1 / (J * ↑(2 * d)))) := by
+  haveI : Nonempty ↥(Set.Ici (1 : ℕ)) := ⟨⟨1, le_refl 1⟩⟩
+  apply upperSemicontinuousOn_ciInf
+  · intro β hβ
+    refine ⟨0, ?_⟩
+    rintro x ⟨v, rfl⟩
+    have hD0 : (0 : ℝ) < (latticeDistance d 0 v.1 : ℝ) := by
+      have hne : latticeDistance d 0 v.1 ≠ 0 := fun h =>
+        v.2 (((latticeDistance_eq_zero_iff d 0 v.1).mp h).symm)
+      exact_mod_cast Nat.pos_of_ne_zero hne
+    have hge : (0 : ℝ) ≤ ⨅ n : ↥(Set.Ici (1 : ℕ)),
+        directionalLogCorr J β v.1 (n : ℕ) / ((n : ℕ) : ℝ) :=
+      le_ciInf fun n => div_nonneg (directionalLogCorr_nonneg hJ hβ.1 v.1 _) (Nat.cast_nonneg _)
+    exact div_nonneg hge hD0.le
+  · intro v
+    exact directionalInverseCorrelationLength_upperSemicontinuousOn_window hd hJ v.2
+
 end Ambient
 end IsingModel
