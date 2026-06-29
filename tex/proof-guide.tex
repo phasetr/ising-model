@@ -33313,6 +33313,26 @@ Ornstein--Zernike content (\#4386). Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312; Friedli--Velenik \S3.7.3.
 
 
+\subsection*{GJ Theorem 17.5.1: true-mass continuity, gated on the uniform-in-direction Lipschitz bound}
+
+\par\noindent\textbf{Role:} Isolates the single remaining Ornstein--Zernike ingredient and proves it
+suffices. $\texttt{latticeMass\_continuousOn\_window\_of\_uniform\_lipschitz}$: given the hypothesis
+$\texttt{hLip}$ --- on each compact subinterval $[\beta_1,\beta_2]$ of the window a \emph{single}
+Lipschitz constant $L$ valid for \emph{every} direction $v$ (the uniform-in-$v$ rate-Lipschitz /
+differentiated-cluster-expansion estimate, GJ p.~312) --- the true mass
+$\beta\mapsto\texttt{latticeMass}\,d\,(\texttt{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle$ is
+$\texttt{ContinuousOn}$ the window. On the window $\texttt{latticeMass} = \mathrm{ofReal}(\inf_v
+\texttt{directionalRateFn}\,v)$; $\texttt{hLip}$ together with
+$\texttt{abs\_csInf\_envelope\_sub\_le\_of\_uniform\_lipschitz}$ (an infimum of a uniformly-Lipschitz
+family is Lipschitz, with \emph{no} binding/attainment hypothesis --- so it sidesteps the
+non-attainment $m_{x,z}\downarrow m_\infty$ obstruction of the pseudo-mass route) makes the real
+envelope Lipschitz, hence continuous, on each subinterval, hence continuous at every interior point;
+$\texttt{ENNReal.ofReal}$ continuity and $\texttt{ContinuousOn.congr}$ transfer it to
+$\texttt{latticeMass}$. $\texttt{hLip}$ is a \emph{hypothesis, not an axiom}; supplying it (a
+dedicated multi-session OZ sub-project) immediately discharges GJ Theorem 17.5.1. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312; Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ eq.~(17.5.1) / FV \S3.7.3: upper-semicontinuity of the inverse correlation length}
 
 \par\noindent\textbf{Role:} A correlation-length \emph{regularity} result --- \emph{not} Theorem
