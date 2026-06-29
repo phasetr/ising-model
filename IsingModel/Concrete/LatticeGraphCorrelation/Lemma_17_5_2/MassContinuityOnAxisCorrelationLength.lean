@@ -27,9 +27,12 @@ Fekete's lemma (`Subadditive.tendsto_lim`) yields
 This **upgrades** the on-axis abscissa upper bound `latticeMass ≤ ofReal(liminf_k τ(k))` (#4389)
 to a true limit: `latticeMass ≤ ofReal(onAxisInverseCorrelationLength)`, where the bound is now a
 genuine `lim`/`inf`.  It is the GJ §17.5 / FV statement that the (on-axis) inverse correlation
-length is **well-defined** — a recognized result worth recording on its own — and the structural
-scaffold the eventual matching lower bound (the Ornstein–Zernike / §18 sharp-rate content; #4386)
-must hook into.  The matching lower bound and hence full continuity are *not* delivered here.
+length is **well-defined** — a recognized result worth recording on its own.  The matching **lower**
+bound on the true mass — and hence the equality `latticeMass = ⨅_{v≠0} ofReal(directional v)` (GJ
+eq. (17.5.1)) — is now proved *elementarily* in
+`MassContinuityLatticeMassDirectionalLowerBound.lean` (no Ornstein–Zernike machinery needed).  What
+remains open (#4386) is the OZ *exact closed-form rate* / correlation lower bound and the
+lower-semicontinuous half of the continuity Theorem 17.5.1.
 
 References:
 
