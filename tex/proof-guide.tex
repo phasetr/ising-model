@@ -33295,6 +33295,24 @@ Reference: Glimm--Jaffe, 2nd ed., \S17.5 eq.~(17.5.1) / Theorem 17.5.1, pp.~311-
 Friedli--Velenik \S3.7.3.
 
 
+\subsection*{GJ Theorem 17.5.1: upper-semicontinuity of the true mass (usc half of continuity)}
+
+\par\noindent\textbf{Role:} The \textbf{upper-semicontinuous half} of GJ Theorem 17.5.1 (continuity
+of the true mass). $\texttt{latticeMass\_upperSemicontinuousOn\_window}$: for $d\ge1$, $0<J$, the map
+$\beta\mapsto\texttt{latticeMass}\,d\,(\texttt{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle$ is
+$\texttt{UpperSemicontinuousOn}$ the window $\mathrm{Ioo}\,0\,(1/(J\cdot2d))$. By the mass
+characterization $\texttt{latticeMass} = \inf_{v\ne0}\mathrm{ofReal}(\texttt{directionalInverse%
+CorrelationLength}\,v)$, on the window $\texttt{latticeMass}$ equals an infimum over directions of
+$\texttt{ENNReal.ofReal}$-images of the upper-semicontinuous per-direction functions; an infimum of
+upper-semicontinuous functions is upper-semicontinuous
+($\texttt{upperSemicontinuousOn\_iInf}$ with
+$\texttt{ENNReal.continuous\_ofReal.comp\_upperSemicontinuousOn}$), transferred to
+$\texttt{latticeMass}$ via $\texttt{UpperSemicontinuousWithinAt.congr\_of\_eventuallyEq}$. The
+\emph{lower}-semicontinuous half (continuity of the directional rates in $\beta$) remains the open
+Ornstein--Zernike content (\#4386). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312; Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ eq.~(17.5.1) / FV \S3.7.3: upper-semicontinuity of the inverse correlation length}
 
 \par\noindent\textbf{Role:} A correlation-length \emph{regularity} result --- \emph{not} Theorem
