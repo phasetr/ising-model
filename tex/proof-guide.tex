@@ -33287,7 +33287,11 @@ $\texttt{onAxisInverseCorrelationLength\_upperSemicontinuousOn\_window}$ and
 $\texttt{directionalInverseCorrelationLength\_upperSemicontinuousOn\_window}$ ($v\ne0$): the infimum
 over $n\ge1$ of the upper-semicontinuous terms is upper-semicontinuous
 ($\texttt{upperSemicontinuousOn\_ciInf}$, bounded below by $0$); the directional $\div d(0,v)$ is a
-continuous monotone post-composition ($\texttt{Continuous.comp\_upperSemicontinuousOn}$).
+continuous monotone post-composition ($\texttt{Continuous.comp\_upperSemicontinuousOn}$). The
+envelope $\texttt{iInf\_directionalInverseCorrelationLength\_upperSemicontinuousOn\_window}$: the
+infimum over all $v\ne0$ of the directional lengths (the real-valued analogue of the
+$\texttt{latticeMass}$-bounding $\inf_{v\ne0}$ envelope) is upper-semicontinuous (infimum over
+directions of upper-semicontinuous functions; $\texttt{le\_ciInf}$ nonnegativity).
 \emph{Honest scope:} $\texttt{latticeMass}$ is the abscissa of \emph{uniform} exponential decay; for
 $d\ge2$ the inverse correlation length is a strict \emph{upper bound} on $\texttt{latticeMass}$, so
 upper-semicontinuity of the length does \emph{not} give upper-semicontinuity (let alone continuity)
