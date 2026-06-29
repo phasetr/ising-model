@@ -21,7 +21,7 @@ abscissa **upper** characterization of the true mass, as true limits.  The on-ax
 direction.  The matching **lower** bound `latticeMass ≥ ⨅_{v≠0} ofReal(directional v)` — hence the
 equality `latticeMass = ⨅_{v≠0} ofReal(directional v)` (GJ eq. (17.5.1) mass characterization) — is
 now proved *elementarily* in `MassContinuityLatticeMassDirectionalLowerBound.lean` (the Fekete
-infimum is `≤` its `n=1` term, so `⟨φ₀φ_x⟩ ≤ exp(−directional(x)·d(0,x))` uniformly); it does **not**
+infimum is `≤` its `n=1` term, giving uniform decay); it does **not**
 need the Ornstein–Zernike machinery.  What genuinely remains open (#4386) is the OZ *exact closed-
 form rate*, a correlation *lower* bound / prefactor, and the lower-semicontinuous half of the
 continuity Theorem 17.5.1 (the usc half follows from the envelope upper-semicontinuity).
