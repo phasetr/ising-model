@@ -9,10 +9,11 @@ The upper-semicontinuous half of GJ Theorem 17.5.1 is unconditional
 **continuity** — is the genuine Ornstein–Zernike content (#4386): it reduces, via the mass identity
 `latticeMass = ofReal(⨅_{v≠0} directionalInverseCorrelationLength v)`, to the **continuity** of the
 real envelope `β ↦ ⨅_{v≠0} directionalInverseCorrelationLength(v)`.  An infimum of continuous
-functions is continuous once the family is *uniformly* Lipschitz on each compact subinterval; the
-per-direction rates are individually continuous (`perPairRate_continuousOn_window`) but the
-**uniform-in-`v` Lipschitz/derivative bound** is the un-formalized OZ estimate (the differentiated
-cluster expansion of `log⟨φ₀φ_x⟩`, GJ p.312).
+functions is continuous once the family is *uniformly* Lipschitz on each compact subinterval.  (For
+context only — not used by the proof below — the per-direction rates are individually continuous,
+cf. `perPairRate_continuousOn_window`; what is missing and supplied here as the hypothesis `hLip` is
+the **uniform-in-`v` Lipschitz/derivative bound**, the un-formalized OZ estimate = the
+differentiated cluster expansion of `log⟨φ₀φ_x⟩`, GJ p.312.)
 
 This file isolates that single ingredient as an explicit **hypothesis** `hLip` and proves that it
 yields the full continuity theorem.  Supplying `hLip` (a dedicated multi-session OZ sub-project)
