@@ -33268,6 +33268,35 @@ Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, \S18, pp.~311--312; Fri
 \S3.7.3.
 
 
+\subsection*{GJ eq.~(17.5.1) / FV \S3.7.3: upper-semicontinuity of the inverse correlation length}
+
+\par\noindent\textbf{Role:} A correlation-length \emph{regularity} result --- \emph{not} Theorem
+17.5.1. The well-defined inverse correlation length is \emph{upper-semicontinuous in} $\beta$ on the
+high-temperature window $\mathrm{Ioo}\,0\,(1/(J\cdot2d))$, in both forms.
+$\texttt{onAxisInverseCorrelationLength\_eq\_iInf}$ and
+$\texttt{directionalInverseCorrelationLength\_eq\_iInf\_div}$ rewrite the Fekete limit
+$\texttt{Subadditive.lim}=\inf((n\mapsto a(n)/n)\,''\,\mathrm{Ici}\,1)$ as the indexed infimum
+$\inf_{n\ge1}a(n)/n$ (range of the subtype coercion is $\mathrm{Ici}\,1$,
+via $\texttt{Set.range\_comp}$ and $\texttt{Subtype.range\_coe}$). Each normalised term
+$\beta\mapsto a(n)/n$ ($n\ge1$) is $\texttt{ContinuousOn}$ the window
+($\texttt{onAxisLogCorr\_div\_continuousOn\_window}$,
+$\texttt{directionalLogCorr\_div\_continuousOn\_window}$: correlation continuity
+$\texttt{correlationInfinite\_continuousAt\_beta\_of\_high\_temp}$ plus strict positivity
+$\texttt{correlationInfinite\_pos\_of\_betaJ\_pos\_pair}$, then $-\log$ and $\div n$). Headlines
+$\texttt{onAxisInverseCorrelationLength\_upperSemicontinuousOn\_window}$ and
+$\texttt{directionalInverseCorrelationLength\_upperSemicontinuousOn\_window}$ ($v\ne0$): the infimum
+over $n\ge1$ of the upper-semicontinuous terms is upper-semicontinuous
+($\texttt{upperSemicontinuousOn\_ciInf}$, bounded below by $0$); the directional $\div d(0,v)$ is a
+continuous monotone post-composition ($\texttt{Continuous.comp\_upperSemicontinuousOn}$).
+\emph{Honest scope:} $\texttt{latticeMass}$ is the abscissa of \emph{uniform} exponential decay; for
+$d\ge2$ the inverse correlation length is a strict \emph{upper bound} on $\texttt{latticeMass}$, so
+upper-semicontinuity of the length does \emph{not} give upper-semicontinuity (let alone continuity)
+of the true mass. The matching lower bound (the Ornstein--Zernike exact rate) remains the open
+research wall (\#4386). Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 eq.~(17.5.1) / Theorem 17.5.1, pp.~311--312;
+Friedli--Velenik \S3.7.3.
+
+
 \subsection*{GJ Theorem 17.5.1: directional abscissa upper bound for the true mass}
 
 \par\noindent\textbf{Role:} Toward true-mass continuity (issue \#4386), the all-directions
