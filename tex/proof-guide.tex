@@ -33313,6 +33313,24 @@ Ornstein--Zernike content (\#4386). Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312; Friedli--Velenik \S3.7.3.
 
 
+\subsection*{GJ Theorem 17.5.1: continuity gate relocated to GJ p.312's per-pair log-Lipschitz estimate}
+
+\par\noindent\textbf{Role:} Sharpens the gate of the previous lemma to the literal GJ p.312 estimate.
+$\texttt{latticeMass\_continuousOn\_window\_of\_uniform\_log\_lipschitz}$: given $\texttt{hLogLip}$ ---
+on each compact subinterval, one constant $K$ with $|\log\langle\varphi_0\varphi_{n\cdot v}\rangle(\beta')
+- \log\langle\varphi_0\varphi_{n\cdot v}\rangle(\beta)| \le K\,(n\,d(0,v))\,|\beta'-\beta|$ for every
+ray point $n\cdot v$ (the $\beta$-log-derivative bounded \emph{linearly in the separation}, GJ
+p.~312) --- the true mass is $\texttt{ContinuousOn}$ the window. Dividing $\texttt{hLogLip}$ by $n$
+and using $d(0,n\cdot v)=n\,d(0,v)$, the $n$-family $-\log\langle\cdot\rangle/n$ is
+$(K\,d(0,v))$-Lipschitz uniformly in $n$, so its infimum is too
+($\texttt{abs\_csInf\_range\_sub\_csInf\_range\_le}$); dividing by $d(0,v)\ge1$ gives the directional
+rate $K$-Lipschitz uniformly in $v$ (i.e.\ the previous lemma's $\texttt{hLip}$). $\texttt{hLogLip}$
+is the genuine remaining Ornstein--Zernike ingredient (a hypothesis, not an axiom), now in its
+book-faithful form --- the natural target for a \S18 random-walk path-sum representation of
+$\partial_\beta\log\langle\varphi_0\varphi_x\rangle$. Axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1: true-mass continuity, gated on the uniform-in-direction Lipschitz bound}
 
 \par\noindent\textbf{Role:} Isolates the single remaining Ornstein--Zernike ingredient and proves it
