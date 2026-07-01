@@ -136,8 +136,11 @@ establishes:
 3. the true mass `m = latticeMass` is continuous at all but *countably many* `β` on `Ioi 0`
    (`latticeMass_countable_not_continuousWithinAt_Ioi`).
 
-GJ's proof rigorously delivers: `m⁻` continuous, the sandwich `m⁻ ≤ m ≤ C·m⁻` with
-`C = √d > 1` (Lemma 17.5.2), and `m` antitone.  GJ's closing line — asserting `m` continuous
+GJ's proof rigorously delivers: `m⁻` continuous, the sandwich `m⁻ ≤ m ≤ C·m⁻` where the
+formalized constant `C = globalPseudoMassDistFullUpperConst α d J β` is `> 1` (Lemma 17.5.2;
+GJ's paper-level value for this loss is `√d`, from the lattice hyperplane distance bound
+`dist ≥ |x−y|/√d`, but the formalized `C` is an explicit β,J-dependent bound, generally larger,
+not equal to `√d`), and `m` antitone.  GJ's closing line — asserting `m` continuous
 *everywhere* — relies on closing that sandwich, but `C > 1`, so the band `[m⁻, C·m⁻]` never
 collapses: this is a genuine gap in GJ's own text.  What is therefore rigorously established
 here is continuity of the true mass on the window *except on a countable set* (an antitone map

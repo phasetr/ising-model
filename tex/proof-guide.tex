@@ -33445,13 +33445,15 @@ window ($0<\beta_1\le\beta_2$, $\beta_2 J\,2d<1/2$, $\alpha\ge d-1$, $d/2<\alpha
 ($\texttt{globalPseudoMassDist\_continuousOn\_window}$);
 (ii) the \emph{literal} Lemma 17.5.2 sandwich $m^-\le\texttt{latticeMass}\le C\cdot m^-$ holds
 pointwise, with $C=\texttt{globalPseudoMassDistFullUpperConst}\,\alpha\,d\,J\,\beta$
-($=\sqrt d$, $\texttt{globalPseudoMassDist\_fullSandwich}$);
+($>1$; GJ's paper value for this loss is $\sqrt d$, but the formalized $C$ is an explicit
+$\beta,J$-dependent bound, generally larger, not equal to $\sqrt d$;
+$\texttt{globalPseudoMassDist\_fullSandwich}$);
 (iii) $\texttt{latticeMass}$ is continuous at all but \emph{countably many} $\beta\in(0,\infty)$
 ($\texttt{latticeMass\_countable\_not\_continuousWithinAt\_Ioi}$, antitone $\Rightarrow$
 countable discontinuity set).
 \textbf{Honest scope:} GJ's own text closes Theorem 17.5.1 by asserting $m$ continuous
 \emph{everywhere}, but that closing step needs the sandwich band $[m^-,C\cdot m^-]$ to collapse,
-and $C=\sqrt d>1$ --- this is a \emph{genuine gap in GJ's own text}, not one introduced by this
+and $C>1$ --- this is a \emph{genuine gap in GJ's own text}, not one introduced by this
 formalization. What is rigorously established here is continuity of the true mass off a countable
 set, trapped by the (non-collapsing) $C\cdot m^-$ sandwich with $m^-$ continuous. Sharp
 everywhere-continuity is deferred to the \S18 window-analyticity route (optional, beyond GJ's
