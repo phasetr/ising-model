@@ -32212,6 +32212,51 @@ high-temperature Kotecký--Preiss window only; it is \emph{not} itself a differe
 \emph{not} the closed ratio bound $\|Q_A/Q_\emptyset\| \le M(|A|,\Delta)$ (that is K3).  References:
 Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Volume-uniform general-boundary correlation-ratio bound (K3, the crux; Issue \#4404)}
+
+Brick K3 (\texttt{ClusterExpansion/GeneralRatioBound.lean}) is the crux of the chain: it upgrades
+the two-point capstone $\texttt{correlationComplex\_two\_point\_norm\_le\_of\_high\_temp}$ (PR~21
+above) to a volume-uniform norm bound on the general-boundary ratio $Q_A/Q_\emptyset$, for an
+arbitrary boundary set $A$, by strong induction on $|A|$, quantified over \emph{all} graphs $G$ with
+$G.\mathrm{maxDegree} \le \Delta$ (the recursion re-enters at the delete-edges graph
+$\texttt{Gavoid}\,G\,C$, a different graph on the same vertex type).
+
+\textbf{K3a} (\texttt{generalRatioBoundFun}, \texttt{generalRatioBoundFun\_closing}): the explicit
+graph-free bound function $\mathsf{M}_\Delta : \mathbb{N} \to \mathbb{R}$, defined by strong recursion
+$\mathsf{M}_\Delta(0) = 1$, $\mathsf{M}_\Delta(k) = \texttt{twoPointHTBoundValue}\,\Delta \cdot
+\sum_{j=0}^{k-1} \binom{k-1}{j}\, \mathsf{M}_\Delta(j)$ for $k \ge 1$; nonnegative and finite (it
+blows up combinatorially in $k$, which is harmless since GJ Theorem~17.6.1 fixes the observable and
+hence $|A|$).  The closing inequality sums the per-block value over the peel index set
+$\texttt{evenSubsetsThrough}\,A\,a_0$ and bounds it by $\mathsf{M}_\Delta(|A|)$, via the involution
+$B \mapsto A \setminus B$ and \texttt{Finset.card\_powersetCard}.
+
+\textbf{K3b} (\texttt{perComponent\_avoiding'\_ratio\_le}): the per-component analytic core.  Given
+an induction hypothesis $\|Q_{A'}(\texttt{Gavoid}\,G\,C)/Q_\emptyset(\texttt{Gavoid}\,G\,C)\| \le
+M_{\mathrm{sub}}$, the avoiding remainder over the fixed denominator $Q_\emptyset(G)$ obeys
+$\|t\|^{|C|}\,\|Q^{\mathrm{av}}_{C,A'}(G)/Q_\emptyset(G)\| \le (M_{\mathrm{sub}}\,e^8)\,(R\,e^8)^{|C|}$,
+by splitting the ratio through the nonzero intermediate denominator
+$Q_\emptyset(\texttt{Gavoid}\,G\,C)$ and reusing the pair-leaf avoiding-ratio bound of
+$\texttt{correlationComplex\_two\_point\_norm\_le\_of\_high\_temp}$ verbatim.
+
+\textbf{K3c} (\texttt{generalRatio\_norm\_le\_of\_card}, headline \texttt{generalRatio\_norm\_le}):
+the strong induction on $k = |A|$, quantified over all $G$ with $\mathrm{maxDegree} \le \Delta$
+(essential, since the recursion re-enters at $\texttt{Gavoid}\,G\,C$): $A = \emptyset$ is the base
+case ($Q_\emptyset/Q_\emptyset = 1$); for nonempty $A$, K1's peel identity is combined with K2c's
+per-block packaging (whose hypothesis is discharged by K3b, fed by the induction hypothesis at the
+strictly smaller boundary $A \setminus B$), and closed by K3a.  The headline
+\[
+  \left\| \frac{Q_A(G,t)}{Q_\emptyset(G,t)} \right\| \;\le\; \mathsf{M}_\Delta(|A|)
+\]
+holds for every finite graph $G$ with $G.\mathrm{maxDegree} \le \Delta$ and every activity $t$ on the
+open Kotecký--Preiss high-temperature window $\|t\| < \texttt{twoPointHTActivityRadius}\,\Delta$ ---
+volume-uniform: independent of the vertex type, the graph, and the exhaustion stage.  It is
+\emph{unconditional} on the KP window (the same legitimate hypotheses as the pair capstone K1/K2 rest
+on); it is \emph{not} itself a differentiability result, and remains scoped to the high-temperature
+Kotecký--Preiss window (not the full $\sigma < \sigma_c$ range of Issue~\#4386).  The remaining
+bricks toward GJ Theorem~17.6.1 are K4 (discharging \texttt{hbdd} unconditionally) and K5 (the
+infinite-volume $\beta$-\texttt{HasDerivAt} capstone).  References: Glimm--Jaffe, 2nd ed.,
+Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
