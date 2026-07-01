@@ -32142,6 +32142,41 @@ conclusion --- behind the single isolated, deliberately-unproven function-theory
 $\texttt{FunctionTheory.vitaliPorter\_tendstoLocallyUniformlyOn}$ --- is the headline.  This completes
 Issue~\#4230 item~D.  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{Anchored one-component peel identity for the HT-expansion numerator (K1, general-$A$
+boundary; Issue \#4404 PR~1)}
+
+Toward GJ Theorem~17.6.1 (p.313: existence of the $\beta$-derivatives of general Schwinger functions,
+beyond the two-point-only differentiability established above), brick K1 generalizes the pair-boundary
+numerator factorization $\texttt{htSubgraphSum\_pair\_eq\_sum\_connectingComponent}$ (PR~11 above) from
+a two-point boundary $\{i,j\}$ to a \emph{general} nonempty even boundary set $A$.  Proven (axiom-free)
+in \texttt{ClusterExpansion/AnchoredPeel.lean}.
+
+Fix an anchor $a \in A$.  Every edge subset $X$ with $\partial X = A$ decomposes into pairwise
+vertex-disjoint connected components ($\texttt{polymerDecomposition}\,X$), and the odd boundary
+distributes disjointly over that decomposition.  Since $a \in \partial X$, the anchor lies in the
+boundary of a \emph{unique} component $C_a$ ($\texttt{existsUnique\_component\_mem\_oddBoundary}$, the
+general-$A$ analogue of $\texttt{existsUnique\_component\_oddBoundary\_pair}$).  Writing
+$B := \partial C_a$ and grouping by $B$, the headline $\texttt{htSubgraphSum\_anchored\_peel}$ is
+\[
+  Q_A(t) \;=\; \sum_{B \in \texttt{evenSubsetsThrough}\,A\,a}\ \sum_{C \in
+    \texttt{connectedComponentsWithBoundary}\,G\,B} t^{|C|}\, Q^{\mathrm{av}}_{C, A \setminus B}(t),
+\]
+where $\texttt{evenSubsetsThrough}\,A\,a$ is the set of even $B \subseteq A$ with $a \in B$, and
+$Q^{\mathrm{av}}_{C,A'}(t) = \texttt{htSubgraphSumAvoiding'}\,G\,C\,A'\,t = \sum_{Y \perp C,\,\partial Y
+= A'} t^{|Y|}$ is the boundary-$A'$ generalization of $\texttt{htSubgraphSumAvoiding}$ (recovered at
+$A' = \emptyset$).  The remainder boundary is the genuine set difference $A \setminus B$ (component
+boundaries are disjoint, so no symmetric-difference cancellation occurs), and $a \in B$ forces
+$B \ne \emptyset$, hence $|A \setminus B| < |A|$ --- the strict decrease that will power an induction on
+$|A|$ in the next bricks.  \emph{Cross-check:} at $A = \{i,j\}$ (anchor $a = i$) the identity collapses
+to the existing $\texttt{htSubgraphSum\_pair\_eq\_sum\_connectingComponent}$
+($\texttt{htSubgraphSum\_anchored\_peel\_pair}$).
+
+K1 is a \emph{pure combinatorial identity}, the first unconditional brick of a $\sim$5--7 PR chain
+toward GJ Theorem~17.6.1's general-observable high-temperature $\beta$-differentiability; it is not
+itself a differentiability result, and remains scoped to the high-temperature Kotecký--Preiss window
+(not the full $\sigma < \sigma_c$ range).  References: Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313),
+\S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
