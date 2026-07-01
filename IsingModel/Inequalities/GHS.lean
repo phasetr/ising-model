@@ -1,4 +1,5 @@
 import IsingModel.Inequalities.GHS.NPoint
+import IsingModel.Inequalities.GHS.Truncated3Contraction
 
 /-!
 # GHS inequality and truncated correlation functions
