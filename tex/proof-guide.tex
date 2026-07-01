@@ -32294,11 +32294,45 @@ at that real $\beta$ --- the general-$A$ analogue of
 $\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ above.
 
 K4 is brick K4 of the general-observable $\infty$-vol $\beta$-differentiability chain toward GJ
-Theorem~17.6.1 (\#4404); the remaining brick is K5 (extracting the real $\beta$-\texttt{HasDerivAt}
-from this complex analyticity).  It is \emph{unconditional} on the KP window; scoped to the
-high-temperature Kotecký--Preiss window only (not the full $\sigma < \sigma_c$ range of
+Theorem~17.6.1 (\#4404); brick K5 below extracts the real $\beta$-\texttt{HasDerivAt}
+from this complex analyticity, completing the chain.  It is \emph{unconditional} on the KP window;
+scoped to the high-temperature Kotecký--Preiss window only (not the full $\sigma < \sigma_c$ range of
 Issue~\#4386); \emph{not} $\partial/\partial h$.  References: Glimm--Jaffe, 2nd ed.,
 Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
+\subsection{Infinite-volume general-observable real \texorpdfstring{$\beta$}{beta}-derivative at
+high temperature (K5, the final brick; Issue \#4404)}
+
+Brick K5, in \texttt{ClusterExpansion/TwoPointCorrelationInfiniteBetaDeriv.lean}, is the
+\emph{final} brick of the general-observable $\infty$-vol $\beta$-differentiability chain: it
+upgrades K4's complex analyticity to a genuine \emph{real} $\beta$-derivative of the infinite-volume
+correlation, proven, axiom-free, unconditional on the KP high-temperature window.
+
+The proof is a mathlib composition of K4, with no new analytic machinery: K4 supplies $r > 0$ and,
+for each real $\beta \in (0, r)$, a holomorphic Vitali limit $f$ on $\texttt{ball}\,0\,r$ agreeing
+with $\texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\langle J,0,\beta\rangle\,A$
+at the real point $\beta$. Since $f$ is complex-differentiable at the interior real point
+$\beta \in \texttt{ball}\,0\,r$, restricting to the real axis
+(\texttt{DifferentiableAt.hasDerivAt.comp\_ofReal}) and taking real parts
+(\texttt{Complex.reCLM}) gives a real \texttt{HasDerivAt} for
+$\beta' \mapsto (f\,\beta').\texttt{re}$; the window identity
+$f(\beta') = \texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\langle
+J,0,\beta'\rangle\,A$ for real $\beta'$ near $\beta$ (from
+$\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$ and uniqueness of limits) transports
+this derivative to the real correlation itself.
+
+\textbf{Headline} $\texttt{correlationInfinite\_latticeGraph\_general\_differentiableAt\_beta\_high\_temp}$:
+on the window $(0, r)$, $\beta' \mapsto \texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,
+\Lambda\,\langle J,0,\beta'\rangle\,A$ is $\texttt{DifferentiableAt}\,\mathbb{R}$ at every interior
+$\beta$, for \emph{any} finite observable boundary $A$ ($J \ge 0$). The named-derivative form
+$\texttt{correlationInfinite\_latticeGraph\_general\_hasDerivAt\_beta\_high\_temp}$ gives the
+derivative value $(\texttt{deriv}\,f\,\beta).\texttt{re}$ for the K4 witness $f$.
+
+K5 completes the K1--K5 chain, delivering the $\beta$-direction, KP high-temperature-window,
+general-observable portion of GJ Theorem~17.6.1 (p.313; \S18) unconditionally and axiom-free. It is
+\textbf{not} the full analyticity claim of Theorem~17.6.1 throughout $\sigma < \sigma_c$
+(Issue~\#4386, which needs uniform Ornstein--Zernike control and remains out of scope), and it is
+\textbf{not} $\partial/\partial h$. References: Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313), \S18.
 
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
