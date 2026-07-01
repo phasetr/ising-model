@@ -221,6 +221,7 @@ import IsingModel.ClusterExpansion.SourceGeneratingFunction
 import IsingModel.ClusterExpansion.SourceLogCoefficient
 import IsingModel.ClusterExpansion.TwoPointNumeratorFactorization
 import IsingModel.ClusterExpansion.TwoPointNumeratorBound
+import IsingModel.ClusterExpansion.AnchoredPeel
 import IsingModel.ClusterExpansion.TwoPointAnchoredCount
 import IsingModel.ClusterExpansion.TwoPointNumeratorEquality
 import IsingModel.ClusterExpansion.TwoPointRatioBound
