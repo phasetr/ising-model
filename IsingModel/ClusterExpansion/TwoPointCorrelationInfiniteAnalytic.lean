@@ -1,4 +1,5 @@
 import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
+import IsingModel.ClusterExpansion.GeneralRatioBound
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformZNonvanishing
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationRealAxisVitali
 
@@ -448,6 +449,58 @@ theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
     (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
     (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
 
+/-! ## General-boundary (K4) degree-uniform bound and Montel capstone
+
+Brick K4 of GJ Theorem 17.6.1 (p.313; §18): the general-boundary analogue of the pair route
+above.  It upgrades K3's volume-uniform ratio bound `generalRatio_norm_le`
+(`GeneralRatioBound.lean`) into the boundary-general Montel local-boundedness input consumed by the
+Vitali--Porter pipeline, for an arbitrary boundary `A` (not just a pair `{i, j}`).  K5 (the
+infinite-volume `β`-derivative assembly) remains. -/
+
+/-- **Degree-uniform general-boundary norm bound on a connected `cosh≠0` / activity-radius domain.**
+On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
+the general-boundary correlation is bounded by `generalRatioBoundFun Δ A.card`, uniformly over `U`.
+The `ball 0` version is the corollary `…_of_high_temp_uniform_radius`.  Brick K4 of GJ Theorem
+17.6.1 (p.313; §18); the general-`A` analogue of
+`correlationComplex_two_point_norm_le_on_connected`, obtained from the already-general ratio
+identity plus K3 `generalRatio_norm_le`. -/
+theorem correlationComplex_general_norm_le_on_connected
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ)
+    {U : Set ℂ} (hUopen : IsOpen U) (hUpre : IsPreconnected U) (h0U : (0 : ℂ) ∈ U)
+    (hcoshU : ∀ z ∈ U, Complex.cosh (z * (J : ℂ)) ≠ 0)
+    (htanhU : ∀ z ∈ U, ‖Complex.tanh (z * (J : ℂ))‖ < twoPointHTActivityRadius Δ) :
+    ∀ β ∈ U, ‖correlationComplex G A (J : ℂ) 0 β‖ ≤ generalRatioBoundFun Δ A.card := by
+  classical
+  have hExp :=
+    correlationComplex_high_temp_expansion_h_zero_htSubgraphSum_on_connected
+      (G := G) A J Δ hΔ hUopen hUpre h0U hcoshU htanhU
+  intro β hβ
+  set t : ℂ := Complex.tanh (β * (J : ℂ)) with htdef
+  have htz : t ∈ Metric.ball (0 : ℂ) (twoPointHTActivityRadius Δ) := by
+    rw [Metric.mem_ball, dist_zero_right]
+    exact htanhU β hβ
+  calc
+    ‖correlationComplex G A (J : ℂ) 0 β‖
+        = ‖htSubgraphSum G A t / htSubgraphSum G (∅ : Finset ι) t‖ := by
+          rw [show correlationComplex G A (J : ℂ) 0 β =
+            htSubgraphSum G A t / htSubgraphSum G (∅ : Finset ι) t from hExp hβ]
+    _ ≤ generalRatioBoundFun Δ A.card := generalRatio_norm_le Δ htz G hΔ A
+
+/-- The `ball 0`-instance of the general-boundary norm bound (corollary of the connected-domain
+version), on the degree-uniform high-temperature disc.  Brick K4 of GJ Theorem 17.6.1 (p.313). -/
+theorem correlationComplex_general_norm_le_of_high_temp_uniform_radius
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
+    ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius Δ J),
+      ‖correlationComplex G A (J : ℂ) 0 β‖ ≤ generalRatioBoundFun Δ A.card :=
+  correlationComplex_general_norm_le_on_connected G A J Δ hΔ
+    Metric.isOpen_ball
+    (convex_ball (0 : ℂ) (twoPointHTUniformRadius Δ J)).isPreconnected
+    (Metric.mem_ball_self (twoPointHTUniformRadius_pos Δ J))
+    (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
+    (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
+
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
@@ -582,6 +635,139 @@ theorem correlationInfinite_latticeGraph_two_point_analytic_high_temp
       (G := latticeGraph d) (Λ := Λ)
       (p := (⟨J, 0, β⟩ : IsingParams ℝ)) hf
       ({i, j} : Finset (Fin d → ℤ))
+      hUopen hUpre hβU hZ hbdd
+  refine ⟨f, ?_, ?_, ?_⟩
+  · simpa [hU] using hfdiff
+  · simpa [hU] using hconv
+  · simpa using hident
+
+/-- The per-stage general-boundary complex correlations along a lattice exhaustion are uniformly
+bounded on the degree-uniform high-temperature beta ball.  Brick K4 of GJ Theorem 17.6.1 (p.313;
+§18); the general-`A` analogue of `correlationComplexAlongExhaustion_two_point_norm_le_uniform`,
+with the degree cap instantiated at `2 * d` via `induced_latticeGraph_maxDegree_le`. -/
+theorem correlationComplexAlongExhaustion_general_norm_le_uniform
+    (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (A : Finset (Fin d → ℤ)) :
+    ∀ n : ℕ, ∀ β ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius (2 * d) J),
+      ‖correlationComplexAlongExhaustion (latticeGraph d) Λ A (J : ℂ) 0 β n‖
+        ≤ generalRatioBoundFun (2 * d) A.card := by
+  classical
+  intro n β hβ
+  unfold correlationComplexAlongExhaustion
+  by_cases hsub : A ⊆ Λ.volume n
+  · simp only [hsub, dif_pos]
+    have hdeg :
+        (inducedGraph (latticeGraph d) (Λ.volume n)).maxDegree ≤ 2 * d :=
+      induced_latticeGraph_maxDegree_le d (Λ.volume n)
+    have hbound :=
+      correlationComplex_general_norm_le_of_high_temp_uniform_radius
+        (G := inducedGraph (latticeGraph d) (Λ.volume n))
+        (liftFinset A hsub) J (2 * d) hdeg β hβ
+    rw [liftFinset_card] at hbound
+    exact hbound
+  · rw [dif_neg hsub, norm_zero]
+    exact generalRatioBoundFun_nonneg (2 * d) A.card
+
+/-- **Infinite-volume lattice general-boundary correlation analyticity at high temperature.**
+Brick K4 of GJ Theorem 17.6.1 (p.313; §18): the general-`A` analogue of
+`correlationInfinite_latticeGraph_two_point_analytic_high_temp`.  The Montel local-boundedness
+hypothesis is supplied by the volume-uniform general bound
+`correlationComplexAlongExhaustion_general_norm_le_uniform` with constant
+`generalRatioBoundFun (2 * d) A.card`, independent of the exhaustion stage and of the point.  K5
+(the infinite-volume `β`-derivative assembly) remains. -/
+theorem correlationInfinite_latticeGraph_general_analytic_high_temp
+    (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J) (A : Finset (Fin d → ℤ)) :
+    ∃ r > 0, ∀ β : ℝ, 0 < β → β < r →
+      ∃ f : ℂ → ℂ, DifferentiableOn ℂ f (Metric.ball (0 : ℂ) r) ∧
+        TendstoLocallyUniformlyOn
+          (fun n z => correlationComplexAlongExhaustion (latticeGraph d) Λ
+            A (J : ℂ) 0 z n)
+          f Filter.atTop (Metric.ball (0 : ℂ) r) ∧
+        f (β : ℂ) =
+          ((correlationInfinite (latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+              A : ℝ) : ℂ) := by
+  classical
+  obtain ⟨rZ, hrZpos, hZraw⟩ :=
+    partitionFunctionComplexAlongExhaustion_ne_zero_on_ball_uniform_latticeGraph d Λ J
+  set rHT : ℝ := twoPointHTUniformRadius (2 * d) J with hrHT
+  set r : ℝ := min rHT rZ with hr
+  have hrHTpos : 0 < rHT := by simpa [hrHT] using twoPointHTUniformRadius_pos (2 * d) J
+  have hrpos : 0 < r := by
+    rw [hr]
+    exact lt_min hrHTpos hrZpos
+  refine ⟨r, hrpos, ?_⟩
+  intro β hβpos hβlt
+  set U : Set ℂ := Metric.ball (0 : ℂ) r with hU
+  have hUopen : IsOpen U := Metric.isOpen_ball
+  have hUpre : IsPreconnected U := (convex_ball (0 : ℂ) r).isPreconnected
+  have hβU : (β : ℂ) ∈ U := by
+    rw [hU, Metric.mem_ball, dist_zero_right, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos hβpos]
+    exact hβlt
+  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
+    ⟨hJ, le_rfl, hβpos⟩
+  have hZ : ∀ n, ∀ z ∈ U,
+      partitionFunctionComplexAlongExhaustion (latticeGraph d) Λ
+        ((⟨J, 0, β⟩ : IsingParams ℝ).J : ℂ)
+        ((⟨J, 0, β⟩ : IsingParams ℝ).h : ℂ) z n ≠ 0 := by
+    intro n z hz
+    have hzdist : dist z 0 < r := by
+      simpa [hU] using Metric.mem_ball.mp hz
+    have hzZ : z ∈ Metric.ball (0 : ℂ) rZ := by
+      refine Metric.mem_ball.mpr (lt_of_lt_of_le hzdist ?_)
+      rw [hr]
+      exact min_le_right _ _
+    simpa using hZraw n z hzZ
+  have hbdd : ∀ z ∈ U, ∃ ρ M : ℝ, 0 < ρ ∧ Metric.ball z ρ ⊆ U ∧
+      ∀ n, ∀ w ∈ Metric.ball z ρ,
+        ‖correlationComplexAlongExhaustion (latticeGraph d) Λ
+            A ((⟨J, 0, β⟩ : IsingParams ℝ).J : ℂ)
+            ((⟨J, 0, β⟩ : IsingParams ℝ).h : ℂ) w n‖ ≤
+          M := by
+    intro z hz
+    have hz_norm : ‖z‖ < r := by
+      have hzdist : dist z 0 < r := by simpa [hU] using Metric.mem_ball.mp hz
+      simpa [dist_zero_right] using hzdist
+    refine ⟨(r - ‖z‖) / 2, generalRatioBoundFun (2 * d) A.card, by linarith, ?_, ?_⟩
+    · intro w hw
+      have hwz : dist w z < (r - ‖z‖) / 2 := Metric.mem_ball.mp hw
+      have hw_norm : ‖w‖ < r := by
+        calc
+          ‖w‖ = dist w 0 := by simp [dist_zero_right]
+          _ ≤ dist w z + dist z 0 := dist_triangle w z 0
+          _ = dist w z + ‖z‖ := by rw [dist_zero_right]
+          _ < (r - ‖z‖) / 2 + ‖z‖ := by linarith
+          _ < r := by linarith
+      rw [hU, Metric.mem_ball, dist_zero_right]
+      exact hw_norm
+    · intro n w hw
+      have hwU : w ∈ U := by
+        exact (show Metric.ball z ((r - ‖z‖) / 2) ⊆ U from by
+          intro y hy
+          have hyz : dist y z < (r - ‖z‖) / 2 := Metric.mem_ball.mp hy
+          have hy_norm : ‖y‖ < r := by
+            calc
+              ‖y‖ = dist y 0 := by simp [dist_zero_right]
+              _ ≤ dist y z + dist z 0 := dist_triangle y z 0
+              _ = dist y z + ‖z‖ := by rw [dist_zero_right]
+              _ < (r - ‖z‖) / 2 + ‖z‖ := by linarith
+              _ < r := by linarith
+          rw [hU, Metric.mem_ball, dist_zero_right]
+          exact hy_norm) hw
+      have hwHT : w ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius (2 * d) J) := by
+        have hwdist : dist w 0 < r := by simpa [hU] using Metric.mem_ball.mp hwU
+        refine Metric.mem_ball.mpr (lt_of_lt_of_le hwdist ?_)
+        rw [hr, hrHT]
+        exact min_le_left _ _
+      simpa using
+        correlationComplexAlongExhaustion_general_norm_le_uniform
+          d Λ J A n w hwHT
+  obtain ⟨f, hfdiff, hconv, hident⟩ :=
+    correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound
+      (G := latticeGraph d) (Λ := Λ)
+      (p := (⟨J, 0, β⟩ : IsingParams ℝ)) hf
+      A
       hUopen hUpre hβU hZ hbdd
   refine ⟨f, ?_, ?_, ?_⟩
   · simpa [hU] using hfdiff
