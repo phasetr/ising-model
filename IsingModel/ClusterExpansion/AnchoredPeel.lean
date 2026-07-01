@@ -9,7 +9,9 @@ Kotecký–Preiss high-temperature window, toward Glimm–Jaffe (GJ) Theorem 17.
 pure algebraic/combinatorial **identity** on the subgraph-activity numerator
 `Q_A(t) = htSubgraphSum G A t = ∑_{X : ∂X = A} t^{|X|}`: an **anchored one-component peel**.
 
-Fix a nonempty even boundary set `A`, an anchor `a ∈ A`, and a complex activity `t`.  Every edge
+Fix a boundary set `A`, an anchor `a ∈ A`, and a complex activity `t` (the identity needs only
+`a ∈ A`, which already forces `A` nonempty; the intended use is an even boundary `A` arising from an
+observable, but evenness is not a hypothesis of the theorem).  Every edge
 subset `X` with odd boundary `∂X = A` decomposes into pairwise **vertex-disjoint** connected
 components (`polymerDecomposition X`), and the odd boundary distributes disjointly over that
 decomposition (`oddBoundary_biUnion_polymerDecomposition`, the union being disjoint as *vertex*
@@ -366,8 +368,9 @@ theorem htSubgraphSum_anchored_peel_component (G : SimpleGraph ι) [Fintype G.ed
 
 /-- **K1 — the anchored one-component peel identity** (GJ Theorem 17.6.1, p.313; §18 cluster
 expansion, §18.4–18.7; FV §3.7.3).  Brick K1 of the general-observable `β`-derivative chain
-(Issue #4404).  For a nonempty even boundary set `A` and anchor `a ∈ A`, the numerator groups by the
-unique anchored component and its even block `B = ∂C`:
+(Issue #4404).  For any anchor `a ∈ A` (the only hypothesis; it already forces `A` nonempty — the
+intended use is an even boundary `A` arising from an observable, but evenness is not required), the
+numerator groups by the unique anchored component and its even block `B = ∂C`:
 `Q_A(t) = ∑_{B ∈ evenSubsetsThrough A a} ∑_{C ∈ connectedComponentsWithBoundary G B}
   t^{|C|} · Q^{av}_{C, A ∖ B}(t)`.
 The remainder boundary is the genuine set difference `A ∖ B` (component boundaries never overlap),
