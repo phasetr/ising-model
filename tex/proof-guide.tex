@@ -32177,6 +32177,41 @@ itself a differentiability result, and remains scoped to the high-temperature Ko
 (not the full $\sigma < \sigma_c$ range).  References: Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313),
 \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
+\subsection{General-boundary component-ratio bricks (K2; Issue \#4404)}
+
+Building on K1's peel identity, brick K2 supplies the three general-boundary analogues of the
+two-point (pair) ratio-bound ingredients of PR~11--13 above, proven (axiom-free) in
+\texttt{ClusterExpansion/AnchoredComponentRatio.lean}.  Each is the faithful $B$-boundary
+generalization of an existing pair lemma (no new mathematics).
+
+\textbf{K2a} (\texttt{htSubgraphSumAvoiding'\_eq\_htSubgraphSum\_Gavoid}): the boundary-$A'$
+structural reduction $Q^{\mathrm{av}}_{C,A'}(t) = \texttt{htSubgraphSum}\,(\texttt{Gavoid}\,G\,C)\,A'\,t$,
+generalizing \texttt{htSubgraphSumAvoiding\_eq\_htSubgraphSum\_empty\_Gavoid} (recovered at
+$A' = \emptyset$), rewriting the K1 peel remainder as a smaller numerator on the delete-edges graph
+$\texttt{Gavoid}\,G\,C$.
+
+\textbf{K2b} (\texttt{connectedComponentsWithBoundaryOfCard\_card\_le\_maxDegree\_pow}): the
+volume-uniform anchored count $|\{C \in \texttt{connectedComponentsWithBoundary}\,G\,B : |C| = \ell\}|
+\le \Delta^{2\ell}$ (anchor $a \in B$), generalizing
+\texttt{connectingComponentsOfCard\_card\_le\_maxDegree\_pow} from $B = \{i,j\}$ to arbitrary boundary
+$B$ (evenness of $B$ is not used).
+
+\textbf{K2c} (\texttt{boundaryComponentRatio\_norm\_le\_geometric}): the per-$B$-block geometric
+packaging
+\[
+  \left\|\frac{\sum_C t^{|C|}\, Q^{\mathrm{av}}_{C,A\setminus B}(t)}{Q_\emptyset(t)}\right\|
+  \;\le\; \frac{M}{1 - a_0 \Delta^2}
+\]
+from a per-component estimate (hypothesis \texttt{hbound}), generalizing
+\texttt{twoPointRatio\_norm\_le\_geometric}.
+
+K2 is a brick of the general-observable $\infty$-vol $\beta$-differentiability chain toward GJ
+Theorem~17.6.1 (\#4404); it enables the K3 induction (summing K2c over
+$\texttt{evenSubsetsThrough}\,A\,a$ and discharging \texttt{hbound}).  It is scoped to the
+high-temperature Kotecký--Preiss window only; it is \emph{not} itself a differentiability result and
+\emph{not} the closed ratio bound $\|Q_A/Q_\emptyset\| \le M(|A|,\Delta)$ (that is K3).  References:
+Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
 infinite-volume gap (GJ \S17.1 vs \S18.6--18.7, Issue \#4214 item B)}
 
