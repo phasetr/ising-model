@@ -1,5 +1,6 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeContinuity
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDist
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDistUpperFull
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.UpperBound
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PosAndAntitone
 import Mathlib.Topology.Order.Monotone
@@ -121,6 +122,57 @@ theorem latticeMass_countable_not_continuousWithinAt_Ioi {d : ℕ} {J : ℝ} (hJ
     intro β₁ hβ₁ β₂ _ hβ₁₂
     exact latticeMass_antitone_beta (cubicExhaustion d) hJ.le hβ₁ hβ₁₂
   exact hanti.countable_not_continuousWithinAt
+
+/-- **GJ §17.5 Theorem 17.5.1 — rigorous capstone for the true mass on the high-temperature
+window** (Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.5, Theorem 17.5.1 / Lemma 17.5.2,
+pp.~311--312).  For the restricted high-temperature window (`0<β₁≤β₂`, `β₂·J·2d<1/2`,
+`α≥d−1` with `d/2<α<d`) this bundles the three ingredients that GJ's argument *rigorously*
+establishes:
+
+1. the system pseudo-mass `m⁻ = globalPseudoMassDist` is `ContinuousOn` the window
+   (`globalPseudoMassDist_continuousOn_window`);
+2. the Lemma 17.5.2 sandwich `m⁻ ≤ m ≤ C·m⁻` holds pointwise on the window, with
+   `C = globalPseudoMassDistFullUpperConst α d J β` (`globalPseudoMassDist_fullSandwich`);
+3. the true mass `m = latticeMass` is continuous at all but *countably many* `β` on `Ioi 0`
+   (`latticeMass_countable_not_continuousWithinAt_Ioi`).
+
+GJ's proof rigorously delivers: `m⁻` continuous, the sandwich `m⁻ ≤ m ≤ C·m⁻` with
+`C = √d > 1` (Lemma 17.5.2), and `m` antitone.  GJ's closing line — asserting `m` continuous
+*everywhere* — relies on closing that sandwich, but `C > 1`, so the band `[m⁻, C·m⁻]` never
+collapses: this is a genuine gap in GJ's own text.  What is therefore rigorously established
+here is continuity of the true mass on the window *except on a countable set* (an antitone map
+into `ℝ≥0∞` is continuous off a countable set), trapped by the `C·m⁻` sandwich with `m⁻`
+continuous.  Sharp everywhere-continuity is deferred to the §18 window-analyticity route (beyond
+GJ's rigorous content; issue #4386, Option B). -/
+theorem gj_theorem_17_5_1_rigorous {α d : ℕ} (hα : 1 ≤ α)
+    (hd : 1 ≤ d) (hαd : d < 2 * α) (hαd2 : α < d) (hαd1 : d ≤ α + 1)
+    {J β₁ β₂ : ℝ} (hJ : 0 < J) (hβ₁ : 0 < β₁) (hβ₁₂ : β₁ ≤ β₂)
+    (hβ₂_half : β₂ * J * (2 * d) < 1 / 2) :
+    ContinuousOn
+        (fun β => globalPseudoMassDist hα (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ))
+        (Set.Icc β₁ β₂)
+      ∧ (∀ β ∈ Set.Icc β₁ β₂,
+          ENNReal.ofReal
+              (globalPseudoMassDist hα (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ))
+              ≤ latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+            ∧ latticeMass d (cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
+              ≤ ENNReal.ofReal (globalPseudoMassDistFullUpperConst α d J β)
+                * ENNReal.ofReal (globalPseudoMassDist hα (cubicExhaustion d)
+                    (⟨J, 0, β⟩ : IsingParams ℝ)))
+      ∧ Set.Countable {β ∈ Set.Ioi (0 : ℝ) |
+          ¬ ContinuousWithinAt
+              (fun β' => latticeMass d (cubicExhaustion d) (⟨J, 0, β'⟩ : IsingParams ℝ))
+              (Set.Ioi 0) β} := by
+  refine ⟨globalPseudoMassDist_continuousOn_window hα hd hαd hαd2 hαd1 hJ hβ₁ hβ₁₂
+      hβ₂_half, ?_, latticeMass_countable_not_continuousWithinAt_Ioi hJ⟩
+  intro β hβmem
+  have hβpos : 0 < β := lt_of_lt_of_le hβ₁ hβmem.1
+  have hβJd_lt1 : β * J * (2 * d) < 1 := by
+    have h2d : (0 : ℝ) ≤ 2 * (d : ℝ) := by positivity
+    have hle : β * J * (2 * d) ≤ β₂ * J * (2 * d) :=
+      mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_right hβmem.2 hJ.le) h2d
+    linarith [hβ₂_half]
+  exact globalPseudoMassDist_fullSandwich hα hd hJ hβpos hβJd_lt1
 
 end Ambient
 end IsingModel
