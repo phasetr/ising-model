@@ -32252,9 +32252,52 @@ open Kotecký--Preiss high-temperature window $\|t\| < \texttt{twoPointHTActivit
 volume-uniform: independent of the vertex type, the graph, and the exhaustion stage.  It is
 \emph{unconditional} on the KP window (the same legitimate hypotheses as the pair capstone K1/K2 rest
 on); it is \emph{not} itself a differentiability result, and remains scoped to the high-temperature
-Kotecký--Preiss window (not the full $\sigma < \sigma_c$ range of Issue~\#4386).  The remaining
-bricks toward GJ Theorem~17.6.1 are K4 (discharging \texttt{hbdd} unconditionally) and K5 (the
-infinite-volume $\beta$-\texttt{HasDerivAt} capstone).  References: Glimm--Jaffe, 2nd ed.,
+Kotecký--Preiss window (not the full $\sigma < \sigma_c$ range of Issue~\#4386).  K4 (discharging
+\texttt{hbdd} unconditionally and the resulting $\infty$-vol complex analyticity) is now done (below);
+the remaining brick toward GJ Theorem~17.6.1 is K5 (the infinite-volume $\beta$-\texttt{HasDerivAt}
+capstone).  References: Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik,
+\S3.7.3.
+
+\subsection{General-boundary volume-uniform Montel bound and infinite-volume complex analyticity
+(K4; Issue \#4404)}
+
+Brick K4, in \texttt{ClusterExpansion/TwoPointCorrelationInfiniteAnalytic.lean}, upgrades K3's
+volume-uniform ratio bound $\texttt{generalRatio\_norm\_le}$ into the general-boundary analogue of the
+route-B pair capstone above (proven, axiom-free).
+
+$\texttt{correlationComplex\_general\_norm\_le\_on\_connected}$ transports K3's ratio bound through the
+(already-general) ratio identity: on any open preconnected $U \ni 0$ with $\cosh(\beta J) \ne 0$ and
+$\|\tanh(\beta J)\| < \texttt{twoPointHTActivityRadius}\,\Delta$ throughout $U$,
+$\|\texttt{correlationComplex}\,G\,A\,(J)\,0\,\beta\| \le \mathsf{M}_\Delta(|A|)$ for every
+$\beta \in U$ --- the general-$A$ analogue of
+$\texttt{correlationComplex\_two\_point\_norm\_le\_on\_connected}$.
+$\texttt{correlationComplex\_general\_norm\_le\_of\_high\_temp\_uniform\_radius}$ specializes this to
+the degree-uniform ball $\texttt{twoPointHTUniformRadius}\,\Delta\,J$.
+
+$\texttt{correlationComplexAlongExhaustion\_general\_norm\_le\_uniform}$ instantiates $\Delta = 2d$ via
+$\texttt{induced\_latticeGraph\_maxDegree\_le}$, giving a single exhaustion-stage-independent Montel
+bound $\mathsf{M}_{2d}(|A|)$ for the along-exhaustion general-boundary complex correlations on
+$\texttt{ball}\,0\,(\texttt{twoPointHTUniformRadius}\,(2d)\,J)$ (uncovered stages are identically
+$0$) --- the general-$A$ analogue of
+$\texttt{correlationComplexAlongExhaustion\_two\_point\_norm\_le\_uniform}$.
+
+The capstone $\texttt{correlationInfinite\_latticeGraph\_general\_analytic\_high\_temp}$ feeds this
+$\texttt{hbdd}$, together with the existing volume-uniform partition non-vanishing $\texttt{hZ}$, into
+$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$: for the cubic
+lattice $\texttt{latticeGraph}\,d$, any exhaustion $\Lambda$, $J \ge 0$, and \emph{any} boundary $A$,
+there is $r > 0$ such that for every real $\beta \in (0, r)$ the along-exhaustion complex correlations
+$n \mapsto \texttt{correlationComplexAlongExhaustion}\,(\texttt{latticeGraph}\,d)\,\Lambda\,A\,(J)\,0\,z\,n$
+converge locally uniformly on $\texttt{ball}\,0\,r$ to a function $f$ that is
+$\texttt{DifferentiableOn}\,\mathbb{C}$ there and satisfies
+$f(\beta) = \texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\langle J,0,\beta\rangle\,A$
+at that real $\beta$ --- the general-$A$ analogue of
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ above.
+
+K4 is brick K4 of the general-observable $\infty$-vol $\beta$-differentiability chain toward GJ
+Theorem~17.6.1 (\#4404); the remaining brick is K5 (extracting the real $\beta$-\texttt{HasDerivAt}
+from this complex analyticity).  It is \emph{unconditional} on the KP window; scoped to the
+high-temperature Kotecký--Preiss window only (not the full $\sigma < \sigma_c$ range of
+Issue~\#4386); \emph{not} $\partial/\partial h$.  References: Glimm--Jaffe, 2nd ed.,
 Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
 
 \section{The \texorpdfstring{\S18}{S18} cluster expansion supersedes the transfer-matrix
