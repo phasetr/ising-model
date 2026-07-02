@@ -5722,6 +5722,78 @@ gives only the wrong-sign estimate $u_3(i,j,k) \le
 GHS supplies the required $|u_3| = -u_3$. Reference: Glimm--Jaffe, 2nd ed.,
 Theorem 17.6.1, p.~313; Cor.~4.3.4, p.~61; Cor.~4.3.3, pp.~61--62.
 
+\subsection{Field/volume-uniform summable majorant for the \(\partial/\partial h\)
+site-sum (\texttt{Concrete/LatticeGraphCorrelation/Truncated2GeneralFieldFiniteVolumeMajorant.lean})}
+
+\textbf{Role:} finite-volume brick~2 toward the external-field derivative
+$\partial/\partial h$ of the connected two-point function, Theorem~17.6.1
+(Issue \#4413). The field derivative $\partial/\partial h\,\langle\sigma_i;
+\sigma_j\rangle$ is a site-sum of Ursell three-point functions $\sum_k u_3(i,j,k)$.
+To control it uniformly one needs a summable majorant independent of both
+the field $h \ge 0$ and the finite volume $\Lambda$. This is a static
+pointwise-plus-summable bound: no infinite-volume object appears, and it does
+\textit{not} touch the equicontinuity / derivative-limit wall (a separate,
+later brick).
+
+\begin{theorem}[\texttt{truncated2\_inducedLatticeGraph\_le\_exp\_neg\_simonLiebRate\_of\_field\_nonneg};
+proved, ferromagnetic, $h \ge 0$, high temperature $0 < \beta J \cdot 2d \le 1$]
+For distinct sites $i \ne j$:
+\[
+  u_2(i,j) \le \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(i,j)),
+\]
+with $m = \text{simonLiebRate}\,\beta\,J\,d$. Both the prefactor $\exp(m)$
+and the rate $m$ are \textbf{independent of $h$ and of $\Lambda$}.
+\end{theorem}
+
+\begin{proof}
+GHS field-antitonicity reduces $h \ge 0$ to $h = 0$, where the singletons
+vanish by $\mathbb{Z}_2$ symmetry so $u_2(i,j) = \langle\sigma_i\sigma_j\rangle$.
+The volume-uniform $h = 0$ Simon--Lieb decay (from
+\texttt{correlation\_inducedLatticeGraph\_le\_pow\_latticeDistance}) gives
+$\langle\sigma_i\sigma_j\rangle \le (\beta J \cdot 2d)^{d(i,j)-1}$. Rewriting
+in exponential form via the identity
+$(\beta J \cdot 2d)^{N-1} = \exp(m) \cdot \exp(-m \cdot N)$ yields the claim.
+Reference: Glimm--Jaffe, 2nd ed., Theorem~17.6.1, p.~313;
+Fernández--Fröhlich--Sokal (1992), Ch.~12.
+\end{proof}
+
+\begin{theorem}[\texttt{summable\_truncated2FiniteVolumeMajorant};
+proved, $m > 0$]
+For the majorant term indexed by lattice sites:
+\[
+  \sum_{k \in \mathbb{Z}^d} \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(x,k))
+  < \infty.
+\]
+The total mass $M(x) = \sum_k \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(x,k))$
+is finite and independent of $\Lambda$ and $h$.
+\end{theorem}
+
+\begin{proof}
+Direct consequence of discrete exponential summability
+(\texttt{summable\_exp\_neg\_dist}) via scalar multiplication.
+\end{proof}
+
+\begin{theorem}[\texttt{sum\_abs\_truncated3\_le\_finiteVolumeMajorant};
+proved, ferromagnetic, $h \ge 0$, strict high temperature $0 < \beta J \cdot 2d < 1$,
+$\Lambda$ is $\text{Preconnected}$]
+For distinct sites $i \ne j$:
+\[
+  \sum_{k \ne i,j} |u_3(i,j,k)|
+  \le M(i) + M(j),
+\]
+where $M(x) = \sum_k \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(x,k))$ with
+$m = \text{simonLiebRate}\,\beta\,J\,d$. Both $M(i)$ and $M(j)$ are
+independent of $\Lambda$ and $h$.
+\end{theorem}
+
+\begin{proof}
+The truncated-3 contraction (\texttt{abs\_truncated3\_le}) gives $|u_3(i,j,k)|
+\le u_2(i,k) + u_2(j,k)$. Applying the per-term bound (2a) to each
+$u_2(a,k)$, reachability from $\text{Preconnected}$, and finite-set dominance
+(\texttt{Finset.sum\_le\_tsum}) with the summability bound (2b) yields the
+claim.
+\end{proof}
+
 \subsection{Spin-flip symmetry and odd correlations}
 
 \begin{theorem}[\texttt{spinProduct\_flip}]
