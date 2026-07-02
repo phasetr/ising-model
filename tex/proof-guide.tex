@@ -33808,6 +33808,41 @@ $\partial_\beta\log\langle\varphi_0\varphi_x\rangle$. Axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
 
 
+\subsection*{GJ Theorem 17.5.1 Brick 1: linear log-Lipschitz per-pair estimate for binding pairs, $d \ge 3$ (Issue \#4386)}
+
+\par\noindent\textbf{Role:} Progress brick toward the full \texttt{hLogLip} hypothesis.
+$\texttt{abs\_deriv\_log\_correlationInfinite\_le\_dist\_of\_binding}$ establishes the literal GJ p.~312 estimate
+$|\partial_\beta \log\langle\varphi_x\varphi_z\rangle^\infty| \le K \cdot d(x,z)$ for the \emph{binding-pair} case at
+$d \ge 3$ and $\alpha = d-1$.
+
+\paragraph*{Hypotheses.}
+$d \ge 3$; $J > 0$; $\beta \in \texttt{ConvergenceRegion.window}\,d\,J$; non-adjacent pair $x \ne z$, $\neg ({\rm latticeGraph}\,d).{\rm Adj}\,x\,z$;
+global pseudo-mass infimum positive $m^- = \texttt{globalPseudoMassDist}_{d-1} > 0$; binding pair condition
+\texttt{hbind}: $\texttt{pseudoMassFromParamsAtPairDist}(x,z) = m^-$ (pair attains the global infimum).
+
+\paragraph*{Proof sketch.}
+(1) Positivity: $\langle\varphi_x\varphi_z\rangle^\infty > 0$ (via $\texttt{correlationInfinite\_pair\_active\_of\_betaJ\_pos\_exhaustion}$,
+using $\beta > 0$, $\beta J > 0$, both implied by the window).
+(2) Sharp ratio bound: from $\texttt{abs\_deriv\_correlationInfinite\_le\_sharp}$ with $\alpha = d-1$, obtain the derivation $|\partial_\beta\langle\varphi_x\varphi_z\rangle^\infty| \le S \cdot \langle\varphi_x\varphi_z\rangle^\infty$, where
+\[
+S = J\bigl[2(1+(m^- r)^{d-1})e^{m^-}C(1+r)^{-(d-2)} + 4d(1+2^{d-1})e^{m^-}\bigr].
+\]
+(3) Log-derivative: apply $\texttt{HasDerivAt.log}$ to the curve $\beta' \mapsto \langle\varphi_x\varphi_z\rangle^\infty$
+(with the same $\texttt{HasDerivAt}$ witness used inside the sharp lemma). Positivity permits $\partial_\beta\log\langle\cdots\rangle = \partial_\beta\langle\cdots\rangle / \langle\cdots\rangle$, so $|\partial_\beta\log\langle\varphi_x\varphi_z\rangle^\infty| \le S$.
+(4) Linearization via $\alpha = d-1$: this exponent is the \emph{unique} choice making $S$ linear in $r = d(x,z)$.
+The decay $(1+r)^{-(d-2)} = (1+r)^{-(2\alpha-d)}$ against growth $(m^- r)^\alpha$ yields $S \sim r^{d-\alpha} = r^1 = r$.
+The private lemma $\texttt{sharp\_growth\_decay\_le\_linear}$ proves $(1+(m \cdot r)^\alpha)(1+r)^{-(2\alpha-d)} \le (1+m^\alpha) \cdot r$ for $1 \le r$, $0 \le m$, $d \ge 3$.
+The constant term $4d(1+2^{d-1})e^{m^-} \le K'' \cdot r$ for $r \ge 1$ (with $r \ge 2$ for non-adjacent). Collecting both pieces yields $S \le K \cdot r$.
+
+\paragraph*{Scope caveat.}
+Brick 1 discharges the per-pair estimate \textbf{only for binding pairs} and \textbf{only for $d \ge 3$}; it does \emph{not} discharge the full
+\texttt{hLogLip} hypothesis (which quantifies over all ray points, hence all pairs). The general non-binding case is the Ornstein--Zernike sharp
+lower-bound gap (\S18.6--18.7 walk-sum content), deferred to a multi-session effort. Theorem 17.5.1 true-mass continuity remains incomplete
+pending the non-binding generalization. Axiom-free.
+
+\textit{Reference}: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, p.~312.
+
+
 \subsection*{GJ Theorem 17.5.1: true-mass continuity, gated on the uniform-in-direction Lipschitz bound}
 
 \par\noindent\textbf{Role:} Isolates the single remaining Ornstein--Zernike ingredient and proves it
