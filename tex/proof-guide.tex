@@ -5858,11 +5858,100 @@ dominated by its complement tsum via the complement reindex move
 \texttt{sum\_majorant\_subtype\_le\_tsum}).
 \end{proof}
 
-\emph{Remark:} The symmetric infinite-volume tail contribution (3c) pulls in
-the $U^\infty / g'$ scaffolding shared with the capstone and is deferred there.
-Brick~3 $=$ 3a $+$ 3b only, with no infinite-volume objects. Reference:
+\emph{Remark:} Brick~3 $=$ 3a $+$ 3b only (finite-volume), with no infinite-volume objects;
+the infinite-volume tail contribution (3c) to the domination/summability layer appears as reduced brick 3c below. Reference:
 Glimm--Jaffe, 2nd ed., Theorem~17.6.1, p.~313; Cor.~4.3.4, p.~61; Cor.~4.3.3,
 pp.~61--62; Fern\'andez--Fr\"ohlich--Sokal (1992), Ch.~12.
+
+\subsection{Infinite-volume Weierstrass majorant for the \(\partial/\partial h\)
+site-sum: reduced brick 3c (\texttt{Concrete/LatticeGraphCorrelation/Truncated3FieldDerivInfiniteMajorant.lean})}
+
+\textbf{Role:} The \textbf{first infinite-volume statement} of the external-field derivative
+$\partial/\partial h$ brick chain (bricks 1--3a are finite-volume). Reduced brick~3c
+transports the field- and volume-uniform finite-volume bounds of bricks 1+2 through
+the exhaustion limit to the infinite-volume Ursell function $U_3^\infty$, and states
+the three consequences that constitute the infinite-volume side of the Weierstrass
+$M$-test: (i)~a per-term majorant, (ii)~summability, and (iii)~a complement-tail
+bound that vanishes by brick~3a. It is a pure domination/summability layer:
+\textit{no} equicontinuity, \textit{no} derivative-limit machinery, and \textit{no}
+claim about the derivative identity $g'(h) = \beta \sum_k U_3^\infty(i,j,k)$ (that
+belongs to the frozen equicontinuity wall, deferred to the capstone).
+
+\textbf{Standing hypotheses:} ferromagnetic parameters $\langle J, h, \beta \rangle$
+with $h \ge 0$; strict high-temperature window $0 < \beta J \cdot 2d < 1$; exhaustion
+$\Lambda$ with every induced subgraph $\text{Preconnected}$; distinct sites $i, j, k$.
+Let $m = \text{simonLiebRate}\,\beta\,J\,d$ and $g_a(x) = \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(a,x))$.
+
+\begin{theorem}[\texttt{abs\_truncated3Infinite\_le};
+proved, ferromagnetic, $h \ge 0$, high temperature $0 < \beta J \cdot 2d < 1$]
+Per-term infinite-volume Weierstrass majorant: for distinct $i, j, k$:
+\[
+  \bigl|U_3^\infty(i,j,k)\bigr| \le \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(i,k))
+    + \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(j,k)).
+\]
+\end{theorem}
+
+\begin{proof}
+At each exhaustion stage $n$ large enough that $i,j,k \in \Lambda_n$, brick~1 applies
+to the finite-volume $U_3$ on $G_n$ (\texttt{inducedGraph}), giving
+$|U_3(i,j,k)| \le u_2(i,k) + u_2(j,k)$ (finite-volume Ursell term). Two applications
+of brick~2a (\texttt{truncated2\_inducedLatticeGraph\_le\_exp\_neg\_simonLiebRate\_of\_field\_nonneg})
+bound each $u_2(a,k) \le g_a(k)$ (by reachability from $\text{Preconnected}$), yielding
+a uniform (in $n$) bound on $|U_3(i,j,k)|$ by the majorant $g_i(k) + g_j(k)$.
+The finite-volume Ursell along the exhaustion converges to $U_3^\infty$ (by
+\texttt{tendsto\_truncated3AlongExhaustion\_truncated3Infinite}), and absolute value
+is continuous, so the limit of the pointwise bounds passes to $|U_3^\infty|$ by
+$\texttt{le\_of\_tendsto}$. Since the majorant is $n$-independent, no uniformity is lost.
+\end{proof}
+
+\begin{theorem}[\texttt{summable\_truncated3Infinite};
+proved, ferromagnetic, $h \ge 0$, high temperature $0 < \beta J \cdot 2d < 1$]
+Summability of the infinite-volume site-sum: for fixed distinct $i \ne j$, the family
+$k \mapsto U_3^\infty(i,j,k)$ is summable over $\mathbb{Z}^d$ off-diagonal,
+dominated by the summable majorant $k \mapsto g_i(k) + g_j(k)$.
+\end{theorem}
+
+\begin{proof}
+Brick~2b (\texttt{summable\_truncated2FiniteVolumeMajorant}) ensures the majorant is
+summable. The per-term domination $|U_3^\infty(i,j,k)| \le g_i(k) + g_j(k)$ (off-diagonal $k$)
+follows from Theorem~$\texttt{abs\_truncated3Infinite\_le}$ applied at $k \ne i, j$.
+The comparison test (\texttt{Summable.of\_norm\_bounded}) yields summability.
+The two diagonal indices $k \in \{i,j\}$ form a finite set and do not affect summability.
+\end{proof}
+
+\begin{theorem}[\texttt{sum\_abs\_truncated3Infinite\_compl\_le\_majorant\_tail};
+proved, ferromagnetic, $h \ge 0$, high temperature $0 < \beta J \cdot 2d < 1$,
+$i, j \in \Lambda_{\text{cut}}$, $i \ne j$]
+Complement-tail bound: for any cutoff $\Lambda_{\text{cut}} \subseteq \mathbb{Z}^d$,
+\[
+  \sum_{k \notin \Lambda_{\text{cut}}} \bigl|U_3^\infty(i,j,k)\bigr|
+  \le \sum_{x \notin \Lambda_{\text{cut}}} g_i(x) + \sum_{x \notin \Lambda_{\text{cut}}} g_j(x)
+  = \mathrm{Rem}(\Lambda_{\text{cut}}),
+\]
+where the right-hand side is the majorant complement tsum (brick~3a),
+which tends to zero as $\Lambda_{\text{cut}} \to \mathbb{Z}^d$ along the exhaustion
+(\texttt{tendsto\_finiteVolumeMajorant\_compl\_atTop\_zero}).
+\end{theorem}
+
+\begin{proof}
+Since $i, j \in \Lambda_{\text{cut}}$, every complement index $k \notin \Lambda_{\text{cut}}$
+satisfies $k \ne i, j$, so no diagonal singularity appears. Theorem~$\texttt{abs\_truncated3Infinite\_le}$ gives
+the termwise bound $|U_3^\infty(i,j,k)| \le g_i(k) + g_j(k)$; Theorem~$\texttt{summable\_truncated3Infinite}$
+ensures the absolute family is summable. Monotonicity of complement tsums under a summable majorant
+(\texttt{Summable.tsum\_le\_tsum} on the complement subtype, split by \texttt{Summable.tsum\_add})
+yields the conclusion. Brick~3a (\texttt{tendsto\_finiteVolumeMajorant\_compl\_atTop\_zero}) supplies
+the unconditional vanishing of the right-hand side.
+\end{proof}
+
+\emph{Scope caveat:} The derivative identity $g'(h) = \beta \sum_k U_3^\infty(i,j,k)$
+(differentiation-under-the-tsum of the infinite-volume two-point function) is
+\textbf{explicitly out of scope}. That equality is the frozen head-equicontinuity
+``wall'' (isomorphic to the $\partial/\partial \beta$ continuity wall of \S17.5,
+Issue~\#4386) and is deferred to the capstone. Reduced brick~3c supplies only the
+domination and summability half of the $M$-test; the passage from summability to
+differentiation-under-the-sum remains a downstream, author-authorised research step.
+Reference: Glimm--Jaffe, 2nd ed., Theorem~17.6.1, p.~313; Cor.~4.3.4, p.~61;
+Cor.~4.3.3, pp.~61--62; Fern\'andez--Fr\"ohlich--Sokal (1992), Ch.~12.
 
 \subsection{Spin-flip symmetry and odd correlations}
 
