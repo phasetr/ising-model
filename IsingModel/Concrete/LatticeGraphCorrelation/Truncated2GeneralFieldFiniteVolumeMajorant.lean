@@ -11,10 +11,15 @@ import IsingModel.LatticeExpSum
 Brick 2 toward the `h`-derivative of the connected two-point function on `ℤ^d`
 (tracking issue #4413), the static analytic input behind Glimm--Jaffe
 Theorem 17.6.1 (*Quantum Physics*, 2nd ed., p. 313).  The field derivative
-`∂/∂h ⟨σ_i; σ_j⟩` is a site-sum of Ursell three-point functions
-`∑_k truncated3(i, j, k)`; to control it uniformly one needs a summable
-majorant that is independent of both the field `h ≥ 0` and the finite volume
-`Λ`.  This file builds that majorant by pure composition of existing pieces:
+is the site-sum `∂/∂h ⟨σ_i; σ_j⟩ = β · ∑_k U₃(i, j, k)`, where the
+*off-diagonal* terms (`k ≠ i, j`) are Ursell three-point functions
+`truncated3(i, j, k)`, but the two *diagonal* terms `k = i` and `k = j` are
+**not** three-point functions: they equal `-2 · corr(m) · truncated2(i, j)`
+(see `Truncated2Antitone.lean`).  This file only builds the summable majorant
+for the off-diagonal part `∑_{k ≠ i, j} |truncated3(i, j, k)|`, independent of
+both the field `h ≥ 0` and the finite volume `Λ`; the two diagonal terms are
+handled separately by the downstream §17.6.1 assembly.  The majorant is built
+by pure composition of existing pieces:
 
 * **(2a)** a per-term exponential bound
   `truncated2 ⟨J,h,β⟩ i j ≤ exp(m) · exp(-m · d_{ℓ¹}(i,j))`,
