@@ -28768,7 +28768,7 @@ $$w(n_1) \cdot w(n_2) = w(m) \cdot w(M-m).$$
 \begin{proof}
   Apply \texttt{Finset.sum\_nbij'} (the reindexing lemma for bijections on finite sets) to the forward map
   $\Phi: (n_1, n_2) \mapsto (n_1 + n_2, n_1)$ and inverse $(M,m) \mapsto (m, M - m)$.
-  All four conditions are algebraic: $(n_1 + n_2 - n_1 = n_2)$, subcurrent membership via bounded sums,
+  All five conditions are algebraic: $(n_1 + n_2 - n_1 = n_2)$, subcurrent membership via bounded sums,
   the summand is invariant under the swap (no algebraic simplification needed---it is already equal),
   and left/right inverses hold by \texttt{Current.add\_sub\_cancel\_of\_le} and \texttt{Current.sub\_add\_cancel\_of\_le}.
 \end{proof}
