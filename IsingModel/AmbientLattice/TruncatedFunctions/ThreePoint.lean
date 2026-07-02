@@ -127,7 +127,7 @@ the infinite-volume definition.  Proof: apply `Tendsto.sub`,
 `Tendsto.add`, and `Tendsto.mul` to the seven `correlationInfinite`
 convergences from
 `tendsto_correlationAlongExhaustion_correlationInfinite`. -/
-private theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
+theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j k : V) :
@@ -146,6 +146,117 @@ private theorem tendsto_truncated3AlongExhaustion_truncated3Infinite
   exact ((((h_ijk.sub (h_i.mul h_jk)).sub (h_j.mul h_ik)).sub
     (h_k.mul h_ij)).add
     (((tendsto_const_nhds (x := (2 : ℝ))).mul h_i).mul h_j |>.mul h_k))
+
+/-- **Stagewise identification of `truncated3AlongExhaustion` with a
+finite-volume `truncated3`**: once the three sites lie in the `n`-th volume
+`Λ.volume n`, the along-exhaustion Ursell expression evaluates to the
+finite-volume Ursell function on the induced subgraph, at the lifted sites
+`⟨i, hi⟩, ⟨j, hj⟩, ⟨k, hk⟩`.
+
+The bridge between the `atTop`-sequence `truncated3AlongExhaustion` and the
+finite-volume brick lemmas (`abs_truncated3_le`, `ghs_inequality`, Simon--Lieb
+decay): rewriting each `correlationAlongExhaustion` via
+`correlationAlongExhaustion_of_subset` and identifying the seven `liftFinset`
+supports with the corresponding subtype pairs/triples reduces both sides to the
+same combination of `correlation (inducedGraph G (Λ.volume n)) p`. -/
+theorem truncated3AlongExhaustion_eq_truncated3
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : IsingParams ℝ) (i j k : V) {n : ℕ}
+    (hi : i ∈ Λ.volume n) (hj : j ∈ Λ.volume n) (hk : k ∈ Λ.volume n) :
+    truncated3AlongExhaustion G Λ p i j k n
+      = IsingModel.truncated3 (inducedGraph G (Λ.volume n)) p ⟨i, hi⟩ ⟨j, hj⟩ ⟨k, hk⟩ := by
+  have ha : ({i} : Finset V) ⊆ Λ.volume n := by
+    intro x hx; rw [Finset.mem_singleton] at hx; exact hx ▸ hi
+  have hb : ({j} : Finset V) ⊆ Λ.volume n := by
+    intro x hx; rw [Finset.mem_singleton] at hx; exact hx ▸ hj
+  have hc : ({k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx; rw [Finset.mem_singleton] at hx; exact hx ▸ hk
+  have habc : ({i, j, k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl | rfl <;> assumption
+  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl <;> assumption
+  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl <;> assumption
+  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := by
+    intro x hx
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
+    rcases hx with rfl | rfl <;> assumption
+  unfold truncated3AlongExhaustion IsingModel.truncated3
+  rw [correlationAlongExhaustion_of_subset G Λ p habc,
+      correlationAlongExhaustion_of_subset G Λ p ha,
+      correlationAlongExhaustion_of_subset G Λ p hb,
+      correlationAlongExhaustion_of_subset G Λ p hc,
+      correlationAlongExhaustion_of_subset G Λ p hab,
+      correlationAlongExhaustion_of_subset G Λ p hac,
+      correlationAlongExhaustion_of_subset G Λ p hbc]
+  have hlift_ijk : liftFinset ({i, j, k} : Finset V) habc
+      = ({⟨i, hi⟩, ⟨j, hj⟩, ⟨k, hk⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx
+      rcases hx with rfl | rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr (Or.inl rfl)
+      · exact Or.inr (Or.inr rfl)
+    · rintro (rfl | rfl | rfl) <;> simp
+  have hlift_i : liftFinset ({i} : Finset V) ha
+      = ({⟨i, hi⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_j : liftFinset ({j} : Finset V) hb
+      = ({⟨j, hj⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_k : liftFinset ({k} : Finset V) hc
+      = ({⟨k, hk⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; subst hx; rfl
+    · rintro rfl; rfl
+  have hlift_ij : liftFinset ({i, j} : Finset V) hab
+      = ({⟨i, hi⟩, ⟨j, hj⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rintro (rfl | rfl) <;> simp
+  have hlift_ik : liftFinset ({i, k} : Finset V) hac
+      = ({⟨i, hi⟩, ⟨k, hk⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rintro (rfl | rfl) <;> simp
+  have hlift_jk : liftFinset ({j, k} : Finset V) hbc
+      = ({⟨j, hj⟩, ⟨k, hk⟩} : Finset (↑(Λ.volume n) : Type _)) := by
+    ext x
+    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · intro hx; rcases hx with rfl | rfl
+      · exact Or.inl rfl
+      · exact Or.inr rfl
+    · rintro (rfl | rfl) <;> simp
+  simp only [correlationΛ, hlift_ijk, hlift_i, hlift_j, hlift_k,
+    hlift_ij, hlift_ik, hlift_jk]
 
 /-- **GHS at infinite volume**: for a ferromagnetic Ising model and
 pairwise distinct sites `i, j, k`, $U_3(i, j, k) \le 0$.
@@ -169,121 +280,15 @@ theorem truncated3Infinite_nonpos
   rw [Filter.eventually_atTop]
   refine ⟨N, fun n hn => ?_⟩
   have habc : ({i, j, k} : Finset V) ⊆ Λ.volume n := hN n hn
-  have ha : ({i} : Finset V) ⊆ Λ.volume n := fun x hx => by
-    simp only [Finset.mem_singleton] at hx; subst hx
-    exact habc (by simp)
-  have hb : ({j} : Finset V) ⊆ Λ.volume n := fun x hx => by
-    simp only [Finset.mem_singleton] at hx; subst hx
-    exact habc (by simp)
-  have hc : ({k} : Finset V) ⊆ Λ.volume n := fun x hx => by
-    simp only [Finset.mem_singleton] at hx; subst hx
-    exact habc (by simp)
-  have hab : ({i, j} : Finset V) ⊆ Λ.volume n := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact habc (by simp)
-    · exact habc (by simp)
-  have hac : ({i, k} : Finset V) ⊆ Λ.volume n := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact habc (by simp)
-    · exact habc (by simp)
-  have hbc : ({j, k} : Finset V) ⊆ Λ.volume n := by
-    intro x hx
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hx
-    rcases hx with rfl | rfl
-    · exact habc (by simp)
-    · exact habc (by simp)
-  -- Rewrite truncated3AlongExhaustion using correlationAlongExhaustion_of_subset
-  change truncated3AlongExhaustion G Λ p i j k n ≤ 0
-  unfold truncated3AlongExhaustion
-  rw [correlationAlongExhaustion_of_subset G Λ p habc,
-      correlationAlongExhaustion_of_subset G Λ p ha,
-      correlationAlongExhaustion_of_subset G Λ p hb,
-      correlationAlongExhaustion_of_subset G Λ p hc,
-      correlationAlongExhaustion_of_subset G Λ p hab,
-      correlationAlongExhaustion_of_subset G Λ p hac,
-      correlationAlongExhaustion_of_subset G Λ p hbc]
-  -- Convert to finite-volume ghs_inequality on inducedGraph
-  -- Build the lifted indices via subtype coercion
-  have := IsingModel.ghs_inequality (inducedGraph G (Λ.volume n)) p hf
-    ⟨i, ha (by simp)⟩ ⟨j, hb (by simp)⟩ ⟨k, hc (by simp)⟩
-    (by intro h; apply hij; exact Subtype.mk.inj h)
-    (by intro h; apply hjk; exact Subtype.mk.inj h)
-    (by intro h; apply hik; exact Subtype.mk.inj h)
-  unfold IsingModel.truncated3 at this
-  -- Show liftFinset {...} equals { ⟨·, ...⟩, ... }
-  -- Instead, rewrite the goal to match ghs_inequality
-  -- The finite-volume ghs_inequality uses {i', j', k'} : Finset ↑(Λ.volume n)
-  -- where i' = ⟨i, _⟩ etc. This coincides with liftFinset {i,j,k} etc.
-  have hlift_ijk : liftFinset ({i, j, k} : Finset V) habc
-      = ({⟨i, ha (by simp)⟩, ⟨j, hb (by simp)⟩, ⟨k, hc (by simp)⟩} :
-        Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx
-      rcases hx with rfl | rfl | rfl
-      · exact Or.inl (by rfl)
-      · exact Or.inr (Or.inl (by rfl))
-      · exact Or.inr (Or.inr (by rfl))
-    · rintro (rfl | rfl | rfl) <;> simp
-  have hlift_i : liftFinset ({i} : Finset V) ha
-      = ({⟨i, ha (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; subst hx; rfl
-    · rintro rfl; rfl
-  have hlift_j : liftFinset ({j} : Finset V) hb
-      = ({⟨j, hb (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; subst hx; rfl
-    · rintro rfl; rfl
-  have hlift_k : liftFinset ({k} : Finset V) hc
-      = ({⟨k, hc (by simp)⟩} : Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; subst hx; rfl
-    · rintro rfl; rfl
-  have hlift_ij : liftFinset ({i, j} : Finset V) hab
-      = ({⟨i, ha (by simp)⟩, ⟨j, hb (by simp)⟩} :
-        Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; rcases hx with rfl | rfl
-      · exact Or.inl (by rfl)
-      · exact Or.inr (by rfl)
-    · rintro (rfl | rfl) <;> simp
-  have hlift_ik : liftFinset ({i, k} : Finset V) hac
-      = ({⟨i, ha (by simp)⟩, ⟨k, hc (by simp)⟩} :
-        Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; rcases hx with rfl | rfl
-      · exact Or.inl (by rfl)
-      · exact Or.inr (by rfl)
-    · rintro (rfl | rfl) <;> simp
-  have hlift_jk : liftFinset ({j, k} : Finset V) hbc
-      = ({⟨j, hb (by simp)⟩, ⟨k, hc (by simp)⟩} :
-        Finset (↑(Λ.volume n) : Type _)) := by
-    ext x
-    simp only [mem_liftFinset, Finset.mem_insert, Finset.mem_singleton]
-    refine ⟨?_, ?_⟩
-    · intro hx; rcases hx with rfl | rfl
-      · exact Or.inl (by rfl)
-      · exact Or.inr (by rfl)
-    · rintro (rfl | rfl) <;> simp
-  simp only [correlationΛ, hlift_ijk, hlift_i, hlift_j, hlift_k,
-    hlift_ij, hlift_ik, hlift_jk]
-  linarith [this]
+  have hi : i ∈ Λ.volume n := habc (by simp)
+  have hj : j ∈ Λ.volume n := habc (by simp)
+  have hk : k ∈ Λ.volume n := habc (by simp)
+  rw [truncated3AlongExhaustion_eq_truncated3 G Λ p i j k hi hj hk]
+  exact IsingModel.ghs_inequality (inducedGraph G (Λ.volume n)) p hf
+    ⟨i, hi⟩ ⟨j, hj⟩ ⟨k, hk⟩
+    (fun h => hij (Subtype.mk.inj h))
+    (fun h => hjk (Subtype.mk.inj h))
+    (fun h => hik (Subtype.mk.inj h))
 
 /-- **`truncated3Infinite` at `h = 0`**: for pairwise distinct sites,
 $U_3 = 0$ at vanishing external field.
