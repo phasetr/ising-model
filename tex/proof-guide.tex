@@ -5794,6 +5794,77 @@ $u_2(a,k)$, reachability from $\text{Preconnected}$, and finite-set dominance
 claim.
 \end{proof}
 
+\subsection{Tail/collar uniform-smallness bound for the \(\partial/\partial h\)
+site-sum (\texttt{Concrete/LatticeGraphCorrelation/Truncated3FieldDerivCollarTail.lean})}
+
+\textbf{Role:} finite-volume brick~3 toward the external-field derivative
+$\partial/\partial h$ of the connected two-point function, Theorem~17.6.1
+(Issue \#4413). Between brick~2 (the field- and volume-uniform summable majorant)
+and the finite-head equicontinuity ``wall'' (to appear in the capstone), brick~3
+supplies the tail and collar contributions to the $\partial/\partial h$ site-sum
+via Weierstrass $M$-test estimates. It touches \textit{no} infinite-volume object,
+\textit{no} equicontinuity, and \textit{no} derivative-limit machinery: a pure
+finite-volume tail/collar domination layer.
+
+Writing $m = \text{simonLiebRate}\,\beta\,J\,d$ and, for fixed sites $a$,
+$g_a(x) = \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(a, x))$ (brick~2's per-site majorant),
+the two Weierstrass estimates are:
+
+\begin{theorem}[\texttt{tendsto\_finiteVolumeMajorant\_compl\_atTop\_zero};
+proved, $m > 0$]
+The two-tail majorant complement tends to zero:
+\[
+  \left(\sum_{x \notin \Lambda_N} g_i(x) + \sum_{x \notin \Lambda_N} g_j(x)\right)
+  \to 0 \quad \text{as } N \to \infty.
+\]
+The tail-to-zero mechanism is unconditional; the finset-$\text{atTop}$ complement
+limit is reindexed along the $\mathbb{N}$-indexed exhaustion by
+\texttt{Exhaustion.tendsto\_volume\_atTop}.
+\end{theorem}
+
+\begin{proof}
+Apply \texttt{Summable.tendsto\_tsum\_compl\_atTop\_zero} (real-valued tail
+vanishing) to the summable families $x \mapsto g_i(x)$ and $x \mapsto g_j(x)$
+(from brick~2's \texttt{summable\_truncated2FiniteVolumeMajorant}), and compose
+with the exhaustion-to-infinity property $\Lambda_\bullet \to \top$ along
+\texttt{atTop} (\texttt{Exhaustion.tendsto\_volume\_atTop}).
+\end{proof}
+
+\begin{theorem}[\texttt{sum\_abs\_truncated3\_collar\_le\_majorant\_tail};
+proved, ferromagnetic, $h \ge 0$, strict high temperature $0 < \beta J \cdot 2d < 1$,
+$\Lambda_{\text{full}}$ is $\text{Preconnected}$]
+Over any bare cutoff $\Lambda_{\text{cut}} \subseteq \Lambda_{\text{full}}$,
+with $i, j \in \Lambda_{\text{cut}}$, $i \ne j$, the collar off-diagonal
+Ursell site-sum is bounded, uniformly in the volume and in $h \ge 0$:
+\[
+  \sum_{\substack{k \in \Lambda_{\text{full}} \\ k \notin \Lambda_{\text{cut}}}}
+  |u_3(i,j,k)|
+  \le \sum_{x \notin \Lambda_{\text{cut}}} g_i(x) + \sum_{x \notin \Lambda_{\text{cut}}} g_j(x),
+\]
+where $g_a(x) = \exp(m) \cdot \exp(-m \cdot d_{\ell^1}(a,x))$ with
+$m = \text{simonLiebRate}\,\beta\,J\,d$. Both terms on the right are independent
+of $\Lambda_{\text{full}}$ and $h$.
+\end{theorem}
+
+\begin{proof}
+Since $\{i,j\} \subseteq \Lambda_{\text{cut}}$, every collar index
+$k \notin \Lambda_{\text{cut}}$ has $k \ne i, k \ne j$, so no degenerate
+diagonal $-2\langle\sigma_m\rangle u_2$ term appears. The chain is: (i) brick~1
+\texttt{abs\_truncated3\_le} gives $|u_3(i,j,k)| \le u_2(i,k) + u_2(j,k)$;
+(ii) brick~2a \texttt{truncated2\_inducedLatticeGraph\_le\_exp\_neg\_simonLiebRate\_of\_field\_nonneg}
+bounds each $u_2(a,k) \le g_a(k)$ (reachability from $\text{Preconnected}$);
+(iii) $\text{Finset.sum\_add\_distrib}$ splits the two collar site-sums, each
+dominated by its complement tsum via the complement reindex move
+\texttt{sum\_majorant\_collar\_le\_tsum\_compl} (analogous to brick~2's
+\texttt{sum\_majorant\_subtype\_le\_tsum}).
+\end{proof}
+
+\emph{Remark:} The symmetric infinite-volume tail contribution (3c) pulls in
+the $U^\infty / g'$ scaffolding shared with the capstone and is deferred there.
+Brick~3 $=$ 3a $+$ 3b only, with no infinite-volume objects. Reference:
+Glimm--Jaffe, 2nd ed., Theorem~17.6.1, p.~313; Cor.~4.3.4, p.~61; Cor.~4.3.3,
+pp.~61--62; Fern\'andez--Fr\"ohlich--Sokal (1992), Ch.~12.
+
 \subsection{Spin-flip symmetry and odd correlations}
 
 \begin{theorem}[\texttt{spinProduct\_flip}]
