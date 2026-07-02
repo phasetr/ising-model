@@ -364,6 +364,7 @@ specifies which of the three above apply.
 | **Cor 4.3.3** | `U₄ ≤ 0` for `h = 0` | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated4Infinite_nonpos_h_zero`) |
 | **GHS** (Cor 4.3.4) | `⟨σᵢ;σⱼ;σₖ⟩ ≤ 0` (axiom-free since PR #3910 via `Lebowitz.cor_4_3_4`) | `Inequalities/GHS.lean` / `AmbientLattice.lean` | Finite + genuine ∞-vol (`truncated3Infinite_nonpos`) |
 | **Cor 4.3.5** | inductive `n`-point bound (`h = 0`) | `Inequalities/GHS.lean` | Finite |
+| **Truncated-3 contraction** (`abs_truncated3_le_weighted`, `abs_truncated3_le`) | Ferromagnetic, `h ≥ 0`: `\|⟨σᵢ;σⱼ;σₖ⟩\| ≤ ⟨σᵢ⟩·⟨σⱼ;σₖ⟩ + ⟨σⱼ⟩·⟨σᵢ;σₖ⟩` (weighted form), hence (`C = 1` corollary) `\|⟨σᵢ;σⱼ;σₖ⟩\| ≤ ⟨σᵢ;σₖ⟩ + ⟨σⱼ;σₖ⟩`, via GHS (Cor 4.3.4, p. 61) + GKS-II (Cor 4.3.3, pp. 61–62) | `Inequalities/GHS/Truncated3Contraction.lean` | **Done (finite-volume correlation inequality), axiom-free.** Brick 1 toward GJ Thm 17.6.1 (p. 313) ∂/∂h (μ-direction) ∞-vol differentiability (Issue #4413); pure finite-volume correlation inequality, **not** an ∞-vol or differentiability result itself |
 
 ### §4.2: Thermodynamic limit of correlations (Thm 4.2.3)
 
