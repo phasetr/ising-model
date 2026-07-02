@@ -20,7 +20,7 @@ Griffiths–Hurst–Sherman bound used in the proof of GJ Theorem 17.6.1
 (*Quantum Physics* 2nd ed., p. 313). It combines:
 * the GHS inequality (GJ Cor 4.3.4, p. 61) `⟨σ_i; σ_j; σ_k⟩ ≤ 0`, and
 * GKS-II (second Griffiths inequality, GJ Cor 4.3.3, pp. 61–62)
-  `⟨σ_iσ_j⟩ ≥ ⟨σ_iσ_j σ_k⟩ …` regrouped against the pair `{i,j}` vs `{k}`.
+  `⟨σ_iσ_j⟩·⟨σ_k⟩ ≤ ⟨σ_iσ_jσ_k⟩` regrouped against the pair `{i,j}` vs `{k}`.
 
 No Lebowitz inductive bound (GJ Cor 4.3.5, pp. 61–62) is needed here: that
 provides only the wrong-sign upper bound `⟨σ_i;σ_j;σ_k⟩ ≤ 2⟨σ_i⟩⟨σ_j⟩⟨σ_k⟩`,
