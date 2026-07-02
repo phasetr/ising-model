@@ -2,6 +2,7 @@ import IsingModel.RandomCurrent.Core
 import IsingModel.RandomCurrent.BoundedExpansion
 import IsingModel.RandomCurrent.Switching
 import IsingModel.RandomCurrent.Peeling
+import IsingModel.RandomCurrent.Switching.GlobalSwitchingLimit
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
@@ -17,6 +18,8 @@ Umbrella file importing all random-current sub-modules:
   (subFinset, pairFinset, jointFactor, source algebra, connectivity).
 * `RandomCurrent.Peeling` — edge peeling + `weightSum_pair_le_edge_sum`
   (GJ §5.1 / FV Prop 9.31 p. 428).
+* `RandomCurrent.Switching.GlobalSwitchingLimit` — the `tsum`/`iSup` lift of
+  the bounded global switching identity to `weightSum` (GJ §17.5 brick 2).
 
 References: Glimm–Jaffe §5.1 pp. 76–79; Friedli–Velenik §3.7, Prop 9.31. -/
 
