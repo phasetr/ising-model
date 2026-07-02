@@ -5823,9 +5823,8 @@ limit is reindexed along the $\mathbb{N}$-indexed exhaustion by
 \end{theorem}
 
 \begin{proof}
-Apply \texttt{Summable.tendsto\_tsum\_compl\_atTop\_zero} (real-valued tail
-vanishing) to the summable families $x \mapsto g_i(x)$ and $x \mapsto g_j(x)$
-(from brick~2's \texttt{summable\_truncated2FiniteVolumeMajorant}), and compose
+Apply the unconditional \texttt{tendsto\_tsum\_compl\_atTop\_zero} (real-valued tail
+vanishing) to the families $x \mapsto g_i(x)$ and $x \mapsto g_j(x)$, and compose
 with the exhaustion-to-infinity property $\Lambda_\bullet \to \top$ along
 \texttt{atTop} (\texttt{Exhaustion.tendsto\_volume\_atTop}).
 \end{proof}
