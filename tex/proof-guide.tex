@@ -28780,6 +28780,47 @@ This bounded form already shows that the identity is purely combinatorial and un
 \noindent\textit{References}: Aizenman (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma 4.1; Fernández--Fröhlich--Sokal (1992), \emph{Random Walks, Critical Phenomena, and Triviality}, Chapter 12; Glimm--Jaffe, \S5.1 (switching lemma) and \S17.5 Theorem 17.5.1 / \S18 (OZ lower-semicontinuity program), pp.~311--312.
 
 %-------------------------------------------------------
+\subsection*{Global Switching Identity (Unbounded Form) --- OZ Stage A Brick 2 (thread \#4418)}
+%-------------------------------------------------------
+
+The $N \to \infty$ limit lift of the bounded global switching identity (Brick 1):
+removes the per-edge caps $m_e \leq N$, $(M-m)_e \leq N$ and the bounded-current truncations $\mathcal{B}(N)$, $\mathcal{B}(2N)$,
+upgrading the identity to a statement about the actual (unbounded) weight sums.
+
+\begin{theorem}[\texttt{Current.weightSum\_mul\_weightSum\_eq\_tsum\_doubled\_subFinset}]
+  For source sets $A, B \subseteq \Lambda$, graph $G$, finite induced subgraph $(\uparrow\!\Lambda)$, and $0 \le \beta J$:
+  \[
+    \mathrm{weightSum}(A) \cdot \mathrm{weightSum}(B)
+    = \sum_M' \sum_{m \leq M,\, \partial m = A,\, \partial(M-m) = B} w(m) \cdot w(M-m),
+  \]
+  where the outer sum is over all currents $M$ (unbounded) and the inner sum is cap-free.
+\end{theorem}
+
+\begin{proof}
+  Both sides are limits of the bounded quantity $L(N) = R(N)$ from Brick 1.
+  \textbf{Left side}: $\mathrm{weightSum}(A) = \lim_{N \to \infty} \mathrm{CurrentBounded.weightSum}(N, A)$ via monotone convergence
+  (each bounded sum is monotone non-decreasing in $N$, bounded above by the infinite weight sum).
+  \textbf{Right side}: the cap-free inner sum $F(M) = \sum_{m \leq M,\, \ldots} w(m) w(M-m)$ is squeezed between
+  two envelopes:
+  \[
+    \sum_{M \in \mathcal{B}(N)} F(M) \quad \le \quad \sum_M' F(M) \quad \le \quad \sum_{M \in \mathcal{B}(2N)} F(M).
+  \]
+  Both envelopes converge to the $\tsum$ via summability of the uniform bound $\exp(\beta J)^{|E|}$ (each summand is
+  non-negative under $0 \le \beta J$, bounded by $\exp(\beta J)^{|E|}$ from the product decomposition).
+  Uniqueness of limits (\texttt{tendsto\_nhds\_unique}) closes the identity.
+  Zero field ($h=0$) is baked in via the weight and source definitions.
+\end{proof}
+
+\noindent\textit{Scope}: This is the $N \to \infty$ squeeze-limit lift (stage A brick 2) of the Aizenman switching method
+in the OZ lower-semicontinuity program (issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half).
+The cap-free form (no truncation at $N$) is required for subsequent integration with random-walk path-sum technology toward the lower-semicontinuous half.
+The connectivity (percolation) representation is deferred to Stage B in the multi-stage effort.
+
+\noindent\textit{Hypothesis}: $0 \le \beta J$.
+
+\noindent\textit{References}: Aizenman (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma 4.1; Fernández--Fröhlich--Sokal (1992), \emph{Random Walks, Critical Phenomena, and Triviality}, Chapter 12; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312) and \S18 (cluster expansion / OZ theory).
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
