@@ -5668,6 +5668,60 @@ right side over; \texttt{linarith} closes the goal. No GKS-I or
 \texttt{truncated2\_nonneg} input is needed.
 \end{proof}
 
+\subsection{Truncated 3-point contraction into two-point functions
+(\texttt{Inequalities/GHS/Truncated3Contraction.lean})}
+
+\textbf{Role:} finite-volume brick~1 toward the external-field derivative
+$\partial/\partial h$ (the $\mu$-direction) of the connected two-point
+function, Theorem 17.6.1 (Issue \#4413). This is a pure finite-volume
+correlation inequality --- no limit, exhaustion, or equicontinuity is
+involved --- and is independently valuable regardless of whether the full
+infinite-volume $\partial/\partial h$ chain is completed.
+
+\begin{theorem}[\texttt{abs\_truncated3\_le\_weighted}; proved, ferromagnetic,
+$h \ge 0$]
+For distinct sites $i, j, k$:
+\[
+  |u_3(i,j,k)| \le \langle\sigma_i\rangle\, u_2(j,k)
+    + \langle\sigma_j\rangle\, u_2(i,k).
+\]
+\end{theorem}
+
+\begin{proof}
+GHS (\texttt{ghs\_inequality}) gives $u_3(i,j,k) \le 0$, so
+$|u_3(i,j,k)| = -u_3(i,j,k)$. The regrouping identity
+\[
+  u_3(i,j,k) + \langle\sigma_i\rangle\,u_2(j,k) + \langle\sigma_j\rangle\,u_2(i,k)
+  = \langle\sigma_i\sigma_j\sigma_k\rangle - \langle\sigma_i\sigma_j\rangle\langle\sigma_k\rangle
+\]
+(unfold and \texttt{ring}) together with GKS-II (\texttt{gks\_second}, Cor.~4.3.3)
+applied to the partition $\{i,j\}$ vs.\ $\{k\}$ (via the symmetric-difference
+identity $\{i,j\} \mathbin{\triangle} \{k\} = \{i,j,k\}$) shows the left-hand
+sum is non-negative, which is the claim.
+\end{proof}
+
+\begin{theorem}[\texttt{abs\_truncated3\_le}; proved, $C = 1$ form,
+ferromagnetic, $h \ge 0$]
+For distinct sites $i, j, k$:
+\[
+  |u_3(i,j,k)| \le u_2(i,k) + u_2(j,k).
+\]
+\end{theorem}
+
+\begin{proof}
+Corollary of \texttt{abs\_truncated3\_le\_weighted}: at $h \ge 0$,
+$0 \le \langle\sigma_i\rangle, \langle\sigma_j\rangle \le 1$ (GKS-I and
+\texttt{abs\_correlation\_le\_one}), and $u_2 \ge 0$
+(\texttt{truncated2\_nonneg}), so each weighted term is bounded above by the
+corresponding unweighted $u_2$.
+\end{proof}
+
+\emph{No Lebowitz inductive bound (Cor.~4.3.5) is needed here}: that bound
+gives only the wrong-sign estimate $u_3(i,j,k) \le
+2\langle\sigma_i\rangle\langle\sigma_j\rangle\langle\sigma_k\rangle$, whereas
+GHS supplies the required $|u_3| = -u_3$. Reference: Glimm--Jaffe, 2nd ed.,
+Theorem 17.6.1, p.~313; Cor.~4.3.4, p.~61; Cor.~4.3.3, pp.~61--62.
+
 \subsection{Spin-flip symmetry and odd correlations}
 
 \begin{theorem}[\texttt{spinProduct\_flip}]
