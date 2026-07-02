@@ -33831,7 +33831,7 @@ S = J\bigl[2(1+(m^- r)^{d-1})e^{m^-}C(1+r)^{-(d-2)} + 4d(1+2^{d-1})e^{m^-}\bigr]
 (with the same $\texttt{HasDerivAt}$ witness used inside the sharp lemma). Positivity permits $\partial_\beta\log\langle\cdots\rangle = \partial_\beta\langle\cdots\rangle / \langle\cdots\rangle$, so $|\partial_\beta\log\langle\varphi_x\varphi_z\rangle^\infty| \le S$.
 (4) Linearization via $\alpha = d-1$: this exponent is the \emph{unique} choice making $S$ linear in $r = d(x,z)$.
 The decay $(1+r)^{-(d-2)} = (1+r)^{-(2\alpha-d)}$ against growth $(m^- r)^\alpha$ yields $S \sim r^{d-\alpha} = r^1 = r$.
-The private lemma $\texttt{sharp\_growth\_decay\_le\_linear}$ proves $(1+(m \cdot r)^\alpha)(1+r)^{-\alpha} \le (1+m^\alpha) \cdot r$ for $1 \le r$, $0 \le m$, $d \ge 3$.
+The private lemma $\texttt{sharp\_growth\_decay\_le\_linear}$ proves $(1+(m \cdot r)^\alpha)(1+r)^{-(2\alpha-d)} \le (1+m^\alpha) \cdot r$ for $1 \le r$, $0 \le m$, $d \ge 3$.
 The constant term $4d(1+2^{d-1})e^{m^-} \le K'' \cdot r$ for $r \ge 1$ (with $r \ge 2$ for non-adjacent). Collecting both pieces yields $S \le K \cdot r$.
 
 \paragraph*{Scope caveat.}
