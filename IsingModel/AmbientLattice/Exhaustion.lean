@@ -93,6 +93,25 @@ theorem Exhaustion.tendsto_card_atTop [Infinite V]
   calc M = A.card := hA.symm
     _ ≤ (Λ.volume n).card := Finset.card_le_card this
 
+omit [DecidableEq V] in
+/-- The exhaustion volumes tend to the top along `atTop`: as `n → ∞` the
+finite volume `Λ.volume n` grows to cover every finite set, i.e.
+`Λ.volume` tends to `atTop` in the `⊆`-order (`Filter.atTop` on
+`Finset V`) as `n` tends to `atTop` in `ℕ`.
+
+Sibling of `Exhaustion.tendsto_card_atTop`, but at the level of the
+finsets themselves rather than their cardinalities: it is the exact
+cofinality statement `Exhaustion.exhaust` repackaged through
+`Filter.tendsto_atTop_atTop` (`≤` on `Finset V` is `⊆`).  Consumed by the
+tail estimates that reindex a `Finset`-`atTop` complement limit along the
+`ℕ`-indexed exhaustion (GJ Thm 17.6.1 Weierstrass tail). -/
+theorem Exhaustion.tendsto_volume_atTop (Λ : Exhaustion V) :
+    Filter.Tendsto Λ.volume Filter.atTop Filter.atTop := by
+  rw [Filter.tendsto_atTop_atTop]
+  intro S
+  obtain ⟨N, hN⟩ := Λ.exhaust S
+  exact ⟨N, fun n hn => hN n hn⟩
+
 /-- Lift a finite set `A ⊆ V` to a finite set in `↑Λ` when `A ⊆ Λ`. -/
 noncomputable def liftFinset {Λ : Finset V} (A : Finset V) (hA : A ⊆ Λ) :
     Finset (↑Λ : Type _) :=
