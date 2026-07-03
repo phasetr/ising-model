@@ -185,16 +185,20 @@ theorem Current.correlation_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree
   exact hswitch
 
 set_option linter.unusedDecidableInType false in
-/-- **C1 probability form (gated)**: dividing the capstone by the positive
-`(weightSum ∅)²` (`Current.weightSum_empty_pos`), for `x ≠ y`, `0 ≤ β J`, and
-the switching gate `hswitch`,
+/-- **C1 probability form (gated), total-mass denominator**: dividing the
+capstone by the positive **total both-sourcefree mass** `∑'_M D(M)`, for
+`x ≠ y`, `0 ≤ β J`, and the switching gate `hswitch`,
 \[
   \langle\sigma_x\sigma_y\rangle^{\Lambda}
-    = \frac{\sum_{M\,:\,x\leftrightarrow y} D(M)}{(weightSum\ ∅)^{2}}
+    = \frac{\sum_{M\,:\,x\leftrightarrow y} D(M)}{\sum_M D(M)}
     = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y],
 \]
-the Aizenman/FFS sourcefree connection-probability form. Proof: `eq_div_iff`
-against the positive denominator, then the gated capstone
+the genuine Aizenman/FFS sourcefree connection-*probability* form: the ratio of
+the connected (`x ↔ y`) `∅/∅` mass to the *total* `∅/∅` mass. Proof: rewrite the
+denominator `(weightSum ∅)² = ∑'_M D(M)` via **U1**
+(`Current.weightSum_empty_sq_eq_tsum_doubled_sourcefree`), so the positive
+denominator is the total mass; then `eq_div_iff` against it and the gated
+capstone
 `Current.correlation_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree`.
 (Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.correlation_eq_tsum_reachable_doubledSourcefree_div
@@ -212,12 +216,52 @@ theorem Current.correlation_eq_tsum_reachable_doubledSourcefree_div
     correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) {x, y}
       = (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
             Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
-          / Current.weightSum G Λ ∅ β J ^ 2 := by
-  have hW : 0 < Current.weightSum G Λ ∅ β J ^ 2 :=
-    pow_pos (Current.weightSum_empty_pos G Λ hβJ) 2
-  rw [eq_div_iff hW.ne']
+          / ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M := by
+  have hU1 : Current.weightSum G Λ ∅ β J ^ 2
+      = ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M :=
+    Current.weightSum_empty_sq_eq_tsum_doubled_sourcefree G Λ hβJ
+  have hden : 0 < ∑' M : Current G Λ,
+      Current.doubledSourcefreeSummand G Λ β J M :=
+    hU1 ▸ pow_pos (Current.weightSum_empty_pos G Λ hβJ) 2
+  rw [eq_div_iff hden.ne', ← hU1]
   exact Current.correlation_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree
     G Λ hxy hβJ hswitch
+
+set_option linter.unusedDecidableInType false in
+/-- **C1 Griffiths bound `ℙ^{∅,∅}[x ↔ y] ≤ 1`, probability-ratio form**: for
+`0 ≤ β J`, the sourcefree connection probability — the ratio of the connected
+(`x ↔ y`) `∅/∅` mass to the total `∅/∅` mass — is at most `1`,
+\[
+  \frac{\sum_{M\,:\,x\leftrightarrow y} D(M)}{\sum_M D(M)} \le 1 .
+\]
+This is the honest `≤ 1` half of the connection probability (unconditional; no
+`hswitch`, no `x ≠ y` needed). Proof: `div_le_one` against the positive total
+mass `∑'_M D(M) > 0` (from **U1** + `Current.weightSum_empty_pos`), with
+numerator `≤` denominator supplied by **U3**
+(`Current.tsum_reachable_doubledSourcefree_le_weightSum_empty_sq`, itself using
+**U2** summability) after rewriting `(weightSum ∅)² = ∑'_M D(M)` via **U1**. The
+matching lower bound is the genuine Stage C3 content (deferred).
+(Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+theorem Current.tsum_reachable_doubledSourcefree_div_tsum_le_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {x y : ↑Λ} {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+          Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+        / ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M
+      ≤ 1 := by
+  have hU1 : Current.weightSum G Λ ∅ β J ^ 2
+      = ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M :=
+    Current.weightSum_empty_sq_eq_tsum_doubled_sourcefree G Λ hβJ
+  have hden : 0 < ∑' M : Current G Λ,
+      Current.doubledSourcefreeSummand G Λ β J M :=
+    hU1 ▸ pow_pos (Current.weightSum_empty_pos G Λ hβJ) 2
+  rw [div_le_one hden]
+  calc (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+          Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+      ≤ Current.weightSum G Λ ∅ β J ^ 2 :=
+        Current.tsum_reachable_doubledSourcefree_le_weightSum_empty_sq G Λ hβJ
+    _ = ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M := hU1
 
 end Ambient
 end IsingModel

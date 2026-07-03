@@ -28896,11 +28896,16 @@ Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
 \subsection*{Sourcefree (Both-Empty) Connection Representation --- OZ Stage C Brick 1 (thread \#4418)}
 %-------------------------------------------------------
 
-The \emph{both-sourcefree ($\emptyset/\emptyset$) connection-representation form} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
-extends the $\{x,y\}/\emptyset$ weighted sum (Stage B) into a representation where both pieces of the split current are sourcefree.
-The key insight is that the sourcefree partition mass squared can be rewritten as a sum over such \emph{both-sourcefree} doubles,
-and the Griffiths inequality gives an upper bound of 1 on the normalized (percolation probability) form.
-All scaffolding is proven \textbf{unconditionally}; the capstone identity is gated on a single hypothesis
+The \emph{both-sourcefree ($\emptyset/\emptyset$) probability-form corollary} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
+expresses the two-point correlation function as the genuine \emph{Aizenman probability ratio}:
+\[
+  \langle\sigma_x\sigma_y\rangle^{\Lambda}
+    = \frac{\sum'_{M\,:\,x \leftrightarrow y} D(M)}{\sum'_M D(M)},
+\]
+where $D(M)$ is the both-sourcefree doubled summand.
+The key insight is that the sourcefree partition mass squared equals the total $\emptyset/\emptyset$ mass (U1),
+and the Griffiths inequality gives an upper bound of 1 on this probability ratio.
+All scaffolding is proven \textbf{unconditionally}; the capstone gated identity uses a single hypothesis
 $\mathtt{hswitch}$ (the genuine Aizenman switching bijection, to be discharged in Stage C2).
 
 \begin{definition}[The both-sourcefree summand]
@@ -28947,6 +28952,21 @@ the sum over splittings where \emph{both} pieces are sourcefree.
   is deferred to Stage C3 (the OZ mechanism).
 \end{theorem}
 
+\begin{theorem}[\texttt{Current.tsum\_reachable\_doubledSourcefree\_div\_tsum\_le\_one} (NEW C1: Griffiths probability bound)]
+  For $0 \le \beta J$, the sourcefree connection probability — the ratio of the connected ($x \leftrightarrow y$)
+  $\emptyset/\emptyset$ mass to the total $\emptyset/\emptyset$ mass — is at most~$1$:
+  \[
+    \frac{\sum'_{M\,:\,(M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y} D(M)}{\sum'_M D(M)}
+    \ \le\ 1.
+  \]
+  This holds \textbf{unconditionally} (no switching gate $\mathtt{hswitch}$).
+
+  \textit{Proof}: Combine: the positive denominator $\sum'_M D(M) = Z_\emptyset^2 > 0$ (from U1 and
+  $\mathtt{Current.weightSum\_empty\_pos}$), summability of $D$ (from U2), and the Griffiths sum
+  inequality (from U3): $\sum_{M:\mathrm{Reachable}} D(M) \le Z_\emptyset^2 = \sum'_M D(M)$.
+  Dividing by the positive denominator gives the bound.
+\end{theorem}
+
 \begin{theorem}[\texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_sourcefree} (C1 capstone: gated)]
   For distinct $x, y \in \Lambda$, $0 \le \beta J$, and \textbf{given the switching gate}
   \[
@@ -28989,8 +29009,9 @@ the sum over splittings where \emph{both} pieces are sourcefree.
   an explicit hypothesis, following the accepted \#4402/\#4403 gate-then-discharge pattern.
 \end{proof}
 
-\noindent\textit{Scope}: This is the \emph{both-sourcefree weighted-sum form} (Stage C brick 1), gated on $\mathtt{hswitch}$,
+\noindent\textit{Scope}: This is the \emph{both-sourcefree probability-form bridge} (Stage C brick 1), a strengthened corollary gated on $\mathtt{hswitch}$,
 of the Aizenman switching method in the OZ lower-semicontinuity program (issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half).
+The \textbf{new unconditional corollary} (theorem above) states $\mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y] \le 1$ directly, with no switching gate.
 \textbf{C1 yields no new rate:} it does not beat the existing $\tanh(\beta J)^{d(x,y)}$ lower bound.
 Discharging the switching gate $\mathtt{hswitch}$ (the backbone-insertion bijection) is Stage C2 (~3--5 PR research effort),
 and the sharp connection-probability lower bound via the OZ mechanism is Stage C3 (~3--6 PR research).
