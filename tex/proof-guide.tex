@@ -30772,6 +30772,87 @@ Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-facto
 File: \texttt{FieldDerivative.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
 
+\subsection*{Step 118b -- Theorem 17.6.1 Option B capstone: field/volume-uniform $\partial/\partial h$ bound (Done)}
+
+\subsubsection*{Mathematical statement}
+
+The \emph{Option~B} capstone of GJ Theorem 17.6.1 (p.~313) is the finite-volume differentiability
+statement paired with a \emph{field- and volume-uniform} bound on the derivative.
+For a finite induced subgraph $G_\Lambda := \texttt{inducedGraph}(\texttt{latticeGraph}\, d)\, \Lambda$
+(assumed \texttt{Preconnected}), ferromagnetic parameters $\langle J, h, \beta \rangle$ with $h \ge 0$,
+and distinct sites $i \ne j \in \Lambda$ in the strict high-temperature window $0 < \beta J (2d) < 1$,
+the finite-volume two-point function $h' \mapsto \langle \sigma_i \sigma_j \rangle_{h'}$ is differentiable
+at $h$ with a derivative $g'$ satisfying:
+\[
+  \boxed{\;
+  \texttt{HasDerivAt}\ \big(h' \mapsto \langle \sigma_i \sigma_j \rangle_{h'}\big)\ g'\ h
+  \quad\text{and}\quad
+  0 \;\le\; g' \;\le\; \beta\big(M(i)+M(j)+2\big) \;}
+\]
+where $M(a) := \sum_{x \in \mathbb{Z}^d} e^{m} \cdot e^{-m \cdot d_{\ell^1}(a,x)}$ with $m = \texttt{simonLiebRate}(\beta, J, d) > 0$.
+The upper bound is \emph{independent of both $h$ and the box $\Lambda$} (both $M(i), M(j)$ are summable
+finite constants), giving equi-Lipschitz control of the family $\{h' \mapsto \langle \sigma_i \sigma_j \rangle_{h'}\}_\Lambda$.
+
+\subsubsection*{Proof structure}
+
+\paragraph{Step 1: differentiability + derivative value.}
+\texttt{hasDerivAt\_correlation\_field} (Step 118) at $A = \{i, j\}$ provides \texttt{HasDerivAt} with
+\[
+  g' = \beta \big( \langle \sigma_i \sigma_j M \rangle_h - \langle \sigma_i \sigma_j \rangle_h \langle M \rangle_h \big),
+\]
+where $M(\sigma) = \sum_l \sigma_l$ is the total magnetization.
+
+\paragraph{Step 2: site-sum rewriting.}
+By \texttt{gibbsExpectation\_spinProd\_mul\_mag} and \texttt{gibbsExpectation\_totalMag\_eq\_sum},
+the derivative is recast as a sum over sites:
+\[
+  g' = \beta \sum_{l \in \Lambda} \big( \langle \sigma_{\{i,j\}\triangle\{l\}} \rangle_h
+        - \langle \sigma_i \sigma_j \rangle_h \langle \sigma_l \rangle_h \big).
+\]
+
+\paragraph{Step 3: partition into diagonal and off-diagonal terms.}
+The sum splits into:
+\begin{itemize}
+  \item \textbf{Diagonal $l=i$}: $\{i,j\} \triangle \{i\} = \{j\}$.
+  \item \textbf{Diagonal $l=j$}: $\{i,j\} \triangle \{j\} = \{i\}$.
+  \item \textbf{Off-diagonal $l \ne i, j$}: $\{i,j\} \triangle \{l\} = \{i,j,l\}$, giving the semi-truncated two-block object
+    $\langle \sigma_i \sigma_j ; \sigma_l \rangle_h := \langle \sigma_i \sigma_j \sigma_l \rangle_h - \langle \sigma_i \sigma_j \rangle_h \langle \sigma_l \rangle_h$.
+\end{itemize}
+
+\paragraph{Step 4: lower bound $0 \le g'$.}
+By \texttt{correlation\_field\_deriv\_nonneg} and GKS-II, each site-sum term is nonnegative.
+
+\paragraph{Step 5: diagonal upper bounds.}
+By GKS-I each diagonal term lies in $[0, 1]$, contributing at most $2$ in total.
+
+\paragraph{Step 6: off-diagonal upper bound.}
+The semi-truncated two-block inequality (via GHS, Cor.~4.3.4) combined with brick~2's exponential
+majorant $M(a)$ gives:
+\[
+  \sum_{l \ne i,j} \langle \sigma_i \sigma_j ; \sigma_l \rangle_h \;\le\; M(i) + M(j).
+\]
+
+\paragraph{Assembly.}
+Combining the diagonal bound ($\le 2$) and off-diagonal bound ($\le M(i) + M(j)$):
+\[
+  g' \le \beta \big( M(i) + M(j) + 2 \big),
+\]
+with $0 \le g'$ from Step 4.
+
+\subsubsection*{Scope and honesty}
+
+This capstone is the \emph{book-faithful finite deliverable}: differentiability (\texttt{HasDerivAt})
+\emph{plus} a field/volume-uniform derivative bound via sums of products of two-point functions
+(GJ Thm 17.6.1, p.~313, realizable through the Lebowitz correlation inequalities Cor.~4.3.3,
+Cor.~4.3.4 of \S4.3).  It \textbf{deliberately does not} claim infinite-volume $\partial/\partial h$
+differentiability, which would require equicontinuity control of the general-$h$ four-point Lebowitz
+sign (the frozen wall of the class of Issue~\#4386; the naive $\kappa_4 \le 0$ is numerically false).
+The complex KP-window Vitali/Montel route (Option~A) is deferred separately.
+
+\noindent\textit{Status}: Complete formalization (PR~\#4432).
+File: \texttt{Concrete/LatticeGraphCorrelation/Truncated2FieldDerivativeUniformBound.lean}.
+Reference: Glimm--Jaffe 2nd~ed. (1987), Theorem~17.6.1 (p.~313); Cor.~4.3.3 (p.~61); Cor.~4.3.4 (p.~61).
+
 \subsection*{Step 123 -- Antitonicity of pseudo-mass in $\beta$ (Done)}
 
 \subsubsection*{Mathematical content}
