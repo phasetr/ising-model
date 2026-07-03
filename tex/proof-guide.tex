@@ -29162,6 +29162,123 @@ the \texttt{BoundedExpansion} orthogonality spine).
 Aizenman (1982), Geometric analysis of $\phi^4$ fields; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
 
 %-------------------------------------------------------
+\subsection*{Walk Constancy of the Spin Sign on Support Graph --- OZ Stage C Brick 2.1c (thread \#4418)}
+%-------------------------------------------------------
+
+\textbf{Spin sign constancy along connected paths in the support graph.}
+For a fixed total current $M$ and spin configuration $\sigma$, if the generating polynomial
+$P_M(\sigma) = \prod_{e \in E} (1 + \sigma_u \sigma_v)^{M_e}$ is nonzero and $x, y$ are connected in the support
+graph $M.\texttt{toSimpleGraph}$, then the endpoint spin signs agree:
+\[
+  (\sigma_x).\mathrm{toSign} \;=\; (\sigma_y).\mathrm{toSign}.
+\]
+
+\begin{theorem}[\texttt{Current.toSign\_eq\_of\_reachable\_of\_prod\_ne\_zero}]
+  Walk constancy above holds unconditionally.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  \textit{Step 1 (local constancy on a support edge).}
+  If $M.\mathrm{Adj}\,u\,v$ (adjacency in the support), then $u, v$ are endpoints of some edge
+  $e \in \mathrm{supp}\,M$. Since $P_M(\sigma) \ne 0$, the factor at $e$ is nonzero
+  (\texttt{Finset.prod\_ne\_zero\_iff}): $(1 + z_e(\sigma))^{M_e} \ne 0$ where
+  $z_e(\sigma) = (\sigma_u).\mathrm{toSign} \cdot (\sigma_v).\mathrm{toSign}$.
+  As $M_e \ne 0$ on the support (\texttt{Current.mem\_support\_iff}), we have
+  $1 + z_e(\sigma) \ne 0$ (\texttt{pow\_ne\_zero\_iff}). Since each sign is $\pm 1$,
+  $z_e(\sigma) \in \{\pm 1\}$; if $z_e(\sigma) = -1$ then $1 + z_e = 0$, contradiction.
+  Thus $z_e(\sigma) = +1$, i.e.\ $(\sigma_u).\mathrm{toSign} \cdot (\sigma_v).\mathrm{toSign} = 1$,
+  giving $(\sigma_u).\mathrm{toSign} = (\sigma_v).\mathrm{toSign}$.
+
+  \textit{Step 2 (generic walk induction).}
+  A helper lemma \texttt{SimpleGraph.Reachable.eq\_of\_adj\_imp\_eq} proves that
+  any vertex map $f : V \to \beta$ constant on edges (i.e., $f\,u = f\,v$ whenever
+  $G.\mathrm{Adj}\,u\,v$) is constant on connected components: if $G.\mathrm{Reachable}\,x\,y$,
+  then $f\,x = f\,y$. The proof is textbook walk induction: take a walk from $x$ to $y$,
+  induct on the walk, and chain per-edge hypotheses.
+
+  \textit{Step 3 (composition).}
+  Apply the generic lemma to $G' = M.\texttt{toSimpleGraph}$ and
+  $f = \lambda v. (\sigma_v).\mathrm{toSign}$. The per-edge hypothesis is local
+  constancy (Step 1) composed with \texttt{Current.toSimpleGraph\_adj\_iff}.
+\end{proof}
+
+\noindent\textit{Truth.} Textbook walk induction over the finite group $\mathrm{Spin} = \{\pm 1\}$; no analytic input or limit.
+
+\noindent\textit{Scope}: This is \textbf{Stage C2.1c} (support-graph walk constancy) of the discharge of the TRUE switching gate
+$\mathtt{hswitch}'$ in the OZ lower-semicontinuity half of GJ Theorem 17.5.1 (Issue \#4386, thread \#4418).
+The constancy statement is the crux of the pointwise vanishing identity in Stage C2.1d below: it upgrades the trivial
+$\chi_\emptyset = 1$ into $\chi_{\{x,y\}} = 1$ on the support of $P_M$.
+
+\noindent\textit{Hypothesis.} None; the walk constancy is unconditional.
+
+\noindent\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only.
+
+\noindent\textit{References}: Fernández--Fröhlich--Sokal (1992), Chapter 12 (random-current representation and support structure);
+Aizenman (1982), Geometric analysis of $\phi^4$ fields; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
+
+%-------------------------------------------------------
+\subsection*{Per-Current Source-Set Equality on Connected Pairs --- OZ Stage C Brick 2.1d (thread \#4418)}
+%-------------------------------------------------------
+
+\textbf{Source-set reduction via connectivity: pair source equals empty source.}
+For a fixed total current $M$, integers $x \ne y$ connected in the support graph
+$M.\texttt{toSimpleGraph}$, define
+\[
+  f_M(A) = \sum_{\substack{m \le M \\ \partial m = A}} \mathrm{jointFactor}(m, M-m),
+\]
+the right-hand-side sum from character inversion (Stage C2.1b). Then
+\[
+  f_M(\{x,y\}) \;=\; f_M(\emptyset).
+\]
+
+\begin{theorem}[\texttt{Current.sum\_jointFactor\_pair\_eq\_sum\_jointFactor\_empty\_of\_reachable}]
+  The pair--empty equality holds unconditionally for all connected pairs $x \ne y$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  \textit{Pointwise vanishing (VAN).} We prove that for every spin configuration $\sigma$,
+  \[
+    \chi_{\{x,y\}}(\sigma) \cdot P_M(\sigma) \;=\; \chi_\emptyset(\sigma) \cdot P_M(\sigma) \;(\,=P_M(\sigma)\,).
+  \]
+  If $P_M(\sigma) = 0$ both sides vanish. Otherwise $P_M(\sigma) \ne 0$, so by
+  Stage C2.1c (\texttt{Current.toSign\_eq\_of\_reachable\_of\_prod\_ne\_zero}),
+  the connected-pair hypothesis gives $(\sigma_x).\mathrm{toSign} = (\sigma_y).\mathrm{toSign}$.
+  Hence $\chi_{\{x,y\}}(\sigma) = (\sigma_x).\mathrm{toSign} \cdot (\sigma_y).\mathrm{toSign} =
+  (\sigma_y).\mathrm{toSign}^2 = 1 = \chi_\emptyset(\sigma)$ (\texttt{Spin.toSign\_sq}).
+
+  \textit{Sum and invert.} Summing (VAN) over all $\sigma : \Lambda \to \mathrm{Spin}$:
+  \[
+    \sum_\sigma \chi_{\{x,y\}}(\sigma) \cdot P_M(\sigma) \;=\; \sum_\sigma \chi_\emptyset(\sigma) \cdot P_M(\sigma).
+  \]
+  Apply character inversion (Stage C2.1b: \texttt{Current.sum\_spinA\_mul\_prod\_one\_add\_z\_pow\_eq\_pow\_card\_mul\_f})
+  to both sides, at $A = \{x,y\}$ and $A = \emptyset$:
+  \[
+    2^{|\Lambda|} \cdot f_M(\{x,y\}) \;=\; 2^{|\Lambda|} \cdot f_M(\emptyset).
+  \]
+  Cancel $2^{|\Lambda|} > 0$ (\texttt{mul\_left\_cancel$_0$}) to conclude.
+\end{proof}
+
+\noindent\textit{Where connectivity enters.} The pointwise vanishing (VAN) is the sole place the
+$x \leftrightarrow y$ hypothesis is used. Without connectedness, the walk-constancy lemma fails
+and the pair source $f_M(\{x,y\})$ can strictly differ from $f_M(\emptyset)$ (verified numerically
+for disconnected configurations: e.g., isolated pair yields $f_M(\{x,y\}) = 0 \ne f_M(\emptyset) = 2$).
+Connectivity is load-bearing.
+
+\noindent\textit{Scope}: This is \textbf{Stage C2.1d} (per-$M$ source-set reduction via walk constancy and character inversion)
+of the discharge of the TRUE switching gate $\mathtt{hswitch}'$ in the OZ lower-semicontinuity half of GJ Theorem 17.5.1
+(Issue \#4386, thread \#4418). The per-$M$ pair--empty equality is the finite-configuration foundation for the downstream
+tsum-lifting stage C2.1e, which will discharge $\mathtt{hswitch}'$ unconditionally and establish the genuine Aizenman
+connection-event probability ratio form $\langle\sigma_x\sigma_y\rangle^2 = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$.
+
+\noindent\textit{Hypothesis.} None; the equality holds unconditionally.
+
+\noindent\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only (inherited from Stage C2.1c
+and the C2.1b character-inversion identity).
+
+\noindent\textit{References}: Fernández--Fröhlich--Sokal (1992), Chapter 12 (random-current representation and vanishing identities);
+Aizenman (1982), Geometric analysis of $\phi^4$ fields, Lemma 4.1; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
