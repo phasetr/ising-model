@@ -29443,6 +29443,117 @@ Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Trivia
 Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
 
 %-------------------------------------------------------
+\subsection*{Stage D --- Random-Current Ratio-Derivative Identity (toward GJ~\S17.5 Thm~17.5.1 lsc half, Issue \#4386)}
+%-------------------------------------------------------
+
+\textbf{Capstone theorem} [\texttt{Current.hasDerivAt\_log\_correlation\_beta}]:
+For $x \neq y \in \Lambda$, $0 < \beta$, $0 \le J$, and \texttt{hpos} $: 0 < \langle\sigma_x\sigma_y\rangle_\Lambda$ (i.e., $x, y$ in the same connected component of the support graph),
+\[
+  \partial_\beta \log\langle\sigma_x\sigma_y\rangle_\Lambda
+    = \frac{1}{2\beta}\left(
+        \frac{\sum'_{M: x\leftrightarrow y} |M| D_\beta(M)}
+             {\sum'_{M: x\leftrightarrow y} D_\beta(M)}
+        - \frac{\sum'_M |M| D_\beta(M)}{\sum'_M D_\beta(M)}
+      \right),
+\]
+where $|M|$ is the total current size and $D_\beta(M)$ is the doubled-sourcefree summand.
+
+\noindent
+This is the \emph{ratio-derivative identity} (Stage D of the OZ lower-semicontinuity build), expressing the $\beta$-derivative of the logarithm of the two-point correlation in terms of the current-size excess on the connection set versus the full measure.
+
+\vspace{0.5em}
+\noindent
+\textbf{Supporting nine-lemma structure:}
+
+\begin{theorem}[\texttt{Current.weight\_eq\_pow\_total\_mul\_weight\_one} (F1 --- monomial factorization)]
+For $n : \mathrm{Current}(G, \Lambda)$,
+\[
+  w_\beta(n) = \beta^{|n|} \cdot w_1(n),
+\]
+where $|n| = \sum_{e} n(e)$ is the total current size.
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.doubledSourcefreeSummand\_eq\_pow\_total\_mul} (F2 --- doubled summand factorization)]
+For $M : \mathrm{Current}(G, \Lambda)$,
+\[
+  D_\beta(M) = \beta^{|M|} \cdot D_1(M).
+\]
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.doubledSourcefree\_mono\_beta} (F3 --- monotonicity in $\beta$)]
+For $0 \le \beta \le \beta'$ and $0 \le J$,
+\[
+  D_\beta(M) \le D_{\beta'}(M).
+\]
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.total\_mul\_doubledSourcefree\_le} (M1 --- majorant step)]
+For $0 \le \beta$ and $0 \le J$,
+\[
+  (|M| : \mathbb{R}) \cdot D_\beta(M) \le D_{2\beta}(M).
+\]
+This follows from $|M| \le 2^{|M|}$ and the factorizations F1, F2.
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.summable\_total\_mul\_doubledSourcefree} (M2 --- summability)]
+For $0 \le \beta$ and $0 \le J$,
+\[
+  \text{Summable}\left( M \mapsto (|M| : \mathbb{R}) \cdot D_\beta(M) \right).
+\]
+This is dominated by the summable $D_{2\beta}$ via M1.
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.hasDerivAt\_tsum\_doubledSourcefree\_beta} (D1 --- total-mass derivative)]
+For $0 < \beta$ and $0 \le J$,
+\[
+  \mathrm{HasDerivAt}\left( \beta' \mapsto \sum'_M D_{\beta'}(M) \right)
+                       \left( \frac{1}{\beta} \sum'_M |M| D_\beta(M) \right)
+                       \beta.
+\]
+On the open preconnected window $(\beta/2, 2\beta) \subset (0, \infty)$, the termwise derivative is given by C3$'$ (\texttt{Current.hasDerivAt\_doubledSourcefreeSummand\_beta}), dominated uniformly by the fixed weighted summand (M2), with base point $\beta$. The result is obtained via \texttt{hasDerivAt\_tsum\_of\_isPreconnected}.
+\end{theorem}
+
+\begin{theorem}[\texttt{Current.hasDerivAt\_tsum\_reachable\_doubledSourcefree\_beta} (D2 --- connected-mass derivative)]
+For $0 < \beta$ and $0 \le J$, over the reachability subtype $\{M : (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}~x~y\}$,
+\[
+  \mathrm{HasDerivAt}\left( \beta' \mapsto \sum'_{M: x\leftrightarrow y} D_{\beta'}(M) \right)
+                       \left( \frac{1}{\beta} \sum'_{M: x\leftrightarrow y} |M| D_\beta(M) \right)
+                       \beta.
+\]
+This is identical to D1 restricted to the reachability subtype, with the connectivity witness inert under differentiation.
+\end{theorem}
+
+\noindent
+\textbf{Route to the capstone}
+[proof outline of \texttt{Current.hasDerivAt\_log\_correlation\_beta}]:
+\begin{enumerate}
+  \item Use the sourcefree connection-probability representation (\texttt{Current.correlation\_sq\_eq\_tsum\_reachable\_doubledSourcefree\_div\_uncond}):
+        $\langle\sigma_x\sigma_y\rangle^2 = N / Z$, where $N = \sum'_{x\leftrightarrow y} D_\beta(M)$ and $Z = \sum'_M D_\beta(M)$.
+  \item Take $\log$ of both sides: $\log\langle\sigma_x\sigma_y\rangle = \frac{1}{2}(\log N - \log Z)$ (on a neighbourhood of $\beta$ where $N > 0$ by continuity from \texttt{hpos}).
+  \item Differentiate the right-hand side using D1 and D2 (the total and connected derivatives), \texttt{HasDerivAt.log}, \texttt{HasDerivAt.sub}, and \texttt{HasDerivAt.const\_mul}.
+  \item Transfer the eventual identity to the left-hand side via \texttt{Filter.EventuallyEq.hasDerivAt\_iff}.
+\end{enumerate}
+
+\noindent
+\textbf{Scope.}
+Stage D supplies the \emph{exact ratio-derivative identity}. It does \emph{not} bound the current-size excess
+\[
+  \mathbb{E}^{x\leftrightarrow y}[|M|] - \mathbb{E}^\emptyset[|M|] \le K \cdot d(x,y)
+\]
+uniformly in $x, y, \Lambda$. The genuine OZ backbone-length estimate (the multi-session brick \texttt{hLogLip}) remains deferred.
+
+\noindent
+\textit{Hypotheses}: $0 < \beta$, $0 \le J$, \texttt{hpos} $: 0 < \langle\sigma_x\sigma_y\rangle$.
+
+\noindent
+\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only.
+
+\noindent
+\textit{References}: Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Triviality}, 2nd ed.\ (1992), Chapter~12.
+Aizenman, M.\ (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma~4.1.
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
