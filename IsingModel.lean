@@ -23,6 +23,7 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.RandomCurrent
 import IsingModel.Inequalities.SimonLieb
 import IsingModel.Inequalities.CurrentConnectivityRepresentation
+import IsingModel.Inequalities.SourcefreeConnectionRepresentation
 import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.SharpSimonLiebNeighbor
 import IsingModel.Inequalities.WalkSum
