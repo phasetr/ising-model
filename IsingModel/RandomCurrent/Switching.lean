@@ -1,6 +1,8 @@
 import IsingModel.RandomCurrent.Switching.CharacterInversion
 import IsingModel.RandomCurrent.Switching.GeneratingFunction
 import IsingModel.RandomCurrent.Switching.GlobalSwitching
+import IsingModel.RandomCurrent.Switching.PerCurrentVanishing
+import IsingModel.RandomCurrent.Switching.SupportConstancy
 import IsingModel.RandomCurrent.Switching.SupportGraph
 
 /-!
