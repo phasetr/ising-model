@@ -29088,6 +29088,80 @@ C2.1e: per-$M$ identity reduction to the switching bijection) build on this bric
 Aizenman (1982), Lemma 4.1 (the switching bijection / source-swap); Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
 
 %-------------------------------------------------------
+\subsection*{Character Inversion ($\mathbb{Z}_2$ Character Extraction) --- OZ Stage C Brick 2.1b (thread \#4418)}
+%-------------------------------------------------------
+
+\textbf{The character inversion of the subcurrent generating function.}
+For a fixed total current $M$ and any source set $A \subseteq \Lambda$,
+\[
+  \sum_{\sigma : \Lambda \to \mathrm{Spin}} \chi_A(\sigma) \cdot P_M(\sigma)
+  \;=\;
+  2^{|\Lambda|} \cdot \sum_{\substack{m \le M \\ \partial m = A}} \mathrm{jointFactor}(m, M-m),
+\]
+where $\chi_A(\sigma) = \prod_{a \in A} (\sigma a).\mathrm{toSign}$ is the $\mathbb{Z}_2$ character on $A$,
+$P_M(\sigma) = \prod_{e \in E} (1 + \sigma_u \sigma_v)^{M_e}$ is the subcurrent binomial generating function,
+and $2^{|\Lambda|}$ counts all vertices in $\Lambda$ (with non-support vertices contributing free factors of $2$,
+cancelling in the downstream Stage C2.1e assembly).
+
+\begin{theorem}[\texttt{Current.sum\_spinA\_mul\_prod\_one\_add\_z\_pow\_eq\_pow\_card\_mul\_f}]
+  The character-inversion identity above holds unconditionally for all $M$ and all $A$.
+  No $\beta J$ dependence; the sum is finite over $\mathrm{Spin}^{\Lambda} \cong \mathbb{Z}_2^{|\Lambda|}$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  \textit{Step 1 (expand $P_M$ by Stage C2.1a).}
+  Apply the merged subcurrent binomial generating function (\texttt{Current.sum\_subFinset\_jointFactor\_mul\_prod\_pow\_eq\_prod\_one\_add\_pow})
+  to the edge weights $z_e(\sigma) = \sigma_u \sigma_v \in \{\pm 1\}$:
+  \[
+    P_M(\sigma) = \sum_{m \le M} \mathrm{jointFactor}(m, M-m) \prod_{e \in E} z_e(\sigma)^{m_e}.
+  \]
+  Multiply by $\chi_A(\sigma)$ and sum over all $\sigma$; since the sum is finite, swap $\sum_\sigma$ with $\sum_{m \le M}$:
+  \[
+    \sum_\sigma \chi_A(\sigma) P_M(\sigma)
+    = \sum_{m \le M} \mathrm{jointFactor}(m, M-m) \sum_\sigma \chi_A(\sigma) \prod_{e \in E} z_e(\sigma)^{m_e}.
+  \]
+
+  \textit{Step 2 (per-current orthogonality).}
+  The inner spin sum is exactly the merged A-source spin orthogonality (\texttt{Config.sum\_spinA\_prod\_spin\_pow\_eq\_pow\_card\_iff}):
+  \[
+    \sum_\sigma \chi_A(\sigma) \prod_{e \in E} z_e(\sigma)^{m_e}
+    = \begin{cases}
+      2^{|\Lambda|}, & \text{if } \partial m = A \text{ (parity condition on all } v \in \Lambda \text{)},\\
+      0, & \text{otherwise}.
+    \end{cases}
+  \]
+  The parity side-condition $m.\mathrm{HasSources}(A)$ is characterized by
+  (\texttt{Current.even\_indicator\_add\_degreeAt\_iff\_hasSources}): the condition holds iff all
+  per-vertex parities $1_A(v) + \mathrm{deg}_m(v)$ are even (i.e., iff $\partial m = A$).
+
+  \textit{Step 3 (collapse).}
+  Each inner term is $2^{|\Lambda|} \cdot [\, \partial m = A \,]$, so
+  \[
+    \sum_\sigma \chi_A(\sigma) P_M(\sigma)
+    = 2^{|\Lambda|} \sum_{\substack{m \le M \\ \partial m = A}} \mathrm{jointFactor}(m, M-m).
+  \]
+\end{proof}
+
+\noindent\textit{Truth.} The identity is a finite $\mathbb{F}_2$ Fourier inversion on the group $\mathrm{Spin}^{\Lambda} \cong \mathbb{Z}_2^{|\Lambda|}$:
+the characters $\{\chi_A\}_{A \subseteq \Lambda}$ form an orthogonal basis, and integrating the generating function
+against $\chi_A$ projects onto the $A$-source component. No analytic input, no limit.
+
+\noindent\textit{Scope}: This is \textbf{Stage C2.1b} (character inversion / source-set extraction) of the discharge of the TRUE switching gate
+$\mathtt{hswitch}'$ in the OZ lower-semicontinuity half of GJ Theorem 17.5.1 (Issue \#4386, thread \#4418).
+It wires together the Stage C2.1a generating function with the existing spin-sum orthogonality spine
+from \texttt{BoundedExpansion.FiniteSums}, yielding the source-set component formula as a closed finite identity.
+Downstream stages (C2.1c/d: pointwise vanishing and connectivity analysis, C2.1e: per-$M$ identity reduction to the switching bijection)
+use this brick to discharge $\mathtt{hswitch}'$.
+
+\noindent\textit{Hypothesis.} None; the identity holds unconditionally.
+
+\noindent\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only (inherited from Stage C2.1a and
+the \texttt{BoundedExpansion} orthogonality spine).
+
+\noindent\textit{References}: Fernández--Fröhlich--Sokal (1992), Chapter 12 (random-current representation and character analysis);
+Aizenman (1982), Geometric analysis of $\phi^4$ fields; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
