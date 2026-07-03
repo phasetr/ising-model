@@ -124,18 +124,6 @@ it is squeezed between `0` (GKS-II) and the sub-additive two-point bound
 `∑_{b ∈ B} τ₂(b, l)` (GHS `+` GKS-I regrouping), the head equi-Lipschitz brick of
 the `∂/∂h` route of GJ Theorem 17.6.1 (*Quantum Physics* 2nd ed., p. 313). -/
 
-/-- **Single-site semi-truncated susceptibility (`B = {i}`)**: the
-semi-truncated object `⟨σ_i; σ_l⟩ = ⟨σ_iσ_l⟩ − ⟨σ_i⟩⟨σ_l⟩` is definitionally
-`truncated2 G p i l`, hence non-negative (GKS-II via `truncated2_nonneg`) and
-trivially `≤ τ₂(i, l)`.  This is the `|B| = 1` slice of the semi-truncated
-two-block bound of GJ Theorem 17.6.1 (*Quantum Physics* 2nd ed., p. 313). -/
-theorem semiTruncated_single_le (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (i l : ι) :
-    0 ≤ correlation G p {i, l} - correlation G p {i} * correlation G p {l}
-      ∧ correlation G p {i, l} - correlation G p {i} * correlation G p {l}
-        ≤ truncated2 G p i l :=
-  ⟨truncated2_nonneg G p hf i l, le_refl _⟩
-
 /-- **Lower bound for the pair semi-truncated susceptibility (`B = {i,j}`,
 GKS-II)**: for a ferromagnetic model with `h ≥ 0` and sites with `l ∉ {i, j}`,
 `0 ≤ ⟨σ_iσ_j; σ_l⟩ = ⟨σ_iσ_jσ_l⟩ − ⟨σ_iσ_j⟩⟨σ_l⟩`.

@@ -250,20 +250,31 @@ theorem sum_abs_truncated3_le_finiteVolumeMajorant
     (sum_majorant_subtype_le_tsum Λ hm (j : Fin d → ℤ) _)
 
 /-- **Semi-truncated 2-block field- and volume-uniform summable majorant** (GJ
-Thm 17.6.1, p. 313, `|B| = 2`): on a `Preconnected` finite induced subgraph
-`inducedGraph (latticeGraph d) Λ`, for a ferromagnetic field `⟨J, h, β⟩` with
-`h ≥ 0`, strict high temperature `0 < β J · 2d < 1`, and distinct sites
-`i ≠ j`, the `∂/∂h` site-sum of the pair semi-truncated susceptibility
-`⟨σ_iσ_j; σ_l⟩ = ⟨σ_iσ_jσ_l⟩ − ⟨σ_iσ_j⟩⟨σ_l⟩` is bounded by a finite tsum
-`M(i) + M(j)` **independent of `Λ` and of `h`**:
-`∑_{l ≠ i,j} ⟨σ_iσ_j; σ_l⟩ ≤ M(i) + M(j)`,
+Thm 17.6.1, p. 313, `|B| = 2`, off-diagonal part): on a `Preconnected` finite
+induced subgraph `inducedGraph (latticeGraph d) Λ`, for a ferromagnetic field
+`⟨J, h, β⟩` with `h ≥ 0`, strict high temperature `0 < β J · 2d < 1`, and
+distinct sites `i ≠ j`, the **off-diagonal** (`l ≠ i, j`) site-sum of the pair
+semi-truncated susceptibility
+`⟨σ_iσ_j; σ_l⟩ = ⟨σ_iσ_jσ_l⟩ − ⟨σ_iσ_j⟩⟨σ_l⟩` is squeezed between `0` and a finite
+tsum `M(i) + M(j)`, both bounds **independent of `Λ` and of `h`**:
+`0 ≤ ∑_{l ≠ i,j} ⟨σ_iσ_j; σ_l⟩ ≤ M(i) + M(j)`,
 `M(x) = ∑_l exp(m) · exp(-m · d_{ℓ¹}(x,l))`, `m = simonLiebRate β J d`.
 
-Since `∂/∂h ⟨σ_iσ_j⟩_Λ = β ∑_l ⟨σ_iσ_j; σ_l⟩_Λ`, this is the uniform Lipschitz
-(equi-Lipschitz-of-moments) bound `0 ≤ ∂/∂h ⟨σ_iσ_j⟩_Λ ≤ β (M(i) + M(j))` feeding
-the Dini / uniform-tail step of the `∂/∂h` capstone of GJ Theorem 17.6.1.
+This bounds only the **off-diagonal susceptibility** `∑_{l ≠ i,j}⟨σ_iσ_j;σ_l⟩`,
+*not* the full field derivative.  The full derivative
+`∂/∂h ⟨σ_iσ_j⟩_Λ = β ∑_l ⟨σ_iσ_j; σ_l⟩_Λ` also contains the two **diagonal**
+terms `l = i` and `l = j` (e.g. `⟨σ_iσ_j; σ_i⟩ = ⟨σ_j⟩ − ⟨σ_iσ_j⟩⟨σ_i⟩`, an
+`O(1)` contribution) that are **not** covered by the `M(i) + M(j)` budget and
+are handled separately by the downstream §17.6.1 assembly (matching the
+brick-2 off-diagonal `∑_{k ≠ i,j}` decomposition where the diagonal
+`−2·corr·τ₂` terms are treated apart).  So this is the two-sided equi-Lipschitz
+bound `0 ≤ (off-diagonal part) ≤ M(i) + M(j)` on the off-diagonal site-sum, a
+constituent of the `∂/∂h` capstone of GJ Theorem 17.6.1, not the full
+`∂_h⟨σ_iσ_j⟩ ≤ β (M(i) + M(j))` claim.
 
-Proof: the pair semi-truncated bound `semiTruncated_pair_le` gives
+Proof: the lower bound is `Finset.sum_nonneg` of the per-term GKS-II positivity
+`semiTruncated_pair_nonneg` (`l ≠ i, j` from the filter).  For the upper bound
+the pair semi-truncated bound `semiTruncated_pair_le` gives
 `⟨σ_iσ_j; σ_l⟩ ≤ τ₂(i,l) + τ₂(j,l)`; (2a) bounds each
 `τ₂(a,l) ≤ exp(m)·exp(-m·d(a,l))` (reachability from `Preconnected`);
 `Finset.sum_add_distrib` splits the two site-sums, each dominated by its tsum via
@@ -275,7 +286,14 @@ theorem sum_semiTruncated_pair_le_finiteVolumeMajorant
     (hβJ2d_pos : 0 < β * J * (2 * (d : ℝ))) (hβJ2d_lt : β * J * (2 * (d : ℝ)) < 1)
     (hconn : (inducedGraph (IsingModel.latticeGraph d) Λ).Preconnected)
     {i j : ↑Λ} (hij : i ≠ j) :
-    ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
+    0 ≤ ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
+        (correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j, l}
+          - correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j}
+            * correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                (⟨J, h, β⟩ : IsingParams ℝ) {l})
+    ∧ ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
         (correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
               (⟨J, h, β⟩ : IsingParams ℝ) {i, j, l}
           - correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
@@ -290,7 +308,12 @@ theorem sum_semiTruncated_pair_le_finiteVolumeMajorant
                 * (latticeDistance d (j : Fin d → ℤ) x : ℝ))) := by
   have hβJ2d_le : β * J * (2 * (d : ℝ)) ≤ 1 := hβJ2d_lt.le
   have hm : 0 < simonLiebRate β J d := simonLiebRate_pos hβJ2d_pos hβJ2d_lt
-  -- Pointwise majorisation of each semi-truncated term by a sum of two exponentials.
+  -- Lower bound: each off-diagonal term is `≥ 0` by GKS-II positivity.
+  refine ⟨Finset.sum_nonneg (fun l hl => ?_), ?_⟩
+  · rw [Finset.mem_filter] at hl
+    exact semiTruncated_pair_nonneg (inducedGraph (IsingModel.latticeGraph d) Λ)
+      (⟨J, h, β⟩ : IsingParams ℝ) hf hl.2.1.symm hl.2.2.symm
+  -- Upper bound: pointwise majorisation of each term by a sum of two exponentials.
   have hstep : ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
         (correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
               (⟨J, h, β⟩ : IsingParams ℝ) {i, j, l}
