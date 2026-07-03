@@ -68,7 +68,7 @@ omit [DecidableEq ι] in
 
 Proof: chain rule via `d/dh H = -M`, so `d/dh [-β·H] = β·M`.
 
-Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
+Reference: Glimm–Jaffe §17.6 pp. 313–314. -/
 theorem hasDerivAt_boltzmannWeight_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (σ : Config ι) :
@@ -185,7 +185,7 @@ Here `M(σ) = totalMagnetization σ = Σ_i sign(σ_i)`.
 
 Proof: Apply the quotient rule for Gibbs expectations with `F = spinProduct A`.
 
-Reference: Glimm–Jaffe §17.6 pp. 348–351. -/
+Reference: Glimm–Jaffe §17.6 pp. 313–314. -/
 theorem hasDerivAt_correlation_field
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) (A : Finset ι) :
