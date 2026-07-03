@@ -113,7 +113,7 @@ set_option linter.unusedDecidableInType false in
 /-- **`Current.weightSum G Λ ∅ β J` is positive** for `0 ≤ β J`:
 derived from positivity of the partition function via
 `partitionFunction_inducedGraph_eq_pow_card_mul_weightSum_empty`. -/
-private theorem weightSum_empty_pos
+theorem Current.weightSum_empty_pos
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     {β J : ℝ} (hβJ : 0 ≤ β * J) :
@@ -135,7 +135,7 @@ theorem correlation_inducedGraph_eq_weightSum_ratio
     correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) A
       = Current.weightSum G Λ A β J / Current.weightSum G Λ ∅ β J := by
   have h2 : (0 : ℝ) < (2 : ℝ) ^ Fintype.card ↑Λ := by positivity
-  have hW : 0 < Current.weightSum G Λ ∅ β J := weightSum_empty_pos G Λ hβJ
+  have hW : 0 < Current.weightSum G Λ ∅ β J := Current.weightSum_empty_pos G Λ hβJ
   unfold correlation gibbsExpectation
   rw [partitionFunction_inducedGraph_eq_pow_card_mul_weightSum_empty G Λ hβJ,
       ← pow_card_mul_weightSum_eq_sum_spinProduct_mul_boltzmannWeight G Λ hβJ A]
@@ -160,7 +160,7 @@ theorem correlation_inducedGraph_simon_lieb
             correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ)
               (symmDiff {i, j} (e : Sym2 ↑Λ).toFinset) := by
   simp_rw [correlation_inducedGraph_eq_weightSum_ratio G Λ hβJ]
-  have hW : 0 < Current.weightSum G Λ ∅ β J := weightSum_empty_pos G Λ hβJ
+  have hW : 0 < Current.weightSum G Λ ∅ β J := Current.weightSum_empty_pos G Λ hβJ
   simp_rw [← Finset.sum_div, ← mul_div_assoc]
   exact (div_le_div_iff_of_pos_right hW).mpr (Current.weightSum_pair_le_edge_sum G Λ hij hβJ)
 
@@ -199,7 +199,7 @@ private lemma correlation_inducedGraph_nonneg
     {β J : ℝ} (hβJ : 0 ≤ β * J) (A : Finset ↑Λ) :
     0 ≤ correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) A :=
   correlation_inducedGraph_eq_weightSum_ratio G Λ hβJ A ▸
-    div_nonneg (Current.weightSum_nonneg G Λ A hβJ) (weightSum_empty_pos G Λ hβJ).le
+    div_nonneg (Current.weightSum_nonneg G Λ A hβJ) (Current.weightSum_empty_pos G Λ hβJ).le
 
 set_option linter.unusedDecidableInType false in
 /-- **High-temperature susceptibility bound** (Simon-Lieb iteration):

@@ -28821,6 +28821,78 @@ The connectivity (percolation) representation is deferred to Stage B in the mult
 \noindent\textit{References}: Aizenman (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma 4.1; Fernández--Fröhlich--Sokal (1992), \emph{Random Walks, Critical Phenomena, and Triviality}, Chapter 12; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312) and \S18 (cluster expansion / OZ theory).
 
 %-------------------------------------------------------
+\subsection*{Connectivity (Percolation) Representation --- OZ Stage B Capstone (thread \#4418)}
+%-------------------------------------------------------
+
+The \emph{$\{x,y\}/\emptyset$ decomposed weighted-sum form} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
+brings together the bounded switching identity (Brick 1) and the unbounded tsum lift (Brick 2)
+to express the two-point function times the squared sourcefree partition mass as a weighted sum
+over doubled currents in the $\{x,y\}/\emptyset$ ensemble. The inner splitting $M = m + (M-m)$ with
+$\partial m = \{x,y\}$ and $\partial(M-m)=\emptyset$ forces $\partial M = \{x,y\}$, and the $x \leftrightarrow y$
+reachability restriction on the outer sum is \emph{automatically satisfied} (it adds no constraint).
+This is a step toward, but is \emph{not yet}, Aizenman's $\emptyset/\emptyset$ sourcefree connection-event
+representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$,
+which lives in the both-sourcefree ensemble and requires the source-moving switching bijection (deferred).
+
+\begin{theorem}[\texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_doubled}]
+  For distinct $x, y \in \Lambda$, graph $G$, and $0 \le \beta J$:
+  \[
+    \langle\sigma_x\sigma_y\rangle^{\Lambda} \cdot Z_\emptyset^{2}
+    = \sum_{\substack{M : (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y}}
+      \sum_{\substack{m\le M,\ \partial m=\{x,y\},\ \partial(M-m)=\emptyset}}
+        w(m)\,w(M-m),
+  \]
+  where the inner splitting forces $\partial M = \{x,y\}$ (so $M$ lives in the $\{x,y\}/\emptyset$ ensemble),
+  and the outer \texttt{tsum} restriction to doubled currents $M$ whose support graph connects $x$ to $y$
+  is \emph{automatic}: $\partial m = \{x,y\}$ already forces an $x$--$y$ connecting path, so it adds no constraint.
+\end{theorem}
+
+\begin{proof}
+  \textbf{Step (P):} Apply \texttt{correlation\_inducedGraph\_eq\_weightSum\_ratio}, expressing both sides
+  as a ratio over $\mathrm{weightSum}(\emptyset)$. Since $\mathrm{weightSum}(\emptyset) > 0$ (zero current has weight $1$),
+  the identity reduces to comparing weighted sums:
+  \[
+    \mathrm{weightSum}(\{x,y\}) \cdot \mathrm{weightSum}(\emptyset) = \mathrm{weightSum}(\{x,y\}) \cdot \mathrm{weightSum}(\emptyset).
+  \]
+
+  \textbf{Step (GS$\infty$):} Apply Brick 2 (\texttt{Current.weightSum\_mul\_weightSum\_eq\_tsum\_doubled\_subFinset})
+  with $A = \{x,y\}$ and $B = \emptyset$ to expand the product as an unrestricted tsum over all doubled currents:
+  \[
+    \sum_M \sum_{\substack{m \le M,\ \partial m = \{x,y\},\ \partial(M-m) = \emptyset}} w(m)\,w(M-m).
+  \]
+
+  \textbf{Step (Support restriction):} The summand $F(M) = \sum_{m \le M,\,\ldots} w(m)\,w(M-m)$ vanishes
+  when $(M.\mathrm{toSimpleGraph})$ does \emph{not} connect $x$ and $y$. This follows from
+  \texttt{Current.doubled\_pair\_sum\_eq\_zero\_of\_not\_reachable} (connectivity vanishing lemma B2):
+  if $x$ and $y$ are not reachable, the pair constraint $(\partial m = \{x,y\}, \partial(M-m) = \emptyset)$
+  cannot be simultaneously satisfied. By \texttt{tsum\_subtype\_eq\_of\_support\_subset}, the unrestricted
+  tsum equals the restricted tsum over the connection subtype.
+\end{proof}
+
+\noindent\textit{The identity is exact:} every equality step is justified; no inequality or limiting process
+is hidden. The weights $w(m)$ and $w(M-m)$ are defined without external field ($h=0$) and with non-negativity
+from the $0 \le \beta J$ hypothesis. The role of $\mathrm{weightSum}(\emptyset)$ is to normalize, as in Aizenman's
+unprobabilized form --- no probability measure is formalized.
+
+\noindent\textit{Scope}: This is the \emph{$\{x,y\}/\emptyset$ decomposed weighted-sum form} (Stage B), with
+automatic reachability and no measure, of the Aizenman switching method in the OZ lower-semicontinuity program
+(issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half). The genuine Aizenman $\emptyset/\emptyset$ sourcefree
+connection-event representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$
+(requiring the source-moving switching bijection into the both-sourcefree ensemble), the random-walk path-sum
+integration toward the lower bound on the correlation function, and the full lower-semicontinuity proof of
+Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
+
+\noindent\textit{Key supporting lemmas:}
+\begin{itemize}
+  \item \texttt{Current.weightSum\_empty\_pos}: $\mathrm{weightSum}(\emptyset) > 0$ for $0 \le \beta J$.
+  \item \texttt{Current.toSimpleGraph\_mono\_of\_le}: connectivity is monotone in the current.
+  \item \texttt{Current.doubled\_pair\_sum\_eq\_zero\_of\_not\_reachable}: the connectivity vanishing condition (Lemma B2).
+  \item \texttt{Current.support\_mono\_of\_le}, \texttt{Current.reachable\_of\_subFinset\_sources\_pair}: support and reachability algebra.
+\end{itemize}
+
+\noindent\textit{References}: Aizenman (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma 4.1; Fernández--Fröhlich--Sokal (1992), \emph{Random Walks, Critical Phenomena, and Triviality}, Chapter 12; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312) and \S5.1 (switching lemma).
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
