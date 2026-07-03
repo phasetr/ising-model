@@ -29041,6 +29041,53 @@ Fernández--Fröhlich--Sokal (1992), \emph{Random Walks, Critical Phenomena, and
 Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312) and \S5.1.
 
 %-------------------------------------------------------
+\subsection*{Subcurrent Binomial Generating Function --- OZ Stage C Brick 2.1a (thread \#4418)}
+%-------------------------------------------------------
+
+\textbf{The weighted binomial generating function over subcurrents.} For a fixed total current $M : E \to \mathbb{N}$
+and real edge weights $z : E \to \mathbb{R}$,
+\[
+  \sum_{m \le M} \mathrm{jointFactor}(m, M-m) \cdot \prod_{e \in E} z_e^{\,m_e}
+  \;=\;
+  \prod_{e \in E} \bigl(1 + z_e\bigr)^{M_e}.
+\]
+(Here `jointFactor$(m,M-m) = \prod_e \binom{M_e}{m_e}$ by the per-summand identity from \texttt{jointFactor\_compl\_eq\_prod\_choose}.)
+
+\begin{theorem}[\texttt{Current.sum\_subFinset\_jointFactor\_mul\_prod\_pow\_eq\_prod\_one\_add\_pow}]
+  Under $0 \le \beta J$, the weighted binomial generating function identity above holds over the
+  full index set of subcurrents $m \le M$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+  Rewrite each summand as $\prod_e \binom{M_e}{m_e} z_e^{\,m_e}$ using \texttt{jointFactor\_compl\_eq\_prod\_choose}.
+  Merge into a single product and apply Fubini for finite products and sums (\texttt{Finset.prod\_univ\_sum}),
+  turning the sum-over-subcurrents into a product-over-edges of row sums:
+  \[
+    \sum_{m \le M} \prod_e \binom{M_e}{m_e} z_e^{\,m_e}
+    \;=\;
+    \prod_e \sum_{k=0}^{M_e} \binom{M_e}{k} z_e^{\,k}.
+  \]
+  Each row sum is the binomial theorem: $\sum_{k=0}^{M_e} \binom{M_e}{k} z_e^{\,k} = (1+z_e)^{M_e}$ (\texttt{add\_pow}).
+  Finite identity; true by construction.
+\end{proof}
+
+\noindent\textit{Specialization.} Setting $z_e \equiv 1$ recovers the merged pair closed form
+$\sum_{m \le M} \mathrm{jointFactor}(m,M-m) = 2^{\sum_e M_e}$ (\texttt{sum\_subFinset\_jointFactor\_compl\_eq\_pow\_two}).
+
+\noindent\textit{Scope}: This is the \emph{algebraic engine} (Stage C2.1a brick) of the discharge of the TRUE switching gate
+$\mathtt{hswitch}'$ in the OZ lower-semicontinuity half of GJ Theorem 17.5.1 (Issue \#4386, thread \#4418).
+It provides the weighted-sum form via character-orthogonality inversion (INV):
+specializing $z$ to the spin-character weights $z_e(\sigma) = \prod_{v \in e}(\sigma v).\mathrm{toSign} \in \{\pm1\}$
+and summing against the source-set character $\chi_A(\sigma) = \prod_{a \in A}(\sigma a).\mathrm{toSign}$, the
+Fubini reindexing extracts the source-set dependence of the formal identity as a $z$-substitution.
+The result is free from any new percolation or $\mathbb{F}_2$ cycle machinery; it is purely \emph{algebraic} and
+finite. Downstream stages (C2.1b: character inversion (INV), C2.1c/d: pointwise vanishing and connectivity,
+C2.1e: per-$M$ identity reduction to the switching bijection) build on this brick to reach the full switching lemma.
+
+\noindent\textit{References}: Fernández--Fröhlich--Sokal (1992), Chapter 12 (random-current representation and switching lemma);
+Aizenman (1982), Lemma 4.1 (the switching bijection / source-swap); Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
