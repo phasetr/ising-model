@@ -5722,6 +5722,81 @@ gives only the wrong-sign estimate $u_3(i,j,k) \le
 GHS supplies the required $|u_3| = -u_3$. Reference: Glimm--Jaffe, 2nd ed.,
 Theorem 17.6.1, p.~313; Cor.~4.3.4, p.~61; Cor.~4.3.3, pp.~61--62.
 
+\subsection{Semi-truncated 2-block susceptibility bounds
+(\texttt{Inequalities/GHS/Truncated3Contraction.lean})}
+
+\textbf{Role:} corrected finite-volume brick~1 toward the external-field
+derivative $\partial/\partial h$ (the $\mu$-direction) of the connected block
+moment $\langle\sigma_B\rangle$, Theorem 17.6.1 (Issue \#4413). This is the
+head equi-Lipschitz foundation: the field derivative is a site-sum
+$\partial/\partial h\,\langle\sigma_B\rangle = \beta \sum_l \langle\sigma_B;
+\sigma_l\rangle$ of the semi-truncated two-block susceptibility, for which
+these bounds ensure uniform Lipschitz control (equi-Lipschitz-of-moments),
+independent of $h$ and $\Lambda$.
+
+\begin{definition}
+For a finite block $B \subseteq \Lambda$ and site $l \notin B$, the
+\emph{semi-truncated 2-block susceptibility} is
+\[
+  \langle\sigma_B;\sigma_l\rangle_\Lambda
+    := \langle\sigma_B\sigma_l\rangle_\Lambda - \langle\sigma_B\rangle_\Lambda
+      \langle\sigma_l\rangle_\Lambda.
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{semiTruncated\_pair\_nonneg}; proved, $|B|=2$,
+ferromagnetic, $h \ge 0$]
+For distinct sites $i \ne j$ and $l \notin \{i,j\}$:
+\[
+  0 \le \langle\sigma_i\sigma_j;\sigma_l\rangle.
+\]
+\end{theorem}
+
+\begin{proof}
+GKS-II (\texttt{gks\_second}) applied to $\{i,j\}$ vs.\ $\{l\}$ gives
+$\langle\sigma_i\sigma_j\rangle\langle\sigma_l\rangle \le
+\langle\sigma^{\{i,j\} \triangle \{l\}}\rangle =
+\langle\sigma_i\sigma_j\sigma_l\rangle$ (using $l \notin \{i,j\}$, so the
+symmetric difference is $\{i,j,l\}$). This is the GKS-II lower half.
+Reference: Glimm--Jaffe, 2nd ed., Cor.~4.3.3, pp.~61--62.
+\end{proof}
+
+\begin{theorem}[\texttt{semiTruncated\_pair\_le}; proved, $|B|=2$,
+ferromagnetic, $h \ge 0$]
+For distinct sites $i \ne j$ and $l \notin \{i,j\}$:
+\[
+  \langle\sigma_i\sigma_j;\sigma_l\rangle \le \tau_2(i,l) + \tau_2(j,l).
+\]
+\end{theorem}
+
+\begin{proof}
+The exact algebraic regrouping (expanded in correlations, closed by
+\texttt{ring}) gives
+\[
+  \langle\sigma_i\sigma_j;\sigma_l\rangle
+    = u_3(i,j,l) + \langle\sigma_i\rangle\,\tau_2(j,l)
+      + \langle\sigma_j\rangle\,\tau_2(i,l).
+\]
+By GHS (\texttt{ghs\_inequality}, Cor.~4.3.4, p.~61) the truncated $3$-point
+term $u_3(i,j,l) \le 0$. By GKS-I, $0 \le \langle\sigma_i\rangle,
+\langle\sigma_j\rangle \le 1$ at $h \ge 0$ (\texttt{abs\_correlation\_le\_one}).
+By \texttt{truncated2\_nonneg}, $\tau_2 \ge 0$. Therefore,
+\[
+  \langle\sigma_i\sigma_j;\sigma_l\rangle
+    \le 0 + 1 \cdot \tau_2(j,l) + 1 \cdot \tau_2(i,l)
+    = \tau_2(i,l) + \tau_2(j,l).
+\]
+Reference: Glimm--Jaffe, 2nd ed., Theorem 17.6.1, p.~313; Cor.~4.3.4,
+p.~61; Cor.~4.3.3, pp.~61--62.
+\end{proof}
+
+\emph{Honest scope}: This is the corrected brick~1 of the $\partial/\partial h$
+route, discharged only for $|B| \le 2$. The $|B|=3$ case requires the
+four-point Lebowitz sign (Cor.~4.3.5) in finite volume at general $h \ge 0$,
+which is deferred. Brick~1 does \emph{not} by itself close Theorem 17.6.1; the
+Dini/uniform-tail assembly and the infinite-volume limit remain downstream
+bricks.
+
 \subsection{Field/volume-uniform summable majorant for the \(\partial/\partial h\)
 site-sum (\texttt{Concrete/LatticeGraphCorrelation/Truncated2GeneralFieldFiniteVolumeMajorant.lean})}
 
@@ -5792,6 +5867,39 @@ The truncated-3 contraction (\texttt{abs\_truncated3\_le}) gives $|u_3(i,j,k)|
 $u_2(a,k)$, reachability from $\text{Preconnected}$, and finite-set dominance
 (\texttt{Finset.sum\_le\_tsum}) with the summability bound (2b) yields the
 claim.
+\end{proof}
+
+\begin{theorem}[\texttt{sum\_semiTruncated\_pair\_le\_finiteVolumeMajorant};
+proved, ferromagnetic, $h \ge 0$, high temperature $0 < \beta J \cdot 2d < 1$,
+$\Lambda$ is $\text{Preconnected}$; defined in
+\texttt{Concrete/LatticeGraphCorrelation/Truncated2GeneralFieldFiniteVolumeMajorant.lean}]
+For distinct sites $i \ne j$:
+\[
+  0 \le \sum_{l \ne i,j} \langle\sigma_i\sigma_j;\sigma_l\rangle
+    \le M(i) + M(j),
+\]
+where $M(x) = \sum_{x' \in \mathbb{Z}^d} \exp(m) \cdot \exp(-m \cdot
+d_{\ell^1}(x,x'))$ with $m = \text{simonLiebRate}\,\beta\,J\,d$. Both the
+prefactor and rate are \textbf{independent of $h$ and $\Lambda$}.
+
+The field derivative bound follows: $0 \le \partial/\partial h\,
+\langle\sigma_i\sigma_j\rangle_\Lambda \le \beta(M(i) + M(j))$, giving
+equi-Lipschitz control.
+\end{theorem}
+
+\begin{proof}
+The pair semi-truncated bound (\texttt{semiTruncated\_pair\_nonneg} and
+\texttt{semiTruncated\_pair\_le} from brick~1) supplies the lower bound
+$0 \le \langle\sigma_i\sigma_j;\sigma_l\rangle$ and the pointwise upper
+bound $\langle\sigma_i\sigma_j;\sigma_l\rangle \le \tau_2(i,l) + \tau_2(j,l)$
+for each term. The per-term exponential bound (2a) bounds each
+$\tau_2(a,l) \le \exp(m) \cdot \exp(-m \cdot d(a,l))$ uniformly in $h$ and
+$\Lambda$, via GHS field-antitonicity and Simon--Lieb decay. The
+summability and finite sum are supplied by brick~2b
+(\texttt{summable\_truncated2FiniteVolumeMajorant} and
+\texttt{sum\_majorant\_subtype\_le\_tsum}). Distributing the sum over the
+two terms and applying \texttt{Finset.sum\_add\_distrib} yields the claim.
+Reference: Glimm--Jaffe, 2nd ed., Theorem 17.6.1, p.~313, \S4.3.
 \end{proof}
 
 \subsection{Tail/collar uniform-smallness bound for the \(\partial/\partial h\)
