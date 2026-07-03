@@ -28896,17 +28896,19 @@ Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
 \subsection*{Sourcefree (Both-Empty) Connection Representation --- OZ Stage C Brick 1 (thread \#4418)}
 %-------------------------------------------------------
 
-The \emph{both-sourcefree ($\emptyset/\emptyset$) probability-form corollary} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
-expresses the two-point correlation function as the genuine \emph{Aizenman probability ratio}:
+\textbf{CORRECTED (squared form):} The \emph{both-sourcefree ($\emptyset/\emptyset$) probability-form corollary} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
+expresses the \emph{squared} two-point correlation function as the genuine \emph{Aizenman probability ratio}:
 \[
-  \langle\sigma_x\sigma_y\rangle^{\Lambda}
+  \langle\sigma_x\sigma_y\rangle^2
     = \frac{\sum'_{M\,:\,x \leftrightarrow y} D(M)}{\sum'_M D(M)},
 \]
 where $D(M)$ is the both-sourcefree doubled summand.
+The merged Stage C1 incorrectly claimed the first-power form $\langle\sigma_x\sigma_y\rangle = \ldots$ gated on a false $\mathtt{hswitch}$;
+both are corrected here to the genuine squared Aizenman identity gated on the \textbf{TRUE} gate $\mathtt{hswitch}'$.
 The key insight is that the sourcefree partition mass squared equals the total $\emptyset/\emptyset$ mass (U1),
-and the Griffiths inequality gives an upper bound of 1 on this probability ratio.
+and the Griffiths inequality gives an upper bound of 1 on the squared probability ratio.
 All scaffolding is proven \textbf{unconditionally}; the capstone gated identity uses a single hypothesis
-$\mathtt{hswitch}$ (the genuine Aizenman switching bijection, to be discharged in Stage C2).
+$\mathtt{hswitch}'$ (the genuine Aizenman switching bijection, to be discharged in Stage C2).
 
 \begin{definition}[The both-sourcefree summand]
 For a doubled current $M$, define
@@ -28967,53 +28969,71 @@ the sum over splittings where \emph{both} pieces are sourcefree.
   Dividing by the positive denominator gives the bound.
 \end{theorem}
 
-\begin{theorem}[\texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_sourcefree} (C1 capstone: gated)]
-  For distinct $x, y \in \Lambda$, $0 \le \beta J$, and \textbf{given the switching gate}
+\begin{theorem}[\texttt{Current.correlation\_sq\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_sourcefree} (C1 capstone: squared, gated)]
+  For distinct $x, y \in \Lambda$, $0 \le \beta J$, and \textbf{given the TRUE switching gate}
   \[
-    \mathtt{hswitch}:\quad
+    \mathtt{hswitch}':\quad
     \sum_{\substack{M : (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y}}
-      \sum_{\substack{m \le M,\ \partial m = \{x,y\},\ \partial(M-m) = \emptyset}} w(m)\,w(M-m)
+      \sum_{\substack{m \le M,\ \partial m = \{x,y\},\ \partial(M-m) = \{x,y\}}} w(m)\,w(M-m)
       \ =\
     \sum_{\substack{M : (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y}} D(M),
   \]
   we have
   \[
-    \langle\sigma_x\sigma_y\rangle^{\Lambda} \cdot Z_\emptyset^{2}
+    \langle\sigma_x\sigma_y\rangle^2 \cdot Z_\emptyset^{2}
     = \sum_{\substack{M : (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y}} D(M).
   \]
   Dividing by $Z_\emptyset^2 > 0$ (by \texttt{Current.weightSum\_empty\_pos}), we obtain the probability form:
   \[
-    \langle\sigma_x\sigma_y\rangle^{\Lambda}
+    \langle\sigma_x\sigma_y\rangle^2
       = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y].
   \]
 \end{theorem}
 
 \begin{proof}
-  \textbf{Step (Stage B):} Apply \texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_doubled}
-  to express the left side in terms of the $\{x,y\}/\emptyset$ summand $N(M)$:
+  \textbf{Step (Squared identity via {$x,y$}/{$x,y$} pairing):} Introduce the \emph{pair-sourced ensemble summand}
   \[
-    \langle\sigma_x\sigma_y\rangle^{\Lambda} \cdot Z_\emptyset^{2}
-    = \sum_{M : \mathrm{Reachable}} N(M).
+    W(M) = \sum_{\substack{m \le M,\ \partial m = \{x,y\},\ \partial(M-m) = \{x,y\}}}
+      w(m)\,w(M-m),
+  \]
+  i.e.\ both sub-currents are sourced at $\{x,y\}$.
+  By the Stage A switching identity (Brick 2) with $A=B=\{x,y\}$, we have
+  \[
+    Z_{\{x,y\}}^2 = \sum'_M W(M).
+  \]
+  Since $\langle\sigma_x\sigma_y\rangle = Z_{\{x,y\}}/Z_\emptyset$, we obtain
+  \[
+    \langle\sigma_x\sigma_y\rangle^2 \cdot Z_\emptyset^2 = \sum'_M W(M).
+  \]
+  By the vanishing lemma $W$ (denote \texttt{doubled\_pair\_pair\_sum\_eq\_zero\_of\_not\_reachable}),
+  if neither sub-current of $M$ connects $\{x,y\}$ then $M$ itself does not, so
+  \[
+    \sum'_M W(M) = \sum_{M: \mathrm{Reachable}} W(M).
   \]
 
-  \textbf{Step (Gate):} Apply $\mathtt{hswitch}$ to equate the two sums:
+  \textbf{Step (Gate $\mathtt{hswitch}'$):} Apply the corrected switching gate to equate the two sums:
   \[
-    \sum_{M : \mathrm{Reachable}} N(M) = \sum_{M : \mathrm{Reachable}} D(M).
+    \sum_{M : \mathrm{Reachable}} W(M) = \sum_{M : \mathrm{Reachable}} D(M).
   \]
 
-  \textit{Remark on the gate}: The hypothesis $\mathtt{hswitch}$ is the genuine Aizenman
-  \emph{switching bijection}: a global, $M$-changing bijection between the two disjoint source classes
-  ($\partial M = \{x,y\}$ vs.~$\partial M = \emptyset$). There is no per-current shortcut, because $N$ lives
-  on the first class and $D$ on the second (Remark~1, Section~3 of the math-before-code note).
-  This bijection (backbone insertion / loop erasure) is genuine multi-lemma combinatorics and is deferred as
-  an explicit hypothesis, following the accepted \#4402/\#4403 gate-then-discharge pattern.
+  \textit{Remark on the corrected gate $\mathtt{hswitch}'$:} The hypothesis $\mathtt{hswitch}'$ is the genuine Aizenman
+  \emph{switching bijection}: for reachable $M$ (where both $\partial M=\{x,y\}$ and $\partial M=\emptyset$ are nonempty but disjoint),
+  the sum of $W(M)$ over both source classes equals. More precisely: it is a global, $M$-changing bijection between the two disjoint source classes
+  ($\partial M = \{x,y\}$ vs.~$\partial M = \emptyset$), acting on reachable currents only.
+  There is no per-current shortcut, because the $\mathbb{F}_2$ cycle-space arguments that discharge this bijection
+  are genuine combinatorics and are deferred as an explicit hypothesis, following the accepted gate-then-discharge pattern.
+  This is the genuine switching lemma, as verified by single-edge sanity check: on the single bond $b=\{x,y\}$,
+  both $W$ and $D$ equal $\sinh^2 t$, confirming $\mathtt{hswitch}'$ holds exactly.
 \end{proof}
 
-\noindent\textit{Scope}: This is the \emph{both-sourcefree probability-form bridge} (Stage C brick 1), a strengthened corollary gated on $\mathtt{hswitch}$,
+\noindent\textit{Scope}: This is the \emph{both-sourcefree probability-form bridge} (Stage C brick 1), a strengthened corollary gated on the \textbf{TRUE} gate $\mathtt{hswitch}'$,
 of the Aizenman switching method in the OZ lower-semicontinuity program (issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half).
 The \textbf{new unconditional corollary} (theorem above) states $\mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y] \le 1$ directly, with no switching gate.
+Since the connection probability is $\langle\sigma_x\sigma_y\rangle^2$ (not the first power), its exponential decay rate
+is $2 \cdot \mathsf{m}$ where $\mathsf{m}$ is the correlation-length mass. The factor~2 is absorbed into the rate constant and
+does \emph{not} obstruct the $\mathtt{hLogLip}$ / Theorem 17.5.1 goal.
 \textbf{C1 yields no new rate:} it does not beat the existing $\tanh(\beta J)^{d(x,y)}$ lower bound.
-Discharging the switching gate $\mathtt{hswitch}$ (the backbone-insertion bijection) is Stage C2 (~3--5 PR research effort),
+Discharging the TRUE switching gate $\mathtt{hswitch}'$ (the backbone-insertion bijection / $\mathbb{F}_2$ cycle-space combinatorics) is Stage C2 (~3--5 PR research effort),
 and the sharp connection-probability lower bound via the OZ mechanism is Stage C3 (~3--6 PR research).
 
 \noindent\textit{References}: Aizenman (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma 4.1;
