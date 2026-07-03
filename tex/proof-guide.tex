@@ -29383,6 +29383,66 @@ Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Trivia
 Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
 
 %-------------------------------------------------------
+\subsection*{Current-Weight $\beta$-Differentiation Identity --- OZ Stage C3$'$ (thread \#4418)}
+%-------------------------------------------------------
+
+\noindent
+\textbf{Summary.} Stage C3$'$ is the elementary $\beta$-differentiation identity for the random-current weight and its doubled-sourcefree lift.
+The identities are:
+\begin{align}
+  \partial_\beta w_\beta(n) &= \frac{|n|}{\beta}\, w_\beta(n), \label{eq:wderiv}\\
+  \partial_\beta D_\beta(M) &= \frac{|M|}{\beta}\, D_\beta(M), \label{eq:Dderiv}
+\end{align}
+where $|n| := \sum_{e \in E} n(e)$ is the \emph{total current size} (\texttt{Current.total}), and the key structural fact is that every splitting $M = m + (M-m)$ satisfies
+\[
+  |m| + |M - m| = |M|,
+\]
+making $D_\beta(M)$ scale like a monomial of degree $|M|$ in $\beta J$.
+
+\begin{theorem}[\texttt{Current.hasDerivAt\_weight\_beta}]
+For every current $n$, coupling $J$, and $\beta \ne 0$,
+\[
+  \partial_\beta w_\beta(n) = \frac{|n|}{\beta}\, w_\beta(n).
+\]
+\end{theorem}
+\begin{proof}
+Each edge factor $\phi_e(\beta) = (\beta J)^{n(e)} / (n(e))!$ is a monomial with derivative
+$\phi_e'(\beta) = \frac{n(e)}{\beta} \phi_e(\beta)$ (requiring $\beta \ne 0$). The product rule over edges $E$ then
+gives $\partial_\beta w_\beta(n) = (\sum_{e \in E} n(e) / \beta) w_\beta(n) = (|n|/\beta) w_\beta(n)$.
+\end{proof}
+
+\begin{theorem}[\texttt{Current.hasDerivAt\_doubledSourcefreeSummand\_beta}]
+For every doubled current $M$ and $\beta \ne 0$,
+\[
+  \partial_\beta D_\beta(M) = \frac{|M|}{\beta}\, D_\beta(M).
+\]
+\end{theorem}
+\begin{proof}
+$D_\beta(M)$ is a finite sum over both-sourcefree splittings $(m, M-m)$. By the product rule and
+\eqref{eq:wderiv}, each summand differentiates to $(\frac{|m|}{\beta} + \frac{|M-m|}{\beta}) w_\beta(m) w_\beta(M-m)$.
+By the additive collapse $|m| + |M-m| = |M|$, all summands share the factor $|M|/\beta$, which pulls out via
+the finite sum rule.
+\end{proof}
+
+\noindent
+\textit{Scope.} Stage C3$'$ supplies the atomic differentiation identity. It is the first ingredient of the ratio-form route
+$\partial_\beta \log \langle \sigma_x \sigma_y \rangle = \frac{1}{2\beta} (\mathbb{E}^{x \leftrightarrow y}[|M|] - \mathbb{E}^\emptyset[|M|])$
+toward removing the binding-pair gate on the log-Lipschitz estimate. The remaining stages C3 (connection-probability lower bound via OZ),
+D (ratio-form assembly), and E (log-Lipschitz packaging into Theorem~17.5.1 continuity) constitute $\sim 6$--$12$ further PR effort.
+C3$'$ does \emph{not} close the gate.
+
+\noindent
+\textit{Hypothesis.} $\beta \ne 0$ (apply at $\beta > 0$ in the high-temperature window).
+
+\noindent
+\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only (pure finite calculus: power rule, product/sum rules; no summability, no lower bounds, no switching lemma).
+
+\noindent
+\textit{References}: Aizenman, M.\ (1982), \emph{Geometric analysis of $\phi^4$ fields}, Lemma~4.1.
+Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Triviality} (1992), Chapter~12.
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
