@@ -34,6 +34,21 @@ theorem Current.support_sub_subset (G : SimpleGraph V) (Λ : Finset V)
 
 omit [DecidableEq V] in
 set_option linter.unusedDecidableInType false in
+/-- **Support is monotone in the current**: if `m ≤ M` (pointwise),
+then `m.support ⊆ M.support`. If `m e ≠ 0` then `m e ≥ 1`, and
+`m e ≤ M e` forces `M e ≥ 1 ≠ 0`, i.e. `e ∈ M.support`
+(`Current.mem_support_iff`). Sibling of `Current.support_sub_subset`. -/
+theorem Current.support_mono_of_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {m M : Current G Λ} (h : m ≤ M) :
+    Current.support G Λ m ⊆ Current.support G Λ M := by
+  intro e he
+  rw [Current.mem_support_iff] at he ⊢
+  have hle : m e ≤ M e := h e
+  omega
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
 /-- **Empty support characterizes zero**: `n.support = ∅ ↔ n = 0`.
 Forward: every edge has `n e = 0` so `n = 0` by extensionality.
 Backward: `support_zero`. -/
@@ -151,6 +166,24 @@ theorem Current.toSimpleGraph_le_inducedGraph
   obtain ⟨hne, e, _, hu, hv⟩ := h
   rw [SimpleGraph.adj_iff_exists_edge]
   exact ⟨hne, (e : Sym2 ↑Λ), e.2, hu, hv⟩
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Support graph is monotone in the current**: if `m ≤ M`
+(pointwise), then `m.toSimpleGraph ≤ M.toSimpleGraph` as simple graphs
+on `↑Λ`. Every adjacency of `m.toSimpleGraph` arises from a support
+edge `e ∈ m.support ⊆ M.support` (`Current.support_mono_of_le`) with
+the same two endpoints, hence is an adjacency of `M.toSimpleGraph`
+(`Current.Adj`). Consequently reachability is monotone via
+`SimpleGraph.Reachable.mono`. -/
+theorem Current.toSimpleGraph_mono_of_le (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {m M : Current G Λ} (h : m ≤ M) :
+    Current.toSimpleGraph G Λ m ≤ Current.toSimpleGraph G Λ M := by
+  intro u v huv
+  rw [Current.toSimpleGraph_adj_iff] at huv ⊢
+  obtain ⟨hne, e, he, hu, hv⟩ := huv
+  exact ⟨hne, e, Current.support_mono_of_le G Λ h he, hu, hv⟩
 
 omit [DecidableEq V] in
 set_option linter.unusedDecidableInType false in
