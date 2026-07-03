@@ -190,5 +190,46 @@ theorem Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset
       (fun N => hLS N) (fun N => hUS N)
   exact tendsto_nhds_unique key key2
 
+set_option linter.unusedDecidableInType false in
+/-- **Backbone connection under a subcurrent source pair (Stage B, B1)**:
+if `m ∈ subFinset M` (i.e. `m ≤ M`) has source set `∂m = {x, y}` with
+`x ≠ y`, then the *support graph of `M`* connects `x` to `y`, i.e.
+`(M.toSimpleGraph G Λ).Reachable x y`. Proof: the backbone-existence
+lemma `Current.sources_reachable_of_sources_eq_pair` gives
+`(m.toSimpleGraph).Reachable x y`, lifted along the support-graph
+monotonicity `Current.toSimpleGraph_mono_of_le` (`m ≤ M`) by
+`SimpleGraph.Reachable.mono`. (Aizenman 1982 Lemma 4.1 / FV §3.7.) -/
+theorem Current.reachable_of_subFinset_sources_pair
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {x y : ↑Λ} (hxy : x ≠ y) {M m : Current G Λ}
+    (hm : m ∈ Current.subFinset G Λ M)
+    (hsrc : m.sources G Λ = {x, y}) :
+    (M.toSimpleGraph G Λ).Reachable x y :=
+  (Current.sources_reachable_of_sources_eq_pair G Λ m hxy hsrc).mono
+    (Current.toSimpleGraph_mono_of_le G Λ ((Current.mem_subFinset_iff G Λ M m).mp hm))
+
+set_option linter.unusedDecidableInType false in
+/-- **Non-connecting doubled currents contribute zero (Stage B, B2)**:
+if the support graph of `M` does *not* connect `x` to `y` (with
+`x ≠ y`), then the `{x, y}`/`∅`-filtered doubled inner sum
+`∑_{m ≤ M, ∂m = {x, y}, ∂(M − m) = ∅} w(m) w(M − m)` vanishes. Proof:
+the filtered `Finset` is empty — any `m ≤ M` with `∂m = {x, y}` would
+force `Reachable x y` by B1
+(`Current.reachable_of_subFinset_sources_pair`), contradicting the
+hypothesis; hence `Finset.filter_false_of_mem` and `Finset.sum_empty`. -/
+theorem Current.doubled_pair_sum_eq_zero_of_not_reachable
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {x y : ↑Λ} (hxy : x ≠ y) {β J : ℝ} (M : Current G Λ)
+    (hnr : ¬ (M.toSimpleGraph G Λ).Reachable x y) :
+    ∑ m ∈ (Current.subFinset G Λ M).filter
+        (fun m => m.sources G Λ = {x, y} ∧ (M - m).sources G Λ = ∅),
+      m.weight G Λ β J * (M - m).weight G Λ β J = 0 := by
+  rw [Finset.filter_false_of_mem
+      (fun m hm hfilter => hnr
+        (Current.reachable_of_subFinset_sources_pair G Λ hxy hm hfilter.1)),
+    Finset.sum_empty]
+
 end Ambient
 end IsingModel
