@@ -28831,7 +28831,7 @@ over doubled currents in the $\{x,y\}/\emptyset$ ensemble. The inner splitting $
 $\partial m = \{x,y\}$ and $\partial(M-m)=\emptyset$ forces $\partial M = \{x,y\}$, and the $x \leftrightarrow y$
 reachability restriction on the outer sum is \emph{automatically satisfied} (it adds no constraint).
 This is a step toward, but is \emph{not yet}, Aizenman's $\emptyset/\emptyset$ sourcefree connection-event
-representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$,
+representation $\langle\sigma_x\sigma_y\rangle^2 = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$,
 which lives in the both-sourcefree ensemble and requires the source-moving switching bijection (deferred).
 
 \begin{theorem}[\texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_doubled}]
@@ -28877,7 +28877,7 @@ unprobabilized form --- no probability measure is formalized.
 \noindent\textit{Scope}: This is the \emph{$\{x,y\}/\emptyset$ decomposed weighted-sum form} (Stage B), with
 automatic reachability and no measure, of the Aizenman switching method in the OZ lower-semicontinuity program
 (issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half). The genuine Aizenman $\emptyset/\emptyset$ sourcefree
-connection-event representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$
+connection-event representation $\langle\sigma_x\sigma_y\rangle^2 = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$
 (requiring the source-moving switching bijection into the both-sourcefree ensemble), the random-walk path-sum
 integration toward the lower bound on the correlation function, and the full lower-semicontinuity proof of
 Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
@@ -29018,7 +29018,7 @@ the sum over splittings where \emph{both} pieces are sourcefree.
 
   \textit{Remark on the corrected gate $\mathtt{hswitch}'$:} The hypothesis $\mathtt{hswitch}'$ is the genuine Aizenman
   \emph{switching bijection}: for reachable $M$ (where both $\partial M=\{x,y\}$ and $\partial M=\emptyset$ are nonempty but disjoint),
-  the sum of $W(M)$ over both source classes equals. More precisely: it is a global, $M$-changing bijection between the two disjoint source classes
+  More precisely: it is a global, $M$-changing bijection between the two disjoint source classes
   ($\partial M = \{x,y\}$ vs.~$\partial M = \emptyset$), acting on reachable currents only.
   There is no per-current shortcut, because the $\mathbb{F}_2$ cycle-space arguments that discharge this bijection
   are genuine combinatorics and are deferred as an explicit hypothesis, following the accepted gate-then-discharge pattern.
