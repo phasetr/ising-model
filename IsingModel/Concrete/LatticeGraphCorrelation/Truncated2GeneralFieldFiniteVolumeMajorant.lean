@@ -249,6 +249,80 @@ theorem sum_abs_truncated3_le_finiteVolumeMajorant
     (sum_majorant_subtype_le_tsum Λ hm (i : Fin d → ℤ) _)
     (sum_majorant_subtype_le_tsum Λ hm (j : Fin d → ℤ) _)
 
+/-- **Semi-truncated 2-block field- and volume-uniform summable majorant** (GJ
+Thm 17.6.1, p. 313, `|B| = 2`): on a `Preconnected` finite induced subgraph
+`inducedGraph (latticeGraph d) Λ`, for a ferromagnetic field `⟨J, h, β⟩` with
+`h ≥ 0`, strict high temperature `0 < β J · 2d < 1`, and distinct sites
+`i ≠ j`, the `∂/∂h` site-sum of the pair semi-truncated susceptibility
+`⟨σ_iσ_j; σ_l⟩ = ⟨σ_iσ_jσ_l⟩ − ⟨σ_iσ_j⟩⟨σ_l⟩` is bounded by a finite tsum
+`M(i) + M(j)` **independent of `Λ` and of `h`**:
+`∑_{l ≠ i,j} ⟨σ_iσ_j; σ_l⟩ ≤ M(i) + M(j)`,
+`M(x) = ∑_l exp(m) · exp(-m · d_{ℓ¹}(x,l))`, `m = simonLiebRate β J d`.
+
+Since `∂/∂h ⟨σ_iσ_j⟩_Λ = β ∑_l ⟨σ_iσ_j; σ_l⟩_Λ`, this is the uniform Lipschitz
+(equi-Lipschitz-of-moments) bound `0 ≤ ∂/∂h ⟨σ_iσ_j⟩_Λ ≤ β (M(i) + M(j))` feeding
+the Dini / uniform-tail step of the `∂/∂h` capstone of GJ Theorem 17.6.1.
+
+Proof: the pair semi-truncated bound `semiTruncated_pair_le` gives
+`⟨σ_iσ_j; σ_l⟩ ≤ τ₂(i,l) + τ₂(j,l)`; (2a) bounds each
+`τ₂(a,l) ≤ exp(m)·exp(-m·d(a,l))` (reachability from `Preconnected`);
+`Finset.sum_add_distrib` splits the two site-sums, each dominated by its tsum via
+`sum_majorant_subtype_le_tsum`. -/
+theorem sum_semiTruncated_pair_le_finiteVolumeMajorant
+    (d : ℕ) (Λ : Finset (Fin d → ℤ))
+    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
+    {β J h : ℝ} (hf : Ferromagnetic (⟨J, h, β⟩ : IsingParams ℝ))
+    (hβJ2d_pos : 0 < β * J * (2 * (d : ℝ))) (hβJ2d_lt : β * J * (2 * (d : ℝ)) < 1)
+    (hconn : (inducedGraph (IsingModel.latticeGraph d) Λ).Preconnected)
+    {i j : ↑Λ} (hij : i ≠ j) :
+    ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
+        (correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j, l}
+          - correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j}
+            * correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                (⟨J, h, β⟩ : IsingParams ℝ) {l})
+      ≤ (∑' x : Fin d → ℤ, Real.exp (simonLiebRate β J d)
+            * Real.exp (-(simonLiebRate β J d)
+                * (latticeDistance d (i : Fin d → ℤ) x : ℝ)))
+        + (∑' x : Fin d → ℤ, Real.exp (simonLiebRate β J d)
+            * Real.exp (-(simonLiebRate β J d)
+                * (latticeDistance d (j : Fin d → ℤ) x : ℝ))) := by
+  have hβJ2d_le : β * J * (2 * (d : ℝ)) ≤ 1 := hβJ2d_lt.le
+  have hm : 0 < simonLiebRate β J d := simonLiebRate_pos hβJ2d_pos hβJ2d_lt
+  -- Pointwise majorisation of each semi-truncated term by a sum of two exponentials.
+  have hstep : ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
+        (correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j, l}
+          - correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+              (⟨J, h, β⟩ : IsingParams ℝ) {i, j}
+            * correlation (inducedGraph (IsingModel.latticeGraph d) Λ)
+                (⟨J, h, β⟩ : IsingParams ℝ) {l})
+      ≤ ∑ l ∈ Finset.univ.filter (fun l : ↑Λ => l ≠ i ∧ l ≠ j),
+          (Real.exp (simonLiebRate β J d)
+              * Real.exp (-(simonLiebRate β J d)
+                  * (latticeDistance d (i : Fin d → ℤ) (l : Fin d → ℤ) : ℝ))
+            + Real.exp (simonLiebRate β J d)
+              * Real.exp (-(simonLiebRate β J d)
+                  * (latticeDistance d (j : Fin d → ℤ) (l : Fin d → ℤ) : ℝ))) := by
+    apply Finset.sum_le_sum
+    intro l hl
+    rw [Finset.mem_filter] at hl
+    have hil : i ≠ l := hl.2.1.symm
+    have hjl : j ≠ l := hl.2.2.symm
+    have hpair := semiTruncated_pair_le (inducedGraph (IsingModel.latticeGraph d) Λ)
+      (⟨J, h, β⟩ : IsingParams ℝ) hf hij hil hjl
+    have hik := truncated2_inducedLatticeGraph_le_exp_neg_simonLiebRate_of_field_nonneg
+      d Λ hf hβJ2d_pos hβJ2d_le hil (hconn i l)
+    have hjk := truncated2_inducedLatticeGraph_le_exp_neg_simonLiebRate_of_field_nonneg
+      d Λ hf hβJ2d_pos hβJ2d_le hjl (hconn j l)
+    linarith
+  refine hstep.trans ?_
+  rw [Finset.sum_add_distrib]
+  exact add_le_add
+    (sum_majorant_subtype_le_tsum Λ hm (i : Fin d → ℤ) _)
+    (sum_majorant_subtype_le_tsum Λ hm (j : Fin d → ℤ) _)
+
 end Ambient
 
 end IsingModel
