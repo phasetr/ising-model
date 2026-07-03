@@ -40,6 +40,117 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 set_option linter.unusedDecidableInType false in
+/-- **Summability of the doubled inner pairing (Stage A, hoisted)**: for
+source sets `A B : Finset ↑Λ` and non-negative coupling `0 ≤ β J`, the
+cap-free doubled inner sum
+`M ↦ ∑_{m ≤ M, ∂m = A, ∂(M − m) = B} w(m) w(M − m)` is `Summable`. This is the
+uniform-bound summability argument (formerly the inline `have hFsummable`
+inside `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset`), hoisted to
+a shared named lemma so that both Stage A brick 2 and the Stage C sourcefree
+(`∅/∅`) representation consume it without duplicating the proof.
+
+Proof: each summand `w(m) w(M − m)` is non-negative (`Current.weight_nonneg`
+under `0 ≤ β J`), and every finite partial sum over a `Finset s` of doubled
+currents is bounded by `(exp(β J)^|E|)²`: choosing a common ceiling `K` for `s`
+(`Finset.sup`), the partial sum is dominated by the sum over `boundedFinset K`,
+which brick 1 (`Current.sum_prod_eq_sum_doubled_subFinset`, packaged as the
+cap-vacuous lower squeeze `hLS`) bounds by
+`weightSum_{≤K} A · weightSum_{≤K} B ≤ (exp(β J)^|E|)²`
+(`CurrentBounded.weightSum_le_exp_pow_card`). `summable_of_sum_le` then closes.
+Zero field (`h = 0`) is baked in. -/
+theorem Current.summable_doubled_subFinset
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (A B : Finset ↑Λ) {β J : ℝ} (hβJ : 0 ≤ β * J) :
+    Summable (fun M : Current G Λ =>
+      ∑ m ∈ (Current.subFinset G Λ M).filter
+          (fun m => m.sources G Λ = A ∧ (M - m).sources G Λ = B),
+        m.weight G Λ β J * (M - m).weight G Λ β J) := by
+  classical
+  set F : Current G Λ → ℝ := fun M =>
+    ∑ m ∈ (Current.subFinset G Λ M).filter
+        (fun m => m.sources G Λ = A ∧ (M - m).sources G Λ = B),
+      m.weight G Λ β J * (M - m).weight G Λ β J with hFdef
+  set Fcap : ℕ → Current G Λ → ℝ := fun N M =>
+    ∑ m ∈ (Current.subFinset G Λ M).filter
+        (fun m => m.sources G Λ = A ∧ (M - m).sources G Λ = B
+          ∧ ∀ e, m e ≤ N ∧ (M - m) e ≤ N),
+      m.weight G Λ β J * (M - m).weight G Λ β J with hFcapdef
+  -- Every summand `w(m) w(M − m)` is non-negative under `0 ≤ β J`.
+  have hterm_nonneg : ∀ M m : Current G Λ,
+      0 ≤ m.weight G Λ β J * (M - m).weight G Λ β J := fun M m =>
+    mul_nonneg (Current.weight_nonneg G Λ hβJ m)
+      (Current.weight_nonneg G Λ hβJ (M - m))
+  have hF_nonneg : ∀ M, 0 ≤ F M := by
+    intro M
+    simp only [hFdef]
+    exact Finset.sum_nonneg (fun m _ => hterm_nonneg M m)
+  have hFcap_nonneg : ∀ (N : ℕ) (M : Current G Λ), 0 ≤ Fcap N M := by
+    intro N M
+    simp only [hFcapdef]
+    exact Finset.sum_nonneg (fun m _ => hterm_nonneg M m)
+  -- Brick 1 in `Fcap` form: `L(N) = wsB N A · wsB N B = ∑_{M ∈ B_{2N}} Fcap N M`.
+  have hLR : ∀ N : ℕ,
+      CurrentBounded.weightSum G Λ N A β J * CurrentBounded.weightSum G Λ N B β J
+        = ∑ M ∈ Current.boundedFinset G Λ (2 * N), Fcap N M := by
+    intro N
+    simp only [hFcapdef]
+    rw [CurrentBounded.weightSum_eq_sum_boundedFinset,
+      CurrentBounded.weightSum_eq_sum_boundedFinset,
+      ← Finset.sum_filter, ← Finset.sum_filter, Finset.sum_mul_sum]
+    exact Current.sum_prod_eq_sum_doubled_subFinset G Λ N A B β J
+  -- Caps are vacuous below the ceiling: `Fcap N M = F M` for `M ∈ B_N`.
+  have hcapfree : ∀ (N : ℕ) (M : Current G Λ), (∀ e, M e ≤ N) →
+      Fcap N M = F M := by
+    intro N M hM
+    simp only [hFcapdef, hFdef]
+    refine Finset.sum_congr (Finset.filter_congr (fun m hm => ?_)) (fun m _ => rfl)
+    rw [Current.mem_subFinset_iff] at hm
+    constructor
+    · rintro ⟨h1, h2, _⟩
+      exact ⟨h1, h2⟩
+    · rintro ⟨h1, h2⟩
+      exact ⟨h1, h2, fun e =>
+        ⟨le_trans (hm e) (hM e),
+          le_trans (Current.sub_le_self G Λ M m e) (hM e)⟩⟩
+  -- Lower squeeze: `∑_{M ∈ B_N} F ≤ wsB N A · wsB N B`.
+  have hLS : ∀ N : ℕ, ∑ M ∈ Current.boundedFinset G Λ N, F M
+      ≤ CurrentBounded.weightSum G Λ N A β J
+          * CurrentBounded.weightSum G Λ N B β J := by
+    intro N
+    rw [hLR N]
+    calc ∑ M ∈ Current.boundedFinset G Λ N, F M
+        = ∑ M ∈ Current.boundedFinset G Λ N, Fcap N M :=
+          Finset.sum_congr rfl (fun M hM =>
+            (hcapfree N M ((Current.mem_boundedFinset_iff G Λ N M).mp hM)).symm)
+      _ ≤ ∑ M ∈ Current.boundedFinset G Λ (2 * N), Fcap N M :=
+          Finset.sum_le_sum_of_subset_of_nonneg
+            (Current.boundedFinset_mono G Λ (by omega : N ≤ 2 * N))
+            (fun M _ _ => hFcap_nonneg N M)
+  -- `F` is summable, with the uniform bound `(exp(β J)^|E|)²`.
+  refine summable_of_sum_le
+    (c := Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet
+      * Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet)
+    hF_nonneg (fun s => ?_)
+  set K : ℕ := s.sup (fun M => Finset.univ.sup M) with hK
+  have hsub : s ⊆ Current.boundedFinset G Λ K := by
+    intro M hM
+    rw [Current.mem_boundedFinset_iff]
+    exact fun e =>
+      le_trans (Finset.le_sup (Finset.mem_univ e)) (Finset.le_sup hM)
+  calc ∑ M ∈ s, F M
+      ≤ ∑ M ∈ Current.boundedFinset G Λ K, F M :=
+        Finset.sum_le_sum_of_subset_of_nonneg hsub (fun M _ _ => hF_nonneg M)
+    _ ≤ CurrentBounded.weightSum G Λ K A β J
+          * CurrentBounded.weightSum G Λ K B β J := hLS K
+    _ ≤ Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet
+          * Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet :=
+        mul_le_mul (CurrentBounded.weightSum_le_exp_pow_card G Λ K A hβJ)
+          (CurrentBounded.weightSum_le_exp_pow_card G Λ K B hβJ)
+          (CurrentBounded.weightSum_nonneg G Λ K B hβJ)
+          (pow_nonneg (Real.exp_pos _).le _)
+
+set_option linter.unusedDecidableInType false in
 /-- **Global switching identity, unbounded form (Stage A brick 2)**: for
 source sets `A B : Finset ↑Λ` and non-negative coupling `0 ≤ β J`, the product
 of the two source-constrained weight sums equals a `tsum` over all doubled
@@ -82,10 +193,6 @@ theorem Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset
       0 ≤ m.weight G Λ β J * (M - m).weight G Λ β J := fun M m =>
     mul_nonneg (Current.weight_nonneg G Λ hβJ m)
       (Current.weight_nonneg G Λ hβJ (M - m))
-  have hF_nonneg : ∀ M, 0 ≤ F M := by
-    intro M
-    simp only [hFdef]
-    exact Finset.sum_nonneg (fun m _ => hterm_nonneg M m)
   have hFcap_nonneg : ∀ (N : ℕ) (M : Current G Λ), 0 ≤ Fcap N M := by
     intro N M
     simp only [hFcapdef]
@@ -141,29 +248,10 @@ theorem Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset
     intro N
     rw [hLR N]
     exact Finset.sum_le_sum (fun M _ => hFcap_le_F N M)
-  -- `F` is summable, with the uniform bound `(exp(β J)^|E|)²`.
+  -- `F` is summable (hoisted uniform-bound argument, `summable_doubled_subFinset`).
   have hFsummable : Summable F := by
-    refine summable_of_sum_le
-      (c := Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet
-        * Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet)
-      hF_nonneg (fun s => ?_)
-    set K : ℕ := s.sup (fun M => Finset.univ.sup M) with hK
-    have hsub : s ⊆ Current.boundedFinset G Λ K := by
-      intro M hM
-      rw [Current.mem_boundedFinset_iff]
-      exact fun e =>
-        le_trans (Finset.le_sup (Finset.mem_univ e)) (Finset.le_sup hM)
-    calc ∑ M ∈ s, F M
-        ≤ ∑ M ∈ Current.boundedFinset G Λ K, F M :=
-          Finset.sum_le_sum_of_subset_of_nonneg hsub (fun M _ _ => hF_nonneg M)
-      _ ≤ CurrentBounded.weightSum G Λ K A β J
-            * CurrentBounded.weightSum G Λ K B β J := hLS K
-      _ ≤ Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet
-            * Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet :=
-          mul_le_mul (CurrentBounded.weightSum_le_exp_pow_card G Λ K A hβJ)
-            (CurrentBounded.weightSum_le_exp_pow_card G Λ K B hβJ)
-            (CurrentBounded.weightSum_nonneg G Λ K B hβJ)
-            (pow_nonneg (Real.exp_pos _).le _)
+    rw [hFdef]
+    exact Current.summable_doubled_subFinset G Λ A B hβJ
   -- Doubling `N ↦ 2 N` is cofinal in `atTop`.
   have h2N : Filter.Tendsto (fun N : ℕ => 2 * N) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_atTop_of_monotone (fun _ _ h => by omega)
