@@ -29279,6 +29279,110 @@ and the C2.1b character-inversion identity).
 Aizenman (1982), Geometric analysis of $\phi^4$ fields, Lemma 4.1; Glimm--Jaffe, \S17.5 Theorem 17.5.1 (p.~312).
 
 %-------------------------------------------------------
+\subsection*{PR \#4427 --- Switching Capstone (C2.1e + C2.2), Unconditional Aizenman $\langle\sigma_x\sigma_y\rangle^2 = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$ (Issue \#4386, thread \#4418)}
+%-------------------------------------------------------
+
+\subsubsection*{Stage C2.1e: Reachability-local per-current identity}
+
+\begin{theorem}[\texttt{Current.doubledPairSummand\_eq\_doubledSourcefreeSummand\_of\_reachable}]
+Let $x \ne y$ be vertices with $x \leftrightarrow y$ in the support graph $M.\texttt{toSimpleGraph}$.
+Then the doubled pair-sourced summand equals the doubled both-sourcefree summand:
+\[
+  W(M) = D(M),
+\]
+where $W(M) = \sum_{m \le M,\, \partial m = \{x,y\},\, \partial(M-m)=\{x,y\}} w(m) w(M-m)$
+and $D(M) = \sum_{m \le M,\, \partial m = \emptyset,\, \partial(M-m)=\emptyset} w(m) w(M-m)$.
+\end{theorem}
+
+\begin{proof}
+Case split on $\partial M = \emptyset$:
+\begin{itemize}
+\item \textbf{If $\partial M = \emptyset$:}
+By the symmetric-difference source law $\partial(M-m) = \partial M \triangle \partial m = \partial m$,
+the second conjunct in each filter is redundant. Both filters collapse to single-source sets
+$\texttt{subFinset\_with\_source}\ M\ \{x,y\}$ and $\texttt{subFinset\_with\_source}\ M\ \emptyset$.
+Applying the weight bridge $w(m) w(M-m) = w(M) \cdot \texttt{jointFactor}\ m\ (M-m)$ and factoring out $w(M)$ gives
+\[
+  W(M) = w(M) \cdot f_M(\{x,y\}), \quad D(M) = w(M) \cdot f_M(\emptyset),
+\]
+where $f_M(A) = \sum_{m \le M,\, \partial m = A} \texttt{jointFactor}\ m\ (M-m)$.
+Stage C2.1d ($\texttt{sum\_jointFactor\_pair\_eq\_sum\_jointFactor\_empty\_of\_reachable}$), valid since $x \leftrightarrow y$,
+yields $f_M(\{x,y\}) = f_M(\emptyset)$, hence $W(M) = D(M)$.
+
+\item \textbf{If $\partial M \ne \emptyset$:}
+Both filters are empty. For $W$: the constraint $\partial m = \{x,y\}$ forces
+$\partial(M-m) = \partial M \triangle \{x,y\}$, which equals $\{x,y\}$ only if $\partial M = \emptyset$
+(contradiction). For $D$: the constraint $\partial m = \emptyset$ forces
+$\partial(M-m) = \partial M \ne \emptyset$ (contradiction).
+Thus $W(M) = 0 = D(M)$.
+\end{itemize}
+\end{proof}
+
+\noindent
+The identity holds pointwise for every reachable current $M$ with $x \leftrightarrow y$ in its support graph.
+No summability hypothesis is needed at this stage; the identity is purely combinatorial.
+
+\subsubsection*{Stage C2.2: Tsum lift and unconditional discharge of the gate $\mathtt{hswitch}'$}
+
+\begin{theorem}[\texttt{Current.tsum\_reachable\_doubledPair\_eq\_doubledSourcefree}]
+For $x \ne y$, the reachability-restricted tsums satisfy
+\[
+  \sum'_{M : x \leftrightarrow y} W(M) = \sum'_{M : x \leftrightarrow y} D(M).
+\]
+This equality is \emph{exactly} the switching gate $\mathtt{hswitch}'$ of Stage C1.
+\end{theorem}
+
+\begin{proof}
+Apply $\texttt{tsum\_congr}$ over the reachability subtype $\{M \mid x \leftrightarrow y\}$.
+Each element's membership witness supplies the reachability hypothesis of Stage C2.1e,
+giving $W(M) = D(M)$ termwise. No summability is required.
+\end{proof}
+
+\noindent
+The discharged gate immediately feeds into the two gated Stage C1 theorems, removing their $\mathtt{hswitch}'$ hypothesis.
+
+\subsubsection*{Unconditional capstones}
+
+\begin{theorem}[\texttt{Current.correlation\_sq\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_sourcefree\_uncond}]
+For $x \ne y \in \Lambda$ and $0 \le \beta J$ (zero field $h = 0$),
+\[
+  \langle\sigma_x\sigma_y\rangle_\Lambda^2 \cdot (\texttt{weightSum}\ \emptyset)^2 = \sum'_{M : x \leftrightarrow y} D(M),
+\]
+where $D(M)$ is the doubled both-sourcefree summand.
+\end{theorem}
+
+\noindent
+This is obtained by feeding Stage C2.2's discharged gate to Stage C1's gated weighted-sum form
+(\texttt{correlation\_sq\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_sourcefree}), removing its $\mathtt{hswitch}'$ hypothesis.
+
+\begin{theorem}[\texttt{Current.correlation\_sq\_eq\_tsum\_reachable\_doubledSourcefree\_div\_uncond}]
+For $x \ne y$ and $0 \le \beta J$,
+\[
+  \langle\sigma_x\sigma_y\rangle_\Lambda^2 = \frac{\sum'_{M : x \leftrightarrow y} D(M)}{\sum'_M D(M)} = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y],
+\]
+where the denominator is the total both-sourcefree mass $\sum'_M D(M) = (\texttt{weightSum}\ \emptyset)^2 > 0$.
+\end{theorem}
+
+\noindent
+This is the \emph{genuine Aizenman 1982 / FFS sourcefree connection-probability representation},
+now an unconditional theorem. It is obtained by feeding Stage C2.2's discharged gate to Stage C1's gated probability form
+(\texttt{correlation\_sq\_eq\_tsum\_reachable\_doubledSourcefree\_div}).
+
+\noindent
+\textit{Significance.} Stage C2 (the Aizenman switching lemma, Lemma~4.1 in Aizenman 1982) is now \textbf{complete and unconditional}.
+The sourcefree connection representation $\langle\sigma_x\sigma_y\rangle^2 = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$
+holds with no gate or hypothesis beyond $0 \le \beta J$. Downstream stages C3 (sharp connection-probability lower bound via the OZ mechanism),
+D (derivative ratio), and E (log-Lipschitz gate for Theorem 17.5.1 continuity) remain for the full lower-semicontinuity proof.
+
+\noindent
+\textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only (inherited from Stage C2.1e and C2.2, which compose Stage C2.1d and the C1 gated theorems).
+
+\noindent
+\textit{References}: Aizenman, M. (1982), \emph{Geometric analysis of $\varphi^4$ fields}, Lemma~4.1.
+Fernández--Fröhlich--Sokal, \emph{Random Walks, Critical Phenomena, and Triviality} (1992), Chapter~12 (Theorem~9.35, Lemma~9.36).
+Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
+
+%-------------------------------------------------------
 \subsection*{PR \#900 --- Simon-Lieb Inequality (GJ~\S5.1 / FV Prop.~9.31, p.~428)}
 %-------------------------------------------------------
 
