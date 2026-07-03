@@ -29447,7 +29447,7 @@ Glimm--Jaffe, \emph{Quantum Physics}, 2nd ed., \S17.5, Theorem~17.5.1, p.~312.
 %-------------------------------------------------------
 
 \textbf{Capstone theorem} [\texttt{Current.hasDerivAt\_log\_correlation\_beta}]:
-For $x \neq y \in \Lambda$, $0 < \beta$, $0 \le J$, and $\hpos : 0 < \langle\sigma_x\sigma_y\rangle_\Lambda$ (i.e., $x, y$ in the same connected component of the support graph),
+For $x \neq y \in \Lambda$, $0 < \beta$, $0 \le J$, and \texttt{hpos} $: 0 < \langle\sigma_x\sigma_y\rangle_\Lambda$ (i.e., $x, y$ in the same connected component of the support graph),
 \[
   \partial_\beta \log\langle\sigma_x\sigma_y\rangle_\Lambda
     = \frac{1}{2\beta}\left(
@@ -29529,7 +29529,7 @@ This is identical to D1 restricted to the reachability subtype, with the connect
 \begin{enumerate}
   \item Use the sourcefree connection-probability representation (\texttt{Current.correlation\_sq\_eq\_tsum\_reachable\_doubledSourcefree\_div\_uncond}):
         $\langle\sigma_x\sigma_y\rangle^2 = N / Z$, where $N = \sum'_{x\leftrightarrow y} D_\beta(M)$ and $Z = \sum'_M D_\beta(M)$.
-  \item Take $\log$ of both sides: $\log\langle\sigma_x\sigma_y\rangle = \frac{1}{2}(\log N - \log Z)$ (on a neighbourhood of $\beta$ where $N > 0$ by continuity from $\hpos$).
+  \item Take $\log$ of both sides: $\log\langle\sigma_x\sigma_y\rangle = \frac{1}{2}(\log N - \log Z)$ (on a neighbourhood of $\beta$ where $N > 0$ by continuity from \texttt{hpos}).
   \item Differentiate the right-hand side using D1 and D2 (the total and connected derivatives), \texttt{HasDerivAt.log}, \texttt{HasDerivAt.sub}, and \texttt{HasDerivAt.const\_mul}.
   \item Transfer the eventual identity to the left-hand side via \texttt{Filter.EventuallyEq.hasDerivAt\_iff}.
 \end{enumerate}
@@ -29540,10 +29540,10 @@ Stage D supplies the \emph{exact ratio-derivative identity}. It does \emph{not} 
 \[
   \mathbb{E}^{x\leftrightarrow y}[|M|] - \mathbb{E}^\emptyset[|M|] \le K \cdot d(x,y)
 \]
-uniformly in $x, y, \Lambda$. The genuine OZ backbone-length estimate (the multi-session brick $\hLogLip$) remains deferred.
+uniformly in $x, y, \Lambda$. The genuine OZ backbone-length estimate (the multi-session brick \texttt{hLogLip}) remains deferred.
 
 \noindent
-\textit{Hypotheses}: $0 < \beta$, $0 \le J$, $\hpos : 0 < \langle\sigma_x\sigma_y\rangle$.
+\textit{Hypotheses}: $0 < \beta$, $0 \le J$, \texttt{hpos} $: 0 < \langle\sigma_x\sigma_y\rangle$.
 
 \noindent
 \textit{Axiom-free:} $[\text{propext}, \text{Classical.choice}, \text{Quot.sound}]$ only.
