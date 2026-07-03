@@ -28824,10 +28824,15 @@ The connectivity (percolation) representation is deferred to Stage B in the mult
 \subsection*{Connectivity (Percolation) Representation --- OZ Stage B Capstone (thread \#4418)}
 %-------------------------------------------------------
 
-The \emph{weighted-sum connectivity representation} of Aizenman (1982, Lemma 4.1; FFS Ch.~12):
+The \emph{$\{x,y\}/\emptyset$ decomposed weighted-sum form} (toward Aizenman 1982, Lemma 4.1; FFS Ch.~12):
 brings together the bounded switching identity (Brick 1) and the unbounded tsum lift (Brick 2)
 to express the two-point function times the squared sourcefree partition mass as a weighted sum
-over the connected doubled currents.
+over doubled currents in the $\{x,y\}/\emptyset$ ensemble. The inner splitting $M = m + (M-m)$ with
+$\partial m = \{x,y\}$ and $\partial(M-m)=\emptyset$ forces $\partial M = \{x,y\}$, and the $x \leftrightarrow y$
+reachability restriction on the outer sum is \emph{automatically satisfied} (it adds no constraint).
+This is a step toward, but is \emph{not yet}, Aizenman's $\emptyset/\emptyset$ sourcefree connection-event
+representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$,
+which lives in the both-sourcefree ensemble and requires the source-moving switching bijection (deferred).
 
 \begin{theorem}[\texttt{Current.correlation\_mul\_weightSum\_empty\_sq\_eq\_tsum\_reachable\_doubled}]
   For distinct $x, y \in \Lambda$, graph $G$, and $0 \le \beta J$:
@@ -28837,7 +28842,9 @@ over the connected doubled currents.
       \sum_{\substack{m\le M,\ \partial m=\{x,y\},\ \partial(M-m)=\emptyset}}
         w(m)\,w(M-m),
   \]
-  where the outer sum is a \texttt{tsum} restricted to doubled currents $M$ whose support graph connects $x$ to $y$.
+  where the inner splitting forces $\partial M = \{x,y\}$ (so $M$ lives in the $\{x,y\}/\emptyset$ ensemble),
+  and the outer \texttt{tsum} restriction to doubled currents $M$ whose support graph connects $x$ to $y$
+  is \emph{automatic}: $\partial m = \{x,y\}$ already forces an $x$--$y$ connecting path, so it adds no constraint.
 \end{theorem}
 
 \begin{proof}
@@ -28867,10 +28874,13 @@ is hidden. The weights $w(m)$ and $w(M-m)$ are defined without external field ($
 from the $0 \le \beta J$ hypothesis. The role of $\mathrm{weightSum}(\emptyset)$ is to normalize, as in Aizenman's
 unprobabilized form --- no probability measure is formalized.
 
-\noindent\textit{Scope}: This is the \emph{weighted-sum connectivity representation} (Stage B) of the Aizenman
-switching method in the OZ lower-semicontinuity program (issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half).
-The random-walk path-sum integration toward the lower bound on the correlation function and the full
-lower-semicontinuity proof of Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
+\noindent\textit{Scope}: This is the \emph{$\{x,y\}/\emptyset$ decomposed weighted-sum form} (Stage B), with
+automatic reachability and no measure, of the Aizenman switching method in the OZ lower-semicontinuity program
+(issue \#4386, thread \#4418, toward Theorem 17.5.1 lsc half). The genuine Aizenman $\emptyset/\emptyset$ sourcefree
+connection-event representation $\langle\sigma_x\sigma_y\rangle = \mathbb{P}^{\emptyset,\emptyset}[x \leftrightarrow y]$
+(requiring the source-moving switching bijection into the both-sourcefree ensemble), the random-walk path-sum
+integration toward the lower bound on the correlation function, and the full lower-semicontinuity proof of
+Theorem 17.5.1 are deferred to later stages (~15--23 PR multi-stage effort).
 
 \noindent\textit{Key supporting lemmas:}
 \begin{itemize}

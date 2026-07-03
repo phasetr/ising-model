@@ -14,12 +14,24 @@ thread #4418): the *weighted-sum connectivity representation*
       w(m)\,w(M-m),
 \]
 i.e. the two-point function (times the sourcefree normalization squared)
-equals the weighted `tsum` over *doubled currents whose support connects
-`x` to `y`*. This is Aizenman's
-`⟨σ_xσ_y⟩ = ℙ^{∅,∅}[x ↔ y]` with **no probability measure formalized**:
-`weightSum ∅` plays the role of the (unnormalized) partition mass of the
-doubled sourcefree ensemble, and the restricted `tsum` is the mass of the
-connection event.
+equals the weighted `tsum` over doubled currents in the `{x,y}/∅`
+ensemble. This is the **decomposed `{x,y}/∅` weighted-sum form**: the
+inner sum ranges over splittings `M = m + (M − m)` with `∂m = {x,y}` and
+`∂(M − m) = ∅`, so the outer current carries sources `∂M = {x,y}` (the
+`{x,y}` current paired with a sourcefree partner). The `Reachable x y`
+restriction on the outer sum is **automatically satisfied**: the pair
+constraint `∂m = {x,y}` already forces a connecting path from `x` to `y`
+in the support of `M`, so cutting the sum down to reachable `M` removes
+nothing (this is exactly `doubled_pair_sum_eq_zero_of_not_reachable`).
+
+This is a *step toward*, but is **not yet**, Aizenman's sourcefree
+connection-event representation `⟨σ_xσ_y⟩ = ℙ^{∅,∅}[x ↔ y]`. That form
+lives in the `∅/∅` (both-sourcefree) ensemble with an explicit
+connection indicator `1[x ↔ y]`, and reaching it requires the
+source-moving switching bijection that converts the `{x,y}/∅` ensemble
+into the `∅/∅` ensemble. **That switching step is deferred to a later
+stage**; no probability measure is formalized here (`weightSum ∅` plays
+the role of an unnormalized partition mass).
 
 The identity is *true* — every step is an equality:
 * (P) `correlation_inducedGraph_eq_weightSum_ratio` (the ratio form);
@@ -48,16 +60,25 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 set_option linter.unusedDecidableInType false in
-/-- **Connectivity representation, weighted-sum form (Stage B capstone)**:
-for `x ≠ y ∈ Λ` and non-negative coupling `0 ≤ β J` (zero field `h = 0`),
+/-- **Connectivity representation, `{x,y}/∅` weighted-sum form (Stage B
+capstone)**: for `x ≠ y ∈ Λ` and non-negative coupling `0 ≤ β J` (zero
+field `h = 0`),
 \[
   \langle\sigma_x\sigma_y\rangle^{\Lambda}\cdot Z_\emptyset^{2}
   = \sum_{\substack{M\ :\ (M.\mathrm{toSimpleGraph}).\mathrm{Reachable}\ x\ y}}
     \sum_{\substack{m\le M,\ \partial m=\{x,y\},\ \partial(M-m)=\emptyset}}
       w(m)\,w(M-m),
 \]
-where the outer sum is a `tsum` over the *subtype* of doubled currents `M`
-whose support graph connects `x` to `y`.
+where the inner splitting `M = m + (M − m)` forces `∂M = {x,y}`, so the
+outer current lives in the `{x,y}/∅` ensemble. The `Reachable x y`
+restriction on the outer `tsum` is **automatic**, not an extra
+constraint: `∂m = {x,y}` already forces an `x`–`y` connecting path in the
+support of `M`, so the summand vanishes off the connection set and
+restricting to the reachable subtype removes nothing. This is the
+decomposed `{x,y}/∅` form; the genuine Aizenman `∅/∅` sourcefree
+connection-event representation `⟨σ_xσ_y⟩ = ℙ^{∅,∅}[x ↔ y]` (which needs
+the source-moving switching bijection into the both-sourcefree ensemble)
+is **deferred to a later stage**.
 
 Proof: (P) `correlation_inducedGraph_eq_weightSum_ratio` gives
 `correlation {x,y} · (weightSum ∅)² = weightSum {x,y} · weightSum ∅`
@@ -65,8 +86,9 @@ Proof: (P) `correlation_inducedGraph_eq_weightSum_ratio` gives
 (GS∞) `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset` with
 `A = {x,y}`, `B = ∅` rewrites the right side as `∑' M, F M`; finally
 `tsum_subtype_eq_of_support_subset` restricts the sum to the connection
-subtype, since `Function.support F` sits inside it by the contrapositive
-of B2 (`Current.doubled_pair_sum_eq_zero_of_not_reachable`).
+subtype — a no-op on the value, since `Function.support F` already sits
+inside it by the contrapositive of B2
+(`Current.doubled_pair_sum_eq_zero_of_not_reachable`).
 (Aizenman 1982 Lemma 4.1 / FV Theorem 9.35 / GJ §17.5.) -/
 theorem Current.correlation_mul_weightSum_empty_sq_eq_tsum_reachable_doubled
     (G : SimpleGraph V) (Λ : Finset V)
