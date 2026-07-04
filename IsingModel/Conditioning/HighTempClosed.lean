@@ -1,4 +1,5 @@
 import IsingModel.Conditioning.HighTempClosed.FreeEnergyRatios
+import IsingModel.Conditioning.HighTempClosed.ClosedFormField
 
 /-!
 # High-Temperature Closed Forms

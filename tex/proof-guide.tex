@@ -18268,6 +18268,40 @@ The correlation length definition (inverse mass, \S17.5)
 and the continuity theorem (Thm~17.5.1) require the infinite
 volume limit and transfer matrix spectral theory.
 
+\subsection{Field-dependent high-temperature closed form (GJ \S17.6.1, first brick)}
+
+The finite-volume partition function at general external field $h$ admits
+a closed-form high-temperature expansion,
+generalizing the zero-field form (Friedli--Velenik, \S3.7.3, eq.~(3.45)).
+Let $G$ be a finite graph on sites $\iota$, and let $\deg_X(v) = |\{e \in X : v \in e\}|$
+denote the $X$-degree of site $v$ in a subset $X \subseteq E(G)$.
+
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_field\_closed}]
+For parameters $\beta, J, h \in \mathbb{R}$,
+\[
+Z(G; J, h, \beta) = 2^{|\iota|} \cosh(\beta J)^{|E(G)|}
+  \cosh(\beta h)^{|\iota|}
+  \sum_{X \subseteq E(G)} \tanh(\beta J)^{|X|}
+    \tanh(\beta h)^{\#\{v : \deg_X(v) \text{ is odd}\}}.
+\]
+\end{theorem}
+
+The single-site field Fubini lemma (\texttt{sum\_prod\_toSign\_pow\_field})
+shows that $\sum_s s^k e^{as} = 2\cosh(a)$ when $k$ is even,
+and $2\sinh(a)$ when $k$ is odd (where $a \in \mathbb{R}$ and $s \in \{\pm 1\}$).
+Applying this per-vertex with $a = \beta h$ and powers matching the $X$-degree,
+the spin sum evaluates to $2^{|\iota|} \cosh(\beta h)^{|\iota|} \tanh(\beta h)^{\#\text{odd-deg}}$.
+Combined with the high-temperature expansion (product form) over edge subsets,
+the closed form follows as a purely finite combinatorial identity.
+No cluster-expansion, Kotečký--Preiss, or new analytic input is required.
+
+This is the first brick of the on-book programme toward
+GJ Theorem~17.6.1 ($\partial/\partial h$ high-temperature differentiability
+and $h$-analyticity of the two-point function).
+The Lean proof (\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormField.lean})
+is axiom-free.
+Reference: Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
