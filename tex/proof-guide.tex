@@ -18462,6 +18462,128 @@ the bound for real $h$.
 Reference: Friedli--Velenik, \S5.7 (polymer gas and Kotečský--Preiss); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (subgraph enumeration);
 Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version).
 
+\subsection{Field-dependent Mayer term and dominated summability (GJ \S17.6.1, brick 3)}
+
+\label{subsec:field_mayer_term}
+
+Brick~3 of the on-book programme toward GJ Theorem~17.6.1.
+Bricks~2a and~2b exhibited the field-dependent partition function as a hard-core
+polymer gas with volume-uniform activity bounds.
+Brick~3 supplies the convergence input of the field-dependent Mayer expansion:
+the field cluster-sequence activity, the field Mayer term, and its
+term-by-term dominated summability by comparison to the already-established zero-field majorant.
+
+\begin{definition}[\texttt{fieldClusterSeqActivity}]
+\label{def:field_cluster_seq_activity}
+For cluster sequences $\omega : \text{Fin}(n) \to \text{Finset}(\text{Sym}^2(\iota))$
+with field-dependent weights $w_{a,b}(P) = \tanh(a)^{|P|} \cdot \tanh(b)^{\#\text{odd}(P)}$:
+\[
+\texttt{fieldClusterSeqActivity}(a, b, \omega) := \prod_{i=0}^{n-1} w_{a,b}(\omega_i).
+\]
+This is the multiplicative carry of the field weight, analogous to
+$\texttt{clusterSeqActivity}(t, \omega) = \prod_{i=0}^{n-1} t^{|\omega_i|}$ for the
+zero-field case (where the weight is a monomial in the activity parameter $t$).
+\end{definition}
+
+\begin{definition}[\texttt{fieldMayerExpansionTerm}]
+\label{def:field_mayer_term}
+The $n$-th term of the field-dependent Mayer expansion:
+\[
+\texttt{fieldMayerExpansionTerm}(G, n, a, b) :=
+\sum_{\omega \in \text{piFinset}(\text{allConnectedPolymers}(G))^n}
+\phi^{\mathrm{T}}(\omega) \cdot \texttt{fieldClusterSeqActivity}(a, b, \omega),
+\]
+where $\phi^{\mathrm{T}}$ is the weight-agnostic Ursell coefficient (reused verbatim)
+and the reference universe is the field-dependent connected polymers
+$\text{allConnectedPolymers}(G)$ from brick~2a (parity restriction dropped).
+The coefficient $1/n!$ is already absorbed into $\phi^{\mathrm{T}}$.
+\end{definition}
+
+\begin{theorem}[\texttt{abs\_fieldClusterSeqActivity\_le}]
+\label{thm:field_cluster_seq_activity_bound}
+For all real $a, b$ and every cluster sequence $\omega$,
+\[
+|\texttt{fieldClusterSeqActivity}(a, b, \omega)| \le
+\texttt{clusterSeqActivity}(|\tanh(a)|, \omega) = \prod_{i=0}^{n-1} |\tanh(a)|^{|\omega_i|}.
+\]
+The proof distributes the absolute value over the product and applies the per-polymer bound
+$|w_{a,b}(P)| \le |\tanh(a)|^{|P|}$ from brick~2b,
+which holds for all real $b$ since $|\tanh(b)| < 1$.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldMayerExpansionTerm\_abs\_le}]
+\label{thm:field_mayer_term_triangle}
+By the triangle inequality applied to the sum-of-products definition,
+\[
+|\texttt{fieldMayerExpansionTerm}(G, n, a, b)| \le
+\sum_{\omega} |\phi^{\mathrm{T}}(\omega)| \cdot |\texttt{fieldClusterSeqActivity}(a, b, \omega)|.
+\]
+This is the field mirror of the zero-field bound.
+\end{theorem}
+
+\begin{theorem}[\texttt{sum\_clusterSeqActivity\_piFinset\_connected}]
+\label{thm:sum_cluster_seq_activity_connected}
+The total activity over connected cluster $n$-tuples factorises as
+\[
+\sum_{\omega \in \text{piFinset}(\text{allConnectedPolymers}(G))^n}
+\texttt{clusterSeqActivity}(t, \omega) =
+\left( \sum_{P \in \text{allConnectedPolymers}(G)} t^{|P|} \right)^n,
+\]
+by the product--sum expansion over the constant product-finset
+(\texttt{Finset.sum\_prod\_piFinset}).
+This is the connected-species analogue of the zero-field version
+and mirrors the Kotečský--Preiss factorisation.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldMayerExpansionTerm\_abs\_le\_tree\_activity\_pow}]
+\label{thm:field_mayer_term_tree_bound}
+The field Mayer term is bounded by the spanning-tree majorant:
+\[
+|\texttt{fieldMayerExpansionTerm}(G, n, a, b)| \le
+\frac{\#\text{SpanningTrees}(\text{Complete}(\text{Fin}(n)))}{n!} \cdot
+\left( \sum_{P \in \text{allConnectedPolymers}(G)} |\tanh(a)|^{|P|} \right)^n.
+\]
+The proof combines the uniform Ursell bound
+(\texttt{ursellCoefficient\_abs\_le\_numSpanningTrees\_top\_div\_factorial})
+with Theorem~\ref{thm:field_cluster_seq_activity_bound}
+(term-by-term domination) and Theorem~\ref{thm:sum_cluster_seq_activity_connected}
+(factorised total activity), as in the zero-field tree bound.
+This is a pure algebraic rearrangement; no new analysis.
+\end{theorem}
+
+\begin{theorem}[\texttt{summable\_fieldMayerExpansionTerm}]
+\label{thm:field_mayer_summable}
+If the high-temperature condition
+\[
+e \cdot \left( \sum_{P \in \text{allConnectedPolymers}(G)} |\tanh(a)|^{|P|} \right) < 1
+\]
+holds, then the field Mayer series is summable for every real $b$:
+\[
+\sum_{n=0}^{\infty} \texttt{fieldMayerExpansionTerm}(G, n, a, b) \text{ is convergent}.
+\]
+The proof is a comparison: Theorem~\ref{thm:field_mayer_term_tree_bound} dominates each
+field Mayer term by a bound in the activity $A = \sum_{P} |\tanh(a)|^{|P|}$.
+The species- and weight-agnostic Penrose spanning-tree majorant
+(\texttt{Penrose.summable\_completeGraph\_numSpanningTrees\_div\_factorial\_mul\_pow}),
+which was already used for the zero-field convergence,
+is applied verbatim at the specialised activity $R = A$:
+it furnishes summability under $e \cdot A < 1$, the connected-species analogue of
+the KP condition. No new hard analysis: brick~3 is pure comparison.
+\end{theorem}
+
+\paragraph{Scope.}
+Brick~3 is completely algebraic and combinatorial: no Kotečský--Preiss machinery,
+no differential or analytic input, and no new weights or majorants are introduced.
+The convergence is collapsed onto the zero-field route via the domination
+Theorem~\ref{thm:field_cluster_seq_activity_bound}.
+Real field $h$ only (complex $h$ deferred);
+regression at $b = 0$ recovers the zero-field even-polymer restriction.
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerTerm.lean}) are axiom-free.
+
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version);
+Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (polymer gas);
+Friedli--Velenik, \S5.7 (Mayer--Montroll expansion).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
