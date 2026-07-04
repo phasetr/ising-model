@@ -18366,6 +18366,102 @@ are axiom-free.
 Reference: Friedli--Velenik, \S3.7.3, eq.~(3.45), p.~117 (2017 ed.) (zero-field template);
 Friedli--Velenik, \S5.7 (polymer gas); Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
 
+\subsection{Field-dependent polymer activity bounds (GJ \S17.6.1, brick 2b)}
+
+\label{subsec:field_polymer_activity}
+
+Brick~2b of the on-book programme toward GJ Theorem~17.6.1.
+The field-dependent polymer factorization identity (brick~2a) exhibits the finite-volume
+partition function as a hard-core gas of field-dependent polymers.
+Brick~2b supplies the volume-uniform activity bounds for that gas,
+exposing the geometric-series convergence input required by the Kotečský--Preiss theorem.
+
+\begin{definition}[\texttt{fieldRootedPolymerActivity}]
+The field-dependent polymer activity through a vertex $v$:
+\[
+\sum_{P \in \texttt{rootedConnectedPolymers}(G, v)} |w_{a,b}(P)|,
+\]
+where the sum ranges over field-dependent connected polymers rooted at $v$.
+\end{definition}
+
+\begin{theorem}[\texttt{abs\_fieldPolymerWeight\_le}]
+\label{thm:abs_fieldPolymerWeight_le}
+For all $a, b \in \mathbb{R}$ and every polymer $P$,
+\[
+|w_{a,b}(P)| \le |\tanh(a)|^{|P|}.
+\]
+The field factor satisfies $|\tanh(b)|^{\#\text{odd}(P)} \le 1$ (by $|\tanh(b)| < 1$ for real $b$,
+via $\texttt{Real.abs\_tanh\_lt\_one}$), so the field only \emph{decreases} the bound.
+No hypothesis on $b$ is required.
+\end{theorem}
+
+\begin{theorem}[\texttt{rootedConnectedPolymersOfCard\_card\_le\_maxDegree\_pow}]
+\label{thm:rooted_connected_polymer_count}
+The number of size-$\ell$ field-dependent connected polymers through a vertex $v$ is at most
+$\Delta^{2\ell}$, where $\Delta = G.\texttt{maxDegree}$.
+This is the volume-uniform cardinality bound used in the geometric series,
+generalizing the zero-field even-polymer count bound.
+\end{theorem}
+
+\begin{theorem}[\texttt{sum\_pow\_card\_le\_geometric\_of\_count\_le}]
+\label{thm:sum_pow_card_geometric}
+For a finset $S$ of edge subsets of $G$ such that every member is contained in
+$G.\texttt{edgeFinset}$ and the $\ell$-cardinality slice has at most $\Delta^{2\ell}$ members,
+the activity sum $\sum_{P \in S} t^{|P|}$ is bounded by the geometric series $(1 - \Delta^2 t)^{-1}$
+under $0 \le t$ and $\Delta^2 t < 1$.
+This is the generic summation core shared by the zero-field even polymers and the
+field-dependent connected polymers; only the count hypothesis differs.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldRootedPolymerActivity\_le\_geometric}]
+\label{thm:field_rooted_activity_bound}
+Under the high-temperature hypothesis $\Delta^2 \cdot |\tanh(a)| < 1$ (where $\Delta = G.\texttt{maxDegree}$),
+the field-dependent activity through $v$ is bounded by
+\[
+\sum_{P \ni v} |w_{a,b}(P)| \le (1 - \Delta^2 |\tanh(a)|)^{-1},
+\]
+independently of the volume $|\iota|$ and of the field $b$.
+Applied with $a = \beta J$ and $b = \beta h$, this is the volume-uniform per-vertex Kotečský--Preiss
+finiteness input. The bound is always $\ge 1$, so it is \emph{not} the KP smallness criterion
+$\sum < 1$; the latter is supplied by the field Mayer bound (a later brick).
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldAllPolymersActivity\_le\_card\_mul\_geometric}]
+\label{thm:field_total_activity_bound}
+Under $\Delta^2 \cdot |\tanh(a)| < 1$, the total field-dependent polymer activity is bounded by
+\[
+\sum_{P \in \texttt{allConnectedPolymers}(G)} |w_{a,b}(P)| \le |\iota| \cdot (1 - \Delta^2 |\tanh(a)|)^{-1}.
+\]
+Each connected polymer is counted at least once in the per-vertex sums (since its support is nonempty),
+so the total activity is dominated by $|\iota|$ copies of the per-vertex geometric bound.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldAllPolymersActivity\_div\_card\_le\_geometric}]
+\label{thm:field_per_site_activity_bound}
+For a nonempty vertex type and $\Delta^2 \cdot |\tanh(a)| < 1$, the per-site total field-dependent
+polymer activity is bounded by
+\[
+\frac{1}{|\iota|} \sum_{P \in \texttt{allConnectedPolymers}(G)} |w_{a,b}(P)| \le (1 - \Delta^2 |\tanh(a)|)^{-1}.
+\]
+This is the per-site normalized form of the total activity bound, independent of volume.
+\end{theorem}
+
+The field-dependent polymer activity bounds are purely combinatorial consequences
+of Theorems~\ref{thm:abs_fieldPolymerWeight_le}, \ref{thm:rooted_connected_polymer_count},
+and the geometric series summation \ref{thm:sum_pow_card_geometric}.
+No Kotečský--Preiss machinery, no convergence, and no new analytic input are required.
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerActivity.lean})
+are axiom-free.
+The scope is honest: the bounds are always $\ge 1$, hence furnish only the
+\emph{finiteness} input to the KP theorem, not the smallness criterion;
+complex field (where $|\tanh(\beta h)|$ need not be $\le 1$) is deferred to a
+non-vanishing brick; and this is the field-dependent mirror of the zero-field
+even-polymer bounds, with the field factor always helping rather than breaking
+the bound for real $h$.
+
+Reference: Friedli--Velenik, \S5.7 (polymer gas and Kotečský--Preiss); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (subgraph enumeration);
+Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
