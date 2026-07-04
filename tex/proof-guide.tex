@@ -18717,6 +18717,141 @@ bricks~5--13+ (non-vanishing and volume-uniform bounds) remain.
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version);
 Friedli--Velenik, \S5.7 (Mayer--Montroll identity) and \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
 
+
+\subsection{Field polymer exponential identity, real-$h$ non-vanishing, and complex-$h$ prelude (GJ \S17.6.1, brick 5)}
+
+\label{subsec:field_polymer_exp_nonvanishing}
+
+Brick~5 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~4 provided the algebraic Mayer--Montroll \emph{log}-identity
+$\texttt{fieldPolymerFreeEnergy}(G, a, b) = \sum_n \texttt{fieldMayerExpansionTerm}(G, n, a, b)$.
+Brick~5 now converts that log-identity into an \emph{exponential} identity and
+establishes the associated \emph{non-vanishing} of the field polymer partition function:
+\[
+\exp(\texttt{fieldPolymerFreeEnergy}(G, a, b)) = \texttt{fieldPolymerZ}(G, a, b), \quad
+\texttt{fieldPolymerZ}(G, a, b) \ne 0,
+\]
+under the high-temperature smallness condition $|\varepsilon_{a,b}| < 1$.
+This is the transition point into the complex field parameter (`$b \in \mathbb{C}$`).
+
+\paragraph{Real-$h$ half (real `$b \in \mathbb{R}$`).}
+The four main theorems are:
+\begin{enumerate}
+\item
+\texttt{fieldPolymerZ\_pos}: $0 < \texttt{fieldPolymerZ}(G, a, b)$ under $|\varepsilon_{a,b}| < 1$.
+Since $\texttt{fieldPolymerZ} = 1 + \varepsilon_{a,b}$ and $|\varepsilon| < 1$ implies $\varepsilon > -1$,
+we have $1 + \varepsilon > 0$.
+Note: the zero-field route relied on every monomial $\geq 0$ to conclude $\sum \geq 1$.
+With the field factor $\tanh(b)^{\#\text{odd}(P)}$, monomials can be negative (at non-integer $\tanh b$),
+so the $1 + \varepsilon > 0$ argument is mandatory.
+
+\item
+\texttt{exp\_fieldPolymerFreeEnergy}: $\exp(\texttt{fieldPolymerFreeEnergy}(G, a, b)) = \texttt{fieldPolymerZ}(G, a, b)$
+under $|\varepsilon_{a,b}| < 1$.
+This is $\exp(\log(x)) = x$ applied to the positivity in~(1).
+
+\item
+\texttt{fieldPolymerZ\_ne\_zero}: $\texttt{fieldPolymerZ}(G, a, b) \ne 0$ under $|\varepsilon_{a,b}| < 1$.
+Phrased via $\exp$ (i.e., as the image of an exponential) rather than via $> 0$,
+so that the argument mirrors the complex non-vanishing in brick~6.
+
+\item
+\texttt{fieldPolymerZ\_eq\_exp\_tsum\_fieldMayerExpansionTerm}:
+$\texttt{fieldPolymerZ}(G, a, b) = \exp(\sum_{n=0}^{\infty} \texttt{fieldMayerExpansionTerm}(G, n, a, b))$
+under $|\varepsilon_{a,b}| < 1$ and $e \cdot A_C(a) < 1$ (brick~3's window).
+This combines the exponential identity with brick~4's Mayer--Montroll identity.
+\end{enumerate}
+
+\paragraph{Complex-$h$ prelude (complex field `$b \in \mathbb{C}$`, coupling `$a \in \mathbb{R}$`).}
+The role of brick~5's complex machinery is \emph{type design} and \emph{estimates only};
+the complex non-vanishing body is deferred to brick~6.
+The main definitions and lemmas are:
+
+\begin{definition}[\texttt{fieldPolymerWeightℂ}]
+The complex field polymer weight, for $b \in \mathbb{C}$:
+\[
+w^{\mathbb{C}}_{a,b}(P) := (\tanh(a) : \mathbb{C})^{|P|} \cdot (\text{Complex.tanh}(b))^{\#\text{odd}(P)},
+\]
+where $\tanh(a)$ is real, and $\text{Complex.tanh}(b)$ is the complex-hyperbolic-tangent.
+Entire in $b$.
+\end{definition}
+
+\begin{definition}[\texttt{fieldPolymerZℂ}]
+The complex field polymer partition function:
+\[
+\texttt{fieldPolymerZℂ}(G, a, b) := \sum_{\Gamma \in \text{vdConnectedPolymerFamilies}(G)}
+\prod_{P \in \Gamma} w^{\mathbb{C}}_{a,b}(P).
+\]
+\end{definition}
+
+\begin{theorem}[\texttt{fieldPolymerWeightℂ\_ofReal}; real-axis agreement]
+For real $b \in \mathbb{R}$,
+\[
+w^{\mathbb{C}}_{a,b}(P) = (\texttt{fieldPolymerWeight}(a, b, P) : \mathbb{C}).
+\]
+Both sides unfold to $\tanh(a)^{|P|} \cdot \tanh(b)^{\#\text{odd}(P)}$.
+The cast is pushed through the product and powers via $(\tanh(x) : \mathbb{C}) = \text{Complex.tanh}(x)$.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldPolymerZℂ\_ofReal}; real-axis agreement for $Z_{\mathbb{C}}$]
+For real $b \in \mathbb{R}$,
+\[
+\texttt{fieldPolymerZℂ}(G, a, b) = (\texttt{fieldPolymerZ}(G, a, b) : \mathbb{C}).
+\]
+The cast distributes over the family sum and the polymer product, and each factor agrees by
+\texttt{fieldPolymerWeightℂ\_ofReal}. This supplies the real-$b$-axis values that brick~6
+feeds to the analytic-continuation identity theorem.
+\end{theorem}
+
+\begin{theorem}[\texttt{oddBoundary\_card\_le\_two\_mul\_card}]
+For any finite set of edges $P$, the odd-degree vertex set
+(vertices incident to an odd number of edges in $P$)
+has cardinality $\leq 2|P|$.
+Every odd-degree vertex lies on some edge, so
+$\#\text{oddBoundary}(P) \subseteq \bigcup_{e \in P} e$,
+and each edge contributes $\leq 2$ vertices. This is a universal lemma (no even-degree hypothesis).
+\end{theorem}
+
+\begin{theorem}[\texttt{norm\_fieldPolymerWeightℂ\_le}; $M^2$-inflated pointwise majorant]
+Let $M := \max(1, \|\text{Complex.tanh}(b)\|)$.
+Then
+\[
+\|w^{\mathbb{C}}_{a,b}(P)\| \leq (M^2 \cdot |\tanh(a)|)^{|P|}.
+\]
+Since $|\text{Complex.tanh}(b)|$ need not be $\leq 1$ at complex $b$, we use $M \geq 1$ to get
+$\|\text{Complex.tanh}(b)\|^{\#\text{odd}(P)} \leq M^{\#\text{odd}(P)} \leq M^{2|P|} = (M^2)^{|P|}$
+via the parity bound.
+This majorant will feed the complex Koteck\'y--Preiss window of brick~6.
+\end{theorem}
+
+\begin{theorem}[\texttt{norm\_fieldPolymerZℂ\_le}; $M^2$-inflated aggregate majorant]
+Let $M := \max(1, \|\text{Complex.tanh}(b)\|)$.
+Then
+\[
+\|\texttt{fieldPolymerZℂ}(G, a, b)\| \leq
+\sum_{\Gamma \in \text{vdConnectedPolymerFamilies}(G)}
+\prod_{P \in \Gamma} (M^2 \cdot |\tanh(a)|)^{|P|}.
+\]
+The right-hand side is the connected-species gas at the inflated activity $t_* = M^2 \cdot |\tanh(a)|$.
+Its Koteck\'y--Preiss summability window is deferred to brick~6.
+\end{theorem}
+
+\paragraph{Scope.}
+Brick~5 supplies the real-$h$ exponential identity and non-vanishing result,
+together with the \emph{type and estimate design} for the complex field parameter.
+The complex $Z_{\mathbb{C}} \ne 0$ statement itself (analytic continuation + non-vanishing on the complex KP ball)
+is the content of brick~6, the Montel/Vitali re-plumbing is brick~7,
+and the $\partial/\partial h$ capstone is brick~8.
+This is brick~5 of the on-book programme toward GJ Theorem~17.6.1's $\partial/\partial h$
+high-temperature differentiability; \textbf{it is not itself a $\partial/\partial h$ result}.
+It is the ~6th PR of the ~13--22 PR chain toward that capstone (Issue~\#4413, thread~\#4433).
+
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerExpNonvanishing.lean})
+are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
+
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, non-vanishing);
+Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
