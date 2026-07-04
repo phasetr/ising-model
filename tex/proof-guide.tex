@@ -18302,6 +18302,70 @@ The Lean proof (\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormField.l
 is axiom-free.
 Reference: Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
 
+\subsection{Field-dependent polymer factorization identity (GJ \S17.6.1, brick 2a)}
+
+\label{subsec:field_polymer_factorization}
+
+Brick~2a of the on-book programme toward GJ Theorem~17.6.1.
+The field-dependent high-temperature closed form (brick~1) decomposes the edge-subset sum
+into connected polymers via the factorization identity.
+
+\begin{definition}[\texttt{IsConnectedPolymer}]
+A non-empty edge-connected subset $P \subseteq E(G)$ such that $P \subseteq G.\texttt{edgeFinset}$.
+This generalizes \texttt{IsPolymer} by dropping the even-degree restriction.
+\end{definition}
+
+\begin{definition}[\texttt{fieldPolymerWeight}]
+For $a, b \in \mathbb{R}$ and a polymer $P$,
+\[
+w_{a,b}(P) = \tanh(a)^{|P|} \cdot \tanh(b)^{\#\text{odd}(P)},
+\]
+where $\#\text{odd}(P) = |\{v : \deg_P(v) \text{ is odd}\}|$ counts the odd-degree vertices.
+Applied with $a = \beta J$ and $b = \beta h$, this is the field-dependent polymer activity.
+\end{definition}
+
+\begin{definition}[\texttt{vdConnectedPolymerFamilies}]
+The universe of vertex-disjoint families of connected polymers in $G$,
+generalizing \texttt{vdCompatiblePolymerFamilies} to the field-dependent setting.
+\end{definition}
+
+\begin{theorem}[\texttt{oddCard\_biUnion\_of\_vd}]
+\label{thm:oddCard_biUnion_of_vd}
+For a pairwise vertex-disjoint family $\Gamma$ with $X = \bigsqcup_{P \in \Gamma} P$
+(edge-disjoint union),
+\[
+\#\text{odd}(X) = \sum_{P \in \Gamma} \#\text{odd}(P).
+\]
+This is the key combinatorial step of brick~2a, establishing additivity of the odd-degree
+vertex count over vertex-disjoint polymers.
+\end{theorem}
+
+\begin{theorem}[\texttt{allSubgraphs\_sum\_eq\_vdConnectedPolymerFamilies\_sum}]
+\label{thm:polymer_factorization_field}
+For all $a, b \in \mathbb{R}$,
+\[
+\sum_{X \subseteq E(G)} \tanh(a)^{|X|} \cdot \tanh(b)^{\#\text{odd}(X)}
+  = \sum_{\Gamma \in \texttt{vdConnectedPolymerFamilies}(G)}
+      \prod_{P \in \Gamma} w_{a,b}(P).
+\]
+The edge-subset sum factorizes over the edge-connected components (polymers) of $X$,
+exhibiting the finite-volume partition function as a hard-core (vertex-disjoint)
+polymer gas with the field-dependent activity.
+This is the field-dependent generalization of the zero-field identity
+\texttt{evenSubgraphs\_sum\_eq\_vdPolymerFamilies\_sum}, with the even-subgraph restriction
+dropped and the odd-vertex-count factor replacing the even-subgraph indicator.
+\end{theorem}
+
+The factorization identity is a purely finite combinatorial consequence
+of the polymer decomposition and Theorem~\ref{thm:oddCard_biUnion_of_vd}.
+No Kotečský--Preiss, convergence, or new analytic input is required.
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/Families/FieldConnectedPolymers.lean},
+\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormFieldPolymer.lean})
+are axiom-free.
+
+Reference: Friedli--Velenik, \S3.7.3, eq.~(3.45), p.~117 (2017 ed.) (zero-field template);
+Friedli--Velenik, \S5.7 (polymer gas); Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
