@@ -18852,6 +18852,169 @@ are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}
 Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, non-vanishing);
 Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
 
+\subsection{Complex field partition non-vanishing via analytic continuation (GJ \S17.6.1, brick 6)}
+
+Brick~6 (the complex-analytic body) establishes the nonvanishing of the field polymer partition function
+on a complex $h$-ball by lifting the real-$h$ identity from brick~5 to the complex plane via analytic continuation.
+It is the \emph{complex $Z_{\mathbb{C}} \ne 0$ body}; the two-point Montel/Vitali re-plumbing is brick~7 and the full
+$\partial/\partial h$ capstone is brick~8.
+
+\subsubsection*{Complex field Mayer term and Penrose majorant}
+
+\begin{definition}[\texttt{fieldClusterSeqActivityℂ}]
+For a cluster sequence $\omega : \Fin n \to \Finset(\Sym^2 \iota)$, the complex field activity is
+\[
+\mathsf{w}^{\mathbb{C}}_{a,b}(\omega) := \prod_{i \in \Fin n} w^{\mathbb{C}}_{a,b}(\omega_i),
+\]
+where $w^{\mathbb{C}}_{a,b}(P)$ is the complex field weight from brick~5: $(\tanh a : \mathbb{C})^{|P|} \cdot (\text{Complex.tanh } b)^{\#\text{odd}(P)}$.
+\end{definition}
+
+\begin{definition}[\texttt{fieldMayerExpansionTermℂ}]
+The complex field Mayer expansion $n$-th term is
+\[
+\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G) :=
+\sum_{\omega \in \text{allConnectedPolymers}(G)^n}
+\text{ursellCoefficient}(\omega) \cdot \mathsf{w}^{\mathbb{C}}_{a,b}(\omega),
+\]
+where the Ursell coefficient is reused verbatim (cast to $\mathbb{C}$).
+\end{definition}
+
+\begin{theorem}[\texttt{fieldClusterSeqActivityℂ\_ofReal} and \texttt{fieldMayerExpansionTermℂ\_ofReal}]
+For real $b \in \mathbb{R}$,
+\begin{align}
+\mathsf{w}^{\mathbb{C}}_{a,b}(\omega) &= (\mathsf{w}_{a,b}(\omega) : \mathbb{C}),\\
+\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G) &= (\mathsf{M}_{a,b}^{(n)}(G) : \mathbb{C}).
+\end{align}
+The cast distributes over the product and sum, and each factor agrees by the weight real-axis
+agreement from brick~5. This supplies the real-axis seed that analytic continuation feeds to the
+identity theorem.
+\end{theorem}
+
+\begin{theorem}[\texttt{norm\_fieldMayerExpansionTermℂ\_le\_tree\_activity\_pow}; Penrose majorant]
+With $M := \max(1, \|\text{Complex.tanh}(b)\|)$,
+\[
+\|\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)\| \leq
+\frac{\text{numSpanningTrees}(\top : \text{SimpleGraph}(\Fin n))}{n!}
+\left(\sum_{P \in \text{allConnectedPolymers}(G)} (M^2 \cdot |\tanh(a)|)^{|P|}\right)^n.
+\]
+This is the $M^2$-inflated Penrose bound, essential for the complex Koteck\'y--Preiss window.
+\end{theorem}
+
+\subsubsection*{Pole avoidance and analyticity of $\text{Complex.tanh}$ on the $\pi/2$-ball}
+
+\begin{theorem}[\texttt{cosh\_ne\_zero\_of\_norm\_lt\_pi\_div\_two}; pole avoidance]
+If $\|b\| < \pi/2$ for $b \in \mathbb{C}$, then $\text{Complex.cosh}(b) \ne 0$.
+
+\emph{Proof.} The zeros of $\text{Complex.cosh}$ are $\text{Complex.cosh}(z) = 0 \iff z = (2k+1)\pi I / 2$
+for $k \in \mathbb{Z}$ (via $\text{Complex.cosh}(z) = \text{Complex.cos}(z \cdot I)$ and $\text{Complex.cos}(\zeta) = 0 \iff
+\zeta = (2k+1)\pi/2$). If $\text{cosh}(b) = 0$, then $b = (2k+1)\pi I/2$, so
+\[
+\|b\| = \|b \cdot I\| = |(2k+1)| \cdot \pi/2 \geq \pi/2,
+\]
+contradicting $\|b\| < \pi/2$. \hfill$\square$
+\end{theorem}
+
+\begin{theorem}[\texttt{differentiableOn\_ctanh\_ball}]
+The function $\text{Complex.tanh} : \mathbb{C} \to \mathbb{C}$ is $\mathtt{DifferentiableOn}$ the open ball
+$\mathcal{B} := \{b \in \mathbb{C} : \|b\| < \pi/2\}$.
+
+\emph{Proof.} On the ball, $\text{cosh}(b) \ne 0$ (by pole avoidance).
+Since $\text{Complex.tanh} = \text{sinh} / \text{cosh}$ and both numerator and denominator are entire,
+the quotient is differentiable at every point where the denominator is nonzero. \hfill$\square$
+\end{theorem}
+
+\begin{theorem}[\texttt{analyticOnNhd\_ctanh\_ball}]
+The function $\text{Complex.tanh}$ is $\mathtt{AnalyticOnNhd} \, \mathbb{C}$ on the ball
+$\mathcal{B} := \{b \in \mathbb{C} : \|b\| < \pi/2\}$.
+
+\emph{Proof.} A differentiable function on an open set is analytic (by the Cauchy--Riemann equations).
+\hfill$\square$
+\end{theorem}
+
+\subsubsection*{Holomorphy of both sides in $b$}
+
+\begin{theorem}[\texttt{fieldPolymerZℂ\_analyticOnNhd}; LHS holomorphy]
+On any ball $\mathcal{B}_r = \{b : \|b\| < r\}$ with $r \leq \pi/2$,
+the function $b \mapsto \mathsf{Z}^{\mathbb{C}}(G; a, b)$ is $\mathtt{AnalyticOnNhd}$.
+
+\emph{Proof.} The partition function is a finite sum of finite products of the analytic weights
+$w^{\mathbb{C}}_{a,b}(P)$, each analytic in $b$ on the ball. Analyticity is closed under
+finite sums and products. \hfill$\square$
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldMayerExpansionTermℂ\_analyticOnNhd}]
+On any ball $\mathcal{B}_r$ with $r \leq \pi/2$, the complex field Mayer term $b \mapsto \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)$
+is $\mathtt{AnalyticOnNhd}$ for each $n$.
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldMayerExpansionTermℂ\_tsum\_analyticOnNhd}; RHS holomorphy]
+On $\mathcal{B}_r$ with $0 < r < \pi/2$, under the inflated high-temperature window
+\[
+e \cdot \left(\sum_{P \in \text{allConnectedPolymers}(G)} (M_r^2 \cdot |\tanh(a)|)^{|P|}\right) < 1
+\]
+where $M_r := \max(1, \sup_{\|z\| \leq r} \|\text{Complex.tanh}(z)\|)$, the infinite series
+\[
+\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)
+\]
+is $\mathtt{AnalyticOnNhd}$ on $\mathcal{B}_r$.
+
+\emph{Proof.} Weierstrass dominated-convergence theorem: each term is analytic, and the Penrose majorant
+provides a summable norm bound that is uniform on the closed ball. \hfill$\square$
+\end{theorem}
+
+\subsubsection*{Analytic continuation and complex non-vanishing}
+
+\begin{theorem}[\texttt{fieldPolymerZ\_eq\_exp\_eventually\_b}; real-axis seed in the $h$-direction]
+For fixed real $a$, under the connected-species window $e \cdot A_C(a) < 1$ and the base-point
+smallness $|E_{a,0}| < 1$ (definitions from brick~5), there is a neighbourhood of $0$ in $\mathbb{R}$ such that
+\[
+\mathsf{Z}(G; a, b) = \exp\left(\sum_{n=0}^{\infty} \mathsf{M}_{a,b}^{(n)}(G)\right)
+\]
+for all real $b$ in that neighbourhood.
+
+\emph{Proof.} The real $h$ identity (brick~5) holds when the smallness condition is satisfied;
+by continuity of the field-polynomial in $b$, the condition persists on a neighbourhood of $0$. \hfill$\square$
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldPolymerZℂ\_eq\_exp\_tsum\_fieldMayerExpansionTermℂ}; complex exponential identity via analytic continuation]
+On the ball $\mathcal{B}_r = \{b : \|b\| < r\}$ with $0 < r < \pi/2$, under the inflated window
+(from the RHS holomorphy theorem above) and the base-point smallness $|E_{a,0}| < 1$,
+for any $b \in \mathcal{B}_r$,
+\[
+\mathsf{Z}^{\mathbb{C}}(G; a, b) = \exp\left(\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)\right).
+\]
+
+\emph{Proof.} \textbf{Analytic continuation via the identity theorem.}
+Both sides are $\mathtt{AnalyticOnNhd}$ on the preconnected open ball $\mathcal{B}_r$ (LHS and RHS holomorphy).
+They agree on a dense subset: by the real-axis seed theorem, they agree on a sequence
+$b_k = 1/(k+1) \to 0$ (after casting the real identity through $\mathbb{C}$ via $\mathbb{C}.ofReal\_exp$ and
+$\mathbb{C}.ofReal\_tsum$). The analytic identity theorem (two analytic functions on a preconnected domain
+that agree on a set accumulating at an interior point agree everywhere) extends the agreement to the
+whole ball. \hfill$\square$
+\end{theorem}
+
+\begin{theorem}[\texttt{fieldPolymerZℂ\_ne\_zero}; complex field partition non-vanishing]
+Under the hypotheses of the previous theorem, for all $b \in \mathcal{B}_r$,
+\[
+\mathsf{Z}^{\mathbb{C}}(G; a, b) \ne 0.
+\]
+
+\emph{Proof.} By the exponential identity, $\mathsf{Z}^{\mathbb{C}}(G; a, b) = \exp(\ldots)$,
+and $\text{Complex.exp}$ is never zero. \hfill$\square$
+\end{theorem}
+
+\paragraph{Scope.}
+Brick~6 supplies the complex exponential identity and complex non-vanishing;
+it does \textbf{not} itself constitute a $\partial/\partial h$ result. The two-point Montel/Vitali re-plumbing
+is brick~7, and the $\partial/\partial h$ capstone is brick~8. This is brick~6 of the on-book programme
+toward GJ Theorem~17.6.1's $\partial/\partial h$ high-temperature differentiability; it is
+the \emph{seventh PR} of the \emph{13--22 PR chain} toward that capstone (Issue~\#4413, thread~\#4433).
+
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerComplexNonvanishing.lean})
+are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
+
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, analyticity and non-vanishing); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the
