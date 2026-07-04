@@ -18584,6 +18584,139 @@ Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster ex
 Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (polymer gas);
 Friedli--Velenik, \S5.7 (Mayer--Montroll expansion).
 
+\subsection{Field-dependent Mayer--Montroll identity (GJ \S17.6.1, brick 4)}
+
+\label{subsec:field_mayer_montroll_identity}
+
+Brick~4 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~3 provided the convergence input via dominated summability of the field Mayer term.
+Brick~4 now supplies the \emph{algebraic Mayer--Montroll identity}:
+the field polymer free energy equals the sum of the field Mayer expansion terms,
+\[
+\texttt{fieldPolymerFreeEnergy}(G, a, b) = \sum_{n=0}^{\infty} \texttt{fieldMayerExpansionTerm}(G, n, a, b).
+\]
+This is a combinatorial statement (Fubini swap of a double sum) that does not introduce
+new analytical machinery: the colour-degree / incompatibility-graph / proper-surjective-colouring
+infrastructure is reused verbatim from the zero-field Mayer--Montroll identity
+(\texttt{mayer\_identity\_general\_t}, PR~\#3998, \texttt{MayerCore/MayerMontroll.lean}),
+and the field-dependent cluster-sequence activity is carried through the identical
+regrouping steps.
+
+\begin{definition}[\texttt{fieldPolymerZ}]
+\label{def:field_polymer_Z}
+The field polymer partition function, summing over vertex-disjoint connected polymer families:
+\[
+\texttt{fieldPolymerZ}(G, a, b) := \sum_{\Gamma \in \mathrm{vdConnectedPolymerFamilies}(G)}
+\prod_{P \in \Gamma} w_{a,b}(P),
+\]
+where $w_{a,b}(P) = \tanh(a)^{|P|} \cdot \tanh(b)^{\#\text{odd}(P)}$ is the field-dependent activity
+(brick~2a, brick~2b).
+This is the field generalization of the zero-field $\texttt{polymerFreeEnergy}$.
+\end{definition}
+
+\begin{definition}[\texttt{fieldPolymerFreeEnergy}]
+\label{def:field_polymer_free_energy}
+The field polymer free energy:
+\[
+\texttt{fieldPolymerFreeEnergy}(G, a, b) := \log(\texttt{fieldPolymerZ}(G, a, b)).
+\]
+\end{definition}
+
+\begin{definition}[\texttt{fieldColorDegreeTerm}]
+\label{def:field_color_degree_term}
+The $(r, k)$-th colour-degree contribution to the Mayer expansion:
+\[
+\texttt{fieldColorDegreeTerm}(G, a, b, r, k) :=
+\frac{(-1)^{k-1}}{k} \sum_{\omega \in \text{piFinset}(\text{allConnectedPolymers}(G))^r}
+\frac{\#\text{properSurjectiveColorings}(G(\omega), k)}{r!} \cdot
+\texttt{fieldClusterSeqActivity}(a, b, \omega),
+\]
+where $G(\omega)$ is the polymer incompatibility graph and the numerator counts
+proper surjective colourings of $r$ polymers into $k$ colours.
+Summing over $k \in \{1, \ldots, r\}$ gives the $r$-th Mayer term;
+summing over $r$ for fixed $k$ gives the $k$-th log-Taylor term.
+\end{definition}
+
+\begin{theorem}[\texttt{field\_mayer\_identity\_general}]
+\label{thm:field_mayer_identity_general}
+(Field-dependent Mayer--Montroll identity.)
+Suppose the high-temperature convergence conditions hold:
+\begin{enumerate}
+\item
+$\left| \sum_{\Gamma \in (\mathrm{vdConnectedPolymerFamilies}(G) \setminus \{\emptyset\})}
+\prod_{P \in \Gamma} w_{a,b}(P) \right| < 1$ (the $|\varepsilon_{a,b}| < 1$ condition for the $\log(1+\varepsilon)$ Taylor series),
+
+\item
+$e \cdot \left( \sum_{P \in \text{allConnectedPolymers}(G)} |\tanh(a)|^{|P|} \right) < 1$ (the brick-3 high-temperature window for the colour-degree double-sum convergence).
+\end{enumerate}
+Then the field polymer free energy equals the field Mayer series:
+\[
+\texttt{fieldPolymerFreeEnergy}(G, a, b) = \sum_{n=0}^{\infty} \texttt{fieldMayerExpansionTerm}(G, n, a, b).
+\]
+\end{theorem}
+
+\paragraph{Proof outline.}
+The proof follows the zero-field Mayer--Montroll structure:
+\begin{enumerate}
+\item
+Peel off the empty polymer family: $\texttt{fieldPolymerZ} = 1 + \varepsilon_{a,b}$,
+where $\varepsilon_{a,b}$ is the sum over nonempty connected families.
+
+\item
+Apply $\log(1 + \varepsilon) = \sum_{n=1}^{\infty} \frac{(-1)^{n-1}}{n} \varepsilon^n$ (real-analytic Taylor series
+from brick~3's domination hypothesis).
+
+\item
+Expand $\varepsilon^n$ as a sum of nonempty connected $(n+1)$-tuples of vertex-disjoint families.
+
+\item
+Regroup by colour classes of a polymer sequence $\omega : \text{Fin}(r) \to \text{allConnectedPolymers}(G)$
+and its proper colourings (the colour-degree axis).
+This yields a double sum of the form
+\[
+\sum_{r=0}^{\infty} \sum_{k=0}^{\infty} \texttt{fieldColorDegreeTerm}(G, a, b, r, k).
+\]
+The row sums (over $k$) are finite by brick~3's domination (no new analytical input).
+
+\item
+Apply Fubini swap (via \texttt{tsum\_comm}, enabled by brick~3's double summability
+\texttt{summable\_uncurry\_fieldColorDegreeTerm}):
+exchange the order of summation to get
+\[
+\sum_{r=0}^{\infty} \sum_{k=0}^{\infty} \cdots = \sum_{r=0}^{\infty}
+\left( \sum_{k=0}^{\infty} \texttt{fieldColorDegreeTerm}(G, a, b, r, k) \right) =
+\sum_{r=0}^{\infty} \texttt{fieldMayerExpansionTerm}(G, r, a, b).
+\]
+The $k=0$ column (vanishing denominator) drops out, accounting for the shift from
+log-Taylor indices $(n+1)$ to Mayer indices $r$.
+\end{enumerate}
+All combinatorial coefficients (the Ursell coefficient $\phi^{\mathrm{T}}$,
+the incompatibility graph, the proper-surjective-colouring count)
+are weight-agnostic and reused verbatim from the zero-field route.
+The genuinely new content is re-running the weight-carrying
+\emph{finset regroupings} with $w_{a,b}(P)$ in place of the monomial $t^{|P|}$.
+
+\paragraph{Scope.}
+Brick~4 is the algebraic assembly of the colour-degree double sum into the Mayer identity.
+Real field $h$ only (complex $h$, where $|\tanh(b)|$ need not satisfy $< 1$, is deferred to a later non-vanishing brick).
+Regression at $b = 0$ (where $\tanh(0) = 0$): the field weight collapses to zero-field monomials,
+the field Mayer term reduces to the even-polymer-restricted zero-field term, and the identity
+recovers the zero-field \texttt{mayer\_identity\_general\_t} (up to the species relabelling).
+
+A complementary theorem, \texttt{field\_mayer\_identity\_general\_eventually}, states that for fixed $b$,
+in some neighbourhood of $a = 0$, the identity holds.
+Both convergence hypotheses are satisfied eventually as $a \to 0$:
+the $\varepsilon_{a,b}$ term vanishes (each nonempty connected polymer $P$ contributes a factor $\tanh(a)^{|P|} \to 0$),
+and the activity sum $A_C(a) = \sum_P |\tanh(a)|^{|P|} \to 0$, so $e \cdot A_C(a) < 1$ eventually.
+
+The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerIdentity.lean}) are axiom-free
+(\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
+The field Mayer identity itself does \emph{not} discharge Theorem~17.6.1:
+bricks~5--13+ (non-vanishing and volume-uniform bounds) remain.
+
+Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version);
+Friedli--Velenik, \S5.7 (Mayer--Montroll identity) and \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+
 \section{Cluster expansion (\S18.1--18.3)}
 
 The lattice Ising analogue of the cluster expansion is the

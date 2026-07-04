@@ -264,6 +264,7 @@ import IsingModel.ClusterExpansion.PolymerCounting
 import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.FieldPolymerActivity
 import IsingModel.ClusterExpansion.FieldMayerTerm
+import IsingModel.ClusterExpansion.FieldMayerIdentity
 import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.PolymerActivityMoment
 import IsingModel.ClusterExpansion.PolymerActivityTailMoment
