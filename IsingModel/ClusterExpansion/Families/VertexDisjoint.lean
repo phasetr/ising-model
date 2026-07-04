@@ -10,15 +10,15 @@ namespace IsingModel
 
 open Finset
 
-/-- **Reachability in a VD-compatible biUnion stays within a polymer**:
-if `Γ` is vertex-disjoint compatible and `P ∈ Γ`, then any chain in
-`edgeAdjacentIn (Γ.biUnion id)` starting from an edge of `P` ends at
-an edge of `P`. -/
-private theorem reflTransGen_in_polymer_of_VD
+/-- **Reachability in a pairwise vertex-disjoint biUnion stays within a
+member**: if the members of `Γ` are pairwise vertex-disjoint and `P ∈ Γ`,
+then any chain in `edgeAdjacentIn (Γ.biUnion id)` starting from an edge of
+`P` ends at an edge of `P`. This is the parity-free core shared by the even
+and connected polymer families. -/
+private theorem reflTransGen_in_member_of_pairwiseVertexDisjoint
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {G : SimpleGraph ι} [Fintype G.edgeSet]
     {Γ : Finset (Finset (Sym2 ι))}
-    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ)
+    (hpair : (↑Γ : Set (Finset (Sym2 ι))).Pairwise IsPolymerVertexDisjoint)
     {P : Finset (Sym2 ι)} (hP : P ∈ Γ)
     {e f : Sym2 ι} (he : e ∈ P)
     (h_chain : Relation.ReflTransGen (edgeAdjacentIn (Γ.biUnion id)) e f) :
@@ -44,7 +44,7 @@ private theorem reflTransGen_in_polymer_of_VD
     · exact hPQ ▸ hbQ
     · exfalso
       have h_disj : Disjoint (polymerSupport P) (polymerSupport Q) :=
-        hΓ.2 (Finset.mem_coe.mpr hP) (Finset.mem_coe.mpr hQ) hPQ
+        hpair (Finset.mem_coe.mpr hP) (Finset.mem_coe.mpr hQ) hPQ
       exact (Finset.disjoint_left.mp h_disj) hvP hvQ
 
 /-- **Lift edge-adjacency reachability from a subgraph to a superset**:
@@ -62,14 +62,15 @@ private theorem reflTransGen_edgeAdjacentIn_mono
       ⟨hPY h_step.1, hPY h_step.2.1, h_step.2.2⟩
     exact Relation.ReflTransGen.tail ih h_step'
 
-/-- **Each VD-family polymer is its own biUnion component**: if `Γ` is
-vertex-disjoint compatible and `P ∈ Γ` with `e ∈ P`, then
-`edgeComponent (Γ.biUnion id) e = P`. -/
-theorem IsCompatiblePolymerFamilyVertexDisjoint.edgeComponent_biUnion_eq_polymer
+/-- **Component recovery from pairwise vertex-disjointness**: if the members
+of `Γ` are pairwise vertex-disjoint and each is edge-connected, then for
+`P ∈ Γ` and `e ∈ P` the `edgeComponent` of `e` in `Γ.biUnion id` is exactly
+`P`. Parity-free core shared by the even and connected polymer families. -/
+theorem edgeComponent_biUnion_eq_member_of_pairwiseVertexDisjoint
     {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {G : SimpleGraph ι} [Fintype G.edgeSet]
     {Γ : Finset (Finset (Sym2 ι))}
-    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ)
+    (hpair : (↑Γ : Set (Finset (Sym2 ι))).Pairwise IsPolymerVertexDisjoint)
+    (hconn : ∀ Q ∈ Γ, IsEdgeConnected Q)
     {P : Finset (Sym2 ι)} (hP_mem : P ∈ Γ)
     {e : Sym2 ι} (he : e ∈ P) :
     edgeComponent (Γ.biUnion id) e = P := by
@@ -77,29 +78,47 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.edgeComponent_biUnion_eq_polymer
   · -- ⊆: chain stays in P
     intro f hf
     rw [mem_edgeComponent] at hf
-    exact reflTransGen_in_polymer_of_VD hΓ hP_mem he hf.2
+    exact reflTransGen_in_member_of_pairwiseVertexDisjoint hpair hP_mem he hf.2
   · -- ⊇: P connected ⇒ chain in P → chain in biUnion
     intro f hf
-    have hP_polymer := hΓ.1 P hP_mem
     have h_in_biU : f ∈ Γ.biUnion id := by
       rw [Finset.mem_biUnion]; exact ⟨P, hP_mem, hf⟩
     rw [mem_edgeComponent]
     refine ⟨h_in_biU, ?_⟩
     have h_chain_in_P : Relation.ReflTransGen (edgeAdjacentIn P) e f :=
-      hP_polymer.connected e he f hf
+      hconn P hP_mem e he f hf
     have hP_sub : P ⊆ Γ.biUnion id := by
       intro x hx
       rw [Finset.mem_biUnion]; exact ⟨P, hP_mem, hx⟩
     exact reflTransGen_edgeAdjacentIn_mono hP_sub h_chain_in_P
 
-/-- **`polymerDecomposition (Γ.biUnion id) = Γ`** for VD-compatible Γ:
-the polymer decomposition of the biUnion of a vertex-disjoint
-compatible polymer family recovers the family. -/
-theorem IsCompatiblePolymerFamilyVertexDisjoint.polymerDecomposition_biUnion
+/-- **Each VD-family polymer is its own biUnion component**: if `Γ` is
+vertex-disjoint compatible and `P ∈ Γ` with `e ∈ P`, then
+`edgeComponent (Γ.biUnion id) e = P`. Specialization of
+`edgeComponent_biUnion_eq_member_of_pairwiseVertexDisjoint` extracting
+connectedness from the polymer clause. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.edgeComponent_biUnion_eq_polymer
     {ι : Type*} [Fintype ι] [DecidableEq ι]
     {G : SimpleGraph ι} [Fintype G.edgeSet]
     {Γ : Finset (Finset (Sym2 ι))}
-    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ)
+    {P : Finset (Sym2 ι)} (hP_mem : P ∈ Γ)
+    {e : Sym2 ι} (he : e ∈ P) :
+    edgeComponent (Γ.biUnion id) e = P :=
+  edgeComponent_biUnion_eq_member_of_pairwiseVertexDisjoint hΓ.2
+    (fun Q hQ => (hΓ.1 Q hQ).connected) hP_mem he
+
+/-- **`polymerDecomposition (Γ.biUnion id) = Γ`** from pairwise vertex-
+disjointness: if the members of `Γ` are pairwise vertex-disjoint, each
+edge-connected and non-empty, then the polymer decomposition of their
+biUnion recovers `Γ`. Parity-free core shared by the even and connected
+polymer families. -/
+theorem polymerDecomposition_biUnion_of_pairwiseVertexDisjoint
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hpair : (↑Γ : Set (Finset (Sym2 ι))).Pairwise IsPolymerVertexDisjoint)
+    (hconn : ∀ Q ∈ Γ, IsEdgeConnected Q)
+    (hne : ∀ Q ∈ Γ, Q.Nonempty) :
     polymerDecomposition (Γ.biUnion id) = Γ := by
   ext C
   rw [mem_polymerDecomposition]
@@ -108,17 +127,30 @@ theorem IsCompatiblePolymerFamilyVertexDisjoint.polymerDecomposition_biUnion
     rintro ⟨e, he, rfl⟩
     rw [Finset.mem_biUnion] at he
     obtain ⟨P, hP_mem, heP⟩ := he
-    -- edgeComponent biUnion e = P (Step 544)
-    rw [hΓ.edgeComponent_biUnion_eq_polymer hP_mem heP]
+    rw [edgeComponent_biUnion_eq_member_of_pairwiseVertexDisjoint hpair hconn
+      hP_mem heP]
     exact hP_mem
   · -- C ∈ Γ ⇒ C ∈ image (pick any edge of C)
     intro hC
-    have hC_polymer := hΓ.1 C hC
-    obtain ⟨e, heC⟩ := hC_polymer.nonempty
+    obtain ⟨e, heC⟩ := hne C hC
     refine ⟨e, ?_, ?_⟩
     · rw [Finset.mem_biUnion]
       exact ⟨C, hC, heC⟩
-    · exact hΓ.edgeComponent_biUnion_eq_polymer hC heC
+    · exact edgeComponent_biUnion_eq_member_of_pairwiseVertexDisjoint hpair hconn
+        hC heC
+
+/-- **`polymerDecomposition (Γ.biUnion id) = Γ`** for VD-compatible Γ:
+the polymer decomposition of the biUnion of a vertex-disjoint
+compatible polymer family recovers the family. Specialization of
+`polymerDecomposition_biUnion_of_pairwiseVertexDisjoint`. -/
+theorem IsCompatiblePolymerFamilyVertexDisjoint.polymerDecomposition_biUnion
+    {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {G : SimpleGraph ι} [Fintype G.edgeSet]
+    {Γ : Finset (Finset (Sym2 ι))}
+    (hΓ : IsCompatiblePolymerFamilyVertexDisjoint G Γ) :
+    polymerDecomposition (Γ.biUnion id) = Γ :=
+  polymerDecomposition_biUnion_of_pairwiseVertexDisjoint hΓ.2
+    (fun Q hQ => (hΓ.1 Q hQ).connected) (fun Q hQ => (hΓ.1 Q hQ).nonempty)
 
 /-- **Set of vertex-disjoint compatible polymer families** in `G`:
 the universe used for the polymer-model identity. Defined as
