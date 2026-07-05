@@ -29,23 +29,26 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Fubini swap of the Penrose tree sum, with parent-constraint relaxation.**  The
-Penrose double sum over polymer sequences and spanning trees of the incompatibility
-graph is bounded by the sum, over complete-graph spanning-tree shapes `T`, of the weight
-over the sequences satisfying the per-edge parent incompatibility for `T`.  The spanning
-trees of `incompat ω` are spanning trees of the complete graph, so the two sums swap;
-the inner constraint is then relaxed by #4096. -/
-theorem penroseTreeSum_le_subtype_parentConstraint (G : SimpleGraph ι) [Fintype G.edgeSet]
+/-- **Fubini swap of the Penrose tree sum over an abstract polymer set, with
+parent-constraint relaxation.**  The Penrose double sum over polymer sequences drawn from
+the abstract polymer set `𝓟` and spanning trees of the incompatibility graph is bounded by
+the sum, over complete-graph spanning-tree shapes `T`, of the weight over the sequences
+satisfying the per-edge parent incompatibility for `T`.  The spanning trees of `incompat ω`
+are spanning trees of the complete graph, so the two sums swap; the inner constraint is
+then relaxed by #4096.  This step is purely combinatorial (Fubini + tree monotonicity) and
+uses no gas hypotheses; the even gas (`allPolymers G`) is recovered by
+`penroseTreeSum_le_subtype_parentConstraint`. -/
+theorem penroseGasTreeSum_le_subtype_parentConstraint (𝓟 : Finset (Finset (Sym2 ι)))
     (n : ℕ) (W : (Fin (n + 1) → Finset (Sym2 ι)) → ℝ) (hW : ∀ ω, 0 ≤ W ω) :
-    (∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G),
+    (∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟),
         ∑ _T ∈ Penrose.spanningTreeEdgeSubsets (polymerSeqIncompatibilityGraph ω), W ω)
       ≤ ∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
             S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
-          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
             (fun ω => ∀ i : Fin n, PolymersIncompatible (ω (Fin.succ i))
               (ω (Penrose.completeGraphTreeParentCode n T i))), W ω := by
   classical
-  set P := Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G) with hP
+  set P := Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟) with hP
   -- Rewrite each inner spanning-tree sum as a subtype sum over complete-graph trees.
   have hinner : ∀ ω, (∑ _T ∈ Penrose.spanningTreeEdgeSubsets
         (polymerSeqIncompatibilityGraph ω), W ω)
@@ -79,5 +82,18 @@ theorem penroseTreeSum_le_subtype_parentConstraint (G : SimpleGraph ι) [Fintype
             (ω (Penrose.completeGraphTreeParentCode n T i))), W ω :=
           Finset.sum_le_sum fun T _ =>
             sum_filter_treeIncompat_le_filter_parentConstraint n T P W hW
+
+/-- **Fubini swap of the Penrose tree sum, with parent-constraint relaxation.**  Even-gas
+(`allPolymers G`) instance of `penroseGasTreeSum_le_subtype_parentConstraint`. -/
+theorem penroseTreeSum_le_subtype_parentConstraint (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (n : ℕ) (W : (Fin (n + 1) → Finset (Sym2 ι)) → ℝ) (hW : ∀ ω, 0 ≤ W ω) :
+    (∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G),
+        ∑ _T ∈ Penrose.spanningTreeEdgeSubsets (polymerSeqIncompatibilityGraph ω), W ω)
+      ≤ ∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
+            S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
+          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+            (fun ω => ∀ i : Fin n, PolymersIncompatible (ω (Fin.succ i))
+              (ω (Penrose.completeGraphTreeParentCode n T i))), W ω :=
+  penroseGasTreeSum_le_subtype_parentConstraint (allPolymers G) n W hW
 
 end IsingModel
