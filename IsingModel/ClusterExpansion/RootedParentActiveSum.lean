@@ -43,20 +43,28 @@ def rootedParentActiveParent {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)}
     RootedParentActive A :=
   ⟨par j, hclosed j hj⟩
 
-/-- **The moment-weighted constrained active sum.**  The sum over labellings of the
-active vertices of `A` by polymers of `G`, of the moment-weighted activity
+/-- **The moment-weighted constrained active gas sum.**  The sum over labellings of the
+active vertices of `A` by polymers of the gas `𝓟`, of the moment-weighted activity
 `∏_v |ω v|^{k v}·(e|t|)^{|ω v|}`, restricted to the labellings with
-`ω (succ j) ∼ ω (par j)` for every active `j ∈ A`. -/
-noncomputable def rootedParentActiveSum (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (par : Fin n → Fin (n + 1)) (A : Finset (Fin n))
+`ω (succ j) ∼ ω (par j)` for every active `j ∈ A`.  The even gas (`allPolymers G`) is
+recovered by `rootedParentActiveSum`. -/
+noncomputable def rootedGasParentActiveSum (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (𝓟 : Finset (Finset (Sym2 ι))) (par : Fin n → Fin (n + 1)) (A : Finset (Fin n))
     (hclosed : RootedParentActiveClosed par A) (k : Fin (n + 1) → ℕ) (t : ℝ) : ℝ :=
-  ∑ ω ∈ Fintype.piFinset (fun _ : RootedParentActive A => allPolymers G),
+  ∑ ω ∈ Fintype.piFinset (fun _ : RootedParentActive A => 𝓟),
     (if ∀ j : Fin n, ∀ hj : j ∈ A,
         PolymersIncompatible (ω (rootedParentActiveChild hj))
           (ω (rootedParentActiveParent hclosed hj)) then
       ∏ v : RootedParentActive A,
         ((ω v).card : ℝ) ^ k v.1 * (Real.exp 1 * |t|) ^ (ω v).card
     else 0)
+
+/-- **The moment-weighted constrained active sum.**  The even-gas (`allPolymers G`)
+instance of `rootedGasParentActiveSum`. -/
+noncomputable def rootedParentActiveSum (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (par : Fin n → Fin (n + 1)) (A : Finset (Fin n))
+    (hclosed : RootedParentActiveClosed par A) (k : Fin (n + 1) → ℕ) (t : ℝ) : ℝ :=
+  rootedGasParentActiveSum G (allPolymers G) par A hclosed k t
 
 /-- The active vertices of the empty active set are just the root `{0}`. -/
 @[simp]
@@ -83,16 +91,16 @@ instance : Unique (RootedParentActive (∅ : Finset (Fin n))) where
     rw [rootedParentActiveVertices_empty, Finset.mem_singleton] at hv
     exact Subtype.ext hv
 
-/-- **Base case of the active sum.**  On the empty active set there are no
-constraints and only the root vertex `0`, so the active sum reduces to the
-root-only moment-weighted activity `∑_P |P|^{k 0}·(e|t|)^{|P|}`. -/
-theorem rootedParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (par : Fin n → Fin (n + 1))
+/-- **Base case of the active gas sum.**  On the empty active set there are no
+constraints and only the root vertex `0`, so the active gas sum reduces to the
+root-only moment-weighted activity `∑_{P ∈ 𝓟} |P|^{k 0}·(e|t|)^{|P|}`. -/
+theorem rootedGasParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (𝓟 : Finset (Finset (Sym2 ι))) (par : Fin n → Fin (n + 1))
     (hclosed : RootedParentActiveClosed par (∅ : Finset (Fin n)))
     (k : Fin (n + 1) → ℕ) (t : ℝ) :
-    rootedParentActiveSum G par ∅ hclosed k t
-      = ∑ P ∈ allPolymers G, (P.card : ℝ) ^ k 0 * (Real.exp 1 * |t|) ^ P.card := by
-  rw [rootedParentActiveSum]
+    rootedGasParentActiveSum G 𝓟 par ∅ hclosed k t
+      = ∑ P ∈ 𝓟, (P.card : ℝ) ^ k 0 * (Real.exp 1 * |t|) ^ P.card := by
+  rw [rootedGasParentActiveSum]
   refine Finset.sum_bij' (fun ω _ => ω default) (fun P _ => fun _ => P)
     (fun ω hω => ?_) (fun P hP => ?_) (fun ω hω => ?_) (fun P hP => ?_) (fun ω hω => ?_)
   · exact (Fintype.mem_piFinset.mp hω) default
@@ -101,5 +109,17 @@ theorem rootedParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
   · rfl
   · rw [if_pos (by simp), Fintype.prod_unique]
     rfl
+
+/-- **Base case of the active sum.**  On the empty active set there are no
+constraints and only the root vertex `0`, so the active sum reduces to the
+root-only moment-weighted activity `∑_P |P|^{k 0}·(e|t|)^{|P|}`.  Even-gas instance of
+`rootedGasParentActiveSum_empty`. -/
+theorem rootedParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (par : Fin n → Fin (n + 1))
+    (hclosed : RootedParentActiveClosed par (∅ : Finset (Fin n)))
+    (k : Fin (n + 1) → ℕ) (t : ℝ) :
+    rootedParentActiveSum G par ∅ hclosed k t
+      = ∑ P ∈ allPolymers G, (P.card : ℝ) ^ k 0 * (Real.exp 1 * |t|) ^ P.card :=
+  rootedGasParentActiveSum_empty G (allPolymers G) par hclosed k t
 
 end IsingModel

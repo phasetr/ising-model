@@ -24,23 +24,24 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ}
 
-/-- **The univ rooted-tree active sum as a `Fin (n + 1)`-labelling sum.**  For the full
-active set and any parent function, the rooted-tree active sum at exponent `0` is the
-sum over polymer sequences `ω : Fin (n + 1) → allPolymers G` of the activity product
+/-- **The univ rooted-tree active gas sum as a `Fin (n + 1)`-labelling sum.**  For the full
+active set and any parent function, the rooted-tree active gas sum at exponent `0` is the
+sum over polymer sequences `ω : Fin (n + 1) → 𝓟` of the activity product
 `∏_v (e|t|)^{|ω v|}`, restricted to the parent-edge incompatibility constraint
 `ω (Fin.succ i) ∼ ω (par i)` for every `i`.  (The labellings are reindexed from the
 active-vertex subtype to `Fin (n + 1)` via `rootedParentActiveUnivEquiv`; the exponent
-`0` makes the moment factors trivial.) -/
-theorem rootedParentActiveSum_univ_zero_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (par : Fin n → Fin (n + 1)) (t : ℝ) :
-    rootedParentActiveSum G par (Finset.univ : Finset (Fin n))
+`0` makes the moment factors trivial.)  The even gas (`allPolymers G`) is recovered by
+`rootedParentActiveSum_univ_zero_eq`. -/
+theorem rootedGasParentActiveSum_univ_zero_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (𝓟 : Finset (Finset (Sym2 ι))) (par : Fin n → Fin (n + 1)) (t : ℝ) :
+    rootedGasParentActiveSum G 𝓟 par (Finset.univ : Finset (Fin n))
         (rootedParentActiveClosed_univ par) (fun _ => 0) t
-      = ∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G),
+      = ∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟),
           if ∀ i : Fin n, PolymersIncompatible (ω (Fin.succ i)) (ω (par i)) then
             ∏ v : Fin (n + 1), (Real.exp 1 * |t|) ^ (ω v).card
           else 0 := by
-  rw [rootedParentActiveSum,
-    sum_piFinset_const_domEquiv rootedParentActiveUnivEquiv (allPolymers G)]
+  rw [rootedGasParentActiveSum,
+    sum_piFinset_const_domEquiv rootedParentActiveUnivEquiv 𝓟]
   refine Finset.sum_congr rfl fun ω _ => ?_
   refine if_congr ?_ ?_ rfl
   · constructor
@@ -56,5 +57,17 @@ theorem rootedParentActiveSum_univ_zero_eq (G : SimpleGraph ι) [Fintype G.edgeS
       (fun a => (Real.exp 1 * |t|) ^ (ω a).card)]
     refine Finset.prod_congr rfl fun v _ => ?_
     simp [rootedParentActiveUnivEquiv_apply]
+
+/-- **The univ rooted-tree active sum as a `Fin (n + 1)`-labelling sum.**  Even-gas
+(`allPolymers G`) instance of `rootedGasParentActiveSum_univ_zero_eq`. -/
+theorem rootedParentActiveSum_univ_zero_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (par : Fin n → Fin (n + 1)) (t : ℝ) :
+    rootedParentActiveSum G par (Finset.univ : Finset (Fin n))
+        (rootedParentActiveClosed_univ par) (fun _ => 0) t
+      = ∑ ω ∈ Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G),
+          if ∀ i : Fin n, PolymersIncompatible (ω (Fin.succ i)) (ω (par i)) then
+            ∏ v : Fin (n + 1), (Real.exp 1 * |t|) ^ (ω v).card
+          else 0 :=
+  rootedGasParentActiveSum_univ_zero_eq G (allPolymers G) par t
 
 end IsingModel
