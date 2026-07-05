@@ -44,7 +44,7 @@ theorem polymerSeqTree_child_mem_incompatiblePolymers (G : SimpleGraph ι)
     {H : SimpleGraph α} (hsub : H ≤ polymerSeqIncompatibilityGraph ω) (hH : H.IsTree)
     (r v : α) (hv : v ≠ r) :
     ω v ∈ incompatiblePolymers G (ω (Penrose.treeParent hH r v hv)) := by
-  rw [incompatiblePolymers, Finset.mem_filter]
+  rw [incompatiblePolymers, incompatibleGasPolymers, Finset.mem_filter]
   exact ⟨hω v, (polymerSeqTree_parent_incompatible ω hsub hH r v hv).symm⟩
 
 /-- **Parent-edge Kotecky--Preiss weight bound.**  At high temperature

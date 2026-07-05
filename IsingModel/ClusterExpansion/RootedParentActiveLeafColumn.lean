@@ -48,7 +48,7 @@ theorem leafColumnSum_eq (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.ed
       = ∑ x ∈ incompatiblePolymers G P, (x.card : ℝ) ^ d * (Real.exp 1 * |t|) ^ x.card := by
   rw [leafColumnSum, ← Finset.sum_filter]
   congr 1
-  rw [incompatiblePolymers]
+  rw [incompatiblePolymers, incompatibleGasPolymers]
   exact Finset.filter_congr fun x _ => ⟨fun h => h.symm, fun h => h.symm⟩
 
 /-- **Kotecky--Preiss bound for the leaf column sum.**  For `P ∈ allPolymers G` and

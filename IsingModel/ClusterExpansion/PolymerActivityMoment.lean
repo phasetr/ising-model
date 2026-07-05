@@ -25,38 +25,39 @@ namespace IsingModel
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Per-vertex polymer activity moment bound (volume-uniform).**  For `0 ≤ u` and
-`Δ²u < 1` (`Δ = G.maxDegree`), the `d`-th moment of the per-vertex polymer activity
-is bounded by `d!·(1 − Δ²u)^{-(d+1)}`, independently of the volume:
-`∑_{Q ∋ v} |Q|^d u^{|Q|} ≤ d!/(1 − Δ²u)^{d+1}`.  Partition the rooted polymers by
-cardinality, bound each size-`ℓ` fibre by `Δ^{2ℓ}·ℓ^d·u^ℓ = ℓ^d·(Δ²u)^ℓ` via the
-volume-uniform count, then dominate by the geometric moment series. -/
-theorem rootedPolymerActivity_cardPow_le (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u)
-    (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
-    (∑ Q ∈ rootedPolymers G v, (Q.card : ℝ) ^ d * u ^ Q.card)
+/-- **Per-vertex gas polymer activity moment bound (volume-uniform).**  For `0 ≤ u`
+and `Δ²u < 1` (`Δ = G.maxDegree`), the `d`-th moment of the per-vertex gas polymer
+activity is bounded by `d!·(1 − Δ²u)^{-(d+1)}`, independently of the volume:
+`∑_{Q ∋ v, Q ∈ 𝓟} |Q|^d u^{|Q|} ≤ d!/(1 − Δ²u)^{d+1}`.  Partition the rooted gas
+polymers by cardinality, bound each size-`ℓ` fibre by `Δ^{2ℓ}·ℓ^d·u^ℓ = ℓ^d·(Δ²u)^ℓ`
+via the volume-uniform count, then dominate by the geometric moment series. -/
+theorem rootedGasPolymerActivity_cardPow_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟)
+    (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u) (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
+    (∑ Q ∈ rootedGasPolymers 𝓟 v, (Q.card : ℝ) ^ d * u ^ Q.card)
       ≤ (d.factorial : ℝ) / (1 - (G.maxDegree : ℝ) ^ 2 * u) ^ (d + 1) := by
   have hr0 : (0 : ℝ) ≤ (G.maxDegree : ℝ) ^ 2 * u := mul_nonneg (by positivity) hu0
-  have hmaps : ∀ P ∈ rootedPolymers G v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
+  have hmaps : ∀ P ∈ rootedGasPolymers 𝓟 v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
     intro P hP
-    rw [rootedPolymers, Finset.mem_filter] at hP
-    have hsub : P ⊆ G.edgeFinset := (mem_allPolymers.mp hP.1).isEven.subset
+    rw [rootedGasPolymers, Finset.mem_filter] at hP
+    have hsub : P ⊆ G.edgeFinset := hgas.mem_edgeFinset P hP.1
     exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.card_le_card hsub))
   rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun Q => (Q.card : ℝ) ^ d * u ^ Q.card)]
   have hfiber : ∀ ℓ ∈ Finset.range (G.edgeFinset.card + 1),
-      (∑ Q ∈ (rootedPolymers G v).filter (fun Q => Q.card = ℓ), (Q.card : ℝ) ^ d * u ^ Q.card)
+      (∑ Q ∈ (rootedGasPolymers 𝓟 v).filter (fun Q => Q.card = ℓ), (Q.card : ℝ) ^ d * u ^ Q.card)
         ≤ (ℓ : ℝ) ^ d * ((G.maxDegree : ℝ) ^ 2 * u) ^ ℓ := by
     intro ℓ _
     have hconst :
-        (∑ Q ∈ (rootedPolymers G v).filter (fun Q => Q.card = ℓ), (Q.card : ℝ) ^ d * u ^ Q.card)
-          = ((rootedPolymersOfCard G v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ) := by
-      rw [rootedPolymersOfCard]
+        (∑ Q ∈ (rootedGasPolymers 𝓟 v).filter (fun Q => Q.card = ℓ),
+            (Q.card : ℝ) ^ d * u ^ Q.card)
+          = ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ) := by
+      rw [rootedGasPolymersOfCard]
       rw [Finset.sum_congr rfl fun Q hQ => by rw [(Finset.mem_filter.mp hQ).2]]
       rw [Finset.sum_const, nsmul_eq_mul]
     rw [hconst]
-    have hcount : ((rootedPolymersOfCard G v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
-      exact_mod_cast rootedPolymersOfCard_card_le_maxDegree_pow G v ℓ
-    calc ((rootedPolymersOfCard G v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ)
+    have hcount : ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
+      exact_mod_cast rootedGasPolymersOfCard_card_le_maxDegree_pow G hgas v ℓ
+    calc ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ)
         ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) * ((ℓ : ℝ) ^ d * u ^ ℓ) :=
           mul_le_mul_of_nonneg_right hcount (by positivity)
       _ = (ℓ : ℝ) ^ d * ((G.maxDegree : ℝ) ^ 2 * u) ^ ℓ := by rw [mul_pow, pow_mul]; ring
@@ -65,5 +66,17 @@ theorem rootedPolymerActivity_cardPow_le (G : SimpleGraph ι) [DecidableRel G.Ad
   refine le_trans ((summable_pow_mul_geometric_of_norm_lt_one d hnorm).sum_le_tsum _
     (fun ℓ _ => by positivity)) ?_
   exact tsum_pow_mul_geometric_le d hr0 hu
+
+/-- **Per-vertex polymer activity moment bound (volume-uniform).**  For `0 ≤ u` and
+`Δ²u < 1` (`Δ = G.maxDegree`), the `d`-th moment of the per-vertex polymer activity
+is bounded by `d!·(1 − Δ²u)^{-(d+1)}`, independently of the volume:
+`∑_{Q ∋ v} |Q|^d u^{|Q|} ≤ d!/(1 − Δ²u)^{d+1}`.  Even-gas instance of
+`rootedGasPolymerActivity_cardPow_le`. -/
+theorem rootedPolymerActivity_cardPow_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u)
+    (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
+    (∑ Q ∈ rootedPolymers G v, (Q.card : ℝ) ^ d * u ^ Q.card)
+      ≤ (d.factorial : ℝ) / (1 - (G.maxDegree : ℝ) ^ 2 * u) ^ (d + 1) :=
+  rootedGasPolymerActivity_cardPow_le G (evenPolymerGasData G) v d hu0 hu
 
 end IsingModel
