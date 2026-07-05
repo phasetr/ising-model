@@ -242,4 +242,167 @@ theorem fieldMayerExpansionTermℂ_succ_norm_le_card_div_mul_geometric (G : Simp
         mul_le_mul_of_nonneg_right hfact hgoal_nonneg
     _ = (Fintype.card ι : ℝ) / q * (8 * rr / q ^ 2) ^ n := one_mul _
 
+/-- **The `n = 0` complex field Mayer term vanishes**: `fieldMayerExpansionTermℂ G 0 a b = 0`
+(GJ §17.6.1, brick F1b).  The unique `ω : Fin 0 → Finset (Sym2 ι)` is the empty function; the
+incompatibility graph on `Fin 0` is disconnected (`Connected` requires `Nonempty`), so
+`ursellCoefficient empty = 0` and its complex cast is `0`.  Field/complex mirror of
+`mayerExpansionTermComplex_zero`. -/
+theorem fieldMayerExpansionTermℂ_zero (G : SimpleGraph ι) [Fintype G.edgeSet] (a : ℝ) (b : ℂ) :
+    fieldMayerExpansionTermℂ G 0 a b = 0 := by
+  unfold fieldMayerExpansionTermℂ
+  refine Finset.sum_eq_zero (fun ω _ => ?_)
+  refine mul_eq_zero.mpr (Or.inl ?_)
+  rw [Complex.ofReal_eq_zero]
+  apply ursellCoefficient_eq_zero_of_disconnected
+  intro h
+  exact h.nonempty.elim Fin.elim0
+
+/-- **Summability of the shifted complex field Mayer expansion terms** (GJ §17.6.1, brick F1b).
+Under the degree window (W) — `r_∗ = Δ²·e·t_∗ < 1` and `ρ_∗ = 8 r_∗/(1−r_∗)² < 1` at the
+inflated activity `t_∗ = (max 1 ‖Complex.tanh b‖)²·|tanh a|` — the map
+`n ↦ ‖fieldMayerExpansionTermℂ G (n+1) a b‖` is summable.  The geometric majorant
+`|ι|/(1−r_∗)·ρ_∗ⁿ` (`fieldMayerExpansionTermℂ_succ_norm_le_card_div_mul_geometric`, F1a) is
+summable since its ratio `ρ_∗ < 1`.  Field/complex mirror of
+`summable_norm_mayerExpansionTermComplex_succ_of_tail_condition`, with the `c = 2` ratio. -/
+theorem summable_norm_fieldMayerExpansionTermℂ_succ_of_tail_condition (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {a : ℝ} {b : ℂ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) < 1)
+    (hρ : 8 * ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2 < 1) :
+    Summable fun n : ℕ => ‖fieldMayerExpansionTermℂ G (n + 1) a b‖ := by
+  set rr : ℝ := (G.maxDegree : ℝ) ^ 2 *
+    (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) with hrr
+  set q : ℝ := 1 - rr with hq
+  have hqpos : 0 < q := by rw [hq]; linarith [hkp]
+  set ρ : ℝ := 8 * rr / q ^ 2 with hρdef
+  have hρ0 : 0 ≤ ρ := by rw [hρdef]; positivity
+  have hgeo : Summable fun n : ℕ => (Fintype.card ι : ℝ) / q * ρ ^ n :=
+    (summable_geometric_of_lt_one hρ0 hρ).mul_left _
+  refine Summable.of_nonneg_of_le (fun n => norm_nonneg _) (fun n => ?_) hgeo
+  exact fieldMayerExpansionTermℂ_succ_norm_le_card_div_mul_geometric G n a b hkp
+
+/-- **Summability of the full complex field Mayer expansion terms** (GJ §17.6.1, brick F1b).
+Under the same degree window, the full series `n ↦ ‖fieldMayerExpansionTermℂ G n a b‖`
+(including the vanishing `n = 0` head term) is summable: `summable_nat_add_iff 1` adds the
+single `n = 0` term to the summable shifted series.  Field/complex mirror of
+`summable_abs_mayerExpansionTerm_of_tail_condition`. -/
+theorem summable_norm_fieldMayerExpansionTermℂ_of_tail_condition (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {a : ℝ} {b : ℂ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) < 1)
+    (hρ : 8 * ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2 < 1) :
+    Summable fun n : ℕ => ‖fieldMayerExpansionTermℂ G n a b‖ :=
+  (summable_nat_add_iff 1).mp
+    (summable_norm_fieldMayerExpansionTermℂ_succ_of_tail_condition G hkp hρ)
+
+/-- **Explicit bound on the shifted complex field Mayer expansion sum** (GJ §17.6.1, brick F1b,
+Theorem F1b).  Summing the geometric per-order norm bound
+(`fieldMayerExpansionTermℂ_succ_norm_le_card_div_mul_geometric`, F1a) gives
+`∑'_n ‖fieldMayerExpansionTermℂ G (n+1) a b‖ ≤ |ι|/((1−r_∗)(1−ρ_∗))` with `r_∗ = Δ²·e·t_∗`
+and `ρ_∗ = 8 r_∗/(1−r_∗)²`, under the degree window (W).  Field/complex mirror of
+`tsum_norm_mayerExpansionTermComplex_succ_le`, with the `c = 2` ratio. -/
+theorem tsum_norm_fieldMayerExpansionTermℂ_succ_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {a : ℝ} {b : ℂ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) < 1)
+    (hρ : 8 * ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2 < 1) :
+    (∑' n : ℕ, ‖fieldMayerExpansionTermℂ G (n + 1) a b‖)
+      ≤ (Fintype.card ι : ℝ) / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+          * (1 - 8 * ((G.maxDegree : ℝ) ^ 2 *
+                (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+              / (1 - (G.maxDegree : ℝ) ^ 2 *
+                  (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2)⁻¹ := by
+  set rr : ℝ := (G.maxDegree : ℝ) ^ 2 *
+    (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) with hrr
+  set q : ℝ := 1 - rr with hq
+  have hqpos : 0 < q := by rw [hq]; linarith [hkp]
+  set ρ : ℝ := 8 * rr / q ^ 2 with hρdef
+  have hρ0 : 0 ≤ ρ := by rw [hρdef]; positivity
+  have hsummL : Summable fun n : ℕ => ‖fieldMayerExpansionTermℂ G (n + 1) a b‖ :=
+    summable_norm_fieldMayerExpansionTermℂ_succ_of_tail_condition G hkp hρ
+  have hsummR : Summable fun n : ℕ => (Fintype.card ι : ℝ) / q * ρ ^ n :=
+    (summable_geometric_of_lt_one hρ0 hρ).mul_left _
+  calc (∑' n : ℕ, ‖fieldMayerExpansionTermℂ G (n + 1) a b‖)
+      ≤ ∑' n : ℕ, (Fintype.card ι : ℝ) / q * ρ ^ n :=
+        hsummL.tsum_le_tsum
+          (fun n => fieldMayerExpansionTermℂ_succ_norm_le_card_div_mul_geometric G n a b hkp)
+          hsummR
+    _ = (Fintype.card ι : ℝ) / q * (1 - ρ)⁻¹ := by
+        rw [tsum_mul_left, tsum_geometric_of_lt_one hρ0 hρ]
+
+/-- **Volume-uniform (per-site) bound on the shifted complex field Mayer expansion sum**
+(GJ §17.6.1, brick F1b).  Dividing `tsum_norm_fieldMayerExpansionTermℂ_succ_le` by the volume
+`|ι|` gives the per-site constant `((1−r_∗)(1−ρ_∗))⁻¹` (`r_∗ = Δ²·e·t_∗`,
+`ρ_∗ = 8 r_∗/(1−r_∗)²`), independent of the volume.  Field/complex mirror of
+`tsum_norm_mayerExpansionTermComplex_succ_div_card_le`, with the `c = 2` ratio. -/
+theorem tsum_norm_fieldMayerExpansionTermℂ_succ_div_card_le (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] [Nonempty ι] {a : ℝ} {b : ℂ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) < 1)
+    (hρ : 8 * ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2 < 1) :
+    (∑' n : ℕ, ‖fieldMayerExpansionTermℂ G (n + 1) a b‖) / (Fintype.card ι : ℝ)
+      ≤ ((1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+          * (1 - 8 * ((G.maxDegree : ℝ) ^ 2 *
+                (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+              / (1 - (G.maxDegree : ℝ) ^ 2 *
+                  (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2))⁻¹ := by
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  rw [div_le_iff₀ hcard]
+  refine (tsum_norm_fieldMayerExpansionTermℂ_succ_le G hkp hρ).trans (le_of_eq ?_)
+  rw [mul_inv]
+  ring
+
+/-- **Volume-uniform (per-site) bound on the full complex field Mayer expansion sum**
+(GJ §17.6.1, brick F1b, Theorem F1b).  Since the `n = 0` complex field Mayer term vanishes
+(`fieldMayerExpansionTermℂ_zero`), the full series equals the shifted one, and
+`‖∑'_n‖ ≤ ∑'_n ‖·‖` (`norm_tsum_le_tsum_norm`), so the same per-site constant
+`((1−r_∗)(1−ρ_∗))⁻¹` (`r_∗ = Δ²·e·t_∗`, `ρ_∗ = 8 r_∗/(1−r_∗)²`) bounds the per-site norm of the
+full field Mayer expansion sum.  Field/complex mirror of
+`tsum_norm_mayerExpansionTermComplex_div_card_le`, with the `c = 2` ratio. -/
+theorem tsum_norm_fieldMayerExpansionTermℂ_div_card_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] [Nonempty ι] {a : ℝ} {b : ℂ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)) < 1)
+    (hρ : 8 * ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2 < 1) :
+    ‖∑' n : ℕ, fieldMayerExpansionTermℂ G n a b‖ / (Fintype.card ι : ℝ)
+      ≤ ((1 - (G.maxDegree : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+          * (1 - 8 * ((G.maxDegree : ℝ) ^ 2 *
+                (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|)))
+              / (1 - (G.maxDegree : ℝ) ^ 2 *
+                  (Real.exp 1 * ((max 1 ‖Complex.tanh b‖) ^ 2 * |Real.tanh a|))) ^ 2))⁻¹ := by
+  have hcard : (0 : ℝ) < (Fintype.card ι : ℝ) := by exact_mod_cast Fintype.card_pos
+  have hsucc : Summable fun n : ℕ => ‖fieldMayerExpansionTermℂ G (n + 1) a b‖ :=
+    summable_norm_fieldMayerExpansionTermℂ_succ_of_tail_condition G hkp hρ
+  have hsum : Summable fun n : ℕ => fieldMayerExpansionTermℂ G n a b :=
+    (summable_nat_add_iff 1).mp hsucc.of_norm
+  have hshift : (∑' n : ℕ, fieldMayerExpansionTermℂ G n a b)
+      = ∑' n : ℕ, fieldMayerExpansionTermℂ G (n + 1) a b := by
+    rw [hsum.tsum_eq_zero_add, fieldMayerExpansionTermℂ_zero, zero_add]
+  have hnorm : ‖∑' n : ℕ, fieldMayerExpansionTermℂ G n a b‖
+      ≤ ∑' n : ℕ, ‖fieldMayerExpansionTermℂ G (n + 1) a b‖ := by
+    rw [hshift]
+    exact norm_tsum_le_tsum_norm hsucc
+  rw [div_le_iff₀ hcard]
+  refine hnorm.trans ?_
+  rw [← div_le_iff₀ hcard]
+  exact tsum_norm_fieldMayerExpansionTermℂ_succ_div_card_le G hkp hρ
+
 end IsingModel
