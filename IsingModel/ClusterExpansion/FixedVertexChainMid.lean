@@ -84,7 +84,7 @@ theorem fixedVertexRootedParentActiveSum_empty (G : SimpleGraph ι) [Fintype G.e
             simp [hroot, hdefault]
     _ = ∑ P ∈ rootedPolymers G root,
           (P.card : ℝ) ^ k 0 * (Real.exp 1 * |t|) ^ P.card := by
-          rw [rootedPolymers, Finset.sum_filter]
+          rw [rootedPolymers, rootedGasPolymers, Finset.sum_filter]
 
 /-- The fixed-root peel bound satisfies the same erase/update recursion as the unfiltered
 peel bound. -/

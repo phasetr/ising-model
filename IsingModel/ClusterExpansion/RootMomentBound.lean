@@ -71,7 +71,7 @@ theorem sum_allPolymers_cardPow_expWeighted_le (G : SimpleGraph ι) [DecidableRe
       _ = ∑ v : ι, ∑ Q ∈ rootedPolymers G v,
             (Q.card : ℝ) ^ d * (Real.exp 1 * |t|) ^ Q.card := by
           refine Finset.sum_congr rfl fun v _ => ?_
-          rw [rootedPolymers, Finset.sum_filter]
+          rw [rootedPolymers, rootedGasPolymers, Finset.sum_filter]
   refine key.trans ?_
   calc (∑ v : ι, ∑ Q ∈ rootedPolymers G v, (Q.card : ℝ) ^ d * (Real.exp 1 * |t|) ^ Q.card)
       ≤ ∑ _v : ι, ((d.factorial : ℝ)
