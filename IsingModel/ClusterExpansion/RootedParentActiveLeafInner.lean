@@ -32,18 +32,19 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ}
 
 /-- **Per-labelling leaf isolation.**  For a leaf `j` of an active-closed set `A`, a
 remainder labelling `η` of the active vertices of `A.erase j`, and a leaf value `x`
-ranging over `allPolymers G`, the reconstructed summand
+ranging over the gas `𝓟`, the reconstructed summand
 `fun a => (rootedParentActiveSplitEquiv hleaf.1 a).elim x η` summed over `x` factors as
-the remainder summand (the summand of `rootedParentActiveSum` for `A.erase j` at `η`)
-times the leaf column sum at the remainder value `η ⟨par j, _⟩` assigned to the
+the remainder summand (the summand of `rootedGasParentActiveSum` for `A.erase j` at `η`)
+times the leaf column gas sum at the remainder value `η ⟨par j, _⟩` assigned to the
 leaf's parent vertex.  The leaf value
-contributes its own constraint and weight factor (collected into `leafColumnSum`); the
-remaining constraints and weights pass through to the remainder. -/
-theorem rootedParentActiveSum_leaf_inner (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
+contributes its own constraint and weight factor (collected into `leafGasColumnSum`); the
+remaining constraints and weights pass through to the remainder.  The even gas
+(`allPolymers G`) is recovered by `rootedParentActiveSum_leaf_inner`. -/
+theorem rootedGasParentActiveSum_leaf_inner (𝓟 : Finset (Finset (Sym2 ι)))
+    {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
     (hclosed : RootedParentActiveClosed par A) (hleaf : RootedParentLeaf par A j)
     (k : Fin (n + 1) → ℕ) (t : ℝ) (η : RootedParentActive (A.erase j) → Finset (Sym2 ι)) :
-    (∑ x ∈ allPolymers G,
+    (∑ x ∈ 𝓟,
         (if ∀ i, ∀ hi : i ∈ A,
             PolymersIncompatible
               ((rootedParentActiveSplitEquiv hleaf.1 (rootedParentActiveChild hi)).elim x η)
@@ -59,7 +60,7 @@ theorem rootedParentActiveSum_leaf_inner (G : SimpleGraph ι) [DecidableRel G.Ad
           ∏ w : RootedParentActive (A.erase j),
             ((η w).card : ℝ) ^ k w.1 * (Real.exp 1 * |t|) ^ (η w).card
         else 0)
-        * leafColumnSum G (η ⟨par j, hleaf.parent_mem_erase hclosed⟩) (k (Fin.succ j)) t := by
+        * leafGasColumnSum 𝓟 (η ⟨par j, hleaf.parent_mem_erase hclosed⟩) (k (Fin.succ j)) t := by
   classical
   set hj : j ∈ A := hleaf.1 with hhj
   set hclosed' : RootedParentActiveClosed par (A.erase j) := hclosed.erase_leaf hleaf with hhc'
@@ -132,19 +133,44 @@ theorem rootedParentActiveSum_leaf_inner (G : SimpleGraph ι) [DecidableRel G.Ad
     by_cases hC : Crest <;> by_cases hL : Cleaf x <;>
       simp [hC, hL, mul_comm]
   calc
-    (∑ x ∈ allPolymers G,
+    (∑ x ∈ 𝓟,
         (if ∀ i, ∀ hi : i ∈ A,
             PolymersIncompatible (recon x (rootedParentActiveChild hi))
               (recon x (rootedParentActiveParent hclosed hi)) then
           ∏ v : RootedParentActive A,
             ((recon x v).card : ℝ) ^ k v.1 * q ^ (recon x v).card else 0))
-        = ∑ x ∈ allPolymers G,
+        = ∑ x ∈ 𝓟,
             (if Crest then Prest else 0) * (if Cleaf x then leafW x else 0) :=
           Finset.sum_congr rfl fun x _ => hsummand x
     _ = (if Crest then Prest else 0)
-          * ∑ x ∈ allPolymers G, (if Cleaf x then leafW x else 0) := by
+          * ∑ x ∈ 𝓟, (if Cleaf x then leafW x else 0) := by
         rw [Finset.mul_sum]
-    _ = (if Crest then Prest else 0) * leafColumnSum G P (k (Fin.succ j)) t := by
+    _ = (if Crest then Prest else 0) * leafGasColumnSum 𝓟 P (k (Fin.succ j)) t := by
         rfl
+
+/-- **Per-labelling leaf isolation.**  Even-gas (`allPolymers G`) instance of
+`rootedGasParentActiveSum_leaf_inner`. -/
+theorem rootedParentActiveSum_leaf_inner (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
+    (hclosed : RootedParentActiveClosed par A) (hleaf : RootedParentLeaf par A j)
+    (k : Fin (n + 1) → ℕ) (t : ℝ) (η : RootedParentActive (A.erase j) → Finset (Sym2 ι)) :
+    (∑ x ∈ allPolymers G,
+        (if ∀ i, ∀ hi : i ∈ A,
+            PolymersIncompatible
+              ((rootedParentActiveSplitEquiv hleaf.1 (rootedParentActiveChild hi)).elim x η)
+              ((rootedParentActiveSplitEquiv hleaf.1
+                (rootedParentActiveParent hclosed hi)).elim x η) then
+          ∏ v : RootedParentActive A,
+            (((rootedParentActiveSplitEquiv hleaf.1 v).elim x η).card : ℝ) ^ k v.1
+              * (Real.exp 1 * |t|) ^ ((rootedParentActiveSplitEquiv hleaf.1 v).elim x η).card
+        else 0))
+      = (if ∀ i, ∀ hi : i ∈ A.erase j,
+            PolymersIncompatible (η (rootedParentActiveChild hi))
+              (η (rootedParentActiveParent (hclosed.erase_leaf hleaf) hi)) then
+          ∏ w : RootedParentActive (A.erase j),
+            ((η w).card : ℝ) ^ k w.1 * (Real.exp 1 * |t|) ^ (η w).card
+        else 0)
+        * leafColumnSum G (η ⟨par j, hleaf.parent_mem_erase hclosed⟩) (k (Fin.succ j)) t :=
+  rootedGasParentActiveSum_leaf_inner (allPolymers G) hclosed hleaf k t η
 
 end IsingModel

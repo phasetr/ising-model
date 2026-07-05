@@ -41,25 +41,29 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **The `(Δ²e|t|)^n`-weighted summed peel bound in closed factorial form.**  Summing
-the factorial-product form (#4131) over the spanning trees and bounding the factorial sum
-by `4^n·n!` (#4126): for `Δ²e|t| < 1`,
-`∑_T (Δ²e|t|)^n·peelBound ≤ ((Δ²e|t|)^n·|V|·4^n·n!)/(1−Δ²e|t|)^{2n+1}`. -/
-theorem sum_pow_rootedParentActivePeelBound_le (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] (n : ℕ) {t : ℝ}
+omit [DecidableEq ι] in
+/-- **The `(Δ²e|t|)^n`-weighted summed gas peel bound in closed factorial form.**  Summing
+the gas factorial-product form over the spanning trees and bounding the factorial sum by
+`4^n·n!` (#4126): for `Δ²e|t| < 1` and `0 ≤ c`,
+`∑_T (Δ²e|t|)^n·gasPeelBound ≤ ((Δ²e|t|)^n·c^n·|V|·4^n·n!)/(1−Δ²e|t|)^{2n+1}`.  The even gas
+(`allPolymers G`) takes `c = 1` in `sum_pow_rootedParentActivePeelBound_le`. -/
+theorem sum_pow_rootedGasParentActivePeelBound_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟) (c : ℝ)
+    (hc : 0 ≤ c) (n : ℕ) {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
     (∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
         S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
         ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ n
-          * rootedParentActivePeelBound G (Penrose.completeGraphTreeParentCode n T)
+          * rootedGasParentActivePeelBound G 𝓟 c (Penrose.completeGraphTreeParentCode n T)
               (Finset.univ : Finset (Fin n)) (fun _ => 0) t)
-      ≤ (((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ n
+      ≤ (((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ n * c ^ n
           * (Fintype.card ι : ℝ) * (4 : ℝ) ^ n * (n.factorial : ℝ))
           / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ (2 * n + 1) := by
   set rr : ℝ := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) with hrr
   set q : ℝ := 1 - rr with hq
   have hqpos : 0 < q := by rw [hq]; linarith [hkp]
   have hrr0 : 0 ≤ rr := by rw [hrr]; positivity
+  have hcn0 : 0 ≤ c ^ n := pow_nonneg hc n
   -- The cast of the spanning-tree factorial bound (#4126).
   have hcast : (∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
         S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
@@ -77,40 +81,56 @@ theorem sum_pow_rootedParentActivePeelBound_le (G : SimpleGraph ι) [DecidableRe
                 (Finset.univ : Finset (Fin n)) v).factorial : ℕ) : ℝ) := by push_cast; ring
       _ ≤ ((4 ^ n * n.factorial : ℕ) : ℝ) := by exact_mod_cast h
       _ = (4 : ℝ) ^ n * (n.factorial : ℝ) := by push_cast; ring
-  -- ∑_T rr^n·peelBound = rr^n·∑_T peelBound ≤ rr^n·(|V|/q^{2n+1})·(4^n·n!).
+  -- ∑_T rr^n·gasPeelBound = rr^n·∑_T gasPeelBound ≤ rr^n·(c^n·|V|/q^{2n+1})·(4^n·n!).
   rw [← Finset.mul_sum]
   have hpeel : (∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
         S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
-        rootedParentActivePeelBound G (Penrose.completeGraphTreeParentCode n T)
+        rootedGasParentActivePeelBound G 𝓟 c (Penrose.completeGraphTreeParentCode n T)
           (Finset.univ : Finset (Fin n)) (fun _ => 0) t)
-      ≤ ((Fintype.card ι : ℝ) / q ^ (2 * n + 1)) * ((4 : ℝ) ^ n * (n.factorial : ℝ)) := by
-    calc (∑ T, rootedParentActivePeelBound G (Penrose.completeGraphTreeParentCode n T)
+      ≤ (c ^ n * (Fintype.card ι : ℝ) / q ^ (2 * n + 1)) * ((4 : ℝ) ^ n * (n.factorial : ℝ)) := by
+    calc (∑ T, rootedGasParentActivePeelBound G 𝓟 c (Penrose.completeGraphTreeParentCode n T)
             (Finset.univ : Finset (Fin n)) (fun _ => 0) t)
-          ≤ ∑ T, ((Fintype.card ι : ℝ)
+          ≤ ∑ T, c ^ n * (((Fintype.card ι : ℝ)
               * ∏ v : Fin (n + 1),
                   ((rootedParentChildCount (Penrose.completeGraphTreeParentCode n T)
                     (Finset.univ : Finset (Fin n)) v).factorial : ℝ))
-              / q ^ (2 * n + 1) := by
+              / q ^ (2 * n + 1)) := by
             refine Finset.sum_le_sum fun T _ => ?_
-            exact rootedParentActivePeelBound_univ_zero_le_card_mul_prod_childCount_factorial_div
-              G (Penrose.completeGraphTreeParentCode n T) hqpos
-      _ = ((Fintype.card ι : ℝ) / q ^ (2 * n + 1))
+            exact rootedGasParentActivePeelBound_univ_zero_le_card_mul_prod_childCount_factorial_div
+              G hgas c hc (Penrose.completeGraphTreeParentCode n T) hqpos
+      _ = (c ^ n * (Fintype.card ι : ℝ) / q ^ (2 * n + 1))
             * ∑ T, ∏ v : Fin (n + 1),
                 ((rootedParentChildCount (Penrose.completeGraphTreeParentCode n T)
                   (Finset.univ : Finset (Fin n)) v).factorial : ℝ) := by
             rw [Finset.mul_sum]
-            refine Finset.sum_congr rfl fun T _ => ?_
-            rw [mul_div_right_comm]
-      _ ≤ ((Fintype.card ι : ℝ) / q ^ (2 * n + 1)) * ((4 : ℝ) ^ n * (n.factorial : ℝ)) := by
+            exact Finset.sum_congr rfl fun T _ => by ring
+      _ ≤ (c ^ n * (Fintype.card ι : ℝ) / q ^ (2 * n + 1)) * ((4 : ℝ) ^ n * (n.factorial : ℝ)) := by
             refine mul_le_mul_of_nonneg_left hcast ?_
             exact div_nonneg (by positivity) (le_of_lt (pow_pos hqpos _))
   calc rr ^ n
-        * ∑ T, rootedParentActivePeelBound G (Penrose.completeGraphTreeParentCode n T)
+        * ∑ T, rootedGasParentActivePeelBound G 𝓟 c (Penrose.completeGraphTreeParentCode n T)
             (Finset.univ : Finset (Fin n)) (fun _ => 0) t
-        ≤ rr ^ n * (((Fintype.card ι : ℝ) / q ^ (2 * n + 1)) * ((4 : ℝ) ^ n * (n.factorial : ℝ))) :=
+        ≤ rr ^ n * ((c ^ n * (Fintype.card ι : ℝ) / q ^ (2 * n + 1))
+            * ((4 : ℝ) ^ n * (n.factorial : ℝ))) :=
           mul_le_mul_of_nonneg_left hpeel (pow_nonneg hrr0 n)
-    _ = (rr ^ n * (Fintype.card ι : ℝ) * (4 : ℝ) ^ n * (n.factorial : ℝ)) / q ^ (2 * n + 1) := by
-          ring
+    _ = (rr ^ n * c ^ n * (Fintype.card ι : ℝ) * (4 : ℝ) ^ n * (n.factorial : ℝ))
+          / q ^ (2 * n + 1) := by ring
+
+/-- **The `(Δ²e|t|)^n`-weighted summed peel bound in closed factorial form.**  Even-gas
+(`c = 1`) instance of `sum_pow_rootedGasParentActivePeelBound_le`. -/
+theorem sum_pow_rootedParentActivePeelBound_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (n : ℕ) {t : ℝ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
+    (∑ T : {S : Finset (Sym2 (Fin (n + 1))) //
+        S ∈ Penrose.spanningTreeEdgeSubsets (⊤ : SimpleGraph (Fin (n + 1)))},
+        ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ n
+          * rootedParentActivePeelBound G (Penrose.completeGraphTreeParentCode n T)
+              (Finset.univ : Finset (Fin n)) (fun _ => 0) t)
+      ≤ (((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ n
+          * (Fintype.card ι : ℝ) * (4 : ℝ) ^ n * (n.factorial : ℝ))
+          / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ (2 * n + 1) := by
+  have h := sum_pow_rootedGasParentActivePeelBound_le G (evenPolymerGasData G) 1 zero_le_one n hkp
+  simpa [rootedParentActivePeelBound] using h
 
 /-- **The geometric per-order bound on the Mayer expansion term.**  For `Δ²e|t| < 1`,
 `|mayerExpansionTerm G (n + 1) t| ≤ |V|/(1−r)·(4r/(1−r)²)^n` with `r = Δ²e|t|`.  This
