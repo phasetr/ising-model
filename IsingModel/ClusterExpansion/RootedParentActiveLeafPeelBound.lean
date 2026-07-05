@@ -30,21 +30,25 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {n : ℕ}
 
-/-- **The leaf-peel inequality.**  For a leaf `j` of an active-closed set `A` and
-`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the active sum over `A` is bounded by the leaf
-Kotecky--Preiss factor times the active sum over `A.erase j` with the moment exponent at
-the leaf's parent vertex bumped by one.  Each leaf column sum is bounded by
-`leafColumnSum_le`, and the resulting `|η ⟨par j, _⟩|` factor is absorbed into the
-remainder weight via `Function.update k (par j) (k (par j) + 1)`. -/
-theorem rootedParentActiveSum_leaf_peel_le (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
+/-- **The leaf-peel inequality (gas form).**  For a leaf `j` of an active-closed set `A`,
+`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), and a support-cardinality bound `|supp P| ≤ c·|P|` for
+all `P ∈ 𝓟`, the active gas sum over `A` is bounded by `c` times the leaf Kotecky--Preiss
+factor times the active gas sum over `A.erase j` with the moment exponent at the leaf's
+parent vertex bumped by one.  Each leaf column gas sum is bounded by `leafGasColumnSum_le`,
+and the resulting `c·|η ⟨par j, _⟩|` factor is absorbed (the `|·|` part into the remainder
+weight via `Function.update k (par j) (k (par j) + 1)`, the `c` factored out).  The even
+gas (`allPolymers G`) takes `c = 1` in `rootedParentActiveSum_leaf_peel_le`. -/
+theorem rootedGasParentActiveSum_leaf_peel_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟)
+    {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
     (hclosed : RootedParentActiveClosed par A) (hleaf : RootedParentLeaf par A j)
-    (k : Fin (n + 1) → ℕ) {t : ℝ}
+    (k : Fin (n + 1) → ℕ) {c : ℝ}
+    (hsupp : ∀ P ∈ 𝓟, ((polymerSupport P).card : ℝ) ≤ c * (P.card : ℝ)) {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
-    rootedParentActiveSum G par A hclosed k t
-      ≤ ((k (Fin.succ j)).factorial : ℝ)
-          / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ (k (Fin.succ j) + 1)
-        * rootedParentActiveSum G par (A.erase j) (hclosed.erase_leaf hleaf)
+    rootedGasParentActiveSum G 𝓟 par A hclosed k t
+      ≤ c * (((k (Fin.succ j)).factorial : ℝ)
+          / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ (k (Fin.succ j) + 1))
+        * rootedGasParentActiveSum G 𝓟 par (A.erase j) (hclosed.erase_leaf hleaf)
             (Function.update k (par j) (k (par j) + 1)) t := by
   classical
   set hclosed' : RootedParentActiveClosed par (A.erase j) := hclosed.erase_leaf hleaf with hhc'
@@ -102,25 +106,48 @@ theorem rootedParentActiveSum_leaf_peel_le (G : SimpleGraph ι) [DecidableRel G.
     · exact Finset.prod_nonneg fun w _ => by positivity
     · exact le_refl 0
   -- Assemble the inequality from the decomposition.
-  rw [rootedParentActiveSum_leaf_peel G hclosed hleaf k t]
+  rw [rootedGasParentActiveSum_leaf_peel G 𝓟 hclosed hleaf k t]
   calc
-    (∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => allPolymers G),
-        summand η k * leafColumnSum G (η w₀) (k (Fin.succ j)) t)
-        ≤ ∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => allPolymers G),
-            summand η k' * C := by
+    (∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => 𝓟),
+        summand η k * leafGasColumnSum 𝓟 (η w₀) (k (Fin.succ j)) t)
+        ≤ ∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => 𝓟),
+            c * summand η k' * C := by
           refine Finset.sum_le_sum fun η hη => ?_
-          have hηmem : η w₀ ∈ allPolymers G := Fintype.mem_piFinset.mp hη w₀
+          have hηmem : η w₀ ∈ 𝓟 := Fintype.mem_piFinset.mp hη w₀
           calc
-            summand η k * leafColumnSum G (η w₀) (k (Fin.succ j)) t
-                ≤ summand η k * ((η w₀).card : ℝ) * C := by
-                  rw [mul_assoc]
-                  refine mul_le_mul_of_nonneg_left ?_ (hsummand_nonneg η)
-                  exact leafColumnSum_le G hηmem (k (Fin.succ j)) hkp
-            _ = summand η k' * C := by rw [hbump η]
-    _ = C * ∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => allPolymers G),
-          summand η k' := by rw [← Finset.sum_mul, mul_comm]
-    _ = C * rootedParentActiveSum G par (A.erase j) hclosed'
+            summand η k * leafGasColumnSum 𝓟 (η w₀) (k (Fin.succ j)) t
+                ≤ summand η k * (c * ((η w₀).card : ℝ) * C) :=
+                  mul_le_mul_of_nonneg_left
+                    (leafGasColumnSum_le G hgas (η w₀) (k (Fin.succ j)) (hsupp (η w₀) hηmem) hkp)
+                    (hsummand_nonneg η)
+            _ = c * summand η k' * C := by rw [← hbump η]; ring
+    _ = c * C * ∑ η ∈ Fintype.piFinset (fun _ : RootedParentActive (A.erase j) => 𝓟),
+          summand η k' := by
+        rw [Finset.mul_sum]
+        exact Finset.sum_congr rfl fun η _ => by ring
+    _ = c * C * rootedGasParentActiveSum G 𝓟 par (A.erase j) hclosed'
           (Function.update k (par j) (k (par j) + 1)) t := by
-        rw [rootedParentActiveSum]
+        rw [rootedGasParentActiveSum]
+
+/-- **The leaf-peel inequality.**  For a leaf `j` of an active-closed set `A` and
+`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the active sum over `A` is bounded by the leaf
+Kotecky--Preiss factor times the active sum over `A.erase j` with the moment exponent at
+the leaf's parent vertex bumped by one.  Even-gas (`c = 1`) instance of
+`rootedGasParentActiveSum_leaf_peel_le`, discharging the support bound via
+`polymerSupport_card_le_card_of_mem_allPolymers`. -/
+theorem rootedParentActiveSum_leaf_peel_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {par : Fin n → Fin (n + 1)} {A : Finset (Fin n)} {j : Fin n}
+    (hclosed : RootedParentActiveClosed par A) (hleaf : RootedParentLeaf par A j)
+    (k : Fin (n + 1) → ℕ) {t : ℝ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
+    rootedParentActiveSum G par A hclosed k t
+      ≤ ((k (Fin.succ j)).factorial : ℝ)
+          / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ (k (Fin.succ j) + 1)
+        * rootedParentActiveSum G par (A.erase j) (hclosed.erase_leaf hleaf)
+            (Function.update k (par j) (k (par j) + 1)) t := by
+  have hsupp : ∀ P ∈ allPolymers G, ((polymerSupport P).card : ℝ) ≤ 1 * (P.card : ℝ) := by
+    intro P hP; rw [one_mul]; exact_mod_cast polymerSupport_card_le_card_of_mem_allPolymers G hP
+  simpa using rootedGasParentActiveSum_leaf_peel_le G (evenPolymerGasData G) hclosed hleaf k
+    hsupp hkp
 
 end IsingModel
