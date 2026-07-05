@@ -34,39 +34,39 @@ namespace IsingModel
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- The polymer activity through a vertex `v`: `∑_{P ∋ v} t^{|P|}`. -/
-noncomputable def rootedPolymerActivity (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (v : ι) (t : ℝ) : ℝ :=
-  ∑ P ∈ rootedPolymers G v, t ^ P.card
+/-- The gas polymer activity through a vertex `v`: `∑_{P ∋ v, P ∈ 𝓟} t^{|P|}`. -/
+noncomputable def rootedGasPolymerActivity (𝓟 : Finset (Finset (Sym2 ι))) (v : ι)
+    (t : ℝ) : ℝ :=
+  ∑ P ∈ rootedGasPolymers 𝓟 v, t ^ P.card
 
-/-- **Per-vertex polymer activity bound (volume-uniform).**  For `0 ≤ t` and
-`Δ²t < 1` (`Δ = G.maxDegree`), the polymer activity through `v` is bounded by the
+/-- **Per-vertex gas polymer activity bound (volume-uniform).**  For `0 ≤ t` and
+`Δ²t < 1` (`Δ = G.maxDegree`), the gas polymer activity through `v` is bounded by the
 geometric series `(1 − Δ²t)⁻¹`, independently of the volume. -/
-theorem rootedPolymerActivity_le_geometric (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] (v : ι) {t : ℝ} (ht0 : 0 ≤ t)
-    (ht : (G.maxDegree : ℝ) ^ 2 * t < 1) :
-    rootedPolymerActivity G v t ≤ (1 - (G.maxDegree : ℝ) ^ 2 * t)⁻¹ := by
+theorem rootedGasPolymerActivity_le_geometric (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟)
+    (v : ι) {t : ℝ} (ht0 : 0 ≤ t) (ht : (G.maxDegree : ℝ) ^ 2 * t < 1) :
+    rootedGasPolymerActivity 𝓟 v t ≤ (1 - (G.maxDegree : ℝ) ^ 2 * t)⁻¹ := by
   have hr0 : (0 : ℝ) ≤ (G.maxDegree : ℝ) ^ 2 * t := mul_nonneg (by positivity) ht0
-  have hmaps : ∀ P ∈ rootedPolymers G v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
+  have hmaps : ∀ P ∈ rootedGasPolymers 𝓟 v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
     intro P hP
-    rw [rootedPolymers, Finset.mem_filter] at hP
-    have hsub : P ⊆ G.edgeFinset := (mem_allPolymers.mp hP.1).isEven.subset
+    rw [rootedGasPolymers, Finset.mem_filter] at hP
+    have hsub : P ⊆ G.edgeFinset := hgas.mem_edgeFinset P hP.1
     exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.card_le_card hsub))
-  rw [rootedPolymerActivity,
+  rw [rootedGasPolymerActivity,
     ← Finset.sum_fiberwise_of_maps_to hmaps (fun P => t ^ P.card)]
   have hfiber : ∀ ℓ ∈ Finset.range (G.edgeFinset.card + 1),
-      (∑ P ∈ (rootedPolymers G v).filter (fun P => P.card = ℓ), t ^ P.card)
+      (∑ P ∈ (rootedGasPolymers 𝓟 v).filter (fun P => P.card = ℓ), t ^ P.card)
         ≤ ((G.maxDegree : ℝ) ^ 2 * t) ^ ℓ := by
     intro ℓ _
-    have hconst : (∑ P ∈ (rootedPolymers G v).filter (fun P => P.card = ℓ), t ^ P.card)
-        = ((rootedPolymersOfCard G v ℓ).card : ℝ) * t ^ ℓ := by
-      rw [rootedPolymersOfCard]
+    have hconst : (∑ P ∈ (rootedGasPolymers 𝓟 v).filter (fun P => P.card = ℓ), t ^ P.card)
+        = ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * t ^ ℓ := by
+      rw [rootedGasPolymersOfCard]
       rw [Finset.sum_congr rfl fun P hP => by rw [(Finset.mem_filter.mp hP).2]]
       rw [Finset.sum_const, nsmul_eq_mul]
     rw [hconst]
-    have hcount : ((rootedPolymersOfCard G v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
-      exact_mod_cast rootedPolymersOfCard_card_le_maxDegree_pow G v ℓ
-    calc ((rootedPolymersOfCard G v ℓ).card : ℝ) * t ^ ℓ
+    have hcount : ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
+      exact_mod_cast rootedGasPolymersOfCard_card_le_maxDegree_pow G hgas v ℓ
+    calc ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * t ^ ℓ
         ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) * t ^ ℓ :=
           mul_le_mul_of_nonneg_right hcount (pow_nonneg ht0 ℓ)
       _ = ((G.maxDegree : ℝ) ^ 2 * t) ^ ℓ := by rw [mul_pow, pow_mul]
@@ -74,6 +74,20 @@ theorem rootedPolymerActivity_le_geometric (G : SimpleGraph ι) [DecidableRel G.
   refine le_trans ((summable_geometric_of_lt_one hr0 ht).sum_le_tsum _
     (fun ℓ _ => pow_nonneg hr0 ℓ)) ?_
   rw [tsum_geometric_of_lt_one hr0 ht]
+
+/-- The polymer activity through a vertex `v`: `∑_{P ∋ v} t^{|P|}` (even gas). -/
+noncomputable def rootedPolymerActivity (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (v : ι) (t : ℝ) : ℝ :=
+  rootedGasPolymerActivity (allPolymers G) v t
+
+/-- **Per-vertex polymer activity bound (volume-uniform).**  For `0 ≤ t` and
+`Δ²t < 1` (`Δ = G.maxDegree`), the polymer activity through `v` is bounded by the
+geometric series `(1 − Δ²t)⁻¹`, independently of the volume. -/
+theorem rootedPolymerActivity_le_geometric (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (v : ι) {t : ℝ} (ht0 : 0 ≤ t)
+    (ht : (G.maxDegree : ℝ) ^ 2 * t < 1) :
+    rootedPolymerActivity G v t ≤ (1 - (G.maxDegree : ℝ) ^ 2 * t)⁻¹ :=
+  rootedGasPolymerActivity_le_geometric G (evenPolymerGasData G) v ht0 ht
 
 /-- The total polymer activity of `G`: `∑_{P ∈ allPolymers G} t^{|P|}`. -/
 noncomputable def allPolymersActivity (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -97,7 +111,7 @@ theorem sum_rootedPolymerActivity_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
     (t : ℝ) :
     (∑ v : ι, rootedPolymerActivity G v t)
       = ∑ P ∈ allPolymers G, (polymerSupport P).card • t ^ P.card := by
-  simp only [rootedPolymerActivity, rootedPolymers]
+  simp only [rootedPolymerActivity, rootedGasPolymerActivity, rootedGasPolymers]
   rw [Finset.sum_congr rfl fun v _ => Finset.sum_filter _ _, Finset.sum_comm]
   refine Finset.sum_congr rfl fun P _ => ?_
   rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const]

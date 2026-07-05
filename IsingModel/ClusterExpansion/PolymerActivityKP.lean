@@ -44,6 +44,21 @@ namespace IsingModel
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
+/-- **Per-vertex `e`-weighted gas activity bound (Kotecky--Preiss input).**  For
+`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the `e`-weighted gas polymer activity through `v`
+satisfies `∑_{Q ∋ v, Q ∈ 𝓟} (e^{|Q|})·|t|^{|Q|} ≤ (1 − Δ²·e·|t|)⁻¹`. -/
+theorem rootedGasPolymerActivity_expWeighted_le_geometric (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))}
+    (hgas : PolymerGasData G 𝓟) (v : ι) {t : ℝ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
+    (∑ Q ∈ rootedGasPolymers 𝓟 v, Real.exp 1 ^ Q.card * |t| ^ Q.card)
+      ≤ (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ := by
+  have h0 : (0 : ℝ) ≤ Real.exp 1 * |t| := by positivity
+  have hgeo := rootedGasPolymerActivity_le_geometric G hgas v h0 hkp
+  rw [rootedGasPolymerActivity] at hgeo
+  refine le_trans (le_of_eq ?_) hgeo
+  exact Finset.sum_congr rfl fun Q _ => (mul_pow _ _ _).symm
+
 /-- **Per-vertex `e`-weighted activity bound (Kotecky--Preiss input).**  For
 `Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the `e`-weighted polymer activity through `v`
 satisfies `∑_{Q ∋ v} (e^{|Q|})·|t|^{|Q|} ≤ (1 − Δ²·e·|t|)⁻¹`. -/
@@ -51,43 +66,47 @@ theorem rootedPolymerActivity_expWeighted_le_geometric (G : SimpleGraph ι)
     [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
     (∑ Q ∈ rootedPolymers G v, Real.exp 1 ^ Q.card * |t| ^ Q.card)
-      ≤ (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ := by
-  have h0 : (0 : ℝ) ≤ Real.exp 1 * |t| := by positivity
-  have hgeo := rootedPolymerActivity_le_geometric G v h0 hkp
-  rw [rootedPolymerActivity] at hgeo
-  refine le_trans (le_of_eq ?_) hgeo
-  exact Finset.sum_congr rfl fun Q _ => (mul_pow _ _ _).symm
+      ≤ (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ :=
+  rootedGasPolymerActivity_expWeighted_le_geometric G (evenPolymerGasData G) v hkp
+
+/-- The gas polymers (from `𝓟`) that are incompatible with `P` (i.e. share a support
+vertex with `P`). -/
+def incompatibleGasPolymers (𝓟 : Finset (Finset (Sym2 ι)))
+    (P : Finset (Sym2 ι)) : Finset (Finset (Sym2 ι)) :=
+  𝓟.filter (PolymersIncompatible P)
 
 /-- The polymers of `G` that are incompatible with `P` (i.e. share a support
 vertex with `P`). -/
 noncomputable def incompatiblePolymers (G : SimpleGraph ι) [Fintype G.edgeSet]
     (P : Finset (Sym2 ι)) : Finset (Finset (Sym2 ι)) :=
-  (allPolymers G).filter (PolymersIncompatible P)
+  incompatibleGasPolymers (allPolymers G) P
 
-/-- **Incompatibility-neighbourhood activity bound (Kotecky--Preiss input).**  For
-`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the total `e`-weighted activity of the polymers
+/-- **Incompatibility-neighbourhood gas activity bound (Kotecky--Preiss input).**  For
+`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the total `e`-weighted activity of the gas polymers
 incompatible with `P` is at most `|supp P|·(1 − Δ²·e·|t|)⁻¹`.  Each incompatible
 polymer is rooted at one of the `|supp P|` support vertices of `P`, so the
 neighbourhood activity is bounded by `|supp P|` copies of the per-vertex geometric
-bound. -/
-theorem incompatibilityActivity_expWeighted_le (G : SimpleGraph ι)
-    [DecidableRel G.Adj] [Fintype G.edgeSet] (P : Finset (Sym2 ι)) {t : ℝ}
+bound.  The `|supp P|` factor is not yet replaced by `|P|`: each gas applies its own
+support bound in a wrapper. -/
+theorem incompatibilityGasActivity_expWeighted_le (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))}
+    (hgas : PolymerGasData G 𝓟) (P : Finset (Sym2 ι)) {t : ℝ}
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
-    (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
+    (∑ Q ∈ incompatibleGasPolymers 𝓟 P, (Real.exp 1 * |t|) ^ Q.card)
       ≤ ((polymerSupport P).card : ℝ)
           * (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ := by
   have hw0 : (0 : ℝ) ≤ Real.exp 1 * |t| := by positivity
   -- Each incompatible polymer is counted at least once when ranging over the
   -- shared support vertices of `P`.
-  have key : (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
+  have key : (∑ Q ∈ incompatibleGasPolymers 𝓟 P, (Real.exp 1 * |t|) ^ Q.card)
       ≤ ∑ v ∈ polymerSupport P,
-          ∑ Q ∈ rootedPolymers G v, (Real.exp 1 * |t|) ^ Q.card := by
-    calc (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
-        ≤ ∑ Q ∈ incompatiblePolymers G P,
+          ∑ Q ∈ rootedGasPolymers 𝓟 v, (Real.exp 1 * |t|) ^ Q.card := by
+    calc (∑ Q ∈ incompatibleGasPolymers 𝓟 P, (Real.exp 1 * |t|) ^ Q.card)
+        ≤ ∑ Q ∈ incompatibleGasPolymers 𝓟 P,
             ∑ _v ∈ (polymerSupport P).filter (· ∈ polymerSupport Q),
               (Real.exp 1 * |t|) ^ Q.card := by
           refine Finset.sum_le_sum fun Q hQ => ?_
-          rw [Finset.sum_const, incompatiblePolymers, Finset.mem_filter] at *
+          rw [Finset.sum_const, incompatibleGasPolymers, Finset.mem_filter] at *
           obtain ⟨v, hvP, hvQ⟩ :=
             PolymersIncompatible.iff_exists_shared_vertex.mp hQ.2
           have hne : ((polymerSupport P).filter (· ∈ polymerSupport Q)).Nonempty :=
@@ -102,79 +121,92 @@ theorem incompatibilityActivity_expWeighted_le (G : SimpleGraph ι)
                 mul_le_mul_of_nonneg_right h1 (pow_nonneg hw0 _)
             _ = ((polymerSupport P).filter (· ∈ polymerSupport Q)).card
                   • (Real.exp 1 * |t|) ^ Q.card := (nsmul_eq_mul _ _).symm
-      _ = ∑ Q ∈ incompatiblePolymers G P,
+      _ = ∑ Q ∈ incompatibleGasPolymers 𝓟 P,
             ∑ v ∈ polymerSupport P,
               (if v ∈ polymerSupport Q then (Real.exp 1 * |t|) ^ Q.card else 0) := by
           refine Finset.sum_congr rfl fun Q _ => ?_
           rw [Finset.sum_filter]
       _ = ∑ v ∈ polymerSupport P,
-            ∑ Q ∈ incompatiblePolymers G P,
+            ∑ Q ∈ incompatibleGasPolymers 𝓟 P,
               (if v ∈ polymerSupport Q then (Real.exp 1 * |t|) ^ Q.card else 0) :=
           Finset.sum_comm
       _ ≤ ∑ v ∈ polymerSupport P,
-            ∑ Q ∈ rootedPolymers G v, (Real.exp 1 * |t|) ^ Q.card := by
+            ∑ Q ∈ rootedGasPolymers 𝓟 v, (Real.exp 1 * |t|) ^ Q.card := by
           refine Finset.sum_le_sum fun v _ => ?_
           rw [← Finset.sum_filter]
           refine Finset.sum_le_sum_of_subset_of_nonneg ?_ ?_
           · intro Q hQ
-            rw [Finset.mem_filter, incompatiblePolymers, Finset.mem_filter] at hQ
-            rw [rootedPolymers, Finset.mem_filter]
+            rw [Finset.mem_filter, incompatibleGasPolymers, Finset.mem_filter] at hQ
+            rw [rootedGasPolymers, Finset.mem_filter]
             exact ⟨hQ.1.1, hQ.2⟩
           · intro Q _ _; exact pow_nonneg hw0 _
   refine key.trans ?_
   calc (∑ v ∈ polymerSupport P,
-          ∑ Q ∈ rootedPolymers G v, (Real.exp 1 * |t|) ^ Q.card)
+          ∑ Q ∈ rootedGasPolymers 𝓟 v, (Real.exp 1 * |t|) ^ Q.card)
       ≤ ∑ _v ∈ polymerSupport P,
           (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ := by
         refine Finset.sum_le_sum fun v _ => ?_
-        have hgeo := rootedPolymerActivity_le_geometric G v hw0 hkp
-        rwa [rootedPolymerActivity] at hgeo
+        have hgeo := rootedGasPolymerActivity_le_geometric G hgas v hw0 hkp
+        rwa [rootedGasPolymerActivity] at hgeo
     _ = ((polymerSupport P).card : ℝ)
           * (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ := by
         rw [Finset.sum_const, nsmul_eq_mul]
 
-/-- **Tail per-vertex activity bound.**  Polymers are nonempty (edge-count `≥ 1`),
-so the per-vertex activity is bounded by the *tail* geometric series:
-`∑_{Q ∋ v} u^{|Q|} ≤ (Δ²u)·(1 − Δ²u)⁻¹` for `0 ≤ u`, `Δ²u < 1`.  Unlike the full
+/-- **Incompatibility-neighbourhood activity bound (Kotecky--Preiss input).**  For
+`Δ²·e·|t| < 1` (`Δ = G.maxDegree`), the total `e`-weighted activity of the polymers
+incompatible with `P` is at most `|supp P|·(1 − Δ²·e·|t|)⁻¹`.  Even-gas instance of
+`incompatibilityGasActivity_expWeighted_le`. -/
+theorem incompatibilityActivity_expWeighted_le (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] (P : Finset (Sym2 ι)) {t : ℝ}
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
+    (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
+      ≤ ((polymerSupport P).card : ℝ)
+          * (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))⁻¹ :=
+  incompatibilityGasActivity_expWeighted_le G (evenPolymerGasData G) P hkp
+
+/-- **Tail per-vertex gas activity bound.**  Gas polymers are nonempty (edge-count
+`≥ 1`), so the per-vertex gas activity is bounded by the *tail* geometric series:
+`∑_{Q ∋ v, Q ∈ 𝓟} u^{|Q|} ≤ (Δ²u)·(1 − Δ²u)⁻¹` for `0 ≤ u`, `Δ²u < 1`.  Unlike the full
 geometric bound `(1 − Δ²u)⁻¹`, this tail vanishes as `u → 0`, which is what the
 Kotecky--Preiss criterion requires. -/
-theorem rootedPolymerActivity_le_geometric_tail (G : SimpleGraph ι)
-    [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {u : ℝ} (hu0 : 0 ≤ u)
+theorem rootedGasPolymerActivity_le_geometric_tail (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))}
+    (hgas : PolymerGasData G 𝓟) (v : ι) {u : ℝ} (hu0 : 0 ≤ u)
     (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
-    rootedPolymerActivity G v u
+    rootedGasPolymerActivity 𝓟 v u
       ≤ (G.maxDegree : ℝ) ^ 2 * u * (1 - (G.maxDegree : ℝ) ^ 2 * u)⁻¹ := by
   set r : ℝ := (G.maxDegree : ℝ) ^ 2 * u with hr
   have hr0 : (0 : ℝ) ≤ r := mul_nonneg (by positivity) hu0
-  have hmaps : ∀ P ∈ rootedPolymers G v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
+  have hmaps : ∀ P ∈ rootedGasPolymers 𝓟 v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
     intro P hP
-    rw [rootedPolymers, Finset.mem_filter] at hP
-    have hsub : P ⊆ G.edgeFinset := (mem_allPolymers.mp hP.1).isEven.subset
+    rw [rootedGasPolymers, Finset.mem_filter] at hP
+    have hsub : P ⊆ G.edgeFinset := hgas.mem_edgeFinset P hP.1
     exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.card_le_card hsub))
-  rw [rootedPolymerActivity,
+  rw [rootedGasPolymerActivity,
     ← Finset.sum_fiberwise_of_maps_to hmaps (fun P => u ^ P.card)]
   have hfiber : ∀ ℓ ∈ Finset.range (G.edgeFinset.card + 1),
-      (∑ P ∈ (rootedPolymers G v).filter (fun P => P.card = ℓ), u ^ P.card)
+      (∑ P ∈ (rootedGasPolymers 𝓟 v).filter (fun P => P.card = ℓ), u ^ P.card)
         ≤ (if ℓ = 0 then 0 else r ^ ℓ) := by
     intro ℓ _
     rcases eq_or_ne ℓ 0 with rfl | hℓ
-    · have hempty : (rootedPolymers G v).filter (fun P => P.card = 0) = ∅ := by
+    · have hempty : (rootedGasPolymers 𝓟 v).filter (fun P => P.card = 0) = ∅ := by
         rw [Finset.filter_eq_empty_iff]
         intro P hP hP0
-        rw [rootedPolymers, Finset.mem_filter] at hP
+        rw [rootedGasPolymers, Finset.mem_filter] at hP
         exact absurd (Finset.card_eq_zero.mp hP0)
-          (Finset.nonempty_iff_ne_empty.mp (mem_allPolymers.mp hP.1).nonempty)
+          (Finset.nonempty_iff_ne_empty.mp (hgas.nonempty P hP.1))
       rw [hempty, Finset.sum_empty]
       exact le_of_eq (if_pos rfl).symm
     · rw [if_neg hℓ]
-      have hconst : (∑ P ∈ (rootedPolymers G v).filter (fun P => P.card = ℓ), u ^ P.card)
-          = ((rootedPolymersOfCard G v ℓ).card : ℝ) * u ^ ℓ := by
-        rw [rootedPolymersOfCard]
+      have hconst : (∑ P ∈ (rootedGasPolymers 𝓟 v).filter (fun P => P.card = ℓ), u ^ P.card)
+          = ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * u ^ ℓ := by
+        rw [rootedGasPolymersOfCard]
         rw [Finset.sum_congr rfl fun P hP => by rw [(Finset.mem_filter.mp hP).2]]
         rw [Finset.sum_const, nsmul_eq_mul]
       rw [hconst]
-      have hcount : ((rootedPolymersOfCard G v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
-        exact_mod_cast rootedPolymersOfCard_card_le_maxDegree_pow G v ℓ
-      calc ((rootedPolymersOfCard G v ℓ).card : ℝ) * u ^ ℓ
+      have hcount : ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
+        exact_mod_cast rootedGasPolymersOfCard_card_le_maxDegree_pow G hgas v ℓ
+      calc ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * u ^ ℓ
           ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) * u ^ ℓ :=
             mul_le_mul_of_nonneg_right hcount (pow_nonneg hu0 ℓ)
         _ = r ^ ℓ := by rw [hr, mul_pow, pow_mul]
@@ -195,6 +227,17 @@ theorem rootedPolymerActivity_le_geometric_tail (G : SimpleGraph ι)
       rw [if_pos rfl, zero_add, tsum_congr hfun, tsum_mul_left,
         tsum_geometric_of_lt_one hr0 hu]
     rw [htsum]
+
+/-- **Tail per-vertex activity bound.**  Polymers are nonempty (edge-count `≥ 1`),
+so the per-vertex activity is bounded by the *tail* geometric series:
+`∑_{Q ∋ v} u^{|Q|} ≤ (Δ²u)·(1 − Δ²u)⁻¹` for `0 ≤ u`, `Δ²u < 1`.  Even-gas instance of
+`rootedGasPolymerActivity_le_geometric_tail`. -/
+theorem rootedPolymerActivity_le_geometric_tail (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {u : ℝ} (hu0 : 0 ≤ u)
+    (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
+    rootedPolymerActivity G v u
+      ≤ (G.maxDegree : ℝ) ^ 2 * u * (1 - (G.maxDegree : ℝ) ^ 2 * u)⁻¹ :=
+  rootedGasPolymerActivity_le_geometric_tail G (evenPolymerGasData G) v hu0 hu
 
 /-- **A polymer has at most as many support vertices as edges.**  In an even
 subgraph every support vertex has even degree `≥ 2`, so by the handshake identity
@@ -250,13 +293,14 @@ theorem incompatibilityActivity_expWeighted_le_card_of_half (G : SimpleGraph ι)
   -- bound by the support sum of the tail per-vertex activity
   have hkey : (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
       ≤ ∑ v ∈ polymerSupport P, rootedPolymerActivity G v (Real.exp 1 * |t|) := by
-    simp only [rootedPolymerActivity]
+    simp only [rootedPolymerActivity, rootedGasPolymerActivity]
     calc (∑ Q ∈ incompatiblePolymers G P, (Real.exp 1 * |t|) ^ Q.card)
         ≤ ∑ Q ∈ incompatiblePolymers G P,
             ∑ _v ∈ (polymerSupport P).filter (· ∈ polymerSupport Q),
               (Real.exp 1 * |t|) ^ Q.card := by
           refine Finset.sum_le_sum fun Q hQ => ?_
-          rw [Finset.sum_const, incompatiblePolymers, Finset.mem_filter] at *
+          rw [Finset.sum_const, incompatiblePolymers, incompatibleGasPolymers,
+            Finset.mem_filter] at *
           obtain ⟨v, hvP, hvQ⟩ :=
             PolymersIncompatible.iff_exists_shared_vertex.mp hQ.2
           have hne : ((polymerSupport P).filter (· ∈ polymerSupport Q)).Nonempty :=
@@ -286,8 +330,9 @@ theorem incompatibilityActivity_expWeighted_le_card_of_half (G : SimpleGraph ι)
           rw [← Finset.sum_filter]
           refine Finset.sum_le_sum_of_subset_of_nonneg ?_ ?_
           · intro Q hQ
-            rw [Finset.mem_filter, incompatiblePolymers, Finset.mem_filter] at hQ
-            rw [rootedPolymers, Finset.mem_filter]
+            rw [Finset.mem_filter, incompatiblePolymers, incompatibleGasPolymers,
+              Finset.mem_filter] at hQ
+            rw [rootedPolymers, rootedGasPolymers, Finset.mem_filter]
             exact ⟨hQ.1.1, hQ.2⟩
           · intro Q _ _; exact pow_nonneg hu0 _
   refine hkey.trans ?_

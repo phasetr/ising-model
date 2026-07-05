@@ -30,29 +30,30 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Sharpened (tail) per-vertex polymer-activity moment bound.**  Since every polymer
-through `v` is nonempty, the size-`0` fiber of the moment sum is empty, so the bound of
-`rootedPolymerActivity_cardPow_le` sharpens by a factor `Δ²u`:
-`∑_{Q ∋ v} |Q|^d u^{|Q|} ≤ (Δ²u)·d!/(1−Δ²u)^{d+1}`.  The proof fibers over the polymer
-size `ℓ` as in #4099, drops the empty `ℓ = 0` fiber, reindexes `ℓ ↦ ℓ + 1`, and applies
-the tail geometric-moment bound `tsum_succ_pow_mul_geometric_succ_le`. -/
-theorem rootedPolymerActivity_cardPow_tail_le (G : SimpleGraph ι) [DecidableRel G.Adj]
-    [Fintype G.edgeSet] (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u)
-    (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
-    (∑ Q ∈ rootedPolymers G v, (Q.card : ℝ) ^ d * u ^ Q.card)
+/-- **Sharpened (tail) per-vertex gas polymer-activity moment bound.**  Since every
+polymer through `v` in the gas `𝓟` is nonempty, the size-`0` fiber of the moment sum is
+empty, so the bound of `rootedGasPolymerActivity_cardPow_le` sharpens by a factor `Δ²u`:
+`∑_{Q ∋ v, Q ∈ 𝓟} |Q|^d u^{|Q|} ≤ (Δ²u)·d!/(1−Δ²u)^{d+1}`.  The proof fibers over the
+polymer size `ℓ` as in #4099, drops the empty `ℓ = 0` fiber, reindexes `ℓ ↦ ℓ + 1`, and
+applies the tail geometric-moment bound `tsum_succ_pow_mul_geometric_succ_le`. -/
+theorem rootedGasPolymerActivity_cardPow_tail_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟)
+    (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u) (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
+    (∑ Q ∈ rootedGasPolymers 𝓟 v, (Q.card : ℝ) ^ d * u ^ Q.card)
       ≤ ((G.maxDegree : ℝ) ^ 2 * u)
           * ((d.factorial : ℝ) / (1 - (G.maxDegree : ℝ) ^ 2 * u) ^ (d + 1)) := by
   set r : ℝ := (G.maxDegree : ℝ) ^ 2 * u with hr
   have hr0 : (0 : ℝ) ≤ r := mul_nonneg (by positivity) hu0
-  have hmaps : ∀ P ∈ rootedPolymers G v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
+  have hmaps : ∀ P ∈ rootedGasPolymers 𝓟 v, P.card ∈ Finset.range (G.edgeFinset.card + 1) := by
     intro P hP
-    rw [rootedPolymers, Finset.mem_filter] at hP
-    have hsub : P ⊆ G.edgeFinset := (mem_allPolymers.mp hP.1).isEven.subset
+    rw [rootedGasPolymers, Finset.mem_filter] at hP
+    have hsub : P ⊆ G.edgeFinset := hgas.mem_edgeFinset P hP.1
     exact Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.card_le_card hsub))
   rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun Q => (Q.card : ℝ) ^ d * u ^ Q.card)]
   -- Each fiber is bounded by `if ℓ = 0 then 0 else ℓ^d r^ℓ`.
   have hfiber : ∀ ℓ ∈ Finset.range (G.edgeFinset.card + 1),
-      (∑ Q ∈ (rootedPolymers G v).filter (fun Q => Q.card = ℓ), (Q.card : ℝ) ^ d * u ^ Q.card)
+      (∑ Q ∈ (rootedGasPolymers 𝓟 v).filter (fun Q => Q.card = ℓ),
+          (Q.card : ℝ) ^ d * u ^ Q.card)
         ≤ (if ℓ = 0 then 0 else (ℓ : ℝ) ^ d * r ^ ℓ) := by
     intro ℓ _
     by_cases hℓ : ℓ = 0
@@ -61,22 +62,23 @@ theorem rootedPolymerActivity_cardPow_tail_le (G : SimpleGraph ι) [DecidableRel
       refine le_of_eq (Finset.sum_eq_zero fun Q hQ => ?_)
       rw [Finset.mem_filter] at hQ
       have hcard0 : Q.card = 0 := hQ.2
-      have hQin : Q ∈ rootedPolymers G v := hQ.1
-      rw [rootedPolymers, Finset.mem_filter] at hQin
-      have hne := (mem_allPolymers.mp hQin.1).nonempty
+      have hQin : Q ∈ rootedGasPolymers 𝓟 v := hQ.1
+      rw [rootedGasPolymers, Finset.mem_filter] at hQin
+      have hne := hgas.nonempty Q hQin.1
       rw [← Finset.card_pos] at hne
       exact absurd hcard0 (by omega)
     · rw [if_neg hℓ]
       have hconst :
-          (∑ Q ∈ (rootedPolymers G v).filter (fun Q => Q.card = ℓ), (Q.card : ℝ) ^ d * u ^ Q.card)
-            = ((rootedPolymersOfCard G v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ) := by
-        rw [rootedPolymersOfCard]
+          (∑ Q ∈ (rootedGasPolymers 𝓟 v).filter (fun Q => Q.card = ℓ),
+              (Q.card : ℝ) ^ d * u ^ Q.card)
+            = ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ) := by
+        rw [rootedGasPolymersOfCard]
         rw [Finset.sum_congr rfl fun Q hQ => by rw [(Finset.mem_filter.mp hQ).2]]
         rw [Finset.sum_const, nsmul_eq_mul]
       rw [hconst]
-      have hcount : ((rootedPolymersOfCard G v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
-        exact_mod_cast rootedPolymersOfCard_card_le_maxDegree_pow G v ℓ
-      calc ((rootedPolymersOfCard G v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ)
+      have hcount : ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) := by
+        exact_mod_cast rootedGasPolymersOfCard_card_le_maxDegree_pow G hgas v ℓ
+      calc ((rootedGasPolymersOfCard 𝓟 v ℓ).card : ℝ) * ((ℓ : ℝ) ^ d * u ^ ℓ)
           ≤ (G.maxDegree : ℝ) ^ (2 * ℓ) * ((ℓ : ℝ) ^ d * u ^ ℓ) :=
             mul_le_mul_of_nonneg_right hcount (by positivity)
         _ = (ℓ : ℝ) ^ d * r ^ ℓ := by rw [hr, mul_pow, pow_mul]; ring
@@ -94,5 +96,18 @@ theorem rootedPolymerActivity_cardPow_tail_le (G : SimpleGraph ι) [DecidableRel
       (summable_pow_mul_geometric_of_norm_lt_one d hnorm)
   refine le_trans (hsumm.sum_le_tsum _ (fun m _ => by positivity)) ?_
   exact tsum_succ_pow_mul_geometric_succ_le d hr0 hu
+
+/-- **Sharpened (tail) per-vertex polymer-activity moment bound.**  Since every polymer
+through `v` is nonempty, the size-`0` fiber of the moment sum is empty, so the bound of
+`rootedPolymerActivity_cardPow_le` sharpens by a factor `Δ²u`:
+`∑_{Q ∋ v} |Q|^d u^{|Q|} ≤ (Δ²u)·d!/(1−Δ²u)^{d+1}`.  Even-gas instance of
+`rootedGasPolymerActivity_cardPow_tail_le`. -/
+theorem rootedPolymerActivity_cardPow_tail_le (G : SimpleGraph ι) [DecidableRel G.Adj]
+    [Fintype G.edgeSet] (v : ι) (d : ℕ) {u : ℝ} (hu0 : 0 ≤ u)
+    (hu : (G.maxDegree : ℝ) ^ 2 * u < 1) :
+    (∑ Q ∈ rootedPolymers G v, (Q.card : ℝ) ^ d * u ^ Q.card)
+      ≤ ((G.maxDegree : ℝ) ^ 2 * u)
+          * ((d.factorial : ℝ) / (1 - (G.maxDegree : ℝ) ^ 2 * u) ^ (d + 1)) :=
+  rootedGasPolymerActivity_cardPow_tail_le G (evenPolymerGasData G) v d hu0 hu
 
 end IsingModel
