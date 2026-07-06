@@ -46,19 +46,21 @@ theorem clusterSeqActivity_comp_equiv {n : ℕ} (t : ℝ)
   exact Equiv.prod_comp e (fun i => t ^ (ω i).card)
 
 open Classical in
-/-- **A fixed coordinate touching `v` has the same term-absolute sum as the root coordinate.**
-The proof reindexes the constant `piFinset` by the transposition swapping `0` and `i`; the Ursell
-coefficient and activity are invariant under this coordinate permutation. -/
-theorem fixedVertexCoordRoot_termAbsSum_succ_eq
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (v : ι) (n : ℕ) (t : ℝ) (i : Fin (n + 1)) :
-    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+/-- **A fixed coordinate touching `v` has the same term-absolute gas sum as the root
+coordinate.**  The proof reindexes the constant `piFinset` (over the abstract gas `𝓟`) by the
+transposition swapping `0` and `i`; the Ursell coefficient and activity are invariant under
+this coordinate permutation.  This step is purely structural, so it needs no gas hypotheses;
+the even gas (`allPolymers G`) is recovered by `fixedVertexCoordRoot_termAbsSum_succ_eq`. -/
+theorem fixedVertexGasCoordRoot_termAbsSum_succ_eq
+    (𝓟 : Finset (Finset (Sym2 ι))) (v : ι) (n : ℕ) (t : ℝ) (i : Fin (n + 1)) :
+    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => v ∈ polymerSupport (ω i)),
         |ursellCoefficient ω| * clusterSeqActivity t ω)
-      = ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+      = ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => v ∈ polymerSupport (ω 0)),
         |ursellCoefficient ω| * clusterSeqActivity t ω := by
   classical
-  let S := Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)
+  let S := Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)
   let e : Fin (n + 1) ≃ Fin (n + 1) := Equiv.swap 0 i
   let a : (Fin (n + 1) → Finset (Sym2 ι)) → ℝ :=
     fun ω => |ursellCoefficient ω| * clusterSeqActivity t ω
@@ -72,11 +74,11 @@ theorem fixedVertexCoordRoot_termAbsSum_succ_eq
     intro ω
     dsimp [e]
     simp
-  have hreindex := sum_piFinset_const_domEquiv e (allPolymers G)
+  have hreindex := sum_piFinset_const_domEquiv e 𝓟
     (fun ω : Fin (n + 1) → Finset (Sym2 ι) =>
       if v ∈ polymerSupport (ω i) then a ω else 0)
   calc
-    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => v ∈ polymerSupport (ω i)),
         |ursellCoefficient ω| * clusterSeqActivity t ω)
         = ∑ ω ∈ S, if v ∈ polymerSupport (ω i) then a ω else 0 := by
@@ -92,16 +94,82 @@ theorem fixedVertexCoordRoot_termAbsSum_succ_eq
           by_cases h : v ∈ polymerSupport (ω 0)
           · rw [if_pos h, if_pos ((hpred ω).mpr h), hterm]
           · rw [if_neg h, if_neg (fun h' => h ((hpred ω).mp h'))]
-    _ = ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+    _ = ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => v ∈ polymerSupport (ω 0)),
         |ursellCoefficient ω| * clusterSeqActivity t ω := by
           dsimp [S, a]
           rw [Finset.sum_filter]
 
+/-- **A fixed coordinate touching `v` has the same term-absolute sum as the root coordinate.**
+Even-gas (`allPolymers G`) instance of `fixedVertexGasCoordRoot_termAbsSum_succ_eq`. -/
+theorem fixedVertexCoordRoot_termAbsSum_succ_eq
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (v : ι) (n : ℕ) (t : ℝ) (i : Fin (n + 1)) :
+    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          (fun ω => v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+      = ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          (fun ω => v ∈ polymerSupport (ω 0)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω :=
+  fixedVertexGasCoordRoot_termAbsSum_succ_eq (allPolymers G) v n t i
+
 open Classical in
+/-- **Fixed-vertex touching per-order gas bound.**  The touching sum (over the abstract gas
+`𝓟`) is bounded by the coordinate union bound, each coordinate-rooted sum is reindexed to the
+root coordinate, and the fixed-root Kotecky--Preiss estimate supplies the common geometric
+bound with support-bump constant `c` (so the geometric ratio is `4·c·Δ²e|t|/(1−Δ²e|t|)²`).
+The even gas (`allPolymers G`, `c = 1`) is recovered by
+`fixedVertexTouching_termAbsSum_succ_le_nat_mul_geometric`. -/
+theorem fixedVertexGasTouching_termAbsSum_succ_le_nat_mul_geometric
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟) {c : ℝ} (hc : 0 ≤ c)
+    (hsupp : ∀ P ∈ 𝓟, ((polymerSupport P).card : ℝ) ≤ c * (P.card : ℝ)) (v : ι) (n : ℕ)
+    {t : ℝ} (ht : 0 ≤ t)
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1) :
+    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+      ≤ ((n + 1 : ℕ) : ℝ)
+        * ((1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
+          * (4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+              / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2) ^ n) := by
+  classical
+  let B : ℝ := (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
+    * (4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2) ^ n
+  have htouch :
+      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+            (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+          |ursellCoefficient ω| * clusterSeqActivity t ω)
+        ≤ ∑ i : Fin (n + 1),
+          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+              (fun ω => v ∈ polymerSupport (ω i)),
+            |ursellCoefficient ω| * clusterSeqActivity t ω := by
+    have h := fixedVertexGasTouching_termAbsSum_succ_le_sum_coord_rooted 𝓟 v n (t : ℂ)
+    simpa [Complex.norm_real, Real.norm_eq_abs, clusterSeqActivity, abs_of_nonneg ht] using h
+  have hcoord :
+      (∑ i : Fin (n + 1),
+          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+              (fun ω => v ∈ polymerSupport (ω i)),
+            |ursellCoefficient ω| * clusterSeqActivity t ω)
+        ≤ ∑ _i : Fin (n + 1), B := by
+    refine Finset.sum_le_sum fun i _ => ?_
+    rw [fixedVertexGasCoordRoot_termAbsSum_succ_eq 𝓟 v n t i]
+    exact fixedVertexGasRoot_termAbsSum_succ_le_div_mul_geometric G hgas hc hsupp v n ht hkp
+  calc
+    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+        ≤ ∑ i : Fin (n + 1),
+          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+              (fun ω => v ∈ polymerSupport (ω i)),
+            |ursellCoefficient ω| * clusterSeqActivity t ω := htouch
+    _ ≤ ∑ _i : Fin (n + 1), B := hcoord
+    _ = ((n + 1 : ℕ) : ℝ) * B := by simp [B]
+
 /-- **Fixed-vertex touching per-order bound.**  The touching sum is bounded by the coordinate
 union bound, each coordinate-rooted sum is reindexed to the root coordinate, and the fixed-root
-Kotecky--Preiss estimate supplies the common geometric bound. -/
+Kotecky--Preiss estimate supplies the common geometric bound.  Even-gas (`c = 1`) instance of
+`fixedVertexGasTouching_termAbsSum_succ_le_nat_mul_geometric`. -/
 theorem fixedVertexTouching_termAbsSum_succ_le_nat_mul_geometric
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) (n : ℕ) {t : ℝ}
     (ht : 0 ≤ t)
@@ -113,38 +181,11 @@ theorem fixedVertexTouching_termAbsSum_succ_le_nat_mul_geometric
         * ((1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
           * (4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
               / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2) ^ n) := by
-  classical
-  let B : ℝ := (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
-    * (4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
-        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2) ^ n
-  have htouch :
-      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-            (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
-          |ursellCoefficient ω| * clusterSeqActivity t ω)
-        ≤ ∑ i : Fin (n + 1),
-          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-              (fun ω => v ∈ polymerSupport (ω i)),
-            |ursellCoefficient ω| * clusterSeqActivity t ω := by
-    have h := fixedVertexTouching_termAbsSum_succ_le_sum_coord_rooted G v n (t : ℂ)
-    simpa [Complex.norm_real, Real.norm_eq_abs, clusterSeqActivity, abs_of_nonneg ht] using h
-  have hcoord :
-      (∑ i : Fin (n + 1),
-          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-              (fun ω => v ∈ polymerSupport (ω i)),
-            |ursellCoefficient ω| * clusterSeqActivity t ω)
-        ≤ ∑ _i : Fin (n + 1), B := by
-    refine Finset.sum_le_sum fun i _ => ?_
-    rw [fixedVertexCoordRoot_termAbsSum_succ_eq G v n t i]
-    exact fixedVertexRoot_termAbsSum_succ_le_div_mul_geometric G v n ht hkp
-  calc
-    (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
-        |ursellCoefficient ω| * clusterSeqActivity t ω)
-        ≤ ∑ i : Fin (n + 1),
-          ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-              (fun ω => v ∈ polymerSupport (ω i)),
-            |ursellCoefficient ω| * clusterSeqActivity t ω := htouch
-    _ ≤ ∑ _i : Fin (n + 1), B := hcoord
-    _ = ((n + 1 : ℕ) : ℝ) * B := by simp [B]
+  have hsupp : ∀ P ∈ allPolymers G, ((polymerSupport P).card : ℝ) ≤ 1 * (P.card : ℝ) := by
+    intro P hP
+    rw [one_mul]; exact_mod_cast polymerSupport_card_le_card_of_mem_allPolymers G hP
+  have h := fixedVertexGasTouching_termAbsSum_succ_le_nat_mul_geometric G (evenPolymerGasData G)
+    zero_le_one hsupp v n ht hkp
+  simpa using h
 
 end IsingModel
