@@ -30,28 +30,31 @@ theorem tsum_nat_succ_mul_geometric_eq_inv_sq {ρ : ℝ} (hρ0 : 0 ≤ ρ) (hρ 
   field_simp [h1]
   ring
 
-/-- **Summability of the fixed-vertex touching majorant.**  The per-order fixed-vertex touching
-bound is dominated by `(1-rr)⁻¹ (n+1)ρ^n`, hence is summable when `ρ < 1`. -/
-theorem summable_fixedVertexTouching_termAbsSum_succ
-    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {t : ℝ}
+/-- **Summability of the fixed-vertex touching gas majorant.**  The per-order fixed-vertex
+touching bound (over the abstract gas `𝓟`) is dominated by `(1-rr)⁻¹ (n+1)ρ^n` with
+`ρ = 4·c·rr/(1-rr)²`, hence is summable when `ρ < 1`.  The even gas (`allPolymers G`,
+`c = 1`) is recovered by `summable_fixedVertexTouching_termAbsSum_succ`. -/
+theorem summable_fixedVertexGasTouching_termAbsSum_succ
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟) {c : ℝ} (hc : 0 ≤ c)
+    (hsupp : ∀ P ∈ 𝓟, ((polymerSupport P).card : ℝ) ≤ c * (P.card : ℝ)) (v : ι) {t : ℝ}
     (ht : 0 ≤ t)
     (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
-    (hρ : 4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+    (hρ : 4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
         / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1) :
     Summable fun n : ℕ =>
-      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
         |ursellCoefficient ω| * clusterSeqActivity t ω := by
   classical
   set rr : ℝ := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) with hrr
-  set ρ : ℝ := 4 * rr / (1 - rr) ^ 2 with hρdef
+  set ρ : ℝ := 4 * c * rr / (1 - rr) ^ 2 with hρdef
   set K : ℝ := 1 / (1 - rr) with hK
   have hρlt : ρ < 1 := by
     rw [hρdef, hrr]
     exact hρ
   have hρ0 : 0 ≤ ρ := by
-    rw [hρdef]
-    positivity
+    rw [hρdef, hrr]; positivity
   have hsuccSumm : Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ρ ^ n := by
     have hnorm : ‖ρ‖ < 1 := by
       rw [Real.norm_eq_abs, abs_of_nonneg hρ0]
@@ -68,16 +71,16 @@ theorem summable_fixedVertexTouching_termAbsSum_succ
   have hdom : Summable fun n : ℕ => K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) :=
     hsuccSumm.mul_left K
   have hterm : ∀ n : ℕ,
-      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
         |ursellCoefficient ω| * clusterSeqActivity t ω)
         ≤ K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) := by
     intro n
-    have h := fixedVertexTouching_termAbsSum_succ_le_nat_mul_geometric
-      (G := G) (v := v) (n := n) (t := t) ht hkp
+    have h := fixedVertexGasTouching_termAbsSum_succ_le_nat_mul_geometric G hgas hc hsupp v n
+      ht hkp
     rw [← hrr, ← hρdef, ← hK] at h
     calc
-      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
         |ursellCoefficient ω| * clusterSeqActivity t ω)
           ≤ ((n + 1 : ℕ) : ℝ) * (K * ρ ^ n) := h
@@ -86,9 +89,104 @@ theorem summable_fixedVertexTouching_termAbsSum_succ
   refine Finset.sum_nonneg fun ω _ => ?_
   exact mul_nonneg (abs_nonneg _) (clusterSeqActivity_nonneg ht ω)
 
+/-- **Summability of the fixed-vertex touching majorant.**  Even-gas (`c = 1`) instance of
+`summable_fixedVertexGasTouching_termAbsSum_succ`. -/
+theorem summable_fixedVertexTouching_termAbsSum_succ
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {t : ℝ}
+    (ht : 0 ≤ t)
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
+    (hρ : 4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1) :
+    Summable fun n : ℕ =>
+      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω := by
+  have hsupp : ∀ P ∈ allPolymers G, ((polymerSupport P).card : ℝ) ≤ 1 * (P.card : ℝ) := by
+    intro P hP
+    rw [one_mul]; exact_mod_cast polymerSupport_card_le_card_of_mem_allPolymers G hP
+  have hρc : 4 * 1 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+      / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1 := by
+    rw [mul_one]; exact hρ
+  exact summable_fixedVertexGasTouching_termAbsSum_succ G (evenPolymerGasData G) zero_le_one
+    hsupp v ht hkp hρc
+
+/-- **Fixed-vertex touching gas clusters are summably bounded.**  Summing the per-order
+fixed-vertex gas bound gives the local KP constant `(1-rr)⁻¹(1-ρ)⁻²`, with `rr = Δ² e |t|`
+and `ρ = 4·c·rr/(1-rr)²`.  The even gas (`allPolymers G`, `c = 1`) is recovered by
+`fixedVertexTouching_tsum_le`. -/
+theorem fixedVertexGasTouching_tsum_le
+    (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
+    {𝓟 : Finset (Finset (Sym2 ι))} (hgas : PolymerGasData G 𝓟) {c : ℝ} (hc : 0 ≤ c)
+    (hsupp : ∀ P ∈ 𝓟, ((polymerSupport P).card : ℝ) ≤ c * (P.card : ℝ)) (v : ι) {t : ℝ}
+    (ht : 0 ≤ t)
+    (hkp : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) < 1)
+    (hρ : 4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1) :
+    (∑' n : ℕ,
+      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+      ≤ (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
+          * (1 - 4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+            / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2)⁻¹ ^ 2 := by
+  classical
+  set rr : ℝ := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) with hrr
+  set ρ : ℝ := 4 * c * rr / (1 - rr) ^ 2 with hρdef
+  set K : ℝ := 1 / (1 - rr) with hK
+  have hρlt : ρ < 1 := by
+    rw [hρdef, hrr]
+    exact hρ
+  have hρ0 : 0 ≤ ρ := by
+    rw [hρdef, hrr]; positivity
+  have hsuccSumm : Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ρ ^ n := by
+    have hnorm : ‖ρ‖ < 1 := by
+      rw [Real.norm_eq_abs, abs_of_nonneg hρ0]
+      exact hρlt
+    have hn : Summable fun n : ℕ => (n : ℝ) * ρ ^ n :=
+      (hasSum_coe_mul_geometric_of_norm_lt_one hnorm).summable
+    have hg : Summable fun n : ℕ => ρ ^ n := summable_geometric_of_lt_one hρ0 hρlt
+    have hsplit : (fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ρ ^ n)
+        = fun n : ℕ => (n : ℝ) * ρ ^ n + ρ ^ n := by
+      funext n
+      norm_num [Nat.cast_add, add_mul]
+    rw [hsplit]
+    exact hn.add hg
+  have hdom : Summable fun n : ℕ => K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) :=
+    hsuccSumm.mul_left K
+  have hterm : ∀ n : ℕ,
+      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+        ≤ K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) := by
+    intro n
+    have h := fixedVertexGasTouching_termAbsSum_succ_le_nat_mul_geometric G hgas hc hsupp v n
+      ht hkp
+    rw [← hrr, ← hρdef, ← hK] at h
+    calc
+      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+          ≤ ((n + 1 : ℕ) : ℝ) * (K * ρ ^ n) := h
+      _ = K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) := by ring
+  have hleft := summable_fixedVertexGasTouching_termAbsSum_succ G hgas hc hsupp v ht hkp hρ
+  calc
+    (∑' n : ℕ,
+      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        |ursellCoefficient ω| * clusterSeqActivity t ω)
+      ≤ ∑' n : ℕ, K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) :=
+        hleft.tsum_le_tsum hterm hdom
+    _ = K * (1 - ρ)⁻¹ ^ 2 := by
+        rw [tsum_mul_left, tsum_nat_succ_mul_geometric_eq_inv_sq hρ0 hρlt]
+    _ = (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
+          * (1 - 4 * c * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+            / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2)⁻¹ ^ 2 := by
+        rw [hK, hρdef, hrr]
+
 /-- **Fixed-vertex touching clusters are summably bounded.**  Summing the per-order fixed-vertex
 bound gives the local KP constant `(1-rr)⁻¹(1-ρ)⁻²`, with
-`rr = Δ² e |t|` and `ρ = 4rr/(1-rr)²`. -/
+`rr = Δ² e |t|` and `ρ = 4rr/(1-rr)²`.  Even-gas (`c = 1`) instance of
+`fixedVertexGasTouching_tsum_le`. -/
 theorem fixedVertexTouching_tsum_le
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet] (v : ι) {t : ℝ}
     (ht : 0 ≤ t)
@@ -102,60 +200,14 @@ theorem fixedVertexTouching_tsum_le
       ≤ (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
           * (1 - 4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
             / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2)⁻¹ ^ 2 := by
-  classical
-  set rr : ℝ := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|) with hrr
-  set ρ : ℝ := 4 * rr / (1 - rr) ^ 2 with hρdef
-  set K : ℝ := 1 / (1 - rr) with hK
-  have hρlt : ρ < 1 := by
-    rw [hρdef, hrr]
-    exact hρ
-  have hρ0 : 0 ≤ ρ := by
-    rw [hρdef]
-    positivity
-  have hsuccSumm : Summable fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ρ ^ n := by
-    have hnorm : ‖ρ‖ < 1 := by
-      rw [Real.norm_eq_abs, abs_of_nonneg hρ0]
-      exact hρlt
-    have hn : Summable fun n : ℕ => (n : ℝ) * ρ ^ n :=
-      (hasSum_coe_mul_geometric_of_norm_lt_one hnorm).summable
-    have hg : Summable fun n : ℕ => ρ ^ n := summable_geometric_of_lt_one hρ0 hρlt
-    have hsplit : (fun n : ℕ => ((n + 1 : ℕ) : ℝ) * ρ ^ n)
-        = fun n : ℕ => (n : ℝ) * ρ ^ n + ρ ^ n := by
-      funext n
-      norm_num [Nat.cast_add, add_mul]
-    rw [hsplit]
-    exact hn.add hg
-  have hdom : Summable fun n : ℕ => K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) :=
-    hsuccSumm.mul_left K
-  have hterm : ∀ n : ℕ,
-      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
-        |ursellCoefficient ω| * clusterSeqActivity t ω)
-        ≤ K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) := by
-    intro n
-    have h := fixedVertexTouching_termAbsSum_succ_le_nat_mul_geometric
-      (G := G) (v := v) (n := n) (t := t) ht hkp
-    rw [← hrr, ← hρdef, ← hK] at h
-    calc
-      (∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
-        |ursellCoefficient ω| * clusterSeqActivity t ω)
-          ≤ ((n + 1 : ℕ) : ℝ) * (K * ρ ^ n) := h
-      _ = K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) := by ring
-  have hleft := summable_fixedVertexTouching_termAbsSum_succ G v ht hkp hρ
-  calc
-    (∑' n : ℕ,
-      ∑ ω ∈ (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
-          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
-        |ursellCoefficient ω| * clusterSeqActivity t ω)
-      ≤ ∑' n : ℕ, K * (((n + 1 : ℕ) : ℝ) * ρ ^ n) :=
-        hleft.tsum_le_tsum hterm hdom
-    _ = K * (1 - ρ)⁻¹ ^ 2 := by
-        rw [tsum_mul_left, tsum_nat_succ_mul_geometric_eq_inv_sq hρ0 hρlt]
-    _ = (1 / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)))
-          * (1 - 4 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
-            / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2)⁻¹ ^ 2 := by
-        rw [hK, hρdef, hrr]
+  have hsupp : ∀ P ∈ allPolymers G, ((polymerSupport P).card : ℝ) ≤ 1 * (P.card : ℝ) := by
+    intro P hP
+    rw [one_mul]; exact_mod_cast polymerSupport_card_le_card_of_mem_allPolymers G hP
+  have hρc : 4 * 1 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|))
+      / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)) ^ 2 < 1 := by
+    rw [mul_one]; exact hρ
+  have h := fixedVertexGasTouching_tsum_le G (evenPolymerGasData G) zero_le_one hsupp v ht hkp hρc
+  simpa using h
 
 open Classical in
 /-- **Touching `C` is bounded by a union over the vertices of `polymerSupport C`.**  If a
