@@ -27,22 +27,25 @@ open Finset
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 open Classical in
-/-- **Coordinate union bound for fixed-vertex touching cluster sequences.**  The absolute Mayer sum
-over cluster sequences in which *some* coordinate touches the vertex `v` is bounded by the sum over
-coordinates `i` of the absolute Mayer sum over sequences whose `i`-th coordinate touches `v`. -/
-theorem fixedVertexTouching_termAbsSum_succ_le_sum_coord_rooted
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (v : ι) (n : ℕ) (z : ℂ) :
+/-- **Coordinate union bound for fixed-vertex touching cluster sequences (gas form).**  The
+absolute Mayer sum over cluster sequences of an abstract gas `𝓟` in which *some* coordinate
+touches the vertex `v` is bounded by the sum over coordinates `i` of the absolute Mayer sum
+over sequences whose `i`-th coordinate touches `v`.  This step is purely structural, so it
+needs no gas hypotheses; the even gas (`allPolymers G`) is recovered by
+`fixedVertexTouching_termAbsSum_succ_le_sum_coord_rooted`. -/
+theorem fixedVertexGasTouching_termAbsSum_succ_le_sum_coord_rooted
+    (𝓟 : Finset (Finset (Sym2 ι))) (v : ι) (n : ℕ) (z : ℂ) :
     (∑ ω ∈
-        (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+        (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
           (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
         ‖(ursellCoefficient ω : ℂ)‖ * ∏ i, ‖z‖ ^ (ω i).card)
       ≤ ∑ i : Fin (n + 1),
         ∑ ω ∈
-          (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          (Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟)).filter
             (fun ω => v ∈ polymerSupport (ω i)),
           ‖(ursellCoefficient ω : ℂ)‖ * ∏ j, ‖z‖ ^ (ω j).card := by
   classical
-  set S := Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G) with hS
+  set S := Fintype.piFinset (fun _ : Fin (n + 1) => 𝓟) with hS
   set a : (Fin (n + 1) → Finset (Sym2 ι)) → ℝ :=
     fun ω => ‖(ursellCoefficient ω : ℂ)‖ * ∏ j, ‖z‖ ^ (ω j).card with ha
   have hanonneg : ∀ ω, 0 ≤ a ω := by
@@ -71,5 +74,23 @@ theorem fixedVertexTouching_termAbsSum_succ_le_sum_coord_rooted
             change (0 : ℝ) ≤ if v ∈ polymerSupport (ω k) then a ω else 0
             split_ifs with h; exacts [hanonneg ω, le_refl 0])
           (Finset.mem_univ i)
+
+/-- **Coordinate union bound for fixed-vertex touching cluster sequences.**  The absolute Mayer sum
+over cluster sequences in which *some* coordinate touches the vertex `v` is bounded by the sum over
+coordinates `i` of the absolute Mayer sum over sequences whose `i`-th coordinate touches `v`.
+Even-gas (`allPolymers G`) instance of the gas version
+`fixedVertexGasTouching_termAbsSum_succ_le_sum_coord_rooted`. -/
+theorem fixedVertexTouching_termAbsSum_succ_le_sum_coord_rooted
+    (G : SimpleGraph ι) [Fintype G.edgeSet] (v : ι) (n : ℕ) (z : ℂ) :
+    (∑ ω ∈
+        (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+          (fun ω => ∃ i : Fin (n + 1), v ∈ polymerSupport (ω i)),
+        ‖(ursellCoefficient ω : ℂ)‖ * ∏ i, ‖z‖ ^ (ω i).card)
+      ≤ ∑ i : Fin (n + 1),
+        ∑ ω ∈
+          (Fintype.piFinset (fun _ : Fin (n + 1) => allPolymers G)).filter
+            (fun ω => v ∈ polymerSupport (ω i)),
+          ‖(ursellCoefficient ω : ℂ)‖ * ∏ j, ‖z‖ ^ (ω j).card :=
+  fixedVertexGasTouching_termAbsSum_succ_le_sum_coord_rooted (allPolymers G) v n z
 
 end IsingModel
