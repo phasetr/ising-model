@@ -276,6 +276,7 @@ import IsingModel.ClusterExpansion.FieldExpIdentityDegreeWindow
 import IsingModel.ClusterExpansion.FieldMayerTermPerOrderBound
 import IsingModel.ClusterExpansion.FieldAvoidingRatio
 import IsingModel.ClusterExpansion.FieldVertexAvoidingRatio
+import IsingModel.ClusterExpansion.FieldSourceCount
 import IsingModel.ClusterExpansion.FieldSourcePeel
 import IsingModel.ClusterExpansion.FieldSourceRoot
 import IsingModel.ClusterExpansion.FieldSourceWeightBound
