@@ -277,6 +277,7 @@ import IsingModel.ClusterExpansion.FieldMayerTermPerOrderBound
 import IsingModel.ClusterExpansion.FieldAvoidingRatio
 import IsingModel.ClusterExpansion.FieldVertexAvoidingRatio
 import IsingModel.ClusterExpansion.FieldSourcePeel
+import IsingModel.ClusterExpansion.FieldSourceRoot
 import IsingModel.ClusterExpansion.FieldSourceWeightBound
 import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.PolymerActivityMoment
