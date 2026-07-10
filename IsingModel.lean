@@ -1,4 +1,5 @@
 import IsingModel.Basic
+import IsingModel.Combinatorics.AntidiagonalTupleCard
 import IsingModel.Hamiltonian
 import IsingModel.GibbsMeasure
 import IsingModel.PartitionFunctionIso
