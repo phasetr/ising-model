@@ -281,6 +281,7 @@ import IsingModel.ClusterExpansion.FieldSourcePeel
 import IsingModel.ClusterExpansion.FieldSourceRoot
 import IsingModel.ClusterExpansion.FieldSourceWeightBound
 import IsingModel.ClusterExpansion.FieldCorrelationUniformBound
+import IsingModel.ClusterExpansion.FieldCorrelationBallUniform
 import IsingModel.ClusterExpansion.PolymerActivityKP
 import IsingModel.ClusterExpansion.PolymerActivityMoment
 import IsingModel.ClusterExpansion.PolymerActivityTailMoment
