@@ -318,4 +318,166 @@ theorem fieldCorrelationℂ_norm_le_ball_uniform (G : SimpleGraph ι)
             |Real.tanh a| * (2 ^ A.card * (G.maxDegree : ℝ) ^ 2)) hA0star0
   linarith [hstep1, hstep2]
 
+/-- **Degree-bound ball-&-volume-uniform complex field correlation bound**
+(GJ §17.6.1, brick F5b-2; TeX §F5b-2 `prop:f5b2`).  A degree-uniform generalization
+of `fieldCorrelationℂ_norm_le_ball_uniform` (F5b-1): both the window hypotheses and
+the closed constant are phrased with an **external** degree bound `Δ` and a
+hypothesis `hΔ : G.maxDegree ≤ Δ`, rather than the concrete `G.maxDegree`.  This is
+essential for the exhaustion wrap, where each induced stage satisfies only
+`maxDegree ≤ 2d` (not equality); phrasing the constant with `Δ = 2d` makes the bound
+independent of the exhaustion stage `n`.
+
+No new analytic content beyond F5b-1: the whole proof is the two monotonicities of
+F5b-1 (`fieldCEKappaOfActivity_mono`, `rhoStar_mono`, and the `prop:const-mono`
+`div_le_div_iff₀` crux) applied **in the degree variable** `(Δ:ℝ)²` instead of the
+field variable.  The sole new numeric input is `(∗)`:
+`(G.maxDegree:ℝ)² ≤ (Δ:ℝ)²` (from `hΔ`, via `Nat.cast_le` and `pow_le_pow_left₀`),
+read in **two opposite senses**:
+* **window downcast** (`Δ → G.maxDegree`): the `Δ`-window hypotheses `hkpstar`,
+  `hρwinstar`, `hqstar` (the larger arguments, all `< 1`) are downcast to the
+  smaller `G.maxDegree`-arguments that F5b-1 literally consumes;
+* **RHS upcast** (`G.maxDegree → Δ`): the F5b-1 output constant at `G.maxDegree`
+  (smaller) is upcast to the `Δ`-constant (larger, since the constant increases in
+  the degree).
+
+Substituting `Δ = G.maxDegree` (with `hΔ = le_rfl`) makes `(∗)` an equality and
+collapses this back to F5b-1 verbatim, so F5b-2 **contains** F5b-1 as a special
+case.  The ball envelope `Mstar = max 1 Mrb` is identical on both sides (only the
+degree varies), so the two-`Mr` duality of F5b-1 is untouched. -/
+theorem fieldCorrelationℂ_norm_le_ball_uniform_of_degree_le (G : SimpleGraph ι)
+    [DecidableRel G.Adj] [Fintype G.edgeSet] [Nonempty ι] (A : Finset ι)
+    (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ)
+    {a Awin r Mrb ρ : ℝ} {b : ℂ}
+    (ha : a ∈ Set.Ico 0 Awin) (hr0 : 0 < r) (hrpi : r < Real.pi / 2) (hMr1 : 1 ≤ Mrb)
+    (hMr : ∀ z : ℂ, ‖z‖ ≤ r → ‖Complex.tanh z‖ ≤ Mrb) (hbr : b ∈ Metric.ball 0 r)
+    (hρ0 : 0 < ρ) (htanhA : Real.tanh Awin < ρ)
+    (hkpstar : (Δ : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)) < 1)
+    (hρwinstar : 8 * ((Δ : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)))
+        / (1 - (Δ : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ))) ^ 2 < 1)
+    (hqstar : (max 1 Mrb) ^ 2 *
+          Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+          |Real.tanh a| * (2 ^ A.card * (Δ : ℝ) ^ 2) < 1) :
+    ‖fieldCorrelationℂ G A a b‖
+      ≤ (max 1 Mrb) ^ A.card *
+            Real.exp (fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+              (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) * (A.card : ℝ)) /
+          (1 - (max 1 Mrb) ^ 2 *
+            Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+              (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+            |Real.tanh a| * (2 ^ A.card * (Δ : ℝ) ^ 2)) := by
+  have hMstar0 : (0 : ℝ) ≤ max 1 Mrb := le_trans zero_le_one (le_max_left _ _)
+  -- (∗): the degree² comparison, read in both senses below.
+  have hDeg2 : (G.maxDegree : ℝ) ^ 2 ≤ (Δ : ℝ) ^ 2 :=
+    pow_le_pow_left₀ (Nat.cast_nonneg _) (Nat.cast_le.mpr hΔ) 2
+  -- The two activities at each degree; both nonnegative, both monotone via (∗).
+  have hX0 : (0 : ℝ) ≤ Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ) := by positivity
+  have hY0 : (0 : ℝ) ≤ Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|) := by positivity
+  have hDρ_G_le : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ))
+      ≤ (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)) :=
+    mul_le_mul_of_nonneg_right hDeg2 hX0
+  have hD_G_le : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))
+      ≤ (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)) :=
+    mul_le_mul_of_nonneg_right hDeg2 hY0
+  have hDρ_G0 : (0 : ℝ) ≤ (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)) := by
+    positivity
+  have hD_G0 : (0 : ℝ) ≤ (G.maxDegree : ℝ) ^ 2 *
+      (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)) := by positivity
+  have hD_Δ0 : (0 : ℝ) ≤ (Δ : ℝ) ^ 2 *
+      (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)) := by positivity
+  -- `|tanh a| ≤ ρ`, hence the `|tanh a|`-activity is below the `ρ`-window activity.
+  have htanha_le : |Real.tanh a| ≤ ρ := by
+    rw [abs_of_nonneg (real_tanh_nonneg ha.1)]
+    exact le_of_lt (lt_of_le_of_lt (real_tanh_le_tanh (le_of_lt ha.2)) htanhA)
+  have hD_Δ_le_Dρ_Δ :
+      (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))
+        ≤ (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)) :=
+    mul_le_mul_of_nonneg_left
+      (mul_le_mul_of_nonneg_left
+        (mul_le_mul_of_nonneg_left htanha_le (sq_nonneg _)) (Real.exp_nonneg 1))
+      (sq_nonneg _)
+  have hD_Δ1 : (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)) < 1 :=
+    lt_of_le_of_lt hD_Δ_le_Dρ_Δ hkpstar
+  have hρ_Δ : 8 * ((Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))
+        / (1 - (Δ : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) ^ 2 < 1 :=
+    lt_of_le_of_lt (rhoStar_mono hD_Δ0 hD_Δ_le_Dρ_Δ hkpstar) hρwinstar
+  -- Degree-monotonicity of the KP exponent: `κ(D_G) ≤ κ(D_Δ)`.
+  have hκ_GΔ :
+      fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))
+        ≤ fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) :=
+    fieldCEKappaOfActivity_mono hD_G0 hD_G_le hD_Δ1 hρ_Δ
+  -- **Window downcast** (`Δ → G.maxDegree`): produce the F5b-1 hypotheses.
+  have hkp_G : (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)) < 1 :=
+    lt_of_le_of_lt hDρ_G_le hkpstar
+  have hρwin_G : 8 * ((G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ)))
+        / (1 - (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ((max 1 Mrb) ^ 2 * ρ))) ^ 2 < 1 :=
+    lt_of_le_of_lt (rhoStar_mono hDρ_G0 hDρ_G_le hkpstar) hρwinstar
+  have hexp : Real.exp (2 * fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))))
+      ≤ Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) :=
+    Real.exp_le_exp.mpr (by linarith [hκ_GΔ])
+  have hq_G_le : (max 1 Mrb) ^ 2 *
+        Real.exp (2 * fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+        |Real.tanh a| * (2 ^ A.card * (G.maxDegree : ℝ) ^ 2)
+      ≤ (max 1 Mrb) ^ 2 *
+          Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+          |Real.tanh a| * (2 ^ A.card * (Δ : ℝ) ^ 2) := by
+    apply mul_le_mul
+    · exact mul_le_mul_of_nonneg_right
+        (mul_le_mul_of_nonneg_left hexp (pow_nonneg hMstar0 2)) (abs_nonneg _)
+    · exact mul_le_mul_of_nonneg_left hDeg2 (by positivity)
+    · positivity
+    · positivity
+  have hq_G : (max 1 Mrb) ^ 2 *
+        Real.exp (2 * fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+        |Real.tanh a| * (2 ^ A.card * (G.maxDegree : ℝ) ^ 2) < 1 :=
+    lt_of_le_of_lt hq_G_le hqstar
+  -- Feed F5b-1 at the actual `G.maxDegree`.
+  have hcap := fieldCorrelationℂ_norm_le_ball_uniform G A ha hr0 hrpi hMr1 hMr hbr hρ0
+    htanhA hkp_G hρwin_G hq_G
+  refine hcap.trans ?_
+  -- **RHS upcast** (`G.maxDegree → Δ`): the F5b-1 constant increases in the degree.
+  have hA0 : (max 1 Mrb) ^ A.card *
+        Real.exp (fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+          (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) * (A.card : ℝ))
+      ≤ (max 1 Mrb) ^ A.card *
+          Real.exp (fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) * (A.card : ℝ)) :=
+    mul_le_mul_of_nonneg_left
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right hκ_GΔ (Nat.cast_nonneg _)))
+      (pow_nonneg hMstar0 _)
+  have hA0star0 : (0 : ℝ) ≤ (max 1 Mrb) ^ A.card *
+      Real.exp (fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|))) * (A.card : ℝ)) :=
+    mul_nonneg (pow_nonneg hMstar0 _) (Real.exp_nonneg _)
+  have hden_G : (0 : ℝ) < 1 - (max 1 Mrb) ^ 2 *
+      Real.exp (2 * fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+      |Real.tanh a| * (2 ^ A.card * (G.maxDegree : ℝ) ^ 2) := by linarith [hq_G]
+  have hden_Δ : (0 : ℝ) < 1 - (max 1 Mrb) ^ 2 *
+      Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+        (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+      |Real.tanh a| * (2 ^ A.card * (Δ : ℝ) ^ 2) := by linarith [hqstar]
+  rw [div_le_div_iff₀ hden_G hden_Δ]
+  have hstep1 := mul_le_mul_of_nonneg_right hA0 (le_of_lt hden_Δ)
+  have hstep2 := mul_le_mul_of_nonneg_left (by linarith [hq_G_le] :
+      (1 : ℝ) - (max 1 Mrb) ^ 2 *
+          Real.exp (2 * fieldCEKappaOfActivity ((Δ : ℝ) ^ 2 *
+            (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+          |Real.tanh a| * (2 ^ A.card * (Δ : ℝ) ^ 2)
+        ≤ 1 - (max 1 Mrb) ^ 2 *
+            Real.exp (2 * fieldCEKappaOfActivity ((G.maxDegree : ℝ) ^ 2 *
+              (Real.exp 1 * ((max 1 Mrb) ^ 2 * |Real.tanh a|)))) *
+            |Real.tanh a| * (2 ^ A.card * (G.maxDegree : ℝ) ^ 2)) hA0star0
+  linarith [hstep1, hstep2]
+
 end IsingModel
