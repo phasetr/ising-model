@@ -227,4 +227,102 @@ theorem fieldTwoPointNumℂ_empty_eq_fieldPolymerZℂ (G : SimpleGraph ι)
   simp only [hsd]
   rw [← fieldPolymerZℂ_eq_allSubgraphs_sumℂ]
 
+/-! ## F4b-2b: complex-`h` field correlation ratio object + local analyticity
+
+The complex-`h` correlation ratio is the complex numerator over its `A = ∅`
+specialization (the denominator).  Its real-`b`-axis value is the honest F4a
+correlation ratio (and hence, through `IsingParams`, the physical correlation
+`correlation G p A`), and on the pole-free `π/2`-ball it is analytic *provided*
+the denominator is non-vanishing.  The non-vanishing is left as an abstract
+hypothesis `hden : ∀ w ∈ ball 0 r, fieldPolymerZℂ G a w ≠ 0`, to be discharged by
+the **volume-uniform** `fieldPolymerZℂ_ne_zero_of_degree_window` (Δ-based
+Kotecký–Preiss window, `FieldExpIdentityDegreeWindow.lean`) — *not* the
+volume-dependent `fieldPolymerZℂ_ne_zero` (whose extensive `hact_star` cannot be
+made uniform, which the F6 Vitali/Montel infinite-volume consumer requires).  The
+actual discharge of `hden` (uniform window, `r < π/2`) and the complex-ratio
+Vitali step are the business of brick F6. -/
+
+/-- **Complex-`h` field correlation ratio** (GJ §17.6.1, brick F4b-2b): for a
+finite `SimpleGraph G`, coupling `a : ℝ`, complex field `b : ℂ` and observable
+`A : Finset ι`, the ratio of the complex field two-point numerator to its
+empty-observable specialization (the denominator),
+\[
+\mathrm{Corr}^{\mathbb C}(A,a,b)
+  = \frac{\mathrm{Num}^{\mathbb C}(A,a,b)}{\mathrm{Num}^{\mathbb C}(\varnothing,a,b)}.
+\]
+The denominator is taken as `fieldTwoPointNumℂ G ∅` (not the families form
+`fieldPolymerZℂ`) so that numerator and denominator share the same
+`fieldTwoPointNumℂ_ofReal` cast, keeping the real-axis agreement symmetric; the
+bridge to `fieldPolymerZℂ` (F4b-2a) is used only inside the analyticity proof to
+transport non-vanishing. -/
+noncomputable def fieldCorrelationℂ (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (a : ℝ) (b : ℂ) : ℂ :=
+  fieldTwoPointNumℂ G A a b / fieldTwoPointNumℂ G ∅ a b
+
+/-- **Real-axis agreement of the complex field correlation ratio** (GJ §17.6.1,
+brick F4b-2b): for real `b`, `fieldCorrelationℂ G A a (b : ℂ)` is the cast of the
+honest F4a real correlation ratio
+`(∑_X tanh(a)^{|X|}·tanh(b)^{|∂X △ A|}) / (∑_X tanh(a)^{|X|}·tanh(b)^{|∂X|})`.
+Both numerator and denominator are cast via `fieldTwoPointNumℂ_ofReal` and combined
+through `Complex.ofReal_div`.  **Unconditional** (no denominator non-vanishing:
+`Complex.ofReal_div` is a field homomorphism, so both sides agree even when the
+denominator is `0`).  Mirrors `fieldTwoPointNumℂ_ofReal`. -/
+theorem fieldCorrelationℂ_ofReal (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (a b : ℝ) :
+    fieldCorrelationℂ G A a (b : ℂ)
+      = (((∑ X ∈ G.edgeFinset.powerset,
+            Real.tanh a ^ X.card * Real.tanh b ^ (oddBoundary X ∆ A).card)
+          / (∑ X ∈ G.edgeFinset.powerset,
+            Real.tanh a ^ X.card * Real.tanh b ^ (oddBoundary X).card) : ℝ) : ℂ) := by
+  have hden : (∑ X ∈ G.edgeFinset.powerset,
+        Real.tanh a ^ X.card * Real.tanh b ^ (oddBoundary X ∆ (∅ : Finset ι)).card)
+      = ∑ X ∈ G.edgeFinset.powerset,
+        Real.tanh a ^ X.card * Real.tanh b ^ (oddBoundary X).card :=
+    Finset.sum_congr rfl fun X _ => by
+      rw [show oddBoundary X ∆ (∅ : Finset ι) = oddBoundary X from by simp]
+  unfold fieldCorrelationℂ
+  rw [fieldTwoPointNumℂ_ofReal, fieldTwoPointNumℂ_ofReal, ← Complex.ofReal_div, hden]
+
+/-- **Physical correlation via the complex field ratio on the real axis** (GJ
+§17.6.1, brick F4b-2b): at the real Ising parameters `p = (J, h, β)`, evaluating
+`fieldCorrelationℂ` at coupling `a = β·J` and real field `b = β·h` recovers the
+physical two-point correlation,
+`fieldCorrelationℂ G A (β·J) (↑(β·h)) = ↑(correlation G p A)`.
+Combines `fieldCorrelationℂ_ofReal` (cast of the F4a ratio) with the honest closed
+form `correlation_high_temp_expansion_general_h_closed`.  This pins down the object
+that the F6 Vitali/Montel step transports to the infinite-volume limit. -/
+theorem fieldCorrelationℂ_ofReal_eq_correlation (G : SimpleGraph ι)
+    [Fintype G.edgeSet] (p : IsingParams ℝ) (A : Finset ι) :
+    fieldCorrelationℂ G A (p.β * p.J) ((p.β * p.h : ℝ) : ℂ)
+      = (correlation G p A : ℂ) := by
+  rw [fieldCorrelationℂ_ofReal, correlation_high_temp_expansion_general_h_closed]
+
+/-- **Local analyticity of the complex field correlation ratio** (GJ §17.6.1, brick
+F4b-2b capstone): on `Metric.ball 0 r` with `r ≤ π/2`, `b ↦ fieldCorrelationℂ G A a b`
+is `AnalyticOnNhd ℂ`, *provided* the complex field polymer partition function
+`fieldPolymerZℂ G a ·` is non-vanishing on the ball (`hden`).  The numerator and
+denominator are analytic by `fieldTwoPointNumℂ_analyticOnNhd`, and the denominator
+non-vanishing is transported from `hden` through the F4b-2a bridge
+`fieldTwoPointNumℂ_empty_eq_fieldPolymerZℂ`, so `AnalyticAt.div` applies pointwise
+(cf. `CorrelationRatioForm`).
+
+The hypothesis `hden` is intended to be discharged by the **volume-uniform**
+`fieldPolymerZℂ_ne_zero_of_degree_window` (Δ-based Kotecký–Preiss window), which is
+what the F6 infinite-volume Vitali/Montel consumer requires; the volume-dependent
+`fieldPolymerZℂ_ne_zero` is *not* used here.  The window `r < π/2` needed by the
+degree-window discharge is compatible with the capstone's `r ≤ π/2`; the actual
+discharge is deferred to F6.  No `DecidableRel` / window-parameter hypotheses enter
+this brick. -/
+theorem fieldCorrelationℂ_analyticOnNhd (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (A : Finset ι) (a : ℝ) {r : ℝ} (hrpi : r ≤ Real.pi / 2)
+    (hden : ∀ w ∈ Metric.ball (0 : ℂ) r, fieldPolymerZℂ G a w ≠ 0) :
+    AnalyticOnNhd ℂ (fun b : ℂ => fieldCorrelationℂ G A a b) (Metric.ball 0 r) := by
+  intro w hw
+  have hnum := fieldTwoPointNumℂ_analyticOnNhd G A a hrpi w hw
+  have hden' := fieldTwoPointNumℂ_analyticOnNhd G ∅ a hrpi w hw
+  have hne : fieldTwoPointNumℂ G ∅ a w ≠ 0 := by
+    rw [fieldTwoPointNumℂ_empty_eq_fieldPolymerZℂ]; exact hden w hw
+  simp only [fieldCorrelationℂ]
+  exact hnum.div hden' hne
+
 end IsingModel
