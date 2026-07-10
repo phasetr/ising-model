@@ -1,5 +1,6 @@
 import IsingModel.Inequalities.SourcefreeConnectionUnconditional
 import IsingModel.Inequalities.SourcefreeConnectionCurrentDeriv
+import IsingModel.BetaDerivative.Monotonicity
 import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
@@ -423,6 +424,86 @@ theorem Current.hasDerivAt_log_correlation_beta (G : SimpleGraph V) (Λ : Finset
       Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ)) ≠ 0 := hNpos.ne'
   have hZ0 : (∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M) ≠ 0 := hZpos.ne'
   field_simp
+
+set_option linter.unusedDecidableInType false in
+/-- **Sign-collapse — excess-current nonnegativity.**  For `x ≠ y ∈ Λ`, `0 < β`,
+`0 ≤ J`, and `hpos : 0 < ⟨σ_xσ_y⟩_Λ`, conditioning on the connection event
+`{x ↔ y}` can only *increase* the `D`-normalised expected total current:
+\[
+  \mathbb{E}\,\lvert M\rvert
+    = \frac{\sum'_M \lvert M\rvert D}{\sum'_M D}
+  \;\le\;
+  \frac{\sum'_{x\leftrightarrow y}\lvert M\rvert D}{\sum'_{x\leftrightarrow y}D}
+    = \mathbb{E}^{x\leftrightarrow y}\,\lvert M\rvert .
+\]
+Equivalently `0 ≤ ∂_β log⟨σ_xσ_y⟩_Λ`, i.e. the lower-direction (sign) half of the
+OZ log-derivative estimate `hLogLip` of Theorem 17.5.1's lower-semicontinuous
+half.
+
+Proof: by GKS-II (`correlation_monotoneOn_beta`) the map `β' ↦ ⟨σ_xσ_y⟩_Λ` is
+monotone on `Ici 0` and positive at `β` (`hpos`), so `β' ↦ log⟨σ_xσ_y⟩_Λ` is
+nondecreasing on `Ioi β`; hence every right slope of it at `β` is `≥ 0`.  The
+Stage-D derivative `∂_β log⟨σσ⟩ = (1/2β)(E^{x↔y}|M| − E|M|)`
+(`Current.hasDerivAt_log_correlation_beta`) is the right-limit of those slopes, so
+it is `≥ 0`; dividing out `1/(2β) > 0` gives `E|M| ≤ E^{x↔y}|M|`.
+
+This is only the lower-direction collapse of the excess current; the matching
+*upper* bound `E^{x↔y}|M| − E|M| ≤ C·d(0,x)` (OZ backbone length, FFS Ch. 12 /
+Aizenman 1982) is off-book and is not addressed here.  (GJ §17.5,
+Theorem 17.5.1, p. 312.) -/
+theorem Current.doubledSourcefree_excess_nonneg (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {x y : ↑Λ} (hxy : x ≠ y)
+    (J : ℝ) {β : ℝ} (hβ : 0 < β) (hJ : 0 ≤ J)
+    (hpos : 0 < correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) {x, y}) :
+    (∑' M : Current G Λ,
+          (Current.total G Λ M : ℝ) * Current.doubledSourcefreeSummand G Λ β J M)
+        / ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M
+      ≤ (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+            (Current.total G Λ (M : Current G Λ) : ℝ)
+              * Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+          / ∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+              Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ) := by
+  classical
+  -- Stage-D ratio-derivative identity: the derivative of `g` equals `(1/2β)·excess`.
+  have hderiv := Current.hasDerivAt_log_correlation_beta G Λ hxy J hβ hJ hpos
+  set g : ℝ → ℝ := fun β' =>
+    Real.log (correlation (inducedGraph G Λ) (⟨J, 0, β'⟩ : IsingParams ℝ) {x, y})
+    with hg
+  set L : ℝ := 1 / (2 * β) *
+      ((∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+            (Current.total G Λ (M : Current G Λ) : ℝ)
+              * Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+          / ∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+              Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ)
+        - (∑' M : Current G Λ,
+              (Current.total G Λ M : ℝ) * Current.doubledSourcefreeSummand G Λ β J M)
+            / ∑' M : Current G Λ, Current.doubledSourcefreeSummand G Λ β J M)
+    with hL
+  -- GKS-II ⟹ `g` is nondecreasing on `Ioi β` (using `hpos` for positivity of `log`).
+  have hmono : ∀ x' ∈ Set.Ioi β, g β ≤ g x' := by
+    intro x' hx'
+    have hx'0 : (0 : ℝ) < x' := hβ.trans hx'
+    have hcorr : correlation (inducedGraph G Λ) (⟨J, 0, β⟩ : IsingParams ℝ) {x, y}
+        ≤ correlation (inducedGraph G Λ) (⟨J, 0, x'⟩ : IsingParams ℝ) {x, y} :=
+      correlation_monotoneOn_beta (inducedGraph G Λ) J hJ {x, y}
+        (Set.mem_Ici.mpr hβ.le) (Set.mem_Ici.mpr hx'0.le) (le_of_lt hx')
+    simp only [hg]
+    exact Real.log_le_log hpos hcorr
+  -- The Stage-D derivative is the right-limit of the (nonnegative) slopes of `g` at `β`.
+  have hslope := (hasDerivWithinAt_iff_tendsto_slope' (s := Set.Ioi β)
+    (by simp)).mp hderiv.hasDerivWithinAt
+  have hLnonneg : 0 ≤ L := by
+    refine ge_of_tendsto hslope ?_
+    filter_upwards [self_mem_nhdsWithin] with x' hx'
+    rw [slope_def_field]
+    have hnum : 0 ≤ g x' - g β := by linarith [hmono x' hx']
+    have hden : 0 ≤ x' - β := by have := Set.mem_Ioi.mp hx'; linarith
+    exact div_nonneg hnum hden
+  -- Divide out the positive prefactor `1/(2β)`.
+  have hcoef : (0 : ℝ) < 1 / (2 * β) := by positivity
+  rw [hL] at hLnonneg
+  have hexcess := (mul_nonneg_iff_of_pos_left hcoef).mp hLnonneg
+  linarith
 
 end Ambient
 end IsingModel
