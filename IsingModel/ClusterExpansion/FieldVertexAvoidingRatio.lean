@@ -102,13 +102,6 @@ theorem mem_touchVertexEdges (G : SimpleGraph ι) [Fintype G.edgeSet]
   unfold touchVertexEdges
   rw [Finset.mem_filter]
 
-/-- `touchVertexEdges G W` is a sub-finset of `G.edgeFinset`. -/
-theorem touchVertexEdges_subset_edgeFinset (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (W : Finset ι) :
-    touchVertexEdges G W ⊆ G.edgeFinset := by
-  intro e he
-  exact ((mem_touchVertexEdges G).mp he).1
-
 /-- The edge finset of `GavoidVertex G W` is the edge finset of `G` with `touchVertexEdges G W`
 removed.  Proved instance-independently via `mem_edgeFinset` to avoid the `Fintype.edgeSet`
 diamond. -/
