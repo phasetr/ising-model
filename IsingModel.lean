@@ -265,6 +265,7 @@ import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.FieldPolymerActivity
 import IsingModel.ClusterExpansion.FieldMayerTerm
 import IsingModel.ClusterExpansion.FieldMayerIdentity
+import IsingModel.Conditioning.CorrelationClosed.GeneralFieldClosed
 import IsingModel.ClusterExpansion.FieldPolymerExpNonvanishing
 import IsingModel.ClusterExpansion.FieldPolymerComplexNonvanishing
 import IsingModel.ClusterExpansion.FieldMayerCouplingTower
