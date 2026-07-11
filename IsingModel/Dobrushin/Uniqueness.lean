@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.ExponentialLocality
 
 /-!
-# Finite-graph Dobrushin uniqueness: vanishing of the boundary influence (GJ §17.1, Issue #4214 §A)
+# Finite-graph Dobrushin uniqueness: vanishing of the boundary influence (Issue #4214 §A)
 
 The capstone of the single-site Dobrushin comparison programme (`Dobrushin/ComparisonTheorem.lean`,
 `Dobrushin/ExponentialLocality.lean`, Issue #4214 §A, PRs #4215–#4223).  The exponential spatial
@@ -16,8 +16,7 @@ by the fixed constant `Fintype.card ι`, so the radius-`R` bound is dominated by
 `η, η', Λ`.  This is the finite-graph **Dobrushin uniqueness** statement: at high temperature the
 finite-volume expectation of a local observable becomes independent of the boundary condition once
 the boundary disagreement is pushed far enough from the observable — the decay-of-influence content
-of the Dobrushin uniqueness theorem (GJ §17.1, Georgii, *Gibbs Measures and Phase Transitions*,
-Ch. 8).
+of the Dobrushin uniqueness theorem (Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8).
 
 ## Main results
 * `gibbsExpectationBC_localObs_dist_le_card_univ_pow_radius` — the boundary-condition difference is
@@ -30,8 +29,7 @@ The full `ℤ^d` *infinite-volume* Gibbs-state uniqueness (the last bullet of Is
 research-level: it requires lifting these finite-graph bounds to the (non-`Fintype`) lattice, where
 the `Fintype.card ι` cardinality factor is unavailable.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306; Georgii,
-*Gibbs Measures and Phase Transitions*, Ch. 8.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8.
 -/
 
 namespace IsingModel
@@ -43,7 +41,7 @@ open Finset Filter Topology
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
-/-- **Cardinality-uniform Dobrushin spatial-mixing bound** (GJ §17.1): on the finite graph `ι` the
+/-- **Cardinality-uniform Dobrushin spatial-mixing bound**: on the finite graph `ι` the
 disagreement set `{y : η_y ≠ η'_y}` has at most `Fintype.card ι` elements, so the exponential
 spatial mixing bound is dominated by `siteOsc x₀ f · (Fintype.card ι) · α^R/(1−α)` — uniform in the
 boundary conditions `η, η'` and the volume `Λ`. -/
@@ -68,8 +66,8 @@ theorem gibbsExpectationBC_localObs_dist_le_card_univ_pow_radius {β J : ℝ} (h
         exact_mod_cast Finset.card_filter_le _ _
     _ = (Fintype.card ι : ℝ) := by rw [Finset.card_univ]
 
-/-- **Finite-graph Dobrushin uniqueness — vanishing of the boundary influence** (GJ §17.1; Georgii
-Ch. 8): at high temperature, for an observable `f` local at `x₀` and every tolerance `ε > 0`, there
+/-- **Finite-graph Dobrushin uniqueness — vanishing of the boundary influence** (Georgii Ch. 8):
+at high temperature, for an observable `f` local at `x₀` and every tolerance `ε > 0`, there
 is a radius `R` beyond which the boundary condition has influence `≤ ε` on the finite-volume
 expectation of `f`, *uniformly* in the volume `Λ` and in any pair of boundary conditions `η, η'`
 that agree on the ball of radius `R` about `x₀` (i.e. differ only at sites `y` with

@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.DobrushinHighTemp
 import IsingModel.RealTanhAux
 
 /-!
-# Exponential decay of the Dobrushin influence-matrix powers (GJ §17.1)
+# Exponential decay of the Dobrushin influence-matrix powers
 
 The single-site Dobrushin influence matrix `C` (`isingInfluenceMatrix`, with `C_{xy} =
 tanh(βJ)·[y∼x]`) has nonnegative entries and every row sum is at most the **Dobrushin coefficient**
@@ -20,7 +20,7 @@ Dobrushin comparison/uniqueness theorem (which itself is not formalized here).
 * `isingInfluenceMatrix_pow_rowSum_tendsto_zero` — the row sums of `C^n` tend to `0` at high
   temperature.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -86,7 +86,7 @@ theorem isingInfluenceMatrix_rowSum_le {β J : ℝ} (hβJ : 0 ≤ β * J) (x : �
     (real_tanh_nonneg hβJ)
 
 omit [Fintype G.edgeSet] in
-/-- **Geometric decay of the influence-matrix powers** (GJ §17.1): for `0 ≤ βJ`, the row sums of the
+/-- **Geometric decay of the influence-matrix powers**: for `0 ≤ βJ`, the row sums of the
 `n`-th power of the influence matrix are at most `α^n` with `α = Δ(G)·tanh(βJ)` the Dobrushin
 coefficient. The boundary influence on a site decays geometrically with the number of steps `n`. -/
 theorem isingInfluenceMatrix_pow_rowSum_le {β J : ℝ} (hβJ : 0 ≤ β * J) (n : ℕ) (x : ι) :
@@ -102,7 +102,7 @@ theorem isingDobrushinCoeff_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) :
   mul_nonneg (Nat.cast_nonneg _) (real_tanh_nonneg hβJ)
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
-/-- **The Dobrushin coefficient is below `1` at high temperature** (GJ §17.1): if `0 ≤ βJ` and
+/-- **The Dobrushin coefficient is below `1` at high temperature**: if `0 ≤ βJ` and
 `βJ·Δ(G) < 1`, then `α = Δ(G)·tanh(βJ) ≤ Δ(G)·βJ < 1` (using `tanh(βJ) ≤ βJ`). -/
 theorem isingDobrushinCoeff_lt_one_of_high_temp {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) : isingDobrushinCoeff G β J < 1 := by
@@ -114,7 +114,7 @@ theorem isingDobrushinCoeff_lt_one_of_high_temp {β J : ℝ} (hβJ : 0 ≤ β * 
     _ < 1 := hΔ
 
 omit [Fintype G.edgeSet] in
-/-- **The influence-matrix power row sums tend to `0` at high temperature** (GJ §17.1): for `0 ≤ βJ`
+/-- **The influence-matrix power row sums tend to `0` at high temperature**: for `0 ≤ βJ`
 and `βJ·Δ(G) < 1`, the row sums of `C^n` tend to `0` as `n → ∞` (squeezed between `0` and `α^n`
 with `0 ≤ α < 1`). This is the geometric decay underlying the Dobrushin comparison theorem (not
 formalized here). -/

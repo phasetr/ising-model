@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.SiteOscillation
 import IsingModel.Dobrushin.InfluenceMatrixDecay
 
 /-!
-# Oscillation propagation under the heat-bath operator (GJ §17.1, Issue #4201)
+# Oscillation propagation under the heat-bath operator (Issue #4201)
 
 The heart of the Dobrushin comparison theorem: applying the single-site heat-bath operator `K_x`
 controls the oscillation vector by the influence matrix. Precisely,
@@ -17,7 +17,7 @@ PRs).
 * `isingInfluence_nonneg` — `0 ≤ C_{xy}` (for `0 ≤ βJ`).
 * `siteOsc_heatBath_le` — `siteOsc y (K_x f) ≤ siteOsc y f + C_{xy}·siteOsc x f`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -64,7 +64,7 @@ theorem isingInfluence_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) (x y : ι) :
   · exact real_tanh_nonneg hβJ
   · exact le_refl 0
 
-/-- **Oscillation propagation under the heat-bath operator** (GJ §17.1): for `0 ≤ βJ`,
+/-- **Oscillation propagation under the heat-bath operator**: for `0 ≤ βJ`,
 `siteOsc y (K_x f) ≤ siteOsc y f + C_{xy}·siteOsc x f` with `C_{xy} = isingInfluence`. The per-step
 Dobrushin inequality: applying the single-site heat-bath at `x` adds at most `C_{xy}` times the
 `x`-oscillation to the `y`-oscillation (and removes the `x`-oscillation entirely). -/

@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.SingleSiteGeneralComparison
 
 /-!
-# The full-volume Gibbs boundary comparison (GJ §17.1, Issue #4214 §A)
+# The full-volume Gibbs boundary comparison (Issue #4214 §A)
 
 Toward the Dobrushin comparison capstone: a **support-diameter** bound on the difference of two
 finite-volume Gibbs expectations under boundary conditions `η, η'` agreeing off a set `S`. The naive
@@ -17,7 +17,7 @@ the Gibbs weight, not just the observable); the correct bound is over the whole 
 * `gibbsExpectationBC_dist_le_volume_add_boundary_siteOsc` — the split into an interior sum over `Λ`
   and a boundary sum over `S`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -30,7 +30,7 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (G : SimpleGraph ι) [Fintype G.edgeSet]
 
 omit [Fintype ι] [Fintype G.edgeSet] in
-/-- **Support configurations agree off the union** (GJ §17.1): if `σ` agrees with `η` off `Λ`, `τ`
+/-- **Support configurations agree off the union**: if `σ` agrees with `η` off `Λ`, `τ`
 agrees with `η'` off `Λ`, and `η` agrees with `η'` off `S`, then `σ` and `τ` agree off `Λ ∪ S`. -/
 theorem agreesOff_union_of_agreesOff_boundary {Λ S : Finset ι} {η η' σ τ : Config ι}
     (hσ : agreesOff Λ η σ) (hτ : agreesOff Λ η' τ) (hη : agreesOff S η η') :
@@ -40,7 +40,7 @@ theorem agreesOff_union_of_agreesOff_boundary {Λ S : Finset ι} {η η' σ τ :
   obtain ⟨hiΛ, hiS⟩ := hi
   rw [hτ i hiΛ, hη i hiS, hσ i hiΛ]
 
-/-- **The full-volume Gibbs boundary comparison** (GJ §17.1): for boundary conditions `η, η'`
+/-- **The full-volume Gibbs boundary comparison**: for boundary conditions `η, η'`
 agreeing off `S`, the finite-volume Gibbs expectations differ by at most the total single-site
 oscillation of `g` over the support diameter `Λ ∪ S`. Proved from the definition via the
 double-sum identity `⟨g⟩^η − ⟨g⟩^η' = (Z_η Z_η')⁻¹ ∑_σ∑_τ w_η(σ) w_η'(τ) (g σ − g τ)`. -/
@@ -113,7 +113,7 @@ theorem gibbsExpectationBC_dist_le_sum_siteOsc_union
         rw [abs_of_nonneg (by positivity : (0 : ℝ) ≤ (Zη * Zη')⁻¹)]
         field_simp
 
-/-- **Interior/boundary split of the Gibbs boundary comparison** (GJ §17.1): the comparison is
+/-- **Interior/boundary split of the Gibbs boundary comparison**: the comparison is
 bounded by an interior sum over `Λ` plus a boundary sum over the differing set `S`. -/
 theorem gibbsExpectationBC_dist_le_volume_add_boundary_siteOsc
     (β : ℝ) (J : Sym2 ι → ℝ) (h : ℝ) (Λ S : Finset ι) {η η' : Config ι} (g : Config ι → ℝ)

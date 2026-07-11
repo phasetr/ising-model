@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.InfluenceMatrixDecay
 
 /-!
-# The Dobrushin total influence (Neumann-series resolvent row sums) (GJ §17.1)
+# The Dobrushin total influence (Neumann-series resolvent row sums)
 
 At high temperature the Dobrushin coefficient `α = Δ(G)·tanh(βJ)` is `< 1`, so the influence-matrix
 powers' row sums `∑_y (C^n)_{xy} ≤ α^n` (`isingInfluenceMatrix_pow_rowSum_le`, #4199) form a
@@ -19,7 +19,7 @@ theorem is not formalized here).
   summability and the `(1 − Δ(G)·tanh(βJ))^{-1}` bound.
 * `one_le_isingTotalInfluence` — the resolvent row sum is `≥ 1` (the identity `n = 0` term).
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -71,7 +71,7 @@ theorem isingInfluenceMatrix_summable_pow_rowSum {β J : ℝ} (hβJ : 0 ≤ β *
     (isingInfluenceMatrix_rowSum_le G hβJ) x
 
 omit [Fintype G.edgeSet] in
-/-- **The total Dobrushin influence is bounded by `(1 − α)^{-1}`** (GJ §17.1): for `0 ≤ βJ` and
+/-- **The total Dobrushin influence is bounded by `(1 − α)^{-1}`**: for `0 ≤ βJ` and
 `βJ·Δ(G) < 1`, the resolvent row sum is at most `(1 − Δ(G)·tanh(βJ))^{-1}`. This is the
 high-temperature bound on the Dobrushin comparison-theorem coefficient. -/
 theorem isingTotalInfluence_le {β J : ℝ} (hβJ : 0 ≤ β * J) (hΔ : β * J * G.maxDegree < 1) (x : ι) :
@@ -81,7 +81,7 @@ theorem isingTotalInfluence_le {β J : ℝ} (hβJ : 0 ≤ β * J) (hΔ : β * J 
     (isingInfluenceMatrix_rowSum_le G hβJ) x
 
 omit [Fintype G.edgeSet] in
-/-- **The total Dobrushin influence is at least `1`** (GJ §17.1): for `0 ≤ βJ` and `βJ·Δ(G) < 1`,
+/-- **The total Dobrushin influence is at least `1`**: for `0 ≤ βJ` and `βJ·Δ(G) < 1`,
 the resolvent row sum is `≥ 1` — the identity contribution `∑_y (C^0)_{xy} = ∑_y [x = y] = 1` (all
 other
 terms are nonnegative). -/

@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.SingleSiteInfluenceMatrix
 
 /-!
-# The single-site conditional expectation of a general observable (GJ §17.1, Issue #4201)
+# The single-site conditional expectation of a general observable (Issue #4201)
 
 For a single free site `Λ = {x}` with the rest frozen to `η`, the boundary-condition Gibbs
 expectation of **any** observable `f` is the two-point convex combination
@@ -18,7 +18,7 @@ single-site influence bound lifted from the up-indicator to a general local obse
 
 The full multi-site Dobrushin comparison theorem (telescoping over sites) is not formalized here.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -41,7 +41,7 @@ theorem isingSingleSiteUpProb_le_one (a : ℝ) : isingSingleSiteUpProb a ≤ 1 :
 
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
-/-- **The single-site conditional expectation of a general observable** (GJ §17.1): for the free
+/-- **The single-site conditional expectation of a general observable**: for the free
 site `{x}` with the rest of the lattice frozen to `η`, the boundary-condition Gibbs expectation of
 any observable `f` is the two-point convex combination
 `⟨f⟩^η_{x} = p·f(η[x↦up]) + (1−p)·f(η[x↦down])` with `p = singleSiteUpProbBC`. -/
@@ -68,7 +68,7 @@ def LocalAtSite (x : ι) (f : Config ι → ℝ) : Prop :=
   ∀ σ σ' : Config ι, σ x = σ' x → f σ = f σ'
 
 omit [DecidableRel G.Adj] in
-/-- **The single-site comparison bound for a local observable** (GJ §17.1): if `f` is local at `x`
+/-- **The single-site comparison bound for a local observable**: if `f` is local at `x`
 and the boundary conditions `η`, `η'` agree off `{y}`, then for `0 ≤ βJ` the single-site conditional
 expectations differ by at most `tanh(βJ)·|f(η[x↦up]) − f(η[x↦down])|`. This lifts the single-site
 influence bound (`singleSiteUpProbBC_dist_le`) from the up-indicator to a general local observable —

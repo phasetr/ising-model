@@ -3,7 +3,7 @@ import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
 import Mathlib.Combinatorics.SimpleGraph.Metric
 
 /-!
-# Exponential distance-decay of the Dobrushin resolvent (GJ §17.1, Issue #4214 §A)
+# Exponential distance-decay of the Dobrushin resolvent (Issue #4214 §A)
 
 The Dobrushin resolvent `R_{xy} = ∑_n (Cⁿ)_{xy}` of the single-site influence matrix
 `C_{xy} = tanh(βJ)·[y∼x]` decays **exponentially in the graph distance**: under the sufficient
@@ -21,7 +21,7 @@ so only the `n ≥ d_G(x,y)` terms contribute, summing to the geometric tail.
 * `isingInfluenceMatrix_pow_apply_eq_zero_of_lt_dist` — `(Cⁿ)_{xy} = 0` for `n < d_G(x,y)`.
 * `dobrushinResolvent_le_pow_dist` — the exponential distance-decay `R_{xy} ≤ αᵈⁱˢᵗ/(1−α)`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -51,7 +51,7 @@ theorem isingInfluenceMatrix_pow_apply (β J : ℝ) (n : ℕ) (x y : ι) :
     G.adjMatrix_pow_apply_eq_card_walk]
 
 omit [Fintype G.edgeSet] in
-/-- **The influence-matrix power vanishes below the graph distance** (GJ §17.1): `(Cⁿ)_{xy} = 0`
+/-- **The influence-matrix power vanishes below the graph distance**: `(Cⁿ)_{xy} = 0`
 whenever `n < d_G(x,y)`, since no walk `x → y` of length `n < d_G(x,y)` exists. -/
 theorem isingInfluenceMatrix_pow_apply_eq_zero_of_lt_dist (β J : ℝ) {n : ℕ} {x y : ι}
     (hn : n < G.dist x y) : ((isingInfluenceMatrix G β J) ^ n) x y = 0 := by
@@ -109,7 +109,7 @@ theorem isingInfluenceMatrix_tsum_shift_apply_le {β J : ℝ} (hβJ : 0 ≤ β *
   rw [tsum_mul_right, tsum_geometric_of_lt_one hα0 hα1, mul_comm]
 
 omit [Fintype G.edgeSet] in
-/-- **Exponential distance-decay of the Dobrushin resolvent** (GJ §17.1): under the sufficient
+/-- **Exponential distance-decay of the Dobrushin resolvent**: under the sufficient
 high-temperature condition `βJ·Δ(G) < 1` (whence the Dobrushin coefficient `α = Δ(G)·tanh(βJ) < 1`),
 `R_{xy} ≤ αᵈⁱˢᵗ/(1−α)`. For reachable `x, y` (where `G.dist` is the genuine graph distance) this is
 true exponential decay; for unreachable pairs `G.dist x y = 0` and the bound degenerates to the
