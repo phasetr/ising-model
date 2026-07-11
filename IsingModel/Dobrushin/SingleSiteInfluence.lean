@@ -1,7 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
-# The single-site Ising influence bound (GJ §17.1 / Dobrushin uniqueness)
+# The single-site Ising influence bound (Dobrushin uniqueness)
 
 Toward a transverse-volume-uniform spectral gap, the correct route (the one-step full-layer
 Dobrushin coefficient is provably insufficient) is **single-site Dobrushin uniqueness**: the
@@ -19,7 +19,7 @@ nearest-neighbour Ising influence is therefore `tanh(βJ)`.
 * `tanh_add_sub_tanh_sub_abs_le` — `|tanh(a+t) − tanh(a−t)| ≤ 2·tanh t` for `t ≥ 0`.
 * `isingSingleSiteUpProb_flip_neighbour_dist_le` — the single-site influence bound `≤ tanh t`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.BoundaryWeight
 import IsingModel.Dobrushin.SingleSiteGeneralComparison
 
 /-!
-# The interior-mass contraction of the heat-bath sweep (GJ §17.1, Issue #4214 §A)
+# The interior-mass contraction of the heat-bath sweep (Issue #4214 §A)
 
 Toward the Dobrushin comparison capstone: under the Dobrushin condition `tanh(βJ)·Δ(G) < 1`, a full
 heat-bath sweep over the volume `Λ` contracts the **interior mass** `MΛ(v) = ∑_{x∈Λ} v_x` of a
@@ -20,7 +20,7 @@ factor `α`.
 * `repeatedFullSweep` / `interiorMass_repeatedFullSweep_le_pow` — `MΛ(repeated n) ≤ αⁿ·MΛ(v)`.
 * `interiorMass_repeatedFullSweep_tendsto_zero` — the interior mass vanishes in the sweep limit.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -57,7 +57,7 @@ theorem heatBathOscStep_ge_of_ne {β J : ℝ} (hβJ : 0 ≤ β * J) (x : ι) {v 
   linarith
 
 omit [Fintype G.edgeSet] in
-/-- **The per-step interior-mass drop** (GJ §17.1): one heat-bath step at `x ∈ Λ` drops the interior
+/-- **The per-step interior-mass drop**: one heat-bath step at `x ∈ Λ` drops the interior
 mass by at least `(1 − α)·v_x`, where `α` is the Dobrushin coefficient. -/
 theorem heatBathOscStep_interiorMass_drop {β J : ℝ} (hβJ : 0 ≤ β * J) {Λ : Finset ι} {x : ι}
     (hx : x ∈ Λ) {v : ι → ℝ} (hvx : 0 ≤ v x) :
@@ -84,7 +84,7 @@ theorem heatBathOscStep_interiorMass_drop {β J : ℝ} (hβJ : 0 ≤ β * J) {Λ
   nlinarith [hC]
 
 omit [Fintype G.edgeSet] in
-/-- **The telescoped sweep interior-mass bound** (GJ §17.1): sweeping a no-duplicate list `xs ⊆ Λ`
+/-- **The telescoped sweep interior-mass bound**: sweeping a no-duplicate list `xs ⊆ Λ`
 drops the interior mass by at least `(1 − α)·∑_{x∈xs} v_x` (each site, swept once, has value
 time at least its initial value). -/
 theorem heatBathListOscBound_interiorMass_le {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -119,7 +119,7 @@ theorem heatBathListOscBound_interiorMass_le {β J : ℝ} (hβJ : 0 ≤ β * J)
     linarith [hdrop, mul_le_mul_of_nonneg_left hgrow hα0]
 
 omit [Fintype G.edgeSet] in
-/-- **A full sweep contracts the interior mass** (GJ §17.1): under the Dobrushin condition,
+/-- **A full sweep contracts the interior mass**: under the Dobrushin condition,
 `MΛ(sweep Λ.toList v) ≤ α·MΛ(v)` for nonnegative `v`. -/
 theorem heatBathListOscBound_toList_interiorMass_le {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hα1 : isingDobrushinCoeff G β J < 1) (Λ : Finset ι) {v : ι → ℝ} (hv : ∀ z, 0 ≤ v z) :
@@ -153,7 +153,7 @@ theorem repeatedFullSweep_succ (Λ : Finset ι) (n : ℕ) :
     List.flatten_cons, List.flatten_nil, List.append_nil]
 
 omit [Fintype G.edgeSet] in
-/-- **The repeated-sweep interior-mass geometric bound** (GJ §17.1): `MΛ(repeatedFullSweep Λ n v) ≤
+/-- **The repeated-sweep interior-mass geometric bound**: `MΛ(repeatedFullSweep Λ n v) ≤
 αⁿ·MΛ(v)`. -/
 theorem interiorMass_repeatedFullSweep_le_pow {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hα1 : isingDobrushinCoeff G β J < 1) (Λ : Finset ι) {v : ι → ℝ} (hv : ∀ z, 0 ≤ v z) :
@@ -182,7 +182,7 @@ theorem interiorMass_repeatedFullSweep_le_pow {β J : ℝ} (hβJ : 0 ≤ β * J)
       _ = isingDobrushinCoeff G β J ^ (n + 1) * ∑ y ∈ Λ, v y := by ring
 
 omit [Fintype G.edgeSet] in
-/-- **The interior mass vanishes in the sweep limit** (GJ §17.1): under the Dobrushin condition, the
+/-- **The interior mass vanishes in the sweep limit**: under the Dobrushin condition, the
 interior mass after `n` full sweeps tends to `0`. -/
 theorem interiorMass_repeatedFullSweep_tendsto_zero {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hα1 : isingDobrushinCoeff G β J < 1) (Λ : Finset ι) {v : ι → ℝ} (hv : ∀ z, 0 ≤ v z) :

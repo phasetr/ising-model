@@ -16,7 +16,7 @@ point is that the finite-volume sum is stratified by ambient lattice distance an
 sphere is bounded by the surface-growth estimate `2 * (2r + 1)^(d - 1)`, so the result
 has no factor depending on `|Λ|`.
 
-References: Glimm--Jaffe, *Quantum Physics*, 2nd ed., §17.1, pp. 304--306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

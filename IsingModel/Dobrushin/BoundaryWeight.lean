@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.HeatBathSweep
 import IsingModel.Dobrushin.DobrushinResolvent
 
 /-!
-# The Dobrushin boundary weight and the oscillation Lyapunov bound (GJ §17.1, Issue #4214 §A)
+# The Dobrushin boundary weight and the oscillation Lyapunov bound (Issue #4214 §A)
 
 The Dobrushin comparison capstone bounds a boundary-condition difference by the resolvent-weighted
 oscillations, `∑_{x,y} R_{xy}·osc_x(f)·1_{y∈S}`. This file isolates the **boundary fixed-point**
@@ -19,7 +19,7 @@ structure underlying that bound, independent of the Gibbs measure.
   Lyapunov function of the oscillation-vector dynamics (non-increasing under each heat-bath step,
   by superharmonicity), and `1_{·∈S} ≤ w` recovers the boundary sum.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -44,7 +44,7 @@ theorem dobrushinBoundaryWeight_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) (S : F
   Finset.sum_nonneg fun y _ => dobrushinResolvent_nonneg G hβJ x y
 
 omit [Fintype G.edgeSet] in
-/-- **The boundary-weight fixed point** (GJ §17.1): `w_x = 1_{x∈S} + ∑_z C_{xz} w_z`, inherited from
+/-- **The boundary-weight fixed point**: `w_x = 1_{x∈S} + ∑_z C_{xz} w_z`, inherited from
 the resolvent fixed point `R = I + C·R` summed over the differing boundary set `S`. -/
 theorem dobrushinBoundaryWeight_fixed_point {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) (S : Finset ι) (x : ι) :
@@ -64,7 +64,7 @@ theorem dobrushinBoundaryWeight_fixed_point {β J : ℝ} (hβJ : 0 ≤ β * J)
     rw [dobrushinBoundaryWeight, Finset.mul_sum]
 
 omit [Fintype G.edgeSet] in
-/-- **Superharmonicity of the boundary weight** (GJ §17.1): `∑_z C_{xz} w_z ≤ w_x`. The harmonic
+/-- **Superharmonicity of the boundary weight**: `∑_z C_{xz} w_z ≤ w_x`. The harmonic
 weight loses exactly `1_{x∈S}` per `C`-step. -/
 theorem dobrushinBoundaryWeight_superharmonic {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) (S : Finset ι) (x : ι) :
@@ -75,7 +75,7 @@ theorem dobrushinBoundaryWeight_superharmonic {β J : ℝ} (hβJ : 0 ≤ β * J)
   linarith
 
 omit [Fintype G.edgeSet] in
-/-- **The boundary indicator is dominated by the boundary weight** (GJ §17.1): `1_{x∈S} ≤ w_x`. -/
+/-- **The boundary indicator is dominated by the boundary weight**: `1_{x∈S} ≤ w_x`. -/
 theorem indicator_le_dobrushinBoundaryWeight {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) (S : Finset ι) (x : ι) :
     (if x ∈ S then (1 : ℝ) else 0) ≤ dobrushinBoundaryWeight G β J S x := by
@@ -105,7 +105,7 @@ theorem heatBathListOscBound_nonneg {β J : ℝ} (hβJ : 0 ≤ β * J) (xs : Lis
     exact ih (heatBathOscStep G β J x v) (fun z => heatBathOscStep_nonneg G hβJ x hv z) y
 
 omit [Fintype G.edgeSet] in
-/-- **One Lyapunov step** (GJ §17.1): the boundary-weighted total `∑_y v_y·w_y` does not increase
+/-- **One Lyapunov step**: the boundary-weighted total `∑_y v_y·w_y` does not increase
 under one heat-bath oscillation step, `∑_y (heatBathOscStep x v)_y·w_y ≤ ∑_y v_y·w_y`, by
 superharmonicity of `w` and `v_x ≥ 0`. -/
 theorem heatBathOscStep_boundaryWeight_sum_le {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -143,7 +143,7 @@ theorem heatBathOscStep_boundaryWeight_sum_le {β J : ℝ} (hβJ : 0 ≤ β * J)
   linarith
 
 omit [Fintype G.edgeSet] in
-/-- **The Lyapunov bound over a sweep** (GJ §17.1): the boundary-weighted total is non-increasing
+/-- **The Lyapunov bound over a sweep**: the boundary-weighted total is non-increasing
 under any sweep, `∑_y (heatBathListOscBound xs v)_y·w_y ≤ ∑_y v_y·w_y`. -/
 theorem heatBathListOscBound_boundaryWeight_sum_le {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hΔ : β * J * G.maxDegree < 1) (S : Finset ι) (xs : List ι) :
@@ -159,7 +159,7 @@ theorem heatBathListOscBound_boundaryWeight_sum_le {β J : ℝ} (hβJ : 0 ≤ β
     exact heatBathOscStep_boundaryWeight_sum_le G hβJ hΔ S x hv
 
 omit [Fintype G.edgeSet] in
-/-- **The boundary-sum Lyapunov bound** (GJ §17.1): the swept oscillation summed over the differing
+/-- **The boundary-sum Lyapunov bound**: the swept oscillation summed over the differing
 boundary set `S` is bounded by the initial boundary-weighted total,
 `∑_{y∈S} heatBathListOscBound xs v y ≤ ∑_x v_x·w_x`. Combines the Lyapunov bound with the
 boundary-indicator domination `1_{·∈S} ≤ w`. -/
