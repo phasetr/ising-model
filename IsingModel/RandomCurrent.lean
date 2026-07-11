@@ -1,4 +1,5 @@
 import IsingModel.RandomCurrent.Core
+import IsingModel.RandomCurrent.ClusterConditioning
 import IsingModel.RandomCurrent.BoundedExpansion
 import IsingModel.RandomCurrent.Switching
 import IsingModel.RandomCurrent.Peeling
@@ -12,6 +13,8 @@ import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 Umbrella file importing all random-current sub-modules:
 
 * `RandomCurrent.Core` — `Current` type, parity, sources, weight, `weightSum`.
+* `RandomCurrent.ClusterConditioning` — edge-partition weight factorization
+  (GJ §17.5 Lemma 5.1 ingredient SL-A).
 * `RandomCurrent.BoundedExpansion` — `CurrentBounded`, Taylor expansion,
   N → ∞ convergence capstone.
 * `RandomCurrent.Switching` — Aizenman switching lemma infrastructure
