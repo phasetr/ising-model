@@ -77,7 +77,7 @@ theorem latticeMass_ge_neg_log_of_high_temp
   exact ⟨α₀, hasExponentialDecay_of_high_temp hβJ.le hlt,
          (ENNReal.ofReal_eq_coe_nnreal hα_pos.le).symm⟩
 
-/-! ## §17.5 Step 112: Lattice mass antitonicity in β and J -/
+/-! ## §17.1 Step 112: Lattice mass antitonicity in β and J -/
 
 /-- **Lattice mass antitone in β** at h = 0 (GJ §17.1 pp. 304–306):
 for fixed `J ≥ 0` and `0 < β₁ ≤ β₂`, the lattice mass satisfies

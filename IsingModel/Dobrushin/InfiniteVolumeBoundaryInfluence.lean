@@ -24,7 +24,7 @@ namespace Dobrushin
 
 open Finset Filter Topology
 
-/-- **Card-free far-field boundary-influence bound on a cubic-lattice volume** .
+/-- **Card-free far-field boundary-influence bound on a cubic-lattice volume**.
 
 For the induced graph `GΛ = Ambient.inducedGraph (latticeGraph d) Λ`, if the boundary conditions
 `η, η'` agree off a finite set `S` every site of which lies at ℓ¹-lattice distance at least `R`

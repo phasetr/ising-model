@@ -99,7 +99,7 @@ theorem siteOsc_originObs (d : ℕ) (g : Spin → ℝ) {Λ : Finset (Fin d → �
         (hval _).symm
     _ ≤ siteOsc (⟨0, h0⟩ : ↑Λ) (originObs d g h0) := abs_sub_update_le_siteOsc _ _ _
 
-/-- **Card-free per-stage boundary-influence bound for the origin observable** .
+/-- **Card-free per-stage boundary-influence bound for the origin observable**.
 
 For a fixed exhaustion stage `cubicBox d n`, if two boundary conditions `η, η'` agree off a finite
 set `S` every site of which lies at ℓ¹-lattice distance at least `R` from the origin, then the
@@ -170,7 +170,7 @@ theorem gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform
   rw [Real.dist_eq, sub_zero] at hdist
   exact (le_abs_self _).trans hdist.le
 
-/-- **Disagreement-set form of the cross-exhaustion boundary independence** .
+/-- **Disagreement-set form of the cross-exhaustion boundary independence**.
 
 Restatement of `gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform` with the
 disagreement set described intrinsically: a single radius `R(ε)` such that, uniformly over every
