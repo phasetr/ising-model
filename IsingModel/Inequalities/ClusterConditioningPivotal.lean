@@ -8,9 +8,14 @@ This module implements ingredient **SL-C**: the pointwise-per-current geometric
 fact that, on the pivotal fiber conditioned by the cluster value
 `C = C_x(M − 1_{e₀})`, the dominant edge `e₀` is the *unique* active edge of `M`
 crossing `C`–`Cᶜ`, together with the derived facts `M e₀ = 1` (F2) and "every
-other crossing edge carries multiplicity `0`" (F3), which make the SL-A edge
-partition `E = E_int ⊔ {e₀} ⊔ E_ext` *exact* on the fiber (Prop.
-`Current.weight_pivotal_fiber_factor`). It rests on exactly two merged inputs:
+other crossing edge carries multiplicity `0`" (F3), which make the FV (3.45)
+**weight** factorise exactly as `w = w_int · (βJ) · w_ext` on the fiber (Prop.
+`Current.weight_pivotal_fiber_factor`). This is a *weight-exact* factorisation,
+**not** a set partition of the edge set: the crossing edges
+`E_cross = E ∖ (E_int ∪ E_ext)` other than `e₀` are not absorbed into the three
+blocks `E_int`, `{e₀}`, `E_ext` — they remain in `E`, but by F3 each carries
+multiplicity `M e = 0`, hence weight factor `(βJ)^0/0! = 1`, so they contribute
+nothing to the product. It rests on exactly two merged inputs:
 the cut/closure property of the decremented cluster
 (`Current.reachableCluster_closed`, SL-B) and the two-arms structure of a pivotal
 edge (`Current.edgePivotal_arms`).
@@ -226,7 +231,8 @@ theorem Current.edgePivotal_bridge_unique (G : SimpleGraph V) (Λ : Finset V)
 set_option linter.unusedDecidableInType false in
 /-- **Membership in `Current.interiorEdges`**: `e ∈ interiorEdges G Λ C` iff both
 endpoints of `e` lie in the vertex set `C`, `∀ w ∈ (e : Sym2 ↑Λ), w ∈ C`. Unfolds
-the interior-edge filter. Support lemma for the SL-C exact edge partition. -/
+the interior-edge filter. Support lemma for the SL-C weight-exact fiber
+factorisation. -/
 theorem Current.mem_interiorEdges_iff (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (C : Finset ↑Λ) (e : (inducedGraph G Λ).edgeSet) :
@@ -238,8 +244,8 @@ set_option linter.unusedDecidableInType false in
 /-- **Interior edge sets of complementary vertex sets are disjoint**: no edge has
 both endpoints in `C` and both endpoints in `Cᶜ`, since a `Sym2` always has a
 member (`Sym2.ind`) which cannot lie in both `C` and `Cᶜ`. Support lemma for the
-SL-C exact edge partition (the exterior block `interiorEdges Cᶜ` is disjoint from
-the interior block `interiorEdges C`). -/
+SL-C weight-exact fiber factorisation (the exterior block `interiorEdges Cᶜ` is
+disjoint from the interior block `interiorEdges C`). -/
 theorem Current.interiorEdges_disjoint (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (C : Finset ↑Λ) :
