@@ -16,7 +16,7 @@ condition.
 * `isingDobrushin_condition_of_high_temp_maxDegree` — the uniform form: `βJ·Δ(G) < 1` (with `Δ(G)`
   the maximum degree) implies Dobrushin's condition at every site.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

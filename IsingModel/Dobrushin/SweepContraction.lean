@@ -20,7 +20,7 @@ factor `α`.
 * `repeatedFullSweep` / `interiorMass_repeatedFullSweep_le_pow` — `MΛ(repeated n) ≤ αⁿ·MΛ(v)`.
 * `interiorMass_repeatedFullSweep_tendsto_zero` — the interior mass vanishes in the sweep limit.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

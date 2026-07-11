@@ -42,8 +42,8 @@ boundary condition in `cubicBox d m` to one in `cubicBox d n` for `m ≤ n`, whi
 estimate of PR 2 does not provide and which is the remaining research-level content of Issue #4214
 §A.  We record the uniform boundary independence here and flag limit existence as not-yet-done.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306; Georgii,
-*Gibbs Measures and Phase Transitions*, Ch. 8; Friedli–Velenik, *Statistical Mechanics of Lattice
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970);
+Friedli–Velenik, *Statistical Mechanics of Lattice
 Systems*, §6.5 (Dobrushin uniqueness).
 -/
 

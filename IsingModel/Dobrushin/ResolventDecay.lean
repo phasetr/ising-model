@@ -21,7 +21,7 @@ so only the `n ≥ d_G(x,y)` terms contribute, summing to the geometric tail.
 * `isingInfluenceMatrix_pow_apply_eq_zero_of_lt_dist` — `(Cⁿ)_{xy} = 0` for `n < d_G(x,y)`.
 * `dobrushinResolvent_le_pow_dist` — the exponential distance-decay `R_{xy} ≤ αᵈⁱˢᵗ/(1−α)`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

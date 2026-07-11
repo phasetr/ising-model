@@ -17,7 +17,7 @@ identity `R = (I − C)⁻¹` is not formalized here).
 * `dobrushinResolvent_nonneg` / `dobrushinResolvent_rowSum` / `one_le_dobrushinResolvent_diag`.
 * `dobrushinResolvent_fixed_point` — `R_{xy} = [x = y] + ∑_z C_{xz}·R_{zy}`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

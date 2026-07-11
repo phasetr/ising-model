@@ -21,7 +21,7 @@ with `α = Δ(G)·tanh(βJ)` the Dobrushin coefficient. The uniform bound (indep
 * `gibbsExpectationBC_localObs_dist_le_resolvent_row` — the collapsed comparison.
 * `gibbsExpectationBC_localObs_dist_le_totalInfluence` — the uniform locality bound.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

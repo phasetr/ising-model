@@ -19,7 +19,7 @@ theorem is not formalized here).
   summability and the `(1 − Δ(G)·tanh(βJ))^{-1}` bound.
 * `one_le_isingTotalInfluence` — the resolvent row sum is `≥ 1` (the identity `n = 0` term).
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

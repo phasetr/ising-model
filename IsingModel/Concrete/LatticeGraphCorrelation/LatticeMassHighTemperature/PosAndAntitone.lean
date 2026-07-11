@@ -11,10 +11,10 @@ open scoped symmDiff
 namespace IsingModel
 namespace Ambient
 
-/-! ## §17.5 Step 111: Positive lattice mass at high temperature -/
+/-! ## §5.1/§17.5 Step 111: Positive lattice mass at high temperature -/
 
 open IsingModel in
-/-- **Positive lattice mass at high temperature** (GJ §17.5 pp. 304–306):
+/-- **Positive lattice mass at high temperature** (GJ §5.1 pp. 74–75):
 for `0 < βJ` and `βJD < 1` (D = 2d), the lattice mass is positive,
 i.e., the correlation length is finite.
 
@@ -23,7 +23,8 @@ vacuously for any rate; `latticeMass ≥ 1 > 0`.
 For `d ≥ 1`: `hasExponentialDecay_of_high_temp` (Step 110) gives rate
 `α₀ = -log(βJD) > 0` (since `0 < βJD < 1`); `latticeMass ≥ α₀ > 0`.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306. -/
+Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature decay, Step 109–110,
+cf. ExpDecay.lean); latticeMass definition matches GJ §17.5 (17.5.1) p. 310. -/
 theorem latticeMass_pos_of_high_temp
     {d : ℕ} {β J : ℝ} (hβJ : 0 < β * J)
     (hlt : β * J * ↑(2 * d) < 1) :
@@ -53,7 +54,7 @@ theorem latticeMass_pos_of_high_temp
     have : (0 : ℝ) < (α₀ : ℝ) := hα_pos
     exact_mod_cast this
 
-/-- **Lattice mass lower bound in high-temperature regime** (Step 152, GJ §17.5):
+/-- **Lattice mass lower bound in high-temperature regime** (Step 152, GJ §5.1):
 for `d ≥ 1`, `0 < βJ`, and `βJ·2d < 1`:
 `ENNReal.ofReal (-log(βJ·2d)) ≤ latticeMass d (cubicExhaustion d) ⟨J,0,β⟩`.
 
@@ -61,7 +62,8 @@ The rate `α₀ = -log(βJD)` (with `D = 2d`) from Step 110 is in the defining s
 `latticeMass`, so `latticeMass ≥ α₀`. This makes the lower bound from `latticeMass_pos_of_high_temp`
 (Step 111) explicit: the exponential decay rate `α₀` is a concrete lower bound for the mass.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306. -/
+Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature decay, Step 109–110,
+cf. ExpDecay.lean); latticeMass definition matches GJ §17.5 (17.5.1) p. 310. -/
 theorem latticeMass_ge_neg_log_of_high_temp
     {d : ℕ} (hd : 1 ≤ d) {β J : ℝ} (hβJ : 0 < β * J)
     (hlt : β * J * ↑(2 * d) < 1) :

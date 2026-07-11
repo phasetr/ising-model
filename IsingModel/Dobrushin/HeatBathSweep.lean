@@ -18,7 +18,7 @@ not a `Finset`.
 * `siteOsc_heatBathList_le_oscBound` — the per-site oscillation of a swept observable is bounded by
   the oscillation-vector dynamics applied to the initial oscillations, the key tracking estimate.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

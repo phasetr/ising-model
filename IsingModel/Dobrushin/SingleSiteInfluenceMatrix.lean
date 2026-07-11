@@ -23,7 +23,7 @@ uniqueness condition `tanh(βJ)·deg(x) < 1` (the high-temperature regime).
 * `isingInfluence_rowSum` — the Dobrushin interaction sum `∑_y c_{xy} = deg(x)·tanh(βJ)`.
 * `isingDobrushin_condition` — the uniqueness condition `tanh(βJ)·deg(x) < 1` as a clean statement.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

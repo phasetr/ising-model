@@ -15,7 +15,7 @@ the per-configuration bound `|f(σ[x↦↑]) − f(σ[x↦↓])| ≤ siteOsc x f
 * `siteOsc_nonneg` / `abs_sub_update_le_siteOsc` / `siteOsc_le_of_forall`.
 * `siteOsc_heatBath_self` — `siteOsc x (K_x f) = 0`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

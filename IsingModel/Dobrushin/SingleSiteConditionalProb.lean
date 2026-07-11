@@ -13,7 +13,7 @@ field))/2` (combined with the single-site Hamiltonian gap `hamiltonian_update_up
 * `hamiltonianJ_const_eq_hamiltonian` — the inhomogeneous Hamiltonian with constant coupling `J` is
   the homogeneous Ising Hamiltonian (bridging the boundary-condition weight to the single-site gap).
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

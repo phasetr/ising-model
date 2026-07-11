@@ -17,7 +17,7 @@ is the "boundary direct term" `b_x` of the comparison telescoping. For an observ
   the single-flip influence bound over the differing neighbours).
 * `gibbsExpectationBC_singleton_localObs_agreesOff_dist_le` — the local-observable version.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

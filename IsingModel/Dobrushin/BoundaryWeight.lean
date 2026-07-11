@@ -19,7 +19,7 @@ structure underlying that bound, independent of the Gibbs measure.
   Lyapunov function of the oscillation-vector dynamics (non-increasing under each heat-bath step,
   by superharmonicity), and `1_{·∈S} ≤ w` recovers the boundary sum.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

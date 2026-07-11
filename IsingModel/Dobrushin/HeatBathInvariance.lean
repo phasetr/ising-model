@@ -20,7 +20,7 @@ oscillation via the influence matrix yields the comparison bound (later PRs).
 
 The multi-site Dobrushin comparison theorem itself is not formalized here.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

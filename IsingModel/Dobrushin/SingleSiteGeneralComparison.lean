@@ -21,7 +21,7 @@ it, together with the underlying "observable telescoping" bound.
 * `sum_isingInfluence_eq` / `heatBath_agreesOff_dist_le_influence` — the influence-matrix form,
   `#(S ∩ nbr(x))·tanh(βJ) = ∑_{y∈S} C_{xy}`, feeding the resolvent comparison.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

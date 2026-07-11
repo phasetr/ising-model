@@ -18,7 +18,7 @@ single-site influence bound lifted from the up-indicator to a general local obse
 
 The full multi-site Dobrushin comparison theorem (telescoping over sites) is not formalized here.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

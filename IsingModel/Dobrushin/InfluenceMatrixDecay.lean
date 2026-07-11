@@ -20,7 +20,7 @@ Dobrushin comparison/uniqueness theorem (which itself is not formalized here).
 * `isingInfluenceMatrix_pow_rowSum_tendsto_zero` — the row sums of `C^n` tend to `0` at high
   temperature.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

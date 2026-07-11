@@ -25,7 +25,7 @@ the Dobrushin uniqueness theorem (volume-uniform exponential decay; not formaliz
 * `gibbsExpectationBC_singleton_down_eq` — the down-probability `1 − upProb`.
 * `gibbsExpectationBC_singleton_sign_eq_tanh` — the conditional magnetization `tanh(a)`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

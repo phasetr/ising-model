@@ -17,7 +17,7 @@ the Gibbs weight, not just the observable); the correct bound is over the whole 
 * `gibbsExpectationBC_dist_le_volume_add_boundary_siteOsc` — the split into an interior sum over `Λ`
   and a boundary sum over `S`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

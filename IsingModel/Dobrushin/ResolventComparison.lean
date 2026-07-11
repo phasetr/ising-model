@@ -16,7 +16,7 @@ Dobrushin comparison theorem (final assembly, later PR).
 * `dobrushin_resolvent_comparison` — the Ising specialization with `C = isingInfluenceMatrix`,
   `R = dobrushinResolvent`, valid for `0 ≤ βJ` and `βJ·Δ(G) < 1`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

@@ -16,7 +16,7 @@ change, giving
   `−2·J·∑_{y∼x} sign(η_y)`.
 * `hamiltonian_update_up_sub_down` — the total single-site energy gap `−2·(J·neighbour-sum + h)`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel

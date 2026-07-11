@@ -17,7 +17,7 @@ PRs).
 * `isingInfluence_nonneg` — `0 ≤ C_{xy}` (for `0 ≤ βJ`).
 * `siteOsc_heatBath_le` — `siteOsc y (K_x f) ≤ siteOsc y f + C_{xy}·siteOsc x f`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
