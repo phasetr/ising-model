@@ -119,9 +119,18 @@ negative semidefinite. Physically this means there are no even-sector
 bound states in the two-body spectrum beyond those already captured by
 disconnected one-body contributions.
 
-Explicit named alias of `cor_4_3_3` (= Lebowitz inequality at `h = 0`),
-matching the `eta_nonneg_finite_vol` / `zeta_nonneg_finite_vol`
-convention. -/
+This is an explicit named alias of `cor_4_3_3` (= Lebowitz inequality at
+`h = 0`), matching the `eta_nonneg_finite_vol` / `zeta_nonneg_finite_vol`
+convention. It is *not* the spectral Corollary 17.2.2 (absence of even
+bound states in the energy interval `(0, 2m)` of the actual Hamiltonian
+via reflection positivity + Osterwalder–Schrader reconstruction), which
+is permanently out of scope for this classical lattice Gibbs-measure
+project. The general correlation-inequality content of §17.2, **GJ
+Theorem 17.2.1** (the ordered odd-subset upper bound for arbitrary even
+`A`, `B`), *is* now formalised in-scope as
+`IsingModel.Lebowitz.thm_17_2_1`
+(`Inequalities/Lebowitz/Thm1721.lean`); this four-point statement is the
+special case `A = {i,j}`, `B = {k,l}`. -/
 theorem absence_of_even_bound_states_finite_vol
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hf : Ferromagnetic ⟨J, (0 : ℝ), β⟩) (i j k l : ι)
