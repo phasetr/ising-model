@@ -3,7 +3,7 @@ import IsingModel.Dobrushin.SingleSiteObservableComparison
 import IsingModel.Dobrushin.InfluenceMatrixResolvent
 
 /-!
-# Dobrushin locality of single-site observables (GJ §17.1, Issue #4214 §A)
+# Dobrushin locality of single-site observables (Issue #4214 §A)
 
 Consequences of the Dobrushin comparison theorem for observables local at a single site. For `f`
 local at `x₀`, the comparison sum `∑_x ∑_{y∈S} R_{xy}·siteOsc x f` collapses to the single `x = x₀`
@@ -44,7 +44,7 @@ theorem siteOsc_eq_zero_of_localAtSite {x₀ x : ι} {f : Config ι → ℝ} (hf
     rw [Function.update_of_ne (fun h => hx h.symm), Function.update_of_ne (fun h => hx h.symm)]
   rw [hf _ _ hupd, sub_self, abs_zero]
 
-/-- **The collapsed Dobrushin comparison for a single-site observable** (GJ §17.1): for `f` local at
+/-- **The collapsed Dobrushin comparison for a single-site observable**: for `f` local at
 `x₀`, the boundary-condition difference is governed by the resolvent row at `x₀`,
 `|⟨f⟩^η_Λ − ⟨f⟩^{η'}_Λ| ≤ siteOsc x₀ f · ∑_{y∈S} R_{x₀ y}`. -/
 theorem gibbsExpectationBC_localObs_dist_le_resolvent_row {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -62,7 +62,7 @@ theorem gibbsExpectationBC_localObs_dist_le_resolvent_row {β J : ℝ} (hβJ : 0
   · intro hx₀
     exact absurd (Finset.mem_univ x₀) hx₀
 
-/-- **The uniform Dobrushin locality bound for a single-site observable** (GJ §17.1): the
+/-- **The uniform Dobrushin locality bound for a single-site observable**: the
 boundary-condition difference is bounded uniformly in `Λ`, `S`, `η`, `η'` by `siteOsc x₀ f` times
 the total-influence factor `(1 − α)⁻¹` (`α = Δ(G)·tanh(βJ)` the Dobrushin coefficient). -/
 theorem gibbsExpectationBC_localObs_dist_le_totalInfluence {β J : ℝ} (hβJ : 0 ≤ β * J)

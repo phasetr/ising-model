@@ -1,7 +1,7 @@
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
-# The single-site Ising influence bound (GJ §17.1 / Dobrushin uniqueness)
+# The single-site Ising influence bound (Dobrushin uniqueness)
 
 Toward a transverse-volume-uniform spectral gap, the correct route (the one-step full-layer
 Dobrushin coefficient is provably insufficient) is **single-site Dobrushin uniqueness**: the

@@ -79,7 +79,7 @@ theorem latticeMass_ge_neg_log_of_high_temp
 
 /-! ## §17.5 Step 112: Lattice mass antitonicity in β and J -/
 
-/-- **Lattice mass antitone in β** at h = 0 (GJ §17.5 pp. 304–306):
+/-- **Lattice mass antitone in β** at h = 0 (GJ §17.1 pp. 304–306):
 for fixed `J ≥ 0` and `0 < β₁ ≤ β₂`, the lattice mass satisfies
 `latticeMass(β₂) ≤ latticeMass(β₁)`.
 
@@ -91,7 +91,7 @@ for `β₁` using `truncated2Infinite_h_zero` + GKS-II β-monotonicity
 (`correlationInfinite_monotone_beta`, GJ Prop 4.2.4) + GKS-I nonnegativity
 (`correlationInfinite_nonneg_of_hβJ`).
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306; §4.2 Prop 4.2.4 (β-monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.4 (β-monotonicity). -/
 theorem latticeMass_antitone_beta
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {J : ℝ} (hJ : 0 ≤ J)
@@ -122,14 +122,14 @@ theorem latticeMass_antitone_beta
           have hb := hbound i j hij
           rwa [abs_of_nonneg hnn₂] at hb
 
-/-- **Lattice mass antitone in J** at h = 0 (GJ §17.5 pp. 304–306):
+/-- **Lattice mass antitone in J** at h = 0 (GJ §17.1 pp. 304–306):
 for fixed `β > 0` and `0 ≤ J₁ ≤ J₂`, the lattice mass satisfies
 `latticeMass(J₂) ≤ latticeMass(J₁)`.
 
 Same argument as `latticeMass_antitone_beta` using GKS-II J-monotonicity
 (`correlationInfinite_monotone_J`, GJ Prop 4.2.3) instead.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306; §4.2 Prop 4.2.3 (J-monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.3 (J-monotonicity). -/
 theorem latticeMass_antitone_J
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂)

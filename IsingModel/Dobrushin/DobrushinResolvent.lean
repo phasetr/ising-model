@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.InfluenceMatrixResolvent
 
 /-!
-# The Dobrushin resolvent matrix `R = ∑ₙ Cⁿ` and its fixed-point equation (GJ §17.1)
+# The Dobrushin resolvent matrix `R = ∑ₙ Cⁿ` and its fixed-point equation
 
 At high temperature the influence matrix `C` (`isingInfluenceMatrix`) has Dobrushin coefficient
 `α = Δ(G)·tanh(βJ) < 1`, so each entry of the powers `(Cⁿ)_{xy}` is dominated by `αⁿ` and the
@@ -75,7 +75,7 @@ theorem one_le_dobrushinResolvent_diag {β J : ℝ} (hβJ : 0 ≤ β * J)
   simpa [pow_zero, Matrix.one_apply] using h
 
 omit [Fintype G.edgeSet] in
-/-- **The Dobrushin resolvent fixed-point equation** (GJ §17.1): `R = I + C·R`, i.e.
+/-- **The Dobrushin resolvent fixed-point equation**: `R = I + C·R`, i.e.
 `R_{xy} = [x = y] + ∑_z C_{xz}·R_{zy}`. The Neumann series `∑ₙ Cⁿ` solves `(I − C)R = I`; the
 matrix-inverse identity `R = (I − C)^{-1}` is not formalized here. Proof: split off the `n = 0`
 identity term, write `C^{n+1} = C·Cⁿ`, and swap the finite `z`-sum with the Neumann series. -/

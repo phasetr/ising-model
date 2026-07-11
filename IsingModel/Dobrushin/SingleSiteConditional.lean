@@ -2,7 +2,7 @@ import IsingModel.Hamiltonian
 import IsingModel.Dobrushin.SingleSiteInfluence
 
 /-!
-# Single-site Hamiltonian decomposition (GJ §17.1 / Dobrushin uniqueness)
+# Single-site Hamiltonian decomposition (Dobrushin uniqueness)
 
 Toward the lattice single-site conditional Gibbs distribution (and thence the single-site Dobrushin
 influence matrix), this file computes the Ising Hamiltonian under updating a single site `x` to `up`

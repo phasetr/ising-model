@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.DobrushinResolvent
 
 /-!
-# The Dobrushin resolvent comparison inequality (GJ §17.1, Issue #4201)
+# The Dobrushin resolvent comparison inequality (Issue #4201)
 
 The matrix-analytic core of the Dobrushin comparison theorem: a nonnegative vector `d` satisfying
 the one-step Dobrushin inequality `d_x ≤ b_x + ∑_y C_{xy} d_y` is bounded by the resolvent applied
@@ -106,7 +106,7 @@ theorem vector_le_resolvent_of_le_add_mul {C : Matrix ι ι ℝ} {d b : ι → �
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
 omit [Fintype G.edgeSet] in
-/-- **The Dobrushin resolvent comparison for the Ising influence matrix** (GJ §17.1): for
+/-- **The Dobrushin resolvent comparison for the Ising influence matrix**: for
 `0 ≤ βJ` and `βJ·Δ(G) < 1`, a nonnegative vector `d` satisfying the one-step Dobrushin inequality
 `d_x ≤ b_x + ∑_y C_{xy} d_y` (with `C` the single-site influence matrix) is bounded by the
 resolvent applied to `b`, `d_x ≤ ∑_y R_{xy} b_y` with `R = dobrushinResolvent`. This consumes the

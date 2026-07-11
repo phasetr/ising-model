@@ -2,9 +2,9 @@ import IsingModel.Dobrushin.SweepContraction
 import IsingModel.Dobrushin.GibbsBoundaryComparison
 
 /-!
-# The single-site Dobrushin comparison theorem (GJ §17.1, Issue #4214 §A capstone)
+# The single-site Dobrushin comparison theorem (Issue #4214 §A capstone)
 
-The capstone of the GJ §17.1 single-site Dobrushin comparison programme. Under the high-temperature
+The capstone of the single-site Dobrushin comparison programme. Under the high-temperature
 condition `βJ·Δ(G) < 1` (whence the Dobrushin coefficient `tanh(βJ)·Δ(G) < 1`), two finite-volume
 Gibbs expectations under boundary conditions `η, η'` agreeing off a set `S` differ by at most the
 resolvent-weighted oscillations of `f`,
@@ -27,8 +27,7 @@ vanishes in the sweep limit (`αⁿ → 0`). Passing `n → ∞` discharges the 
 * `gibbsExpectationBC_dist_le_resolvent_sum` — the comparison in the resolvent double-sum form
   `∑_x ∑_{y∈S} R_{xy}·siteOsc x f`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306; Georgii,
-*Gibbs Measures and Phase Transitions*, Ch. 8.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8.
 -/
 
 namespace IsingModel
@@ -40,7 +39,7 @@ open Finset Filter Topology
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable (G : SimpleGraph ι) [Fintype G.edgeSet] [DecidableRel G.Adj]
 
-/-- **The single-site Dobrushin comparison theorem** (GJ §17.1, capstone of Issue #4214 §A): under
+/-- **The single-site Dobrushin comparison theorem** (capstone of Issue #4214 §A): under
 the high-temperature condition `βJ·Δ(G) < 1` (whence the Dobrushin coefficient `tanh(βJ)·Δ(G) < 1`),
 the Gibbs expectations under boundary conditions agreeing off `S` differ by at most
 `∑_x siteOsc x f · w_x`, with `w_x = ∑_{y∈S} R_{xy}` the resolvent boundary weight. -/
@@ -89,7 +88,7 @@ theorem gibbsExpectationBC_dist_le_dobrushinBoundaryWeight {β J : ℝ} (hβJ : 
   rw [zero_add] at htend
   exact ge_of_tendsto' htend hper
 
-/-- **The single-site Dobrushin comparison theorem, resolvent form** (GJ §17.1): the same
+/-- **The single-site Dobrushin comparison theorem, resolvent form**: the same
 comparison, written with the resolvent double sum `∑_x ∑_{y∈S} R_{xy}·siteOsc x f` — the literal
 comparison inequality `|⟨f⟩_η − ⟨f⟩_{η'}| ≤ ∑_{x,y} R_{xy}·osc_x(f)·[η,η' differ at y]`. -/
 theorem gibbsExpectationBC_dist_le_resolvent_sum {β J : ℝ} (hβJ : 0 ≤ β * J)

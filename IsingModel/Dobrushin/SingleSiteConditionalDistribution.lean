@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.SingleSiteConditionalProb
 import IsingModel.Dobrushin.SingleSiteConditional
 
 /-!
-# The single-site conditional Gibbs distribution (GJ §17.1 / Dobrushin uniqueness)
+# The single-site conditional Gibbs distribution (Dobrushin uniqueness)
 
 With the `{x}`-conditioned sum collapse (`sum_indicator_agreesOff_singleton`) and the single-site
 Hamiltonian gap (`hamiltonian_update_up_sub_down`) in hand, this file computes the **single-site
@@ -110,7 +110,7 @@ private theorem isingLocalField_eq_gap (β J h : ℝ) (x : ι) (η : Config ι) 
   rw [isingLocalField]
   linear_combination (β / 2) * hgap
 
-/-- **The single-site conditional up-probability** (GJ §17.1): conditioning on the boundary `η` off
+/-- **The single-site conditional up-probability**: conditioning on the boundary `η` off
 `{x}`, the probability that the free spin at `x` is `up` is `isingSingleSiteUpProb(a)` with local
 field `a = β·(J·∑_{y∼x} sign(η_y) + h)`. This is the lattice realization of the logistic single-site
 conditional distribution underlying the Dobrushin influence `tanh(βJ)`. -/
@@ -135,7 +135,7 @@ theorem gibbsExpectationBC_singleton_up_eq_upProb (β J h : ℝ) (x : ι) (η : 
   rw [isingSingleSiteUpProb_eq_exp_ratio, hwu, hwd]
   ring
 
-/-- **The single-site conditional down-probability** (GJ §17.1): the probability that the free spin
+/-- **The single-site conditional down-probability**: the probability that the free spin
 at `x` is `down` is `1 − isingSingleSiteUpProb(a)` (the two events are complementary). -/
 theorem gibbsExpectationBC_singleton_down_eq (β J h : ℝ) (x : ι) (η : Config ι) :
     gibbsExpectationBC G β (fun _ => J) h {x} η (fun σ => if σ x = Spin.down then (1 : ℝ) else 0)
@@ -150,7 +150,7 @@ theorem gibbsExpectationBC_singleton_down_eq (β J h : ℝ) (x : ι) (η : Confi
     gibbsExpectationBC_singleton_up_eq_upProb]
   ring
 
-/-- **The single-site conditional magnetization** (GJ §17.1): conditioning on the boundary `η` off
+/-- **The single-site conditional magnetization**: conditioning on the boundary `η` off
 `{x}`, the expected spin sign at the free site `x` is `tanh(a)` with local field
 `a = β·(J·∑_{y∼x} sign(η_y) + h)`. This is the per-site magnetization response `m = tanh(a)` and the
 source of the Ising Dobrushin influence `tanh(βJ)`. -/

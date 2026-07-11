@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.HeatBathInvariance
 
 /-!
-# The single-site oscillation of an observable (GJ §17.1, Issue #4201)
+# The single-site oscillation of an observable (Issue #4201)
 
 The **Dobrushin single-site oscillation** of an observable `f` at a site `x` is
 `siteOsc x f = sup_σ |f(σ[x↦↑]) − f(σ[x↦↓])|` — the largest change in `f` from flipping the spin at

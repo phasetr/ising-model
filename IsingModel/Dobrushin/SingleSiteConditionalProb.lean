@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.SingleSiteConditional
 import IsingModel.Inequalities.FKGBoundaryCondition
 
 /-!
-# The single-site conditional sum collapse (GJ §17.1 / Dobrushin uniqueness)
+# The single-site conditional sum collapse (Dobrushin uniqueness)
 
 The boundary-condition Gibbs expectation over the single free site `Λ = {x}` collapses to a two-term
 sum: the only configurations agreeing with `η` off `{x}` are `η` updated at `x` to `up` or `down`.

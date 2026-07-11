@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.SiteOscillation
 import IsingModel.RealTanhAux
 
 /-!
-# The multi-site boundary influence bound (GJ §17.1, Issue #4201)
+# The multi-site boundary influence bound (Issue #4201)
 
 Toward the Dobrushin comparison theorem: the single-site conditional law at `x` is insensitive to
 boundary configurations agreeing on the neighbours of `x`, and more quantitatively, two boundary
@@ -84,7 +84,7 @@ private theorem singleSiteUpProbBC_dist_le_aux {β J : ℝ} (hβJ : 0 ≤ β * J
       _ ≤ (T'.card : ℝ) * Real.tanh (β * J) + Real.tanh (β * J) := add_le_add h1 h2
 
 omit [Fintype G.edgeSet] in
-/-- **The multi-site boundary influence bound** (GJ §17.1): for `0 ≤ βJ`, two boundary
+/-- **The multi-site boundary influence bound**: for `0 ≤ βJ`, two boundary
 configurations agreeing off a set `S` change the single-site conditional up-probability at `x` by at
 most
 `#(S ∩ nbr(x))·tanh(βJ)` — the total influence of the differing boundary neighbours. -/
@@ -98,7 +98,7 @@ theorem singleSiteUpProbBC_agreesOff_dist_le {β J : ℝ} (hβJ : 0 ≤ β * J) 
   · exact absurd (Finset.mem_inter.mpr ⟨hzS, hz⟩) hzSi
   · exact (hagree z hzS).symm
 
-/-- **The multi-site boundary comparison for a local observable** (GJ §17.1): if `f` is local at `x`
+/-- **The multi-site boundary comparison for a local observable**: if `f` is local at `x`
 and the boundary configurations `η, η'` agree off `S`, the single-site conditional expectations
 differ by at most `#(S ∩ nbr(x))·tanh(βJ)·siteOsc x f`. The boundary-direct term of the Dobrushin
 comparison telescoping. -/

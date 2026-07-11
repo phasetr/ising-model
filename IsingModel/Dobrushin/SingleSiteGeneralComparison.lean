@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.OscillationPropagation
 import IsingModel.Dobrushin.BoundaryInfluence
 
 /-!
-# The general single-site Dobrushin comparison inequality (GJ §17.1, Issue #4201)
+# The general single-site Dobrushin comparison inequality (Issue #4201)
 
 The boundary-influence bound `gibbsExpectationBC_singleton_localObs_agreesOff_dist_le` handles only
 observables **local at the resampled site** `x`. The Dobrushin comparison capstone, however,
@@ -45,7 +45,7 @@ theorem abs_sub_update_spin_le_siteOsc (x : ι) (f : Config ι → ℝ) (σ : Co
   · simp only [sub_self, abs_zero]; exact siteOsc_nonneg x f
 
 omit [Fintype G.edgeSet] [DecidableRel G.Adj] in
-/-- **Observable telescoping** (GJ §17.1): if `η` and `η'` agree off a finite set `S`, then the
+/-- **Observable telescoping**: if `η` and `η'` agree off a finite set `S`, then the
 values of any observable `f` differ by at most the sum of the single-site oscillations over `S`,
 `|f η − f η'| ≤ ∑_{y∈S} siteOsc y f`. Proved by flipping the differing spins one at a time, each
 flip bounded by `abs_sub_update_spin_le_siteOsc`. -/
@@ -78,7 +78,7 @@ theorem agreesOff_dist_le_sum_siteOsc (f : Config ι → ℝ) {S : Finset ι} {�
       _ ≤ (∑ y ∈ S', siteOsc y f) + siteOsc a f := add_le_add h1 h2
       _ = siteOsc a f + ∑ y ∈ S', siteOsc y f := by ring
 
-/-- **The general single-site Dobrushin comparison inequality** (GJ §17.1): for `0 ≤ βJ` and two
+/-- **The general single-site Dobrushin comparison inequality**: for `0 ≤ βJ` and two
 boundary configurations `η, η'` agreeing off a finite set `S`, the single-site heat-bath expectation
 of *any* observable `f` differs by at most the C-propagated `x`-oscillation plus the direct
 observable oscillation,
@@ -145,7 +145,7 @@ theorem sum_isingInfluence_eq (β J : ℝ) (x : ι) (S : Finset ι) :
   simp only [isingInfluence]
   rw [Finset.sum_ite_mem, Finset.sum_const, nsmul_eq_mul]
 
-/-- **Influence-matrix form of the general single-site comparison** (GJ §17.1): the C-propagated
+/-- **Influence-matrix form of the general single-site comparison**: the C-propagated
 term is written as the influence-matrix row sum `∑_{y∈S} C_{xy}·siteOsc x f`, the shape consumed by
 the resolvent comparison. -/
 theorem heatBath_agreesOff_dist_le_influence {β J : ℝ} (hβJ : 0 ≤ β * J) (h : ℝ) (x : ι)

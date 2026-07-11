@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.SingleSiteObservableComparison
 
 /-!
-# Heat-bath single-site invariance of the boundary-condition Gibbs measure (GJ §17.1, Issue #4201)
+# Heat-bath single-site invariance of the boundary-condition Gibbs measure (Issue #4201)
 
 The single-site **heat-bath operator** `K_x f (σ) = ⟨f⟩^σ_{x}` replaces an observable `f` by its
 single-site conditional expectation at `x` given the rest of the configuration `σ`. The
@@ -133,7 +133,7 @@ conditional expectation at `x`, with the rest of the configuration `σ` acting a
 noncomputable def heatBath (β J h : ℝ) (x : ι) (f : Config ι → ℝ) (σ : Config ι) : ℝ :=
   gibbsExpectationBC G β (fun _ => J) h {x} σ f
 
-/-- **Heat-bath single-site invariance** (GJ §17.1): the finite-volume boundary-condition Gibbs
+/-- **Heat-bath single-site invariance**: the finite-volume boundary-condition Gibbs
 measure is invariant under the single-site heat-bath operator at any free site `x ∈ Λ`,
 `⟨K_x f⟩^η_Λ = ⟨f⟩^η_Λ`. Re-sampling the spin at `x` from its conditional law leaves the measure
 unchanged (the finite-volume heat-bath/DLR consistency); this is the first telescoping step of the

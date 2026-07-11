@@ -24,7 +24,7 @@ namespace Dobrushin
 
 open Finset Filter Topology
 
-/-- **Card-free far-field boundary-influence bound on a cubic-lattice volume** (GJ §17.1).
+/-- **Card-free far-field boundary-influence bound on a cubic-lattice volume** .
 
 For the induced graph `GΛ = Ambient.inducedGraph (latticeGraph d) Λ`, if the boundary conditions
 `η, η'` agree off a finite set `S` every site of which lies at ℓ¹-lattice distance at least `R`
@@ -52,7 +52,7 @@ theorem gibbsExpectationBC_localObs_inducedLattice_dist_le_resolventTail
     (dobrushinResolvent_farSum_le_resolventTail d hd hβJ hα x₀ S R hfar)
     (siteOsc_nonneg x₀ f)
 
-/-- **Card-free volume-uniform vanishing of the boundary influence** (GJ §17.1; ℤ^d lift).
+/-- **Card-free volume-uniform vanishing of the boundary influence** (ℤ^d lift).
 
 For a fixed cubic-lattice volume `Λ`, observable site `x₀`, and observable `f` local at `x₀`, at
 high temperature (`0 ≤ βJ`, `βJ·2d < 1`, `d ≥ 1`) and for every `ε > 0` there is a radius `R` such

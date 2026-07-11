@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.InfiniteVolumeBoundaryInfluence
 import IsingModel.Concrete.CubicExhaustion
 
 /-!
-# Cross-exhaustion ℤ^d infinite-volume Gibbs-state Dobrushin uniqueness (GJ §17.1, Issue #4214 §A)
+# Cross-exhaustion ℤ^d infinite-volume Gibbs-state Dobrushin uniqueness (Issue #4214 §A)
 
 This file is the cross-exhaustion capstone of the ℤ^d Dobrushin-uniqueness lift (Issue #4256). The
 finite-graph Dobrushin uniqueness (`Dobrushin/Uniqueness.lean`) and the per-box card-free
@@ -99,7 +99,7 @@ theorem siteOsc_originObs (d : ℕ) (g : Spin → ℝ) {Λ : Finset (Fin d → �
         (hval _).symm
     _ ≤ siteOsc (⟨0, h0⟩ : ↑Λ) (originObs d g h0) := abs_sub_update_le_siteOsc _ _ _
 
-/-- **Card-free per-stage boundary-influence bound for the origin observable** (GJ §17.1).
+/-- **Card-free per-stage boundary-influence bound for the origin observable** .
 
 For a fixed exhaustion stage `cubicBox d n`, if two boundary conditions `η, η'` agree off a finite
 set `S` every site of which lies at ℓ¹-lattice distance at least `R` from the origin, then the
@@ -124,7 +124,7 @@ theorem gibbsExpectationBC_originObs_inducedLattice_dist_le_resolventTail
   rwa [siteOsc_originObs] at hbound
 
 /-- **Cross-exhaustion volume-uniform boundary-condition independence of a local observable**
-(GJ §17.1; ℤ^d Dobrushin-uniqueness capstone, Issue #4256).
+(ℤ^d Dobrushin-uniqueness capstone, Issue #4256).
 
 At high temperature (`0 ≤ βJ`, `βJ·2d < 1`, `d ≥ 1`), for the fixed single-spin-at-origin observable
 `originObs d g` and every tolerance `ε > 0` there is a **single** radius `R` such that for **every**
@@ -170,7 +170,7 @@ theorem gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform
   rw [Real.dist_eq, sub_zero] at hdist
   exact (le_abs_self _).trans hdist.le
 
-/-- **Disagreement-set form of the cross-exhaustion boundary independence** (GJ §17.1).
+/-- **Disagreement-set form of the cross-exhaustion boundary independence** .
 
 Restatement of `gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform` with the
 disagreement set described intrinsically: a single radius `R(ε)` such that, uniformly over every

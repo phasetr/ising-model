@@ -2,7 +2,7 @@ import IsingModel.Dobrushin.SingleSiteConditionalDistribution
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 /-!
-# The single-site Dobrushin influence matrix (GJ §17.1 / Dobrushin uniqueness)
+# The single-site Dobrushin influence matrix (Dobrushin uniqueness)
 
 The single-site conditional Gibbs distribution at a free site `x`
 (`gibbsExpectationBC_singleton_up_eq_upProb`) is `isingSingleSiteUpProb(a)` with local field
@@ -115,7 +115,7 @@ private theorem abs_sign_sub_le_two (s t : Spin) :
   cases s <;> cases t <;> simp [Spin.sign, Spin.toSign] <;> norm_num
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
-/-- **The single-site neighbour influence bound** (GJ §17.1): if `η` and `η'` agree off `{y}` with
+/-- **The single-site neighbour influence bound**: if `η` and `η'` agree off `{y}` with
 `y ∼ x`, the single-site conditional up-probability at `x` moves by at most `tanh(βJ)` (for
 `0 ≤ βJ`). This is the Dobrushin influence of a neighbour `y` on the site `x`. -/
 theorem singleSiteUpProbBC_neighbour_dist_le {β J : ℝ} (hβJ : 0 ≤ β * J) (h : ℝ) (x : ι)
@@ -134,7 +134,7 @@ theorem singleSiteUpProbBC_neighbour_dist_le {β J : ℝ} (hβJ : 0 ≤ β * J) 
   exact tanh_le_tanh_of_le hle
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
-/-- **The single-site influence bound for any site** (GJ §17.1): for `0 ≤ βJ`, changing the boundary
+/-- **The single-site influence bound for any site**: for `0 ≤ βJ`, changing the boundary
 at a single site `y` moves the single-site conditional up-probability at `x` by at most `tanh(βJ)` —
 sharply when `y ∼ x`, and not at all when `y` is a non-neighbour. -/
 theorem singleSiteUpProbBC_dist_le {β J : ℝ} (hβJ : 0 ≤ β * J) (h : ℝ) (x : ι)

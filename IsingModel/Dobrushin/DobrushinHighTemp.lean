@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.SingleSiteInfluenceMatrix
 
 /-!
-# High-temperature sufficiency of the single-site Dobrushin condition (GJ §17.1)
+# High-temperature sufficiency of the single-site Dobrushin condition
 
 The single-site Dobrushin uniqueness condition `tanh(βJ)·deg(x) < 1`
 (`isingDobrushin_condition`) is satisfied in the high-temperature regime. Since `tanh(t) ≤ t` for
@@ -63,7 +63,7 @@ theorem isingInfluence_rowSum_le {β J : ℝ} (hβJ : 0 ≤ β * J) (x : ι) :
   exact mul_le_mul_of_nonneg_right (tanh_le_self hβJ) (Nat.cast_nonneg _)
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
-/-- **High-temperature sufficiency of Dobrushin's condition** (GJ §17.1): if `0 ≤ βJ` and the
+/-- **High-temperature sufficiency of Dobrushin's condition**: if `0 ≤ βJ` and the
 high-temperature threshold `βJ·deg(x) < 1` holds, then Dobrushin's uniqueness condition
 `tanh(βJ)·deg(x) < 1` holds at `x`. This is the same `βJ·deg < 1` threshold as the Simon–Lieb decay
 results. -/
@@ -77,7 +77,7 @@ theorem isingDobrushin_condition_of_high_temp {β J : ℝ} (hβJ : 0 ≤ β * J)
     _ < 1 := hx
 
 omit [Fintype G.edgeSet] [DecidableEq ι] in
-/-- **Uniform high-temperature sufficiency** (GJ §17.1): if `0 ≤ βJ` and `βJ·Δ(G) < 1` with `Δ(G)`
+/-- **Uniform high-temperature sufficiency**: if `0 ≤ βJ` and `βJ·Δ(G) < 1` with `Δ(G)`
 the maximum degree, then Dobrushin's condition holds at **every** site (each degree is at most the
 maximum degree). -/
 theorem isingDobrushin_condition_of_high_temp_maxDegree {β J : ℝ} (hβJ : 0 ≤ β * J)
