@@ -23,8 +23,9 @@ vacuously for any rate; `latticeMass ≥ 1 > 0`.
 For `d ≥ 1`: `hasExponentialDecay_of_high_temp` (Step 110) gives rate
 `α₀ = -log(βJD) > 0` (since `0 < βJD < 1`); `latticeMass ≥ α₀ > 0`.
 
-Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature decay, Step 109–110,
-cf. ExpDecay.lean); latticeMass definition matches GJ §17.5 (17.5.1) p. 310. -/
+Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature
+decay, Step 109–110, cf. ExpDecay.lean); latticeMass definition matches
+GJ §17.5 (17.5.1) p. 310. -/
 theorem latticeMass_pos_of_high_temp
     {d : ℕ} {β J : ℝ} (hβJ : 0 < β * J)
     (hlt : β * J * ↑(2 * d) < 1) :
@@ -58,12 +59,14 @@ theorem latticeMass_pos_of_high_temp
 for `d ≥ 1`, `0 < βJ`, and `βJ·2d < 1`:
 `ENNReal.ofReal (-log(βJ·2d)) ≤ latticeMass d (cubicExhaustion d) ⟨J,0,β⟩`.
 
-The rate `α₀ = -log(βJD)` (with `D = 2d`) from Step 110 is in the defining set of
-`latticeMass`, so `latticeMass ≥ α₀`. This makes the lower bound from `latticeMass_pos_of_high_temp`
-(Step 111) explicit: the exponential decay rate `α₀` is a concrete lower bound for the mass.
+The rate `α₀ = -log(βJD)` (with `D = 2d`) from Step 110 is in the defining
+set of `latticeMass`, so `latticeMass ≥ α₀`. This makes the lower bound from
+`latticeMass_pos_of_high_temp` (Step 111) explicit: the exponential decay
+rate `α₀` is a concrete lower bound for the mass.
 
-Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature decay, Step 109–110,
-cf. ExpDecay.lean); latticeMass definition matches GJ §17.5 (17.5.1) p. 310. -/
+Reference: Glimm–Jaffe §5.1 pp. 74–75 (Simon–Lieb-type high-temperature
+decay, Step 109–110, cf. ExpDecay.lean); latticeMass definition matches
+GJ §17.5 (17.5.1) p. 310. -/
 theorem latticeMass_ge_neg_log_of_high_temp
     {d : ℕ} (hd : 1 ≤ d) {β J : ℝ} (hβJ : 0 < β * J)
     (hlt : β * J * ↑(2 * d) < 1) :
