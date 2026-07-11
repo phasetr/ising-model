@@ -1,4 +1,4 @@
-import IsingModel.Inequalities.SourcefreeConnectionRepresentation
+import IsingModel.Inequalities.SourcefreeConnectionRatioDerivative
 import IsingModel.RandomCurrent.Peeling
 import Mathlib.Algebra.BigOperators.Field
 
@@ -255,6 +255,209 @@ theorem Current.edge_mul_doubledSourcefree_eq_defect
       rw [hpt, hw]
       field_simp
   rw [step1, step2, step3]; ring
+
+set_option linter.unusedDecidableInType false in
+/-- **Edge-pivotal event on a doubled current (Stage B2b, Candidate B)**: an edge
+`e₀` is *pivotal for the pair `x, y` in the current `M`* when `x` and `y` are
+connected in the support graph of `M` but become disconnected after *decrementing*
+one copy of `e₀` (subtracting `1_{e₀} = Current.fromEdgeFinset G Λ {e₀}`):
+`(M.toSimpleGraph G Λ).Reachable x y ∧
+   ¬ ((M − 1_{e₀}).toSimpleGraph G Λ).Reachable x y`.
+The decrement `M − 1_{e₀}` (rather than a simple-graph edge deletion) is the
+correct multigraph semantics — it removes exactly one copy of `e₀` and keeps `e₀`
+in the support whenever `M e₀ ≥ 2` — and it matches the reindexing target of the
+Stage B2a defect summand `Current.doubledDefectSummand`. This is the graph event
+whose probability appears in the per-edge excess: the difference
+`E^{x↔y}[M e₀] − E^{∅,∅}[M e₀]` is intended (in the deferred B2c switching
+identity) to equal `2βJ · ℙ^{x↔y}[e₀ pivotal]`, matching the
+FFS Ch. 12 / Aizenman 1982 upper bound for Glimm–Jaffe Theorem 17.5.1
+(issue #4386; the switching identity relating it to the defect summand is the
+deferred brick B2c). -/
+def Current.EdgePivotal (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y : ↑Λ) : Prop :=
+  (M.toSimpleGraph G Λ).Reachable x y ∧
+    ¬ ((M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ).Reachable x y
+
+set_option linter.unusedDecidableInType false in
+/-- **`Current.EdgePivotal` is decidable**: a noncomputable `Decidable` instance
+via `Classical.propDecidable`, mirroring `Current.instDecidableAdj`. It is
+logically valid on the finite doubled-current ensemble (unlocking the pivotal
+indicator `if EdgePivotal … then 1 else 0` used to form the pivotal-restricted
+sums), even though `Current.support` is noncomputable. -/
+noncomputable instance Current.instDecidableEdgePivotal
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y : ↑Λ) :
+    Decidable (Current.EdgePivotal G Λ e₀ M x y) :=
+  Classical.propDecidable _
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **An absent edge is never pivotal**: if `M e₀ = 0`, then `e₀` is not pivotal
+for any pair `x, y` in `M`. Indeed `M e₀ = 0` forces `M − 1_{e₀} = M` (truncated
+`Nat` subtraction at `e₀` gives `0 − 1 = 0`, and every other edge is unchanged),
+so the two reachability clauses of `Current.EdgePivotal` become
+`Reachable x y ∧ ¬ Reachable x y`, a contradiction. -/
+theorem Current.not_edgePivotal_of_edge_eq_zero
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y : ↑Λ)
+    (he : M e₀ = 0) :
+    ¬ Current.EdgePivotal G Λ e₀ M x y := by
+  intro hpiv
+  obtain ⟨hR, hnr⟩ := hpiv
+  have heq : M - Current.fromEdgeFinset G Λ {e₀} = M := by
+    funext e
+    simp only [Current.sub_apply, Current.fromEdgeFinset, Finset.mem_singleton]
+    by_cases hee : e = e₀
+    · subst hee; simp [he]
+    · simp only [if_neg hee, Nat.sub_zero]
+  rw [heq] at hnr
+  exact hnr hR
+
+omit [DecidableEq V] in
+set_option linter.unusedDecidableInType false in
+/-- **Cut-edge two-arms structure of a pivotal edge (Stage B2b)**: if `e₀ = s(a, b)`
+is pivotal for `x, y` in `M`, then in the *decremented* support graph
+`(M − 1_{e₀}).toSimpleGraph` the two vertices `x, y` reach opposite endpoints of
+`e₀`: either `Reachable x a ∧ Reachable b y`, or `Reachable x b ∧ Reachable a y`.
+This is the cut-edge decomposition that Stage B2c/B3 consume (the pivotal edge is
+a bridge between the two arms carrying `x` and `y`).
+
+Proof.  Let `D = M.toSimpleGraph.deleteEdges {s(a, b)}` be the *simple-graph*
+deletion of the `a`–`b` edge.  Because subtraction only affects `e₀`, any
+`D`-adjacency comes from a support edge `≠ e₀`, so `D ≤ (M − 1_{e₀}).toSimpleGraph`
+(`hle`); it therefore suffices to produce the arms in `D` and lift them by
+`SimpleGraph.Reachable.mono`.  A walk induction (`key`/`arm`) shows that if a
+vertex `src` reaches neither `a` nor `b` in `D`, then every `M`-walk out of a
+`D`-neighbourhood of `src` stays inside it — so, since `x` reaches `y` in `M` but
+not in `D`, `x` must reach `a` or `b` in `D` (and symmetrically for `y`).  Mutual
+exclusivity (`excl_a`/`excl_b`, via `¬ D.Reachable x y`) pairs the two arms across
+`e₀`.  (FFS Ch. 12 / Aizenman 1982 Lemma 4.1; Glimm–Jaffe Theorem 17.5.1,
+issue #4386.) -/
+theorem Current.edgePivotal_arms
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
+    (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
+    (hpiv : Current.EdgePivotal G Λ e₀ M x y) :
+    (((M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ).Reachable x a ∧
+       ((M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ).Reachable b y) ∨
+    (((M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ).Reachable x b ∧
+       ((M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ).Reachable a y) := by
+  obtain ⟨hR, hnr⟩ := hpiv
+  set D := (M.toSimpleGraph G Λ).deleteEdges {(e₀ : Sym2 ↑Λ)} with hDdef
+  -- The simple-graph deletion of the `a`–`b` edge sits below the decremented graph.
+  have hle : D ≤ (M - Current.fromEdgeFinset G Λ {e₀}).toSimpleGraph G Λ := by
+    intro u v hadjD
+    rw [hDdef, SimpleGraph.deleteEdges_adj] at hadjD
+    obtain ⟨hG'adj, hnotin⟩ := hadjD
+    rw [Current.toSimpleGraph_adj_iff] at hG'adj
+    obtain ⟨hne, ed, hed, hu, hv⟩ := hG'adj
+    rw [Current.toSimpleGraph_adj_iff]
+    refine ⟨hne, ed, ?_, hu, hv⟩
+    rw [Current.mem_support_iff] at hed ⊢
+    by_cases hee : ed = e₀
+    · exfalso
+      apply hnotin
+      have hsuv : (ed : Sym2 ↑Λ) = s(u, v) := (Sym2.mem_and_mem_iff hne).mp ⟨hu, hv⟩
+      rw [Set.mem_singleton_iff, ← hsuv, hee]
+    · rw [Current.sub_apply]
+      simp only [Current.fromEdgeFinset, Finset.mem_singleton, if_neg hee, Nat.sub_zero]
+      exact hed
+  have hnrD : ¬ D.Reachable x y := fun h => hnr (h.mono hle)
+  -- Each vertex reaches an endpoint of the pivotal edge in `D`.
+  have arm : ∀ (src tgt : ↑Λ), (M.toSimpleGraph G Λ).Reachable src tgt →
+      ¬ D.Reachable src tgt → D.Reachable src a ∨ D.Reachable src b := by
+    intro src tgt hRc hnrc
+    by_contra hcon
+    rw [not_or] at hcon
+    obtain ⟨hna, hnb⟩ := hcon
+    have key : ∀ (s t : ↑Λ), (M.toSimpleGraph G Λ).Walk s t →
+        D.Reachable src s → D.Reachable src t := by
+      intro s t w
+      induction w with
+      | nil => exact id
+      | @cons u mid v hadj q ih =>
+        intro hsrcu
+        by_cases hcase : s(u, mid) = (e₀ : Sym2 ↑Λ)
+        · exfalso
+          have hmem : u = a ∨ u = b := by
+            have h0 : u ∈ (e₀ : Sym2 ↑Λ) := by
+              rw [← hcase]; exact Sym2.mem_iff.mpr (Or.inl rfl)
+            rwa [hab, Sym2.mem_iff] at h0
+          rcases hmem with rfl | rfl
+          · exact hna hsrcu
+          · exact hnb hsrcu
+        · have hDadj : D.Adj u mid := by
+            rw [hDdef]
+            exact SimpleGraph.deleteEdges_adj.mpr
+              ⟨hadj, by rw [Set.mem_singleton_iff]; exact hcase⟩
+          exact ih (hsrcu.trans hDadj.reachable)
+    obtain ⟨w⟩ := hRc
+    exact hnrc (key src tgt w (SimpleGraph.Reachable.refl src))
+  have hax := arm x y hR hnrD
+  have hay := arm y x hR.symm (fun h => hnrD h.symm)
+  have excl_a : ¬ (D.Reachable x a ∧ D.Reachable y a) :=
+    fun ⟨h1, h2⟩ => hnrD (h1.trans h2.symm)
+  have excl_b : ¬ (D.Reachable x b ∧ D.Reachable y b) :=
+    fun ⟨h1, h2⟩ => hnrD (h1.trans h2.symm)
+  rcases hax with hxa | hxb
+  · rcases hay with hya | hyb
+    · exact absurd ⟨hxa, hya⟩ excl_a
+    · exact Or.inl ⟨hxa.mono hle, hyb.symm.mono hle⟩
+  · rcases hay with hya | hyb
+    · exact Or.inr ⟨hxb.mono hle, hya.symm.mono hle⟩
+    · exact absurd ⟨hxb, hyb⟩ excl_b
+
+set_option linter.unusedDecidableInType false in
+/-- **Summability of the pivotal-restricted sourcefree summand (Stage B2b)**: for
+`0 ≤ β`, `0 ≤ J` the map `M ↦ [e₀ pivotal for x, y in M] · D_β(M)` is `Summable`
+over all doubled currents, where `[·]` is the `{0, 1}`-valued pivotal indicator
+and `D_β` is the both-sourcefree doubled summand (`Current.doubledSourcefreeSummand`).
+Since `0 ≤ [·] ≤ 1` and `D_β ≥ 0`, the term is dominated by `D_β`, which is
+summable (`Current.summable_doubledSourcefree`); `Summable.of_nonneg_of_le`
+concludes. This lets the next brick define the pivotal probability numerator
+`∑'_{x↔y, e₀ pivotal} D_β`. (FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.summable_edgePivotal_doubledSourcefree
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    Summable (fun M : Current G Λ =>
+      (if Current.EdgePivotal G Λ e₀ M x y then (1 : ℝ) else 0)
+        * Current.doubledSourcefreeSummand G Λ β J M) := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ hJ
+  refine Summable.of_nonneg_of_le ?_ ?_ (Current.summable_doubledSourcefree G Λ hβJ)
+  · intro M
+    have hD := Current.doubledSourcefreeSummand_nonneg G Λ hβJ M
+    split_ifs with h
+    · simpa using hD
+    · simp
+  · intro M
+    have hD := Current.doubledSourcefreeSummand_nonneg G Λ hβJ M
+    split_ifs with h
+    · simp
+    · simpa using hD
+
+set_option linter.unusedDecidableInType false in
+/-- **Summability of the pivotal-restricted sourcefree summand over the reachable
+ensemble (Stage B2b)**: the reachable-subtype version of
+`Current.summable_edgePivotal_doubledSourcefree`. Over
+`{M // (M.toSimpleGraph).Reachable x y}`, the map
+`M ↦ [e₀ pivotal for x, y in M] · D_β(M)` is `Summable`, obtained from the
+all-currents version by `Summable.comp_injective` along the injective inclusion
+`Subtype.val`. This is the summable numerator of the `x↔y`-conditioned pivotal
+probability. (FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.summable_edgePivotal_doubledSourcefree_reachable
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    Summable (fun M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y} =>
+      (if Current.EdgePivotal G Λ e₀ (M : Current G Λ) x y then (1 : ℝ) else 0)
+        * Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ)) :=
+  (Current.summable_edgePivotal_doubledSourcefree G Λ hβ hJ e₀ x y).comp_injective
+    Subtype.val_injective
 
 end Ambient
 end IsingModel
