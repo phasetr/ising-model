@@ -1,7 +1,7 @@
 import IsingModel.Dobrushin.OscillationPropagation
 
 /-!
-# The heat-bath Gibbs sweep and oscillation tracking (GJ §17.1, Issue #4214 §A)
+# The heat-bath Gibbs sweep and oscillation tracking (Issue #4214 §A)
 
 The Dobrushin comparison theorem is proved by the Gibbs-sampler (heat-bath) telescoping: applying
 the single-site operators `K_x` over the sites drives the observable's oscillation to zero under the
@@ -18,7 +18,7 @@ not a `Finset`.
 * `siteOsc_heatBathList_le_oscBound` — the per-site oscillation of a swept observable is bounded by
   the oscillation-vector dynamics applied to the initial oscillations, the key tracking estimate.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.1, pp. 304–306.
+References: Georgii, *Gibbs Measures and Phase Transitions*, Ch. 8 (Dobrushin 1968/1970).
 -/
 
 namespace IsingModel
@@ -36,7 +36,7 @@ noncomputable def heatBathList (β J h : ℝ) (xs : List ι) (f : Config ι → 
   xs.foldl (fun g x => heatBath G β J h x g) f
 
 omit [DecidableRel G.Adj] in
-/-- **Sweep invariance of the finite-volume Gibbs measure** (GJ §17.1): if every site of the sweep
+/-- **Sweep invariance of the finite-volume Gibbs measure**: if every site of the sweep
 `xs` lies in the free volume `Λ`, then `⟨(K_{x_n}∘⋯∘K_{x_1}) f⟩^η_Λ = ⟨f⟩^η_Λ`. Iterates the
 single-site invariance over the list. -/
 theorem gibbsExpectationBC_heatBathList_invariant {Λ : Finset ι} (β J h : ℝ) (η : Config ι)
@@ -79,7 +79,7 @@ theorem heatBathListOscBound_cons (β J : ℝ) (x : ι) (xs : List ι) (v : ι �
       = heatBathListOscBound G β J xs (heatBathOscStep G β J x v) := rfl
 
 omit [Fintype G.edgeSet] in
-/-- **Monotonicity of the oscillation-vector dynamics** (GJ §17.1): a pointwise-larger initial
+/-- **Monotonicity of the oscillation-vector dynamics**: a pointwise-larger initial
 oscillation vector stays pointwise-larger after any sweep (the dynamics is built from nonnegative
 `C`-propagation). -/
 theorem heatBathListOscBound_mono {β J : ℝ} (hβJ : 0 ≤ β * J) :
@@ -99,7 +99,7 @@ theorem heatBathListOscBound_mono {β J : ℝ} (hβJ : 0 ≤ β * J) :
       exact add_le_add (hvw z)
         (mul_le_mul_of_nonneg_left (hvw x) (isingInfluence_nonneg G hβJ x z))
 
-/-- **The sweep oscillation tracking estimate** (GJ §17.1): the per-site oscillation of a swept
+/-- **The sweep oscillation tracking estimate**: the per-site oscillation of a swept
 observable is bounded by the oscillation-vector dynamics applied to the initial single-site
 oscillations, `siteOsc y (K_{x_n}∘⋯∘K_{x_1} f) ≤ heatBathListOscBound xs (z ↦ siteOsc z f) y`. The
 inductive engine of the Dobrushin comparison: at each step the new oscillation at `x` is zero
