@@ -23,16 +23,29 @@ that any correct D1b needs: the ambient restriction map, its block-weight and
 restricted source set. It does **not** build the bijection `Φ` nor the `tsum`
 Fubini: see the "design blocker" note below.
 
-**Design blocker on the `Φ` bijection (reported, not worked around).** The D1b
-spec discharges its deferred nondegeneracy side conditions `x ≠ a`, `y ≠ b` by
-"the even-cardinality lemma", but this handshake does **not** imply them: `x = a`
-is realisable on a pinned pivotal fiber (a source coinciding with the near
-endpoint of the pivotal bridge), in which case `sourcesOn (interiorEdges C) M = ∅`,
-not `{x, a}`, so `Φ` does not land in `A_int`. The even-cardinality identity is
-therefore provided here as a **true** helper (`sourcesOn_card_even`), but it is
-*not* claimed to yield `x ≠ a`; the forward-landing (D1b.2(ii)) and reverse-source
-(D1b.2(iv)) steps of `Φ` remain gated on resolving that nondegeneracy at the design
-level (a `dev-design` question, deferred to the main agent).
+**Nondegeneracy design blocker — RESOLVED by the symmetric-difference source form.**
+The original D1b spec tried to discharge deferred side conditions `x ≠ a`, `y ≠ b`
+by "the even-cardinality lemma", which does **not** imply them: `x = a` is
+realisable on a pinned pivotal fiber (a source coinciding with the near endpoint of
+the pivotal bridge), in which case `sourcesOn (interiorEdges C) M = ∅`, not `{x, a}`.
+The corrected design (`.self-local/reports/design-oz-d1b-degeneracy.md`) drops the
+nondegeneracy hypotheses entirely and states the source constraints as **symmetric
+differences** `sourcesOn (interiorEdges C) M = {x} △ {a}` and
+`sourcesOn (interiorEdges Cᶜ) M = {b} △ {y}`
+(`Current.pivotalFiber_sourcesOn_symmDiff`, built on the degeneracy-uniform
+`Current.sourcesOn_eq_symmDiff`, both in `ClusterConditioningFiberSplit.lean`): the
+symmetric difference collapses to `∅` exactly in the degenerate branch `x = a`
+(resp. `y = b`), so the forward-landing and reverse-source steps of `Φ` need **no**
+nondegeneracy at all. `sourcesOn_card_even` (below) remains a **true** helper but is
+no longer on the D1b critical path (it was never able to yield `x ≠ a`, and need not).
+
+The symmetric-difference source split (`pivotalFiber_sourcesOn_symmDiff`, this PR's
+increment) is the first verifiable brick of the corrected D1b; the remaining
+SL-D₁-completion bricks — the restriction/gluing bijection `Φ` (round-trip via
+`Finset.piecewise`, the `reachableCluster` decoupling in both directions, the
+reverse `EdgePivotal` reconstruction) and the headline `tsum` Fubini
+`Σ_C = (βJ)·Ξ_int·Ξ_ext` (`Equiv.tsum_eq` + `Summable.tsum_mul_tsum`) — are the
+next increment, entirely inside the authorised `SL-D₁`.
 
 **Tracked-ingredient status.** Like SL-A/SL-B/SL-C/D1a, this is a *tracked
 ingredient* (Group 1a authorisation), buildable and axiom-free, with
@@ -197,10 +210,14 @@ The `S`-restricted source set `sourcesOn S n` (vertices of odd `S`-degree) has e
 cardinality, because `∑_v degreeOn S n v` is even (`degreeOn_sum_eq_two_mul`) and
 the number of odd-degree vertices has the parity of the degree sum.
 
-*This does not establish the D1b nondegeneracy `x ≠ a`.* Evenness of the source
-cardinality is consistent with `sourcesOn (interiorEdges C) M = ∅` (the `x = a`
-degenerate branch), so it cannot rule out `x = a`; see the module docstring's
-design-blocker note. Part of ingredient **SL-D₁** brick D1b foundation. -/
+*This does not establish any nondegeneracy `x ≠ a`, and the corrected D1b design
+no longer needs it.* Evenness of the source cardinality is consistent with
+`sourcesOn (interiorEdges C) M = ∅` (the `x = a` degenerate branch), so it cannot
+rule out `x = a`; the resolved design handles that branch via the
+symmetric-difference source form `{x} △ {a}`
+(`Current.pivotalFiber_sourcesOn_symmDiff`), see the module docstring. This lemma is
+kept as a true auxiliary but is off the D1b critical path. Part of ingredient
+**SL-D₁** brick D1b foundation. -/
 theorem Current.sourcesOn_card_even (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) :

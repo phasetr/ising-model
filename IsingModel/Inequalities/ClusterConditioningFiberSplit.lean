@@ -51,6 +51,8 @@ namespace IsingModel
 
 namespace Ambient
 
+open scoped symmDiff
+
 variable {V : Type*} [DecidableEq V]
 
 /-- **`S`-restricted incident degree**: for an edge subset `S`, a current `n` and a
@@ -483,6 +485,59 @@ theorem Current.sourcesOn_eq_pair (G : SimpleGraph V) (Λ : Finset V)
     rw [hpo]
     simp [hnq, hnp]
 
+omit [DecidableEq V] in
+/-- **A restricted source set is a symmetric difference** (degeneracy-uniform D1a
+source-decoupling step; the correct form of `Current.sourcesOn_eq_pair`). Suppose,
+on a vertex block `D`, the parity of `M` differs from its `S`-restricted parity by a
+single bridge bump at `p`
+(`hpar : ∀ v ∈ D, parity M v = parityOn S M v + [v = p]`), the restricted source set
+sits inside `D` (`hsub`), the bridge point `p` and the source point `q` both lie in
+`D` (`hpD`, `hqD`), and within `D` the unique global source is `q` (`hDsrc`). Then
+`sourcesOn S M = {q} △ {p}` (the `ZMod 2` symmetric-difference inversion): off `D`
+the restricted parity vanishes; on `D` it equals `[v = q] + [v = p]`, non-zero
+exactly at the symmetric difference `{q} △ {p}`. Unlike `Current.sourcesOn_eq_pair`,
+this **needs no `p ≠ q` nor `p ∉ sources` side condition**: the symmetric difference
+absorbs the degeneracy `p = q` (where it collapses to `∅`, `M`'s near-endpoint
+source coinciding with the bridge endpoint), so the pinned-pivotal-fiber corollary
+`Current.pivotalFiber_sourcesOn_symmDiff` holds unconditionally (the `x = a` / `y = b`
+degenerate configurations of a backbone pinned fiber are handled correctly, resolving
+the D1b nondegeneracy design blocker). Part of ingredient **SL-D₁** brick D1a. -/
+theorem Current.sourcesOn_eq_symmDiff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (S : Finset (inducedGraph G Λ).edgeSet) (M : Current G Λ) (D : Finset ↑Λ)
+    (p q : ↑Λ)
+    (hpar : ∀ v ∈ D, M.parity G Λ v
+      = M.parityOn G Λ S v + (if v = p then (1 : ZMod 2) else 0))
+    (hsub : ∀ v, M.parityOn G Λ S v ≠ 0 → v ∈ D)
+    (hpD : p ∈ D) (hqD : q ∈ D)
+    (hDsrc : ∀ v ∈ D, M.parity G Λ v ≠ 0 ↔ v = q) :
+    M.sourcesOn G Λ S = ({q} : Finset ↑Λ) ∆ {p} := by
+  ext v
+  rw [Current.mem_sourcesOn_iff, Finset.mem_symmDiff, Finset.mem_singleton,
+    Finset.mem_singleton]
+  by_cases hvD : v ∈ D
+  · -- On `D`: `parity M v = [v = q]` (unique source), so `parityOn = [v=q] + [v=p]`.
+    have hq : M.parity G Λ v = (if v = q then (1 : ZMod 2) else 0) := by
+      by_cases hvq : v = q
+      · rw [if_pos hvq]
+        have hne : M.parity G Λ v ≠ 0 := (hDsrc v hvD).mpr hvq
+        revert hne; generalize M.parity G Λ v = a; revert a; decide
+      · rw [if_neg hvq]
+        by_contra h; exact hvq ((hDsrc v hvD).mp h)
+    have key : M.parityOn G Λ S v
+        = (if v = q then (1 : ZMod 2) else 0) - (if v = p then 1 else 0) := by
+      rw [eq_sub_iff_add_eq, ← hpar v hvD]; exact hq
+    rw [key]
+    rcases eq_or_ne v q with hvq | hvq <;> rcases eq_or_ne v p with hvp | hvp <;>
+      subst_vars <;> simp_all
+  · -- Off `D`: restricted parity vanishes and `v ∉ {q} △ {p}` (both `p, q ∈ D`).
+    have hpo : M.parityOn G Λ S v = 0 := by
+      by_contra h; exact hvD (hsub v h)
+    have hnq : v ≠ q := fun h => hvD (h ▸ hqD)
+    have hnp : v ≠ p := fun h => hvD (h ▸ hpD)
+    rw [hpo]
+    simp [hnq, hnp]
+
 set_option linter.unusedDecidableInType false in
 /-- **D1a source-set split of a pinned pivotal fiber** (Corollary D1a.5(b), F1
 labelling `a ∈ C, b ∉ C`). With `sources M = {x, y}`, and the nondegeneracy side
@@ -591,6 +646,109 @@ theorem Current.pivotalFiber_sourcesOn_eq (G : SimpleGraph V) (Λ : Finset V)
     exact Current.sourcesOn_eq_pair G Λ (Current.interiorEdges G Λ Cᶜ) M Cᶜ b y
       hpar_ext hsub_ext (Finset.mem_compl.mpr hbC) (Finset.mem_compl.mpr hyC)
       (Ne.symm hyb) hb_notsrc hDsrc_ext
+
+set_option linter.unusedDecidableInType false in
+/-- **D1a symmetric-difference source-set split of a pinned pivotal fiber**
+(degeneracy-uniform Corollary D1a.5(b), F1 labelling `a ∈ C, b ∉ C`). This is the
+**unconditional** form of `Current.pivotalFiber_sourcesOn_eq`: with `sources M = {x, y}`
+but **no** nondegeneracy side conditions `x ≠ a`, `y ≠ b`, the interior/exterior
+restricted source sets are the symmetric differences
+`sourcesOn (interiorEdges C) M = {x} △ {a}` and
+`sourcesOn (interiorEdges Cᶜ) M = {b} △ {y}`.
+Here `x ∈ C` (reflexive reachability) and `y ∉ C` (the second `EdgePivotal` clause).
+When `x ≠ a` this is `{x, a}` (the labelled pair of `pivotalFiber_sourcesOn_eq`); the
+degenerate branch `x = a` (a source coinciding with the near endpoint of the pivotal
+bridge) gives `{x} △ {a} = ∅`, which is exactly what happens on the fiber when the
+`e₀`-bump cancels `a`'s source parity — resolving the D1b nondegeneracy design
+blocker (the even-cardinality handshake cannot rule out `x = a`, and does not need
+to). Proof: `Current.sourcesOn_eq_symmDiff` applied to the interior block (`D = C`,
+bridge `p = a`, source `q = x`) and the exterior block (`D = Cᶜ`, bridge `p = b`,
+source `q = y`), using the D1a parity clauses
+(`Current.parity_eq_parityOn_add_ite`) and the restricted-parity vanishing lemmas;
+the exterior symmetric difference is normalised by `symmDiff_comm`. **D1b (the
+product Fubini) and the SL-D₂ conditioned-switching core (Aizenman Lemma 4.1) are
+follow-ups, the latter awaiting explicit user authorisation.** Tracked ingredient
+(Group 1a), downstream: future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem
+17.5.1 (§17.5, issue #4386 / thread #4418); weight source FV (3.45). -/
+theorem Current.pivotalFiber_sourcesOn_symmDiff (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
+    (C : Finset ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
+    (hpiv : Current.EdgePivotal G Λ e₀ M x y)
+    (hC : Current.reachableCluster G Λ (M - Current.fromEdgeFinset G Λ {e₀}) x = C)
+    (haC : a ∈ C) (hbC : b ∉ C)
+    (hsrc : M.sources G Λ = {x, y}) :
+    M.sourcesOn G Λ (Current.interiorEdges G Λ C) = ({x} : Finset ↑Λ) ∆ {a}
+    ∧ M.sourcesOn G Λ (Current.interiorEdges G Λ Cᶜ) = ({b} : Finset ↑Λ) ∆ {y} := by
+  -- `x ∈ C` (reflexive reachability) and `y ∉ C` (second `EdgePivotal` clause).
+  have hxC : x ∈ C := by
+    rw [← hC, Current.mem_reachableCluster_iff]
+  have hyC : y ∉ C := by
+    intro hy
+    rw [← hC, Current.mem_reachableCluster_iff] at hy
+    exact hpiv.2 hy
+  -- The global source set is `{x, y}` (membership characterisation).
+  have hsrc_iff : ∀ v, M.parity G Λ v ≠ 0 ↔ (v = x ∨ v = y) := by
+    intro v
+    rw [← Current.mem_sources_iff, hsrc, Finset.mem_insert, Finset.mem_singleton]
+  -- Interior/exterior restricted parity clauses (D1a, F1 labelling).
+  have hpar_int : ∀ v ∈ C, M.parity G Λ v
+      = M.parityOn G Λ (Current.interiorEdges G Λ C) v + (if v = a then 1 else 0) := by
+    intro v hv
+    apply Current.parity_eq_parityOn_add_ite
+    have h := Current.degreeAt_eq_degreeOn_interior_add_bridge_of_mem
+      G Λ e₀ M x y a b C hab hpiv hC v hv
+    have hvb : v ≠ b := fun h' => hbC (h' ▸ hv)
+    rw [h, if_neg hvb]; ring
+  have hpar_ext : ∀ v ∈ Cᶜ, M.parity G Λ v
+      = M.parityOn G Λ (Current.interiorEdges G Λ Cᶜ) v + (if v = b then 1 else 0) := by
+    intro v hv
+    rw [Finset.mem_compl] at hv
+    apply Current.parity_eq_parityOn_add_ite
+    have h := Current.degreeAt_eq_degreeOn_exterior_add_bridge_of_not_mem
+      G Λ e₀ M x y a b C hab hpiv hC v hv
+    have hva : v ≠ a := by rintro rfl; exact hv haC
+    rw [h, if_neg hva]; ring
+  -- Restricted source sets sit inside their blocks.
+  have hsub_int : ∀ v, M.parityOn G Λ (Current.interiorEdges G Λ C) v ≠ 0 → v ∈ C := by
+    intro v hpo
+    by_contra hvC
+    apply hpo
+    rw [Current.parityOn_eq_degreeOn,
+      Current.degreeOn_interiorEdges_eq_zero_of_not_mem G Λ C M v hvC]
+    simp
+  have hsub_ext : ∀ v, M.parityOn G Λ (Current.interiorEdges G Λ Cᶜ) v ≠ 0 → v ∈ Cᶜ := by
+    intro v hpo
+    rw [Finset.mem_compl]
+    intro hvC
+    apply hpo
+    rw [Current.parityOn_eq_degreeOn,
+      Current.degreeOn_interiorEdges_compl_eq_zero_of_mem G Λ C M v hvC]
+    simp
+  -- Within each block, the unique global source.
+  have hDsrc_int : ∀ v ∈ C, M.parity G Λ v ≠ 0 ↔ v = x := by
+    intro v hvC
+    rw [hsrc_iff v]
+    constructor
+    · rintro (h | rfl)
+      · exact h
+      · exact absurd hvC hyC
+    · exact Or.inl
+  have hDsrc_ext : ∀ v ∈ Cᶜ, M.parity G Λ v ≠ 0 ↔ v = y := by
+    intro v hv
+    rw [Finset.mem_compl] at hv
+    rw [hsrc_iff v]
+    constructor
+    · rintro (rfl | h)
+      · exact absurd hxC hv
+      · exact h
+    · exact Or.inr
+  refine ⟨?_, ?_⟩
+  · exact Current.sourcesOn_eq_symmDiff G Λ (Current.interiorEdges G Λ C) M C a x
+      hpar_int hsub_int haC hxC hDsrc_int
+  · rw [symmDiff_comm]
+    exact Current.sourcesOn_eq_symmDiff G Λ (Current.interiorEdges G Λ Cᶜ) M Cᶜ b y
+      hpar_ext hsub_ext (Finset.mem_compl.mpr hbC) (Finset.mem_compl.mpr hyC) hDsrc_ext
 
 end Ambient
 
