@@ -10,14 +10,16 @@ Edge-partition factorization of the random-current weight `Current.weight`
 current sum (SL-B). The weight `∏_e (βJ)^{n_e}/n_e!` is the random-current
 weight of Friedli–Velenik, eq. (3.45) (§3.7); see `RandomCurrent/Core.lean`.
 
-This module is ingredient **SL-A** intended to supply the (future) Lemma 5.1
-(cluster-conditioning factorisation). It is a **tracked ingredient** under the
-Group 1a authorisation, not an isolated decoration: it is planned to feed the
-weight-factorization step of Lemma 5.1, which in turn is aimed at `hLogLip` →
-the lower-semicontinuity half of GJ Theorem 17.5.1 (§17.5). That GJ §17.5
-reference records the intended downstream position of this ingredient, not the
-source of the weight itself (which is FV (3.45)). The successor ingredients
-SL-B, …, SL-E are planned to build on it; SL-C and SL-D are new mathematics and
+This module implements ingredients **SL-A** and **SL-B** intended to supply the
+(future) Lemma 5.1 (cluster-conditioning factorisation). It is a **tracked
+ingredient** under the Group 1a authorisation, not an isolated decoration: it is
+planned to feed the weight-factorization + cluster-extraction steps of Lemma
+5.1, which in turn is aimed at `hLogLip` → the lower-semicontinuity half of GJ
+Theorem 17.5.1 (§17.5). That GJ §17.5 reference records the intended downstream
+position of these ingredients, not the source of the weight itself (which is FV
+(3.45)). The downstream ingredients SL-C (avoiding / bridge-uniqueness on the
+undecremented ensemble), SL-D (exterior → `Z`-ratio collapse), and SL-E
+(re-assembly) are not yet implemented: SL-C and SL-D are new mathematics and
 require a math-before-code pass before implementation.
 
 ## Definitions
@@ -214,7 +216,9 @@ set_option linter.unusedDecidableInType false in
 summand `F : Current G Λ → ℝ`, the sum over `𝓜` reorganises as an outer sum over
 the admissible cluster values `C` of the map
 `M ↦ reachableCluster (M − 1_{e₀}) x` (where `1_{e₀} = fromEdgeFinset {e₀}` and
-`M − 1_{e₀}` is the decremented current) times an inner sum over the currents
+`M − 1_{e₀}` is the edge-subtracted, i.e. truncated, current: `Current` values
+are `ℕ`-valued, so the subtraction is truncated at `0` and any `M` with
+`M e₀ = 0` is left unchanged) times an inner sum over the currents
 with that cluster:
 \[
   \sum_{M \in \mathcal M} F(M)
@@ -225,8 +229,10 @@ This is the standard fiber partition of a finite sum along
 `M ↦ reachableCluster (M − 1_{e₀}) x` (mathlib `Finset.sum_fiberwise_of_maps_to`
 over the image partition); no current-specific input beyond
 `Current.reachableCluster` being a well-defined `Finset ↑Λ`-valued function is
-used. Specialising `F(M) = 1[Piv_{e₀}^{xy}(M)] · D(M)` reorganises the pivotal
-numerator into the boxed inner double-sum of Lemma 5.1's step (i). Part of
+used, so the statement holds for an *arbitrary* index set `𝓜`. Specialising
+`F(M) = 1[Piv_{e₀}^{xy}(M)] · D(M)` reorganises the pivotal numerator into the
+boxed inner double-sum of Lemma 5.1's step (i); on that pivotal support `e₀`
+carries a current so the truncated subtraction is honest (`M e₀ ≥ 1`). Part of
 ingredient **SL-B** (cluster-index engine of the future Lemma 5.1 → `hLogLip` →
 lsc half of GJ Theorem 17.5.1, §17.5); weight source FV (3.45). -/
 theorem Current.pivotalNumerator_eq_sum_by_cluster (G : SimpleGraph V)
