@@ -30,6 +30,7 @@ import IsingModel.Inequalities.SourcefreeConnectionUnconditional
 import IsingModel.Inequalities.SourcefreeConnectionRatioDerivative
 import IsingModel.Inequalities.SourcefreeConnectionExcessEdgeSum
 import IsingModel.Inequalities.SourcefreeConnectionEdgePivotal
+import IsingModel.Inequalities.SourcefreeConnectionEdgeEmptyLeg
 import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.SharpSimonLiebNeighbor
 import IsingModel.Inequalities.WalkSum
