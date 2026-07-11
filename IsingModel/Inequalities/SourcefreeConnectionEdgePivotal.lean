@@ -459,5 +459,110 @@ theorem Current.summable_edgePivotal_doubledSourcefree_reachable
   (Current.summable_edgePivotal_doubledSourcefree G Λ hβ hJ e₀ x y).comp_injective
     Subtype.val_injective
 
+set_option linter.unusedDecidableInType false in
+/-- **Pivotal probability object (Stage B2b)**: the `x↔y`-conditioned probability
+that edge `e₀` is pivotal in the doubled random-current ensemble, defined as the
+ratio
+`ℙ^{x↔y}[e₀ pivotal] =
+  (∑'_{M : x↔y} [e₀ pivotal for x, y in M] · D_β(M)) / (∑'_{M : x↔y} D_β(M))`,
+where the sums range over the reachable subtype
+`{M // (M.toSimpleGraph).Reachable x y}`, `[·]` is the `{0, 1}`-valued pivotal
+indicator, and `D_β` is the both-sourcefree doubled summand
+(`Current.doubledSourcefreeSummand`).  The denominator is *verbatim* the
+reachable-ensemble weight `N` used as the B1 excess-ratio denominator
+(`Current.doubledSourcefree_excess_eq_sum_edge`), so that later switching bricks
+(B2c) dock this probability into the per-edge excess ratio with no re-plumbing.
+Division is total in Lean (`x / 0 = 0`); `0 ≤ ℙ ≤ 1` holds unconditionally for
+`0 ≤ β`, `0 ≤ J` (see `Current.edgePivotalProbability_mem_Icc`).
+(FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+noncomputable def Current.edgePivotalProbability
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    (e₀ : (inducedGraph G Λ).edgeSet) (β J : ℝ) (x y : ↑Λ) : ℝ :=
+  (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+      (if Current.EdgePivotal G Λ e₀ (M : Current G Λ) x y then (1 : ℝ) else 0)
+        * Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+    / ∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+        Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ)
+
+set_option linter.unusedDecidableInType false in
+/-- **Pivotal numerator ≤ denominator (Stage B2b)**: for `0 ≤ β`, `0 ≤ J` the
+pivotal-restricted reachable numerator is dominated by the reachable denominator
+`N`, since `[e₀ pivotal] ≤ 1` and `D_β ≥ 0` termwise and both series are
+`Summable` (`Current.summable_edgePivotal_doubledSourcefree_reachable` and the
+reachable restriction of `Current.summable_doubledSourcefree`).  This is the
+ordering input to `Current.edgePivotalProbability_le_one`.
+(FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.edgePivotalProbability_num_le_denom
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    (∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+        (if Current.EdgePivotal G Λ e₀ (M : Current G Λ) x y then (1 : ℝ) else 0)
+          * Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ))
+      ≤ ∑' M : {M : Current G Λ // (M.toSimpleGraph G Λ).Reachable x y},
+          Current.doubledSourcefreeSummand G Λ β J (M : Current G Λ) := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ hJ
+  refine (Current.summable_edgePivotal_doubledSourcefree_reachable G Λ hβ hJ e₀ x y).tsum_le_tsum
+    ?_ ((Current.summable_doubledSourcefree G Λ hβJ).comp_injective Subtype.val_injective)
+  intro M
+  have hD := Current.doubledSourcefreeSummand_nonneg G Λ hβJ (M : Current G Λ)
+  split_ifs with h
+  · exact le_of_eq (one_mul _)
+  · exact (zero_mul _).le.trans hD
+
+set_option linter.unusedDecidableInType false in
+/-- **Pivotal probability is non-negative (Stage B2b)**: for `0 ≤ β`, `0 ≤ J`,
+`0 ≤ ℙ^{x↔y}[e₀ pivotal]`.  Both numerator and denominator are non-negative sums
+of `[e₀ pivotal] · D_β ≥ 0` and `D_β ≥ 0` respectively
+(`Current.doubledSourcefreeSummand_nonneg`, `tsum_nonneg`); `div_nonneg`
+concludes.  (FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.edgePivotalProbability_nonneg
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    0 ≤ Current.edgePivotalProbability G Λ e₀ β J x y := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ hJ
+  unfold Current.edgePivotalProbability
+  apply div_nonneg
+  · refine tsum_nonneg fun M => ?_
+    have hD := Current.doubledSourcefreeSummand_nonneg G Λ hβJ (M : Current G Λ)
+    split_ifs with h
+    · simpa using hD
+    · simp
+  · exact tsum_nonneg fun M =>
+      Current.doubledSourcefreeSummand_nonneg G Λ hβJ (M : Current G Λ)
+
+set_option linter.unusedDecidableInType false in
+/-- **Pivotal probability ≤ 1 (Stage B2b)**: for `0 ≤ β`, `0 ≤ J`,
+`ℙ^{x↔y}[e₀ pivotal] ≤ 1`.  Follows from `div_le_one_of_le₀` applied to the
+domination `Current.edgePivotalProbability_num_le_denom` and the non-negativity
+of the denominator; the `N = 0` case is handled by totality of division
+(`0 / 0 = 0 ≤ 1`).  (FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.edgePivotalProbability_le_one
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    Current.edgePivotalProbability G Λ e₀ β J x y ≤ 1 := by
+  have hβJ : 0 ≤ β * J := mul_nonneg hβ hJ
+  unfold Current.edgePivotalProbability
+  refine div_le_one_of_le₀
+    (Current.edgePivotalProbability_num_le_denom G Λ hβ hJ e₀ x y) ?_
+  exact tsum_nonneg fun M =>
+    Current.doubledSourcefreeSummand_nonneg G Λ hβJ (M : Current G Λ)
+
+set_option linter.unusedDecidableInType false in
+/-- **Pivotal probability lies in `[0, 1]` (Stage B2b)**: bundles
+`Current.edgePivotalProbability_nonneg` and `Current.edgePivotalProbability_le_one`
+into `ℙ^{x↔y}[e₀ pivotal] ∈ Set.Icc 0 1`, the interface consumed by the B2
+switching capstone.  (FFS Ch. 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+theorem Current.edgePivotalProbability_mem_Icc
+    (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
+    (hβ : 0 ≤ β) (hJ : 0 ≤ J) (e₀ : (inducedGraph G Λ).edgeSet) (x y : ↑Λ) :
+    Current.edgePivotalProbability G Λ e₀ β J x y ∈ Set.Icc (0 : ℝ) 1 :=
+  ⟨Current.edgePivotalProbability_nonneg G Λ hβ hJ e₀ x y,
+    Current.edgePivotalProbability_le_one G Λ hβ hJ e₀ x y⟩
+
 end Ambient
 end IsingModel
