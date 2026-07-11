@@ -32,6 +32,7 @@ import IsingModel.Inequalities.SourcefreeConnectionExcessEdgeSum
 import IsingModel.Inequalities.SourcefreeConnectionEdgePivotal
 import IsingModel.Inequalities.SourcefreeConnectionEdgeEmptyLeg
 import IsingModel.Inequalities.SourcefreeConnectionEdgeReachableLeg
+import IsingModel.Inequalities.SourcefreeConnectionTruncatedFourPointMass
 import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.SharpSimonLiebNeighbor
 import IsingModel.Inequalities.WalkSum
