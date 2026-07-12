@@ -347,6 +347,40 @@ private theorem Current.summable_weight_if_sources
           Current.sum_weight_boundedFinset_le G Λ _ hβJ
 
 set_option linter.unusedDecidableInType false in
+/-- **Weight-dominated summability** (private-machinery reuse, non-private).
+Any real-valued current function `g` that is nonnegative and pointwise bounded by
+the FV (3.45) weight `Current.weight` is summable over the (countably infinite)
+ambient current type, because every finite partial sum is bounded by
+`exp(β J)^{|E|}` via the private bounded-partial-sum estimate
+`Current.sum_weight_boundedFinset_le`. This is the general dominated-summability
+sibling of the private `Current.summable_weight_if_sources`, exposed (non-private)
+so that downstream block-restricted summands — whose *statements* need the
+restriction/source objects defined in later modules and hence cannot live in this
+file — can reuse the private partial-sum machinery (`Current.boundedFinset`,
+`Current.sum_weight_boundedFinset_le`) without exposing or duplicating it. Part of
+ingredient **SL-D₁** brick D1b part 2a (tracked ingredient, Group 1a; the SL-D₂
+conditioned-switching core awaits explicit user authorisation); weight FV (3.45). -/
+theorem Current.summable_of_le_weight (G : SimpleGraph V) (Λ : Finset V)
+    [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
+    {β J : ℝ} (hβJ : 0 ≤ β * J) (g : Current G Λ → ℝ)
+    (hg0 : ∀ n : Current G Λ, 0 ≤ g n)
+    (hgle : ∀ n : Current G Λ, g n ≤ n.weight G Λ β J) :
+    Summable g := by
+  refine summable_of_sum_le
+      (c := Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet) hg0 ?_
+  intro s
+  have hs : s ⊆ Current.boundedFinset G Λ (s.sup (fun n => Finset.univ.sup n)) := by
+    intro n hn; rw [Current.mem_boundedFinset_iff]
+    exact fun e => Nat.le_trans (Finset.le_sup (Finset.mem_univ e)) (Finset.le_sup hn)
+  calc ∑ n ∈ s, g n
+      ≤ ∑ n ∈ s, n.weight G Λ β J := Finset.sum_le_sum (fun n _ => hgle n)
+    _ ≤ ∑ n ∈ Current.boundedFinset G Λ _, n.weight G Λ β J :=
+          Finset.sum_le_sum_of_subset_of_nonneg hs
+            (fun n _ _ => Current.weight_nonneg G Λ hβJ n)
+    _ ≤ Real.exp (β * J) ^ Fintype.card (inducedGraph G Λ).edgeSet :=
+          Current.sum_weight_boundedFinset_le G Λ _ hβJ
+
+set_option linter.unusedDecidableInType false in
 /-- **`Current.weightSum` equals the supremum of bounded sums**: for `0 ≤ β J`,
 \(Current.weightSum A β J = ⨆_N CurrentBounded.weightSum N A β J\).
 Proof by uniqueness of limits: the bounded sums converge to both
