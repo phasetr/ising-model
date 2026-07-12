@@ -349,7 +349,7 @@ private theorem Current.summable_weight_if_sources
 set_option linter.unusedDecidableInType false in
 /-- **Weight-dominated summability** (private-machinery reuse, non-private).
 Any real-valued current function `g` that is nonnegative and pointwise bounded by
-the FV (3.45) weight `Current.weight` is summable over the (countably infinite)
+the FV (3.45) weight `Current.weight` is summable over the (countable)
 ambient current type, because every finite partial sum is bounded by
 `exp(β J)^{|E|}` via the private bounded-partial-sum estimate
 `Current.sum_weight_boundedFinset_le`. This is the general dominated-summability
