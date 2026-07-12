@@ -24,8 +24,12 @@ identity (Stage D + B1 + P1, all axiom-free) reduces to the single *upper* bound
       -\langle\sigma_u\sigma_v\rangle\langle\sigma_x\sigma_y\rangle .
 \]
 **M1 applies the tight, merged four-point Lebowitz inequality
-`lebowitz_four_zero_field` to each truncated four-point** `U^T_{uvxy}`, turning
-the master *equality* into the *upper bound*
+`lebowitz_four_zero_field` to each *non-degenerate* truncated four-point**
+`U^T_{uvxy}` — the four-point *correlation* form produced by
+`lebowitz_four_zero_field` requires `Disjoint {u,v} {x,y}`, so it applies only on
+non-degenerate edges; degenerate edges (`u` or `v ∈ {x,y}`) are handled by a
+separate `weightSum` two-point bound — turning the master *equality* into the
+*upper bound*
 \[
   \partial_\beta\log\langle\sigma_x\sigma_y\rangle
     \le \sum_{e=\{u,v\}}
@@ -42,9 +46,14 @@ the master *equality* into the *upper bound*
 For a **non-degenerate** edge `U^T_{uvxy}\le\langle\sigma_u\sigma_x\rangle
 \langle\sigma_v\sigma_y\rangle+\langle\sigma_u\sigma_y\rangle\langle\sigma_v\sigma_x
 \rangle` (the `⟨σ_uσ_v⟩⟨σ_xσ_y⟩` diagonal pairing cancels the truncation), and
-for a **degenerate** edge (`{u,v}∩{x,y}≠∅`) the identity keeps the genuine
-two-point `⟨σ_{{u,v}△{x,y}}⟩` and the subtracted `⟨σ_uσ_v⟩≥0` is dropped by
-GKS-I; there are only `≤ 4d` such edges, so no `|E|` term appears.
+for a **degenerate** edge (`{u,v}∩{x,y}≠∅`) the identity keeps the
+symmetric-difference correlation `⟨σ_{{u,v}△{x,y}}⟩` (generically a genuine
+two-point, but on the *fully overlapping* edge `e={x,y}` the symmetric difference
+is `∅`, so this collapses to `⟨σ_∅⟩=1` and is not a two-point) and the subtracted
+`⟨σ_uσ_v⟩≥0` is dropped by GKS-I.  This theorem is stated for an **arbitrary
+finite `SimpleGraph`**, so the number of degenerate edges is bounded by the
+endpoint degrees `≤ deg(x)+deg(y)` (on `ℤ^d` this specialises to `≤ 4d`); either
+way no `|E|` term appears.
 
 **M1 does NOT by itself discharge `hLogLip`.**  Its right-hand side is exactly the
 OZ *convolution ratio*
