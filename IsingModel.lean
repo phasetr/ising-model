@@ -37,6 +37,7 @@ import IsingModel.Inequalities.ClusterConditioningPivotal
 import IsingModel.Inequalities.ClusterConditioningFiberSplit
 import IsingModel.Inequalities.ClusterConditioningFiberFubini
 import IsingModel.Inequalities.ClusterConditioningFiberDecouple
+import IsingModel.Inequalities.ClusterConditioningFiberFubiniSum
 import IsingModel.Inequalities.SimonLiebKernel
 import IsingModel.Inequalities.SharpSimonLiebNeighbor
 import IsingModel.Inequalities.WalkSum
