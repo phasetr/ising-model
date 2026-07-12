@@ -2,8 +2,6 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.ExpDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDistanceDecay
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfiniteTrivialSlice
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfiniteBounds
 
 /-!
 # Substantive HLS Simon-Lieb half-rate bridge

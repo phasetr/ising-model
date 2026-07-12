@@ -1,7 +1,6 @@
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
-import IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibility
 
 /-!
 # Ambient h_zero / J_zero / zero_params / tanh_pow wrappers

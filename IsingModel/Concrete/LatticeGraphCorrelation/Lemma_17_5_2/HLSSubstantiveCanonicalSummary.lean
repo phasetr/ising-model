@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveSimonLieb
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveExistingRate
 
 /-!
