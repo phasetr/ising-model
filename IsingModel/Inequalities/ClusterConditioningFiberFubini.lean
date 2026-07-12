@@ -15,7 +15,7 @@ standalone verifiable brick (`Current.restrictOn` and its algebra) and the clean
 ## Scope and honest status
 
 D1b is the completion of `SL-D₁` (product Fubini) = D1a's additive source split
-(`Current.pivotalFiber_sources_split` / `pivotalFiber_sourcesOn_eq`) turned, via a
+(`Current.pivotalFiber_sources_split` / `pivotalFiber_sourcesOn_symmDiff`) turned, via a
 restriction/gluing bijection `Φ` and a `tsum` Fubini, into the ensemble
 factorisation `Σ_C = (βJ)·Ξ_int·Ξ_ext`. This module delivers only the *foundation*
 that any correct D1b needs: the ambient restriction map, its block-weight and
