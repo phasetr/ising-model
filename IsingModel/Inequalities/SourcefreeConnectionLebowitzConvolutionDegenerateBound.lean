@@ -63,8 +63,11 @@ Theorem 3.49 (GKS-II); Fernández–Fröhlich–Sokal, *Random Walks…* (1992),
 * `Current.lebowitz_degenerate_edge_sum_le` — the degenerate-edge sum bound
   `S_deg ≤ (deg x + deg y)·(J/tanh(βJ))`.
 * `Current.lebowitz_degenerate_edge_sum_le_dist` — the M2-facing form
-  `S_deg ≤ (deg x + deg y)·(J/tanh(βJ))·d` for any `d ≥ 1` (e.g. the graph
-  distance `d(x,y) ≥ 1`).
+  `S_deg ≤ (deg x + deg y)·(J/tanh(βJ))·d` for any abstract `d ≥ 1` (the intended
+  instance is the graph distance `d(x,y) ≥ 1`; note that in a bare `SimpleGraph`
+  `x ≠ y` alone does *not* force `SimpleGraph.dist x y ≥ 1` — non-reachable
+  distinct vertices have junk `dist = 0` — but `hpos : 0 < ⟨σ_xσ_y⟩` at zero field
+  forces `x, y` into one connected component (reachability), whence `dist ≥ 1`).
 -/
 
 namespace IsingModel
@@ -205,9 +208,15 @@ theorem Current.lebowitz_degenerate_edge_sum_le (G : SimpleGraph V) (Λ : Finset
     _ = _ := by push_cast; ring
 
 /-- **Degenerate-edge sum bound, M2-facing form** (brick B1).  Multiplying
-`Current.lebowitz_degenerate_edge_sum_le` by any `d ≥ 1` (e.g. the graph distance
-`d(x,y) ≥ 1`, valid since `x ≠ y`) gives the linear-in-separation shape
-`S_deg ≤ (deg x + deg y)·(J/tanh(βJ))·d` targeted by Stage M2.
+`Current.lebowitz_degenerate_edge_sum_le` by any abstract `d ≥ 1` gives the
+linear-in-separation shape `S_deg ≤ (deg x + deg y)·(J/tanh(βJ))·d` targeted by
+Stage M2.  The intended instance is the graph distance `d(x,y) ≥ 1`; the theorem
+keeps `d` abstract (`hd : 1 ≤ d`) precisely because, in a bare `SimpleGraph`,
+`x ≠ y` alone does *not* give `SimpleGraph.dist x y ≥ 1` (non-reachable distinct
+vertices carry the junk value `dist = 0`).  The bound `d(x,y) ≥ 1` is legitimate
+here because `hpos : 0 < ⟨σ_xσ_y⟩` at zero field forces `x, y` into a single
+connected component (reachability), and reachability of distinct vertices yields
+`dist x y ≥ 1`.
 
 Only the **degenerate** collar is closed here; the non-degenerate convolution part
 `S_nd` (bricks B2/B3/B4, with B4 = `H_low`/FFS Ch. 12 the OZ wall) is not addressed.
