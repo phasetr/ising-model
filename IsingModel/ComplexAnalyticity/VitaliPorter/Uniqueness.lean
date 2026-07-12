@@ -6,8 +6,8 @@ import Mathlib.Topology.ClusterPt
 # Vitali–Porter: the uniqueness (identity-theorem) core
 
 This is the first building block of an in-project proof of the Vitali–Porter convergence theorem
-(`vitaliPorter_tendstoLocallyUniformlyOn`, currently a declared scope-excluded axiom —
-Issue #4280). It isolates the **uniqueness** half: two holomorphic functions
+(`vitaliPorter_tendstoLocallyUniformlyOn`, proved as a theorem in `VitaliPorter/Theorem.lean`
+via Issue #4280). It isolates the **uniqueness** half: two holomorphic functions
 on an open preconnected set `U` that agree with the same function `g` on a subset `S` having an
 accumulation point in `U` must agree on all of `U`.
 
