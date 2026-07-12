@@ -7,9 +7,9 @@ import Mathlib.Topology.Compactness.LocallyCompact
 # Vitali–Porter convergence theorem (proved)
 
 This file **proves** the Vitali–Porter convergence theorem
-`vitaliPorter_tendstoLocallyUniformlyOn`, previously a declared scope-excluded axiom (Issue #4280).
-It combines the complex Montel theorem (`MontelExtraction.lean`) with the identity-theorem
-uniqueness core (`Uniqueness.lean`):
+`vitaliPorter_tendstoLocallyUniformlyOn`, originally a scope-excluded axiom (Issue #4280),
+now fully formalized. It combines the complex Montel theorem (`MontelExtraction.lean`) with
+the identity-theorem uniqueness core (`Uniqueness.lean`):
 
 * Montel gives **one** locally-uniformly convergent subsequence with holomorphic limit `f`; the
   pointwise hypothesis on the accumulating set `S` identifies `f` with `g` on `S`.
@@ -18,7 +18,7 @@ uniqueness core (`Uniqueness.lean`):
   further Montel subsequence whose limit again agrees with `g` on `S`, hence equals `f` by the
   identity theorem; so all subsequential limits coincide and the sequence converges to `f`.
 
-Proving this removes the `vitaliPorter_tendstoLocallyUniformlyOn` axiom from the project.
+This proof removes the `vitaliPorter_tendstoLocallyUniformlyOn` axiom from the project.
 
 **Reference:** Conway, *Functions of One Complex Variable I*, VII §2–3 (Montel / Vitali). -/
 
