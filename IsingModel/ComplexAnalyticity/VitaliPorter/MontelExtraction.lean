@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.VitaliPorter.PerCompact
 import IsingModel.ComplexAnalyticity.VitaliPorter.Exhaustion
+import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!
 # Vitali–Porter: Montel diagonal extraction
@@ -27,10 +28,11 @@ open Filter Topology Metric Set
 
 /-- **Per-level cumulative-extractor data for the Montel diagonal** (auxiliary).
 
-At level `m`, `φ` is the cumulative subsequence (`φ = (previous φ) ∘ ρ`, with `ρ` the relative
-extractor produced by the per-compact Arzelà–Ascoli step on `K m`), and `F ∘ φ` converges uniformly
-on `K m` to `g`. Keeping `ρ` as a field lets the chain relation `φ (m+1) = φ m ∘ ρ (m+1)` be
-definitional. -/
+At level `m`, `φ` is the cumulative subsequence
+(`φ = (previous φ) ∘ ρ`, with `ρ` the relative extractor produced by the
+per-compact Arzelà–Ascoli step on `K m`), and `F ∘ φ` converges uniformly on
+`K m` to `g`. Keeping `ρ` as a field makes the chain relation
+`φ (m+1) = φ m ∘ ρ (m+1)` definitional. -/
 structure VitaliDiagState (F : ℕ → ℂ → ℂ) (K : ℕ → Set ℂ) (m : ℕ) : Type where
   /-- Cumulative extractor through level `m`. -/
   φ : ℕ → ℕ
@@ -139,7 +141,8 @@ theorem exists_subseq_tendstoLocallyUniformlyOn_of_locallyBounded
     rw [hchain n (n + 1)]
     exact hφmono n (lt_of_lt_of_le (Nat.lt_succ_self n) (D (n + 1)).hρ.le_apply)
   -- Factorisation (pointwise): `φ n k = φ m (τ k)` for some strict-mono `τ`, when `m ≤ n`.
-  have hfactor : ∀ m n, m ≤ n → ∃ τ : ℕ → ℕ, StrictMono τ ∧ ∀ k, φ n k = φ m (τ k) := by
+  have hfactor : ∀ m n, m ≤ n →
+      ∃ τ : ℕ → ℕ, StrictMono τ ∧ ∀ k, φ n k = φ m (τ k) := by
     intro m n hmn
     induction n, hmn using Nat.le_induction with
     | base => exact ⟨id, strictMono_id, fun _ => rfl⟩
