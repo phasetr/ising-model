@@ -1,7 +1,13 @@
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Branches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.SubseqCompactOpen.CompactOpenVitali
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.SubseqCompactOpen.FiniteCoverPatches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.SubseqCompactOpen.FiniteSubseqCompactOpen
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.SubseqCompactOpen.PointwiseAllStage
 
 /-!
-# ℤ^d subsequence compact-open and finite-cover wrappers
+# Per-stage complex analyticity umbrella: SubseqCompactOpen
 
-This compatibility module re-exports the split subsequence compact-open layer.
+Compatibility umbrella re-exporting the consolidated `SubseqCompactOpen`
+leaf modules (and the lower-branch umbrella) for the GJ §17.5.2
+Vitali–Montel route.
 -/

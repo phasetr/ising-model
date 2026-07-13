@@ -1,5 +1,17 @@
 import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchEndpoint
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.EventualClosedBallDeviation.PosReal.ViaLocal
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.EventualClosedBallDeviation
+
+/-!
+# Per-stage complex analyticity wrappers: GlobalBranchEndpoint
+
+Consolidated `GlobalBranchEndpoint` wrappers for the GJ §17.5.2 / §4.6
+Vitali–Montel route (per-stage complex partition-function
+analyticity).  Merged from the former one-declaration-per-file
+fragments; declarations and proofs are unchanged.
+-/
+
+namespace IsingModel
+namespace Ambient
 
 /-!
 # ℤ^d unconditional positive-real holomorphic extension (GJ §4.6 Thm 4.6.2)
@@ -12,8 +24,6 @@ References: Glimm–Jaffe, *Quantum Physics*, 2nd ed. (Springer, 1987), §4.6,
 Theorem 4.6.2, pp. 68–70.
 -/
 
-namespace IsingModel
-namespace Ambient
 
 /-- **ℤ^d unconditional subsequential compact-target patch toward GJ Theorem 4.6.2**: for
 positive real ferromagnetic parameters on `latticeGraph d`, bounded edge density,
