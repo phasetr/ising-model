@@ -13,7 +13,6 @@ import IsingModel.PseudoMass
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion
 
 /-!
 # Lattice-mass: reference pseudoMassFromParamsAtPair variants
