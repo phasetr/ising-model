@@ -1,4 +1,3 @@
-import IsingModel.Inequalities.GHS.GHSInequality
 import IsingModel.Inequalities.Lebowitz.LebowitzFour
 
 /-!

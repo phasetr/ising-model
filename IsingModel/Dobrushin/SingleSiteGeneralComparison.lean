@@ -1,4 +1,3 @@
-import IsingModel.Dobrushin.OscillationPropagation
 import IsingModel.Dobrushin.BoundaryInfluence
 
 /-!

@@ -1,5 +1,4 @@
 import IsingModel.TransferMatrix.LayerOpenExplicitSubdominantRatio
-import IsingModel.TransferMatrix.CubicLayerOpenBoxMass
 
 /-!
 # Mass-form decay on the ambient cubic open box, explicit ratio (GJ §17.1)

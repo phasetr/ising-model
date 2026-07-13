@@ -1,4 +1,3 @@
-import IsingModel.GibbsMeasure
 import Mathlib.Combinatorics.SimpleGraph.Hasse
 
 /-!

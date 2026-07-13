@@ -1,7 +1,6 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd
-import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 
 /-!
 # ℤ^d site-independence / exhaustion-independence wrappers

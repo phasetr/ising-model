@@ -1,7 +1,6 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPointNonnegAndGe
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointZeroCollapse
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncated2EqSubMagSq
@@ -9,7 +8,6 @@ import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
-import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 
 /-!
 # ℤ^d uniformMagnetization recasts + truncated zero_params + magnetization basic wrappers

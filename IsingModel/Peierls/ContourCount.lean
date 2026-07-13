@@ -1,5 +1,4 @@
 import IsingModel.Conditioning.EdgeWalkCounting
-import IsingModel.Peierls.DualCutInBox
 
 /-!
 # The contour count capstone (FV §3.7.2)
