@@ -2,7 +2,6 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.BallDefs
 import IsingModel.BallBoundarySimonLieb.Tight
 import IsingModel.AmbientLatticeSum.PerStageIncrement
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Disconnection
-import IsingModel.Inequalities.HighTemp.SimonLiebInfinite
 
 /-!
 # Infinite-volume tight ball-boundary Simon–Lieb inequality (GJ §17.8)

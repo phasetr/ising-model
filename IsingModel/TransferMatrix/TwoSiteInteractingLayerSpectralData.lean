@@ -1,5 +1,4 @@
 import IsingModel.TransferMatrix.TwoSiteFreeLayerSpectralWindow
-import IsingModel.TransferMatrix.LayerOpenSimpleSpectrum
 
 /-!
 # Two-site interacting layer spectral data
