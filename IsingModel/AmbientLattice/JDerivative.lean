@@ -1,6 +1,5 @@
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
-import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.BetaDerivativeFieldJ
 import IsingModel.JDerivative
 

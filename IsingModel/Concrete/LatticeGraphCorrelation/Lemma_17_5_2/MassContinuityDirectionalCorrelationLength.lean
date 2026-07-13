@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassDirectionalAbscissa
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityOnAxisCorrelationLength
 
 /-!
 # GJ §17.5 eq. (17.5.1) — directional inverse correlation length exists as a Fekete limit

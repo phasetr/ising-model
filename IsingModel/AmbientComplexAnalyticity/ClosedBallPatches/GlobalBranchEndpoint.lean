@@ -1,5 +1,4 @@
 import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchBounds
-import IsingModel.AmbientComplexAnalyticity.CoverPatches.Pointwise
 
 /-!
 # The unconditional positive-real endpoint via the global branch (GJ §4.6 Thm 4.6.2)

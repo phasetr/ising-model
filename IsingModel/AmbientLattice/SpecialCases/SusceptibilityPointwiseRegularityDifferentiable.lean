@@ -1,5 +1,4 @@
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta
 
 /-!
 # Susceptibility `Differentiable` in `h` / `J` along-ex wrappers

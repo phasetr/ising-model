@@ -1,4 +1,3 @@
-import IsingModel.ClusterExpansion.MayerCore.IndependentFreeEnergyMayer
 import IsingModel.ClusterExpansion.MayerCore.MayerMontroll
 
 /-!

@@ -3,7 +3,6 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ
 
 /-!
 # Ambient alongExhaustion ratio-LogFe `_of_nonempty` freeEnergy wrappers

@@ -1,6 +1,5 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero
 
 /-!
 # Partition-function `Z = 2^|Λ|` closed forms along an exhaustion

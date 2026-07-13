@@ -1,7 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CapstoneIncrementFromComplexBound
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.IncrementCapstone
-import IsingModel.AmbientComplexAnalyticity.VolumeUniformHZ
-import IsingModel.ComplexAnalyticity.SecondMomentBounds
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
