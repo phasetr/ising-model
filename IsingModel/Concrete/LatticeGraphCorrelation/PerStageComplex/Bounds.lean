@@ -1,7 +1,12 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Bounds.LeeYangLower
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Bounds.PerStage
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Bounds.PolynomialLower
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Bounds.UpperLog
 
 /-!
-# ℤ^d complex per-stage bounds and Lee-Yang local boundedness wrappers
+# Per-stage complex analyticity umbrella: Bounds
 
-Compatibility umbrella for the split per-stage complex bounds layer.
+Compatibility umbrella re-exporting the consolidated `Bounds`
+leaf modules (and the lower-branch umbrella) for the GJ §17.5.2
+Vitali–Montel route.
 -/
