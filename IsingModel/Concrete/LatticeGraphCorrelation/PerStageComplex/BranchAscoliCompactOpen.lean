@@ -1,7 +1,14 @@
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.AscoliPatches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.CompactCoverPatches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.CoverPatches
 import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.EventualPatches
+import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.RealCoverPatches
 
 /-!
-# ℤ^d branch Ascoli and compact-open capstone wrappers
+# Per-stage complex analyticity umbrella: BranchAscoliCompactOpen
 
-This compatibility module re-exports the split branch Ascoli compact-open layer.
+Compatibility umbrella re-exporting the consolidated `BranchAscoliCompactOpen`
+leaf modules (and the lower-branch umbrella) for the GJ §17.5.2
+Vitali–Montel route.
 -/
