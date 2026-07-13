@@ -1,5 +1,6 @@
 import IsingModel.ComplexAnalyticity.VitaliPorter.PerCompact
 import IsingModel.ComplexAnalyticity.VitaliPorter.Exhaustion
+import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!
 # Vitali–Porter: Montel diagonal extraction
