@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.JDerivative

@@ -1,4 +1,3 @@
-import IsingModel.Concrete.IntLattice
 import IsingModel.PeierlsInfinite
 
 /-!

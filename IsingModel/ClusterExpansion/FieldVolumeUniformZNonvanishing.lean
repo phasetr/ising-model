@@ -1,5 +1,4 @@
 import IsingModel.ClusterExpansion.FieldAvoidingRatio
-import IsingModel.ClusterExpansion.FieldCorrelationAlongExhaustion
 
 /-!
 # Volume-uniform complex field polymer non-vanishing (GJ §17.6.1, brick F6b)

@@ -1,7 +1,6 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
-import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.BetaDerivative
 
 /-!

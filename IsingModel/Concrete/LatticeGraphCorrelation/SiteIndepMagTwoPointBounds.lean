@@ -1,11 +1,8 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointZeroCollapse
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointCorrelationInfinite
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
 # ℤ^d twoPointFunction basic bound wrappers

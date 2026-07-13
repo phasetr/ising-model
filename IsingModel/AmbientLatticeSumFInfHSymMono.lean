@@ -1,8 +1,4 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.PartitionFunctionIso
-import IsingModel.AmbientLatticeSumFreeEnergy
-import IsingModel.AmbientLatticeSumGeFerromagnetic
-import IsingModel.AmbientLatticeSumLogZ
 
 /-!
 # AmbientLatticeSum freeEnergyInfinite h-symmetry + monotonicity wrappers
