@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.WalkSumTsumLatticeGraph
-import IsingModel.Concrete.CubicBoxConnectivity
 import IsingModel.AmbientLattice.Exhaustion
 import Mathlib.Analysis.SpecificLimits.Basic
 

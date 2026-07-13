@@ -1,5 +1,4 @@
 import IsingModel.Peierls.DartPrimalCut
-import IsingModel.Peierls.DartCutChar
 
 /-!
 # Cardinality of the primal cut (FV §3.7.2)

@@ -7,7 +7,6 @@ import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBotLambda
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBotLambdaAlongEx
 
 /-!

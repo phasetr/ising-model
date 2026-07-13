@@ -1,5 +1,4 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.AmbientLattice.BetaDerivativePartitionSusc
 import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
