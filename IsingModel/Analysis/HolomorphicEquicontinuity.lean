@@ -21,8 +21,9 @@ below; the latter converts its `DifferentiableOn` hypothesis to `AnalyticOnNhd` 
 * `equicontinuous_range_coe` — transfer of equicontinuity to a range carrier.
 * `equicontinuousAt_of_analyticOnNhd_of_ballBound` — ambient pointwise `EquicontinuousAt` form.
 
-References: Glimm–Jaffe, *Quantum Physics*, 2nd ed. (Springer, 1987), §4.6, Theorem 4.6.2; Conway,
-*Functions of One Complex Variable I*, VII §2 (normal families / Montel).
+References: Glimm–Jaffe, *Quantum Physics*, 2nd ed. (Springer, 1987), §4.6,
+Theorem 4.6.2; Conway, *Functions of One Complex Variable I*, VII §2
+(normal families / Montel).
 -/
 
 namespace IsingModel
@@ -49,8 +50,9 @@ theorem norm_deriv_le_of_analyticOnNhd_of_bounded {f : ℂ → ℂ} {c : ℂ} {R
   exact Complex.norm_deriv_le_div_of_mapsTo_ball hd hmaps hρ
 
 /-- **Uniform local Lipschitz estimate for a bounded analytic function**: on the half-ball
-`ball z₀ (ρ/2)` inside the domain, `‖f y - f x‖ ≤ (2C/(ρ/2)) · ‖y - x‖`, with a constant
-depending only on the bound `C` and the geometry — uniform over the family. -/
+`ball z₀ (ρ/2)` inside the domain,
+`‖f y - f x‖ ≤ (2C/(ρ/2)) · ‖y - x‖`, with a constant depending only on
+the bound `C` and the geometry — uniform over the family. -/
 theorem norm_sub_le_of_analyticOnNhd_of_bounded {f : ℂ → ℂ} {c : ℂ} {R C : ℝ}
     (hf : AnalyticOnNhd ℂ f (ball c R))
     (hb : ∀ z ∈ ball c R, ‖f z‖ ≤ C)
@@ -126,12 +128,14 @@ theorem equicontinuous_range_coe {X : Type*} [TopologicalSpace X] {ι : Type*}
     rw [g.2.choose_spec]
   rwa [heq] at hcomp
 
-/-- **Ambient pointwise equicontinuity of a uniformly bounded analytic family** (Montel input,
-ball form): if every `F i` is analytic on `ball x₀ ρ` (`ρ > 0`) and uniformly bounded by `M ≥ 0`
-there, then the family `F` is equicontinuous at the centre `x₀` as maps on the ambient space `ℂ`.
+/-- **Ambient pointwise equicontinuity of a uniformly bounded analytic family**
+(Montel input, ball form): if every `F i` is analytic on `ball x₀ ρ` (`ρ > 0`)
+and uniformly bounded by `M ≥ 0` there, then the family `F` is equicontinuous
+at the centre `x₀` as maps on the ambient space `ℂ`.
 
-Proof: the uniform local Lipschitz estimate `norm_sub_le_of_analyticOnNhd_of_bounded` on the inner
-ball `ball x₀ (ρ/2)` gives a common Lipschitz constant `2M/(ρ/2)`, which is a common modulus of
+Proof: the uniform local Lipschitz estimate
+`norm_sub_le_of_analyticOnNhd_of_bounded` on the inner ball `ball x₀ (ρ/2)`
+gives a common Lipschitz constant `2M/(ρ/2)`, which is a common modulus of
 continuity at `x₀`. -/
 theorem equicontinuousAt_of_analyticOnNhd_of_ballBound {ι : Type*} {F : ι → ℂ → ℂ}
     {x₀ : ℂ} {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 ≤ M)

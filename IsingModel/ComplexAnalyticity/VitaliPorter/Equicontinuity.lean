@@ -23,8 +23,9 @@ open Complex Metric Set
 
 /-- **Equicontinuity at a point from a local uniform bound** (Montel input, ball form).
 
-If every `F n` is holomorphic on the open `U`, `ball x₀ ρ ⊆ U` (`ρ > 0`), and `‖F n w‖ ≤ M` for all
-`n` and `w ∈ ball x₀ ρ`, then the family `F` is equicontinuous at `x₀`.
+If every `F n` is holomorphic on the open `U`, `ball x₀ ρ ⊆ U` (`ρ > 0`),
+and `‖F n w‖ ≤ M` for all `n` and `w ∈ ball x₀ ρ`, then the family `F` is
+equicontinuous at `x₀`.
 
 Thin wrapper: holomorphy on the open `U` upgrades to `AnalyticOnNhd` via
 `DifferentiableOn.analyticOnNhd`, restricted to `ball x₀ ρ`; the shared core
@@ -43,12 +44,14 @@ theorem equicontinuousAt_of_ball_bound
 /-- **Equicontinuity at a point from the local-boundedness hypothesis** (Montel input).
 
 Existential-`ball` repackaging of `equicontinuousAt_of_ball_bound`: from the local uniform bound
-`∃ r M, 0 < r ∧ ball x₀ r ⊆ U ∧ ∀ n w ∈ ball x₀ r, ‖F n w‖ ≤ M` (the standard "locally uniformly
-bounded family" hypothesis at `x₀`), the holomorphic family `F` is equicontinuous at `x₀`. -/
+`∃ r M, 0 < r ∧ ball x₀ r ⊆ U ∧ ∀ n w ∈ ball x₀ r, ‖F n w‖ ≤ M`
+(the standard "locally uniformly bounded family" hypothesis at `x₀`), the
+holomorphic family `F` is equicontinuous at `x₀`. -/
 theorem equicontinuousAt_of_locallyBounded
     {U : Set ℂ} (hU : IsOpen U) {F : ℕ → ℂ → ℂ}
     (hF : ∀ n, DifferentiableOn ℂ (F n) U) {x₀ : ℂ}
-    (hbdd : ∃ r M : ℝ, 0 < r ∧ ball x₀ r ⊆ U ∧ ∀ n, ∀ w ∈ ball x₀ r, ‖F n w‖ ≤ M) :
+    (hbdd : ∃ r M : ℝ,
+      0 < r ∧ ball x₀ r ⊆ U ∧ ∀ n, ∀ w ∈ ball x₀ r, ‖F n w‖ ≤ M) :
     EquicontinuousAt (fun n => F n) x₀ := by
   obtain ⟨r, M, hr, hrU, hbound⟩ := hbdd
   exact equicontinuousAt_of_ball_bound hU hF hr hrU hbound
