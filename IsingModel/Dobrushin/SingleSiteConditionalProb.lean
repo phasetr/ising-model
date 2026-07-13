@@ -1,4 +1,3 @@
-import IsingModel.Dobrushin.SingleSiteConditional
 import IsingModel.Inequalities.FKGBoundaryCondition
 
 /-!

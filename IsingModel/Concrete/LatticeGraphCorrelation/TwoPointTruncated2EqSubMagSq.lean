@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
 # ℤ^d truncated2TwoPoint = twoPointFunction - M²

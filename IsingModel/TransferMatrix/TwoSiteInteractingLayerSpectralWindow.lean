@@ -1,5 +1,4 @@
 import IsingModel.TransferMatrix.TwoSiteInteractingLayerSpectralData
-import IsingModel.TransferMatrix.LayerOpenBoundaryWindowSimple
 import IsingModel.TransferMatrix.LayerOpenSimpleSpectrum
 
 /-!

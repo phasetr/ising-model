@@ -1,7 +1,6 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagUniformSpontaneous
 import IsingModel.PhaseTransition
 
 /-!
