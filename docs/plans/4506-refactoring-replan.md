@@ -214,7 +214,10 @@ Every source refactor must provide:
 
 - targeted module, downstream importer, and root builds with zero warnings;
 - `lake exe GKSTest` and the repository's sentinel/property checks;
-- no `sorry`, `admit`, or `native_decide` in `IsingModel/`;
+- no new placeholder hit in the diff, no `sorry` or `admit` in compiled library declarations, and
+  no new `native_decide` in library theorem/proof bodies. Current `main` has 16 accepted textual
+  hits: ten executable `native_decide` sanity-check `example`s in `IsingModel/TestGenerators.lean`
+  and six prose/comment mentions. They must remain unchanged; deleting them is outside this scope;
 - representative `#print axioms` output limited to `propext`, `Classical.choice`, and `Quot.sound`;
 - the `lean-verify-audit` V1--V3 verification/audit gate and focused Shake/import review for touched
   modules; `scripts/leaf_audit.py` is a separate import-graph orphan/dead-candidate report, not a
