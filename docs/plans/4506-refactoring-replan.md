@@ -156,10 +156,13 @@ the affected B0 workload, compatibility gates, and an explicit rollback threshol
 
 ### Candidate A1: proof and API abstraction
 
-An abstraction candidate requires a separate issue supported by real consumers. Audit the family by
-statement, hypotheses, proof dependencies, and consumers before editing. Extract a common lemma only
-when at least two consumers share the proof core. Introduce a new record or typeclass only when at
-least three consumers repeat the same hypothesis bundle and proof skeleton.
+Consider an abstraction candidate only if B0 returns FAIL and retained measurements provide evidence
+that repeated proof or API structure materially contributes to the measured build or maintenance
+cost. Selection requires Tier-2/design review and a separate authorizing issue supported by real
+consumers. Audit the family by statement, hypotheses, proof dependencies, and consumers before
+editing. Extract a common lemma only when at least two consumers share the proof core. Introduce a
+new record or typeclass only when at least three consumers repeat the same hypothesis bundle and
+proof skeleton.
 
 Keep the core theorem at the weakest useful `SimpleGraph` or `Ambient` assumptions. Keep `Λ`,
 along-exhaustion, and `ℤ^d` declarations as short transports or named capstones. Preserve existing
