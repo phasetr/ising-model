@@ -4,9 +4,9 @@ import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationVitaliPorter
 # Real-axis Vitali application: infinite-volume correlation analyticity from a volume-uniform bound
 (GJ §18.6/§18.7)
 
-Fourth step of the infinite-volume two-point correlation-analyticity programme (Issue #4230, item D
-of #4214).  This is **Ising-side content and is proven**: it builds the real-axis inputs to the
-isolated Vitali–Porter axiom (via its consumer
+Fourth step of the infinite-volume two-point correlation-analyticity programme (Issue #4230,
+item D of #4214). This is **Ising-side content and is proven**: it builds the real-axis inputs to
+the proved Vitali–Porter theorem (via its consumer
 `correlationComplexAlongExhaustion_analytic_limit_of_volume_uniform`), reducing the infinite-volume
 correlation analyticity to a *single* remaining Ising hypothesis — the **volume-uniform bound** on
 the per-stage complex correlations on the high-temperature open set `U`.
@@ -25,7 +25,8 @@ identified at `p.β` with `correlationInfinite` via #4232.
   `f (p.β) = ↑(correlationInfinite …)`.
 
 The only remaining Ising hypothesis is the volume-uniform bound (cluster expansion), proven in a
-follow-up PR; the function-theory input is the isolated Vitali–Porter axiom.
+follow-up PR; the function-theory input is the Vitali–Porter theorem proved from Mathlib in Issue
+#4280.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §18.6–18.7.
 -/

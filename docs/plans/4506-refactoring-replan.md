@@ -65,12 +65,12 @@ The largest files are also candidates, not automatic split targets:
 | `Lemma_17_5_2/PseudoMassFromParamsHighTempSandwich.lean` | 1,580 | Keep unless two or more independent consumers justify a boundary |
 | `Lemma_17_5_2/DerivativeLimitProviderFiniteHLS.lean` | 1,481 | Keep unless a declaration-DAG audit finds parallel mathematical sections |
 | `Lemma_17_5_2/Lipschitz.lean` | 1,364 | Keep unless a stable API boundary is demonstrated |
-| `ClusterExpansion/MayerCore/MayerMontroll.lean` | 1,285 | First large-file split candidate because its mathematical sections are separable |
+| `ClusterExpansion/MayerCore/MayerMontroll.lean` | 1,285 | Secondary split declined in #4503; do not revive without new measured evidence |
 
 The `Lemma_17_5_2.lean` compatibility umbrella directly imports 115 child modules and has one
-in-repository consumer,
-`Umbrella/RegularityAndLatticeMass.lean`. This makes that consumer a bounded import-narrowing pilot;
-the public compatibility umbrella itself must remain.
+in-repository consumer, `Umbrella/RegularityAndLatticeMass.lean`. This is a static fan-out
+observation, not authorization for an import-narrowing change. #4499 deliberately declined that
+scope, and it may not be revived without new measured evidence.
 
 ## Diagnosis
 
@@ -96,90 +96,88 @@ The existing mathematical architecture is the default abstraction boundary:
 
 ## Execution order
 
-Only one refactoring PR may be active at a time. Each implementation PR must be small enough to
-merge or revert in one or two working days and must name its before/after benchmark commits.
+The B0 measurement is the only default next step. There is no preselected implementation sequence
+after B0. Any later refactor requires a separate issue supported by the B0 result and a focused
+import-graph and type/hypothesis design audit.
 
 ### B0: establish the performance baseline (#4521)
 
-Use isolated worktrees and isolated build directories for fixed commits. Preserve raw command,
-environment, stdout, stderr, exit status, wall/user/system time, maximum RSS, warnings, and the list
-of regenerated `.olean` files.
+Use isolated worktrees and isolated build directories for the fixed comparison:
+
+- before: `6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4`;
+- after: `94ceb4f83906dc23069b7566ce31242240e22855`.
+
+Preserve raw command, environment, stdout, stderr, exit status, wall/user/system time, maximum RSS,
+warnings, and the pre/post rebuilt IsingModel `.olean` inventory.
 
 The minimum matrix is:
 
-- cold full build: three runs per commit;
-- warm no-op root build: five runs per commit;
-- representative hub touch: five runs per commit;
-- representative leaf touch: five runs per commit.
+- primary hub-touch workload: touch
+  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, then build `IsingModel`, with
+  five valid alternating before/after repetitions per revision;
+- cold full build diagnostic: three runs per revision.
 
 Compare medians; retain every valid row. A failed run is evidence, not a row to silently replace.
 B0 must publish the exact commands and a small recomputation procedure. It must not recreate the
 append-only signature and anchor machinery from #4519.
 
-No source refactor may claim a speed improvement until B0 is complete. Static import changes can be
-designed in parallel, but their performance acceptance remains pending.
+The primary verdict is the median wall-time improvement for the five hub-touch runs:
 
-### B1: narrow one internal umbrella import
+`100 * (before median - after median) / before median`.
 
-Replace the single internal import of `Lemma_17_5_2` in
-`Umbrella/RegularityAndLatticeMass.lean` with the smallest child import set required by that module.
-Do not remove or change the public `Lemma_17_5_2.lean` compatibility umbrella.
+PASS means at least 10%. A valid result closes #4521 completed whether PASS or FAIL, with the full
+result posted to #4521 and #4506. No source refactor may claim a speed improvement until B0 is
+complete.
 
-Expand to `Concrete.LatticeGraphBED`, `AmbientLattice.Analyticity`, `IntLattice`, or `FKG` only after
-the pilot passes. Each family is a separate PR and measurement decision.
+## Conditional candidates after B0
 
-Acceptance:
+These are audit categories, not an ordered roadmap or authorization to edit source. A candidate may
+be selected only in a new issue after the conditions below are met.
 
-- at least 10% lower hub-touch median, or at least 20% fewer regenerated `.olean` files;
-- no more than 5% regression in the cold root-build median;
-- no public API change and no changed axiom set;
-- targeted module, a downstream importer, and the root build pass with zero warnings.
+### Candidate B1: import narrowing
 
-Rollback:
+Consider import narrowing only if B0 returns FAIL and the retained measurements show that import
+fan-out or the weighted critical path materially contributes to the primary hub-touch workload.
+Selection requires a separate issue with the measured evidence and a module-level import audit.
 
-- revert the pilot if it misses both incremental thresholds, regresses the cold build by more than
-  5%, increases maximum RSS by more than 10%, or expands the import closure;
-- do not roll an unsuccessful pilot into the next import family.
+The umbrella-to-child narrowing declined in #4499, including the observed `Lemma_17_5_2` umbrella,
+must not be revived merely from static import counts. A new issue must preserve public compatibility
+umbrellas and define its own measured acceptance and rollback thresholds from B0 evidence.
 
-### B2: consolidate serial micro-modules
+### Candidate B2: serial micro-module consolidation
 
-Measure the longest chain with timings and begin with one cohesive portion of
-`AmbientComplexAnalyticity`. Coalesce only modules that have one consumer, form a serial import
-chain, and belong to the same mathematical layer. Preserve boundaries such as Ascoli/Montel versus
-Vitali/uniqueness and retain compatibility re-exports for public paths.
+If B0 returns FAIL and timing evidence identifies a weighted serial critical path, a separate issue
+may audit one cohesive portion of that path. Coalesce only modules that have one consumer, form a
+measured serial chain, and belong to the same mathematical layer. Preserve mathematical boundaries
+and compatibility re-exports.
 
-Acceptance:
+Static chain length alone is not sufficient evidence. The new issue must state before/after commits,
+the affected B0 workload, compatibility gates, and an explicit rollback threshold.
 
-- at least 15% reduction in the measured weighted critical path;
-- at least 10% lower cold-build median;
-- no regression in the B0 incremental scenarios;
-- public imports, declarations, and axiom output remain compatible.
+### Candidate A1: proof and API abstraction
 
-Rollback the consolidation when any of those performance or compatibility gates fails.
-
-### A1: simplify proofs through existing abstractions
-
-Audit a proposed family by statement, hypotheses, proof dependencies, and consumers before editing.
-Extract a common lemma only when at least two real consumers share the proof core. Introduce a new
-record or typeclass only when at least three consumers repeat the same hypothesis bundle and proof
-skeleton.
+An abstraction candidate requires a separate issue supported by real consumers. Audit the family by
+statement, hypotheses, proof dependencies, and consumers before editing. Extract a common lemma only
+when at least two consumers share the proof core. Introduce a new record or typeclass only when at
+least three consumers repeat the same hypothesis bundle and proof skeleton.
 
 Keep the core theorem at the weakest useful `SimpleGraph` or `Ambient` assumptions. Keep `Λ`,
 along-exhaustion, and `ℤ^d` declarations as short transports or named capstones. Preserve existing
-public names as thin wrappers when downstream users rely on them.
+public names when downstream users rely on them.
 
 Reject an abstraction when the first consumer becomes longer, requires more explicit arguments,
 widens its import closure, or merely hides genuinely different hypotheses behind a common name.
 
-### F1: split a large file only after import work
+### Candidate F1: large-file splitting
 
-The first candidate is `MayerMontroll.lean`. A design audit must identify declaration boundaries
-for proper colorings, inclusion--exclusion, fibers, and analytic summability, and must show that the
-resulting child modules can be consumed independently.
+Large files remain audit triggers, not selected work. #4503 deliberately declined its secondary
+split candidates, including `MayerMontroll.lean`; none may be revived without new measured evidence
+and a separate issue. A candidate issue must identify declaration boundaries and independent
+consumers, and show why splitting improves the measured workload rather than deepening a serial
+chain.
 
-The four largest `Lemma_17_5_2` files remain unsplit by default. Their size triggers an audit, not a
-mandatory edit. Do not cut source ranges mechanically; move complete declarations at section or doc
-comment boundaries.
+Do not cut source ranges mechanically. Any authorized split must move complete declarations at
+section or doc comment boundaries.
 
 ## Verification for every implementation PR
 
