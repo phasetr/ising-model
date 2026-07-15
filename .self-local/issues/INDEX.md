@@ -8,6 +8,13 @@
 
 GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/ising-model/issues/4519#issuecomment-4979750222 / #4506 https://github.com/phasetr/ising-model/issues/4506#issuecomment-4979751432
 
+**Consolidated #4519/#4506 ↔ PR #4520 handoff (2026-07-15)**: Rev18–22 are immutable
+static-only retirements. Their terminal reasons are recorded in the canonical #4519 issue and
+tracker backlinks above; no Lake/Lean/build, measurement, metrics, or >=10% verdict exists.
+PR [#4520](https://github.com/phasetr/ising-model/pull/4520) (`b9c2da93e54d1839baa602a78d676c65a6d41e1e`)
+archives Rev18–22 and these mirrors only, excludes Rev23, and remains Draft pending a designated
+second maintainer/reviewer. `docs/index.md` and Lean sources are unchanged.
+
 **Superseded 2026-07-15 #4519 rev18 protocol remediation / static-only**: rev17 is **DESIGN_REJECTED** and retired; no change, resume, retry, repair, correction, or reuse. Rev18 starts only as a new revision and is **STATIC-ONLY**. No build, calibration, measurement, freeze, result publication, or metric calculation is authorized. Measurement remains **pending**; no admissible measurements, medians, percentage deltas, or >=10% metrics verdict. #4519/#4506 remain OPEN.
 
 GitHub superseded rev18 checkpoints: #4519 https://github.com/phasetr/ising-model/issues/4519#issuecomment-4976266141 / #4506 https://github.com/phasetr/ising-model/issues/4506#issuecomment-4976266997
