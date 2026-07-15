@@ -9,6 +9,9 @@ Lean 4 + mathlib formalization of Ising model theorems, with particular
 emphasis on Glimm–Jaffe, *Quantum Physics: A Functional Integral Point of
 View* (2nd ed., 1987).
 
+The current build-speed and simplification baseline, issue mapping, and staged acceptance gates are
+recorded in the [refactoring execution plan for #4506](plans/4506-refactoring-replan.html).
+
 > **Notice:** automatic publication of the doc-gen4 API reference to
 > `/docs/` on GitHub Pages is **currently paused**. Every main-push
 > run of the `docs` job in the CI workflow was taking ~1 hour and
@@ -1167,46 +1170,21 @@ ambient framework:
 
 ## Axioms
 
-### Scope policy: complex-analysis (function-theory) results are isolated as axioms, not proven
+### Current policy: no declared project axioms
 
-This project is a formalization of the **lattice Ising model** (rigorous statistical mechanics, GJ
-§17–18). Self-contained *complex-analysis* results — theorems of pure function theory that are not
-about the Ising model and that Mathlib does not (yet) provide — are **out of scope**: they are
-**isolated as clearly-labelled `axiom`s in a dedicated module and are deliberately not proven
-here**. Proving them would amount to building a bespoke complex-analysis library inside a
-lattice-model project, which is not this project's responsibility. The Ising-side content that
-*feeds* such an axiom (e.g. volume-uniform cluster-expansion bounds, real-axis convergence) **is**
-in scope and is proven.
+The project has no declared axioms. Representative capstones reduce only to Mathlib's standard
+`propext`, `Classical.choice`, and `Quot.sound` foundations.
 
-**Currently planned function-theory axiom** (for the infinite-volume two-point correlation
-analyticity, GJ §18.6/§18.7, Issue #4230 / master #4214 item D):
+The Vitali--Porter convergence theorem
+`IsingModel.FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn` was introduced temporarily as a
+function-theory axiom in PR #4234, but it has been proved from Mathlib since Issue #4280. The proof
+in `ComplexAnalyticity/VitaliPorter/Theorem.lean` combines the in-project complex Montel theorem with
+the identity-theorem uniqueness argument. The historical
+`ComplexAnalyticity/FunctionTheoryAxioms.lean` path is now a compatibility re-export of that proved
+theorem; it contains no axiom declaration.
 
-- **Vitali–Porter convergence theorem** (classical function theory; absent from Mathlib). *Informal
-  statement to be axiomatized:* let `U ⊆ ℂ` be open and preconnected, and `F : ℕ → ℂ → ℂ` a sequence
-  with each `F n` holomorphic on `U` (`DifferentiableOn ℂ (F n) U`) and the family **locally
-  uniformly bounded** on `U`; if `F n` converges pointwise on a subset `S ⊆ U` that has an
-  accumulation point in `U`, then `F n` converges **locally uniformly** on `U` to a function `f`
-  that is holomorphic on `U` (and agrees with the pointwise limit on `S`).
-  This is exactly the bridge that turns the (Ising-side, to-be-proven) **volume-uniform bound** on
-  the per-stage complex correlations on a high-temperature disc, together with the **already-proven
-  real-axis pointwise convergence** to `correlationInfinite`
-  (`correlationComplexAlongExhaustion_tendsto_at_real`), into the locally-uniform-convergence
-  hypothesis `hconv` consumed by `correlationComplexAlongExhaustion_vitali_identified_at_real_of_ne_zero`
-  (PR #4232). It will live in a dedicated `…/FunctionTheoryAxioms.lean`-style module, labelled and
-  documented as an intentionally-unproven function-theory axiom, with the rationale above.
-
-  *Status: INTRODUCED* (PR #4234) as `IsingModel.FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn`
-  in `IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean` — the project's single non-Ising axiom.
-  Its consumer `Ambient.correlationComplexAlongExhaustion_analytic_limit_of_volume_uniform`
-  (`AmbientComplexAnalyticity/Vitali/CorrelationVitaliPorter.lean`) applies it to the per-stage
-  complex correlations (holomorphic from partition non-vanishing, #4232) to produce the locally
-  uniform limit; `#print axioms` on that consumer is now
-  `[propext, Classical.choice, Quot.sound]` (the Vitali–Porter theorem is proved, #4280).
-
-The project is now **axiom-free except for the isolated, documented function-theory axiom(s) listed
-here** (modulo Mathlib). Every such axiom must be (i) pure function theory, unrelated
-to the Ising model; (ii) absent from Mathlib; (iii) confined to its dedicated module; (iv) listed in
-this section with its informal statement and the reason it is out of scope.
+Any future proposal for a declared axiom requires an explicit policy decision and documentation. It
+must not be inferred from the historical Vitali--Porter compatibility module.
 
 ### Discharged axioms (Ising-side; all proven)
 
