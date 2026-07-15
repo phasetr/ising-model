@@ -1,3 +1,5 @@
+import IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PartitionAndPerStage
+import IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PolymerRegularitySite
 import IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.TwoPointUniform
 
 /-!

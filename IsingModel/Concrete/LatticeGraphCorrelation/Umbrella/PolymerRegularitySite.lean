@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PartitionAndPerStage
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticity
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticityAlongExTanh
 import IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyAnalyticityLambdaTanh
