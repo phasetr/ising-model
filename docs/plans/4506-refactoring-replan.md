@@ -111,37 +111,55 @@ Preserve raw command, environment, stdout, stderr, exit status, wall/user/system
 warnings, source hashes, dirty/clean checks, and the pre/post rebuilt IsingModel `.olean`
 inventories.
 
-Lake 5 uses content-hash traces, so an mtime-only touch, including a touch followed by `--rehash`,
-does not exercise this workload when it produces only `Replayed` jobs and rebuilds zero IsingModel
-`.olean` files. Preserve that pre-amendment attempt, exclude it from every repetition and statistic,
-and label it invalid with reason
-`Lake 5 content-hash trace: mtime-only mutation rebuilt 0 olean`.
+Lake 5 uses content-hash traces, and downstream replay depends on the compiled module output hash.
+Preserve and exclude both earlier probe families from every repetition and statistic:
+
+- the mtime/`--rehash` attempt, with invalid reason
+  `Lake 5 content-hash trace: mtime-only mutation rebuilt 0 olean`;
+- the comment-ID toggle rows, including provisional runs 8--17, with invalid reason
+  `semantic output unchanged: hub rebuilt 1, hub olean hash unchanged, downstream replayed`.
+
+Do not delete these raw rows, renumber them into the valid series, or count them in a median.
 
 The minimum matrix is:
 
-- primary semantic-marker workload: in
-  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, insert the dedicated line
-  `-- benchmark-4521-state: 0` at one fixed documented location, warm `IsingModel` outside timing,
-  then toggle only that line to `-- benchmark-4521-state: 1` for the timed `IsingModel` build;
-  perform five valid alternating B/A repetitions per revision;
+- primary private-declaration workload: in
+  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, insert at one fixed documented
+  location the v0 declaration
+  `private theorem benchmark4521Probe : True := True.intro`, warm `IsingModel` outside timing, then
+  replace only that declaration with the same-name v1 declaration
+  `private theorem benchmark4521Probe : True ∧ True := And.intro True.intro True.intro` for the
+  timed `IsingModel` build; perform five valid alternating B/A repetitions per revision;
 - cold full build diagnostic: three runs per revision.
 
-Before result-bearing repetitions, run one untimed state-0 to state-1 preflight on B and one on A.
-Each preflight must exit successfully with zero warnings and rebuild more than zero IsingModel
-`.olean` files; otherwise stop and amend #4521 before collecting rows.
+Untimed validation of all four B/A × v0/v1 combinations passed with zero warnings, a changed hub
+`.olean` hash, exact restoration, clean worktrees, no public API effect, and this identical six-module
+rebuilt closure:
+
+1. `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`;
+2. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PartitionAndPerStage`;
+3. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PolymerRegularitySite`;
+4. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.TwoPointUniform`;
+5. `IsingModel.Concrete.LatticeGraphCorrelation`;
+6. `IsingModel`.
+
+Every valid row must reproduce that exact closure and rebuild at least six IsingModel `.olean` files.
+A missing member, an unchanged v0/v1 hub `.olean` hash, or an unexplained closure change invalidates
+the row and requires investigation before continuing.
 
 For every preflight and timed repetition, start from exact tracked bytes and a clean worktree; record
-the tracked, state-0, and state-1 source hashes and pre/post `.olean` inventories; verify that only the
-one-line state toggle makes the worktree dirty during the timed build; then restore the exact tracked
-bytes, verify the restored hash, and verify a clean worktree before continuing. Do not commit either
-marker state.
+the tracked, v0, and v1 source hashes, the v0 and v1 hub `.olean` hashes, and pre/post `.olean`
+inventories; verify that only the same-name private theorem type toggle makes the worktree dirty
+during the timed build; then restore the exact tracked bytes, verify the restored hash, and verify a
+clean worktree before continuing. Both declarations are private and theorem-proved, do not alter the
+public API, and must not be committed.
 
 Compare medians; retain every valid row and document every invalidated sample without counting it.
 A failed run is evidence, not a row to silently replace. B0 must publish the exact commands and a
 small recomputation procedure. It must not recreate the append-only signature and anchor machinery
 from #4519.
 
-The primary verdict is the median wall-time improvement for the five semantic-marker runs:
+The primary verdict is the median wall-time improvement for the five private-declaration runs:
 
 `100 * (B median - A median) / B median`.
 
