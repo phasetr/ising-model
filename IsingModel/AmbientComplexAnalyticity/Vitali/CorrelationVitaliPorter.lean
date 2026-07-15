@@ -5,9 +5,10 @@ import IsingModel.ComplexAnalyticity.FunctionTheoryAxioms
 # Applying Vitali–Porter to the complex along-exhaustion correlation (GJ §18.6/§18.7)
 
 Third step of the infinite-volume two-point correlation-analyticity programme (Issue #4230, item D
-of #4214).  Consumes the isolated **Vitali–Porter** function-theory axiom
-(`IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean`) to turn the **Ising-side** inputs into
-the locally-uniform convergence of the per-stage complex correlations.
+of #4214). It applies the proved **Vitali–Porter** function-theory theorem, re-exported by
+`IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean`, to turn the **Ising-side** inputs into
+the locally-uniform convergence of the per-stage complex correlations. The theorem was proved
+from Mathlib in Issue #4280.
 
 The per-stage complex correlations are holomorphic on a high-temperature open set `U` once the
 complex partition function is nonvanishing there
@@ -15,8 +16,8 @@ complex partition function is nonvanishing there
 **volume-uniform bound** on those correlations on `U` (the Ising-side cluster-expansion input, to be
 proven separately) and their **pointwise convergence** on a
 subset `S ⊆ U` with an accumulation point in `U` (supplied on the real axis by
-`correlationComplexAlongExhaustion_tendsto_at_real`), the Vitali–Porter axiom yields a holomorphic
-limit `f` on `U` with locally uniform convergence — exactly the `hconv` consumed by
+`correlationComplexAlongExhaustion_tendsto_at_real`), the Vitali–Porter theorem yields a
+holomorphic limit `f` on `U` with locally uniform convergence — exactly the `hconv` consumed by
 `correlationComplexAlongExhaustion_vitali_identified_at_real_of_ne_zero`.
 
 ## Main result
@@ -44,7 +45,7 @@ variable {V : Type*} [DecidableEq V]
 * pointwise convergence of the per-stage correlations on a subset `S ⊆ U` with an accumulation point
   `z₀ ∈ U`,
 
-the isolated **Vitali–Porter** function-theory axiom yields a holomorphic limit `f` on `U` with
+the proved **Vitali–Porter** function-theory theorem yields a holomorphic limit `f` on `U` with
 locally uniform convergence and `f = g` on `S`.  The locally-uniform convergence is exactly the
 `hconv` consumed by `correlationComplexAlongExhaustion_vitali_identified_at_real_of_ne_zero`. -/
 theorem correlationComplexAlongExhaustion_analytic_limit_of_volume_uniform

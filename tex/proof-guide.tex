@@ -33554,35 +33554,36 @@ scaling hypothesis (GJ p.~77, \S5.2).  Axiom-free ($\texttt{\#print axioms} = [\
 \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
 \S17.8 pp.~316--318, \S5.1; Friedli--Velenik, \S3.7.3.
 
-\subsection{Isolated Vitali--Porter function-theory axiom (Issue \#4230 PR 3; scope policy)}
+\subsection{Vitali--Porter function-theory theorem (Issue \#4230 PR 3; proved in Issue \#4280)}
 
 The locally-uniform convergence $\texttt{hconv}$ needed to close the infinite-volume correlation
 analyticity is supplied by a theorem of \emph{pure complex analysis} --- the Vitali--Porter
-convergence theorem --- which Mathlib does not provide.  Per the project scope policy, such a
-function-theory result is \emph{not} the responsibility of a lattice-Ising-model library: it is
-\textbf{isolated as a deliberately-unproven \texttt{axiom}} in
-\texttt{IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean}, namely
+convergence theorem. It was temporarily introduced as an isolated function-theory axiom in
+PR~\#4234 and was subsequently proved from Mathlib in Issue~\#4280. The proof in
+\texttt{IsingModel/ComplexAnalyticity/VitaliPorter/Theorem.lean} combines the in-project complex
+Montel theorem with identity-theorem uniqueness. The historical path
+\texttt{IsingModel/ComplexAnalyticity/FunctionTheoryAxioms.lean} is now a compatibility re-export of
+the proved theorem
 \[
   \texttt{vitaliPorter\_tendstoLocallyUniformlyOn} :
 \]
 for $U \subseteq \mathbb{C}$ open and preconnected and $F : \mathbb{N} \to \mathbb{C} \to \mathbb{C}$
 with each $F_n$ holomorphic on $U$, the family locally uniformly bounded on $U$, and $F_n$ converging
 pointwise on a subset $S \subseteq U$ with an accumulation point $z_0 \in U$, there is a holomorphic
-$f$ on $U$ with $F_n \to f$ locally uniformly on $U$ and $f = g$ on $S$.  This is the project's
-\emph{single} non-Ising axiom.  Its consumer
+$f$ on $U$ with $F_n \to f$ locally uniformly on $U$ and $f = g$ on $S$. Its consumer
 $\texttt{correlationComplexAlongExhaustion\_analytic\_limit\_of\_volume\_uniform}$
 (\texttt{AmbientComplexAnalyticity/Vitali/CorrelationVitaliPorter.lean}) applies it to the per-stage
 complex correlations: the per-stage holomorphicity comes from the partition non-vanishing (\#4232),
 the pointwise convergence on the real axis from
 $\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$, and the locally-uniform bound is the
-Ising-side cluster-expansion input proven in later PRs.  The Ising content feeding the axiom is in
-scope and is proven; only the axiom itself is left unproven.  Reference: Glimm--Jaffe, 2nd ed.,
+Ising-side cluster-expansion input proven in later PRs. No declared project axiom is used.
+Reference: Glimm--Jaffe, 2nd ed.,
 \S18.6--18.7; Conway, \emph{Functions of One Complex Variable I}, VII \S2--3.
 
 \subsection{Real-axis application: correlation analyticity from a volume-uniform bound
 (Issue \#4230 PR 4)}
 
-The \emph{Ising-side} step that feeds the axiom is fully proven in
+The \emph{Ising-side} step that applies the proved theorem is fully proven in
 \texttt{AmbientComplexAnalyticity/Vitali/CorrelationRealAxisVitali.lean}.
 $\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ shows that, for a
 ferromagnetic $p$ and an open preconnected $U \ni (p.\beta : \mathbb{C})$ on which the
@@ -33596,8 +33597,8 @@ whence $\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$ gives poi
 $S$ to $\uparrow\texttt{correlationInfinite}$, and $(p.\beta : \mathbb{C})$ is an accumulation point
 of $S$ ($\texttt{accPt\_iff\_nhds}$, $\texttt{Complex.isometry\_ofReal.dist\_eq}$,
 $\texttt{Complex.ofReal\_inj}$).  The Vitali--Porter consumer then yields the locally-uniform
-holomorphic limit, identified at $p.\beta$ via the per-stage-holomorphicity assembly.  $\texttt{\#print
-axioms}$ lists only the isolated function-theory axiom; all Ising content is proven.  The remaining
+holomorphic limit, identified at $p.\beta$ via the per-stage-holomorphicity assembly. $\texttt{\#print
+axioms}$ lists only $\texttt{propext}$, $\texttt{Classical.choice}$, and $\texttt{Quot.sound}$. The remaining
 inputs $\texttt{hZ}$, $\texttt{hbdd}$ are Ising-side and are discharged from a high-temperature
 cluster-expansion bound in a follow-up PR.  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
@@ -34168,8 +34169,8 @@ $\texttt{induced\_latticeGraph\_maxDegree\_le}$ caps every induced stage degree 
 are identically $0$).  \emph{Layer~2} feeds this $\texttt{hbdd}$ together with the volume-uniform
 partition non-vanishing $\texttt{hZ}$ (\#4238) into
 $\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (\#4235), whose
-conclusion --- behind the single isolated, deliberately-unproven function-theory axiom
-$\texttt{FunctionTheory.vitaliPorter\_tendstoLocallyUniformlyOn}$ --- is the headline.  This completes
+conclusion uses the proved function-theory theorem
+$\texttt{FunctionTheory.vitaliPorter\_tendstoLocallyUniformlyOn}$ and is the headline. This completes
 Issue~\#4230 item~D.  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
 
 \subsection{Anchored one-component peel identity for the HT-expansion numerator (K1, general-$A$
@@ -34506,16 +34507,17 @@ Reference: Glimm--Jaffe, 2nd ed., \S17.5 pp.~311--312, \S5.1 pp.~73--74; Friedli
 
 \subsection*{PR \#4278 --- Unconditional sharp HLS Lemma 17.5.2 via scope-excluded axioms (GJ~\S17.5, audit B4 \#4271 / B2 \#4269)}
 
-\par\noindent\textbf{Role:} Completes the GJ~\S17.5 sharp Hardy--Littlewood--Sobolev constant
+\par\noindent\textbf{Historical role:} PR~\#4278 completed the GJ~\S17.5 sharp
+Hardy--Littlewood--Sobolev constant
 (Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312): the two-sided sandwich
 $m^-(x,z) \le m(x,z) \le \tfrac{(2\alpha+1)K}{\rho}\,m^-(x,z)$ with one HLS constant $K>0$, for the
-cubic lattice at high temperature, \emph{unconditional modulo two declared scope-excluded analytic
-axioms}.
+cubic lattice at high temperature, \emph{unconditional modulo two then-declared scope-excluded
+analytic axioms}.
 
-\par\noindent\textbf{Scope-excluded axiom (one) plus an honest hypothesis.} Per the project scope
-policy (the same isolation used for the Vitali--Porter axiom
-$\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$), the \emph{single} genuinely out-of-scope
-analytic input of the sharp constant is declared as a documented \texttt{axiom} in
+\par\noindent\textbf{Historical scope-excluded axiom plus an honest hypothesis.} At the time of
+PR~\#4278, the project followed the same temporary isolation used for the former Vitali--Porter
+axiom $\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$, which was later proved in Issue~\#4280.
+The single analytic input of the sharp constant was then declared as a documented \texttt{axiom} in
 $\texttt{Lemma\_17\_5\_2/SharpHLSScopeExcludedAxioms.lean}$:
 $\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$ (the locally-uniform convergence of
 the finite-stage $\beta$-derivatives $\partial_\beta c_n$ on $\mathrm{Ioo}\,0\,(1/(J\cdot 2d))$ --- the
@@ -34537,9 +34539,10 @@ force $\texttt{latticeMass}=\top$.
 \par\noindent\textbf{Capstone.} $\texttt{lemma\_17\_5\_2\_sandwich\_sharp\_cubicExhaustion}$
 ($\texttt{Lemma\_17\_5\_2/SharpHLSCapstone.lean}$) instantiates the conditional provider-shaped
 sandwich $\texttt{lemma\_17\_5\_2\_sandwich\_of\_concrete\_infinite\_hls\_compact\_ratio\_bounds\_provider}$
-with the derivative-limit axiom and the profile-derived validating decay, removing every remaining
+with the then-declared derivative-limit axiom and the profile-derived validating decay, removing
+every remaining
 hypothesis except the elementary high-temperature interval data and the per-pair profile bound.
-$\texttt{\#print axioms}$ lists exactly
+$\texttt{\#print axioms}$ at that commit listed exactly
 $[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound},\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}]$
 (one declared axiom, not even $\texttt{vitaliPorter}$).  This discharges audit B4 \#4271 (sharp constant) and
 B2 \#4269 (the CE route-input it required).  The Ising-side content feeding the constant --- the
