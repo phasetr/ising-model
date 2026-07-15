@@ -18,14 +18,16 @@ Status as of 2026-07-16:
 - #4521 is closed completed: its canonical measurement passed independent verification, but the
   primary performance result was **FAIL** (B 16.83 s, A 16.72 s, 0.6535948% improvement against the
   fixed 10% target).
-- #4524 is open and is the sole active, authorized B1 implementation issue. Its scope is the fixed
-  three-import internal-umbrella change and its published API, correctness, performance, resource,
-  and rollback gates.
+- #4524 is closed completed through merged PR #4525. Its sole authorized three-import B1 change
+  passed every API, correctness, performance, resource, review, CI, and issue-manager gate and was
+  squash-merged to `main` as `bc793decec94be53ea19fb927186f54068ebca7b`.
 - #4519 is closed not planned. Revisions 1--22 produced no admissible timing rows, medians,
   percentage deltas, or performance verdict. In particular, Rev22 ended with two passing static
   tests and one fixture error; it is not a performance baseline.
 - #4505 is reopened to correct the stale `docs/index.md` statement that Vitali--Porter remains an
   axiom. The theorem has been proved since #4280.
+- #4523 tracks the pre-existing U+0085 byte that independently blocks proof-guide pdfLaTeX; it was
+  not introduced by #4505, PR #4522, #4524, or PR #4525.
 - Draft PR #4520 is an archive boundary for the #4519 evidence. It does not authorize a new
   benchmark protocol or a source refactor.
 
@@ -100,9 +102,10 @@ The existing mathematical architecture is the default abstraction boundary:
 
 ## Execution order
 
-The canonical B0 measurement is complete. Its fixed primary metric failed, and #4524 is now the sole
-authorized B1 implementation issue. No other source refactor is authorized. Tracker #4506 remains
-open until #4505 and #4524 are resolved and the final measured classification is recorded.
+The canonical B0 measurement and the sole authorized B1 implementation are complete. No additional
+source refactor is active or authorized. The next programme step is to merge the independently
+verified #4505 documentation fix in PR #4522, then perform the #4506 completion audit. Tracker #4506
+remains open until that audit records the final state.
 
 ### B0: completed performance baseline (#4521)
 
@@ -128,10 +131,9 @@ The cold result does not override the predeclared primary metric. #4521 is close
 the measurement and independent verification finished, not because performance passed. The
 canonical evidence is under `.self-local/benchmarks/4521/b0-20260715-rerun1/`.
 
-### B1: flatten the measured internal umbrella tail (#4524)
+### B1: completed internal umbrella-tail flattening (#4524, PR #4525)
 
-#4524 is active and is the only authorized B1 candidate. Its implementation scope is exactly three
-import edits:
+#4524 authorized exactly three import edits:
 
 1. remove `Umbrella.PartitionAndPerStage` from `Umbrella/PolymerRegularitySite.lean`;
 2. remove `Umbrella.PolymerRegularitySite` from `Umbrella/TwoPointUniform.lean`;
@@ -143,28 +145,34 @@ theorem, proof, visibility, generated-shard name, documentation, or unrelated im
 scope. The required primary rebuilt closure is exactly four modules: `PerStageComplex`,
 `Umbrella.PartitionAndPerStage`, public `LatticeGraphCorrelation`, and root `IsingModel`.
 
-All #4524 correctness and performance gates are mandatory, including the public-API sentinel and
-unchanged declaration inventory. The fixed numeric gates are:
+The candidate at `7f930464d57937f568acb3b31df9365bdeae82e1` passed the public-API sentinel,
+unchanged declaration inventory, targeted/root/test/axiom checks, independent correctness and code
+review, corrected Tier-2/design audit, GitHub CI, and issue-manager final resolution audit. The
+accepted performance result is:
 
-- primary median at most **15.048 s**;
-- exact four-module primary closure;
-- cold median at most **1370.1975 s**;
-- primary median maximum RSS at most **3,736,674,304 bytes** (`3736674304 B`).
+| Gate | Result | Verdict |
+|---|---:|---|
+| Fresh primary baseline → candidate | 16.89 s → 11.74 s (30.4914150%) | PASS |
+| Fixed #4521 A → candidate | 16.72 s → 11.74 s (29.7846890%) | PASS, limit 15.048 s |
+| Primary rebuilt closure | 6 modules → exactly 4 | PASS |
+| Primary median maximum RSS | 3,396,485,120 bytes | PASS, limit 3,736,674,304 bytes |
+| Candidate cold median | 1052.46 s | PASS, limit 1370.1975 s |
+| Candidate cold RSS | 5,166,612,480 bytes | Diagnostic only |
 
-Any correctness, API, audit, test, review, CI, performance, closure, cold, or RSS failure requires
-rollback of the three import edits and closure of #4524 with the measured classification. Do not
-broaden #4524 or automatically select another candidate.
+PR #4525 was squash-merged after exact-head authority verification as
+`bc793decec94be53ea19fb927186f54068ebca7b`; #4524 then closed automatically. The result authorizes
+no scope broadening or automatic next candidate.
 
 ## Unselected conditional categories
 
 The remaining categories are not an ordered roadmap and are not authorized. The umbrella-to-child
-narrowing declined in #4499, including `Lemma_17_5_2`, remains declined; #4524 authorizes only the
-three generated-shard import edits above. Any further candidate requires new measured evidence,
-design review, and a separate authorizing issue after #4524 is resolved.
+narrowing declined in #4499, including `Lemma_17_5_2`, remains declined; completed #4524 authorized
+only the three generated-shard import edits above. Any further candidate requires new measured
+evidence, design review, and a separate authorizing issue after the #4506 completion audit.
 
 ### Candidate B2: serial micro-module consolidation
 
-B0's FAIL does not authorize this category. Only after #4524 is resolved, if new timing evidence
+The completed B0/B1 sequence does not authorize this category. If future new timing evidence
 identifies a weighted serial critical path, a separate issue may audit one cohesive portion of that
 path. Coalesce only modules that have one consumer, form a measured serial chain, and belong to the
 same mathematical layer. Preserve mathematical boundaries and compatibility re-exports.
@@ -174,13 +182,13 @@ the affected B0 workload, compatibility gates, and an explicit rollback threshol
 
 ### Candidate A1: proof and API abstraction
 
-B0's FAIL does not authorize this category. Only after #4524 is resolved, consider an abstraction
-candidate if new measured evidence shows that repeated proof or API structure materially contributes
-to build or maintenance cost. Selection requires Tier-2/design review and a separate authorizing
-issue supported by real consumers. Audit the family by statement, hypotheses, proof dependencies,
-and consumers before editing. Extract a common lemma only when at least two consumers share the
-proof core. Introduce a new record or typeclass only when at least three consumers repeat the same
-hypothesis bundle and proof skeleton.
+The completed B0/B1 sequence does not authorize this category. Consider an abstraction candidate
+only if future new measured evidence shows that repeated proof or API structure materially
+contributes to build or maintenance cost. Selection requires Tier-2/design review and a separate
+authorizing issue supported by real consumers. Audit the family by statement, hypotheses, proof
+dependencies, and consumers before editing. Extract a common lemma only when at least two consumers
+share the proof core. Introduce a new record or typeclass only when at least three consumers repeat
+the same hypothesis bundle and proof skeleton.
 
 Keep the core theorem at the weakest useful `SimpleGraph` or `Ambient` assumptions. Keep `Λ`,
 along-exhaustion, and `ℤ^d` declarations as short transports or named capstones. Preserve existing
