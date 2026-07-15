@@ -9099,7 +9099,7 @@ open two-point numerator.  With \(T=\texttt{layerTransferMatrix}\,u\,k\) and
 \]
 Equivalently, this is the boundary-vector product
 \[
-  u^T T^{left}D_fT^{sep}D_fT^{right}{\bf 1}.
+  u^T T^{left}D_fT^{sep}D_fT^{right}\boldsymbol{1}.
 \]
 The expanded finite endpoint form is
 \[
@@ -18293,7 +18293,7 @@ Applying this per-vertex with $a = \beta h$ and powers matching the $X$-degree,
 the spin sum evaluates to $2^{|\iota|} \cosh(\beta h)^{|\iota|} \tanh(\beta h)^{\#\text{odd-deg}}$.
 Combined with the high-temperature expansion (product form) over edge subsets,
 the closed form follows as a purely finite combinatorial identity.
-No cluster-expansion, Kotečký--Preiss, or new analytic input is required.
+No cluster-expansion, Kotecký--Preiss, or new analytic input is required.
 
 This is the first brick of the on-book programme toward
 GJ Theorem~17.6.1 ($\partial/\partial h$ high-temperature differentiability
@@ -18767,7 +18767,7 @@ The role of brick~5's complex machinery is \emph{type design} and \emph{estimate
 the complex non-vanishing body is deferred to brick~6.
 The main definitions and lemmas are:
 
-\begin{definition}[\texttt{fieldPolymerWeightℂ}]
+\begin{definition}[\texttt{fieldPolymerWeight\ensuremath{\mathbb{C}}}]
 The complex field polymer weight, for $b \in \mathbb{C}$:
 \[
 w^{\mathbb{C}}_{a,b}(P) := (\tanh(a) : \mathbb{C})^{|P|} \cdot (\text{Complex.tanh}(b))^{\#\text{odd}(P)},
@@ -18776,15 +18776,15 @@ where $\tanh(a)$ is real, and $\text{Complex.tanh}(b)$ is the complex-hyperbolic
 Entire in $b$.
 \end{definition}
 
-\begin{definition}[\texttt{fieldPolymerZℂ}]
+\begin{definition}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}]
 The complex field polymer partition function:
 \[
-\texttt{fieldPolymerZℂ}(G, a, b) := \sum_{\Gamma \in \text{vdConnectedPolymerFamilies}(G)}
+\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}(G, a, b) := \sum_{\Gamma \in \text{vdConnectedPolymerFamilies}(G)}
 \prod_{P \in \Gamma} w^{\mathbb{C}}_{a,b}(P).
 \]
 \end{definition}
 
-\begin{theorem}[\texttt{fieldPolymerWeightℂ\_ofReal}; real-axis agreement]
+\begin{theorem}[\texttt{fieldPolymerWeight\ensuremath{\mathbb{C}}\_ofReal}; real-axis agreement]
 For real $b \in \mathbb{R}$,
 \[
 w^{\mathbb{C}}_{a,b}(P) = (\texttt{fieldPolymerWeight}(a, b, P) : \mathbb{C}).
@@ -18793,13 +18793,13 @@ Both sides unfold to $\tanh(a)^{|P|} \cdot \tanh(b)^{\#\text{odd}(P)}$.
 The cast is pushed through the product and powers via $(\tanh(x) : \mathbb{C}) = \text{Complex.tanh}(x)$.
 \end{theorem}
 
-\begin{theorem}[\texttt{fieldPolymerZℂ\_ofReal}; real-axis agreement for $Z_{\mathbb{C}}$]
+\begin{theorem}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ofReal}; real-axis agreement for $Z_{\mathbb{C}}$]
 For real $b \in \mathbb{R}$,
 \[
-\texttt{fieldPolymerZℂ}(G, a, b) = (\texttt{fieldPolymerZ}(G, a, b) : \mathbb{C}).
+\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}(G, a, b) = (\texttt{fieldPolymerZ}(G, a, b) : \mathbb{C}).
 \]
 The cast distributes over the family sum and the polymer product, and each factor agrees by
-\texttt{fieldPolymerWeightℂ\_ofReal}. This supplies the real-$b$-axis values that brick~6
+\texttt{fieldPolymerWeight\ensuremath{\mathbb{C}}\_ofReal}. This supplies the real-$b$-axis values that brick~6
 feeds to the analytic-continuation identity theorem.
 \end{theorem}
 
@@ -18812,7 +18812,7 @@ $\#\text{oddBoundary}(P) \subseteq \bigcup_{e \in P} e$,
 and each edge contributes $\leq 2$ vertices. This is a universal lemma (no even-degree hypothesis).
 \end{theorem}
 
-\begin{theorem}[\texttt{norm\_fieldPolymerWeightℂ\_le}; $M^2$-inflated pointwise majorant]
+\begin{theorem}[\texttt{norm\_fieldPolymerWeight\ensuremath{\mathbb{C}}\_le}; $M^2$-inflated pointwise majorant]
 Let $M := \max(1, \|\text{Complex.tanh}(b)\|)$.
 Then
 \[
@@ -18824,11 +18824,11 @@ via the parity bound.
 This majorant will feed the complex Koteck\'y--Preiss window of brick~6.
 \end{theorem}
 
-\begin{theorem}[\texttt{norm\_fieldPolymerZℂ\_le}; $M^2$-inflated aggregate majorant]
+\begin{theorem}[\texttt{norm\_fieldPolymerZ\ensuremath{\mathbb{C}}\_le}; $M^2$-inflated aggregate majorant]
 Let $M := \max(1, \|\text{Complex.tanh}(b)\|)$.
 Then
 \[
-\|\texttt{fieldPolymerZℂ}(G, a, b)\| \leq
+\|\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}(G, a, b)\| \leq
 \sum_{\Gamma \in \text{vdConnectedPolymerFamilies}(G)}
 \prod_{P \in \Gamma} (M^2 \cdot |\tanh(a)|)^{|P|}.
 \]
@@ -18861,40 +18861,40 @@ $\partial/\partial h$ capstone is brick~8.
 
 \subsubsection*{Complex field Mayer term and Penrose majorant}
 
-\begin{definition}[\texttt{fieldClusterSeqActivityℂ}]
-For a cluster sequence $\omega : \Fin n \to \Finset(\Sym^2 \iota)$, the complex field activity is
+\begin{definition}[\texttt{fieldClusterSeqActivity\ensuremath{\mathbb{C}}}]
+For a cluster sequence $\omega : \mathrm{Fin} n \to \mathrm{Finset}(\mathrm{Sym}^2 \iota)$, the complex field activity is
 \[
-\mathsf{w}^{\mathbb{C}}_{a,b}(\omega) := \prod_{i \in \Fin n} w^{\mathbb{C}}_{a,b}(\omega_i),
+\mathsf{w}^{\mathbb{C}}_{a,b}(\omega) := \prod_{i \in \mathrm{Fin} n} w^{\mathbb{C}}_{a,b}(\omega_i),
 \]
 where $w^{\mathbb{C}}_{a,b}(P)$ is the complex field weight from brick~5: $(\tanh a : \mathbb{C})^{|P|} \cdot (\text{Complex.tanh } b)^{\#\text{odd}(P)}$.
 \end{definition}
 
-\begin{definition}[\texttt{fieldMayerExpansionTermℂ}]
+\begin{definition}[\texttt{fieldMayerExpansionTerm\ensuremath{\mathbb{C}}}]
 The complex field Mayer expansion $n$-th term is
 \[
-\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G) :=
+\mathsf{M}^{\mathbb{C},(n)}_{a,b}(G) :=
 \sum_{\omega \in \text{allConnectedPolymers}(G)^n}
 \text{ursellCoefficient}(\omega) \cdot \mathsf{w}^{\mathbb{C}}_{a,b}(\omega),
 \]
 where the Ursell coefficient is reused verbatim (cast to $\mathbb{C}$).
 \end{definition}
 
-\begin{theorem}[\texttt{fieldClusterSeqActivityℂ\_ofReal} and \texttt{fieldMayerExpansionTermℂ\_ofReal}]
+\begin{theorem}[\texttt{fieldClusterSeqActivity\ensuremath{\mathbb{C}}\_ofReal} and \texttt{fieldMayerExpansionTerm\ensuremath{\mathbb{C}}\_ofReal}]
 For real $b \in \mathbb{R}$,
 \begin{align}
 \mathsf{w}^{\mathbb{C}}_{a,b}(\omega) &= (\mathsf{w}_{a,b}(\omega) : \mathbb{C}),\\
-\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G) &= (\mathsf{M}_{a,b}^{(n)}(G) : \mathbb{C}).
+\mathsf{M}^{\mathbb{C},(n)}_{a,b}(G) &= (\mathsf{M}_{a,b}^{(n)}(G) : \mathbb{C}).
 \end{align}
 The cast distributes over the product and sum, and each factor agrees by the weight real-axis
 agreement from brick~5. This supplies the real-axis seed that analytic continuation feeds to the
 identity theorem.
 \end{theorem}
 
-\begin{theorem}[\texttt{norm\_fieldMayerExpansionTermℂ\_le\_tree\_activity\_pow}; Penrose majorant]
+\begin{theorem}[\texttt{norm\_fieldMayerExpansionTerm\ensuremath{\mathbb{C}}\_le\_tree\_activity\_pow}; Penrose majorant]
 With $M := \max(1, \|\text{Complex.tanh}(b)\|)$,
 \[
-\|\mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)\| \leq
-\frac{\text{numSpanningTrees}(\top : \text{SimpleGraph}(\Fin n))}{n!}
+\|\mathsf{M}^{\mathbb{C},(n)}_{a,b}(G)\| \leq
+\frac{\text{numSpanningTrees}(\top : \text{SimpleGraph}(\mathrm{Fin} n))}{n!}
 \left(\sum_{P \in \text{allConnectedPolymers}(G)} (M^2 \cdot |\tanh(a)|)^{|P|}\right)^n.
 \]
 This is the $M^2$-inflated Penrose bound, essential for the complex Koteck\'y--Preiss window.
@@ -18933,7 +18933,7 @@ $\mathcal{B} := \{b \in \mathbb{C} : \|b\| < \pi/2\}$.
 
 \subsubsection*{Holomorphy of both sides in $b$}
 
-\begin{theorem}[\texttt{fieldPolymerZℂ\_analyticOnNhd}; LHS holomorphy]
+\begin{theorem}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_analyticOnNhd}; LHS holomorphy]
 On any ball $\mathcal{B}_r = \{b : \|b\| < r\}$ with $r \leq \pi/2$,
 the function $b \mapsto \mathsf{Z}^{\mathbb{C}}(G; a, b)$ is $\mathtt{AnalyticOnNhd}$.
 
@@ -18942,19 +18942,19 @@ $w^{\mathbb{C}}_{a,b}(P)$, each analytic in $b$ on the ball. Analyticity is clos
 finite sums and products. \hfill$\square$
 \end{theorem}
 
-\begin{theorem}[\texttt{fieldMayerExpansionTermℂ\_analyticOnNhd}]
-On any ball $\mathcal{B}_r$ with $r \leq \pi/2$, the complex field Mayer term $b \mapsto \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)$
+\begin{theorem}[\texttt{fieldMayerExpansionTerm\ensuremath{\mathbb{C}}\_analyticOnNhd}]
+On any ball $\mathcal{B}_r$ with $r \leq \pi/2$, the complex field Mayer term $b \mapsto \mathsf{M}^{\mathbb{C},(n)}_{a,b}(G)$
 is $\mathtt{AnalyticOnNhd}$ for each $n$.
 \end{theorem}
 
-\begin{theorem}[\texttt{fieldMayerExpansionTermℂ\_tsum\_analyticOnNhd}; RHS holomorphy]
+\begin{theorem}[\texttt{fieldMayerExpansionTerm\ensuremath{\mathbb{C}}\_tsum\_analyticOnNhd}; RHS holomorphy]
 On $\mathcal{B}_r$ with $0 < r < \pi/2$, under the inflated high-temperature window
 \[
 e \cdot \left(\sum_{P \in \text{allConnectedPolymers}(G)} (M_r^2 \cdot |\tanh(a)|)^{|P|}\right) < 1
 \]
 where $M_r := \max(1, \sup_{\|z\| \leq r} \|\text{Complex.tanh}(z)\|)$, the infinite series
 \[
-\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)
+\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C},(n)}_{a,b}(G)
 \]
 is $\mathtt{AnalyticOnNhd}$ on $\mathcal{B}_r$.
 
@@ -18976,12 +18976,12 @@ for all real $b$ in that neighbourhood.
 by continuity of the field-polynomial in $b$, the condition persists on a neighbourhood of $0$. \hfill$\square$
 \end{theorem}
 
-\begin{theorem}[\texttt{fieldPolymerZℂ\_eq\_exp\_tsum\_fieldMayerExpansionTermℂ}; complex exponential identity via analytic continuation]
+\begin{theorem}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_eq\_exp\_tsum\_fieldMayerExpansionTerm\ensuremath{\mathbb{C}}}; complex exponential identity via analytic continuation]
 On the ball $\mathcal{B}_r = \{b : \|b\| < r\}$ with $0 < r < \pi/2$, under the inflated window
 (from the RHS holomorphy theorem above) and the base-point smallness $|E_{a,0}| < 1$,
 for any $b \in \mathcal{B}_r$,
 \[
-\mathsf{Z}^{\mathbb{C}}(G; a, b) = \exp\left(\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C}}_{a,b}^{(n)}(G)\right).
+\mathsf{Z}^{\mathbb{C}}(G; a, b) = \exp\left(\sum_{n=0}^{\infty} \mathsf{M}^{\mathbb{C},(n)}_{a,b}(G)\right).
 \]
 
 \emph{Proof.} \textbf{Analytic continuation via the identity theorem.}
@@ -18993,7 +18993,7 @@ that agree on a set accumulating at an interior point agree everywhere) extends 
 whole ball. \hfill$\square$
 \end{theorem}
 
-\begin{theorem}[\texttt{fieldPolymerZℂ\_ne\_zero}; complex field partition non-vanishing]
+\begin{theorem}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}; complex field partition non-vanishing]
 Under the hypotheses of the previous theorem, for all $b \in \mathcal{B}_r$,
 \[
 \mathsf{Z}^{\mathbb{C}}(G; a, b) \ne 0.
@@ -29643,6 +29643,7 @@ removes the per-edge caps $m_e \leq N$, $(M-m)_e \leq N$ and the bounded-current
 upgrading the identity to a statement about the actual (unbounded) weight sums.
 
 \begin{theorem}[\texttt{Current.weightSum\_mul\_weightSum\_eq\_tsum\_doubled\_subFinset}]
+\label{thm:GSinfty}
   For source sets $A, B \subseteq \Lambda$, graph $G$, finite induced subgraph $(\uparrow\!\Lambda)$, and $0 \le \beta J$:
   \[
     \mathrm{weightSum}(A) \cdot \mathrm{weightSum}(B)
@@ -29660,7 +29661,7 @@ upgrading the identity to a statement about the actual (unbounded) weight sums.
   \[
     \sum_{M \in \mathcal{B}(N)} F(M) \quad \le \quad L(N) \quad \le \quad \sum_{M \in \mathcal{B}(2N)} F(M).
   \]
-  Both envelopes converge to the $\tsum$ via summability of the uniform bound $\exp(\beta J)^{|E|}$ (each summand is
+  Both envelopes converge to the \texttt{tsum} via summability of the uniform bound $\exp(\beta J)^{|E|}$ (each summand is
   non-negative under $0 \le \beta J$, bounded by $\exp(\beta J)^{|E|}$ from the product decomposition).
   Uniqueness of limits (\texttt{tendsto\_nhds\_unique}) closes the identity.
   Zero field ($h=0$) is baked in via the weight and source definitions.
@@ -29779,7 +29780,7 @@ the sum over splittings where \emph{both} pieces are sourcefree.
   \[
     Z_\emptyset^2 = \sum'_M D(M).
   \]
-  \textit{Proof}: Specialize the Stage A global switching identity (Brick 2, \eqref{eq:GSinfty})
+  \textit{Proof}: Specialize the Stage A global switching identity (Brick 2, Theorem~\ref{thm:GSinfty})
   to $A = B = \emptyset$ and apply $\mathtt{pow\_two}$ to rewrite $Z_\emptyset \cdot Z_\emptyset = Z_\emptyset^2$.
 \end{theorem}
 
@@ -34928,7 +34929,7 @@ These supply the numerator-majorization / denominator-identity of the p.312 deri
 Axiom-free. Roadmap PR-1..PR-5 in issue \#4320.
 Reference: Glimm--Jaffe, 2nd ed., \S17.5 Theorem 17.5.1, pp.~311--312.
 
-\subsection*{PR \#4336 --- GJ Theorem 17.5.1, PR-1b: m⁻-scaled neighbour-shift (dart) HLS convolution}
+\subsection*{PR \#4336 --- GJ Theorem 17.5.1, PR-1b: \texorpdfstring{$m^{-}$}{m-minus}-scaled neighbour-shift (dart) HLS convolution}
 
 \par\noindent\textbf{Role:} The $t=m^-$ scaled, edge/dart form of the sharp HLS convolution (the
 Ising $\beta$-derivative Lebowitz bound is a nearest-neighbour edge cross-sum, not GJ's site sum).
