@@ -1,0 +1,19 @@
+{
+  "files": {
+    "README.md": "72d3396a441627e0a7466cac4b63cc0d8736a9af0f25e701a6ab1c0b552504e4",
+    "keys/anchor.pub.pem": "ab650c782aaff8c4852d3565053bfa39bb2973be6b3e9e2c9d0cdc91b98ba166",
+    "keys/review.pub.pem": "bf019c455f05e75ce74ca02a55a4b88bab561f85a76555d8281a79f7c2985233",
+    "keys/run.pub.pem": "31736c11c2ff361cc130723a5d11fe2ffa2f52f6ce34231923844a85cb8cb83a",
+    "keys/setup.pub.pem": "7f2d9ed0b71b8e5a6c5cf30e647d6e20b5bca6dac8071f11abe3fef8014db610",
+    "protocol.json": "f3413c93b21fe0e4a5d1f6aa4334f381b4a1eae6ac85e8119a8fef665807818c",
+    "tests/test_signed_full_chain.py": "b2d057952fcffe57348610824c24b88eda8c746dcecaad9eac8b5ef65ddc162b"
+  },
+  "manifest_excludes": [
+    "harness.py",
+    "package-manifest.json",
+    "raw/**",
+    "state/**"
+  ],
+  "run_id": "20260715T102437Z",
+  "schema": "ising-model.issue-4519.rev21.static-remediation.package-manifest"
+}

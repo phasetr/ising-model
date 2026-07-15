@@ -1,0 +1,25 @@
+{
+  "after": "94ceb4f83906dc23069b7566ce31242240e22855",
+  "authority": {
+    "anchor": {"key_id": "issue4519-rev21-anchor", "public_key": "keys/anchor.pub.pem", "spki_sha256": "e4f982b51ad0bdd87be820b259fe80337ef636e72b9fa7a8867a6949eb610fd6"},
+    "review": {"key_id": "issue4519-rev21-review", "public_key": "keys/review.pub.pem", "spki_sha256": "deb2ded39dc26fce0e6085b6fc34bf6b5941913bbfe2ea614113cff9e004c170"},
+    "run": {"key_id": "issue4519-rev21-run", "public_key": "keys/run.pub.pem", "spki_sha256": "8d39ba50abe50f77b6bb8ae7b6927aff7ffbeba35ad2837c0e51e82bcbcc60d5"},
+    "setup": {"key_id": "issue4519-rev21-setup", "public_key": "keys/setup.pub.pem", "spki_sha256": "06e3fd8fda29bb60ab59557de61edb0aecdb231134be30e75b455f8e1b792fa9"}
+  },
+  "before": "6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4",
+  "command": ["lake", "--no-ansi", "--no-cache", "build", "IsingModel"],
+  "evidence_contract": {
+    "inventory": {"algorithm": "recursive-lstat-v1", "continuity": "setup.execution -> action.before -> action.after", "required_stages": ["setup", "before-each-action", "after-each-action", "terminal-failure"]},
+    "raw_capture": {"per_action": ["stdout.raw", "stderr.raw", "time-rss.raw", "warnings.raw"], "time_command": ["/usr/bin/time", "-l"], "warning_count": "derived from warnings.raw"},
+    "terminal_failure": {"exact_allowlist": ["state/terminal-failure.json", "state/terminal-failure.sig"], "no_retry": true, "state_machine": "setup -> review -> action* -> terminal | completed"},
+    "external_root_anchor": {"validation": "fixed raw URL and commit bytes, no caller bytes", "must_bind": ["package_manifest_sha256", "authority_spki_sha256"]},
+    "execution_anchor": {"must_bind": ["package_manifest_sha256", "setup_sha256", "review_sha256", "terminal_or_journal_head_sha256"]}
+  },
+  "plan": ["Bf", "Af", "Ar", "Br", "Bw", "Aw"],
+  "revision": 21,
+  "roles": ["setup", "review", "run", "anchor"],
+  "run_id": "20260715T102437Z",
+  "schema": "ising-model.issue-4519.rev21.static-remediation",
+  "static_only": true,
+  "worktrees": {"A": "94ceb4f83906dc23069b7566ce31242240e22855", "B": "6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4"}
+}

@@ -1,0 +1,15 @@
+{
+  "files": {
+    "README.md": "40f08b8f9245c0af7626532c8f8cd20a9ce6e54d89356b6959c81f126cfbe215",
+    "harness.py": "9383b867419241aba76b7faeae612a6c2aa4f138c8133c3d23d36777353319dd",
+    "keys/anchor.pub.pem": "ab650c782aaff8c4852d3565053bfa39bb2973be6b3e9e2c9d0cdc91b98ba166",
+    "keys/review.pub.pem": "bf019c455f05e75ce74ca02a55a4b88bab561f85a76555d8281a79f7c2985233",
+    "keys/run.pub.pem": "31736c11c2ff361cc130723a5d11fe2ffa2f52f6ce34231923844a85cb8cb83a",
+    "keys/setup.pub.pem": "7f2d9ed0b71b8e5a6c5cf30e647d6e20b5bca6dac8071f11abe3fef8014db610",
+    "protocol.json": "7cb4d0d40ea3655497ab7f4218a9835728c15c75e79ed6bd2d97c60d5431186f",
+    "tests/test_signed_full_chain.py": "d467af63e1d9ac9b6bec2d88470cea7bafee024d8fdc3b33c7d7037f18c0b540"
+  },
+  "manifest_excludes": ["package-manifest.json", "raw/**", "state/**"],
+  "run_id": "20260715T113000Z",
+  "schema": "ising-model.issue-4519.rev22.static-remediation.package-manifest"
+}

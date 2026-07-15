@@ -1,0 +1,16 @@
+{
+  "schema": "ising-model.issue-4519.rev20.static-package-manifest",
+  "run_id": "20260715T092437Z",
+  "files": {
+    "README.md": "95d8a0451be96608ad9e7f8b134cd21b2c08a49ddde4dcf6348b6ee8fb7cbd65",
+    "harness.py": "26c5d757a6109f60b72cbe75d6ee6194df9c8bbda379321e74d4200f0ff110ff",
+    "keys/anchor.pub.pem": "51e6c6bae3ddfb9f1302a177b719dfca19a5ce995e9023e21b4fa346976a0ad5",
+    "keys/review.pub.pem": "692819e5a9c22ab7b3de62277dccaa91e25c803497773ca776a0800c1775e788",
+    "keys/run.pub.pem": "ad7256d2db21ee2316c5cde7708862c41ad529dbd5cf7bd4b23aa1909feecd0c",
+    "keys/setup.pub.pem": "b615face9fb9914f28f2f48b2c5aa4697eb7b8705947795165aa1316de63a6f3",
+    "protocol.json": "6a19b36070cdfa737023e710129607a937323230cd76c59b0d1689805c32aa60",
+    "tests/test_adversarial.py": "d1a9ab09095832bb38ab8af8ed4867e60c159c191f42820ee4e1a589806f254d",
+    "tests/test_static_contract.py": "434a8b39ac3fafbeafb4089275459c454586595b51422b335a22329447faa064"
+  },
+  "manifest_excludes": ["external-anchor.receipt.json", "package-manifest.json"]
+}

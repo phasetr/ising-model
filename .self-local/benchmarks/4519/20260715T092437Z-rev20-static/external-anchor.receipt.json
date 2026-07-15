@@ -1,0 +1,26 @@
+{
+  "payload": {
+    "authority_spki_sha256": {
+      "anchor": "cd13d03efb457295002b212023953284c1c8420524bec8fbf19c1e997a83a78b",
+      "review": "b5787ed3d16632d995ee343c6bccc27ca30085e325e5f26c7c9d3d05fb08ab27",
+      "run": "853562d893b3a518edc37708358aa5772b8a4fdfff32b95ad6ba6e251f11dad4",
+      "setup": "f679b185f3aaa98a7b219a114b743ab8a3df92278c655335b7d6d9780e441a8c"
+    },
+    "package_manifest_sha256": "0ea5bad2cc6e7ef0898193a27fb3e0d82843d227756da10bdd9130d668b5442a",
+    "run_id": "20260715T092437Z",
+    "schema": "ising-model.issue-4519.rev20.static-remediation.root-anchor"
+  },
+  "publication": {
+    "commit_sha": "bf6f63edd39a18bf21d24844a0f0f7dd822bbc6d",
+    "kind": "github-gist-git-commit",
+    "published_at": "2026-07-15T09:38:16Z",
+    "published_object_sha256": "9fcff98a79919ff11e1b241c5d3d32128296e638a2622dbac9db4acfddd159ec",
+    "raw_url": "https://gist.githubusercontent.com/phasetr/7fab53a81bbe7b973822846464cc272a/raw/bf6f63edd39a18bf21d24844a0f0f7dd822bbc6d/issue4519-rev20-anchor.json"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "issue4519-rev20-anchor",
+    "record_sha256": "9fcff98a79919ff11e1b241c5d3d32128296e638a2622dbac9db4acfddd159ec",
+    "signature_b64": "MWWLVVd9JndjMeGLrSVzDBtFAeAX+uKXUbnT/cZri1Vtm4ci38xAXIacP//sB8Cd5urNyi60exglFQmfF+HFCw=="
+  }
+}

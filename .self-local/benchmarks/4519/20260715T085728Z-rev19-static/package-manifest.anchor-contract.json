@@ -1,0 +1,1 @@
+{"anchor_authority":"issue4519-rev19-anchor-ed25519","anchor_payload":"sha256(canonical(package-manifest.json))","immutable_publication_required":true,"prohibited_until_external_anchor_exists":["setup","review","run","lake","lean","build","calibration","measurement","freeze","results","metrics"],"schema":"ising-model.issue-4519.rev19.external-anchor-contract"}
