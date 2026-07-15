@@ -216,7 +216,9 @@ Every source refactor must provide:
 - `lake exe GKSTest` and the repository's sentinel/property checks;
 - no `sorry`, `admit`, or `native_decide` in `IsingModel/`;
 - representative `#print axioms` output limited to `propext`, `Classical.choice`, and `Quot.sound`;
-- `scripts/audit_gate.py --diff main` and Shake for touched modules;
+- the `lean-verify-audit` V1--V3 verification/audit gate and focused Shake/import review for touched
+  modules; `scripts/leaf_audit.py` is a separate import-graph orphan/dead-candidate report, not a
+  V1--V3 gate substitute;
 - `#check` coverage for preserved public entry points;
 - the B0 before/after scenario relevant to the change, with raw evidence retained.
 
