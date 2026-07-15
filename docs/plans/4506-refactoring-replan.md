@@ -104,26 +104,46 @@ import-graph and type/hypothesis design audit.
 
 Use isolated worktrees and isolated build directories for the fixed comparison:
 
-- before: `6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4`;
-- after: `94ceb4f83906dc23069b7566ce31242240e22855`.
+- **B = Before**: `6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4`;
+- **A = After**: `94ceb4f83906dc23069b7566ce31242240e22855`.
 
 Preserve raw command, environment, stdout, stderr, exit status, wall/user/system time, maximum RSS,
-warnings, and the pre/post rebuilt IsingModel `.olean` inventory.
+warnings, source hashes, dirty/clean checks, and the pre/post rebuilt IsingModel `.olean`
+inventories.
+
+Lake 5 uses content-hash traces, so an mtime-only touch, including a touch followed by `--rehash`,
+does not exercise this workload when it produces only `Replayed` jobs and rebuilds zero IsingModel
+`.olean` files. Preserve that pre-amendment attempt, exclude it from every repetition and statistic,
+and label it invalid with reason
+`Lake 5 content-hash trace: mtime-only mutation rebuilt 0 olean`.
 
 The minimum matrix is:
 
-- primary hub-touch workload: touch
-  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, then build `IsingModel`, with
-  five valid alternating before/after repetitions per revision;
+- primary semantic-marker workload: in
+  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, insert the dedicated line
+  `-- benchmark-4521-state: 0` at one fixed documented location, warm `IsingModel` outside timing,
+  then toggle only that line to `-- benchmark-4521-state: 1` for the timed `IsingModel` build;
+  perform five valid alternating B/A repetitions per revision;
 - cold full build diagnostic: three runs per revision.
 
-Compare medians; retain every valid row. A failed run is evidence, not a row to silently replace.
-B0 must publish the exact commands and a small recomputation procedure. It must not recreate the
-append-only signature and anchor machinery from #4519.
+Before result-bearing repetitions, run one untimed state-0 to state-1 preflight on B and one on A.
+Each preflight must exit successfully with zero warnings and rebuild more than zero IsingModel
+`.olean` files; otherwise stop and amend #4521 before collecting rows.
 
-The primary verdict is the median wall-time improvement for the five hub-touch runs:
+For every preflight and timed repetition, start from exact tracked bytes and a clean worktree; record
+the tracked, state-0, and state-1 source hashes and pre/post `.olean` inventories; verify that only the
+one-line state toggle makes the worktree dirty during the timed build; then restore the exact tracked
+bytes, verify the restored hash, and verify a clean worktree before continuing. Do not commit either
+marker state.
 
-`100 * (before median - after median) / before median`.
+Compare medians; retain every valid row and document every invalidated sample without counting it.
+A failed run is evidence, not a row to silently replace. B0 must publish the exact commands and a
+small recomputation procedure. It must not recreate the append-only signature and anchor machinery
+from #4519.
+
+The primary verdict is the median wall-time improvement for the five semantic-marker runs:
+
+`100 * (B median - A median) / B median`.
 
 PASS means at least 10%. A valid result closes #4521 completed whether PASS or FAIL, with the full
 result posted to #4521 and #4506. No source refactor may claim a speed improvement until B0 is
