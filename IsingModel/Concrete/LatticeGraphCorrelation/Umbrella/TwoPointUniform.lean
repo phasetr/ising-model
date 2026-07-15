@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PolymerRegularitySite
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBot
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBotLambda
