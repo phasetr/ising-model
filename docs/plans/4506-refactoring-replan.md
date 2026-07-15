@@ -12,13 +12,16 @@ descriptions conflict with the issue state below.
 
 ## Status and issue mapping
 
-Status as of 2026-07-15:
+Status as of 2026-07-16:
 
 - #4506 remains the open tracker for this refactoring programme.
-- #4521 is the open B0 benchmark issue. Measurement is in progress, and its results will be recorded
-  on that issue. It replaces the unsuccessful benchmark protocol work with a deliberately small
-  measurement task.
-- #4519 is closed as superseded. Revisions 1--22 produced no admissible timing rows, medians,
+- #4521 is closed completed: its canonical measurement passed independent verification, but the
+  primary performance result was **FAIL** (B 16.83 s, A 16.72 s, 0.6535948% improvement against the
+  fixed 10% target).
+- #4524 is open and is the sole active, authorized B1 implementation issue. Its scope is the fixed
+  three-import internal-umbrella change and its published API, correctness, performance, resource,
+  and rollback gates.
+- #4519 is closed not planned. Revisions 1--22 produced no admissible timing rows, medians,
   percentage deltas, or performance verdict. In particular, Rev22 ended with two passing static
   tests and one fixture error; it is not a performance baseline.
 - #4505 is reopened to correct the stale `docs/index.md` statement that Vitali--Porter remains an
@@ -54,8 +57,9 @@ not build-time measurements:
 
 The 196-edge path passes through both
 `Concrete.LatticeGraphCorrelation.PerStageComplex` and `AmbientComplexAnalyticity`. This is a
-strong candidate explanation for clean-build serialization, but only B0 measurements may turn it
-into a performance claim.
+static clean-build serialization observation, not a performance claim. The completed B0 primary
+measurement did not meet its 10% target; #4524 is limited to the separately measured six-module
+incremental closure and does not authorize broader path restructuring.
 
 The largest files are also candidates, not automatic split targets:
 
@@ -107,10 +111,11 @@ The fixed revisions were:
 - **B = Before**: `6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4`;
 - **A = After**: `94ceb4f83906dc23069b7566ce31242240e22855`.
 
-The canonical private-theorem-toggle rows 28--37 were independently accepted by validators V1--V3.
-All ten valid primary rows rebuilt the exact six-module closure, changed the hub `.olean` hash, exited
-successfully with zero warnings, restored the exact source, and left clean worktrees. Rows 7--27 are
-preserved as invalid evidence and excluded from all medians and percentages.
+Independent verification accepted the canonical identity, every per-run classification, and the
+aggregate arithmetic for private-theorem-toggle rows 28--37. All ten valid primary rows rebuilt the
+exact six-module closure, changed the hub `.olean` hash, exited successfully with zero warnings,
+restored the exact source, and left clean worktrees. Rows 7--27 are preserved as invalid evidence and
+excluded from all medians and percentages.
 
 The completed result is:
 
