@@ -96,111 +96,86 @@ The existing mathematical architecture is the default abstraction boundary:
 
 ## Execution order
 
-The B0 measurement is the only default next step. There is no preselected implementation sequence
-after B0. Any later refactor requires a separate issue supported by the B0 result and a focused
-import-graph and type/hypothesis design audit.
+The canonical B0 measurement is complete. Its fixed primary metric failed, and #4524 is now the sole
+authorized B1 implementation issue. No other source refactor is authorized. Tracker #4506 remains
+open until #4505 and #4524 are resolved and the final measured classification is recorded.
 
-### B0: establish the performance baseline (#4521)
+### B0: completed performance baseline (#4521)
 
-Use isolated worktrees and isolated build directories for the fixed comparison:
+The fixed revisions were:
 
 - **B = Before**: `6a2470114fe0b5dd5c6cdcbb0e02b8acca351fb4`;
 - **A = After**: `94ceb4f83906dc23069b7566ce31242240e22855`.
 
-Preserve raw command, environment, stdout, stderr, exit status, wall/user/system time, maximum RSS,
-warnings, source hashes, dirty/clean checks, and the pre/post rebuilt IsingModel `.olean`
-inventories.
+The canonical private-theorem-toggle rows 28--37 were independently accepted by validators V1--V3.
+All ten valid primary rows rebuilt the exact six-module closure, changed the hub `.olean` hash, exited
+successfully with zero warnings, restored the exact source, and left clean worktrees. Rows 7--27 are
+preserved as invalid evidence and excluded from all medians and percentages.
 
-Lake 5 uses content-hash traces, and downstream replay depends on the compiled module output hash.
-Preserve and exclude both earlier probe families from every repetition and statistic:
+The completed result is:
 
-- the mtime/`--rehash` attempt, with invalid reason
-  `Lake 5 content-hash trace: mtime-only mutation rebuilt 0 olean`;
-- the comment-ID toggle rows, including provisional runs 8--17, with invalid reason
-  `semantic output unchanged: hub rebuilt 1, hub olean hash unchanged, downstream replayed`.
+| Workload | B median | A median | Improvement | Classification |
+|---|---:|---:|---:|---|
+| Primary six-module closure | 16.83 s | 16.72 s | 0.6535948% | **FAIL** against 10% |
+| Cold full-build diagnostic | 1597.41 s | 1304.95 s | 18.3084% | Diagnostic only |
 
-Do not delete these raw rows, renumber them into the valid series, or count them in a median.
+The cold result does not override the predeclared primary metric. #4521 is closed completed because
+the measurement and independent verification finished, not because performance passed. The
+canonical evidence is under `.self-local/benchmarks/4521/b0-20260715-rerun1/`.
 
-The minimum matrix is:
+### B1: flatten the measured internal umbrella tail (#4524)
 
-- primary private-declaration workload: in
-  `IsingModel/Concrete/LatticeGraphCorrelation/PerStageComplex.lean`, insert at one fixed documented
-  location the v0 declaration
-  `private theorem benchmark4521Probe : True := True.intro`, warm `IsingModel` outside timing, then
-  replace only that declaration with the same-name v1 declaration
-  `private theorem benchmark4521Probe : True ∧ True := And.intro True.intro True.intro` for the
-  timed `IsingModel` build; perform five valid alternating B/A repetitions per revision;
-- cold full build diagnostic: three runs per revision.
+#4524 is active and is the only authorized B1 candidate. Its implementation scope is exactly three
+import edits:
 
-Untimed validation of all four B/A × v0/v1 combinations passed with zero warnings, a changed hub
-`.olean` hash, exact restoration, clean worktrees, no public API effect, and this identical six-module
-rebuilt closure:
+1. remove `Umbrella.PartitionAndPerStage` from `Umbrella/PolymerRegularitySite.lean`;
+2. remove `Umbrella.PolymerRegularitySite` from `Umbrella/TwoPointUniform.lean`;
+3. import `Umbrella.PartitionAndPerStage`, `Umbrella.PolymerRegularitySite`, and
+   `Umbrella.TwoPointUniform` as siblings from the public `LatticeGraphCorrelation.lean` root.
 
-1. `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`;
-2. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PartitionAndPerStage`;
-3. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.PolymerRegularitySite`;
-4. `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.TwoPointUniform`;
-5. `IsingModel.Concrete.LatticeGraphCorrelation`;
-6. `IsingModel`.
+The supported public import remains `IsingModel.Concrete.LatticeGraphCorrelation`. No declaration,
+theorem, proof, visibility, generated-shard name, documentation, or unrelated import change is in
+scope. The required primary rebuilt closure is exactly four modules: `PerStageComplex`,
+`Umbrella.PartitionAndPerStage`, public `LatticeGraphCorrelation`, and root `IsingModel`.
 
-Every valid row must reproduce that exact closure and rebuild at least six IsingModel `.olean` files.
-A missing member, an unchanged v0/v1 hub `.olean` hash, or an unexplained closure change invalidates
-the row and requires investigation before continuing.
+All #4524 correctness and performance gates are mandatory, including the public-API sentinel and
+unchanged declaration inventory. The fixed numeric gates are:
 
-For every preflight and timed repetition, start from exact tracked bytes and a clean worktree; record
-the tracked, v0, and v1 source hashes, the v0 and v1 hub `.olean` hashes, and pre/post `.olean`
-inventories; verify that only the same-name private theorem type toggle makes the worktree dirty
-during the timed build; then restore the exact tracked bytes, verify the restored hash, and verify a
-clean worktree before continuing. Both declarations are private and theorem-proved, do not alter the
-public API, and must not be committed.
+- primary median at most **15.048 s**;
+- exact four-module primary closure;
+- cold median at most **1370.1975 s**;
+- primary median maximum RSS at most **3,736,674,304 bytes** (`3736674304 B`).
 
-Compare medians; retain every valid row and document every invalidated sample without counting it.
-A failed run is evidence, not a row to silently replace. B0 must publish the exact commands and a
-small recomputation procedure. It must not recreate the append-only signature and anchor machinery
-from #4519.
+Any correctness, API, audit, test, review, CI, performance, closure, cold, or RSS failure requires
+rollback of the three import edits and closure of #4524 with the measured classification. Do not
+broaden #4524 or automatically select another candidate.
 
-The primary verdict is the median wall-time improvement for the five private-declaration runs:
+## Unselected conditional categories
 
-`100 * (B median - A median) / B median`.
-
-PASS means at least 10%. A valid result closes #4521 completed whether PASS or FAIL, with the full
-result posted to #4521 and #4506. No source refactor may claim a speed improvement until B0 is
-complete.
-
-## Conditional candidates after B0
-
-These are audit categories, not an ordered roadmap or authorization to edit source. A candidate may
-be selected only in a new issue after the conditions below are met.
-
-### Candidate B1: import narrowing
-
-Consider import narrowing only if B0 returns FAIL and the retained measurements show that import
-fan-out or the weighted critical path materially contributes to the primary hub-touch workload.
-Selection requires a separate issue with the measured evidence and a module-level import audit.
-
-The umbrella-to-child narrowing declined in #4499, including the observed `Lemma_17_5_2` umbrella,
-must not be revived merely from static import counts. A new issue must preserve public compatibility
-umbrellas and define its own measured acceptance and rollback thresholds from B0 evidence.
+The remaining categories are not an ordered roadmap and are not authorized. The umbrella-to-child
+narrowing declined in #4499, including `Lemma_17_5_2`, remains declined; #4524 authorizes only the
+three generated-shard import edits above. Any further candidate requires new measured evidence,
+design review, and a separate authorizing issue after #4524 is resolved.
 
 ### Candidate B2: serial micro-module consolidation
 
-If B0 returns FAIL and timing evidence identifies a weighted serial critical path, a separate issue
-may audit one cohesive portion of that path. Coalesce only modules that have one consumer, form a
-measured serial chain, and belong to the same mathematical layer. Preserve mathematical boundaries
-and compatibility re-exports.
+B0's FAIL does not authorize this category. Only after #4524 is resolved, if new timing evidence
+identifies a weighted serial critical path, a separate issue may audit one cohesive portion of that
+path. Coalesce only modules that have one consumer, form a measured serial chain, and belong to the
+same mathematical layer. Preserve mathematical boundaries and compatibility re-exports.
 
 Static chain length alone is not sufficient evidence. The new issue must state before/after commits,
 the affected B0 workload, compatibility gates, and an explicit rollback threshold.
 
 ### Candidate A1: proof and API abstraction
 
-Consider an abstraction candidate only if B0 returns FAIL and retained measurements provide evidence
-that repeated proof or API structure materially contributes to the measured build or maintenance
-cost. Selection requires Tier-2/design review and a separate authorizing issue supported by real
-consumers. Audit the family by statement, hypotheses, proof dependencies, and consumers before
-editing. Extract a common lemma only when at least two consumers share the proof core. Introduce a
-new record or typeclass only when at least three consumers repeat the same hypothesis bundle and
-proof skeleton.
+B0's FAIL does not authorize this category. Only after #4524 is resolved, consider an abstraction
+candidate if new measured evidence shows that repeated proof or API structure materially contributes
+to build or maintenance cost. Selection requires Tier-2/design review and a separate authorizing
+issue supported by real consumers. Audit the family by statement, hypotheses, proof dependencies,
+and consumers before editing. Extract a common lemma only when at least two consumers share the
+proof core. Introduce a new record or typeclass only when at least three consumers repeat the same
+hypothesis bundle and proof skeleton.
 
 Keep the core theorem at the weakest useful `SimpleGraph` or `Ambient` assumptions. Keep `Λ`,
 along-exhaustion, and `ℤ^d` declarations as short transports or named capstones. Preserve existing
