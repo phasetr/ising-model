@@ -29643,6 +29643,7 @@ removes the per-edge caps $m_e \leq N$, $(M-m)_e \leq N$ and the bounded-current
 upgrading the identity to a statement about the actual (unbounded) weight sums.
 
 \begin{theorem}[\texttt{Current.weightSum\_mul\_weightSum\_eq\_tsum\_doubled\_subFinset}]
+\label{thm:GSinfty}
   For source sets $A, B \subseteq \Lambda$, graph $G$, finite induced subgraph $(\uparrow\!\Lambda)$, and $0 \le \beta J$:
   \[
     \mathrm{weightSum}(A) \cdot \mathrm{weightSum}(B)
@@ -29779,7 +29780,7 @@ the sum over splittings where \emph{both} pieces are sourcefree.
   \[
     Z_\emptyset^2 = \sum'_M D(M).
   \]
-  \textit{Proof}: Specialize the Stage A global switching identity (Brick 2, \eqref{eq:GSinfty})
+  \textit{Proof}: Specialize the Stage A global switching identity (Brick 2, Theorem~\ref{thm:GSinfty})
   to $A = B = \emptyset$ and apply $\mathtt{pow\_two}$ to rewrite $Z_\emptyset \cdot Z_\emptyset = Z_\emptyset^2$.
 \end{theorem}
 
