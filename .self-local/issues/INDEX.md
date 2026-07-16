@@ -121,6 +121,7 @@ GitHub post-setup checkpoints: [#4519](https://github.com/phasetr/ising-model/is
 | refactor-B1 candidate (LatticeGraphCorrelation) | #4524 | **CLOSED completed (merged PR #4525)** | Sole authorized B1 candidate; flatten internal umbrella; 11.74s (29.78% vs A, 30.49% vs B); all gates PASS. | `4524.md` |
 | PR #4525 B1 merge to main | #4525 | **CLOSED completed (merged bc793dec)** | Squash-merge of refactor-B1; ancestor to final main at #4522 merge. | `4525.md` |
 | resolve proof-guide cyclic build blockers | #4531 | **CLOSED completed (merged)** | Unrelated pdfLaTeX U+0085 control-byte fix (pre-existing); merged; current main ancestor. | `4531.md` |
+| refactor H1/M2 (dead decoration + import) | #4535 | **CLOSED completed (2026-07-17)** | refactor cycle 2026-07-17 (97 dead decls + 1 import, PR #4536 merged 1793e549) | `4535.md` |
 | current-main bottleneck profile | #4533 | **OPEN — v10 TERMINAL INVALID; v11 exact registration and approval complete, execution authority absent** | Attempt `v11-41a5ea8c54e4524153c9599ffe188d92`; no M0 execution. [registration](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993733856) / [approval](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993754940) | `4533.md` |
 
 ## reopen 条件 (close した各 issue 共通)
