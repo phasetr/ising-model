@@ -210,15 +210,6 @@ noncomputable def spontaneousMagnetization
     (J β : ℝ) (i : V) : ℝ :=
   spontaneousCorrelation G Λ J β {i}
 
-/-- **Unfolding of `spontaneousMagnetization`**:
-`spontaneousMagnetization G Λ J β i = spontaneousCorrelation G Λ J β {i}`. -/
-theorem spontaneousMagnetization_apply
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (i : V) :
-    spontaneousMagnetization G Λ J β i = spontaneousCorrelation G Λ J β {i} :=
-  rfl
-
 /-- **Agreement at singletons**: `spontaneousCorrelation` on `{i}`
 equals `spontaneousMagnetization`. Holds by definition. -/
 theorem spontaneousCorrelation_singleton_eq_spontaneousMagnetization

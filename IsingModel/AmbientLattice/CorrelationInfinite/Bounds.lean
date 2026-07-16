@@ -85,16 +85,6 @@ theorem correlationInfinite_lt_two
   have h := correlationInfinite_le_one G Λ p A
   linarith
 
-/-- **`correlationInfinite ∈ Icc (-1) 1`** (unconditional): combines
-`abs_correlationInfinite_le_one` lower and upper sides. -/
-theorem correlationInfinite_mem_Icc_neg_one_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Icc (-1 : ℝ) 1 :=
-  ⟨neg_one_le_correlationInfinite G Λ p A,
-   correlationInfinite_le_one G Λ p A⟩
-
 /-- **Nonnegativity** (ferromagnetic): `correlationInfinite ≥ 0`.
 Uses `Λ.exhaust`: pick `N` with `A ⊆ Λ.volume N`; then
 `correlationAlongExhaustion G Λ p A N ≥ 0` by GKS-I, and this is
@@ -112,36 +102,6 @@ theorem correlationInfinite_nonneg
     exact correlationΛ_nonneg G (Λ.volume N) p hf _
   exact hval.trans (le_ciSup (correlationAlongExhaustion_bddAbove G Λ p A) N)
 
-/-- **`correlationInfinite ∈ Icc 0 1`** under ferromagnetic: combines
-`correlationInfinite_nonneg` and `correlationInfinite_le_one`. -/
-theorem correlationInfinite_mem_Icc_zero_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Icc (0 : ℝ) 1 :=
-  ⟨correlationInfinite_nonneg G Λ p hf A,
-   correlationInfinite_le_one G Λ p A⟩
-
-/-- **`correlationInfinite ∈ Icc 0 2`** under ferromagnetic: combines
-`correlationInfinite_nonneg` and `correlationInfinite_le_one ≤ 2`. -/
-theorem correlationInfinite_mem_Icc_zero_two
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Icc (0 : ℝ) 2 := by
-  have h := correlationInfinite_le_one G Λ p A
-  refine ⟨correlationInfinite_nonneg G Λ p hf A, ?_⟩
-  linarith
-
-/-- **`correlationInfinite ∈ Ioc 0 1`** when positive under ferromagnetic. -/
-theorem correlationInfinite_mem_Ioc_zero_one_of_pos
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (_hf : Ferromagnetic p) (A : Finset V)
-    (hpos : 0 < correlationInfinite G Λ p A) :
-    correlationInfinite G Λ p A ∈ Set.Ioc (0 : ℝ) 1 :=
-  ⟨hpos, correlationInfinite_le_one G Λ p A⟩
-
 /-- **`correlationInfinite ∈ Ioo 0 2`** when positive under ferromagnetic. -/
 theorem correlationInfinite_mem_Ioo_zero_two_of_pos
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -150,86 +110,6 @@ theorem correlationInfinite_mem_Ioo_zero_two_of_pos
     (hpos : 0 < correlationInfinite G Λ p A) :
     correlationInfinite G Λ p A ∈ Set.Ioo (0 : ℝ) 2 :=
   ⟨hpos, correlationInfinite_lt_two G Λ p A⟩
-
-/-- **`correlationInfinite ∈ Ico 0 2`** under ferromagnetic. -/
-theorem correlationInfinite_mem_Ico_zero_two
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Ico (0 : ℝ) 2 :=
-  ⟨correlationInfinite_nonneg G Λ p hf A,
-   correlationInfinite_lt_two G Λ p A⟩
-
-/-- **`correlationInfinite ∈ Iio 2`** (unconditional). -/
-theorem correlationInfinite_mem_Iio_two
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Iio (2 : ℝ) :=
-  correlationInfinite_lt_two G Λ p A
-
-/-- **`correlationInfinite ∈ Iic 1`** (unconditional). -/
-theorem correlationInfinite_mem_Iic_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Iic (1 : ℝ) :=
-  correlationInfinite_le_one G Λ p A
-
-/-- **`correlationInfinite ∈ Ici 0`** under ferromagnetic. -/
-theorem correlationInfinite_mem_Ici_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ∈ Set.Ici (0 : ℝ) :=
-  correlationInfinite_nonneg G Λ p hf A
-
-/-- **`correlationInfinite ∉ Iio 0`** under ferromagnetic. -/
-theorem correlationInfinite_not_mem_Iio_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ∉ Set.Iio (0 : ℝ) :=
-  not_lt.mpr (correlationInfinite_nonneg G Λ p hf A)
-
-/-- **`correlationInfinite ∉ Ioi 1`** (unconditional): direct from
-`correlationInfinite_le_one`. -/
-theorem correlationInfinite_not_mem_Ioi_one
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (A : Finset V) :
-    correlationInfinite G Λ p A ∉ Set.Ioi (1 : ℝ) :=
-  not_lt.mpr (correlationInfinite_le_one G Λ p A)
-
-/-- **`0 < correlationInfinite ↔ correlationInfinite ≠ 0`** under
-ferromagnetic: standard nonneg → pos iff ne_zero pattern. -/
-theorem correlationInfinite_pos_iff_ne_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    0 < correlationInfinite G Λ p A ↔ correlationInfinite G Λ p A ≠ 0 :=
-  (correlationInfinite_nonneg G Λ p hf A).lt_iff_ne.trans
-    ⟨fun h => h.symm, fun h => h.symm⟩
-
-/-- **`correlationInfinite ≤ 0 ↔ correlationInfinite = 0`** under
-ferromagnetic: combines nonneg with antisymmetry. -/
-theorem correlationInfinite_le_zero_iff_eq_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    correlationInfinite G Λ p A ≤ 0 ↔ correlationInfinite G Λ p A = 0 := by
-  refine ⟨?_, fun h => le_of_eq h⟩
-  intro hle
-  exact le_antisymm hle (correlationInfinite_nonneg G Λ p hf A)
-
-/-- **`¬(correlationInfinite < 0)`** under ferromagnetic: direct
-from `correlationInfinite_nonneg`. -/
-theorem correlationInfinite_not_lt_zero
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (hf : Ferromagnetic p) (A : Finset V) :
-    ¬ (correlationInfinite G Λ p A < 0) :=
-  not_lt.mpr (correlationInfinite_nonneg G Λ p hf A)
 
 end Ambient
 end IsingModel

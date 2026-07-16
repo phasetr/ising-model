@@ -1,7 +1,6 @@
-import IsingModel.PseudoMass.FromParamsBounds.Intervals
-
 /-!
 # Pseudo-Mass Parameter Bounds
 
-This compatibility module re-exports the split pseudo-mass parameter bound layer.
+This compatibility module is retained as a stable import path in the
+pseudo-mass parameter bound layer.
 -/

@@ -1,6 +1,5 @@
 import Mathlib.Combinatorics.SimpleGraph.Circulant
 import Mathlib.Combinatorics.SimpleGraph.Finite
-import Mathlib.Tactic
 import IsingModel.GibbsMeasure
 import IsingModel.Hamiltonian
 
