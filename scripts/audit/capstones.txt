@@ -1,0 +1,34 @@
+# Capstone theorems for the V3 axiom audit (scripts/audit_gate.py).
+#
+# Each line is a fully-qualified theorem name whose `#print axioms` output
+# must equal exactly {propext, Classical.choice, Quot.sound}. Blank lines and
+# lines starting with `#` are ignored. Keep this list in sync with the
+# repository's headline results (docs/index.md); an unknown identifier here is
+# a hard failure, forcing the list to stay honest.
+
+# Lee-Yang circle theorem (GJ Lee-Yang)
+IsingModel.lee_yang_circle
+# Peierls spontaneous magnetization on cubic boxes (FV Thm 3.7)
+IsingModel.peierls_spontaneous_magnetization_pos_cubic
+# Simon-Lieb ball-boundary inequality (weak) (GJ Thm 17.5.x)
+IsingModel.ball_boundary_simon_lieb
+# Simon-Lieb ball-boundary inequality (tight)
+IsingModel.ball_boundary_simon_lieb_tight
+# Simon-Lieb sharp infinite-volume mass lower bound
+IsingModel.Ambient.correlationInfinite_simon_lieb_sharp
+# Mayer-Montroll coloring identity (GJ Sec 18)
+IsingModel.mayerMontroll_coloring_identity
+# FKG inequality along an exhaustion (GJ Sec 17)
+IsingModel.Ambient.fkg_ising_along_exhaustion
+# GKS-I nonnegativity of scaled correlations
+IsingModel.scaledCorrelation_nonneg
+# GKS-II inequality for scaled correlations
+IsingModel.scaledCorrelation_gks_second
+# GHS inequality
+IsingModel.ghs_inequality
+# GKS-II infinite-volume (cubic exhaustion)
+IsingModel.Ambient.correlationInfinite_latticeGraph_cubicExhaustion_gks_second
+# 1D two-point function = (tanh beta*J)^dist
+IsingModel.TransferMatrix.twoPointFunction_one_eq_tanh_pow
+# 1D sharp mass = correlation mass
+IsingModel.TransferMatrix.latticeMass_one_eq_correlationMass
