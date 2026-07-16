@@ -22,6 +22,8 @@ jobs:
         run: lake exe GKSTest
       - name: Build sentinel property suite (Issue #888 Step P3)
         run: lake build test.IsingModel.SentinelProps
+      - name: Audit gate (V1-V3 axiom/sorry/capstone checks)
+        run: python3 scripts/audit_gate.py --full
 
   # NOTE: docs generation via `leanprover-community/docgen-action` has been
   # temporarily disabled because every main-push run takes ~1 hour and

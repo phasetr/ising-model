@@ -2,7 +2,6 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncated2EqSubMagSq
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
 # ℤ^d twoPointFunction / truncated2TwoPoint nonneg / ge mag² / symm wrappers

@@ -1,6 +1,4 @@
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
-import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
-import IsingModel.ClusterExpansion.MayerCore.SurjectiveLogWeight
 
 /-!
 # Proper surjective colorings of a finite graph (GJ §18.4)

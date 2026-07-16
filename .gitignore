@@ -1,5 +1,8 @@
 /.lake
 
+# Scratch directory for the audit gate's temporary V3 .lean file
+/.self-local/tmp/
+
 # TeX auxiliary files
 *.aux
 *.fdb_latexmk
