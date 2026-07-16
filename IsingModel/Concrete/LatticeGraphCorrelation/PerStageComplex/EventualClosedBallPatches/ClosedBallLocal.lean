@@ -5,7 +5,6 @@ import IsingModel.AmbientComplexAnalyticity.AscoliData.ClosedBallConversions.Bra
 import IsingModel.AmbientComplexAnalyticity.CompactPatches.BranchRelCompact
 import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.RelCompact
 import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.CompactTarget
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.RangeAscoliPatches
 
 /-!
 # Per-stage complex analyticity wrappers: ClosedBallLocal

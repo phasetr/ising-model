@@ -2,13 +2,11 @@ import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTrivialSlice
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPointNonnegAndGe
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
-import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices
 
