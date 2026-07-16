@@ -129,17 +129,6 @@ noncomputable def susceptibilityAlongExhaustion
     susceptibilityΛ G (Λ.volume n) p ⟨i, h⟩
   else 0
 
-/-- **Unfolding of `susceptibilityAlongExhaustion`**: by definition the
-stagewise value is the dependent `if`-expression over membership. -/
-theorem susceptibilityAlongExhaustion_apply
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (i : V) (n : ℕ) :
-    susceptibilityAlongExhaustion G Λ p i n
-      = if h : i ∈ Λ.volume n then
-          susceptibilityΛ G (Λ.volume n) p ⟨i, h⟩
-        else 0 := rfl
-
 /-- **Unfolding of `susceptibilityAlongExhaustion` when `i ∈ Λ.volume n`**:
 the stagewise value equals `susceptibilityΛ` at the lifted subtype site. -/
 theorem susceptibilityAlongExhaustion_of_mem

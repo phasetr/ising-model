@@ -54,17 +54,6 @@ theorem susceptibilityInfinite_eq_ciSup
     susceptibilityInfinite G Λ p i
       = ⨆ n, susceptibilityAlongExhaustion G Λ p i n := rfl
 
-/-- **Unfolding of `susceptibilityInfinite`**:
-`susceptibilityInfinite G Λ p i = ⨆ n, susceptibilityAlongExhaustion G Λ p i n`,
-by definition. (Alias of `susceptibilityInfinite_eq_ciSup` for uniformity
-with `magnetizationInfinite_apply`.) -/
-theorem susceptibilityInfinite_apply
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (i : V) :
-    susceptibilityInfinite G Λ p i
-      = ⨆ n, susceptibilityAlongExhaustion G Λ p i n := rfl
-
 /-- **Nonnegativity of `susceptibilityInfinite`** under ferromagnetism:
 `0 ≤ susceptibilityInfinite G Λ p i`.
 

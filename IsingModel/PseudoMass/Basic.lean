@@ -75,18 +75,6 @@ theorem pseudoMass_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 
   rw [le_div_iff₀ hr]
   linarith
 
-/-- **`pseudoMass(c) · r ≤ log(2/c)`**: multiplied form of
-`pseudoMass_le_log_two_div`, useful when `r` appears as a factor
-(e.g., `pm·d(x,z)` decay rates). Direct from the divided form
-multiplied through by `r > 0`. -/
-theorem pseudoMass_mul_r_le_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc * r ≤ Real.log (2 / c) := by
-  have h := pseudoMass_le_log_two_div hα hr hc
-  rw [le_div_iff₀ hr] at h
-  exact h
-
-
 /-- Characterisation of the pseudo-mass: `pseudoMass = t ↔ pseudoMassG α r t = c`
 for `t ≥ 0`. -/
 theorem pseudoMass_eq_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
@@ -312,44 +300,6 @@ theorem pseudoMass_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 
   rw [lt_div_iff₀ hr]
   linarith
 
-/-- **`pseudoMass(c) · r < log(2/c)`**: strict multiplied form of
-`pseudoMass_lt_log_two_div`. -/
-theorem pseudoMass_mul_r_lt_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc * r < Real.log (2 / c) := by
-  have h := pseudoMass_lt_log_two_div hα hr hc
-  rw [lt_div_iff₀ hr] at h
-  exact h
-
-/-- **`pseudoMass(c) ∈ Ioo 0 (log(2/c)/r)`**: bundles
-`pseudoMass_pos` and `pseudoMass_lt_log_two_div` into one Ioo
-membership statement. -/
-theorem pseudoMass_mem_Ioo_zero_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Ioo (0 : ℝ) (Real.log (2 / c) / r) :=
-  ⟨pseudoMass_pos hα hr hc,
-   pseudoMass_lt_log_two_div hα hr hc⟩
-
-/-- **`pseudoMass(c) ∈ Ioo 0 ((2-c)/(c·r))`**: bundle of `pos` and
-strict sharper `(2-c)/(c·r)` upper bound. -/
-theorem pseudoMass_mem_Ioo_zero_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Ioo (0 : ℝ) ((2 - c) / (c * r)) :=
-  ⟨pseudoMass_pos hα hr hc,
-   pseudoMass_lt_two_sub_div_mul_r hα hr hc⟩
-
-/-- **`pseudoMass(c) ∈ Iio (log(2/c)/r)`**: trivial via `_lt_log_two_div`. -/
-theorem pseudoMass_mem_Iio_log_two_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Iio (Real.log (2 / c) / r) :=
-  pseudoMass_lt_log_two_div hα hr hc
-
-/-- **`pseudoMass(c) ∈ Iio ((2-c)/(c·r))`**: trivial via `_lt_two_sub_div_mul_r`. -/
-theorem pseudoMass_mem_Iio_two_sub_div {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Iio ((2 - c) / (c * r)) :=
-  pseudoMass_lt_two_sub_div_mul_r hα hr hc
-
 /-- The pseudo-mass is strictly decreasing in `c`: larger correlation value
 means smaller pseudo-mass (slower decay). -/
 theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -374,33 +324,6 @@ theorem pseudoMass_strictAnti {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     rw [heq, h₂] at h₁
     linarith
 
-/-- **`pseudoMass(c) ≠ 0`** for `c ∈ Ioo 0 2`: direct from
-`pseudoMass_pos`. -/
-theorem pseudoMass_ne_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
-    (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ≠ 0 :=
-  (pseudoMass_pos hα hr hc).ne'
-
-/-- **`pseudoMass(c) ∈ Set.Ioi 0`** for `c ∈ Ioo 0 2`: direct from
-`pseudoMass_pos`. -/
-theorem pseudoMass_mem_Ioi_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
-    (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Ioi (0 : ℝ) :=
-  pseudoMass_pos hα hr hc
-
-/-- **`pseudoMass(c) ∈ Set.Ici 0`** for `c ∈ Ioo 0 2`: direct from
-`pseudoMass_nonneg`. -/
-theorem pseudoMass_mem_Ici_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) {c : ℝ}
-    (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∈ Set.Ici (0 : ℝ) :=
-  pseudoMass_nonneg hα hr hc
-
-/-- **`pseudoMass(c) ∉ Set.Iio 0`** for `c ∈ Ioo 0 2`: direct from `pos`. -/
-theorem pseudoMass_not_mem_Iio_zero {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {c : ℝ} (hc : c ∈ Ioo 0 2) :
-    pseudoMass hα hr hc ∉ Set.Iio (0 : ℝ) :=
-  not_lt.mpr (pseudoMass_nonneg hα hr hc)
-
 /-- **Implicit definition: `pseudoMass(c) ≤ t ↔ pseudoMassG α r t ≤ c`** for
 `t ≥ 0` and `c ∈ Ioo 0 2`: characterizes pseudoMass(c) as the unique
 threshold by the anti-monotone defining equation `g(pseudoMass(c)) = c`. -/
@@ -412,18 +335,6 @@ theorem pseudoMass_le_iff_pseudoMassG_le {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   have hG_iff : pseudoMassG α r t ≤ pseudoMassG α r (pseudoMass hα hr hc) ↔
                   pseudoMass hα hr hc ≤ t :=
     pseudoMassG_le_iff hα hr hpm_nn ht
-  rw [hspec] at hG_iff
-  exact hG_iff.symm
-
-/-- **Implicit definition strict version**: `pseudoMass(c) < t ↔ pseudoMassG α r t < c`. -/
-theorem pseudoMass_lt_iff_pseudoMassG_lt {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
-    pseudoMass hα hr hc < t ↔ pseudoMassG α r t < c := by
-  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
-  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
-  have hG_iff : pseudoMassG α r t < pseudoMassG α r (pseudoMass hα hr hc) ↔
-                  pseudoMass hα hr hc < t :=
-    pseudoMassG_lt_iff hα hr hpm_nn ht
   rw [hspec] at hG_iff
   exact hG_iff.symm
 
@@ -439,18 +350,6 @@ theorem pseudoMass_ge_iff_pseudoMassG_ge {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
   rw [hspec] at hG_iff
   exact hG_iff.symm
 
-/-- **Implicit definition strict reverse**: `t < pseudoMass(c) ↔ c < pseudoMassG α r t`. -/
-theorem pseudoMass_gt_iff_pseudoMassG_gt {α : ℕ} (hα : 1 ≤ α) {r : ℝ}
-    (hr : 0 < r) {c : ℝ} (hc : c ∈ Ioo 0 2) {t : ℝ} (ht : 0 ≤ t) :
-    t < pseudoMass hα hr hc ↔ c < pseudoMassG α r t := by
-  have hspec : pseudoMassG α r (pseudoMass hα hr hc) = c := pseudoMass_spec hα hr hc
-  have hpm_nn : 0 ≤ pseudoMass hα hr hc := pseudoMass_nonneg hα hr hc
-  have hG_iff : pseudoMassG α r (pseudoMass hα hr hc) < pseudoMassG α r t ↔
-                  t < pseudoMass hα hr hc :=
-    pseudoMassG_lt_iff hα hr ht hpm_nn
-  rw [hspec] at hG_iff
-  exact hG_iff.symm
-
 /-- **`pseudoMass` is antitone (non-strict)**: corollary of
 `pseudoMass_strictAnti` weakened to `≤`. Useful when the strict
 inequality is unnecessarily strong (e.g., bound chains). -/
@@ -461,44 +360,5 @@ theorem pseudoMass_antitone {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
   · exact (pseudoMass_strictAnti hα hr hc₁ hc₂ hlt).le
   · subst heq
     exact le_refl _
-
-/-- **`pseudoMass(c₂) < pseudoMass(c₁) ↔ c₁ < c₂`**: iff form of
-`pseudoMass_strictAnti`. -/
-theorem pseudoMass_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
-    pseudoMass hα hr hc₂ < pseudoMass hα hr hc₁ ↔ c₁ < c₂ := by
-  refine ⟨?_, fun h => pseudoMass_strictAnti hα hr hc₁ hc₂ h⟩
-  intro hlt
-  by_contra h_neg
-  have h_neg' : c₂ ≤ c₁ := not_lt.mp h_neg
-  have := pseudoMass_antitone hα hr hc₂ hc₁ h_neg'
-  linarith
-
-/-- **`pseudoMass(c₂) ≤ pseudoMass(c₁) ↔ c₁ ≤ c₂`**: iff form of
-`pseudoMass_antitone`. -/
-theorem pseudoMass_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
-    pseudoMass hα hr hc₂ ≤ pseudoMass hα hr hc₁ ↔ c₁ ≤ c₂ := by
-  refine ⟨?_, fun h => pseudoMass_antitone hα hr hc₁ hc₂ h⟩
-  intro hle
-  by_contra h_neg
-  have h_neg' : c₂ < c₁ := not_le.mp h_neg
-  have := pseudoMass_strictAnti hα hr hc₂ hc₁ h_neg'
-  linarith
-
-/-- **`pseudoMass(c₂) = pseudoMass(c₁) ↔ c₁ = c₂`**: equality iff
-via antisymmetry. -/
-theorem pseudoMass_eq_iff_eq {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {c₁ c₂ : ℝ} (hc₁ : c₁ ∈ Ioo 0 2) (hc₂ : c₂ ∈ Ioo 0 2) :
-    pseudoMass hα hr hc₂ = pseudoMass hα hr hc₁ ↔ c₁ = c₂ := by
-  refine ⟨?_, ?_⟩
-  · intro heq
-    have h1 := (pseudoMass_le_iff hα hr hc₁ hc₂).mp heq.le
-    have h2 := (pseudoMass_le_iff hα hr hc₂ hc₁).mp heq.ge
-    linarith
-  · intro heq_c
-    subst heq_c
-    rfl
-
 
 end IsingModel
