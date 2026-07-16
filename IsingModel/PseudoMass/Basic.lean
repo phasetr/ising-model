@@ -124,26 +124,6 @@ theorem pseudoMass_deriv_formula
   field_simp [hg'_ne] at huniq ⊢
   linarith
 
-/-- Corollary: if the pseudo-mass `m⁻ = pseudoMass hα hr hc(β)` is differentiable
-at `β` with derivative `m'`, then `m'` satisfies the implicit differentiation formula.
-(The differentiability of `pseudoMass` as a function of `β` follows from the
-implicit function theorem, which requires additional infrastructure.) -/
-theorem pseudoMass_deriv_formula_corollary
-    {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {c : ℝ → ℝ} {c' β m' : ℝ}
-    (hc_mem : c β ∈ Ioo 0 2)
-    (hc_fam : ∀ β', c β' ∈ Ioo 0 2)
-    (hc : HasDerivAt c c' β)
-    (hm_pos : 0 < pseudoMass hα hr hc_mem)
-    (hm_diff : HasDerivAt (fun β' => pseudoMass hα hr (hc_fam β')) m' β) :
-    m' = c' / ((-2 * r * Real.exp (-(pseudoMass hα hr hc_mem * r)) *
-        (1 + (pseudoMass hα hr hc_mem * r) ^ α) -
-        2 * Real.exp (-(pseudoMass hα hr hc_mem * r)) *
-        (↑α * (pseudoMass hα hr hc_mem * r) ^ (α - 1) * r)) /
-       (1 + (pseudoMass hα hr hc_mem * r) ^ α) ^ 2) := by
-  apply pseudoMass_deriv_formula α hr hm_diff hc (pseudoMass_nonneg hα hr hc_mem) _ hm_pos
-  exact Filter.Eventually.of_forall fun β' => pseudoMass_spec hα hr (hc_fam β')
-
 /-! ## Derivation lemma for the Lipschitz estimate (Step 117f partial) -/
 
 /-- For `t ≥ 0`, `r > 0`, the absolute value of `pseudoMassG` derivative

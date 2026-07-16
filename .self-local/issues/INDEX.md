@@ -1,4 +1,4 @@
-# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535 CLOSED completed + #4521/#4522/#4524/#4525/#4531 synced)
+# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535 CLOSED completed + #4538 OPEN (refactor M1) + #4521/#4522/#4524/#4525/#4531 synced)
 
 **2026-07-12 CANONICAL BOOTSTRAP DEPRECATED**: canonical #4259 を CLOSED (single source of truth = docs/index.md)。三層 issue 構造は廃止。ローカルミラーは監査証跡として保持; ミラーは`.self-local/issues/<n>.md` 形式のまま無期保持するが, resume protocol からは削除。
 
@@ -122,6 +122,7 @@ GitHub post-setup checkpoints: [#4519](https://github.com/phasetr/ising-model/is
 | PR #4525 B1 merge to main | #4525 | **CLOSED completed (merged bc793dec)** | Squash-merge of refactor-B1; ancestor to final main at #4522 merge. | `4525.md` |
 | resolve proof-guide cyclic build blockers | #4531 | **CLOSED completed (merged)** | Unrelated pdfLaTeX U+0085 control-byte fix (pre-existing); merged; current main ancestor. | `4531.md` |
 | refactor H1/M2 (dead decoration + import) | #4535 | **CLOSED completed (2026-07-17)** | refactor cycle 2026-07-17 (97 dead decls + 1 import, PR #4536 merged 1793e549) | `4535.md` |
+| refactor M1 (file splits) | #4538 | **OPEN** | M1 umbrella split cycle (2026-07-17): MayerMontroll→3 children (ProperColorings 33–158 incl. line-table deviation, EdgeInclusionExclusion, ColorClassFibre), LayerPerronExistence→5 children, remove `pseudoMass_deriv_formula_corollary`, add shake config. PR #4539 Draft; body corrected by issue-manager 2026-07-17 to match actual line ranges. Design: `.self-local/reports/design-refactor-m1-2026-07-17.md` | `4538.md` |
 | current-main bottleneck profile | #4533 | **OPEN — v10 TERMINAL INVALID; v11 exact registration and approval complete, execution authority absent** | Attempt `v11-41a5ea8c54e4524153c9599ffe188d92`; no M0 execution. [registration](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993733856) / [approval](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993754940) | `4533.md` |
 
 ## reopen 条件 (close した各 issue 共通)
