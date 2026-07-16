@@ -9,13 +9,13 @@ Checks
 V1  No ``axiom`` declarations anywhere under ``IsingModel/``. The project has
     no axiomatized targets, so the expected count is zero.
 V2  No ``sorry`` / ``admit`` / ``native_decide`` in library code, after
-    stripping comments and string literals. ``native_decide`` is exempt only
-    in the files listed in ``V2_NATIVE_DECIDE_FILE_ALLOWLIST`` (executable
+    blanking comments and string literals. ``native_decide`` is exempt only in
+    the files listed in ``V2_NATIVE_DECIDE_FILE_ALLOWLIST`` (executable
     sanity-check ``example``s embedded in the library directory).
 V3  Capstone axiom audit. For every fully-qualified name in
-    ``scripts/audit/capstones.txt`` the ``#print axioms`` output must equal
-    exactly ``{propext, Classical.choice, Quot.sound}``. An unknown identifier
-    is a hard failure (keeps the capstone list honest).
+    ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
+    subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
+    identifier is a hard failure (keeps the capstone list honest).
 
 Usage
 -----
@@ -28,7 +28,6 @@ Exit code 0 iff every executed check passes; 1 otherwise.
 from __future__ import annotations
 
 import argparse
-import os
 import re
 import subprocess
 import sys
@@ -39,94 +38,95 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 LIB_DIR = REPO_ROOT / "IsingModel"
 CAPSTONES_FILE = REPO_ROOT / "scripts" / "audit" / "capstones.txt"
+# Scratch dir for the V3 temp .lean (gitignored; avoids leaking into the tree).
+TEMP_DIR = REPO_ROOT / ".self-local" / "tmp"
 
 # Only these files may contain ``native_decide`` (executable sanity-check
 # ``example``s living in the library directory). This exemption covers
 # ``native_decide`` only, never ``sorry`` or ``admit``.
 V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean"}
 
-# The axioms every capstone is permitted to depend on.
+# The axioms every capstone is permitted to depend on (subset accepted).
 ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
 
 
-def strip_comments(source: str) -> str:
-    """Return ``source`` with Lean comments blanked out.
+def strip_noncode(source: str) -> str:
+    """Return ``source`` with comments and string-literal contents blanked out.
 
-    Handles line comments (``--`` to end of line) and nesting-aware block
-    comments (``/- ... -/``). Removed characters are replaced by spaces or
-    newlines so that line and column numbers are preserved for diagnostics.
+    A single left-to-right character scanner tracks four mutually exclusive
+    states simultaneously, so a delimiter that appears *inside* another
+    construct never triggers a spurious transition:
+
+    * code
+    * double-quoted string (backslash escapes consumed as a unit)
+    * line comment (``--`` to end of line)
+    * nested block comment (``/- ... -/``)
+
+    This closes the fail-open hole of running string- and comment-stripping as
+    two independent passes (e.g. ``def m := "/-"`` would otherwise open a block
+    comment and swallow subsequent real code). Blanked characters become spaces
+    (newlines preserved) so line/column numbers stay accurate for diagnostics.
     """
     out: list[str] = []
     i = 0
     n = len(source)
-    depth = 0  # block-comment nesting depth
+    state = "code"  # code | string | line | block
+    block_depth = 0
     while i < n:
         ch = source[i]
         nxt = source[i + 1] if i + 1 < n else ""
-        if depth > 0:
-            if ch == "/" and nxt == "-":
-                depth += 1
-                out.append("  ")
-                i += 2
-                continue
-            if ch == "-" and nxt == "/":
-                depth -= 1
-                out.append("  ")
-                i += 2
-                continue
-            out.append("\n" if ch == "\n" else " ")
-            i += 1
-            continue
-        if ch == "/" and nxt == "-":
-            depth += 1
-            out.append("  ")
-            i += 2
-            continue
-        if ch == "-" and nxt == "-":
-            # Line comment: blank until (but keep) the newline.
-            j = i
-            while j < n and source[j] != "\n":
-                j += 1
-            out.append(" " * (j - i))
-            i = j
-            continue
-        out.append(ch)
-        i += 1
-    return "".join(out)
-
-
-def strip_strings(source: str) -> str:
-    """Return ``source`` with the contents of string literals blanked out.
-
-    Assumes comments have already been removed. Double-quoted strings with
-    backslash escapes are handled; column/line numbers are preserved.
-    """
-    out: list[str] = []
-    i = 0
-    n = len(source)
-    in_str = False
-    while i < n:
-        ch = source[i]
-        if in_str:
-            if ch == "\\" and i + 1 < n:
-                out.append("  ")
-                i += 2
-                continue
+        if state == "code":
             if ch == '"':
-                in_str = False
+                state = "string"
                 out.append('"')
                 i += 1
-                continue
-            out.append("\n" if ch == "\n" else " ")
-            i += 1
-            continue
-        if ch == '"':
-            in_str = True
-            out.append('"')
-            i += 1
-            continue
-        out.append(ch)
-        i += 1
+            elif ch == "-" and nxt == "-":
+                state = "line"
+                out.append("  ")
+                i += 2
+            elif ch == "/" and nxt == "-":
+                state = "block"
+                block_depth = 1
+                out.append("  ")
+                i += 2
+            else:
+                out.append(ch)
+                i += 1
+        elif state == "string":
+            if ch == "\\" and i + 1 < n:
+                # Consume the escaped char as a unit, preserving a trailing
+                # newline (Lean string line-continuation) for line accounting.
+                out.append(" \n" if source[i + 1] == "\n" else "  ")
+                i += 2
+            elif ch == '"':
+                state = "code"
+                out.append('"')
+                i += 1
+            else:
+                out.append("\n" if ch == "\n" else " ")
+                i += 1
+        elif state == "line":
+            if ch == "\n":
+                state = "code"
+                out.append("\n")
+                i += 1
+            else:
+                out.append(" ")
+                i += 1
+        else:  # block comment
+            if ch == "/" and nxt == "-":
+                block_depth += 1
+                out.append("  ")
+                i += 2
+            elif ch == "-" and nxt == "/":
+                block_depth -= 1
+                out.append("  ")
+                i += 2
+                if block_depth == 0:
+                    state = "code"
+            else:
+                out.append("\n" if ch == "\n" else " ")
+                i += 1
     return "".join(out)
 
 
@@ -140,17 +140,24 @@ def rel(path: Path) -> str:
     return path.relative_to(REPO_ROOT).as_posix()
 
 
+# ``axiom`` command with any leading attribute block and any combination of
+# declaration modifiers (private / protected / noncomputable / unsafe /
+# scoped[...] / local). Applied to comment/string-stripped text.
+_AXIOM_RE = re.compile(
+    r"^\s*(?:@\[[^\]]*\]\s*)?"
+    r"(?:(?:private|protected|noncomputable|unsafe)\s+"
+    r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
+    r"axiom\b"
+)
+
+
 def check_v1() -> list[str]:
     """V1: report any top-level ``axiom`` declaration under ``IsingModel/``."""
     failures: list[str] = []
-    # Matches ``axiom`` (optionally attributed / noncomputable) at line start.
-    pattern = re.compile(
-        r"^\s*(?:@\[[^\]]*\]\s*)?(?:noncomputable\s+)?axiom\b"
-    )
     for path in iter_lib_files():
-        text = strip_comments(path.read_text(encoding="utf-8"))
+        text = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
-            if pattern.match(line):
+            if _AXIOM_RE.match(line):
                 failures.append(f"{rel(path)}:{lineno}: axiom declaration")
     return failures
 
@@ -162,7 +169,7 @@ def check_v2() -> list[str]:
     word_res = {tok: re.compile(rf"\b{re.escape(tok)}\b") for tok in tokens}
     for path in iter_lib_files():
         relpath = rel(path)
-        cleaned = strip_strings(strip_comments(path.read_text(encoding="utf-8")))
+        cleaned = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(cleaned.splitlines(), start=1):
             for tok in tokens:
                 if not word_res[tok].search(line):
@@ -184,38 +191,37 @@ def read_capstones() -> list[str]:
     return names
 
 
-def parse_axioms_output(output: str) -> dict[str, object]:
-    """Parse ``#print axioms`` output into ``name -> axiom set | 'unknown'``.
+def parse_axioms_output(output: str) -> dict[str, set[str]]:
+    """Parse ``#print axioms`` output into ``name -> axiom set``.
 
-    A value of the string ``"unknown"`` marks a name Lean could not resolve.
+    Names Lean could not resolve simply do not appear in the result.
     """
-    result: dict[str, object] = {}
-    # "'name' depends on axioms: [a, b, c]"
+    result: dict[str, set[str]] = {}
     dep_re = re.compile(r"'([^']+)' depends on axioms: \[([^\]]*)\]")
     none_re = re.compile(r"'([^']+)' does not depend on any axioms")
     for match in dep_re.finditer(output):
-        name = match.group(1)
         body = match.group(2).strip()
-        axioms = {a.strip() for a in body.split(",") if a.strip()}
-        result[name] = axioms
+        result[match.group(1)] = {a.strip() for a in body.split(",") if a.strip()}
     for match in none_re.finditer(output):
         result[match.group(1)] = set()
     return result
 
 
-def check_v3() -> list[str]:
-    """V3: audit each capstone's axiom dependencies against the allowed set."""
+def check_v3() -> tuple[list[str], set[str]]:
+    """V3: audit capstone axiom dependencies. Return (failures, observed union)."""
     failures: list[str] = []
+    observed: set[str] = set()
     names = read_capstones()
     if not names:
-        return ["capstones.txt lists no theorems (V3 has nothing to audit)"]
+        return (["capstones.txt lists no theorems (V3 has nothing to audit)"], observed)
 
     lines = ["import IsingModel", ""]
     lines += [f"#print axioms {name}" for name in names]
     source = "\n".join(lines) + "\n"
 
+    TEMP_DIR.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(
-        mode="w", suffix=".lean", dir=str(REPO_ROOT), delete=False, encoding="utf-8"
+        mode="w", suffix=".lean", dir=str(TEMP_DIR), delete=False, encoding="utf-8"
     ) as handle:
         temp_path = Path(handle.name)
         handle.write(source)
@@ -247,7 +253,8 @@ def check_v3() -> list[str]:
             failures.append(f"V3: no `#print axioms` result for `{name}`")
             continue
         axioms = parsed[name]
-        extra = set(axioms) - ALLOWED_AXIOMS
+        observed |= axioms
+        extra = axioms - ALLOWED_AXIOMS
         if extra:
             failures.append(
                 f"V3: `{name}` depends on disallowed axioms {sorted(extra)}"
@@ -258,7 +265,7 @@ def check_v3() -> list[str]:
             "V3: `lake env lean` exited nonzero but produced no parsed failure; "
             f"raw output:\n{combined.strip()}"
         )
-    return failures
+    return (failures, observed)
 
 
 def lake_available() -> bool:
@@ -310,7 +317,7 @@ def main() -> int:
 
     print("== V3: capstone axiom audit (#print axioms) ==")
     if args.full or lake_available():
-        v3 = check_v3()
+        v3, observed = check_v3()
         if v3:
             ok = False
             print(f"FAIL: {len(v3)} problem(s):")
@@ -318,7 +325,11 @@ def main() -> int:
                 print(f"  {item}")
         else:
             names = read_capstones()
-            print(f"PASS ({len(names)} capstones, axioms == {{propext, Classical.choice, Quot.sound}})")
+            observed_str = "{" + ", ".join(sorted(observed)) + "}" if observed else "{}"
+            print(
+                f"PASS ({len(names)} capstones; every axiom set is a subset of "
+                f"{{propext, Classical.choice, Quot.sound}}; observed union = {observed_str})"
+            )
     else:
         print("SKIP: no `lake` env available (pass --full to require V3)")
 
