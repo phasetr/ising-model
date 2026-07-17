@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.CompactCoverPatches
 import IsingModel.AmbientComplexAnalyticity.CoverPatches.Pointwise
+import IsingModel.Lattice
 
 /-!
 # Per-stage complex analyticity wrappers: EventualPatches

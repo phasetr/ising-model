@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.BranchAscoliCompactOpen.AscoliPatches
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.BranchLocallyBoundedPatches.ConstNormBounded
 
 /-!
 # Per-stage complex analyticity wrappers: CoverPatches

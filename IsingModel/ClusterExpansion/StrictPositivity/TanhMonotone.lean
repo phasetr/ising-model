@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
+import IsingModel.ClusterExpansion.StrictPositivity.StrictMono
 
 /-!
 # Cluster expansion strict positivity split — polymer free energy tanh monotonicity in beta and J

@@ -1,5 +1,5 @@
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
-import IsingModel.Concrete.LatticeGraphBED.HandshakeIdentity
+import Mathlib.Data.Real.Basic
 
 /-!
 # Dart-sum-by-neighbor grouping (GJ §17.5 Theorem 17.5.1 — PR-1i convolution infrastructure)

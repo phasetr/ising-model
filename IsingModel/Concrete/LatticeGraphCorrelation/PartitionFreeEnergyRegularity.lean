@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaJoint
+import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 /-!
 # Concrete partition/free-energy regularity wrappers

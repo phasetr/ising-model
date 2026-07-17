@@ -1,5 +1,3 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionClosedForms
 
 /-!

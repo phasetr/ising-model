@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.Bounds.PolynomialLower
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.Basic.LeeYangBounds
 
 /-!
 # Per-stage complex analyticity wrappers: LeeYangLower

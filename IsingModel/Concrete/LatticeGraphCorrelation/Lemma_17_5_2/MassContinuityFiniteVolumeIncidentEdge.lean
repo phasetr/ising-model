@@ -1,7 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeIncidentRatio
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentDivCTight
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDenomRatioGeneral
 import IsingModel.Inequalities.SimonLieb
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentDivC
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-FV3f: the finite-volume per-edge incident `/c` bound (p.312)

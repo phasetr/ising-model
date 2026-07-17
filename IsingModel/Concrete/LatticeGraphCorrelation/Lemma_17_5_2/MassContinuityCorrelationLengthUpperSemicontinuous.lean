@@ -1,7 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityOnAxisCorrelationLength
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDirectionalCorrelationLength
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityPerPairRate
 import Mathlib.Topology.Semicontinuity.Basic
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 
 /-!
 # GJ §17.5 / FV §3.7.3 — upper-semicontinuity of the inverse correlation length on the window

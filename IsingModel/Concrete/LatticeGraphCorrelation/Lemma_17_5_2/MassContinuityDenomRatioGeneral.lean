@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDenomRatio
+import Mathlib.Analysis.Normed.Ring.Basic
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-FV4b-adj: the bounded denominator ratio for any `r ≤ 2s`

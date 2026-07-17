@@ -1,7 +1,3 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial
 
 /-!

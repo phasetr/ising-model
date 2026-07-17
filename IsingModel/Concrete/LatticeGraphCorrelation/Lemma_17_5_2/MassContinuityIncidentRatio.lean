@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartRatio
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityRatioBound
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-1f: single-factor (incident) exp-cancellation and profile ratio

@@ -1,4 +1,3 @@
-import IsingModel.AmbientLattice.Monotonicity
 import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

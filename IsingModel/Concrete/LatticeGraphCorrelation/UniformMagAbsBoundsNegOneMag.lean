@@ -1,4 +1,3 @@
-import IsingModel.TranslationInvariance
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!

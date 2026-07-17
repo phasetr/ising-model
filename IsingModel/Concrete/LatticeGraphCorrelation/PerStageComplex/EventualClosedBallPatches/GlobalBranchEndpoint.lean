@@ -1,5 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.GlobalBranchEndpoint
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.EventualClosedBallDeviation
+import IsingModel.Lattice
 
 /-!
 # Per-stage complex analyticity wrappers: GlobalBranchEndpoint

@@ -357,6 +357,7 @@ import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterFreeEnergyComplex
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterMontel
 import IsingModel.ClusterExpansion.MayerCore.MayerIdentityPersiteKP
 import IsingModel.ClusterExpansion.MayerCore.ComplexMayerMontroll
+import IsingModel.ClusterExpansion.MayerCore.MayerMontroll
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterRealAxis
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterLimit
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerCouplingAnalyticity

@@ -1,6 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict
 
 /-!

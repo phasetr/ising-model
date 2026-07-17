@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationRates.Summaries
+import IsingModel.Conditioning.CorrelationRates.TanhBounds
 
 /-!
 # Correlation rates split — ferromagnetic bounds and pair/singleton bundles

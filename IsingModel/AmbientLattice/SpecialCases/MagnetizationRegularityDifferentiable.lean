@@ -1,6 +1,5 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiableBeta
 
 /-!
 # Magnetization `Differentiable` in `h` / `J` along-ex wrappers

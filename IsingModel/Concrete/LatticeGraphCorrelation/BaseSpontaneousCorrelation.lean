@@ -7,7 +7,6 @@ pass-through to the abstract `spontaneousCorrelation_*` /
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
 -/
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

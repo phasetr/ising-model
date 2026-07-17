@@ -1,5 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityIncidentRatio
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicIncidentInfiniteBridge
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellInfiniteVolumeBound
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-1g: the per-edge incident `/c` uniform bound (p.312)

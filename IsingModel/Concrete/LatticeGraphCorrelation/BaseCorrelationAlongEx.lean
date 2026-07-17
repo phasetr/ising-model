@@ -9,7 +9,6 @@ Each is a thin pass-through to the corresponding abstract lemma at
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
 -/
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

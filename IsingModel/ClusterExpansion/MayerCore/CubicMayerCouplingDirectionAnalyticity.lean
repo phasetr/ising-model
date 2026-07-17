@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.MayerCore.CubicMayerHighTempIntervalAnalyticity
+import IsingModel.ClusterExpansion.MayerCore.CubicMayerCouplingAnalyticity
 
 /-!
 # Coupling-direction analyticity of the infinite-volume free energy (GJ §18.6)

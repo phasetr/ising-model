@@ -1,6 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairBase
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation
 
 /-!
 # ℤ^d along-ex correlation simple bound wrappers

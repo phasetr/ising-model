@@ -1,4 +1,6 @@
-import IsingModel.ClusterExpansion.PiFinsetSeparation
+import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Data.Real.Basic
 
 /-!
 # Separating an arbitrary coordinate of a constant `piFinset` sum (GJ §18.5)
