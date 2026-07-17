@@ -1,4 +1,4 @@
-# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535/#4538/#4541/#4544/#4547/#4550 CLOSED completed (refactor cycles 1-6))
+# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535/#4538/#4541/#4544/#4547/#4550/#4553 CLOSED completed (refactor cycles 1-7))
 
 **2026-07-12 CANONICAL BOOTSTRAP DEPRECATED**: canonical #4259 を CLOSED (single source of truth = docs/index.md)。三層 issue 構造は廃止。ローカルミラーは監査証跡として保持; ミラーは`.self-local/issues/<n>.md` 形式のまま無期保持するが, resume protocol からは削除。
 
