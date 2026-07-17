@@ -1,6 +1,6 @@
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.Lattice
-import IsingModel.TranslationInvariance
+import IsingModel.TranslationInvariance.Shift
 
 /-!
 # Cubic exhaustion of the integer lattice `Fin d → ℤ`

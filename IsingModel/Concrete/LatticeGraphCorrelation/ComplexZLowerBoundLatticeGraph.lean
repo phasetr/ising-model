@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientComplexAnalyticity.HighTempExpansion
+import IsingModel.Lattice
 
 /-!
 # ℤ^d complex Z lower bound per stage

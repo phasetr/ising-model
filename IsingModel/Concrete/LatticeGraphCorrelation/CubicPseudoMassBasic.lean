@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
 # Basic anchored cubic pseudo-mass names

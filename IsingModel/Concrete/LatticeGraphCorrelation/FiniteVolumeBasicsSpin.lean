@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.AmbientLattice.Monotonicity
-import IsingModel.FreeEnergy
+import IsingModel.Inequalities.NonnegCorrelations
 
 /-!
 # Concrete spinProduct + edgeSpin algebra wrappers

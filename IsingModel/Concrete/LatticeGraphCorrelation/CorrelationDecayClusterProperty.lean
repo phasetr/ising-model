@@ -1,6 +1,5 @@
-import IsingModel.AmbientLattice.CorrelationDecay
-import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.Lattice
+import IsingModel.AmbientLattice.TruncatedFunctions.Cluster
 
 /-!
 # ℤ^d clusterProperty_latticeGraph wrappers
