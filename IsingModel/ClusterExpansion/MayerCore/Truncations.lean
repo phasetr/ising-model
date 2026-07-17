@@ -77,19 +77,4 @@ theorem mayerPartialSum_three
               (t ^ pqr.1.card * t ^ pqr.2.1.card * t ^ pqr.2.2.card) := by
   rw [show (3 : ℕ) = 2 + 1 from rfl, mayerPartialSum_succ, mayerExpansionTerm_three]
 
-/-- **Mayer term vanishes when there are no polymers** (for `n ≥ 1`): if
-`allPolymers G = ∅` then `mayerExpansionTerm G n t = 0` for every `n ≥ 1`,
-since the `piFinset (Fin n → allPolymers G)` is empty (each coordinate must
-land in the empty polymer set). -/
-theorem mayerExpansionTerm_eq_zero_of_no_polymers
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (h_no : allPolymers G = ∅)
-    {n : ℕ} (hn : 1 ≤ n) (t : ℝ) :
-    mayerExpansionTerm G n t = 0 := by
-  unfold mayerExpansionTerm
-  refine Finset.sum_eq_zero (fun ω hω => ?_)
-  rw [Fintype.mem_piFinset] at hω
-  have h0 : ω ⟨0, hn⟩ ∈ allPolymers G := hω _
-  rw [h_no] at h0
-  exact absurd h0 (Finset.notMem_empty _)
-
 end IsingModel
