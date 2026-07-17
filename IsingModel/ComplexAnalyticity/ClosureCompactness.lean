@@ -1,4 +1,5 @@
-import IsingModel.ComplexAnalyticity.Compactness
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Topology.UniformSpace.Ascoli
 
 /-!
 # Closure-carrier compactness handoffs (GJ §4.6 Thm 4.6.2)

@@ -1,5 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityInfEnvelopeLipschitz
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityBindingPairDeriv
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistContinuity
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-C: global pseudo-mass-power Lipschitz (conditional capstone)

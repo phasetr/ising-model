@@ -1,6 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperComplete
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFE
 
 /-!
 # Concrete HT AlongExhaustion complete_summary_exp wrappers

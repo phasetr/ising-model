@@ -1,6 +1,6 @@
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerClusterFreeEnergyComplex
 import IsingModel.ComplexAnalyticity.ClosureCompactness
-import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions
+import IsingModel.Analysis.HolomorphicEquicontinuity
 
 /-!
 # Montel compact carrier for the per-site complex cluster free energy (GJ §18.6)

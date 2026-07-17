@@ -1,8 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperCompleteSummary
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichLogZ
 
 /-!
 # Concrete alongExhaustion sharper-exp Z/f/log Z wrappers at h = 0

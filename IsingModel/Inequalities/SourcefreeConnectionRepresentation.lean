@@ -1,4 +1,5 @@
-import IsingModel.Inequalities.CurrentConnectivityRepresentation
+import IsingModel.RandomCurrent.Switching.GlobalSwitchingLimit
+import IsingModel.Inequalities.SimonLieb
 
 /-!
 # Sourcefree (`∅/∅`) connection representation of the *squared* two-point function

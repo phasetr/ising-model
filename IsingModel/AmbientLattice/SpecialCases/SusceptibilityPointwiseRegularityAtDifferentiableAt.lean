@@ -1,5 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAtBeta
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiable
 
 /-!
 # Susceptibility `DifferentiableAt` along-ex wrappers

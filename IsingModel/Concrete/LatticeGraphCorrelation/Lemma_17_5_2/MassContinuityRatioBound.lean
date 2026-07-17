@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalFiniteRegionLipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistContinuity
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — analytic heart (PR-1): the m⁻-rate correlation majorant

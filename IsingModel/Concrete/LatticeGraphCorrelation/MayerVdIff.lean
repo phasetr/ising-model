@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymer
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # Concrete Mayer vd iff characterization wrappers

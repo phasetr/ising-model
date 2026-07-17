@@ -1,5 +1,6 @@
 import IsingModel.ClusterExpansion.FieldPolymerActivity
-import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
+import IsingModel.ClusterExpansion.UrsellTreeBound
+import IsingModel.ClusterExpansion.Penrose.SpanningTreeSummable
 
 /-!
 # Field-dependent Mayer term and its dominated summability (GJ §17.6.1)

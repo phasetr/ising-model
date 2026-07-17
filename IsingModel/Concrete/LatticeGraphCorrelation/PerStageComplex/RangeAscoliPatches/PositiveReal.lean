@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.RangeAscoliPatches.BranchDeviationDirectRange
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.BranchDeviationPatches
 
 /-!
 # Per-stage complex analyticity wrappers: PositiveReal

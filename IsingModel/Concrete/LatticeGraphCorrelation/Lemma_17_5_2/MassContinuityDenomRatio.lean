@@ -1,4 +1,4 @@
-import IsingModel.PseudoMass.Profile
+import Mathlib.Analysis.RCLike.Basic
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-1k: the bounded pseudo-mass denominator ratio (p.312)

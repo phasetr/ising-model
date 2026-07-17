@@ -1,4 +1,4 @@
-import IsingModel.AmbientComplexAnalyticity.AscoliData.Structures
+import IsingModel.AmbientComplexAnalyticity.AscoliData.Structures.BranchLocallyBounded
 
 /-!
 # Ambient complex analyticity Ascoli compact-open conversions

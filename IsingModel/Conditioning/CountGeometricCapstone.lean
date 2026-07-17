@@ -1,5 +1,7 @@
-import IsingModel.Conditioning.GeometricTail
 import Mathlib.Topology.Algebra.InfiniteSum.Order
+import Mathlib.Analysis.Normed.Ring.Basic
+import Mathlib.Analysis.Normed.Order.Lattice
+import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Geometric domination of a counted finite sum (FV §3.7.3 capstone bound)

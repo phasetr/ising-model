@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.EventualClosedBallPatches.ClosedBallDeviation
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.ClosedBallPatches.PosReal
 
 /-!
 # Per-stage complex analyticity wrappers: EventualClosedBallDeviation

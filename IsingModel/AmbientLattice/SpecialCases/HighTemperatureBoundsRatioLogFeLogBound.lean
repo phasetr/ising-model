@@ -1,6 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnly
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundFerro
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion log Z ratio sandwich / bound wrappers at h = 0

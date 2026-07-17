@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex.SubseqCompactOpen.FiniteCoverPatches
+import IsingModel.Lattice
+import IsingModel.AmbientComplexAnalyticity.CompactPatches.GeometryCOpen
 
 /-!
 # Per-stage complex analyticity wrappers: PointwiseAllStage
