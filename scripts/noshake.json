@@ -56,5 +56,13 @@
     "Mathlib.Tactic.Positivity",
     "Mathlib.Tactic.FieldSimp"
   ],
-  "ignore": {}
+  "ignore": {
+    "IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAt": [
+      "IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt",
+      "IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtContinuousAtBeta"
+    ],
+    "IsingModel.Concrete.LatticeGraphCorrelation.Inequalities": [
+      "IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature"
+    ]
+  }
 }

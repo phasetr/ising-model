@@ -1,5 +1,4 @@
 import IsingModel.ContinuousSpin.Measure
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 /-!

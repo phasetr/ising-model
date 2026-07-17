@@ -1,4 +1,3 @@
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBotLambdaAlongEx

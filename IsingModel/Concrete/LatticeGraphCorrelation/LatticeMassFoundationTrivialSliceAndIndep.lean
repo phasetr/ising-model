@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
-import IsingModel.TranslationInvariance
 
 /-!
 # `latticeMass` trivial-slice and exhaustion-independence wrappers at ℤ^d
