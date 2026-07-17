@@ -5,7 +5,6 @@ monotonicity + singleton-set wrappers extracted from
 abstract `spontaneousCorrelation_*` lemma at `latticeGraph d`. The
 theorem names are unchanged.
 -/
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

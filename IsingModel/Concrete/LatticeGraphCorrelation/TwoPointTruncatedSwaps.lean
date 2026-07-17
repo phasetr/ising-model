@@ -4,7 +4,6 @@ and `truncated4Infinite_latticeGraph_swap_{ij,jk,kl}` symmetry wrappers,
 extracted from `TwoPoint.lean` in PR #2027. The theorem names are
 unchanged from the former `TwoPoint` declarations.
 -/
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

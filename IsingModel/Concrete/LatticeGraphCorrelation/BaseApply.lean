@@ -9,7 +9,6 @@ extracted from `Base.lean` in PR #2037. Theorems:
 corresponding abstract `*_apply` lemma at `latticeGraph d`. The
 theorem names are unchanged from the former `Base` declarations.
 -/
-import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
