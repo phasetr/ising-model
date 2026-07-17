@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
 # Polymer free-energy tanh `< log 2` wrapper along an exhaustion

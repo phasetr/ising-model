@@ -1,8 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion Z ratio sandwich singleton wrappers at h = 0

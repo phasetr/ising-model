@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # Mayer identity at `J = β = 0` polymer_free_energy wrapper along an exhaustion

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
 
 /-!
 # Polymer-family `tanh ∘ (·)` analyticity wrappers along an exhaustion

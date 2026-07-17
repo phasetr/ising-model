@@ -1,7 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion partitionFunction closed-form trivial slice wrappers

@@ -1,5 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion freeEnergy HT closed-form decomposition wrapper

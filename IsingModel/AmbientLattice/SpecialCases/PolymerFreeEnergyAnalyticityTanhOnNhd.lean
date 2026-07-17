@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
 # Polymer free-energy `tanh`-composition `AnalyticOnNhd` wrappers along an exhaustion

@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.TruncatedFunctions
+import IsingModel.AmbientLattice.TruncatedFunctions.FourPoint
 
 /-!
 # Infinite-volume `truncated4Infinite` aliases at `h = 0`

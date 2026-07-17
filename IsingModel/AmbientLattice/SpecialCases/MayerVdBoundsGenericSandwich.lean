@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # Mayer vd generic-t sandwich bound wrappers along an exhaustion

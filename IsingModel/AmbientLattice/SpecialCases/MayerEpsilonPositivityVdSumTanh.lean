@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
 # `vdPolymerFamilies_sum` ε(tanh) positivity-iff wrappers along an exhaustion

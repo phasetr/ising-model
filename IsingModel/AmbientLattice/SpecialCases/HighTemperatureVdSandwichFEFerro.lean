@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 /-!
 # §18.5 cluster-expansion convergence ferromagnetic sandwich wrappers

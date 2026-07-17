@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpontaneousMono
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Free-energy J = 0 trivial-slice wrappers along an exhaustion

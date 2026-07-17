@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion `≥ 0` base wrapper

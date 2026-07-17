@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningCapstone
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
 
 /-!
 # General-ambient `+` boundary screening (Issue #3581 PR 3)

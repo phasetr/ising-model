@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 
 /-!
 # `mayerExpansionTerm` tanh `AnalyticAt` wrappers along an exhaustion

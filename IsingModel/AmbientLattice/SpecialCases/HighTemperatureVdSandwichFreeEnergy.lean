@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
 # §18.5 strict `freeEnergyAlongExhaustion` cluster-expansion bounds

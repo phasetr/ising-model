@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 
 /-!
 # Polymer free-energy edge-case vanishing wrappers along an exhaustion

@@ -1,6 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion partition function high-temperature expansion (general h)

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # Mayer `mayerPartialSum` at `t = 0` wrapper along an exhaustion

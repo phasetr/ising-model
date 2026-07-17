@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
 
 /-!
 # `vdPolymerFamilies_sum` tanh `Differentiable` along-ex wrappers

@@ -3,8 +3,7 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFE
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedSlices
 
 /-!
 # Ambient alongExhaustion sharper-exp complete-summary wrappers at h = 0

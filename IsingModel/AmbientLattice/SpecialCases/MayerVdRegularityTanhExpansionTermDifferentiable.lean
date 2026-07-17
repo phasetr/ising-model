@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 
 /-!
 # `mayerExpansionTerm` tanh `Differentiable` along-ex wrappers

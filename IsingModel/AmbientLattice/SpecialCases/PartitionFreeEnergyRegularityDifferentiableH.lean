@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 /-!
 # Ambient `partitionFunctionAlongExhaustion` `Differentiable` in `h` wrapper

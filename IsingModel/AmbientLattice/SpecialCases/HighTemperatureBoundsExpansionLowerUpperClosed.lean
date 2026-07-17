@@ -1,5 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion log Z high-temperature closed-form wrapper at h = 0

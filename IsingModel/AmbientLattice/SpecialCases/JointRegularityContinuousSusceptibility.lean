@@ -1,6 +1,6 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
 # Joint `Continuous` susceptibility along-ex wrapper

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # Mayer vd `tanh` iff characterization wrappers along an exhaustion

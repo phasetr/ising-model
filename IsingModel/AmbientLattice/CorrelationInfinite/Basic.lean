@@ -1,6 +1,6 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.Monotonicity
+import IsingModel.AmbientLattice.Monotonicity.Volume
 
 /-!
 # Infinite-volume correlation basics

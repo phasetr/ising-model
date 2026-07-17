@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
 # §18.6 freeEnergyAlongExhaustion = polymerFreeEnergy decomposition wrappers
