@@ -1,5 +1,5 @@
-import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-import Mathlib.Logic.Equiv.Fin.Basic
+import Mathlib.Data.Finset.Image
+import Mathlib.Data.Fin.Basic
 
 /-!
 # Rooted-parent active-set scaffolding for the leaf-peel induction (GJ §18.5)

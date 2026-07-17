@@ -1,4 +1,4 @@
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!

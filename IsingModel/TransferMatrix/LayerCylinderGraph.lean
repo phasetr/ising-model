@@ -1,6 +1,7 @@
 import IsingModel.PartitionFunctionIso
 import IsingModel.TransferMatrix.LayerCylinder
-import Mathlib.Tactic
+import Mathlib.CategoryTheory.Category.Preorder
+import Mathlib.CategoryTheory.FinCategory.Basic
 
 /-!
 # Finite layer-cylinder graphs (GJ §17.1)

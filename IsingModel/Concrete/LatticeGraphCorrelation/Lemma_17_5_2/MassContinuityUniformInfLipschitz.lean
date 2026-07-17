@@ -1,5 +1,5 @@
 import Mathlib.Order.ConditionallyCompleteLattice.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Real.Archimedean
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — Step-2: an infimum of uniformly-Lipschitz functions is Lipschitz

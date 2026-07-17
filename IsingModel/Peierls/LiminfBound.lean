@@ -1,5 +1,5 @@
 import Mathlib.Order.LiminfLimsup
-import Mathlib.Topology.Algebra.Order.LiminfLimsup
+import Mathlib.Data.Real.Archimedean
 
 /-!
 # Pushing a pointwise upper bound through the liminf (FV §3.7.2)
