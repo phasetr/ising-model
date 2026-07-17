@@ -1,4 +1,5 @@
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Analysis.Complex.Trigonometric
+import Mathlib.Analysis.RCLike.Basic
 
 /-!
 # The single-site Ising influence bound (Dobrushin uniqueness)

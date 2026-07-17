@@ -1,4 +1,4 @@
-import Mathlib.Data.Fin.Tuple.Finset
+import Mathlib.Data.Fintype.Pi
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Data.Real.Basic
 

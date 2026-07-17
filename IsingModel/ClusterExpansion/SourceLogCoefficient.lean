@@ -1,4 +1,6 @@
-import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Topology.Algebra.Module.ModuleTopology
+import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.Deriv.Mul
 
