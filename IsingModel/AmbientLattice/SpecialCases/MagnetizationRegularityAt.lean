@@ -1,4 +1,6 @@
 import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtDifferentiableAt
+import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityAtContinuousAtBeta
 
 /-!
 # Magnetization `ContinuousAt` along-ex wrappers
