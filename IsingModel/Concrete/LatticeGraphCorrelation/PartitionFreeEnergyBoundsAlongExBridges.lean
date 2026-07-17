@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete ℤ^d freeEnergyAlongExhaustion bridge / per-stage bound wrappers

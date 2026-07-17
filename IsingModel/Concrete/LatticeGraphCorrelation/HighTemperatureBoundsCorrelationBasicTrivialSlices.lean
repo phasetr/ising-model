@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete HT correlation basic trivial-slice wrappers (J = 0, β = 0)

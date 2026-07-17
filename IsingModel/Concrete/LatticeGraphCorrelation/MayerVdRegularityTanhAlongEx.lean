@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.Lattice
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 
 /-!
 # ℤ^d AlongExhaustion Mayer tanh regularity wrappers

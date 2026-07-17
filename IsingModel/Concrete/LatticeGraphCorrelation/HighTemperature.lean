@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperature
+import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 /-!
 # Concrete high-temperature convergence wrappers for the lattice graph

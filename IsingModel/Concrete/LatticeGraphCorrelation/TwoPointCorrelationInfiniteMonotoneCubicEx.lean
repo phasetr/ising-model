@@ -1,11 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
-import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d `correlationInfinite_latticeGraph_cubicExhaustion_monotone_*` wrappers

@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperature
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro
 
 /-!
 # Concrete §18.5 along-exhaustion high-temperature ferromagnetic wrappers

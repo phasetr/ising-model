@@ -5,14 +5,9 @@ Narrow child module for the 5 ℤ^d magnetization monotonicity wrappers
 extracted from `TwoPoint.lean` in PR #2026. The theorem names are
 unchanged from the former `TwoPoint` declarations.
 -/
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
-import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
 

@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnly
 
 /-!
 # Concrete alongExhaustion Z ratio_bound J = 0 / β = 0 slice wrappers at h = 0

@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetry
 import IsingModel.AmbientLatticeSum
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d partitionFunctionAlongEx |h|-symmetry wrappers

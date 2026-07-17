@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete spontaneousCorrelation cubicExhaustion translation + monotone wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DartSumNeighborGrouping
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.GlobalPseudoMassDist
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-1i: dart-profile sum ≤ box-vertex sum (p.312)

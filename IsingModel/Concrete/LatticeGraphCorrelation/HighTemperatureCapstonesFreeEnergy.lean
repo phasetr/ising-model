@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
+import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
 # Concrete Λ-direct freeEnergyΛ high-temperature capstone wrappers

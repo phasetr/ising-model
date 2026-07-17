@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
+import IsingModel.AmbientLattice.AnalyticityLambdaTanhFerroIff
 
 /-!
 # Concrete Mayer tanh ferromagnetic iff wrappers

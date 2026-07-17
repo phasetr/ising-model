@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassAbscissa
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 
 /-!
 # GJ §17.5/§18 Theorem 17.5.1 — directional abscissa upper bound for the true mass

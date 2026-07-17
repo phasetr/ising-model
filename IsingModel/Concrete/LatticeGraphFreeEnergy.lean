@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete free-energy sandwich bound for the `ℤ^d` Ising model

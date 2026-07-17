@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 /-!
 # ℤ^d `vdPolymerFamilies_sum` tanh-composed analyticity wrappers

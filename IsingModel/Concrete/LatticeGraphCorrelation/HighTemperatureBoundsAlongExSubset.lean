@@ -1,7 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedSlices
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariants
 
 /-!
 # Concrete HT AlongExhaustion subset / even-subgraph wrappers

@@ -1,6 +1,7 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.Lipschitz
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.UpperBound
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSConstants
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.Predicates
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone — Step 115 path-rate bridge

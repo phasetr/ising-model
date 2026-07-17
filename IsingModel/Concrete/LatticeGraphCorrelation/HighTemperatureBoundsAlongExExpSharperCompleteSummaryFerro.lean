@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerro
 
 /-!
 # Concrete §18.3-§18.4 along-ex sharper-exp ferromagnetic complete-summary wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon
 
 /-!
 # Concrete Mayer epsilon infrastructure wrappers

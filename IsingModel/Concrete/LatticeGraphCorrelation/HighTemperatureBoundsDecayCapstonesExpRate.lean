@@ -1,7 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDecayCapstones
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
 
 /-!
 # Concrete §18.7 exp_rate_dist decay-capstone wrappers

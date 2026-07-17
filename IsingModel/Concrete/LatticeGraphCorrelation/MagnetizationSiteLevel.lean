@@ -11,9 +11,8 @@ monotone wrappers
 now live in `MagnetizationSiteLevelTrivialAndMonotone.lean`. The
 theorem names are unchanged from the former `Magnetization` declarations.
 -/
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
 

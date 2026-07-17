@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
+import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
 # ℤ^d Λ-layer freeEnergy `AnalyticAt` general-h wrappers

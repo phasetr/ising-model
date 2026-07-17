@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.Defs
+import IsingModel.AmbientLattice.Defs.Regularity.Convergent
 
 /-!
 # ℤ^d Λ-layer susceptibility parameter-direction convergent wrappers

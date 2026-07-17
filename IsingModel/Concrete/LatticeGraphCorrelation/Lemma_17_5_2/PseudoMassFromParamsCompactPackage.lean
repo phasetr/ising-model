@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteHLSLipschitzPackage
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsRegularity
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteHLSLipschitzPackage.CompactRatio
 
 /-!
 # Concrete pseudo-mass compact package for GJ Lemma 17.5.2

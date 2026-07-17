@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.Continuity
 
 /-!
 # Continuity of corr_∞ on open high-temperature intervals at ℤ^d

@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaMayer
+import IsingModel.Lattice
 
 /-!
 # ℤ^d Λ-direct mayerPartialSum regularity wrappers

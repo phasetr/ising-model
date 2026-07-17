@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh
 
 /-!
 # ℤ^d AlongExhaustion polymerFreeEnergy tanh analyticity wrappers

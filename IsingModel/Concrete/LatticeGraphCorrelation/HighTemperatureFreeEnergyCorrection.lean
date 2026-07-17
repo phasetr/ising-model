@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperature
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy
 
 /-!
 # Concrete `freeEnergy_lt_log_two_plus_high_temp_correction` wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening
+import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
 # ℤ^d Λ-layer polymerFreeEnergy ε iff wrappers

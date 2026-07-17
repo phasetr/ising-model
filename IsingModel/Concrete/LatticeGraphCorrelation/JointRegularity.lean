@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.JointRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 
 /-!
 # Concrete joint regularity wrappers

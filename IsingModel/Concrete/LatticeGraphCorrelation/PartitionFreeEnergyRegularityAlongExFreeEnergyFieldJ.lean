@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
 
 /-!
 # ℤ^d along-ex freeEnergyAlongEx field/J regularity wrappers

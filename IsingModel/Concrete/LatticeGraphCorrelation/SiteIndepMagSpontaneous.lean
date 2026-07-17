@@ -1,11 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
-import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d `spontaneousCorrelation`/`spontaneousMagnetization_latticeGraph` wrappers

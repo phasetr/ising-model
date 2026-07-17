@@ -11,8 +11,8 @@ the corresponding abstract translation-invariance lemma at
 `IsingModel.latticeGraph d`. The theorem names are unchanged from the
 former `Translation` declarations.
 -/
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
 

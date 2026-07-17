@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityOnNhd
 
 /-!
 # ℤ^d freeEnergyAlongEx AnalyticOnNhd general-h wrappers

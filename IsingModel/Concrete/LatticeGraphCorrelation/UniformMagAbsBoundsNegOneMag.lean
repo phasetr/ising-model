@@ -1,8 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.TranslationInvariance
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d `neg_one_le_magnetization*_latticeGraph` wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
 
 /-!
 # Concrete along-ex freeEnergyAlongExhaustion regularity wrappers

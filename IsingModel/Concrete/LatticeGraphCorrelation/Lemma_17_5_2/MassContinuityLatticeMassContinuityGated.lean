@@ -1,5 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassUpperSemicontinuous
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityUniformInfLipschitz
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityCorrelationLengthUpperSemicontinuous
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityLatticeMassDirectionalLowerBound
 
 /-!
 # GJ Theorem 17.5.1 — true-mass continuity, gated on the uniform-in-direction Lipschitz bound

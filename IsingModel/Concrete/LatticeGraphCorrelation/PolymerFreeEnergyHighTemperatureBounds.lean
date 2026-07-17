@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
 # Concrete polymer free-energy high-temperature bound wrappers

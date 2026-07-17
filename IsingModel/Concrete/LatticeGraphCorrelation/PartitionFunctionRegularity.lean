@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
 # Concrete partition-function regularity wrappers

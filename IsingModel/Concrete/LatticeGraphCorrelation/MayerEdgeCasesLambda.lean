@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # ℤ^d Λ-direct Mayer identity edge-case wrappers

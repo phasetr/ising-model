@@ -1,9 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d ciSup / pointwise-le wrappers (magnetization / correlation)

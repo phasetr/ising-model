@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete partition/free-energy along-exhaustion bounds

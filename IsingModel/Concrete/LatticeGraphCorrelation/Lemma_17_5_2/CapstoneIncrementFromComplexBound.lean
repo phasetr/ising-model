@@ -1,7 +1,8 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationDerivativeIncrementBridge
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CorrelationAlongExhaustionDeriv
 import IsingModel.Concrete.LatticeGraphCorrelation.Regularity
 import IsingModel.Lattice
+import IsingModel.ComplexAnalyticity.Correlation
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CauchyDerivativeBridge
 
 /-!
 # Capstone per-stage β-derivative increment from complex inputs (Issue #3026)

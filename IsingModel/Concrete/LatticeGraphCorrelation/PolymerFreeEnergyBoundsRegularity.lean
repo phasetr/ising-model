@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
+import IsingModel.Lattice
 
 /-!
 # Concrete ℤ^d polymerFreeEnergy regularity wrappers (§18.5)

@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.Lattice
 
 /-!
 # Concrete AlongExhaustion polymerFreeEnergy eq_zero / le wrappers

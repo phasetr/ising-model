@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
 import Mathlib.Analysis.BoundedVariation
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.Lipschitz
 
 /-!
 # ℤ^d open-interval correlationInfinite BV / a.e.-differentiability wrappers

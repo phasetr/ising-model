@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff
 
 /-!
 # Concrete AlongExhaustion polymerFreeEnergy tanh sharpening wrappers

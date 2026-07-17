@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d along-exhaustion `log_partitionFunctionAlongExhaustion` monotonicity wrappers

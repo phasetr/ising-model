@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # Concrete `mayer_identity_*_polymer_free_energy_*` edge cases

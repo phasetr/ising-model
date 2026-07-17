@@ -1,7 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d correlation trivial-slice wrappers on `latticeGraph d`

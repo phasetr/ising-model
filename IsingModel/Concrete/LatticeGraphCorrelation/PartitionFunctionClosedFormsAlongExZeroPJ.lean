@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d partitionFunctionAlongExhaustion closed-form zero_params + J_zero wrappers

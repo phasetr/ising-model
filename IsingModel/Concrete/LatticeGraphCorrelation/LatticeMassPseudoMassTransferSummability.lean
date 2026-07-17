@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundationTrivialSliceAndIndep
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
@@ -11,6 +10,7 @@ import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
 import IsingModel.LatticeExpSum
 import IsingModel.PseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PosAndAntitone
 
 /-!
 # Lattice-mass: Step 127 summability + criticalInverseTemp foundations

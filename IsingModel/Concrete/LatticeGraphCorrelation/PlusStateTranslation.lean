@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LocalObservableUnion
 import IsingModel.TranslationInvariance.FiniteVolume
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
 
 /-!
 # Boundary-condition translation covariance (Issue #3581 PR 1)

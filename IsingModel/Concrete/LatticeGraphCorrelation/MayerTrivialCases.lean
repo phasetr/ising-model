@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # Concrete Mayer trivial-case wrappers

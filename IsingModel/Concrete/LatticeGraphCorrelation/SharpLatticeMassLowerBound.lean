@@ -1,7 +1,6 @@
 import IsingModel.Inequalities.SharpSimonLiebNeighbor
 import IsingModel.Inequalities.HighTemp.SimonLiebInfinite
-import IsingModel.Concrete.LatticeGraphCorrelation.SimonLiebDistanceDecay
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PosAndAntitone
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 
 /-!
 # Sharp `tanh`-coefficient lattice-mass lower bound (GJ §17.5 / §18 / FFS Ch 12)

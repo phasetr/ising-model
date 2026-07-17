@@ -1,8 +1,8 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityPerPairRate
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.UpperBound
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PathLowerBound
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import Mathlib.Analysis.SpecificLimits.Basic
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSBridgeFromSimonLieb
 
 /-!
 # GJ §17.5/§18 Theorem 17.5.1 — on-axis abscissa upper bound for the true mass

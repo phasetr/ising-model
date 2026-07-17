@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityDartScaledHLS
+import IsingModel.PseudoMass.HLSSharpPairBound
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-1j-final: mass-uniform HLS convolution bound (p.312)

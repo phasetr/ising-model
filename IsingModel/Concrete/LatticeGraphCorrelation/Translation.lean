@@ -1,12 +1,10 @@
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /- Translation.lean
 Concrete translation invariance theorems for the ℤ^d Ising model:
 finite-volume, along-exhaustion, and infinite-volume wrappers for
 correlations, partition functions, free energy, truncated 2/3/4-point
 functions, and spontaneous correlation/magnetization.
 -/
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd
 
 open scoped symmDiff
 

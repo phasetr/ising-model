@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
 # ℤ^d Λ-layer polymerFreeEnergy tanh-bound ferromagnetic wrappers

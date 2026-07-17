@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationMonotonicity
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d per-Λ `correlationΛ` monotone wrappers

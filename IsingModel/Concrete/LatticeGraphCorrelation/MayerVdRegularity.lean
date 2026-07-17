@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.Lattice
 
 /-!
 # Concrete Mayer and polymer-family regularity wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening
+import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
 # Concrete polymer free-energy epsilon sharpening wrappers

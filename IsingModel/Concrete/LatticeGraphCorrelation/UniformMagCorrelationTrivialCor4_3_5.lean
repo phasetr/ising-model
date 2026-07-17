@@ -1,7 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d Cor 4.3.5 ∞-volume correlation wrappers

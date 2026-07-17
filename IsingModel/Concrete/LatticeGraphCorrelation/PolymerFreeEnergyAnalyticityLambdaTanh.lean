@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
+import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
 # ℤ^d Λ-layer polymerFreeEnergy tanh analyticity wrappers (§18.6)

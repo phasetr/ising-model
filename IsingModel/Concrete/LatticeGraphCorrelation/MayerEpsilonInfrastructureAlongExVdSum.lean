@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 
 /-!
 # Concrete along-ex vdPolymerFamilies_sumAlongExhaustion ε(t) wrappers

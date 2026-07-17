@@ -1,6 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity
 
 /-!
 # Concrete alongExhaustion f deviation_bound_exp + continuity_bundle wrappers at h = 0

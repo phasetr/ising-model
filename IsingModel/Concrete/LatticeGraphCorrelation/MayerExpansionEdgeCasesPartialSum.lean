@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
 # ℤ^d Λ-layer `mayerPartialSum_Λ_latticeGraph_*` edge-case wrappers

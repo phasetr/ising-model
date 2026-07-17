@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Disconnection
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Theorem eta-le-1 split — Phases 2-4 lattice ball defs, polynomial decay, ball-boundary axiom

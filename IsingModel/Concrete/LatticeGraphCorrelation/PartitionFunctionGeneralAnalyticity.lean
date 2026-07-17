@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity
+import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
 # Concrete partition-function joint and general-h analyticity wrappers

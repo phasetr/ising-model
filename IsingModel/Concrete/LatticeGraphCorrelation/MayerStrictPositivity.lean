@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
+import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
 # Concrete Mayer strict positivity wrappers

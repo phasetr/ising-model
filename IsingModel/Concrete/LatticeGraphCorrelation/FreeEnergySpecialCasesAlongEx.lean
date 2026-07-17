@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete ℤ^d `freeEnergyAlongExhaustion` special-case wrappers

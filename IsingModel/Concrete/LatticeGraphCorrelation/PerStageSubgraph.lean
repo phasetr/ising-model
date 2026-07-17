@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
+import IsingModel.FreeEnergy.SubgraphBounds
 
 /-!
 # Concrete ℤ^d Λ-induced subgraph monotone/convergent wrappers

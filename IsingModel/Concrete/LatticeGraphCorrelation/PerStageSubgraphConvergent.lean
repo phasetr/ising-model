@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
+import IsingModel.FreeEnergy.SpecialValues
 
 /-!
 # ℤ^d *_convergent_subgraph_latticeGraph wrappers

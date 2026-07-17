@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Concrete.LatticeGraphCorrelation.Magnetization
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d susceptibility_convergent wrappers

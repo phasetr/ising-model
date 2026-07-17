@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d tail GKS / FKG / supermodular wrappers
