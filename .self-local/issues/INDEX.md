@@ -1,4 +1,4 @@
-# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535/#4538 CLOSED completed (refactor H1/M2 + M1 cycles) + #4521/#4522/#4524/#4525/#4531 synced)
+# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535/#4538/#4541 CLOSED completed (refactor cycles 1-3) + #4544 OPEN (cycle 4, mathlib-only downgrades))
 
 **2026-07-12 CANONICAL BOOTSTRAP DEPRECATED**: canonical #4259 を CLOSED (single source of truth = docs/index.md)。三層 issue 構造は廃止。ローカルミラーは監査証跡として保持; ミラーは`.self-local/issues/<n>.md` 形式のまま無期保持するが, resume protocol からは削除。
 
@@ -126,6 +126,7 @@ GitHub post-setup checkpoints: [#4519](https://github.com/phasetr/ising-model/is
 | refactor H1/M2 (dead decoration + import) | #4535 | **CLOSED completed (2026-07-17)** | refactor cycle 2026-07-17 (97 dead decls + 1 import, PR #4536 merged 1793e549) | `4535.md` |
 | refactor M1 (file splits) | #4538 | **CLOSED completed (2026-07-17)** | M1 umbrella split cycle completed (PR #4539 merged `4a44ad71`): MayerMontroll→umbrella + 3 children; LayerPerronExistence→umbrella + 5 children; declaration multiset preserved verbatim, machine-verified; 61 decls (MayerMontroll) / 66 decls (LayerPerronExistence) by comprehensive count incl. attribute-prefixed declarations; removed `pseudoMass_deriv_formula_corollary` (ref-0), trimmed docs/index.md mention, added scripts/noshake.json. All gates PASS (zero warnings, GKSTest green, axiom-free, importer churn 0). Design: `.self-local/reports/design-refactor-m1-2026-07-17.md` | `4538.md` |
 | refactor cycle 3 (shake-imports + CI audit gate) | #4541 | **CLOSED completed (2026-07-17)** | shake-driven removals/downgrades (9 imports across 6 files) + CI audit_gate.py (V1/V2/V3, 13 capstones) wired into GitHub Actions; 2 false-positive candidates excluded (build arbiter); review QA fail-open holes (string-masking, modifier-prefixed axiom) FIXED in `e4532253` + re-verified; 680 umbrella→child downgrades + 298 coupled blocks DEFERRED (explicit approval required); all gates PASS (zero warnings, GKSTest, review+codex, tier1+issue-manager, CI green); PR #4542 merged `2b6b1c22` | `4541.md` |
+| refactor cycle 4 (mathlib-only import downgrades) | #4544 | **OPEN** | shake-suggested downgrades (mathlib-only scope); PR #4545 (Draft); seed commit pushed; awaiting implementation | `4544.md` |
 | current-main bottleneck profile | #4533 | **OPEN — v10 TERMINAL INVALID; v11 exact registration and approval complete, execution authority absent** | Attempt `v11-41a5ea8c54e4524153c9599ffe188d92`; no M0 execution. [registration](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993733856) / [approval](https://github.com/phasetr/ising-model/issues/4533#issuecomment-4993754940) | `4533.md` |
 
 ## reopen 条件 (close した各 issue 共通)
