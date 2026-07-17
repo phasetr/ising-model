@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Defs.Core
-import IsingModel.Conditioning.CorrelationClosed
+import IsingModel.Conditioning.CorrelationClosed.GeneralField
+import IsingModel.Conditioning.CorrelationClosed.Z2Symmetry
 
 /-!
 # Ambient lattice high-temperature partition bounds

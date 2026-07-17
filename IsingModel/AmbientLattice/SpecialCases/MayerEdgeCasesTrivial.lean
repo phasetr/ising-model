@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # Mayer trivial-slice edge-case wrappers along an exhaustion

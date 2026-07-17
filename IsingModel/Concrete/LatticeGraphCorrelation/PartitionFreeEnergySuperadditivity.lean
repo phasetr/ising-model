@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLatticeSum
+import IsingModel.AmbientLatticeSum.LambdaSuperadditivity
+import IsingModel.Lattice
 
 /-!
 # Concrete partition/free-energy superadditivity wrappers

@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityMagnetization
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility
 
 /-!
 # ℤ^d AlongExhaustion joint mag + susc analyticity wrappers

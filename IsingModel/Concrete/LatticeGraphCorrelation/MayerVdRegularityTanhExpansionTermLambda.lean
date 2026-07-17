@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaMayer
+import IsingModel.Lattice
 
 /-!
 # Concrete `mayerExpansionTerm_Λ` tanh regularity wrappers

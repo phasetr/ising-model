@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
 
 /-!
 # Concrete joint analyticity wrappers for the lattice graph

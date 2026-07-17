@@ -1,5 +1,5 @@
-import IsingModel.Inequalities.Lebowitz.Cor434
 import IsingModel.Inequalities.GKS
+import IsingModel.Inequalities.Lebowitz.LebowitzFour
 
 /-!
 # GJ Corollary 4.3.5, the inductive Lebowitz bound

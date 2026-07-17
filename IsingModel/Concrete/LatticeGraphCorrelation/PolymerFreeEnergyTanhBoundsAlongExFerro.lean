@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro
 
 /-!
 # Concrete along-ex ferromagnetic polymerFreeEnergy tanh-bound wrappers

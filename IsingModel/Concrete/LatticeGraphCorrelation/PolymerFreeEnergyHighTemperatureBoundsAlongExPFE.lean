@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh
 
 /-!
 # Concrete along-ex polymerFreeEnergyAlongExhaustion tanh HT bound wrappers

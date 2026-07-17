@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d truncated2Infinite trivial-slice / symmetry / h-zero wrappers

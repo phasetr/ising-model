@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
 import IsingModel.Inequalities.GHS
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d Λ-induced truncated-four-point wrappers

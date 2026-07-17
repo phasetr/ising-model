@@ -1,5 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d Λ-induced high-temperature h=0 sandwich / ferromagnetic / bundle wrappers

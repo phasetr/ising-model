@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.FiniteVolumeCorrelationMonotonicity
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete Lambda-layer correlation monotonicity wrappers

@@ -1,13 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedForms
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPair
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion correlation basic + bundle wrappers at h = 0

@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
+import IsingModel.Lattice
 
 /-!
 # Concrete polymer free-energy bound wrappers for the lattice graph

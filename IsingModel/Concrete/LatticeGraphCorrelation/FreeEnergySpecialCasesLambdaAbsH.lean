@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d freeEnergyΛ |h|-symmetry / monotonicity wrappers

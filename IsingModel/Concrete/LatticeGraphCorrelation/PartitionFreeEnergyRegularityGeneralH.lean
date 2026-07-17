@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 /-!
 # ℤ^d partitionFunctionΛ continuous/differentiable general-h wrappers

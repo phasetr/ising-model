@@ -1,6 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
+import IsingModel.PhaseTransition.CriticalGrowth
 
 /-!
 # ℤ^d *_convergent_subgraph_latticeGraph wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Dobrushin.SiteOscillation
-import IsingModel.Dobrushin.InfluenceMatrixDecay
+import IsingModel.RealTanhAux
 
 /-!
 # Oscillation propagation under the heat-bath operator (Issue #4201)

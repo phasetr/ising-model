@@ -1,5 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
+import IsingModel.Lattice
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiableExpansionTerm
+import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityExpansionTerm
 
 /-!
 # ℤ^d §18.6 mayerExpansionTerm regularity wrappers

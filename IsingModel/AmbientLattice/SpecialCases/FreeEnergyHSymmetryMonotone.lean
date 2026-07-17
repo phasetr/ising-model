@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpontaneousMono
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Free-energy ferromagnetic `|h|`-monotonicity along an exhaustion

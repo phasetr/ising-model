@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateAmbientIndep
 import IsingModel.Concrete.LatticeGraphBED.NeighborDegree
+import IsingModel.Concrete.LatticeGraphCorrelation.PlusStateExhaustion
 
 /-!
 # The region `+` expectation and its nearest-neighbour closure (Issue #3581)

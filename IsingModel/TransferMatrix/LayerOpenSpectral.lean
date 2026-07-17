@@ -1,5 +1,5 @@
 import IsingModel.TransferMatrix.LayerOpenSlab
-import IsingModel.TransferMatrix.LayerSpectral
+import IsingModel.TransferMatrix.LayerSpectral.FlipParity
 
 /-!
 # Open-boundary layer spectral bridges

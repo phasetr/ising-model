@@ -1,11 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion §18.7 alpha-rate distance-bound capstones at h = 0

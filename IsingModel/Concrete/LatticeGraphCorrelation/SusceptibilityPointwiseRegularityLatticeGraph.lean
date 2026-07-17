@@ -1,7 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAtBeta
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta
 
 /-!
 # Concrete ℤ^d-specialized susceptibilityAlongExhaustion pointwise wrappers

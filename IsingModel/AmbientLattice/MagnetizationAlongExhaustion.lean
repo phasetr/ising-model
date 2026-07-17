@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.CorrelationInfinite
+import IsingModel.AmbientLattice.CorrelationInfinite.GKSSecondPrelude
 
 /-!
 # Magnetization along an exhaustion and parameter monotonicity

@@ -1,4 +1,4 @@
-import IsingModel.Concrete.CenteredSlab.InfiniteVolumeMonotone
+import IsingModel.Concrete.CenteredSlab.InfiniteVolumeLimit
 
 /-!
 # Centered slab split — 1D / slab-brick / stripe-brick consistency

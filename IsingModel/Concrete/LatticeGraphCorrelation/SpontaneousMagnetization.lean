@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationFieldMonotone
+import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationFlipSymmetry
 
 /-!
 # Spontaneous magnetization `m*(β)` (FV §3.6, order parameter)

@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LambdaCorrelationMonotonicity
 import IsingModel.AmbientLattice.CorrelationInfinite
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d correlationAlongExhaustion ciSup / infinite-limit wrappers

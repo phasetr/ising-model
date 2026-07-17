@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationClosed.ClosedForm
+import IsingModel.Conditioning.HighTempExpansion
 
 /-!
 # General external-field high-temperature expansion of thermal averages (GJ §18.3/§18.5)

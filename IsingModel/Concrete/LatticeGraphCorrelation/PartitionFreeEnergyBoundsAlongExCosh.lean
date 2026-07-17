@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d partitionFunctionAlongEx 2^|Λ_n| / (2 cosh)^|Λ_n| wrappers

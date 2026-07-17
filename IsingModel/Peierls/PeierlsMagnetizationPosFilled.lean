@@ -1,5 +1,8 @@
-import IsingModel.Peierls.PeierlsMagnetizationPos
 import IsingModel.Peierls.PeierlsContourCountFilled
+import IsingModel.Peierls.FilledConnectedBound
+import IsingModel.Peierls.PlusGibbsMono
+import IsingModel.Peierls.LiminfBound
+import IsingModel.PeierlsInfinite
 
 /-!
 # Unconditional positivity of the spontaneous magnetization (FV §3.7.2)

@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.ComplexAnalyticity
-import IsingModel.AmbientComplexAnalyticity
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.ComplexAnalyticity.Basic
 
 /-!
 # ℤ^d partitionFunctionComplex single-variable analyticAt wrappers

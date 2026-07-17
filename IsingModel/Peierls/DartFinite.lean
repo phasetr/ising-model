@@ -1,4 +1,4 @@
-import IsingModel.Peierls.NextDart
+import IsingModel.Peierls.BoundaryDart
 
 /-!
 # Finiteness of boundary darts (FV §3.7.2)

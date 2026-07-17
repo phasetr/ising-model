@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
 # `vdPolymerFamilies_sum` `MonotoneOn (Set.Ici 0)` wrapper along an exhaustion

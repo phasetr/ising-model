@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.Monotonicity
+import IsingModel.AmbientLattice.Monotonicity.Factoring
 
 /-!
 # Concrete finite-volume extension wrappers

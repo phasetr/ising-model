@@ -1,4 +1,4 @@
-import IsingModel.Inequalities.SourcefreeConnectionEdgeReachableLeg
+import IsingModel.RandomCurrent.Switching.GlobalSwitchingLimit
 
 /-!
 # Truncated four-point mass as the `x ↮ y` doubled sum (OZ Wall #2, Stage P2, Step P2-i)

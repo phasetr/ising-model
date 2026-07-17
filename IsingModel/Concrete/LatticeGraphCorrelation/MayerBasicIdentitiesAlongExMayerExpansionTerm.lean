@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
+import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentitiesExpansionTerm
 
 /-!
 # ℤ^d mayerExpansionTermAlongExhaustion_latticeGraph wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
 
 /-!
 # Concrete along-ex polymerFreeEnergy = mayerPartialSum edge cases

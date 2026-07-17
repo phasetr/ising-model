@@ -1,6 +1,5 @@
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag

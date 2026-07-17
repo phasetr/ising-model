@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.Defs.Correlation
+import IsingModel.AmbientLattice.Defs.Core
 
 /-!
 # Lambda-layer regularity split — susceptibility definition and free-energy/magnetization regularity

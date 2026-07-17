@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.UniformMag
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d magnetizationInfinite J=0 regularity wrappers

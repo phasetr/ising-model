@@ -1,4 +1,4 @@
-import IsingModel.TransferMatrix.OneDimCorrelationLength
+import IsingModel.RealTanhAux
 
 /-!
 # Magnetic susceptibility of the 1D Ising chain (GJ §17.1)

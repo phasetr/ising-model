@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # ℤ^d Λ vdPolymerFamilies_sum generic-t bound wrappers

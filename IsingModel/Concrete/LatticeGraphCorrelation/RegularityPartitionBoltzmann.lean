@@ -1,7 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.BetaDerivative
-import IsingModel.AmbientLattice.JDerivative
-import IsingModel.AmbientLattice.FieldDerivative
+import IsingModel.AmbientLattice.Defs.Regularity.HasDerivBasic
 
 /-!
 # Concrete ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers

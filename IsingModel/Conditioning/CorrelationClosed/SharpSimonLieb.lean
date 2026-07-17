@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationClosed.PairBound
+import IsingModel.Conditioning.CorrelationClosed.EvenBoundaryBasics
 
 /-!
 # Sharp `tanh`-coefficient Simon-Lieb inequality (GJ §18 / FFS Ch 12)

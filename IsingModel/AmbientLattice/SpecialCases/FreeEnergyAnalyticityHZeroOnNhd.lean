@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
 # Ambient freeEnergyAlongExhaustion h=0 `AnalyticOnNhd` wrappers

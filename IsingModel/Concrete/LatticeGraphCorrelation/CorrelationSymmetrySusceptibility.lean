@@ -1,7 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
 import IsingModel.PhaseTransition
 import IsingModel.AmbientLattice.MagnetizationInfinite
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete susceptibility h-symmetry wrappers

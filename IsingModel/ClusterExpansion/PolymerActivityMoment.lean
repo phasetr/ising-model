@@ -1,5 +1,5 @@
-import IsingModel.ClusterExpansion.PolymerActivity
 import IsingModel.ClusterExpansion.GeometricMoment
+import IsingModel.ClusterExpansion.PolymerCounting
 
 /-!
 # Per-vertex polymer activity moment bound (GJ §18.5)

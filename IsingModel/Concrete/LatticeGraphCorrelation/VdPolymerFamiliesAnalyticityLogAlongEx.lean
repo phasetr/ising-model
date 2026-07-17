@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 
 /-!
 # Concrete log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers

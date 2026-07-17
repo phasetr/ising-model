@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
+import IsingModel.Lattice
 
 /-!
 # Concrete ℤ^d polymerFreeEnergy tanh-bound wrappers (§18.5)

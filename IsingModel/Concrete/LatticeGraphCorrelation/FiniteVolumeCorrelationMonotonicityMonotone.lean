@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
 import IsingModel.InfiniteVolume
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d finite-volume correlation_monotone_{J,h,β} wrappers

@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.ComplexAnalyticity
-import IsingModel.AmbientComplexAnalyticity
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.ComplexAnalyticity.Locus
 
 /-!
 # Concrete real-axis evaluation of complex partition function / free energy

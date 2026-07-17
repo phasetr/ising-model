@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicDerivativeProfileLebowitz
 import IsingModel.BetaDerivative.LebowitzCancelling
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # c-cancelling tight Lebowitz bound for the cubic finite-volume β-derivative profile (GJ §17.5)

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Defs
-import IsingModel.ClusterExpansion
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.ClusterExpansion.HighTempGeneralRegularity.CorrelationRegularity
 
 /-!
 # AmbientLattice/Analyticity Λ-level joint analyticity wrappers

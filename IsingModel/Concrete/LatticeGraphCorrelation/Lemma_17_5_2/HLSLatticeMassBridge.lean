@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveCanonicalSummary
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecayMass
 import IsingModel.Inequalities.HighTemp.Susceptibility
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.HLSSubstantiveExistingRate
 
 /-!
 # Substantive HLS ↔ latticeMass joint bundle

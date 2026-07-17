@@ -1,5 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 
 /-!
 # Cubic named-rate wrappers (`_of_le_high_temp_rate` family)

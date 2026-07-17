@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.Families
+import IsingModel.ClusterExpansion.Families.SandwichBounds
 
 /-!
 # Cluster expansion zero-field regularity wrappers

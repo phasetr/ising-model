@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFE
 
 /-!
 # ℤ^d along-ex `freeEnergyAlongExhaustion` pointwise J/joint regularity wrappers

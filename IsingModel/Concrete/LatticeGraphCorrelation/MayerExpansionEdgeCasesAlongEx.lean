@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
+import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe
 
 /-!
 # ℤ^d AlongExhaustion mayer-expansion edge-case wrappers

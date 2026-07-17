@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion log Z ratio_bound singleton wrappers at h = 0

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
+import IsingModel.AmbientLattice.Defs.Regularity.Defs
 
 /-!
 # ℤ^d magnetizationΛ Λ-direct regularity wrappers

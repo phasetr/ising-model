@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
+import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
 # Concrete Mayer filter-connected wrappers

@@ -1,6 +1,6 @@
-import IsingModel.Peierls.RayAnchorBox
 import IsingModel.Peierls.RayExitBound
 import IsingModel.Peierls.DualCutEdgeAdjacency
+import IsingModel.Peierls.RayAnchorDart
 
 /-!
 # Ray-exit anchor darts (FV §3.7.2)

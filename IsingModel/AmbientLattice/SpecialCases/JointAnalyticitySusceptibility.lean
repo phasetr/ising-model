@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
 # Joint analyticity wrappers along an exhaustion (susceptibility)

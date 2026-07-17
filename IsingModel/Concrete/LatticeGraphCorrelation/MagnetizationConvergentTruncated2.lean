@@ -1,6 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d `truncated2_convergent_*_latticeGraph` wrappers

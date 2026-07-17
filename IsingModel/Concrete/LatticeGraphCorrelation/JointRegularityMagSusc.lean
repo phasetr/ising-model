@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.JointRegularity
+import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
 # ℤ^d Λ-layer joint mag + susc Continuous/Differentiable wrappers

@@ -1,5 +1,6 @@
-import IsingModel.TransferMatrix.LayerOpenSpectralDecay
-import IsingModel.TransferMatrix.LayerPerronExistence
+import IsingModel.TransferMatrix.LayerPerronExistence.SpinObservableCertificates
+import IsingModel.TransferMatrix.LayerOpenSpectralDenominator
+import IsingModel.TransferMatrix.LayerOpenSlabGraph
 
 /-!
 # Perron-facing constructors for open-boundary layer spectral bounds

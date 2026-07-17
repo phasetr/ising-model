@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
+import IsingModel.AmbientLattice.AnalyticityLambdaTanhFerroIff
 
 /-!
 # ℤ^d Mayer tanh-ferromagnetic vdSum iff and pFE-comparison wrappers

@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
 # ℤ^d Λ-layer Mayer identity trivial-case wrappers

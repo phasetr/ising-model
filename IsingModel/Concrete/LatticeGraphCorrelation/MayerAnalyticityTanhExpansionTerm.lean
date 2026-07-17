@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityExpansionTermTanh
 
 /-!
 # ℤ^d mayerExpansionTerm tanh β/J analyticity wrappers

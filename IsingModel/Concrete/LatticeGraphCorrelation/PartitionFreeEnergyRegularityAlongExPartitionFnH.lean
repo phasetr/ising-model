@@ -1,5 +1,6 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiableH
+import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityH
 
 /-!
 # Concrete along-ex partitionFunction h-direction regularity wrappers

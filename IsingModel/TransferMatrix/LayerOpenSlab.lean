@@ -1,5 +1,5 @@
-import IsingModel.TransferMatrix.LayerGibbs
 import Mathlib.Tactic
+import IsingModel.TransferMatrix.LayerTransfer
 
 /-!
 # Finite open layer slabs (GJ Section 17.1)

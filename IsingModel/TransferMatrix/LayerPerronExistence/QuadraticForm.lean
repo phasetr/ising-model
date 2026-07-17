@@ -1,4 +1,4 @@
-import IsingModel.TransferMatrix.LayerPerron
+import IsingModel.TransferMatrix.LayerSpectral.Positivity
 
 /-!
 # Quadratic-form helpers for signed positive columns (GJ §17.1)

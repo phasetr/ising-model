@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.MayerCore.MayerMontroll
+import IsingModel.ClusterExpansion.MayerCore.MayerMontroll.ColorClassFibre
 
 /-!
 # Ising free energy as a Mayer expansion (interacting case, GJ §18.5)

@@ -1,17 +1,5 @@
-import IsingModel.AmbientLattice.Defs
-import IsingModel.ClusterExpansion
-import IsingModel.AmbientLattice.AnalyticityLambdaJoint
-import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
-import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
-import IsingModel.AmbientLattice.AnalyticityLambdaPolymer
-import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
-import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
-import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
-import IsingModel.AmbientLattice.AnalyticityLambdaMayer
-import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
-import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
-import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
-import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 
 /-!
 # AmbientLattice/Analyticity Mayer recurrence + ε infrastructure wrappers

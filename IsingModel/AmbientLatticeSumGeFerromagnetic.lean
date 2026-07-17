@@ -1,5 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.PartitionFunctionIso
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # AmbientLatticeSum partition ≥ ferromagnetic wrappers

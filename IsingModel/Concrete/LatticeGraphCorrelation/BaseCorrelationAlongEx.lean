@@ -9,12 +9,9 @@ Each is a thin pass-through to the corresponding abstract lemma at
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
 -/
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
 

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
 # Mayer filter-connected base-case wrappers along an exhaustion

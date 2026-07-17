@@ -1,9 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
-import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
 import IsingModel.TranslationInvariance
-import IsingModel.PseudoMass
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
 # §17 lattice mass foundation at ℤ^d

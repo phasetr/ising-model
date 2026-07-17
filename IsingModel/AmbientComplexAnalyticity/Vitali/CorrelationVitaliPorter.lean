@@ -1,5 +1,5 @@
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationPerStageHolomorphic
-import IsingModel.ComplexAnalyticity.FunctionTheoryAxioms
+import IsingModel.ComplexAnalyticity.VitaliPorter.Theorem
 
 /-!
 # Applying Vitali–Porter to the complex along-exhaustion correlation (GJ §18.6/§18.7)

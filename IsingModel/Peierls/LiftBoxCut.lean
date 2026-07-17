@@ -1,6 +1,6 @@
 import IsingModel.Peierls.DualCut
-import IsingModel.Peierls.FilledRegion
 import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.Peierls.FlipSet
 
 /-!
 # Lifting the box cut to the ambient lattice (FV §3.7.2)

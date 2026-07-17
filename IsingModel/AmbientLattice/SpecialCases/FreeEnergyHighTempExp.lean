@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpontaneousMono
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Sharper high-temperature free-energy upper bound wrappers along an exhaustion

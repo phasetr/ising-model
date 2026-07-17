@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReferencePos
 
 /-!
 # Concrete cubic-pseudoMass corr-profile wrappers

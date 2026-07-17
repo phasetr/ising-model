@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.MassContinuityFiniteVolumeMassLower
 import IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExSubsetMono
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationExhaustionLimitsCubicMonotone
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseudoMassDistFV
 
 /-!
 # GJ §17.5 Theorem 17.5.1 — PR-FV4b-prep: upper bound on the finite-volume finite-region mass

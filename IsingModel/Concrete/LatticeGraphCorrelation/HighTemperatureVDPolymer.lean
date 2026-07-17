@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperature
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE
 
 /-!
 # Concrete vdPolymerFamilies sandwich wrappers

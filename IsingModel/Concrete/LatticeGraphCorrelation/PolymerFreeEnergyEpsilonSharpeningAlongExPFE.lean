@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFE
 
 /-!
 # Concrete along-ex polymerFreeEnergyAlongExhaustion ε(t) sharpening wrappers

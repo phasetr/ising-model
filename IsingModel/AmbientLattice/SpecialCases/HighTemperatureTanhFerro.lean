@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 /-!
 # High-temperature tanh ferromagnetic sandwich / `HasSum` wrappers along an exhaustion

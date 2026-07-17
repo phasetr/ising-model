@@ -1,9 +1,10 @@
-import IsingModel.TransferMatrix.TwoSiteFreeLayerSpectralWindow
 import IsingModel.TransferMatrix.LayerCardinalitySmallRatio
 import IsingModel.Inequalities.NonnegCorrelations
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Ring.Parity
 import Mathlib.Data.Finset.SymmDiff
+import IsingModel.RealTanhAux
+import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 
 /-!
 # Finite free-layer Walsh spectral window

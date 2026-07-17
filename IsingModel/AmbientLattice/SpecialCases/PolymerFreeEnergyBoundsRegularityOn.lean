@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion `_On` (Set.Ici 0) regularity wrappers

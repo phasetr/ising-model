@@ -1,8 +1,5 @@
-import IsingModel.AmbientLattice.Defs
-import IsingModel.ClusterExpansion
-import IsingModel.AmbientLattice.AnalyticityLambdaJoint
-import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
-import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
 
 /-!
 # AmbientLattice/Analyticity polymerFreeEnergy_Λ basic wrappers

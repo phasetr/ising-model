@@ -1,8 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperCompleteSummary
-import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperSandwich
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete sharper-exp Z/f/log Z high-temperature bounds at h = 0

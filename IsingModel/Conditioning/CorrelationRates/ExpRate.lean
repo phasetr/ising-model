@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationClosed
+import IsingModel.Conditioning.CorrelationClosed.PairBound
 
 /-!
 # Correlation rates split — high-temperature exponential rate and exp-rate distance bounds

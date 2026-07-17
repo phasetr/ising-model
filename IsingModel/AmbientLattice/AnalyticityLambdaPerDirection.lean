@@ -1,7 +1,5 @@
-import IsingModel.AmbientLattice.Defs
-import IsingModel.ClusterExpansion
-import IsingModel.AmbientLattice.AnalyticityLambdaJoint
-import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.ClusterExpansion.HighTempGeneralRegularity.GibbsExpectation
 
 /-!
 # AmbientLattice/Analyticity Λ partitionFunction per-direction wrappers

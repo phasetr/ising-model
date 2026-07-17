@@ -1,8 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
-import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Concrete ℤ^d ζ/η/absence-of-even-bound-states wrappers (GJ §17.2/§17.7)

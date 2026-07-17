@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
+import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
 # ℤ^d Λ-direct joint analyticity wrappers

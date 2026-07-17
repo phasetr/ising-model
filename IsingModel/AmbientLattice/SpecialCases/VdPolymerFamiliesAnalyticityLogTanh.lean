@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
 
 /-!
 # Ambient log_vdPolymerFamilies_sumAlongExhaustion `tanh` analyticity wrappers

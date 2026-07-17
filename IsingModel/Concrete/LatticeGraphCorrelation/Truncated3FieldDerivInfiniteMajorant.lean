@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Truncated3FieldDerivCollarTail
 import IsingModel.AmbientLattice.TruncatedFunctions.ThreePoint
+import IsingModel.Concrete.LatticeGraphCorrelation.Truncated2GeneralFieldFiniteVolumeMajorant
 
 /-!
 # Infinite-volume Weierstrass majorant for the ∂/∂h site-sum (GJ Thm 17.6.1)

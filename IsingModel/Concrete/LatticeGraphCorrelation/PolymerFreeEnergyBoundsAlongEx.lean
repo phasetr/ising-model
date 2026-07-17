@@ -1,5 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.Lattice
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
+import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn
 
 /-!
 # ℤ^d along-exhaustion polymerFreeEnergy bound wrappers

@@ -1,7 +1,7 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
-import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAtBeta
+import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta
 
 /-!
 # Compatibility-named ℤ^d susceptibility β-direction (h=0) regularity wrappers

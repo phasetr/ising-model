@@ -1,5 +1,5 @@
 import IsingModel.GibbsMeasure
-import IsingModel.RandomCurrent
+import IsingModel.RandomCurrent.Peeling
 
 /-!
 # Simon-Lieb inequality (GJ §5.1 / FV Prop. 9.31)

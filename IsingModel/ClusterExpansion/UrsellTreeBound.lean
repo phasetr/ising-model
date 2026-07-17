@@ -1,5 +1,5 @@
-import IsingModel.ClusterExpansion.Penrose
 import IsingModel.ClusterExpansion.MayerRootComponent
+import IsingModel.ClusterExpansion.Penrose.TreeGraphBound
 
 /-!
 # Ursell tree bound from the Penrose inequality (GJ §18.4-18.5, Issue #3954)

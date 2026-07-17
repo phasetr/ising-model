@@ -1,7 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.IntLattice
-import IsingModel.AmbientLattice.Monotonicity
-import IsingModel.FreeEnergy
+import IsingModel.FreeEnergy.SubgraphBounds
 
 /-!
 # ℤ^d `partitionFunction_bot_latticeGraph_*` wrappers

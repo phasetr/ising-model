@@ -1,4 +1,4 @@
-import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums
+import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.WeightZero
 
 /-!
 # Bounded random-current Taylor partial sums

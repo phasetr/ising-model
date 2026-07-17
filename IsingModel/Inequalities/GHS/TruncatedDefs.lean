@@ -1,4 +1,4 @@
-import IsingModel.InfiniteVolume
+import IsingModel.InfiniteVolume.Boundedness
 
 /-!
 # GHS inequality split — truncated 2- and 3-point function definitions and special values

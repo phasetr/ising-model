@@ -1,5 +1,5 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBounds
+import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
+import IsingModel.Lattice
 
 /-!
 # ℤ^d §18.5 Λ polymerFreeEnergy edge-case / comparison wrappers

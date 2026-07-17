@@ -1,4 +1,4 @@
-import IsingModel.AmbientComplexAnalyticity.HighTempExpansion
+import IsingModel.AmbientComplexAnalyticity.Basic.Core
 
 /-!
 # Volume-uniform `Z_ℂ` lower bound: structural conditional reduction

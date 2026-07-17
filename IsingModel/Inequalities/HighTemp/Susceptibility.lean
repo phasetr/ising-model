@@ -1,6 +1,6 @@
 import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.Inequalities.SimonLieb
-import IsingModel.Concrete.LatticeGraphBED
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # High-temperature susceptibility bounds

@@ -1,5 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.AmbientLattice.Analyticity
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion HT expansion bounds consistency wrappers at h = 0

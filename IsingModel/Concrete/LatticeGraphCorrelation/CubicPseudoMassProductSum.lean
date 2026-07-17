@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassClusterSummability
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 
 /-!
 # Cubic named-rate product-sum wrappers

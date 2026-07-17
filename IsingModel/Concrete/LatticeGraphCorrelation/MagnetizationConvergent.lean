@@ -5,9 +5,8 @@ Narrow child module for the 9 ℤ^d `magnetization_convergent_*`,
 `Magnetization.lean` in PR #2030. The theorem names are unchanged
 from the former `Magnetization` declarations.
 -/
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.PhaseTransition
-import IsingModel.Inequalities.FKG
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
 

@@ -1,4 +1,4 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumePlusState
+import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreeningLimit
 
 /-!
 # Infinite-volume `+` expectation of a monotone local observable on ℤ^d (Issue #3565)

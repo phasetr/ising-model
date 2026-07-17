@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.Defs
+import IsingModel.AmbientLattice.Defs.Regularity.Defs
 
 /-!
 # Concrete Lambda-layer susceptibility wrappers

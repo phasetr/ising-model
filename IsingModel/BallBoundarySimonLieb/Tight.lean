@@ -1,5 +1,5 @@
-import IsingModel.BallBoundarySimonLieb.WeakBound
 import IsingModel.Inequalities.Lebowitz.ScaledLebowitz
+import IsingModel.BallBoundarySimonLieb.Monotonicity
 
 /-!
 # Ball-boundary Simon-Lieb tight bound wrappers

@@ -1,7 +1,6 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.BetaDerivative
-import IsingModel.AmbientLattice.JDerivative
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Compatibility-named ℤ^d correlationAlongEx β-direction (h=0) wrappers

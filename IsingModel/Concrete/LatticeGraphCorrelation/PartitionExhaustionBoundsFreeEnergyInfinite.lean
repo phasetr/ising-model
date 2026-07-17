@@ -1,5 +1,4 @@
-import IsingModel.Concrete.LatticeGraphBED
-import IsingModel.Concrete.LatticeGraphCorrelation.PartitionExhaustionBounds
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # ℤ^d freeEnergyInfinite positivity / non-negativity wrappers

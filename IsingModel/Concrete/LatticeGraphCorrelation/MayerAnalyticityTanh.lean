@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
+import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 
 /-!
 # Concrete Mayer tanh-composed analyticity wrappers

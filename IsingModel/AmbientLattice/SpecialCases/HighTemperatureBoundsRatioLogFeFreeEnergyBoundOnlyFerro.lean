@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion ferromagnetic freeEnergy ratio_bound non-bundle wrappers at h = 0

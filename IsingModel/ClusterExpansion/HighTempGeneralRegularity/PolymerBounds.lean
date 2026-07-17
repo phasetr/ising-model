@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.AlternatingCompleteGraph
+import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 
 /-!
 # High-temperature polymer bounds

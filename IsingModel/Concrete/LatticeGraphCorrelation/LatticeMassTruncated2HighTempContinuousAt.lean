@@ -1,7 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempIciZero
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassTruncated2HighTemp
 import IsingModel.AmbientLattice.TruncatedFunctions
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 
 /-!
 # truncated2Infinite ContinuousAt at every interior point in β / J

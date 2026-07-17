@@ -1,6 +1,6 @@
 import IsingModel.TransferMatrix.LayerOpenSlabGraph
 import IsingModel.TransferMatrix.LayerOpenSpectral
-import IsingModel.TransferMatrix.LayerOpenSpectralDecay
+import IsingModel.TransferMatrix.LayerOpenSpectralDenominator
 
 /-!
 # Finite open layer-slab two-marked spectral decay (GJ Section 17.1)

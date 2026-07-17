@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion ferromagnetic log Z ratio_sandwich_bundle wrapper at h = 0

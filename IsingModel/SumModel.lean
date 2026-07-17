@@ -1,4 +1,3 @@
-import IsingModel.FreeEnergy
 import IsingModel.GibbsMeasure
 import IsingModel.Hamiltonian
 import IsingModel.PartitionFunctionIso
@@ -7,6 +6,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Logic.Equiv.Prod
+import IsingModel.FreeEnergy.SubgraphBounds
 
 /-!
 # Hamiltonian additivity on the disjoint sum graph

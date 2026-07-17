@@ -1,6 +1,6 @@
 import IsingModel.RandomCurrent.Core
-import IsingModel.RandomCurrent.Peeling
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.EdgeFinsetBasic
+import IsingModel.RandomCurrent.Switching.SupportGraph
 
 /-!
 # Cluster-conditioning weight factorization (ingredients SL-A, SL-B)

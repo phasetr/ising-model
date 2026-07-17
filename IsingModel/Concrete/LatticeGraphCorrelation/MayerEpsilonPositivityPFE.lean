@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
+import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
 # Concrete Λ-direct polymerFreeEnergy_Λ tanh positivity / equality wrappers

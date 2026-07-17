@@ -1,6 +1,6 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.DerivativeLimitProviderFiniteProfile
 import IsingModel.BetaDerivative.Lebowitz
 import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Tight Lebowitz bound for the cubic finite-volume β-derivative profile (Issue #2965, Phase C)

@@ -1,5 +1,5 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
 # `vdPolymerFamilies_sumAlongExhaustion` at-zero / at-one identities

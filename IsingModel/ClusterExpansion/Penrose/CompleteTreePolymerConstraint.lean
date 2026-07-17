@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeOrientation
+import IsingModel.ClusterExpansion.Penrose.CompleteGraphTreeBound
 
 /-!
 # Parent-edge incompatibility for complete-graph spanning trees (GJ §18.5)

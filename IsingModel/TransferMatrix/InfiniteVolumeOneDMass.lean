@@ -1,7 +1,8 @@
-import IsingModel.TransferMatrix.InfiniteVolumeOneDSusceptibility
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncated2EqSubMagSq
 import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagCorrelationTrivialTrivialSlices
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
+import IsingModel.TransferMatrix.OneDimCorrelationLength
+import IsingModel.TransferMatrix.InfiniteVolumeOneD
 
 /-!
 # Sharp 1D lattice mass and cluster property (Glimm–Jaffe §17.1, §17.5)

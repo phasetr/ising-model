@@ -1,8 +1,4 @@
-import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
-import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
-import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
-import IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibility
-import IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero
+import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 
 /-!
 # Ambient empty / beta_zero / zero_params correlation wrappers
