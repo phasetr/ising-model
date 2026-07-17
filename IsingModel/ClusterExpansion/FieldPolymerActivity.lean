@@ -1,5 +1,5 @@
 import IsingModel.ClusterExpansion.Families.FieldConnectedPolymers
-import IsingModel.ClusterExpansion.PolymerActivity
+import IsingModel.Conditioning.EdgeWalkCounting
 
 /-!
 # Field-dependent per-vertex / total / per-site polymer activity bound (GJ §17.6.1)

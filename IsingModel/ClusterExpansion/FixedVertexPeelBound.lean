@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.RootedParentActivePeelBoundFactorial
+import IsingModel.ClusterExpansion.RootedParentActiveLeafPeelInduction
 
 /-!
 # Fixed-vertex child-count peel bound in factorial-product form (GJ §18.5)

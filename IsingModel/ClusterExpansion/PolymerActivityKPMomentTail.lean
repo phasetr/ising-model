@@ -1,5 +1,5 @@
-import IsingModel.ClusterExpansion.PolymerActivityKPMoment
 import IsingModel.ClusterExpansion.PolymerActivityTailMoment
+import IsingModel.ClusterExpansion.PolymerActivityKP
 
 /-!
 # Sharpened (tail) incompatibility-neighbourhood moment bound (GJ §18.5)

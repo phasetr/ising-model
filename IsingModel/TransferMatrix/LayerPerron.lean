@@ -1,5 +1,5 @@
-import IsingModel.TransferMatrix.LayerSpectral
 import Mathlib.Data.Finset.Max
+import IsingModel.TransferMatrix.LayerSpectral.BalancedSpectralGap
 
 /-!
 # Positive/simple Perron-facing bridge for finite layer transfer matrices

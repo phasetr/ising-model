@@ -1,5 +1,5 @@
 import IsingModel.ClusterExpansion.TwoPointNumeratorBound
-import IsingModel.ClusterExpansion.PolymerCounting
+import IsingModel.Conditioning.EdgeWalkCounting
 
 /-!
 # Anchored count of two-point connecting components (GJ §18.4–18.7, FV §3.7.3)

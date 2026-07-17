@@ -2,11 +2,11 @@ import IsingModel.GibbsMeasure
 import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.Inequalities.GKS
 import IsingModel.Inequalities.GHS
-import IsingModel.BetaDerivative
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import IsingModel.BetaDerivative.Lebowitz
 
 /-!
 # J-Derivative of Ising Gibbs correlations (GJ §17.5 Step 214)

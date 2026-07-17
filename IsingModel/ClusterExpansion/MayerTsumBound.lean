@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.MayerSeriesConvergence
+import IsingModel.ClusterExpansion.MayerTermTailSummability
 
 /-!
 # Explicit bound on the Mayer expansion sum (GJ §18.5)

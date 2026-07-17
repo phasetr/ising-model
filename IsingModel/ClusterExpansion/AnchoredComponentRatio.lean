@@ -1,6 +1,7 @@
 import IsingModel.ClusterExpansion.AnchoredPeel
 import IsingModel.ClusterExpansion.AvoidingDeleteEdges
-import IsingModel.ClusterExpansion.TwoPointRatioBound
+import IsingModel.Conditioning.EdgeWalkCounting
+import IsingModel.ClusterExpansion.GeometricFiberSum
 
 /-!
 # General-boundary component-ratio bricks (GJ Theorem 17.6.1, §18 cluster expansion)

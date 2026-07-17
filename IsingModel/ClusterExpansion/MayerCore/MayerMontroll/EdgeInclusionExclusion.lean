@@ -1,7 +1,7 @@
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
-import IsingModel.ClusterExpansion.MayerCore.UrsellMajorant
 import IsingModel.ClusterExpansion.MayerCore.SurjectiveLogWeight
 import IsingModel.ClusterExpansion.MayerCore.MayerMontroll.ProperColorings
+import IsingModel.ClusterExpansion.MayerRootComponent
 
 /-!
 # Edge inclusion–exclusion for proper colourings (GJ §18.4)

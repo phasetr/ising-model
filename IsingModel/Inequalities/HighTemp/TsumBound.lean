@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.TruncatedFunctions
+import IsingModel.AmbientLattice.TruncatedFunctions.TwoPoint
 
 /-!
 # High-temperature susceptibility tsum bound

@@ -1,4 +1,4 @@
-import IsingModel.Peierls.DartOfCut
+import IsingModel.Peierls.GridEdge2
 
 /-!
 # The axis ray exits a finite region (FV §3.7.2)

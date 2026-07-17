@@ -1,4 +1,4 @@
-import IsingModel.RandomCurrent.Switching.SwitchingIdentities
+import IsingModel.RandomCurrent.Switching.Core
 
 /-!
 # Global switching identity (bounded form)

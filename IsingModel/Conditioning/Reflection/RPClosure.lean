@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.Reflection.EuclideanFormulas
+import IsingModel.Conditioning.Reflection.Predicates
 
 /-!
 # Reflection positivity — parallelogram identity and closure properties

@@ -1,4 +1,4 @@
-import IsingModel.Peierls.DartStepReverse
+import IsingModel.Peierls.NextDart
 
 /-!
 # The predecessor dart (FV §3.7.2)

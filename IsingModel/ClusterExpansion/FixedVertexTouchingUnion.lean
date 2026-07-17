@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.TouchingClusterDecomp
+import IsingModel.ClusterExpansion.Families.EvenSubgraphs
 
 /-!
 # Coordinate union bound for fixed-vertex touching cluster sequences (GJ §18.4–18.7)

@@ -1,5 +1,5 @@
 import IsingModel.ClusterExpansion.RootedParentActive
-import IsingModel.ClusterExpansion.Penrose.CompleteTreeLeaf
+import IsingModel.ClusterExpansion.Penrose.CompleteGraphTreeBound
 
 /-!
 # Leaf existence for the rooted-parent active-set induction (GJ §18.5)

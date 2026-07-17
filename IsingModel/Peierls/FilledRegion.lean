@@ -1,4 +1,4 @@
-import IsingModel.Peierls.DropletInjective
+import IsingModel.Peierls.ConnectedDroplet
 
 /-!
 # Hole-filled droplet region (FV §3.7.2)

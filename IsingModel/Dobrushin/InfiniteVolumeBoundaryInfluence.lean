@@ -1,5 +1,5 @@
 import IsingModel.Dobrushin.InfiniteVolumeUniformInfluence
-import IsingModel.Dobrushin.ExponentialLocality
+import IsingModel.Dobrushin.Locality
 
 /-!
 # Card-free volume-uniform boundary influence on cubic-lattice graphs

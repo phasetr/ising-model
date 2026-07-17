@@ -1,9 +1,9 @@
 import IsingModel.ClusterExpansion.MayerCore.TermsComplexHolomorphic
 import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
-import IsingModel.ClusterExpansion.MayerCore.MayerMontroll
 import Mathlib.Analysis.Analytic.Uniqueness
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Topology.Order.IntermediateValue
+import IsingModel.ClusterExpansion.MayerCore.MayerMontroll.ColorClassFibre
 
 /-!
 # Volume-uniform per-site Kotecky--Preiss Mayer--Montroll identity (GJ §18.6)

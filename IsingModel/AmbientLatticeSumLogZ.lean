@@ -1,7 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
-import IsingModel.PartitionFunctionIso
-import IsingModel.AmbientLatticeSumFreeEnergy
-import IsingModel.AmbientLatticeSumGeFerromagnetic
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # AmbientLatticeSum log Z trivial-slice + monotonicity wrappers

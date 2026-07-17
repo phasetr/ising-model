@@ -1,4 +1,4 @@
-import IsingModel.TransferMatrix.LayerPerronExistence
+import IsingModel.TransferMatrix.LayerPerronExistence.MaximalColumnCertificates
 
 /-!
 # Layer-cardinality small-ratio bridges

@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationRates.Ferromagnetic
+import IsingModel.Conditioning.CorrelationRates.Summaries
 
 /-!
 # Correlation rates split — high-temperature parameter and its lower bound

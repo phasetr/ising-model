@@ -1,5 +1,8 @@
-import IsingModel.Peierls.PeierlsSum
 import IsingModel.Peierls.BondFilledEdgeConnected
+import IsingModel.Conditioning.CountGeometricCapstone
+import IsingModel.Peierls.ContourCountAssembly
+import IsingModel.Peierls.RayAnchorSet
+import IsingModel.Peierls.DualCutCardBridge
 
 /-!
 # The unconditional filled-droplet Peierls contour count (FV §3.7.2)

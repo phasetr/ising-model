@@ -1,5 +1,5 @@
-import IsingModel.Peierls.DartDualCutCard
 import IsingModel.Lattice
+import IsingModel.Peierls.BoundaryDart
 
 /-!
 # Every cut edge is crossed by a boundary dart (FV §3.7.2)

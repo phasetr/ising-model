@@ -1,4 +1,4 @@
-import IsingModel.Conditioning.CorrelationRates
+import IsingModel.Conditioning.Bounds
 
 /-!
 # Free Energy Bounds

@@ -1,7 +1,7 @@
 import IsingModel.ClusterExpansion.FieldMayerTerm
 import IsingModel.ClusterExpansion.Families.FieldConnectedPolymers
-import IsingModel.ClusterExpansion.MayerCore.MayerMontroll
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
+import IsingModel.ClusterExpansion.MayerCore.MayerMontroll.ColorClassFibre
 
 /-!
 # Field-dependent Mayer–Montroll identity `log Ξ_{a,b} = ∑ₙ fieldMayerExpansionTerm`

@@ -1,5 +1,5 @@
-import IsingModel.Peierls
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.Peierls.Prop542
 
 /-!
 # Peierls argument along an infinite-volume exhaustion

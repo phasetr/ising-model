@@ -1,4 +1,4 @@
-import IsingModel.PseudoMass.Composition
+import IsingModel.PseudoMass.Ext
 
 /-!
 # Pseudo-mass from parameters: basic slices
