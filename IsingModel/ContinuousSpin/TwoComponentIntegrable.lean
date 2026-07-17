@@ -1,4 +1,3 @@
-import IsingModel.ContinuousSpin.TwoComponentSystem
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
 

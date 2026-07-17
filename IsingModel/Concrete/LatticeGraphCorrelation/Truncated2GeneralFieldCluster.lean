@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.Truncated2GeneralFieldDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.HighTempMassGap
 
 /-!

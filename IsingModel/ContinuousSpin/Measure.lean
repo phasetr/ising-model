@@ -4,7 +4,6 @@ import Mathlib.MeasureTheory.Measure.Haar.Unique
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Continuous spin measures

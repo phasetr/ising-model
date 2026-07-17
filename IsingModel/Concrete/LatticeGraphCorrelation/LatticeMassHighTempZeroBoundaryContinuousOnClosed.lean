@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
 
