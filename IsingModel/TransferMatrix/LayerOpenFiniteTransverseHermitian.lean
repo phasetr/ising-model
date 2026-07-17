@@ -1,6 +1,5 @@
 import IsingModel.TransferMatrix.LayerOpenBoundaryWindowSimple
 import IsingModel.TransferMatrix.LayerOpenSimpleSpectrum
-import IsingModel.TransferMatrix.LayerPerronExistence
 
 /-!
 # Finite arbitrary transverse layer open-slab decay via Hermitian spectral data

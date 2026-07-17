@@ -1,6 +1,4 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ
 
 /-!
 # Ambient alongExhaustion ferromagnetic strict-deviation wrappers at h = 0

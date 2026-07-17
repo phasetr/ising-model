@@ -1,6 +1,5 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundationTrivialSliceAndIndep
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
 
 /-!
 # ℤ^d criticalInverseTemp characterization wrappers

@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay

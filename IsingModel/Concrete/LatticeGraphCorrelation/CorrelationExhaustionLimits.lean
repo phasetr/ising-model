@@ -1,4 +1,3 @@
-import IsingModel.AmbientLattice.CorrelationInfinite
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 

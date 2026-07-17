@@ -7,7 +7,6 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge
 
 /-!
 # Ambient alongExhaustion §18.7 high-temperature exponential-decay capstone wrappers

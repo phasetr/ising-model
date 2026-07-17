@@ -1,5 +1,4 @@
 import Mathlib.Analysis.SpecialFunctions.Exponential
-import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 import IsingModel.AmbientLattice.Defs.Core
 
 /-!
