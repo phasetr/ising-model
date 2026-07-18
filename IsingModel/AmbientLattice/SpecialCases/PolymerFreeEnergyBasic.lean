@@ -1,16 +1,13 @@
-import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasicSandwich
+import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Basic polymer free-energy at-zero / at-one wrappers along an exhaustion
+# Basic polymer free-energy at-zero / at-one / sandwich wrappers along an exhaustion
 
-Narrow child module for the two along-exhaustion `polymerFreeEnergy`
-trivial-slice wrappers (`_at_zero`, `_at_one`). The corresponding
-nonnegative sandwich wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasicSandwich`
-and is re-imported through this parent module. Theorem names are
-unchanged from the former monolithic special-cases declarations.
+Narrow child module for the along-exhaustion `polymerFreeEnergy`
+trivial-slice wrappers (`_at_zero`, `_at_one`) together with the
+nonnegative sandwich wrapper. Theorem names are unchanged from the
+former monolithic special-cases declarations.
 -/
 
 namespace IsingModel
@@ -38,14 +35,16 @@ theorem polymerFreeEnergyAlongExhaustion_at_one
         (inducedGraph G (Λ.volume n))).card :=
   polymerFreeEnergy_Λ_at_one G (Λ.volume n)
 
-/-! ## Moved: 1 polymerFreeEnergy sandwich wrapper
-
-The `polymerFreeEnergyAlongExhaustion_sandwich_of_nonneg` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasicSandwich`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
+/-- **Along-ex: polymerFreeEnergy sandwich for `t ≥ 0`**. -/
+theorem polymerFreeEnergyAlongExhaustion_sandwich_of_nonneg
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {t : ℝ} (ht : 0 ≤ t) (n : ℕ) :
+    0 ≤ IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ∧
+    IsingModel.polymerFreeEnergy (inducedGraph G (Λ.volume n)) t ≤
+      (inducedGraph G (Λ.volume n)).edgeFinset.card *
+        Real.log (1 + t) :=
+  polymerFreeEnergy_Λ_sandwich_of_nonneg G (Λ.volume n) ht
 
 end Ambient
 end IsingModel
