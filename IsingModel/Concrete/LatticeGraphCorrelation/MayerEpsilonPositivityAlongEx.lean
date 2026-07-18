@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivityVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 
 /-!
 # ℤ^d AlongExhaustion mayer-epsilon positivity / equality wrappers
