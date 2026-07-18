@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
+import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 
 /-!
 # Concrete along-ex Mayer-identity polymer_free_energy edge-case wrappers

@@ -1,15 +1,26 @@
 import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPolymerFreeEnergy
-import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesTrivial
 
 /-!
 # Mayer edge-case wrappers along an exhaustion
 
-Narrow child module for along-exhaustion Mayer identity edge cases and
-`polymerFreeEnergy = mayerPartialSum` wrappers. This keeps callers that only
-need these forwarders out of the monolithic original special-cases module.
+Narrow child module gathering the §18.5 along-exhaustion Mayer identity
+edge-case forwarders and the `polymerFreeEnergyAlongExhaustion = mayerPartialSum`
+wrappers. Every declaration is a thin pass-through to the corresponding ambient
+`*_Λ` lemma, so callers that only need these forwarders stay out of the
+monolithic original special-cases module. This module collects:
+
+* `mayer_identity_at_zero_AlongExhaustion`,
+* `mayer_identity_at_betaJ_zero_AlongExhaustion`,
+* `mayer_identity_at_beta_zero_AlongExhaustion`,
+* `mayer_identity_at_J_zero_AlongExhaustion`,
+* `mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion`,
+* `mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion`,
+* `mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion`,
+* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_zero`,
+* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_betaJ_zero`,
+* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero`,
+* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero`.
 -/
 
 namespace IsingModel
@@ -44,33 +55,125 @@ theorem mayer_identity_at_betaJ_zero_AlongExhaustion
         (Real.tanh (β * J)) :=
   mayer_identity_at_betaJ_zero_Λ G (Λ.volume n) hβJ N
 
-/-! ## Moved: 2 trivial-slice Mayer identity wrappers
+/-- **Along-ex: Mayer identity at `β = 0`**. -/
+theorem mayer_identity_at_beta_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, Real.tanh ((0 : ℝ) * J) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  mayer_identity_at_beta_zero_Λ G (Λ.volume n) J N
 
-The two along-ex `mayer_identity_at_*_zero_AlongExhaustion` trivial-slice
-wrappers (`_beta_zero`, `_J_zero`) now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesTrivial`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
+/-- **Along-ex: Mayer identity at `J = 0`**. -/
+theorem mayer_identity_at_J_zero_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (N : ℕ) (n : ℕ) :
+    Real.log (∑ Γ ∈ IsingModel.vdCompatiblePolymerFamilies
+                (inducedGraph G (Λ.volume n)),
+              ∏ P ∈ Γ, Real.tanh (β * (0 : ℝ)) ^ P.card) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  mayer_identity_at_J_zero_Λ G (Λ.volume n) β N
 
-/-! ## Moved: polymerFreeEnergyAlongExhaustion eq mayerPartialSum wrappers
+/-! ### §18.5 mayer_identity polymer_free_energy variants along-ex wraps -/
 
-The four `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_*`
-wrappers (`zero`, `betaJ_zero`, `beta_zero`, `J_zero`) now live in
-`MayerEdgeCasesPolymerFreeEnergy.lean`. They are re-imported here so
-downstream consumers continue to see the symbols. -/
+/-- **Along-ex: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) (Real.tanh (β * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  mayer_identity_at_J_zero_polymer_free_energy_Λ G (Λ.volume n) β N
 
+/-- **Along-ex: Mayer identity at `β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) (Real.tanh ((0 : ℝ) * J)) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  mayer_identity_at_beta_zero_polymer_free_energy_Λ G (Λ.volume n) J N
 
+/-- **Along-ex: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
+theorem
+mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n))
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
+  mayer_identity_at_either_zero_polymer_free_energy_Λ G (Λ.volume n) N
 
-/-! ## Moved: mayer_identity polymer_free_energy edge-case wrappers
+/-! ### §18.5 polymerFreeEnergy_eq_mayerPartialSum_at edge-case along-ex wraps -/
 
-The three
-`mayer_identity_at_*_polymer_free_energy_AlongExhaustion`
-wrappers (`_J_zero`, `_beta_zero`, `_either_zero`) now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerEdgeCasesPFE`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
+/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at t = 0**. -/
+theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) 0 =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N 0 :=
+  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_zero G (Λ.volume n) N
+
+/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at β·J = 0**. -/
+theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_betaJ_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    {β J : ℝ} (hβJ : β * J = 0) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) (Real.tanh (β * J)) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * J)) :=
+  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_betaJ_zero
+    G (Λ.volume n) hβJ N
+
+/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at β = 0**. -/
+theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) (Real.tanh ((0 : ℝ) * J)) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh ((0 : ℝ) * J)) :=
+  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_beta_zero
+    G (Λ.volume n) J N
+
+/-- **Along-ex: polymerFreeEnergy = mayerPartialSum at J = 0**. -/
+theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (β : ℝ) (N : ℕ) (n : ℕ) :
+    IsingModel.polymerFreeEnergy
+        (inducedGraph G (Λ.volume n)) (Real.tanh (β * (0 : ℝ))) =
+      IsingModel.mayerPartialSum
+        (inducedGraph G (Λ.volume n)) N
+        (Real.tanh (β * (0 : ℝ))) :=
+  polymerFreeEnergy_Λ_eq_mayerPartialSum_at_J_zero
+    G (Λ.volume n) β N
 
 end Ambient
 end IsingModel
