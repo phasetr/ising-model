@@ -869,6 +869,7 @@ GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/isi
 
 ---
 
+<<<<<<< Updated upstream
 ## SpecialCases Family Consolidation Campaign (#4563, Master Issue)
 
 **Campaign Overview**: Autonomous family-by-family consolidation of 46-family SpecialCases subtree per #4563 blanket authorization (2026-07-18). Quality gates: declaration preservation, attribute conservation, consumer repoint completeness, build green (zero warnings), axiom invariance, audit gates V1–V3, shake clean, facade preservation.
@@ -876,8 +877,8 @@ GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/isi
 ### Progress Summary
 
 **Total families to consolidate**: 46  
-**Families consolidated**: 9  
-**Remaining**: 37
+**Families consolidated**: 10  
+**Remaining**: 36
 
 ### Consolidation Log
 
@@ -892,9 +893,10 @@ GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/isi
 | 17 | PartitionFunctionSymmetry | 2→1 | #4570 | e24b898af9 | 2026-07-19 | DONE |
 | 18 | MayerEpsilonPositivity | 3→1 | #4572 | 0eed2fd6 | 2026-07-19 | DONE |
 | 19 | MayerAnalyticity | 5→1 | #4573 | 45b770d7 | 2026-07-19 | DONE |
+| 20 | FreeEnergyAnalyticity | 6→1 | #4574 | c660ec46 | 2026-07-19 | DONE |
 
 **Wave-1 (zero-red-flag)**: Cycles 11–17, 7 families COMPLETE.  
-**Wave-2 (self-contained)**: Cycles 18–19, 2 families COMPLETE (+ 30+ pending).  
+**Wave-2 (self-contained)**: Cycles 18–20, 3 families COMPLETE (+ 33 pending).  
 **Wave-3 (escalation-prone/complex)**: ~9 families deferred pending design review.
 
 ### Standing Authorization
@@ -910,3 +912,18 @@ Blanket authorization (2026-07-18) for autonomous family-by-family consolidation
 - Continue wave-2 self-contained families (high-confidence, zero-red-flag)
 - Prepare wave-3 design review (escalation-prone families)
 - Monitor build-speed / olean stability across wave-1/2 merges
+=======
+## Re-merge SpecialCases Families (Cycle 12) — SusceptibilityConvergence
+
+**2026-07-18 PR #4565 merge (SusceptibilityConvergence family consolidation, cycle 12)**
+
+| Family | Status | Modules | PR | Commit | Reduction |
+|--------|--------|---------|----|---------| ----------|
+| Magnetization* | DONE (2026-07-18) | 10 → 1 | #4564 | fa163e07 | 10.5x (median) |
+| SusceptibilityConvergence* | DONE (2026-07-18) | 2 → 1 | #4565 | a758058b | — |
+| Remaining | — | 242 | — | — | — |
+
+**#4563 status**: OPEN (pilot + cycle-12 consolidation complete; 242 families pending sequential consolidation under blanket authorization 2026-07-18).
+
+**Progress**: 2/46 families consolidated (4.3% completion rate in pilot estimate).
+>>>>>>> Stashed changes
