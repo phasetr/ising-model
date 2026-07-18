@@ -1,16 +1,12 @@
 import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetryMonotone
 
 /-!
-# Partition-function h-symmetry wrappers along an exhaustion
+# Partition-function h-symmetry & monotonicity wrappers along an exhaustion
 
-Narrow child module for the two finite-stage partition-function
-`h`-symmetry wrappers along an exhaustion (h-evenness,
-|h|-rewrite). The ferromagnetic `|h|`-monotonicity wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetryMonotone`
-and is re-imported through this parent module. Theorem names are
+Child module for the finite-stage partition-function `h`-symmetry
+wrappers along an exhaustion (h-evenness, |h|-rewrite) together with
+the ferromagnetic `|h|`-monotonicity wrapper. Theorem names are
 unchanged from the former monolithic special-cases declarations.
 -/
 
@@ -45,14 +41,19 @@ theorem partitionFunctionAlongExhaustion_eq_abs_h
       = partitionFunctionAlongExhaustion G Λ (⟨J, |h|, β⟩ : IsingParams ℝ) n :=
   partitionFunctionΛ_eq_abs_h G (Λ.volume n) J h β
 
-/-! ## Moved: 1 ferromagnetic `|h|`-monotonicity wrapper
-
-The `partitionFunctionAlongExhaustion_monotone_abs_h` wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionSymmetryMonotone`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
+/-- **Along-exhaustion ferromagnetic `|h|`-monotonicity of partition
+function**: for `J ≥ 0`, `β > 0`, `|h₁| ≤ |h₂|`,
+`partitionFunctionAlongExhaustion G Λ ⟨J, h₁, β⟩ n ≤
+partitionFunctionAlongExhaustion G Λ ⟨J, h₂, β⟩ n`. Per-stage lift of
+`partitionFunctionΛ_monotone_abs_h`. -/
+theorem partitionFunctionAlongExhaustion_monotone_abs_h
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β)
+    {h₁ h₂ : ℝ} (hh : |h₁| ≤ |h₂|) (n : ℕ) :
+    partitionFunctionAlongExhaustion G Λ (⟨J, h₁, β⟩ : IsingParams ℝ) n
+      ≤ partitionFunctionAlongExhaustion G Λ (⟨J, h₂, β⟩ : IsingParams ℝ) n :=
+  partitionFunctionΛ_monotone_abs_h G (Λ.volume n) J β hJ hβ hh
 
 end Ambient
 end IsingModel
