@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivityVdSum
+import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 
 /-!
 # Concrete AlongExhaustion Mayer strict positivity wrappers
