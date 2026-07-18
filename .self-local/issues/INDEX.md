@@ -866,3 +866,47 @@ publication, metric, or documentation authority exists. #4519/#4506 remain OPEN;
 rows/medians/deltas/metrics/>=10% verdict exist, and `docs/index.md` is unchanged.
 
 GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/ising-model/issues/4519#issuecomment-4979750222 / #4506 https://github.com/phasetr/ising-model/issues/4506#issuecomment-4979751432
+
+---
+
+## SpecialCases Family Consolidation Campaign (#4563, Master Issue)
+
+**Campaign Overview**: Autonomous family-by-family consolidation of 46-family SpecialCases subtree per #4563 blanket authorization (2026-07-18). Quality gates: declaration preservation, attribute conservation, consumer repoint completeness, build green (zero warnings), axiom invariance, audit gates V1–V3, shake clean, facade preservation.
+
+### Progress Summary
+
+**Total families to consolidate**: 46  
+**Families consolidated**: 9  
+**Remaining**: 37
+
+### Consolidation Log
+
+| Cycle | Family | Modules (n→1) | PR | Commit | Date | Status |
+|-------|--------|---------------|----|---------|----|--------|
+| 11 | Magnetization* | 10→1 | #4564 | fa163e07 | 2026-07-18 | DONE |
+| 12 | SusceptibilityConvergence | 2→1 | #4565 | a758058b | 2026-07-18 | DONE |
+| 13 | PolymerFreeEnergyBasic | 2→1 | #4566 | 9441d49fb7 | 2026-07-19 | DONE |
+| 14 | MayerFilterConnected | 2→1 | #4567 | 0947a5839c | 2026-07-19 | DONE |
+| 15 | MayerRecurrenceHasSum | 2→1 | #4568 | 499fa926cd | 2026-07-18 | DONE |
+| 16 | MayerVdIff | 2→1 | #4569 | cf913edf | 2026-07-19 | DONE |
+| 17 | PartitionFunctionSymmetry | 2→1 | #4570 | e24b898af9 | 2026-07-19 | DONE |
+| 18 | MayerEpsilonPositivity | 3→1 | #4572 | 0eed2fd6 | 2026-07-19 | DONE |
+| 19 | MayerAnalyticity | 5→1 | #4573 | 45b770d7 | 2026-07-19 | DONE |
+
+**Wave-1 (zero-red-flag)**: Cycles 11–17, 7 families COMPLETE.  
+**Wave-2 (self-contained)**: Cycles 18–19, 2 families COMPLETE (+ 30+ pending).  
+**Wave-3 (escalation-prone/complex)**: ~9 families deferred pending design review.
+
+### Standing Authorization
+
+Blanket authorization (2026-07-18) for autonomous family-by-family consolidation with auto-merge eligibility upon all 8 quality gates PASS and no escalation conditions triggered. Escalation halts and escalates to issue-manager (do NOT auto-merge):
+- Name collision (duplicate decls at merge target)
+- Non-trivial attributes (logic beyond simple preservation)
+- Cross-family dependencies (implicit inter-family usage)
+- Olean/rebuild anomalies (performance degradation, recomputation issues)
+
+### Next Steps
+
+- Continue wave-2 self-contained families (high-confidence, zero-red-flag)
+- Prepare wave-3 design review (escalation-prone families)
+- Monitor build-speed / olean stability across wave-1/2 merges
