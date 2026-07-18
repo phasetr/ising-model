@@ -876,8 +876,8 @@ GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/isi
 ### Progress Summary
 
 **Total families to consolidate**: 46  
-**Families consolidated**: 11  
-**Remaining**: 35
+**Families consolidated**: 12  
+**Remaining**: 34
 
 ### Consolidation Log
 
@@ -894,9 +894,10 @@ GitHub Rev22 STATIC_AUDIT_FAIL checkpoints: #4519 https://github.com/phasetr/isi
 | 19 | MayerAnalyticity | 5→1 | #4573 | 45b770d7 | 2026-07-19 | DONE |
 | 20 | FreeEnergyAnalyticity | 6→1 | #4574 | c660ec46 | 2026-07-19 | DONE |
 | 21 | MayerBasicIdentities | 5→1 | #4575 | 4a4f4a53 | 2026-07-19 | DONE |
+| 22 | MayerEdgeCases | 6→1 | #4576 | 3781a5e3 | 2026-07-19 | DONE |
 
 **Wave-1 (zero-red-flag)**: Cycles 11–17, 7 families COMPLETE.  
-**Wave-2 (self-contained)**: Cycles 18–21, 4 families COMPLETE (+ 32 pending).  
+**Wave-2 (self-contained)**: Cycles 18–22, 5 families COMPLETE (+ 34 pending).  
 **Wave-3 (escalation-prone/complex)**: ~9 families deferred pending design review.
 
 ### Standing Authorization
