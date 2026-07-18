@@ -1,6 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityDifferentiableBeta
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularityContinuousBeta
+import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
 # ℤ^d along-ex magnetizationAlongExhaustion β-direction regularity wrappers

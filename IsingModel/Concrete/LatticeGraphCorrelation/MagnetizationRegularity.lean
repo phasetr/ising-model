@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationRegularity
+import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
 # Concrete magnetization regularity wrappers

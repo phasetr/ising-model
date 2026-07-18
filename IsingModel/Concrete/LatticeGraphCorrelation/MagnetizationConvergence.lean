@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MagnetizationConvergence
+import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
 # Concrete magnetization convergence wrappers
