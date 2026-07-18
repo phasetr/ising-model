@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticityHZero
+import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 
 /-!
 # Concrete along-ex free-energy analyticity wrappers
