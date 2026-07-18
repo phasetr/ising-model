@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticityTanh
+import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 
 /-!
 # ℤ^d AlongExhaustion mayerPartialSum tanh analyticity wrappers
