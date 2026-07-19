@@ -7,12 +7,14 @@ This module is part of the split `IsingModel.PseudoMass.FromParamsBounds` develo
 
 ## Standalone module (intentional)
 
-This file is not imported by the root umbrella `IsingModel.lean` and has no
-downstream consumers in the import graph.  It is retained deliberately as
-genuine formalization: non-trivial limit / lower-bound results for the `J = 0` /
-`h = 0` slices of `pseudoMassFromParamsAtPair` (built on the live
-`PseudoMass/FromParamsBasic` results).  It is NOT dead code and must NOT be
-removed; it is simply not wired into the umbrella.
+This module lies outside the transitive import closure of the root umbrella
+`IsingModel.lean`, so it is not part of the assembled library: no
+umbrella-reachable ("live") module imports it.  It is imported only within this
+standalone cluster (by a sibling module), which is deliberately not wired into
+the umbrella.  It should be retained rather than treated as dead code: it is
+genuine formalization — non-trivial limit / lower-bound results for the
+`J = 0` / `h = 0` slices of `pseudoMassFromParamsAtPair`, built on the live
+`PseudoMass/FromParamsBasic` results.
 -/
 
 namespace IsingModel

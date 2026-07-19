@@ -15,11 +15,14 @@ with the per-`ω` Ursell classification (`UrsellFinThree.lean`).
 
 ## Standalone module (intentional)
 
-This file is not imported by the root umbrella `IsingModel.lean` and has no
-downstream consumers in the import graph.  It is retained deliberately: it backs
-the §18.4/18.5 "Done" entry in `docs/index.md` (the closed-form evaluation of
-the third-order Mayer term).  It is genuine formalization, not dead code, and
-must NOT be removed; it is simply not wired into the umbrella.
+This module lies outside the transitive import closure of the root umbrella
+`IsingModel.lean`, so it is not part of the assembled library: no
+umbrella-reachable ("live") module imports it, and in fact it has no importers
+anywhere in the repository.  It sits at the head of a small self-contained
+cluster (it imports its sibling `Truncations`) that is deliberately not wired
+into the umbrella.  It should be retained rather than treated as dead code: it
+backs the §18.4/18.5 "Done" entry in `docs/index.md` (the closed-form evaluation
+of the third-order Mayer term).
 
 ## References
 
