@@ -1,11 +1,8 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist
-import IsingModel.PseudoMass
 
 /-!
 # Lattice-mass cubic pair correlation tanh-power profile wrappers

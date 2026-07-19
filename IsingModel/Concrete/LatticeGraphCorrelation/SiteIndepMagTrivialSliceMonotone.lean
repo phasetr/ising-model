@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.TranslationInvariance
 import IsingModel.PhaseTransition

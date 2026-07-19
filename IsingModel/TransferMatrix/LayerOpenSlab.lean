@@ -1,4 +1,4 @@
-import Mathlib.Tactic
+import Mathlib.Analysis.Normed.Ring.Basic
 import IsingModel.TransferMatrix.LayerTransfer
 
 /-!
