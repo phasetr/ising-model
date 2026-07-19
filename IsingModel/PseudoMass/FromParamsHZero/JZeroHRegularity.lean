@@ -5,6 +5,17 @@ import IsingModel.PseudoMass.FromParamsHZero.JZeroBetaRegularity
 
 Continuity and differentiability wrappers in the field variable on the `J = 0`
 distinct-pair slice.
+
+## Standalone module (intentional)
+
+This module lies outside the transitive import closure of the root umbrella
+`IsingModel.lean`, so it is not part of the assembled library: no
+umbrella-reachable ("live") module imports it.  It is imported only within this
+standalone cluster (by a sibling module), which is deliberately not wired into
+the umbrella.  It should be retained rather than treated as dead code: it is
+genuine formalization — non-trivial regularity results for the `J = 0` /
+`h = 0` slices of `pseudoMassFromParamsAtPair`, built on the live
+`PseudoMass/FromParamsBasic` results.
 -/
 
 namespace IsingModel

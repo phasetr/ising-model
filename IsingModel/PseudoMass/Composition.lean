@@ -4,6 +4,17 @@ import IsingModel.PseudoMass.Ext
 # Pseudo-Mass Correlation Composition
 
 This module is part of the split `IsingModel.PseudoMass` development.
+
+## Standalone module (intentional)
+
+This module lies outside the transitive import closure of the root umbrella
+`IsingModel.lean`, so it is not part of the assembled library: no
+umbrella-reachable ("live") module imports it, and in fact it has no importers
+anywhere in the repository.  It is deliberately not wired into the umbrella.  It
+should be retained rather than treated as dead code: it backs the §17.5
+Step 120/123 "Done" entries in `docs/index.md` (the Step 120 continuity result
+`pseudoMass_comp_corr_continuousAt` and the Step 123 β-antitonicity result for
+the pseudoMass ∘ correlation composition).
 -/
 
 namespace IsingModel

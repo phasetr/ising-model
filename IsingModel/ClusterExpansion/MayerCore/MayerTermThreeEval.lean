@@ -13,6 +13,17 @@ otherwise.  This is the first explicit *interacting* Mayer term, combining the
 ordered-triple form `mayerExpansionTerm_three` (`MayerCore/Truncations.lean`)
 with the per-`ω` Ursell classification (`UrsellFinThree.lean`).
 
+## Standalone module (intentional)
+
+This module lies outside the transitive import closure of the root umbrella
+`IsingModel.lean`, so it is not part of the assembled library: no
+umbrella-reachable ("live") module imports it, and in fact it has no importers
+anywhere in the repository.  It sits at the head of a small self-contained
+cluster (it imports its sibling `Truncations`) that is deliberately not wired
+into the umbrella.  It should be retained rather than treated as dead code: it
+backs the §18.4/18.5 "Done" entry in `docs/index.md` (the closed-form evaluation
+of the third-order Mayer term).
+
 ## References
 
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4 (Mayer expansion), pp. 378–386.
