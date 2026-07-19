@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.MayerVdBoundsGeneric
+import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 
 /-!
 # Concrete AlongEx Mayer vd bound `of_nonneg` wrappers
