@@ -1,5 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularityAnalytic
+import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
 
 /-!
 # Concrete partitionFunctionAlongExhaustion regularity at `h = 0`
