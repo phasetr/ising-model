@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.UpperBound
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PathLowerBound
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import Mathlib.Analysis.SpecificLimits.Basic

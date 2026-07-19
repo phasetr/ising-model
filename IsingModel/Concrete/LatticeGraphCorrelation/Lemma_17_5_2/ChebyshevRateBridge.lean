@@ -1,5 +1,4 @@
 import IsingModel.Lattice
-import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Chebyshev → ℓ¹ rate conversion for transfer-matrix decay (GJ §17.5)
