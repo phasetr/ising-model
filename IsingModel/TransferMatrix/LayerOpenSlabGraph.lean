@@ -1,7 +1,6 @@
 import IsingModel.PartitionFunctionIso
 import IsingModel.TransferMatrix.CubicLayerCylinder
 import IsingModel.TransferMatrix.LayerOpenSlab
-import Mathlib.Tactic
 
 /-!
 # Finite open layer-slab graphs (GJ Section 17.1)
