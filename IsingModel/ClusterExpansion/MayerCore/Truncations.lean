@@ -11,6 +11,14 @@ low-order Mayer terms, building on `mayerExpansionTerm` / `mayerPartialSum`
 the Mayer–Montroll exponential formula, deferred) by isolating the
 explicit `n = 3` term as a triple sum and the `N = 3` partial sum.
 
+## Standalone module (intentional)
+
+This file is not imported by the root umbrella `IsingModel.lean` and has no
+downstream consumers in the import graph.  It is retained deliberately: it backs
+the §18.4/18.5 "Done" entry in `docs/index.md` (the explicit low-order Mayer
+terms and truncation partial sums).  It is genuine formalization, not dead code,
+and must NOT be removed; it is simply not wired into the umbrella.
+
 ## References
 
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4 (Mayer expansion), pp. 378–386.

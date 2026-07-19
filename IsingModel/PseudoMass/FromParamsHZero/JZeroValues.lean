@@ -5,6 +5,15 @@ import IsingModel.PseudoMass.FromParamsHZero.HZeroTruncatedBounds
 
 Closed-form value wrappers for `pseudoMassFromParamsAtPair` on the `J = 0`
 slice.
+
+## Standalone module (intentional)
+
+This file is not imported by the root umbrella `IsingModel.lean` and has no
+downstream consumers in the import graph.  It is retained deliberately as
+genuine formalization: non-trivial closed-form value results for the `J = 0` /
+`h = 0` slices of `pseudoMassFromParamsAtPair` (built on the live
+`PseudoMass/FromParamsBasic` results).  It is NOT dead code and must NOT be
+removed; it is simply not wired into the umbrella.
 -/
 
 namespace IsingModel
