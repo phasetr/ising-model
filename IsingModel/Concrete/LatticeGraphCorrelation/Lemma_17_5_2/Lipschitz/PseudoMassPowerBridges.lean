@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.BetaDerivBridges
-import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.CubicHighTemp
 
 /-!
 # GJ §17.5 Lemma 17.5.2 capstone — pseudo-mass power Lipschitz bridges

@@ -1,4 +1,3 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature
 import IsingModel.Concrete.LatticeGraphCorrelation.InfiniteVolumeCorrelationInequalities
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationSymmetry
 import IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay
@@ -8,9 +7,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.Inequalities.HighTemp
-import IsingModel.LatticeExpSum
 import IsingModel.PseudoMass
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion
