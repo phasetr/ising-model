@@ -138,8 +138,6 @@ import IsingModel.Conditioning.HighTempZeroMagnetization
 import IsingModel.Conditioning
 import IsingModel.Conditioning.CorrelationClosed
 import IsingModel.Conditioning.CorrelationClosed.TruncatedGeneralField
-import IsingModel.Conditioning.Reflection.EuclideanBasic
-import IsingModel.Conditioning.Reflection.EuclideanFormulas
 import IsingModel.Inequalities.HighTemp
 import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
