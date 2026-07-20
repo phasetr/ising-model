@@ -1,8 +1,7 @@
 import IsingModel.ClusterExpansion.StrictPositivity.TanhBounds
-import IsingModel.ClusterExpansion.CycleGraphAlternatingSum
 
 /-!
-# Cluster expansion strict positivity split — cycle-7 alternating sum and Mayer term vanishing
+# Cluster expansion strict positivity split — Mayer term filters and vanishing
 
 Part of the split cluster-expansion strict-positivity layer (Issue #1850).
 -/
@@ -26,16 +25,6 @@ theorem mayerExpansionTerm_two_filter_connected_eq_incompat
   apply Finset.filter_congr
   intro ω _
   exact polymerSeqIncompatibilityGraph_two_connected_iff_incompatible ω
-
-/-- **`cycleGraph 7` alternating connected-spanning sum = 6** (Mayer Phase B):
-instance of the general closed form `alternatingConnectedSubgraphSum_cycleGraph`
-at `n = 7`, `(-1)^(7-1)·(7-1) = 6`. The cycle on `Fin 7` has 7 connected spanning
-subsets of size 6 (single-edge deletions) plus the full cycle of size 7. -/
-theorem alternatingConnectedSubgraphSum_cycleGraph_seven :
-    alternatingConnectedSubgraphSum (SimpleGraph.cycleGraph 7) = 6 := by
-  have h := alternatingConnectedSubgraphSum_cycleGraph 7 (by norm_num)
-  norm_num at h
-  exact h
 
 /-- **`mayerExpansionTerm = 0` for graphs with no polymers** (§18.4
 sharpening): when `allPolymers G = ∅`, the n-th Mayer term vanishes
