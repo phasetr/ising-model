@@ -1,5 +1,4 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellInfiniteVolumeBound
-import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction.Factor
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction.Iterated
 import IsingModel.Concrete.CubicExhaustion
