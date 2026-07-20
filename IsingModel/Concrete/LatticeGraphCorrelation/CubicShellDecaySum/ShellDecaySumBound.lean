@@ -1,10 +1,15 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellInfiniteVolumeBound
 import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction.Factor
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction.Iterated
 import IsingModel.Concrete.CubicExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.CorrelationInfinite.Bounds
 import IsingModel.AmbientLatticeSum.PerStageIncrement
 import IsingModel.BallBoundarySimonLieb.Tight
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.Lattice
+import IsingModel.Basic
 
 /-!
 # Cubic-shell decay sum (1/4): shell decay-sum bound

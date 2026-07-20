@@ -3,6 +3,12 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPerStageIncrement
 import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLatticeSum.PerStageIncrement
+import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Concrete.LatticeGraphCorrelation.TheoremEtaLe1.Contraction.Factor
+import IsingModel.GibbsMeasure
+import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.Lattice
+import IsingModel.Basic
 
 /-!
 # Cubic-shell decay sum (2/4): correlation increment in polynomial × geometric form

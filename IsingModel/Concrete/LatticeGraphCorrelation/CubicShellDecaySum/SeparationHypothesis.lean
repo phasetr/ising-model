@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellDecaySum.ShellDecay
 import IsingModel.Concrete.CubicExhaustion
 import IsingModel.Lattice
 import IsingModel.AmbientLatticeSum.PerStageIncrement
+import IsingModel.AmbientLattice.Defs.Core
 
 /-!
 # Cubic-shell decay sum (3/4): separation hypothesis
