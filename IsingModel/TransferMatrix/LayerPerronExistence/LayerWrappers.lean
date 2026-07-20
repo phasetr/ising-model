@@ -1,4 +1,3 @@
-import IsingModel.TransferMatrix.LayerPerron
 import IsingModel.TransferMatrix.LayerPerronExistence.OrthogonalSpectralData
 
 /-!
