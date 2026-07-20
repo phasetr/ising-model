@@ -19334,14 +19334,13 @@ under $0 < |\iota|$, $0 \le \beta J$ (Step~612).
 Explicit values of the alternating connected-subgraph sum
 $\mathrm{alternatingConnectedSubgraphSum}\,G
 := \sum_{S \in \mathrm{connectedSpanningEdgeSubsets}\,G} (-1)^{|S|}$
-were computed by \texttt{decide} (with
-\texttt{set\_option maxRecDepth} / \texttt{maxHeartbeats} raised) on:
+were computed by \texttt{decide +kernel} on:
 \begin{itemize}
   \item Complete graphs \(K_3 = 2\), \(K_4 = -6\)
     (PRs~\#1518, \#1519);
   \item Path graphs \(P_n\) for \(n = 3,\dots,8\) with values
-    \(1, -1, 1, -1, 1, -1\) (PRs~\#1542--\#1544; \(P_8\) requires
-    \texttt{maxRecDepth 8000} + \texttt{maxHeartbeats 1000000});
+    \(1, -1, 1, -1, 1, -1\) (PRs~\#1542--\#1544; \(P_8\) only requires
+    \texttt{maxHeartbeats 400000} for elaborator-side \texttt{push\_cast; rfl} overhead);
   \item Cycle graphs \(C_n\) for \(n = 3,\dots,7\) with values
     \(2, -3, 4, -5, 6\) (PRs~\#1545, \#1546, \#1553).
 \end{itemize}
