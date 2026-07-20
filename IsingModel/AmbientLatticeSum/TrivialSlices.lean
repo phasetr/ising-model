@@ -258,7 +258,7 @@ assuming eventually `(Λ.volume n).Nonempty`, the sequence
 `log(2·cosh(β·h))` in the topology on `ℝ`.
 
 First non-trivial ∞-volume convergence under the scope update
-(CLAUDE.local.md: 無限系も対象). The J=0 slice sidesteps the
+(CLAUDE.local.md: infinite-volume systems are in scope). The J=0 slice sidesteps the
 translation-invariance issue of the general Fekete program because
 the stagewise sequence is eventually constant (PR #174
 `freeEnergyAlongExhaustion_J_zero`); then via
