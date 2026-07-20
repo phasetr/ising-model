@@ -32794,7 +32794,7 @@ closes the inclusion. Reference: Glimm--Jaffe, 2nd ed., §17.8,
 \section{Shell supremum contraction (GJ \S17.8)}
 
 The second of the three §17.8 axioms, \texttt{shellSup\_contraction}, is now a
-\emph{theorem} (\texttt{TheoremEtaLe1/Contraction.lean}), built directly on the
+\emph{theorem} (\texttt{TheoremEtaLe1/Contraction/ShellSup.lean}), built directly on the
 discharged \texttt{ball\_boundary\_tight\_infinite}. For a ferromagnetic Ising
 model at $h=0$ on $\texttt{latticeGraph}\,d$, with $1\le r$ and $r+1<n$,
 \[
@@ -32839,7 +32839,7 @@ Reference: Glimm--Jaffe, 2nd ed., §17.8, proof of Theorem 17.8.1, p.~317.
 \section{Contraction factor tends to zero (GJ \S17.8) --- last axiom discharged}
 
 The third and final §17.8 axiom, \texttt{polynomialDecay\_contraction\_factor\_tendsto},
-is now a \emph{theorem} (\texttt{TheoremEtaLe1/Contraction.lean}). Under
+is now a \emph{theorem} (\texttt{TheoremEtaLe1/Contraction/Factor.lean}). Under
 \texttt{HasPolynomialDecay}\,$d\,\Lambda\,p$ (i.e.
 $\langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}\to 0$ along the cofinite
 filter), the contraction factor tends to zero,
