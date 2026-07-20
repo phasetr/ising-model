@@ -14,7 +14,7 @@ open Finset
 
 Strict monotonicity of `vdPolymerFamilies_sum` and `polymerFreeEnergy`
 in the activity `t` under the hypothesis that polymers exist. Bundle
-of GJ-命題 corollaries: if at least one polymer is present, then both
+of GJ-proposition corollaries: if at least one polymer is present, then both
 `vdSum` and `polymerFreeEnergy` are strictly increasing on `[0, ∞)`. -/
 
 /-- **`vdPolymerFamilies_sum` strict monotonicity under polymers exist**
@@ -88,7 +88,7 @@ theorem vdPolymerFamilies_sum_strictMonoOn_of_polymers_nonempty
   fun _ hs _ _ hst =>
     vdPolymerFamilies_sum_lt_of_lt_of_polymers_nonempty G h_poly hs hst
 
-/-! ## §18.4 strict-positivity GJ-命題-bundle
+/-! ## §18.4 strict-positivity GJ-proposition-bundle
 
 Strict positivity of `polymerFreeEnergy`, `vdSum > 1`, and `ε > 0`
 under the joint hypothesis `t > 0 ∧ allPolymers G ≠ ∅`. Direct

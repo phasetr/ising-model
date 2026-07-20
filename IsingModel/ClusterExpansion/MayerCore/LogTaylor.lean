@@ -240,7 +240,7 @@ theorem polymerFreeEnergy_hasSum_via_log_of_pow_lt_two
   exact polymerFreeEnergy_hasSum_via_log G h_eps_lt_one
 
 /-- **`polymerFreeEnergy` log-Taylor expansion (tanh form)** (§18.5
-GJ-命題-bundle): tanh-substituted version of
+GJ-proposition-bundle): tanh-substituted version of
 `polymerFreeEnergy_hasSum_via_log_of_pow_lt_two` for the
 ferromagnetic Ising activity `t = tanh(β·J)` under `0 ≤ β·J` and
 `(1 + tanh(β·J))^|E| < 2`. -/
