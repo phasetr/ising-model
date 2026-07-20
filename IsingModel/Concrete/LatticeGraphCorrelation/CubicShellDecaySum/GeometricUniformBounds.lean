@@ -1,5 +1,7 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellDecaySum.CorrelationIncrementPolyPow
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellDecaySum.SeparationHypothesis
+import IsingModel.Concrete.CubicExhaustion
+import IsingModel.Lattice
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!

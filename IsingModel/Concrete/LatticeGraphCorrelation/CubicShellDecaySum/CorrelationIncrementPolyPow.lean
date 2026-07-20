@@ -2,6 +2,7 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicShellDecaySum.ShellDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPerStageIncrement
 import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.AmbientLatticeSum.PerStageIncrement
 
 /-!
 # Cubic-shell decay sum (2/4): correlation increment in polynomial × geometric form
