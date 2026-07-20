@@ -1,5 +1,6 @@
 import IsingModel.ContinuousSpin.TwoComponentGriffithsIV
 import IsingModel.ContinuousSpin.TwoComponentSystem
+import IsingModel.ContinuousSpin.MvPolynomialNonnegCoeffs
 import Mathlib.Algebra.MvPolynomial.Eval
 import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
@@ -77,42 +78,6 @@ noncomputable def dSpinVal (cfg : ι → Fin 4 → ℝ) : ι × Fin 4 → ℝ :=
 noncomputable def dSpinEval (p : MvPolynomial (ι × Fin 4) ℝ) (cfg : ι → Fin 4 → ℝ) : ℝ :=
   MvPolynomial.eval (dSpinVal cfg) p
 
-/-- A polynomial over `ι × Fin 4` has non-negative coefficients. -/
-def NNCoeffs (p : MvPolynomial (ι × Fin 4) ℝ) : Prop := ∀ m, 0 ≤ MvPolynomial.coeff m p
-
-theorem NNCoeffs.zero : NNCoeffs (0 : MvPolynomial (ι × Fin 4) ℝ) := fun m => by simp
-
-theorem NNCoeffs.one : NNCoeffs (1 : MvPolynomial (ι × Fin 4) ℝ) := fun m => by
-  classical rw [coeff_one]; split <;> norm_num
-
-theorem NNCoeffs.X (v : ι × Fin 4) : NNCoeffs (MvPolynomial.X v : MvPolynomial (ι × Fin 4) ℝ) :=
-  fun m => by classical rw [coeff_X']; split <;> norm_num
-
-theorem NNCoeffs.C {c : ℝ} (hc : 0 ≤ c) :
-    NNCoeffs (MvPolynomial.C c : MvPolynomial (ι × Fin 4) ℝ) := fun m => by
-  classical rw [coeff_C]; split <;> [exact hc; exact le_refl 0]
-
-theorem NNCoeffs.add {p q : MvPolynomial (ι × Fin 4) ℝ}
-    (hp : NNCoeffs p) (hq : NNCoeffs q) : NNCoeffs (p + q) := fun m => by
-  rw [coeff_add]; exact add_nonneg (hp m) (hq m)
-
-theorem NNCoeffs.mul {p q : MvPolynomial (ι × Fin 4) ℝ}
-    (hp : NNCoeffs p) (hq : NNCoeffs q) : NNCoeffs (p * q) := fun m => by
-  classical rw [coeff_mul]; exact Finset.sum_nonneg fun x _ => mul_nonneg (hp _) (hq _)
-
-theorem NNCoeffs.sum {α : Type*} {s : Finset α} {f : α → MvPolynomial (ι × Fin 4) ℝ}
-    (h : ∀ a ∈ s, NNCoeffs (f a)) : NNCoeffs (∑ a ∈ s, f a) :=
-  Finset.sum_induction f NNCoeffs (fun _ _ => NNCoeffs.add) NNCoeffs.zero h
-
-theorem NNCoeffs.prod {α : Type*} {s : Finset α} {f : α → MvPolynomial (ι × Fin 4) ℝ}
-    (h : ∀ a ∈ s, NNCoeffs (f a)) : NNCoeffs (∏ a ∈ s, f a) :=
-  Finset.prod_induction f NNCoeffs (fun _ _ => NNCoeffs.mul) NNCoeffs.one h
-
-theorem NNCoeffs.pow {p : MvPolynomial (ι × Fin 4) ℝ} (hp : NNCoeffs p) :
-    ∀ k : ℕ, NNCoeffs (p ^ k)
-  | 0 => by simpa using NNCoeffs.one
-  | k + 1 => by rw [pow_succ]; exact (NNCoeffs.pow hp k).mul hp
-
 /-! ## The cone integral is non-negative -/
 
 /-- Integrability of a site-product over the doubled-rotated configuration. -/
@@ -134,7 +99,7 @@ theorem integral_dmonomial_mul_siteWeight4Prod [Fintype ι] {A σ cα cγ : ℝ}
 the product weight is non-negative.** -/
 theorem dSpinEval_integral_nonneg [Fintype ι] {A σ cα cγ : ℝ} (hA : 0 < A) (hcα : 0 ≤ cα)
     (hcγ : 0 ≤ cγ)
-    {p : MvPolynomial (ι × Fin 4) ℝ} (hp : NNCoeffs p) :
+    {p : MvPolynomial (ι × Fin 4) ℝ} (hp : NonnegCoeffs p) :
     0 ≤ ∫ cfg : ι → Fin 4 → ℝ, dSpinEval p cfg * ∏ i, siteWeight4 A σ cα cγ (cfg i) := by
   classical
   have hpt : ∀ cfg : ι → Fin 4 → ℝ, dSpinEval p cfg * ∏ i, siteWeight4 A σ cα cγ (cfg i)

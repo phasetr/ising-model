@@ -30,7 +30,7 @@ variable {ι : Type*}
 
 /-- For a non-negative-coefficient polynomial, the evaluation is bounded in absolute
 value by the evaluation at the absolute values. -/
-theorem dSpinEval_abs_le {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NNCoeffs obs)
+theorem dSpinEval_abs_le {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NonnegCoeffs obs)
     (cfg : ι → Fin 4 → ℝ) :
     |dSpinEval obs cfg| ≤ dSpinEval obs (fun i j => |cfg i j|) := by
   rw [dSpinEval, dSpinEval, eval_eq, eval_eq]
@@ -98,7 +98,7 @@ theorem continuous_edgeDot4 (e : Sym2 ι) :
 observable is non-negative** (GJ Theorem 4.7.1 (4.7.6)–(4.7.8), pp. 70–71). -/
 theorem dRotInteraction_nonneg [Fintype ι] (G : SimpleGraph ι) [Fintype G.edgeSet]
     {A : ℝ} {σ J β cα cγ : ℝ} (hA : 0 < A) (hβJ : 0 ≤ β * J) (hcα : 0 ≤ cα) (hcγ : 0 ≤ cγ)
-    {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NNCoeffs obs) :
+    {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NonnegCoeffs obs) :
     0 ≤ ∫ cfg : ι → Fin 4 → ℝ, dSpinEval obs cfg
       * Real.exp (β * J * ∑ e ∈ G.edgeFinset, edgeDot4 cfg e)
       * ∏ i, siteWeight4 A σ cα cγ (cfg i) := by

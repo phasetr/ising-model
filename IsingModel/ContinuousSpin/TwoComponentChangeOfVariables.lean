@@ -159,7 +159,7 @@ change of variables (`measurePreserving_combinedEquiv`), the weight factorizatio
 theorem doubled_integral_nonneg [Fintype ι] (Gr : SimpleGraph ι) [Fintype Gr.edgeSet]
     {A σ J h1 h2 β : ℝ} (hA : 0 < A) (hβJ : 0 ≤ β * J)
     (hcα : 0 ≤ Real.sqrt 2 * β * h1) (hcγ : 0 ≤ Real.sqrt 2 * β * h2)
-    {F G : VectorConfig ι → ℝ} {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NNCoeffs obs)
+    {F G : VectorConfig ι → ℝ} {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NonnegCoeffs obs)
     (hid : ∀ ξ ξ' : VectorConfig ι,
       (F ξ - F ξ') * (G ξ - G ξ') = dSpinEval obs (fun i => rotLin (dCoord ξ ξ' i))) :
     0 ≤ ∫ z : VectorConfig ι × VectorConfig ι,

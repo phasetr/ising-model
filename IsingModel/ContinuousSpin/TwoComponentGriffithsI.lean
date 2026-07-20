@@ -1,5 +1,6 @@
 import IsingModel.ContinuousSpin.TwoComponentMultiIntegrable
 import IsingModel.ContinuousSpin.TwoComponentGriffiths
+import IsingModel.ContinuousSpin.MvPolynomialNonnegCoeffs
 import Mathlib.Algebra.MvPolynomial.Eval
 import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
@@ -145,55 +146,6 @@ noncomputable def spinVal (ξ : VectorConfig ι) : ι ⊕ ι → ℝ :=
 /-- Evaluation of a spin polynomial at a configuration. -/
 noncomputable def spinEval (p : MvPolynomial (ι ⊕ ι) ℝ) (ξ : VectorConfig ι) : ℝ :=
   MvPolynomial.eval (spinVal ξ) p
-
-/-- A polynomial has non-negative coefficients. -/
-def NonnegCoeffs (p : MvPolynomial (ι ⊕ ι) ℝ) : Prop := ∀ m, 0 ≤ MvPolynomial.coeff m p
-
-/-- The zero polynomial has non-negative coefficients. -/
-theorem NonnegCoeffs.zero : NonnegCoeffs (0 : MvPolynomial (ι ⊕ ι) ℝ) := fun m => by
-  simp
-
-/-- The unit polynomial has non-negative coefficients. -/
-theorem NonnegCoeffs.one : NonnegCoeffs (1 : MvPolynomial (ι ⊕ ι) ℝ) := fun m => by
-  classical rw [coeff_one]; split <;> norm_num
-
-/-- Each variable has non-negative coefficients. -/
-theorem NonnegCoeffs.X (v : ι ⊕ ι) : NonnegCoeffs (MvPolynomial.X v : MvPolynomial (ι ⊕ ι) ℝ) :=
-  fun m => by classical rw [coeff_X']; split <;> norm_num
-
-/-- A non-negative constant has non-negative coefficients. -/
-theorem NonnegCoeffs.C {c : ℝ} (hc : 0 ≤ c) :
-    NonnegCoeffs (MvPolynomial.C c : MvPolynomial (ι ⊕ ι) ℝ) := fun m => by
-  classical rw [coeff_C]; split <;> [exact hc; exact le_refl 0]
-
-/-- Non-negative coefficients are closed under addition. -/
-theorem NonnegCoeffs.add {p q : MvPolynomial (ι ⊕ ι) ℝ}
-    (hp : NonnegCoeffs p) (hq : NonnegCoeffs q) : NonnegCoeffs (p + q) := fun m => by
-  rw [coeff_add]; exact add_nonneg (hp m) (hq m)
-
-/-- Non-negative coefficients are closed under multiplication (`coeff_mul` is a
-sum of products of coefficients). -/
-theorem NonnegCoeffs.mul {p q : MvPolynomial (ι ⊕ ι) ℝ}
-    (hp : NonnegCoeffs p) (hq : NonnegCoeffs q) : NonnegCoeffs (p * q) := fun m => by
-  classical
-  rw [coeff_mul]
-  exact Finset.sum_nonneg fun x _ => mul_nonneg (hp _) (hq _)
-
-/-- Non-negative coefficients are closed under finite sums. -/
-theorem NonnegCoeffs.sum {α : Type*} {s : Finset α} {f : α → MvPolynomial (ι ⊕ ι) ℝ}
-    (h : ∀ a ∈ s, NonnegCoeffs (f a)) : NonnegCoeffs (∑ a ∈ s, f a) :=
-  Finset.sum_induction f NonnegCoeffs (fun _ _ => NonnegCoeffs.add) NonnegCoeffs.zero h
-
-/-- Non-negative coefficients are closed under finite products. -/
-theorem NonnegCoeffs.prod {α : Type*} {s : Finset α} {f : α → MvPolynomial (ι ⊕ ι) ℝ}
-    (h : ∀ a ∈ s, NonnegCoeffs (f a)) : NonnegCoeffs (∏ a ∈ s, f a) :=
-  Finset.prod_induction f NonnegCoeffs (fun _ _ => NonnegCoeffs.mul) NonnegCoeffs.one h
-
-/-- Non-negative coefficients are closed under powers. -/
-theorem NonnegCoeffs.pow {p : MvPolynomial (ι ⊕ ι) ℝ} (hp : NonnegCoeffs p) :
-    ∀ k : ℕ, NonnegCoeffs (p ^ k)
-  | 0 => by simpa using NonnegCoeffs.one
-  | k + 1 => by rw [pow_succ]; exact (NonnegCoeffs.pow hp k).mul hp
 
 /-! ## The integral of a non-negative-coefficient polynomial is non-negative -/
 

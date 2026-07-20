@@ -261,6 +261,7 @@ import IsingModel.Concrete.SlabBrick
 import IsingModel.Concrete.CenteredSlab
 import IsingModel.Concrete.CenteredSlab.InfiniteVolumeMonotone
 import IsingModel.ContinuousSpin.Measure
+import IsingModel.ContinuousSpin.MvPolynomialNonnegCoeffs
 import IsingModel.ContinuousSpin.Phi4
 import IsingModel.ContinuousSpin.Phi4AllOdd
 import IsingModel.ContinuousSpin.Phi4Averaging

@@ -84,22 +84,22 @@ theorem dSpinEval_truncPoly4 (G : SimpleGraph ι) [Fintype G.edgeSet]
   ring
 
 /-- The per-edge interaction polynomial has non-negative coefficients. -/
-theorem edgeDot4Poly_nncoeffs (e : Sym2 ι) : NNCoeffs (edgeDot4Poly e) := by
+theorem edgeDot4Poly_nncoeffs (e : Sym2 ι) : NonnegCoeffs (edgeDot4Poly e) := by
   induction e using Sym2.ind with
   | _ i j =>
     simp only [edgeDot4Poly, Sym2.lift_mk]
-    exact NNCoeffs.sum fun k _ => (NNCoeffs.X _).mul (NNCoeffs.X _)
+    exact NonnegCoeffs.sum fun k _ => (NonnegCoeffs.X _).mul (NonnegCoeffs.X _)
 
 /-- The truncating polynomial has non-negative coefficients (ferromagnetic `β, J ≥ 0`,
 non-negative observable). -/
 theorem truncPoly4_nncoeffs (G : SimpleGraph ι) [Fintype G.edgeSet]
-    {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NNCoeffs obs) {J β : ℝ}
-    (hβJ : 0 ≤ β * J) (N : ℕ) : NNCoeffs (truncPoly4 G obs J β N) := by
-  have hinter : NNCoeffs (interactionPoly4 G) :=
-    NNCoeffs.sum fun e _ => edgeDot4Poly_nncoeffs e
+    {obs : MvPolynomial (ι × Fin 4) ℝ} (hobs : NonnegCoeffs obs) {J β : ℝ}
+    (hβJ : 0 ≤ β * J) (N : ℕ) : NonnegCoeffs (truncPoly4 G obs J β N) := by
+  have hinter : NonnegCoeffs (interactionPoly4 G) :=
+    NonnegCoeffs.sum fun e _ => edgeDot4Poly_nncoeffs e
   rw [truncPoly4]
-  refine hobs.mul (NNCoeffs.sum fun k _ => ?_)
-  exact (NNCoeffs.C (div_nonneg (pow_nonneg hβJ k) (by positivity))).mul (hinter.pow k)
+  refine hobs.mul (NonnegCoeffs.sum fun k _ => ?_)
+  exact (NonnegCoeffs.C (div_nonneg (pow_nonneg hβJ k) (by positivity))).mul (hinter.pow k)
 
 /-! ## The dominated-convergence headline -/
 
