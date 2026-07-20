@@ -206,7 +206,11 @@ private instance : DecidableRel (SimpleGraph.pathGraph 8).Adj :=
 -- decision procedure is evaluated once, by the kernel only, instead of
 -- twice (elaborator whnf + kernel). This keeps the same trust boundary
 -- as plain `decide` (no `native_decide`) while fitting in the default
--- recursion / heartbeat budget.
+-- recursion budget.
+set_option maxHeartbeats 400000 in
+-- Not for `decide +kernel` (kernel reduction consumes no heartbeats): the
+-- headroom is for the elaborator-side `push_cast; rfl` of `h_cast`, which
+-- needs ~1.3x the default 200000 and would break on a toolchain bump.
 /-- **`pathGraph 8` alternating connected-spanning sum = -1**: 7 edges,
 only the full path is connected spanning, sum = `(-1)^7 = -1`. Ursell
 coefficient for n=8 path cluster: `ϕ^T = -1/8! = -1/40320`. -/
