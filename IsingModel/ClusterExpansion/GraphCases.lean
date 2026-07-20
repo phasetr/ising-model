@@ -56,7 +56,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_three :
       (∑ S ∈ (SimpleGraph.pathGraph 3).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 3)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 3)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 1 := by decide
+        ((-1 : ℤ) ^ S.card)) = 1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 3).edgeFinset.powerset.filter
@@ -89,7 +89,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_four :
       (∑ S ∈ (SimpleGraph.pathGraph 4).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 4)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -1 := by decide
+        ((-1 : ℤ) ^ S.card)) = -1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 4).edgeFinset.powerset.filter
@@ -120,7 +120,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_five :
       (∑ S ∈ (SimpleGraph.pathGraph 5).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 5)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 5)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 1 := by decide
+        ((-1 : ℤ) ^ S.card)) = 1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 5).edgeFinset.powerset.filter
@@ -144,7 +144,6 @@ private instance : DecidableRel (SimpleGraph.pathGraph 6).Adj :=
 private instance : DecidableRel (SimpleGraph.pathGraph 7).Adj :=
   fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
-set_option maxRecDepth 4000 in
 /-- **`pathGraph 7` alternating connected-spanning sum = 1**: 6 edges,
 only the full path is connected spanning, sum = `(-1)^6 = 1`. Ursell
 coefficient for n=7 path cluster: `ϕ^T = 1/7! = 1/5040`. -/
@@ -156,7 +155,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_seven :
       (∑ S ∈ (SimpleGraph.pathGraph 7).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 7)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 7)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = 1 := by decide
+        ((-1 : ℤ) ^ S.card)) = 1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 7).edgeFinset.powerset.filter
@@ -172,7 +171,6 @@ theorem alternatingConnectedSubgraphSum_pathGraph_seven :
   rw [h_cast, h_int]
   norm_num
 
-set_option maxRecDepth 2000 in
 /-- **`pathGraph 6` alternating connected-spanning sum = -1**: 5 edges,
 only the full path is connected spanning, sum = `(-1)^5 = -1`. Ursell
 coefficient for n=6 path cluster: `ϕ^T = -1/6! = -1/720`. -/
@@ -184,7 +182,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_six :
       (∑ S ∈ (SimpleGraph.pathGraph 6).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 6)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 6)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -1 := by decide
+        ((-1 : ℤ) ^ S.card)) = -1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 6).edgeFinset.powerset.filter
@@ -204,11 +202,11 @@ theorem alternatingConnectedSubgraphSum_pathGraph_six :
 private instance : DecidableRel (SimpleGraph.pathGraph 8).Adj :=
   fun _ _ => decidable_of_iff _ SimpleGraph.pathGraph_adj.symm
 
-set_option maxRecDepth 8000 in
-set_option maxHeartbeats 1000000 in
--- `decide` on `pathGraph 8` (7 edges, 2^7 = 128 subsets) needs the
--- raised recursion / heartbeat limits; the default budget runs out
--- mid-decision while enumerating connected spanning edge subsets.
+-- `decide +kernel` on `pathGraph 8` (7 edges, 2^7 = 128 subsets): the
+-- decision procedure is evaluated once, by the kernel only, instead of
+-- twice (elaborator whnf + kernel). This keeps the same trust boundary
+-- as plain `decide` (no `native_decide`) while fitting in the default
+-- recursion / heartbeat budget.
 /-- **`pathGraph 8` alternating connected-spanning sum = -1**: 7 edges,
 only the full path is connected spanning, sum = `(-1)^7 = -1`. Ursell
 coefficient for n=8 path cluster: `ϕ^T = -1/8! = -1/40320`. -/
@@ -220,7 +218,7 @@ theorem alternatingConnectedSubgraphSum_pathGraph_eight :
       (∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 8)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 8)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -1 := by decide
+        ((-1 : ℤ) ^ S.card)) = -1 := by decide +kernel
   unfold connectedSpanningEdgeSubsets
   have h_cast :
       (∑ S ∈ (SimpleGraph.pathGraph 8).edgeFinset.powerset.filter
