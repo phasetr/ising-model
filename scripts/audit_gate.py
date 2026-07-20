@@ -16,11 +16,15 @@ V3  Capstone axiom audit. For every fully-qualified name in
     ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
     subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
     identifier is a hard failure (keeps the capstone list honest).
-V4  No Japanese text (hiragana / katakana / CJK ideographs) in git-tracked
-    files under the public-facing paths listed in ``V4_PATHS``. Committed
-    sources, docs and TeX are English-only; gitignored working material
-    (``.self-local/``, ``CLAUDE.local.md``, ``AGENTS.md``) is out of scope by
-    construction, because the file list comes from ``git ls-files``.
+V4  No Japanese text (kana, CJK ideographs, CJK punctuation, fullwidth and
+    halfwidth forms) in git-tracked files under the public-facing paths listed
+    in ``V4_PATHS``. Committed sources, docs and TeX are English-only.
+    The scope is delimited *by the ``V4_PATHS`` enumeration*, not by
+    ``.gitignore``: internal working material such as ``.self-local/issues/``
+    and ``.self-local/reports/`` **is** tracked and **does** contain Japanese
+    on purpose, and is excluded only because ``V4_PATHS`` does not list it.
+    Consequently ``V4_PATHS`` must never be widened to ``"."`` -- that would
+    pull in ``.self-local/`` and fail immediately.
 
 Usage
 -----
@@ -55,13 +59,49 @@ V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean"}
 ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
 
 # Pathspecs scanned by V4 (English-only committed sources and public docs).
-V4_PATHS = ("docs", "README.md", "tex", "IsingModel", "scripts")
+# ``IsingModel.lean`` (library umbrella), ``test``, ``.github`` and
+# ``lakefile.toml`` are listed explicitly: they are tracked, English-only, and
+# would otherwise be unscanned. Do NOT replace this list by ``"."`` -- see the
+# module docstring (``.self-local/`` is tracked and intentionally Japanese).
+V4_PATHS = (
+    "docs",
+    "README.md",
+    "tex",
+    "IsingModel",
+    "IsingModel.lean",
+    "test",
+    "scripts",
+    ".github",
+    "lakefile.toml",
+)
 
-# Hiragana (U+3041-U+3093), katakana (U+30A1-U+30F3) and CJK ideographs
-# (U+4E00-U+9FAF) -- the same class the project rule uses for its manual ``rg``
-# spot check. The class is built from codepoints rather than spelled out with
-# literal characters, so that this file passes its own check.
-_JAPANESE_RANGES = ((0x3041, 0x3093), (0x30A1, 0x30F3), (0x4E00, 0x9FAF))
+# Full CJK/Japanese class. The narrow "kana + U+4E00-U+9FAF" class used by the
+# manual ``rg`` spot check misses exactly the residue a Japanese-to-English
+# rewrite tends to leave behind -- prolonged sound mark (U+30FC), ideographic
+# comma/full stop (U+3001/U+3002), corner and fullwidth brackets, ideographic
+# space (U+3000), fullwidth alphanumerics -- so V4 uses the wider ranges below:
+#   U+3000-U+303F  CJK symbols and punctuation (includes the ideographic space)
+#   U+3041-U+309F  hiragana (incl. U+3094 and the kana marks)
+#   U+30A0-U+30FF  katakana (incl. U+30F4-U+30F6 and the prolonged sound mark)
+#   U+3400-U+4DBF  CJK unified ideographs extension A
+#   U+4E00-U+9FFF  CJK unified ideographs (whole block, not just U+9FAF)
+#   U+F900-U+FAFF  CJK compatibility ideographs
+#   U+FF00-U+FFEF  halfwidth and fullwidth forms (halfwidth kana, fullwidth ASCII)
+#   U+20000-U+2FFFF CJK unified ideographs extensions B and beyond
+# Measured on the current tree: zero hits over all tracked files under
+# ``V4_PATHS``, i.e. the wider class costs no false positive. The class is built
+# from codepoints rather than spelled out with literal characters, so that this
+# file passes its own check.
+_JAPANESE_RANGES = (
+    (0x3000, 0x303F),
+    (0x3041, 0x309F),
+    (0x30A0, 0x30FF),
+    (0x3400, 0x4DBF),
+    (0x4E00, 0x9FFF),
+    (0xF900, 0xFAFF),
+    (0xFF00, 0xFFEF),
+    (0x20000, 0x2FFFF),
+)
 _JAPANESE_RE = re.compile(
     "[" + "".join(f"{chr(lo)}-{chr(hi)}" for lo, hi in _JAPANESE_RANGES) + "]"
 )
@@ -289,18 +329,22 @@ def iter_v4_files() -> tuple[list[Path], list[str]]:
     """Return (tracked files under ``V4_PATHS``, hard failures) for V4.
 
     ``git ls-files`` is what makes the exclusion list self-maintaining: only
-    committed material is scanned, so gitignored working notes never trip the
-    gate and no hand-written ignore list can drift. A failing ``git`` invocation
-    is reported as a failure rather than silently yielding an empty file list
-    (fail-closed).
+    committed material under ``V4_PATHS`` is scanned, so untracked scratch files
+    never trip the gate and the list stays in sync with the repository. A ``git``
+    invocation that fails -- or a ``git`` that is not installed at all -- is
+    reported as a failure rather than silently yielding an empty file list
+    (fail-closed; mirrors the guard in ``lake_available``).
     """
-    proc = subprocess.run(
-        ["git", "ls-files", "-z", "--", *V4_PATHS],
-        cwd=str(REPO_ROOT),
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["git", "ls-files", "-z", "--", *V4_PATHS],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:  # FileNotFoundError included: no usable `git`.
+        return ([], [f"V4: could not run `git ls-files`: {exc}"])
     if proc.returncode != 0:
         return ([], [f"V4: `git ls-files` failed: {proc.stderr.strip()}"])
     paths = [REPO_ROOT / name for name in proc.stdout.split("\0") if name]
@@ -310,16 +354,25 @@ def iter_v4_files() -> tuple[list[Path], list[str]]:
 
 
 def check_v4() -> tuple[list[str], int]:
-    """V4: report Japanese text in tracked sources/docs. Return (failures, files)."""
+    """V4: report Japanese text in tracked sources/docs. Return (failures, files).
+
+    A file that cannot be read or decoded is reported as a failure instead of
+    being skipped. Everything tracked under ``V4_PATHS`` is text today, so an
+    unreadable file means either a broken working tree or a newly committed
+    binary; both deserve an explicit decision (adjust ``V4_PATHS``) rather than
+    a silent unscanned file counted as "scanned". Skipping is the fail-open
+    variant this gate exists to avoid; an extension allowlist was rejected
+    because it would need per-file upkeep (``docs/Gemfile`` has no suffix).
+    """
     paths, failures = iter_v4_files()
     for path in paths:
         try:
             text = path.read_text(encoding="utf-8")
-        except OSError:
-            # A tracked path that disappeared (e.g. mid-rebase working tree).
-            continue
         except UnicodeDecodeError:
-            # Not UTF-8 text, hence not prose this check is about.
+            failures.append(f"{rel(path)}: not valid UTF-8 text (cannot be scanned)")
+            continue
+        except OSError as exc:
+            failures.append(f"{rel(path)}: could not be read ({exc})")
             continue
         for lineno, line in enumerate(text.splitlines(), start=1):
             hits = _JAPANESE_RE.findall(line)
@@ -404,7 +457,9 @@ def main() -> int:
     v4, scanned = check_v4()
     if v4:
         ok = False
-        print(f"FAIL: {len(v4)} line(s) with Japanese text:")
+        # Not necessarily "N lines with Japanese": the list may also hold
+        # git-level or unreadable-file failures, which are not line reports.
+        print(f"FAIL: {len(v4)} problem(s) (Japanese text and/or scan errors):")
         for item in v4:
             print(f"  {item}")
     else:
