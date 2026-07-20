@@ -1,0 +1,270 @@
+import IsingModel.ClusterExpansion.Incompatibility
+
+/-!
+# Cluster expansion complete-graph alternating sums (1/4): signed sums and iso-invariance
+
+Structural split (1/4) of `IsingModel.ClusterExpansion.AlternatingCompleteGraph`.
+This child holds the two signed-sum definitions (`alternatingConnectedSubgraphSum` over
+connected spanning edge-subsets, `allSignedSubgraphSum` = `D(G)` over all spanning
+edge-subsets), the general `D(G) = 0 / 1` evaluations, the edge-relabelling machinery and
+the graph-isomorphism invariance of both sums, the `K_V ≅ K_{Fin |V|}` card-transfer
+corollaries, the crossing-edge-free component lemma, and the complete-graph `D_n` boundary
+values.  See the `IsingModel.ClusterExpansion.AlternatingCompleteGraph` facade module for the
+full contents overview.
+-/
+
+namespace IsingModel
+
+open Finset
+
+/-! ## K_n alternating connected-spanning subgraph sum (Mayer Phase B)
+
+**Goal**: prove the Mayer combinatorial identity
+  Σ_{S ⊆ E(K_n) connected spanning} (-1)^|S| = (-1)^(n-1) · (n-1)!
+
+at least for small `n` cases (`n = 0, 1, 2`), and document the
+general-n proof as research-level work (via matrix-tree / Tutte
+polynomial / inclusion-exclusion). -/
+
+/-- **Alternating connected-spanning sum** (helper definition):
+`Σ_{S ∈ connectedSpanningEdgeSubsets G} (-1)^|S|`. The Mayer
+combinatorial identity asserts this equals `(-1)^(n-1) · (n-1)!`
+for `K_n`. -/
+noncomputable def alternatingConnectedSubgraphSum
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] : ℝ :=
+  ∑ S ∈ connectedSpanningEdgeSubsets G, (-1 : ℝ) ^ S.card
+
+/-! ### All-subgraph signed sum `D_n` (root-component recurrence foundation)
+
+The Mayer Phase B identity `alternatingConnectedSubgraphSum K_n =
+(-1)^(n-1)·(n-1)!` is proved by the root-component recurrence: classifying every
+spanning edge-subset by the connected component of vertex `0` gives
+`D_n = ∑_{C ∋ 0} c_{|C|} · D_{n-|C|}`, where `c_m = alternatingConnectedSubgraphSum`
+and `D_m = allSignedSubgraphSum` is the signed sum over *all* (not necessarily
+connected) spanning edge-subsets. Since `D_m = 0` for `m ≥ 2` and `D_0 = D_1 = 1`,
+the recurrence collapses to `c_n + (n-1)·c_{n-1} = 0`. This section establishes
+the `D_n` values; the recurrence and closed form follow in later work (#1499). -/
+
+/-- **Alternating all-subgraph sum** `D(G)`: `Σ_{S ⊆ E(G)} (-1)^|S|`, the signed
+sum over *all* spanning edge-subsets (not necessarily connected). Plays the role
+of `D_n` in the root-component recurrence for the complete-graph connected sum. -/
+noncomputable def allSignedSubgraphSum
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj] : ℝ :=
+  ∑ S ∈ G.edgeFinset.powerset, (-1 : ℝ) ^ S.card
+
+/-- **`D(G) = 0` when `G` has an edge**: if `G.edgeFinset` is nonempty then the
+signed all-subgraph sum vanishes. Direct real-cast of
+`Finset.sum_powerset_neg_one_pow_card_of_nonempty`. -/
+theorem allSignedSubgraphSum_eq_zero_of_edgeFinset_nonempty
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (h : G.edgeFinset.Nonempty) :
+    allSignedSubgraphSum G = 0 := by
+  unfold allSignedSubgraphSum
+  have hℤ : (∑ S ∈ G.edgeFinset.powerset, (-1 : ℤ) ^ S.card) = 0 :=
+    Finset.sum_powerset_neg_one_pow_card_of_nonempty h
+  have hcast : (∑ S ∈ G.edgeFinset.powerset, (-1 : ℝ) ^ S.card)
+      = (((∑ S ∈ G.edgeFinset.powerset, (-1 : ℤ) ^ S.card) : ℤ) : ℝ) := by
+    push_cast
+    rfl
+  rw [hcast, hℤ, Int.cast_zero]
+
+/-- **`D(G) = 1` when `G` is edgeless**: if `G.edgeFinset = ∅` then the only
+spanning edge-subset is `∅`, contributing `(-1)^0 = 1`. -/
+theorem allSignedSubgraphSum_eq_one_of_edgeFinset_empty
+    {V : Type*} [Fintype V] [DecidableEq V]
+    (G : SimpleGraph V) [DecidableRel G.Adj]
+    (h : G.edgeFinset = ∅) :
+    allSignedSubgraphSum G = 1 := by
+  unfold allSignedSubgraphSum
+  rw [h]
+  simp
+
+/-- **Edge-relabelling embedding from a graph isomorphism**: `Sym2.map φ` as a
+`Sym2 V ↪ Sym2 W`, injective since `φ` is. Relabels edge-subsets under `φ`. -/
+private def isoEdgeEmbedding {V W : Type*}
+    {G : SimpleGraph V} {H : SimpleGraph W} (φ : G ≃g H) :
+    Sym2 V ↪ Sym2 W :=
+  ⟨Sym2.map φ, Sym2.map.injective (EquivLike.injective φ)⟩
+
+/-- **`D` is a graph-isomorphism invariant**: for `φ : G ≃g H`,
+`allSignedSubgraphSum G = allSignedSubgraphSum H`. The relabelling
+`S ↦ S.map (Sym2.map φ)` is a cardinality-preserving bijection between
+`G.edgeFinset.powerset` and `H.edgeFinset.powerset`
+(`SimpleGraph.Iso.map_mem_edgeSet_iff`). Supplies the `D_{n-|C|} = D(K_{n-|C|})`
+ingredient of the Mayer root-component recurrence via `K_n|_C ≅ K_{|C|}`. -/
+theorem allSignedSubgraphSum_iso {V W : Type*} [Fintype V] [DecidableEq V]
+    [Fintype W] [DecidableEq W] {G : SimpleGraph V} {H : SimpleGraph W}
+    [DecidableRel G.Adj] [DecidableRel H.Adj] (φ : G ≃g H) :
+    allSignedSubgraphSum G = allSignedSubgraphSum H := by
+  classical
+  unfold allSignedSubgraphSum
+  refine Finset.sum_bij'
+    (fun S _ => S.map (isoEdgeEmbedding φ))
+    (fun T _ => T.map (isoEdgeEmbedding φ.symm)) ?_ ?_ ?_ ?_ ?_
+  · intro S hS
+    rw [Finset.mem_powerset] at hS ⊢
+    intro e he
+    rw [Finset.mem_map] at he
+    obtain ⟨a, ha, rfl⟩ := he
+    rw [SimpleGraph.mem_edgeFinset]
+    exact (SimpleGraph.Iso.map_mem_edgeSet_iff φ).mpr
+      (SimpleGraph.mem_edgeFinset.mp (hS ha))
+  · intro T hT
+    rw [Finset.mem_powerset] at hT ⊢
+    intro e he
+    rw [Finset.mem_map] at he
+    obtain ⟨a, ha, rfl⟩ := he
+    rw [SimpleGraph.mem_edgeFinset]
+    exact (SimpleGraph.Iso.map_mem_edgeSet_iff φ.symm).mpr
+      (SimpleGraph.mem_edgeFinset.mp (hT ha))
+  · intro S _
+    have hcomp : (isoEdgeEmbedding φ).trans (isoEdgeEmbedding φ.symm)
+        = Function.Embedding.refl _ := by
+      ext e
+      refine Sym2.ind (fun a b => ?_) e
+      simp [isoEdgeEmbedding]
+    simp only [Finset.map_map, hcomp, Finset.map_refl]
+  · intro T _
+    have hcomp : (isoEdgeEmbedding φ.symm).trans (isoEdgeEmbedding φ)
+        = Function.Embedding.refl _ := by
+      ext e
+      refine Sym2.ind (fun a b => ?_) e
+      simp [isoEdgeEmbedding]
+    simp only [Finset.map_map, hcomp, Finset.map_refl]
+  · intro S _
+    rw [Finset.card_map]
+
+/-- **Graph isomorphism preserves connectivity of edge-subset subgraphs**: for
+`φ : G ≃g H`, the same vertex bijection is an isomorphism
+`fromEdgeSet ↑S ≃g fromEdgeSet ↑(S.map (Sym2.map φ))`, so connectivity transfers. -/
+private theorem fromEdgeSet_map_iso_connected_iff {V W : Type*}
+    {G : SimpleGraph V} {H : SimpleGraph W}
+    (φ : G ≃g H) (S : Finset (Sym2 V)) :
+    (SimpleGraph.fromEdgeSet (↑(S.map (isoEdgeEmbedding φ)) : Set (Sym2 W))).Connected ↔
+      (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).Connected := by
+  refine SimpleGraph.Iso.connected_iff (G := SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V)))
+    (H := SimpleGraph.fromEdgeSet (↑(S.map (isoEdgeEmbedding φ)) : Set (Sym2 W)))
+    ⟨φ.toEquiv, ?_⟩ |>.symm
+  intro a b
+  simp only [SimpleGraph.fromEdgeSet_adj, Finset.mem_coe, RelIso.coe_fn_toEquiv]
+  rw [show (s(φ a, φ b) : Sym2 W) = isoEdgeEmbedding φ s(a, b) by
+        simp [isoEdgeEmbedding, Sym2.map_mk],
+      Finset.mem_map' (isoEdgeEmbedding φ)]
+  exact and_congr Iff.rfl (EquivLike.injective φ).ne_iff
+
+/-- **`c` (connected-spanning signed sum) is a graph-isomorphism invariant**:
+for `φ : G ≃g H`, `alternatingConnectedSubgraphSum G = alternatingConnectedSubgraphSum H`.
+Same edge-subset relabelling as `allSignedSubgraphSum_iso`, restricted to the
+connected-spanning subsets: `φ` carries `fromEdgeSet ↑S` isomorphically to
+`fromEdgeSet ↑(S.map (Sym2.map φ))` (same vertex bijection), so connectivity is
+preserved (`SimpleGraph.Iso.connected_iff`). Supplies the `c_{|C|} = c(K_{|C|})`
+ingredient of the Mayer root-component recurrence via `K_n|_C ≅ K_{|C|}`. -/
+theorem alternatingConnectedSubgraphSum_iso {V W : Type*} [Fintype V] [DecidableEq V]
+    [Fintype W] [DecidableEq W] {G : SimpleGraph V} {H : SimpleGraph W}
+    [DecidableRel G.Adj] [DecidableRel H.Adj] (φ : G ≃g H) :
+    alternatingConnectedSubgraphSum G = alternatingConnectedSubgraphSum H := by
+  classical
+  unfold alternatingConnectedSubgraphSum
+  refine Finset.sum_bij'
+    (fun S _ => S.map (isoEdgeEmbedding φ))
+    (fun T _ => T.map (isoEdgeEmbedding φ.symm)) ?_ ?_ ?_ ?_ ?_
+  · intro S hS
+    rw [mem_connectedSpanningEdgeSubsets] at hS ⊢
+    refine ⟨?_, ?_⟩
+    · intro e he
+      rw [Finset.mem_map] at he
+      obtain ⟨a, ha, rfl⟩ := he
+      rw [SimpleGraph.mem_edgeFinset]
+      exact (SimpleGraph.Iso.map_mem_edgeSet_iff φ).mpr
+        (SimpleGraph.mem_edgeFinset.mp (hS.1 ha))
+    · exact (fromEdgeSet_map_iso_connected_iff φ S).mpr hS.2
+  · intro T hT
+    rw [mem_connectedSpanningEdgeSubsets] at hT ⊢
+    refine ⟨?_, ?_⟩
+    · intro e he
+      rw [Finset.mem_map] at he
+      obtain ⟨a, ha, rfl⟩ := he
+      rw [SimpleGraph.mem_edgeFinset]
+      exact (SimpleGraph.Iso.map_mem_edgeSet_iff φ.symm).mpr
+        (SimpleGraph.mem_edgeFinset.mp (hT.1 ha))
+    · exact (fromEdgeSet_map_iso_connected_iff φ.symm T).mpr hT.2
+  · intro S _
+    have hcomp : (isoEdgeEmbedding φ).trans (isoEdgeEmbedding φ.symm)
+        = Function.Embedding.refl _ := by
+      ext e
+      refine Sym2.ind (fun a b => ?_) e
+      simp [isoEdgeEmbedding]
+    simp only [Finset.map_map, hcomp, Finset.map_refl]
+  · intro T _
+    have hcomp : (isoEdgeEmbedding φ.symm).trans (isoEdgeEmbedding φ)
+        = Function.Embedding.refl _ := by
+      ext e
+      refine Sym2.ind (fun a b => ?_) e
+      simp [isoEdgeEmbedding]
+    simp only [Finset.map_map, hcomp, Finset.map_refl]
+  · intro S _
+    rw [Finset.card_map]
+
+/-- **`c(K_V)` depends only on `|V|`**: for any finite `V`, the connected-spanning
+signed sum of the complete graph on `V` equals that of `K_{|V|}`. Iso-invariance
+applied to `K_V ≅ K_{Fin |V|}` (`SimpleGraph.Iso.completeGraph (Fintype.equivFin V)`).
+Gives `c_{|C|} = c(K_{|C|})` for the root-component recurrence (with `V := ↑C`). -/
+theorem alternatingConnectedSubgraphSum_completeGraph_card
+    {V : Type*} [Fintype V] [DecidableEq V] :
+    alternatingConnectedSubgraphSum (⊤ : SimpleGraph V)
+      = alternatingConnectedSubgraphSum (⊤ : SimpleGraph (Fin (Fintype.card V))) :=
+  alternatingConnectedSubgraphSum_iso (SimpleGraph.Iso.completeGraph (Fintype.equivFin V))
+
+/-- **`D(K_V)` depends only on `|V|`**: for any finite `V`, the all-subgraph signed
+sum of the complete graph on `V` equals that of `K_{|V|}`. Iso-invariance applied to
+`K_V ≅ K_{Fin |V|}`. Gives `D_{n-|C|} = D(K_{n-|C|})` for the recurrence. -/
+theorem allSignedSubgraphSum_completeGraph_card
+    {V : Type*} [Fintype V] [DecidableEq V] :
+    allSignedSubgraphSum (⊤ : SimpleGraph V)
+      = allSignedSubgraphSum (⊤ : SimpleGraph (Fin (Fintype.card V))) :=
+  allSignedSubgraphSum_iso (SimpleGraph.Iso.completeGraph (Fintype.equivFin V))
+
+/-- **Edges of `S` do not cross connected components**: in `fromEdgeSet ↑S`, the
+two endpoints of any edge `s(a,b) ∈ S` (with `a ≠ b`) lie in the same connected
+component. Direct from `SimpleGraph.connectedComponentMk_eq_of_adj`. The
+crossing-edge-free property underlying the root-component decomposition: the edges
+of `S` within the component `C` of vertex `0` and those outside `C` have no
+edge of `S` between them. -/
+theorem connectedComponentMk_eq_of_mem {V : Type*} {S : Finset (Sym2 V)} {a b : V}
+    (hab : s(a, b) ∈ S) (hne : a ≠ b) :
+    (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).connectedComponentMk a
+      = (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 V))).connectedComponentMk b := by
+  apply SimpleGraph.ConnectedComponent.connectedComponentMk_eq_of_adj
+  rw [SimpleGraph.fromEdgeSet_adj]
+  exact ⟨Finset.mem_coe.mpr hab, hne⟩
+
+/-- **`D_n = 0` for `K_n`, `n ≥ 2`**: the signed all-subgraph sum over the
+complete graph vanishes once there is at least one edge (`s(0,1)`). The `D_m = 0`
+ingredient of the Mayer root-component recurrence. -/
+theorem allSignedSubgraphSum_completeGraph_eq_zero_of_two_le
+    {n : ℕ} (hn : 2 ≤ n) :
+    allSignedSubgraphSum (⊤ : SimpleGraph (Fin n)) = 0 := by
+  apply allSignedSubgraphSum_eq_zero_of_edgeFinset_nonempty
+  refine ⟨s(⟨0, by omega⟩, ⟨1, by omega⟩), ?_⟩
+  rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet, SimpleGraph.top_adj]
+  exact Fin.ne_of_val_ne Nat.zero_ne_one
+
+/-- **`D(G) = 1` for an edgeless complete graph on a `Subsingleton`**: `K_n` with
+`n ≤ 1` (here via `Subsingleton (Fin n)`) has no edges, so `D = 1`. Covers the
+`n = 0` and `n = 1` boundary values of the recurrence uniformly. -/
+theorem allSignedSubgraphSum_completeGraph_eq_one_of_subsingleton
+    {n : ℕ} [Subsingleton (Fin n)] :
+    allSignedSubgraphSum (⊤ : SimpleGraph (Fin n)) = 1 := by
+  apply allSignedSubgraphSum_eq_one_of_edgeFinset_empty
+  rw [Finset.eq_empty_iff_forall_notMem]
+  intro e he
+  rw [SimpleGraph.mem_edgeFinset] at he
+  revert he
+  refine Sym2.ind (fun a b hab => ?_) e
+  rw [SimpleGraph.mem_edgeSet, SimpleGraph.top_adj] at hab
+  exact hab (Subsingleton.elim a b)
+
+end IsingModel

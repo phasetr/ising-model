@@ -1,3 +1,4 @@
+import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
 import IsingModel.ClusterExpansion.MayerRootComponent
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
