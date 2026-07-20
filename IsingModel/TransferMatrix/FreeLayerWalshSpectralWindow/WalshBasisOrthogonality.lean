@@ -1,6 +1,7 @@
 import IsingModel.Inequalities.NonnegCorrelations
 import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Data.Finset.SymmDiff
 
 /-!
 # Finite free-layer Walsh spectral window (1/4): Walsh basis and orthogonality
