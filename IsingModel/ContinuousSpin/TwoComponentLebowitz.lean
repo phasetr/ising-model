@@ -42,24 +42,24 @@ noncomputable def minusProd (S : Finset ι) (s t : Fin 4) : MvPolynomial (ι × 
   ∏ i ∈ S, (X (i, s) - X (i, t))
 
 /-- The summed product has non-negative coefficients. -/
-theorem nncoeffs_plusProd (S : Finset ι) (s t : Fin 4) : NNCoeffs (plusProd S s t) :=
-  NNCoeffs.prod fun _ _ => (NNCoeffs.X _).add (NNCoeffs.X _)
+theorem nncoeffs_plusProd (S : Finset ι) (s t : Fin 4) : NonnegCoeffs (plusProd S s t) :=
+  NonnegCoeffs.prod fun _ _ => (NonnegCoeffs.X _).add (NonnegCoeffs.X _)
 
 /-- **Mutual non-negativity of the even sum and the odd difference**: both
 `plusProd + minusProd` and `plusProd − minusProd` have non-negative coefficients.
 This is the combinatorial core of (4.7.6)–(4.7.8): the difference of `±` products
 expands with non-negative coefficients. -/
 theorem nncoeffs_evenSum_oddDiff (S : Finset ι) (s t : Fin 4) :
-    NNCoeffs (plusProd S s t + minusProd S s t)
-      ∧ NNCoeffs (plusProd S s t - minusProd S s t) := by
+    NonnegCoeffs (plusProd S s t + minusProd S s t)
+      ∧ NonnegCoeffs (plusProd S s t - minusProd S s t) := by
   classical
   induction S using Finset.induction with
   | empty =>
     refine ⟨?_, ?_⟩
     · simpa only [plusProd, minusProd, Finset.prod_empty] using
-        (NNCoeffs.one (ι := ι)).add NNCoeffs.one
+        (NonnegCoeffs.one (σ := ι × Fin 4)).add NonnegCoeffs.one
     · simpa only [plusProd, minusProd, Finset.prod_empty, sub_self] using
-        (NNCoeffs.zero (ι := ι))
+        (NonnegCoeffs.zero (σ := ι × Fin 4))
   | insert i S hi ih =>
     obtain ⟨ihe, iho⟩ := ih
     have hP : plusProd (insert i S) s t = (X (i, s) + X (i, t)) * plusProd S s t := by
@@ -71,16 +71,16 @@ theorem nncoeffs_evenSum_oddDiff (S : Finset ι) (s t : Fin 4) :
           = X (i, s) * (plusProd S s t + minusProd S s t)
             + X (i, t) * (plusProd S s t - minusProd S s t) := by rw [hP, hM]; ring
       rw [heq]
-      exact ((NNCoeffs.X _).mul ihe).add ((NNCoeffs.X _).mul iho)
+      exact ((NonnegCoeffs.X _).mul ihe).add ((NonnegCoeffs.X _).mul iho)
     · have heq : plusProd (insert i S) s t - minusProd (insert i S) s t
           = X (i, s) * (plusProd S s t - minusProd S s t)
             + X (i, t) * (plusProd S s t + minusProd S s t) := by rw [hP, hM]; ring
       rw [heq]
-      exact ((NNCoeffs.X _).mul iho).add ((NNCoeffs.X _).mul ihe)
+      exact ((NonnegCoeffs.X _).mul iho).add ((NonnegCoeffs.X _).mul ihe)
 
 /-- The odd difference `plusProd − minusProd` has non-negative coefficients. -/
 theorem nncoeffs_oddDiff (S : Finset ι) (s t : Fin 4) :
-    NNCoeffs (plusProd S s t - minusProd S s t) :=
+    NonnegCoeffs (plusProd S s t - minusProd S s t) :=
   (nncoeffs_evenSum_oddDiff S s t).2
 
 /-! ## Evaluation of the `±` products -/
@@ -360,8 +360,8 @@ theorem vectorExpectation_t_mul_le (Gr : SimpleGraph ι) [Fintype Gr.edgeSet] {A
     (doubled_integral_nonneg Gr hA hβJ hcα hcγ
       (obs := C ((Real.sqrt 2 / 2) ^ A.card) * (plusProd A 0 1 - minusProd A 0 1)
         * (C ((Real.sqrt 2 / 2) ^ B.card) * (plusProd B 0 1 - minusProd B 0 1)))
-      (((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 0 1)).mul
-        ((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 0 1)))
+      (((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 0 1)).mul
+        ((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 0 1)))
       (fun ξ ξ' => by rw [tMon_diff A ξ ξ', tMon_diff B ξ ξ', ← dSpinEval_mul]))
 
 /-- **GJ Theorem 4.7.1 (4.7.7): the `q`-correlations are positively associated**:
@@ -384,8 +384,8 @@ theorem vectorExpectation_q_mul_le (Gr : SimpleGraph ι) [Fintype Gr.edgeSet] {A
     (doubled_integral_nonneg Gr hA hβJ hcα hcγ
       (obs := C ((Real.sqrt 2 / 2) ^ A.card) * (plusProd A 2 3 - minusProd A 2 3)
         * (C ((Real.sqrt 2 / 2) ^ B.card) * (plusProd B 2 3 - minusProd B 2 3)))
-      (((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 2 3)).mul
-        ((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 2 3)))
+      (((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 2 3)).mul
+        ((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 2 3)))
       (fun ξ ξ' => by
         rw [qMon_diff A ξ ξ', qMon_diff B ξ ξ', ← dSpinEval_mul]
         congr 1
@@ -420,8 +420,8 @@ theorem vectorExpectation_t_mul_q_le (Gr : SimpleGraph ι) [Fintype Gr.edgeSet] 
       (F := vectorMonomial A ∅) (G := fun ξ => -vectorMonomial ∅ B ξ)
       (obs := C ((Real.sqrt 2 / 2) ^ A.card) * (plusProd A 0 1 - minusProd A 0 1)
         * (C ((Real.sqrt 2 / 2) ^ B.card) * (plusProd B 2 3 - minusProd B 2 3)))
-      (((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 0 1)).mul
-        ((NNCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 2 3)))
+      (((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff A 0 1)).mul
+        ((NonnegCoeffs.C (by positivity)).mul (nncoeffs_oddDiff B 2 3)))
       (fun ξ ξ' => by
         have hq : -vectorMonomial ∅ B ξ - -vectorMonomial ∅ B ξ'
             = -(vectorMonomial ∅ B ξ - vectorMonomial ∅ B ξ') := by ring
