@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit gate for the IsingModel Lean library (V1-V3).
+"""Audit gate for the IsingModel Lean library (V1-V4).
 
 Deterministic, dependency-free checks intended to run in CI (and, if wired,
 from a git pre-push hook). Uses only the Python 3 standard library.
@@ -16,11 +16,16 @@ V3  Capstone axiom audit. For every fully-qualified name in
     ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
     subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
     identifier is a hard failure (keeps the capstone list honest).
+V4  No Japanese text (hiragana / katakana / CJK ideographs) in git-tracked
+    files under the public-facing paths listed in ``V4_PATHS``. Committed
+    sources, docs and TeX are English-only; gitignored working material
+    (``.self-local/``, ``CLAUDE.local.md``, ``AGENTS.md``) is out of scope by
+    construction, because the file list comes from ``git ls-files``.
 
 Usage
 -----
-    python3 scripts/audit_gate.py            # V1 + V2 always; V3 if lake env present
-    python3 scripts/audit_gate.py --full     # V1 + V2 + V3 (V3 required; CI mode)
+    python3 scripts/audit_gate.py            # V1 + V2 + V4 always; V3 if lake env present
+    python3 scripts/audit_gate.py --full     # V1 + V2 + V3 + V4 (V3 required; CI mode)
 
 Exit code 0 iff every executed check passes; 1 otherwise.
 """
@@ -48,6 +53,18 @@ V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean"}
 
 # The axioms every capstone is permitted to depend on (subset accepted).
 ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
+
+# Pathspecs scanned by V4 (English-only committed sources and public docs).
+V4_PATHS = ("docs", "README.md", "tex", "IsingModel", "scripts")
+
+# Hiragana (U+3041-U+3093), katakana (U+30A1-U+30F3) and CJK ideographs
+# (U+4E00-U+9FAF) -- the same class the project rule uses for its manual ``rg``
+# spot check. The class is built from codepoints rather than spelled out with
+# literal characters, so that this file passes its own check.
+_JAPANESE_RANGES = ((0x3041, 0x3093), (0x30A1, 0x30F3), (0x4E00, 0x9FAF))
+_JAPANESE_RE = re.compile(
+    "[" + "".join(f"{chr(lo)}-{chr(hi)}" for lo, hi in _JAPANESE_RANGES) + "]"
+)
 
 
 def strip_noncode(source: str) -> str:
@@ -268,6 +285,56 @@ def check_v3() -> tuple[list[str], set[str]]:
     return (failures, observed)
 
 
+def iter_v4_files() -> tuple[list[Path], list[str]]:
+    """Return (tracked files under ``V4_PATHS``, hard failures) for V4.
+
+    ``git ls-files`` is what makes the exclusion list self-maintaining: only
+    committed material is scanned, so gitignored working notes never trip the
+    gate and no hand-written ignore list can drift. A failing ``git`` invocation
+    is reported as a failure rather than silently yielding an empty file list
+    (fail-closed).
+    """
+    proc = subprocess.run(
+        ["git", "ls-files", "-z", "--", *V4_PATHS],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        return ([], [f"V4: `git ls-files` failed: {proc.stderr.strip()}"])
+    paths = [REPO_ROOT / name for name in proc.stdout.split("\0") if name]
+    if not paths:
+        return ([], ["V4: `git ls-files` matched no file (V4 has nothing to scan)"])
+    return (sorted(paths), [])
+
+
+def check_v4() -> tuple[list[str], int]:
+    """V4: report Japanese text in tracked sources/docs. Return (failures, files)."""
+    paths, failures = iter_v4_files()
+    for path in paths:
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError:
+            # A tracked path that disappeared (e.g. mid-rebase working tree).
+            continue
+        except UnicodeDecodeError:
+            # Not UTF-8 text, hence not prose this check is about.
+            continue
+        for lineno, line in enumerate(text.splitlines(), start=1):
+            hits = _JAPANESE_RE.findall(line)
+            if not hits:
+                continue
+            snippet = line.strip()
+            if len(snippet) > 80:
+                snippet = snippet[:80] + "..."
+            failures.append(
+                f"{rel(path)}:{lineno}: Japanese text {''.join(dict.fromkeys(hits))!r}"
+                f" in: {snippet}"
+            )
+    return (failures, len(paths))
+
+
 def lake_available() -> bool:
     """Return whether a ``lake`` executable is usable for the V3 check."""
     try:
@@ -285,7 +352,7 @@ def lake_available() -> bool:
 
 def main() -> int:
     """Run the audit gate and return the process exit code."""
-    parser = argparse.ArgumentParser(description="IsingModel audit gate (V1-V3).")
+    parser = argparse.ArgumentParser(description="IsingModel audit gate (V1-V4).")
     parser.add_argument(
         "--full",
         action="store_true",
@@ -332,6 +399,16 @@ def main() -> int:
             )
     else:
         print("SKIP: no `lake` env available (pass --full to require V3)")
+
+    print("== V4: no Japanese text in tracked sources and public docs ==")
+    v4, scanned = check_v4()
+    if v4:
+        ok = False
+        print(f"FAIL: {len(v4)} line(s) with Japanese text:")
+        for item in v4:
+            print(f"  {item}")
+    else:
+        print(f"PASS ({scanned} tracked files under {', '.join(V4_PATHS)})")
 
     print()
     if ok:
