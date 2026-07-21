@@ -19,8 +19,10 @@ No other library module imports this one, so it is registered directly in the
 root umbrella `IsingModel.lean`; it is the head of a small self-contained
 cluster (it imports its sibling `Truncations`), and registering the head brings
 the whole cluster into the transitive import closure of `import IsingModel` —
-which is what the capstone axiom audit (`scripts/audit_gate.py`, check V3)
-elaborates against.  It backs the §18.4/18.5 "Done" entry in `docs/index.md`
+the prerequisite for the capstone axiom audit (`scripts/audit_gate.py`, check
+V3) to reach it.  Note that V3 inspects only the names listed in
+`scripts/audit/capstones.txt`, and no declaration of this cluster is currently
+listed there.  It backs the §18.4/18.5 "Done" entry in `docs/index.md`
 (the closed-form evaluation of the third-order Mayer term).
 
 ## References

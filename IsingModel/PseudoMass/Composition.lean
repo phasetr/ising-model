@@ -9,8 +9,10 @@ This module is part of the split `IsingModel.PseudoMass` development.
 
 No other library module imports this one, so it is registered directly in the
 root umbrella `IsingModel.lean`.  That keeps it inside the transitive import
-closure of `import IsingModel`, which is what the capstone axiom audit
-(`scripts/audit_gate.py`, check V3) elaborates against.  It backs the §17.5
+closure of `import IsingModel` — the prerequisite for the capstone axiom audit
+(`scripts/audit_gate.py`, check V3) to reach it.  Note that V3 inspects only the
+names listed in `scripts/audit/capstones.txt`, and no declaration of this module
+is currently listed there.  It backs the §17.5
 Step 120/123 "Done" entries in `docs/index.md` (the Step 120 continuity result
 `pseudoMass_comp_corr_continuousAt` and the Step 123 β-antitonicity result for
 the pseudoMass ∘ correlation composition).

@@ -11,8 +11,10 @@ No other library module imports this one, so it is registered directly in the
 root umbrella `IsingModel.lean`; it is the head of a self-contained cluster
 (its sibling modules import one another in a chain), and registering the head
 brings the whole cluster into the transitive import closure of
-`import IsingModel` — which is what the capstone axiom audit
-(`scripts/audit_gate.py`, check V3) elaborates against.  The cluster is genuine
+`import IsingModel` — the prerequisite for the capstone axiom audit
+(`scripts/audit_gate.py`, check V3) to reach it.  Note that V3 inspects only the
+names listed in `scripts/audit/capstones.txt`, and no declaration of this
+cluster is currently listed there.  The cluster is genuine
 formalization: non-trivial comparison / sandwich / log-bound results for the
 `J = 0` / `h = 0` slices of `pseudoMassFromParamsAtPair`, built on the
 `PseudoMass/FromParamsBasic` results.

@@ -14,9 +14,11 @@ explicit `n = 3` term as a triple sum and the `N = 3` partial sum.
 ## Umbrella-reachable via its cluster head
 
 This module has no importers outside its own cluster.  The cluster head is
-registered in the root umbrella `IsingModel.lean`, so this module lies inside
-the transitive import closure of `import IsingModel` and is therefore covered by
-the capstone axiom audit (`scripts/audit_gate.py`, check V3).  It backs the
+registered in the root umbrella `IsingModel.lean`, so this module too lies
+inside the transitive import closure of `import IsingModel` — the prerequisite
+for the capstone axiom audit (`scripts/audit_gate.py`, check V3) to reach it.
+Note that V3 inspects only the names listed in `scripts/audit/capstones.txt`,
+and no declaration of this module is currently listed there.  It backs the
 §18.4/18.5 "Done" entry in `docs/index.md` (the explicit low-order Mayer terms
 and truncation partial sums).
 
