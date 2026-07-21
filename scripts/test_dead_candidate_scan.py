@@ -14,7 +14,9 @@ retains), :class:`SameLineAttributeTest` (``@[simp] theorem foo`` vanishing from
 the declaration table, which turns its consumers into self-references),
 :class:`TexCoverageTest` (a citation the LaTeX channel cannot read must warn, not
 disappear), :class:`UnreadableCitationTest` (that warning must also *classify*,
-or coverage is fail-open exactly where it claims to be fail-closed) and
+or coverage is fail-open exactly where it claims to be fail-closed),
+:class:`MissingDocumentationTest` (a documentation file that vanishes must abort
+the run instead of silently emptying its channel) and
 :class:`CharClassTest` (the identifier class must never be a superset of Lean's).
 :class:`FamilyCalibrationTest` asserts the calibration integers that used to live
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
@@ -32,7 +34,7 @@ import sys
 import tempfile
 import time
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -292,6 +294,21 @@ class DocTokenTest(unittest.TestCase):
             tokens = [token for token, _line in dcs._markdown_source(path).tokens]
         self.assertEqual(tokens, ["synthetic{,_h}_xyzzy", "plain_xyzzy"])
 
+    def test_the_name_shape_is_tested_before_and_after_trimming(self) -> None:
+        """Either order alone drops a shorthand, so both forms are tested.
+
+        Trimming first loses a citation whose only ``_``/``.`` *is* the sentence
+        punctuation (`` `foo{,bar}.` ``); testing first loses one that merely
+        carries punctuation (`` `foo{,_bar}:` ``). Both are brace shorthands, so
+        neither has a verbatim search to fall back on. The token kept is always
+        the trimmed one -- the punctuation belongs to the prose.
+        """
+        self.assertEqual(dcs._citation_tokens("foo{,bar}."), ["foo{,bar}"])
+        self.assertEqual(dcs._citation_tokens("synthetic{,_h}_xyzzy:"), ["synthetic{,_h}_xyzzy"])
+        self.assertEqual(dcs._citation_tokens("(plain_xyzzy)"), ["plain_xyzzy"])
+        self.assertEqual(dcs._citation_tokens("..."), [])  # never an empty token
+        self.assertEqual(dcs._citation_tokens("prose here"), [])
+
     def test_family_label_threshold(self) -> None:
         """``_ferromagnetic`` labels a family; it may never rescue one lemma."""
         cache: dict[str, list[dcs.Decl] | None] = {}
@@ -324,6 +341,57 @@ class DocScopeTest(unittest.TestCase):
         name = "ConvergenceRegion.derivativeLimit_on_window"
         self.assertIn(name, readme.text)
         self.assertIn(name, [token for token, _line in readme.tokens])
+
+
+class MissingDocumentationTest(unittest.TestCase):
+    """A documentation channel that vanishes must stop the run, not shrink it.
+
+    Every citation lives in one of three tracked files. If one of them is gone
+    -- moved, renamed, checked out partially -- the channel contributes no token
+    and no literal text, so every name cited *only* there becomes uncited, and
+    the run still prints "no citation in the scanned documentation": a
+    ``safe-to-delete`` verdict resting on evidence that was never read. So the
+    absence is a hard failure (exit 2), like the canaries.
+    """
+
+    def missing(self, attribute: str, replacement: Path) -> list[str]:
+        """Run ``require_documentation`` with one path redirected to a missing file."""
+        original = getattr(dcs, attribute)
+        setattr(dcs, attribute, replacement)
+        try:
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+            return [str(caught.exception)]
+        finally:
+            setattr(dcs, attribute, original)
+
+    def test_each_channel_is_required(self) -> None:
+        """The guide, the README and the progress index each abort when absent."""
+        for attribute, replacement, expected in (
+            ("TEX_GUIDE", dcs.REPO_ROOT / "tex" / "no-such-guide.tex", "tex/no-such-guide.tex"),
+            ("README", dcs.REPO_ROOT / "no-such-readme.md", "no-such-readme.md"),
+            ("DOCS_DIR", dcs.REPO_ROOT / "no-such-docs", "no-such-docs/index.md"),
+        ):
+            (message,) = self.missing(attribute, replacement)
+            self.assertIn(expected, message)
+
+    def test_the_real_documentation_satisfies_the_requirement(self) -> None:
+        """The check must not fire on a healthy tree."""
+        dcs.require_documentation()
+
+    def test_a_missing_guide_fails_the_whole_run(self) -> None:
+        """End to end: the CLI exits 2 rather than reporting a silent tex channel."""
+        original = dcs.TEX_GUIDE
+        dcs.TEX_GUIDE = dcs.REPO_ROOT / "tex" / "no-such-guide.tex"
+        try:
+            out, err = io.StringIO(), io.StringIO()
+            with redirect_stdout(out), redirect_stderr(err):
+                code = dcs.main(["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"])
+        finally:
+            dcs.TEX_GUIDE = original
+        self.assertEqual(code, dcs.EXIT_INCONSISTENT, out.getvalue())
+        self.assertIn("no-such-guide.tex", err.getvalue())
+        self.assertNotIn("safe-to-delete", out.getvalue())
 
 
 def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
@@ -652,11 +720,13 @@ class TexChannelLimitTest(unittest.TestCase):
     """The shapes charge-only does *not* reach, pinned as they behave today.
 
     Charging fixes every leak that produced an :class:`dcs.UnreadableSpan`, but
-    a citation that produces **no span and no literal hit** never reaches the
-    charging step at all: it leaves the TeX channel silently, and the name it
-    cites can still come out ``safe-to-delete``. There are three, not two: a
-    ``%`` comment inside a citation (``L7a``), a bare line break inside one
-    (``L7c``) and an unrecognised wrapper (``L7b``). The first two are properties
+    a citation that leaves **nothing to charge and no literal hit** never reaches
+    the charging step at all: it leaves the TeX channel silently, and the name it
+    cites can still come out ``safe-to-delete``. There are three, not two, and
+    they escape differently: a ``%`` comment inside a citation (``L7a``) and a
+    bare line break inside one (``L7c``) parse into a clean span, so there is no
+    residue to charge, while an unrecognised wrapper (``L7b``) yields no span at
+    all. The first two are properties
     of the *parser* only, because :func:`dcs.run_tex_canary` forbids them in the
     guide (see :class:`CanaryTest`); the tests below pin the parser behaviour so
     that a future fix is noticed as a *test failure* instead of shipping

@@ -1158,12 +1158,15 @@ def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
     What makes this fail-closed is not the count but
     :meth:`UnreadableSpan.could_cite`: an unread span downgrades **every**
     candidate to ``uncertain``. A low count is evidence of coverage only in
-    combination with that downgrade -- and only for citations that produce a
-    span at all. Three shapes do not: a ``%`` comment inside a citation
-    (``L7a``), a bare line break inside one (``L7c``), and a code wrapper the
-    span grammar does not know (``L7b``). The first two are kept out of the real
-    guide by :func:`run_tex_canary`, which aborts the run if any citation body in
-    the guide contains a line break at all.
+    combination with that downgrade -- and only for citations that leave residue
+    to charge. Three shapes leave none. A ``%`` comment inside a citation
+    (``L7a``) and a bare line break inside one (``L7c``) both parse into a
+    perfectly clean span, so there is nothing to charge, while the newline they
+    keep hides the name from the literal search as well; a code wrapper the span
+    grammar does not know (``L7b``) produces no span in the first place. The
+    first two are kept out of the real guide by :func:`run_tex_canary`, which
+    aborts the run if any citation body in the guide contains a line break at
+    all.
     """
     partial = _normalize_tex_body(text)
     spans: list[UnreadableSpan] = []
@@ -1241,6 +1244,26 @@ def _nameish(token: str) -> bool:
     return all(is_id_rest(char) or char in allowed for char in token)
 
 
+def _citation_tokens(body: str) -> list[str]:
+    """Return the name-shaped pieces of one citation body, punctuation trimmed.
+
+    Both the raw piece and the trimmed one are tested, because either order
+    alone loses a shape, silently. Testing *before* trimming rejects a brace
+    shorthand that carries its sentence punctuation (`` `foo{,_bar}:` ``) on
+    the colon; testing *only* after trimming rejects one whose only ``_``/``.``
+    lived in that punctuation (`` `foo{,bar}.` ``). Neither failure warns -- the
+    token just disappears -- and a brace or glob shorthand, unlike a complete
+    name, has no verbatim search to fall back on. The trimmed form is what is
+    kept: the punctuation is the prose's, not the name's.
+    """
+    out: list[str] = []
+    for piece in body.split():
+        trimmed = piece.strip(",.;:()")
+        if trimmed and (_nameish(piece) or _nameish(trimmed)):
+            out.append(trimmed)
+    return out
+
+
 @dataclass
 class DocSource:
     """A normalised documentation file with its extracted citation tokens."""
@@ -1269,50 +1292,72 @@ def markdown_sources() -> list[Path]:
     return paths
 
 
+def require_documentation() -> None:
+    """Abort unless every documentation channel the scan claims to read exists.
+
+    A missing file is the fail-open direction, and silently so: with no
+    ``README.md``, no ``docs/index.md`` or no guide, the corresponding channel
+    contributes no token and no literal text, every citation living in it
+    disappears, and the run still prints "no citation in the scanned
+    documentation" -- the sentence that licenses a deletion -- with a clean bill
+    of health. The three files are tracked, so their absence is never a normal
+    state; it is a moved path, a truncated checkout or a bad rename, and each
+    must stop the scan instead of quietly shrinking its evidence base.
+    """
+    required = (README, DOCS_DIR / "index.md", TEX_GUIDE)
+    missing = [rel(path) for path in required if not path.is_file()]
+    if missing:
+        raise Inconsistency(
+            "documentation source(s) missing, which would silence a whole citation "
+            "channel without warning: " + ", ".join(missing)
+        )
+
+
+def _read_doc(path: Path) -> str:
+    """Return the text of a documentation file, or abort if it cannot be read."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as exc:  # pragma: no cover - tracked files
+        raise Inconsistency(f"{rel(path)}: could not be read ({exc})") from exc
+
+
 def _markdown_source(path: Path) -> DocSource:
     """Return the citation tokens of one Markdown file (its code spans)."""
-    raw = path.read_text(encoding="utf-8")
+    raw = _read_doc(path)
     tokens: list[tuple[str, int]] = []
     starts = line_starts(raw)
     for match in _MD_TOKEN_RE.finditer(raw):
         body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
         lineno = offset_to_line(starts, match.start())
-        for piece in body.split():
-            # Trimmed *before* the test: a citation carrying its sentence
-            # punctuation (`` `foo{,_bar}:` ``) is not name-shaped until the
-            # punctuation is gone, and testing first dropped it silently.
-            piece = piece.strip(",.;:()")
-            if _nameish(piece):
-                tokens.append((piece, lineno))
+        for token in _citation_tokens(body):
+            tokens.append((token, lineno))
     return DocSource(label=rel(path), text=raw, starts=starts, tokens=tokens, unreadable=[])
 
 
 def load_docs() -> list[DocSource]:
     """Return the normalised documentation sources (Markdown plus proof-guide.tex)."""
+    require_documentation()
     out: list[DocSource] = [_markdown_source(path) for path in markdown_sources()]
-    if TEX_GUIDE.exists():
-        raw = TEX_GUIDE.read_text(encoding="utf-8")
-        # Tokens are read from the *pre-unwrap* normalisation so the \texttt
-        # delimiters still mark which spans are code citations.
-        partial = _normalize_tex_body(raw)
-        partial_starts = line_starts(partial)
-        tokens = []
-        for body, offset in code_citation_spans(partial):
-            lineno = offset_to_line(partial_starts, offset)
-            for piece in body.split():
-                piece = piece.strip(",.;:()")  # trimmed before the test, as above
-                if _nameish(piece):
-                    tokens.append((piece, lineno))
-        text, unreadable = normalize_tex(raw)
-        out.append(
-            DocSource(
-                label=rel(TEX_GUIDE),
-                text=text,
-                starts=line_starts(text),
-                tokens=tokens,
-                unreadable=unreadable,
-            )
+    raw = _read_doc(TEX_GUIDE)
+    # Tokens are read from the *pre-unwrap* normalisation so the \texttt
+    # delimiters still mark which spans are code citations.
+    partial = _normalize_tex_body(raw)
+    partial_starts = line_starts(partial)
+    tokens = []
+    for body, offset in code_citation_spans(partial):
+        lineno = offset_to_line(partial_starts, offset)
+        for token in _citation_tokens(body):
+            tokens.append((token, lineno))
+    text, unreadable = normalize_tex(raw)
+    out.append(
+        DocSource(
+            label=rel(TEX_GUIDE),
+            text=text,
+            starts=line_starts(text),
+            tokens=tokens,
+            unreadable=unreadable,
         )
+    )
     return out
 
 
@@ -1824,12 +1869,13 @@ def run_tex_canary() -> int:
 
     Unconditional and cheap, like the declaration canary, and it aborts the run
     rather than warning: this is the guard that keeps ``L7a``/``L7c`` a
-    statement about the real guide and not merely about the parser. Returns the
-    number of code citations checked.
+    statement about the real guide and not merely about the parser. A guide that
+    is *absent* silences the same channel just as completely, so that too aborts
+    (:func:`require_documentation`) rather than returning a vacuous zero.
+    Returns the number of code citations checked.
     """
-    if not TEX_GUIDE.exists():  # pragma: no cover - the guide is tracked
-        return 0
-    raw = TEX_GUIDE.read_text(encoding="utf-8")
+    require_documentation()
+    raw = _read_doc(TEX_GUIDE)
     citations, broken = tex_citation_line_breaks(raw)
     if broken:
         listing = "\n  ".join(
@@ -1901,11 +1947,14 @@ L7 the TeX macro table is incomplete by construction, so the normaliser meets
    refuted `café_lemma` while satisfying every precondition then in force. So the
    residue is no longer a refutation rule: charging every candidate can only cost
    `uncertain` verdicts, and on the real guide it costs nothing, the guide leaving
-   no unreadable span at all. What remains are the shapes that never become a span
-   at all: a line break inside a citation (L7a with a comment, L7c without one) and
-   an unrecognised wrapper (L7b). The line-break shapes are now excluded from the
-   real guide by an unconditional canary, so they are a property of the parser, not
-   a live gap; the wrapper shape is still editorial.
+   no unreadable span at all. What remains are the shapes charging never reaches,
+   and they escape for two different reasons. A line break inside a citation (L7a
+   with a comment, L7c without one) *does* produce a span, and a clean one, so there
+   is nothing to charge -- while the newline it keeps also hides the name from the
+   literal search. An unrecognised wrapper (L7b) produces no span at all. The
+   line-break shapes are now excluded from the real guide by an unconditional canary,
+   so they are a property of the parser, not a live gap; the wrapper shape is still
+   editorial.
 L7a a `%` comment inside a code citation is a silent gap. TeX splices the comment's
    line into the next one (`\texttt{foo% c` + newline + `\beta bar}` typesets
    `fooβbar`), but comment stripping keeps the line break, so the span parses
@@ -1915,15 +1964,21 @@ L7a a `%` comment inside a code citation is a silent gap. TeX splices the commen
    only applies to material that produced a span. Mitigation: `run_tex_canary`
    rejects any citation in the guide whose body contains a line break, so this
    shape cannot re-enter unnoticed; write `\allowbreak` for the break hint.
-L7b only a *recognised* code wrapper is charged. The span grammar knows `\texttt`,
-   `\verb`, `\lstinline` and `\mintinline`; a name written with any other wrapper
-   (`{\tt caf\'{e}\_lemma}`) is not a citation for this scan, so it raises no span
-   and no warning. It is *not* generally invisible: normalisation runs over the
-   whole document, not only inside spans, so a wrapper-less ASCII name (`{\tt
-   foo\_bar}`) is still found by the literal search that rescues published results.
-   What escapes both channels is the intersection: a name outside a recognised
-   wrapper *and* carrying a character the macro table cannot spell (`caf\'e`),
-   so that the normalised text does not reproduce the name. Mitigation is
+L7b only a *recognised* code wrapper is charged, and only in its braced form: the
+   span grammar reads `\texttt{...}`, `\verb{...}`, `\lstinline{...}` and
+   `\mintinline{...}`, so the delimiter form the last three normally take
+   (`\verb|foo\_bar|`) is no span, and `\mintinline{lean}{foo\_bar}` is read as a
+   span spelling its language argument (`lean`) rather than the name. The guide
+   uses none of those three today (only `\texttt`), so that approximation is not
+   live. A name written with any other wrapper (`{\tt caf\'{e}\_lemma}`) is
+   likewise not a citation for this scan, so it raises no span and no warning. It
+   is *not* generally invisible: normalisation runs over the whole document, not
+   only inside spans, so a wrapper-less ASCII name (`{\tt foo\_bar}`) is still
+   found by the literal search that rescues published results. What escapes both
+   channels is the intersection: a name outside a recognised span *and* written
+   with any markup whose normalisation does not reproduce the name. A character
+   the macro table cannot spell (`caf\'e`) is only one way in; an unbraced accent,
+   a surviving macro or an intervening break do it too. Mitigation is
    editorial: cite code with `\texttt` in the guide. This gap and L7a/L7c are why a
    machine-readable citation macro shared by the guide and this scanner remains the
    permanent fix; PR #4647 records the analysis.
