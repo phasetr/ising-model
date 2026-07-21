@@ -342,6 +342,8 @@ We distinguish three formalization regimes:
 When a GJ theorem is marked "Done", the adjacent *Regime* column
 specifies which of the three above apply.
 
+> **Facade module notation:** The notation "(declaration-free facade; the declarations live in ...)" marks modules split in the July 2026 build-speed series (PR #4606–#4627). The absence of this notation does not indicate a module is not a facade; existing un-annotated facades are not part of that series.
+
 ## Formalized theorems
 
 ### Correlation inequalities (§4.1–§4.7)
