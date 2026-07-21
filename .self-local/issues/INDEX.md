@@ -1,4 +1,8 @@
-# ローカルミラー・インデックス (2026-07-17 更新 — #4506/#4519/#4535/#4538/#4541/#4544/#4547/#4550/#4553 CLOSED completed (refactor cycles 1-7))
+# ローカルミラー・インデックス (2026-07-21 更新 — #4640 CLOSED, #4642 OPEN)
+
+**2026-07-21 #4640 refactor (pseudoMassG dead-declaration removal) / user-authorized / CLOSED**: PR #4641 merged via squash commit 272b310e (2026-07-21). Completed: 12 reference-0 declarations deleted from `IsingModel/PseudoMass/Profile.lean` (audit-narrowed from 22 reported; 7 load-bearing, 3 cited in docs). Final audit: all 10 protected declarations confirmed present (7 load-bearing + 3 docs-cited); CI green; axiom-free; review PASS. Mirror: `4640.md`. Follow-up: #4642 (generalize K_n closed form, retire hardcoded K0/K2/K3/K4 base cases). Mirror: `4642.md`.
+
+**2026-07-21 #4642 follow-up (K_n closed-form generalization) / user decision required / OPEN**: New issue tracking generalization of `alternatingConnectedSubgraphSum(completeGraph n)` to derive closed form `(-1)^(n-1)·(n-1)!`, enabling deletion of four hardcoded base-case modules (K0/K2/K3/K4) currently retained only for TeX documentation citation. Requires explicit user authorization before implementation; treat as future-scope optional optimization. Mirror: `4642.md`.
 
 **2026-07-17 SESSION-END CLEANUP (user-instructed)**: PR #4520 closed as superseded (branch deleted; Rev18-22 evidence preserved under `.self-local/benchmarks/4519/`). Issue #4533 closed not-planned (execution authority never granted across v1-v11; reopen only on explicit item-specific user authorization). **Open issues: 0 / Open PRs: 0.** Session handoff: `.self-local/reports/handoff-session-refactor-2026-07-17.md` (refactor cycles 1-7 complete, main `f3f1e899`).
 
