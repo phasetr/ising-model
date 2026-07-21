@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import io
 import sys
+import tempfile
 import time
 import unittest
 from contextlib import redirect_stdout
@@ -274,6 +275,22 @@ class DocTokenTest(unittest.TestCase):
         self.assertTrue(pattern.match("foo_J_deriv_eq_le"))
         self.assertFalse(pattern.match("foo_J_deriv_eq_le_extra"))
         self.assertIsNone(dcs.glob_to_regex("plain_name"))
+
+    def test_trailing_punctuation_does_not_swallow_a_brace_citation(self) -> None:
+        """A citation carrying its sentence punctuation is still a token.
+
+        ``_nameish`` was applied *before* the punctuation was trimmed, so a
+        brace shorthand written mid-sentence (`` `foo{,_bar}:` ``) failed the
+        test on the colon and dropped out. A complete name survived only because
+        the verbatim search rescues it; a brace shorthand has no such fallback.
+        """
+        scratch = dcs.REPO_ROOT / ".self-local" / "tmp"  # gitignored, and inside the root
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as tmp:
+            path = Path(tmp) / "note.md"
+            path.write_text("see `synthetic{,_h}_xyzzy:` and `plain_xyzzy`.\n", encoding="utf-8")
+            tokens = [token for token, _line in dcs._markdown_source(path).tokens]
+        self.assertEqual(tokens, ["synthetic{,_h}_xyzzy", "plain_xyzzy"])
 
     def test_family_label_threshold(self) -> None:
         """``_ferromagnetic`` labels a family; it may never rescue one lemma."""
@@ -632,15 +649,18 @@ class UnreadableCitationTest(unittest.TestCase):
 
 
 class TexChannelLimitTest(unittest.TestCase):
-    """The two shapes charge-only does *not* reach, pinned as they behave today.
+    """The shapes charge-only does *not* reach, pinned as they behave today.
 
     Charging fixes every leak that produced an :class:`dcs.UnreadableSpan`, but
     a citation that produces **no span and no literal hit** never reaches the
     charging step at all: it leaves the TeX channel silently, and the name it
-    cites can still come out ``safe-to-delete``. Both shapes are documented as
-    limitations (``L7`` in :data:`dcs.LIMITATIONS`) rather than fixed, and the
-    tests below exist so that a future fix is noticed as a *test failure*
-    instead of shipping unremarked.
+    cites can still come out ``safe-to-delete``. There are three, not two: a
+    ``%`` comment inside a citation (``L7a``), a bare line break inside one
+    (``L7c``) and an unrecognised wrapper (``L7b``). The first two are properties
+    of the *parser* only, because :func:`dcs.run_tex_canary` forbids them in the
+    guide (see :class:`CanaryTest`); the tests below pin the parser behaviour so
+    that a future fix is noticed as a *test failure* instead of shipping
+    unremarked.
     """
 
     def test_a_comment_inside_a_citation_is_a_silent_gap(self) -> None:
@@ -657,22 +677,41 @@ class TexChannelLimitTest(unittest.TestCase):
         self.assertIn("foo\nβbar", normalized)
         self.assertEqual(dcs.find_occurrences(normalized, "fooβbar"), [])
 
-    def test_an_unrecognised_code_wrapper_is_a_silent_gap(self) -> None:
-        """Charging only ever applies inside a *recognised* code citation.
+    def test_a_bare_line_break_inside_a_citation_is_a_silent_gap(self) -> None:
+        """The same gap without a comment: the newline alone hides the name.
 
-        ``{\\tt ...}`` is not in :data:`dcs._TEX_CODE_CMDS`, so the citation is
-        not a span, its residual accent raises no warning, and the name it
-        spells is invisible to both the span channel and the literal search.
-        Mitigation is editorial: cite code with ``\\texttt`` in the guide.
+        ``\\texttt{foo\\_`` + newline + ``bar}`` is one clean span, so nothing is
+        charged, and the normalised text spells ``foo_``+newline+``bar``, which
+        no search for ``foo_bar`` finds. Unlike ``L7a`` it also typesets wrongly,
+        TeX turning the break into a space inside the name.
         """
-        normalized, warnings = dcs.normalize_tex(r"{\tt caf\'{e}\_lemma}")
+        normalized, warnings = dcs.normalize_tex("\\texttt{foo\\_\nbar}")
         self.assertEqual(warnings, [])
-        self.assertEqual(dcs.find_occurrences(normalized, "café_lemma"), [])
+        self.assertIn("foo_\nbar", normalized)
+        self.assertEqual(dcs.find_occurrences(normalized, "foo_bar"), [])
 
-    def test_both_gaps_are_documented_as_limitations(self) -> None:
+    def test_an_unrecognised_code_wrapper_hides_only_macro_spelt_names(self) -> None:
+        """Charging applies inside a *recognised* citation; the literal search does not.
+
+        ``{\\tt ...}`` is not in :data:`dcs._TEX_CODE_CMDS`, so it is no span and
+        raises no warning. That alone does not hide the name: normalisation runs
+        over the whole document, so a plain ASCII name in such a wrapper is still
+        found verbatim. What escapes is the intersection -- an unrecognised
+        wrapper *and* a macro-spelt character the normaliser leaves as residue.
+        """
+        readable, warnings = dcs.normalize_tex(r"{\tt plain\_lemma}")
+        self.assertEqual(warnings, [])
+        self.assertTrue(dcs.find_occurrences(readable, "plain_lemma"))
+        hidden, warnings = dcs.normalize_tex(r"{\tt caf\'{e}\_lemma}")
+        self.assertEqual(warnings, [])
+        self.assertEqual(dcs.find_occurrences(hidden, "café_lemma"), [])
+
+    def test_every_gap_is_documented_as_a_limitation(self) -> None:
         """A silent gap must be written down where the report prints its limits."""
         self.assertIn("%", dcs.LIMITATIONS)
         self.assertIn(r"{\tt", dcs.LIMITATIONS)
+        self.assertIn("L7c", dcs.LIMITATIONS)
+        self.assertIn("run_tex_canary", dcs.LIMITATIONS)
 
     def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
@@ -810,6 +849,41 @@ class CanaryTest(unittest.TestCase):
         self.assertGreater(count, 1000)
         for char, hits in per_char.items():
             self.assertGreater(hits, 0, char)
+
+    def test_no_guide_citation_is_broken_across_a_line(self) -> None:
+        """The real guide keeps every code citation on one line.
+
+        A citation split across lines is invisible to *both* halves of the TeX
+        channel and warns about nothing (``L7a``/``L7c``), so the guard has to
+        be a property of the guide rather than of the parser.
+        """
+        citations = dcs.run_tex_canary()
+        self.assertGreater(citations, 1000)
+
+    def test_the_canary_rejects_a_broken_citation(self) -> None:
+        """Both flavours of the break -- with and without ``%`` -- are caught."""
+        for source in ("\\texttt{foo\\_%\nbar}", "\\texttt{foo\\_\nbar}"):
+            citations, broken = dcs.tex_citation_line_breaks(source)
+            self.assertEqual(citations, 1, source)
+            self.assertEqual([line for line, _body in broken], [1], source)
+        self.assertEqual(dcs.tex_citation_line_breaks("\\texttt{foo\\_bar}")[1], [])
+
+    def test_the_names_the_break_used_to_hide_are_visible(self) -> None:
+        """The four published results the broken citations hid are found again.
+
+        Each was cited only in a citation the guide split across a line, so the
+        TeX channel saw nothing while reporting zero coverage warnings; only an
+        unrelated ``docs/`` citation kept them off ``safe-to-delete``.
+        """
+        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
+        for name in (
+            "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_ball",
+            "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform",
+            "plusStateExpectation_eq_minusStateExpectation_originObs",
+            "polymerFreeEnergy_analyticOnNhd_Ici_zero",
+        ):
+            self.assertTrue(dcs.find_occurrences(guide.text, name), name)
+            self.assertIn(name, [token for token, _line in guide.tokens], name)
 
 
 class FixtureTest(unittest.TestCase):

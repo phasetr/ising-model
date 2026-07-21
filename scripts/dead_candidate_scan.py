@@ -1159,8 +1159,11 @@ def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
     :meth:`UnreadableSpan.could_cite`: an unread span downgrades **every**
     candidate to ``uncertain``. A low count is evidence of coverage only in
     combination with that downgrade -- and only for citations that produce a
-    span at all (``L7a``/``L7b`` in :data:`LIMITATIONS` are the two shapes that
-    leave the channel without one).
+    span at all. Three shapes do not: a ``%`` comment inside a citation
+    (``L7a``), a bare line break inside one (``L7c``), and a code wrapper the
+    span grammar does not know (``L7b``). The first two are kept out of the real
+    guide by :func:`run_tex_canary`, which aborts the run if any citation body in
+    the guide contains a line break at all.
     """
     partial = _normalize_tex_body(text)
     spans: list[UnreadableSpan] = []
@@ -1193,6 +1196,33 @@ def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
             )
         )
     return _TEXTTT_RE.sub(lambda m: m.group(1), partial), spans
+
+
+def tex_citation_line_breaks(text: str) -> tuple[int, list[tuple[int, str]]]:
+    """Return ``(citations read, broken ones)`` for a LaTeX source.
+
+    A *broken* citation is reported as ``(line, body)``.
+
+    A citation whose body straddles a line break is the one shape the charging
+    rule cannot reach: the span parses, so nothing is charged, and the name it
+    spells is split by a newline, so no literal search finds it either. It is
+    invisible to the whole TeX channel while the run still reports zero coverage
+    warnings -- the fail-open direction. The check is therefore run against the
+    real guide on every invocation (:func:`run_tex_canary`), not merely
+    documented as a limitation.
+
+    Both flavours are caught, because both leave the same newline behind: the
+    line ending in ``%`` (which TeX splices, so the typeset name has no break)
+    and the bare line break (which TeX turns into a space, so the typeset name
+    is wrong as well).
+    """
+    partial = _normalize_tex_body(text)
+    starts = line_starts(partial)
+    spans = code_citation_spans(partial)
+    broken = sorted(
+        (offset_to_line(starts, offset), body) for body, offset in spans if "\n" in body
+    )
+    return len(spans), broken
 
 
 _MD_TOKEN_RE = re.compile(r"`([^`\n]+)`|```(.*?)```", re.DOTALL)
@@ -1248,8 +1278,12 @@ def _markdown_source(path: Path) -> DocSource:
         body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
         lineno = offset_to_line(starts, match.start())
         for piece in body.split():
+            # Trimmed *before* the test: a citation carrying its sentence
+            # punctuation (`` `foo{,_bar}:` ``) is not name-shaped until the
+            # punctuation is gone, and testing first dropped it silently.
+            piece = piece.strip(",.;:()")
             if _nameish(piece):
-                tokens.append((piece.strip(",.;:()"), lineno))
+                tokens.append((piece, lineno))
     return DocSource(label=rel(path), text=raw, starts=starts, tokens=tokens, unreadable=[])
 
 
@@ -1266,8 +1300,9 @@ def load_docs() -> list[DocSource]:
         for body, offset in code_citation_spans(partial):
             lineno = offset_to_line(partial_starts, offset)
             for piece in body.split():
+                piece = piece.strip(",.;:()")  # trimmed before the test, as above
                 if _nameish(piece):
-                    tokens.append((piece.strip(",.;:()"), lineno))
+                    tokens.append((piece, lineno))
         text, unreadable = normalize_tex(raw)
         out.append(
             DocSource(
@@ -1776,6 +1811,40 @@ def run_canary(tree: Tree) -> tuple[int, dict[str, int]]:
     return len(names), per_char
 
 
+def run_tex_canary() -> int:
+    """Assert no code citation in the guide is split across source lines.
+
+    The declaration canary above asks whether a name can find *itself* in its
+    defining file; this one asks the same question of the guide, and for the
+    same reason: a citation broken across a line raises no coverage warning, so
+    the run prints a clean bill of health while the cited name is invisible to
+    both halves of the TeX channel (no span to charge, no literal hit to find).
+    Four published results were hidden that way and were only rescued -- by
+    accident -- by a second citation in ``docs/``.
+
+    Unconditional and cheap, like the declaration canary, and it aborts the run
+    rather than warning: this is the guard that keeps ``L7a``/``L7c`` a
+    statement about the real guide and not merely about the parser. Returns the
+    number of code citations checked.
+    """
+    if not TEX_GUIDE.exists():  # pragma: no cover - the guide is tracked
+        return 0
+    raw = TEX_GUIDE.read_text(encoding="utf-8")
+    citations, broken = tex_citation_line_breaks(raw)
+    if broken:
+        listing = "\n  ".join(
+            f"{rel(TEX_GUIDE)}:{line}: {' '.join(body.split())[:80]!r}"
+            for line, body in broken[:20]
+        )
+        raise Inconsistency(
+            f"{len(broken)} code citation(s) in {rel(TEX_GUIDE)} are broken across a "
+            "line, which makes the name invisible to the TeX channel with no "
+            "warning; join each citation onto one line (use `\\allowbreak` for the "
+            f"break hint):\n  {listing}"
+        )
+    return citations
+
+
 def char_class_selftest() -> None:
     """Assert the identifier class matches Lean's, in both directions."""
     for char in "λΠΣ×÷ⁿ":  # reserved syntax, or outside Lean's tables
@@ -1832,23 +1901,39 @@ L7 the TeX macro table is incomplete by construction, so the normaliser meets
    refuted `café_lemma` while satisfying every precondition then in force. So the
    residue is no longer a refutation rule: charging every candidate can only cost
    `uncertain` verdicts, and on the real guide it costs nothing, the guide leaving
-   no unreadable span at all. What remains are the two shapes that never become a
-   span at all, below.
+   no unreadable span at all. What remains are the shapes that never become a span
+   at all: a line break inside a citation (L7a with a comment, L7c without one) and
+   an unrecognised wrapper (L7b). The line-break shapes are now excluded from the
+   real guide by an unconditional canary, so they are a property of the parser, not
+   a live gap; the wrapper shape is still editorial.
 L7a a `%` comment inside a code citation is a silent gap. TeX splices the comment's
    line into the next one (`\texttt{foo% c` + newline + `\beta bar}` typesets
    `fooβbar`), but comment stripping keeps the line break, so the span parses
    cleanly, raises no warning, normalises to `foo`+newline+`βbar`, and a literal
    search for `fooβbar` finds nothing: the name is charged to nobody. This is the
    counterexample to "a citation that cannot be read is always charged" -- charging
-   only applies to material that produced a span. Mitigation: do not break a code
-   citation across a comment in the guide.
+   only applies to material that produced a span. Mitigation: `run_tex_canary`
+   rejects any citation in the guide whose body contains a line break, so this
+   shape cannot re-enter unnoticed; write `\allowbreak` for the break hint.
 L7b only a *recognised* code wrapper is charged. The span grammar knows `\texttt`,
    `\verb`, `\lstinline` and `\mintinline`; a name written with any other wrapper
-   (`{\tt caf\'{e}\_lemma}`) is not a citation for this scan, so no span, no warning
-   and no literal hit -- the same silent gap as L7a. Mitigation is editorial: cite
-   code with `\texttt` in the guide. Both gaps are why a machine-readable citation
-   macro shared by the guide and this scanner remains the permanent fix; PR #4647
-   records the analysis.
+   (`{\tt caf\'{e}\_lemma}`) is not a citation for this scan, so it raises no span
+   and no warning. It is *not* generally invisible: normalisation runs over the
+   whole document, not only inside spans, so a wrapper-less ASCII name (`{\tt
+   foo\_bar}`) is still found by the literal search that rescues published results.
+   What escapes both channels is the intersection: a name outside a recognised
+   wrapper *and* carrying a character the macro table cannot spell (`caf\'e`),
+   so that the normalised text does not reproduce the name. Mitigation is
+   editorial: cite code with `\texttt` in the guide. This gap and L7a/L7c are why a
+   machine-readable citation macro shared by the guide and this scanner remains the
+   permanent fix; PR #4647 records the analysis.
+L7c a bare line break inside a code citation is the same gap as L7a without the
+   comment: `\texttt{foo\_` + newline + `bar}` parses as one span, raises no
+   warning, and normalises to `foo_`+newline+`bar`, which no search for `foo_bar`
+   finds. It also typesets wrongly (TeX turns the break into a space *inside* the
+   name), so it is a documentation bug as well as a scanner blind spot. Four
+   published results were hidden this way in the guide and were rescued only by an
+   unrelated `docs/` citation. Both shapes are now forbidden by the same canary.
 L7d the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
    A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
    a TeX file other than the guide) is invisible, so "no documentation citation"
@@ -1874,6 +1959,7 @@ def report(
     family_labels: dict[str, list[str]],
     warnings: list[UnreadableSpan],
     canary: tuple[int, dict[str, int]],
+    tex_citations: int,
     elapsed: float,
     report_only: bool,
 ) -> None:
@@ -1884,6 +1970,10 @@ def report(
         f"canary: {count} declarations carrying "
         + ", ".join(f"{char!r}x{per_char[char]}" for char in CANARY_CHARS)
         + " each find themselves: PASS"
+    )
+    print(
+        f"canary: {tex_citations} code citations in {rel(TEX_GUIDE)}, none broken "
+        "across a line: PASS"
     )
     print()
     buckets: dict[str, list[Verdict]] = {name: [] for name in VERDICT_ORDER}
@@ -2199,6 +2289,7 @@ def main(argv: list[str] | None = None) -> int:
 
         tree = load_tree()
         canary = run_canary(tree)
+        tex_citations = run_tex_canary()
         docs = load_docs()
         warnings = [span for doc in docs for span in doc.unreadable]
 
@@ -2235,6 +2326,7 @@ def main(argv: list[str] | None = None) -> int:
             family_labels,
             warnings,
             canary,
+            tex_citations,
             time.time() - started,
             args.report_only,
         )
