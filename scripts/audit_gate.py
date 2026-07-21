@@ -22,7 +22,10 @@ V2  No ``sorry`` / ``admit`` / ``native_decide`` in checked Lean code, after
 V3  Capstone axiom audit. For every fully-qualified name in
     ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
     subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
-    identifier is a hard failure (keeps the capstone list honest).
+    identifier is a hard failure (keeps the capstone list honest), and the list
+    must hold at least :data:`CAPSTONE_MIN_COUNT` names -- a non-empty guard
+    alone leaves "delete twelve of the thirteen lines" as a one-edit way to
+    make V3 vacuous.
 V4  No Japanese text (kana, CJK ideographs and radicals, CJK punctuation,
     enclosed and compatibility forms, vertical forms, fullwidth and halfwidth
     forms, ideographic variation selectors) in git-tracked files under the
@@ -42,6 +45,17 @@ Usage
     python3 scripts/audit_gate.py --self-test  # test the gate itself (no lake needed)
 
 Exit code 0 iff every executed check passes; 1 otherwise.
+
+Scanned-set honesty
+-------------------
+V1, V2 and V4 each return the list of files they *actually opened*, not the list
+their file enumeration produced, and :func:`main` requires the two to agree
+(:func:`unvisited_failures`). Without that, a single ``continue`` in a check's
+loop body -- ``if "RandomCurrent" in path.parts: continue`` -- removes a whole
+subtree from the scan while the enumeration, every fixture test and the printed
+"2063 files scanned" stay exactly as before. The count reported on a PASS line
+is therefore the number of files read, so it can never overstate the coverage
+the gate achieved.
 
 The gate is only worth as much as its own tests: ``scripts/test_audit_gate.py``
 pins each check against fixtures *and* mutates this file's detection logic to
@@ -78,6 +92,16 @@ V2_NATIVE_DECIDE_DIR_ALLOWLIST = ("test/",)
 
 # The axioms every capstone is permitted to depend on (subset accepted).
 ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
+
+# Ratchet on the size of ``capstones.txt``: V3 audits exactly the names listed
+# there, so thinning the list is the cheapest way to disarm the check without
+# touching a line of gate logic. The "list is non-empty" guard does not help --
+# one surviving line passes it while twelve headline theorems stop being
+# audited, and every fixture-driven V3 test stays green because each builds its
+# own throwaway list. Set to the number of names currently tracked; removing a
+# capstone therefore means lowering this constant on purpose, in the same
+# commit, with a reason.
+CAPSTONE_MIN_COUNT = 13
 
 # Pathspecs scanned by V4 (English-only committed sources and public docs).
 # ``IsingModel.lean`` (library umbrella), ``test``, ``.github`` and
@@ -306,23 +330,32 @@ _AXIOM_RE = re.compile(
 )
 
 
-def check_v1() -> list[str]:
-    """V1: report any top-level ``axiom`` declaration in a checked Lean file."""
+def check_v1() -> tuple[list[str], list[Path]]:
+    """V1: report ``axiom`` declarations. Return (failures, files visited).
+
+    The second component is the honesty half of the check: it is built inside
+    the loop, so it shrinks with any filter added to the loop body, whereas
+    ``iter_checked_files()`` would not (see the module docstring).
+    """
     failures: list[str] = []
+    visited: list[Path] = []
     for path in iter_checked_files():
+        visited.append(path)
         text = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
             if _AXIOM_RE.match(line):
                 failures.append(f"{rel(path)}:{lineno}: axiom declaration")
-    return failures
+    return (failures, visited)
 
 
-def check_v2() -> list[str]:
-    """V2: report ``sorry`` / ``admit`` / ``native_decide`` in checked code."""
+def check_v2() -> tuple[list[str], list[Path]]:
+    """V2: report ``sorry``/``admit``/``native_decide``. Return (failures, visited)."""
     failures: list[str] = []
+    visited: list[Path] = []
     tokens = ("sorry", "admit", "native_decide")
     word_res = {tok: re.compile(rf"\b{re.escape(tok)}\b") for tok in tokens}
     for path in iter_checked_files():
+        visited.append(path)
         relpath = rel(path)
         exempt = relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST or relpath.startswith(
             V2_NATIVE_DECIDE_DIR_ALLOWLIST
@@ -335,7 +368,7 @@ def check_v2() -> list[str]:
                 if tok == "native_decide" and exempt:
                     continue
                 failures.append(f"{relpath}:{lineno}: `{tok}`")
-    return failures
+    return (failures, visited)
 
 
 def read_capstones() -> list[str]:
@@ -372,6 +405,11 @@ def check_v3() -> tuple[list[str], set[str]]:
     names = read_capstones()
     if not names:
         return (["capstones.txt lists no theorems (V3 has nothing to audit)"], observed)
+    if len(names) < CAPSTONE_MIN_COUNT:
+        failures.append(
+            f"V3: capstones.txt lists {len(names)} theorem(s), below the ratchet of "
+            f"{CAPSTONE_MIN_COUNT} (lower CAPSTONE_MIN_COUNT deliberately to retire one)"
+        )
 
     lines = ["import IsingModel", ""]
     lines += [f"#print axioms {name}" for name in names]
@@ -454,8 +492,8 @@ def iter_v4_files() -> tuple[list[Path], list[str]]:
     return (sorted(paths), [])
 
 
-def check_v4() -> tuple[list[str], int]:
-    """V4: report Japanese text in tracked sources/docs. Return (failures, files).
+def check_v4() -> tuple[list[str], list[Path]]:
+    """V4: report Japanese text in tracked sources/docs. Return (failures, visited).
 
     A file that cannot be read or decoded is reported as a failure instead of
     being skipped. Everything tracked under ``V4_PATHS`` is text today, so an
@@ -464,9 +502,16 @@ def check_v4() -> tuple[list[str], int]:
     a silent unscanned file counted as "scanned". Skipping is the fail-open
     variant this gate exists to avoid; an extension allowlist was rejected
     because it would need per-file upkeep (``docs/Gemfile`` has no suffix).
+
+    ``visited`` records the files the loop reached (including the two failure
+    arms, which report rather than skip), so a filter added here -- ``if
+    path.suffix == ".tex": continue`` -- cannot leave the reported file count
+    claiming coverage the scan never achieved.
     """
     paths, failures = iter_v4_files()
+    visited: list[Path] = []
     for path in paths:
+        visited.append(path)
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
@@ -486,7 +531,23 @@ def check_v4() -> tuple[list[str], int]:
                 f"{rel(path)}:{lineno}: Japanese text {''.join(dict.fromkeys(hits))!r}"
                 f" in: {snippet}"
             )
-    return (failures, len(paths))
+    return (failures, visited)
+
+
+def unvisited_failures(label: str, expected: list[Path], visited: list[Path]) -> list[str]:
+    """Report the gap between the files a check was given and the ones it read.
+
+    Every check enumerates its files and then loops over them, and the two are
+    only the same set as long as the loop body contains no filter. Comparing
+    them turns "the check quietly stopped looking at a directory" -- invisible
+    to every fixture test, and to a report that prints the *enumeration* size --
+    into an ordinary gate failure.
+    """
+    missed = sorted(set(expected) - set(visited))
+    extra = sorted(set(visited) - set(expected))
+    out = [f"{label}: enumerated but never scanned: {rel(path)}" for path in missed]
+    out += [f"{label}: scanned outside its own file list: {rel(path)}" for path in extra]
+    return out
 
 
 def lake_available() -> bool:
@@ -527,28 +588,31 @@ def main() -> int:
 
     ok = True
     # Printed with the V1/V2 verdicts: a pass over a shrunken file set is not a
-    # pass, so the coverage the gate actually achieved is part of the report.
-    checked = len(iter_checked_files())
+    # pass, so the coverage the gate actually achieved is part of the report --
+    # and it is measured from what each check read, never from the enumeration.
+    checked = iter_checked_files()
 
     print("== V1: no `axiom` declarations in checked Lean files ==")
-    v1 = check_v1()
+    v1, v1_visited = check_v1()
+    v1 += unvisited_failures("V1", checked, v1_visited)
     if v1:
         ok = False
         print(f"FAIL: {len(v1)} axiom declaration(s) found:")
         for item in v1:
             print(f"  {item}")
     else:
-        print(f"PASS ({checked} Lean files scanned)")
+        print(f"PASS ({len(v1_visited)} Lean files scanned)")
 
     print("== V2: no sorry/admit/native_decide in checked Lean files ==")
-    v2 = check_v2()
+    v2, v2_visited = check_v2()
+    v2 += unvisited_failures("V2", checked, v2_visited)
     if v2:
         ok = False
         print(f"FAIL: {len(v2)} occurrence(s) found:")
         for item in v2:
             print(f"  {item}")
     else:
-        print(f"PASS ({checked} Lean files scanned)")
+        print(f"PASS ({len(v2_visited)} Lean files scanned)")
 
     print("== V3: capstone axiom audit (#print axioms) ==")
     if args.full or lake_available():
@@ -569,7 +633,8 @@ def main() -> int:
         print("SKIP: no `lake` env available (pass --full to require V3)")
 
     print("== V4: no Japanese text in tracked sources and public docs ==")
-    v4, scanned = check_v4()
+    v4, v4_visited = check_v4()
+    v4 += unvisited_failures("V4", iter_v4_files()[0], v4_visited)
     if v4:
         ok = False
         # Not necessarily "N lines with Japanese": the list may also hold
@@ -578,7 +643,7 @@ def main() -> int:
         for item in v4:
             print(f"  {item}")
     else:
-        print(f"PASS ({scanned} tracked files under {', '.join(V4_PATHS)})")
+        print(f"PASS ({len(v4_visited)} tracked files under {', '.join(V4_PATHS)})")
 
     print()
     if ok:

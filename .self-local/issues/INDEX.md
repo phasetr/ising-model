@@ -1,4 +1,6 @@
-# ローカルミラー・インデックス (2026-07-22 更新 — #4646 OPEN, #4639 CLOSED (mirror was stale at OPEN, corrected), #4640 CLOSED, #4642 OPEN, #4649 OPEN (pending CI), #4650 CLOSED (merged PR #4651, squash 58f4e1f0))
+# ローカルミラー・インデックス (2026-07-22 更新 — #4653 OPEN (PR #4652 follow-up), #4646 OPEN, #4639 CLOSED (mirror was stale at OPEN, corrected), #4640 CLOSED, #4642 OPEN, #4649 OPEN (pending CI), #4650 CLOSED (merged PR #4651, squash 58f4e1f0))
+
+**2026-07-22 #4653 follow-up (audit-gate 自己テストの残り 5 件) / OPEN**: PR #4652 の review が変異 18 種類を実測し 6 件無検出. Med 3 件 (観測点ズレ: 列挙関数と実走査の乖離 / V1・V2 の行ループ truncation / capstone リスト間引き) は PR #4652 で是正済み. 残る Low 5 件 (テスト件数ラチェット無し, `_AXIOM_RE` が同一行 `in` 前置を取りこぼす, 走査対象ゼロで V1/V2 が PASS, CI wiring が部分文字列 assert のみ, pre-push フック未設置) を本 issue で追跡. tooling のみ, Lean/docs/tex 変更なし. Mirror: `4653.md`.
 
 **2026-07-22 #4639/#4649/#4650 dev-issue-manager pass (PR #4648)**: #4639 mirror corrected from
 stale OPEN to CLOSED (GitHub state was already CLOSED since 2026-07-21T17:58:18Z; mirror had not

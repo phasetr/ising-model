@@ -57,7 +57,7 @@ import types
 import unittest
 from contextlib import contextmanager, redirect_stdout
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -82,19 +82,34 @@ EXT_B_IDEOGRAPH = chr(0x20001)  # U+20001
 IVS_SELECTOR = chr(0xE0100)  # U+E0100, ideographic variation selector
 EMOJI_SELECTOR = chr(0xFE0F)  # U+FE0F, deliberately NOT in the class
 
-_REAL: tuple[list[str], list[str], list[str], int] | None = None
+class RealTree(NamedTuple):
+    """One pass of V1/V2/V4 over the real tree: verdicts and files read."""
+
+    v1: list[str]
+    v1_visited: list[Path]
+    v2: list[str]
+    v2_visited: list[Path]
+    v4: list[str]
+    v4_visited: list[Path]
 
 
-def real_tree_results() -> tuple[list[str], list[str], list[str], int]:
-    """Return ``(v1, v2, v4, files)`` for the real tree, computed at most once.
+_REAL: RealTree | None = None
+
+
+def real_tree_results() -> RealTree:
+    """Return the real-tree scan, computed at most once.
 
     V1 and V2 each re-scan every library file through the character-at-a-time
-    ``strip_noncode``, so the whole suite shares one pass.
+    ``strip_noncode``, so the whole suite shares one pass. The visited lists are
+    kept as well: what a check *read* is the only thing that distinguishes a
+    real pass from a pass over a silently shrunken file set.
     """
     global _REAL
     if _REAL is None:
-        v4, scanned = ag.check_v4()
-        _REAL = (ag.check_v1(), ag.check_v2(), v4, scanned)
+        v1, v1_visited = ag.check_v1()
+        v2, v2_visited = ag.check_v2()
+        v4, v4_visited = ag.check_v4()
+        _REAL = RealTree(v1, v1_visited, v2, v2_visited, v4, v4_visited)
     return _REAL
 
 
@@ -232,12 +247,18 @@ def stub_lean(stdout: str = "", stderr: str = "", returncode: int = 0) -> Iterat
 
 @contextmanager
 def capstones(text: str, module: types.ModuleType | None = None) -> Iterator[Path]:
-    """Point ``read_capstones`` at a throwaway capstone list."""
+    """Point ``read_capstones`` at a throwaway capstone list.
+
+    ``CAPSTONE_MIN_COUNT`` is lowered to 1 for the duration: these fixtures
+    exist to pin V3's *decision logic* with one or two hand-written names, and
+    the real list's size ratchet is a separate claim about the repository,
+    asserted against the real file in :class:`V3CapstoneTest`.
+    """
     target = module if module is not None else ag
     with tempfile.TemporaryDirectory() as raw:
         path = Path(raw) / "capstones.txt"
         path.write_text(text, encoding="utf-8")
-        with patched(target, CAPSTONES_FILE=path):
+        with patched(target, CAPSTONES_FILE=path, CAPSTONE_MIN_COUNT=1):
             yield path
 
 
@@ -268,6 +289,21 @@ def drop_range(low: int, high: int) -> tuple[str, str]:
     """Return a substitution removing one Unicode range from the V4 class."""
     line = f"    (0x{low:X}, 0x{high:X}),\n"
     return (line, "")
+
+
+def deep_lean_file(payload: str) -> tuple[str, int]:
+    """Return ``(source, payload line number)`` for a long, bulky Lean fixture.
+
+    The witness sits at line 401 of a file above 40 kB, so the fixture defeats
+    both shapes of "look at less of the file": a truncated line loop
+    (``splitlines()[:200]``) and a size-based skip (``if path.stat().st_size >
+    40000: continue``). Library files really are this long -- several exceed 900
+    lines -- so either edit would stay green on today's tree while hiding a
+    ``sorry`` added at the bottom of a big file. The padding is comment text, so
+    it survives ``strip_noncode`` as blanks and cannot itself trip V1 or V2.
+    """
+    padding = "-- " + "x" * 117 + "\n"
+    return (padding * 400 + payload, 401)
 
 
 # ---------------------------------------------------------------------------
@@ -413,7 +449,7 @@ class V1AxiomTest(unittest.TestCase):
     def failures(self, text: str) -> list[str]:
         """Run V1 over a one-file fixture library."""
         with library({"F.lean": text}):
-            return ag.check_v1()
+            return ag.check_v1()[0]
 
     def test_plain_axiom_is_caught(self) -> None:
         """The base case."""
@@ -468,11 +504,24 @@ class V1AxiomTest(unittest.TestCase):
     def test_all_library_files_are_visited(self) -> None:
         """Nested directories are searched, not just the top level."""
         with library({"A.lean": "axiom a : True\n", "Sub/B.lean": "axiom b : True\n"}):
-            self.assertEqual(len(ag.check_v1()), 2)
+            self.assertEqual(len(ag.check_v1()[0]), 2)
+
+    def test_a_whole_file_is_scanned_not_just_its_head(self) -> None:
+        """V1's witness deep inside a large file (see :func:`deep_lean_file`).
+
+        Every other V1 fixture is a few lines long, so a truncated line loop or
+        a size-based skip passes all of them -- and passes the real tree, where
+        no ``axiom`` exists at any depth.
+        """
+        text, lineno = deep_lean_file("axiom deep : True\n")
+        self.assertGreater(len(text.encode("utf-8")), 40_000, "witness file too small")
+        failures = self.failures(text)
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn(f"F.lean:{lineno}: axiom declaration", failures[0])
 
     def test_real_tree_has_no_axioms(self) -> None:
         """The project's standing claim: zero axiomatized targets."""
-        self.assertEqual(real_tree_results()[0], [])
+        self.assertEqual(real_tree_results().v1, [])
 
 
 # ---------------------------------------------------------------------------
@@ -486,7 +535,7 @@ class V2TokenTest(unittest.TestCase):
     def failures(self, text: str, name: str = "F.lean") -> list[str]:
         """Run V2 over a one-file fixture library."""
         with library({name: text}):
-            return ag.check_v2()
+            return ag.check_v2()[0]
 
     def test_sorry_is_caught(self) -> None:
         """The headline case."""
@@ -564,7 +613,7 @@ class V2TokenTest(unittest.TestCase):
             path = root / "test" / "IsingModel" / "T.lean"
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("example : True := by native_decide\n", encoding="utf-8")
-            self.assertEqual(ag.check_v2(), [])
+            self.assertEqual(ag.check_v2()[0], [])
 
     def test_the_directory_allowlist_never_exempts_sorry(self) -> None:
         """Per-token again: an unfinished proof in a test is still a failure.
@@ -577,13 +626,26 @@ class V2TokenTest(unittest.TestCase):
             path = root / "test" / "IsingModel" / "T.lean"
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("example : True := by sorry\n", encoding="utf-8")
-            failures = ag.check_v2()
+            failures = ag.check_v2()[0]
         self.assertEqual(len(failures), 1)
         self.assertIn("test/IsingModel/T.lean:1: `sorry`", failures[0])
 
+    def test_a_whole_file_is_scanned_not_just_its_head(self) -> None:
+        """V2's witness deep inside a large file (see :func:`deep_lean_file`).
+
+        The realistic accident this pins: a ``sorry`` left at the bottom of a
+        900-line proof file, the one place a head-only or small-files-only scan
+        would never look.
+        """
+        text, lineno = deep_lean_file("theorem deep : True := by sorry\n")
+        self.assertGreater(len(text.encode("utf-8")), 40_000, "witness file too small")
+        failures = self.failures(text)
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn(f"F.lean:{lineno}: `sorry`", failures[0])
+
     def test_real_tree_is_clean(self) -> None:
         """The project's standing claim: no sorry/admit outside the allowlist."""
-        self.assertEqual(real_tree_results()[1], [])
+        self.assertEqual(real_tree_results().v2, [])
 
 
 # ---------------------------------------------------------------------------
@@ -645,6 +707,56 @@ class CheckedFilesTest(unittest.TestCase):
         """``iter_lib_files`` keeps its narrower meaning for its consumers."""
         for path in ag.iter_lib_files():
             self.assertTrue(ag.rel(path).startswith("IsingModel/"), ag.rel(path))
+
+
+# ---------------------------------------------------------------------------
+# Scan execution: what each check read, not what it was handed
+# ---------------------------------------------------------------------------
+
+
+class ScanExecutionTest(unittest.TestCase):
+    """The checks must read every file their enumeration produced.
+
+    ``CheckedFilesTest`` and ``ScopeCoverageTest`` above test the *enumeration
+    functions* -- ``iter_checked_files``, ``iter_v4_files`` -- and stop there,
+    which leaves the loop bodies unguarded: a ``continue`` inside ``check_v1``
+    (``if "RandomCurrent" in path.parts: continue``) or inside ``check_v4``
+    (``if path.suffix == ".tex": continue``) removes those files from the scan
+    while every enumeration test, every fixture test and the printed file count
+    stay exactly as they were. The checks therefore report the files they
+    actually opened, and the assertions below -- plus
+    ``unvisited_failures`` inside ``main`` -- pin the two sets together.
+    """
+
+    def test_v1_reads_every_file_it_enumerated(self) -> None:
+        """V1's field of view on the real tree, measured from the scan itself."""
+        self.assertEqual(set(real_tree_results().v1_visited), set(ag.iter_checked_files()))
+
+    def test_v2_reads_every_file_it_enumerated(self) -> None:
+        """Same for V2: the two loops are separate and can drift apart."""
+        self.assertEqual(set(real_tree_results().v2_visited), set(ag.iter_checked_files()))
+
+    def test_v4_reads_every_file_it_enumerated(self) -> None:
+        """And for V4, whose scope is the widest of the three."""
+        self.assertEqual(set(real_tree_results().v4_visited), set(ag.iter_v4_files()[0]))
+
+    def test_the_visited_lists_are_the_real_scan_not_a_re_enumeration(self) -> None:
+        """The counts are large: a shrunken scan is a visible number, not a hint."""
+        real = real_tree_results()
+        self.assertGreater(len(real.v1_visited), 2000)
+        self.assertGreater(len(real.v2_visited), 2000)
+        self.assertGreater(len(real.v4_visited), 2000)
+
+    def test_unvisited_failures_reports_both_directions(self) -> None:
+        """The comparator itself: files never read, and files read off-list."""
+        a, b = ag.REPO_ROOT / "A.lean", ag.REPO_ROOT / "B.lean"
+        self.assertEqual(ag.unvisited_failures("V1", [a, b], [a, b]), [])
+        missed = ag.unvisited_failures("V1", [a, b], [a])
+        self.assertEqual(len(missed), 1)
+        self.assertIn("B.lean", missed[0])
+        extra = ag.unvisited_failures("V1", [a], [a, b])
+        self.assertEqual(len(extra), 1)
+        self.assertIn("outside its own file list", extra[0])
 
 
 # ---------------------------------------------------------------------------
@@ -729,6 +841,35 @@ class V3CapstoneTest(unittest.TestCase):
             failures, _ = ag.check_v3()
         self.assertEqual(len(failures), 1)
         self.assertIn("no theorems", failures[0])
+
+    def test_a_thinned_capstone_list_is_a_failure(self) -> None:
+        """Emptiness is not the only way to disarm V3: thinning is enough.
+
+        Deleting twelve of the thirteen lines leaves a list that passes the
+        non-empty guard, audits one theorem, and reports ``PASS (1 capstone)``.
+        The count ratchet is what refuses it. (The fixture re-raises
+        ``CAPSTONE_MIN_COUNT``, which :func:`capstones` lowers so the other V3
+        fixtures can use one-name lists.)
+        """
+        with capstones("IsingModel.a\n"), patched(ag, CAPSTONE_MIN_COUNT=13), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext]"
+        ):
+            failures, _ = ag.check_v3()
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("below the ratchet", failures[0])
+
+    def test_the_real_capstone_list_meets_the_ratchet(self) -> None:
+        """The ratchet, measured against the file it guards."""
+        self.assertGreaterEqual(len(ag.read_capstones()), ag.CAPSTONE_MIN_COUNT)
+
+    def test_the_ratchet_never_slides_down_silently(self) -> None:
+        """Pin the floor as a literal: lowering it must be an edit here too.
+
+        Left as ``CAPSTONE_MIN_COUNT == len(read_capstones())`` the assertion
+        would be self-fulfilling -- delete a capstone, lower the constant, still
+        green. Growing the list stays free; shrinking it costs this line.
+        """
+        self.assertGreaterEqual(ag.CAPSTONE_MIN_COUNT, 13)
 
     def test_nonzero_exit_without_a_parsed_problem_is_a_failure(self) -> None:
         """A build error must not be mistaken for a pass.
@@ -927,8 +1068,8 @@ class V4ScanTest(unittest.TestCase):
     def test_japanese_in_a_tracked_file_is_reported(self) -> None:
         """The base case, with the offending line located."""
         with tracked_repo({"docs/a.md": f"ok\ntitle {KANJI}\n"}):
-            failures, scanned = ag.check_v4()
-        self.assertEqual(scanned, 1)
+            failures, visited = ag.check_v4()
+        self.assertEqual(len(visited), 1)
         self.assertEqual(len(failures), 1)
         self.assertIn("docs/a.md:2", failures[0])
 
@@ -941,7 +1082,7 @@ class V4ScanTest(unittest.TestCase):
     def test_an_english_tree_passes(self) -> None:
         """No false positive on ordinary ASCII prose."""
         with tracked_repo({"docs/a.md": "# Title\n\nPlain English.\n"}):
-            self.assertEqual(ag.check_v4(), ([], 1))
+            self.assertEqual(ag.check_v4()[0], [])
 
     def test_untracked_files_are_ignored(self) -> None:
         """Scratch files must never trip the gate."""
@@ -955,7 +1096,7 @@ class V4ScanTest(unittest.TestCase):
         with tracked_repo(
             {"docs/a.md": "English\n", "notes/b.md": f"{HIRAGANA_A}\n"}, paths=("docs",)
         ):
-            self.assertEqual(ag.check_v4(), ([], 1))
+            self.assertEqual(ag.check_v4()[0], [])
 
     def test_a_long_line_is_truncated_in_the_report(self) -> None:
         """Diagnostics stay readable even for a minified or generated line."""
@@ -978,8 +1119,8 @@ class V4ScanTest(unittest.TestCase):
     def test_an_empty_match_is_a_failure(self) -> None:
         """Scanning nothing is not passing."""
         with tracked_repo({"docs/a.md": "English\n"}, paths=("no_such_dir",)):
-            failures, scanned = ag.check_v4()
-        self.assertEqual(scanned, 0)
+            failures, visited = ag.check_v4()
+        self.assertEqual(visited, [])
         self.assertTrue(any("nothing to scan" in f for f in failures), failures)
 
     def test_a_failing_git_is_a_failure(self) -> None:
@@ -989,8 +1130,8 @@ class V4ScanTest(unittest.TestCase):
             return FakeProc(stderr="fatal: not a git repository", returncode=128)
 
         with patched(subprocess, run=broken):
-            failures, scanned = ag.check_v4()
-        self.assertEqual(scanned, 0)
+            failures, visited = ag.check_v4()
+        self.assertEqual(visited, [])
         self.assertTrue(any("git ls-files` failed" in f for f in failures), failures)
 
     def test_a_missing_git_is_a_failure(self) -> None:
@@ -1000,8 +1141,8 @@ class V4ScanTest(unittest.TestCase):
             raise FileNotFoundError("git")
 
         with patched(subprocess, run=missing):
-            failures, scanned = ag.check_v4()
-        self.assertEqual(scanned, 0)
+            failures, visited = ag.check_v4()
+        self.assertEqual(visited, [])
         self.assertTrue(any("could not run" in f for f in failures), failures)
 
     def test_every_line_of_a_file_is_reported(self) -> None:
@@ -1037,15 +1178,15 @@ class V4ScanTest(unittest.TestCase):
         with tracked_repo({"docs/a.md": "English\n", "docs/b.md": "English\n"}) as root:
             (root / "docs" / "a.md").unlink()
             (root / "docs" / "a.md").mkdir()
-            failures, scanned = ag.check_v4()
-        self.assertEqual(scanned, 2)
+            failures, visited = ag.check_v4()
+        self.assertEqual(len(visited), 2)
         self.assertEqual(len(failures), 1, failures)
         self.assertIn("docs/a.md: could not be read", failures[0])
 
     def test_real_tree_is_japanese_free(self) -> None:
         """The measured ratchet: zero hits over every tracked scanned file."""
-        self.assertEqual(real_tree_results()[2], [])
-        self.assertGreater(real_tree_results()[3], 2000)
+        self.assertEqual(real_tree_results().v4, [])
+        self.assertGreater(len(real_tree_results().v4_visited), 2000)
 
 
 # ---------------------------------------------------------------------------
@@ -1173,9 +1314,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"F.lean": "private axiom bad : True\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v1(), [], "mutation did not weaken V1")
+            self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
         with library(source):
-            self.assertEqual(len(ag.check_v1()), 1, "V1 must catch what the mutant misses")
+            self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch what the mutant misses")
 
     def test_v1v2_with_a_filtered_file_list_stop_seeing_a_whole_directory(self) -> None:
         """One ``if`` in the file walk hides a library subtree from V1 and V2.
@@ -1193,11 +1334,11 @@ class MutationTest(unittest.TestCase):
         )
         source = {"Inequalities/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v1(), [])
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v1()[0], [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v1()), 1)
-            self.assertEqual(len(ag.check_v2()), 1)
+            self.assertEqual(len(ag.check_v1()[0]), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
         # And on the real tree the ratchet moves: the mutant scans strictly less.
         self.assertLess(len(mutant.iter_checked_files()), len(ag.iter_checked_files()))
 
@@ -1216,6 +1357,115 @@ class MutationTest(unittest.TestCase):
         self.assertIn("IsingModel.lean", real)
         self.assertTrue([name for name in real if name.startswith("test/")])
 
+    def test_v1v2_that_skip_a_subtree_inside_the_loop_go_unseen_by_the_file_lists(self) -> None:
+        """The hole ``CheckedFilesTest`` cannot see: a filter in the loop body.
+
+        ``iter_checked_files`` still returns every file, so both scope tests and
+        every fixture test stay green, and the gate keeps printing the same
+        "2063 Lean files scanned" while an entire directory goes unread. Only
+        the visited list -- what the loop actually reached -- shows it, and
+        ``main`` turns the gap into a failure.
+        """
+        skip = '        if "RandomCurrent" in path.parts:\n            continue\n'
+        mutant = load_mutated(
+            (
+                "    for path in iter_checked_files():\n"
+                "        visited.append(path)\n"
+                '        text = strip_noncode(path.read_text(encoding="utf-8"))',
+                "    for path in iter_checked_files():\n"
+                f"{skip}"
+                "        visited.append(path)\n"
+                '        text = strip_noncode(path.read_text(encoding="utf-8"))',
+            ),
+            (
+                "    for path in iter_checked_files():\n"
+                "        visited.append(path)\n"
+                "        relpath = rel(path)",
+                "    for path in iter_checked_files():\n"
+                f"{skip}"
+                "        visited.append(path)\n"
+                "        relpath = rel(path)",
+            ),
+        )
+        source = {"RandomCurrent/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n"}
+        with library(source, module=mutant):
+            # Blind, while its file list is untouched: enumerated 1, read 0.
+            self.assertEqual(mutant.check_v1()[0], [])
+            self.assertEqual(mutant.check_v2()[0], [])
+            self.assertEqual(len(mutant.iter_checked_files()), 1)
+            self.assertEqual(mutant.check_v1()[1], [])
+            self.assertEqual(mutant.check_v2()[1], [])
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
+        # And the gate itself refuses to pass: the unread file is a failure.
+        files = {"IsingModel/RandomCurrent/F.lean": "axiom bad : True\n", "docs/a.md": "English\n"}
+        with whole_repo(files, module=mutant), patched(mutant, lake_available=lambda: False):
+            code, out = run_main(mutant)
+        self.assertEqual(code, 1, out)
+        self.assertIn("enumerated but never scanned", out)
+        self.assertNotIn("1 Lean files scanned", out)
+
+    def test_v1_that_reads_only_the_head_of_a_file_misses_the_rest(self) -> None:
+        """Truncating V1's line loop hides a declaration further down."""
+        mutant = load_mutated(
+            (
+                "        for lineno, line in enumerate(text.splitlines(), start=1):\n"
+                "            if _AXIOM_RE.match(line):",
+                "        for lineno, line in enumerate(text.splitlines()[:200], start=1):\n"
+                "            if _AXIOM_RE.match(line):",
+            )
+        )
+        text, _ = deep_lean_file("axiom deep : True\n")
+        source = {"F.lean": text}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1()[0], [])
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1)
+
+    def test_v2_that_reads_only_the_head_of_a_file_misses_the_rest(self) -> None:
+        """Same for V2, whose realistic victim is a ``sorry`` at the bottom."""
+        mutant = load_mutated(
+            (
+                "        for lineno, line in enumerate(cleaned.splitlines(), start=1):",
+                "        for lineno, line in enumerate(cleaned.splitlines()[:5], start=1):",
+            )
+        )
+        text, _ = deep_lean_file("theorem deep : True := by sorry\n")
+        source = {"F.lean": text}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v2()[0], [])
+        with library(source):
+            self.assertEqual(len(ag.check_v2()[0]), 1)
+
+    def test_v1v2_that_skip_large_files_go_blind(self) -> None:
+        """A size cutoff -- the "make the gate fast" edit -- unchecks big files.
+
+        The skip is placed *after* the file is recorded as visited, so the
+        coverage invariant is satisfied and only the deep witness fixtures
+        (:func:`deep_lean_file`) can catch it. Large files are exactly where an
+        unfinished proof hides.
+        """
+        cutoff = "        if path.stat().st_size > 40000:\n            continue\n"
+        mutant = load_mutated(
+            (
+                '        text = strip_noncode(path.read_text(encoding="utf-8"))',
+                f'{cutoff}        text = strip_noncode(path.read_text(encoding="utf-8"))',
+            ),
+            (
+                '        cleaned = strip_noncode(path.read_text(encoding="utf-8"))',
+                f'{cutoff}        cleaned = strip_noncode(path.read_text(encoding="utf-8"))',
+            ),
+        )
+        text, _ = deep_lean_file("axiom deep : True\ntheorem t : True := by sorry\n")
+        source = {"F.lean": text}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1()[0], [])
+            self.assertEqual(mutant.check_v2()[0], [])
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
+
     def test_v1_without_comment_stripping_produces_false_positives(self) -> None:
         """Skipping ``strip_noncode`` turns commented-out prose into failures."""
         mutant = load_mutated(
@@ -1230,9 +1480,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"F.lean": "-- historical note\n/-\naxiom old : True\n-/\n"}
         with library(source, module=mutant):
-            self.assertEqual(len(mutant.check_v1()), 1)
+            self.assertEqual(len(mutant.check_v1()[0]), 1)
         with library(source):
-            self.assertEqual(ag.check_v1(), [])
+            self.assertEqual(ag.check_v1()[0], [])
 
     # -- V2 ---------------------------------------------------------------
 
@@ -1243,9 +1493,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"F.lean": "theorem a : True := by admit\nexample : True := by native_decide\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v2()), 2)
+            self.assertEqual(len(ag.check_v2()[0]), 2)
 
     def test_v2_with_a_file_wide_allowlist_hides_sorry(self) -> None:
         """Turning the per-token exemption into a per-file one is the worst case."""
@@ -1258,9 +1508,9 @@ class MutationTest(unittest.TestCase):
         listed = next(iter(ag.V2_NATIVE_DECIDE_FILE_ALLOWLIST)).split("/", 1)[1]
         source = {listed: "theorem a : True := by sorry\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v2()), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
 
     def test_v2_with_a_widened_allowlist_legalises_native_decide(self) -> None:
         """Adding one existing file to the allowlist is the cheapest weakening.
@@ -1276,9 +1526,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"Basic.lean": "theorem t : True := by native_decide\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v2()), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
         # The pinning assertion is what makes this visible without a fixture.
         self.assertNotEqual(
             mutant.V2_NATIVE_DECIDE_FILE_ALLOWLIST, {"IsingModel/TestGenerators.lean"}
@@ -1291,9 +1541,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"Basic.lean": "theorem t : True := by native_decide\n"}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v2()), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
         self.assertNotEqual(mutant.V2_NATIVE_DECIDE_DIR_ALLOWLIST, ("test/",))
 
     def test_v2_without_word_boundaries_produces_false_positives(self) -> None:
@@ -1306,9 +1556,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"F.lean": "def sorryAx_free := 1\n"}
         with library(source, module=mutant):
-            self.assertEqual(len(mutant.check_v2()), 1)
+            self.assertEqual(len(mutant.check_v2()[0]), 1)
         with library(source):
-            self.assertEqual(ag.check_v2(), [])
+            self.assertEqual(ag.check_v2()[0], [])
 
     def test_shared_stripper_weakening_hides_a_sorry(self) -> None:
         """The scanner-shared primitive matters to V2 too.
@@ -1322,9 +1572,9 @@ class MutationTest(unittest.TestCase):
         )
         source = {"F.lean": 'def m := "/-"\ntheorem t : True := by sorry\n'}
         with library(source, module=mutant):
-            self.assertEqual(mutant.check_v2(), [])
+            self.assertEqual(mutant.check_v2()[0], [])
         with library(source):
-            self.assertEqual(len(ag.check_v2()), 1)
+            self.assertEqual(len(ag.check_v2()[0]), 1)
 
     # -- V3 ---------------------------------------------------------------
 
@@ -1353,6 +1603,25 @@ class MutationTest(unittest.TestCase):
         with capstones("# nothing\n", module=mutant):
             self.assertEqual(mutant.check_v3()[0], [])
         with capstones("# nothing\n"):
+            self.assertEqual(len(ag.check_v3()[0]), 1)
+
+    def test_v3_without_the_count_ratchet_accepts_a_gutted_capstone_list(self) -> None:
+        """Deleting the ratchet restores "keep one line" as a way out of V3.
+
+        The empty-list guard above does not cover this: a one-name list is
+        non-empty, elaborates, and reports a pass while twelve headline theorems
+        stop being audited.
+        """
+        mutant = load_mutated(
+            ("    if len(names) < CAPSTONE_MIN_COUNT:", "    if False:")
+        )
+        one = "IsingModel.a\n"
+        output = "'IsingModel.a' depends on axioms: [propext]"
+        with capstones(one, module=mutant), patched(mutant, CAPSTONE_MIN_COUNT=13), stub_lean(
+            output
+        ):
+            self.assertEqual(mutant.check_v3()[0], [])
+        with capstones(one), patched(ag, CAPSTONE_MIN_COUNT=13), stub_lean(output):
             self.assertEqual(len(ag.check_v3()[0]), 1)
 
     def test_v3_without_the_missing_result_check_ignores_silence(self) -> None:
@@ -1422,6 +1691,45 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(mutant.check_v4()[0], [])
         with tracked_repo(files):
             self.assertEqual(len(ag.check_v4()[0]), 1)
+
+    def test_v4_that_skips_a_file_type_inside_the_loop_is_caught(self) -> None:
+        """The V4 twin of the V1/V2 loop-body filter, with a worse symptom.
+
+        ``iter_v4_files`` still lists the TeX files, so ``ScopeCoverageTest``
+        (which reads that enumeration) sees nothing at all -- and because the
+        report used to print the size of the enumeration, the gate would
+        announce a scan of files it never opened. The count now comes from the
+        visited list, and the gap is a failure.
+        """
+        mutant = load_mutated(
+            (
+                "    for path in paths:\n        visited.append(path)",
+                "    for path in paths:\n"
+                '        if path.suffix == ".tex":\n            continue\n'
+                "        visited.append(path)",
+            )
+        )
+        files: dict[str, str | bytes] = {
+            "tex/a.tex": f"\\section{{{KANJI}}}\n",
+            "docs/a.md": "English\n",
+        }
+        with tracked_repo(files, paths=("docs", "tex"), module=mutant):
+            failures, visited = mutant.check_v4()
+            self.assertEqual(failures, [])
+            self.assertEqual(len(mutant.iter_v4_files()[0]), 2, "the file list is untouched")
+            self.assertEqual(len(visited), 1)
+            self.assertTrue(
+                mutant.unvisited_failures("V4", mutant.iter_v4_files()[0], visited)
+            )
+        with tracked_repo(files, paths=("docs", "tex")):
+            self.assertEqual(len(ag.check_v4()[0]), 1)
+        # End to end: the gate fails instead of reporting a scan it never did.
+        whole = {"IsingModel/A.lean": "theorem t : True := trivial\n", "docs/a.tex": f"{KANJI}\n"}
+        with whole_repo(whole, module=mutant), patched(mutant, lake_available=lambda: False):
+            code, out = run_main(mutant)
+        self.assertEqual(code, 1, out)
+        self.assertIn("enumerated but never scanned", out)
+        self.assertNotIn("1 tracked files", out)
 
     def test_v4_that_skips_unreadable_files_goes_fail_open(self) -> None:
         """The ``OSError`` arm, mutated: an unopenable tracked file vanishes."""
@@ -1742,8 +2050,8 @@ class MainTest(unittest.TestCase):
 
     def test_the_gate_passes_on_the_current_tree(self) -> None:
         """V1, V2 and V4 are green here and now (V3 is CI's job)."""
-        v1, v2, v4, _ = real_tree_results()
-        self.assertEqual((v1, v2, v4), ([], [], []))
+        real = real_tree_results()
+        self.assertEqual((real.v1, real.v2, real.v4), ([], [], []))
 
 
 def run_suite() -> int:
