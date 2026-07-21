@@ -534,178 +534,88 @@ class UnreadableCitationTest(unittest.TestCase):
     A warning that changes no verdict and no exit code is fail-open where the
     docstring claimed fail-closed: 16 real published names were invisible to the
     TeX channel while the run printed 45 warnings and exited 0 regardless.
+
+    The channel is **charge-only**: :attr:`dcs.UnreadableSpan.refutes` is
+    ``False`` for every span, so an unread citation is charged to every
+    candidate and can never deny one. Seven rounds of refutation rules each
+    closed one leak and opened the next, always of the same shape -- text the
+    normaliser had not explained was read as literal name evidence and refuted
+    the very name it spelled -- so the refutation surface was removed rather
+    than patched again. :data:`MEASURED_LEAKS` is every one of those leaks as
+    measured on the real code; each entry must charge the name it hid.
     """
 
-    def test_fragments_refute_a_name_or_keep_it(self) -> None:
-        """Readable fragments must occur, in order, inside any name cited.
+    #: ``(span source, the name that span really cites)``: the seven rounds'
+    #: worth of measured fail-open shapes, ordered as they were found.
+    MEASURED_LEAKS = (
+        (r"\texttt{fieldPolymerZ\ensuremath{\mathbb{X}}}", "fieldPolymerZ𝕏"),
+        (r"\texttt{le\_div\_iff\textsubscript{k}}", "le_div_iffₖ"),
+        (r"\texttt{caf\'{e}\_lemma}", "café_lemma"),
+        (r"\texttt{pre\ensuremath{\mathfrak{{{X}}}}post}", "pre𝔛post"),
+        ("\\texttt{Ambient.foo\n", "IsingModel.Ambient.foo"),
+        ("\\texttt{prose {deep {nest}} name_xyzzy}\n", "IsingModel.name_xyzzy"),
+        ("\\texttt{prose{x}foo\\_bar\n", "foo_bar"),
+        ("\\texttt{see\\/foo\\_bar\n", "foo_bar"),
+        (r"\texttt{myLemma\unknown deprecated}", "myLemma"),
+        (r"\texttt{foo\unknown{arg text}bar}", "fooXbar"),
+        (r"\texttt{foo\'{e x}bar}", "fooébar"),
+        # Round seven, the one that ended refutation: a macro's argument was
+        # swallowed with it only when *braced*, so the standard unbraced accent
+        # left its argument (``e``) behind as a readable fragment, and the span
+        # refuted ``café_lemma`` -- the very name the macro spells.
+        (r"\texttt{caf\'e\_lemma}", "café_lemma"),
+    )
 
-        Per *word*: an unknown macro may gobble the space after it, so the whole
-        span can spell one name, but the trailing word may equally be prose while
-        the macro spells the rest of the name -- ``foo_baz`` is therefore charged
-        too. Only a name no single word can spell is refuted.
+    def test_every_measured_leak_charges_the_name_it_hid(self) -> None:
+        """The whole table: an unread span is charged to the name it cites."""
+        for source, name in self.MEASURED_LEAKS:
+            with self.subTest(source=source):
+                _normalized, warnings = dcs.normalize_tex(source)
+                self.assertEqual(len(warnings), 1, [w.message for w in warnings])
+                self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
+
+    def test_unbracketed_accent_is_charged(self) -> None:
+        """The round-seven leak, isolated: ``\\'e`` must not refute ``café_lemma``.
+
+        ``\\'{e}`` was rescued by swallowing the macro's brace group, but the
+        LaTeX-standard unbraced spelling carries no braces to swallow: the
+        argument ``e`` survived as a readable fragment, the span refuted the
+        name it spelled, no literal search could find that name either, and the
+        declaration came out ``safe-to-delete``. It is charged now because no
+        span refutes anything.
         """
-        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"foo\unknownmacro bar")
-        self.assertTrue(span.could_cite("fooXbar"))
-        self.assertTrue(span.could_cite("foo_lambda_bar"))
-        self.assertTrue(span.could_cite("foo_baz"))
-        self.assertFalse(span.could_cite("zzz_unrelated"))
-
-    def test_a_prose_word_does_not_disown_the_cited_name(self) -> None:
-        """A second word in the span must not refute the name the first one spells.
-
-        Requiring *every* word's fragments inside one name refuted the real
-        cited name whenever the citation carried a prose word, and a span
-        charged to nobody is a citation that stops forcing `uncertain` -- the
-        same fail-open route as reading a macro argument literally, reached
-        without any argument at all.
-        """
-        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"myLemma\unknown deprecated")
-        self.assertTrue(span.could_cite("myLemma"))
-        self.assertFalse(span.could_cite("zzz_unrelated"))
-        _normalized, warnings = dcs.normalize_tex(r"\texttt{myLemma\unknown deprecated}")
+        _normalized, warnings = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
         self.assertEqual(len(warnings), 1)
-        decl = synthetic_tree(
-            {
-                "IsingModel/SynthProseWord.lean": (
-                    "namespace IsingModel\ntheorem myLemma : True := trivial\nend IsingModel\n"
-                )
-            }
-        ).decls[0]
-        self.assertTrue(warnings[0].could_cite_decl(decl), warnings[0].message)
+        self.assertFalse(warnings[0].refutes)
+        self.assertTrue(warnings[0].could_cite("café_lemma"), warnings[0].message)
 
-    def test_an_entirely_unreadable_span_keeps_everything(self) -> None:
-        """No fragment left means no candidate can be excluded."""
-        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"\unknownmacro")
-        self.assertTrue(span.could_cite("anything_at_all"))
+    def test_no_span_shape_may_refute(self) -> None:
+        """Charge-only is a property of the class, not of a span's shape.
 
-    def test_unparsable_span_refutes_nothing_at_all(self) -> None:
-        """Unexplained braces mean unknown content, so no name may be refuted.
-
-        Reading such a span word by word was a refutation made on material the
-        normaliser had not explained; each round of rules for it opened a new
-        fail-open face. The span now charges every candidate, unrelated ones
-        included -- which can only produce `uncertain`, never a false
-        `safe-to-delete`.
+        Every shape that used to decide refutation one way or the other -- a
+        clean parse, an unparsable body, a brace no macro swallowed -- now
+        charges, and charges names that have nothing to do with the citation.
+        Over-charging can only produce ``uncertain``, never a false
+        ``safe-to-delete``.
         """
-        span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
-        self.assertFalse(span.refutes)
-        for name in ("deep_lemma", "prefix_tail_of_it", "shallow_lemma", "zzz_lemm"):
-            self.assertTrue(span.could_cite(name), name)
-
-    def test_unparsable_span_is_charged_whatever_the_name(self) -> None:
-        """The real shapes that escaped: qualified, prose-opened, deeply nested.
-
-        The last one is the leak that motivated the invariant: ``_MACRO_ARGS``
-        swallows at most two levels of braces, so a third level put the argument
-        text -- *the name itself* -- back into the readable fragments, where it
-        refuted the very name it spelled.
-        """
-        cases = (
-            ("\\texttt{Ambient.foo\n", "IsingModel.Ambient.foo"),
-            ("\\texttt{prose {deep {nest}} name_xyzzy}\n", "IsingModel.name_xyzzy"),
-            ("\\texttt{pre\\ensuremath{\\mathfrak{{{X}}}}post}\n", "pre𝔛post"),
-            ("\\texttt{prose{x}foo\\_bar\n", "foo_bar"),
-            ("\\texttt{see\\/foo\\_bar\n", "foo_bar"),
+        shapes = (
+            (dcs.MACRO_RESIDUE, r"foo\unknownmacro bar"),
+            (dcs.MACRO_RESIDUE, r"pre{X}post\unknown"),
+            (dcs.MACRO_RESIDUE, r"pre\unknown{X}post"),
+            (dcs.MACRO_RESIDUE, r"prefix\unknown{Z} (see)"),
+            (dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}"),
+            (dcs.UNPARSABLE_BRACES, r"\texttt{\unknownmacro"),
+            (dcs.UNPARSABLE_BRACES, r"\texttt{ \foo bar"),
         )
-        for source, name in cases:
-            with self.subTest(source=source):
-                _normalized, warnings = dcs.normalize_tex(source)
-                self.assertEqual(len(warnings), 1)
-                self.assertEqual(warnings[0].kind, dcs.UNPARSABLE_BRACES)
-                self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
-                self.assertTrue(warnings[0].could_cite("zzz_qqq"), warnings[0].message)
-
-    def test_a_brace_no_macro_swallowed_disables_refutation(self) -> None:
-        """The invariant is checked on the braces, not on the span's kind.
-
-        A parsed span may still carry a brace that no macro match accounted for;
-        the text around it is of unknown provenance for exactly the same reason,
-        so it refutes nothing either. A span whose braces *are* all charged to a
-        macro keeps refuting, which is what makes the precondition a condition
-        rather than a switch that turns the channel off.
-        """
-        self.assertFalse(
-            dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"pre{X}post\unknown").refutes
-        )
-        self.assertTrue(
-            dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"pre\unknown{X}post").refutes
-        )
-
-    def test_macro_arguments_are_not_readable_fragments(self) -> None:
-        """An unknown macro's argument is its input, never literal name text.
-
-        Each of these spans is the shape the guide already uses for a *real*
-        published name (``\\ensuremath{\\mathbb{C}}`` spells ``ℂ`` inside 16 of
-        them). Reading the argument body as a literal fragment demanded that the
-        cited name contain ``X`` / ``k`` / ``e``, which the name it actually
-        spells never does, so the span refuted every candidate, was charged to
-        nobody, and the name it hid could fall out as ``safe-to-delete``.
-        """
-        cases = (
-            (r"\texttt{fieldPolymerZ\ensuremath{\mathbb{X}}}", "fieldPolymerZ𝕏"),
-            (r"\texttt{le\_div\_iff\textsubscript{k}}", "le_div_iffₖ"),
-            (r"\texttt{caf\'{e}\_lemma}", "café_lemma"),
-        )
-        for source, name in cases:
-            with self.subTest(source=source):
-                _normalized, warnings = dcs.normalize_tex(source)
-                self.assertEqual(len(warnings), 1)
-                self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
-                # Still discriminating: an unrelated name is refuted as before.
-                self.assertFalse(warnings[0].could_cite("unrelated_lemma"))
-
-    def test_a_macro_argument_is_never_a_word_of_its_own(self) -> None:
-        """A space inside an unknown macro's argument must not cut a word.
-
-        Reading the span word by word is only sound if the words are cut at the
-        prose spaces. Cutting at *every* space made the argument text a word --
-        readable evidence about a name the macro never spelled that way -- so the
-        span was refuted by its own input and charged to nobody, which is the
-        argument-as-literal-text route reopened through the word rule.
-        """
-        cases = (
-            (r"foo\unknown{arg text}bar", "fooXbar"),
-            (r"foo\'{e x}bar", "fooébar"),
-        )
-        for text, name in cases:
+        for kind, text in shapes:
             with self.subTest(text=text):
-                span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, text)
-                self.assertTrue(span.could_cite(name), span.message)
-                self.assertFalse(span.could_cite("zzz_unrelated"))
+                span = dcs.UnreadableSpan("tex", 1, kind, text)
+                self.assertFalse(span.refutes)
+                for name in ("fooXbar", "IsingModel.αX", "zzz_unrelated"):
+                    self.assertTrue(span.could_cite(name), name)
 
-    def test_an_unreadable_opener_charges_every_candidate(self) -> None:
-        """A citation showing no readable fragment must keep every name.
-
-        An unparsable span begins with its own ``\\texttt{`` opener, and taking
-        the letters of an unresolved control sequence for identifier evidence
-        made the span demand that the name contain ``unknownmacro`` -- so a
-        citation nothing could be read out of was charged to nobody instead of to
-        everybody.
-        """
-        for text in (r"\texttt{\unknownmacro", r"\texttt{\alphaX", r"\texttt{ \foo bar"):
-            with self.subTest(text=text):
-                span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, text)
-                self.assertTrue(span.could_cite("IsingModel.gks_second_ferromagnetic"))
-                self.assertTrue(span.could_cite("IsingModel.αX"))
-                self.assertTrue(span.could_cite("IsingModel.zzz_name"))
-
-    def test_prose_fragments_do_not_refute_every_candidate(self) -> None:
-        """A fragment no identifier can contain is prose, not evidence.
-
-        The identifier fragment of the same span keeps refuting, so ignoring the
-        prose one loosens the test exactly where it was refuting by mistake.
-        """
-        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"prefix\unknown{Z} (see)")
-        self.assertTrue(span.could_cite("prefix_lemma"))
-        self.assertFalse(span.could_cite("other_lemma"))
-
-    def test_qualified_citation_is_matched_against_the_full_name(self) -> None:
-        """A namespace-qualified fragment is refuted by the bare final component.
-
-        The multi-word spelling of the same citation is charged too: its first
-        word carries the qualified fragment, so the prose word after it cannot
-        disown the declaration.
-        """
+    def test_qualified_citation_is_charged_under_either_spelling(self) -> None:
+        """Both the bare and the qualified spelling keep the declaration charged."""
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX")
         decl = synthetic_tree(
             {
@@ -717,12 +627,52 @@ class UnreadableCitationTest(unittest.TestCase):
             }
         ).decls[0]
         self.assertEqual(decl.full, "IsingModel.foo_x_bar")
-        self.assertFalse(span.could_cite(decl.final))
+        self.assertTrue(span.could_cite(decl.final))
         self.assertTrue(span.could_cite_decl(decl))
-        with_prose = dcs.UnreadableSpan(
-            "tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX bar"
-        )
-        self.assertTrue(with_prose.could_cite_decl(decl), with_prose.message)
+
+
+class TexChannelLimitTest(unittest.TestCase):
+    """The two shapes charge-only does *not* reach, pinned as they behave today.
+
+    Charging fixes every leak that produced an :class:`dcs.UnreadableSpan`, but
+    a citation that produces **no span and no literal hit** never reaches the
+    charging step at all: it leaves the TeX channel silently, and the name it
+    cites can still come out ``safe-to-delete``. Both shapes are documented as
+    limitations (``L7`` in :data:`dcs.LIMITATIONS`) rather than fixed, and the
+    tests below exist so that a future fix is noticed as a *test failure*
+    instead of shipping unremarked.
+    """
+
+    def test_a_comment_inside_a_citation_is_a_silent_gap(self) -> None:
+        """``%`` splices two lines in TeX; the normaliser leaves a newline.
+
+        ``\\texttt{foo% c\\n\\beta bar}`` typesets ``fooβbar``, but comment
+        stripping keeps the line break, so the span parses cleanly (no warning)
+        and normalises to ``foo\\nβbar``, which no literal search for
+        ``fooβbar`` finds. Nothing is charged: this is the counterexample to
+        "an unreadable citation is always charged".
+        """
+        normalized, warnings = dcs.normalize_tex("\\texttt{foo% c\n\\beta bar}")
+        self.assertEqual(warnings, [])
+        self.assertIn("foo\nβbar", normalized)
+        self.assertEqual(dcs.find_occurrences(normalized, "fooβbar"), [])
+
+    def test_an_unrecognised_code_wrapper_is_a_silent_gap(self) -> None:
+        """Charging only ever applies inside a *recognised* code citation.
+
+        ``{\\tt ...}`` is not in :data:`dcs._TEX_CODE_CMDS`, so the citation is
+        not a span, its residual accent raises no warning, and the name it
+        spells is invisible to both the span channel and the literal search.
+        Mitigation is editorial: cite code with ``\\texttt`` in the guide.
+        """
+        normalized, warnings = dcs.normalize_tex(r"{\tt caf\'{e}\_lemma}")
+        self.assertEqual(warnings, [])
+        self.assertEqual(dcs.find_occurrences(normalized, "café_lemma"), [])
+
+    def test_both_gaps_are_documented_as_limitations(self) -> None:
+        """A silent gap must be written down where the report prints its limits."""
+        self.assertIn("%", dcs.LIMITATIONS)
+        self.assertIn(r"{\tt", dcs.LIMITATIONS)
 
     def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
