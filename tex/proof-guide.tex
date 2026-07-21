@@ -1134,8 +1134,7 @@ $\texttt{minusStateExpectation}\,J\,h\,\beta\,O
    := \texttt{plusStateExpectation}\,J\,(-h)\,\beta\,O.\texttt{flipObs}$, where
 $O.\texttt{flipObs} = \sigma \mapsto \varphi(\sigma.\texttt{flip})$, inheriting
 convergence (\texttt{tendsto\_minusStateExpectation}) and the same-support
-linearity / normalisation / positivity (\texttt{minusStateExpectation\_\{add,
-const\_mul, const, nonneg\}}).  Finally, for a monotone observable and
+linearity / normalisation / positivity (\texttt{minusStateExpectation\_\{add, const\_mul, const, nonneg\}}).  Finally, for a monotone observable and
 $\beta, J \ge 0$, the flip bridge turns the finite-volume boundary monotonicity
 $\langle\varphi\rangle^{-}_{\Lambda} \le \langle\varphi\rangle^{+}_{\Lambda}$
 (\texttt{gibbsExpectationBC\_minus\_le}) into the $\pm$ extremal ordering
@@ -2844,8 +2843,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 exactly a single valid turn.  $\texttt{leftFanPrefix\_one\_iff}$ gives
 $d.\texttt{LeftFanPrefix}\,1 \iff \texttt{ValidAt}\,F\,d.\texttt{head}\,d.\texttt{dir.turnLeft}$ (a
 valid left turn), and $\texttt{rightFanPrefix\_one\_iff}$ gives
-$d.\texttt{RightFanPrefix}\,1 \iff (\lnot\texttt{ValidAt turnLeft} \land \lnot\texttt{ValidAt
-straight})$ (a right turn), with the $\texttt{mpr}$ constructors $\texttt{leftFanPrefix\_one}$,
+$d.\texttt{RightFanPrefix}\,1 \iff (\lnot\texttt{ValidAt turnLeft} \land \lnot\texttt{ValidAt straight})$ (a right turn), with the $\texttt{mpr}$ constructors $\texttt{leftFanPrefix\_one}$,
 $\texttt{rightFanPrefix\_one}$.  These are the elementary generators a fan rotation (hence a contact
 step) is built from when the global connectivity argument constructs prefixes from local validity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
@@ -3396,8 +3394,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The dual-cut support box and its subtype lift (\texttt{Peierls/DualSupport.lean})}
 
-\par\noindent\textbf{Role:} The contour count $\texttt{card\_connected\_edge\_sets\_inducedLattice%
-Graph\_le}$ lives over a finite \emph{subtype} $\uparrow\!\Lambda$, so the ambient dual cut is
+\par\noindent\textbf{Role:} The contour count $\texttt{card\_connected\_edge\_sets\_inducedLattice\allowbreak Graph\_le}$ lives over a finite \emph{subtype} $\uparrow\!\Lambda$, so the ambient dual cut is
 restricted to the finite support box $\texttt{dualSupport}\,F$ collecting every dart's tail and head
 ($\texttt{tail\_mem\_dualSupport}$, $\texttt{head\_mem\_dualSupport}$).  The lifted cut
 $\texttt{dualCutSub}\,F \subseteq \mathrm{Sym}_2\,\uparrow\!(\texttt{dualSupport}\,F)$ lies in the
@@ -3456,8 +3453,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 \par\noindent\textbf{Role:} A boundary dart crosses one primal cut edge $\texttt{primalCutEdge}
 \,t\,\delta = s(\texttt{leftSite}, \texttt{rightSite})$.  This primal edge depends only on the
 dart's \emph{dual} edge $s(t, t+\delta.\texttt{vec})$, independent of orientation: the reverse dart
-swaps the left and right sites ($\texttt{rightSite\_reverse}$ complements $\texttt{leftSite\_%
-reverse}$), but the unordered primal edge is unchanged ($\texttt{Sym2.eq\_swap}$).  Hence equal dual
+swaps the left and right sites ($\texttt{rightSite\_reverse}$ complements $\texttt{leftSite\_\allowbreak reverse}$), but the unordered primal edge is unchanged ($\texttt{Sym2.eq\_swap}$).  Hence equal dual
 edges give equal primal cut edges ($\texttt{primalCutEdge\_congr\_of\_dualEdge\_eq}$) --- the
 well-definedness bridge from dual-cut equality to primal-cut equality used in the contour
 injectivity (with $\texttt{isFilled\_eq\_of\_cutEdges\_eq}$).
@@ -3561,8 +3557,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \par\noindent\textbf{Role:} In a preconnected box graph, $\texttt{liftBoxCut}\,\Lambda$ is injective
 on $\{F \mid g \notin F\}$ ($\texttt{liftBoxCut\_injOn}$): equal lifted cuts give equal box cuts
-($\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$ injective via $\texttt{Finset.image\_%
-injective}$), which $\texttt{eq\_of\_cutEdges\_eq}$ (the winding-parity argument) turns into equal
+($\mathrm{Sym}_2.\texttt{map}\,\texttt{Subtype.val}$ injective via $\texttt{Finset.image\_\allowbreak injective}$), which $\texttt{eq\_of\_cutEdges\_eq}$ (the winding-parity argument) turns into equal
 regions.  This is the final link of the contour injectivity chain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
@@ -4543,8 +4538,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 $+$-state magnetization $\texttt{plusGibbsExpectationLiminf}(\sigma_i)$ satisfies $1 -
 \mu^+(\sigma_i) \le 2\cdot 32 q / (1 - 32 q)$ ($\texttt{peierls\_plusGibbsLiminf\_le}$).  Each stage
 gives $1 - \mu^+_n(\sigma_i) = 2\mu^+_n(\downarrow) \le 64 q/(1-32q)$ ($\texttt{peierls\_plusGibbs\_le}$
-and $\texttt{plusGibbsExpectation\_sign\_eq}$) and $\mu^+_n(\sigma_i) \le 1$; $\texttt{one\_sub\_%
-liminf\_le}$ pushes this to the liminf.  This \emph{replaces the volume-dependent count of}
+and $\texttt{plusGibbsExpectation\_sign\_eq}$) and $\mu^+_n(\sigma_i) \le 1$; $\texttt{one\_sub\_\allowbreak liminf\_le}$ pushes this to the liminf.  This \emph{replaces the volume-dependent count of}
 $\texttt{prop\_5\_4\_2\_plusGibbsExpectationLiminf\_bound}$ \emph{with the volume-independent contour
 count}.  As $\beta \to \infty$ the bound vanishes, so $\mu^+(\sigma_i) \to 1$ --- the spontaneous
 magnetization is positive, $m^*(\beta) > 0$, the Peierls phase transition.  The single-orbit
@@ -4641,8 +4635,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 \par\noindent\textbf{Role:} The combinatorial core of the contour count.  If every element of a
 finite family $D$ satisfies $P\,a\,z$ for \emph{some} anchor $z \in Z$, and each anchor class
 $\{a \in D \mid P\,a\,z\}$ has at most $M$ elements, then $|D| \le |Z| \cdot M$
-($\texttt{card\_le\_of\_anchor\_cover}$, via $\texttt{Finset.biUnion}$ cover, $\texttt{card\_%
-biUnion\_le}$, and the constant sum).  With the $r$ ray anchors $z_0, \dots, z_{r-1}$ (first-exit
+($\texttt{card\_le\_of\_anchor\_cover}$, via $\texttt{Finset.biUnion}$ cover, $\texttt{card\_\allowbreak biUnion\_le}$, and the constant sum).  With the $r$ ray anchors $z_0, \dots, z_{r-1}$ (first-exit
 bound $k < r$) and per-anchor count $M = 16^r$, this gives the volume-independent contour bound
 $r \cdot 16^r \le 32^r$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
@@ -20716,8 +20709,7 @@ volume-uniform conditions \(\Delta^2 eT<1\) and \(4r/(1-r)^2<1\) (\(r=\Delta^2 e
 real-analytic on \(\texttt{Ico}\,0\,T\) and agree near \(0\)
 (\(\texttt{mayer\_identity\_general\_t\_eventually}\)), hence agree throughout by the identity
 theorem (\(\texttt{AnalyticOnNhd.eqOn\_of\_preconnected\_of\_eventuallyEq}\),
-\(\texttt{isPreconnected\_Ico}\)).  LHS analyticity is \(\texttt{polymerFreeEnergy\_analyticOnNhd\_
-Ici\_zero}\) (\(\log\Xi\), \(\Xi\ge1>0\)); RHS analyticity
+\(\texttt{isPreconnected\_Ico}\)).  LHS analyticity is \(\texttt{polymerFreeEnergy\_analyticOnNhd\_\allowbreak Ici\_zero}\) (\(\log\Xi\), \(\Xi\ge1>0\)); RHS analyticity
 (\(\texttt{polymerFreeEnergy\_analyticOnNhd\_mayer\_tsum\_Ioo}\)) writes the real Mayer tsum as
 \(t\mapsto\operatorname{Re}F(t)\) (real embedding \(t\mapsto F(\uparrow t)\)) for the holomorphic
 complex tsum \(F\) (PR-B) and applies
@@ -22573,11 +22565,8 @@ Continuous and Differentiable wrappers for
 \texttt{magnetization}, \texttt{susceptibility}, and
 \texttt{correlation} across abstract, $\Lambda$, along-exhaustion,
 and $\mathbb{Z}^d$ concrete layers. 26 new theorems total:
-abstract \texttt{magnetization\_/susceptibility\_\{continuous,
-differentiable\}\_joint} (4); $\Lambda$ counterparts (4); along-ex
-general-$G$ \texttt{correlation/magnetization/
-susceptibility\_AlongExhaustion\_\{continuous,
-differentiable\}\_joint(\_gen)} (6); $\mathbb{Z}^d$ concrete
+abstract \texttt{magnetization\_/susceptibility\_\{continuous, differentiable\}\_joint} (4); $\Lambda$ counterparts (4); along-ex
+general-$G$ \texttt{correlation/magnetization/\allowbreak susceptibility\_AlongExhaustion\_\{continuous, differentiable\}\_joint(\_gen)} (6); $\mathbb{Z}^d$ concrete
 $\Lambda$- and along-ex-layer
 \texttt{*\_latticeGraph\_\{continuous, differentiable\}\_joint}
 (12). The susceptibility joint case is proved as a finite sum of
@@ -22595,11 +22584,8 @@ along-exhaustion and $\mathbb{Z}^d$ wrapper layers now live in
 DifferentiableAt wrappers
 (\S17.5--\S17.6, PR~\#1638).}
 \texttt{Concrete/LatticeGraphCorrelation.lean}:
-\texttt{partitionFunctionAlongExhaustion\_latticeGraph\_\{continuousAt,
-differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero,
-beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
-\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuousAt,
-differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
+\texttt{partitionFunctionAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero, beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
 pointwise wrappers at $G := \texttt{IsingModel.latticeGraph}\,d$,
 lifting the ambient versions from PR~\#1636.
 
@@ -22607,12 +22593,9 @@ lifting the ambient versions from PR~\#1636.
 ContinuousAt + DifferentiableAt wrappers
 (\S17.5--\S17.6, PR~\#1637).}
 \texttt{Concrete/LatticeGraphCorrelation.lean}:
-\texttt{correlationAlongExhaustion\_latticeGraph\_\{continuousAt,
-differentiableAt\}\_J} (2),
-\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuousAt,
-differentiableAt\}\_\{beta, field, J\}} (6),
-\texttt{susceptibilityAlongExhaustion\_latticeGraph\_\{continuousAt,
-differentiableAt\}\_\{beta\_general\_h, field, J\}} (6). 14 new
+\texttt{correlationAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_J} (2),
+\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta, field, J\}} (6),
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta\_general\_h, field, J\}} (6). 14 new
 wrappers at $G := \texttt{IsingModel.latticeGraph}\,d$, lifting the
 ambient general-$G$ versions from PR~\#1635.
 
@@ -22621,24 +22604,18 @@ ambient general-$G$ versions from PR~\#1635.
 wrappers (ambient)
 (\S17.5--\S17.6, PR~\#1636).}
 \texttt{SpecialCases/} modules:
-\texttt{partitionFunctionAlongExhaustion\_\{continuousAt,
-differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero,
-beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
-\texttt{freeEnergyAlongExhaustion\_\{continuousAt,
-differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
+\texttt{partitionFunctionAlongExhaustion\_\{continuousAt, differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero, beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
+\texttt{freeEnergyAlongExhaustion\_\{continuousAt, differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
 pointwise wrappers, each derived from the existing whole-$\mathbb{R}$
 wrapper via \texttt{.continuousAt} / \texttt{.differentiableAt}.
 
 \paragraph{Along-exhaustion ContinuousAt + DifferentiableAt
 wrappers (ambient general $G$)
 (\S17.5--\S17.6, PR~\#1635).}
-\texttt{correlationAlongExhaustion\_\{continuousAt,
-differentiableAt\}\_J\_gen} (2 thms in
-\texttt{JDerivative.lean}); \texttt{magnetizationAlongExhaustion\_
-\{continuousAt, differentiableAt\}\_\{beta, field, J\}} (6 thms;
+\texttt{correlationAlongExhaustion\_\{continuousAt, differentiableAt\}\_J\_gen} (2 thms in
+\texttt{JDerivative.lean}); \texttt{magnetizationAlongExhaustion\_\allowbreak \{continuousAt, differentiableAt\}\_\{beta, field, J\}} (6 thms;
 $\beta$ at general $h$) and
-\texttt{susceptibilityAlongExhaustion\_\{continuousAt,
-differentiableAt\}\_\{beta, field, J\}\_gen} (6 thms; in
+\texttt{susceptibilityAlongExhaustion\_\{continuousAt, differentiableAt\}\_\{beta, field, J\}\_gen} (6 thms; in
 \texttt{SpecialCases/} modules). 14 new pointwise wrappers, each
 derived from the existing whole-$\mathbb{R}$ Continuous /
 Differentiable via \texttt{(continuous \_).continuousAt} or
@@ -22651,8 +22628,7 @@ wrappers for \texttt{susceptibilityAlongExhaustion} in all four
 parameter directions. Ambient (general $G$, split across
 \texttt{BetaDerivative.lean} / \texttt{JDerivative.lean} /
 \texttt{FieldDerivative.lean}):
-\texttt{susceptibilityAlongExhaustion\_hasDerivAt\_\{beta\_gen,
-beta\_general\_h\_gen, J\_gen, field\_gen\}} (4 thms).
+\texttt{susceptibilityAlongExhaustion\_hasDerivAt\_\{beta\_gen, beta\_general\_h\_gen, J\_gen, field\_gen\}} (4 thms).
 $\mathbb{Z}^d$ concrete:
 \texttt{susceptibilityAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
 (4 thms). 8 new wrappers in existence form
@@ -22665,18 +22641,14 @@ with $\mathbb{Z}^d$-specialized variants.
 Continuous/Differentiable wrappers
 (\S17.5--\S17.6, PR~\#1633).} Ambient
 (\texttt{SpecialCases/} modules):
-\texttt{magnetizationAlongExhaustion\_\{continuous,
-differentiable\}\_beta} (general $h$, 2) and
-\texttt{susceptibilityAlongExhaustion\_\{continuous,
-differentiable\}\_\{beta, field, J\}\_gen} (general $G$, general
+\texttt{magnetizationAlongExhaustion\_\{continuous, differentiable\}\_beta} (general $h$, 2) and
+\texttt{susceptibilityAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}\_gen} (general $G$, general
 $h$, 8). The \texttt{\_gen} suffix on susceptibility distinguishes
 from the $\mathbb{Z}^d$-specialized variants in
 \texttt{Concrete/LatticeGraphCorrelation/Inequalities.lean} which
-share the unsuffixed names with \texttt{(IsingModel.latticeGraph
-d)} baked in. $\mathbb{Z}^d$ concrete
+share the unsuffixed names with \texttt{(IsingModel.latticeGraph d)} baked in. $\mathbb{Z}^d$ concrete
 (\texttt{LatticeGraphCorrelation.lean}):
-\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuous,
-differentiable\}\_beta} (2). 12 new wrappers.
+\texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuous, differentiable\}\_beta} (2). 12 new wrappers.
 
 \paragraph{Per-parameter
 \texttt{freeEnergyAlongExhaustion} Continuous/Differentiable
@@ -22690,8 +22662,7 @@ mirroring the existing per-parameter coverage of
 \texttt{freeEnergyAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}}
 (6, with $\beta$ at general $h$).
 $\mathbb{Z}^d$ concrete (\texttt{LatticeGraphCorrelation.lean}):
-\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuous,
-differentiable\}\_\{beta, field, J\}} (6). 12 new thin
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuous, differentiable\}\_\{beta, field, J\}} (6). 12 new thin
 instantiations of the corresponding
 \texttt{freeEnergy\LeanLambda\_\{continuous, differentiable\}\_*} at
 $\Lambda := \Lambda.\mathrm{volume}\,n$.
@@ -22703,12 +22674,9 @@ $\Lambda := \Lambda.\mathrm{volume}\,n$.
 \texttt{hasDerivAt\_\{partitionFunction\LeanLambda, freeEnergy\LeanLambda\}\_*} family
 (PRs~\#1623, \#1624) at $\Lambda := \Lambda.\mathrm{volume}\,n$.
 Along-ex layer:
-\texttt{partitionFunctionAlongExhaustion\_hasDerivAt\_\{beta, J,
-field\}} (3),
-\texttt{freeEnergyAlongExhaustion\_hasDerivAt\_\{beta\_general\_h,
-J, field\}} (3) split across
-\texttt{AmbientLattice/\{BetaDerivative, JDerivative,
-FieldDerivative\}.lean}.
+\texttt{partitionFunctionAlongExhaustion\_hasDerivAt\_\{beta, J, field\}} (3),
+\texttt{freeEnergyAlongExhaustion\_hasDerivAt\_\{beta\_general\_h, J, field\}} (3) split across
+\texttt{AmbientLattice/\{BetaDerivative, JDerivative, FieldDerivative\}.lean}.
 $\mathbb{Z}^d$ concrete:
 \texttt{partitionFunctionAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
 (3) and
@@ -22723,8 +22691,7 @@ along-exhaustion \texttt{HasDerivAt} wrappers
 (\S17.5--\S17.6, PR~\#1630).} Direct instantiations at
 $G := \texttt{IsingModel.latticeGraph}\,d$ of the
 along-exhaustion \texttt{hasDerivAt} family
-(\texttt{AmbientLattice/\{BetaDerivative, JDerivative,
-FieldDerivative\}.lean}; PR~\#1628 + earlier):
+(\texttt{AmbientLattice/\{BetaDerivative, JDerivative, FieldDerivative\}.lean}; PR~\#1628 + earlier):
 \texttt{correlationAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
 (4) and
 \texttt{magnetizationAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
@@ -23180,8 +23147,7 @@ to derive the volume-uniform \(Z_{\mathbb{C}}\) lower bound across all stages.
 \texttt{norm\_pos\_iff}), and
 \texttt{partitionFunctionComplex\_inducedGraph\_ne\_zero\_on\_ball\_at\_zero\_of\_volume\_uniform}
 unfolds the along-exhaustion wrapper to
-\texttt{partitionFunctionComplex (inducedGraph G ($\Lambda$.volume n))
-($J{:}\mathbb{C}$) 0 $\beta$} \(\ne0\) — the exact shape required by the
+\texttt{partitionFunctionComplex (inducedGraph G ($\Lambda$.volume n)) ($J{:}\mathbb{C}$) 0 $\beta$} \(\ne0\) — the exact shape required by the
 \texttt{hZk}/\texttt{hZk1} hypotheses of
 \texttt{dist\_deriv\_correlationAlongExhaustion\_le\_of\_complex\_circle\_bound}
 (PR \#3032) for the Lemma 17.5.2 capstone, specialised to the centred disc at
@@ -33290,8 +33256,7 @@ $\texttt{siteOsc} \cdot \texttt{resolventTail}\,d\,(2d\tanh\beta J)\,R$ carries 
 a single $R(\varepsilon)$ drawn from the box-independent
 $\texttt{Tendsto}\,(\texttt{resolventTail}\,d\,\alpha\,R \to 0)$ controls every stage.
 
-\paragraph{Headline.} $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion\_boundary\_influence%
-\_uniform}$: for $d \ge 1$, $0 \le \beta J$, $\beta J \cdot 2d < 1$, and every $\varepsilon > 0$
+\paragraph{Headline.} $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion\_boundary\_influence\allowbreak \_uniform}$: for $d \ge 1$, $0 \le \beta J$, $\beta J \cdot 2d < 1$, and every $\varepsilon > 0$
 there is one $R$ such that for \emph{every} stage $n$, Gibbs region $\Lambda'$, disagreement set $S$,
 and boundary conditions $\eta, \eta'$ agreeing off $S$ with every disagreement site at
 $\ell^1$-lattice distance $\ge R$ from the origin,
@@ -33303,8 +33268,7 @@ with $R$ depending only on $d, \beta, J, \varepsilon, |g(\uparrow)-g(\downarrow)
 the stage $n$, $S$, or volume cardinality.  The proof drives the per-stage explicit bound
 $\texttt{gibbsExpectationBC\_originObs\_inducedLattice\_dist\_le\_resolventTail}$ (the previous
 subsection's estimate with $\texttt{siteOsc}$ rewritten to the constant) through the single
-box-independent $\texttt{Tendsto}$.  $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion%
-\_boundary\_influence\_ball}$ restates this with the disagreement set described intrinsically (two
+box-independent $\texttt{Tendsto}$.  $\texttt{gibbsExpectationBC\_originObs\_cubicExhaustion\allowbreak \_boundary\_influence\_ball}$ restates this with the disagreement set described intrinsically (two
 boundary conditions agreeing on the ball of radius $R$ about the origin) --- the most direct reading
 of ``the infinite-volume expectation of a local observable is independent of the boundary
 condition'', uniform in the volume.
@@ -33360,8 +33324,7 @@ is the shell, every site at $\ell^1$-distance $\ge n+1$ from the origin
 ($\texttt{latticeDistance\_ge\_of\_mem\_cubicBox\_succ\_not\_mem}$), whence the PR \#4258 per-stage
 bound applies.
 
-\paragraph{Coincidence headline.} $\texttt{plusStateExpectation\_eq\_minusStateExpectation%
-\_originObs}$: at high temperature ($0 \le \beta$, $0 \le J$, $\beta J \cdot 2d < 1$, $d \ge 1$) the
+\paragraph{Coincidence headline.} $\texttt{plusStateExpectation\_eq\_minusStateExpectation\allowbreak \_originObs}$: at high temperature ($0 \le \beta$, $0 \le J$, $\beta J \cdot 2d < 1$, $d \ge 1$) the
 cubic-exhaustion $\pm$-state functionals of $\texttt{originObs}\,d\,g$ coincide,
 $\mu^{+}(\texttt{originObs}\,g) = \mu^{-}(\texttt{originObs}\,g)$ --- the decay-of-influence
 $\Rightarrow$ uniqueness content of the Dobrushin theorem.  Proof: squeeze the per-stage difference to
@@ -33443,8 +33406,7 @@ and is dominated on it ($\texttt{siteOsc\_lift\_le}$), so the total lifted oscil
 $\sum_{j\in O.S}\texttt{siteOsc}_j\,O.\varphi$ ($\texttt{sum\_siteOsc\_lift\_le}$, reindexed via the
 support-inclusion image), independent of the ambient box.
 
-\paragraph{Card-free multi-site bound.} $\texttt{gibbsExpectationBC\_localObs\_inducedLattice\_dist%
-\_le\_resolventTail}$: if $\eta,\eta'$ agree off a finite $S'$ every site of which is $\ge R$-far from
+\paragraph{Card-free multi-site bound.} $\texttt{gibbsExpectationBC\_localObs\_inducedLattice\_dist\allowbreak \_le\_resolventTail}$: if $\eta,\eta'$ agree off a finite $S'$ every site of which is $\ge R$-far from
 \emph{every} support site, then
 $|\langle O_{\mathrm{lift}}\rangle^{\eta} - \langle O_{\mathrm{lift}}\rangle^{\eta'}| \le
 (\sum_{j\in O.S}\texttt{siteOsc}_j\,O.\varphi)\cdot\texttt{resolventTail}\,d\,(2d\tanh\beta J)\,R$,
@@ -33494,8 +33456,7 @@ Georgii, Ch.~8.
 \subsection{Unconditional high-temperature distance cluster decay (Issue \#4274)}
 
 File \texttt{IsingModel/Concrete/LatticeGraphCorrelation/CorrelationDecay.lean}.  The earlier
-distance-cluster-decay wrapper $\texttt{truncated2Infinite\_latticeGraph\_tendsto\_atTop\_zero\_of%
-\_summable}$ is conditional on a $\texttt{Summable}$ hypothesis (a placeholder for the unconditional
+distance-cluster-decay wrapper $\texttt{truncated2Infinite\_latticeGraph\_tendsto\_atTop\_zero\_of\allowbreak \_summable}$ is conditional on a $\texttt{Summable}$ hypothesis (a placeholder for the unconditional
 summability supplied by the Simon--Lieb stack).  This subsection discharges it at high temperature.
 
 \paragraph{Summability discharge.} $\texttt{truncated2Infinite\_latticeGraph\_summable\_of\_high\_temp}$:
@@ -33540,16 +33501,14 @@ $\mathrm{dist}\to\infty$).
 
 \paragraph{Unconditional high-temperature capstones.}
 $\texttt{hasPolynomialDecay\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ composes the unconditional
-high-temperature exponential decay $\texttt{hasExponentialDecay\_latticeGraph\_of\_betaJ\_two\_d%
-\_lt\_one}$ (Simon--Lieb peeling, rate $-\log(\beta J\cdot2d)>0$) with the bridge, so
+high-temperature exponential decay $\texttt{hasExponentialDecay\_latticeGraph\_of\_betaJ\_two\_d\allowbreak \_lt\_one}$ (Simon--Lieb peeling, rate $-\log(\beta J\cdot2d)>0$) with the bridge, so
 $\texttt{HasPolynomialDecay}$ holds unconditionally at $0<J$, $0<\beta$, $\beta J\cdot2d<1$.  Feeding
 it into the conditional theorems yields the unconditional
 $\texttt{correlationInfinite\_exponential\_of\_betaJ\_two\_d\_lt\_one}$ (\S17.8 $\eta\le1$) and
 $\texttt{clusterProperty\_latticeGraph\_of\_betaJ\_two\_d\_lt\_one}$ (\S5.1 cluster property).  The
 genuinely-new content is the promotion of $\texttt{HasPolynomialDecay}$ from hypothesis to theorem; the
 $\eta\le1$ capstone is logically a round-trip, and the \S5.1 cluster property was already unconditional
-at high temperature via the independent summability route $\texttt{clusterProperty\_latticeGraph\_of%
-\_high\_temp}$ (\#903).  Only the high-temperature slice is discharged; at/below criticality polynomial decay is genuinely the
+at high temperature via the independent summability route $\texttt{clusterProperty\_latticeGraph\_of\allowbreak \_high\_temp}$ (\#903).  Only the high-temperature slice is discharged; at/below criticality polynomial decay is genuinely the
 scaling hypothesis (GJ p.~77, \S5.2).  Axiom-free ($\texttt{\#print axioms} = [\texttt{propext},
 \texttt{Classical.choice}, \texttt{Quot.sound}]$; no Vitali).  References: Glimm--Jaffe, 2nd ed.,
 \S17.8 pp.~316--318, \S5.1; Friedli--Velenik, \S3.7.3.
@@ -33597,8 +33556,7 @@ whence $\texttt{correlationComplexAlongExhaustion\_tendsto\_at\_real}$ gives poi
 $S$ to $\uparrow\texttt{correlationInfinite}$, and $(p.\beta : \mathbb{C})$ is an accumulation point
 of $S$ ($\texttt{accPt\_iff\_nhds}$, $\texttt{Complex.isometry\_ofReal.dist\_eq}$,
 $\texttt{Complex.ofReal\_inj}$).  The Vitali--Porter consumer then yields the locally-uniform
-holomorphic limit, identified at $p.\beta$ via the per-stage-holomorphicity assembly. $\texttt{\#print
-axioms}$ lists only $\texttt{propext}$, $\texttt{Classical.choice}$, and $\texttt{Quot.sound}$. The remaining
+holomorphic limit, identified at $p.\beta$ via the per-stage-holomorphicity assembly. $\texttt{\#print axioms}$ lists only $\texttt{propext}$, $\texttt{Classical.choice}$, and $\texttt{Quot.sound}$. The remaining
 inputs $\texttt{hZ}$, $\texttt{hbdd}$ are Ising-side and are discharged from a high-temperature
 cluster-expansion bound in a follow-up PR.  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
@@ -35526,8 +35484,7 @@ Friedli--Velenik \S3.7.3.
 of the true mass). $\texttt{latticeMass\_upperSemicontinuousOn\_window}$: for $d\ge1$, $0<J$, the map
 $\beta\mapsto\texttt{latticeMass}\,d\,(\texttt{cubicExhaustion}\,d)\,\langle J,0,\beta\rangle$ is
 $\texttt{UpperSemicontinuousOn}$ the window $\mathrm{Ioo}\,0\,(1/(J\cdot2d))$. By the mass
-characterization $\texttt{latticeMass} = \inf_{v\ne0}\mathrm{ofReal}(\texttt{directionalInverse%
-CorrelationLength}\,v)$, on the window $\texttt{latticeMass}$ equals an infimum over directions of
+characterization $\texttt{latticeMass} = \inf_{v\ne0}\mathrm{ofReal}(\texttt{directionalInverse\allowbreak CorrelationLength}\,v)$, on the window $\texttt{latticeMass}$ equals an infimum over directions of
 $\texttt{ENNReal.ofReal}$-images of the upper-semicontinuous per-direction functions; an infimum of
 upper-semicontinuous functions is upper-semicontinuous
 ($\texttt{upperSemicontinuousOn\_iInf}$ with

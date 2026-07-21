@@ -1,0 +1,70 @@
+# Regression fixtures for scripts/dead_candidate_scan.py.
+#
+#   name <TAB> expected-class <TAB> provenance
+#
+# expected-class is one of: published-result, load-bearing, uncertain,
+# safe-to-delete, or the weaker `not-safe` (anything but safe-to-delete), which
+# is what a keeper actually has to satisfy.
+#
+# Run with:  python3 scripts/dead_candidate_scan.py --expect scripts/audit/dead_candidate_fixtures.tsv
+#
+# Every row below is a *measured* fact about the tree, not a recollection. The
+# 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
+# only Lean rescues the first seven, reading only docs rescues the last three.
+#
+# Family-level calibration, main 0922a812, `--pattern '_ferromagnetic$'`:
+#   263 candidates -> 132 safe-to-delete, 44 uncertain, 52 load-bearing,
+#   35 published-result; 143 of the 263 have zero Lean consumers.
+# These integers are asserted by FamilyCalibrationTest in
+# scripts/test_dead_candidate_scan.py; they are main-relative and must be
+# refreshed there and here together, with a justification, when they move.
+#
+# The gap between "143 have no consumer" and "132 are safe" is the *delete*
+# closure: a lemma consumed only by another candidate is deletable with it, but
+# only if that other candidate is itself deleted. An earlier revision seeded the
+# closure with every candidate and then let the classifier retain some of them,
+# which made 15 lemmas safe-to-delete whose only consumer the same run reported
+# as a keeper. The closure is sound only over the candidates that actually go
+# away, so the retained ones are now removed before the fixpoint runs.
+
+# --- PR #4641 keepers, internally load-bearing (Lean channel) ---
+two_div_one_add_pow_le_two_div_pow	not-safe	#4641 keeper; consumed by two_div_one_add_pow_mul_..._le_two_div_pow_mul_two_div_pow
+one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow	not-safe	#4641 keeper; consumed by one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow	not-safe	#4641 keeper; same consumer
+pseudoMassG_analyticAt	not-safe	#4641 keeper; consumed by pseudoMassG_analyticWithinAt_Ici_zero (sibling _of_even differs only by suffix)
+pseudoMassG_analyticWithinAt_Ici_zero	not-safe	#4641 keeper; consumed by pseudoMassG_continuousWithinAt_Ici_zero
+one_div_one_add_pow_le_one_div_pow	not-safe	#4641 keeper; consumed by one_div_one_add_pow_mul_..._le_one_div_pow_mul_one_div_pow
+one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	not-safe	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
+
+# --- PR #4641 keepers with ZERO Lean consumers, saved only by docs/index.md ---
+one_div_mul_pow_mul_one_div_mul_pow_eq	published-result	docs/index.md:2052 (GJ Thm 17.5.1 M-factor factorization, Done row)
+one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow	published-result	docs/index.md:2054 (pair-product bridge, Done row)
+pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md:1945 (Sec 17.5 Step 132b, Done row)
+
+# --- The _ferromagnetic case: candidate -> consumer -> GJ Prop 4.6.1 ---
+freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	not-safe	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
+
+# --- Unicode identifiers must behave exactly like ASCII ones ---
+freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the name must not split the key
+correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
+
+# --- A genuinely isolated declaration: the exit-0 path must stay reachable ---
+# Main-relative (measured at 0922a812: no Lean consumer in the text scan, none in
+# the elaborated graph either, no docs/tex citation). Refresh -- and justify the
+# refresh -- if it ever acquires a consumer.
+Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	safe-to-delete	zero consumers by text and by `lake env lean scripts/audit/DumpDeps.lean`; no doc citation
+
+# --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
+log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}
+freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	tex/proof-guide.tex spells it \texttt{freeEnergy$\Lambda$\_...}
+
+# --- TeX channel: the two-stage \ensuremath{\mathbb{C}} unwrap ---
+# 16 section-18 names are spelled \texttt{...\ensuremath{\mathbb{C}}...}; before
+# the unwrap all 16 were invisible to the TeX channel, while the run printed the
+# 20 warnings that said so and exited 0 anyway. Both rows *also* pass on
+# docs/index.md alone -- which is why they were never false safe -- so the row
+# that pins the unwrap itself is EnsureMathTest in
+# scripts/test_dead_candidate_scan.py, asserting the names are findable in the
+# normalised TeX. These two rows record the case; the unit test guards it.
+fieldPolymerZℂ_ne_zero	published-result	tex/proof-guide.tex:18996 \texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}
+norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	tex/proof-guide.tex:18893 same spelling, name longer than the 60-char warning excerpt
