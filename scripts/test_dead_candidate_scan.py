@@ -578,29 +578,34 @@ class UnreadableCitationTest(unittest.TestCase):
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"\unknownmacro")
         self.assertTrue(span.could_cite("anything_at_all"))
 
-    def test_unparsable_span_requires_only_one_of_its_words(self) -> None:
-        """Its end is not locatable, so no word can be required to open the name.
+    def test_unparsable_span_refutes_nothing_at_all(self) -> None:
+        """Unexplained braces mean unknown content, so no name may be refuted.
 
-        ``shallow_lemma`` is charged because the one-character fragment ``a``
-        occurs in it: inside an unparsable region a short fragment refutes almost
-        nothing, which is the conservative direction.
+        Reading such a span word by word was a refutation made on material the
+        normaliser had not explained; each round of rules for it opened a new
+        fail-open face. The span now charges every candidate, unrelated ones
+        included -- which can only produce `uncertain`, never a false
+        `safe-to-delete`.
         """
         span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
-        self.assertTrue(span.could_cite("deep_lemma"))
-        self.assertTrue(span.could_cite("prefix_tail_of_it"))  # a run that does not open it
-        self.assertTrue(span.could_cite("shallow_lemma"))
-        self.assertFalse(span.could_cite("zzz_lemm"))
+        self.assertFalse(span.refutes)
+        for name in ("deep_lemma", "prefix_tail_of_it", "shallow_lemma", "zzz_lemm"):
+            self.assertTrue(span.could_cite(name), name)
 
-    def test_unparsable_span_is_charged_when_its_word_sits_inside_the_name(self) -> None:
-        """Requiring the *opening* fragment as a prefix let two real shapes escape.
+    def test_unparsable_span_is_charged_whatever_the_name(self) -> None:
+        """The real shapes that escaped: qualified, prose-opened, deeply nested.
 
-        A partially qualified citation and one opened by prose both show a
-        fragment the name carries, and both were charged to nobody while
-        `startswith` decided the question.
+        The last one is the leak that motivated the invariant: ``_MACRO_ARGS``
+        swallows at most two levels of braces, so a third level put the argument
+        text -- *the name itself* -- back into the readable fragments, where it
+        refuted the very name it spelled.
         """
         cases = (
             ("\\texttt{Ambient.foo\n", "IsingModel.Ambient.foo"),
             ("\\texttt{prose {deep {nest}} name_xyzzy}\n", "IsingModel.name_xyzzy"),
+            ("\\texttt{pre\\ensuremath{\\mathfrak{{{X}}}}post}\n", "pre𝔛post"),
+            ("\\texttt{prose{x}foo\\_bar\n", "foo_bar"),
+            ("\\texttt{see\\/foo\\_bar\n", "foo_bar"),
         )
         for source, name in cases:
             with self.subTest(source=source):
@@ -608,7 +613,23 @@ class UnreadableCitationTest(unittest.TestCase):
                 self.assertEqual(len(warnings), 1)
                 self.assertEqual(warnings[0].kind, dcs.UNPARSABLE_BRACES)
                 self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
-                self.assertFalse(warnings[0].could_cite("zzz_qqq"))
+                self.assertTrue(warnings[0].could_cite("zzz_qqq"), warnings[0].message)
+
+    def test_a_brace_no_macro_swallowed_disables_refutation(self) -> None:
+        """The invariant is checked on the braces, not on the span's kind.
+
+        A parsed span may still carry a brace that no macro match accounted for;
+        the text around it is of unknown provenance for exactly the same reason,
+        so it refutes nothing either. A span whose braces *are* all charged to a
+        macro keeps refuting, which is what makes the precondition a condition
+        rather than a switch that turns the channel off.
+        """
+        self.assertFalse(
+            dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"pre{X}post\unknown").refutes
+        )
+        self.assertTrue(
+            dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"pre\unknown{X}post").refutes
+        )
 
     def test_macro_arguments_are_not_readable_fragments(self) -> None:
         """An unknown macro's argument is its input, never literal name text.

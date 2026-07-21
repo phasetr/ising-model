@@ -52,7 +52,10 @@ A third rule follows from the first two and is just as load-bearing:
    those candidates come out ``uncertain``, never ``safe-to-delete``. Reading a
    multi-word span as one name (or a macro argument as literal text) refuted the
    name it actually cited and charged the span to nobody -- the same fail-open
-   route, one level down.
+   route, one level down. Every such leak was a *refutation* made on material the
+   normaliser had not explained, so refutation now has a single precondition
+   instead of a growing rule set: a span may deny a candidate only if its brace
+   structure was accounted for completely (:attr:`UnreadableSpan.refutes`).
 
 Boundary predicate
 ------------------
@@ -1063,6 +1066,25 @@ MACRO_RESIDUE = "unnormalised macro"
 UNPARSABLE_BRACES = "unparsable braces"
 
 
+def _braces_all_charged_to_a_macro(text: str) -> bool:
+    """Return whether every brace of ``text`` was swallowed by a macro match.
+
+    This is the **refutation precondition** of :class:`UnreadableSpan`. The last
+    alternative of :data:`_UNREADABLE_RE` matches a brace on its own, so a lone
+    ``{`` or ``}`` in the match stream is precisely a brace the normaliser could
+    not attribute to any macro: the span's brace structure is *not* explained,
+    the text between such braces is of unknown provenance, and a fragment read
+    out of it is not evidence about any name.
+
+    ``_MACRO_ARGS`` swallows at most one level of nesting, so a deeper argument
+    (``\\ensuremath{\\mathfrak{{{X}}}}``) leaves its inner text outside every
+    macro match -- and that text is the very name the macro spells. Refusing to
+    refute on such a span is what makes the rule one condition rather than a
+    growing list of special cases.
+    """
+    return not any(match.group() in {"{", "}"} for match in _UNREADABLE_RE.finditer(text))
+
+
 def _usable_fragment(fragment: str) -> bool:
     """Return whether ``fragment`` could be a piece of a declaration name.
 
@@ -1141,6 +1163,33 @@ class UnreadableSpan:
     text: str  # the span as far as it could be read
 
     @property
+    def refutes(self) -> bool:
+        """Return whether this span may be used to *refute* a candidate name.
+
+        **The invariant of the whole TeX channel**: only a span whose brace
+        structure the normaliser explained completely may say "this citation is
+        not about that name". Everything else charges every candidate.
+
+        Six rounds of fixes to the refutation rules each opened a new fail-open
+        face, always through the same move: text of unknown provenance was read
+        as literal name evidence and refuted the name it actually spelled. The
+        two ways a span's braces can stay unexplained are exactly
+
+        * :data:`UNPARSABLE_BRACES` -- the citation grammar could not find the
+          span's end at all, so its content is unknown by construction, and
+        * a brace inside the span that no macro match swallowed
+          (:func:`_braces_all_charged_to_a_macro`), which is where a three-level
+          argument leaks its inner text.
+
+        Both give up refutation instead of getting a rule of their own, so the
+        refutation surface is one precondition rather than a set of rules.
+        Charging a span to every candidate only ever produces `uncertain`
+        verdicts, never a false `safe-to-delete`; the coverage warnings are zero
+        on the real guide, so the precondition costs nothing today.
+        """
+        return self.kind != UNPARSABLE_BRACES and _braces_all_charged_to_a_macro(self.text)
+
+    @property
     def message(self) -> str:
         """Return the one-line warning as printed in the report."""
         detail = (
@@ -1172,14 +1221,13 @@ class UnreadableSpan:
         argument never becomes a word -- reading it as one would restore that
         very fail-open route through the word rule.
 
-        A :data:`UNPARSABLE_BRACES` span is read by the same rule, its unreadable
-        opener included: ``\\texttt{`` and whatever follows it up to the next space
-        form one word, which no name can be refuted by unless the span shows a
-        readable fragment there. So ``\\texttt{\\unknownmacro`` keeps every
-        candidate, ``\\texttt{Ambient.foo`` keeps the names containing that
-        fragment, and a name spelled after prose (``\\texttt{prose {x} name_xyzzy``)
-        is charged through its own word.
+        The word rule runs **only** on a span that passes :attr:`refutes`; a span
+        whose braces are not fully explained is charged to every candidate
+        outright, since any fragment read out of unexplained material is text of
+        unknown provenance rather than evidence about a name.
         """
+        if not self.refutes:
+            return True
         decided = False
         for word in _citation_words(self.text):
             verdict = self._word_could_spell(word, name)
@@ -1915,22 +1963,35 @@ L6 documentation prose that depends on a lemma without naming it -- unmatchable 
 L7 the TeX macro table is incomplete by construction. Mitigation: a citation the
    normaliser cannot read is not dropped but charged to every candidate name it
    could have been citing, which forces `uncertain`; the coverage warnings printed
-   with every run are those same spans. "Could have been citing" is decided word by
-   word -- a name has no space, so one word of the span spelling the name is enough,
-   and a span is charged to nobody only when *every* word refutes the name. An
-   unknown macro is charged together with its brace arguments
-   (`\ensuremath{\mathbb{X}}`, `\'{e}`, `\textsubscript{k}` each spell one
-   character), because reading an argument as literal name text would refute the
-   very name it spells; the words are therefore cut at the whitespace outside that
-   material only, so an argument never becomes a word either. Likewise a fragment
-   that no identifier can contain (a space, a bracket) never refutes a candidate,
-   and an unresolved control sequence is not identifier evidence: a word showing no
-   readable fragment at all keeps every candidate. A citation is matched against
-   both the bare and the qualified spelling of a name. A citation whose braces
-   cannot be parsed at all is read by the same rule, its unreadable opener
-   included, so its words are those of the line it opens. The residue is that
-   within one word the readable fragments are required in order, which an
-   unparsable region could in principle permute.
+   with every run are those same spans. Charging is the safe direction, so the
+   rules below only ever decide when a span may *refute* a name, and they reduce
+   to one precondition: a span refutes only if its brace structure was explained
+   completely, i.e. it parsed as a citation *and* every brace inside it was
+   swallowed by a macro match. In particular an unknown macro is charged together
+   with its brace arguments (`\ensuremath{\mathbb{X}}`, `\'{e}`,
+   `\textsubscript{k}` each spell one character), because reading an argument as
+   literal name text would refute the very name it spells -- but that swallowing
+   covers at most two levels of braces, so `\ensuremath{\mathfrak{{{X}}}}` leaves
+   its inner text unattributed, and such a span refutes nothing rather than
+   refuting through the leak. A span whose braces cannot be parsed at all
+   (`\texttt{Ambient.foo`, an unbalanced or three-level body) likewise refutes
+   nothing: its end is not locatable, so its content is unknown by construction.
+   For the spans that do refute, "could have been citing" is decided word by word
+   -- a name has no space, so one word of the span spelling the name is enough,
+   and a span is charged to nobody only when *every* word refutes the name. The
+   words are cut at the whitespace outside the unreadable material only, so a
+   macro argument never becomes a word either. A fragment that no identifier can
+   contain (a space, a bracket) never refutes a candidate, and an unresolved
+   control sequence is not identifier evidence: a word showing no readable
+   fragment at all keeps every candidate. A citation is matched against both the
+   bare and the qualified spelling of a name. The residue is the refutation test
+   itself: within one word every readable fragment is required to occur in the
+   name at all (and in order), so a name is refuted whenever literal text sits in
+   the same word without belonging to it -- prose glued to the citation with no
+   space (`\texttt{cf.foo\_bar}`), or an identifier-shaped fragment of a
+   *different* name in the same word. Only the explained-braces precondition
+   bounds that, so the permanent fix is a machine-readable citation macro (see
+   the follow-up note in `.self-local/reports/`).
 L7b the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
    A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
    a TeX file other than the guide) is invisible, so "no documentation citation"
