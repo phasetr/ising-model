@@ -6,13 +6,12 @@ import IsingModel.PseudoMass.FromParamsBasic
 H-zero specialisations of `pseudoMassFromParamsAtPair` bounds in terms of
 `truncated2Infinite`.
 
-## Standalone module (intentional)
+## Umbrella-reachable via its cluster head
 
-This module lies outside the transitive import closure of the root umbrella
-`IsingModel.lean`, so it is not part of the assembled library: no
-umbrella-reachable ("live") module imports it.  It is imported only within this
-standalone cluster (by a sibling module), which is deliberately not wired into
-the umbrella.  It should be retained rather than treated as dead code: it is
+This module has no importers outside its own cluster.  The cluster head is
+registered in the root umbrella `IsingModel.lean`, so this module lies inside
+the transitive import closure of `import IsingModel` and is therefore covered by
+the capstone axiom audit (`scripts/audit_gate.py`, check V3).  It is
 genuine formalization — non-trivial sandwich / bound results for the `J = 0` /
 `h = 0` slices of `pseudoMassFromParamsAtPair`, built on the live
 `PseudoMass/FromParamsBasic` results.
