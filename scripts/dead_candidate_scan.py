@@ -548,10 +548,15 @@ class SourceFile:
 
 
 # ``strip_noncode`` blanks comments and string bodies to spaces *in place*, so a
-# run of two or more spaces in the cleaned text is exactly a region the code
-# scanner cannot see. Recovering the prose from the mask rather than from a
-# second comment tokenizer keeps the repository's single stripper single.
-_BLANK_RUN_RE = re.compile(r"[ ]{2,}")
+# run of spaces in the cleaned text whose raw text is *not* blank is exactly a
+# region the code scanner cannot see. Recovering the prose from the mask rather
+# than from a second comment tokenizer keeps the repository's single stripper
+# single. The run may be a single space: newlines are preserved, so a line
+# carrying one character inside a block comment blanks to exactly one space, and
+# requiring two dropped such a line (and any one-character name on it) from the
+# prose channel. Ordinary code spacing is blank in the raw text too and is
+# discarded by the ``strip()`` guard below rather than by the run length.
+_BLANK_RUN_RE = re.compile(r"[ ]+")
 _PROSE_KINDS = (("/-!", "module docstring"), ("/--", "doc comment"), ("--", "comment"),
                 ("/-", "comment"))
 
@@ -907,6 +912,12 @@ TEX_MACROS: dict[str, str] = {
     # Repository-local macro (tex/proof-guide.tex:44): 139 occurrences, every
     # one of them inside a declaration name.
     r"\LeanLambda": "Λ",
+    # Not identifier characters, but the guide writes type signatures inside code
+    # citations, so without these the whole span is unreadable and every name it
+    # could be citing is forced to `uncertain`.
+    r"\to": "→",
+    r"\langle": "⟨",
+    r"\rangle": "⟩",
 }
 
 # ``\ensuremath`` selects math mode without changing the token it wraps, so it
@@ -916,8 +927,11 @@ TEX_MACROS: dict[str, str] = {
 # stage one hid all 16 published ``...ℂ...`` results (20 citations) from the TeX
 # channel entirely.
 _TRANSPARENT_WRAPPERS = ("ensuremath",)
+# The gap before the brace is matched with ``[ \t]*`` rather than ``\s*``: a
+# newline swallowed here would join two source lines and shift every TeX line
+# number reported after it.
 _TRANSPARENT_RE = re.compile(
-    r"\\(?:" + "|".join(_TRANSPARENT_WRAPPERS) + r")\s*\{((?:[^{}]|\{[^{}]*\})*)\}"
+    r"\\(?:" + "|".join(_TRANSPARENT_WRAPPERS) + r")[ \t]*\{((?:[^{}]|\{[^{}]*\})*)\}"
 )
 # Unwrapping exposes an outer layer's braces, so it repeats to a fixpoint; the
 # bound only stops a pathological input from spinning.
@@ -1024,12 +1038,37 @@ def code_citation_spans(text: str) -> list[tuple[str, int]]:
 
 
 # Everything the normaliser could *not* resolve inside a citation: a macro it has
-# no entry for, an escape, and the braces around them. Splitting on it leaves the
-# fragments that are certainly part of whatever name the span cites.
-_UNREADABLE_RE = re.compile(r"\\[A-Za-z]+\s*|\\.|[{}]")
+# no entry for, *its arguments*, an escape, and any stray braces. Splitting on it
+# leaves the fragments that are certainly part of whatever name the span cites.
+#
+# The arguments must go with the macro. An unknown macro's brace group is its
+# input, not literal text: ``\ensuremath{\mathbb{X}}`` spells one character and
+# ``\'{e}`` spells one letter, so treating the body (``X``, ``e``) as a readable
+# fragment demands that the cited name contain it -- which the real name never
+# does, and the candidate is refuted by evidence that does not exist. That is the
+# one route by which a name invisible to the TeX channel can still come out
+# `safe-to-delete`, so the argument groups are swallowed with the macro.
+_MACRO_ARGS = r"(?:\{(?:[^{}]|\{[^{}]*\})*\}[ \t]*)*"
+_UNREADABLE_RE = re.compile(
+    r"\\[A-Za-z]+[ \t]*" + _MACRO_ARGS  # control word (space-gobbling) plus arguments
+    + r"|\\." + _MACRO_ARGS  # control symbol (accents: ``\'{e}``) plus arguments
+    + r"|[{}]"
+)
 
 MACRO_RESIDUE = "unnormalised macro"
 UNPARSABLE_BRACES = "unparsable braces"
+
+
+def _usable_fragment(fragment: str) -> bool:
+    """Return whether ``fragment`` could be a piece of a declaration name.
+
+    A fragment that no name can contain (it carries a space, a bracket, or any
+    other non-identifier character) is prose around the citation rather than
+    evidence about the name, and using it as a refutation would reject every
+    candidate. The dot is admitted so that a namespace-qualified fragment can be
+    matched against the full name (:meth:`UnreadableSpan.could_cite_decl`).
+    """
+    return bool(fragment) and all(is_id_rest(char) or char == "." for char in fragment)
 
 
 @dataclass(frozen=True)
@@ -1071,6 +1110,11 @@ class UnreadableSpan:
         an entirely unreadable span (no fragment left) could cite anything and
         therefore makes every candidate uncertain -- loudly rather than silently.
 
+        Only a fragment that could itself be part of a name may refute one
+        (:func:`_usable_fragment`): a fragment carrying a space or a bracket is
+        prose surrounding the citation, and requiring the name to contain it
+        would refute every candidate at once.
+
         A :data:`UNPARSABLE_BRACES` span has no locatable end, so its tail is
         prose of unknown extent and only the identifier run that opens it may be
         required; an empty run again keeps every candidate.
@@ -1082,13 +1126,23 @@ class UnreadableSpan:
             return name.startswith(prefix)
         position = 0
         for fragment in _UNREADABLE_RE.split(self.text):
-            if not fragment:
+            if not _usable_fragment(fragment):
                 continue
             found = name.find(fragment, position)
             if found < 0:
                 return False
             position = found + len(fragment)
         return True
+
+    def could_cite_decl(self, decl: "Decl") -> bool:
+        """Return whether this span may be a citation of ``decl``, under any spelling.
+
+        The guide cites a result both bare (``foo``) and namespace-qualified
+        (``IsingModel.Ambient.foo``), and a fragment carrying the qualification
+        is refuted by the bare final component. Either spelling keeping the span
+        alive is enough to charge it, since charging is what forces `uncertain`.
+        """
+        return self.could_cite(decl.final) or self.could_cite(decl.full)
 
 
 def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
@@ -1663,7 +1717,7 @@ def _apply_doc_channel(
         # have been citing.
         for span in doc.unreadable:
             for verdict in verdicts:
-                if span.could_cite(verdict.decl.final):
+                if span.could_cite_decl(verdict.decl):
                     verdict.doc_citations.append(
                         f"unreadable {doc.label}:{span.line}: a citation this scan "
                         f"cannot read ({span.kind}) may name this declaration"
@@ -1754,15 +1808,25 @@ L6 documentation prose that depends on a lemma without naming it -- unmatchable 
 L7 the TeX macro table is incomplete by construction. Mitigation: a citation the
    normaliser cannot read is not dropped but charged to every candidate name it
    could have been citing, which forces `uncertain`; the coverage warnings printed
-   with every run are those same spans. The residue is bounded, not zero: for a
-   citation whose braces cannot be parsed at all the end of the span is unknown,
-   so only the identifier run that opens it is required of the name -- a name
-   spelled entirely inside the unparsable region is not charged to anyone.
+   with every run are those same spans. An unknown macro is charged together with
+   its brace arguments (`\ensuremath{\mathbb{X}}`, `\'{e}`, `\textsubscript{k}`
+   each spell one character), because reading an argument as literal name text
+   would refute the very name it spells and charge the span to nobody; likewise a
+   fragment that no identifier can contain (a space, a bracket) never refutes a
+   candidate. A citation is matched against both the bare and the qualified
+   spelling of a name. The residue is bounded, not zero: for a citation whose
+   braces cannot be parsed at all the end of the span is unknown, so only the
+   identifier run that opens it is required of the name -- a name spelled
+   entirely inside the unparsable region is not charged to anyone.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
    such a lemma really is dead code -- it is the surrounding *documentation* the
-   deletion PR must update, or the tree keeps building green while its headers lie."""
+   deletion PR must update, or the tree keeps building green while its headers lie.
+   The prose is recovered from the comment mask, down to a single blanked
+   character, so a one-character name on its own line inside a block comment is
+   seen too; what the mask cannot distinguish is prose from an equally long run
+   of ordinary code spacing, which is why blank raw text is discarded."""
 
 
 def report(

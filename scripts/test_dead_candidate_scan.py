@@ -476,10 +476,11 @@ class EnsureMathTest(unittest.TestCase):
     def test_real_guide_has_no_name_shaped_blind_spot(self) -> None:
         """Every span the guide leaves unreadable is prose, not a name citation.
 
-        The measured state of main: 3 unreadable spans (type signatures written
-        with ``\\to``), and none of them can be a citation of any declaration in
-        the tree. A failure here is a maintenance signal, not a flake -- the
-        macro table needs the entry, or those names go out as ``uncertain``.
+        The measured state of main: no unreadable span at all (the three type
+        signatures written with ``\\to`` are read since the macro table carries
+        the arrow), and therefore nothing charged to any declaration. A failure
+        here is a maintenance signal, not a flake -- the macro table needs the
+        entry, or those names go out as ``uncertain``.
         """
         tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
         self.assertLessEqual(len(tex.unreadable), 5, [w.message for w in tex.unreadable])
@@ -487,7 +488,7 @@ class EnsureMathTest(unittest.TestCase):
             (span.line, decl.final)
             for span in tex.unreadable
             for decl in tree().decls
-            if not decl.anonymous and span.could_cite(decl.final)
+            if not decl.anonymous and span.could_cite_decl(decl)
         ]
         self.assertEqual(charged, [])
 
@@ -526,6 +527,57 @@ class UnreadableCitationTest(unittest.TestCase):
         span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
         self.assertTrue(span.could_cite("deep_lemma"))
         self.assertFalse(span.could_cite("shallow_lemma"))
+
+    def test_macro_arguments_are_not_readable_fragments(self) -> None:
+        """An unknown macro's argument is its input, never literal name text.
+
+        Each of these spans is the shape the guide already uses for a *real*
+        published name (``\\ensuremath{\\mathbb{C}}`` spells ``ℂ`` inside 16 of
+        them). Reading the argument body as a literal fragment demanded that the
+        cited name contain ``X`` / ``k`` / ``e``, which the name it actually
+        spells never does, so the span refuted every candidate, was charged to
+        nobody, and the name it hid could fall out as ``safe-to-delete``.
+        """
+        cases = (
+            (r"\texttt{fieldPolymerZ\ensuremath{\mathbb{X}}}", "fieldPolymerZ𝕏"),
+            (r"\texttt{le\_div\_iff\textsubscript{k}}", "le_div_iffₖ"),
+            (r"\texttt{caf\'{e}\_lemma}", "café_lemma"),
+        )
+        for source, name in cases:
+            with self.subTest(source=source):
+                _normalized, warnings = dcs.normalize_tex(source)
+                self.assertEqual(len(warnings), 1)
+                self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
+                # Still discriminating: an unrelated name is refuted as before.
+                self.assertFalse(warnings[0].could_cite("unrelated_lemma"))
+
+    def test_prose_fragments_do_not_refute_every_candidate(self) -> None:
+        """A fragment no identifier can contain is prose, not evidence.
+
+        The identifier fragment of the same span keeps refuting, so ignoring the
+        prose one loosens the test exactly where it was refuting by mistake.
+        """
+        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"prefix\unknown{Z} (see)")
+        self.assertTrue(span.could_cite("prefix_lemma"))
+        self.assertFalse(span.could_cite("other_lemma"))
+
+    def test_qualified_citation_is_matched_against_the_full_name(self) -> None:
+        """A namespace-qualified fragment is refuted by the bare final component."""
+        span = dcs.UnreadableSpan(
+            "tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX bar"
+        )
+        decl = synthetic_tree(
+            {
+                "IsingModel/SynthQualified.lean": (
+                    "namespace IsingModel\n"
+                    "theorem foo_x_bar : True := trivial\n"
+                    "end IsingModel\n"
+                )
+            }
+        ).decls[0]
+        self.assertEqual(decl.full, "IsingModel.foo_x_bar")
+        self.assertFalse(span.could_cite(decl.final))
+        self.assertTrue(span.could_cite_decl(decl))
 
     def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
@@ -581,6 +633,19 @@ class ProseMentionTest(unittest.TestCase):
         self.assertEqual(verdict.verdict, dcs.SAFE)
         self.assertTrue(any("module docstring" in item for item in verdict.info))
         self.assertTrue(any("leaves that text stale" in item for item in verdict.info))
+
+    def test_one_character_prose_line_is_recovered(self) -> None:
+        """A blanked run of length one is prose too, not code spacing.
+
+        Newlines survive the mask, so a line carrying a single character inside a
+        block comment blanks to exactly one space; requiring two silently dropped
+        such a line, and with it any one-character name written on it.
+        """
+        raw = "/-! ## Doc\nx\n-/\ntheorem t : True := trivial\n"
+        cleaned = strip_noncode(raw)
+        prose, regions = dcs.extract_prose(raw, cleaned, dcs.line_starts(raw))
+        self.assertIn("x", prose.splitlines())
+        self.assertIn(2, [line for _offset, line, _kind in regions])
 
     def test_prose_channel_sees_every_non_code_occurrence(self) -> None:
         """On the real tree, no textual occurrence falls between the channels."""
