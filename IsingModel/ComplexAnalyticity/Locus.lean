@@ -373,31 +373,6 @@ theorem leeYangDomain_eq_preimage :
   · intro hlt; linarith
   · intro hlt; change |h.im| < h.re; linarith
 
-/-- `leeYangSubdomain` characterized as an intersection of preimages. -/
-theorem leeYangSubdomain_eq_inter_preimage (β : ℝ) (N : ℕ) :
-    leeYangSubdomain β N = leeYangDomain ∩
-      (fun h : ℂ => β * |h.im| * (N : ℝ)) ⁻¹' Set.Iio (Real.pi / 2) := by
-  ext h
-  rfl
-
-/-- Explicit element of `leeYangSubdomain`: `(1 : ℂ)` works for any
-`β, N`. Convenient for downstream arguments needing a basepoint. -/
-theorem one_mem_leeYangSubdomain (β : ℝ) (N : ℕ) :
-    (1 : ℂ) ∈ leeYangSubdomain β N :=
-  real_pos_mem_leeYangSubdomain β N (by norm_num : (0 : ℝ) < 1)
-
-/-- `(1 : ℂ) ∈ leeYangDomain` as a convenience. -/
-theorem one_mem_leeYangDomain : (1 : ℂ) ∈ leeYangDomain :=
-  real_pos_mem_leeYangDomain (by norm_num : (0 : ℝ) < 1)
-
-/-- `leeYangSubdomain β 1` (single-site case): vacuously close to full
-Lee-Yang, constrained by `β · |Im h| < π/2`. -/
-theorem leeYangSubdomain_one_eq (β : ℝ) :
-    leeYangSubdomain β 1 =
-      {h : ℂ | |h.im| < h.re ∧ β * |h.im| < Real.pi / 2} := by
-  ext h
-  simp [leeYangSubdomain]
-
 /-- When `β = 0`, `leeYangSubdomain 0 N = leeYangDomain` for any `N`
 (the strip constraint is vacuously `0 < π/2`). -/
 theorem leeYangSubdomain_beta_zero (N : ℕ) :
