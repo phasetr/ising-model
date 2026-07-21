@@ -1,4 +1,14 @@
-# ローカルミラー・インデックス (2026-07-21 更新 — #4646 OPEN, #4639 OPEN, #4640 CLOSED, #4642 OPEN)
+# ローカルミラー・インデックス (2026-07-22 更新 — #4646 OPEN, #4639 CLOSED (mirror was stale at OPEN, corrected), #4640 CLOSED, #4642 OPEN, #4649 OPEN (pending CI), #4650 CLOSED (merged PR #4651, squash 58f4e1f0))
+
+**2026-07-22 #4639/#4649/#4650 dev-issue-manager pass (PR #4648)**: #4639 mirror corrected from
+stale OPEN to CLOSED (GitHub state was already CLOSED since 2026-07-21T17:58:18Z; mirror had not
+been updated). PR #4648 verified as the first compliant operational use of the #4639 adoption
+rule (full scanner output incl. `LIMITS:` banner + `--lean` cross-check pasted for the exact
+3-candidate set). #4649 checklist updated to reflect actual gate results; blocked only on CI
+(`build` check `in_progress` at time of this pass). New follow-up issue #4650 opened for 5
+reference-0 Lee-Yang subdomain/domain declarations (1 cascade from #4648 + 4 pre-existing
+siblings found during this audit), in-scope decoration removal under standing authorization.
+Mirrors: `4639.md`, `4649.md`, `4650.md`.
 
 **2026-07-21 #4646 refactor (shake import-precision) / user-authorized / OPEN**: Tracking issue for PR #4645 (draft). Build-speed / simplification refactor under standing authorization. `lake exe shake` reports 346 findings; after filtering structural noise (PR #4644), exactly 3 genuine import-precision issues remain in modules with declarations. Three findings: (1) `ComplexAnalyticityCore.lean` imports `Families.SandwichBounds` but only needs `Families.VertexDisjoint`; (2) `WalshBasisOrthogonality.lean` suggests replacing `OneSiteLayerSpectralWindow` with direct imports (needs checking); (3) `ComponentFiber.lean` reaches `AlternatingCompleteGraph.SignedSums` through facade. Policy note: repository keeps facades as re-export window; these three are import-precision issues (not facade dismantling), so in scope. Mirror: `4646.md`.
 
