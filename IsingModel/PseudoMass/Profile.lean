@@ -523,63 +523,6 @@ theorem pseudoMassG_continuousWithinAt_Ici_zero (α : ℕ) {r : ℝ} (hr : 0 < r
     ContinuousWithinAt (pseudoMassG α r) (Set.Ici 0) t :=
   (pseudoMassG_analyticWithinAt_Ici_zero α hr ht).continuousWithinAt
 
-/-- **For even `α`, `pseudoMassG α r` is `AnalyticAt` everywhere on `ℝ`**
-(`r > 0`): the denominator `1 + (t·r)^α` is bounded below by `1 > 0`
-since `(t·r)^α ≥ 0` for even `α`, so the quotient is analytic on all
-of `ℝ`. -/
-theorem pseudoMassG_analyticAt_of_even {α : ℕ} (hα_even : Even α) (r t : ℝ) :
-    AnalyticAt ℝ (pseudoMassG α r) t := by
-  unfold pseudoMassG
-  have h_tr : AnalyticAt ℝ (fun x : ℝ => x * r) t :=
-    analyticAt_id.mul (analyticAt_const)
-  have h_neg_tr : AnalyticAt ℝ (fun x : ℝ => -(x * r)) t :=
-    h_tr.neg
-  have h_exp : AnalyticAt ℝ (fun x : ℝ => Real.exp (-(x * r))) t :=
-    analyticAt_rexp.comp h_neg_tr
-  have h_two_exp : AnalyticAt ℝ (fun x : ℝ => 2 * Real.exp (-(x * r))) t :=
-    analyticAt_const.mul h_exp
-  have h_pow : AnalyticAt ℝ (fun x : ℝ => (x * r) ^ α) t :=
-    h_tr.pow α
-  have h_denom : AnalyticAt ℝ (fun x : ℝ => 1 + (x * r) ^ α) t :=
-    analyticAt_const.add h_pow
-  have h_pow_nn : 0 ≤ (t * r) ^ α := hα_even.pow_nonneg _
-  have h_denom_ne : (1 + (t * r) ^ α) ≠ 0 := by linarith
-  exact h_two_exp.div h_denom h_denom_ne
-
-/-- **For even `α`, `pseudoMassG α r` is `AnalyticOnNhd ℝ` on
-`Set.univ`**: lift `_analyticAt_of_even` to a set-level form on all
-of `ℝ`. -/
-theorem pseudoMassG_analyticOnNhd_univ_of_even {α : ℕ} (hα_even : Even α)
-    (r : ℝ) :
-    AnalyticOnNhd ℝ (pseudoMassG α r) Set.univ := by
-  intro t _
-  exact pseudoMassG_analyticAt_of_even hα_even r t
-
-/-- **`-pseudoMassG α r` is `StrictMonoOn (Ici 0)`**: dual of
-`pseudoMassG_strictAntiOn`. -/
-theorem neg_pseudoMassG_strictMonoOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
-    StrictMonoOn (fun t : ℝ => -pseudoMassG α r t) (Set.Ici 0) := by
-  intro t₁ ht₁ t₂ ht₂ h
-  have hgt : pseudoMassG α r t₂ < pseudoMassG α r t₁ :=
-    pseudoMassG_strictAntiOn hα hr ht₁ ht₂ h
-  linarith
-
-/-- **`pseudoMassG(t₂) < pseudoMassG(t₁) ↔ t₁ < t₂`** (for `t₁, t₂ ≥ 0`,
-`r > 0`, `α ≥ 1`): iff form of `pseudoMassG_strictAntiOn`. -/
-theorem pseudoMassG_lt_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
-    {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht₂ : 0 ≤ t₂) :
-    pseudoMassG α r t₂ < pseudoMassG α r t₁ ↔ t₁ < t₂ := by
-  have hanti := pseudoMassG_strictAntiOn hα hr
-  refine ⟨?_, fun h => hanti (Set.mem_Ici.mpr ht₁) (Set.mem_Ici.mpr ht₂) h⟩
-  intro hlt
-  by_contra h_neg
-  have h_neg' : t₂ ≤ t₁ := not_lt.mp h_neg
-  rcases h_neg'.lt_or_eq with hlt_t | heq_t
-  · have := hanti (Set.mem_Ici.mpr ht₂) (Set.mem_Ici.mpr ht₁) hlt_t
-    linarith
-  · subst heq_t
-    exact lt_irrefl _ hlt
-
 /-- **`pseudoMassG(t₂) ≤ pseudoMassG(t₁) ↔ t₁ ≤ t₂`** (non-strict). -/
 theorem pseudoMassG_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht₂ : 0 ≤ t₂) :
@@ -600,49 +543,6 @@ theorem pseudoMassG_le_iff {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
 theorem pseudoMassG_antitoneOn {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) :
     AntitoneOn (pseudoMassG α r) (Set.Ici (0 : ℝ)) :=
   (pseudoMassG_strictAntiOn hα hr).antitoneOn
-
-/-- **`pseudoMassG α r t < 2` for `t > 0` (strict at positive `t`)**:
-direct corollary of `pseudoMassG_strictAntiOn` (strict anti on `Ici 0`)
-and `pseudoMassG_zero` (`g(0) = 2`). Sharpens `pseudoMassG_le_two`
-to a strict inequality away from `t = 0`. -/
-theorem pseudoMassG_lt_two_of_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
-    (ht : 0 < t) (hr : 0 < r) :
-    pseudoMassG α r t < 2 := by
-  have h_anti := pseudoMassG_strictAntiOn hα hr
-  have hzero : pseudoMassG α r 0 = 2 := pseudoMassG_zero hα r
-  have hlt : pseudoMassG α r t < pseudoMassG α r 0 :=
-    h_anti (Set.mem_Ici.mpr (le_refl 0)) (Set.mem_Ici.mpr ht.le) ht
-  rw [hzero] at hlt
-  exact hlt
-
-/-- **`pseudoMassG α r t < 2 ↔ 0 < t`** (for `t ≥ 0`, `r > 0`,
-`α ≥ 1`): combines `_lt_two_of_pos` (forward, t > 0 → g < 2) with
-`pseudoMassG_zero` (reverse: t = 0 → g = 2 ≥ 2 contradicts g < 2). -/
-theorem pseudoMassG_lt_two_iff_pos {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
-    (ht : 0 ≤ t) (hr : 0 < r) :
-    pseudoMassG α r t < 2 ↔ 0 < t := by
-  refine ⟨?_, fun h => pseudoMassG_lt_two_of_pos hα h hr⟩
-  intro hlt
-  by_contra h_neg
-  have h_neg' : t ≤ 0 := not_lt.mp h_neg
-  have ht_eq : t = 0 := le_antisymm h_neg' ht
-  rw [ht_eq, pseudoMassG_zero hα] at hlt
-  exact lt_irrefl _ hlt
-
-/-- **`pseudoMassG α r t = 2 ↔ t = 0`** (for `t ≥ 0`, `r > 0`,
-`α ≥ 1`): boundary value characterisation. Forward via
-`pseudoMassG_le_two` (≤ 2) + `pseudoMassG_lt_two_iff_pos` (strict
-< 2 iff t > 0). Reverse: direct from `pseudoMassG_zero`. -/
-theorem pseudoMassG_eq_two_iff_zero {α : ℕ} (hα : 1 ≤ α) {r t : ℝ}
-    (ht : 0 ≤ t) (hr : 0 < r) :
-    pseudoMassG α r t = 2 ↔ t = 0 := by
-  refine ⟨?_, fun h_eq => by rw [h_eq]; exact pseudoMassG_zero hα r⟩
-  intro h_eq
-  by_contra h_ne
-  have ht_pos : 0 < t := lt_of_le_of_ne ht (Ne.symm h_ne)
-  have h_lt : pseudoMassG α r t < 2 := pseudoMassG_lt_two_of_pos hα ht_pos hr
-  rw [h_eq] at h_lt
-  exact lt_irrefl _ h_lt
 
 /-- **Correlation decay bound via global pseudo-mass** (Step 132b):
 If `pseudoMassG α 1 m₁ = c` (defining equation for per-pair pseudo-mass `m₁ = m^-_{x,z} · d(x,z)`)
@@ -682,41 +582,6 @@ theorem pseudoMassG_continuousOn (α : ℕ) {r : ℝ} (hr : 0 < r) :
     have ht' : 0 ≤ t := Set.mem_Ici.mp ht
     have h : 0 ≤ (t * r) ^ α := pow_nonneg (mul_nonneg ht' hr.le) α
     exact ne_of_gt (by linarith)
-
-/-- **`pseudoMassG α r` is `ContinuousOn (Ioi 0)`**: sub-interval form. -/
-theorem pseudoMassG_continuousOn_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
-    ContinuousOn (pseudoMassG α r) (Set.Ioi (0 : ℝ)) := by
-  apply (pseudoMassG_continuousOn α hr).mono
-  intro t ht
-  exact Set.mem_Ici.mpr (le_of_lt ht)
-
-/-- **`pseudoMassG α r` is `ContinuousAt t` for `t > 0`**: pointwise
-form. -/
-theorem pseudoMassG_continuousAt_of_pos (α : ℕ) {r : ℝ} (hr : 0 < r)
-    {t : ℝ} (ht : 0 < t) :
-    ContinuousAt (pseudoMassG α r) t :=
-  (pseudoMassG_analyticAt α hr ht.le).continuousAt
-
-/-- **`pseudoMassG α r` is `DifferentiableAt t` for `t ≥ 0`**: from
-`pseudoMassG_analyticAt`. -/
-theorem pseudoMassG_differentiableAt (α : ℕ) {r : ℝ} (hr : 0 < r)
-    {t : ℝ} (ht : 0 ≤ t) :
-    DifferentiableAt ℝ (pseudoMassG α r) t :=
-  (pseudoMassG_analyticAt α hr ht).differentiableAt
-
-/-- **`pseudoMassG α r` is `DifferentiableOn ℝ ... (Ioi 0)`**: lifted
-from `differentiableAt`. -/
-theorem pseudoMassG_differentiableOn_Ioi_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
-    DifferentiableOn ℝ (pseudoMassG α r) (Set.Ioi (0 : ℝ)) := by
-  intro t ht
-  exact (pseudoMassG_differentiableAt α hr ht.le).differentiableWithinAt
-
-/-- **`pseudoMassG α r` is `DifferentiableAt t` for `t > 0`**: pointwise
-form on the open positive line. -/
-theorem pseudoMassG_differentiableAt_of_pos (α : ℕ) {r : ℝ} (hr : 0 < r)
-    {t : ℝ} (ht : 0 < t) :
-    DifferentiableAt ℝ (pseudoMassG α r) t :=
-  pseudoMassG_differentiableAt α hr ht.le
 
 /-- `pseudoMassG` tends to 0 as `t → ∞` for `r > 0`. -/
 theorem pseudoMassG_tendsto_zero (α : ℕ) {r : ℝ} (hr : 0 < r) :
