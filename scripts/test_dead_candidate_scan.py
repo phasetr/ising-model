@@ -7,6 +7,16 @@ trusting: the failures it pins down -- a Unicode-splitting tokenizer, a LaTeX
 channel that silently matches nothing, a line-anchored declaration parser --
 are the three defects that produced three bad deletion sweeps.
 
+Every route to a **false ``safe-to-delete``** has a test aimed at it, because
+that is the only verdict of this tool that can destroy work:
+:class:`DeleteClosureTest` (a candidate consumed only by a candidate the same run
+retains), :class:`SameLineAttributeTest` (``@[simp] theorem foo`` vanishing from
+the declaration table, which turns its consumers into self-references),
+:class:`TexCoverageTest` (a citation the LaTeX channel cannot read must warn, not
+disappear) and :class:`CharClassTest` (the identifier class must never be a
+superset of Lean's). :class:`FamilyCalibrationTest` asserts the calibration
+integers that used to live only in a fixtures comment.
+
 Fast unit tests use synthetic strings. The tree-dependent tests (canary,
 fixtures, exit codes, determinism, performance) parse the real repository once
 and share it.
@@ -59,8 +69,18 @@ class CharClassTest(unittest.TestCase):
 
     def test_identifier_characters_are_included(self) -> None:
         """Capital Lambda, Greek minuscules, blackboard bold and subscripts are."""
-        for char in "Λβσℝℕ₀ₐ_'!?aZ0":
+        for char in "Λβσℝℕ₀ₐⱼÀÿĀſ_'!?aZ0":
             self.assertTrue(dcs.is_id_rest(char), char)
+
+    def test_class_is_not_a_superset_of_leans(self) -> None:
+        """Wide is the catastrophic direction, and these three are Lean's edges.
+
+        ``Init/Meta/Defs.lean:101-118`` of the pinned toolchain has no superscript
+        range at all (``ⁿ``), and cuts the multiplication and division signs out
+        of the Latin-1 letter block.
+        """
+        for char in "ⁿ×÷":
+            self.assertFalse(dcs.is_id_rest(char), char)
 
     def test_separators_are_excluded(self) -> None:
         """Whitespace, brackets, dots and logical symbols end an identifier."""
@@ -258,6 +278,211 @@ class DocTokenTest(unittest.TestCase):
         many = dcs._resolve_fragment(tree(), "_ferromagnetic", cache)
         self.assertIsNotNone(many)
         self.assertGreaterEqual(len(many), 2)
+
+
+def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
+    """Build a tree from ``{repo-relative path: source text}``."""
+    return dcs.build_tree([(dcs.REPO_ROOT / path, text) for path, text in sources.items()])
+
+
+def synthetic_doc(text: str, label: str = "docs/index.md") -> dcs.DocSource:
+    """Return a documentation source carrying ``text`` and no citation token."""
+    return dcs.DocSource(label=label, text=text, starts=dcs.line_starts(text), tokens=[], warnings=[])
+
+
+class DeleteClosureTest(unittest.TestCase):
+    """The delete-closure may only excuse references from candidates that go away.
+
+    The failure this pins down: a candidate retained by the very same run
+    (published, uncertain, attribute- or kind-driven) was still counted as
+    deleted by the closure, so a lemma consumed *only* by that keeper came out
+    ``safe-to-delete``. False safe is the one fatal verdict of this tool.
+    """
+
+    BASE = "IsingModel.synthetic_closure_base_xyzzy"
+    USER = "IsingModel.synthetic_closure_user_xyzzy"
+
+    def build(self) -> dcs.Tree:
+        """Return a two-file tree where ``USER`` is the sole consumer of ``BASE``."""
+        return synthetic_tree(
+            {
+                "IsingModel/SynthClosureA.lean": (
+                    "namespace IsingModel\n"
+                    "theorem synthetic_closure_base_xyzzy : True := trivial\n"
+                    "end IsingModel\n"
+                ),
+                "IsingModel/SynthClosureB.lean": (
+                    "namespace IsingModel\n"
+                    "theorem synthetic_closure_user_xyzzy : True :=\n"
+                    "  synthetic_closure_base_xyzzy\n"
+                    "end IsingModel\n"
+                ),
+            }
+        )
+
+    def classify(self, docs_list: list[dcs.DocSource]) -> dict[str, str]:
+        """Classify both synthetic candidates against ``docs_list``."""
+        verdicts, _cascade, _labels = dcs.classify(
+            self.build(), [self.BASE, self.USER], docs_list, allow_homonym=False
+        )
+        return {verdict.decl.full: verdict.verdict for verdict in verdicts}
+
+    def test_both_deleted_together_is_still_safe(self) -> None:
+        """The closure must keep working: nothing retains either candidate here."""
+        result = self.classify([])
+        self.assertEqual(result[self.BASE], dcs.SAFE)
+        self.assertEqual(result[self.USER], dcs.SAFE)
+
+    def test_candidate_consumed_by_a_retained_candidate_is_not_safe(self) -> None:
+        """A module citation retains the consumer, so the consumed lemma stays."""
+        # The citation names the *consumer's* module only, which is what makes
+        # the consumer uncertain while leaving the base candidate untouched.
+        result = self.classify([synthetic_doc("see SynthClosureB.lean for the proof")])
+        self.assertEqual(result[self.USER], dcs.UNCERTAIN)
+        self.assertNotEqual(result[self.BASE], dcs.SAFE)
+        self.assertEqual(result[self.BASE], dcs.LOAD_BEARING)
+
+    def test_no_safe_candidate_is_consumed_by_a_retained_one_on_the_real_family(self) -> None:
+        """The same invariant, over the 263-candidate ``_ferromagnetic`` family."""
+        verdicts = family_verdicts()
+        safe_keys = {v.decl.key for v in verdicts if v.verdict == dcs.SAFE}
+        for verdict in verdicts:
+            if verdict.verdict != dcs.SAFE:
+                continue
+            for occ in verdict.consumers:
+                self.assertIsNotNone(occ.owner, f"{verdict.name}: file-level consumer")
+                self.assertIn(
+                    occ.owner.key,
+                    safe_keys,
+                    f"{verdict.name} is safe-to-delete but consumed by the retained "
+                    f"{occ.owner.full} ({occ.file}:{occ.line})",
+                )
+
+
+class SameLineAttributeTest(unittest.TestCase):
+    """``@[simp] theorem foo`` declares ``foo`` on the attribute line.
+
+    Dropping the rest of that line deletes ``foo`` from the declaration table,
+    which silently re-attributes its body to the *previous* declaration; every
+    reference in that body then looks like a self-reference and is discarded --
+    the second route to a false ``safe-to-delete``.
+    """
+
+    SOURCE = (
+        "namespace IsingModel\n"
+        "theorem synthetic_attr_base_xyzzy : True := trivial\n"
+        "@[simp] theorem synthetic_attr_user_xyzzy : True :=\n"
+        "  synthetic_attr_base_xyzzy\n"
+        "end IsingModel\n"
+    )
+
+    def test_declaration_is_extracted_with_its_attributes(self) -> None:
+        """Both the name and the attribute survive the same-line form."""
+        decls = dcs.extract_decls(
+            dcs.REPO_ROOT / "IsingModel" / "SynthAttr.lean", strip_noncode(self.SOURCE)
+        )
+        self.assertEqual(
+            [decl.name for decl in decls],
+            ["synthetic_attr_base_xyzzy", "synthetic_attr_user_xyzzy"],
+        )
+        self.assertEqual(decls[1].attrs, ("simp",))
+        self.assertEqual(decls[1].line, 3)
+
+    def test_multiline_block_closing_before_the_declaration(self) -> None:
+        """The closing ``]`` may share its line with the declaration keyword."""
+        decls = dcs.extract_decls(
+            dcs.REPO_ROOT / "IsingModel" / "SynthAttr.lean",
+            strip_noncode("@[simp,\n  norm_cast] theorem foo_multiline : True := trivial\n"),
+        )
+        self.assertEqual([decl.name for decl in decls], ["foo_multiline"])
+        self.assertEqual(decls[0].attrs, ("norm_cast", "simp"))
+
+    def test_body_is_owned_by_the_same_line_declaration(self) -> None:
+        """The reference belongs to the attributed lemma, not to its predecessor."""
+        tree_obj = synthetic_tree({"IsingModel/SynthAttr.lean": self.SOURCE})
+        source = tree_obj.file_of("IsingModel/SynthAttr.lean")
+        self.assertEqual(source.owner_of(4).final, "synthetic_attr_user_xyzzy")
+
+    def test_the_reference_is_counted_as_a_consumer(self) -> None:
+        """End to end: the base lemma must not be reported as deletable."""
+        tree_obj = synthetic_tree({"IsingModel/SynthAttr.lean": self.SOURCE})
+        verdicts, _cascade, _labels = dcs.classify(
+            tree_obj, ["IsingModel.synthetic_attr_base_xyzzy"], [], allow_homonym=False
+        )
+        self.assertEqual(verdicts[0].verdict, dcs.LOAD_BEARING)
+        self.assertEqual(len(verdicts[0].consumers), 1)
+        self.assertTrue(
+            all(occ.owner.attrs == ("simp",) for occ in verdicts[0].consumers)
+        )
+
+
+class TexCoverageTest(unittest.TestCase):
+    """Coverage must be fail-closed: an unreadable citation is a warning, not a gap."""
+
+    def test_brace_alternation_inside_a_citation_is_read(self) -> None:
+        """A ``\\texttt`` body carrying braces used to match nothing, silently."""
+        text = r"\texttt{magnetization\_convergent\_\{J,h,beta\}\_latticeGraph}"
+        normalized, warnings = dcs.normalize_tex(text)
+        self.assertIn("magnetization_convergent_{J,h,beta}_latticeGraph", normalized)
+        self.assertEqual(warnings, [])
+
+    def test_unreadable_citation_raises_a_warning_instead_of_vanishing(self) -> None:
+        """Deeper nesting is not parsed -- but it must be *counted*."""
+        _normalized, warnings = dcs.normalize_tex(r"\texttt{deep {a {b}} tail}")
+        self.assertEqual(len(warnings), 1)
+        self.assertIn("unparsable code citation", warnings[0])
+
+    def test_nested_citation_still_yields_the_inner_token(self) -> None:
+        """The outer span consumes the inner one, so extraction recurses."""
+        spans = dcs.code_citation_spans(r"\texttt{prose \texttt{inner_name_here} tail}")
+        self.assertIn("inner_name_here", [body for body, _offset in spans])
+
+    def test_real_guide_yields_its_brace_family_citations(self) -> None:
+        """End to end: the guide's brace families are tokens, not blind spots."""
+        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
+        tokens = {token for token, _line in tex.tokens}
+        self.assertIn("magnetization_convergent_{J,h,beta}_latticeGraph", tokens)
+        self.assertGreater(len([t for t in tokens if "{" in t]), 50)
+
+
+_FAMILY: list[dcs.Verdict] | None = None
+
+
+def family_verdicts() -> list[dcs.Verdict]:
+    """Classify the whole ``_ferromagnetic`` family, at most once per process."""
+    global _FAMILY
+    if _FAMILY is None:
+        names = sorted(
+            decl.full
+            for decl in tree().decls
+            if not decl.anonymous and decl.name.endswith("_ferromagnetic")
+        )
+        _FAMILY = dcs.classify(tree(), names, docs(), allow_homonym=False)[0]
+    return _FAMILY
+
+
+class FamilyCalibrationTest(unittest.TestCase):
+    """The calibration integers recorded in the fixtures header, asserted.
+
+    They were prose in a comment, so nothing noticed when the delete-closure
+    defect moved 15 candidates into ``safe-to-delete``.
+    """
+
+    def test_ferromagnetic_family_counts(self) -> None:
+        """263 candidates -> 132 safe / 44 uncertain / 52 load-bearing / 35 published."""
+        verdicts = family_verdicts()
+        counts: dict[str, int] = {}
+        for verdict in verdicts:
+            counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
+        self.assertEqual(len(verdicts), 263)
+        self.assertEqual(counts.get(dcs.SAFE), 132)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
+        self.assertEqual(counts.get(dcs.PUBLISHED), 35)
+
+    def test_zero_consumer_count(self) -> None:
+        """143 of the 263 have no Lean consumer at all."""
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 143)
 
 
 class CanaryTest(unittest.TestCase):

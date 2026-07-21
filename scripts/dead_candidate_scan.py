@@ -31,6 +31,17 @@ Two architectural decisions follow, and they are the whole design:
    by ``docs/index.md`` or ``tex/proof-guide.tex``. Reading only Lean rescues 7
    of the 10 keepers of PR #4641; reading only docs rescues 3; both are needed.
 
+A third rule follows from the first two and is just as load-bearing:
+
+3. **The delete-closure runs over the candidates that are actually deleted.**
+   "Consumed only by another candidate" excuses a reference only if that other
+   candidate really goes away. Candidates the run itself retains -- published,
+   uncertain, attribute- or kind-driven -- are therefore removed from the delete
+   set *before* the fixpoint, never after. Seeding the fixpoint with every
+   candidate reports a lemma as safe because its only consumer is a lemma the
+   same report tells you to keep: a false ``safe-to-delete``, which for a tool
+   that authorises deletions is the only fatal error class.
+
 Boundary predicate
 ------------------
 ``is_id_rest`` mirrors Lean 4's ``isIdRest``/``isLetterLike``/``isSubScriptAlnum``
@@ -107,30 +118,35 @@ class Inconsistency(Exception):
 # 1. Lean identifier character class
 # ---------------------------------------------------------------------------
 
-# ``Lean.isLetterLike`` (Lean 4, ``src/Lean/Data/Name.lean`` /
-# ``src/Lean/Parser/Basic.lean``). Ranges are inclusive.
+# ``Lean.isLetterLike``, transcribed line by line from the primary source of the
+# toolchain this repository pins (``lean-toolchain`` = ``leanprover/lean4:v4.29.0``,
+# ``src/lean/Init/Meta/Defs.lean:101-109``). Ranges are inclusive.
 _LETTERLIKE_RANGES: tuple[tuple[int, int], ...] = (
-    (0x03B1, 0x03C9),  # lower-case Greek
-    (0x0391, 0x03A9),  # upper-case Greek
-    (0x03CA, 0x03FB),  # Greek extended
-    (0x1F00, 0x1FFE),  # Greek extended
+    (0x03B1, 0x03C9),  # lower-case Greek (minus lambda)
+    (0x0391, 0x03A9),  # upper-case Greek (minus Pi and Sigma)
+    (0x03CA, 0x03FB),  # Coptic letters
+    (0x1F00, 0x1FFE),  # polytonic Greek extended
     (0x2100, 0x214F),  # letterlike symbols (blackboard bold reals, naturals...)
-    (0x1D49C, 0x1D59F),  # script / fraktur / double-struck
-    (0x207F, 0x2089),  # superscripts
-    (0x2090, 0x209C),  # subscripts
+    (0x1D49C, 0x1D59F),  # script / fraktur / double-struck Latin
+    (0x00C0, 0x00FF),  # Latin-1 supplement letters (minus multiplication/division)
+    (0x0100, 0x017F),  # Latin Extended-A
 )
 
-# Lean removes these three from the letterlike class because they are reserved
-# syntax: lower-case lambda is the binder, upper-case Pi and Sigma are the
-# dependent-type keywords. Keeping them would widen the class, and wide is the
+# Lean removes these five from the letterlike class. Three are reserved syntax
+# (lower-case lambda is the binder, upper-case Pi and Sigma are the dependent-type
+# keywords); the multiplication and division signs merely sit inside the Latin-1
+# letter block. Keeping any of them would widen the class, and wide is the
 # catastrophic direction (see the module docstring).
-_LETTERLIKE_EXCLUDED = frozenset({0x03BB, 0x03A0, 0x03A3})
+_LETTERLIKE_EXCLUDED = frozenset({0x03BB, 0x03A0, 0x03A3, 0x00D7, 0x00F7})
 
-# ``Lean.isSubScriptAlnum``.
+# ``Lean.isSubScriptAlnum`` (same source, lines 111-118). Note that Lean has *no*
+# superscript range: an earlier table here admitted U+207F, which made the class a
+# proper superset of Lean's -- the forbidden direction.
 _SUBSCRIPT_RANGES: tuple[tuple[int, int], ...] = (
     (0x1D62, 0x1D6A),
     (0x2080, 0x2089),
     (0x2090, 0x209C),
+    (0x2C7C, 0x2C7C),  # subscript j
 )
 
 _ID_PUNCT = frozenset("_'!?")
@@ -302,7 +318,6 @@ _HEAD_KEYWORDS = frozenset(DECL_KINDS) | {
     "section",
     "end",
 }
-_ATTR_LINE_RE = re.compile(r"^\s*@\[(.*)$")
 _NAMESPACE_RE = re.compile(r"^\s*namespace\s+([^\s]+)")
 _END_RE = re.compile(r"^\s*end\b\s*([^\s]*)")
 _SECTION_RE = re.compile(r"^\s*section\b\s*([^\s]*)")
@@ -352,22 +367,9 @@ def _strip_name(rest: str) -> str:
     return name
 
 
-def _parse_attrs(text_line: str) -> tuple[str, ...]:
-    """Return the attribute names of an ``@[...]`` prefix line."""
-    inner = text_line.strip()
-    if not inner.startswith("@["):
-        return ()
-    inner = inner[2:]
-    depth = 1
+def _parse_attr_names(inner: str) -> tuple[str, ...]:
+    """Return the attribute names listed inside an ``@[...]`` block."""
     out: list[str] = []
-    for idx, char in enumerate(inner):
-        if char == "[":
-            depth += 1
-        elif char == "]":
-            depth -= 1
-            if depth == 0:
-                inner = inner[:idx]
-                break
     for chunk in re.split(r"[,\s]+", inner):
         chunk = chunk.strip()
         if not chunk:
@@ -378,6 +380,24 @@ def _parse_attrs(text_line: str) -> tuple[str, ...]:
     return tuple(out)
 
 
+def _scan_bracket(text: str, depth: int) -> tuple[str, str | None, int]:
+    """Split ``text`` where a bracket nesting already ``depth`` deep closes.
+
+    Returns ``(consumed, remainder, depth)``. ``remainder`` is ``None`` when the
+    block is still open at the end of ``text``; otherwise it is everything after
+    the closing ``]`` -- which is where ``@[simp] theorem foo`` keeps its
+    declaration, so it must be parsed rather than discarded.
+    """
+    for idx, char in enumerate(text):
+        if char == "[":
+            depth += 1
+        elif char == "]":
+            depth -= 1
+            if depth == 0:
+                return text[:idx], text[idx + 1 :], 0
+    return text, None, depth
+
+
 def extract_decls(path: Path, cleaned: str) -> list[Decl]:
     """Return the declarations of ``cleaned`` (comment-stripped source of ``path``).
 
@@ -386,6 +406,12 @@ def extract_decls(path: Path, cleaned: str) -> list[Decl]:
     earlier sweep -- a declaration **name on the line after the keyword**.
     Anonymous ``instance``/``example`` heads are recorded as unnamed owners:
     they consume references even though nothing can reference them.
+
+    An attribute block is *consumed*, not skipped: ``@[simp] theorem foo ...``
+    declares ``foo`` on the attribute line, and dropping the rest of the line
+    would erase ``foo`` from the declaration table -- which silently re-attributes
+    its body to the *preceding* declaration and turns its references into
+    self-references.
     """
     relpath = rel(path)
     lines = cleaned.splitlines()
@@ -393,27 +419,34 @@ def extract_decls(path: Path, cleaned: str) -> list[Decl]:
     stack: list[str] = []  # namespace / section scopes ("" for anonymous sections)
     pending_attrs: list[str] = []
     attr_depth = 0
+    attr_inner = ""  # text accumulated inside a still-open attribute block
     for idx, raw in enumerate(lines):
         lineno = idx + 1
         if attr_depth > 0:
-            attr_depth += raw.count("[") - raw.count("]")
-            continue
-        # Cheap pre-filter: only lines opening with an attribute block or one of
-        # the structural keywords can start a declaration or change the scope.
-        # Everything else is proof body, which is the bulk of the tree.
-        stripped = raw.lstrip()
-        if not stripped:
-            continue
-        if stripped[0] != "@":
-            word = _LEADING_WORD_RE.match(stripped)
-            if word is None or word.group(0) not in _HEAD_KEYWORDS:
-                pending_attrs = []
+            consumed, remainder, attr_depth = _scan_bracket(raw, attr_depth)
+            attr_inner += " " + consumed
+            if remainder is None:
                 continue
-        match = _ATTR_LINE_RE.match(raw)
-        if match:
-            pending_attrs.extend(_parse_attrs(raw))
-            depth = raw.count("[") - raw.count("]")
-            attr_depth = max(depth, 0)
+            pending_attrs.extend(_parse_attr_names(attr_inner))
+            attr_inner = ""
+            raw = remainder
+        stripped = raw.lstrip()
+        while stripped.startswith("@["):
+            consumed, remainder, attr_depth = _scan_bracket(stripped[2:], 1)
+            attr_inner += consumed
+            if remainder is None:
+                break
+            pending_attrs.extend(_parse_attr_names(attr_inner))
+            attr_inner = ""
+            raw = remainder
+            stripped = raw.lstrip()
+        if attr_depth > 0 or not stripped:
+            continue
+        # Cheap pre-filter: only the structural keywords can start a declaration
+        # or change the scope. Everything else is proof body, the bulk of the tree.
+        word = _LEADING_WORD_RE.match(stripped)
+        if word is None or word.group(0) not in _HEAD_KEYWORDS:
+            pending_attrs = []
             continue
         ns_match = _NAMESPACE_RE.match(raw)
         if ns_match:
@@ -572,14 +605,26 @@ def _index_tokens(cleaned: str) -> list[tuple[str, int]]:
 
 
 def load_tree(verbose: bool = False) -> Tree:
-    """Parse the tree: strip comments, extract declarations, build the index."""
-    files: list[SourceFile] = []
-    decls: list[Decl] = []
+    """Parse the working tree: every Lean file whose references count."""
+    sources: list[tuple[Path, str]] = []
     for path in iter_scan_files():
         try:
-            raw = path.read_text(encoding="utf-8")
+            sources.append((path, path.read_text(encoding="utf-8")))
         except OSError as exc:  # pragma: no cover - unreadable working tree
             raise Inconsistency(f"{rel(path)}: could not be read ({exc})") from exc
+    return build_tree(sources, verbose=verbose)
+
+
+def build_tree(sources: list[tuple[Path, str]], verbose: bool = False) -> Tree:
+    """Build the tree from ``(path, text)`` pairs: strip, extract, index.
+
+    Split from :func:`load_tree` so a test can run the *whole* pipeline --
+    extraction, index, dependency graph, classification -- over a synthetic
+    two-file tree, instead of unit-testing the pieces and hoping they compose.
+    """
+    files: list[SourceFile] = []
+    decls: list[Decl] = []
+    for path, raw in sources:
         if "«" in raw:
             raise Inconsistency(
                 f"{rel(path)}: escaped identifier <<...>> found; "
@@ -778,7 +823,13 @@ TEX_MACROS: dict[str, str] = {
 
 _TEX_COMMENT_RE = re.compile(r"(?<!\\)%.*")
 _TEX_MATH_RE = re.compile(r"\$([^$\n]*)\$|\\\(((?:[^\\]|\\(?!\)))*)\\\)")
-_TEXTTT_RE = re.compile(r"\\(?:texttt|verb|lstinline|mintinline)\s*\{([^{}]*)\}")
+_TEX_CODE_CMDS = r"\\(?:texttt|verb|lstinline|mintinline)\s*\{"
+# The body admits one level of nested braces, because the guide writes brace
+# alternation *inside* code citations (``\texttt{magnetization\_{J,h}\_lattice}``).
+# A body of ``[^{}]*`` made those spans fail to match at all: no token, and no
+# coverage warning either, since the warning loop iterated over the same regex.
+_TEXTTT_RE = re.compile(_TEX_CODE_CMDS + r"((?:[^{}]|\{[^{}]*\})*)\}")
+_TEXTTT_CMD_RE = re.compile(_TEX_CODE_CMDS)
 
 
 # Line-breaking hints are written *inside* long declaration names in the guide,
@@ -858,17 +909,50 @@ def normalize_tex(text: str) -> tuple[str, list[str]]:
     silent under-coverage here is exactly the failure that must not recur. Prose
     outside ``\\texttt`` is not a name citation and is deliberately not warned
     about.
+
+    The warning loop is **fail-closed**: it counts the ``\\texttt``-family
+    *openers* independently of the span regex, so a citation whose body the regex
+    cannot parse (unbalanced or deeply nested braces) raises a warning instead of
+    disappearing. A near-zero warning count is only evidence of coverage if the
+    spans that could not be read are counted too.
     """
     partial = _normalize_tex_body(text)
     warnings: list[str] = []
     starts = line_starts(partial)
+    parsed: set[int] = set()
     for match in _TEXTTT_RE.finditer(partial):
+        parsed.add(match.start())
         if "\\" in match.group(1):
             lineno = offset_to_line(starts, match.start())
             warnings.append(
                 f"tex:{lineno}: unnormalised macro in a code citation: {match.group(1)[:60]!r}"
             )
+    for match in _TEXTTT_CMD_RE.finditer(partial):
+        if match.start() in parsed:
+            continue
+        lineno = offset_to_line(starts, match.start())
+        warnings.append(
+            f"tex:{lineno}: unparsable code citation (unbalanced or deeply nested "
+            f"braces): {partial[match.start() : match.start() + 60]!r}"
+        )
     return _TEXTTT_RE.sub(lambda m: m.group(1), partial), warnings
+
+
+def code_citation_spans(text: str) -> list[tuple[str, int]]:
+    """Return ``(body, offset)`` for every code citation, nested ones included.
+
+    ``\\texttt`` nests in the guide (a citation whose prose carries another
+    citation), and the span regex consumes the outer one whole; recursing keeps
+    the inner name visible instead of swallowing it with its wrapper.
+    """
+    out: list[tuple[str, int]] = []
+    for match in _TEXTTT_RE.finditer(text):
+        body = match.group(1)
+        out.append((body, match.start()))
+        if _TEXTTT_CMD_RE.search(body):
+            base = match.start(1)
+            out.extend((inner, base + offset) for inner, offset in code_citation_spans(body))
+    return out
 
 
 _MD_TOKEN_RE = re.compile(r"`([^`\n]+)`|```(.*?)```", re.DOTALL)
@@ -921,9 +1005,9 @@ def load_docs() -> list[DocSource]:
         partial = _normalize_tex_body(raw)
         partial_starts = line_starts(partial)
         tokens = []
-        for match in _TEXTTT_RE.finditer(partial):
-            lineno = offset_to_line(partial_starts, match.start())
-            for piece in match.group(1).split():
+        for body, offset in code_citation_spans(partial):
+            lineno = offset_to_line(partial_starts, offset)
+            for piece in body.split():
                 if _nameish(piece):
                     tokens.append((piece.strip(",.;:()"), lineno))
         text, warnings = normalize_tex(raw)
@@ -989,7 +1073,8 @@ class Verdict:
     cross_file: list[Occurrence] = field(default_factory=list)
     test_refs: list[Occurrence] = field(default_factory=list)
     doc_citations: list[str] = field(default_factory=list)
-    notes: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)  # each note forces ``uncertain``
+    info: list[str] = field(default_factory=list)  # reported, but never classifies
     witness: list[str] = field(default_factory=list)
 
     @property
@@ -998,13 +1083,17 @@ class Verdict:
         return self.same_file + self.cross_file + self.test_refs
 
 
-def resolve_candidate(tree: Tree, name: str, allow_homonym: bool) -> tuple[Decl, list[str]]:
-    """Return the declaration a candidate name denotes, plus any notes.
+def resolve_candidate(
+    tree: Tree, name: str, allow_homonym: bool
+) -> tuple[Decl, list[str], list[str]]:
+    """Return the declaration a candidate name denotes, its notes and its info.
 
-    An unknown name is a hard failure (exit code 2): a stale candidate list must
+    A *note* forces ``uncertain``; *info* is reported but does not classify. An
+    unknown name is a hard failure (exit code 2): a stale candidate list must
     never be silently reported as deletable.
     """
     notes: list[str] = []
+    info: list[str] = []
     matches = tree.by_full.get(name) or []
     if not matches:
         matches = [decl for decl in tree.by_final.get(name.rsplit(".", 1)[-1], [])]
@@ -1015,8 +1104,10 @@ def resolve_candidate(tree: Tree, name: str, allow_homonym: bool) -> tuple[Decl,
         if not allow_homonym:
             notes.append(f"homonymous final component: {listing}")
         else:
-            notes.append(f"homonym allowed by --allow-homonym: {listing}")
-    return matches[0], notes
+            # The flag is documented as *permitting* a safe verdict, so it must
+            # not leave behind a note that forces uncertain regardless.
+            info.append(f"homonym allowed by --allow-homonym: {listing}")
+    return matches[0], notes, info
 
 
 def classify(
@@ -1033,9 +1124,10 @@ def classify(
     candidate_keys: set[str] = set()
     problems: list[str] = []
     for name in names:
-        decl, notes = resolve_candidate(tree, name, allow_homonym)
+        decl, notes, info = resolve_candidate(tree, name, allow_homonym)
         verdict = Verdict(name=name, decl=decl)
         verdict.notes.extend(notes)
+        verdict.info.extend(info)
         occs = scan_name(tree, decl.name)
         problems.extend(cross_check(tree, decl.name, occs))
         for occ in occs:
@@ -1078,24 +1170,6 @@ def classify(
     family_labels: dict[str, list[str]] = {}
     _apply_doc_channel(tree, verdicts, docs, family_labels)
 
-    # Delete-closure fixpoint: the greatest subset of the candidates that is
-    # closed under consumers.
-    keyed = {verdict.decl.key: verdict for verdict in verdicts}
-    deletable = set(keyed)
-    while True:
-        drop = set()
-        for key, verdict in keyed.items():
-            if key not in deletable:
-                continue
-            for occ in verdict.consumers:
-                owner_key = occ.owner.key if occ.owner else f"<file>:{occ.file}"
-                if owner_key not in deletable:
-                    drop.add(key)
-                    break
-        if not drop:
-            break
-        deletable -= drop
-
     graph = build_dependency_graph(tree)
     reverse: dict[str, set[str]] = defaultdict(set)
     for src, targets in graph.items():
@@ -1107,45 +1181,87 @@ def classify(
         if decl.full in capstones or (not decl.anonymous and decl.final in capstone_finals)
     }
     reachable = _capstone_closure(graph, capstone_keys)
-
     key_to_decl = {decl.key: decl for decl in tree.decls}
+    keyed = {verdict.decl.key: verdict for verdict in verdicts}
+
+    # Phase 1 -- the facts that do not depend on the candidate-set closure:
+    # publication, tactic reachability, surface kind, and the notes that make a
+    # candidate uncertain. Every one of them means the candidate is *kept*.
+    published_reasons: dict[str, str] = {}
+    static_load: dict[str, list[str]] = {key: [] for key in keyed}
+    uncertain_keys: set[str] = set()
     for verdict in verdicts:
         decl = verdict.decl
         key = decl.key
-        published_reason = None
         if decl.full in capstones or decl.final in capstone_finals:
-            published_reason = "listed in scripts/audit/capstones.txt"
+            published_reasons[key] = "listed in scripts/audit/capstones.txt"
         elif any(cit.startswith("exact ") for cit in verdict.doc_citations):
-            published_reason = "cited verbatim in the public documentation"
-        if published_reason:
-            verdict.verdict = PUBLISHED
-            verdict.reasons.append(published_reason)
-            continue
-
-        load_reasons: list[str] = []
-        if key not in deletable:
-            load_reasons.append(
-                f"{len(verdict.consumers)} reference(s) from outside the candidate set"
-            )
+            published_reasons[key] = "cited verbatim in the public documentation"
+        reasons = static_load[key]
         if key in reachable:
-            load_reasons.append("inside the dependency closure of a capstone")
+            reasons.append("inside the dependency closure of a capstone")
         tactic = [attr for attr in decl.attrs if attr in TACTIC_ATTRS]
         if tactic or decl.kind == "instance":
-            load_reasons.append(
+            reasons.append(
                 "consumed by tactics, not by name "
                 f"(@[{', '.join(tactic) or 'instance'}])"
             )
         if decl.kind in SURFACE_KINDS:
-            load_reasons.append(f"`{decl.kind}` deletion changes the surface, not only a proof")
+            reasons.append(f"`{decl.kind}` deletion changes the surface, not only a proof")
+        if verdict.notes or any(
+            cit.startswith(("shorthand ", "module-cited ")) for cit in verdict.doc_citations
+        ):
+            uncertain_keys.add(key)
+
+    # Phase 2 -- delete-closure fixpoint: the greatest subset of the candidates
+    # that is closed under consumers. The closure is only sound over the
+    # candidates that are actually going to be deleted, so the ones phase 1
+    # already retained are removed *before* the fixpoint runs. Seeding it with
+    # every candidate (as an earlier revision did) declared a candidate safe
+    # because its only consumer was another candidate that the very same run
+    # reported as a keeper -- a false safe-to-delete, the one fatal error class.
+    deletable = {
+        key
+        for key in keyed
+        if key not in published_reasons and not static_load[key] and key not in uncertain_keys
+    }
+    while True:
+        drop = set()
+        for key in deletable:
+            for occ in keyed[key].consumers:
+                owner_key = occ.owner.key if occ.owner else f"<file>:{occ.file}"
+                if owner_key not in deletable:
+                    drop.add(key)
+                    break
+        if not drop:
+            break
+        deletable -= drop
+
+    # Phase 3 -- the verdict, in decreasing severity.
+    for verdict in verdicts:
+        decl = verdict.decl
+        key = decl.key
+        if key in published_reasons:
+            verdict.verdict = PUBLISHED
+            verdict.reasons.append(published_reasons[key])
+            continue
+
+        load_reasons: list[str] = []
+        external = [
+            occ
+            for occ in verdict.consumers
+            if (occ.owner.key if occ.owner else f"<file>:{occ.file}") not in deletable
+        ]
+        if external:
+            load_reasons.append(f"{len(external)} reference(s) from outside the delete set")
+        load_reasons.extend(static_load[key])
         if load_reasons:
             verdict.verdict = LOAD_BEARING
             verdict.reasons.extend(load_reasons)
             verdict.witness = _witness_path(verdict, reverse, key_to_decl, capstone_keys)
             continue
 
-        if verdict.notes or any(
-            cit.startswith(("shorthand ", "module-cited ")) for cit in verdict.doc_citations
-        ):
+        if key in uncertain_keys:
             verdict.verdict = UNCERTAIN
             verdict.reasons.extend(verdict.notes)
             verdict.reasons.extend(
@@ -1154,7 +1270,7 @@ def classify(
             continue
 
         verdict.verdict = SAFE
-        verdict.reasons.append("no reference outside the candidate set, no documentation citation")
+        verdict.reasons.append("no reference outside the delete set, no documentation citation")
 
     cascade = _cascade(tree, deletable, reverse, graph, key_to_decl)
     return verdicts, cascade, family_labels
@@ -1224,7 +1340,7 @@ def _cascade(
     removed = set(deletable)
     out: list[str] = []
     depth = 1
-    while depth <= 4:
+    while True:  # a genuine fixpoint: each round strictly grows ``removed``
         front: list[str] = []
         for key, decl in key_to_decl.items():
             if key in removed or decl.anonymous:
@@ -1378,10 +1494,10 @@ def run_canary(tree: Tree) -> tuple[int, dict[str, int]]:
 
 def char_class_selftest() -> None:
     """Assert the identifier class matches Lean's, in both directions."""
-    for char in "λΠΣ":  # lambda, Pi, Sigma: reserved by Lean
+    for char in "λΠΣ×÷ⁿ":  # reserved syntax, or outside Lean's tables
         if is_id_rest(char):
-            raise Inconsistency(f"is_id_rest({char!r}) must be False (Lean reserves it)")
-    for char in "Λβσℝ₀_'!?aZ0":
+            raise Inconsistency(f"is_id_rest({char!r}) must be False (Lean excludes it)")
+    for char in "Λβσℝ₀ⱼÀÿĀſ_'!?aZ0":
         if not is_id_rest(char):
             raise Inconsistency(f"is_id_rest({char!r}) must be True")
     for char in " ().,¬":
@@ -1415,8 +1531,10 @@ L5 string-literal and metaprogramming references -- strip_noncode blanks string 
    by design. Mitigation: --lean.
 L6 documentation prose that depends on a lemma without naming it -- unmatchable in
    principle. Mitigation: the module-cited metadata, then human review.
-L7 the TeX macro table is incomplete by construction. Mitigation: the residual-macro
-   coverage warning printed with every run.
+L7 the TeX macro table is incomplete by construction. Mitigation: the coverage
+   warnings printed with every run, which are fail-closed -- a citation the span
+   regex cannot parse is counted as a warning rather than dropped, so a low
+   warning count is evidence of coverage and not merely of silence.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree."""
 
 
@@ -1449,6 +1567,8 @@ def report(
             print(f"  {decl.full}  [{decl.kind}]  {decl.file}:{decl.line}")
             for reason in verdict.reasons:
                 print(f"      reason: {reason}")
+            for item in verdict.info:
+                print(f"      info: {item}")
             for label, group_occs in (
                 ("same-file", verdict.same_file),
                 ("cross-file", verdict.cross_file),
@@ -1573,38 +1693,69 @@ def lean_dependency_edges() -> dict[str, set[str]]:
             continue
         source, targets = line.split("\t", 1)
         edges[source.strip()] = {t for t in targets.split() if t}
+    if not edges:
+        # An empty dump is indistinguishable from "nothing is used by anything",
+        # so accepting it would print "no consumer missed" while checking nothing.
+        raise Inconsistency(
+            "`lake env lean scripts/audit/DumpDeps.lean` produced no dependency "
+            "edges; the cross-check would be vacuous (is the build green?)"
+        )
     return edges
 
 
-def lean_cross_check(verdicts: list[Verdict], edges: dict[str, set[str]]) -> list[str]:
-    """Return candidates whose Lean consumers the text scan failed to see."""
+def _lean_aliases(full: str) -> set[str]:
+    """Return the names under which ``full`` can appear in the elaborated dump.
+
+    The text scanner records a namespace-qualified source name (``Ambient.foo``)
+    while Lean prints the absolute name (``IsingModel.Ambient.foo``), so the two
+    spellings of the same declaration are matched -- and *only* those two.
+    Comparing final components alone (as an earlier revision did) let ``A.foo``
+    stand in for ``B.foo`` and hid a genuinely unseen consumer.
+    """
+    if full.startswith("IsingModel."):
+        return {full, full[len("IsingModel.") :]}
+    return {full, f"IsingModel.{full}"}
+
+
+def lean_cross_check(
+    verdicts: list[Verdict], edges: dict[str, set[str]]
+) -> tuple[list[str], list[str]]:
+    """Return ``(hard failures, advisory findings)`` from the elaborated graph.
+
+    Every candidate is compared, not only the ``safe-to-delete`` ones: an unseen
+    consumer is a defect of the text scanner wherever it appears. It is fatal on
+    a ``safe-to-delete`` verdict (the tool would authorise a bad deletion) and
+    advisory elsewhere (the verdict is already "keep", so the risk is a wrong
+    *reason*, not a wrong action).
+    """
     reverse: dict[str, set[str]] = defaultdict(set)
     for source, targets in edges.items():
         for target in targets:
             reverse[target].add(source)
     problems: list[str] = []
+    advisories: list[str] = []
     for verdict in verdicts:
         full = verdict.decl.full
-        candidates = [full, f"IsingModel.{full}"]
+        aliases = _lean_aliases(full)
         lean_consumers: set[str] = set()
-        for key in candidates:
+        for key in aliases:
             lean_consumers |= reverse.get(key, set())
-        lean_consumers.discard(full)
+        lean_consumers -= aliases
         if not lean_consumers:
             continue
-        text_consumers = {
-            occ.owner.full for occ in verdict.consumers if occ.owner is not None
-        }
-        unseen = {
-            consumer
-            for consumer in lean_consumers
-            if consumer.split(".")[-1] not in {t.split(".")[-1] for t in text_consumers}
-        }
-        if unseen and verdict.verdict == SAFE:
-            problems.append(
-                f"{full}: Lean sees consumers {sorted(unseen)[:5]} that the text scan does not"
-            )
-    return problems
+        text_consumers: set[str] = set()
+        for occ in verdict.consumers:
+            if occ.owner is not None:
+                text_consumers |= _lean_aliases(occ.owner.full)
+        unseen = sorted(lean_consumers - text_consumers)
+        if not unseen:
+            continue
+        message = f"{full}: Lean sees consumers {unseen[:5]} that the text scan does not"
+        if verdict.verdict == SAFE:
+            problems.append(message)
+        else:
+            advisories.append(f"[{verdict.verdict}] {message}")
+    return problems, advisories
 
 
 # ---------------------------------------------------------------------------
@@ -1728,13 +1879,21 @@ def main(argv: list[str] | None = None) -> int:
 
         verdicts, cascade, family_labels = classify(tree, names, docs, args.allow_homonym)
         if args.lean:
-            problems = lean_cross_check(verdicts, lean_dependency_edges())
+            problems, advisories = lean_cross_check(verdicts, lean_dependency_edges())
+            for advisory in advisories[:20]:
+                print(f"--lean advisory: {advisory}")
+            if len(advisories) > 20:
+                print(f"--lean advisory: ... and {len(advisories) - 20} more")
             if problems:
                 raise Inconsistency(
                     "text scanner bug (Lean sees consumers the text scan missed); "
                     "add these to the fixtures:\n  " + "\n  ".join(problems)
                 )
-            print("--lean cross-check: no consumer seen by Lean was missed by the text scan")
+            print(
+                f"--lean cross-check: {len(verdicts)} candidate(s) compared against the "
+                "elaborated graph; no consumer seen by Lean was missed on a "
+                "safe-to-delete verdict"
+            )
         if args.json_path:
             write_json(Path(args.json_path), verdicts, cascade)
         report(

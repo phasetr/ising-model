@@ -23,17 +23,28 @@ import IsingModel
 
 open Lean
 
+/-- The user-facing name of a constant.
+
+A `private` declaration is stored as `_private.<module>.<hash>.IsingModel.foo`, so
+filtering on the `IsingModel` prefix alone drops every private consumer -- and a
+consumer the cross-check cannot see is exactly the blind spot this file exists to
+close. -/
+def userName (n : Name) : Name := Lean.privateToUserName n
+
 run_cmd do
   let env ← Lean.getEnv
   let root : Name := `IsingModel
   let mut out : Array String := #[]
   for (name, info) in env.constants.toList do
-    if root.isPrefixOf name && !name.isInternal then
+    let src := userName name
+    if root.isPrefixOf src && !src.isInternal then
       let used := info.type.getUsedConstants ++
         (info.value?.map Expr.getUsedConstants).getD #[]
-      let deps := used.filter fun dep => root.isPrefixOf dep && dep != name && !dep.isInternal
+      let deps := used.filterMap fun dep =>
+        let tgt := userName dep
+        if root.isPrefixOf tgt && tgt != src && !tgt.isInternal then some tgt else none
       let deps := deps.toList.eraseDups
       if !deps.isEmpty then
-        out := out.push s!"{name}\t{String.intercalate " " (deps.map toString)}"
+        out := out.push s!"{src}\t{String.intercalate " " (deps.map toString)}"
   for line in out do
     IO.println line
