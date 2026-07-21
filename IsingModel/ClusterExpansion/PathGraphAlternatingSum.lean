@@ -85,9 +85,11 @@ The full edge set is the unique connected spanning subset
 (`pathGraph_connectedSpanning_charac`), so the alternating sum has the single term
 `(-1)^|E| = (-1)^n`.  This subsumes the former per-`n` `decide` lemmas for
 `pathGraph 3, …, 8` and additionally covers `pathGraph 1` (value `1`) and
-`pathGraph 2` (value `-1`).  Values: `n=2 ↦ 1`, `3 ↦ -1`, `4 ↦ 1`, `5 ↦ -1`,
-`6 ↦ 1`, `7 ↦ -1`; the corresponding Ursell coefficient of an `(n+1)`-vertex path
-cluster is `ϕ^T = (-1)^n / (n+1)!`. -/
+`pathGraph 2` (value `-1`).  Spelled out in terms of the exponent `n`:
+`n = 2 ↦ pathGraph 3 = 1`, `n = 3 ↦ pathGraph 4 = -1`, `n = 4 ↦ pathGraph 5 = 1`,
+`n = 5 ↦ pathGraph 6 = -1`, `n = 6 ↦ pathGraph 7 = 1`, `n = 7 ↦ pathGraph 8 = -1`;
+the corresponding Ursell coefficient of an `(n+1)`-vertex path cluster is
+`ϕ^T = (-1)^n / (n+1)!`. -/
 theorem alternatingConnectedSubgraphSum_pathGraph (n : ℕ) :
     alternatingConnectedSubgraphSum (SimpleGraph.pathGraph (n + 1)) = (-1 : ℝ) ^ n := by
   unfold alternatingConnectedSubgraphSum

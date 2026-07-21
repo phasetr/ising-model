@@ -391,6 +391,8 @@ import IsingModel.ClusterExpansion.Penrose.PolymerSeqTreeKP
 import IsingModel.ClusterExpansion.Penrose.CompleteTreePolymerConstraint
 import IsingModel.ClusterExpansion.UrsellTreeBound
 import IsingModel.ClusterExpansion.AlternatingFinThree
+import IsingModel.ClusterExpansion.PathGraphAlternatingSum
+import IsingModel.ClusterExpansion.CycleGraphAlternatingSum
 import IsingModel.ClusterExpansion.Families
 import IsingModel.ClusterExpansion.MayerCompleteContribution
 import IsingModel.ClusterExpansion.UrsellFinThree
