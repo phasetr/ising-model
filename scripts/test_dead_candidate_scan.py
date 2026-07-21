@@ -578,12 +578,12 @@ class UnreadableCitationTest(unittest.TestCase):
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"\unknownmacro")
         self.assertTrue(span.could_cite("anything_at_all"))
 
-    def test_unparsable_span_requires_only_one_of_its_identifier_runs(self) -> None:
-        """Its end is not locatable, so no run can be required to open the name.
+    def test_unparsable_span_requires_only_one_of_its_words(self) -> None:
+        """Its end is not locatable, so no word can be required to open the name.
 
-        ``shallow_lemma`` is charged because the one-character run ``a`` occurs
-        in it: inside an unparsable region a short run refutes almost nothing,
-        which is the conservative direction.
+        ``shallow_lemma`` is charged because the one-character fragment ``a``
+        occurs in it: inside an unparsable region a short fragment refutes almost
+        nothing, which is the conservative direction.
         """
         span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
         self.assertTrue(span.could_cite("deep_lemma"))
@@ -591,12 +591,12 @@ class UnreadableCitationTest(unittest.TestCase):
         self.assertTrue(span.could_cite("shallow_lemma"))
         self.assertFalse(span.could_cite("zzz_lemm"))
 
-    def test_unparsable_span_is_charged_when_its_run_sits_inside_the_name(self) -> None:
-        """Requiring the *opening* run as a prefix let two real shapes escape.
+    def test_unparsable_span_is_charged_when_its_word_sits_inside_the_name(self) -> None:
+        """Requiring the *opening* fragment as a prefix let two real shapes escape.
 
-        A partially qualified citation and one opened by prose both show a run
-        the name carries, and both were charged to nobody while `startswith`
-        decided the question.
+        A partially qualified citation and one opened by prose both show a
+        fragment the name carries, and both were charged to nobody while
+        `startswith` decided the question.
         """
         cases = (
             ("\\texttt{Ambient.foo\n", "IsingModel.Ambient.foo"),
@@ -633,6 +633,41 @@ class UnreadableCitationTest(unittest.TestCase):
                 # Still discriminating: an unrelated name is refuted as before.
                 self.assertFalse(warnings[0].could_cite("unrelated_lemma"))
 
+    def test_a_macro_argument_is_never_a_word_of_its_own(self) -> None:
+        """A space inside an unknown macro's argument must not cut a word.
+
+        Reading the span word by word is only sound if the words are cut at the
+        prose spaces. Cutting at *every* space made the argument text a word --
+        readable evidence about a name the macro never spelled that way -- so the
+        span was refuted by its own input and charged to nobody, which is the
+        argument-as-literal-text route reopened through the word rule.
+        """
+        cases = (
+            (r"foo\unknown{arg text}bar", "fooXbar"),
+            (r"foo\'{e x}bar", "fooébar"),
+        )
+        for text, name in cases:
+            with self.subTest(text=text):
+                span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, text)
+                self.assertTrue(span.could_cite(name), span.message)
+                self.assertFalse(span.could_cite("zzz_unrelated"))
+
+    def test_an_unreadable_opener_charges_every_candidate(self) -> None:
+        """A citation showing no readable fragment must keep every name.
+
+        An unparsable span begins with its own ``\\texttt{`` opener, and taking
+        the letters of an unresolved control sequence for identifier evidence
+        made the span demand that the name contain ``unknownmacro`` -- so a
+        citation nothing could be read out of was charged to nobody instead of to
+        everybody.
+        """
+        for text in (r"\texttt{\unknownmacro", r"\texttt{\alphaX", r"\texttt{ \foo bar"):
+            with self.subTest(text=text):
+                span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, text)
+                self.assertTrue(span.could_cite("IsingModel.gks_second_ferromagnetic"))
+                self.assertTrue(span.could_cite("IsingModel.αX"))
+                self.assertTrue(span.could_cite("IsingModel.zzz_name"))
+
     def test_prose_fragments_do_not_refute_every_candidate(self) -> None:
         """A fragment no identifier can contain is prose, not evidence.
 
@@ -644,7 +679,12 @@ class UnreadableCitationTest(unittest.TestCase):
         self.assertFalse(span.could_cite("other_lemma"))
 
     def test_qualified_citation_is_matched_against_the_full_name(self) -> None:
-        """A namespace-qualified fragment is refuted by the bare final component."""
+        """A namespace-qualified fragment is refuted by the bare final component.
+
+        The multi-word spelling of the same citation is charged too: its first
+        word carries the qualified fragment, so the prose word after it cannot
+        disown the declaration.
+        """
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX")
         decl = synthetic_tree(
             {
@@ -658,6 +698,10 @@ class UnreadableCitationTest(unittest.TestCase):
         self.assertEqual(decl.full, "IsingModel.foo_x_bar")
         self.assertFalse(span.could_cite(decl.final))
         self.assertTrue(span.could_cite_decl(decl))
+        with_prose = dcs.UnreadableSpan(
+            "tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX bar"
+        )
+        self.assertTrue(with_prose.could_cite_decl(decl), with_prose.message)
 
     def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""

@@ -1075,19 +1075,52 @@ def _usable_fragment(fragment: str) -> bool:
     return bool(fragment) and all(is_id_rest(char) or char == "." for char in fragment)
 
 
-def _identifier_runs(text: str) -> list[str]:
-    """Return every maximal run of identifier characters (dots included) in ``text``."""
-    runs: list[str] = []
+_WHITESPACE_RE = re.compile(r"\s+")
+
+
+def _citation_words(text: str) -> list[str]:
+    """Split ``text`` at the whitespace lying *outside* every unreadable match.
+
+    Word splitting exists because a declaration name carries no space: a space
+    in a citation separates the name from the prose around it, so each word can
+    be tested on its own (:meth:`UnreadableSpan.could_cite`).
+
+    A space *inside* an unknown macro's argument separates nothing. The argument
+    is the macro's input, not literal text, so splitting the raw span would turn
+    the argument into a word of its own -- readable evidence about a name the
+    macro never spelled that way (``\\unknown{arg text}``, ``\\'{e x}``). That is
+    exactly the fail-open route the argument-swallowing in :data:`_UNREADABLE_RE`
+    closes, so each match is kept whole and only the whitespace around it breaks
+    a word. The whitespace a control word *gobbles* (``\\unknown deprecated``)
+    still breaks one: what follows it is prose after the macro, not its argument.
+    """
+    words: list[str] = []
     current: list[str] = []
-    for char in text:
-        if is_id_rest(char) or char == ".":
-            current.append(char)
-        elif current:
-            runs.append("".join(current))
-            current = []
-    if current:
-        runs.append("".join(current))
-    return runs
+
+    def flush() -> None:
+        if current:
+            words.append("".join(current))
+            current.clear()
+
+    def add_readable(chunk: str) -> None:
+        for index, piece in enumerate(_WHITESPACE_RE.split(chunk)):
+            if index:
+                flush()  # the whitespace before this piece ends the current word
+            if piece:
+                current.append(piece)
+
+    position = 0
+    for match in _UNREADABLE_RE.finditer(text):
+        add_readable(text[position : match.start()])
+        whole = match.group()
+        kept = whole.rstrip(" \t")
+        current.append(kept)
+        if kept != whole:
+            flush()
+        position = match.end()
+    add_readable(text[position:])
+    flush()
+    return words
 
 
 @dataclass(frozen=True)
@@ -1124,30 +1157,31 @@ class UnreadableSpan:
         """Return whether this span may be a citation of ``name``.
 
         A declaration name contains no space, so a span is read **word by word**
-        and the candidate is charged as soon as *one* word could spell the name
-        (:meth:`_word_could_spell`). Requiring the whole span to match at once --
-        the fragments of every word, in order, inside a single name -- refuted
-        real cited names whenever the citation carried a second, prose word
-        (``\\texttt{myLemma\\unknown deprecated}`` was charged to nobody), which is
-        the same fail-open route as reading a macro argument literally.
+        (:func:`_citation_words`) and the candidate is charged as soon as *one*
+        word could spell the name (:meth:`_word_could_spell`). Requiring the whole
+        span to match at once -- the fragments of every word, in order, inside a
+        single name -- refuted real cited names whenever the citation carried a
+        second, prose word (``\\texttt{myLemma\\unknown deprecated}`` was charged
+        to nobody), which is the same fail-open route as reading a macro argument
+        literally.
 
         The disjunction only widens the old test: a span matching as a whole
         matches through its first word too, since that word's fragments are a
-        prefix of the whole span's fragment sequence.
+        prefix of the whole span's fragment sequence. The words are cut at the
+        whitespace *outside* the unreadable material only, so an unknown macro's
+        argument never becomes a word -- reading it as one would restore that
+        very fail-open route through the word rule.
 
-        A :data:`UNPARSABLE_BRACES` span has no locatable end, so its tail is
-        prose of unknown extent and no order can be relied on; any identifier run
-        it shows may be the one the name carries, and a run may sit *inside* the
-        name (a partially qualified citation such as ``\\texttt{Ambient.foo``, or
-        a run preceded by prose). No run at all again keeps every candidate.
+        A :data:`UNPARSABLE_BRACES` span is read by the same rule, its unreadable
+        opener included: ``\\texttt{`` and whatever follows it up to the next space
+        form one word, which no name can be refuted by unless the span shows a
+        readable fragment there. So ``\\texttt{\\unknownmacro`` keeps every
+        candidate, ``\\texttt{Ambient.foo`` keeps the names containing that
+        fragment, and a name spelled after prose (``\\texttt{prose {x} name_xyzzy``)
+        is charged through its own word.
         """
-        if self.kind == UNPARSABLE_BRACES:
-            opener = _TEXTTT_CMD_RE.match(self.text)
-            body = self.text[opener.end() :] if opener else self.text
-            runs = _identifier_runs(body)
-            return not runs or any(run in name for run in runs)
         decided = False
-        for word in self.text.split():
+        for word in _citation_words(self.text):
             verdict = self._word_could_spell(word, name)
             if verdict is None:
                 continue  # punctuation-only prose: no evidence either way
@@ -1887,14 +1921,16 @@ L7 the TeX macro table is incomplete by construction. Mitigation: a citation the
    unknown macro is charged together with its brace arguments
    (`\ensuremath{\mathbb{X}}`, `\'{e}`, `\textsubscript{k}` each spell one
    character), because reading an argument as literal name text would refute the
-   very name it spells; likewise a fragment that no identifier can contain (a
-   space, a bracket) never refutes a candidate. A citation is matched against both
-   the bare and the qualified spelling of a name. The residue is bounded, not zero:
-   for a citation whose braces cannot be parsed at all the end of the span is
-   unknown, so the name is required to contain (anywhere, in any order) one of the
-   identifier runs the span does show -- a name spelled entirely inside the
-   unparsable region is still charged to nobody, and a one-character run there is
-   satisfied by almost any name.
+   very name it spells; the words are therefore cut at the whitespace outside that
+   material only, so an argument never becomes a word either. Likewise a fragment
+   that no identifier can contain (a space, a bracket) never refutes a candidate,
+   and an unresolved control sequence is not identifier evidence: a word showing no
+   readable fragment at all keeps every candidate. A citation is matched against
+   both the bare and the qualified spelling of a name. A citation whose braces
+   cannot be parsed at all is read by the same rule, its unreadable opener
+   included, so its words are those of the line it opens. The residue is that
+   within one word the readable fragments are required in order, which an
+   unparsable region could in principle permute.
 L7b the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
    A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
    a TeX file other than the guide) is invisible, so "no documentation citation"
