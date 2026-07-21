@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.GraphCases
+import IsingModel.ClusterExpansion.HighTempGeneralRegularity
 
 /-!
 # Cluster expansion strict positivity split — tanh-substituted strict and iff bounds
