@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.Families.SandwichBounds
+import IsingModel.ClusterExpansion.Families.VertexDisjoint
 
 /-!
 # Cluster expansion zero-field regularity (3/4): complex analyticity core
