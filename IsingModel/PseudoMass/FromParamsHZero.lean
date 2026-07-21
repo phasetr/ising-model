@@ -6,15 +6,16 @@ import IsingModel.PseudoMass.FromParamsHZero.JZeroJointRegularity
 This module preserves the historical import path for the split
 `FromParamsHZero` wrapper layer.
 
-## Standalone module (intentional)
+## Umbrella-reachable via its cluster head
 
-This aggregator lies outside the transitive import closure of the root umbrella
-`IsingModel.lean`, so it is not part of the assembled library: no
-umbrella-reachable ("live") module imports it.  It is imported only within this
-standalone cluster (by a sibling module), which is deliberately not wired into
-the umbrella.  It should be retained rather than treated as dead code: it
+This module has no importers outside its own cluster.  The cluster head is
+registered in the root umbrella `IsingModel.lean`, so this module too lies
+inside the transitive import closure of `import IsingModel` — the prerequisite
+for the capstone axiom audit (`scripts/audit_gate.py`, check V3) to reach it.
+Note that V3 inspects only the names listed in `scripts/audit/capstones.txt`,
+and no declaration of this module is currently listed there.  It
 aggregates the standalone `FromParamsHZero/*` regularity chain — genuine
 regularity / value results for the `J = 0` / `h = 0` slices of
-`pseudoMassFromParamsAtPair`, built on the live `PseudoMass/FromParamsBasic`
+`pseudoMassFromParamsAtPair`, built on the `PseudoMass/FromParamsBasic`
 results.
 -/

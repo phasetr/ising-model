@@ -1,3 +1,7 @@
+import IsingModel.RealTanhAux
+import IsingModel.ClusterExpansion.Incompatibility
+import IsingModel.ClusterExpansion.Families.VertexDisjoint
+import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity
 
 /-!

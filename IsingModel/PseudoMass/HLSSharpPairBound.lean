@@ -1,3 +1,4 @@
+import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.PseudoMassFromParamsRegularity
 import IsingModel.PseudoMass.HLSCorrelationCapstone
 import IsingModel.HLSConvolutionSharp
 import IsingModel.Concrete.LatticeGraphBED.NeighborDegree
