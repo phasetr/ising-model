@@ -13,9 +13,12 @@ that is the only verdict of this tool that can destroy work:
 retains), :class:`SameLineAttributeTest` (``@[simp] theorem foo`` vanishing from
 the declaration table, which turns its consumers into self-references),
 :class:`TexCoverageTest` (a citation the LaTeX channel cannot read must warn, not
-disappear) and :class:`CharClassTest` (the identifier class must never be a
-superset of Lean's). :class:`FamilyCalibrationTest` asserts the calibration
-integers that used to live only in a fixtures comment.
+disappear), :class:`UnreadableCitationTest` (that warning must also *classify*,
+or coverage is fail-open exactly where it claims to be fail-closed) and
+:class:`CharClassTest` (the identifier class must never be a superset of Lean's).
+:class:`FamilyCalibrationTest` asserts the calibration integers that used to live
+only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
+direction: a docstring mention is reported but must never rescue a lemma.
 
 Fast unit tests use synthetic strings. The tree-dependent tests (canary,
 fixtures, exit codes, determinism, performance) parse the real repository once
@@ -287,7 +290,9 @@ def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
 
 def synthetic_doc(text: str, label: str = "docs/index.md") -> dcs.DocSource:
     """Return a documentation source carrying ``text`` and no citation token."""
-    return dcs.DocSource(label=label, text=text, starts=dcs.line_starts(text), tokens=[], warnings=[])
+    return dcs.DocSource(
+        label=label, text=text, starts=dcs.line_starts(text), tokens=[], unreadable=[]
+    )
 
 
 class DeleteClosureTest(unittest.TestCase):
@@ -430,7 +435,19 @@ class TexCoverageTest(unittest.TestCase):
         """Deeper nesting is not parsed -- but it must be *counted*."""
         _normalized, warnings = dcs.normalize_tex(r"\texttt{deep {a {b}} tail}")
         self.assertEqual(len(warnings), 1)
-        self.assertIn("unparsable code citation", warnings[0])
+        self.assertEqual(warnings[0].kind, dcs.UNPARSABLE_BRACES)
+        self.assertIn("unparsable braces", warnings[0].message)
+
+    def test_nested_citation_is_not_residue_of_its_wrapper(self) -> None:
+        """The inner span is read recursively, so the outer one is not a gap.
+
+        Ten of the guide's warnings were this self-inflicted false positive, and
+        a coverage count is worthless if the tool inflates it itself.
+        """
+        _normalized, warnings = dcs.normalize_tex(
+            r"\texttt{(removed; archived \texttt{archive/branch-name})}"
+        )
+        self.assertEqual([w.message for w in warnings], [])
 
     def test_nested_citation_still_yields_the_inner_token(self) -> None:
         """The outer span consumes the inner one, so extraction recurses."""
@@ -443,6 +460,145 @@ class TexCoverageTest(unittest.TestCase):
         tokens = {token for token, _line in tex.tokens}
         self.assertIn("magnetization_convergent_{J,h,beta}_latticeGraph", tokens)
         self.assertGreater(len([t for t in tokens if "{" in t]), 50)
+
+
+class EnsureMathTest(unittest.TestCase):
+    """``\\ensuremath`` wraps the blackboard-bold macros that spell ``ℂ``."""
+
+    def test_two_stage_unwrap(self) -> None:
+        """Dropping the wrapper and spelling the character must compose."""
+        normalized, warnings = dcs.normalize_tex(
+            r"\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ofReal}"
+        )
+        self.assertIn("fieldPolymerZℂ_ofReal", normalized)
+        self.assertEqual(warnings, [])
+
+    def test_real_guide_has_no_name_shaped_blind_spot(self) -> None:
+        """Every span the guide leaves unreadable is prose, not a name citation.
+
+        The measured state of main: 3 unreadable spans (type signatures written
+        with ``\\to``), and none of them can be a citation of any declaration in
+        the tree. A failure here is a maintenance signal, not a flake -- the
+        macro table needs the entry, or those names go out as ``uncertain``.
+        """
+        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
+        self.assertLessEqual(len(tex.unreadable), 5, [w.message for w in tex.unreadable])
+        charged = [
+            (span.line, decl.final)
+            for span in tex.unreadable
+            for decl in tree().decls
+            if not decl.anonymous and span.could_cite(decl.final)
+        ]
+        self.assertEqual(charged, [])
+
+    def test_real_guide_publishes_the_complex_family(self) -> None:
+        """The 16 ``...ℂ...`` names of section 18 were invisible before the unwrap."""
+        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
+        for name in (
+            "fieldPolymerZℂ_ne_zero",
+            "norm_fieldMayerExpansionTermℂ_le_tree_activity_pow",
+        ):
+            self.assertTrue(dcs.find_occurrences(tex.text, name), name)
+
+
+class UnreadableCitationTest(unittest.TestCase):
+    """Coverage must reach the *verdict*, not only the warning count.
+
+    A warning that changes no verdict and no exit code is fail-open where the
+    docstring claimed fail-closed: 16 real published names were invisible to the
+    TeX channel while the run printed 45 warnings and exited 0 regardless.
+    """
+
+    def test_fragments_refute_a_name_or_keep_it(self) -> None:
+        """Readable fragments must occur, in order, inside any name cited."""
+        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"foo\unknownmacro bar")
+        self.assertTrue(span.could_cite("fooXbar"))
+        self.assertTrue(span.could_cite("foo_lambda_bar"))
+        self.assertFalse(span.could_cite("foo_baz"))
+
+    def test_an_entirely_unreadable_span_keeps_everything(self) -> None:
+        """No fragment left means no candidate can be excluded."""
+        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"\unknownmacro")
+        self.assertTrue(span.could_cite("anything_at_all"))
+
+    def test_unparsable_span_requires_only_its_opening_run(self) -> None:
+        """Its end is not locatable, so the tail is prose of unknown extent."""
+        span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
+        self.assertTrue(span.could_cite("deep_lemma"))
+        self.assertFalse(span.could_cite("shallow_lemma"))
+
+    def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
+        """End to end: an unread span downgrades the name it might be citing."""
+        tree_ = synthetic_tree(
+            {
+                "IsingModel/SynthUnreadable.lean": (
+                    "namespace IsingModel\n"
+                    "theorem synthetic_unreadableβ_xyzzy : True := trivial\n"
+                    "end IsingModel\n"
+                )
+            }
+        )
+        name = "IsingModel.synthetic_unreadableβ_xyzzy"
+        blind = synthetic_doc("nothing here")
+        self.assertEqual(dcs.classify(tree_, [name], [blind], False)[0][0].verdict, dcs.SAFE)
+        blind.unreadable.append(
+            dcs.UnreadableSpan("tex", 7, dcs.MACRO_RESIDUE, r"synthetic_unreadable\beta\_xyzzy")
+        )
+        verdict = dcs.classify(tree_, [name], [blind], False)[0][0]
+        self.assertEqual(verdict.verdict, dcs.UNCERTAIN)
+        self.assertTrue(any("cannot read" in reason for reason in verdict.reasons))
+
+
+class ProseMentionTest(unittest.TestCase):
+    """Module docstrings that list a name: reported, never classifying."""
+
+    SOURCES = {
+        "IsingModel/SynthProseA.lean": (
+            "namespace IsingModel\n"
+            "theorem synthetic_prose_target_xyzzy : True := trivial\n"
+            "end IsingModel\n"
+        ),
+        "IsingModel/SynthProseB.lean": (
+            "/-! ## Siblings\n"
+            "This module continues `synthetic_prose_target_xyzzy`.\n"
+            "-/\n"
+            "namespace IsingModel\n"
+            "theorem synthetic_prose_other_xyzzy : True := trivial\n"
+            "end IsingModel\n"
+        ),
+    }
+
+    def verdict(self) -> dcs.Verdict:
+        """Classify the target against the two-file synthetic tree."""
+        tree_ = synthetic_tree(self.SOURCES)
+        return dcs.classify(
+            tree_, ["IsingModel.synthetic_prose_target_xyzzy"], [synthetic_doc("")], False
+        )[0][0]
+
+    def test_docstring_mention_is_reported_but_does_not_rescue(self) -> None:
+        """Prose is not a reference: the verdict stays safe, with a warning."""
+        verdict = self.verdict()
+        self.assertEqual(verdict.verdict, dcs.SAFE)
+        self.assertTrue(any("module docstring" in item for item in verdict.info))
+        self.assertTrue(any("leaves that text stale" in item for item in verdict.info))
+
+    def test_prose_channel_sees_every_non_code_occurrence(self) -> None:
+        """On the real tree, no textual occurrence falls between the channels."""
+        parsed = tree()
+        name = "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"
+        prose_lines = {site for site in dcs.scan_prose(parsed, name)}
+        code_lines = {f"{occ.file}:{occ.line}" for occ in dcs.scan_name(parsed, name)}
+        for source in parsed.files:
+            raw = source.path.read_text(encoding="utf-8")
+            if name not in raw:
+                continue
+            for offset, _ctx, _prefix in dcs.find_occurrences(raw, name):
+                line = dcs.offset_to_line(source.starts, offset)
+                where = f"{source.relpath}:{line}"
+                self.assertTrue(
+                    where in code_lines or any(site.startswith(where + " ") for site in prose_lines),
+                    where,
+                )
 
 
 _FAMILY: list[dcs.Verdict] | None = None

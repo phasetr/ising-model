@@ -42,6 +42,14 @@ A third rule follows from the first two and is just as load-bearing:
    same report tells you to keep: a false ``safe-to-delete``, which for a tool
    that authorises deletions is the only fatal error class.
 
+4. **A documentation citation that cannot be read still classifies.** The LaTeX
+   macro table is incomplete by construction, so the normaliser meets spans it
+   cannot resolve. Counting them as coverage warnings is not enough: a warning
+   that changes no verdict and no exit code leaves the tool fail-open exactly
+   where it claims to be fail-closed. Each unreadable span is therefore charged
+   to every candidate name it could have been citing, and those candidates come
+   out ``uncertain``, never ``safe-to-delete``.
+
 Boundary predicate
 ------------------
 ``is_id_rest`` mirrors Lean 4's ``isIdRest``/``isLetterLike``/``isSubScriptAlnum``
@@ -82,6 +90,7 @@ import sys
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
+from itertools import takewhile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -509,6 +518,20 @@ class SourceFile:
     starts: list[int]
     decls: list[Decl]
     head_lines: list[int] = field(default_factory=list)
+    prose: str = ""  # comments and string bodies, joined (see extract_prose)
+    prose_regions: list[tuple[int, int, str]] = field(default_factory=list)
+
+    def prose_site(self, offset: int) -> tuple[int, str]:
+        """Return the ``(line, kind)`` of the prose region holding ``offset``."""
+        lo, hi = 0, len(self.prose_regions) - 1
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            if self.prose_regions[mid][0] <= offset:
+                lo = mid
+            else:
+                hi = mid - 1
+        _start, line, kind = self.prose_regions[lo]
+        return line, kind
 
     def owner_of(self, lineno: int) -> Decl | None:
         """Return the declaration owning ``lineno`` (greatest head line <= it)."""
@@ -522,6 +545,46 @@ class SourceFile:
             else:
                 hi = mid - 1
         return self.decls[lo]
+
+
+# ``strip_noncode`` blanks comments and string bodies to spaces *in place*, so a
+# run of two or more spaces in the cleaned text is exactly a region the code
+# scanner cannot see. Recovering the prose from the mask rather than from a
+# second comment tokenizer keeps the repository's single stripper single.
+_BLANK_RUN_RE = re.compile(r"[ ]{2,}")
+_PROSE_KINDS = (("/-!", "module docstring"), ("/--", "doc comment"), ("--", "comment"),
+                ("/-", "comment"))
+
+
+def extract_prose(
+    raw: str, cleaned: str, starts: list[int]
+) -> tuple[str, list[tuple[int, int, str]]]:
+    """Return ``(joined prose, regions)`` for one source file.
+
+    A region is ``(offset in the joined text, line in the file, kind)``. The
+    prose channel is **informational only**: a name mentioned in a sibling
+    module docstring is not a Lean reference, but deleting it leaves that
+    docstring stale, which a deletion PR needs to know.
+    """
+    pieces: list[str] = []
+    regions: list[tuple[int, int, str]] = []
+    position = 0
+    kind = "comment"
+    for match in _BLANK_RUN_RE.finditer(cleaned):
+        text = raw[match.start() : match.end()]
+        if not text.strip():
+            continue  # plain indentation, not a blanked region
+        if match.start() > 0 and cleaned[match.start() - 1] == '"':
+            kind = "string literal"
+        else:
+            for opener, label in _PROSE_KINDS:
+                if text.lstrip().startswith(opener):
+                    kind = label
+                    break
+        regions.append((position, offset_to_line(starts, match.start()), kind))
+        pieces.append(text)
+        position += len(text) + 1
+    return "\n".join(pieces), regions
 
 
 def iter_scan_files() -> list[Path]:
@@ -632,13 +695,17 @@ def build_tree(sources: list[tuple[Path, str]], verbose: bool = False) -> Tree:
             )
         cleaned = strip_noncode(raw)
         file_decls = extract_decls(path, cleaned)
+        starts = line_starts(cleaned)
+        prose, prose_regions = extract_prose(raw, cleaned, starts)
         source = SourceFile(
             path=path,
             relpath=rel(path),
             cleaned=cleaned,
-            starts=line_starts(cleaned),
+            starts=starts,
             decls=file_decls,
             head_lines=[decl.line for decl in file_decls],
+            prose=prose,
+            prose_regions=prose_regions,
         )
         files.append(source)
         decls.extend(file_decls)
@@ -736,6 +803,25 @@ def scan_name(tree: Tree, name: str) -> list[Occurrence]:
     return out
 
 
+def scan_prose(tree: Tree, name: str) -> list[str]:
+    """Return the comment / docstring sites that mention ``name``.
+
+    Never a verdict input: prose is not a reference, and a lemma cited only by a
+    sibling module's ``/-! ... -/`` header is still dead code. It is reported
+    because the deletion PR has to update those headers -- a deletion that
+    builds green can still leave the documentation lying.
+    """
+    needle = name.rsplit(".", 1)[-1]
+    out: list[str] = []
+    for source in tree.files:
+        if needle not in source.prose:
+            continue
+        for offset, _context, _prefix in find_occurrences(source.prose, needle):
+            line, kind = source.prose_site(offset)
+            out.append(f"{source.relpath}:{line} ({kind})")
+    return out
+
+
 def index_occurrences(tree: Tree, name: str) -> set[tuple[str, int]]:
     """Return ``(file, line)`` occurrences of ``name`` according to the index."""
     needle = name.rsplit(".", 1)[-1]
@@ -816,10 +902,26 @@ TEX_MACROS: dict[str, str] = {
     r"\mathbb{Z}": "ℤ",
     r"\mathbb{Q}": "ℚ",
     r"\mathbb{C}": "ℂ",
+    # Text-mode subscripts: the guide spells ``le_div_iff₀`` this way.
+    **{rf"\textsubscript{{{digit}}}": chr(0x2080 + digit) for digit in range(10)},
     # Repository-local macro (tex/proof-guide.tex:44): 139 occurrences, every
     # one of them inside a declaration name.
     r"\LeanLambda": "Λ",
 }
+
+# ``\ensuremath`` selects math mode without changing the token it wraps, so it
+# is *transparent* for name matching and must be removed before the macro table
+# is consulted: the guide writes ``\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}``
+# and reading it needs both stages (drop the wrapper, then spell ``ℂ``). Skipping
+# stage one hid all 16 published ``...ℂ...`` results (20 citations) from the TeX
+# channel entirely.
+_TRANSPARENT_WRAPPERS = ("ensuremath",)
+_TRANSPARENT_RE = re.compile(
+    r"\\(?:" + "|".join(_TRANSPARENT_WRAPPERS) + r")\s*\{((?:[^{}]|\{[^{}]*\})*)\}"
+)
+# Unwrapping exposes an outer layer's braces, so it repeats to a fixpoint; the
+# bound only stops a pathological input from spinning.
+_MAX_UNWRAP_ROUNDS = 8
 
 _TEX_COMMENT_RE = re.compile(r"(?<!\\)%.*")
 _TEX_MATH_RE = re.compile(r"\$([^$\n]*)\$|\\\(((?:[^\\]|\\(?!\)))*)\\\)")
@@ -839,6 +941,7 @@ _TEX_UNESCAPE = (
     # so it must survive as one rather than be dropped.
     (r"\dots", "..."),
     (r"\ldots", "..."),
+    (r"\cdots", "..."),
     (r"\allowbreak", ""),
     (r"\linebreak", ""),
     (r"\-", ""),
@@ -869,13 +972,25 @@ def _apply_macro(text: str, macro: str, replacement: str) -> str:
     return text.replace(macro, replacement)
 
 
+def _unwrap_transparent(text: str) -> str:
+    """Return ``text`` with transparent wrappers such as ``\\ensuremath`` removed."""
+    for _ in range(_MAX_UNWRAP_ROUNDS):
+        unwrapped = _TRANSPARENT_RE.sub(lambda m: m.group(1), text)
+        if unwrapped == text:
+            break
+        text = unwrapped
+    return text
+
+
 def _normalize_tex_body(text: str) -> str:
     """Return ``text`` with comments, math macros and LaTeX escapes resolved.
 
     ``\\texttt{...}`` wrappers are *kept*, so the caller can still tell which
-    spans are code citations.
+    spans are code citations. Transparent wrappers are removed *before* the
+    macro table runs, because the two compose (``\\ensuremath{\\mathbb{C}}``).
     """
     text = _TEX_COMMENT_RE.sub("", text)
+    text = _unwrap_transparent(text)
 
     def _replace_math(match: re.Match[str]) -> str:
         body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
@@ -889,53 +1004,6 @@ def _normalize_tex_body(text: str) -> str:
     for escaped, plain in _TEX_UNESCAPE:
         text = _apply_macro(text, escaped, plain)
     return text
-
-
-def normalize_tex(text: str) -> tuple[str, list[str]]:
-    """Return ``(normalized text, coverage warnings)`` for a LaTeX source.
-
-    ``tex/proof-guide.tex`` writes declaration names with ``\\_`` for the
-    underscore and ``$\\Lambda$`` / ``\\(\\Lambda\\)`` for the Greek letter, so a
-    raw fixed-string search finds *none* of the published results whose name
-    carries one. Normalisation is therefore a precondition, not a nicety.
-
-    Steps: drop comments, unescape LaTeX punctuation, replace math-mode Greek /
-    blackboard macros by the characters they spell, unwrap ``\\texttt{...}``.
-    Line structure is preserved so reported line numbers stay usable.
-
-    The macro table is incomplete by construction, so a **coverage warning** is
-    emitted for every ``\\texttt{...}`` span that still contains a backslash
-    after normalisation: that is a name citation the scanner could not read, and
-    silent under-coverage here is exactly the failure that must not recur. Prose
-    outside ``\\texttt`` is not a name citation and is deliberately not warned
-    about.
-
-    The warning loop is **fail-closed**: it counts the ``\\texttt``-family
-    *openers* independently of the span regex, so a citation whose body the regex
-    cannot parse (unbalanced or deeply nested braces) raises a warning instead of
-    disappearing. A near-zero warning count is only evidence of coverage if the
-    spans that could not be read are counted too.
-    """
-    partial = _normalize_tex_body(text)
-    warnings: list[str] = []
-    starts = line_starts(partial)
-    parsed: set[int] = set()
-    for match in _TEXTTT_RE.finditer(partial):
-        parsed.add(match.start())
-        if "\\" in match.group(1):
-            lineno = offset_to_line(starts, match.start())
-            warnings.append(
-                f"tex:{lineno}: unnormalised macro in a code citation: {match.group(1)[:60]!r}"
-            )
-    for match in _TEXTTT_CMD_RE.finditer(partial):
-        if match.start() in parsed:
-            continue
-        lineno = offset_to_line(starts, match.start())
-        warnings.append(
-            f"tex:{lineno}: unparsable code citation (unbalanced or deeply nested "
-            f"braces): {partial[match.start() : match.start() + 60]!r}"
-        )
-    return _TEXTTT_RE.sub(lambda m: m.group(1), partial), warnings
 
 
 def code_citation_spans(text: str) -> list[tuple[str, int]]:
@@ -953,6 +1021,135 @@ def code_citation_spans(text: str) -> list[tuple[str, int]]:
             base = match.start(1)
             out.extend((inner, base + offset) for inner, offset in code_citation_spans(body))
     return out
+
+
+# Everything the normaliser could *not* resolve inside a citation: a macro it has
+# no entry for, an escape, and the braces around them. Splitting on it leaves the
+# fragments that are certainly part of whatever name the span cites.
+_UNREADABLE_RE = re.compile(r"\\[A-Za-z]+\s*|\\.|[{}]")
+
+MACRO_RESIDUE = "unnormalised macro"
+UNPARSABLE_BRACES = "unparsable braces"
+
+
+@dataclass(frozen=True)
+class UnreadableSpan:
+    """A code citation the LaTeX normaliser could not fully read.
+
+    It is both the coverage warning printed by every run *and* the object that
+    makes coverage bite: :meth:`could_cite` asks which candidate names the
+    unread span might have been citing, and every one of them is forced to
+    ``uncertain``. Counting the span without that step left the tool fail-closed
+    at the level of the *warning* and fail-open at the level of the *verdict*,
+    which is the only level that authorises a deletion.
+    """
+
+    label: str
+    line: int
+    kind: str
+    text: str  # the span as far as it could be read
+
+    @property
+    def message(self) -> str:
+        """Return the one-line warning as printed in the report."""
+        detail = (
+            "unbalanced or deeply nested braces"
+            if self.kind == UNPARSABLE_BRACES
+            else "no macro-table entry"
+        )
+        return (
+            f"{self.label}:{self.line}: {self.kind} in a code citation "
+            f"({detail}): {self.text[:60]!r}"
+        )
+
+    def could_cite(self, name: str) -> bool:
+        """Return whether this span may be a citation of ``name``.
+
+        The readable fragments of a name citation must occur, in order, inside
+        the name it cites, while the unread macros may have spelled anything at
+        all. So the test keeps a candidate *unless* the fragments refute it, and
+        an entirely unreadable span (no fragment left) could cite anything and
+        therefore makes every candidate uncertain -- loudly rather than silently.
+
+        A :data:`UNPARSABLE_BRACES` span has no locatable end, so its tail is
+        prose of unknown extent and only the identifier run that opens it may be
+        required; an empty run again keeps every candidate.
+        """
+        if self.kind == UNPARSABLE_BRACES:
+            opener = _TEXTTT_CMD_RE.match(self.text)
+            body = self.text[opener.end() :] if opener else self.text
+            prefix = "".join(takewhile(is_id_rest, body))
+            return name.startswith(prefix)
+        position = 0
+        for fragment in _UNREADABLE_RE.split(self.text):
+            if not fragment:
+                continue
+            found = name.find(fragment, position)
+            if found < 0:
+                return False
+            position = found + len(fragment)
+        return True
+
+
+def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
+    """Return ``(normalized text, unreadable spans)`` for a LaTeX source.
+
+    ``tex/proof-guide.tex`` writes declaration names with ``\\_`` for the
+    underscore and ``$\\Lambda$`` / ``\\(\\Lambda\\)`` for the Greek letter, so a
+    raw fixed-string search finds *none* of the published results whose name
+    carries one. Normalisation is therefore a precondition, not a nicety.
+
+    Steps: drop comments, unwrap transparent wrappers, unescape LaTeX
+    punctuation, replace math-mode Greek / blackboard macros by the characters
+    they spell, unwrap ``\\texttt{...}``. Line structure is preserved so
+    reported line numbers stay usable.
+
+    The macro table is incomplete by construction, so every ``\\texttt{...}``
+    span the normaliser could not fully read is **returned rather than dropped**,
+    in two flavours: a body that still contains a backslash after normalisation
+    (:data:`MACRO_RESIDUE`), and an opener whose body the span regex cannot parse
+    at all (:data:`UNPARSABLE_BRACES`) -- counted independently of the span
+    regex, so an unparsable citation cannot disappear between the two loops.
+    Nested code citations are read recursively and therefore do not count as
+    residue of their enclosing span. Prose outside ``\\texttt`` is not a name
+    citation and is deliberately not reported.
+
+    What makes this fail-closed is not the count but
+    :meth:`UnreadableSpan.could_cite`: the classifier downgrades to ``uncertain``
+    every candidate an unread span might have been citing. A low count is
+    evidence of coverage only in combination with that downgrade.
+    """
+    partial = _normalize_tex_body(text)
+    spans: list[UnreadableSpan] = []
+    starts = line_starts(partial)
+    parsed: set[int] = set()
+    for body, offset in code_citation_spans(partial):
+        parsed.add(offset)
+        own = _TEXTTT_RE.sub(" ", body)  # nested citations are read on their own
+        if "\\" in own:
+            spans.append(
+                UnreadableSpan(
+                    label="tex",
+                    line=offset_to_line(starts, offset),
+                    kind=MACRO_RESIDUE,
+                    text=own,
+                )
+            )
+    for match in _TEXTTT_CMD_RE.finditer(partial):
+        if match.start() in parsed:
+            continue
+        # The closing brace is by definition not locatable, so the span is
+        # reported up to the end of its line.
+        end = partial.find("\n", match.start())
+        spans.append(
+            UnreadableSpan(
+                label="tex",
+                line=offset_to_line(starts, match.start()),
+                kind=UNPARSABLE_BRACES,
+                text=partial[match.start() : end if end >= 0 else len(partial)],
+            )
+        )
+    return _TEXTTT_RE.sub(lambda m: m.group(1), partial), spans
 
 
 _MD_TOKEN_RE = re.compile(r"`([^`\n]+)`|```(.*?)```", re.DOTALL)
@@ -979,7 +1176,7 @@ class DocSource:
     text: str
     starts: list[int]
     tokens: list[tuple[str, int]]  # (token, line)
-    warnings: list[str]
+    unreadable: list[UnreadableSpan]  # coverage warnings *and* uncertainty triggers
 
 
 def load_docs() -> list[DocSource]:
@@ -996,7 +1193,7 @@ def load_docs() -> list[DocSource]:
                 if _nameish(piece):
                     tokens.append((piece.strip(",.;:()"), lineno))
         out.append(
-            DocSource(label=rel(DOCS_INDEX), text=raw, starts=starts, tokens=tokens, warnings=[])
+            DocSource(label=rel(DOCS_INDEX), text=raw, starts=starts, tokens=tokens, unreadable=[])
         )
     if TEX_GUIDE.exists():
         raw = TEX_GUIDE.read_text(encoding="utf-8")
@@ -1010,14 +1207,14 @@ def load_docs() -> list[DocSource]:
             for piece in body.split():
                 if _nameish(piece):
                     tokens.append((piece.strip(",.;:()"), lineno))
-        text, warnings = normalize_tex(raw)
+        text, unreadable = normalize_tex(raw)
         out.append(
             DocSource(
                 label=rel(TEX_GUIDE),
                 text=text,
                 starts=line_starts(text),
                 tokens=tokens,
-                warnings=warnings,
+                unreadable=unreadable,
             )
         )
     return out
@@ -1130,6 +1327,14 @@ def classify(
         verdict.info.extend(info)
         occs = scan_name(tree, decl.name)
         problems.extend(cross_check(tree, decl.name, occs))
+        mentions = sorted(set(scan_prose(tree, decl.name)))
+        if mentions:
+            verdict.info.append(
+                "mentioned in prose at "
+                + ", ".join(mentions[:3])
+                + (f" and {len(mentions) - 3} more site(s)" if len(mentions) > 3 else "")
+                + " -- deleting it leaves that text stale"
+            )
         for occ in occs:
             if occ.owner is not None and occ.owner.key == decl.key:
                 continue  # the declaration itself (head or recursive use)
@@ -1209,7 +1414,8 @@ def classify(
         if decl.kind in SURFACE_KINDS:
             reasons.append(f"`{decl.kind}` deletion changes the surface, not only a proof")
         if verdict.notes or any(
-            cit.startswith(("shorthand ", "module-cited ")) for cit in verdict.doc_citations
+            cit.startswith(("shorthand ", "module-cited ", "unreadable "))
+            for cit in verdict.doc_citations
         ):
             uncertain_keys.add(key)
 
@@ -1394,6 +1600,11 @@ def _apply_doc_channel(
     single-match fragment citations only make the candidate uncertain; a
     fragment matching two or more declarations is a *family label* and is
     attributed to nobody (the ``_ferromagnetic`` trap).
+
+    A citation the normaliser could not read is attached too, to every candidate
+    it might have been citing (:meth:`UnreadableSpan.could_cite`). That is what
+    turns the coverage warnings into a verdict: without it a name invisible to
+    the TeX channel could still come out ``safe-to-delete``.
     """
     by_name: dict[str, list[Verdict]] = defaultdict(list)
     for verdict in verdicts:
@@ -1448,6 +1659,15 @@ def _apply_doc_channel(
                 verdict.doc_citations.append(
                     f"module-cited {doc.label}: defining module `{tail}` is cited"
                 )
+        # (d) citations that could not be read, charged to every name they could
+        # have been citing.
+        for span in doc.unreadable:
+            for verdict in verdicts:
+                if span.could_cite(verdict.decl.final):
+                    verdict.doc_citations.append(
+                        f"unreadable {doc.label}:{span.line}: a citation this scan "
+                        f"cannot read ({span.kind}) may name this declaration"
+                    )
 
 
 # ---------------------------------------------------------------------------
@@ -1531,18 +1751,25 @@ L5 string-literal and metaprogramming references -- strip_noncode blanks string 
    by design. Mitigation: --lean.
 L6 documentation prose that depends on a lemma without naming it -- unmatchable in
    principle. Mitigation: the module-cited metadata, then human review.
-L7 the TeX macro table is incomplete by construction. Mitigation: the coverage
-   warnings printed with every run, which are fail-closed -- a citation the span
-   regex cannot parse is counted as a warning rather than dropped, so a low
-   warning count is evidence of coverage and not merely of silence.
-L8 the scanner reads the working tree, not the git index. Run it on a clean tree."""
+L7 the TeX macro table is incomplete by construction. Mitigation: a citation the
+   normaliser cannot read is not dropped but charged to every candidate name it
+   could have been citing, which forces `uncertain`; the coverage warnings printed
+   with every run are those same spans. The residue is bounded, not zero: for a
+   citation whose braces cannot be parsed at all the end of the span is unknown,
+   so only the identifier run that opens it is required of the name -- a name
+   spelled entirely inside the unparsable region is not charged to anyone.
+L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
+L9 a name mentioned only in a comment or a module docstring is reported (with the
+   site and the kind of prose) but never classifies: prose is not a reference, so
+   such a lemma really is dead code -- it is the surrounding *documentation* the
+   deletion PR must update, or the tree keeps building green while its headers lie."""
 
 
 def report(
     verdicts: list[Verdict],
     cascade: list[str],
     family_labels: dict[str, list[str]],
-    warnings: list[str],
+    warnings: list[UnreadableSpan],
     canary: tuple[int, dict[str, int]],
     elapsed: float,
     report_only: bool,
@@ -1599,9 +1826,12 @@ def report(
     if len(family_labels) > 20:
         print(f"  ... and {len(family_labels) - 20} more")
     print()
-    print(f"-- coverage warnings: {len(warnings)} --")
+    print(
+        f"-- coverage warnings: {len(warnings)} "
+        "(each forces `uncertain` on every candidate it could be citing) --"
+    )
     for warning in warnings[:10]:
-        print(f"  {warning}")
+        print(f"  {warning.message}")
     if len(warnings) > 10:
         print(f"  ... and {len(warnings) - 10} more")
     print()
@@ -1867,7 +2097,7 @@ def main(argv: list[str] | None = None) -> int:
         tree = load_tree()
         canary = run_canary(tree)
         docs = load_docs()
-        warnings = [w for doc in docs for w in doc.warnings]
+        warnings = [span for doc in docs for span in doc.unreadable]
 
         if args.expect:
             return run_expect(tree, docs, Path(args.expect))

@@ -57,3 +57,14 @@ Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_p
 # --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
 log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}
 freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	tex/proof-guide.tex spells it \texttt{freeEnergy$\Lambda$\_...}
+
+# --- TeX channel: the two-stage \ensuremath{\mathbb{C}} unwrap ---
+# 16 section-18 names are spelled \texttt{...\ensuremath{\mathbb{C}}...}; before
+# the unwrap all 16 were invisible to the TeX channel, while the run printed the
+# 20 warnings that said so and exited 0 anyway. Both rows *also* pass on
+# docs/index.md alone -- which is why they were never false safe -- so the row
+# that pins the unwrap itself is EnsureMathTest in
+# scripts/test_dead_candidate_scan.py, asserting the names are findable in the
+# normalised TeX. These two rows record the case; the unit test guards it.
+fieldPolymerZℂ_ne_zero	published-result	tex/proof-guide.tex:18996 \texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}
+norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	tex/proof-guide.tex:18893 same spelling, name longer than the 60-char warning excerpt
