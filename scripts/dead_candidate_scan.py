@@ -28,8 +28,9 @@ Two architectural decisions follow, and they are the whole design:
    match itself.
 2. **The documentation channel is a first-class input.** Reference-zero *from
    Lean* does not mean deletable: a declaration may be a published result cited
-   by ``docs/index.md`` or ``tex/proof-guide.tex``. Reading only Lean rescues 7
-   of the 10 keepers of PR #4641; reading only docs rescues 3; both are needed.
+   by ``README.md``, any ``docs/**/*.md`` or ``tex/proof-guide.tex``. Reading
+   only Lean rescues 7 of the 10 keepers of PR #4641; reading only docs rescues
+   3; both are needed.
 
 A third rule follows from the first two and is just as load-bearing:
 
@@ -47,8 +48,11 @@ A third rule follows from the first two and is just as load-bearing:
    cannot resolve. Counting them as coverage warnings is not enough: a warning
    that changes no verdict and no exit code leaves the tool fail-open exactly
    where it claims to be fail-closed. Each unreadable span is therefore charged
-   to every candidate name it could have been citing, and those candidates come
-   out ``uncertain``, never ``safe-to-delete``.
+   to every candidate name **any one of its words** could have spelled, and
+   those candidates come out ``uncertain``, never ``safe-to-delete``. Reading a
+   multi-word span as one name (or a macro argument as literal text) refuted the
+   name it actually cited and charged the span to nobody -- the same fail-open
+   route, one level down.
 
 Boundary predicate
 ------------------
@@ -90,7 +94,6 @@ import sys
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from itertools import takewhile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -104,7 +107,8 @@ from audit_gate import (  # noqa: E402  (path bootstrap must precede the import)
 )
 
 FIXTURES_FILE = REPO_ROOT / "scripts" / "audit" / "dead_candidate_fixtures.tsv"
-DOCS_INDEX = REPO_ROOT / "docs" / "index.md"
+DOCS_DIR = REPO_ROOT / "docs"
+README = REPO_ROOT / "README.md"
 TEX_GUIDE = REPO_ROOT / "tex" / "proof-guide.tex"
 
 # Verdicts, ordered by decreasing severity for reporting.
@@ -1071,6 +1075,21 @@ def _usable_fragment(fragment: str) -> bool:
     return bool(fragment) and all(is_id_rest(char) or char == "." for char in fragment)
 
 
+def _identifier_runs(text: str) -> list[str]:
+    """Return every maximal run of identifier characters (dots included) in ``text``."""
+    runs: list[str] = []
+    current: list[str] = []
+    for char in text:
+        if is_id_rest(char) or char == ".":
+            current.append(char)
+        elif current:
+            runs.append("".join(current))
+            current = []
+    if current:
+        runs.append("".join(current))
+    return runs
+
+
 @dataclass(frozen=True)
 class UnreadableSpan:
     """A code citation the LaTeX normaliser could not fully read.
@@ -1104,35 +1123,68 @@ class UnreadableSpan:
     def could_cite(self, name: str) -> bool:
         """Return whether this span may be a citation of ``name``.
 
-        The readable fragments of a name citation must occur, in order, inside
-        the name it cites, while the unread macros may have spelled anything at
-        all. So the test keeps a candidate *unless* the fragments refute it, and
-        an entirely unreadable span (no fragment left) could cite anything and
-        therefore makes every candidate uncertain -- loudly rather than silently.
+        A declaration name contains no space, so a span is read **word by word**
+        and the candidate is charged as soon as *one* word could spell the name
+        (:meth:`_word_could_spell`). Requiring the whole span to match at once --
+        the fragments of every word, in order, inside a single name -- refuted
+        real cited names whenever the citation carried a second, prose word
+        (``\\texttt{myLemma\\unknown deprecated}`` was charged to nobody), which is
+        the same fail-open route as reading a macro argument literally.
 
-        Only a fragment that could itself be part of a name may refute one
-        (:func:`_usable_fragment`): a fragment carrying a space or a bracket is
-        prose surrounding the citation, and requiring the name to contain it
-        would refute every candidate at once.
+        The disjunction only widens the old test: a span matching as a whole
+        matches through its first word too, since that word's fragments are a
+        prefix of the whole span's fragment sequence.
 
         A :data:`UNPARSABLE_BRACES` span has no locatable end, so its tail is
-        prose of unknown extent and only the identifier run that opens it may be
-        required; an empty run again keeps every candidate.
+        prose of unknown extent and no order can be relied on; any identifier run
+        it shows may be the one the name carries, and a run may sit *inside* the
+        name (a partially qualified citation such as ``\\texttt{Ambient.foo``, or
+        a run preceded by prose). No run at all again keeps every candidate.
         """
         if self.kind == UNPARSABLE_BRACES:
             opener = _TEXTTT_CMD_RE.match(self.text)
             body = self.text[opener.end() :] if opener else self.text
-            prefix = "".join(takewhile(is_id_rest, body))
-            return name.startswith(prefix)
+            runs = _identifier_runs(body)
+            return not runs or any(run in name for run in runs)
+        decided = False
+        for word in self.text.split():
+            verdict = self._word_could_spell(word, name)
+            if verdict is None:
+                continue  # punctuation-only prose: no evidence either way
+            if verdict:
+                return True
+            decided = True
+        return not decided
+
+    @staticmethod
+    def _word_could_spell(word: str, name: str) -> bool | None:
+        """Return whether ``word`` alone could spell ``name`` (``None``: no evidence).
+
+        The readable fragments of a name citation must occur, in order, inside
+        the name it spells, while the unread macros may have spelled anything at
+        all -- so a word refutes a name only through the fragments the normaliser
+        actually read. Only a fragment that could itself be part of a name counts
+        (:func:`_usable_fragment`): one carrying a space or a bracket is prose,
+        and requiring the name to contain it would refute every candidate.
+
+        A word with no usable fragment left is unreadable material (a macro, a
+        brace group) and could spell anything, so it keeps every candidate; a
+        word that is bare punctuation (``(see)``) is prose around the citation
+        and is evidence for nothing, hence ``None`` rather than ``True``.
+        """
         position = 0
-        for fragment in _UNREADABLE_RE.split(self.text):
+        seen = False
+        for fragment in _UNREADABLE_RE.split(word):
             if not _usable_fragment(fragment):
                 continue
+            seen = True
             found = name.find(fragment, position)
             if found < 0:
                 return False
             position = found + len(fragment)
-        return True
+        if seen:
+            return True
+        return True if any(char in word for char in "\\{}") else None
 
     def could_cite_decl(self, decl: "Decl") -> bool:
         """Return whether this span may be a citation of ``decl``, under any spelling.
@@ -1233,22 +1285,40 @@ class DocSource:
     unreadable: list[UnreadableSpan]  # coverage warnings *and* uncertainty triggers
 
 
+def markdown_sources() -> list[Path]:
+    """Return every Markdown file whose citations count, in a stable order.
+
+    ``docs/index.md`` is the progress index, but it is not the only Markdown
+    that cites results: ``README.md`` cites
+    ``ConvergenceRegion.derivativeLimit_on_window`` and ``docs/plans/`` cites
+    modules and lemmas of a refactoring plan. Reading only the index made
+    "no documentation citation" -- the sentence a ``safe-to-delete`` verdict
+    prints -- a claim about one file while sounding like a claim about the
+    documentation, so the whole set is read.
+    """
+    paths = sorted(DOCS_DIR.rglob("*.md")) if DOCS_DIR.exists() else []
+    if README.exists():
+        paths.insert(0, README)
+    return paths
+
+
+def _markdown_source(path: Path) -> DocSource:
+    """Return the citation tokens of one Markdown file (its code spans)."""
+    raw = path.read_text(encoding="utf-8")
+    tokens: list[tuple[str, int]] = []
+    starts = line_starts(raw)
+    for match in _MD_TOKEN_RE.finditer(raw):
+        body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
+        lineno = offset_to_line(starts, match.start())
+        for piece in body.split():
+            if _nameish(piece):
+                tokens.append((piece.strip(",.;:()"), lineno))
+    return DocSource(label=rel(path), text=raw, starts=starts, tokens=tokens, unreadable=[])
+
+
 def load_docs() -> list[DocSource]:
-    """Return the normalised documentation sources (index.md and proof-guide.tex)."""
-    out: list[DocSource] = []
-    if DOCS_INDEX.exists():
-        raw = DOCS_INDEX.read_text(encoding="utf-8")
-        tokens: list[tuple[str, int]] = []
-        starts = line_starts(raw)
-        for match in _MD_TOKEN_RE.finditer(raw):
-            body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
-            lineno = offset_to_line(starts, match.start())
-            for piece in body.split():
-                if _nameish(piece):
-                    tokens.append((piece.strip(",.;:()"), lineno))
-        out.append(
-            DocSource(label=rel(DOCS_INDEX), text=raw, starts=starts, tokens=tokens, unreadable=[])
-        )
+    """Return the normalised documentation sources (Markdown plus proof-guide.tex)."""
+    out: list[DocSource] = [_markdown_source(path) for path in markdown_sources()]
     if TEX_GUIDE.exists():
         raw = TEX_GUIDE.read_text(encoding="utf-8")
         # Tokens are read from the *pre-unwrap* normalisation so the \texttt
@@ -1530,7 +1600,10 @@ def classify(
             continue
 
         verdict.verdict = SAFE
-        verdict.reasons.append("no reference outside the delete set, no documentation citation")
+        verdict.reasons.append(
+            "no reference outside the delete set, no citation in the scanned "
+            "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
+        )
 
     cascade = _cascade(tree, deletable, reverse, graph, key_to_decl)
     return verdicts, cascade, family_labels
@@ -1808,16 +1881,25 @@ L6 documentation prose that depends on a lemma without naming it -- unmatchable 
 L7 the TeX macro table is incomplete by construction. Mitigation: a citation the
    normaliser cannot read is not dropped but charged to every candidate name it
    could have been citing, which forces `uncertain`; the coverage warnings printed
-   with every run are those same spans. An unknown macro is charged together with
-   its brace arguments (`\ensuremath{\mathbb{X}}`, `\'{e}`, `\textsubscript{k}`
-   each spell one character), because reading an argument as literal name text
-   would refute the very name it spells and charge the span to nobody; likewise a
-   fragment that no identifier can contain (a space, a bracket) never refutes a
-   candidate. A citation is matched against both the bare and the qualified
-   spelling of a name. The residue is bounded, not zero: for a citation whose
-   braces cannot be parsed at all the end of the span is unknown, so only the
-   identifier run that opens it is required of the name -- a name spelled
-   entirely inside the unparsable region is not charged to anyone.
+   with every run are those same spans. "Could have been citing" is decided word by
+   word -- a name has no space, so one word of the span spelling the name is enough,
+   and a span is charged to nobody only when *every* word refutes the name. An
+   unknown macro is charged together with its brace arguments
+   (`\ensuremath{\mathbb{X}}`, `\'{e}`, `\textsubscript{k}` each spell one
+   character), because reading an argument as literal name text would refute the
+   very name it spells; likewise a fragment that no identifier can contain (a
+   space, a bracket) never refutes a candidate. A citation is matched against both
+   the bare and the qualified spelling of a name. The residue is bounded, not zero:
+   for a citation whose braces cannot be parsed at all the end of the span is
+   unknown, so the name is required to contain (anywhere, in any order) one of the
+   identifier runs the span does show -- a name spelled entirely inside the
+   unparsable region is still charged to nobody, and a one-character run there is
+   satisfied by almost any name.
+L7b the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
+   A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
+   a TeX file other than the guide) is invisible, so "no documentation citation"
+   means "none in those files". Mitigation: keep published results cited from the
+   scanned set; the module-cited metadata catches file-level mentions.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
@@ -1826,7 +1908,10 @@ L9 a name mentioned only in a comment or a module docstring is reported (with th
    The prose is recovered from the comment mask, down to a single blanked
    character, so a one-character name on its own line inside a block comment is
    seen too; what the mask cannot distinguish is prose from an equally long run
-   of ordinary code spacing, which is why blank raw text is discarded."""
+   of ordinary code spacing, which is why blank raw text is discarded. The *site*
+   of a mention is exact; its *kind* label is a best effort, because a masked run
+   that does not itself carry the opener (a continuation line of the same block)
+   inherits the kind of the preceding run. The label never changes a verdict."""
 
 
 def report(

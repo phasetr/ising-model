@@ -283,6 +283,32 @@ class DocTokenTest(unittest.TestCase):
         self.assertGreaterEqual(len(many), 2)
 
 
+class DocScopeTest(unittest.TestCase):
+    """Which files the documentation channel reads.
+
+    A ``safe-to-delete`` verdict prints "no citation in the scanned
+    documentation". While only ``docs/index.md`` and the guide were read, that
+    sentence was a claim about two files: ``README.md`` cites
+    ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
+    """
+
+    def test_readme_and_every_docs_markdown_are_scanned(self) -> None:
+        """The scanned set is README.md, docs/**/*.md and the TeX guide."""
+        labels = {source.label for source in docs()}
+        self.assertIn("README.md", labels)
+        self.assertIn("docs/index.md", labels)
+        self.assertIn("tex/proof-guide.tex", labels)
+        for path in dcs.DOCS_DIR.rglob("*.md"):
+            self.assertIn(dcs.rel(path), labels)
+
+    def test_readme_citation_is_seen(self) -> None:
+        """The real README citation reaches the channel, verbatim and as a token."""
+        readme = next(source for source in docs() if source.label == "README.md")
+        name = "ConvergenceRegion.derivativeLimit_on_window"
+        self.assertIn(name, readme.text)
+        self.assertIn(name, [token for token, _line in readme.tokens])
+
+
 def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
     """Build a tree from ``{repo-relative path: source text}``."""
     return dcs.build_tree([(dcs.REPO_ROOT / path, text) for path, text in sources.items()])
@@ -511,22 +537,78 @@ class UnreadableCitationTest(unittest.TestCase):
     """
 
     def test_fragments_refute_a_name_or_keep_it(self) -> None:
-        """Readable fragments must occur, in order, inside any name cited."""
+        """Readable fragments must occur, in order, inside any name cited.
+
+        Per *word*: an unknown macro may gobble the space after it, so the whole
+        span can spell one name, but the trailing word may equally be prose while
+        the macro spells the rest of the name -- ``foo_baz`` is therefore charged
+        too. Only a name no single word can spell is refuted.
+        """
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"foo\unknownmacro bar")
         self.assertTrue(span.could_cite("fooXbar"))
         self.assertTrue(span.could_cite("foo_lambda_bar"))
-        self.assertFalse(span.could_cite("foo_baz"))
+        self.assertTrue(span.could_cite("foo_baz"))
+        self.assertFalse(span.could_cite("zzz_unrelated"))
+
+    def test_a_prose_word_does_not_disown_the_cited_name(self) -> None:
+        """A second word in the span must not refute the name the first one spells.
+
+        Requiring *every* word's fragments inside one name refuted the real
+        cited name whenever the citation carried a prose word, and a span
+        charged to nobody is a citation that stops forcing `uncertain` -- the
+        same fail-open route as reading a macro argument literally, reached
+        without any argument at all.
+        """
+        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"myLemma\unknown deprecated")
+        self.assertTrue(span.could_cite("myLemma"))
+        self.assertFalse(span.could_cite("zzz_unrelated"))
+        _normalized, warnings = dcs.normalize_tex(r"\texttt{myLemma\unknown deprecated}")
+        self.assertEqual(len(warnings), 1)
+        decl = synthetic_tree(
+            {
+                "IsingModel/SynthProseWord.lean": (
+                    "namespace IsingModel\ntheorem myLemma : True := trivial\nend IsingModel\n"
+                )
+            }
+        ).decls[0]
+        self.assertTrue(warnings[0].could_cite_decl(decl), warnings[0].message)
 
     def test_an_entirely_unreadable_span_keeps_everything(self) -> None:
         """No fragment left means no candidate can be excluded."""
         span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"\unknownmacro")
         self.assertTrue(span.could_cite("anything_at_all"))
 
-    def test_unparsable_span_requires_only_its_opening_run(self) -> None:
-        """Its end is not locatable, so the tail is prose of unknown extent."""
+    def test_unparsable_span_requires_only_one_of_its_identifier_runs(self) -> None:
+        """Its end is not locatable, so no run can be required to open the name.
+
+        ``shallow_lemma`` is charged because the one-character run ``a`` occurs
+        in it: inside an unparsable region a short run refutes almost nothing,
+        which is the conservative direction.
+        """
         span = dcs.UnreadableSpan("tex", 1, dcs.UNPARSABLE_BRACES, r"\texttt{deep {a {b}} tail}")
         self.assertTrue(span.could_cite("deep_lemma"))
-        self.assertFalse(span.could_cite("shallow_lemma"))
+        self.assertTrue(span.could_cite("prefix_tail_of_it"))  # a run that does not open it
+        self.assertTrue(span.could_cite("shallow_lemma"))
+        self.assertFalse(span.could_cite("zzz_lemm"))
+
+    def test_unparsable_span_is_charged_when_its_run_sits_inside_the_name(self) -> None:
+        """Requiring the *opening* run as a prefix let two real shapes escape.
+
+        A partially qualified citation and one opened by prose both show a run
+        the name carries, and both were charged to nobody while `startswith`
+        decided the question.
+        """
+        cases = (
+            ("\\texttt{Ambient.foo\n", "IsingModel.Ambient.foo"),
+            ("\\texttt{prose {deep {nest}} name_xyzzy}\n", "IsingModel.name_xyzzy"),
+        )
+        for source, name in cases:
+            with self.subTest(source=source):
+                _normalized, warnings = dcs.normalize_tex(source)
+                self.assertEqual(len(warnings), 1)
+                self.assertEqual(warnings[0].kind, dcs.UNPARSABLE_BRACES)
+                self.assertTrue(warnings[0].could_cite(name), warnings[0].message)
+                self.assertFalse(warnings[0].could_cite("zzz_qqq"))
 
     def test_macro_arguments_are_not_readable_fragments(self) -> None:
         """An unknown macro's argument is its input, never literal name text.
@@ -563,9 +645,7 @@ class UnreadableCitationTest(unittest.TestCase):
 
     def test_qualified_citation_is_matched_against_the_full_name(self) -> None:
         """A namespace-qualified fragment is refuted by the bare final component."""
-        span = dcs.UnreadableSpan(
-            "tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX bar"
-        )
+        span = dcs.UnreadableSpan("tex", 1, dcs.MACRO_RESIDUE, r"IsingModel.foo\unknownX")
         decl = synthetic_tree(
             {
                 "IsingModel/SynthQualified.lean": (
