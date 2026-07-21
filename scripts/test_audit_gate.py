@@ -48,13 +48,14 @@ that made its own gate fail would be self-defeating.
 
 from __future__ import annotations
 
+import io
 import os
 import subprocess
 import sys
 import tempfile
 import types
 import unittest
-from contextlib import contextmanager
+from contextlib import contextmanager, redirect_stdout
 from pathlib import Path
 from typing import Iterator
 
@@ -162,6 +163,41 @@ def tracked_repo(
             subprocess.run(["git", "add", "-A"], cwd=root, check=True)
         with patched(target, REPO_ROOT=root, V4_PATHS=paths):
             yield root
+
+
+@contextmanager
+def whole_repo(files: dict[str, str], module: types.ModuleType | None = None) -> Iterator[Path]:
+    """Build a throwaway repository that V1, V2 and V4 can all be pointed at.
+
+    ``library`` and ``tracked_repo`` each patch ``REPO_ROOT``, so neither can be
+    used to drive ``main``, which runs all four checks against one tree. Paths
+    are relative to the repository root (``IsingModel/A.lean``, ``docs/a.md``).
+    """
+    target = module if module is not None else ag
+    with tempfile.TemporaryDirectory() as raw:
+        root = Path(raw)
+        for name, text in files.items():
+            path = root / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(text, encoding="utf-8")
+        (root / "IsingModel").mkdir(exist_ok=True)
+        subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+        subprocess.run(["git", "add", "-A"], cwd=root, check=True)
+        with patched(
+            target,
+            REPO_ROOT=root,
+            LIB_DIR=root / "IsingModel",
+            V4_PATHS=("IsingModel", "docs"),
+        ):
+            yield root
+
+
+def run_main(module: types.ModuleType, *argv: str) -> tuple[int, str]:
+    """Run ``module.main()`` with ``argv``; return ``(exit code, stdout)``."""
+    buffer = io.StringIO()
+    with patched(sys, argv=["audit_gate.py", *argv]), redirect_stdout(buffer):
+        code = module.main()
+    return (code, buffer.getvalue())
 
 
 class FakeProc:
@@ -509,9 +545,106 @@ class V2TokenTest(unittest.TestCase):
         for entry in ag.V2_NATIVE_DECIDE_FILE_ALLOWLIST:
             self.assertTrue((ag.REPO_ROOT / entry).is_file(), entry)
 
+    def test_the_allowlists_are_exactly_these_entries(self) -> None:
+        """Pin the exemptions themselves, not just their existence.
+
+        ``test_allowlist_entries_exist`` only asks whether a listed path is a
+        real file, so adding any existing library file to the allowlist -- the
+        one-line way to legalise ``native_decide`` in a proof -- passes it. The
+        exemption set is a policy decision and belongs under an ``assertEqual``:
+        widening it must require editing this test, in the same commit, on
+        purpose.
+        """
+        self.assertEqual(ag.V2_NATIVE_DECIDE_FILE_ALLOWLIST, {"IsingModel/TestGenerators.lean"})
+        self.assertEqual(ag.V2_NATIVE_DECIDE_DIR_ALLOWLIST, ("test/",))
+
+    def test_the_directory_allowlist_exempts_native_decide_in_tests(self) -> None:
+        """``test/`` is executable sanity checks; that is what it evaluates with."""
+        with library({"Basic.lean": "theorem t : True := trivial\n"}) as root:
+            path = root / "test" / "IsingModel" / "T.lean"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("example : True := by native_decide\n", encoding="utf-8")
+            self.assertEqual(ag.check_v2(), [])
+
+    def test_the_directory_allowlist_never_exempts_sorry(self) -> None:
+        """Per-token again: an unfinished proof in a test is still a failure.
+
+        This is the reason ``test/`` is inside the V1/V2 scan rather than
+        outside it -- exempting the directory wholesale would restore exactly
+        the blind spot the scan was widened to remove.
+        """
+        with library({"Basic.lean": "theorem t : True := trivial\n"}) as root:
+            path = root / "test" / "IsingModel" / "T.lean"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("example : True := by sorry\n", encoding="utf-8")
+            failures = ag.check_v2()
+        self.assertEqual(len(failures), 1)
+        self.assertIn("test/IsingModel/T.lean:1: `sorry`", failures[0])
+
     def test_real_tree_is_clean(self) -> None:
         """The project's standing claim: no sorry/admit outside the allowlist."""
         self.assertEqual(real_tree_results()[1], [])
+
+
+# ---------------------------------------------------------------------------
+# V1/V2 scope: which Lean files the two checks actually read
+# ---------------------------------------------------------------------------
+
+
+class CheckedFilesTest(unittest.TestCase):
+    """What V1 and V2 scan, pinned against the real tree.
+
+    Every V1/V2 test above runs on a fixture library, so all of them stay green
+    when the *real* scan shrinks: a filter such as ``if "Inequalities" not in
+    p.parts`` removes a whole directory from the gate's field of view and no
+    fixture notices. The checks below are the ratchet -- they compare the
+    scanned set with what git says exists.
+    """
+
+    def tracked_lean(self, *pathspec: str) -> set[str]:
+        """Return tracked ``*.lean`` paths under ``pathspec``."""
+        proc = subprocess.run(
+            ["git", "ls-files", "-z", "--", *pathspec],
+            cwd=str(ag.REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return {name for name in proc.stdout.split("\0") if name.endswith(".lean")}
+
+    ROOTS = ("IsingModel", "IsingModel.lean", "test", "scripts/audit")
+
+    def test_every_tracked_lean_file_is_scanned(self) -> None:
+        """The invariant: no committed Lean file escapes V1/V2.
+
+        A subset assertion rather than equality, so an uncommitted local file
+        does not fail the suite -- scanning more than git knows about is safe,
+        scanning less is the failure mode.
+        """
+        scanned = {ag.rel(path) for path in ag.iter_checked_files()}
+        missing = sorted(self.tracked_lean(*self.ROOTS) - scanned)
+        self.assertEqual(missing, [], "tracked Lean files outside the V1/V2 scan")
+
+    def test_no_tracked_lean_file_lives_outside_the_checked_roots(self) -> None:
+        """The scope list itself has to keep up with the repository layout."""
+        stray = sorted(self.tracked_lean() - self.tracked_lean(*self.ROOTS))
+        self.assertEqual(stray, [], "tracked Lean file outside the checked roots")
+
+    def test_the_scan_covers_the_whole_library(self) -> None:
+        """A count ratchet: dropping one library directory must be visible."""
+        self.assertGreater(len(ag.iter_checked_files()), 2000)
+        self.assertGreater(len(ag.iter_lib_files()), 2000)
+
+    def test_the_umbrella_and_the_test_suite_are_scanned(self) -> None:
+        """The two roots the old ``IsingModel/``-only scan left unchecked."""
+        scanned = {ag.rel(path) for path in ag.iter_checked_files()}
+        self.assertIn("IsingModel.lean", scanned)
+        self.assertTrue(any(name.startswith("test/") for name in scanned), "no test file scanned")
+
+    def test_the_library_scan_stays_inside_the_library(self) -> None:
+        """``iter_lib_files`` keeps its narrower meaning for its consumers."""
+        for path in ag.iter_lib_files():
+            self.assertTrue(ag.rel(path).startswith("IsingModel/"), ag.rel(path))
 
 
 # ---------------------------------------------------------------------------
@@ -598,10 +731,46 @@ class V3CapstoneTest(unittest.TestCase):
         self.assertIn("no theorems", failures[0])
 
     def test_nonzero_exit_without_a_parsed_problem_is_a_failure(self) -> None:
-        """A build error must not be mistaken for a pass."""
+        """A build error must not be mistaken for a pass.
+
+        Stated on its own the assertion is nearly vacuous: with no output at
+        all, the missing-result check fires first and ``failures`` is non-empty
+        whether or not the exit code is inspected. The exit-code guard is
+        isolated in
+        ``test_a_nonzero_exit_alone_is_a_failure`` below.
+        """
         with capstones("IsingModel.a\n"), stub_lean(stderr="error: build failed", returncode=1):
             failures, _ = ag.check_v3()
         self.assertTrue(failures)
+
+    def test_a_nonzero_exit_alone_is_a_failure(self) -> None:
+        """The guard, isolated: every capstone answered, yet Lean exited 1.
+
+        This is the shape that makes the guard load-bearing -- ``#print axioms``
+        reported an allowed axiom set for every name, so no other check has
+        anything to say, and only the exit code shows that Lean also emitted an
+        error (a failed downstream elaboration, an ``unknown attribute``, an
+        aborted build). Without a fixture in which the exit code is the *sole*
+        signal, deleting the guard changes no verdict.
+        """
+        with capstones("IsingModel.a\n"), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext, Classical.choice, Quot.sound]",
+            stderr="error: something else went wrong",
+            returncode=1,
+        ):
+            failures, observed = ag.check_v3()
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("exited nonzero", failures[0])
+        self.assertEqual(observed, ag.ALLOWED_AXIOMS)
+
+    def test_a_zero_exit_with_the_same_output_passes(self) -> None:
+        """The control for the test above: only the exit code differs."""
+        with capstones("IsingModel.a\n"), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext, Classical.choice, Quot.sound]",
+            returncode=0,
+        ):
+            failures, _ = ag.check_v3()
+        self.assertEqual(failures, [])
 
     def test_the_generated_source_asks_about_every_capstone(self) -> None:
         """The file handed to Lean must import the library and list all names."""
@@ -841,6 +1010,38 @@ class V4ScanTest(unittest.TestCase):
             failures, _ = ag.check_v4()
         self.assertEqual(len(failures), 2)
 
+    def test_a_whole_file_is_scanned_not_just_its_head(self) -> None:
+        """Every line, however far down: real files are long.
+
+        The tree's documents run to hundreds of lines, so a scan that stopped
+        after the first screenful would still be green on today's tree and blind
+        to the next paragraph appended to ``docs/index.md``. Two witnesses --
+        one just past a plausible cutoff, one deep in the file.
+        """
+        body = "".join(f"line {i}\n" for i in range(1, 400))
+        with tracked_repo({"docs/a.md": f"{body}{KANJI}\nmore\n{HIRAGANA_A}\n"}):
+            failures, _ = ag.check_v4()
+        self.assertEqual(len(failures), 2, failures)
+        self.assertIn("docs/a.md:400", failures[0])
+        self.assertIn("docs/a.md:402", failures[1])
+
+    def test_an_unreadable_file_is_a_failure_not_a_skip(self) -> None:
+        """The ``OSError`` arm, exercised: a tracked path that will not open.
+
+        The file is staged and then replaced by a directory, so ``git`` still
+        lists it while ``read_text`` raises ``IsADirectoryError``. Any tracked
+        path the scanner cannot read has to be reported, for the same reason an
+        undecodable one is: a file counted as scanned but never read is the
+        fail-open outcome V4 exists to prevent.
+        """
+        with tracked_repo({"docs/a.md": "English\n", "docs/b.md": "English\n"}) as root:
+            (root / "docs" / "a.md").unlink()
+            (root / "docs" / "a.md").mkdir()
+            failures, scanned = ag.check_v4()
+        self.assertEqual(scanned, 2)
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("docs/a.md: could not be read", failures[0])
+
     def test_real_tree_is_japanese_free(self) -> None:
         """The measured ratchet: zero hits over every tracked scanned file."""
         self.assertEqual(real_tree_results()[2], [])
@@ -860,6 +1061,13 @@ class ScopeCoverageTest(unittest.TestCase):
     exclusion list is deliberately tiny -- internal working material that is
     Japanese on purpose -- so any other unscanned path is a decision that has to
     be made rather than defaulted.
+
+    The invariant is asserted against the files ``iter_v4_files`` actually
+    returns, not against the ``V4_PATHS`` constant. Re-deriving the scanned set
+    from the same constant the gate declares would test the constant against
+    itself: any filter applied *inside* ``iter_v4_files`` (skip ``.json``, skip
+    ``tex/``, take the first N entries) would shrink the real scan while leaving
+    the derived set untouched.
     """
 
     def tracked(self, *pathspec: str) -> set[str]:
@@ -873,9 +1081,15 @@ class ScopeCoverageTest(unittest.TestCase):
         )
         return {name for name in proc.stdout.split("\0") if name}
 
+    def scanned(self) -> set[str]:
+        """Return the paths V4 really reads, as reported by ``iter_v4_files``."""
+        paths, failures = ag.iter_v4_files()
+        self.assertEqual(failures, [], "iter_v4_files failed on the real tree")
+        return {ag.rel(path) for path in paths}
+
     def test_no_tracked_file_escapes_unnoticed(self) -> None:
         """The invariant: scanned + deliberately excluded = everything tracked."""
-        unscanned = sorted(self.tracked() - self.tracked(*ag.V4_PATHS))
+        unscanned = sorted(self.tracked() - self.scanned())
         stray = [
             name
             for name in unscanned
@@ -883,14 +1097,40 @@ class ScopeCoverageTest(unittest.TestCase):
         ]
         self.assertEqual(stray, [], "tracked but neither scanned nor excluded")
 
+    def test_the_excluded_prefixes_are_exactly_the_internal_working_tree(self) -> None:
+        """Pin the exclusion list; it is the gate's only sanctioned blind spot.
+
+        Left as a free variable, it is the escape hatch that makes the coverage
+        invariant above self-fulfilling: drop ``"docs"`` from ``V4_PATHS``, add
+        ``"docs/"`` here, and every tracked file is still "scanned or
+        excluded" while the public documentation quietly stops being checked.
+        Growing the list must mean editing this assertion.
+        """
+        self.assertEqual(ag.V4_UNSCANNED_PREFIXES, (".self-local/",))
+
     def test_the_excluded_prefixes_are_non_empty(self) -> None:
         """A stale exclusion would quietly widen the gate's blind spot."""
         for prefix in ag.V4_UNSCANNED_PREFIXES:
             self.assertTrue(self.tracked(prefix.rstrip("/")), prefix)
 
+    def test_the_public_paths_are_really_scanned(self) -> None:
+        """Name the material V4 exists for, so its loss cannot be silent.
+
+        ``docs/index.md``, the TeX guide and the README are the English-only
+        public surface; the gate's whole purpose is that Japanese never reaches
+        them.
+        """
+        scanned = self.scanned()
+        for name in ("docs/index.md", "tex/proof-guide.tex", "README.md"):
+            self.assertIn(name, scanned)
+        for prefix in ("IsingModel/", "scripts/", "test/", ".github/"):
+            self.assertTrue(
+                any(name.startswith(prefix) for name in scanned), f"nothing scanned under {prefix}"
+            )
+
     def test_the_machine_managed_files_are_scanned(self) -> None:
         """Being generated is no reason to leave a committed file unscanned."""
-        scanned = self.tracked(*ag.V4_PATHS)
+        scanned = self.scanned()
         for name in (".gitignore", ".vscode/settings.json", "lake-manifest.json", "lean-toolchain"):
             self.assertIn(name, scanned)
 
@@ -937,6 +1177,45 @@ class MutationTest(unittest.TestCase):
         with library(source):
             self.assertEqual(len(ag.check_v1()), 1, "V1 must catch what the mutant misses")
 
+    def test_v1v2_with_a_filtered_file_list_stop_seeing_a_whole_directory(self) -> None:
+        """One ``if`` in the file walk hides a library subtree from V1 and V2.
+
+        Nothing in a fixture-driven suite notices: every V1/V2 test builds its
+        own tiny library, so all of them stay green while the real scan quietly
+        drops 47 files. ``CheckedFilesTest`` is what catches it on the real
+        tree; the paired assertion here shows the detection power that is lost.
+        """
+        mutant = load_mutated(
+            (
+                "    found = set(iter_lib_files())",
+                '    found = {p for p in iter_lib_files() if "Inequalities" not in p.parts}',
+            )
+        )
+        source = {"Inequalities/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1(), [])
+            self.assertEqual(mutant.check_v2(), [])
+        with library(source):
+            self.assertEqual(len(ag.check_v1()), 1)
+            self.assertEqual(len(ag.check_v2()), 1)
+        # And on the real tree the ratchet moves: the mutant scans strictly less.
+        self.assertLess(len(mutant.iter_checked_files()), len(ag.iter_checked_files()))
+
+    def test_v1v2_without_the_extra_roots_stop_scanning_the_umbrella_and_tests(self) -> None:
+        """Narrowing the scan back to ``IsingModel/`` unchecks two real roots."""
+        mutant = load_mutated(
+            (
+                'EXTRA_CHECKED_ROOTS = ("IsingModel.lean", "test", "scripts/audit")',
+                "EXTRA_CHECKED_ROOTS = ()",
+            )
+        )
+        scanned = {ag.rel(path) for path in mutant.iter_checked_files()}
+        self.assertNotIn("IsingModel.lean", scanned)
+        self.assertFalse([name for name in scanned if name.startswith("test/")])
+        real = {ag.rel(path) for path in ag.iter_checked_files()}
+        self.assertIn("IsingModel.lean", real)
+        self.assertTrue([name for name in real if name.startswith("test/")])
+
     def test_v1_without_comment_stripping_produces_false_positives(self) -> None:
         """Skipping ``strip_noncode`` turns commented-out prose into failures."""
         mutant = load_mutated(
@@ -972,8 +1251,8 @@ class MutationTest(unittest.TestCase):
         """Turning the per-token exemption into a per-file one is the worst case."""
         mutant = load_mutated(
             (
-                'if tok == "native_decide" and relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST:',
-                "if relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST:",
+                'if tok == "native_decide" and exempt:',
+                "if exempt:",
             )
         )
         listed = next(iter(ag.V2_NATIVE_DECIDE_FILE_ALLOWLIST)).split("/", 1)[1]
@@ -982,6 +1261,40 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(mutant.check_v2(), [])
         with library(source):
             self.assertEqual(len(ag.check_v2()), 1)
+
+    def test_v2_with_a_widened_allowlist_legalises_native_decide(self) -> None:
+        """Adding one existing file to the allowlist is the cheapest weakening.
+
+        It survives ``test_allowlist_entries_exist`` untouched -- the entry does
+        name a real file -- which is why the allowlist is pinned by value.
+        """
+        mutant = load_mutated(
+            (
+                'V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean"}',
+                'V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean", "IsingModel/Basic.lean"}',
+            )
+        )
+        source = {"Basic.lean": "theorem t : True := by native_decide\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v2(), [])
+        with library(source):
+            self.assertEqual(len(ag.check_v2()), 1)
+        # The pinning assertion is what makes this visible without a fixture.
+        self.assertNotEqual(
+            mutant.V2_NATIVE_DECIDE_FILE_ALLOWLIST, {"IsingModel/TestGenerators.lean"}
+        )
+
+    def test_v2_with_a_widened_directory_allowlist_legalises_native_decide(self) -> None:
+        """Same weakening one level up: exempting a library directory."""
+        mutant = load_mutated(
+            ('V2_NATIVE_DECIDE_DIR_ALLOWLIST = ("test/",)', 'V2_NATIVE_DECIDE_DIR_ALLOWLIST = ("test/", "IsingModel/")')
+        )
+        source = {"Basic.lean": "theorem t : True := by native_decide\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v2(), [])
+        with library(source):
+            self.assertEqual(len(ag.check_v2()), 1)
+        self.assertNotEqual(mutant.V2_NATIVE_DECIDE_DIR_ALLOWLIST, ("test/",))
 
     def test_v2_without_word_boundaries_produces_false_positives(self) -> None:
         """Relaxing to substring search flags ``sorryAx_free``."""
@@ -1071,7 +1384,103 @@ class MutationTest(unittest.TestCase):
         with capstones("IsingModel.gone\n"), stub_lean(**canned):
             self.assertTrue(any("unknown identifier" in f for f in ag.check_v3()[0]))
 
+    def test_v3_without_the_exit_code_guard_ignores_a_failed_lean_run(self) -> None:
+        """Deleting the last guard makes a failed Lean run look like a pass.
+
+        The fixture has to answer every capstone with an allowed axiom set, or
+        the missing-result check fires instead and the guard's removal changes
+        nothing -- which is exactly how this mutation used to survive.
+        """
+        mutant = load_mutated(
+            ("    if proc.returncode != 0 and not failures:", "    if False:")
+        )
+        canned = {
+            "stdout": "'IsingModel.a' depends on axioms: [propext, Classical.choice, Quot.sound]",
+            "stderr": "error: something else went wrong",
+            "returncode": 1,
+        }
+        with capstones("IsingModel.a\n", module=mutant), stub_lean(**canned):
+            self.assertEqual(mutant.check_v3()[0], [])
+        with capstones("IsingModel.a\n"), stub_lean(**canned):
+            self.assertEqual(len(ag.check_v3()[0]), 1)
+
     # -- V4 ---------------------------------------------------------------
+
+    def test_v4_that_reads_only_the_head_of_a_file_misses_the_rest(self) -> None:
+        """Truncating the line loop keeps today's tree green and goes blind."""
+        mutant = load_mutated(
+            (
+                "        for lineno, line in enumerate(text.splitlines(), start=1):\n"
+                "            hits = _JAPANESE_RE.findall(line)",
+                "        for lineno, line in enumerate(text.splitlines()[:50], start=1):\n"
+                "            hits = _JAPANESE_RE.findall(line)",
+            )
+        )
+        body = "".join(f"line {i}\n" for i in range(1, 400))
+        files: dict[str, str | bytes] = {"docs/a.md": f"{body}{KANJI}\n"}
+        with tracked_repo(files, module=mutant):
+            self.assertEqual(mutant.check_v4()[0], [])
+        with tracked_repo(files):
+            self.assertEqual(len(ag.check_v4()[0]), 1)
+
+    def test_v4_that_skips_unreadable_files_goes_fail_open(self) -> None:
+        """The ``OSError`` arm, mutated: an unopenable tracked file vanishes."""
+        mutant = load_mutated(
+            (
+                "        except OSError as exc:\n"
+                '            failures.append(f"{rel(path)}: could not be read ({exc})")\n'
+                "            continue",
+                "        except OSError:\n            continue",
+            )
+        )
+        files: dict[str, str | bytes] = {"docs/a.md": "English\n"}
+        with tracked_repo(files, module=mutant) as root:
+            (root / "docs" / "a.md").unlink()
+            (root / "docs" / "a.md").mkdir()
+            self.assertEqual(mutant.check_v4()[0], [])
+        with tracked_repo(files) as root:
+            (root / "docs" / "a.md").unlink()
+            (root / "docs" / "a.md").mkdir()
+            self.assertEqual(len(ag.check_v4()[0]), 1)
+
+    def test_v4_scope_moved_into_the_exclusion_list_stops_scanning_the_docs(self) -> None:
+        """The two-line escape hatch: drop a path, then declare it excluded.
+
+        Both halves are individually innocuous, and together they leave the
+        coverage invariant satisfied while the public documentation is no longer
+        checked. The pinned exclusion list is what refuses the second half.
+        """
+        mutant = load_mutated(
+            ('    "docs",\n', ""),
+            (
+                'V4_UNSCANNED_PREFIXES = (".self-local/",)',
+                'V4_UNSCANNED_PREFIXES = (".self-local/", "docs/")',
+            ),
+        )
+        weakened = {ag.rel(path) for path in mutant.iter_v4_files()[0]}
+        self.assertNotIn("docs/index.md", weakened)
+        self.assertIn("docs/index.md", {ag.rel(path) for path in ag.iter_v4_files()[0]})
+        # The mutant satisfies the coverage invariant but fails the pinned list.
+        self.assertNotEqual(mutant.V4_UNSCANNED_PREFIXES, (".self-local/",))
+
+    def test_v4_with_a_filtered_file_list_stops_scanning_a_file_type(self) -> None:
+        """A filter inside ``iter_v4_files`` shrinks the scan below ``V4_PATHS``.
+
+        This is why the coverage invariant is asserted against the files
+        ``iter_v4_files`` returns: derived from the ``V4_PATHS`` constant it
+        would see nothing at all.
+        """
+        mutant = load_mutated(
+            (
+                '    paths = [REPO_ROOT / name for name in proc.stdout.split("\\0") if name]',
+                '    paths = [REPO_ROOT / name for name in proc.stdout.split("\\0")'
+                ' if name and not name.endswith(".json")]',
+            )
+        )
+        weakened = {ag.rel(path) for path in mutant.iter_v4_files()[0]}
+        self.assertNotIn("lake-manifest.json", weakened)
+        self.assertIn("lake-manifest.json", {ag.rel(path) for path in ag.iter_v4_files()[0]})
+        self.assertEqual(mutant.V4_PATHS, ag.V4_PATHS, "the constant alone shows nothing")
 
     def test_v4_narrowed_to_the_legacy_class_misses_the_residue(self) -> None:
         """The manual ``rg`` class (kana plus common kanji) is what V4 replaced."""
@@ -1183,6 +1592,25 @@ class MutationTest(unittest.TestCase):
         ).stdout
         self.assertNotIn("lean-toolchain", tracked.split("\0"))
 
+    # -- main --------------------------------------------------------------
+
+    def test_a_main_that_always_returns_zero_blocks_nothing(self) -> None:
+        """The exit code is the whole contract with CI and the hook.
+
+        Every check can work perfectly and the gate still fail open, because
+        what CI observes is one integer. Reading the source for flag names --
+        the only thing ``MainTest`` used to do -- cannot see this at all.
+        """
+        mutant = load_mutated(('    print("audit gate: FAIL")\n    return 1', '    print("audit gate: FAIL")\n    return 0'))
+        files = {
+            "IsingModel/A.lean": "axiom bad : True\n",
+            "docs/a.md": "English\n",
+        }
+        with whole_repo(files, module=mutant), patched(mutant, lake_available=lambda: False):
+            self.assertEqual(run_main(mutant)[0], 0)
+        with whole_repo(files), patched(ag, lake_available=lambda: False):
+            self.assertEqual(run_main(ag)[0], 1)
+
 
 # ---------------------------------------------------------------------------
 # End-to-end
@@ -1190,7 +1618,100 @@ class MutationTest(unittest.TestCase):
 
 
 class MainTest(unittest.TestCase):
-    """The command-line surface CI and the hook depend on."""
+    """The command-line surface CI and the hook depend on.
+
+    ``main`` is what CI actually invokes, and its exit code is the entire
+    contract: a gate whose checks all work but which returns 0 regardless blocks
+    nothing. Reading the source for the flag names -- the only thing this class
+    used to do -- cannot see that. Each test below runs ``main`` over a
+    throwaway repository and asserts the code it returns.
+    """
+
+    CLEAN = {
+        "IsingModel/A.lean": "theorem t : True := trivial\n",
+        "docs/a.md": "# Title\n\nEnglish only.\n",
+    }
+
+    def run_gate(self, files: dict[str, str], *argv: str) -> tuple[int, str]:
+        """Run ``main`` over a fixture repository with V3 unavailable."""
+        with whole_repo(files), patched(ag, lake_available=lambda: False):
+            return run_main(ag, *argv)
+
+    def test_a_clean_tree_exits_zero(self) -> None:
+        """The baseline the other cases are measured against."""
+        code, out = self.run_gate(self.CLEAN)
+        self.assertEqual(code, 0, out)
+        self.assertIn("audit gate: PASS", out)
+
+    def test_an_axiom_makes_the_gate_exit_nonzero(self) -> None:
+        """V1's verdict has to reach the exit code."""
+        code, out = self.run_gate({**self.CLEAN, "IsingModel/B.lean": "axiom bad : True\n"})
+        self.assertEqual(code, 1)
+        self.assertIn("audit gate: FAIL", out)
+        self.assertIn("IsingModel/B.lean:1", out)
+
+    def test_a_sorry_makes_the_gate_exit_nonzero(self) -> None:
+        """So does V2's."""
+        code, out = self.run_gate(
+            {**self.CLEAN, "IsingModel/B.lean": "theorem t : True := by sorry\n"}
+        )
+        self.assertEqual(code, 1)
+        self.assertIn("`sorry`", out)
+
+    def test_japanese_makes_the_gate_exit_nonzero(self) -> None:
+        """And V4's."""
+        code, out = self.run_gate({**self.CLEAN, "docs/b.md": f"title {KANJI}\n"})
+        self.assertEqual(code, 1)
+        self.assertIn("docs/b.md:1", out)
+
+    def test_v3_is_skipped_without_lake_and_required_with_full(self) -> None:
+        """``--full`` is what makes the capstone audit mandatory in CI."""
+        _, skipped = self.run_gate(self.CLEAN)
+        self.assertIn("SKIP", skipped)
+        with whole_repo(self.CLEAN), capstones("IsingModel.a\n"), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext]"
+        ):
+            code, out = run_main(ag, "--full")
+        self.assertEqual(code, 0, out)
+        self.assertIn("V3", out)
+        self.assertNotIn("SKIP", out)
+
+    def test_a_disallowed_capstone_axiom_makes_full_mode_exit_nonzero(self) -> None:
+        """V3's verdict reaches the exit code too."""
+        with whole_repo(self.CLEAN), capstones("IsingModel.a\n"), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext, sorryAx]"
+        ):
+            code, out = run_main(ag, "--full")
+        self.assertEqual(code, 1)
+        self.assertIn("sorryAx", out)
+
+    def test_the_reported_file_count_reflects_what_was_scanned(self) -> None:
+        """A pass over a shrunken file set is not a pass; print the coverage."""
+        code, out = self.run_gate(self.CLEAN)
+        self.assertEqual(code, 0)
+        self.assertIn("1 Lean files scanned", out)
+        self.assertIn("2 tracked files", out)
+
+    def test_the_self_test_flag_delegates_and_forwards_the_exit_code(self) -> None:
+        """``--self-test`` is how CI runs this suite; its result must propagate."""
+        fake = types.ModuleType("test_audit_gate")
+        calls: list[int] = []
+
+        def run_suite() -> int:
+            calls.append(1)
+            return 7
+
+        fake.run_suite = run_suite  # type: ignore[attr-defined]
+        saved = sys.modules.get("test_audit_gate")
+        sys.modules["test_audit_gate"] = fake
+        try:
+            code, _ = run_main(ag, "--self-test")
+        finally:
+            if saved is None:
+                del sys.modules["test_audit_gate"]
+            else:
+                sys.modules["test_audit_gate"] = saved
+        self.assertEqual((code, calls), (7, [1]))
 
     def test_the_argument_parser_accepts_the_documented_flags(self) -> None:
         """``--full`` (CI) and ``--self-test`` (this suite) must stay wired."""
@@ -1200,10 +1721,24 @@ class MainTest(unittest.TestCase):
 
     def test_ci_runs_the_gate_in_full_mode(self) -> None:
         """V3 is only mandatory where the oleans exist; CI is that place."""
-        workflow = (ag.REPO_ROOT / ".github" / "workflows" / "lean_action_ci.yml").read_text(
+        self.assertIn("scripts/audit_gate.py --full", self.workflow())
+
+    def test_ci_runs_the_gate_and_scanner_self_tests(self) -> None:
+        """The gate's tests are worthless if nothing runs them.
+
+        ``--full`` exercises the gate on the current tree, which stays green
+        when a check is weakened -- catching that is precisely what the self
+        tests do, so CI has to invoke them explicitly.
+        """
+        workflow = self.workflow()
+        self.assertIn("scripts/audit_gate.py --self-test", workflow)
+        self.assertIn("scripts/dead_candidate_scan.py --self-test", workflow)
+
+    def workflow(self) -> str:
+        """Return the CI workflow text."""
+        return (ag.REPO_ROOT / ".github" / "workflows" / "lean_action_ci.yml").read_text(
             encoding="utf-8"
         )
-        self.assertIn("scripts/audit_gate.py --full", workflow)
 
     def test_the_gate_passes_on_the_current_tree(self) -> None:
         """V1, V2 and V4 are green here and now (V3 is CI's job)."""

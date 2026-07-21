@@ -22,6 +22,14 @@ jobs:
         run: lake exe GKSTest
       - name: Build sentinel property suite (Issue #888 Step P3)
         run: lake build test.IsingModel.SentinelProps
+      # The gate's own tests run *before* the gate: `--full` only says whether
+      # the current tree passes, which stays true when a check is weakened, so
+      # the self tests are what actually defend V1-V4. Both suites are pure
+      # Python (no lake, no network) and cost about 20 s and 80 s respectively.
+      - name: Audit gate self-tests (test the gate, not just the tree)
+        run: python3 scripts/audit_gate.py --self-test
+      - name: Dead-candidate scanner self-tests
+        run: python3 scripts/dead_candidate_scan.py --self-test
       - name: Audit gate (V1-V4 axiom/sorry/capstone/no-Japanese checks)
         run: python3 scripts/audit_gate.py --full
 

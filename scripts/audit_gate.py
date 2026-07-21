@@ -6,12 +6,19 @@ from a git pre-push hook). Uses only the Python 3 standard library.
 
 Checks
 ------
-V1  No ``axiom`` declarations anywhere under ``IsingModel/``. The project has
-    no axiomatized targets, so the expected count is zero.
-V2  No ``sorry`` / ``admit`` / ``native_decide`` in library code, after
-    blanking comments and string literals. ``native_decide`` is exempt only in
-    the files listed in ``V2_NATIVE_DECIDE_FILE_ALLOWLIST`` (executable
-    sanity-check ``example``s embedded in the library directory).
+V1  No ``axiom`` declarations in any checked Lean file. The project has no
+    axiomatized targets, so the expected count is zero.
+V2  No ``sorry`` / ``admit`` / ``native_decide`` in checked Lean code, after
+    blanking comments and string literals. ``native_decide`` is exempt in the
+    files listed in ``V2_NATIVE_DECIDE_FILE_ALLOWLIST`` and under the
+    directories listed in ``V2_NATIVE_DECIDE_DIR_ALLOWLIST`` (executable
+    sanity-check ``example``s); the exemption never covers ``sorry``/``admit``.
+
+    "Checked" means every tracked Lean file the project owns
+    (``iter_checked_files``): ``IsingModel/**/*.lean`` plus the umbrella
+    ``IsingModel.lean`` and ``test/**/*.lean``. Restricting V1/V2 to the
+    ``IsingModel/`` subdirectory used to leave the umbrella and the test suite
+    entirely unchecked -- a ``sorry`` there would have been invisible.
 V3  Capstone axiom audit. For every fully-qualified name in
     ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
     subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
@@ -61,6 +68,13 @@ TEMP_DIR = REPO_ROOT / ".self-local" / "tmp"
 # ``example``s living in the library directory). This exemption covers
 # ``native_decide`` only, never ``sorry`` or ``admit``.
 V2_NATIVE_DECIDE_FILE_ALLOWLIST = {"IsingModel/TestGenerators.lean"}
+
+# Directories under which ``native_decide`` is exempt for the same reason, with
+# no per-file upkeep: ``test/`` is nothing but executable sanity checks, and
+# ``native_decide`` is how they evaluate. The exemption is again per-token --
+# a ``sorry`` or ``admit`` in a test is still a V2 failure, which is the whole
+# reason ``test/`` is scanned at all rather than left outside V1/V2.
+V2_NATIVE_DECIDE_DIR_ALLOWLIST = ("test/",)
 
 # The axioms every capstone is permitted to depend on (subset accepted).
 ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
@@ -240,8 +254,40 @@ def strip_noncode(source: str) -> str:
 
 
 def iter_lib_files() -> list[Path]:
-    """Return every ``*.lean`` file under ``IsingModel/`` (sorted)."""
+    """Return every ``*.lean`` file under ``IsingModel/`` (sorted).
+
+    This is the *library* proper -- the set the capstone honesty check and
+    ``dead_candidate_scan.py`` reason about. V1/V2 scan the wider
+    ``iter_checked_files``.
+    """
     return sorted(LIB_DIR.rglob("*.lean"))
+
+
+# Lean sources owned by the project but outside ``IsingModel/``: the umbrella
+# module, the test suite and the Lean helper the dead-candidate scanner runs.
+# Kept as a named constant so that narrowing the V1/V2 scan is an edit to a
+# pinned list rather than an invisible filter. Together with ``IsingModel/``
+# these cover every tracked ``*.lean`` file, an invariant the test suite pins
+# (``CheckedFilesTest``): a new Lean root forces an explicit decision instead of
+# silently escaping V1 and V2.
+EXTRA_CHECKED_ROOTS = ("IsingModel.lean", "test", "scripts/audit")
+
+
+def iter_checked_files() -> list[Path]:
+    """Return every ``*.lean`` file V1 and V2 scan (sorted, deduplicated).
+
+    ``IsingModel/`` plus :data:`EXTRA_CHECKED_ROOTS`. A file is included by
+    existence, never filtered by name or by parent directory: a filter is
+    exactly how a directory silently drops out of the gate's field of view.
+    """
+    found = set(iter_lib_files())
+    for name in EXTRA_CHECKED_ROOTS:
+        root = REPO_ROOT / name
+        if root.is_dir():
+            found |= set(root.rglob("*.lean"))
+        elif root.is_file() and root.suffix == ".lean":
+            found.add(root)
+    return sorted(found)
 
 
 def rel(path: Path) -> str:
@@ -261,9 +307,9 @@ _AXIOM_RE = re.compile(
 
 
 def check_v1() -> list[str]:
-    """V1: report any top-level ``axiom`` declaration under ``IsingModel/``."""
+    """V1: report any top-level ``axiom`` declaration in a checked Lean file."""
     failures: list[str] = []
-    for path in iter_lib_files():
+    for path in iter_checked_files():
         text = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
             if _AXIOM_RE.match(line):
@@ -272,18 +318,21 @@ def check_v1() -> list[str]:
 
 
 def check_v2() -> list[str]:
-    """V2: report ``sorry`` / ``admit`` / ``native_decide`` in library code."""
+    """V2: report ``sorry`` / ``admit`` / ``native_decide`` in checked code."""
     failures: list[str] = []
     tokens = ("sorry", "admit", "native_decide")
     word_res = {tok: re.compile(rf"\b{re.escape(tok)}\b") for tok in tokens}
-    for path in iter_lib_files():
+    for path in iter_checked_files():
         relpath = rel(path)
+        exempt = relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST or relpath.startswith(
+            V2_NATIVE_DECIDE_DIR_ALLOWLIST
+        )
         cleaned = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(cleaned.splitlines(), start=1):
             for tok in tokens:
                 if not word_res[tok].search(line):
                     continue
-                if tok == "native_decide" and relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST:
+                if tok == "native_decide" and exempt:
                     continue
                 failures.append(f"{relpath}:{lineno}: `{tok}`")
     return failures
@@ -477,8 +526,11 @@ def main() -> int:
         return run_suite()
 
     ok = True
+    # Printed with the V1/V2 verdicts: a pass over a shrunken file set is not a
+    # pass, so the coverage the gate actually achieved is part of the report.
+    checked = len(iter_checked_files())
 
-    print("== V1: no `axiom` declarations under IsingModel/ ==")
+    print("== V1: no `axiom` declarations in checked Lean files ==")
     v1 = check_v1()
     if v1:
         ok = False
@@ -486,9 +538,9 @@ def main() -> int:
         for item in v1:
             print(f"  {item}")
     else:
-        print("PASS")
+        print(f"PASS ({checked} Lean files scanned)")
 
-    print("== V2: no sorry/admit/native_decide in library code ==")
+    print("== V2: no sorry/admit/native_decide in checked Lean files ==")
     v2 = check_v2()
     if v2:
         ok = False
@@ -496,7 +548,7 @@ def main() -> int:
         for item in v2:
             print(f"  {item}")
     else:
-        print("PASS")
+        print(f"PASS ({checked} Lean files scanned)")
 
     print("== V3: capstone axiom audit (#print axioms) ==")
     if args.full or lake_available():
