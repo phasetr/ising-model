@@ -81,11 +81,6 @@ theorem Ioi_subset_leeYangDomain_real_preimage :
   intro x hx
   exact real_pos_mem_leeYangDomain hx
 
-/-- The complex unit `(1 : ℂ)` lies in every `leeYangSubdomain β N`. -/
-theorem one_mem_leeYangSubdomain' (β : ℝ) (N : ℕ) :
-    (1 : ℂ) ∈ leeYangSubdomain β N :=
-  one_mem_leeYangSubdomain β N
-
 /-- The positive real axis embedded into ℂ is a subset of leeYangDomain. -/
 theorem real_pos_axis_subset_leeYangDomain :
     Set.range (fun x : Set.Ioi (0 : ℝ) => (x.1 : ℂ)) ⊆ leeYangDomain := by

@@ -425,18 +425,6 @@ theorem mem_slitPlane_locus_of_mem_leeYangSubdomain
     partitionFunctionComplex G (J : ℂ) h (β : ℂ) ∈ Complex.slitPlane :=
   partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain G hβ J hh.2
 
-/-- `leeYangSubdomain β N` is open. Restatement of
-`isOpen_leeYangSubdomain`. -/
-theorem isOpen_leeYangSubdomain' (β : ℝ) (N : ℕ) :
-    IsOpen (leeYangSubdomain β N) :=
-  isOpen_leeYangSubdomain β N
-
-/-- `leeYangSubdomain β N` is convex. Restatement of
-`convex_leeYangSubdomain'`. -/
-theorem convex_leeYangSubdomain_alt (β : ℝ) (N : ℕ) :
-    Convex ℝ (leeYangSubdomain β N) :=
-  convex_leeYangSubdomain' β N
-
 /-- Combined: on the Lee-Yang subdomain, `Re Z > 0` and thus
 `Z ∈ slitPlane`, and `f_complex` is therefore analytic. Packaged
 `AnalyticOnNhd` form of the finite-volume analyticity on the
