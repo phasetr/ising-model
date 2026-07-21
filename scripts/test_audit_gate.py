@@ -50,9 +50,11 @@ from __future__ import annotations
 
 import io
 import os
+import signal
 import subprocess
 import sys
 import tempfile
+import time
 import types
 import unittest
 from contextlib import contextmanager, redirect_stdout
@@ -506,7 +508,10 @@ class V1AxiomTest(unittest.TestCase):
 
         ``open X in axiom ...`` / ``set_option Y in axiom ...`` -- and chains of
         the two -- declare an axiom on the same line; the regex has to see past
-        the leading wrapper commands.
+        the leading wrapper commands. Every scoping command that idiomatically
+        carries an ``in`` continuation is exercised, ``omit`` included: ``omit
+        [Inst] in`` is frequent in this repository and one line of it can still
+        declare an axiom.
         """
         for line in (
             "open Nat in axiom bad : True\n",
@@ -514,6 +519,11 @@ class V1AxiomTest(unittest.TestCase):
             "open Nat in set_option pp.all true in axiom bad : True\n",
             "open Nat in private axiom bad : True\n",
             "variable (n : Nat) in axiom bad : True\n",
+            "universe u in axiom bad : Sort u\n",
+            "include h in axiom bad : True\n",
+            "omit h in axiom bad : True\n",
+            "omit [DecidableEq V] in axiom bad : True\n",
+            "attribute [simp] foo in axiom bad : True\n",
             "  open Nat in axiom bad : True\n",
         ):
             with self.subTest(line=line):
@@ -524,6 +534,8 @@ class V1AxiomTest(unittest.TestCase):
 
         An ``open ... in theorem``, a declaration whose name merely contains
         ``in`` or ``axiom``, and ``open ... in def myaxiom`` are all innocent.
+        The ``omit [Inst] in <decl>`` idiom is a real line in the library, so it
+        is pinned as a non-axiom both ways.
         """
         for line in (
             "open Nat in theorem t : True := trivial\n",
@@ -531,9 +543,43 @@ class V1AxiomTest(unittest.TestCase):
             "def contains_axiom_in_name := 1\n",
             "open Finset in def myaxiom := 1\n",
             "open Finset in axiomatic_thing : True := trivial\n",
+            "omit [DecidableEq V] in theorem foo : True := trivial\n",
+            "omit h in lemma l : True := trivial\n",
         ):
             with self.subTest(line=line):
                 self.assertEqual(self.failures(line), [], line)
+
+    def test_axiom_regex_is_redos_safe_on_a_wrapper_chain(self) -> None:
+        """A wrapper-prefixed line that never reaches ``axiom`` matches in bounded time.
+
+        The pre-fix wrapper group nested a lazy ``[^\\n]*?`` inside ``(...)*``
+        and backtracked catastrophically: ``open Foo in`` x20 already cost
+        ~0.4 s and every extra copy roughly quadrupled it, so CI would hang on a
+        perfectly valid Lean line whose ``in`` chain happens not to end in an
+        ``axiom``. The guarded char class ``(?!\\bin\\b)[^\\n]`` forces each
+        segment to stop at the first ``in``, making the partition unique and the
+        match linear (~0.1 ms even at 2400 chars). A hard ``SIGALRM`` bound
+        turns a reintroduced quadratic/exponential regex into a clean failure
+        instead of a hung run.
+        """
+        if not hasattr(signal, "SIGALRM"):
+            self.skipTest("SIGALRM-based timeout unavailable on this platform")
+        pathological = "open Foo in " * 40  # 40 wrapper segments, no trailing axiom
+
+        def _fire(_signum: int, _frame: object) -> None:
+            raise TimeoutError("axiom regex did not finish -- catastrophic backtracking?")
+
+        previous = signal.signal(signal.SIGALRM, _fire)
+        try:
+            signal.setitimer(signal.ITIMER_REAL, 2.0)
+            start = time.perf_counter()
+            matched = ag._AXIOM_RE.match(pathological)
+            elapsed = time.perf_counter() - start
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0.0)
+            signal.signal(signal.SIGALRM, previous)
+        self.assertIsNone(matched, "a wrapper chain with no axiom must not match")
+        self.assertLess(elapsed, 1.0, f"axiom regex took {elapsed * 1000:.1f} ms -- possible ReDoS")
 
     def test_an_empty_scan_set_fails_closed(self) -> None:
         """V1 fails closed when there is nothing to scan (broken checkout).
@@ -1378,8 +1424,8 @@ class MutationTest(unittest.TestCase):
             (
                 '_AXIOM_RE = re.compile(\n'
                 '    r"^\\s*"\n'
-                '    r"(?:(?:open|set_option|variable|universe|include|attribute)'
-                '\\b[^\\n]*?\\bin\\s+)*"\n'
+                '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
+                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n'
                 '    r"(?:@\\[[^\\]]*\\]\\s*)?"\n'
                 '    r"(?:(?:private|protected|noncomputable|unsafe)\\s+"\n'
                 '    r"|(?:scoped|local)(?:\\s*\\[[^\\]]*\\])?\\s+)*"\n'
@@ -1404,8 +1450,8 @@ class MutationTest(unittest.TestCase):
         mutant = load_mutated(
             (
                 '    r"^\\s*"\n'
-                '    r"(?:(?:open|set_option|variable|universe|include|attribute)'
-                '\\b[^\\n]*?\\bin\\s+)*"\n',
+                '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
+                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n',
                 '    r"^\\s*"\n',
             )
         )
@@ -1414,6 +1460,27 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
         with library(source):
             self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch what the mutant misses")
+
+    def test_v1_regex_without_omit_in_the_wrapper_list_misses_omit_axioms(self) -> None:
+        """Dropping ``omit`` from the wrapper alternation hides ``omit ... in axiom``.
+
+        ``omit [Inst] in`` is a frequent idiom in this library (dozens of
+        files), and ``omit h in axiom bad`` is a valid line that declares an
+        axiom. If the wrapper list loses ``omit`` the leading command is
+        unrecognised and the axiom slips past V1 -- the exact hole this fix
+        closes.
+        """
+        mutant = load_mutated(
+            (
+                "open|set_option|variable|universe|include|omit|attribute",
+                "open|set_option|variable|universe|include|attribute",
+            )
+        )
+        source = {"F.lean": "omit h in axiom bad : True\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the omit-prefixed axiom")
 
     def test_v1_without_the_empty_scan_guard_passes_vacuously(self) -> None:
         """Defusing V1's fail-closed guard turns an empty scan into a pass.

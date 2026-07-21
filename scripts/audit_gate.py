@@ -324,22 +324,41 @@ def rel(path: Path) -> str:
 # protected / noncomputable / unsafe / scoped[...] / local). Applied to
 # comment/string-stripped text.
 #
-# Lean's ``in`` command combinator lets a command be prefixed on the same line
-# by one or more scoping commands -- ``open Nat in axiom bad : True``,
-# ``set_option pp.all true in axiom bad : True``, and chains such as
-# ``open Nat in set_option x true in axiom bad`` -- each of which still declares
+# Lean's ``in`` combinator is a *generic* ``trailing_parser`` -- in the compiler
+# it is ``Command.«in» := trailing_parser withOpen (" in" >> commandParser)``
+# (``Lean/Parser/Command.lean``), attaching ``in <command>`` after *any*
+# preceding command. So a single line can prefix an ``axiom`` with a scoping
+# command and its ``in`` continuation: ``open Nat in axiom bad : True``,
+# ``set_option pp.all true in axiom bad : True``, ``omit [Inst] in axiom bad``
+# (the ``omit`` form is idiomatic here -- dozens of files use it), and chains
+# such as ``open Nat in set_option x true in axiom bad`` -- each still declares
 # an axiom. Without the leading wrapper group these same-line forms slip past
-# V1 entirely. The wrapper keyword list is exactly the commands that take an
-# ``in`` continuation (``open`` / ``set_option`` / ``variable`` / ``universe`` /
-# ``include`` / ``attribute``); anchoring on those keywords keeps the group from
-# firing on an ordinary declaration whose body merely contains the word ``in``
-# (``theorem in_axiom`` starts with ``theorem``, not a wrapper keyword, and
-# ``axiom`` inside an identifier such as ``myaxiom``/``axiomatic`` is excluded by
-# the trailing ``\b``). Measured on the current tree the wrapper group adds no
-# false positive.
+# V1 entirely.
+#
+# Because ``in`` is generic, no finite keyword list is *exhaustive*; the wrapper
+# alternation enumerates the seven scoping commands that idiomatically carry an
+# ``in`` continuation onto a declaration (``open`` / ``set_option`` /
+# ``variable`` / ``universe`` / ``include`` / ``omit`` / ``attribute``).
+# Anchoring on those keywords keeps the group from firing on an ordinary
+# declaration whose body merely contains the word ``in`` (``theorem in_axiom``
+# starts with ``theorem``, not a wrapper keyword, and ``axiom`` inside an
+# identifier such as ``myaxiom``/``axiomatic`` is excluded by the trailing
+# ``\b``). A same-line ``in axiom`` behind some *other*, non-enumerated command
+# is the residual heuristic gap tracked in issue #4653; measured on the current
+# tree the wrapper group adds no false positive.
+#
+# ReDoS note: each wrapper segment consumes ``(?!\bin\b)[^\n]`` -- any char that
+# does *not* start the ``in`` delimiter -- so a segment stops at the first
+# ``in`` and the partition into segments is unique. That removes the ambiguity
+# an inner ``[^\n]*?`` had inside the outer ``(...)*``, which backtracked
+# catastrophically on a wrapper-prefixed line that never reaches ``axiom``
+# (``open Foo in`` repeated: ~0.4 s at 20 copies, unbounded beyond). Python 3.9
+# has no atomic groups / possessive quantifiers, so the guarded char class is
+# the linear form; ``test_audit_gate`` pins a bounded match time on such input.
 _AXIOM_RE = re.compile(
     r"^\s*"
-    r"(?:(?:open|set_option|variable|universe|include|attribute)\b[^\n]*?\bin\s+)*"
+    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\b"
+    r"(?:(?!\bin\b)[^\n])*\bin\s+)*"
     r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
@@ -550,12 +569,17 @@ def check_v4() -> tuple[list[str], list[Path]]:
     read failure is itself a decision reached about the file). Recording at the
     open, as an earlier version did, left a hole: ``if path.suffix == ".json":
     continue`` placed *after* the record satisfied the coverage check while the
-    file's content was never examined. Recording only once scanning is complete
-    means any per-suffix content-skip -- wherever in the loop body it sits --
-    drops the file out of ``visited`` and ``unvisited_failures`` turns the gap
-    into a failure. So a filter added here (``if path.suffix == ".tex":
-    continue``) cannot leave the reported file count claiming coverage the scan
-    never achieved.
+    file's content was never examined. Recording only once the whole-file scan
+    is complete closes *that* class of skip: a per-file ``continue`` in the
+    loop body (before the ``visited.append`` below) drops the file out of
+    ``visited`` and ``unvisited_failures`` turns the gap into a failure.
+
+    This guard is not total. A ``continue`` in the *inner* ``for lineno, line``
+    loop skips the rest of a file's lines yet still falls through to the
+    ``visited.append`` below, so a content-skip nested one level deeper would
+    not be caught here (tracked as a known limitation in issue #4653). The
+    coverage check defends the outer, per-file loop, where filters are the
+    plausible regression.
     """
     paths, failures = iter_v4_files()
     visited: list[Path] = []
