@@ -16,9 +16,11 @@ V3  Capstone axiom audit. For every fully-qualified name in
     ``scripts/audit/capstones.txt`` the ``#print axioms`` output must be a
     subset of ``{propext, Classical.choice, Quot.sound}``. An unknown
     identifier is a hard failure (keeps the capstone list honest).
-V4  No Japanese text (kana, CJK ideographs, CJK punctuation, fullwidth and
-    halfwidth forms) in git-tracked files under the public-facing paths listed
-    in ``V4_PATHS``. Committed sources, docs and TeX are English-only.
+V4  No Japanese text (kana, CJK ideographs and radicals, CJK punctuation,
+    enclosed and compatibility forms, vertical forms, fullwidth and halfwidth
+    forms, ideographic variation selectors) in git-tracked files under the
+    paths listed in ``V4_PATHS``. Committed sources, docs and TeX are
+    English-only.
     The scope is delimited *by the ``V4_PATHS`` enumeration*, not by
     ``.gitignore``: internal working material such as ``.self-local/issues/``
     and ``.self-local/reports/`` **is** tracked and **does** contain Japanese
@@ -30,8 +32,13 @@ Usage
 -----
     python3 scripts/audit_gate.py            # V1 + V2 + V4 always; V3 if lake env present
     python3 scripts/audit_gate.py --full     # V1 + V2 + V3 + V4 (V3 required; CI mode)
+    python3 scripts/audit_gate.py --self-test  # test the gate itself (no lake needed)
 
 Exit code 0 iff every executed check passes; 1 otherwise.
+
+The gate is only worth as much as its own tests: ``scripts/test_audit_gate.py``
+pins each check against fixtures *and* mutates this file's detection logic to
+prove that a weakened gate fails its tests instead of silently passing.
 """
 
 from __future__ import annotations
@@ -63,6 +70,16 @@ ALLOWED_AXIOMS = frozenset({"propext", "Classical.choice", "Quot.sound"})
 # ``lakefile.toml`` are listed explicitly: they are tracked, English-only, and
 # would otherwise be unscanned. Do NOT replace this list by ``"."`` -- see the
 # module docstring (``.self-local/`` is tracked and intentionally Japanese).
+#
+# The last four entries are machine-managed (``.gitignore``, editor settings,
+# the Lake manifest, the toolchain pin). They were added once measurement showed
+# they cost nothing: zero hits for the whole Japanese class over all four. Being
+# generated is not a reason to leave a tracked file unscanned -- a generated file
+# is committed like any other, and an unscanned tracked file is exactly the
+# fail-open hole V4 exists to close. With them the scope is stated positively:
+# **every tracked file except ``.self-local/`` is scanned**, an invariant the
+# test suite pins (``ScopeCoverageTest``), so a new top-level tracked path forces
+# an explicit include/exclude decision instead of silently escaping the gate.
 V4_PATHS = (
     "docs",
     "README.md",
@@ -73,34 +90,69 @@ V4_PATHS = (
     "scripts",
     ".github",
     "lakefile.toml",
+    ".gitignore",
+    ".vscode",
+    "lake-manifest.json",
+    "lean-toolchain",
 )
+
+# Tracked paths deliberately outside the V4 scope: internal working material
+# that is Japanese on purpose. Used by the scope-coverage test, which requires
+# every tracked file to be either scanned by V4 or listed here.
+V4_UNSCANNED_PREFIXES = (".self-local/",)
 
 # Full CJK/Japanese class. The narrow "kana + U+4E00-U+9FAF" class used by the
 # manual ``rg`` spot check misses exactly the residue a Japanese-to-English
 # rewrite tends to leave behind -- prolonged sound mark (U+30FC), ideographic
 # comma/full stop (U+3001/U+3002), corner and fullwidth brackets, ideographic
 # space (U+3000), fullwidth alphanumerics -- so V4 uses the wider ranges below:
-#   U+3000-U+303F  CJK symbols and punctuation (includes the ideographic space)
+#   U+2E80-U+303F  CJK radicals supplement, Kangxi radicals, ideographic
+#                  description characters, CJK symbols and punctuation
+#                  (includes the ideographic space U+3000)
 #   U+3041-U+309F  hiragana (incl. U+3094 and the kana marks)
 #   U+30A0-U+30FF  katakana (incl. U+30F4-U+30F6 and the prolonged sound mark)
+#   U+3190-U+33FF  kanbun marks, katakana phonetic extensions, enclosed CJK
+#                  letters and months, CJK compatibility (squared abbreviations
+#                  and era names such as the ones a pasted Japanese table emits)
 #   U+3400-U+4DBF  CJK unified ideographs extension A
 #   U+4E00-U+9FFF  CJK unified ideographs (whole block, not just U+9FAF)
 #   U+F900-U+FAFF  CJK compatibility ideographs
+#   U+FE10-U+FE1F  vertical forms (vertical comma, full stop, brackets)
+#   U+FE30-U+FE6F  CJK compatibility forms and small form variants
 #   U+FF00-U+FFEF  halfwidth and fullwidth forms (halfwidth kana, fullwidth ASCII)
 #   U+20000-U+2FFFF CJK unified ideographs extensions B and beyond
-# Measured on the current tree: zero hits over all tracked files under
-# ``V4_PATHS``, i.e. the wider class costs no false positive. The class is built
-# from codepoints rather than spelled out with literal characters, so that this
-# file passes its own check.
+#   U+E0100-U+E01EF ideographic variation selectors (VS17-VS256)
+# Measured on the current tree, per candidate range, over all tracked files under
+# ``V4_PATHS``: every range above scores zero hits, so the wider class costs no
+# false positive.
+#
+# Deliberately excluded: **U+FE00-U+FE0F (variation selectors VS1-VS16)**, also
+# zero hits today. It is the one CJK-adjacent block with a non-CJK job:
+# U+FE0F is the emoji presentation selector, and the tree already contains 35
+# dingbats it could legitimately follow (checkmark U+2713, star U+2605), so the
+# block trades a future false positive for no detection power -- a variation
+# selector in Japanese text follows a base ideograph, which the ideograph ranges
+# above already catch. U+E0100-U+E01EF has no such double duty (it only ever
+# follows a CJK ideograph) and is kept so that an *orphaned* selector left behind
+# by a Japanese-to-English rewrite -- invisible residue, exactly like U+3000 --
+# still trips the gate. Bopomofo and Hangul (U+3100-U+318F) are out of scope:
+# they are not Japanese and V4 is not a general non-Latin gate.
+#
+# The class is built from codepoints rather than spelled out with literal
+# characters, so that this file passes its own check.
 _JAPANESE_RANGES = (
-    (0x3000, 0x303F),
+    (0x2E80, 0x303F),
     (0x3041, 0x309F),
     (0x30A0, 0x30FF),
+    (0x3190, 0x33FF),
     (0x3400, 0x4DBF),
     (0x4E00, 0x9FFF),
     (0xF900, 0xFAFF),
+    (0xFE10, 0xFE1F),
+    (0xFE30, 0xFE6F),
     (0xFF00, 0xFFEF),
     (0x20000, 0x2FFFF),
+    (0xE0100, 0xE01EF),
 )
 _JAPANESE_RE = re.compile(
     "[" + "".join(f"{chr(lo)}-{chr(hi)}" for lo, hi in _JAPANESE_RANGES) + "]"
@@ -411,7 +463,18 @@ def main() -> int:
         action="store_true",
         help="Require V3 (capstone axiom audit) via `lake env lean`.",
     )
+    parser.add_argument(
+        "--self-test",
+        action="store_true",
+        help="Run the gate's own test suite (scripts/test_audit_gate.py).",
+    )
     args = parser.parse_args()
+
+    if args.self_test:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from test_audit_gate import run_suite  # noqa: PLC0415
+
+        return run_suite()
 
     ok = True
 
