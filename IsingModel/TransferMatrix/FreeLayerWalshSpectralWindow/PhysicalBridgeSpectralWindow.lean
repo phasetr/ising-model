@@ -1,5 +1,6 @@
 import IsingModel.TransferMatrix.FreeLayerWalshSpectralWindow.WalshDiagonalization
 import IsingModel.RealTanhAux
+import IsingModel.TransferMatrix.OneSiteLayerSpectralWindow
 
 /-!
 # Finite free-layer Walsh spectral window (3/4): physical bridge and spectral window
