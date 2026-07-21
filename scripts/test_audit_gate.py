@@ -501,6 +501,52 @@ class V1AxiomTest(unittest.TestCase):
         """``#print axioms X`` and ``exact axiomFoo`` must stay silent."""
         self.assertEqual(self.failures("#print axioms IsingModel.foo\n"), [])
 
+    def test_in_prefixed_axiom_is_caught(self) -> None:
+        """Lean's ``in`` command combinator must not hide an axiom.
+
+        ``open X in axiom ...`` / ``set_option Y in axiom ...`` -- and chains of
+        the two -- declare an axiom on the same line; the regex has to see past
+        the leading wrapper commands.
+        """
+        for line in (
+            "open Nat in axiom bad : True\n",
+            "set_option pp.all true in axiom bad : True\n",
+            "open Nat in set_option pp.all true in axiom bad : True\n",
+            "open Nat in private axiom bad : True\n",
+            "variable (n : Nat) in axiom bad : True\n",
+            "  open Nat in axiom bad : True\n",
+        ):
+            with self.subTest(line=line):
+                self.assertEqual(len(self.failures(line)), 1, line)
+
+    def test_in_prefixed_non_axiom_is_not_reported(self) -> None:
+        """The wrapper group must not fire on ordinary ``in`` usage.
+
+        An ``open ... in theorem``, a declaration whose name merely contains
+        ``in`` or ``axiom``, and ``open ... in def myaxiom`` are all innocent.
+        """
+        for line in (
+            "open Nat in theorem t : True := trivial\n",
+            "theorem in_axiom_lemma : True := trivial\n",
+            "def contains_axiom_in_name := 1\n",
+            "open Finset in def myaxiom := 1\n",
+            "open Finset in axiomatic_thing : True := trivial\n",
+        ):
+            with self.subTest(line=line):
+                self.assertEqual(self.failures(line), [], line)
+
+    def test_an_empty_scan_set_fails_closed(self) -> None:
+        """V1 fails closed when there is nothing to scan (broken checkout).
+
+        An empty ``iter_checked_files`` -- a mis-set path, a broken worktree --
+        would otherwise return ``([], [])`` and pass V1 with nothing examined.
+        """
+        with patched(ag, iter_checked_files=lambda: []):
+            failures, visited = ag.check_v1()
+        self.assertEqual(visited, [])
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("nothing to scan", failures[0])
+
     def test_all_library_files_are_visited(self) -> None:
         """Nested directories are searched, not just the top level."""
         with library({"A.lean": "axiom a : True\n", "Sub/B.lean": "axiom b : True\n"}):
@@ -642,6 +688,14 @@ class V2TokenTest(unittest.TestCase):
         failures = self.failures(text)
         self.assertEqual(len(failures), 1, failures)
         self.assertIn(f"F.lean:{lineno}: `sorry`", failures[0])
+
+    def test_an_empty_scan_set_fails_closed(self) -> None:
+        """V2 fails closed on an empty scan set, mirroring V1."""
+        with patched(ag, iter_checked_files=lambda: []):
+            failures, visited = ag.check_v2()
+        self.assertEqual(visited, [])
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("nothing to scan", failures[0])
 
     def test_real_tree_is_clean(self) -> None:
         """The project's standing claim: no sorry/admit outside the allowlist."""
@@ -857,6 +911,25 @@ class V3CapstoneTest(unittest.TestCase):
             failures, _ = ag.check_v3()
         self.assertEqual(len(failures), 1, failures)
         self.assertIn("below the ratchet", failures[0])
+
+    def test_a_duplicated_capstone_list_is_a_failure(self) -> None:
+        """A repeated name is a config mistake and must fail closed.
+
+        Duplicates inflate ``len(names)``, so a name repeated
+        ``CAPSTONE_MIN_COUNT`` times would clear the count ratchet while V3
+        audits a single theorem repeatedly. The duplicate guard rejects it.
+        """
+        with capstones("IsingModel.a\nIsingModel.a\n"), stub_lean(
+            "'IsingModel.a' depends on axioms: [propext]"
+        ):
+            failures, _ = ag.check_v3()
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("duplicate", failures[0])
+
+    def test_the_real_capstone_list_has_no_duplicates(self) -> None:
+        """Every capstone on the real list is audited exactly once."""
+        names = ag.read_capstones()
+        self.assertEqual(len(names), len(set(names)))
 
     def test_the_real_capstone_list_meets_the_ratchet(self) -> None:
         """The ratchet, measured against the file it guards."""
@@ -1304,7 +1377,10 @@ class MutationTest(unittest.TestCase):
         mutant = load_mutated(
             (
                 '_AXIOM_RE = re.compile(\n'
-                '    r"^\\s*(?:@\\[[^\\]]*\\]\\s*)?"\n'
+                '    r"^\\s*"\n'
+                '    r"(?:(?:open|set_option|variable|universe|include|attribute)'
+                '\\b[^\\n]*?\\bin\\s+)*"\n'
+                '    r"(?:@\\[[^\\]]*\\]\\s*)?"\n'
                 '    r"(?:(?:private|protected|noncomputable|unsafe)\\s+"\n'
                 '    r"|(?:scoped|local)(?:\\s*\\[[^\\]]*\\])?\\s+)*"\n'
                 '    r"axiom\\b"\n'
@@ -1317,6 +1393,57 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
         with library(source):
             self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch what the mutant misses")
+
+    def test_v1_regex_without_the_in_wrapper_misses_same_line_axioms(self) -> None:
+        """Dropping the ``... in`` wrapper group hides ``open X in axiom``.
+
+        The same-line ``in`` command combinator is valid Lean and really does
+        declare an axiom; without the leading wrapper group the regex only sees
+        the wrapper command and lets the axiom through.
+        """
+        mutant = load_mutated(
+            (
+                '    r"^\\s*"\n'
+                '    r"(?:(?:open|set_option|variable|universe|include|attribute)'
+                '\\b[^\\n]*?\\bin\\s+)*"\n',
+                '    r"^\\s*"\n',
+            )
+        )
+        source = {"F.lean": "open Nat in axiom bad : True\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch what the mutant misses")
+
+    def test_v1_without_the_empty_scan_guard_passes_vacuously(self) -> None:
+        """Defusing V1's fail-closed guard turns an empty scan into a pass.
+
+        With nothing to scan (a broken checkout, a mis-set path) the loop runs
+        zero times and returns ``([], [])`` -- a green V1 that examined nothing.
+        """
+        mutant = load_mutated(
+            (
+                '        return (["V1: iter_checked_files() found no Lean file (nothing to scan)"], visited)',
+                "        pass",
+            )
+        )
+        with patched(mutant, iter_checked_files=lambda: []):
+            self.assertEqual(mutant.check_v1()[0], [])
+        with patched(ag, iter_checked_files=lambda: []):
+            self.assertEqual(len(ag.check_v1()[0]), 1)
+
+    def test_v2_without_the_empty_scan_guard_passes_vacuously(self) -> None:
+        """Same fail-closed guard for V2."""
+        mutant = load_mutated(
+            (
+                '        return (["V2: iter_checked_files() found no Lean file (nothing to scan)"], visited)',
+                "        pass",
+            )
+        )
+        with patched(mutant, iter_checked_files=lambda: []):
+            self.assertEqual(mutant.check_v2()[0], [])
+        with patched(ag, iter_checked_files=lambda: []):
+            self.assertEqual(len(ag.check_v2()[0]), 1)
 
     def test_v1v2_with_a_filtered_file_list_stop_seeing_a_whole_directory(self) -> None:
         """One ``if`` in the file walk hides a library subtree from V1 and V2.
@@ -1332,7 +1459,13 @@ class MutationTest(unittest.TestCase):
                 '    found = {p for p in iter_lib_files() if "Inequalities" not in p.parts}',
             )
         )
-        source = {"Inequalities/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n"}
+        # A clean file outside the filtered subtree keeps the mutant's scan
+        # non-empty, so it fails on the *filter*, not on the fail-closed
+        # empty-scan guard (which is exercised separately).
+        source = {
+            "Basic.lean": "theorem ok : True := trivial\n",
+            "Inequalities/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n",
+        }
         with library(source, module=mutant):
             self.assertEqual(mutant.check_v1()[0], [])
             self.assertEqual(mutant.check_v2()[0], [])
@@ -1369,32 +1502,38 @@ class MutationTest(unittest.TestCase):
         skip = '        if "RandomCurrent" in path.parts:\n            continue\n'
         mutant = load_mutated(
             (
-                "    for path in iter_checked_files():\n"
+                "    for path in checked:\n"
                 "        visited.append(path)\n"
                 '        text = strip_noncode(path.read_text(encoding="utf-8"))',
-                "    for path in iter_checked_files():\n"
+                "    for path in checked:\n"
                 f"{skip}"
                 "        visited.append(path)\n"
                 '        text = strip_noncode(path.read_text(encoding="utf-8"))',
             ),
             (
-                "    for path in iter_checked_files():\n"
+                "    for path in checked:\n"
                 "        visited.append(path)\n"
                 "        relpath = rel(path)",
-                "    for path in iter_checked_files():\n"
+                "    for path in checked:\n"
                 f"{skip}"
                 "        visited.append(path)\n"
                 "        relpath = rel(path)",
             ),
         )
-        source = {"RandomCurrent/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n"}
+        # A clean file keeps the scan non-empty so the loop-body skip, not the
+        # empty-scan guard, is what is under test.
+        source = {
+            "Basic.lean": "theorem ok : True := trivial\n",
+            "RandomCurrent/F.lean": "axiom bad : True\ntheorem t : True := by sorry\n",
+        }
         with library(source, module=mutant):
-            # Blind, while its file list is untouched: enumerated 1, read 0.
+            # Blind on the skipped subtree while its file list is untouched:
+            # enumerated 2, read only the clean file.
             self.assertEqual(mutant.check_v1()[0], [])
             self.assertEqual(mutant.check_v2()[0], [])
-            self.assertEqual(len(mutant.iter_checked_files()), 1)
-            self.assertEqual(mutant.check_v1()[1], [])
-            self.assertEqual(mutant.check_v2()[1], [])
+            self.assertEqual(len(mutant.iter_checked_files()), 2)
+            self.assertNotIn("RandomCurrent", str(mutant.check_v1()[1]))
+            self.assertNotIn("RandomCurrent", str(mutant.check_v2()[1]))
         with library(source):
             self.assertEqual(len(ag.check_v1()[0]), 1)
             self.assertEqual(len(ag.check_v2()[0]), 1)
@@ -1624,6 +1763,26 @@ class MutationTest(unittest.TestCase):
         with capstones(one), patched(ag, CAPSTONE_MIN_COUNT=13), stub_lean(output):
             self.assertEqual(len(ag.check_v3()[0]), 1)
 
+    def test_v3_without_the_duplicate_guard_lets_a_repeated_name_fake_the_count(self) -> None:
+        """G2: 13 copies of one name clear the count ratchet but audit one theorem.
+
+        Duplicates make ``len(names)`` overstate coverage: a single name listed
+        ``CAPSTONE_MIN_COUNT`` times passes the ratchet while V3 audits that one
+        theorem repeatedly. The duplicate guard is what refuses it; deleting the
+        guard restores the loophole.
+        """
+        mutant = load_mutated(("    if duplicates:", "    if False:"))
+        dup_list = "IsingModel.a\n" * 13
+        output = "'IsingModel.a' depends on axioms: [propext]"
+        with capstones(dup_list, module=mutant), patched(
+            mutant, CAPSTONE_MIN_COUNT=13
+        ), stub_lean(output):
+            self.assertEqual(mutant.check_v3()[0], [])
+        with capstones(dup_list), patched(ag, CAPSTONE_MIN_COUNT=13), stub_lean(output):
+            failures = ag.check_v3()[0]
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("duplicate", failures[0])
+
     def test_v3_without_the_missing_result_check_ignores_silence(self) -> None:
         """A capstone Lean never reported on must not pass by omission."""
         mutant = load_mutated(
@@ -1703,10 +1862,10 @@ class MutationTest(unittest.TestCase):
         """
         mutant = load_mutated(
             (
-                "    for path in paths:\n        visited.append(path)",
+                "    for path in paths:\n        try:",
                 "    for path in paths:\n"
                 '        if path.suffix == ".tex":\n            continue\n'
-                "        visited.append(path)",
+                "        try:",
             )
         )
         files: dict[str, str | bytes] = {
@@ -1731,11 +1890,51 @@ class MutationTest(unittest.TestCase):
         self.assertIn("enumerated but never scanned", out)
         self.assertNotIn("1 tracked files", out)
 
+    def test_v4_content_skip_after_the_open_is_caught(self) -> None:
+        """G1: a per-suffix skip that reads a file but scans nothing is caught.
+
+        The subtle hole: the file is opened (its content read) and then a
+        ``continue`` bypasses the line scan. ``visited`` is recorded only once
+        the line scan completes, so the file drops out of the visited set and
+        ``unvisited_failures`` fails the gate. Pinned for two suffixes to show
+        the fix is not ``.tex``-specific -- the earlier V4 content-skip test
+        pinned only ``.tex``.
+        """
+        for suffix in (".json", ".md"):
+            with self.subTest(suffix=suffix):
+                skip = f'        if path.suffix == "{suffix}":\n            continue\n'
+                mutant = load_mutated(
+                    (
+                        "        for lineno, line in enumerate(text.splitlines(), start=1):\n"
+                        "            hits = _JAPANESE_RE.findall(line)",
+                        f"{skip}"
+                        "        for lineno, line in enumerate(text.splitlines(), start=1):\n"
+                        "            hits = _JAPANESE_RE.findall(line)",
+                    )
+                )
+                files: dict[str, str | bytes] = {
+                    f"docs/a{suffix}": f"title {KANJI}\n",
+                    "docs/clean.txt": "English\n",
+                }
+                with tracked_repo(files, module=mutant):
+                    failures, visited = mutant.check_v4()
+                    # Opened but never scanned: no Japanese reported, and the
+                    # file has dropped out of the visited set.
+                    self.assertEqual(failures, [])
+                    self.assertEqual(len(mutant.iter_v4_files()[0]), 2, "file list untouched")
+                    self.assertEqual(len(visited), 1)
+                    self.assertTrue(
+                        mutant.unvisited_failures("V4", mutant.iter_v4_files()[0], visited)
+                    )
+                with tracked_repo(files):
+                    self.assertEqual(len(ag.check_v4()[0]), 1)
+
     def test_v4_that_skips_unreadable_files_goes_fail_open(self) -> None:
         """The ``OSError`` arm, mutated: an unopenable tracked file vanishes."""
         mutant = load_mutated(
             (
                 "        except OSError as exc:\n"
+                "            visited.append(path)\n"
                 '            failures.append(f"{rel(path)}: could not be read ({exc})")\n'
                 "            continue",
                 "        except OSError:\n            continue",
@@ -1857,6 +2056,7 @@ class MutationTest(unittest.TestCase):
         mutant = load_mutated(
             (
                 "        except UnicodeDecodeError:\n"
+                "            visited.append(path)\n"
                 '            failures.append(f"{rel(path)}: not valid UTF-8 text (cannot be scanned)")\n'
                 "            continue",
                 "        except UnicodeDecodeError:\n            continue",

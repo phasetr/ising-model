@@ -319,11 +319,28 @@ def rel(path: Path) -> str:
     return path.relative_to(REPO_ROOT).as_posix()
 
 
-# ``axiom`` command with any leading attribute block and any combination of
-# declaration modifiers (private / protected / noncomputable / unsafe /
-# scoped[...] / local). Applied to comment/string-stripped text.
+# ``axiom`` command with any leading ``... in`` command wrappers, any leading
+# attribute block and any combination of declaration modifiers (private /
+# protected / noncomputable / unsafe / scoped[...] / local). Applied to
+# comment/string-stripped text.
+#
+# Lean's ``in`` command combinator lets a command be prefixed on the same line
+# by one or more scoping commands -- ``open Nat in axiom bad : True``,
+# ``set_option pp.all true in axiom bad : True``, and chains such as
+# ``open Nat in set_option x true in axiom bad`` -- each of which still declares
+# an axiom. Without the leading wrapper group these same-line forms slip past
+# V1 entirely. The wrapper keyword list is exactly the commands that take an
+# ``in`` continuation (``open`` / ``set_option`` / ``variable`` / ``universe`` /
+# ``include`` / ``attribute``); anchoring on those keywords keeps the group from
+# firing on an ordinary declaration whose body merely contains the word ``in``
+# (``theorem in_axiom`` starts with ``theorem``, not a wrapper keyword, and
+# ``axiom`` inside an identifier such as ``myaxiom``/``axiomatic`` is excluded by
+# the trailing ``\b``). Measured on the current tree the wrapper group adds no
+# false positive.
 _AXIOM_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)?"
+    r"^\s*"
+    r"(?:(?:open|set_option|variable|universe|include|attribute)\b[^\n]*?\bin\s+)*"
+    r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
     r"axiom\b"
@@ -339,7 +356,13 @@ def check_v1() -> tuple[list[str], list[Path]]:
     """
     failures: list[str] = []
     visited: list[Path] = []
-    for path in iter_checked_files():
+    checked = iter_checked_files()
+    if not checked:
+        # Fail-closed: an empty scan set (a broken checkout, a mis-set path)
+        # would otherwise return ``([], [])`` and turn V1 green with nothing
+        # examined. Mirrors the "nothing to scan" guard in ``iter_v4_files``.
+        return (["V1: iter_checked_files() found no Lean file (nothing to scan)"], visited)
+    for path in checked:
         visited.append(path)
         text = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
@@ -354,7 +377,12 @@ def check_v2() -> tuple[list[str], list[Path]]:
     visited: list[Path] = []
     tokens = ("sorry", "admit", "native_decide")
     word_res = {tok: re.compile(rf"\b{re.escape(tok)}\b") for tok in tokens}
-    for path in iter_checked_files():
+    checked = iter_checked_files()
+    if not checked:
+        # Fail-closed, as in ``check_v1``: no file to scan is a broken gate, not
+        # a clean tree.
+        return (["V2: iter_checked_files() found no Lean file (nothing to scan)"], visited)
+    for path in checked:
         visited.append(path)
         relpath = rel(path)
         exempt = relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST or relpath.startswith(
@@ -405,6 +433,19 @@ def check_v3() -> tuple[list[str], set[str]]:
     names = read_capstones()
     if not names:
         return (["capstones.txt lists no theorems (V3 has nothing to audit)"], observed)
+    # Fail-closed on duplicates: the count ratchet counts *lines*, so a name
+    # repeated CAPSTONE_MIN_COUNT times would clear it while V3 audits a single
+    # theorem CAPSTONE_MIN_COUNT times. A duplicate is unambiguously a config
+    # mistake, so reject it outright rather than let it inflate the count.
+    duplicates = sorted({name for name in names if names.count(name) > 1})
+    if duplicates:
+        return (
+            [
+                f"V3: capstones.txt has duplicate name(s) {duplicates}; each capstone "
+                "must be listed once (duplicates fake the count ratchet)"
+            ],
+            observed,
+        )
     if len(names) < CAPSTONE_MIN_COUNT:
         failures.append(
             f"V3: capstones.txt lists {len(names)} theorem(s), below the ratchet of "
@@ -503,21 +544,30 @@ def check_v4() -> tuple[list[str], list[Path]]:
     variant this gate exists to avoid; an extension allowlist was rejected
     because it would need per-file upkeep (``docs/Gemfile`` has no suffix).
 
-    ``visited`` records the files the loop reached (including the two failure
-    arms, which report rather than skip), so a filter added here -- ``if
-    path.suffix == ".tex": continue`` -- cannot leave the reported file count
-    claiming coverage the scan never achieved.
+    ``visited`` records the files the scan actually *processed*, not the ones it
+    *opened*: a file counts as visited only after its content has been read and
+    run through the line scan (the two failure arms count too -- reporting a
+    read failure is itself a decision reached about the file). Recording at the
+    open, as an earlier version did, left a hole: ``if path.suffix == ".json":
+    continue`` placed *after* the record satisfied the coverage check while the
+    file's content was never examined. Recording only once scanning is complete
+    means any per-suffix content-skip -- wherever in the loop body it sits --
+    drops the file out of ``visited`` and ``unvisited_failures`` turns the gap
+    into a failure. So a filter added here (``if path.suffix == ".tex":
+    continue``) cannot leave the reported file count claiming coverage the scan
+    never achieved.
     """
     paths, failures = iter_v4_files()
     visited: list[Path] = []
     for path in paths:
-        visited.append(path)
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
+            visited.append(path)
             failures.append(f"{rel(path)}: not valid UTF-8 text (cannot be scanned)")
             continue
         except OSError as exc:
+            visited.append(path)
             failures.append(f"{rel(path)}: could not be read ({exc})")
             continue
         for lineno, line in enumerate(text.splitlines(), start=1):
@@ -531,6 +581,9 @@ def check_v4() -> tuple[list[str], list[Path]]:
                 f"{rel(path)}:{lineno}: Japanese text {''.join(dict.fromkeys(hits))!r}"
                 f" in: {snippet}"
             )
+        # Recorded only here, once the whole file has been scanned: a
+        # content-skip ``continue`` inserted anywhere above never reaches this.
+        visited.append(path)
     return (failures, visited)
 
 
