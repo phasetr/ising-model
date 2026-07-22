@@ -44,12 +44,11 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_ferromagnetic
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     G Λ J β (mul_pos hβ hJ) n hne hEpos
 
-/-! ## Moved: 2 strict-deviation bundle wrappers
+/-! ## Moved: strict-deviation bundle wrapper
 
-The two `Z + log Z + f` strict-deviation bundle wrappers
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle`,
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle_ferromagnetic`)
-now live in
+The `Z + log Z + f` strict-deviation bundle wrapper
+(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle`)
+now lives in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle`.
 The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella `SpecialCases.lean`.

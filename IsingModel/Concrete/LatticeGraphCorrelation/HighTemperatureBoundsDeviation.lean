@@ -94,14 +94,12 @@ The two Λ-direct
 
 /-! ## Moved: ℤ^d HT Λ-layer strict-deviation wrappers
 
-The 8 ℤ^d Λ-layer strict-deviation HT wrappers
+The 6 ℤ^d Λ-layer strict-deviation HT wrappers
 (`freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos`,
 `_ferromagnetic`,
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt`,
 `_ferromagnetic`,
 `log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos`,
-`_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle`,
 `_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict`.
 The earlier import path is preserved by re-importing the new child.
