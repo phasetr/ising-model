@@ -2,13 +2,12 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete f/Z/log Z deviation / continuity wrappers at h = 0
+# Concrete f/Z/log Z deviation wrappers at h = 0
 
 Narrow child module for the §18.3-§18.4 concrete deviation_bound /
-continuity_bundle / deviation_sandwich / relative_sandwich / deviation_pos /
-pow_two_lt / strict_deviation_bundle wrappers on `latticeGraph d` at
-`h = 0`. 18 theorems for `freeEnergyΛ_latticeGraph`,
-`partitionFunctionΛ_latticeGraph`, and
+deviation_sandwich / relative_sandwich / deviation_pos / pow_two_lt
+wrappers on `latticeGraph d` at `h = 0`. 14 theorems for
+`freeEnergyΛ_latticeGraph`, `partitionFunctionΛ_latticeGraph`, and
 `log_partitionFunctionΛ_latticeGraph`, with their ferromagnetic variants.
 The theorem names are unchanged from the former `HighTemperatureBounds`
 declarations.
@@ -20,11 +19,11 @@ namespace Ambient
 open scoped symmDiff
 
 
-/-! ## Moved: ℤ^d HT Λ-layer deviation_bound + continuity wrappers
+/-! ## Moved: ℤ^d HT Λ-layer deviation_bound wrappers
 
-The 4 ℤ^d Λ-layer `freeEnergyΛ_latticeGraph_high_temp_h_zero_*`
-wrappers (`deviation_bound_exp`, `deviation_bound_exp_ferromagnetic`,
-`continuity_bundle`, `continuity_bundle_ferromagnetic`) now live in
+The 2 ℤ^d Λ-layer `freeEnergyΛ_latticeGraph_high_temp_h_zero_*`
+wrappers (`deviation_bound_exp`, `deviation_bound_exp_ferromagnetic`)
+now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationContinuity`.
 The earlier import path is preserved by re-importing the new child.
 -/
@@ -94,14 +93,12 @@ The two Λ-direct
 
 /-! ## Moved: ℤ^d HT Λ-layer strict-deviation wrappers
 
-The 8 ℤ^d Λ-layer strict-deviation HT wrappers
+The 6 ℤ^d Λ-layer strict-deviation HT wrappers
 (`freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos`,
 `_ferromagnetic`,
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt`,
 `_ferromagnetic`,
 `log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos`,
-`_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_strict_deviation_bundle`,
 `_ferromagnetic`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict`.
 The earlier import path is preserved by re-importing the new child.
