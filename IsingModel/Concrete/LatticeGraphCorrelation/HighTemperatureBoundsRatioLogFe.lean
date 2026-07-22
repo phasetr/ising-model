@@ -139,13 +139,16 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_b
   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
 
-/-! ## Moved: Λ-direct ratio_bound_bundle wrappers
+/-! ## Removed: Λ-direct ratio_bound_bundle wrappers
 
-The four Λ-direct `ratio_bound_bundle` wrappers
-(`log_partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle`
-and `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle`,
-each with `_ferromagnetic` variants) now live in
-`HighTemperatureBoundsRatioBoundBundle.lean`. -/
+The Λ-direct `log_partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle`
+conjunction wrappers (and their `_ferromagnetic` variants) were removed as
+unused bundles; they delegated directly to the ambient base
+`log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound` and
+`log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero`
+lemmas (in `AmbientLattice/Defs/HighTempPartition/Ratios.lean`), which remain.
+The companion `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle` wrappers had
+already been dropped. -/
 
 
 
