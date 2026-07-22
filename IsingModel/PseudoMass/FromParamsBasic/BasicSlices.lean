@@ -98,32 +98,6 @@ theorem pseudoMassFromParamsAtPair_beta_zero {α : ℕ} (hα : 1 ≤ α)
   intro hmem
   exact lt_irrefl 0 hmem.1
 
-/-- **`pseudoMassFromParamsAtPair` at `J = 0, h = 0` (trivial-coupling
-slice)**: equals 0 because the correlation `tanh(β·0)^2 = 0`.
-
-Direct corollary of `correlationInfinite_J_zero` with `h = 0`. -/
-theorem pseudoMassFromParamsAtPair_J_zero_h_zero {α : ℕ} (hα : 1 ≤ α)
-    {r : ℝ} (hr : 0 < r) (d : ℕ)
-    (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
-                      (Λ.volume n)).edgeSet]
-    {β : ℝ} (hβ : 0 < β) (x z : Fin d → ℤ) :
-    pseudoMassFromParamsAtPair hα hr d Λ (⟨0, 0, β⟩ : IsingParams ℝ) x z = 0 := by
-  have hf : Ferromagnetic (⟨(0 : ℝ), 0, β⟩ : IsingParams ℝ) :=
-    ⟨le_refl 0, le_refl 0, hβ⟩
-  have hcorr := Ambient.correlationInfinite_J_zero
-    (IsingModel.latticeGraph d) Λ 0 β hf {x, z}
-  unfold pseudoMassFromParamsAtPair
-  rw [hcorr]
-  apply pseudoMassExt_of_not_mem
-  intro hmem
-  -- correlation = tanh(β·0)^A.card = 0^|{x,z}| = 0
-  have htanh : Real.tanh (β * 0) ^ ({x, z} : Finset (Fin d → ℤ)).card = 0 := by
-    rw [mul_zero, Real.tanh_zero, zero_pow]
-    exact (Finset.Nonempty.card_pos ⟨x, by simp⟩).ne'
-  rw [htanh] at hmem
-  exact lt_irrefl 0 hmem.1
-
 /-- **`pseudoMassFromParamsAtPair` is symmetric in `(x, z)`**: the pair
 `{x, z}` as a `Finset` is unchanged under swap, hence the correlation
 and the resulting pseudo-mass are unchanged. -/
