@@ -347,7 +347,21 @@ def rel(path: Path) -> str:
 # is the residual heuristic gap tracked in issue #4653; measured on the current
 # tree the wrapper group adds no false positive.
 #
-# ReDoS note: each wrapper segment consumes ``(?!\bin\b)[^\n]`` -- any char that
+# The guard is ``(?!\bin\s)``, not ``(?!\bin\b)``: the delimiter is ``\bin\s+``
+# (``in`` then whitespace), so the guard must key on that exact shape. A ``\bin\b``
+# guard also fired when ``in`` appears *inside* the wrapper target followed by a
+# non-word char -- an escaped identifier ``«in»`` or a dotted component
+# ``Foo.in.Bar`` / option name ``foo.in.bar`` -- desynchronising the segment from
+# the delimiter and dropping the whole wrapper (so ``open «in» in axiom`` slipped
+# past). ``\bin\s`` skips those inner ``in`` tokens and stops only at the real
+# delimiter. The one shape no *linear* guard can catch is a bare keyword ``in`` as
+# the final namespace component (``open A.in in axiom``): its ``in`` *is* followed
+# by whitespace, so ``A.in `` is identical to ``A.`` plus the ``in `` delimiter --
+# but a bare keyword ``in`` is not a legal Lean identifier (it must be ``«in»``, and
+# that form *is* caught), so ``open A.in in axiom`` is not valid Lean; it stays in
+# the issue #4653 residual gap rather than justify a backtracking (ReDoS) rewrite.
+#
+# ReDoS note: each wrapper segment consumes ``(?!\bin\s)[^\n]`` -- any char that
 # does *not* start the ``in`` delimiter -- so a segment stops at the first
 # ``in`` and the partition into segments is unique. That removes the ambiguity
 # an inner ``[^\n]*?`` had inside the outer ``(...)*``, which backtracked
@@ -358,7 +372,7 @@ def rel(path: Path) -> str:
 _AXIOM_RE = re.compile(
     r"^\s*"
     r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\b"
-    r"(?:(?!\bin\b)[^\n])*\bin\s+)*"
+    r"(?:(?!\bin\s)[^\n])*\bin\s+)*"
     r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"

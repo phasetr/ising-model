@@ -54,7 +54,6 @@ import signal
 import subprocess
 import sys
 import tempfile
-import time
 import types
 import unittest
 from contextlib import contextmanager, redirect_stdout
@@ -512,6 +511,27 @@ class V1AxiomTest(unittest.TestCase):
         carries an ``in`` continuation is exercised, ``omit`` included: ``omit
         [Inst] in`` is frequent in this repository and one line of it can still
         declare an axiom.
+
+        The last three lines pin the guard on the *segment* char class. The guard
+        has to skip the word ``in`` when it appears *inside* the wrapper body --
+        as a French-quoted identifier ``«in»``, a dotted namespace component
+        ``Foo.in.Bar``, or an option-name component ``foo.in.bar`` -- and stop
+        only at the real ``in`` delimiter (``in`` followed by whitespace). A
+        ``\bin\b`` guard fired on those inner ``in`` tokens (each is followed by
+        ``»`` or ``.``, both non-word, so ``\b`` held), desynchronised the segment
+        from the ``\bin\s+`` delimiter, and dropped the whole wrapper -- taking
+        the axiom with it. ``\bin\s`` matches the delimiter exactly, so an inner
+        ``in`` that is *not* followed by whitespace is skipped and these lines are
+        caught again.
+
+        The one shape a linear guard cannot catch is a bare keyword ``in`` used as
+        a namespace component that ends the wrapper target, e.g. ``open A.in in
+        axiom``: there the inner ``in`` *is* followed by whitespace, so ``A.in ``
+        is byte-for-byte identical to a wrapper ``A.`` plus the ``in `` delimiter,
+        and only backtracking (the ReDoS the guard exists to prevent) could look
+        past it. That is not a real gap -- a bare keyword ``in`` is not a legal
+        Lean identifier component (it must be escaped ``«in»``, which *is* caught),
+        so ``open A.in in axiom`` is not valid Lean and is left to issue #4653.
         """
         for line in (
             "open Nat in axiom bad : True\n",
@@ -525,6 +545,9 @@ class V1AxiomTest(unittest.TestCase):
             "omit [DecidableEq V] in axiom bad : True\n",
             "attribute [simp] foo in axiom bad : True\n",
             "  open Nat in axiom bad : True\n",
+            "open «in» in axiom bad : True\n",
+            "open Foo.in.Bar in axiom bad : True\n",
+            "set_option foo.in.bar true in axiom bad : True\n",
         ):
             with self.subTest(line=line):
                 self.assertEqual(len(self.failures(line)), 1, line)
@@ -556,11 +579,16 @@ class V1AxiomTest(unittest.TestCase):
         and backtracked catastrophically: ``open Foo in`` x20 already cost
         ~0.4 s and every extra copy roughly quadrupled it, so CI would hang on a
         perfectly valid Lean line whose ``in`` chain happens not to end in an
-        ``axiom``. The guarded char class ``(?!\\bin\\b)[^\\n]`` forces each
-        segment to stop at the first ``in``, making the partition unique and the
-        match linear (~0.1 ms even at 2400 chars). A hard ``SIGALRM`` bound
-        turns a reintroduced quadratic/exponential regex into a clean failure
-        instead of a hung run.
+        ``axiom``. The guarded char class ``(?!\\bin\\s)[^\\n]`` forces each
+        segment to stop at the first ``in`` delimiter, making the partition
+        unique and the match linear (~0.1 ms even at 2400 chars).
+
+        The essential guard is the hard ``SIGALRM`` bound: a reintroduced
+        quadratic/exponential regex trips it and fails cleanly instead of hanging
+        the run. A wall-clock ``elapsed`` assert is deliberately *not* made here
+        -- it would flake on a heavily loaded worker while adding nothing the
+        SIGALRM does not already enforce (linear ~0.1 ms vs a 2 s ceiling leaves
+        four orders of magnitude of headroom).
         """
         if not hasattr(signal, "SIGALRM"):
             self.skipTest("SIGALRM-based timeout unavailable on this platform")
@@ -569,17 +597,16 @@ class V1AxiomTest(unittest.TestCase):
         def _fire(_signum: int, _frame: object) -> None:
             raise TimeoutError("axiom regex did not finish -- catastrophic backtracking?")
 
+        # Save/restore the prior handler *and* the prior REAL itimer so this test
+        # never clobbers an outer timer a runner may have armed.
         previous = signal.signal(signal.SIGALRM, _fire)
+        prev_timer = signal.setitimer(signal.ITIMER_REAL, 2.0)
         try:
-            signal.setitimer(signal.ITIMER_REAL, 2.0)
-            start = time.perf_counter()
             matched = ag._AXIOM_RE.match(pathological)
-            elapsed = time.perf_counter() - start
         finally:
-            signal.setitimer(signal.ITIMER_REAL, 0.0)
+            signal.setitimer(signal.ITIMER_REAL, *prev_timer)
             signal.signal(signal.SIGALRM, previous)
         self.assertIsNone(matched, "a wrapper chain with no axiom must not match")
-        self.assertLess(elapsed, 1.0, f"axiom regex took {elapsed * 1000:.1f} ms -- possible ReDoS")
 
     def test_an_empty_scan_set_fails_closed(self) -> None:
         """V1 fails closed when there is nothing to scan (broken checkout).
@@ -1425,7 +1452,7 @@ class MutationTest(unittest.TestCase):
                 '_AXIOM_RE = re.compile(\n'
                 '    r"^\\s*"\n'
                 '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
-                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n'
+                '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n'
                 '    r"(?:@\\[[^\\]]*\\]\\s*)?"\n'
                 '    r"(?:(?:private|protected|noncomputable|unsafe)\\s+"\n'
                 '    r"|(?:scoped|local)(?:\\s*\\[[^\\]]*\\])?\\s+)*"\n'
@@ -1451,7 +1478,7 @@ class MutationTest(unittest.TestCase):
             (
                 '    r"^\\s*"\n'
                 '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
-                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n',
+                '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n',
                 '    r"^\\s*"\n',
             )
         )
@@ -1481,6 +1508,35 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
         with library(source):
             self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the omit-prefixed axiom")
+
+    def test_v1_segment_guard_on_word_boundary_desyncs_on_inner_in(self) -> None:
+        """A ``\\bin\\b`` segment guard drops axioms behind an inner ``in`` token.
+
+        The wrapper body may itself contain the word ``in`` -- as a French-quoted
+        identifier ``«in»`` or a dotted namespace component ``Foo.in.Bar`` -- that
+        is *not* the ``in`` command delimiter. The real delimiter is ``\\bin\\s+``
+        (``in`` followed by whitespace). A ``\\bin\\b`` guard stops the segment at
+        the inner ``in`` (whose right edge is a non-word char, so ``\\b`` holds),
+        desynchronises it from the ``\\bin\\s+`` delimiter, and the whole wrapper
+        fails to match -- taking the trailing axiom with it. ``\\bin\\s`` guards on
+        the delimiter itself, so the inner ``in`` is skipped and the axiom caught.
+        """
+        mutant = load_mutated(
+            (
+                '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n',
+                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n',
+            )
+        )
+        for line in (
+            "open «in» in axiom bad : True\n",
+            "open Foo.in.Bar in axiom bad : True\n",
+        ):
+            source = {"F.lean": line}
+            with self.subTest(line=line):
+                with library(source, module=mutant):
+                    self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
+                with library(source):
+                    self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the inner-in axiom")
 
     def test_v1_without_the_empty_scan_guard_passes_vacuously(self) -> None:
         """Defusing V1's fail-closed guard turns an empty scan into a pass.
