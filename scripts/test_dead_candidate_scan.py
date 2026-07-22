@@ -894,20 +894,30 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """261 candidates -> 130 safe / 44 uncertain / 52 load-bearing / 35 published."""
+        """259 candidates -> 128 safe / 44 uncertain / 52 load-bearing / 35 published.
+
+        Recalibrated when PR #4659 deleted the two safe-to-delete
+        ``correlationΛ*_high_temp_h_zero_at_pair_singleton_bundle_ferromagnetic``
+        wrappers: total and safe both drop by 2, and the other three classes are
+        unchanged -- the healthy signature that no live lemma was reclassified.
+        """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 261)
-        self.assertEqual(counts.get(dcs.SAFE), 130)
+        self.assertEqual(len(verdicts), 259)
+        self.assertEqual(counts.get(dcs.SAFE), 128)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """142 of the 261 have no Lean consumer at all."""
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 142)
+        """141 of the 259 have no Lean consumer at all.
+
+        Was 142 of 261 before PR #4659; the deleted ``_latticeGraph_`` bundle
+        ferromagnetic wrapper was itself zero-consumer, so the count drops by one.
+        """
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 141)
 
 
 class CanaryTest(unittest.TestCase):

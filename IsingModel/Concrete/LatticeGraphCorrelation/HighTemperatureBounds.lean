@@ -93,16 +93,6 @@ The earlier import path is preserved by re-importing the new child.
 -/
 
 
-/-! ## Moved: ℤ^d HT pair+singleton bundle wrappers
-
-The 3 ℤ^d
-`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_singleton_*`
-bundle wrappers (`_bundle_ferromagnetic`, `_complete_summary`,
-`_trivial_slices_bundle`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsPairSingletonBundle`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 /-! ## Moved: §18.7 high-temperature exponential decay capstones
 
 The §18.7 high-temperature pair-correlation exponential-decay capstone
