@@ -2,13 +2,12 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-direct triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0
+# ℤ^d Λ-direct triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
 
-Narrow child module for 7 §18.3-§18.4 concrete (`latticeGraph d`)
-Λ-direct `triple_ratio_sandwich_bundle` and
-`triple_ratio_bound_bundle` wrappers (J = 0 trivial slice, β = 0
-specialisation, ferromagnetic variants). Theorem names are unchanged
-from the former
+Narrow child module for 4 §18.3-§18.4 concrete (`latticeGraph d`)
+Λ-direct `triple_ratio_sandwich_bundle` wrappers (J = 0 trivial slice,
+β = 0 specialisation, ferromagnetic variants). Theorem names are
+unchanged from the former
 `Concrete/LatticeGraphCorrelation/HighTemperatureBoundsRatioBounds`
 declarations.
 -/
@@ -197,15 +196,6 @@ theorem partitionFunctionΛ_latticeGraph_h_zero_triple_ratio_sandwich_bundle_fer
               Λ.card) :=
   partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) hne
-
-/-! ## Moved: Λ-direct triple_ratio_bound_bundle wrappers
-
-The three `partitionFunctionΛ_*_triple_ratio_bound_bundle` wrappers
-(direct, `_beta_zero`, `_ferromagnetic`) now live in
-`HighTemperatureBoundsTripleRatioBoundBundle.lean`. -/
-
-
-
 
 end Ambient
 
