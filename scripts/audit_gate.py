@@ -319,11 +319,90 @@ def rel(path: Path) -> str:
     return path.relative_to(REPO_ROOT).as_posix()
 
 
-# ``axiom`` command with any leading attribute block and any combination of
-# declaration modifiers (private / protected / noncomputable / unsafe /
-# scoped[...] / local). Applied to comment/string-stripped text.
+# ``axiom`` command with any leading ``... in`` command wrappers, any leading
+# attribute block and any combination of declaration modifiers (private /
+# protected / noncomputable / unsafe / scoped[...] / local). Applied to
+# comment/string-stripped text.
+#
+# Lean's ``in`` combinator is a *generic* ``trailing_parser`` -- in the compiler
+# it is ``Command.«in» := trailing_parser withOpen (" in" >> commandParser)``
+# (``Lean/Parser/Command.lean``), attaching ``in <command>`` after *any*
+# preceding command. So a single line can prefix an ``axiom`` with a scoping
+# command and its ``in`` continuation: ``open Nat in axiom bad : True``,
+# ``set_option pp.all true in axiom bad : True``, ``omit [Inst] in axiom bad``
+# (the ``omit`` form is idiomatic here -- dozens of files use it), and chains
+# such as ``open Nat in set_option x true in axiom bad`` -- each still declares
+# an axiom. Without the leading wrapper group these same-line forms slip past
+# V1 entirely.
+#
+# Because ``in`` is generic, no finite keyword list is *exhaustive*; the wrapper
+# alternation enumerates the seven scoping commands that idiomatically carry an
+# ``in`` continuation onto a declaration (``open`` / ``set_option`` /
+# ``variable`` / ``universe`` / ``include`` / ``omit`` / ``attribute``).
+# Anchoring on those keywords keeps the group from firing on an ordinary
+# declaration whose body merely contains the word ``in`` (``theorem in_axiom``
+# starts with ``theorem``, not a wrapper keyword, and ``axiom`` inside an
+# identifier such as ``myaxiom``/``axiomatic`` is excluded by the trailing
+# ``\b``). A same-line ``in axiom`` behind some *other*, non-enumerated command
+# is the residual heuristic gap tracked in issue #4653; measured on the current
+# tree the wrapper group adds no false positive.
+#
+# The ``in`` *delimiter* between a wrapper and the command it scopes is a
+# standalone keyword token, so in valid Lean it is always preceded by whitespace.
+# Both the segment guard and the delimiter are therefore keyed on
+# ``(?<=\s)in\s`` -- a whitespace char, then ``in``, then whitespace -- rather
+# than on the word boundary ``\bin\s``. That whitespace lookbehind tells the real
+# delimiter apart from an ``in`` occurring *inside* the wrapper target *whenever
+# the inner ``in`` is not itself surrounded by whitespace*:
+#   * a dotted namespace component ``Foo.in.Bar`` or option name ``foo.in.bar``
+#     (``in`` preceded by ``.``), and
+#   * a bare keyword ``in`` used as the final namespace component,
+#     ``open A.in in axiom`` (the component ``in`` is preceded by ``.``; only the
+#     delimiter ``in`` is preceded by whitespace).
+# The bare-component case is a genuine fail-open the earlier ``\bin\s`` guard let
+# through: ``namespace A.in`` is accepted by Lean and ``open A.in in axiom bad``
+# really declares the axiom, yet ``A.in`` and its escaped twin ``A.«in»`` name the
+# *same* namespace. A word-boundary guard fired on the dotted component ``A.in``
+# (``.`` is a non-word char, so ``\b`` held there) and mistook it for the
+# delimiter, dropping the whole wrapper -- catching the escaped spelling while
+# missing the bare one. The fixed-width ``(?<=\s)`` lookbehind keys on whitespace
+# instead, so it steps over ``A.in`` and matches the real delimiter. (This
+# supersedes the earlier note claiming ``open A.in in axiom`` was "not valid
+# Lean" and that no linear guard could catch it; measured on Lean 4.29.0 the
+# axiom is declared, and the lookbehind catches it linearly.)
+#
+# The whitespace lookbehind is *not* enough on its own, though: an escaped
+# identifier may itself contain a whitespace-flanked ``in``. ``open A.«foo in
+# bar» in axiom bad`` is valid Lean (verified on 4.29.0 -- ``#print axioms
+# badEscIn`` reports the axiom), and the ``« in »`` inside the escaped component
+# satisfies ``(?<=\s)in\s`` exactly as the real delimiter does, so a lookbehind
+# alone stops the segment at the *wrong* ``in`` and drops the wrapper. That is why
+# the segment alternation swallows a French-quoted identifier ``«[^»]*»`` **as one
+# atomic token** before the lookbehind ever sees its contents; the guarded char
+# class ``(?!(?<=\s)in\s)[^\n«]`` (note the excluded ``«``) handles every char
+# outside an escaped identifier. So the segment skips an inner ``in`` when it is
+# either dot-attached (``A.in``) or sealed inside ``«...»`` (``«in»``, ``«foo in
+# bar»``); the only residual same-line gaps are those tracked in issue #4653
+# (a wrapper behind a non-enumerated command, and physical-line splits).
+#
+# ReDoS note: the two segment alternatives are disjoint on their first character
+# -- ``«[^»]*»`` starts with ``«``, which ``[^\n«]`` excludes -- so the partition
+# of the wrapper body into segments is unique and the outer ``(...)*`` has no
+# ambiguity to backtrack over. ``«[^»]*»`` cannot consume a ``»`` (the class
+# excludes it), so its terminator is fixed and it does not backtrack either; an
+# *unclosed* ``«`` simply fails both alternatives and stops the segment at once
+# (linear -- measured at a few microseconds even for thousands of unclosed ``«``
+# or a 4000-char run with no ``»``). The lookbehind is fixed width (one char), so
+# Python compiles it without the extra work a variable-width lookbehind would
+# need, and the whole match stays linear (~0.4 ms at 4800 chars of ``open Foo in``
+# repeated, ~0.2 ms at 4600 chars of ``open A.«foo in bar» in`` repeated, versus
+# the ~0.4 s-at-20-copies catastrophic backtracking of the pre-fix lazy
+# ``[^\n]*?``). ``test_audit_gate`` pins a bounded match time on such input.
 _AXIOM_RE = re.compile(
-    r"^\s*(?:@\[[^\]]*\]\s*)?"
+    r"^\s*"
+    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\b"
+    r"(?:«[^»]*»|(?!(?<=\s)in\s)[^\n«])*(?<=\s)in\s+)*"
+    r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
     r"axiom\b"
@@ -339,7 +418,13 @@ def check_v1() -> tuple[list[str], list[Path]]:
     """
     failures: list[str] = []
     visited: list[Path] = []
-    for path in iter_checked_files():
+    checked = iter_checked_files()
+    if not checked:
+        # Fail-closed: an empty scan set (a broken checkout, a mis-set path)
+        # would otherwise return ``([], [])`` and turn V1 green with nothing
+        # examined. Mirrors the "nothing to scan" guard in ``iter_v4_files``.
+        return (["V1: iter_checked_files() found no Lean file (nothing to scan)"], visited)
+    for path in checked:
         visited.append(path)
         text = strip_noncode(path.read_text(encoding="utf-8"))
         for lineno, line in enumerate(text.splitlines(), start=1):
@@ -354,7 +439,12 @@ def check_v2() -> tuple[list[str], list[Path]]:
     visited: list[Path] = []
     tokens = ("sorry", "admit", "native_decide")
     word_res = {tok: re.compile(rf"\b{re.escape(tok)}\b") for tok in tokens}
-    for path in iter_checked_files():
+    checked = iter_checked_files()
+    if not checked:
+        # Fail-closed, as in ``check_v1``: no file to scan is a broken gate, not
+        # a clean tree.
+        return (["V2: iter_checked_files() found no Lean file (nothing to scan)"], visited)
+    for path in checked:
         visited.append(path)
         relpath = rel(path)
         exempt = relpath in V2_NATIVE_DECIDE_FILE_ALLOWLIST or relpath.startswith(
@@ -405,6 +495,19 @@ def check_v3() -> tuple[list[str], set[str]]:
     names = read_capstones()
     if not names:
         return (["capstones.txt lists no theorems (V3 has nothing to audit)"], observed)
+    # Fail-closed on duplicates: the count ratchet counts *lines*, so a name
+    # repeated CAPSTONE_MIN_COUNT times would clear it while V3 audits a single
+    # theorem CAPSTONE_MIN_COUNT times. A duplicate is unambiguously a config
+    # mistake, so reject it outright rather than let it inflate the count.
+    duplicates = sorted({name for name in names if names.count(name) > 1})
+    if duplicates:
+        return (
+            [
+                f"V3: capstones.txt has duplicate name(s) {duplicates}; each capstone "
+                "must be listed once (duplicates fake the count ratchet)"
+            ],
+            observed,
+        )
     if len(names) < CAPSTONE_MIN_COUNT:
         failures.append(
             f"V3: capstones.txt lists {len(names)} theorem(s), below the ratchet of "
@@ -503,21 +606,35 @@ def check_v4() -> tuple[list[str], list[Path]]:
     variant this gate exists to avoid; an extension allowlist was rejected
     because it would need per-file upkeep (``docs/Gemfile`` has no suffix).
 
-    ``visited`` records the files the loop reached (including the two failure
-    arms, which report rather than skip), so a filter added here -- ``if
-    path.suffix == ".tex": continue`` -- cannot leave the reported file count
-    claiming coverage the scan never achieved.
+    ``visited`` records the files the scan actually *processed*, not the ones it
+    *opened*: a file counts as visited only after its content has been read and
+    run through the line scan (the two failure arms count too -- reporting a
+    read failure is itself a decision reached about the file). Recording at the
+    open, as an earlier version did, left a hole: ``if path.suffix == ".json":
+    continue`` placed *after* the record satisfied the coverage check while the
+    file's content was never examined. Recording only once the whole-file scan
+    is complete closes *that* class of skip: a per-file ``continue`` in the
+    loop body (before the ``visited.append`` below) drops the file out of
+    ``visited`` and ``unvisited_failures`` turns the gap into a failure.
+
+    This guard is not total. A ``continue`` in the *inner* ``for lineno, line``
+    loop skips the rest of a file's lines yet still falls through to the
+    ``visited.append`` below, so a content-skip nested one level deeper would
+    not be caught here (tracked as a known limitation in issue #4653). The
+    coverage check defends the outer, per-file loop, where filters are the
+    plausible regression.
     """
     paths, failures = iter_v4_files()
     visited: list[Path] = []
     for path in paths:
-        visited.append(path)
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
+            visited.append(path)
             failures.append(f"{rel(path)}: not valid UTF-8 text (cannot be scanned)")
             continue
         except OSError as exc:
+            visited.append(path)
             failures.append(f"{rel(path)}: could not be read ({exc})")
             continue
         for lineno, line in enumerate(text.splitlines(), start=1):
@@ -531,6 +648,9 @@ def check_v4() -> tuple[list[str], list[Path]]:
                 f"{rel(path)}:{lineno}: Japanese text {''.join(dict.fromkeys(hits))!r}"
                 f" in: {snippet}"
             )
+        # Recorded only here, once the whole file has been scanned: a
+        # content-skip ``continue`` inserted anywhere above never reaches this.
+        visited.append(path)
     return (failures, visited)
 
 
