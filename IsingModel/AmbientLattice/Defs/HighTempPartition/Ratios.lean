@@ -322,34 +322,6 @@ theorem freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero
   exact IsingModel.freeEnergy_high_temp_h_zero_ratio_bound_beta_zero
     (inducedGraph G Λ) J β hβJ hcard
 
-/-- **Λ-level f ratio bound bundle**. -/
-theorem freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Λ.card) :
-    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
-    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
-  ⟨freeEnergyΛ_high_temp_h_zero_ratio_bound G Λ J β hβJ hne,
-   freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero G Λ J β hβJ hne⟩
-
-/-- **Λ-level ferromagnetic f ratio bound bundle**. -/
-theorem freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Λ.card) :
-    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card ∧
-    freeEnergyΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * (inducedGraph G Λ).edgeFinset.card / Λ.card :=
-  freeEnergyΛ_high_temp_h_zero_ratio_bound_bundle
-    G Λ J β (mul_nonneg hβ.le hJ) hne
-
 end Ambient
 
 end IsingModel

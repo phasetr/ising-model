@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBound
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBound
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonempty
 
@@ -104,16 +104,15 @@ here so downstream consumers continue to see the symbols. -/
 
 
 
-/-! ## Moved: freeEnergy `ratio_bound` (non-bundle and bundle) wrappers
+/-! ## Moved: freeEnergy `ratio_bound` non-bundle wrappers
 
-The six ambient alongExhaustion `freeEnergyAlongExhaustion`
-`ratio_bound` wrappers (four non-bundle slice variants — `J = 0` /
-`β = 0` and ferromagnetic counterparts — and the two
-`ratio_bound_bundle` wrappers, general and ferromagnetic) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBound`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrellas `HighTemperatureBounds.lean` /
-this parent module (which now re-imports the new child below).
+The four ambient alongExhaustion `freeEnergyAlongExhaustion`
+`ratio_bound` non-bundle slice variants (`J = 0` / `β = 0` and their
+ferromagnetic counterparts) live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly`.
+The two `ratio_bound_bundle` wrappers (general and ferromagnetic) were
+removed as unused conjunction bundles; downstream consumers reach the
+non-bundle slices by importing that child directly.
 -/
 
 end Ambient
