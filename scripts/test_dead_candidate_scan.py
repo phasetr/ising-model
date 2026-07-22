@@ -894,20 +894,20 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """263 candidates -> 132 safe / 44 uncertain / 52 load-bearing / 35 published."""
+        """261 candidates -> 130 safe / 44 uncertain / 52 load-bearing / 35 published."""
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 263)
-        self.assertEqual(counts.get(dcs.SAFE), 132)
+        self.assertEqual(len(verdicts), 261)
+        self.assertEqual(counts.get(dcs.SAFE), 130)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """143 of the 263 have no Lean consumer at all."""
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 143)
+        """142 of the 261 have no Lean consumer at all."""
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 142)
 
 
 class CanaryTest(unittest.TestCase):
