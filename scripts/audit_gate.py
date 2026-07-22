@@ -351,41 +351,57 @@ def rel(path: Path) -> str:
 # standalone keyword token, so in valid Lean it is always preceded by whitespace.
 # Both the segment guard and the delimiter are therefore keyed on
 # ``(?<=\s)in\s`` -- a whitespace char, then ``in``, then whitespace -- rather
-# than on the word boundary ``\bin\s``. That whitespace lookbehind is exactly
-# what tells the real delimiter apart from an ``in`` occurring *inside* the
-# wrapper target:
-#   * an escaped identifier ``«in»`` (``in`` preceded by ``«``),
+# than on the word boundary ``\bin\s``. That whitespace lookbehind tells the real
+# delimiter apart from an ``in`` occurring *inside* the wrapper target *whenever
+# the inner ``in`` is not itself surrounded by whitespace*:
 #   * a dotted namespace component ``Foo.in.Bar`` or option name ``foo.in.bar``
-#     (``in`` preceded by ``.``),
-#   * and a bare keyword ``in`` used as the final namespace component,
+#     (``in`` preceded by ``.``), and
+#   * a bare keyword ``in`` used as the final namespace component,
 #     ``open A.in in axiom`` (the component ``in`` is preceded by ``.``; only the
 #     delimiter ``in`` is preceded by whitespace).
-# The last case is a genuine fail-open the earlier ``\bin\s`` guard let through:
-# ``namespace A.in`` is accepted by Lean and ``open A.in in axiom bad`` really
-# declares the axiom, yet ``A.in`` and its escaped twin ``A.«in»`` name the
+# The bare-component case is a genuine fail-open the earlier ``\bin\s`` guard let
+# through: ``namespace A.in`` is accepted by Lean and ``open A.in in axiom bad``
+# really declares the axiom, yet ``A.in`` and its escaped twin ``A.«in»`` name the
 # *same* namespace. A word-boundary guard fired on the dotted component ``A.in``
 # (``.`` is a non-word char, so ``\b`` held there) and mistook it for the
 # delimiter, dropping the whole wrapper -- catching the escaped spelling while
 # missing the bare one. The fixed-width ``(?<=\s)`` lookbehind keys on whitespace
-# instead, so it skips every inner ``in`` and matches only the real delimiter,
-# catching all four spellings. (This supersedes the earlier note claiming
-# ``open A.in in axiom`` was "not valid Lean" and that no linear guard could
-# catch it; measured on Lean 4.29.0 the axiom is declared, and the lookbehind
-# catches it linearly.)
+# instead, so it steps over ``A.in`` and matches the real delimiter. (This
+# supersedes the earlier note claiming ``open A.in in axiom`` was "not valid
+# Lean" and that no linear guard could catch it; measured on Lean 4.29.0 the
+# axiom is declared, and the lookbehind catches it linearly.)
 #
-# ReDoS note: the segment char class ``(?!(?<=\s)in\s)[^\n]`` consumes any char
-# that does *not* begin the ``(?<=\s)in\s`` delimiter, so each segment stops at
-# the first delimiter and the partition into segments is unique -- there is no
-# ambiguity in the outer ``(...)*`` to backtrack over. The lookbehind is
-# fixed width (one char), so Python compiles it without the extra work a
-# variable-width lookbehind would need, and the match stays linear (~0.1 ms even
-# at 2400 chars of ``open Foo in`` repeated, versus the ~0.4 s-at-20-copies
-# catastrophic backtracking of the pre-fix lazy ``[^\n]*?``). ``test_audit_gate``
-# pins a bounded match time on such input.
+# The whitespace lookbehind is *not* enough on its own, though: an escaped
+# identifier may itself contain a whitespace-flanked ``in``. ``open A.«foo in
+# bar» in axiom bad`` is valid Lean (verified on 4.29.0 -- ``#print axioms
+# badEscIn`` reports the axiom), and the ``« in »`` inside the escaped component
+# satisfies ``(?<=\s)in\s`` exactly as the real delimiter does, so a lookbehind
+# alone stops the segment at the *wrong* ``in`` and drops the wrapper. That is why
+# the segment alternation swallows a French-quoted identifier ``«[^»]*»`` **as one
+# atomic token** before the lookbehind ever sees its contents; the guarded char
+# class ``(?!(?<=\s)in\s)[^\n«]`` (note the excluded ``«``) handles every char
+# outside an escaped identifier. So the segment skips an inner ``in`` when it is
+# either dot-attached (``A.in``) or sealed inside ``«...»`` (``«in»``, ``«foo in
+# bar»``); the only residual same-line gaps are those tracked in issue #4653
+# (a wrapper behind a non-enumerated command, and physical-line splits).
+#
+# ReDoS note: the two segment alternatives are disjoint on their first character
+# -- ``«[^»]*»`` starts with ``«``, which ``[^\n«]`` excludes -- so the partition
+# of the wrapper body into segments is unique and the outer ``(...)*`` has no
+# ambiguity to backtrack over. ``«[^»]*»`` cannot consume a ``»`` (the class
+# excludes it), so its terminator is fixed and it does not backtrack either; an
+# *unclosed* ``«`` simply fails both alternatives and stops the segment at once
+# (linear -- measured at a few microseconds even for thousands of unclosed ``«``
+# or a 4000-char run with no ``»``). The lookbehind is fixed width (one char), so
+# Python compiles it without the extra work a variable-width lookbehind would
+# need, and the whole match stays linear (~0.4 ms at 4800 chars of ``open Foo in``
+# repeated, ~0.2 ms at 4600 chars of ``open A.«foo in bar» in`` repeated, versus
+# the ~0.4 s-at-20-copies catastrophic backtracking of the pre-fix lazy
+# ``[^\n]*?``). ``test_audit_gate`` pins a bounded match time on such input.
 _AXIOM_RE = re.compile(
     r"^\s*"
     r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\b"
-    r"(?:(?!(?<=\s)in\s)[^\n])*(?<=\s)in\s+)*"
+    r"(?:«[^»]*»|(?!(?<=\s)in\s)[^\n«])*(?<=\s)in\s+)*"
     r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
