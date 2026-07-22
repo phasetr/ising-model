@@ -512,26 +512,26 @@ class V1AxiomTest(unittest.TestCase):
         [Inst] in`` is frequent in this repository and one line of it can still
         declare an axiom.
 
-        The last three lines pin the guard on the *segment* char class. The guard
+        The last four lines pin the guard on the *segment* char class. The guard
         has to skip the word ``in`` when it appears *inside* the wrapper body --
         as a French-quoted identifier ``«in»``, a dotted namespace component
-        ``Foo.in.Bar``, or an option-name component ``foo.in.bar`` -- and stop
-        only at the real ``in`` delimiter (``in`` followed by whitespace). A
-        ``\bin\b`` guard fired on those inner ``in`` tokens (each is followed by
-        ``»`` or ``.``, both non-word, so ``\b`` held), desynchronised the segment
-        from the ``\bin\s+`` delimiter, and dropped the whole wrapper -- taking
-        the axiom with it. ``\bin\s`` matches the delimiter exactly, so an inner
-        ``in`` that is *not* followed by whitespace is skipped and these lines are
-        caught again.
+        ``Foo.in.Bar``, an option-name component ``foo.in.bar``, or a bare keyword
+        ``in`` used as the final namespace component ``A.in`` -- and stop only at
+        the real ``in`` delimiter. The delimiter is a standalone keyword token, so
+        in valid Lean it is always preceded by whitespace; the guard therefore
+        keys on ``(?<=\s)in\s`` (whitespace, then ``in``, then whitespace). Every
+        inner ``in`` above is preceded by ``«`` or ``.`` instead, so the
+        whitespace lookbehind skips it and matches only the real delimiter.
 
-        The one shape a linear guard cannot catch is a bare keyword ``in`` used as
-        a namespace component that ends the wrapper target, e.g. ``open A.in in
-        axiom``: there the inner ``in`` *is* followed by whitespace, so ``A.in ``
-        is byte-for-byte identical to a wrapper ``A.`` plus the ``in `` delimiter,
-        and only backtracking (the ReDoS the guard exists to prevent) could look
-        past it. That is not a real gap -- a bare keyword ``in`` is not a legal
-        Lean identifier component (it must be escaped ``«in»``, which *is* caught),
-        so ``open A.in in axiom`` is not valid Lean and is left to issue #4653.
+        The bare component ``open A.in in axiom`` is the case an earlier
+        word-boundary guard ``\bin\s`` let through: ``namespace A.in`` is accepted
+        by Lean and ``open A.in in axiom bad`` really declares the axiom, but the
+        dotted component ``A.in`` also satisfies ``\b`` (``.`` is a non-word char),
+        so the old guard mistook it for the delimiter and dropped the wrapper --
+        while ``A.in`` and its escaped twin ``A.«in»`` name the *same* namespace,
+        and the escaped spelling *was* caught. The whitespace lookbehind closes
+        that fail-open; it is fixed width, so the match stays linear (see
+        :meth:`test_axiom_regex_is_redos_safe_on_a_wrapper_chain`).
         """
         for line in (
             "open Nat in axiom bad : True\n",
@@ -548,6 +548,7 @@ class V1AxiomTest(unittest.TestCase):
             "open «in» in axiom bad : True\n",
             "open Foo.in.Bar in axiom bad : True\n",
             "set_option foo.in.bar true in axiom bad : True\n",
+            "open A.in in axiom bad : True\n",
         ):
             with self.subTest(line=line):
                 self.assertEqual(len(self.failures(line)), 1, line)
@@ -568,6 +569,8 @@ class V1AxiomTest(unittest.TestCase):
             "open Finset in axiomatic_thing : True := trivial\n",
             "omit [DecidableEq V] in theorem foo : True := trivial\n",
             "omit h in lemma l : True := trivial\n",
+            "open A.in in theorem t : True := trivial\n",
+            "omit h in def main := 1\n",
         ):
             with self.subTest(line=line):
                 self.assertEqual(self.failures(line), [], line)
@@ -579,9 +582,12 @@ class V1AxiomTest(unittest.TestCase):
         and backtracked catastrophically: ``open Foo in`` x20 already cost
         ~0.4 s and every extra copy roughly quadrupled it, so CI would hang on a
         perfectly valid Lean line whose ``in`` chain happens not to end in an
-        ``axiom``. The guarded char class ``(?!\\bin\\s)[^\\n]`` forces each
+        ``axiom``. The guarded char class ``(?!(?<=\\s)in\\s)[^\\n]`` forces each
         segment to stop at the first ``in`` delimiter, making the partition
-        unique and the match linear (~0.1 ms even at 2400 chars).
+        unique and the match linear. The ``(?<=\\s)`` lookbehind is fixed width
+        (one char), so it stays linear too -- Python compiles it without the
+        backtracking a variable-width lookbehind would need (~0.25 ms at 3840
+        chars, doubling with length).
 
         The essential guard is the hard ``SIGALRM`` bound: a reintroduced
         quadratic/exponential regex trips it and fails cleanly instead of hanging
@@ -1452,7 +1458,7 @@ class MutationTest(unittest.TestCase):
                 '_AXIOM_RE = re.compile(\n'
                 '    r"^\\s*"\n'
                 '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
-                '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n'
+                '    r"(?:(?!(?<=\\s)in\\s)[^\\n])*(?<=\\s)in\\s+)*"\n'
                 '    r"(?:@\\[[^\\]]*\\]\\s*)?"\n'
                 '    r"(?:(?:private|protected|noncomputable|unsafe)\\s+"\n'
                 '    r"|(?:scoped|local)(?:\\s*\\[[^\\]]*\\])?\\s+)*"\n'
@@ -1478,7 +1484,7 @@ class MutationTest(unittest.TestCase):
             (
                 '    r"^\\s*"\n'
                 '    r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\\b"\n'
-                '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n',
+                '    r"(?:(?!(?<=\\s)in\\s)[^\\n])*(?<=\\s)in\\s+)*"\n',
                 '    r"^\\s*"\n',
             )
         )
@@ -1509,34 +1515,32 @@ class MutationTest(unittest.TestCase):
         with library(source):
             self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the omit-prefixed axiom")
 
-    def test_v1_segment_guard_on_word_boundary_desyncs_on_inner_in(self) -> None:
-        """A ``\\bin\\b`` segment guard drops axioms behind an inner ``in`` token.
+    def test_v1_segment_guard_on_word_boundary_misses_a_bare_in_component(self) -> None:
+        """A ``\\bin\\s`` segment guard drops ``open A.in in axiom``.
 
-        The wrapper body may itself contain the word ``in`` -- as a French-quoted
-        identifier ``«in»`` or a dotted namespace component ``Foo.in.Bar`` -- that
-        is *not* the ``in`` command delimiter. The real delimiter is ``\\bin\\s+``
-        (``in`` followed by whitespace). A ``\\bin\\b`` guard stops the segment at
-        the inner ``in`` (whose right edge is a non-word char, so ``\\b`` holds),
-        desynchronises it from the ``\\bin\\s+`` delimiter, and the whole wrapper
-        fails to match -- taking the trailing axiom with it. ``\\bin\\s`` guards on
-        the delimiter itself, so the inner ``in`` is skipped and the axiom caught.
+        The wrapper body may end in the bare keyword ``in`` used as a namespace
+        component: ``namespace A.in`` is accepted by Lean and ``open A.in in
+        axiom bad`` really declares the axiom (measured on Lean 4.29.0). The real
+        ``in`` command delimiter is a standalone token, always preceded by
+        whitespace, so the guard keys on ``(?<=\\s)in\\s`` (whitespace before
+        ``in``). A word-boundary guard ``\\bin\\s`` instead fires on the dotted
+        component ``A.in`` too (``.`` is a non-word char, so ``\\b`` holds),
+        mistakes it for the delimiter, and drops the whole wrapper -- letting the
+        axiom through, even though ``A.in`` and its escaped twin ``A.«in»`` name
+        the *same* namespace and the escaped spelling *is* caught. The whitespace
+        lookbehind closes that fail-open.
         """
         mutant = load_mutated(
             (
+                '    r"(?:(?!(?<=\\s)in\\s)[^\\n])*(?<=\\s)in\\s+)*"\n',
                 '    r"(?:(?!\\bin\\s)[^\\n])*\\bin\\s+)*"\n',
-                '    r"(?:(?!\\bin\\b)[^\\n])*\\bin\\s+)*"\n',
             )
         )
-        for line in (
-            "open «in» in axiom bad : True\n",
-            "open Foo.in.Bar in axiom bad : True\n",
-        ):
-            source = {"F.lean": line}
-            with self.subTest(line=line):
-                with library(source, module=mutant):
-                    self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
-                with library(source):
-                    self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the inner-in axiom")
+        source = {"F.lean": "open A.in in axiom bad : True\n"}
+        with library(source, module=mutant):
+            self.assertEqual(mutant.check_v1()[0], [], "mutation did not weaken V1")
+        with library(source):
+            self.assertEqual(len(ag.check_v1()[0]), 1, "V1 must catch the bare-in-component axiom")
 
     def test_v1_without_the_empty_scan_guard_passes_vacuously(self) -> None:
         """Defusing V1's fail-closed guard turns an empty scan into a pass.

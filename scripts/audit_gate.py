@@ -347,32 +347,45 @@ def rel(path: Path) -> str:
 # is the residual heuristic gap tracked in issue #4653; measured on the current
 # tree the wrapper group adds no false positive.
 #
-# The guard is ``(?!\bin\s)``, not ``(?!\bin\b)``: the delimiter is ``\bin\s+``
-# (``in`` then whitespace), so the guard must key on that exact shape. A ``\bin\b``
-# guard also fired when ``in`` appears *inside* the wrapper target followed by a
-# non-word char -- an escaped identifier ``«in»`` or a dotted component
-# ``Foo.in.Bar`` / option name ``foo.in.bar`` -- desynchronising the segment from
-# the delimiter and dropping the whole wrapper (so ``open «in» in axiom`` slipped
-# past). ``\bin\s`` skips those inner ``in`` tokens and stops only at the real
-# delimiter. The one shape no *linear* guard can catch is a bare keyword ``in`` as
-# the final namespace component (``open A.in in axiom``): its ``in`` *is* followed
-# by whitespace, so ``A.in `` is identical to ``A.`` plus the ``in `` delimiter --
-# but a bare keyword ``in`` is not a legal Lean identifier (it must be ``«in»``, and
-# that form *is* caught), so ``open A.in in axiom`` is not valid Lean; it stays in
-# the issue #4653 residual gap rather than justify a backtracking (ReDoS) rewrite.
+# The ``in`` *delimiter* between a wrapper and the command it scopes is a
+# standalone keyword token, so in valid Lean it is always preceded by whitespace.
+# Both the segment guard and the delimiter are therefore keyed on
+# ``(?<=\s)in\s`` -- a whitespace char, then ``in``, then whitespace -- rather
+# than on the word boundary ``\bin\s``. That whitespace lookbehind is exactly
+# what tells the real delimiter apart from an ``in`` occurring *inside* the
+# wrapper target:
+#   * an escaped identifier ``«in»`` (``in`` preceded by ``«``),
+#   * a dotted namespace component ``Foo.in.Bar`` or option name ``foo.in.bar``
+#     (``in`` preceded by ``.``),
+#   * and a bare keyword ``in`` used as the final namespace component,
+#     ``open A.in in axiom`` (the component ``in`` is preceded by ``.``; only the
+#     delimiter ``in`` is preceded by whitespace).
+# The last case is a genuine fail-open the earlier ``\bin\s`` guard let through:
+# ``namespace A.in`` is accepted by Lean and ``open A.in in axiom bad`` really
+# declares the axiom, yet ``A.in`` and its escaped twin ``A.«in»`` name the
+# *same* namespace. A word-boundary guard fired on the dotted component ``A.in``
+# (``.`` is a non-word char, so ``\b`` held there) and mistook it for the
+# delimiter, dropping the whole wrapper -- catching the escaped spelling while
+# missing the bare one. The fixed-width ``(?<=\s)`` lookbehind keys on whitespace
+# instead, so it skips every inner ``in`` and matches only the real delimiter,
+# catching all four spellings. (This supersedes the earlier note claiming
+# ``open A.in in axiom`` was "not valid Lean" and that no linear guard could
+# catch it; measured on Lean 4.29.0 the axiom is declared, and the lookbehind
+# catches it linearly.)
 #
-# ReDoS note: each wrapper segment consumes ``(?!\bin\s)[^\n]`` -- any char that
-# does *not* start the ``in`` delimiter -- so a segment stops at the first
-# ``in`` and the partition into segments is unique. That removes the ambiguity
-# an inner ``[^\n]*?`` had inside the outer ``(...)*``, which backtracked
-# catastrophically on a wrapper-prefixed line that never reaches ``axiom``
-# (``open Foo in`` repeated: ~0.4 s at 20 copies, unbounded beyond). Python 3.9
-# has no atomic groups / possessive quantifiers, so the guarded char class is
-# the linear form; ``test_audit_gate`` pins a bounded match time on such input.
+# ReDoS note: the segment char class ``(?!(?<=\s)in\s)[^\n]`` consumes any char
+# that does *not* begin the ``(?<=\s)in\s`` delimiter, so each segment stops at
+# the first delimiter and the partition into segments is unique -- there is no
+# ambiguity in the outer ``(...)*`` to backtrack over. The lookbehind is
+# fixed width (one char), so Python compiles it without the extra work a
+# variable-width lookbehind would need, and the match stays linear (~0.1 ms even
+# at 2400 chars of ``open Foo in`` repeated, versus the ~0.4 s-at-20-copies
+# catastrophic backtracking of the pre-fix lazy ``[^\n]*?``). ``test_audit_gate``
+# pins a bounded match time on such input.
 _AXIOM_RE = re.compile(
     r"^\s*"
     r"(?:(?:open|set_option|variable|universe|include|omit|attribute)\b"
-    r"(?:(?!\bin\s)[^\n])*\bin\s+)*"
+    r"(?:(?!(?<=\s)in\s)[^\n])*(?<=\s)in\s+)*"
     r"(?:@\[[^\]]*\]\s*)?"
     r"(?:(?:private|protected|noncomputable|unsafe)\s+"
     r"|(?:scoped|local)(?:\s*\[[^\]]*\])?\s+)*"
