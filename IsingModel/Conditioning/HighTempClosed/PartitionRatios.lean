@@ -90,20 +90,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
     _ = Real.exp (β * J * G.edgeFinset.card) *
           (2 : ℝ) ^ Fintype.card ι := by ring
 
-/-- **Z ratio upper bound bundle**: under `0 ≤ β·J`, single statement
-bundling Z ratio upper bounds at both J=0 and β=0 trivial slices. -/
-theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) :=
-  ⟨partitionFunction_high_temp_expansion_h_zero_ratio_bound G J β hβJ,
-   partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero G J β hβJ⟩
-
 /-- **log Z ratio sandwich at J=0 trivial slice**: under `0 ≤ β·J`,
 `|E|·log cosh(β·J) ≤ log Z⟨J,0,β⟩ - log Z⟨0,0,β⟩ ≤ β·J·|E|`.
 
@@ -229,21 +215,6 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
   linarith [log_partitionFunction_high_temp_expansion_h_zero_upper_bound_exp
     G J β hβJ]
 
-/-- **log Z ratio bound bundle**: under `0 ≤ β·J`, single statement
-bundling log Z ratio upper bounds at both J=0 and β=0 trivial slices. -/
-theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card ∧
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card :=
-  ⟨log_partitionFunction_high_temp_expansion_h_zero_ratio_bound G J β hβJ,
-   log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
-     G J β hβJ⟩
-
 /-- **Ferromagnetic log Z ratio bound at J=0**. -/
 theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -262,19 +233,6 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero_f
         - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
       ≤ β * J * G.edgeFinset.card :=
   log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
-    G J β (mul_nonneg hβ.le hJ)
-
-/-- **Ferromagnetic log Z ratio bound bundle**. -/
-theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card ∧
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card :=
-  log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle
     G J β (mul_nonneg hβ.le hJ)
 
 /-- **Sharper Z complete-summary exp bundle**: under `0 ≤ β·J`,
@@ -461,19 +419,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferro
         partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
       ≤ Real.exp (β * J * G.edgeFinset.card) :=
   partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
-    G J β (mul_nonneg hβ.le hJ)
-
-/-- **Ferromagnetic Z ratio upper bound bundle**: under `0 ≤ J, 0 < β`. -/
-theorem partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) :=
-  partitionFunction_high_temp_expansion_h_zero_ratio_bound_bundle
     G J β (mul_nonneg hβ.le hJ)
 
 /-- **Ferromagnetic Z relative-deviation sandwich**: under `0 ≤ J, 0 < β`,
