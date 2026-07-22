@@ -87,7 +87,7 @@ theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich
 The §18.3-§18.4 concrete `correlationΛ_latticeGraph` basic high-temperature
 wrappers at `h = 0` (pair nonneg, pair `≤ 1`, singleton / pair trivial-slice
 vanishings at `J = 0` and `β = 0`, pair sandwich, singleton / pair
-ferromagnetic, singleton `= 0 ∧ ≤ 1`, pair+singleton bundle) now live in
+ferromagnetic, singleton `= 0 ∧ ≤ 1`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationBasic`.
 The earlier import path is preserved by re-importing the new child.
 -/

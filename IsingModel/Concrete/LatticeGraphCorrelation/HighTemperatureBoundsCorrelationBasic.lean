@@ -7,9 +7,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Narrow child module for the §18.3-§18.4 concrete `correlationΛ_latticeGraph`
 basic high-temperature wrappers at `h = 0`: pair nonneg, pair `≤ 1`,
 singleton / pair trivial-slice vanishings at `J = 0` and `β = 0`, pair
-sandwich, singleton / pair ferromagnetic, singleton `= 0 ∧ ≤ 1`, and the
-pair+singleton bundle. Bundle / single-edge-bound / capstone / §18.7
-exponential-decay wrappers remain in the parent `HighTemperatureBounds`.
+sandwich, singleton / pair ferromagnetic, and singleton `= 0 ∧ ≤ 1`.
+Bundle / single-edge-bound / capstone / §18.7 exponential-decay wrappers
+remain in the parent `HighTemperatureBounds`.
 The theorem names are unchanged from the former `HighTemperatureBounds`
 declarations.
 -/
@@ -47,9 +47,9 @@ trivial-slice wrappers (singleton/pair at J = 0 and β = 0) now live in
 
 /-! ## Moved: pair sandwich / ferromagnetic / bundle wrappers
 
-The five `correlationΛ_latticeGraph_high_temp_h_zero_*` wrappers
+The four `correlationΛ_latticeGraph_high_temp_h_zero_*` wrappers
 (`pair_sandwich`, `singleton_ferromagnetic`, `pair_ferromagnetic`,
-`singleton_eq_zero_le_one`, `pair_singleton_bundle`) now live in
+`singleton_eq_zero_le_one`) now live in
 `HighTemperatureBoundsCorrelationBasicBundles.lean`. -/
 
 
