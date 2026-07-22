@@ -3,15 +3,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d Λ-induced high-temperature h=0 sandwich / ferromagnetic / bundle wrappers
 
-Narrow child module for five ℤ^d Λ-induced
+Narrow child module for four ℤ^d Λ-induced
 `correlationΛ_latticeGraph_high_temp_h_zero_*` wrappers extracted from
 `HighTemperatureBoundsCorrelationBasic.lean`:
 
 * `_at_pair_sandwich`,
 * `_at_singleton_ferromagnetic`,
 * `_at_pair_ferromagnetic`,
-* `_at_singleton_eq_zero_le_one`,
-* `_at_pair_singleton_bundle`.
+* `_at_singleton_eq_zero_le_one`.
 -/
 
 namespace IsingModel
@@ -57,20 +56,6 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_eq_zero_le_one
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) ≤ 1 :=
   correlationΛ_high_temp_h_zero_at_singleton_eq_zero_le_one
     (IsingModel.latticeGraph d) Λ J β i
-
-/-- **ℤ^d Λ pair+singleton bundle at h=0**: combines pair sandwich and
-singleton vanishing. -/
-theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (i j : ↑Λ) :
-    correlationΛ (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset ↑Λ) = 0 ∧
-      0 ≤ correlationΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ∧
-      correlationΛ (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
-  correlationΛ_high_temp_h_zero_at_pair_singleton_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ i j
 
 end Ambient
 end IsingModel
