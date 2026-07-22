@@ -37,18 +37,6 @@ theorem freeEnergy_high_temp_h_zero_ratio_bound_beta_zero
   rw [freeEnergy_beta_zero G J 0 hne]
   exact freeEnergy_high_temp_h_zero_deviation_bound_exp G J β hβJ hne
 
-/-- **f ratio bound bundle**: under `0 ≤ β·J` and `0 < |ι|`, single
-statement bundling f ratio bounds at both J=0 and β=0 trivial slices. -/
-theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι ∧
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
-  ⟨freeEnergy_high_temp_h_zero_ratio_bound G J β hβJ hne,
-   freeEnergy_high_temp_h_zero_ratio_bound_beta_zero G J β hβJ hne⟩
-
 /-- **Ferromagnetic f ratio bound at J=0**. -/
 theorem freeEnergy_high_temp_h_zero_ratio_bound_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -124,17 +112,6 @@ theorem freeEnergy_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic
       freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
         ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
   freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
-    G J β (mul_nonneg hβ.le hJ) hne
-
-/-- **Ferromagnetic f ratio bound bundle**. -/
-theorem freeEnergy_high_temp_h_zero_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι ∧
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
-  freeEnergy_high_temp_h_zero_ratio_bound_bundle
     G J β (mul_nonneg hβ.le hJ) hne
 
 /-- **Triple ratio sandwich bundle at J=0 trivial slice**: under `0 ≤ β·J`
