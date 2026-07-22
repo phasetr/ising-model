@@ -1,6 +1,7 @@
 import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnly
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly
 
 /-!
 # ℤ^d alongExhaustion log Z ratio_bound_bundle wrappers at h = 0
