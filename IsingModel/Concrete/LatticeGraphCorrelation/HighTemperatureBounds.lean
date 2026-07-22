@@ -149,11 +149,11 @@ The earlier import path is preserved by re-importing the new child.
 -/
 
 
-/-! ## Moved: f/Z/log Z deviation / continuity wrappers at h = 0
+/-! ## Moved: f/Z/log Z deviation wrappers at h = 0
 
-The §18.3-§18.4 concrete deviation_bound / continuity_bundle /
-deviation_sandwich / relative_sandwich / deviation_pos / pow_two_lt /
-strict_deviation_bundle wrappers on `latticeGraph d` at `h = 0` (18 theorems
+The §18.3-§18.4 concrete deviation_bound / deviation_sandwich /
+relative_sandwich / deviation_pos / pow_two_lt wrappers on
+`latticeGraph d` at `h = 0` (14 theorems
 for `freeEnergyΛ_latticeGraph`, `partitionFunctionΛ_latticeGraph`, and
 `log_partitionFunctionΛ_latticeGraph`, with ferromagnetic variants) now
 live in
