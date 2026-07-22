@@ -1,15 +1,16 @@
 import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPair
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle
 
 /-!
 # Concrete HT AlongExhaustion correlation bound wrappers
 
-Narrow child module for the 8 ℤ^d along-exhaustion correlation
+Narrow child module for the ℤ^d along-exhaustion correlation
 bound wrappers (`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
 `_at_pair_nonneg`, `_at_singleton_ferromagnetic`, `_at_pair_ferromagnetic`,
-`_at_singleton_eq_zero_le_one`, `_at_pair_le_one`, `_at_pair_sandwich`,
-`_at_pair_singleton_bundle`) extracted from
+`_at_singleton_eq_zero_le_one`, `_at_pair_le_one`, `_at_pair_sandwich`)
+extracted from
 `HighTemperatureBoundsAlongExhaustionBasic.lean` in PR #2077. Each is
 a thin pass-through to the corresponding ambient
 `correlationAlongExhaustion_high_temp_h_zero_*` lemma at
@@ -73,22 +74,6 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_sandwic
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
-
-/-- **ℤ^d along-ex pair+singleton bundle at h = 0**: combines
-`{i}`-vanishing with the `{i,j}` sandwich at every stage `n`. ℤ^d
-wrapper of `correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle`. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_singleton_bundle
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hβJ : 0 ≤ β * J) (i j : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 ∧
-      0 ≤ correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ∧
-      correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n ≤ 1 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_pair_singleton_bundle
-    (IsingModel.latticeGraph d) Λ J β hβJ i j n
-
 
 end Ambient
 
