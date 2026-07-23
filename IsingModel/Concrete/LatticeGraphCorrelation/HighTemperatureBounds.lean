@@ -281,10 +281,11 @@ wrappers (general and ferromagnetic) live in
 (carved out in PR #2090); the 2 `ratio_bound_bundle` wrappers (general
 and ferromagnetic) live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundBundle`
-(carved out in PR #2091); the 7 `triple_ratio_*` wrappers (sandwich +
-bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
+(carved out in PR #2091); the 4 `triple_ratio_sandwich_bundle` wrappers
+(J = 0 / β = 0 trivial slices, ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`
-(narrowed in PR #1996); and the 14 `log_partitionFunction` /
+(narrowed in PR #1996; the bound-bundle variants were dropped in
+PR #4676); and the 14 `log_partitionFunction` /
 `freeEnergy` ratio wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe`
 (narrowed in PR #1997). The earlier import path is preserved by

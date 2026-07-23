@@ -17,9 +17,11 @@ the two `ratio_sandwich_bundle` wrappers;
 `HighTemperatureBoundsAlongExRatioBoundSlices.lean` (PR #2090) for the
 four J = 0 / β = 0 `ratio_bound` slice wrappers; and
 `HighTemperatureBoundsAlongExRatioBoundBundle.lean` (PR #2091) for the
-two `ratio_bound_bundle` wrappers. The 7 `triple_ratio_*` wrappers
-live in `HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (PR
-#1996) and the 14 `log_partitionFunction` / `freeEnergy` ratio
+two `ratio_bound_bundle` wrappers. The 4
+`triple_ratio_sandwich_bundle` wrappers live in
+`HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (PR #1996; the
+bound-bundle variants were dropped in PR #4676) and the 14
+`log_partitionFunction` / `freeEnergy` ratio
 wrappers live in `HighTemperatureBoundsAlongExhaustionRatioLogFe.lean`
 (PR #1997). The theorem names are unchanged from the former
 `HighTemperatureBounds` declarations.

@@ -96,10 +96,11 @@ The 17 `log_partitionFunctionAlongExhaustion` and
 `freeEnergyAlongExhaustion` ratio_sandwich / ratio_bound (+
 deviation_pos / pow_two_lt) wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`
-(narrowed in PR #1995). The 7 `triple_ratio_*` wrappers (sandwich +
-bound bundles, J = 0 / β = 0 / ferromagnetic variants) now live in
+(narrowed in PR #1995). The 2 `triple_ratio_sandwich_bundle` wrappers
+(J = 0 / β = 0 trivial slices) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
-(narrowed in PR #1994). The earlier import path is preserved by
+(narrowed in PR #1994; the bound-bundle and ferromagnetic variants were
+dropped in PR #4676). The earlier import path is preserved by
 re-importing all three children.
 -/
 

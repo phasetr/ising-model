@@ -13,9 +13,10 @@ Narrow child module for the §18.3-§18.4 ambient alongExhaustion
 `partitionFunctionAlongExhaustion` `ratio_sandwich` / `ratio_bound`
 wrappers (with `J = 0` / `β = 0` / bundle variants plus ferromagnetic
 counterparts). The log / freeEnergy ratio wrappers now live in
-`HighTemperatureBoundsRatioLogFe.lean` (split off in PR #1995); the
-`triple_ratio_*_bundle` wrappers now live in
-`HighTemperatureBoundsTripleRatio.lean` (split off in PR #1994). The
+`HighTemperatureBoundsRatioLogFe.lean` (split off in PR #1995); the 2
+`triple_ratio_sandwich_bundle` wrappers now live in
+`HighTemperatureBoundsTripleRatio.lean` (split off in PR #1994; the
+bound-bundle and ferromagnetic variants were dropped in PR #4676). The
 theorem names are unchanged from the former `HighTemperatureBounds`
 declarations.
 -/
