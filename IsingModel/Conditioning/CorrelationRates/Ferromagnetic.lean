@@ -88,7 +88,7 @@ theorem correlation_high_temp_h_zero_at_pair_singleton_bundle
 
 /-- **Pair + singleton trivial-slices full bundle at h = 0**: at
 `J = 0` and at `β = 0`, both pair and singleton correlations vanish.
-Combines the pair and singleton trivial-slices bundles. -/
+Combines the pair and singleton trivial-slices facts. -/
 theorem correlation_high_temp_h_zero_at_pair_singleton_trivial_slices_bundle
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (i j : ι) :
