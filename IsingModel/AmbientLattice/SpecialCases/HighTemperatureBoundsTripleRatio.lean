@@ -7,12 +7,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
-# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0
+# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
 
-Narrow child module for 7 §18.3-§18.4 ambient alongExhaustion
-`triple_ratio_sandwich_bundle` and `triple_ratio_bound_bundle`
-wrappers (J = 0 trivial slice, β = 0 specialisation, ferromagnetic
-variants). The theorem names are unchanged from the former
+Narrow child module for the 2 §18.3-§18.4 ambient alongExhaustion
+`triple_ratio_sandwich_bundle` wrappers (J = 0 trivial slice, β = 0
+specialisation). The theorem names are unchanged from the former
 `HighTemperatureBoundsRatioBounds` declarations.
 -/
 
@@ -108,27 +107,6 @@ partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwic
       G Λ J β hβJ n).2,
    (freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
       G Λ J β hβJ n hne).2⟩
-
-/-! ## Moved: 2 ferromagnetic triple ratio sandwich bundle wrappers
-
-The two ferromagnetic `triple_ratio_sandwich_bundle*_ferromagnetic`
-wrappers
-(`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic`,
-`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: triple_ratio_bound_bundle wrappers
-
-The three `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle*`
-wrappers (general, `_beta_zero`, ferromagnetic) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

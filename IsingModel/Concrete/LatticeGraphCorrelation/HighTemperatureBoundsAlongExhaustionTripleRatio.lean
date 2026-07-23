@@ -3,13 +3,12 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 
 /-!
-# ℤ^d alongExhaustion triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0
+# ℤ^d alongExhaustion triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
 
-Narrow child module for 7 §18.3-§18.4 concrete (`latticeGraph d`)
-alongExhaustion `triple_ratio_sandwich_bundle` and
-`triple_ratio_bound_bundle` wrappers (J = 0 trivial slice, β = 0
-specialisation, ferromagnetic variants). Theorem names are unchanged
-from the former
+Narrow child module for the 4 §18.3-§18.4 concrete (`latticeGraph d`)
+alongExhaustion `triple_ratio_sandwich_bundle` wrappers (J = 0 trivial
+slice, β = 0 specialisation, ferromagnetic variants). Theorem names are
+unchanged from the former
 `Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionRatioBounds`
 declarations.
 -/
@@ -198,14 +197,6 @@ partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundl
               (Λ.volume n).card) :=
   partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) n hne
-
-/-! ## Moved: along-ex triple_ratio_bound_bundle wrappers
-
-The three `partitionFunctionAlongExhaustion_*_triple_ratio_bound_bundle`
-wrappers (direct, `_beta_zero`, `_ferromagnetic`) now live in
-`HighTemperatureBoundsAlongExhaustionTripleRatioBoundBundle.lean`. -/
-
-
 
 end Ambient
 
