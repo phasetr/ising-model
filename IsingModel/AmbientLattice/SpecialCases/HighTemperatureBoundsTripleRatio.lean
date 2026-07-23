@@ -109,27 +109,6 @@ partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_sandwic
    (freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
       G Λ J β hβJ n hne).2⟩
 
-/-! ## Moved: 2 ferromagnetic triple ratio sandwich bundle wrappers
-
-The two ferromagnetic `triple_ratio_sandwich_bundle*_ferromagnetic`
-wrappers
-(`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic`,
-`partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: triple_ratio_bound_bundle wrappers
-
-The three `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle*`
-wrappers (general, `_beta_zero`, ferromagnetic) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatioBoundBundle`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
 end Ambient
 
 end IsingModel
