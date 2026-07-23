@@ -60,15 +60,12 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sa
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
     G (Λ.volume n) J β hβJ
 
-/-! ## Related log Z `ratio_bound` singleton wrappers
+/-! ## Removed: log Z `ratio_bound` wrappers
 
-The two
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound{,_beta_zero}`
-slice-singleton wrappers (`J = 0`, `β = 0`) live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnlySingletons`.
-The former `ratio_bound_bundle`, `ratio_bound_bundle_ferromagnetic`,
-and `ratio_sandwich_bundle_ferromagnetic` conjunction wrappers were
-removed as unused pass-through bundles.
+The `ratio_bound{,_beta_zero}` slice-singleton wrappers together with
+the `ratio_bound_bundle`, `ratio_bound_bundle_ferromagnetic`, and
+`ratio_sandwich_bundle_ferromagnetic` conjunction wrappers were removed
+as unused pass-through wrappers.
 -/
 
 end Ambient
