@@ -143,12 +143,16 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_b
 
 The Λ-direct `log_partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle`
 conjunction wrappers (and their `_ferromagnetic` variants) were removed as
-unused bundles; they delegated directly to the ambient base
+unused bundles. The two Λ-level scalar lemmas they delegated to,
 `log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound` and
 `log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero`
-lemmas (in `AmbientLattice/Defs/HighTempPartition/Ratios.lean`), which remain.
-The companion `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle` wrappers had
-already been dropped. -/
+(formerly in `AmbientLattice/Defs/HighTempPartition/Ratios.lean`), were
+themselves also removed as unused; the ambient abstract base
+`log_partitionFunction_high_temp_expansion_h_zero_ratio_bound` and
+`log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero`
+(in `Conditioning/HighTempClosed/PartitionRatios.lean`) remain, retaining
+live consumers. The companion `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle`
+wrappers had already been dropped. -/
 
 
 
