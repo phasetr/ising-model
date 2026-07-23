@@ -99,21 +99,6 @@ theorem freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
   ⟨freeEnergy_high_temp_h_zero_ratio_sandwich G J β hβJ hne,
    freeEnergy_high_temp_h_zero_ratio_sandwich_beta_zero G J β hβJ hne⟩
 
-/-- **Ferromagnetic f ratio sandwich bundle**. -/
-theorem freeEnergy_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
-        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι) ∧
-    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
-        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
-  freeEnergy_high_temp_h_zero_ratio_sandwich_bundle
-    G J β (mul_nonneg hβ.le hJ) hne
-
 /-- **Triple ratio sandwich bundle at J=0 trivial slice**: under `0 ≤ β·J`
 and `0 < |ι|`, single statement bundling Z, log Z, and f ratio sandwiches
 at the J=0 slice. -/
@@ -140,79 +125,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundl
    log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich G J β hβJ,
    freeEnergy_high_temp_h_zero_ratio_sandwich G J β hβJ hne⟩
 
-/-- **Triple ratio sandwich bundle at β=0 trivial slice**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-          ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
-    ((G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
-            - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
-      Real.log (partitionFunction G ⟨J, 0, β⟩)
-          - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-          ≤ β * J * G.edgeFinset.card) ∧
-    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
-        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
-  ⟨partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-     G J β hβJ,
-   log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-     G J β hβJ,
-   freeEnergy_high_temp_h_zero_ratio_sandwich_beta_zero G J β hβJ hne⟩
-
-/-- **Ferromagnetic triple ratio sandwich bundle at J=0**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-          ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
-    ((G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
-            - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
-      Real.log (partitionFunction G ⟨J, 0, β⟩)
-          - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
-          ≤ β * J * G.edgeFinset.card) ∧
-    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
-        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
-  partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle
-    G J β (mul_nonneg hβ.le hJ) hne
-
-/-- **Ferromagnetic triple ratio sandwich bundle at β=0**. -/
-theorem
-partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-          ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
-    ((G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
-            - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
-      Real.log (partitionFunction G ⟨J, 0, β⟩)
-          - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-          ≤ β * J * G.edgeFinset.card) ∧
-    ((G.edgeFinset.card : ℝ) / Fintype.card ι * Real.log (Real.cosh (β * J))
-        ≤ freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι) :=
-  partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero
-    G J β (mul_nonneg hβ.le hJ) hne
-
 /-- **Triple ratio bound bundle at J=0 trivial slice**: under `0 ≤ β·J`
 and `0 < |ι|`, single statement bundling Z, log Z, and f ratio bounds:
   1. `Z⟨J,0,β⟩ / Z⟨0,0,β⟩ ≤ exp(β·J·|E|)`,
@@ -232,54 +144,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle
   ⟨partitionFunction_high_temp_expansion_h_zero_ratio_bound G J β hβJ,
    log_partitionFunction_high_temp_expansion_h_zero_ratio_bound G J β hβJ,
    freeEnergy_high_temp_h_zero_ratio_bound G J β hβJ hne⟩
-
-/-- **Triple ratio bound bundle at β=0 trivial slice**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) (hne : 0 < Fintype.card ι) :
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card ∧
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
-  ⟨partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero G J β hβJ,
-   log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero
-     G J β hβJ,
-   freeEnergy_high_temp_h_zero_ratio_bound_beta_zero G J β hβJ hne⟩
-
-/-- **Ferromagnetic triple ratio bound bundle at J=0**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card ∧
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
-  partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle
-    G J β (mul_nonneg hβ.le hJ) hne
-
-/-- **Ferromagnetic triple ratio bound bundle at β=0**. -/
-theorem
-partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) (hne : 0 < Fintype.card ι) :
-    partitionFunction G ⟨J, 0, β⟩ /
-        partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card) ∧
-    Real.log (partitionFunction G ⟨J, 0, β⟩)
-        - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-        ≤ β * J * G.edgeFinset.card ∧
-    freeEnergy G ⟨J, 0, β⟩ - freeEnergy G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ β * J * G.edgeFinset.card / Fintype.card ι :=
-  partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero
-    G J β (mul_nonneg hβ.le hJ) hne
 
 /-- **Strict deviation bundle**: under `0 < β·J`, `0 < |E|`,
 `0 < |ι|`, single statement bundling Z, log Z, and f strict deviations. -/
