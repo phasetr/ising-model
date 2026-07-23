@@ -894,40 +894,38 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """241 candidates -> 110 safe / 44 uncertain / 52 load-bearing / 35 published.
+        """236 candidates -> 105 safe / 44 uncertain / 52 load-bearing / 35 published.
 
-        Recalibrated when the PR #4669 triple_ratio_bound_bundle / sandwich cluster
-        deleted four safe-to-delete ``_ferromagnetic`` bundle wrappers
-        (``partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic``,
-        ``partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic``,
-        ``partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic``,
-        ``partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic``):
-        total and safe both drop by 4, and the other three classes are
+        Recalibrated when the PR #4672 abstract-layer triple_ratio bundle cluster
+        deleted five safe-to-delete ``_ferromagnetic`` bundle wrappers in
+        ``IsingModel/Conditioning/HighTempClosed/FreeEnergyRatios.lean``
+        (``freeEnergy_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic``,
+        ``partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic``,
+        ``partitionFunction_high_temp_expansion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic``,
+        ``partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic``,
+        ``partitionFunction_high_temp_expansion_h_zero_triple_ratio_bound_bundle_beta_zero_ferromagnetic``):
+        total and safe both drop by 5, and the other three classes are
         unchanged -- the healthy signature that no live lemma was reclassified.
-        (Was 245 -> 114 safe after PR #4667 removed five continuity/strict-deviation
-        wrappers.)
+        (Was 241 -> 110 safe after PR #4669 removed four Lambda-layer bundle wrappers.)
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 241)
-        self.assertEqual(counts.get(dcs.SAFE), 110)
+        self.assertEqual(len(verdicts), 236)
+        self.assertEqual(counts.get(dcs.SAFE), 105)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """128 of the 241 have no Lean consumer at all.
+        """123 of the 236 have no Lean consumer at all.
 
-        Was 131 of 245 before the PR #4669 triple_ratio_bound_bundle / sandwich
-        cluster; of the four deleted ``_ferromagnetic`` bundle wrappers three were
-        themselves zero-consumer, while
-        ``partitionFunctionΛ_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic``
-        fed the ``_latticeGraph`` bound-bundle leaf (also deleted here), so the count
-        drops by three.
+        Was 128 of 241 before the PR #4672 abstract-layer triple_ratio bundle
+        cluster; all five deleted ``_ferromagnetic`` bundle wrappers were
+        themselves zero-consumer, so the count drops by five.
         """
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 128)
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 123)
 
 
 class CanaryTest(unittest.TestCase):
