@@ -4,16 +4,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d Λ-direct Z ratio-bound wrappers
 
-Narrow child module for six ℤ^d Λ-direct
+Narrow child module for four ℤ^d Λ-direct
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound*`
 wrappers extracted from `HighTemperatureBoundsRatioBounds.lean`:
 
 * `_ratio_bound`,
 * `_ratio_bound_beta_zero`,
 * `_ratio_bound_ferromagnetic`,
-* `_ratio_bound_beta_zero_ferromagnetic`,
-* `_ratio_bound_bundle`,
-* `_ratio_bound_bundle_ferromagnetic`.
+* `_ratio_bound_beta_zero_ferromagnetic`.
 -/
 
 namespace IsingModel
@@ -69,13 +67,6 @@ partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zer
           (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
-/-! ## Moved: Λ-direct ratio_bound_bundle wrappers
-
-The two Λ-direct
-`partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle` wrappers
-(direct + `_ferromagnetic`) now live in
-`HighTemperatureBoundsRatioBoundsBoundBundle.lean`. -/
-
 
 end Ambient
 end IsingModel

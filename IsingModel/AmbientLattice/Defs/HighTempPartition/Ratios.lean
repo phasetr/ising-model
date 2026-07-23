@@ -122,35 +122,6 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero_fer
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
     G Λ J β (mul_nonneg hβ.le hJ)
 
-/-- **Λ-level Z ratio upper bound bundle**. -/
-theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
-    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
-  ⟨partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound G Λ J β hβJ,
-   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero
-     G Λ J β hβJ⟩
-
-/-- **Λ-level ferromagnetic Z ratio upper bound bundle**. -/
-theorem partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
-    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G Λ (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) ∧
-    partitionFunctionΛ G Λ (⟨J, 0, β⟩ : IsingParams ℝ) /
-        partitionFunctionΛ G Λ (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * (inducedGraph G Λ).edgeFinset.card) :=
-  partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle
-    G Λ J β (mul_nonneg hβ.le hJ)
-
 /-- **Λ-level log Z ratio sandwich bundle**. -/
 theorem log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
     (G : SimpleGraph V) (Λ : Finset V)
