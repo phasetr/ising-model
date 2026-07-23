@@ -95,7 +95,7 @@ from the umbrella `HighTemperatureBounds.lean`.
 
 /-! ## Moved: log Z + freeEnergy ratio wrappers
 
-The 17 ambient alongExhaustion `log_partitionFunction` and
+The 12 ambient alongExhaustion `log_partitionFunction` and
 `freeEnergy` ratio_sandwich / ratio_bound (+ deviation_pos /
 pow_two_lt) wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`.

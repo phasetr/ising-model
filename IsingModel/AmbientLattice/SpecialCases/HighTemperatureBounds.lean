@@ -92,7 +92,7 @@ The §18.3-§18.4 ambient alongExhaustion `partitionFunctionAlongExhaustion`
 `ratio_sandwich` / `ratio_bound` wrappers (with bundle / `_of_nonempty`
 variants plus ferromagnetic counterparts) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds`.
-The 17 `log_partitionFunctionAlongExhaustion` and
+The 12 `log_partitionFunctionAlongExhaustion` and
 `freeEnergyAlongExhaustion` ratio_sandwich / ratio_bound (+
 deviation_pos / pow_two_lt) wrappers now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`

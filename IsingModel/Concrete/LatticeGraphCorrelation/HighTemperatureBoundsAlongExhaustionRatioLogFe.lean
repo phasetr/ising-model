@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 /-!
 # ℤ^d alongExhaustion log Z + freeEnergy ratio sandwich / bound wrappers at h = 0
 
-Narrow child module for 14 §18.3-§18.4 concrete (`latticeGraph d`)
+Narrow child module for 12 §18.3-§18.4 concrete (`latticeGraph d`)
 alongExhaustion `log_partitionFunction` and `freeEnergy`
 ratio_sandwich / ratio_bound (+ deviation_pos / pow_two_lt)
 wrappers at h = 0 (with J = 0 / β = 0 trivial slices and
@@ -150,13 +150,13 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_
   log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) n
 
-/-! ## Moved: ratio_bound_bundle wrappers
+/-! ## Removed: ratio_bound_bundle wrappers
 
 The four `ratio_bound_bundle` wrappers
 (`log_partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
 and `freeEnergyAlongExhaustion_latticeGraph_*_ratio_bound_bundle`,
-each with `_ferromagnetic` variants) now live in
-`HighTemperatureBoundsAlongExhaustionRatioBoundBundle.lean`. -/
+each with `_ferromagnetic` variants) were removed as unused
+pass-through conjunction bundles. -/
 
 
 
