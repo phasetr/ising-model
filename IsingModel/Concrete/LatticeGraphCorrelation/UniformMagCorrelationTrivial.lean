@@ -4,13 +4,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d correlation trivial / GKS-II / FKG / h_zero / cor 4.3.5 wrappers
 
-Narrow child module for 15 ℤ^d wrappers covering:
+Narrow child module for 14 ℤ^d wrappers covering:
 
 - `magnetizationInfinite_latticeGraph_*` trivial slices
   (`zero_at_h_zero`, `beta_zero`, `J_zero`, `indep_exhaustion`);
 - `correlationInfinite_latticeGraph_cubicExhaustion_empty`;
 - `correlationInfinite_latticeGraph_gks_second` /
-  `_fkg_spinProduct` / `_cubicExhaustion_fkg_spinProduct`;
+  `_fkg_spinProduct`;
 - `correlationΛ_latticeGraph_odd_vanish_h_zero`;
 - `correlationAlongExhaustion_latticeGraph_h_zero` /
   `_any_h_zero`;
@@ -77,20 +77,6 @@ theorem correlationInfinite_latticeGraph_fkg_spinProduct
       * correlationInfinite (IsingModel.latticeGraph d) Λ p B
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p (A ∆ B) :=
   correlationInfinite_fkg_spinProduct (IsingModel.latticeGraph d) Λ p hf A B
-
-/-- **ℤ^d FKG for spinProducts at ∞-vol** (Glimm–Jaffe §4.4 p. 67):
-alias of the `correlationInfinite_gks_second` GKS-II form. -/
-theorem correlationInfinite_latticeGraph_cubicExhaustion_fkg_spinProduct
-    (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
-    (A B : Finset (Fin d → ℤ)) :
-    correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p A
-      * correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p B
-      ≤ correlationInfinite (IsingModel.latticeGraph d)
-        (Ambient.cubicExhaustion d) p (A ∆ B) :=
-  correlationInfinite_fkg_spinProduct (IsingModel.latticeGraph d)
-    (Ambient.cubicExhaustion d) p hf A B
 
 /-! ## Moved: correlation h_zero (Z₂ symmetry) wrappers
 
