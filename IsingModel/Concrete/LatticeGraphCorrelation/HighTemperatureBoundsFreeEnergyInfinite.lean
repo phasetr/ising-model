@@ -7,11 +7,11 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Narrow child module for the §18.3-§18.4 concrete `freeEnergyInfinite`
 high-temperature wrappers on `latticeGraph d` (with caller-supplied
 `Exhaustion` BED witness) and on `cubicExhaustion d` (with the BED
-constant `c = d`). 10 theorems: `upper_bound_exp_uniform`,
+constant `c = d`). 9 theorems: `upper_bound_exp_uniform`,
 `upper_bound_exp`, `sandwich_exp`, `complete_summary_exp`,
 `deviation_bound_exp`, `continuity_at_J_zero`,
 `continuity_at_beta_zero`, `continuity_bundle`,
-`deviation_sandwich_exp`, `ratio_bound_bundle`. The theorem names are
+`deviation_sandwich_exp`. The theorem names are
 unchanged from the former `HighTemperatureBounds` declarations.
 -/
 
@@ -125,11 +125,11 @@ The three wrappers
 now live in `HighTemperatureBoundsFreeEnergyInfiniteContinuity.lean`. -/
 
 
-/-! ## Moved: ℤ^d ∞-vol f deviation/ratio bundle wrappers
+/-! ## Moved: ℤ^d ∞-vol f deviation sandwich wrapper
 
-The 2 ℤ^d
+The ℤ^d
 `freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_deviation_sandwich_exp`
-and `_ratio_bound_bundle` wrappers now live in
+wrapper now lives in
 `...HighTemperatureBoundsFreeEnergyInfiniteDeviationAndRatio`.
 The earlier import path is preserved by re-importing the new child. -/
 
