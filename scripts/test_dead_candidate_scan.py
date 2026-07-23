@@ -894,38 +894,38 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """226 candidates -> 95 safe / 44 uncertain / 52 load-bearing / 35 published.
+        """223 candidates -> 92 safe / 44 uncertain / 52 load-bearing / 35 published.
 
-        Recalibrated when PR #4688 dropped the single safe-to-delete
-        ``_ratio_sandwich_bundle_ferromagnetic`` Lambda-layer wrapper
-        (``freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic``;
-        the non-ferromagnetic base bundle
-        ``freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle`` is retained and
-        outside this ``_ferromagnetic`` family): the wrapper was zero-consumer and
-        safe-to-delete, so total and safe both drop by one while the other three
-        classes are unchanged -- the healthy signature that no live lemma was
-        reclassified.
-        (Was 227 -> 96 safe after PR #4684 dropped the two safe-to-delete
-        ``_ratio_sandwich_bundle_ferromagnetic`` abstract wrappers.)
+        Recalibrated when PR #4690 dropped the three safe-to-delete RatioLogFe
+        ``_ferromagnetic`` alongExhaustion bundle wrappers
+        (``log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic``,
+        ``log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic``,
+        ``log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic``):
+        all three were safe-to-delete, so total and safe both drop by three while
+        the other three classes are unchanged -- the healthy signature that no
+        live lemma was reclassified.
+        (Was 226 -> 95 safe after PR #4688 dropped the single safe-to-delete
+        ``freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic``
+        Lambda-layer wrapper.)
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 226)
-        self.assertEqual(counts.get(dcs.SAFE), 95)
+        self.assertEqual(len(verdicts), 223)
+        self.assertEqual(counts.get(dcs.SAFE), 92)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """114 of the 226 have no Lean consumer at all.
+        """112 of the 223 have no Lean consumer at all.
 
-        Was 115 of 227 before PR #4688 dropped the single zero-consumer
-        ``freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic``
-        Lambda-layer wrapper, so the count drops by one.
+        Was 114 of 226 before PR #4690 dropped the three safe-to-delete
+        RatioLogFe ``_ferromagnetic`` alongExhaustion bundle wrappers; two of the
+        three were zero-consumer, so the count drops by two.
         """
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 114)
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 112)
 
 
 class CanaryTest(unittest.TestCase):

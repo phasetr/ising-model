@@ -150,13 +150,13 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_
   log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) n
 
-/-! ## Moved: ratio_bound_bundle wrappers
+/-! ## Removed: ratio_bound_bundle wrappers
 
 The four `ratio_bound_bundle` wrappers
 (`log_partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
 and `freeEnergyAlongExhaustion_latticeGraph_*_ratio_bound_bundle`,
-each with `_ferromagnetic` variants) now live in
-`HighTemperatureBoundsAlongExhaustionRatioBoundBundle.lean`. -/
+each with `_ferromagnetic` variants) were removed as unused
+pass-through conjunction bundles. -/
 
 
 

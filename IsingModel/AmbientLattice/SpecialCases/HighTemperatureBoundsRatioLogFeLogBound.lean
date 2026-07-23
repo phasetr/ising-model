@@ -60,24 +60,15 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sa
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
     G (Λ.volume n) J β hβJ
 
-/-! ## Moved: 1 ferromagnetic log Z ratio_sandwich_bundle wrapper
+/-! ## Related log Z `ratio_bound` singleton wrappers
 
-The ferromagnetic log Z `ratio_sandwich_bundle_ferromagnetic`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: log Z `ratio_bound` wrappers
-
-The four
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound*`
-wrappers (`J = 0`, `β = 0`, `_bundle`, `_bundle_ferromagnetic`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnly`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
+The two
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound{,_beta_zero}`
+slice-singleton wrappers (`J = 0`, `β = 0`) live in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBoundOnlySingletons`.
+The former `ratio_bound_bundle`, `ratio_bound_bundle_ferromagnetic`,
+and `ratio_sandwich_bundle_ferromagnetic` conjunction wrappers were
+removed as unused pass-through bundles.
 -/
 
 end Ambient

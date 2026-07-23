@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.Exhaustion
 
 Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
 `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound{,_beta_zero}`
-slice-singleton wrappers extracted from
-`HighTemperatureBoundsRatioLogFeLogBoundOnly.lean`:
+slice-singleton wrappers:
 
 * `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound`
   (J = 0 trivial slice)
