@@ -102,13 +102,11 @@ The umbrella `HighTemperatureBounds.lean` re-imports
 the new child so the import paths and theorem names remain
 unchanged.
 
-The 7 ambient alongExhaustion `triple_ratio_sandwich_bundle` and
-`triple_ratio_bound_bundle` wrappers (J = 0 / β = 0 trivial slices,
-ferromagnetic variants) now live in
+The 2 ambient alongExhaustion `triple_ratio_sandwich_bundle` wrappers
+(J = 0 / β = 0 trivial slices) now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
 (narrowed in PR #1994). The earlier import path is preserved by
-re-exporting both children from the umbrella module that aggregates
-them.
+re-exporting the child from the umbrella module that aggregates it.
 -/
 
 end Ambient

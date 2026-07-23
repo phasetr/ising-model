@@ -67,12 +67,11 @@ unchanged.
 
 /-! ## Moved: ℤ^d alongExhaustion triple-ratio wrappers
 
-The 7 ℤ^d alongExhaustion `triple_ratio_sandwich_bundle` and
-`triple_ratio_bound_bundle` wrappers (J = 0 / β = 0 trivial slices,
-ferromagnetic variants) now live in
+The 4 ℤ^d alongExhaustion `triple_ratio_sandwich_bundle` wrappers
+(J = 0 / β = 0 trivial slices, ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`.
 The earlier import path is preserved by re-exporting the new child
-from the umbrella module that aggregates both.
+from the umbrella module that aggregates it.
 -/
 
 

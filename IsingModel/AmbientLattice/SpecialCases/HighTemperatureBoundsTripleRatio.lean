@@ -7,12 +7,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
-# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich / bound wrappers at h = 0
+# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
 
-Narrow child module for 7 §18.3-§18.4 ambient alongExhaustion
-`triple_ratio_sandwich_bundle` and `triple_ratio_bound_bundle`
-wrappers (J = 0 trivial slice, β = 0 specialisation, ferromagnetic
-variants). The theorem names are unchanged from the former
+Narrow child module for the 2 §18.3-§18.4 ambient alongExhaustion
+`triple_ratio_sandwich_bundle` wrappers (J = 0 trivial slice, β = 0
+specialisation). The theorem names are unchanged from the former
 `HighTemperatureBoundsRatioBounds` declarations.
 -/
 
