@@ -310,11 +310,11 @@ The earlier import path is preserved by re-importing the new child.
 
 The §18.3-§18.4 concrete `freeEnergyInfinite` high-temperature wrappers
 on `latticeGraph d` (with caller-supplied `Exhaustion` BED witness) and
-on `cubicExhaustion d` (with the BED constant `c = d`) (10 theorems:
+on `cubicExhaustion d` (with the BED constant `c = d`) (9 theorems:
 `upper_bound_exp_uniform`, `upper_bound_exp`, `sandwich_exp`,
 `complete_summary_exp`, `deviation_bound_exp`,
 `continuity_at_J_zero`, `continuity_at_beta_zero`, `continuity_bundle`,
-`deviation_sandwich_exp`, `ratio_bound_bundle`) now live in
+`deviation_sandwich_exp`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsFreeEnergyInfinite`.
 The earlier import path is preserved by re-importing the new child.
 -/

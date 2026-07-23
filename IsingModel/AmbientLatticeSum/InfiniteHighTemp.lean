@@ -285,22 +285,6 @@ theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound_beta_zero
   exact freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
     G Λ J β hJ hβ hc
 
-/-- **∞-vol f ratio bound bundle**. -/
-theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound_bundle
-    [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) {c : ℝ}
-    (hc : ∀ n, (Λ.volume n).Nonempty →
-      ((inducedGraph G (Λ.volume n)).edgeFinset.card : ℝ) ≤
-        c * Fintype.card (↑(Λ.volume n) : Type _)) :
-    (freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyInfinite G Λ (⟨0, 0, β⟩ : IsingParams ℝ) ≤ β * J * c) ∧
-    (freeEnergyInfinite G Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-        - freeEnergyInfinite G Λ (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ β * J * c) :=
-  ⟨freeEnergyInfinite_high_temp_h_zero_ratio_bound G Λ J β hJ hβ hc,
-   freeEnergyInfinite_high_temp_h_zero_ratio_bound_beta_zero
-     G Λ J β hJ hβ hc⟩
-
 /-- **Strict positivity** of `freeEnergyInfinite` under the standard
 ferromagnetic + `BoundedEdgeDensity` + `[Nonempty V]` setup:
 `0 < freeEnergyInfinite G Λ p`.
