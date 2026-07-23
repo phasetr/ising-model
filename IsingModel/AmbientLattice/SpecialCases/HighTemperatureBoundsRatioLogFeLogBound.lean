@@ -3,15 +3,17 @@ import IsingModel.AmbientLattice.Exhaustion
 /-!
 # Ambient alongExhaustion log Z ratio sandwich / bound wrappers at h = 0
 
-Narrow child module for the six §18.3-§18.4 ambient alongExhaustion
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_*`
-wrappers: the two `ratio_sandwich_bundle` variants (general and
-ferromagnetic) and the four `ratio_bound` variants (`J = 0`, `β = 0`,
-the general `ratio_bound_bundle`, and the ferromagnetic
-`ratio_bound_bundle_ferromagnetic`). Each wrapper is a thin
-pass-through to the corresponding `log_partitionFunctionΛ_*` ambient
-lemma. The theorem names are unchanged from the former
-`HighTemperatureBoundsRatioLogFe` declarations.
+Narrow child module for the single surviving §18.3-§18.4 ambient
+alongExhaustion
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle`
+wrapper (general variant). It is a thin pass-through to the
+corresponding `log_partitionFunctionΛ_*` ambient lemma. The former
+ferromagnetic `ratio_sandwich_bundle` variant and the four `ratio_bound`
+variants (`J = 0`, `β = 0`, the general `ratio_bound_bundle`, and the
+ferromagnetic `ratio_bound_bundle_ferromagnetic`) were removed as unused
+pass-through wrappers (see the `## Removed` note below). The theorem name
+is unchanged from the former `HighTemperatureBoundsRatioLogFe`
+declarations.
 -/
 
 namespace IsingModel

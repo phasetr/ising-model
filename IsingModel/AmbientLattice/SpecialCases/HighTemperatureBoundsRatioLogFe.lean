@@ -12,7 +12,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNon
 /-!
 # Ambient alongExhaustion log Z / freeEnergy ratio sandwich / bound wrappers at h = 0
 
-Narrow child module for 17 §18.3-§18.4 ambient alongExhaustion
+Narrow child module for 12 §18.3-§18.4 ambient alongExhaustion
 `log_partitionFunction` and `freeEnergy` ratio_sandwich /
 ratio_bound (+ deviation_pos / pow_two_lt) wrappers at h = 0 (with
 J = 0 / β = 0 trivial slices and ferromagnetic variants). Theorem
@@ -79,18 +79,20 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle_ferroma
   freeEnergyAlongExhaustion_high_temp_h_zero_ratio_sandwich_bundle
     G Λ J β (mul_nonneg hβ.le hJ) n hne
 
-/-! ## Moved: log Z `ratio_sandwich_bundle` + `ratio_bound` wrappers
+/-! ## Moved: log Z `ratio_sandwich_bundle` wrapper; ## Removed: log Z `ratio_bound` wrappers
 
-The six ambient alongExhaustion
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_*`
-wrappers (the two `ratio_sandwich_bundle` variants — general and
-ferromagnetic — and the four `ratio_bound` variants: `J = 0`,
-`β = 0`, `ratio_bound_bundle`, and
-`ratio_bound_bundle_ferromagnetic`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBound`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrellas `HighTemperatureBounds.lean` /
-this parent module (which now re-imports the new child below).
+The general ambient alongExhaustion
+`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle`
+wrapper now lives in
+`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeLogBound`;
+the earlier import path is preserved by re-exporting that child from the
+umbrellas `HighTemperatureBounds.lean` / this parent module (which
+re-imports the child below).
+
+The other five log Z wrappers — the ferromagnetic `ratio_sandwich_bundle`
+variant and the four `ratio_bound` variants (`J = 0`, `β = 0`,
+`ratio_bound_bundle`, and `ratio_bound_bundle_ferromagnetic`) — were
+removed as unused pass-through wrappers.
 -/
 
 /-! ## Moved: ratio-LogFe `_of_nonempty` wrappers

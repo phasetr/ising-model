@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 /-!
 # ℤ^d alongExhaustion log Z + freeEnergy ratio sandwich / bound wrappers at h = 0
 
-Narrow child module for 14 §18.3-§18.4 concrete (`latticeGraph d`)
+Narrow child module for 12 §18.3-§18.4 concrete (`latticeGraph d`)
 alongExhaustion `log_partitionFunction` and `freeEnergy`
 ratio_sandwich / ratio_bound (+ deviation_pos / pow_two_lt)
 wrappers at h = 0 (with J = 0 / β = 0 trivial slices and
