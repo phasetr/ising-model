@@ -894,36 +894,38 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """232 candidates -> 101 safe / 44 uncertain / 52 load-bearing / 35 published.
+        """230 candidates -> 99 safe / 44 uncertain / 52 load-bearing / 35 published.
 
-        Recalibrated when the PR #4676 along-ex / ℤ^d along-ex triple_ratio bundle
-        cluster deleted four safe-to-delete ``_ferromagnetic`` bundle wrappers
-        (``partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_ferromagnetic``,
-        ``partitionFunctionAlongExhaustion_h_zero_triple_ratio_sandwich_bundle_beta_zero_ferromagnetic``,
-        ``partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_triple_ratio_bound_bundle_ferromagnetic``,
-        ``partitionFunctionAlongExhaustion_latticeGraph_h_zero_triple_ratio_bound_bundle_ferromagnetic``):
-        total and safe both drop by 4, and the other three classes are
-        unchanged -- the healthy signature that no live lemma was reclassified.
-        (Was 236 -> 105 safe after PR #4672 removed five abstract-layer bundle wrappers.)
+        Recalibrated when the PR #4678 Λ-direct ratio_bound_bundle cluster
+        deleted two safe-to-delete ``_ferromagnetic`` bundle wrappers
+        (``partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic``,
+        ``partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic``):
+        both are safe-to-delete under the delete-closure (the ambient wrapper's
+        only consumer was the ℤ^d wrapper, itself in the delete set), so total
+        and safe both drop by 2 while the other three classes are unchanged --
+        the healthy signature that no live lemma was reclassified.
+        (Was 232 -> 101 safe after PR #4676 removed four along-ex triple_ratio
+        bundle wrappers.)
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 232)
-        self.assertEqual(counts.get(dcs.SAFE), 101)
+        self.assertEqual(len(verdicts), 230)
+        self.assertEqual(counts.get(dcs.SAFE), 99)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """119 of the 232 have no Lean consumer at all.
+        """118 of the 230 have no Lean consumer at all.
 
-        Was 123 of 236 before the PR #4676 along-ex / ℤ^d along-ex triple_ratio
-        bundle cluster; all four deleted ``_ferromagnetic`` bundle wrappers were
-        themselves zero-consumer, so the count drops by four.
+        Was 119 of 232 before the PR #4678 Λ-direct ratio_bound_bundle cluster;
+        of the two deleted ``_ferromagnetic`` bundle wrappers only the ℤ^d
+        (``_latticeGraph_``) one was itself zero-consumer -- the ambient one was
+        consumed by that ℤ^d wrapper -- so the count drops by one.
         """
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 119)
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 118)
 
 
 class CanaryTest(unittest.TestCase):

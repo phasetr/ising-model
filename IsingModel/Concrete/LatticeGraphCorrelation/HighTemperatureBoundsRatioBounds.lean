@@ -121,13 +121,11 @@ partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundl
 
 /-! ## Moved: ℤ^d Λ-direct Z ratio-bound wrappers
 
-The six wrappers
+The four wrappers
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound`,
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero`,
 `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic`
+`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic`
 now live in `HighTemperatureBoundsRatioBoundsBound.lean`. -/
 
 /-! ## Moved: ℤ^d Λ-direct log Z + freeEnergy ratio wrappers
