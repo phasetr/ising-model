@@ -157,25 +157,6 @@ theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
    log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
      G J β hβJ⟩
 
-/-- **Ferromagnetic log Z ratio sandwich bundle**. -/
-theorem log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
-    ((G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
-            - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)) ∧
-      Real.log (partitionFunction G ⟨J, 0, β⟩)
-          - Real.log (partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ))
-          ≤ β * J * G.edgeFinset.card) ∧
-    ((G.edgeFinset.card : ℝ) * Real.log (Real.cosh (β * J))
-        ≤ Real.log (partitionFunction G ⟨J, 0, β⟩)
-            - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧
-      Real.log (partitionFunction G ⟨J, 0, β⟩)
-          - Real.log (partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ))
-          ≤ β * J * G.edgeFinset.card) :=
-  log_partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
-    G J β (mul_nonneg hβ.le hJ)
-
 /-- **log Z ratio bound at J=0 trivial slice**: under `0 ≤ β·J`,
 `log Z⟨J, 0, β⟩ - log Z⟨0, 0, β⟩ ≤ β·J·|E|`.
 
@@ -335,27 +316,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
   rw [h_β0]
   exact partitionFunction_high_temp_expansion_h_zero_relative_sandwich G J β hβJ
 
-/-- **Z ratio sandwich bundle**: under `0 ≤ β·J`, single statement
-bundling Z ratios at both `J = 0` and `β = 0` trivial slices. -/
-theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hβJ : 0 ≤ β * J) :
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card)) :=
-  ⟨partitionFunction_high_temp_expansion_h_zero_ratio_sandwich G J β hβJ,
-   partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-     G J β hβJ⟩
-
 /-- **Ferromagnetic Z ratio sandwich at J=0 trivial slice**. -/
 theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_ferromagnetic
     (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -380,25 +340,6 @@ theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero_fe
         partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
       ≤ Real.exp (β * J * G.edgeFinset.card) :=
   partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
-    G J β (mul_nonneg hβ.le hJ)
-
-/-- **Ferromagnetic Z ratio sandwich bundle**. -/
-theorem partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (hJ : 0 ≤ J) (hβ : 0 < β) :
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨0, 0, β⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card)) ∧
-    (Real.cosh (β * J) ^ G.edgeFinset.card
-        ≤ partitionFunction G ⟨J, 0, β⟩ /
-            partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ) ∧
-      partitionFunction G ⟨J, 0, β⟩ /
-          partitionFunction G (⟨J, 0, 0⟩ : IsingParams ℝ)
-        ≤ Real.exp (β * J * G.edgeFinset.card)) :=
-  partitionFunction_high_temp_expansion_h_zero_ratio_sandwich_bundle
     G J β (mul_nonneg hβ.le hJ)
 
 /-- **Ferromagnetic Z ratio upper bound at J=0**. -/
