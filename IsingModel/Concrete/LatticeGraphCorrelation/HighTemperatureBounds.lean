@@ -170,7 +170,7 @@ wrappers on `latticeGraph d` at `h = 0` for
 `partitionFunctionΛ_latticeGraph` (with `J = 0` / `β = 0` / `bundle`
 variants plus ferromagnetic counterparts) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioBounds`.
-The 7 `triple_ratio_*` wrappers now live in
+The 4 `triple_ratio_sandwich_bundle` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio`
 (narrowed in PR #1998), and the 12 `log_partitionFunctionΛ_latticeGraph`
 / `freeEnergyΛ_latticeGraph` ratio wrappers now live in

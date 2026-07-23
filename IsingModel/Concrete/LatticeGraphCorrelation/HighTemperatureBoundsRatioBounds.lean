@@ -7,8 +7,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Narrow child module for the 10 §18.3-§18.4 concrete Λ-level
 `partitionFunctionΛ_latticeGraph` `ratio_sandwich` / `ratio_bound`
 wrappers on `latticeGraph d` at `h = 0` (with `J = 0` / `β = 0` /
-`bundle` variants plus ferromagnetic counterparts). The 7
-`triple_ratio_*` wrappers now live in
+`bundle` variants plus ferromagnetic counterparts). The 4
+`triple_ratio_sandwich_bundle` wrappers now live in
 `HighTemperatureBoundsTripleRatio.lean` (narrowed in PR #1998); the
 12 `log_partitionFunctionΛ_latticeGraph` / `freeEnergyΛ_latticeGraph`
 ratio wrappers now live in `HighTemperatureBoundsRatioLogFe.lean`
@@ -142,12 +142,10 @@ unchanged.
 
 /-! ## Moved: ℤ^d Λ-direct triple-ratio wrappers
 
-The 7 ℤ^d Λ-direct `triple_ratio_sandwich_bundle` and
-`triple_ratio_bound_bundle` wrappers (J = 0 / β = 0 trivial slices,
-ferromagnetic variants) now live in
+The 4 ℤ^d Λ-direct `triple_ratio_sandwich_bundle` wrappers (J = 0 /
+β = 0 trivial slices, ferromagnetic variants) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella module that aggregates both.
+The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient
