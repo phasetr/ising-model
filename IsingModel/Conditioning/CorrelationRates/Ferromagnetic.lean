@@ -86,30 +86,6 @@ theorem correlation_high_temp_h_zero_at_pair_singleton_bundle
    correlation_high_temp_h_zero_at_pair_nonneg G J β hβJ i j,
    correlation_high_temp_h_zero_at_pair_le_one G J β i j⟩
 
-/-- **Pair trivial-slices bundle at h = 0**: at `J = 0` and at `β = 0`,
-the pair correlation vanishes. Bundles
-`correlation_high_temp_h_zero_at_pair_J_zero` and
-`correlation_high_temp_h_zero_at_pair_beta_zero` into one statement. -/
-theorem correlation_high_temp_h_zero_at_pair_trivial_slices_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (i j : ι) :
-    correlation G ⟨0, 0, β⟩ ({i, j} : Finset ι) = 0 ∧
-      correlation G ⟨J, 0, 0⟩ ({i, j} : Finset ι) = 0 :=
-  ⟨correlation_high_temp_h_zero_at_pair_J_zero G β i j,
-   correlation_high_temp_h_zero_at_pair_beta_zero G J i j⟩
-
-/-- **Singleton trivial-slices bundle at h = 0**: at `J = 0` and at
-`β = 0`, the singleton magnetization vanishes. Bundles
-`correlation_high_temp_h_zero_at_singleton_J_zero` and
-`correlation_high_temp_h_zero_at_singleton_beta_zero`. -/
-theorem correlation_high_temp_h_zero_at_singleton_trivial_slices_bundle
-    (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (J β : ℝ) (i : ι) :
-    correlation G ⟨0, 0, β⟩ ({i} : Finset ι) = 0 ∧
-      correlation G ⟨J, 0, 0⟩ ({i} : Finset ι) = 0 :=
-  ⟨correlation_high_temp_h_zero_at_singleton_J_zero G β i,
-   correlation_high_temp_h_zero_at_singleton_beta_zero G J i⟩
-
 /-- **Pair + singleton trivial-slices full bundle at h = 0**: at
 `J = 0` and at `β = 0`, both pair and singleton correlations vanish.
 Combines the pair and singleton trivial-slices bundles. -/
