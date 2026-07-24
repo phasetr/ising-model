@@ -1,4 +1,4 @@
-import IsingModel.ClusterExpansion.StrictPositivity.CycleSeven
+import IsingModel.ClusterExpansion.StrictPositivity.TanhBounds
 
 /-!
 # Cluster expansion strict positivity split — vd-polymer-family and tanh iff characterisations

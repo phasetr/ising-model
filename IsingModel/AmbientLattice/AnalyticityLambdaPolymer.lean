@@ -1,5 +1,6 @@
 import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.AlternatingCompleteGraph.MayerConnectedFilter
+import IsingModel.ClusterExpansion.StrictPositivity.CycleSeven
 import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
 
 /-!
