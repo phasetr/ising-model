@@ -2,16 +2,15 @@ import IsingModel.Basic
 import IsingModel.Hamiltonian
 import Mathlib.Tactic.FinCases
 
-set_option linter.style.nativeDecide false
-
 /-!
 # Test generators for Ising model property tests (Issue #888 Step P1)
 
 Small-graph definitions and all-configuration enumeration for use in
 property-test sentinel files.
 
-All computations use ℤ for spin algebra — no `Real.exp` — enabling
-`native_decide`-based tests.
+All computations use ℤ for spin algebra — no `Real.exp` — enabling the
+kernel-decidable sanity checks in the `test` library
+(`test/IsingModel/Generators.lean`).
 -/
 
 namespace IsingModel.TestGenerators
@@ -19,7 +18,7 @@ namespace IsingModel.TestGenerators
 /-! ## Small graph definitions
 
 All graphs carry explicit `DecidableRel` and `Fintype edgeSet` instances
-so that `native_decide` can evaluate edge counts and spin sums. -/
+so that edge counts and spin sums are decidable by the kernel. -/
 
 /-- **2-site complete graph**: single edge {0,1} on `Fin 2`. -/
 abbrev chainGraph2 : SimpleGraph (Fin 2) := SimpleGraph.completeGraph (Fin 2)
@@ -91,37 +90,5 @@ def edgeCouplingSum {n : ℕ} (G : SimpleGraph (Fin n))
 def formalCouplingSum {n : ℕ} (G : SimpleGraph (Fin n))
     [DecidableRel G.Adj] [Fintype G.edgeSet] : ℤ :=
   ∑ σ : Fin n → Spin, edgeCouplingSum G σ
-
-/-! ## Sanity checks (native_decide) -/
-
-/-- chainGraph2 has exactly 1 edge. -/
-example : Fintype.card chainGraph2.edgeSet = 1 := by native_decide
-
-/-- chainGraph3 has exactly 2 edges. -/
-example : Fintype.card chainGraph3.edgeSet = 2 := by native_decide
-
-/-- triangleGraph (K₃) has exactly 3 edges. -/
-example : Fintype.card triangleGraph.edgeSet = 3 := by native_decide
-
-/-- squareGraph has exactly 4 edges. -/
-example : Fintype.card squareGraph.edgeSet = 4 := by native_decide
-
-/-- k4Graph has exactly 6 edges. -/
-example : Fintype.card k4Graph.edgeSet = 6 := by native_decide
-
-/-- allConfigsFinset 2 has 4 elements. -/
-example : (allConfigsFinset 2).card = 4 := by native_decide
-
-/-- allConfigsFinset 3 has 8 elements. -/
-example : (allConfigsFinset 3).card = 8 := by native_decide
-
-/-- chainGraph2: formalCouplingSum = 0. -/
-example : formalCouplingSum chainGraph2 = 0 := by native_decide
-
-/-- chainGraph3: formalCouplingSum = 0. -/
-example : formalCouplingSum chainGraph3 = 0 := by native_decide
-
-/-- triangleGraph: formalCouplingSum = 0. -/
-example : formalCouplingSum triangleGraph = 0 := by native_decide
 
 end IsingModel.TestGenerators
