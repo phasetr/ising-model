@@ -61,14 +61,18 @@ noncomputable def twoSiteK2EvenBot (a : ℝ) : ℝ :=
 /-- The discriminant radius is at least the absolute gap, so `rad + Δ ≥ 0`. -/
 theorem twoSiteK2_rad_add_delta_nonneg (a : ℝ) :
     0 ≤ twoSiteK2Rad a + twoSiteK2Delta a := by
-  have hrad := twoSiteK2Rad_pos a
-  nlinarith [twoSiteK2Rad_sq a, sq_nonneg (twoSiteK2Delta a)]
+  have hle : |twoSiteK2Delta a| ≤ twoSiteK2Rad a := by
+    rw [← Real.sqrt_sq_eq_abs, twoSiteK2Rad]
+    exact Real.sqrt_le_sqrt (by linarith)
+  linarith [neg_le_of_abs_le hle]
 
 /-- The discriminant radius dominates the gap, so `rad - Δ ≥ 0`. -/
 theorem twoSiteK2_rad_sub_delta_nonneg (a : ℝ) :
     0 ≤ twoSiteK2Rad a - twoSiteK2Delta a := by
-  have hrad := twoSiteK2Rad_pos a
-  nlinarith [twoSiteK2Rad_sq a, sq_nonneg (twoSiteK2Delta a)]
+  have hle : |twoSiteK2Delta a| ≤ twoSiteK2Rad a := by
+    rw [← Real.sqrt_sq_eq_abs, twoSiteK2Rad]
+    exact Real.sqrt_le_sqrt (by linarith)
+  linarith [le_of_abs_le hle]
 
 /-! ## Even-sector rotation -/
 
@@ -292,7 +296,7 @@ theorem twoSiteK2_rotC_mul (a : ℝ) :
       linear_combination (twoSiteK2Rad a - twoSiteK2Delta a) ^ 2 * e1 - 16 * e2
         + (twoSiteK2Rad a - twoSiteK2Delta a) * twoSiteK2Rad_sq a
     exact mul_right_cancel₀ (mul_ne_zero two_ne_zero (ne_of_gt (twoSiteK2Rad_pos a))) key
-  nlinarith [hsq, h1nn, h2nn]
+  exact (pow_left_inj₀ h1nn h2nn (by norm_num)).mp hsq
 
 /-- Rotation eigenvector identity `s·(rad + Δ) = 4 c`. -/
 theorem twoSiteK2_rotS_mul (a : ℝ) :
@@ -309,7 +313,7 @@ theorem twoSiteK2_rotS_mul (a : ℝ) :
       linear_combination (twoSiteK2Rad a + twoSiteK2Delta a) ^ 2 * e2 - 16 * e1
         + (twoSiteK2Rad a + twoSiteK2Delta a) * twoSiteK2Rad_sq a
     exact mul_right_cancel₀ (mul_ne_zero two_ne_zero (ne_of_gt (twoSiteK2Rad_pos a))) key
-  nlinarith [hsq, h1nn, h2nn]
+  exact (pow_left_inj₀ h1nn h2nn (by norm_num)).mp hsq
 
 /-! ## Diagonalization -/
 
