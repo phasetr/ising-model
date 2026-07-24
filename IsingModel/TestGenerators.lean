@@ -9,7 +9,7 @@ Small-graph definitions and all-configuration enumeration for use in
 property-test sentinel files.
 
 All computations use ℤ for spin algebra — no `Real.exp` — enabling the
-kernel-decidable sanity checks in the `test` library
+`native_decide` sanity checks in the `test` library
 (`test/IsingModel/Generators.lean`).
 -/
 
