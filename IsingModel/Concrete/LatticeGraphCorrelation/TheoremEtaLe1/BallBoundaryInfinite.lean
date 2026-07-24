@@ -191,7 +191,7 @@ theorem ball_boundary_tight_infinite (d : ℕ) (_hd : 1 ≤ d)
     have h3 := correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf
       {(0 : Fin d → ℤ), l}
     have h4 := correlationInfinite_nonneg (IsingModel.latticeGraph d) Λ p hf {k, x}
-    positivity
+    exact add_nonneg (mul_nonneg h1 h2) (mul_nonneg h3 h4)
   -- `x ≠ 0` (since `latticeDistance 0 x > r + 1 ≥ 0`).
   have hx0 : x ≠ 0 := by
     rintro rfl
