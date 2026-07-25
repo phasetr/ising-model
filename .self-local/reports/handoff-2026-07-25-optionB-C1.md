@@ -310,6 +310,37 @@ governance re-verification). None of these are executed; all require the user's 
    (K1 and K3 must stay regardless — they are load-bearing / docs-cited, not deletable under
    either option).
 
+## 2026-07-25 update — PR #4711 merged; #4303 dangling-reference cluster fully closed out
+
+**PR #4711 merged (main `4b188515`)**: `IsingModel/TransferMatrix/ClusterExpansionSupersession.lean:18-19`
+module doc comment repointed away from the three deleted `LayerDobrushinContraction`/`LayerDoeblin`/
+`LayerDoobSpectralGap` modules. This was the last surviving reference to those three module names
+anywhere in the repo. Combined with PR #4710 (`docs/index.md:1715`, merged main `d97f9612`), the
+entire #4303 dangling-reference cluster — spanning both the `docs/` side (#4710) and the `.lean`
+doc-comment side (#4711) — is now fully closed out (0 hits repo-wide).
+
+**Authorization note (governance, recorded for the record)**: PR #4711 was **not** based on user
+authorization. `dev-pr-clerk` recorded, in both the #4704 mirror (UPDATE #10) and a GitHub comment
+on #4704, that the main agent's own scope judgment treated this as finishing the already-in-progress
+#4303 cluster (not opening the systematic `.lean` doc-comment sweep that remains explicitly
+unauthorized). #4704 stays OPEN with 2 remaining items: (i) the `docs/index.md:1974` count fix
+(authorization-pending) and (ii) the unclassified docs/tex token pool plus the still-unauthorized
+systematic `.lean` doc-comment sweep (needs a false-positive-reduced scanning method first).
+
+**Governance corrections this session (dev-issue-manager findings, actioned by dev-pr-clerk)**:
+- `.self-local/issues/4692.md`'s stale "Item A: parked" checklist line corrected to reflect that
+  PR #4702 + #4705 already disposed it.
+- GitHub completion comments posted on #4692 and #4559 (their bodies were already updated in a
+  prior pass, but carried zero comments recording the completion — now recorded).
+- GitHub park/close-judgement comment posted on #4642 (previously only in the body, not as a
+  comment).
+- #4563's standing-authorization-validity language was already present in the GitHub body from a
+  prior pass — not duplicated here.
+
+**Next step**: no open technical items in this cluster. Remaining user-decision items across the
+touched issues: #4704 (b)/(c) above, #4692/#4559 close approval, #4642 close-vs-override decision,
+#4563 standing-authorization reconfirmation.
+
 ## Repo hygiene note — benchmark worktree pollution in repo-wide scans
 
 `.self-local/benchmarks/4519/*/worktrees/` contains full duplicate copies of the repo tree (left
