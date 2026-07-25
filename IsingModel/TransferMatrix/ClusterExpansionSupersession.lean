@@ -14,9 +14,10 @@ That route is **obstructed**.  The single-step Dobrushin/Doeblin contraction is 
 insufficient for the growing transverse box, and a Codex counterexample
 (`u ≡ 1`, `k = exp(t·∑ a·b)`, `ρ ~ exp(O(|S|))`) shows the uniform Kotecký–Preiss /
 Dobrushin estimate one would need cannot hold transversally uniformly; see the roadmap
-`.self-local/docs/11-roadmap-to-completion-2026-06-20.md`, Phase 5, and the documented
-obstruction in `IsingModel/TransferMatrix/Layer*` (`LayerDobrushinContraction.lean`,
-`LayerDoeblin.lean`, `LayerDoobSpectralGap.lean`, …).
+`.self-local/docs/11-roadmap-to-completion-2026-06-20.md`, Phase 5.  The scaffolding that
+documented this obstruction in `IsingModel/TransferMatrix/Layer*.lean` was removed in
+PR-B1: route obstructed #4081, superseded by §18 #4228/#4255; archived at git tag
+`archive/transfermatrix-spectral-gap-scaffolding`.
 
 This module records the **resolution** prescribed by Issue #4214 item B, option (ii):
 the §18 *cluster-expansion* route already delivers, **unconditionally**, the
