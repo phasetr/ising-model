@@ -250,6 +250,23 @@ theorem neighborFinset_sum_pow_neg_le {d : ℕ} {α : ℝ} (hαnn : 0 ≤ α) (z
             ≤ ((2 * d : ℕ) : ℝ) := by exact_mod_cast hcard
           _ = 2 * (d : ℝ) := by push_cast; ring
 
+/-- **Nonnegativity of the neighbour-sum kernel** (GJ §17.5 p. 312).  The summand
+`(1+d(x,u))^{−α}·(∑_{v∼u}(1+d(z,v))^{−α})` of the neighbour-shifted convolution is
+nonnegative, since `1 + d(·,·) ≥ 0` makes every `rpow` factor nonnegative.
+
+Shared by `tsum_mul_neighborFinset_sum_pow_neg_le`,
+`summable_mul_neighborFinset_sum_pow_neg` and `darts_cross_sum_le_sharp_decay`.  It is
+spelled as an explicit term rather than `positivity`, because on this shape (a product
+with a `Finset.sum` inside) `positivity` must recurse through the `Finset.sum` extension
+and re-run `evalRpow` per summand, costing 100–400 ms per call. -/
+private lemma mul_neighborFinset_sum_pow_neg_nonneg {d : ℕ} {α : ℝ} (x z u : Fin d → ℤ) :
+    0 ≤ (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
+      (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
+        (1 + (latticeDistance d z v : ℝ)) ^ (-α)) :=
+  mul_nonneg (Real.rpow_nonneg (add_nonneg zero_le_one (Nat.cast_nonneg _)) _)
+    (Finset.sum_nonneg fun _ _ =>
+      Real.rpow_nonneg (add_nonneg zero_le_one (Nat.cast_nonneg _)) _)
+
 /-- **Neighbour-shifted sharp convolution bound.**  For `d/2 < α < d` there is
 `C > 0` such that for all `x z`,
 `∑'_u (1+d(x,u))^{−α}·(∑_{v∼u}(1+d(z,v))^{−α}) ≤ C·(1+d(x,z))^{−(2α−d)}`.
@@ -293,7 +310,8 @@ theorem tsum_mul_neighborFinset_sum_pow_neg_le {d : ℕ} (hd : 1 ≤ d) {α : �
   have hlhs_nn : ∀ u : Fin d → ℤ, 0 ≤
       (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
         (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
-          (1 + (latticeDistance d z v : ℝ)) ^ (-α)) := fun u => by positivity
+          (1 + (latticeDistance d z v : ℝ)) ^ (-α)) :=
+    fun u => mul_neighborFinset_sum_pow_neg_nonneg x z u
   have hlhs_sum : Summable (fun u : Fin d → ℤ =>
       (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
         (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
@@ -383,7 +401,8 @@ theorem summable_mul_neighborFinset_sum_pow_neg {d : ℕ} (x z : Fin d → ℤ) 
       ((1 + (latticeDistance d x u : ℝ)) ^ (-α) *
         (1 + (latticeDistance d z u : ℝ)) ^ (-α))) :=
     (summable_pow_neg_pair_translate x z hα2).mul_left _
-  refine Summable.of_nonneg_of_le (fun u => by positivity) (fun u => ?_) hmaj
+  refine Summable.of_nonneg_of_le (fun u => mul_neighborFinset_sum_pow_neg_nonneg x z u)
+    (fun u => ?_) hmaj
   calc (1 + (latticeDistance d x u : ℝ)) ^ (-α) *
           (∑ v ∈ (IsingModel.latticeGraph d).neighborFinset u,
             (1 + (latticeDistance d z v : ℝ)) ^ (-α))
@@ -535,7 +554,7 @@ theorem darts_cross_sum_le_sharp_decay
         ≤ ∑' u' : Fin d → ℤ, (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
               (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
                 (1 + (latticeDistance d z w : ℝ)) ^ (-(α : ℝ))) :=
-      (hsummable x z).sum_le_tsum _ (fun u' _ => by positivity)
+      (hsummable x z).sum_le_tsum _ (fun u' _ => mul_neighborFinset_sum_pow_neg_nonneg x z u')
     calc (2 * Cf) ^ 2 * ∑ u' ∈ (Ambient.cubicExhaustion d).volume n,
             (1 + (latticeDistance d x u' : ℝ)) ^ (-(α : ℝ)) *
               (∑ w ∈ (IsingModel.latticeGraph d).neighborFinset u',
