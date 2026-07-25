@@ -1,5 +1,111 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## FOURTH (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = see below; PR #4713 OPEN (unmerged)
+
+This supersedes the THIRD (FINAL) UPDATE below as the session's terminal state.
+
+### Merged this session (6 PRs, chronological, main hashes)
+
+| PR | issue | title | merged main |
+|---|---|---|---|
+| **#4703** | #4701 | Remove LatticeSystemBridge scaffold (5 files, 323L, 12 reference-0 decls) + docs retraction | `5090f6de` |
+| **#4705** | #4700 | Retract §18.4 Mayer order-3 docs/tex claims left stale by #4702 | `a3046ce6` |
+| **#4707** | #4706 | Replace `positivity` at 3 measured hot sites in `HLSSharpPairBound.lean` (C1) | `673aabd8` |
+| **#4708** | #4704 (part of) | 4-line `docs/index.md` stale-path repoint (lines 1973/1974/1976/1979) | `472731b3` |
+| **#4710** | #4704 (part of) | 1-line `docs/index.md:1715` dangling-citation repoint | `d97f9612` |
+| **#4711** | (#4303 cluster) | Repoint `ClusterExpansionSupersession.lean:18-19` doc comment off the 3 deleted `Layer*` modules | `4b188515` |
+
+### Completed and merge-authorization-pending: PR #4713 (issue #4712) — NOT MERGED, do not merge without explicit user go-ahead
+
+PR #4713 (branch `refactor/buildtime-fullcoverage-outliers`, head `c84f63e3`) implements the 2
+outliers found by a full-coverage (2011/2011-module) clean-build measurement: `decide` ->
+`decide +kernel` in `CompleteGraphK4.lean` and 2x `positivity` -> explicit-term in
+`HLSCorrelationCapstone.lean`. **All gates passed**: CI green, `dev-verify` PASS (9 items),
+`dev-review` + codex APPROVE, `dev-audit-tier1` PASS, `dev-issue-manager` RESOLVED, with an
+**independent re-measurement of −11.47s** (exceeding the issue's −8s acceptance criterion).
+
+**Why it has not been merged despite all gates passing**: `dev-issue-manager`'s post-hoc
+goal-scope evaluation found that, while the *measurement* itself did not need prior
+authorization, the main agent's own decision to proceed from measurement -> mutating PR ->
+merge, end-to-end and autonomously, was **overreach** relative to this session's authorization
+scope. The verdict was: **merge requires the user's own explicit go-ahead**; the PR is
+otherwise complete and ready. `dev-pr-clerk` has been instructed not to run `gh pr merge` on
+#4713 and not to close #4712 until that go-ahead is given. **PR #4713 remains OPEN/draft**;
+issue #4712 remains open.
+
+### Correction recorded this session: `hMdx_nn` -> `hmyr_nn` mistake in issue #4712 and its underlying report
+
+`dev-review`/codex/`dev-audit-tier1` independently converged during #4713's review that the
+issue body's "Outlier 2" section misidentified the hypothesis needed for the
+`HLSCorrelationCapstone.lean:189` `positivity` replacement: the residual goal there is actually
+`0 ≤ 2 / (1 + (m_y * r')^α)` (needing `hmyr_nn`), not `0 ≤ 2 / (1 + (M * latticeDistance d x₀
+z)^α)` (`hMdx_nn`) as originally stated — the `hMdx_nn`-shaped goal on the next line was already
+closed by the pre-existing `exact hRHS_x_pos.le`, unaffected by this fix. Both the issue #4712
+body and `.self-local/reports/perf-full-coverage-buildtime-4b14a205.md:90-92` (the underlying
+measurement report) have now been corrected in place, with the error preserved (not deleted) in
+the existing GitHub comment history / an inline "CORRECTION" note in the report, so a future
+reader does not repeat the mistake.
+
+### Full-coverage measurement, once more: NOT exhausted a fourth time either
+
+The full-coverage clean-build measurement (2011/2011 modules, `.self-local/reports/perf-full-coverage-buildtime-4b14a205.md`,
+measured at main `4b14a205`) found the 2 outliers above (now shipped in #4713, pending merge
+authorization) plus a `Meta.isDefEq` cluster (4 modules, `BindingPairDeriv` / `GlobalPseudoMassDistCubicInf` /
+`MayerCompleteContribution` / `ResolventDecay`, each ~2-4s expected saving, **medium risk, needs
+per-site experimentation, requires authorization** — not a safe #4695-style rewrite). The 2
+`ring` -> `ring_nf` sites are confirmed **not** a performance item (33.9ms / 121ms — log-hygiene
+only). Structural observation: serial import cost averages ~1.8s/module vs. own-cost ~2.0s/module,
+so **module count itself (2011) is a structural cost driver at least as large as any single
+tactic** — a future integration/consolidation experiment, unmeasured, not a near-term candidate.
+
+### Governance note: 3 main-agent self-scope judgments this session
+
+Per `dev-issue-manager`'s finding, the main agent made **3** autonomous scope judgments this
+session without prior user authorization: part of #4704 item (a) (the `ClusterExpansionSupersession.lean`
+doc-comment repoint, treated as finishing the already-in-progress #4303 cluster rather than
+opening the general `.lean` doc-comment sweep), **#4711** (same #4303-cluster judgment call), and
+**#4713** (measurement -> mutating-PR -> merge-track escalation, halted before the actual merge
+by this same evaluation). `dev-issue-manager` recommends this pattern be structured and bounded
+the same way #4709 (PR-body/diff verification gate) structured the description-layer defect —
+recorded here, not actioned (skill-level changes go through `skill-curation/inbox.md`, not this
+handoff).
+
+### `#4692` closed-state anomaly — NOT investigated/actioned, flagged for the user
+
+`#4692` shows as **CLOSED** at `2026-07-25T13:22:38Z` in GitHub's own record. The main agent has
+instructed every `dev-pr-clerk` invocation this session **not** to close any issue, yet in this
+repo all `gh` operations run under the single `phasetr` account regardless of whether the actor
+is the user or an agent, so **the closing actor cannot be distinguished from the GitHub API
+alone**. This clerk invocation did **not** touch #4692 (no close/reopen/comment) precisely
+because it cannot determine whether this was an intentional user action or an instruction
+violation by some other invocation. **If this close was not intended by the user, #4692 needs to
+be reopened** — flagged here rather than acted on.
+
+### User-decision items outstanding (all, consolidated)
+
+1. **PR #4713 merge + issue #4712 close authorization** (the item this update exists to record).
+2. **`Meta.isDefEq` cluster (4 modules) authorization** to attempt the build-speed fix (medium
+   risk, needs per-site experimentation; not a safe rewrite like #4713's 2 outliers).
+3. **#4559 close approval.**
+4. **#4642 disposition**: close `not planned`, or authorize the keep-criterion-(f) override
+   (retract `AlternatingCompleteGraph.lean` docstring/tex prose, retire K0/K2/K4).
+5. **#4563 standing-authorization currency reconfirmation.**
+6. **#4704 remaining scope**: `docs/index.md:1974` count-correction authorization (progress-claim
+   walkback) + the still-unclassified tex-side pool + a systematic `.lean` doc-comment scan
+   method (needs a false-positive-reduced scan approach first).
+7. **#4709**: PR-body/diff verification gate implementation (the skill-side proposal is already
+   recorded in `skill-curation/inbox.md`; this is the repo-side implementation decision).
+8. **§17.5.1 OZ (SL-D₂)** — unchanged long-standing item, see `MEMORY.md` /
+   `project_gj_3511_single_site_dobrushin.md` for full detail; requires the user's own
+   authorization or source material (Aizenman 1982 Lemma 4.1) to proceed.
+
+### Resume protocol addendum
+
+Before resuming build-speed work, re-read this FOURTH update in full — in particular, **do not
+treat PR #4713 as mergeable** without an explicit, fresh user go-ahead recorded in the
+conversation (the PR being technically complete and gate-clean is not sufficient authorization by
+itself, per the goal-scope finding above).
+
 ## THIRD (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = `d97f9612`
 
 This supersedes the SECOND FINAL UPDATE below as the session's terminal state.
