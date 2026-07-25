@@ -1,5 +1,40 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## SECOND FINAL UPDATE 2026-07-25 (dev-pr-clerk) — main = `472731b3`
+
+PR **#4708** (`docs/4704-fix-stale-lean-paths`, issue #4704 "Part of", 4-line `docs/index.md`
+path repoint at lines 1973/1974/1976/1979) squash-merged with `--body-file` from the verified
+body → main `472731b3` (branch deleted). All merge-gate items (CI green, `dev-verify` PASS 8/8,
+`dev-review`+codex clean, `dev-audit-tier1` clean, `dev-issue-manager` RESOLVED) were confirmed
+independently before merge; squash body used explicitly (never default commit concatenation) to
+keep the branch's inaccurate commit messages ("nine stale .lean paths") out of `main`'s permanent
+history.
+
+- **#4704 stays OPEN** (`Closes` keyword confirmed absent from the body; verified not
+  auto-closed). GitHub body rewritten to the final 4-line outcome (withdrawing the earlier
+  "9-line"/`HLS*` claims) and the settled citation-convention test (a path citation is stale iff
+  the cited module's transitive import closure does not reach the cited declarations). The stale
+  2026-07-25T12:01 comment corrected via a follow-up comment withdrawing **only** its items 2/3
+  (umbrella-vs-leaf granularity, resolved by the settled test above); items 1
+  (`docs/index.md:1715` stale path, 3 files absent) and 4 (`docs/index.md:1974` count error,
+  "8"/"12" should read "6"/"10") remain valid and untouched — both are recorded as remaining open
+  work under #4704.
+- **New tracking issue #4709** filed:
+  https://github.com/phasetr/ising-model/issues/4709 — process-level PR-body/diff verification
+  gate (recurrence-prevention proposal (c) from `.self-local/issues/4704.md`). Records that 4 PR
+  bodies this session (#4702/#4703/#4707/#4708) were factually wrong about their own diff, and
+  that no current pipeline stage checks PR body claims against `git diff`. Making this durable in
+  the global `dev-pr-workflow` skill requires going through the `skill-curation` inbox — #4709
+  records the repo-side finding only, it does not itself edit the skill.
+- Mirrors synced: `.self-local/issues/4704.md` (UPDATE #4 + "Governance defects... RESOLVED"
+  section), `.self-local/issues/INDEX.md` (header + new dated entry).
+
+**User-confirmation items still open (unchanged from the FINAL UPDATE below, none resolved this
+sub-session)**: #4692/#4559 close approval, #4704 remaining implementation authorization
+(`docs/index.md:1715` + `:1974` + tex-side pool), #4563 standing-authorization currency, #4642
+disposition (A/B). None were touched — this sub-session's only actions were the #4708 merge, the
+#4704 GitHub-side correction, and filing #4709.
+
 ## FINAL UPDATE 2026-07-25 (session end) — main = `673aabd8`
 
 This session's Option-B + C1 work is **fully merged**. Three PRs landed in sequence:

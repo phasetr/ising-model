@@ -1,4 +1,38 @@
-# ローカルミラー・インデックス (2026-07-25 更新 — #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4704 OPEN (9/156 re-anchored), #4692/#4559 OPEN pending user close approval), #4563/#4642 GitHub body corrected (dev-pr-clerk, per dev-issue-manager governance re-verification; both remain OPEN, no close)
+# ローカルミラー・インデックス (2026-07-25 更新 — PR #4708 MERGED (main `472731b3`), #4704 GitHub body + stale comment corrected, #4704 stays OPEN, new tracking issue #4709 (PR-body/diff verification gate) filed, #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4692/#4559 OPEN pending user close approval), #4563/#4642 GitHub body corrected (dev-pr-clerk, per dev-issue-manager governance re-verification; both remain OPEN, no close)
+
+**2026-07-25 #4708 merged + #4704 GitHub-side corrected + #4709 filed (dev-pr-clerk)**: PR #4708
+(`docs/4704-fix-stale-lean-paths`) squash-merged with `--body-file` from the verified 4-line body
+→ main `472731b3` (branch deleted). `Closes` keyword was never present; confirmed #4704 NOT
+auto-closed, remains **OPEN**. #4704 GitHub issue body rewritten to state the final 4-line outcome
+(withdrawing the "9-line"/`HLS*` claims) and the settled citation-convention test; the stale
+2026-07-25T12:01 comment corrected via a follow-up comment withdrawing only its items 2/3 (items 1
+and 4 remain valid, untouched). Filed **#4709** — separate process-level tracking issue for
+recurrence-prevention proposal (c) (PR-body/claim verification gate before merge; four PR bodies
+this session, #4702/#4703/#4707/#4708, were factually wrong about their own diff). Remaining open
+work under #4704: `docs/index.md:1715` stale path (3 files absent), `docs/index.md:1974` count
+error, unclassified tex-side pool. Mirror: `4704.md`.
+
+**2026-07-25 #4704 body corrected (dev-pr-clerk, GitHub body + mirror edited, no build, no
+close)**: `dev-research` deep pass found the original "9/156" headline counts were raw mechanical
+token-scan counts dominated by false positives (common-stem/multi-file doc shorthand, Mathlib/core
+API references — 42% of surviving tokens). **Zero classification-B cases** (silently deleted
+content, hidden false Done claim) found; no keep-criterion(f) trigger. Confirmed classification-A
+(rename/move, declarations survive) count = **4 lines** in `docs/index.md` (lines
+1973/1974/1976/1979), addressed by **PR #4708** (merged, main `472731b3`).
+Remaining ~1200 docs / 85+3195 tex candidate tokens left unclassified/out-of-scope pending a
+lower-false-positive scanning method. Issue remains OPEN (tracking only).
+Evidence: `.self-local/reports/research-4704-stale-refs-inventory.md`. Mirror: `4704.md`.
+
+**2026-07-25 #4708 resolution verification (dev-issue-manager, HEAD `33cf2e5e`, main `99ed7f68`)
+= RESOLVED / merge-eligible (squash only; `Part of #4704`, #4704 stays OPEN).** The earlier
+"9-line" figure is retracted: 3 of those lines (2010/2012/2019, `HLS*`) were never stale, 2
+(1980/1982, joint analyticity) were reverted as umbrella-vs-leaf granularity, leaving 4. Citation
+rule settled: *a path citation is stale iff the cited module's transitive import closure does not
+reach the cited declarations.* Still-open GitHub-side defects (dev-pr-clerk): #4704 body + its
+2026-07-25T12:01 comment still describe #4708 as 9-line / 6-line and umbrella→leaf. New
+cross-cutting finding: **4 consecutive PR bodies this session (#4702/#4703/#4707/#4708) were
+factually wrong about their own diff — no workflow stage verifies the PR body against the diff,
+although squash merge writes it into `main`. Needs its own tracking issue.** Mirror: `4704.md`.
 
 **2026-07-25 #4563 / #4642 body corrections (dev-pr-clerk, GitHub body edited, no build, no close)**:
 **#4563** — stale 253-module / "243 modules deferred" figures corrected to measured **193 modules /
