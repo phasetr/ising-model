@@ -1,5 +1,13 @@
 # ローカルミラー・インデックス (2026-07-22 更新 — #4662 CLOSED (merged PR #4661, squash a1ead114), #4653 OPEN (audit-gate self-test), #4635 CLOSED (merged PR #4652), #4639 CLOSED, #4640 CLOSED, #4642 OPEN, #4649 OPEN (pending CI), #4650 CLOSED (merged PR #4651))
 
+**2026-07-25 #4701 CLOSED (merged PR #4703, squash main `5090f6de`)**: LatticeSystemBridge scaffold
+removed (5 files, 323L, 12 reference-0 decls), docs retracted in same PR. `#4700 REOPENED`, body
+re-anchored to post-merge line numbers (`docs/index.md:2126`, `tex/proof-guide.tex:19368–19383` +
+`21076–21098`); `scripts/noshake.json:46` item resolved by #4703. New issue **#4704 OPEN**
+(tracking only): repo-wide stale `.lean` references in `docs/index.md` (12) and
+`tex/proof-guide.tex` (159), pre-existing debt unrelated to #4703. Mirrors: `4701.md`, `4700.md`,
+`4704.md`. Handoff: `.self-local/reports/handoff-2026-07-25-optionB-C1.md`.
+
 **2026-07-22 #4662 refactor (ratio_bound_bundle cluster-1 deletion) / tracking PR #4661 / CLOSED**: Sixth application of #4639 adoption rule. Remove first self-contained closure-component subset of `ratio_bound_bundle` family (≈28 decls across ~11 components total; this PR removed 6 from base-Conditioning layer). Merged at squash commit a1ead114 (2026-07-22, CI green 34m0s). All six claimed removals executed, zero cascade references, audit gates passed. Under standing user authorization (continuing #4648/#4651/#4655/#4657/#4659). Scanner methodology, cascade-zero check, fixture integrity verification per #4639. Source enumeration: `.self-local/reports/remaining-safe-clusters-2026-07-22.md`. Mirror: `4662.md`.
 
 **2026-07-22 #4653 follow-up (audit-gate 自己テストの残り 5 件) / OPEN**: PR #4652 の review が変異 18 種類を実測し 6 件無検出. Med 3 件 (観測点ズレ: 列挙関数と実走査の乖離 / V1・V2 の行ループ truncation / capstone リスト間引き) は PR #4652 で是正済み. 残る Low 5 件 (テスト件数ラチェット無し, `_AXIOM_RE` が同一行 `in` 前置を取りこぼす, 走査対象ゼロで V1/V2 が PASS, CI wiring が部分文字列 assert のみ, pre-push フック未設置) を本 issue で追跡. tooling のみ, Lean/docs/tex 変更なし. Mirror: `4653.md`.
