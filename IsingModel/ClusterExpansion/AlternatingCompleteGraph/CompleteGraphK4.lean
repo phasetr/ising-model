@@ -31,7 +31,7 @@ theorem alternatingConnectedSubgraphSum_K4 :
       (∑ S ∈ (⊤ : SimpleGraph (Fin 4)).edgeFinset.powerset.filter
         (fun S : Finset (Sym2 (Fin 4)) =>
           (SimpleGraph.fromEdgeSet (↑S : Set (Sym2 (Fin 4)))).Connected),
-        ((-1 : ℤ) ^ S.card)) = -6 := by decide
+        ((-1 : ℤ) ^ S.card)) = -6 := by decide +kernel
   have h_cast :
       (∑ S ∈ (⊤ : SimpleGraph (Fin 4)).edgeFinset.powerset.filter
           (fun S : Finset (Sym2 (Fin 4)) =>

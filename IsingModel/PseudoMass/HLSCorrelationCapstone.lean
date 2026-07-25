@@ -182,11 +182,11 @@ theorem correlationInfinite_pair_product_le_pseudoMass_pair
           (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ) {y₀, z}
       ≤ 2 / (1 + (m_x * r') ^ α) * (2 / (1 + (m_y * r') ^ α)) := by
         apply mul_le_mul h_x_step51 h_y_step51 h_y_nn
-        positivity
+        exact div_nonneg zero_le_two (add_nonneg zero_le_one (pow_nonneg hmxr_nn α))
     _ ≤ 2 / (1 + (M * (latticeDistance d x₀ z : ℝ)) ^ α) *
           (2 / (1 + (M * (latticeDistance d y₀ z : ℝ)) ^ α)) := by
         apply mul_le_mul h_x_mono h_y_mono
-        · positivity
+        · exact div_nonneg zero_le_two (add_nonneg zero_le_one (pow_nonneg hmyr_nn α))
         · exact hRHS_x_pos.le
 
 /-- **HLS correlation pair-product tsum capstone** (Step 119 plan Step 5.6).
