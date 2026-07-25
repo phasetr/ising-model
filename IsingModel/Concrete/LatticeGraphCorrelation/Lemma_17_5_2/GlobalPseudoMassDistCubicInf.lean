@@ -130,7 +130,7 @@ theorem globalPseudoMassDist_eq_csInf_finiteRegion_cubic {α d : ℕ} (hα : 1 �
       change finiteRegionPseudoMassDist hα Λ p (Λ.volume N) hne
         ≤ pseudoMassFromParamsAtPairDist hα Λ p x z
       rw [finiteRegionPseudoMassDist]
-      exact Finset.inf'_le (fun q => pseudoMassFromParamsAtPairDist hα Λ p q.1 q.2) hpair_mem
+      exact Finset.inf'_le _ hpair_mem
     exact (csInf_le hbdd ⟨⟨N, hne⟩, rfl⟩).trans h1
 
 end Ambient

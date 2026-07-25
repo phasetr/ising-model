@@ -86,8 +86,8 @@ theorem singlePolymer_ursell_term_eq
     ursellCoefficient (fun _ : Fin (m + 1) => P)
         * clusterSeqActivity t (fun _ : Fin (m + 1) => P)
       = -((-(t ^ P.card)) ^ (m + 1) / ((m : ℝ) + 1)) := by
-  rw [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
-      (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+  rw [ursellCoefficient_complete_eq (ω := fun _ : Fin (m + 1) => P) (Nat.le_add_left 1 m)
+      (fun _ _ _ => PolymersIncompatible.self_of_isPolymer hP),
     clusterSeqActivity_const, Nat.add_sub_cancel]
   have hexp : (-(t ^ P.card)) ^ (m + 1) = -((-1 : ℝ) ^ m * (t ^ P.card) ^ (m + 1)) := by
     rw [neg_pow, pow_succ]; ring

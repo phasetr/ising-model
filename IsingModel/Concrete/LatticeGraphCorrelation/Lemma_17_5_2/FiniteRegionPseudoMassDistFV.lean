@@ -109,7 +109,7 @@ theorem finiteRegionPseudoMassDistFV_le_of_mem {α d : ℕ} (hα : 1 ≤ α) (p 
     (hmem : (x, z) ∈ finiteRegionDistinctPairs ((cubicExhaustion d).volume n)) :
     finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z := by
   unfold finiteRegionPseudoMassDistFV
-  exact Finset.inf'_le (fun q => pseudoMassFromParamsAtPairFV hα p n q.1 q.2) hmem
+  exact Finset.inf'_le _ hmem
 
 end Ambient
 end IsingModel

@@ -103,7 +103,9 @@ theorem isingInfluenceMatrix_tsum_shift_apply_le {β J : ℝ} (hβJ : 0 ≤ β *
       (fun z _ => Matrix.pow_apply_nonneg (isingInfluenceMatrix_nonneg G hβJ) (n + d) x z)
       (Finset.mem_univ y)) ?_
     exact isingInfluenceMatrix_pow_rowSum_le G hβJ (n + d) x
-  refine le_trans (Summable.tsum_le_tsum hle ((summable_nat_add_iff d).mpr hsummable) hge)
+  have hshift : Summable (fun n : ℕ => ((isingInfluenceMatrix G β J) ^ (n + d)) x y) :=
+    (summable_nat_add_iff (f := fun i => ((isingInfluenceMatrix G β J) ^ i) x y) d).mpr hsummable
+  refine le_trans (Summable.tsum_le_tsum hle hshift hge)
     (le_of_eq ?_)
   simp_rw [pow_add]
   rw [tsum_mul_right, tsum_geometric_of_lt_one hα0 hα1, mul_comm]

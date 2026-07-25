@@ -104,7 +104,9 @@ theorem pseudoMassFromParamsAtPairFV_pow_succ_hasDeriv_abs_le_binding_core {α d
   have hdiff : DifferentiableAt ℝ
       (fun β' => pseudoMassFromParamsAtPairFV hα (⟨J, 0, β'⟩ : IsingParams ℝ) n x z) β := by
     rw [hfun]
-    exact ((pseudoMassExt_hasStrictDerivAt hα hpos hcorr).hasDerivAt.comp β
+    exact ((pseudoMassExt_hasStrictDerivAt hα hpos hcorr).hasDerivAt.comp
+      (h := fun β' => Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d)
+        (cubicExhaustion d) (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β
       hc_deriv).differentiableAt
   have hh : HasDerivAt (fun β' =>
       pseudoMassFromParamsAtPairFV hα (⟨J, 0, β'⟩ : IsingParams ℝ) n x z)
