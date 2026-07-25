@@ -102,7 +102,10 @@ theorem finiteRegionPseudoMassDistFV_pos {α d : ℕ} (hα : 1 ≤ α) {J β : �
 
 /-- **Finite-volume finite-region pseudo-mass is `≤` any contributing in-box pair's FV pseudo-mass**
 (`Finset.inf'_le`): for `(x, z) ∈ finiteRegionDistinctPairs (volume n)`,
-`finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z`. -/
+`finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z`.
+Keep this as a standalone public lemma (do not re-inline `Finset.inf'_le` at call sites): the
+heavy `pseudoMassExt`/`correlationAlongExhaustion` defeq check runs once here, instead of
+repeatedly inside a bridge's `set`-folded context, where it has previously caused slowdowns. -/
 theorem finiteRegionPseudoMassDistFV_le_of_mem {α d : ℕ} (hα : 1 ≤ α) (p : IsingParams ℝ)
     (n : ℕ) (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
     {x z : Fin d → ℤ}
