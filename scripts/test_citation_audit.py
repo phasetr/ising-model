@@ -27,12 +27,17 @@ So every check is tested in two directions, the idiom of
    target no longer matches exactly once, so a mutation cannot quietly become
    vacuous after the code moves.
 
-The twelve fixture/mutation pairs cover the twelve known ways a ``.lean``
-citation scan has silently missed something: brace shorthand, verbatim source
-line wraps, bare prose tokens, archive-tag exoneration, basename-only citations,
-multiple suffix matches, ``\\_`` escapes, the coverage audit itself, resolution
-against untracked or benchmark copies, the anti-vacuity floors, self-reference
-detection, and the multiset ratchet.
+The fixture/mutation pairs cover the known ways a ``.lean`` citation scan has
+silently missed something, or has silently exonerated something: brace
+shorthand, verbatim source line wraps, bare prose tokens, archive-tag
+exoneration, basename-only citations, multiple suffix matches, ``\\_`` escapes,
+the coverage audit itself, resolution against untracked or benchmark copies, the
+anti-vacuity floors, self-reference detection, the multiset ratchet, path text
+glued to a match (``../X/Y.lean``, ``X/Y.lean.bak``), a directive read from a
+quotation instead of from a comment, a directive that outlived the block it was
+written for, an indented tree entry joined onto the heading above it, a census
+published from a provably incomplete run, and a baseline rewritten from a
+partial target set.
 
 Cost: fixtures build throwaway git repositories (the resolution set really is
 ``git ls-files``, so stubbing it away would test the wrong thing), plus one
@@ -101,6 +106,18 @@ def _run_git(root: Path, *args: str) -> None:
     subprocess.run(["git", *args], cwd=str(root), check=True, capture_output=True)
 
 
+def _staged_paths(root: Path) -> List[str]:
+    """Return the paths in ``root``'s index, sorted."""
+    out = subprocess.run(
+        ["git", "ls-files", "-z"],
+        cwd=str(root),
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout
+    return sorted(path for path in out.split("\0") if path)
+
+
 @contextmanager
 def fixture(
     documents: Dict[str, str],
@@ -118,10 +135,17 @@ def fixture(
     filesystem is not the resolution set" is tested; ``tags`` maps a tag name to
     the ``.lean`` paths that exist *only* in that tag.
 
-    Staging uses ``git add -f``: a developer's global ignore file must not be
-    able to silently drop a fixture path and leave the test asserting nothing
-    (measured -- a global ``.gitignore`` entry for ``.self-local`` did exactly
-    that to the contamination fixtures below).
+    Staging uses ``git add -f`` with the paths named explicitly, and the
+    resulting index is compared against them: a developer's global ignore file
+    must not be able to silently drop a fixture path and leave the test
+    asserting nothing (measured -- a global ``.gitignore`` entry for
+    ``.self-local`` did exactly that to the contamination fixtures below), and a
+    fixture whose resolution set is not the one it asked for must fail *as a
+    fixture*. Review observed one run in which a two-file fixture behaved as if
+    only one file were tracked and the verdicts changed accordingly; it has not
+    reproduced (960 stress builds under parallel load), so the remedy here is
+    not a fix but a tripwire: whatever caused it, the next occurrence names
+    itself instead of quietly changing a verdict.
 
     ``MIN_TRACKED_LEAN`` is lowered to 1 for the duration: these fixtures pin the
     *decision logic* with a handful of files, and the real floor is a separate
@@ -138,7 +162,7 @@ def fixture(
                     path = root / name
                     path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text("-- archived\n", encoding="utf-8")
-                _run_git(root, "add", "-A", "-f")
+                _run_git(root, "add", "-A", "-f", "--", *paths)
                 _run_git(
                     root,
                     "-c",
@@ -153,7 +177,7 @@ def fixture(
                 _run_git(root, "tag", tag)
                 for name in paths:
                     (root / name).unlink()
-                _run_git(root, "add", "-A", "-f")
+                _run_git(root, "add", "-A", "-f", "--", *paths)
         for name, text in documents.items():
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -162,7 +186,15 @@ def fixture(
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("-- stub\n", encoding="utf-8")
-        _run_git(root, "add", "-A", "-f")
+        wanted = sorted(set(documents) | set(tracked))
+        if wanted:
+            _run_git(root, "add", "-f", "--", *wanted)
+        staged = _staged_paths(root)
+        if staged != wanted:
+            raise AssertionError(
+                f"fixture staged {staged}, expected {wanted}: the resolution set is not "
+                "the one this test asked for, so its verdicts would be meaningless"
+            )
         for name in untracked:
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -242,12 +274,32 @@ class PrimitiveTest(unittest.TestCase):
         self.assertEqual(ca.expand("Dir/{A.lean"), ["Dir/{A.lean"])
         self.assertIsNone(ca.normalise("Dir/{A.lean"))
 
-    def test_normalise_rejects_traversal_and_absolute_paths(self) -> None:
-        """A token that cannot mean a repository path is ``MALFORMED``."""
+    def test_normalise_rejects_what_cannot_mean_a_repository_path(self) -> None:
+        """A token that cannot mean a repository path is ``MALFORMED``.
+
+        These are unit assertions on the predicate; that the *extractor* really
+        hands it these spellings -- rather than truncating them into something
+        that resolves -- is what :class:`GluedTokenTest` pins, because a branch
+        the pipeline cannot reach is not a guard.
+        """
         self.assertIsNone(ca.normalise("../A.lean"))
         self.assertIsNone(ca.normalise("/A.lean"))
+        self.assertIsNone(ca.normalise("~/A.lean"))
+        self.assertIsNone(ca.normalise("A/B.lean.bak"))
+        self.assertIsNone(ca.normalise("A/B.leanx"))
         self.assertIsNone(ca.normalise("A//B.lean"))
         self.assertEqual(ca.normalise("A/B.lean"), "A/B.lean")
+
+    def test_glued_text_widens_a_match_to_what_was_written(self) -> None:
+        """The match is only evidence when nothing path-like touches it."""
+        for text, expected in (
+            ("see ../X/Y.lean here", "../X/Y.lean"),
+            ("see X/Y.lean.bak here", "X/Y.lean.bak"),
+            ("see X/Y.lean here", "X/Y.lean"),
+        ):
+            match = ca.TOKEN.search(text)
+            assert match is not None
+            self.assertEqual(ca.glued_text(text, match.start(), match.end()), expected)
 
     def test_unescape_preserves_the_lean_occurrence_count(self) -> None:
         """The coverage arithmetic depends on this: escapes never add or remove a hit."""
@@ -307,6 +359,13 @@ TREE_TEX = (
     "\\end{Verbatim}\n"
 )
 
+INDENTED_PREFIX_TEX = (
+    "\\begin{Verbatim}\n"
+    "    Inequalities/\n"
+    "GKS.lean                  GKS-I, GKS-II\n"
+    "\\end{Verbatim}\n"
+)
+
 
 class VerbatimWrapTest(unittest.TestCase):
     """A path split across two source lines is one citation, and it is charged."""
@@ -332,6 +391,24 @@ class VerbatimWrapTest(unittest.TestCase):
             report = ca.audit(["tex/g.tex"])
         self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
         self.assertEqual(tokens_of(report, ca.BASENAME_ONLY), ["GKS.lean"])
+
+    def test_an_indented_heading_is_not_a_wrapped_source_line(self) -> None:
+        """The other direction of the same rule, and the one that was open.
+
+        ``+-- Inequalities/`` is refused because of the ``+--``; an *indented*
+        heading with a column-0 entry under it has neither marker, so only the
+        indentation distinguishes a tree from a wrapped path. Joining them would
+        resolve ``GKS.lean`` as ``Inequalities/GKS.lean`` -- a directory taken
+        from layout, exactly what ``test_ascii_tree_indentation_is_never_joined``
+        forbids in the mirror-image case.
+        """
+        with fixture(
+            {"tex/g.tex": INDENTED_PREFIX_TEX}, tracked=["IsingModel/Inequalities/GKS.lean"]
+        ):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
+        self.assertEqual(tokens_of(report, ca.BASENAME_ONLY), ["GKS.lean"])
+        self.assertEqual(report.coverage, [])
 
 
 # ---------------------------------------------------------------------------
@@ -375,6 +452,47 @@ PREFIX_TEX = (
     "\\begin{Verbatim}\n"
     "GKS.lean                  GKS-I, GKS-II\n"
     "\\end{Verbatim}\n"
+)
+
+# The directive spelling quoted in running prose, the way documentation about
+# this tool would be transcribed into the guide, in each document syntax.
+DIRECTIVE_QUOTED_TEX = (
+    "Prefix such a block with % citation-audit: prefix IsingModel/Inequalities/ to exempt it.\n"
+    "\\texttt{GKS.lean} is one of the entries.\n"
+)
+
+DIRECTIVE_MD = (
+    "<!-- citation-audit: prefix IsingModel/Inequalities/ -->\n"
+    "`GKS.lean` holds GKS-I and GKS-II.\n"
+)
+
+DIRECTIVE_QUOTED_MD = (
+    "Write <!-- citation-audit: prefix IsingModel/Inequalities/ --> above the block.\n"
+    "`GKS.lean` holds GKS-I and GKS-II.\n"
+)
+
+# The same, quoted inside a sample block rather than issued as an instruction.
+DIRECTIVE_IN_VERBATIM_TEX = (
+    "\\begin{Verbatim}\n"
+    "% citation-audit: prefix IsingModel/Inequalities/\n"
+    "GKS.lean                  GKS-I, GKS-II\n"
+    "\\end{Verbatim}\n"
+)
+
+# A directive whose block has since been deleted, leaving it pointing at
+# whatever citation happens to come next.
+DIRECTIVE_ORPHANED_TEX = (
+    "% citation-audit: archived archive/stub\n"
+    "The block this directive annotated was deleted in a later edit.\n"
+    "\n"
+    "\\texttt{Peierls/RayExitAnchor.lean} is cited here for an unrelated reason.\n"
+)
+
+# A directive separated from its citation by blank lines only.
+DIRECTIVE_BLANK_LINE_TEX = (
+    "% citation-audit: archived archive/stub\n"
+    "\n"
+    "\\texttt{Peierls/RayExitAnchor.lean} was the old route.\n"
 )
 
 STUB_TAG = {"archive/stub": ["Peierls/RayExitAnchor.lean"]}
@@ -428,6 +546,69 @@ class ArchiveTagTest(unittest.TestCase):
             report = ca.audit(["tex/g.tex"])
         self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
 
+    def test_a_quoted_directive_is_not_an_instruction(self) -> None:
+        """Writing *about* the syntax must not arm it.
+
+        The pattern used to match anywhere on a line, so transcribing this
+        tool's own documentation into a document -- mid-sentence, inside
+        ``\\texttt{...}``, inside a sample block -- exempted the next citation
+        for real. A directive is now read only from a line that is itself a
+        comment in that document's syntax.
+        """
+        for target, text in (
+            ("tex/g.tex", DIRECTIVE_QUOTED_TEX),
+            ("docs/g.md", DIRECTIVE_QUOTED_MD),
+        ):
+            with self.subTest(target=target):
+                with fixture(
+                    {target: text}, tracked=["IsingModel/Inequalities/GKS.lean"]
+                ):
+                    report = ca.audit([target])
+                self.assertEqual(classes(report, target), {"BASENAME_ONLY": 1})
+
+    def test_a_markdown_comment_directive_is_honoured(self) -> None:
+        """The comment rule must still let a real directive through, in both syntaxes.
+
+        Without this the markdown half of the rule could be spelled so that it
+        never matches and every test would stay green -- a check that only ever
+        refuses is indistinguishable from one that is broken.
+        """
+        with fixture({"docs/g.md": DIRECTIVE_MD}, tracked=["IsingModel/Inequalities/GKS.lean"]):
+            report = ca.audit(["docs/g.md"])
+        self.assertEqual(classes(report, "docs/g.md"), {"RESOLVED_BY_DIRECTIVE": 1})
+
+    def test_a_directive_inside_a_verbatim_block_is_content(self) -> None:
+        """A sample document printed in a block exempts nothing in the real one."""
+        with fixture(
+            {"tex/g.tex": DIRECTIVE_IN_VERBATIM_TEX},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        ):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
+
+    def test_a_directive_expires_when_its_subject_is_gone(self) -> None:
+        """An exemption must not outlive the block it was written for.
+
+        Nothing bounded the wait, so a directive left behind by a deletion armed
+        whatever citation appeared next -- dozens of lines later, in a passage
+        nobody wrote it for. It now expires at the first non-blank line that
+        carries no citation.
+        """
+        with fixture({"tex/g.tex": DIRECTIVE_ORPHANED_TEX}, tags=STUB_TAG):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
+
+    def test_a_blank_line_does_not_expire_a_directive(self) -> None:
+        """The rule is "the next line with citations", not "the next line".
+
+        Pinned because it is the boundary of the expiry rule: paragraph spacing
+        between a directive and its citation is ordinary formatting and must
+        keep working, or authors would learn to distrust the mechanism.
+        """
+        with fixture({"tex/g.tex": DIRECTIVE_BLANK_LINE_TEX}, tags=STUB_TAG):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(classes(report, "tex/g.tex"), {"RESOLVED_BY_DIRECTIVE": 1})
+
 
 # ---------------------------------------------------------------------------
 # 5/6 - basename-only and ambiguous
@@ -456,6 +637,57 @@ class SuffixVerdictTest(unittest.TestCase):
             report = ca.audit(["tex/g.tex"])
         self.assertEqual(classes(report, "tex/g.tex"), {"AMBIGUOUS": 2})
         self.assertEqual(sorted(tokens_of(report, ca.AMBIGUOUS)), ["Basic.lean", "Sub/Basic.lean"])
+
+
+# ---------------------------------------------------------------------------
+# 6b - path text glued to a match
+# ---------------------------------------------------------------------------
+
+
+GLUED_TEX = (
+    "Absolute \\texttt{/X/Y.lean} and relative \\texttt{./X/Y.lean},\n"
+    "traversal \\texttt{../X/Y.lean} and home \\texttt{~/X/Y.lean},\n"
+    "backup \\texttt{X/Y.lean.bak} and typo \\texttt{X/Y.leanx}.\n"
+    "The delimited spelling is \\texttt{X/Y.lean}.\n"
+)
+
+GLUED_SPELLINGS = [
+    "../X/Y.lean",
+    "./X/Y.lean",
+    "/X/Y.lean",
+    "X/Y.lean.bak",
+    "X/Y.leanx",
+    "~/X/Y.lean",
+]
+
+
+class GluedTokenTest(unittest.TestCase):
+    """A match that touches path text is charged as written, never truncated.
+
+    ``TOKEN`` has no boundary on either side, so on every spelling below it
+    matches the substring ``X/Y.lean`` -- a path the document did not write, and
+    one that resolves. Six citations of files this repository does not have would
+    have been reported as clean, which is the fail-open shape this whole tool
+    exists to refuse.
+    """
+
+    def test_glued_spellings_are_malformed_not_resolved(self) -> None:
+        """Every glued spelling is a finding, and the delimited one still resolves."""
+        with fixture({"tex/g.tex": GLUED_TEX}, tracked=["IsingModel/X/Y.lean"]):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(classes(report, "tex/g.tex"), {"RESOLVED": 1, "MALFORMED": 6})
+        self.assertEqual(sorted(tokens_of(report, ca.MALFORMED)), GLUED_SPELLINGS)
+        self.assertEqual(report.coverage, [])
+
+    def test_the_glued_run_is_reported_verbatim(self) -> None:
+        """The finding names what the document says, so it can be found and fixed."""
+        with fixture({"tex/g.tex": GLUED_TEX}, tracked=["IsingModel/X/Y.lean"]):
+            report = ca.audit(["tex/g.tex"])
+        self.assertEqual(len(report.findings), 6)
+        for finding in report.findings:
+            self.assertEqual(finding.cls, ca.MALFORMED)
+            self.assertIn("+glued", finding.variant)
+        self.assertNotIn("X/Y.lean", tokens_of(report, ca.MALFORMED))
 
 
 # ---------------------------------------------------------------------------
@@ -495,14 +727,44 @@ class CoverageAuditTest(unittest.TestCase):
         self.assertIn("raw=1 captured=0", report.coverage[0])
         self.assertFalse(report.ok_structurally)
 
-    def test_coverage_failure_suppresses_the_findings_report(self) -> None:
-        """Publishing a census from a provably incomplete extractor is the artefact."""
-        with fixture({"tex/g.tex": UNCOVERED_TEX + BARE_TEX}, tracked=["IsingModel/A.lean"]):
-            report = ca.audit(["tex/g.tex"])
-            text = ca.format_text(report, [], 0)
-        self.assertIn("COVERAGE FAIL", text)
-        self.assertIn("NOT reported", text)
-        self.assertNotIn("MISSING=", text)
+    def test_coverage_failure_suppresses_the_findings_report_in_every_format(self) -> None:
+        """Publishing a census from a provably incomplete extractor is the artefact.
+
+        Parameterised over every format on purpose: ``tsv`` is the one this
+        module calls "the count-of-record", so a census suppressed in the human
+        report but printed unmarked as TSV is the artefact surviving in exactly
+        the form that gets quoted as a number.
+        """
+        for fmt in ("text", "tsv", "json"):
+            with self.subTest(format=fmt):
+                with fixture(
+                    {"tex/g.tex": UNCOVERED_TEX + BARE_TEX}, tracked=["IsingModel/A.lean"]
+                ):
+                    code, out = run_main(ca, "--targets", "tex/g.tex", "--format", fmt)
+                self.assertEqual(code, 1)
+                self.assertIn("COVERAGE", out)
+                self.assertNotIn("Foo/Gone.lean", out)
+                self.assertNotIn("MISSING", out)
+                if fmt == "text":
+                    self.assertIn("NOT reported", out)
+
+    def test_a_hard_failure_suppresses_the_census_in_every_format(self) -> None:
+        """The same rule for the other kind of untrustworthy run.
+
+        A contaminated resolution set makes the verdicts meaningless in a
+        different way from an incomplete extractor, and a census published
+        beside it would be quoted just as readily.
+        """
+        for fmt in ("text", "tsv", "json"):
+            with self.subTest(format=fmt):
+                with fixture(
+                    {"tex/g.tex": BARE_TEX},
+                    tracked=[".self-local/benchmarks/IsingModel/Foo/Gone.lean"],
+                ):
+                    code, out = run_main(ca, "--targets", "tex/g.tex", "--format", fmt)
+                self.assertEqual(code, 1)
+                self.assertIn("CONTAMINATED", out)
+                self.assertNotIn("RESOLVED", out)
 
     def test_file_totals_are_checked_as_well_as_lines(self) -> None:
         """Per-line equality alone would miss an attribution bug that cancels."""
@@ -710,7 +972,12 @@ class RatchetTest(unittest.TestCase):
 
     def test_baseline_round_trip(self) -> None:
         """What is written is what is read back."""
-        with fixture({"tex/g.tex": BARE_TEX}, tracked=["IsingModel/A.lean"]) as root:
+        with fixture(
+            {"tex/g.tex": BARE_TEX},
+            tracked=["IsingModel/A.lean"],
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ) as root:
             code, _ = run_main(
                 ca, "--targets", "tex/g.tex", "--write-baseline", "audit/base.tsv"
             )
@@ -722,13 +989,43 @@ class RatchetTest(unittest.TestCase):
 
     def test_baseline_is_not_written_from_an_untrustworthy_run(self) -> None:
         """A coverage failure must not be allowed to become the new normal."""
-        with fixture({"tex/g.tex": UNCOVERED_TEX}, tracked=["IsingModel/A.lean"]) as root:
+        with fixture(
+            {"tex/g.tex": UNCOVERED_TEX},
+            tracked=["IsingModel/A.lean"],
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ) as root:
             code, out = run_main(
                 ca, "--targets", "tex/g.tex", "--write-baseline", "audit/base.tsv"
             )
+            # Inside the fixture: the temporary tree is gone once it exits, so
+            # this assertion would hold for the wrong reason outside it.
+            self.assertFalse((root / "audit" / "base.tsv").exists())
         self.assertEqual(code, 1)
         self.assertIn("refusing to write a baseline", out)
-        self.assertFalse((root / "audit" / "base.tsv").exists())
+
+    def test_baseline_is_not_written_from_a_partial_target_set(self) -> None:
+        """``--targets`` plus ``--write-baseline`` must not shrink the record.
+
+        The file is rendered from one run, so a run that opened one of the two
+        targets would drop every row of the other -- the recorded debt falls, no
+        citation was fixed, and the ratchet afterwards has nothing to compare the
+        dropped rows against. Structurally the partial run is perfectly sound,
+        which is why the refusal has to be its own check.
+        """
+        with fixture(
+            {"tex/a.tex": BARE_TEX, "tex/b.tex": BASENAME_TEX},
+            tracked=["IsingModel/Foo/Bar.lean"],
+            TARGETS=("tex/a.tex", "tex/b.tex"),
+            MIN_CITATIONS={"tex/a.tex": 1, "tex/b.tex": 1},
+        ) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/a.tex", "--write-baseline", "audit/base.tsv"
+            )
+            self.assertFalse((root / "audit" / "base.tsv").exists())
+        self.assertEqual(code, 1)
+        self.assertIn("refusing to write a baseline", out)
+        self.assertIn("tex/b.tex", out)
 
     def test_missing_baseline_is_a_hard_failure(self) -> None:
         """No baseline means no ratchet, which must not read as "no regressions"."""
@@ -833,6 +1130,51 @@ class MutationTest(unittest.TestCase):
         report = self.audit_with(mutant, {"tex/g.tex": DIRECTIVE_WRONG_TEX}, tags=STUB_TAG)
         self.assertEqual(report.findings, [])
 
+    # 4c - directive scope
+    def test_a_directive_matched_anywhere_arms_a_quotation(self) -> None:
+        """Dropping the comment test turns documentation into an exemption."""
+        mutant = load_mutated(
+            (
+                "    if not (TEX_COMMENT if is_tex else MD_COMMENT).match(line):\n"
+                "        return None",
+                "    if False:\n        return None",
+            )
+        )
+        report = self.audit_with(
+            mutant,
+            {"tex/g.tex": DIRECTIVE_QUOTED_TEX},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        )
+        self.assertEqual(report.findings, [])
+
+    def test_a_directive_read_inside_a_block_exempts_its_sample(self) -> None:
+        """Without the block test, a printed sample document exempts for real."""
+        mutant = load_mutated(
+            (
+                "        found = None if (verbatim_line or in_fence) "
+                "else parse_directive(line, is_tex)",
+                "        found = parse_directive(line, is_tex)",
+            )
+        )
+        report = self.audit_with(
+            mutant,
+            {"tex/g.tex": DIRECTIVE_IN_VERBATIM_TEX},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        )
+        self.assertEqual(report.findings, [])
+
+    def test_a_directive_that_never_expires_drifts_onto_a_later_citation(self) -> None:
+        """The orphaned directive silently exempts a passage nobody wrote it for."""
+        mutant = load_mutated(
+            (
+                "        elif (\n            pending_directive is not None\n"
+                "            and not carried",
+                "        elif (\n            False\n            and not carried",
+            )
+        )
+        report = self.audit_with(mutant, {"tex/g.tex": DIRECTIVE_ORPHANED_TEX}, tags=STUB_TAG)
+        self.assertEqual(report.findings, [])
+
     # 5 - basename-only
     def test_accepting_bare_basenames_exonerates_them(self) -> None:
         """A basename is not a path; accepting it silently resolves 767 citations."""
@@ -867,6 +1209,43 @@ class MutationTest(unittest.TestCase):
         )
         self.assertEqual(report.findings, [])
 
+    # 6b - glued path text
+    def test_without_the_widening_every_glued_spelling_resolves(self) -> None:
+        """The truncation exonerates six citations of files that do not exist."""
+        mutant = load_mutated(
+            (
+                "    left, right = start, end\n"
+                "    while left > 0 and text[left - 1] in TOKEN_EDGE_CHARS:\n"
+                "        left -= 1\n"
+                "    while right < len(text) and text[right] in TOKEN_EDGE_CHARS:\n"
+                "        right += 1\n"
+                "    return text[left:right]",
+                "    return text[start:end]",
+            )
+        )
+        report = self.audit_with(
+            mutant, {"tex/g.tex": GLUED_TEX}, tracked=["IsingModel/X/Y.lean"]
+        )
+        self.assertEqual(report.findings, [])
+        self.assertEqual(report.counts["tex/g.tex"][mutant.RESOLVED], 7)
+
+    # 2b - the indented tree heading
+    def test_stripping_the_wrap_prefix_rebuilds_a_path_from_indentation(self) -> None:
+        """``strip`` instead of ``rstrip`` joins a tree heading to its entry."""
+        mutant = load_mutated(
+            (
+                "            candidate = scan_text.rstrip()",
+                "            candidate = scan_text.strip()",
+            )
+        )
+        report = self.audit_with(
+            mutant,
+            {"tex/g.tex": INDENTED_PREFIX_TEX},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        )
+        self.assertEqual(report.findings, [])
+        self.assertEqual(report.counts["tex/g.tex"][mutant.RESOLVED], 1)
+
     # 7 - escapes
     def test_dropping_unescape_invents_a_false_finding(self) -> None:
         """Proves the unescape step is exercised rather than incidental."""
@@ -899,6 +1278,40 @@ class MutationTest(unittest.TestCase):
         self.assertTrue(report.ok_structurally)
         self.assertEqual(report.raw_occurrences["tex/g.tex"], 2)
         self.assertEqual(report.citations["tex/g.tex"], 1)
+
+    # 8b - suppression of the count-of-record
+    def test_an_ungated_tsv_publishes_a_census_from_an_incomplete_run(self) -> None:
+        """The suppression has to live where the numbers get quoted from."""
+        mutant = load_mutated(
+            (
+                "    if not report.ok_structurally:\n        lines.append(\"#\")",
+                "    if False:\n        lines.append(\"#\")",
+            )
+        )
+        with fixture(
+            {"tex/g.tex": UNCOVERED_TEX + BARE_TEX},
+            tracked=["IsingModel/A.lean"],
+            module=mutant,
+        ):
+            _, out = run_main(mutant, "--targets", "tex/g.tex", "--format", "tsv")
+        self.assertIn("#census", out)
+        self.assertIn("Foo/Gone.lean", out)
+
+    def test_an_ungated_text_report_publishes_a_census_beside_a_hard_failure(self) -> None:
+        """The human report must refuse for the same reason the TSV does."""
+        mutant = load_mutated(
+            (
+                '    if report.ok_structurally:\n        out.append("")',
+                '    if True:\n        out.append("")',
+            )
+        )
+        with fixture(
+            {"tex/g.tex": BARE_TEX},
+            tracked=[".self-local/benchmarks/IsingModel/Foo/Gone.lean"],
+            module=mutant,
+        ):
+            _, out = run_main(mutant, "--targets", "tex/g.tex")
+        self.assertIn("RESOLVED=1", out)
 
     def test_the_file_total_backstops_the_per_line_comparison(self) -> None:
         """Removing only the per-line check still fails the run."""
@@ -997,6 +1410,27 @@ class MutationTest(unittest.TestCase):
             mutant, {"tex/g.tex": SELFREF_TEX}, tracked=["IsingModel/A/X.lean"]
         )
         self.assertEqual(report.selfrefs, [])
+
+    # 12b - the baseline's target set
+    def test_without_the_target_check_a_partial_run_shrinks_the_baseline(self) -> None:
+        """One ``--targets`` run would drop the other target's rows for good."""
+        mutant = load_mutated(
+            ("        if set(report.visited) != set(TARGETS):", "        if False:")
+        )
+        with fixture(
+            {"tex/a.tex": BARE_TEX, "tex/b.tex": BASENAME_TEX},
+            tracked=["IsingModel/Foo/Bar.lean"],
+            module=mutant,
+            TARGETS=("tex/a.tex", "tex/b.tex"),
+            MIN_CITATIONS={"tex/a.tex": 1, "tex/b.tex": 1},
+        ) as root:
+            code, _ = run_main(
+                mutant, "--targets", "tex/a.tex", "--write-baseline", "audit/base.tsv"
+            )
+            written = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 0)
+        self.assertIn("tex/a.tex", written)
+        self.assertNotIn("tex/b.tex", written)
 
     # 12 - the ratchet
     def test_comparing_totals_hides_a_fix_paired_with_a_regression(self) -> None:

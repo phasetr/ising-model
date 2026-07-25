@@ -17,12 +17,16 @@ The two invariants
 ------------------
 1. **A citation is resolved only by exact evidence.** ``RESOLVED`` requires the
    token to be a *component-aligned* suffix of exactly one **git-tracked**
-   ``.lean`` path and to carry at least one directory component. No archive tag,
-   no section heading, no neighbouring line and no filesystem copy can resolve
-   anything. Every other outcome -- no match, several matches, a bare basename,
-   a token that does not normalise -- is a finding. There is deliberately no
-   "probably fine" bucket, and an exemption must be written in the document, per
-   citation, and machine-verified (see ``citation-audit:`` directives below).
+   ``.lean`` path, to carry at least one directory component, and to be
+   *delimited*: a match glued to neighbouring path text (``/X/Y.lean``,
+   ``../X/Y.lean``, ``X/Y.lean.bak``) is charged as the whole glued run and is
+   never truncated into a different path that happens to resolve. No archive
+   tag, no section heading, no neighbouring line and no filesystem copy can
+   resolve anything. Every other outcome -- no match, several matches, a bare
+   basename, a token that does not normalise -- is a finding. There is
+   deliberately no "probably fine" bucket, and an exemption must be written in
+   the document, per citation, and machine-verified (see ``citation-audit:``
+   directives below).
 
 2. **Coverage audit.** Every raw ``.lean`` occurrence in every target must be
    accounted for by the extractor: per line ``line.count(".lean")`` must equal
@@ -32,9 +36,12 @@ The two invariants
    variant" -- a silent fail-open, and the actual failure mode of the four
    previous attempts -- into a loud failure. It runs always, before resolution,
    it cannot be disabled by a flag, it is not part of the baseline (it can never
-   be "accepted"), and a coverage failure suppresses the findings report:
-   printing "280 dangling" from an extractor that is provably incomplete is the
-   artefact that has to stop being produced.
+   be "accepted"), and a coverage failure -- like any hard failure -- suppresses
+   the findings report **in every format** (``text``, ``tsv`` and ``json``
+   alike, and no baseline can be written from such a run): printing "280
+   dangling" from an extractor that is provably incomplete is the artefact that
+   has to stop being produced, and it would still be that artefact if it were
+   printed as TSV.
 
 Decision table
 --------------
@@ -47,7 +54,7 @@ R1   exactly one match **and** the token contains ``/``          ``RESOLVED``
 R2   no match                                                    ``MISSING``
 R3   two or more matches                                         ``AMBIGUOUS``
 R4   exactly one match but the token has no ``/``                ``BASENAME_ONLY``
-R5   token does not normalise (stray brace, ``..``, empty part)  ``MALFORMED``
+R5   token does not normalise (brace, ``..``, glued neighbour)   ``MALFORMED``
 R6   a target does not exist or is not tracked                   hard failure ``TARGET``
 R7   an unaccounted raw ``.lean`` occurrence                     hard failure ``COVERAGE``
 R8   citations in a target below its floor                       hard failure ``VACUOUS``
@@ -90,9 +97,16 @@ implemented at all. The replacement is explicit, local and verified:
     GKS.lean                  GKS-I, GKS-II
     \\end{Verbatim}
 
-A directive applies to the *single next line that carries citations*, or, when
-written immediately before a verbatim block or a fenced block, to that one
-block. ``archived`` is checked against ``git ls-tree -r <tag>``; ``prefix``
+A directive is read **only from a document comment** -- ``%`` at the start of a
+tex line, ``<!--`` at the start of a markdown line -- and **never from inside a
+verbatim or fenced block**, so quoting these examples into a document (or into
+this docstring) arms nothing. Its scope is the *single next line that carries
+citations*, or, when written immediately before a verbatim block or a fenced
+block, that one block; it **expires at the first non-blank line that carries no
+citation**, so deleting the block a directive was written for cannot let the
+exemption drift silently onto an unrelated citation further down.
+
+``archived`` is checked against ``git ls-tree -r <tag>``; ``prefix``
 re-resolves each bare basename as ``<prefix><token>`` against the tracked set.
 Either way the exemption is verified, and a directive whose target does not
 verify yields ``MISSING`` (R12) -- a wrong exemption is a finding, not a pass.
@@ -211,7 +225,8 @@ VERBATIM_BEGIN = re.compile(r"\\begin\{Verbatim\}")
 VERBATIM_END = re.compile(r"\\end\{Verbatim\}")
 
 # Inline macros that carry a path. ``\texttt`` and ``\path`` are the ones in use
-# (937 / 72 occurrences); ``\lstinline`` and ``\verb`` are listed because they
+# (965 / 72 invocations whose argument holds a ``.lean``, out of 10,892 / 145
+# invocations in all); ``\lstinline`` and ``\verb`` are listed because they
 # would otherwise be an unhandled variant the moment someone uses one. Nested
 # ``\texttt`` inside a ``\section{...}`` heading is handled by the residue scan.
 MACRO = re.compile(r"\\(?:texttt|path|lstinline|verb)\{((?:\\.|[^{}\\])*)\}")
@@ -220,14 +235,31 @@ MACRO = re.compile(r"\\(?:texttt|path|lstinline|verb)\{((?:\\.|[^{}\\])*)\}")
 # group (the ``Dir/{A, B}.lean`` shorthand), ends in ``.lean``. The leading
 # ``[A-Za-z0-9_]`` is what makes a prose ".lean" *not* a token -- those
 # occurrences are handled by ``NON_CITATION`` below, never ignored.
+#
+# The pattern has no boundary of its own on either side: it starts at the first
+# identifier character it can and stops at the last ``.lean`` it can reach, so
+# on ``../X/Y.lean`` it yields ``X/Y.lean`` and on ``X/Y.lean.bak`` it again
+# yields ``X/Y.lean`` -- a *different* path from the one written, handed to the
+# resolver as if the document had written it. Truncating a citation until it
+# resolves is an exoneration, so every match is widened by :func:`glued_text`
+# before anything else looks at it.
 TOKEN = re.compile(r"[A-Za-z0-9_][A-Za-z0-9_.+/-]*(?:\{[^}]*\}[A-Za-z0-9_.+/-]*)?\.lean")
 
 # Brace shorthand splitter, applied to a whole token.
 BRACE = re.compile(r"^(.*?)\{([^}]*)\}(.*)\.lean$")
 
-# Characters that may appear inside a token; used for the boundary test that
-# keeps ``NON_CITATION`` from degenerating into a wildcard.
-TOKEN_CHARS = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.+/-")
+# Characters a citation may start with, and the characters it may contain.
+TOKEN_START_CHARS = frozenset(
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
+)
+TOKEN_CHARS = TOKEN_START_CHARS | frozenset(".+/-")
+
+# Characters that must not touch a match on either side. It is ``TOKEN_CHARS``
+# plus ``~``: everything a path may contain (so a match cannot be a truncation
+# of a longer path-like run) plus the one leading character a shell-style home
+# path adds. Used both for the boundary widening in :func:`glued_text` and for
+# the test that keeps ``NON_CITATION`` from degenerating into a wildcard.
+TOKEN_EDGE_CHARS = TOKEN_CHARS | frozenset("~")
 
 # Raw ``.lean`` occurrences that are deliberately *not* citations. This is an
 # enumeration of exact spellings, not a pattern, and it must stay one: the
@@ -256,6 +288,15 @@ WRAP_CONTINUATION = re.compile(r"^[A-Za-z0-9_]")
 # Per-citation exemption directive, written as a comment in the document.
 DIRECTIVE = re.compile(r"citation-audit:\s*([A-Za-z][A-Za-z0-9_-]*)\s+(\S+)")
 DIRECTIVE_KINDS = ("archived", "prefix")
+
+# A directive is only read from a line that *is* a comment: ``%`` at the start
+# of a tex line, ``<!--`` at the start of a markdown line. Without this the
+# pattern would arm anywhere on any line -- inside ``\texttt{...}``, inside a
+# ``Verbatim`` block, in a sentence explaining the syntax -- so transcribing
+# this tool's own documentation into the proof guide would grant a real
+# exemption. An exemption has to be an act, not a quotation.
+TEX_COMMENT = re.compile(r"^\s*%")
+MD_COMMENT = re.compile(r"^\s*<!--")
 
 # Fenced code block delimiter in Markdown (used only for directive block scope;
 # fenced content is scanned like any other line).
@@ -308,18 +349,50 @@ def expand(token: str) -> List[str]:
     return expanded or [token]
 
 
+def glued_text(text: str, start: int, end: int) -> str:
+    """Return the whole run of path characters a ``TOKEN`` match sits inside.
+
+    ``TOKEN`` matches without boundaries (see its comment), so a match is only
+    evidence about the document when nothing path-like touches it. Widening to
+    the maximal run of :data:`TOKEN_EDGE_CHARS` returns the text *as written*:
+    equal to the match when it was delimited, and strictly longer -- and hence
+    rejected by :func:`normalise` -- when it was a truncation of ``/X/Y.lean``,
+    ``./X/Y.lean``, ``../X/Y.lean``, ``~/X/Y.lean``, ``X/Y.lean.bak`` or
+    ``X/Y.leanx``. Charging the glued run is the fail-closed reading: the tool
+    must not repair a citation into one that resolves.
+    """
+    left, right = start, end
+    while left > 0 and text[left - 1] in TOKEN_EDGE_CHARS:
+        left -= 1
+    while right < len(text) and text[right] in TOKEN_EDGE_CHARS:
+        right += 1
+    return text[left:right]
+
+
 def normalise(token: str) -> Optional[str]:
     """Return the token if it is a well-formed relative path, else ``None``.
 
-    ``None`` means ``MALFORMED`` (R5). Rejected: leftover braces, an absolute
-    path, an empty component, and ``.``/``..`` components -- each of which would
-    otherwise be handed to a suffix lookup that cannot mean anything sensible.
+    ``None`` means ``MALFORMED`` (R5). Rejected: leftover braces; anything that
+    does not end in ``.lean`` (``X/Y.lean.bak``, ``X/Y.leanx``); a character no
+    path component of this repository may hold (``~`` and everything else
+    outside :data:`TOKEN_CHARS`); a first character that is not an identifier
+    character (``/X.lean``, ``./X.lean``, ``../X.lean``); an empty component;
+    and ``.``/``..`` components anywhere. Each of those would otherwise be
+    handed to a suffix lookup that answers a different question from the one the
+    document asked.
+
+    The predicate is total on the *glued* text the extractor hands over (see
+    :func:`glued_text`), which is what makes the absolute-path and ``..`` rows of
+    the decision table reachable at all: ``TOKEN`` on its own would have
+    truncated those spellings into a plain relative path before this is called.
     """
     if "{" in token or "}" in token:
         return None
     if not token.endswith(".lean"):
         return None
-    if token.startswith("/"):
+    if any(char not in TOKEN_CHARS for char in token):
+        return None
+    if token[0] not in TOKEN_START_CHARS:
         return None
     parts = token.split("/")
     for part in parts:
@@ -421,13 +494,16 @@ class Citation(NamedTuple):
     directive: Optional[Directive]
 
 
-def parse_directive(line: str) -> Optional[Directive]:
-    """Parse a ``citation-audit:`` directive, or return ``None``.
+def parse_directive(line: str, is_tex: bool) -> Optional[Directive]:
+    """Parse a ``citation-audit:`` directive from a comment line, or ``None``.
 
-    An unrecognised kind returns ``None``, which grants no exemption at all --
-    the citations it was meant to cover stay charged. That is the fail-closed
-    reading of a typo, and it is why an unparsed directive needs no class.
+    A line that is not a comment in the document's own syntax grants nothing,
+    and neither does an unrecognised kind: in both cases the citations the
+    writer meant to cover stay charged. That is the fail-closed reading of a
+    typo and of a quotation, and it is why neither needs a class of its own.
     """
+    if not (TEX_COMMENT if is_tex else MD_COMMENT).match(line):
+        return None
     match = DIRECTIVE.search(line)
     if not match:
         return None
@@ -487,7 +563,7 @@ def acknowledge_non_citations(text: str, spans: List[Tuple[int, int]]) -> int:
             right = text[end] if end < len(text) else ""
             if left and left not in NON_CITATION_LEFT_DELIMITERS:
                 continue
-            if right and right in TOKEN_CHARS:
+            if right and right in TOKEN_EDGE_CHARS:
                 continue
             acknowledged += 1
             break
@@ -543,8 +619,14 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                 scan_text = pending_wrap[1] + line.strip()
                 wrapped = True
             pending_wrap = None
-            if raw == 0 and WRAP_PREFIX.match(scan_text.strip()):
-                pending_wrap = (report_line, scan_text.strip())
+            # ``rstrip`` and not ``strip``: an indented line is a tree entry, not
+            # a wrapped source line, and stripping its indentation first would
+            # let ``    Inequalities/`` join a column-0 ``GKS.lean`` below it --
+            # rebuilding a path out of tree layout, which is the one inference
+            # this tool exists to refuse.
+            candidate = scan_text.rstrip()
+            if raw == 0 and WRAP_PREFIX.match(candidate):
+                pending_wrap = (report_line, candidate)
 
         if raw or ".lean" in scan_text:
             captured = 0
@@ -560,7 +642,17 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                     token_variant = "verbatim-wrap" if wrapped else unit_variant
                     if "{" in raw_token:
                         token_variant += "+brace"
-                    for expanded in expand(raw_token):
+                    # What the document wrote, not what the pattern could reach.
+                    # A glued match is charged whole and is never brace-expanded:
+                    # expanding it would hand the resolver alternatives nobody
+                    # wrote, which is the same repair by another route.
+                    written = glued_text(unescaped, match.start(), match.end())
+                    if written != raw_token:
+                        token_variant += "+glued"
+                        expansions = [written]
+                    else:
+                        expansions = expand(raw_token)
+                    for expanded in expansions:
                         citations.append(
                             Citation(
                                 target=target,
@@ -584,7 +676,8 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
         # Directive scope. A directive never covers its own line -- it is parsed
         # after this line's citations have been attached -- so it applies to the
         # next line carrying citations, or to the block it immediately precedes.
-        if len(citations) > line_start:
+        carried = len(citations) > line_start
+        if carried:
             active = block_directive if block_directive is not None else pending_directive
             if active is not None:
                 for index in range(line_start, len(citations)):
@@ -592,9 +685,25 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                 if block_directive is None:
                     pending_directive = None
 
-        found = parse_directive(line)
+        # A directive written inside a verbatim or fenced block is content, not
+        # an instruction: a document that quotes the syntax must not thereby
+        # exempt the citation printed after the block.
+        found = None if (verbatim_line or in_fence) else parse_directive(line, is_tex)
         if found is not None:
             pending_directive = Directive(found.kind, found.argument, number)
+        elif (
+            pending_directive is not None
+            and not carried
+            and not begins
+            and not fence
+            and line.strip()
+        ):
+            # Expiry. A directive names the *next* citation line; if the first
+            # non-blank line after it carries no citation, its subject is gone
+            # (typically because the block it annotated was deleted). Letting it
+            # wait would silently exempt whatever citation appears next, dozens
+            # of lines away, which is an exemption nobody wrote.
+            pending_directive = None
 
         if begins:
             in_verbatim = True
@@ -993,7 +1102,16 @@ def aggregate(findings: Sequence[Finding]) -> List[Row]:
 
 
 def render_baseline(report: Report) -> str:
-    """Render the canonical TSV: header comments, census lines, then the rows."""
+    """Render the canonical TSV: header comments, census lines, then the rows.
+
+    A run that is not structurally sound (coverage mismatch or hard failure)
+    renders **no census and no rows**, only what went wrong. This is the same
+    rule :func:`format_text` states, applied where it matters most: the TSV is
+    the count-of-record, so a census printed here from a provably incomplete
+    extractor is the exact artefact the module docstring says must stop being
+    produced -- and it would be quoted as a count precisely because it is the
+    machine-readable form.
+    """
     lines = [
         "# citation-audit v1 baseline -- the count-of-record for .lean citations.",
         "#",
@@ -1006,8 +1124,18 @@ def render_baseline(report: Report) -> str:
         "#   python3 scripts/citation_audit.py --write-baseline scripts/audit/citation_baseline.tsv",
         "# A baseline that grew without a stated reason is a review signal: remediation",
         "# is supposed to shrink it monotonically.",
-        f"#tracked\t{report.tracked}",
     ]
+    if not report.ok_structurally:
+        lines.append("#")
+        lines.append(
+            "# UNTRUSTWORTHY RUN: the extractor did not account for every .lean "
+            "occurrence,"
+        )
+        lines.append("# so no census and no rows are published. What failed:")
+        for item in list(report.coverage) + list(report.hard):
+            lines.append(f"#!\t{item}")
+        return "\n".join(lines) + "\n"
+    lines.append(f"#tracked\t{report.tracked}")
     for target in report.visited:
         census = ",".join(
             f"{name}={report.counts[target][name]}"
@@ -1090,9 +1218,18 @@ def format_tsv(report: Report) -> str:
 
 
 def format_json(report: Report) -> str:
-    """Render the report as JSON for tooling."""
+    """Render the report as JSON for tooling.
+
+    ``trustworthy`` is the machine-readable form of the suppression rule: when
+    it is ``false``, ``counts`` and ``findings`` are empty because they were
+    withheld, not because the documents were clean. A consumer that reads only
+    ``findings`` therefore sees nothing to act on and nothing to quote, which is
+    the intended fail-closed reading of an incomplete run.
+    """
+    trustworthy = report.ok_structurally
     payload = {
         "schema": 1,
+        "trustworthy": trustworthy,
         "tracked_lean_files": report.tracked,
         "targets": [
             {
@@ -1104,7 +1241,11 @@ def format_json(report: Report) -> str:
         ],
         "coverage": {"ok": not report.coverage, "mismatches": report.coverage},
         "hard_failures": report.hard,
-        "counts": {target: report.counts[target] for target in report.visited},
+        "counts": (
+            {target: report.counts[target] for target in report.visited}
+            if trustworthy
+            else {}
+        ),
         "findings": [
             {
                 "class": finding.cls,
@@ -1114,7 +1255,9 @@ def format_json(report: Report) -> str:
                 "variant": finding.variant,
             }
             for finding in list(report.findings) + list(report.selfrefs)
-        ],
+        ]
+        if trustworthy
+        else [],
     }
     return json.dumps(payload, indent=1, sort_keys=True) + "\n"
 
@@ -1124,7 +1267,9 @@ def format_text(
 ) -> str:
     """Render the human report.
 
-    A coverage failure suppresses the finding census entirely. Printing "280
+    A coverage failure or a hard failure suppresses the finding census entirely,
+    the same rule :func:`render_baseline` and :func:`format_json` apply, so no
+    format publishes numbers a structurally unsound run produced. Printing "280
     dangling" from an extractor that is provably incomplete is the artefact this
     tool exists to stop producing, so the run reports what it cannot do instead
     of what it thinks it found.
@@ -1151,7 +1296,9 @@ def format_text(
         out.append(f"HARD FAILURES: {len(report.hard)}")
         for item in report.hard:
             out.append(f"  {item}")
-    if not report.coverage:
+        if not report.coverage:
+            out.append("The run is not trustworthy, so the findings below are NOT reported.")
+    if report.ok_structurally:
         out.append("")
         for target in report.visited:
             census = "  ".join(
@@ -1211,7 +1358,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument(
         "--write-baseline",
         metavar="PATH",
-        help="Regenerate a baseline file and print the delta written.",
+        help="Regenerate a baseline file (every default target must be scanned).",
     )
     parser.add_argument(
         "--strict",
@@ -1240,6 +1387,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if not report.ok_structurally:
             print(format_text(report, [], 0), end="")
             print("refusing to write a baseline from an untrustworthy run")
+            return 1
+        if set(report.visited) != set(TARGETS):
+            # The file is the count-of-record for *all* targets, and it is
+            # rendered from this run alone, so a partial run would silently drop
+            # every row of the targets it did not open -- shrinking the recorded
+            # debt without fixing a single citation, and leaving the ratchet with
+            # nothing to compare against later.
+            missing = sorted(set(TARGETS) - set(report.visited))
+            extra = sorted(set(report.visited) - set(TARGETS))
+            print(format_text(report, [], 0), end="")
+            print(
+                "refusing to write a baseline from a partial target set "
+                f"(not scanned: {missing or 'none'}; not a default target: {extra or 'none'})"
+            )
             return 1
         previous: Counter = Counter()
         if destination.is_file():
