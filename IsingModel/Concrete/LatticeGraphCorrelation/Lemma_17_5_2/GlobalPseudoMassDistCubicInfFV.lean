@@ -37,7 +37,7 @@ private theorem finiteRegionPseudoMassDistFV_le_pair {α d : ℕ} (hα : 1 ≤ �
     (hmem : (x, z) ∈ finiteRegionDistinctPairs ((cubicExhaustion d).volume n)) :
     finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z := by
   unfold finiteRegionPseudoMassDistFV
-  exact Finset.inf'_le (fun q => pseudoMassFromParamsAtPairFV hα p n q.1 q.2) hmem
+  exact Finset.inf'_le _ hmem
 
 /-- **GJ p.312 bridge, finite-volume form**: `globalPseudoMassDist` is the cubic-exhaustion infimum
 of the finite-volume finite-region pseudo-masses.  See the module docstring for the two
