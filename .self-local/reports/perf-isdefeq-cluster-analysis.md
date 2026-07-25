@@ -83,7 +83,11 @@ is a design observation for a separate item, not a build-speed action for this i
 
 Copied from the ephemeral `/tmp/claude-501/isdefeq/` location (session-scoped, not durable) to
 `.self-local/reports/perf-isdefeq-cluster-artifacts/`:
-- Fixed-version Lean files: `bpd_B1.lean`, `bpd_B2.lean`, `gpm_G1.lean`, `gpm_G2.lean`,
-  `gpm_G3.lean`, `mcc_M1.lean`, `res_FIX.lean`, `fv1_FIX.lean`, `fv2_FIX.lean`.
+- Fixed-version Lean sources: `bpd_B1.lean.txt`, `bpd_B2.lean.txt`, `gpm_G1.lean.txt`,
+  `gpm_G2.lean.txt`, `gpm_G3.lean.txt`, `mcc_M1.lean.txt`, `res_FIX.lean.txt`,
+  `fv1_FIX.lean.txt`, `fv2_FIX.lean.txt`. They carry the `.lean.txt` suffix on purpose: the
+  audit gate self-test `test_no_tracked_lean_file_lives_outside_the_checked_roots` requires
+  every tracked `.lean` file to live under a checked root, and these are experiment records
+  rather than library sources. Drop the `.txt` suffix locally to re-run them.
 - Raw trace-profiler logs: `bpd_trace.out`, `gpm_trace.out`, `mcc_trace.out`.
-- Measurement script: `measure.sh`.
+- Measurement script: `measure.sh` (takes the Lean file to measure as its first argument).
