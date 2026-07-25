@@ -1,5 +1,38 @@
 # ローカルミラー・インデックス (2026-07-25 更新 — PR #4711 MERGED (main `4b188515`), #4704 GitHub body + mirror Scope section moved item (a) `.lean` doc-comment fix into Done (explicitly NOT user-authorized, main agent's own scope judgment recorded), #4704 stays OPEN with 2 remaining items; the #4303 dangling-reference cluster (docs + `.lean`) is now fully closed out across PR #4705/#4708/#4710/#4711; #4692/#4559 GitHub-side completion comments posted (bodies already updated, mirror #4692 stale checklist line fixed) — still OPEN pending user close approval; #4642 park/close judgement posted as a GitHub comment (still OPEN pending user decision); #4563 standing-authorization-validity language already present in body, not duplicated)
 
+**2026-07-25 goal-scope 検問 + ミラー是正 (dev-issue-manager, main `4b14a205`, mirror-only edits)**:
+(1) **#4692 は GitHub 上で CLOSED** (`2026-07-25T13:22:38Z`, `gh issue view` 実測) — ミラー
+`4692.md` の "Status: OPEN" と本 INDEX ヘッダの「#4692/#4559 still OPEN」記述が stale だった;
+`4692.md` を是正済. GitHub の open issue は **#4704 / #4709 / #4642 / #4563 / #4559 の 5 本のみ**.
+(2) **#4559** は 3 items すべて disposed (PR #4702+#4705 / #4636 / #4693) = 実体 RESOLVED,
+GitHub は OPEN のまま — close はユーザー承認待ちであって作業レーンではない (`4559.md` 是正済).
+(3) **goal-scope 判定**: mutating な作業で追加認可なしに着手できるものは **無し**
+(#4704 (b)/(c) と `.lean` doc-comment sweep = issue 本文自身が authorization-pending と明記,
+#4709 gate = global skill 変更を伴う, #4563 = item-specific gate + standing auth 未確認,
+#4642 = off-book 新規定理, OZ/§17.5.1 = off-book). 形式化レーンは現 main でも on-book 枯渇を
+再確認 (docs の non-Done 行は連続体 φ⁴ の Out of scope と supersede 済 Partial のみ).
+(4) **未記録の負債 2 件 (新規, 本 INDEX が初出)**:
+   - **`ring` → `ring_nf` fallback 2 サイト**: full build のたびに
+     `info: Try this: [apply] ring_nf` + "The `ring` tactic failed to close the goal" を出す
+     (`IsingModel/ContinuousSpin/Phi4AllOdd.lean:41`,
+     `IsingModel/TransferMatrix/TwoSiteInteractingLayerOpenBoundaryWindow.lean:223`).
+     5040 job の full build で info を出すのはこの 2 モジュールのみ
+     (`.self-local/reports/verify-optionB-latticesystembridge.log` 全 16 行が証拠).
+     warning ではないのでゲートは通るが, 失敗する `ring1` 探索コストを毎回払っている.
+     2026-07-17 以降の verify ログにも同じ 2 行が残存 (長期未記録). 未 issue 化.
+   - **docs/index.md の status 散文の内部矛盾**: `docs/index.md:496` / `:1076` が §4.6 Prop 4.6.1 を
+     "(convergence) pending" と書く一方, 同 `:401` / `:1332` / `:1338` は同命題を **Done
+     (unconditional, PR #3898)** と書く; さらに `:2219` 付近の節見出し "The following GJ Ising
+     infinite-volume discussions are **not yet formalized**" の直下で item 1/2/3/6 が
+     "DONE"/"(Resolved.)" と書かれている. #4704 は stale `.lean` パス/宣言参照のみを追跡しており,
+     この **status 散文の陳腐化は既存 issue のどれにも記録されていない**. 修正は達成主張の表現変更を
+     伴うためユーザー判断事項.
+(5) **build 高速化レーンの「枯渇」は未実証**: 実測済みモジュールは 48/2011 のみで, その候補選定基準
+(`maxHeartbeats` 保持ファイル + 最大行数 top-25) は同じレポートが「実測コストと無相関」と結論した
+proxy そのもの (`refactor-axis-buildtime-measured-2db44a2b.md` finding 3). 全数カバレッジは
+**clean full build 1 回**の per-job 所要時間出力 (`✔ [n/m] Built X (12s)` 形式; replay 時は出ない)
+で得られるため, 8h の逐次 sweep は不要.
+
 **2026-07-25 #4710 merged + #4704 Scope section resynced (dev-pr-clerk)**: PR #4710
 (`docs/4704-fix-dangling-transfermatrix-citation`) squash-merged with `--body-file` from the
 current PR body (title corrected `drop`→`repoint` before merge per `dev-issue-manager`
@@ -1031,3 +1064,15 @@ Blanket authorization (2026-07-18) for autonomous family-by-family consolidation
 - Continue wave-2 self-contained families (high-confidence, zero-red-flag)
 - Prepare wave-3 design review (escalation-prone families)
 - Monitor build-speed / olean stability across wave-1/2 merges
+
+---
+
+## 2026-07-25 (dev-pr-clerk) — new issue #4712 + draft PR #4713 opened
+
+`dev-perf` full-coverage (2011/2011 module) clean-build measurement at main `4b14a205`
+found 2 new outliers not caught by the two prior 48/2011-coverage "exhausted" campaigns:
+`CompleteGraphK4.lean:34` `decide` (VERIFIED -5.3s) and `HLSCorrelationCapstone.lean:185,189`
+2x `positivity` (estimated -4..5s). Filed as issue #4712, branch
+`refactor/buildtime-fullcoverage-outliers` opened with empty commit `f7b90286` and draft PR
+#4713 (`Closes #4712`). Implementation not yet started — mirror `.self-local/issues/4712.md`
+created. GitHub open issues now: #4704 / #4709 / #4642 / #4563 / #4559 / **#4712 (new)**.
