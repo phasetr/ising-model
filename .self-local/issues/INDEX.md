@@ -1144,3 +1144,19 @@ all `C1`/`HLSSharpPairBound` occurrences) — no edit was needed there.
 Session totals (this session, cumulative): **12 PRs merged** (including #4722 above), build-time
 reduction **≈ −37s** aggregate across the session's build-speed items. #4714 is ON HOLD. Next
 recommended step: PR-1 under #4704 (fail-closed citation checker).
+
+---
+
+## 2026-07-26 (dev-pr-clerk) — PR #4714 CLOSED per user instruction (not merged); R4 findings recorded on #4704
+
+Per explicit user instruction, **PR #4714 was closed without merging** (comment with halt
+rationale posted first:
+https://github.com/phasetr/ising-model/pull/4714#issuecomment-5080691044). Branch
+`docs/4704-tex-dangling-paths` (HEAD `a14f6830`) **preserved** (`--delete-branch` not used).
+
+R4 halt findings (citation-format coverage table + 2 exoneration traps + self-reference/
+collapsed-enumeration detector + reusable ephemeral scan assets) recorded as a comment on #4704:
+https://github.com/phasetr/ising-model/issues/4704#issuecomment-5080692428, and mirrored in
+`4704.md`. **#4704 stays OPEN**; next actionable step remains **PR-1 (fail-closed checker)**.
+GitHub open issues: #4704 / #4709 / #4642 / #4563 / #4559 / #4712 (#4714 now closed, not counted).
+Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local/` mirrors only).

@@ -1,5 +1,32 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## SEVENTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — PR #4714 CLOSED per user instruction (not merged); next = PR-1 under #4704
+
+This supersedes the SIXTH (FINAL) UPDATE below as the session's terminal state.
+
+Per explicit user instruction, **PR #4714 is now CLOSED** (not merged). A comment with the halt
+rationale was posted before closing:
+https://github.com/phasetr/ising-model/pull/4714#issuecomment-5080691044. **Branch
+`docs/4704-tex-dangling-paths` (HEAD `a14f6830`) is preserved for reference** (`--delete-branch`
+was not used).
+
+R4's halt findings — citation-format coverage table (inline `\texttt`, `\path`, Verbatim blocks/
+ASCII trees, brace-shorthand `Dir/\{A,B\}.lean`, bare-prose form, `\_` escaping, Verbatim
+line-wraps), 2 confirmed exoneration traps (unconditional archive-tag resolution; permissive
+component-aligned suffix matching), a self-reference/collapsed-enumeration detection rule
+(exactly reproduced tier1's 15-paragraph finding), and reusable ephemeral scan assets
+(`r4scan.py`/`r4audit.py`/`r4dup.py`/`r4count.py`) — were recorded as a comment on #4704:
+https://github.com/phasetr/ising-model/issues/4704#issuecomment-5080692428, and mirrored into
+`.self-local/issues/4704.md`.
+
+**#4704 stays OPEN.** Next actionable step: **PR-1 under #4704** — a fail-closed citation checker
+under `scripts/` (full path-suffix resolution, correct Verbatim/brace expansion, zero
+disclaim-exemptions, fixtures + mutation tests for the known miss-classes, self-referential-prose
+detection). No separate authorization needed for PR-1 itself.
+
+Synced this update via short-lived PR #4727 (`docs/4704-pr4714-close-sync`), containing only
+`.self-local/` mirror changes, merged with CI green.
+
 ## SIXTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — main = `40315d38` — PR #4722 MERGED (#4721 closed); PR #4714 ON HOLD
 
 This supersedes the FIFTH (FINAL) UPDATE below as the session's terminal state.
