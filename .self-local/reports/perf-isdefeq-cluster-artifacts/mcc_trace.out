@@ -1,0 +1,283 @@
+[Elab.async] [0.015313] ✅️ Lean.Elab.Command.runLintersAsync
+  [Elab.lint] [0.015302] ✅️ running linters
+[Elab.async] [5.622716] ✅️ elaborating proof of IsingModel.singlePolymer_ursell_term_eq
+  [Elab.definition.value] [5.620253] ✅️ IsingModel.singlePolymer_ursell_term_eq
+    [Elab.step] [5.619395] ✅️ 
+          rw [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+              (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+            clusterSeqActivity_const, Nat.add_sub_cancel]
+          have hexp : (-(t ^ P.card)) ^ (m + 1) = -((-1 : ℝ) ^ m * (t ^ P.card) ^ (m + 1)) := by rw [neg_pow, pow_succ];
+            ring
+          rw [hexp]; push_cast; ring
+      [Elab.step] [5.619385] ✅️ 
+            rw [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+              clusterSeqActivity_const, Nat.add_sub_cancel]
+            have hexp : (-(t ^ P.card)) ^ (m + 1) = -((-1 : ℝ) ^ m * (t ^ P.card) ^ (m + 1)) := by
+              rw [neg_pow, pow_succ]; ring
+            rw [hexp]; push_cast; ring
+        [Elab.step] [5.588780] ✅️ rw [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+              clusterSeqActivity_const, Nat.add_sub_cancel]
+          [Elab.step] [5.588772] ✅️ (rewrite [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                    (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+                  clusterSeqActivity_const, Nat.add_sub_cancel];
+                with_annotate_state"]" (try (with_reducible rfl)))
+            [Elab.step] [5.588767] ✅️ rewrite [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                      (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+                    clusterSeqActivity_const, Nat.add_sub_cancel];
+                  with_annotate_state"]" (try (with_reducible rfl))
+              [Elab.step] [5.588763] ✅️ rewrite [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                        (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+                      clusterSeqActivity_const, Nat.add_sub_cancel];
+                    with_annotate_state"]" (try (with_reducible rfl))
+                [Elab.step] [5.588332] ✅️ rewrite [ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                        (fun i j _ => PolymersIncompatible.self_of_isPolymer hP),
+                      clusterSeqActivity_const, Nat.add_sub_cancel]
+                  [Elab.step] [5.586245] ✅️ expected type: <not-available>, term
+                      ursellCoefficient_complete_eq (Nat.le_add_left 1 m)
+                        (fun i j _ => PolymersIncompatible.self_of_isPolymer hP)
+                    [Elab.step] [5.585765] ✅️ expected type: ∀ (i j : Fin (m + 1)),
+                          i ≠ j → PolymersIncompatible P P, term
+                        (fun i j _ => PolymersIncompatible.self_of_isPolymer hP)
+                      [Elab.step] [5.585756] ✅️ expected type: ∀ (i j : Fin (m + 1)),
+                            i ≠ j → PolymersIncompatible P P, term
+                          fun i j _ => PolymersIncompatible.self_of_isPolymer hP
+                        [Elab.step] [5.585618] ✅️ expected type: PolymersIncompatible P P, term
+                            PolymersIncompatible.self_of_isPolymer hP
+                          [Meta.isDefEq] [5.584066] ❌️ PolymersIncompatible (?m.64 i)
+                                (?m.64 j) =?= PolymersIncompatible ?m.75 ?m.75
+                            [Meta.isDefEq] [5.583852] ❌️ ¬Disjoint (polymerSupport (?m.64 i))
+                                    (polymerSupport
+                                      (?m.64 j)) =?= ¬Disjoint (polymerSupport ?m.75) (polymerSupport ?m.75)
+                              [Meta.isDefEq.delta] [2.824549] ❌️ ¬Disjoint (polymerSupport (?m.64 i))
+                                      (polymerSupport
+                                        (?m.64 j)) =?= ¬Disjoint (polymerSupport ?m.75) (polymerSupport ?m.75)
+                                [Meta.isDefEq] [2.824540] ❌️ Disjoint (polymerSupport (?m.64 i))
+                                      (polymerSupport
+                                        (?m.64 j)) =?= Disjoint (polymerSupport ?m.75) (polymerSupport ?m.75)
+                                  [Meta.isDefEq] [2.757121] ❌️ ∀ ⦃x : Finset ?m.60⦄,
+                                        x ≤ polymerSupport (?m.64 i) →
+                                          x ≤ polymerSupport (?m.64 j) →
+                                            x ≤
+                                              ⊥ =?= ∀ ⦃x : Finset ?m.70⦄,
+                                        x ≤ polymerSupport ?m.75 → x ≤ polymerSupport ?m.75 → x ≤ ⊥
+                                    [Meta.isDefEq] [2.756757] ❌️ x ≤
+                                          polymerSupport (?m.64 j) =?= x ≤ polymerSupport (?m.64 i)
+                                      [Meta.isDefEq] [2.670645] ❌️ partialOrder.toLE.1 x
+                                            (polymerSupport
+                                              (?m.64 j)) =?= partialOrder.toLE.1 x (polymerSupport (?m.64 i))
+                                        [Meta.isDefEq] [2.670516] ❌️ ∀ ⦃x_1 : ?m.76⦄,
+                                              x_1 ∈ x →
+                                                x_1 ∈
+                                                  polymerSupport
+                                                    (?m.64
+                                                      j) =?= ∀ ⦃x_1 : ?m.76⦄, x_1 ∈ x → x_1 ∈ polymerSupport (?m.64 i)
+                                          [Meta.isDefEq] [2.670499] ❌️ x ∈
+                                                polymerSupport (?m.64 j) =?= x ∈ polymerSupport (?m.64 i)
+                                            [Meta.isDefEq] [2.589602] ❌️ SetLike.instMembership.1
+                                                  (polymerSupport (?m.64 j))
+                                                  x =?= SetLike.instMembership.1 (polymerSupport (?m.64 i)) x
+                                              [Meta.isDefEq] [2.589581] ❌️ x ∈
+                                                    ↑(polymerSupport (?m.64 j)) =?= x ∈ ↑(polymerSupport (?m.64 i))
+                                                [Meta.isDefEq.delta] [0.899695] ❌️ x ∈
+                                                      ↑(polymerSupport (?m.64 j)) =?= x ∈ ↑(polymerSupport (?m.64 i))
+                                                  [Meta.isDefEq] [0.899682] ❌️ ↑(polymerSupport
+                                                          (?m.64 j)) =?= ↑(polymerSupport (?m.64 i))
+                                                    [Meta.isDefEq] [0.832796] ❌️ instSetLike.1
+                                                          (polymerSupport
+                                                            (?m.64 j)) =?= instSetLike.1 (polymerSupport (?m.64 i))
+                                                      [Meta.isDefEq] [0.832773] ❌️ {a |
+                                                            a ∈
+                                                              (polymerSupport
+                                                                  (?m.64
+                                                                    j)).val} =?= {a |
+                                                            a ∈ (polymerSupport (?m.64 i)).val}
+                                                        [Meta.isDefEq.delta] [0.418027] ❌️ {a |
+                                                              a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val} =?= {a |
+                                                              a ∈ (polymerSupport (?m.64 i)).val}
+                                                          [Meta.isDefEq] [0.418003] ❌️ fun a =>
+                                                                a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= fun a =>
+                                                                a ∈ (polymerSupport (?m.64 i)).val
+                                                            [Meta.isDefEq] [0.417994] ❌️ a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= a ∈ (polymerSupport (?m.64 i)).val
+                                                        [Meta.isDefEq] [0.414728] ❌️ fun a =>
+                                                              a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val =?= fun a =>
+                                                              a ∈ (polymerSupport (?m.64 i)).val
+                                                          [Meta.isDefEq] [0.414719] ❌️ a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val =?= a ∈ (polymerSupport (?m.64 i)).val
+                                                [Meta.isDefEq] [1.689867] ❌️ Set.instMembership.1
+                                                      (↑(polymerSupport (?m.64 j)))
+                                                      x =?= Set.instMembership.1 (↑(polymerSupport (?m.64 i))) x
+                                                  [Meta.isDefEq] [1.689850] ❌️ (↑(polymerSupport (?m.64 j))).Mem
+                                                        x =?= (↑(polymerSupport (?m.64 i))).Mem x
+                                                    [Meta.isDefEq.delta] [0.847608] ❌️ (↑(polymerSupport (?m.64 j))).Mem
+                                                          x =?= (↑(polymerSupport (?m.64 i))).Mem x
+                                                      [Meta.isDefEq] [0.847598] ❌️ ↑(polymerSupport
+                                                              (?m.64 j)) =?= ↑(polymerSupport (?m.64 i))
+                                                        [Meta.isDefEq] [0.798729] ❌️ instSetLike.1
+                                                              (polymerSupport
+                                                                (?m.64 j)) =?= instSetLike.1 (polymerSupport (?m.64 i))
+                                                          [Meta.isDefEq] [0.798710] ❌️ {a |
+                                                                a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val} =?= {a |
+                                                                a ∈ (polymerSupport (?m.64 i)).val}
+                                                            [Meta.isDefEq] [0.400014] ❌️ fun a =>
+                                                                  a ∈
+                                                                    (polymerSupport
+                                                                        (?m.64
+                                                                          j)).val =?= fun a =>
+                                                                  a ∈ (polymerSupport (?m.64 i)).val
+                                                              [Meta.isDefEq] [0.400008] ❌️ a ∈
+                                                                    (polymerSupport
+                                                                        (?m.64
+                                                                          j)).val =?= a ∈ (polymerSupport (?m.64 i)).val
+                                                    [Meta.isDefEq] [0.842228] ❌️ ↑(polymerSupport (?m.64 j))
+                                                          x =?= ↑(polymerSupport (?m.64 i)) x
+                                                      [Meta.isDefEq] [0.793135] ❌️ instSetLike.1
+                                                            (polymerSupport (?m.64 j))
+                                                            x =?= instSetLike.1 (polymerSupport (?m.64 i)) x
+                                                        [Meta.isDefEq] [0.793114] ❌️ {a |
+                                                                a ∈ (polymerSupport (?m.64 j)).val}
+                                                              x =?= {a | a ∈ (polymerSupport (?m.64 i)).val} x
+                                                          [Meta.isDefEq] [0.400403] ❌️ (fun a =>
+                                                                  a ∈ (polymerSupport (?m.64 j)).val)
+                                                                x =?= (fun a => a ∈ (polymerSupport (?m.64 i)).val) x
+                                                            [Meta.isDefEq] [0.400397] ❌️ x ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= x ∈ (polymerSupport (?m.64 i)).val
+                              [Meta.isDefEq] [2.759283] ❌️ Disjoint (polymerSupport (?m.64 i))
+                                      (polymerSupport (?m.64 j)) →
+                                    False =?= Disjoint (polymerSupport ?m.75) (polymerSupport ?m.75) → False
+                                [Meta.isDefEq] [2.759280] ❌️ Disjoint (polymerSupport (?m.64 i))
+                                      (polymerSupport
+                                        (?m.64 j)) =?= Disjoint (polymerSupport ?m.75) (polymerSupport ?m.75)
+                                  [Meta.isDefEq] [2.708775] ❌️ ∀ ⦃x : Finset ?m.60⦄,
+                                        x ≤ polymerSupport (?m.64 i) →
+                                          x ≤ polymerSupport (?m.64 j) →
+                                            x ≤
+                                              ⊥ =?= ∀ ⦃x : Finset ?m.70⦄,
+                                        x ≤ polymerSupport ?m.75 → x ≤ polymerSupport ?m.75 → x ≤ ⊥
+                                    [Meta.isDefEq] [2.708570] ❌️ x ≤
+                                          polymerSupport (?m.64 j) =?= x ≤ polymerSupport (?m.64 i)
+                                      [Meta.isDefEq] [2.659791] ❌️ partialOrder.toLE.1 x
+                                            (polymerSupport
+                                              (?m.64 j)) =?= partialOrder.toLE.1 x (polymerSupport (?m.64 i))
+                                        [Meta.isDefEq] [2.659731] ❌️ ∀ ⦃x_1 : ?m.76⦄,
+                                              x_1 ∈ x →
+                                                x_1 ∈
+                                                  polymerSupport
+                                                    (?m.64
+                                                      j) =?= ∀ ⦃x_1 : ?m.76⦄, x_1 ∈ x → x_1 ∈ polymerSupport (?m.64 i)
+                                          [Meta.isDefEq] [2.659723] ❌️ x ∈
+                                                polymerSupport (?m.64 j) =?= x ∈ polymerSupport (?m.64 i)
+                                            [Meta.isDefEq] [2.610545] ❌️ SetLike.instMembership.1
+                                                  (polymerSupport (?m.64 j))
+                                                  x =?= SetLike.instMembership.1 (polymerSupport (?m.64 i)) x
+                                              [Meta.isDefEq] [2.610527] ❌️ x ∈
+                                                    ↑(polymerSupport (?m.64 j)) =?= x ∈ ↑(polymerSupport (?m.64 i))
+                                                [Meta.isDefEq.delta] [0.893532] ❌️ x ∈
+                                                      ↑(polymerSupport (?m.64 j)) =?= x ∈ ↑(polymerSupport (?m.64 i))
+                                                  [Meta.isDefEq] [0.893517] ❌️ ↑(polymerSupport
+                                                          (?m.64 j)) =?= ↑(polymerSupport (?m.64 i))
+                                                    [Meta.isDefEq] [0.843769] ❌️ instSetLike.1
+                                                          (polymerSupport
+                                                            (?m.64 j)) =?= instSetLike.1 (polymerSupport (?m.64 i))
+                                                      [Meta.isDefEq] [0.843749] ❌️ {a |
+                                                            a ∈
+                                                              (polymerSupport
+                                                                  (?m.64
+                                                                    j)).val} =?= {a |
+                                                            a ∈ (polymerSupport (?m.64 i)).val}
+                                                        [Meta.isDefEq.delta] [0.416577] ❌️ {a |
+                                                              a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val} =?= {a |
+                                                              a ∈ (polymerSupport (?m.64 i)).val}
+                                                          [Meta.isDefEq] [0.416551] ❌️ fun a =>
+                                                                a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= fun a =>
+                                                                a ∈ (polymerSupport (?m.64 i)).val
+                                                            [Meta.isDefEq] [0.416544] ❌️ a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= a ∈ (polymerSupport (?m.64 i)).val
+                                                        [Meta.isDefEq] [0.427155] ❌️ fun a =>
+                                                              a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val =?= fun a =>
+                                                              a ∈ (polymerSupport (?m.64 i)).val
+                                                          [Meta.isDefEq] [0.427148] ❌️ a ∈
+                                                                (polymerSupport
+                                                                    (?m.64
+                                                                      j)).val =?= a ∈ (polymerSupport (?m.64 i)).val
+                                                [Meta.isDefEq] [1.716978] ❌️ Set.instMembership.1
+                                                      (↑(polymerSupport (?m.64 j)))
+                                                      x =?= Set.instMembership.1 (↑(polymerSupport (?m.64 i))) x
+                                                  [Meta.isDefEq] [1.716961] ❌️ (↑(polymerSupport (?m.64 j))).Mem
+                                                        x =?= (↑(polymerSupport (?m.64 i))).Mem x
+                                                    [Meta.isDefEq.delta] [0.867539] ❌️ (↑(polymerSupport (?m.64 j))).Mem
+                                                          x =?= (↑(polymerSupport (?m.64 i))).Mem x
+                                                      [Meta.isDefEq] [0.867526] ❌️ ↑(polymerSupport
+                                                              (?m.64 j)) =?= ↑(polymerSupport (?m.64 i))
+                                                        [Meta.isDefEq] [0.817080] ❌️ instSetLike.1
+                                                              (polymerSupport
+                                                                (?m.64 j)) =?= instSetLike.1 (polymerSupport (?m.64 i))
+                                                          [Meta.isDefEq] [0.817058] ❌️ {a |
+                                                                a ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val} =?= {a |
+                                                                a ∈ (polymerSupport (?m.64 i)).val}
+                                                            [Meta.isDefEq.delta] [0.421776] ❌️ {a |
+                                                                  a ∈
+                                                                    (polymerSupport
+                                                                        (?m.64
+                                                                          j)).val} =?= {a |
+                                                                  a ∈ (polymerSupport (?m.64 i)).val}
+                                                              [Meta.isDefEq] [0.421756] ❌️ fun a =>
+                                                                    a ∈
+                                                                      (polymerSupport
+                                                                          (?m.64
+                                                                            j)).val =?= fun a =>
+                                                                    a ∈ (polymerSupport (?m.64 i)).val
+                                                                [Meta.isDefEq] [0.421750] ❌️ a ∈
+                                                                      (polymerSupport
+                                                                          (?m.64
+                                                                            j)).val =?= a ∈
+                                                                      (polymerSupport (?m.64 i)).val
+                                                    [Meta.isDefEq] [0.849407] ❌️ ↑(polymerSupport (?m.64 j))
+                                                          x =?= ↑(polymerSupport (?m.64 i)) x
+                                                      [Meta.isDefEq] [0.799064] ❌️ instSetLike.1
+                                                            (polymerSupport (?m.64 j))
+                                                            x =?= instSetLike.1 (polymerSupport (?m.64 i)) x
+                                                        [Meta.isDefEq] [0.799042] ❌️ {a |
+                                                                a ∈ (polymerSupport (?m.64 j)).val}
+                                                              x =?= {a | a ∈ (polymerSupport (?m.64 i)).val} x
+                                                          [Meta.isDefEq] [0.400650] ❌️ (fun a =>
+                                                                  a ∈ (polymerSupport (?m.64 j)).val)
+                                                                x =?= (fun a => a ∈ (polymerSupport (?m.64 i)).val) x
+                                                            [Meta.isDefEq] [0.400644] ❌️ x ∈
+                                                                  (polymerSupport
+                                                                      (?m.64
+                                                                        j)).val =?= x ∈ (polymerSupport (?m.64 i)).val
