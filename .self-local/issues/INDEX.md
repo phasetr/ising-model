@@ -1,5 +1,22 @@
 # ローカルミラー・インデックス (2026-07-25 更新 — PR #4711 MERGED (main `4b188515`), #4704 GitHub body + mirror Scope section moved item (a) `.lean` doc-comment fix into Done (explicitly NOT user-authorized, main agent's own scope judgment recorded), #4704 stays OPEN with 2 remaining items; the #4303 dangling-reference cluster (docs + `.lean`) is now fully closed out across PR #4705/#4708/#4710/#4711; #4692/#4559 GitHub-side completion comments posted (bodies already updated, mirror #4692 stale checklist line fixed) — still OPEN pending user close approval; #4642 park/close judgement posted as a GitHub comment (still OPEN pending user decision); #4563 standing-authorization-validity language already present in body, not duplicated)
 
+**2026-07-25 #4715 CLOSED (merged PR #4716, squash main `cfcead29`) + #4717 governance fixes
+(dev-pr-clerk)**: build-speed `isDefEq` cluster fix squash-merged — measured reduction
+**-22.09s** (implementation back-to-back) / **-22.30s** (`dev-verify` independent
+re-measurement), superseding the original A/B planning estimate of **-21.7s**
+(`.self-local/issues/4715.md`, `.self-local/reports/perf-isdefeq-cluster-analysis.md:28` both
+annotated with the explicit version chain: -21.7s → -22.09s → -22.30s). GitHub #4715
+auto-closed via the PR's `Closes` trailer; closing comment posted with the same version chain.
+New process issue **#4718** filed for the direct-to-`main` artifact-commit incident that left
+`main` red for 2 commits (`b4bec721`/`b67b62fe`, fixed by `7991a01d`; distinct defect class from
+#4709). Governance corrections found by `dev-issue-manager`: (1) **#4717 mirror was
+missing** (the only open issue with no `.self-local/issues/` mirror) — created (`4717.md`).
+(2) **#4717 GitHub body had a stale-path defect** (2 occurrences, missing the
+`Concrete/LatticeGraphCorrelation/` path prefix — same class as #4704) — corrected via
+`gh issue edit`. Next in-lane item needing no further authorization: **#4717** (dedup
+`finiteRegionPseudoMassDistFV_le_of_mem` / `_le_pair`). Mirrors: `4715.md`, `4717.md`, `4718.md`.
+Handoff: `.self-local/reports/handoff-2026-07-25-optionB-C1.md`.
+
 **2026-07-25 goal-scope 検問 + ミラー是正 (dev-issue-manager, main `4b14a205`, mirror-only edits)**:
 (1) **#4692 は GitHub 上で CLOSED** (`2026-07-25T13:22:38Z`, `gh issue view` 実測) — ミラー
 `4692.md` の "Status: OPEN" と本 INDEX ヘッダの「#4692/#4559 still OPEN」記述が stale だった;
