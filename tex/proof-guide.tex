@@ -2062,7 +2062,7 @@ boundary map $S \mapsto \mathrm{cut}(S)$ tractable for the volume-independent co
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Connected-droplet \texorpdfstring{$+$}{+}-boundary Peierls bound
-  (\texttt{Peierls/ConnectedDropletBound.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Feeding the connected-droplet indicator through the flip
 involution gives the connected refinement of $\texttt{spontaneous\_magnetization\_plus}$:
@@ -2538,7 +2538,7 @@ down-droplet, giving $\mathrm{Disjoint}\,F\,B$.  Restricting to filled droplets 
 a \emph{single} edge-connected curve, the form needed for the volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, Lemma 3.37, pp. 109--116.
 
-\subsection*{A walk's edges are edge-connected (\texttt{Peierls/WalkEdgesConnected.lean})}
+\subsection*{A walk's edges are edge-connected (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The edge set of any walk is edge-connected.  The start vertex of a
 nonempty walk lies in one of its edges ($\texttt{start\_mem\_some\_edge}$), so by induction each
@@ -2600,7 +2600,7 @@ volume-independent count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Boundary darts have faithful site coordinates
-  (\texttt{Peierls/SingleOrbitBase.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} A local base lemma for the planned boundary-slide argument toward the
 single-orbit (discrete Jordan single-curve) property; the nontrivial slide/reachability content is
@@ -2620,7 +2620,7 @@ target $\texttt{sameOrbit\_of\_left\_right\_reachable}$).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Site evolution under \texttt{nextDart}
-  (\texttt{Peierls/SingleOrbitSlide.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The concrete geometric increments the planned boundary slide relies on:
 how a boundary dart's two sites $(d.\texttt{left}, d.\texttt{right})$ change under one
@@ -2637,7 +2637,7 @@ $\texttt{nextDart\_eq\_\{turnLeft,straight,turnRight\}}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Boundary darts and contact pairs
-  (\texttt{Peierls/SingleOrbitContact.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} A \emph{contact pair} of $F$ is an ordered adjacent pair $(a, b)$ with
 $a \in F$ and $b \notin F$.  The boundary darts of $F$ correspond exactly to its contact pairs --
@@ -2653,7 +2653,7 @@ $\texttt{sameOrbit\_nextDart}$, $\texttt{sameOrbit\_iterate}$ record that a dart
 its forward iterates.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
-\subsection*{Fan boundary detection (\texttt{Peierls/SingleOrbitFan.lean})}
+\subsection*{Fan boundary detection (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The \emph{fan} around a left site $p \in F$ is the set of boundary darts
 with left site $p$.  A left turn keeps the left site fixed ($\texttt{left\_nextDart\_of\_turnLeft}$),
@@ -2671,7 +2671,7 @@ rotates the direction left.  These are the local building blocks (per a focused 
 fan rotation feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
-\subsection*{Left-fan prefix rotation (\texttt{Peierls/SingleOrbitFanPrefix.lean})}
+\subsection*{Left-fan prefix rotation (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} A \emph{left-fan prefix} of length $n$ at a dart $d$ is a run of $n$
 consecutive $\texttt{nextDart}$ steps each taking the left turn ($\texttt{BoundaryDart.LeftFanPrefix}$).
@@ -2689,7 +2689,7 @@ rotation feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Left-fan prefix completeness
-  (\texttt{Peierls/SingleOrbitFanComplete.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The forward left-fan rotation is pinned down by the rotation it
 performs.  $\texttt{eq\_iterate\_of\_leftFanPrefix\_of\_dir\_eq}$: if $e$ sits at the same left site
@@ -2705,7 +2705,7 @@ completeness feeding $\texttt{sameOrbit\_of\_left\_right\_reachable}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Left site stays $F$-reachable across one step
-  (\texttt{Peierls/SingleOrbitReach.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} As $\texttt{nextDart}$ advances, the left site stays inside $F$ and
 reachable within $F$, regardless of the turn taken.  The combined
@@ -2725,7 +2725,7 @@ handled separately via contact-pair chains.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The orbit's left sites lie in one $F$-component
-  (\texttt{Peierls/SingleOrbitOrbitReach.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Iterating the per-step $F$-reachability of \texttt{SingleOrbitReach}.
 $\texttt{reachableWithin\_left\_iterate}$ shows the left site of any forward iterate of $d$ is
@@ -2740,7 +2740,7 @@ a \emph{single} orbit additionally needs the complementary planar input via cont
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact pairs as a type
-  (\texttt{Peierls/SingleOrbitContactPair.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The dart $\leftrightarrow$ contact-pair correspondence of
 \texttt{SingleOrbitContact} packaged as a type.  $\texttt{ContactPair}\,F$ is the type of ordered
@@ -2756,7 +2756,7 @@ the naive orbit-step complement invariant.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Right-fan boundary detection
-  (\texttt{Peierls/SingleOrbitRightFan.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Dual to the left fan (\texttt{SingleOrbitFan}): the \emph{right fan}
 around a fixed right site $q \notin F$ is the set of boundary darts with right site $q$.  A right turn
@@ -2772,7 +2772,7 @@ complement-side rotation needed for the ``vary in-site'' contact step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Right-fan prefix rotation and completeness
-  (\texttt{Peierls/SingleOrbitRightFanPrefix.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Dual to \texttt{SingleOrbitFanPrefix}/\texttt{SingleOrbitFanComplete}.  A
 \emph{right-fan prefix} of length $n$ at $d$ is a run of $n$ consecutive $\texttt{nextDart}$ steps
@@ -2790,7 +2790,7 @@ left-fan rotation, needed for the ``vary in-site'' contact step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact steps and the orbit push-down
-  (\texttt{Peierls/SingleOrbitContactStep.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} $\texttt{ContactStep}\,c\,c'$ is a proof-carrying edge between contact
 pairs, independent of the orbit dynamics: either the in-site is fixed and the realizing darts are
@@ -2807,7 +2807,7 @@ share one orbit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact moves: fans plus the slide
-  (\texttt{Peierls/SingleOrbitContactMove.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The two fan contact steps do not suffice to connect the contact graph (a
 ``domino'' region has fan moves only along its sides); the missing move is the \emph{slide} --
@@ -2823,7 +2823,7 @@ of the contact graph this gives the single-orbit property.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Local generators of contact-move connectivity
-  (\texttt{Peierls/SingleOrbitContactGen.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The elementary $\texttt{ContactMove}$s packaged as
 $\texttt{ReflTransGen ContactMove}$ facts -- the local generators a global planar-connectivity
@@ -2837,7 +2837,7 @@ remaining planar step -- only there do $F$-connectivity and filledness enter, to
 exposed wedges.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
-\subsection*{One-step fan validity (\texttt{Peierls/SingleOrbitFanOne.lean})}
+\subsection*{One-step fan validity (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The base case of fan-prefix construction: a length-one fan prefix is
 exactly a single valid turn.  $\texttt{leftFanPrefix\_one\_iff}$ gives
@@ -2849,7 +2849,7 @@ step) is built from when the global connectivity argument constructs prefixes fr
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Elementary single-turn steps
-  (\texttt{Peierls/SingleOrbitTurnStep.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The $k = 1$ specialisations of the fan completeness and contact-move
 generators: a single valid turn between darts sharing a site.  At the dart level, two darts with the
@@ -2862,7 +2862,7 @@ applies step by step.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact-move connectivity equals same-orbit
-  (\texttt{Peierls/SingleOrbitContactEquiv.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The dart-level contact-move connectivity is \emph{exactly} the orbit
 relation.  $\texttt{reflTransGen\_contactMove\_of\_sameOrbit}$ shows same orbit gives a contact-move
@@ -2876,7 +2876,7 @@ further orbit bookkeeping.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact-move connectivity is symmetric
-  (\texttt{Peierls/SingleOrbitContactSymm.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Although a single $\texttt{ContactMove}$ is directed (a fan prefix or a
 forward slide), the connectivity $\texttt{ReflTransGen ContactMove}$ is symmetric: via
@@ -2888,7 +2888,7 @@ argument route in either direction.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Straight-slide transport and fan reach
-  (\texttt{Peierls/SingleOrbitTransport.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Two free transport facts the global connectivity argument uses.
 $\texttt{sameOrbit\_of\_straight\_slide}$: when $\texttt{nextDart}$ goes straight at $d$ (left turn
@@ -2901,7 +2901,7 @@ exit direction of the exposed wedge.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The left-fan validity criterion
-  (\texttt{Peierls/SingleOrbitWedge.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The local condition controlling how far a left fan turns.
 $\texttt{leftFan\_next\_turnLeft\_valid\_iff}$: after a left-fan prefix of length $n$, the next left
@@ -2915,7 +2915,7 @@ $d.\texttt{left}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Left-fan reach through a complement arc
-  (\texttt{Peierls/SingleOrbitWedgeReach.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Using the validity criterion
 $\texttt{leftFan\_next\_turnLeft\_valid\_iff}$, a left-fan prefix exists for as long as the successive
@@ -2929,7 +2929,7 @@ arc, with no global filledness hypothesis -- the global argument later supplies 
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Same-site darts across a complement arc
-  (\texttt{Peierls/SingleOrbitSameLeftArc.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The wedge reach turned into a same-orbit statement.
 $\texttt{sameOrbit\_of\_same\_left\_arc}$: if $d$, $d'$ have the same left site,
@@ -2942,7 +2942,7 @@ direction.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Orbit advance to an adjacent vertex
-  (\texttt{Peierls/SingleOrbitAdvance.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Combining a left-fan rotation with one straight slide.
 $\texttt{sameOrbit\_iterate\_succ\_left}$: if the first $n$ steps from $d$ are left turns and the
@@ -2954,7 +2954,7 @@ argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Membership form of the orbit advance
-  (\texttt{Peierls/SingleOrbitAdvanceMem.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The per-edge transport $\texttt{sameOrbit\_iterate\_succ\_left}$ restated
 purely in terms of $F$-membership of the local sites -- the form the global filled-region argument
@@ -2970,7 +2970,7 @@ $\texttt{leftSite\_add}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Single orbit from contact-pair connectivity
-  (\texttt{Peierls/SingleOrbitFromConnected.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The capstone reduction.
 $\texttt{boundaryDart\_single\_orbit\_of\_contactPair\_connected}$: if every two contact pairs of $F$
@@ -2982,7 +2982,7 @@ $\texttt{sameOrbit\_of\_dart\_contactMove\_chain}$.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Contact-move advance to an adjacent vertex
-  (\texttt{Peierls/SingleOrbitAdvanceConn.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The membership-driven orbit advance lifted to contact-move connectivity.
 $\texttt{reflTransGen\_contactMove\_advance}$: under the three local membership conditions of
@@ -2995,7 +2995,7 @@ contact-graph level.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Reduction of connectivity to a basepoint
-  (\texttt{Peierls/SingleOrbitBasepoint.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} A standard connectivity reduction using the symmetry of contact-move
 connectivity.  $\texttt{reflTransGen\_contactMove\_of\_basepoint}$: if every contact pair reaches one
@@ -3007,7 +3007,7 @@ fixed one'', the form the $F$-path argument establishes.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Single orbit from basepoint connectivity
-  (\texttt{Peierls/SingleOrbitFromBasepoint.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Composing the basepoint reduction with the connectivity capstone.
 $\texttt{boundaryDart\_single\_orbit\_of\_contactPair\_basepoint}$: if every contact pair of $F$
@@ -3018,7 +3018,7 @@ fixed contact pair) yields $\texttt{hone}$ directly.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Chaining the per-edge advance along an $F$-path
-  (\texttt{Peierls/SingleOrbitInSitePath.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The $F$-path induction at the contact-graph level.
 $\texttt{reflTransGen\_contactMove\_of\_inSite\_reachable}$: given a per-edge advance (for any contact
@@ -3030,7 +3030,7 @@ advance (from the wedge construction) and the same-vertex wedge then closes the 
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Basepoint connectivity from the geometric inputs
-  (\texttt{Peierls/SingleOrbitToBasepoint.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Assembling the $F$-path chaining into basepoint connectivity, isolating
 the three geometric inputs the global filled-region argument must supply.
@@ -3043,7 +3043,7 @@ the basepoint wedge.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Single orbit from the geometric inputs
-  (\texttt{Peierls/SingleOrbitGeometric.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The full reduction capstone.
 $\texttt{boundaryDart\_single\_orbit\_of\_geometric\_inputs}$: the single-orbit $\texttt{hone}$ input
@@ -3057,7 +3057,7 @@ otherwise complete.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Same-in-site contact pairs across an arc
-  (\texttt{Peierls/SingleOrbitSameInSite.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The same-vertex wedge connectivity at the contact-graph level.
 $\texttt{reflTransGen\_contactMove\_same\_inSite\_arc}$: if $c$, $c'$ share an in-site,
@@ -3071,7 +3071,7 @@ argument supplies the arc condition so that any two contact pairs at a vertex ar
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Single orbit from connected-$F$ inputs
-  (\texttt{Peierls/SingleOrbitConnectedInputs.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The $\texttt{hreach}$ input is exactly within-$F$ connectivity, since
 every contact-pair in-site lies in $F$.  $\texttt{reachable\_inSite\_of\_connected}$ supplies the
@@ -3083,7 +3083,7 @@ per-edge advance and same-vertex inputs (the wedge/filled geometry) then remain.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Transferring connectivity from a box droplet to its image
-  (\texttt{Peierls/SingleOrbitConnTransfer.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The within-$F$ connectivity input supplied from the box.
 $\texttt{reachableWithin\_image\_val}$: a within-$S$ path in $\texttt{Ambient.inducedGraph}\,G\,\Lambda$
@@ -3096,7 +3096,7 @@ the $F$-connectivity $\texttt{hreach}$ input for $F = S.\texttt{image Subtype.va
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The left turn is a 4-cycle on directions
-  (\texttt{Peierls/SingleOrbitDirCycle.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} $\texttt{Dir2}$ is $\texttt{Fin}\,4$ and $\texttt{turnLeft}$ is
 $\cdot + 1$, a 4-cycle.  $\texttt{Dir2.exists\_turnLeft\_iterate\_lt\_four}$: for any
@@ -3109,7 +3109,7 @@ one of its $\texttt{Dir2}$-enumeration ingredients.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{First exposed direction hitting $F$
-  (\texttt{Peierls/SingleOrbitFirstHit.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Rotating left, $a + (\texttt{turnLeft}^{[k]} \texttt{dir}).\texttt{vec}$
 sweeps the four neighbours of $a$.  $\texttt{exists\_first\_turnLeft\_mem}$: if some rotation
@@ -3122,7 +3122,7 @@ $\texttt{sameOrbit\_advance\_of\_membership}$ from pure membership.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{An $F$-neighbour is hit by a rotation
-  (\texttt{Peierls/SingleOrbitHitAdjacent.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The precondition of $\texttt{exists\_first\_turnLeft\_mem}$ is met
 whenever $a$ has an $F$-neighbour.  $\texttt{exists\_turnLeft\_hit\_of\_adjacent\_mem}$: if $a'$ is an
@@ -3134,7 +3134,7 @@ cleared-arc-and-stop data of the wedge advance.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Orbit successor dichotomy at a first hit
-  (\texttt{Peierls/SingleOrbitDichotomy.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} After the left fan stops at the first rotation landing in $F$, the next
 $\texttt{nextDart}$ step is a contact move, and its left site is fixed by one membership test on the
@@ -3149,7 +3149,7 @@ single-curve property, which the contact-pair bookkeeping relocates but does not
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Degree-two faces of the contour
-  (\texttt{Peierls/SingleOrbitDegTwo.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} A characterisation of the $\texttt{squareSplitCount} = 2$ faces -- the
 ``ordinary'' faces of the Peierls contour where the curve passes through once (vs empty faces, count
@@ -3162,7 +3162,7 @@ having been confirmed to relocate, not remove, the discrete Jordan crux).
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The face-degree trichotomy of the contour
-  (\texttt{Peierls/SingleOrbitFaceDeg.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} Completing the characterisation of the three contour face types by
 $\texttt{squareSplitCount}$ ($0$/$2$/$4$).  $\texttt{squareSplitCount\_eq\_zero\_iff}$: an
@@ -3176,7 +3176,7 @@ argument.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{A crossed edge carries a boundary dart
-  (\texttt{Peierls/SingleOrbitDartEdge.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} $\texttt{edgeCrosses}\,F\,s(a,b)$ holds exactly when one of $a, b$ lies in
 $F$ and the other does not (xor of the endpoint memberships).
@@ -3280,7 +3280,7 @@ the degree-two case of the discrete-Jordan cycle structure.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The degree-four crossing of the contour
-  (\texttt{Peierls/SingleOrbitDegFourPairing.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 At a \textbf{degree-four} dual vertex all four sides are cut
 ($\texttt{cutDirs\_eq\_univ\_of\_squareSplitCount\_eq\_four}$) and the four corner sites strictly
@@ -3665,7 +3665,7 @@ remain separate.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Ray-exit adjacency shadow case reduction
-  (\texttt{Peierls/RayExitAnchorAdjacency.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} This file packages the two-dimensional nearest-neighbour case split
 around the horizontal ray-exit shadow lemmas.  For adjacent sites $x,y \in F$,
@@ -3677,8 +3677,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Ray-exit adjacency route with vertical obligations}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorAdjacencyRoute.lean} consumes the adjacency case reduction at the
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorAdjacencyRoute.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) consumes the adjacency case reduction at the
 route level.
 The predicate $\texttt{RayExitVerticalStep}\,F$ names the remaining oriented vertical transport
 input: for $y = x \pm e_1$, the ray-exit anchors of $x$ and $y$ are connected by
@@ -3693,8 +3692,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Equal-index vertical ray-exit steps}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalEqual.lean} closes the safe part of the vertical input left
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalEqual.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) closes the safe part of the vertical input left
 by the adjacency route.  The coordinate lemma
 \(\texttt{ray0\_add\_unitVec2\_one}\) says that shifting the start of a \(+e_0\) ray by \(+e_1\)
 shifts every ray point by \(+e_1\).  Hence, if \(b=a+e_1\) and the two ray-exit indices agree,
@@ -3715,8 +3713,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Connected-droplet strict ray-exit route}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictConnected.lean} removes one purely structural input from
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictConnected.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) removes one purely structural input from
 the strict ray-exit route in the Peierls count setting.  The strict wrappers of the previous file
 still require ordinary connectivity inside
 \(F = S.\mathrm{image}\,\texttt{Subtype.val}\).  But for a box droplet
@@ -3739,8 +3736,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Ordered strict ray-exit cases}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictOrdered.lean} splits the remaining strict vertical
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictOrdered.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) splits the remaining strict vertical
 ray-exit input by first-exit-index order.  The previous
 \(\texttt{RayExitVerticalStrictStep}\) handles upward \(+e_1\) pairs with unequal indices in one
 block.  The ordered interface names the two later geometric cases separately:
@@ -3759,8 +3755,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Endpoint bridge darts for strict vertical ray-exit cases}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridge.lean} proves the first boundary dart forced at
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridge.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) proves the first boundary dart forced at
 the near endpoint of each ordered strict vertical case.  If \(b=a+e_1\) and the lower ray exits
 first, then \(\texttt{rayExitVerticalStrictLtBridgeDart}\) is the horizontal \(+e_0\) boundary dart
 at the lower first-exit point: its left site is the upper successor, still in \(F\), and its right
@@ -3781,8 +3776,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Bridge-chain inputs for strict vertical ray-exit cases}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeChain.lean} consumes the endpoint bridge darts
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeChain.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) consumes the endpoint bridge darts
 and restates the remaining ordered strict vertical obligations as post-bridge chain inputs.  In the
 lower-exits-first case, \(\texttt{RayExitVerticalStrictLtBridgeChain}\) asks for reachability from
 the lower-first bridge dart to the upper ray-exit anchor.  The endpoint lemma supplies the preceding
@@ -3806,8 +3800,7 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Gap-reduced bridge-chain inputs for strict vertical ray-exit cases}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeGap.lean} removes the adjacent-index subcase from
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeGap.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) removes the adjacent-index subcase from
 the remaining bridge-chain input.  If the lower ray exits first and the upper first-exit index is
 exactly one more than the lower first-exit index, then the lower endpoint bridge dart shares its
 head with the upper ray-exit anchor.  Thus
@@ -3830,10 +3823,9 @@ exit; it only proves the endpoint-adjacent case.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Straight strip chains for strict vertical ray-exit gaps
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeStrip.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeStrip.lean} closes the next concrete subcase of
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeStrip.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) closes the next concrete subcase of
 the genuine-gap bridge input.  In the lower-exits-first case, if every lower ray point between the
 two first-exit indices is outside \(F\), the horizontal darts
 \(\texttt{rayExitVerticalStrictLtStripDart}\) form a finite strip from the lower endpoint bridge to
@@ -3855,10 +3847,9 @@ between the two first-exit indices; it does not assume global ray monotonicity a
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Frontier entries for non-strip strict ray-exit gaps
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStrip.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStrip.lean} prepares the remaining
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeNonStrip.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) prepares the remaining
 non-strip genuine-gap case.  If the lower-exits-first gap is not a straight strip, then some
 lower ray point in the finite interval between the two first-exit indices belongs to \(F\);
 \(\texttt{exists\_ltGap\_nonStrip\_mem}\) extracts such a point.  The upper-exits-first case is
@@ -3881,10 +3872,9 @@ finite-interval statement and does not assume ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Frontier-split inputs for non-strip strict ray-exit gaps
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean} refines the remaining
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) refines the remaining
 non-strip bridge-gap input by factoring it through the first re-entry darts constructed above.
 The lower-exits-first input \(\texttt{RayExitVerticalStrictLtBridgeFrontierChain}\) asks for a
 chain from the endpoint bridge dart to
@@ -3903,10 +3893,9 @@ proof; it does not assume ray monotonicity after first exit.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{NextDart inputs for non-strip strict ray-exit frontier chains
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean} gives the frontier-split
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) gives the frontier-split
 input a direct traversal form.  The generic lemma
 \(\texttt{dartReachable\_nextDart\_iterate}\) proves that a boundary dart reaches each forward
 \(\texttt{nextDart}\) iterate in the \(\texttt{DartReachable}\) relation, and
@@ -3928,10 +3917,9 @@ for these iterates remains the next geometric task.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Turn-certificate inputs for non-strip strict ray-exit frontier chains
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurn.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurn.lean} refines the NextDart input
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeNonStripTurn.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) refines the NextDart input
 by naming the local left/straight/right turn data that compute each step of the frontier
 traversal.  The generic certificate \(\texttt{NextDartTurnStep}\) records one application of the
 boundary-dart turning rule, and \(\texttt{NextDartTurnChain}\) records a finite chain of such
@@ -3954,10 +3942,9 @@ and the separate same-left-site anchor reachability input, remain open.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{Concrete lower strip turn step for non-strip ray-exit chains
-  (\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
-\par\noindent\textbf{Role:} The file
-\texttt{Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean} starts to discharge the
+\par\noindent\textbf{Role:} This historical file (formerly \emph{RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean}, superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route}) starts to discharge the
 turn-chain input by proving concrete local steps along the lower horizontal strip.  The lemma
 \(\texttt{nextDartTurnChain\_ltBridgeDart\_ltStripDart\_base}\) identifies the lower endpoint
 bridge dart with the first lower strip dart as a trivial turn chain.  The lemma
@@ -4369,7 +4356,7 @@ upper-exits-first side, or assume post-exit ray monotonicity.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit anchored route
-  (\texttt{Peierls/RayExitAnchoredRoute.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} This file specializes the abstract anchored reachability route to the
 concrete ray-exit anchor map $\texttt{rayExitAnchorDartMap}\,F$.  The wrappers
@@ -4385,7 +4372,7 @@ anchors, and ordinary within-$F$ connectivity chains those local steps.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \subsection*{The ray-exit shadow route
-  (\texttt{Peierls/RayExitShadowRoute.lean})}
+  (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} This file narrows the per-edge input of the ray-exit anchored route.
 Instead of asking directly for $\texttt{DartReachable}$ between the anchors of adjacent sites, it
@@ -4857,7 +4844,7 @@ $\texttt{latticeGraph}\,2$, which the degree-based walk count bounds — the rou
 volume-independent contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
-\subsection*{The orbit as an explicit closed walk (\texttt{Peierls/DartOrbitWalk.lean})}
+\subsection*{The orbit as an explicit closed walk (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The sequence of dart tails is realised as an honest
 $\texttt{SimpleGraph.Walk}$ in $\texttt{latticeGraph}\,2$.  $\texttt{orbitWalk}\,d\,n$ walks along
@@ -4870,7 +4857,7 @@ closed walks (by the degree count $\texttt{walksFromCount\_le\_pow}$) is the fin
 input to the contour count.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
-\subsection*{Counting closed walks in the box (\texttt{Peierls/ClosedWalkCount.lean})}
+\subsection*{Counting closed walks in the box (historical: superseded ray-exit/single-orbit route, removed by PR \#4299; archived at git tag \texttt{archive/peierls-rayexit-route})}
 
 \par\noindent\textbf{Role:} The number of closed walks of length $k$ from a vertex $v$ in the
 induced box graph $\texttt{inducedGraph}\,(\texttt{latticeGraph}\,d)\,\Lambda$ is at most $(2d)^k$
@@ -13423,16 +13410,14 @@ the Hausdorff space $\mathbb C$.
 The concrete \(\mathbb Z^d\) non-real wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Bridge/OpenSet.lean
+  Branches/VitaliBridge.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/VitaliBridge/Bridge/LeeYangDomain.lean
 \end{Verbatim}
 and the real-axis wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Real/Limit.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Real/Identified.lean
+  Branches/VitaliBridge.lean
 \end{Verbatim}
 with the old Vitali bridge and branches import paths kept as re-exports.
 \end{theorem}
@@ -13483,7 +13468,7 @@ specializations are recorded in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/Stage/Ball/Basic.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Ball.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
 with the old ball, all-stage, stage-Lee--Yang, and branches import paths
 kept as re-exports.
@@ -13538,9 +13523,7 @@ future normal-family/Vitali argument can consume.
 The concrete $\mathbb Z^d$ stage wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Strong.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Strong.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
 with the old ball, all-stage, stage-Lee--Yang, and branches import paths
 kept as re-exports.
@@ -13586,11 +13569,13 @@ Uniqueness of limits identifies
 The concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean
-Branches/LocalCoverPatch/Vitali/Ball/Real.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 \end{Verbatim}
 and are re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
-Branches/LocalCoverPatch/Vitali/Ball.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 Branches/LocalCoverPatch/Vitali.lean
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
@@ -13705,7 +13690,8 @@ families converge to the same \(f\), then \(f\) is holomorphic on the
 Lee--Yang domain and agrees with the real infinite-volume free energy at real
 Lee--Yang centres.  The corresponding \(\mathbb Z^d\) ball wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/SubseqVitali/Ball.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 and the local-cover wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -13717,7 +13703,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
 and are re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/SubseqVitali.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 path.
 
@@ -13765,12 +13752,14 @@ identifies the centre value with the real infinite-volume free energy:
 The concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/CompactOpenVitali/Ball/Bridge.lean
-SubseqCompactOpen/CompactOpenVitali/Ball/Real.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and are
 re-exported by the old paths
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Ball.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 
@@ -13805,7 +13794,8 @@ For two Lee--Yang balls the ambient theorem applies the PR \#2693 subsequence
 Vitali bridge on each ball, producing holomorphic local limits on both balls.
 The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/TwoBall.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 under
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -13813,7 +13803,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
 and is re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -13853,18 +13844,10 @@ many Lee--Yang balls the ambient theorem then applies the PR \#2693 subsequence
 Vitali bridge on every ball, producing holomorphic local limits for the whole
 finite family.  The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/FinBall.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This result still assumes compact-open compactness for each branch family.  It
 does not prove Montel compactness, compatibility of arbitrary branch choices on
@@ -13900,7 +13883,8 @@ family of holomorphic local limits \(f_i\), and pairwise equalities
 whenever the selected stage branches are eventually equal on the same
 overlaps.  The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Overlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
 re-exported by the old
@@ -13951,17 +13935,20 @@ freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_latticeGrap
 \end{Verbatim}
 The compact-open package wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/FiniteFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
 The patch wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Family.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
 under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
 re-exported by the old paths
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
 
@@ -13997,14 +13984,10 @@ freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Real.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
-SubseqCompactOpen/FiniteSubseqCompactOpen.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This remains a finite, conditional handoff.  It identifies the real centre for
 a selected ball in a packaged finite family, but it does not construct Montel
@@ -14039,7 +14022,7 @@ freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_realPatch_la
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/RealPatch.lean
+  BranchAscoliCompactOpen/RealCoverPatches.lean
 \end{Verbatim}
 and is re-exported through the legacy real-cover path.
 
@@ -14070,7 +14053,8 @@ freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_patch_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen/FiniteFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
 under the concrete per-stage complex directory, and is re-exported by the old
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -14116,18 +14100,16 @@ field \(p.h\), identify the patched value with
 wrappers and compact-open package/patch wrappers are implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch/FiniteCover.lean
+  SubseqCompactOpen/FiniteCoverPatches.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/FiniteCover.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/Patch.lean
+  BranchAscoliCompactOpen/RealCoverPatches.lean
 \end{Verbatim}
 and are re-exported through the legacy finite-cover patch and real-cover
 paths.  The compact-open
 real-centre wrapper is implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CompactCoverPatches/FiniteCover.lean
+  BranchAscoliCompactOpen/CompactCoverPatches.lean
 \end{Verbatim}
 including
 \begin{Verbatim}
@@ -14176,7 +14158,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and is re-exported by the old
 \begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
 and
 \begin{Verbatim}
@@ -14232,7 +14215,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and is re-exported by the old
 \begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches/Patch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
 and
 \begin{Verbatim}
@@ -14288,7 +14272,7 @@ agreement \(g=f_i\) on each ball, and differentiability of \(g\) on that finite
 union.  The concrete \(\mathbb Z^d\) wrapper is in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/FiniteBallPatch.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
 and is re-exported through the legacy eventual-patches path.
 
@@ -14329,9 +14313,9 @@ For a Lee--Yang open cover, the ambient theorem first applies the Vitali
 handoff on each cover member to obtain differentiable local limits, then
 applies the open-cover patching theorem.  If the cover contains
 \(\texttt{leeYangDomain}\), the resulting patched function is differentiable on
-\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in the
-\texttt{OpenPatch/OpenCover.lean} child, re-exported by the legacy
-\texttt{OpenPatch.lean} and \texttt{LocalCoverPatch.lean} paths.
+\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper now lives in
+\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/LocalCoverPatch.lean}
+(the former split/legacy paths have merged into this file).
 
 This is still a conditional handoff.  It assumes the compatible local-cover
 limits explicitly, and does not prove coherent branch selection, Montel
@@ -14374,7 +14358,8 @@ Branches/LocalCoverPatch/OpenPatch/LocalCover.lean
 \end{Verbatim}
 and is re-exported by the legacy paths
 \begin{Verbatim}
-Branches/LocalCoverPatch/OpenPatch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
 .
@@ -14410,16 +14395,12 @@ limit on its own ball, and \(g\) is differentiable on
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
 \end{Verbatim}
-in the patch child
+now lives in
 \begin{Verbatim}
-StructuredPatch/Patch/Data.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Patch.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
-\end{Verbatim}
+(the split/legacy paths above have merged into this file)
 
 This is still a conditional post-extraction handoff.  It makes the local-cover
 input easier to pass around, but it does not prove coherent branch selection,
@@ -14455,16 +14436,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
 \end{Verbatim}
-in the real-axis child
+now lives in
 \begin{Verbatim}
-StructuredPatch/Real/Data.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
-\end{Verbatim}
+(the split/legacy paths above have merged into this file)
 
 This is still a conditional post-extraction handoff: compatibility of the
 packaged local limits and the coherent local-cover extraction remain external
@@ -14504,18 +14481,12 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-split between the children
+now lives in
 \begin{Verbatim}
-StructuredPatch/Patch/Family.lean
-StructuredPatch/Real/Family.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Patch.lean
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
-\end{Verbatim}
+(the split/legacy paths above have merged into this file)
 
 This remains conditional and post-extraction.  The new structure removes the
 last loose compatibility argument from downstream APIs, but it does not prove
@@ -14556,16 +14527,12 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in the real-axis child
+now lives in
 \begin{Verbatim}
-StructuredPatch/Real/RealFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
-\end{Verbatim}
+(the split/legacy paths above have merged into this file)
 
 This is still a conditional post-extraction handoff.  It does not prove
 Montel compactness or construct the family; it names the exact real-centred
@@ -14616,25 +14583,20 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 with related stage and all-stage branch wrappers split into
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Point/Exists.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Point/Family.lean
+  Branches/StageLeeYang.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/Stage/Ball/Basic.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Strong.lean
+  Branches/StageLeeYang.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang/AllStages/Pointwise.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Ball.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Strong.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
 and re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
-Branches/StageLeeYang/Stage/Point.lean
-Branches/StageLeeYang/Stage/Ball.lean
-Branches/StageLeeYang/AllStages.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/StageLeeYang.lean
 Branches/StageLeeYang.lean
 PerStageComplex/Branches.lean
 \end{Verbatim}
@@ -14729,15 +14691,9 @@ freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_patch_l
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/FinCover/Package.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/FinCover/Patch.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage/FinCover.lean
-SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This bridge remains finite and conditional.  It assumes compact-open
 compactness of the selected continuous restrictions and explicit eventual
@@ -14777,12 +14733,12 @@ freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patc
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/RealCover/FinReal.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/RealCover/CompactReal.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
 and are re-exported through the legacy
 \texttt{SubseqCompactOpen/PointwiseAllStage/RealCover.lean} and
@@ -14833,7 +14789,7 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 and
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Patch.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
 and are re-exported through the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -14879,7 +14835,7 @@ freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact_latticeGra
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/COpenData/Patch.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -14888,7 +14844,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and are re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage/COpenData.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -14939,7 +14896,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and re-exported by the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/RangeCompactOpen/RangeClosure.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/RangeCompactOpen.lean
 RangeAscoliPatches/RangeCompactOpen.lean
 \end{Verbatim}
 
@@ -15032,7 +14990,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 and are re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
 RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact.lean
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -15094,7 +15053,8 @@ The wrapper layers are re-exported by
 \begin{Verbatim}[fontsize=\footnotesize]
 BranchRelCompact/NormBounded.lean
 BranchRelCompact/ConstNormBounded.lean
-BranchRelCompact/LocallyBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchRelCompact.lean
 BranchRelCompact.lean
 \end{Verbatim}
 
@@ -15135,7 +15095,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and are re-exported through the legacy modules
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange.lean
 RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
 This is a
@@ -15294,14 +15255,13 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the following child modules under
-\texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}:
+in
 \begin{Verbatim}[fontsize=\tiny]
-EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/Core.lean
-EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/CompactTarget.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  EventualClosedBallPatches/EventualClosedBallDeviation.lean
 \end{Verbatim}
-They are re-exported by the old \texttt{LocalViaDeviation.lean} umbrella in
-the same directory.  This records the closed-ball analogue of the
+(the former split child modules and legacy umbrella have merged into this
+file).  This records the closed-ball analogue of the
 local-bound-to-deviation triangle-inequality route for the eventual-overlap
 boundary.  It still does not construct eventual-overlap data, prove
 closed-ball containment, or prove branch local bounds, closedness,
@@ -15643,8 +15603,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 \end{Verbatim}
 and are re-exported through the legacy modules
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange/ViaDeviation.lean
-RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/BranchLocalDirectRange.lean
 RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
 This records
@@ -16097,13 +16057,10 @@ freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_of_isComp
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/ClosedProduct/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/ClosedProduct/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli/ClosedProduct.lean} and
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
+(the former split child modules and legacy paths have merged into this
+file).
 
 This splits the remaining normal-family input into closedness of the
 pointwise function-space image, compact pointwise target bounds,
@@ -16209,7 +16166,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/
 and are re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
 RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli.lean
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
 and
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -16305,7 +16263,7 @@ and is re-exported through the legacy AscoliPatches path; the compact-target
 cover wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/ConstCompactTarget.lean
+  BranchAscoliCompactOpen/CoverPatches.lean
 \end{Verbatim}
 and is re-exported through the legacy CoverPatches path.
 
@@ -16347,9 +16305,7 @@ freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoli_patch_isComp
 in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/LocallyBounded.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/LocallyBoundedCompactTarget.lean
+  BranchAscoliCompactOpen/CoverPatches.lean
 \end{Verbatim}
 and are re-exported through the legacy CoverPatches path.
 
@@ -16408,16 +16364,13 @@ freeEnergyComplexAlongExhaustion_branchData_localCover_real_latticeGraph
 \end{Verbatim}
 The first two branch-family wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData/RealFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
 and are re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
 path.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
@@ -16467,27 +16420,16 @@ global patch conclusion.
 
 The branch-family concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn/RealFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
-and are re-exported by the legacy chain
+(the former split/legacy paths have merged into this file).  The real
+local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  RawPatch/EventuallyEqOn.lean
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
-.
+(the former split/legacy paths have merged into this file).
 
 This is still a conditional coherent-overlap handoff.  It does not construct
 the coherent branch choices, prove Montel compactness, or perform the
@@ -16525,27 +16467,16 @@ identification.
 
 The branch-family concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily/Structured.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
-and are re-exported by the legacy chain
+(the former split/legacy paths have merged into this file).  The real
+local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch/Structured.lean
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
-.
+(the former split/legacy paths have merged into this file).
 
 This is still a conditional post-Montel package.  It records the coherent
 data shape without constructing coherent branches, proving Montel compactness,
@@ -16578,9 +16509,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
 \end{Verbatim}
 and is re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
 path.
 
@@ -16611,15 +16541,15 @@ freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_patch_latt
 \end{Verbatim}
 split between the children
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/Patch/Structured.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
   LocalCoverPatch/Patch/Pointwise.lean
 \end{Verbatim}
 and are re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/Patch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
@@ -16660,15 +16590,15 @@ freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_pat
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/FamilyPatch/Structured.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
   LocalCoverPatch/FamilyPatch/Pointwise.lean
 \end{Verbatim}
 and are re-exported by the old
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/FamilyPatch.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
   LocalCoverPatch.lean
 \end{Verbatim}
@@ -16710,9 +16640,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
 \end{Verbatim}
 and is re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/EventualOverlap.lean
 \end{Verbatim}
 path.
 
@@ -16742,13 +16671,13 @@ exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData_latticeGrap
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry/Structured.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
 and is re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
   CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
@@ -16786,8 +16715,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
 \end{Verbatim}
 and is re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
   CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
@@ -16826,7 +16755,7 @@ freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch_lattic
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/RealEventualOverlap.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
 and is re-exported through the legacy eventual-patches path.
 
@@ -16865,7 +16794,7 @@ freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_cOpenPatch_latticeGra
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/PointwiseNorm.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
 and is re-exported through the legacy eventual-patches path.
 
@@ -16902,9 +16831,8 @@ Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
 \end{Verbatim}
 and is re-exported by the old
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
 path.
 
@@ -16941,15 +16869,13 @@ exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
 split between the children
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover/RealFamily.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
 and are re-exported by the legacy chain
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
   CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
@@ -16996,14 +16922,10 @@ exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinGeometry.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
-path.
+(the former split/legacy path has merged into this file).
 
 This remains a geometry-only enumeration step.  It does not construct the
 finite subsequence branch-limit family needed by
@@ -17195,8 +17117,8 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyLocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and is re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17233,8 +17155,8 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_of_is
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyLocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and is re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17269,8 +17191,8 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_on_ba
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyBallAround.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and is re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17313,8 +17235,8 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_aroun
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyBallAround.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and is re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17399,10 +17321,8 @@ Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
 \end{Verbatim}
 The corresponding \(\mathbb Z^d\) wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower/LowerLog.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower/LocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/LeeYangLower.lean
 \end{Verbatim}
 and are re-exported through the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17480,8 +17400,8 @@ the envelope of PR \#2678 to get the per-stage estimate
 Bounded edge density replaces the edge ratio by the single constant $c$.
 The concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/CompactUpper.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
 and are re-exported through the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17516,8 +17436,8 @@ Lee--Yang gives
 \]
 at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/LeeYangUpperLower.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and is re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17570,8 +17490,8 @@ and
 \texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_ly\_latticeGraph}.
 They live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/LeeYangUpperLower.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
 and are re-exported through the legacy
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17617,8 +17537,8 @@ The setwise companion
 packages one constant $C$ for all stages and all fields in a set $K$.  The
 concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/AbsLogFreeEnergy.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
 and are re-exported through the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
@@ -17657,8 +17577,8 @@ The proof composes PR \#2679 with the elementary consequence of nonemptiness
 using \texttt{Fintype.card\_pos} in Lean.  The concrete $\mathbb Z^d$ wrapper
 lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/AbsLogFreeEnergy.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
 and is re-exported through the legacy paths
 \begin{Verbatim}[fontsize=\footnotesize]
