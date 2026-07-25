@@ -1,5 +1,50 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## SIXTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — main = `40315d38` — PR #4722 MERGED (#4721 closed); PR #4714 ON HOLD
+
+This supersedes the FIFTH (FINAL) UPDATE below as the session's terminal state.
+
+**PR #4722 squash-merged** (issue #4721, branch `refactor/buildtime-cast-positivity-fv`, head
+`89b22161` → merge commit `40315d38`, new `main` tip; branch deleted). All merge gates confirmed
+independently before merge: CI green (`build` pass, 3m53s @ `89b22161`), `dev-verify` all 12
+items PASS (independent re-measurement −3.34s, vs. the implementation's own −3.163s and the
+issue's original $TMPDIR-copy −3.75s — all three consistent, chain recorded in the squash
+message), `dev-review` + codex both APPROVE, `dev-audit-tier1` PASS, `dev-issue-manager`
+RESOLVED. Squash body supplied explicitly via `--body-file` (not the default auto-generated
+message) specifically to keep two defects present in the branch's own history — the stale "this
+branch has not yet been merged with current main" sentence and a `# Conflicts:` block, both
+artifacts of an earlier `origin/main`-into-branch merge — out of `main`'s permanent log (the
+exact `dev-audit-tier1` concern this session). Issue #4721 closed via the squash body's
+`Closes #4721`. The final branch commit (`89b22161`, pushed by `dev-pr-clerk`) also fixed a
+governance defect: `dev-issue-manager` found `.self-local/issues/4721.md` had been silently
+paraphrased (headings reworded, a checkbox list flattened to prose, one sentence dropped) while
+claiming to be a verbatim mirror; restored byte-faithful before merge.
+
+**PR #4714 put ON HOLD** (title prefixed `[ON HOLD]`, body updated with hold rationale; **not
+closed** — close remains a user-approval item; branch/worktree preserved for reference, not
+touched further). `dev-issue-manager` verdict: the same defect shape — a scan declaring
+"complete" by disclaiming unresolved citations instead of counting them as dangling — recurred
+**4 times** (issue #4704's original "157" scan, then #4714's R1/R2/R3 commits), each round also
+injected a *new* defect class into the public `tex/proof-guide.tex` artifact, and the headline
+"157" figure does not match the fuller measured "268". Work restructured under #4704 into
+**PR-1** (fail-closed citation checker under `scripts/` — full path-suffix resolution, correct
+Verbatim/brace expansion, zero disclaim-exemptions, fixtures + mutation tests for the 3 known
+miss-classes, self-referential-prose detection; no separate authorization needed) then **PR-2
+onward** (batched repointing, accepted against the checker's monotonically decreasing count).
+Wiring the checker into CI/`audit_gate.py` as a blocking gate remains a separate user-approval
+item. Full plan recorded on PR #4714's body and in a comment + mirror update on issue #4704.
+
+**Handoff correction check**: the "C1 (HLSSharpPairBound positivity) authorized, not yet
+started" claim that `dev-issue-manager` flagged as stale (C1 actually shipped as PR #4707, see
+`.self-local/reports/perf-C1-hls-positivity-profile.md`) was checked against this file directly —
+every section already correctly states C1 as merged via #4707 (verified by grepping every
+`C1`/`HLSSharpPairBound` occurrence in this file); no edit was needed here. The stale claim
+lived only in the cross-session memory summary, not in this handoff doc.
+
+**Session totals (cumulative across the session)**: **12 PRs merged** (including #4722 above),
+aggregate build-time reduction **≈ −37s** across this session's build-speed items. #4714 is
+ON HOLD (not closed). Next recommended step: PR-1 under #4704 (fail-closed citation checker).
+
 ## FIFTH (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = `cfcead29` — PR #4716 MERGED, #4715 CLOSED
 
 This supersedes the FOURTH (FINAL) UPDATE below as the session's terminal state.

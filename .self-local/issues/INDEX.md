@@ -1111,3 +1111,36 @@ found 2 new outliers not caught by the two prior 48/2011-coverage "exhausted" ca
 `refactor/buildtime-fullcoverage-outliers` opened with empty commit `f7b90286` and draft PR
 #4713 (`Closes #4712`). Implementation not yet started — mirror `.self-local/issues/4712.md`
 created. GitHub open issues now: #4704 / #4709 / #4642 / #4563 / #4559 / **#4712 (new)**.
+
+---
+
+## 2026-07-26 (dev-pr-clerk) — session end: PR #4722 merged (issue #4721 closed); PR #4714 put ON HOLD, restructured under #4704
+
+**PR #4722 merged** (issue #4721, branch `refactor/buildtime-cast-positivity-fv`, squash-merged
+to `main` `40315d38`; branch deleted). Gates confirmed independently before merge: CI green
+(`build` pass, 3m53s @ the final commit `89b22161`, which added a governance fix restoring a
+byte-faithful `.self-local/issues/4721.md` mirror after `dev-issue-manager` found it had been
+silently paraphrased), `dev-verify` all 12 items PASS (independent re-measurement −3.34s),
+`dev-review` + codex both APPROVE, `dev-audit-tier1` PASS, `dev-issue-manager` RESOLVED. Squash
+body supplied explicitly via `--body-file` (not the default merge message) to keep the stale
+"has not yet been merged with current main" sentence and a `# Conflicts:` block — both present
+in the branch's own merge-commit history — out of `main`'s permanent log. Issue #4721 closed via
+the squash body's `Closes #4721`.
+
+**PR #4714 put ON HOLD** (not closed — close is a user-approval item): title prefixed
+`[ON HOLD]`, body updated with the hold rationale (4x recurrence of a "disclaim unresolved
+citations instead of counting them dangling" defect shape across the issue's original scan and
+the PR's three commits; each round injected a new defect class into `tex/proof-guide.tex`;
+headline count 157 vs. measured 268 mismatch). Branch/worktree preserved for reference. Work
+restructured under issue #4704 into PR-1 (fail-closed citation checker, `scripts/`, no separate
+authorization needed) then PR-2+ (batched repointing against the checker's monotonically
+decreasing count). Full plan recorded in a comment on #4704 and in `.self-local/issues/4704.md`.
+
+Handoff doc `.self-local/reports/handoff-2026-07-25-optionB-C1.md` was checked against the
+"C1 authorized-but-not-started" claim reported stale by `dev-issue-manager`; the file already
+correctly documents C1 as completed via PR #4707 in every relevant section (verified by grep for
+all `C1`/`HLSSharpPairBound` occurrences) — no edit was needed there.
+
+Session totals (this session, cumulative): **12 PRs merged** (including #4722 above), build-time
+reduction **≈ −37s** aggregate across the session's build-speed items. #4714 is ON HOLD. Next
+recommended step: PR-1 under #4704 (fail-closed citation checker).
