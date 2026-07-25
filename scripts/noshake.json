@@ -43,7 +43,6 @@
     "IsingModel.Inequalities.GHS",
     "IsingModel.Inequalities.HighTemp",
     "IsingModel.Inequalities.Lebowitz",
-    "IsingModel.LatticeSystemBridge",
     "IsingModel.PseudoMass",
     "IsingModel.RandomCurrent",
     "IsingModel.RandomCurrent.Switching",
