@@ -1,4 +1,17 @@
-# ローカルミラー・インデックス (2026-07-25 更新 — PR #4708 MERGED (main `472731b3`), #4704 GitHub body + stale comment corrected, #4704 stays OPEN, new tracking issue #4709 (PR-body/diff verification gate) filed, #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4692/#4559 OPEN pending user close approval), #4563/#4642 GitHub body corrected (dev-pr-clerk, per dev-issue-manager governance re-verification; both remain OPEN, no close)
+# ローカルミラー・インデックス (2026-07-25 更新 — PR #4710 MERGED (main `d97f9612`), #4704 GitHub body + mirror Scope section moved item 1(`docs/index.md:1715`) into Done, #4704 stays OPEN with 3 remaining items; PR #4708 MERGED (main `472731b3`), new tracking issue #4709 (PR-body/diff verification gate) filed, #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4692/#4559 OPEN pending user close approval), #4563/#4642 GitHub body corrected (dev-pr-clerk, per dev-issue-manager governance re-verification; both remain OPEN, no close)
+
+**2026-07-25 #4710 merged + #4704 Scope section resynced (dev-pr-clerk)**: PR #4710
+(`docs/4704-fix-dangling-transfermatrix-citation`) squash-merged with `--body-file` from the
+current PR body (title corrected `drop`→`repoint` before merge per `dev-issue-manager`
+UPDATE #7) → main `d97f9612` (fast-forward from `3e085137`, branch deleted). `Part of #4704`
+only, no `Closes` keyword — confirmed #4704 stays **OPEN**. #4704 GitHub body + mirror Scope
+section updated: `docs/index.md:1715` moved from "Not started" (Scope item 2) to "Done" (Scope
+item 1), citing PR #4710. #4704's remaining work is now explicitly **3 items**: (a)
+`ClusterExpansionSupersession.lean:18-19` doc-comment stale reference (sole surviving `.lean`
+doc-comment reference to the retired `Layer*.lean` modules, invisible to docs/tex scans; scope
+extension is a user decision), (b) `docs/index.md:1974` count over-statement (8→6, 12→10;
+authorization-pending), (c) unclassified tex-side + remaining docs identifier-token pool
+(false-positive-dominant, needs a better scanning method first). Mirror: `4704.md`.
 
 **2026-07-25 #4708 merged + #4704 GitHub-side corrected + #4709 filed (dev-pr-clerk)**: PR #4708
 (`docs/4704-fix-stale-lean-paths`) squash-merged with `--body-file` from the verified 4-line body

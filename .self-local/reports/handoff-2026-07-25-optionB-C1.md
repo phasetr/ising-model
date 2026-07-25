@@ -1,5 +1,69 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## THIRD (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = `d97f9612`
+
+This supersedes the SECOND FINAL UPDATE below as the session's terminal state.
+
+### Merged this session (5 PRs, chronological)
+
+| PR | issue | title | merged main |
+|---|---|---|---|
+| **#4703** | #4701 | Remove LatticeSystemBridge scaffold (5 files, 323L, 12 reference-0 decls) + docs retraction | `5090f6de` |
+| **#4705** | #4700 | Retract §18.4 Mayer order-3 docs/tex claims left stale by #4702 (i.e. #4702's unperformed part) | `a3046ce6` |
+| **#4707** | #4706 | Replace `positivity` at 3 measured hot sites in `HLSSharpPairBound.lean` (C1); own-cost 3.05s→2.48s (−0.57s/−19%), independent re-measurement 2.43s | `673aabd8` |
+| **#4708** | #4704 (part of) | 4-line `docs/index.md` stale-path repoint (lines 1973/1974/1976/1979) | `472731b3` |
+| **#4710** | #4704 (part of) | 1-line `docs/index.md:1715` dangling-citation repoint (retired `TransferMatrix/Layer*.lean` scaffolding) | `d97f9612` |
+
+### Closed this session
+
+#4701, #4700, #4706 (all `completed`, via merge of #4703/#4705/#4707 respectively).
+
+### New issues filed this session (both remain OPEN)
+
+- **#4704** — repo-wide stale `.lean` reference tracking. 4-line + 1-line items done (PRs #4708,
+  #4710). **3 items remain**: (a) `ClusterExpansionSupersession.lean:18-19` doc-comment stale
+  reference to the retired `Layer*.lean` modules (sole surviving `.lean` doc-comment reference,
+  invisible to docs/tex scans — scope extension is a user decision), (b) `docs/index.md:1974`
+  count over-statement (8→6, 12→10, authorization-pending), (c) unclassified tex-side pool +
+  remaining docs identifier tokens (false-positive-dominant; needs a better scanning method
+  first).
+- **#4709** — PR-body/diff verification gate (process-level finding: 5 PR bodies this session
+  had factual errors about their own diff; see lessons below).
+
+### User-approval-pending items (5, none resolved this session — do not action without explicit user instruction)
+
+1. **#4692 / #4559 close approval** — all technical work disposed (Option-D reference-0
+   campaign umbrella + folded-in predecessor); only the close itself is withheld.
+2. **#4704 remaining implementation authorization + scope-extension decision** — the 3 items
+   above (a/b/c), including whether #4704's scope extends to `.lean` doc comments (item a).
+3. **#4563 standing-authorization currency** — whether the 2026-07-18 "Blanket Authorization
+   Record" is still in force (unexercised 6 days / 100+ commits since #4573, no independently
+   verifiable primary-source text).
+4. **#4642 disposition** — close as `not planned`, or authorize the keep-criterion-(f) override
+   to retract the `AlternatingCompleteGraph.lean` docstring/tex prose and retire K0/K2/K4.
+5. **`docs/index.md:1974` count-correction authorization** — same item as #4704(b) above, listed
+   separately because it is a standalone progress-claim retraction, not a deletion.
+
+### Key lessons this session (for the next session — avoid repeating)
+
+1. **5 PR bodies this session had factual errors** (#4702, #4703, #4707, #4708, #4710).
+   Implementation and verification were each correct in isolation; the errors clustered
+   entirely in the *description* layer. Structural root cause: no pipeline stage checks PR-body
+   claims against the actual diff (→ filed as #4709).
+2. **Provenance/history claims cannot be verified from the PR's own diff.** They must be checked
+   against the *cited commits themselves*: `git show --stat <hash>` / `git log
+   --diff-filter=A -- <path>` at the referenced commit, not just `base...HEAD` of the PR branch.
+3. **Static/mechanical scans were overturned by measurement 4 times this session** (C1's
+   hot-site classification, an `.lean` line-number mis-citation, #4704's false-positive rate,
+   and the docs:1715 repoint-vs-retract classification). Build-speed work in particular must use
+   profiler-measured own-cost (`real − import`), not file size / import-cone / maxHeartbeats
+   heuristics.
+4. **`shake` is systematically false-positive in this umbrella re-export repo** for import-removal
+   candidates; the full build is the only reliable oracle.
+5. **Repo-wide scans are polluted by `.self-local/benchmarks/4519/*/worktrees/`** (full repo-tree
+   duplicates, ~181KB of false positives observed this session). Scope scans to `IsingModel/`,
+   `docs/`, `tex/`, `scripts/` explicitly; never grep the repo root unrestricted.
+
 ## SECOND FINAL UPDATE 2026-07-25 (dev-pr-clerk) — main = `472731b3`
 
 PR **#4708** (`docs/4704-fix-stale-lean-paths`, issue #4704 "Part of", 4-line `docs/index.md`
