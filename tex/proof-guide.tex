@@ -13567,13 +13567,7 @@ The concrete $\mathbb Z^d$ wrappers live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/LocalCoverPatch.lean
-Branches/LocalCoverPatch.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This result does not construct the coherent branch family or prove its local
 uniform convergence.  It records the exact local theorem that can consume that
@@ -13619,19 +13613,11 @@ wrapper lives in
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
-It is re-exported by the old
-\begin{Verbatim}[breaklines=true,breakanywhere=true]
-Branches/LocalCoverPatch.lean
-\end{Verbatim}
-paths.  The real wrapper lives in
+(the former split/legacy paths have merged into this file).  The real wrapper lives in
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
 Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}[breaklines=true,breakanywhere=true]
-Branches/RealCompact.lean
-\end{Verbatim}
-path.
+(the former split/legacy path has merged into this file).
 
 This result still does not construct the coherent local cover or prove local
 uniform convergence; it records the global conditional handoff that such a
@@ -13686,20 +13672,8 @@ Lee--Yang centres.  The corresponding \(\mathbb Z^d\) ball wrappers now live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
-and the local-cover wrappers now live in
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-under
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex
-\end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-path.
+and the local-cover wrappers now live in the same file
+(the former split/legacy path has merged into it).
 
 This theorem does not prove Montel extraction.  It records the exact
 post-extraction target consumed by the remaining normal-family construction.
@@ -13747,13 +13721,8 @@ The concrete \(\mathbb Z^d\) wrappers now live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and are
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/CompactOpenVitali.lean
-SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}
+(the former split/legacy paths have merged into this file).
 
 This result still does not prove Montel compactness of the branch family, nor
 does it perform the diagonal extraction needed for a coherent local cover of
@@ -13793,16 +13762,7 @@ under
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This is the two-ball base case for the finite diagonal extraction theorem.  By
 itself it does not prove Montel compactness, compatibility of the two limits on
@@ -13935,13 +13895,8 @@ The patch wrapper now lives in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteSubseqCompactOpen.lean
-SubseqCompactOpen/FiniteSubseqCompactOpen.lean
-\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}
+(the former split/legacy paths have merged into this file).
 
 This is still a finite, explicit-hypothesis handoff.  It does not prove Montel
 compactness or construct a coherent \(\texttt{leeYangDomain}\)-cover; it only
@@ -14047,11 +14002,8 @@ It now lives in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-under the concrete per-stage complex directory, and is re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-path.
+under the concrete per-stage complex directory
+(the former split/legacy path has merged into this file).
 
 This remains a finite, explicit-hypothesis handoff.  It removes the separate
 manual step of first extracting a packaged finite family and then applying the
@@ -14146,16 +14098,7 @@ The first wrapper lives in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-and
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-paths.  The compact-open
+(the former split/legacy paths have merged into this file).  The compact-open
 wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
@@ -14203,16 +14146,7 @@ The first wrapper lives in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-and
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-paths.  The compact-open
+(the former split/legacy paths have merged into this file).  The compact-open
 wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
@@ -14346,13 +14280,7 @@ in
 \begin{Verbatim}
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and is re-exported by the legacy paths
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/LocalCoverPatch.lean
-Branches/LocalCoverPatch.lean
-\end{Verbatim}
-.
+(the former split/legacy paths have merged into this file).
 
 This is still a conditional post-extraction handoff.  It packages the pointed
 Lee--Yang ball cover, but it does not prove coherent branch selection, Montel
@@ -14575,13 +14503,11 @@ with related stage and all-stage branch wrappers split into
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/StageLeeYang.lean
 \end{Verbatim}
-and re-exported through the legacy
+and re-exported by the
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang.lean
-Branches/StageLeeYang.lean
-PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
 \end{Verbatim}
+umbrella (the former split/legacy paths have merged into the file above).
 paths.
 
 This is an unconditional pre-Montel package.  It still does not provide
@@ -14618,10 +14544,7 @@ The package wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
-and is re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 The patch wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/FiniteCoverPatches.lean
@@ -14765,15 +14688,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
-and are re-exported through the legacy path
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 
 This closes the compact finite-subcover extraction layer for all-stage
 point-indexed data.  It still does not prove Montel compactness, locally
@@ -14812,15 +14727,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 paths.
 
 This packages the compact-target Montel/coherence output shape but still does
@@ -14862,12 +14769,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/RangeCompactOpen.lean
 \end{Verbatim}
-and re-exported by the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/RangeCompactOpen.lean
-RangeAscoliPatches/RangeCompactOpen.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This matches the relative-compactness form naturally expected from a Montel
 argument, but it still assumes compactness of the range closure and coherent
@@ -14907,10 +14809,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/RangeCompactOpen.lean
 \end{Verbatim}
-and re-exported by the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/RangeCompactOpen.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 
 This is the standard relative-compactness input shape for the Montel layer:
 the compact carrier can be supplied by a later normal-family or Ascoli
@@ -14950,16 +14849,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This exposes the compact carrier produced by the range norm-bounded Ascoli
 layer in the relative-compactness shape used by Montel.  It still leaves
@@ -15005,12 +14895,7 @@ and the locally bounded wrappers now live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchRelCompact.lean
 \end{Verbatim}
-The wrapper layers are re-exported by
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact.lean
-BranchRelCompact.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This exposes the final relative-compactness input directly at the
 branch-family boundedness boundary used in Glimm--Jaffe's Vitali argument.  It
@@ -15043,12 +14928,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange.lean
-RangeAscoliPatches/BranchLocalDirectRange.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 This is a
 composition bridge; branch local bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
@@ -15085,10 +14965,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 This removes
 the selected-overlap field from the branch-local Ascoli boundary once
 pointwise-normalised eventual-overlap data is available.  It still does not
@@ -15163,8 +15040,7 @@ freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelComp
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
 in the \texttt{EventualClosedBallPatches/EventualClosedBallDeviation.lean}
-module, re-exported by the old
-\texttt{DirectRange.lean} umbrella path.  This
+module (the former \texttt{DirectRange.lean} child module has merged into this file).  This
 removes the selected-overlap field from the closed-ball branch-deviation Ascoli
 boundary once pointwise-normalised eventual-overlap data is available.  It
 still does not construct that eventual-overlap data, prove closed-ball
@@ -15246,8 +15122,7 @@ in the following child module under
 \begin{Verbatim}[fontsize=\tiny]
 EventualClosedBallPatches/EventualClosedBallDeviation.lean
 \end{Verbatim}
-They are re-exported by the old \texttt{ViaLocal.lean} umbrella in the same
-directory.  This records the closed-ball analogue of the
+(the former \texttt{ViaLocal.lean} child module has merged into this file).  This records the closed-ball analogue of the
 deviation-to-local-bound triangle-inequality route for the eventual-overlap
 boundary.  It still does not construct eventual-overlap data, prove
 closed-ball containment, or prove branch-deviation bounds, closedness,
@@ -15289,10 +15164,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and re-exported by the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchDeviationDirectRange.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 
 This isolates the branch-choice deviation estimate needed to turn the existing
 Lee--Yang local bounded free-energy bounds into branch-family Montel input.
@@ -15325,10 +15197,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and re-exported by the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchDeviationDirectRange.lean
-\end{Verbatim}
+(the former split/legacy path has merged into this file).
 This is a composition bridge;
 branch-deviation bounds, closedness, equicontinuity, and coherent overlap inputs
 remain explicit.
@@ -15361,9 +15230,8 @@ in
 \begin{Verbatim}[fontsize=\scriptsize]
 RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and are re-exported by the legacy
-\texttt{RangeAscoliPatches/BranchDeviationDirectRange.lean} module and the umbrella
-module.
+and are re-exported by the
+\texttt{RangeAscoliPatches.lean} umbrella module.
 
 The named route is a composition result: the principal finite-volume
 free-energy bound and branch-deviation bound are combined by the triangle
@@ -15392,9 +15260,9 @@ freeEnergyComplexAlongExhaustion_posRealBranchDeviationRelCompact_patch_isCompac
 freeEnergyComplexAlongExhaustion_posRealBranchDeviation_directRange_patch_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_posRealBranchDeviationViaLocal_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-respectively in the \texttt{RelCompact.lean}, \texttt{DirectRange.lean}, and
-\texttt{ViaLocal.lean} child modules, re-exported by the
-\texttt{PositiveReal.lean} umbrella path.
+in the \texttt{RangeAscoliPatches/PositiveReal.lean} module (the former
+\texttt{RelCompact.lean}, \texttt{DirectRange.lean}, and \texttt{ViaLocal.lean}
+child modules have merged into this file).
 
 These wrappers add no compactness step.  Principal free-energy bounds,
 branch-deviation bounds, closedness, equicontinuity, restriction identities,
@@ -15528,12 +15396,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange.lean
-RangeAscoliPatches/BranchLocalDirectRange.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 This records
 the non-closed-ball analogue of the PR \#2762 closed-ball
 branch-local to branch-deviation route, with the principal free-energy bound
@@ -15785,8 +15648,7 @@ endpoint.  The concrete \(\mathbb Z^d\) wrapper is
 freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
 in the \texttt{EventualClosedBallPatches/EventualClosedBallDeviation.lean}
-module, re-exported by the old
-\texttt{PosReal.lean} umbrella path.
+module (the former \texttt{PosReal.lean} child module has merged into this file).
 
 This is a positive-real wrapper for the named via-local route, not a new
 compactness step.  Closed-ball branch-deviation bounds, closedness,
@@ -15842,7 +15704,7 @@ with the positive-real wrapper in
 \begin{Verbatim}[fontsize=\footnotesize]
 EventualClosedBallPatches/EventualClosedBallDeviation.lean
 \end{Verbatim}
-re-exported by the old \texttt{PosReal.lean} umbrella path.  This is a
+(the former \texttt{PosReal.lean} child module has merged into this file).  This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
@@ -16086,16 +15948,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This removes the separate carrier and membership bookkeeping from the
 norm-bounded Ascoli input.  It still does not derive closedness of the range
@@ -16287,20 +16140,11 @@ The first two branch-family wrappers now live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/EventualOverlap.lean
 \end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/EventualOverlap.lean
-\end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
+(the former split/legacy path has merged into this file).  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
-.
+(the former split/legacy path has merged into this file).
 
 This is still post-Montel.  It does not prove compactness, diagonal
 extraction, or coherent branch selection; it records the exact raw-data shape
@@ -16426,12 +16270,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/EventualOverlap.lean
 \end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/EventualOverlap.lean
-\end{Verbatim}
-path.
+(the former split/legacy path has merged into this file).
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16463,15 +16302,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/EventualOverlap.lean
 \end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/EventualOverlap.lean
-\end{Verbatim}
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
-\end{Verbatim}
-paths.
+(the former split/legacy paths have merged into this file).
 
 This remains conditional and post-Montel.  It patches already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16506,16 +16337,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/EventualOverlap.lean
 \end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/EventualOverlap.lean
-\end{Verbatim}
-and
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
-\end{Verbatim}
-path.
+(the former split/legacy paths have merged into this file).
 
 This remains conditional and post-Montel.  It packages and patches already
 supplied coherent eventual-overlap data, but does not construct coherent
@@ -16547,12 +16369,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/EventualOverlap.lean
 \end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/EventualOverlap.lean
-\end{Verbatim}
-path.
+(the former split/legacy path has merged into this file).
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16583,12 +16400,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/RealCompact.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This remains conditional and post-Montel.  It extracts finite compact
 geometry from already supplied coherent eventual-overlap data; it does not
@@ -16620,12 +16432,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/RealCompact.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This remains conditional and post-Montel.  It aligns the pointwise-normalised
 API with the compact-geometry endpoint, but does not construct coherent
@@ -16734,12 +16541,7 @@ in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/RealCompact.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/RealCompact.lean
-\end{Verbatim}
-path.
+(the former split/legacy path has merged into this file).
 
 This remains conditional and post-Montel.  It narrows the local-cover endpoint
 for future pointwise-normalised extraction output, but does not construct
@@ -16772,17 +16574,12 @@ The concrete \(\mathbb Z^d\) wrappers are
 exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily_latticeGraph
 exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
-split between the children
+in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Branches/RealCompact.lean
 \end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/RealCompact.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
-\end{Verbatim}
+(the former split/legacy paths have merged into this file).
 
 This is the compactness finite-subcover step for an already packaged local
 cover.  It does not prove Montel compactness, coherent branch choices,
@@ -17227,12 +17024,11 @@ The corresponding \(\mathbb Z^d\) wrappers live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Bounds/LeeYangLower.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+and are re-exported by the
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
 \end{Verbatim}
+umbrella (the former split/legacy path has merged into the file above).
 
 This completes the lower normalised-log side of the Lee--Yang Vitali input.
 The remaining task for GJ \S 4.6 is the coherent locally-uniform branch-family
@@ -17306,12 +17102,11 @@ The concrete $\mathbb Z^d$ wrappers live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Bounds/UpperLog.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+and are re-exported by the
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
 \end{Verbatim}
+umbrella (the former split/legacy path has merged into the file above).
 
 This is not yet the absolute normalised-log bound used by PR \#2679 and
 PR \#2680: it supplies only an upper bound for
@@ -17443,12 +17238,11 @@ concrete $\mathbb Z^d$ wrappers live in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Bounds/UpperLog.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+and are re-exported by the
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
 \end{Verbatim}
+umbrella (the former split/legacy path has merged into the file above).
 
 This is intentionally a conditional handoff.  It identifies the missing
 normal-family input after the compact $Z$ envelope of PR \#2678: one still
@@ -17483,12 +17277,11 @@ lives in
 Concrete/LatticeGraphCorrelation/PerStageComplex/
   Bounds/UpperLog.lean
 \end{Verbatim}
-and is re-exported through the legacy paths
+and is re-exported by the
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
 \end{Verbatim}
+umbrella (the former split/legacy path has merged into the file above).
 
 This theorem packages the exact locally bounded family shape that a later
 Montel/normal-family argument can consume.  It remains conditional on the
@@ -34126,7 +33919,8 @@ thermodynamic limit.  That route is \emph{obstructed}: the single-step Dobrushin
 is provably insufficient for the growing transverse box, and a transverse-uniform Kotecký--Preiss /
 Dobrushin estimate fails (counterexample $u \equiv 1$, $k = \exp(t \sum a\,b)$,
 $\rho \sim \exp(O(|S|))$); see the roadmap, Phase~5, and the documented obstruction in
-the historical transfer-matrix layer contraction modules (removed by PR \#4303).
+the historical transfer-matrix layer contraction modules (removed PR-B1; archived
+\texttt{archive/transfermatrix-spectral-gap-scaffolding}).
 
 Issue~\#4214 item~B option~(ii), formalized in
 \texttt{TransferMatrix/ClusterExpansionSupersession.lean}, records the resolution: the \S18
