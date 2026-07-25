@@ -34,7 +34,9 @@ exoneration, basename-only citations, multiple suffix matches, ``\\_`` escapes,
 the coverage audit itself, resolution against untracked or benchmark copies, the
 anti-vacuity floors, self-reference detection, the multiset ratchet, path text
 glued to a match (``../X/Y.lean``, ``X/Y.lean.bak``), a directive read from a
-quotation instead of from a comment, a directive that outlived the block it was
+quotation instead of from a comment -- mid-sentence, inside a ``Verbatim`` block,
+inside any *other* verbatim environment, or inside an indented markdown code
+block -- a directive that outlived the block it was
 written for, an indented tree entry joined onto the heading above it, a census
 published from a provably incomplete run, and a baseline rewritten from a
 partial target set.
@@ -479,6 +481,52 @@ DIRECTIVE_IN_VERBATIM_TEX = (
     "\\end{Verbatim}\n"
 )
 
+# The same sample, printed with a verbatim environment other than fancyvrb's
+# ``Verbatim``. Each of these armed the quoted directive for real until the
+# environment family was enumerated: the block was not recognised as verbatim,
+# so its ``%`` line was read as an instruction and exempted the citation under
+# it -- a rendered sample acting as an act.
+DIRECTIVE_IN_OTHER_VERBATIM_TEX = {
+    "verbatim": (
+        "\\begin{verbatim}\n"
+        "% citation-audit: prefix IsingModel/Inequalities/\n"
+        "GKS.lean                  GKS-I, GKS-II\n"
+        "\\end{verbatim}\n"
+    ),
+    "lstlisting": (
+        "\\begin{lstlisting}[language=Lean]\n"
+        "% citation-audit: prefix IsingModel/Inequalities/\n"
+        "GKS.lean                  GKS-I, GKS-II\n"
+        "\\end{lstlisting}\n"
+    ),
+    "alltt": (
+        "\\begin{alltt}\n"
+        "% citation-audit: prefix IsingModel/Inequalities/\n"
+        "GKS.lean                  GKS-I, GKS-II\n"
+        "\\end{alltt}\n"
+    ),
+}
+
+# The markdown counterpart: the syntax shown in an indented code block, which is
+# a rendered sample and not a comment. It armed the directive for real while the
+# comment pattern accepted leading whitespace.
+DIRECTIVE_INDENTED_MD = (
+    "The exemption is written like this:\n"
+    "\n"
+    "    <!-- citation-audit: prefix IsingModel/Inequalities/ -->\n"
+    "    `GKS.lean` holds GKS-I and GKS-II.\n"
+)
+
+# The same text at a shallower indent, where markdown renderers disagree about
+# whether it is a comment or content. It armed the directive too, and is refused
+# now on the fail-closed side: an author who means it un-indents to column 0.
+DIRECTIVE_INDENTED_SHALLOW_MD = (
+    "- The exemption is written like this:\n"
+    "\n"
+    "  <!-- citation-audit: prefix IsingModel/Inequalities/ -->\n"
+    "  `GKS.lean` holds GKS-I and GKS-II.\n"
+)
+
 # A directive whose block has since been deleted, leaving it pointing at
 # whatever citation happens to come next.
 DIRECTIVE_ORPHANED_TEX = (
@@ -547,13 +595,15 @@ class ArchiveTagTest(unittest.TestCase):
         self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
 
     def test_a_quoted_directive_is_not_an_instruction(self) -> None:
-        """Writing *about* the syntax must not arm it.
+        """Writing *about* the syntax mid-sentence must not arm it.
 
         The pattern used to match anywhere on a line, so transcribing this
         tool's own documentation into a document -- mid-sentence, inside
-        ``\\texttt{...}``, inside a sample block -- exempted the next citation
-        for real. A directive is now read only from a line that is itself a
-        comment in that document's syntax.
+        ``\\texttt{...}`` -- exempted the next citation for real. A directive is
+        now read only from a line that is itself a comment in that document's
+        syntax. The other renderings of the same quotation (a sample block, an
+        indented markdown block, a blockquote) are pinned separately below;
+        each was its own hole.
         """
         for target, text in (
             ("tex/g.tex", DIRECTIVE_QUOTED_TEX),
@@ -585,6 +635,47 @@ class ArchiveTagTest(unittest.TestCase):
         ):
             report = ca.audit(["tex/g.tex"])
         self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
+
+    def test_a_directive_inside_a_non_fancyvrb_verbatim_block_is_content(self) -> None:
+        """The block test must cover the verbatim *family*, not one environment.
+
+        Only ``\\begin{Verbatim}`` was recognised, so the identical sample
+        printed with ``verbatim``, ``lstlisting`` or ``alltt`` was read as an
+        instruction and exempted the citation under it. Measured before the fix:
+        each of the three yielded ``RESOLVED_BY_DIRECTIVE`` and zero findings,
+        indistinguishable from a directive written in earnest at column 0.
+        """
+        for name, text in sorted(DIRECTIVE_IN_OTHER_VERBATIM_TEX.items()):
+            with self.subTest(environment=name):
+                with fixture(
+                    {"tex/g.tex": text}, tracked=["IsingModel/Inequalities/GKS.lean"]
+                ):
+                    report = ca.audit(["tex/g.tex"])
+                self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
+
+    def test_an_indented_markdown_directive_is_content(self) -> None:
+        """In markdown, indentation is what turns the syntax into a rendering.
+
+        Four spaces make an indented code block, so a leading-whitespace-tolerant
+        comment pattern could not tell a printed sample from an act: measured
+        before the fix, the indented sample resolved the citation beneath it by
+        directive, exactly as a column-0 directive would have. The shallower
+        indent is refused as well -- renderers disagree about it and the tool
+        must not have to adjudicate, so column 0 is required and an author who
+        means the exemption un-indents. The tex half stays whitespace-tolerant
+        on purpose: an indented ``%`` line is still an invisible source comment
+        there, and its rendered form is the verbatim block covered above.
+        """
+        for name, text in (
+            ("indented code block", DIRECTIVE_INDENTED_MD),
+            ("shallow indent", DIRECTIVE_INDENTED_SHALLOW_MD),
+        ):
+            with self.subTest(rendering=name):
+                with fixture(
+                    {"docs/g.md": text}, tracked=["IsingModel/Inequalities/GKS.lean"]
+                ):
+                    report = ca.audit(["docs/g.md"])
+                self.assertEqual(classes(report, "docs/g.md"), {"BASENAME_ONLY": 1})
 
     def test_a_directive_expires_when_its_subject_is_gone(self) -> None:
         """An exemption must not outlive the block it was written for.
@@ -1159,6 +1250,34 @@ class MutationTest(unittest.TestCase):
         report = self.audit_with(
             mutant,
             {"tex/g.tex": DIRECTIVE_IN_VERBATIM_TEX},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        )
+        self.assertEqual(report.findings, [])
+
+    def test_recognising_only_fancyvrb_arms_a_sample_in_any_other_block(self) -> None:
+        """Narrowing the family back to ``Verbatim`` reopens the measured hole."""
+        mutant = load_mutated(
+            (
+                '    r"(?:B|L|S|Save)?(?:verbatim|verbatimtab|semiverbatim|alltt'
+                '|lstlisting|listing|minted)\\*?",\n    re.IGNORECASE,\n',
+                '    r"Verbatim",\n',
+            )
+        )
+        report = self.audit_with(
+            mutant,
+            {"tex/g.tex": DIRECTIVE_IN_OTHER_VERBATIM_TEX["verbatim"]},
+            tracked=["IsingModel/Inequalities/GKS.lean"],
+        )
+        self.assertEqual(report.findings, [])
+
+    def test_an_indent_tolerant_markdown_comment_arms_a_printed_sample(self) -> None:
+        """Accepting leading whitespace makes a code-block sample an instruction."""
+        mutant = load_mutated(
+            ('MD_COMMENT = re.compile(r"^<!--")', 'MD_COMMENT = re.compile(r"^\\s*<!--")')
+        )
+        report = self.audit_with(
+            mutant,
+            {"docs/g.md": DIRECTIVE_INDENTED_MD},
             tracked=["IsingModel/Inequalities/GKS.lean"],
         )
         self.assertEqual(report.findings, [])

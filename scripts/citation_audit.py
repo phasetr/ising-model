@@ -97,14 +97,28 @@ implemented at all. The replacement is explicit, local and verified:
     GKS.lean                  GKS-I, GKS-II
     \\end{Verbatim}
 
-A directive is read **only from a document comment** -- ``%`` at the start of a
-tex line, ``<!--`` at the start of a markdown line -- and **never from inside a
-verbatim or fenced block**, so quoting these examples into a document (or into
-this docstring) arms nothing. Its scope is the *single next line that carries
-citations*, or, when written immediately before a verbatim block or a fenced
-block, that one block; it **expires at the first non-blank line that carries no
-citation**, so deleting the block a directive was written for cannot let the
-exemption drift silently onto an unrelated citation further down.
+A directive is read **only from a source comment**: in tex, a line whose first
+non-blank character is ``%``; in markdown, a line beginning with ``<!--`` in
+**column 0**. It is further ignored inside a verbatim environment -- the whole
+family, see :data:`VERBATIM_ENVIRONMENT`, not just ``Verbatim`` -- and inside a
+fenced Markdown block. So each of these ways of *showing* the syntax leaves the
+citations after it charged: a sample inside ``Verbatim``, ``verbatim``,
+``lstlisting`` or ``alltt``; a fenced block; an indented Markdown code block; a
+blockquote or list item (neither starts in column 0); a mid-sentence quotation.
+Each was measured: the first three of the verbatim family and the indented block
+armed a real exemption before these rules existed.
+
+Like the rest of the extraction layer this is an enumeration of the spellings
+these documents use, not a proof that no rendering can arm a directive (a raw
+``<pre>`` HTML block in the markdown, say, is not tracked). The invariant it does
+hold to is the direction: every spelling not recognised as a comment, and every
+one recognised as quoted, **charges** rather than exonerates.
+
+A directive's scope is the *single next line that carries citations*, or, when
+written immediately before a verbatim block or a fenced block, that one block; it
+**expires at the first non-blank line that carries no citation**, so deleting the
+block a directive was written for cannot let the exemption drift silently onto an
+unrelated citation further down.
 
 ``archived`` is checked against ``git ls-tree -r <tag>``; ``prefix``
 re-resolves each bare basename as ``<prefix><token>`` against the tracked set.
@@ -147,8 +161,14 @@ The extraction layer is a text approximation of LaTeX and Markdown and is
 best-effort *charging* only. Green tests do not mean the tokeniser is complete;
 completeness is what the coverage audit and human review of edge cases are for.
 CI wiring (a ``V5`` in ``scripts/audit_gate.py`` or a workflow step) is a
-configuration change and is deliberately not part of this script -- see
-:func:`run` for the connection point.
+configuration change and is deliberately not part of this script: there is no
+adapter function here either, because an adapter written before its caller
+exists is guesswork, and the obvious guess -- returning findings and
+self-references as one list -- would silently promote the advisory ``SELFREF``
+class into a gating one. A future wiring commit calls :func:`audit` and reads
+``Report.findings`` (gating), ``Report.coverage`` and ``Report.hard`` (hard
+failures), ``Report.visited`` (scanned-set honesty) and ``Report.selfrefs``
+(advisory, must not gate) explicitly.
 
 Runtime: Python 3.9 standard library only; no ``lake``, no network.
 """
@@ -219,10 +239,29 @@ ALL_CLASSES = (
 # Lexical layer
 # ---------------------------------------------------------------------------
 
-# Only ``Verbatim`` (fancyvrb) is used as a verbatim environment in the tex
-# (measured: 423 ``\begin{Verbatim}``, no ``verbatim``/``lstlisting``/``alltt``).
-VERBATIM_BEGIN = re.compile(r"\\begin\{Verbatim\}")
-VERBATIM_END = re.compile(r"\\end\{Verbatim\}")
+# Verbatim environments. Only ``Verbatim`` (fancyvrb) is in use today
+# (measured: 423 ``\begin{Verbatim}``, no ``verbatim``/``lstlisting``/``alltt``),
+# but the whole family is enumerated for the same reason ``MACRO`` below lists
+# ``\lstinline`` and ``\verb``: an unlisted spelling is an unhandled variant the
+# moment someone writes it. Here the stake is higher than a missed citation --
+# being inside a verbatim environment is what makes a quoted ``citation-audit:``
+# comment *content* instead of an instruction, so an unlisted environment is a
+# fail-open hole through which a sample block exempts real citations (measured:
+# ``\begin{verbatim}``, ``lstlisting`` and ``alltt`` each armed a quoted
+# directive before this list existed).
+#
+# The name test is case-insensitive and accepts the starred and prefixed forms,
+# so ``verbatim``, ``Verbatim*``, ``BVerbatim`` and ``SaveVerbatim`` are all
+# covered. Environment options (``\begin{lstlisting}[language=Lean]``) follow the
+# closing brace and are ignored. Closing requires the *same* name that opened, so
+# a mismatched ``\end`` cannot end verbatim treatment early; an environment left
+# open runs to the end of the file, which is the fail-closed direction.
+ENVIRONMENT_BEGIN = re.compile(r"\\begin\{([^{}]*)\}")
+ENVIRONMENT_END = re.compile(r"\\end\{([^{}]*)\}")
+VERBATIM_ENVIRONMENT = re.compile(
+    r"(?:B|L|S|Save)?(?:verbatim|verbatimtab|semiverbatim|alltt|lstlisting|listing|minted)\*?",
+    re.IGNORECASE,
+)
 
 # Inline macros that carry a path. ``\texttt`` and ``\path`` are the ones in use
 # (965 / 72 invocations whose argument holds a ``.lean``, out of 10,892 / 145
@@ -289,14 +328,27 @@ WRAP_CONTINUATION = re.compile(r"^[A-Za-z0-9_]")
 DIRECTIVE = re.compile(r"citation-audit:\s*([A-Za-z][A-Za-z0-9_-]*)\s+(\S+)")
 DIRECTIVE_KINDS = ("archived", "prefix")
 
-# A directive is only read from a line that *is* a comment: ``%`` at the start
-# of a tex line, ``<!--`` at the start of a markdown line. Without this the
-# pattern would arm anywhere on any line -- inside ``\texttt{...}``, inside a
-# ``Verbatim`` block, in a sentence explaining the syntax -- so transcribing
-# this tool's own documentation into the proof guide would grant a real
-# exemption. An exemption has to be an act, not a quotation.
+# A directive is only read from a line that *is* a comment in the document's own
+# syntax. Without this the pattern would arm anywhere on any line -- inside
+# ``\texttt{...}``, inside a ``Verbatim`` block, in a sentence explaining the
+# syntax -- so transcribing this tool's own documentation into the proof guide
+# would grant a real exemption. An exemption has to be an act, not a quotation.
+#
+# The asymmetry between the two patterns is the difference between the two
+# syntaxes, and it is what closes the quotation route in each:
+#
+# * in tex, ``%`` starts a comment at any column, and leading whitespace is
+#   ordinary source indentation -- an indented ``%`` line is still invisible in
+#   the rendered document, hence still an act. A *visible* sample of the syntax
+#   has to sit inside a verbatim environment, which is handled above.
+# * in markdown there is no such thing as an indented comment: four spaces make
+#   an **indented code block**, so ``    <!-- citation-audit: ... -->`` is a
+#   rendered sample, and one or three spaces put the text inside a blockquote or
+#   a list item. Accepting leading whitespace here therefore made a quotation
+#   indistinguishable from an act (measured: an indented sample exempted the
+#   citation printed under it), so column 0 is required.
 TEX_COMMENT = re.compile(r"^\s*%")
-MD_COMMENT = re.compile(r"^\s*<!--")
+MD_COMMENT = re.compile(r"^<!--")
 
 # Fenced code block delimiter in Markdown (used only for directive block scope;
 # fenced content is scanned like any other line).
@@ -308,6 +360,25 @@ SELFREF_CUE = re.compile(
     r"re-exported|legacy|split into|former split|merged into|now lives in"
     r"|lives in|live in|\bold\b"
 )
+
+
+def verbatim_environment_opened(line: str) -> Optional[str]:
+    """Return the name of the verbatim environment ``line`` opens, else ``None``.
+
+    The first verbatim-family ``\\begin{...}`` on the line wins; a line that
+    opens only prose environments opens nothing. The name is returned rather
+    than a boolean so :func:`verbatim_environment_closes` can require the
+    matching ``\\end``.
+    """
+    for match in ENVIRONMENT_BEGIN.finditer(line):
+        if VERBATIM_ENVIRONMENT.fullmatch(match.group(1)):
+            return match.group(1)
+    return None
+
+
+def verbatim_environment_closes(line: str, name: str) -> bool:
+    """Return whether ``line`` closes the open verbatim environment ``name``."""
+    return any(match.group(1) == name for match in ENVIRONMENT_END.finditer(line))
 
 
 def unescape(text: str) -> str:
@@ -480,7 +551,6 @@ class Directive(NamedTuple):
 
     kind: str
     argument: str
-    line: int
 
 
 class Citation(NamedTuple):
@@ -490,7 +560,6 @@ class Citation(NamedTuple):
     line: int
     variant: str
     token: str
-    raw_token: str
     directive: Optional[Directive]
 
 
@@ -510,7 +579,7 @@ def parse_directive(line: str, is_tex: bool) -> Optional[Directive]:
     kind, argument = match.group(1), match.group(2)
     if kind not in DIRECTIVE_KINDS:
         return None
-    return Directive(kind, argument, 0)
+    return Directive(kind, argument)
 
 
 def scan_units(line: str, is_tex: bool, in_verbatim: bool) -> List[Tuple[str, str]]:
@@ -583,7 +652,7 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
     citations: List[Citation] = []
     coverage: List[str] = []
 
-    in_verbatim = False
+    verbatim_env: Optional[str] = None
     in_fence = False
     pending_wrap: Optional[Tuple[int, str]] = None
     pending_directive: Optional[Directive] = None
@@ -596,8 +665,14 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
         raw_total += raw
         line_start = len(citations)
 
-        begins = bool(is_tex and VERBATIM_BEGIN.search(line))
-        ends = bool(is_tex and VERBATIM_END.search(line))
+        in_verbatim = verbatim_env is not None
+        opened = verbatim_environment_opened(line) if is_tex else None
+        begins = opened is not None
+        ends = bool(
+            is_tex
+            and verbatim_env is not None
+            and verbatim_environment_closes(line, verbatim_env)
+        )
         fence = bool(not is_tex and MD_FENCE.match(line))
         # The delimiter line is scanned as ordinary prose rather than skipped:
         # a ``.lean`` written in ``\begin{Verbatim}[label=Foo.lean]`` would
@@ -659,7 +734,6 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                                 line=report_line,
                                 variant=token_variant,
                                 token=expanded,
-                                raw_token=raw_token,
                                 directive=None,
                             )
                         )
@@ -690,7 +764,7 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
         # exempt the citation printed after the block.
         found = None if (verbatim_line or in_fence) else parse_directive(line, is_tex)
         if found is not None:
-            pending_directive = Directive(found.kind, found.argument, number)
+            pending_directive = found
         elif (
             pending_directive is not None
             and not carried
@@ -706,12 +780,12 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
             pending_directive = None
 
         if begins:
-            in_verbatim = True
+            verbatim_env = opened
             pending_wrap = None
             if pending_directive is not None:
                 block_directive, pending_directive = pending_directive, None
         elif ends:
-            in_verbatim = False
+            verbatim_env = None
             pending_wrap = None
             block_directive = None
         elif fence:
@@ -1048,22 +1122,6 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
         coverage=coverage,
         hard=hard,
     )
-
-
-def run(targets: Optional[Sequence[str]] = None) -> Tuple[List[Finding], List[str]]:
-    """Return ``(findings, coverage_failures)``; never raises on document content.
-
-    The connection point for a future ``audit_gate.check_v5()``, matching the
-    ``check_vN() -> (failures, visited)`` shape used there. Wiring it into the
-    gate or into CI changes what blocks a push, which is a configuration
-    decision and is not taken here. Callers that need the scanned-set honesty
-    data (which targets were actually opened) or the hard failures should call
-    :func:`audit` and read ``Report.visited`` / ``Report.hard`` -- a caller that
-    looks only at the two lists returned here must treat an empty findings list
-    as meaningless unless it also checked those.
-    """
-    report = audit(targets)
-    return (report.findings + report.selfrefs, report.coverage + report.hard)
 
 
 # ---------------------------------------------------------------------------
