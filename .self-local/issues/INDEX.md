@@ -1,3 +1,10 @@
+**2026-07-26 #4724 filed (dev-pr-clerk)**: build-speed numeric-discrepancy tracking issue —
+measurement A (2026-07-18, #4563's decision basis, per-module fixed cost ≈7.0s) vs. measurement B
+(2026-07-24/25 full-coverage `dev-perf` sweep, `.self-local/reports/perf-full-coverage-buildtime-4b14a205.md`,
+1.55–2.19s/module) disagree by ~4.5x. Direction is **not** in dispute — both #4563 and measurement B
+agree consolidation reduces build cost; only the magnitude is unresolved. Cross-referenced on #4563
+(not closed); mirror `4724.md` created.
+
 **2026-07-26 governance sync (dev-pr-clerk)**: (1) **#4721 mirror was missing** (build-speed
 `Nat.cast_nonneg` A/B proposal, `dev-perf` measured -3.75s) — created (`4721.md`), verbatim from
 the GitHub issue body, no implementation started. (2) **#4709 was stale** (title/body still said
