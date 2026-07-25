@@ -499,11 +499,6 @@ import IsingModel.TransferMatrix.InfiniteVolumeOneDSusceptibility
 import IsingModel.TransferMatrix.InfiniteVolumeOneDMass
 import IsingModel.TransferMatrix.ClusterExpansionSupersession
 import IsingModel.PhaseTransition.FieldResponseHighTemp
-import IsingModel.LatticeSystemBridge
-import IsingModel.LatticeSystemBridge.Abstraction
-import IsingModel.LatticeSystemBridge.CorrelationCompat
-import IsingModel.LatticeSystemBridge.Coupling
-import IsingModel.LatticeSystemBridge.GibbsCompat
 
 import IsingModel.Analysis.HolomorphicEquicontinuity
 import IsingModel.AmbientComplexAnalyticity.AscoliData.Constructors.AnalyticSideConditions

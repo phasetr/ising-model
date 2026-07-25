@@ -13,7 +13,7 @@ Definitions
   catch-all root umbrella ``IsingModel.lean``.  NOTE: genuine terminal
   capstones are themselves leaves that nothing imports, so the orphan set
   ALWAYS contains real results (e.g. ``ContinuousSpin.TwoComponentLebowitz``,
-  ``LatticeSystemBridge.*``, the ``GKSTest`` entry ``TestGenerators``).
+  the ``GKSTest`` entry ``TestGenerators``).
   **Orphan does NOT mean deletable.**
 * **dead (relative to a capstone set)**: a module not contained in the
   transitive import-closure of any genuine terminal capstone.  This is only
