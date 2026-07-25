@@ -421,7 +421,6 @@ import IsingModel.ClusterExpansion.MayerCore.IndependentFreeEnergyMayer
 import IsingModel.ClusterExpansion.MayerCore.IndependentMayerTerm
 import IsingModel.ClusterExpansion.MayerCore.IndependentPolymer
 import IsingModel.ClusterExpansion.MayerCore.IndependentVanishing
-import IsingModel.ClusterExpansion.MayerCore.MayerTermThreeEval
 import IsingModel.TransferMatrix.OneDim
 import IsingModel.TransferMatrix.OneDimField
 import IsingModel.TransferMatrix.OneDimFieldPower
