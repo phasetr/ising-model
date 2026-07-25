@@ -92,7 +92,8 @@ theorem correlationAlongExhaustion_dart_ratio_le_finiteRegionFV {α d : ℕ} (h�
   have hexp := exp_neg_scaled_dart_pair_le_exp (d := d) (t := m) hm_nn x y u v hadj
   have halg := pseudoMassG_ratio_le (α := α) (m := m)
     (a := (latticeDistance d x u : ℝ)) (b := (latticeDistance d y v : ℝ))
-    (c := (latticeDistance d x y : ℝ)) hm_nn (by positivity) (by positivity) (by positivity) hexp
+    (c := (latticeDistance d x y : ℝ)) hm_nn (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+    (Nat.cast_nonneg _) hexp
   calc cxu * cyv / cxy
       ≤ (pseudoMassG α (latticeDistance d x u : ℝ) m
           * pseudoMassG α (latticeDistance d y v : ℝ) m) / cxy :=

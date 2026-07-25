@@ -77,7 +77,7 @@ theorem correlationAlongExhaustion_incident_ratio_le_finiteRegionFV {α d : ℕ}
   have hexp := exp_neg_scaled_incident_le_exp (d := d) (t := m) hm_nn x z v hadj
   have halg := pseudoMassG_single_ratio_le (α := α) (m := m)
     (a := (latticeDistance d z v : ℝ)) (c := (latticeDistance d x z : ℝ))
-    hm_nn (by positivity) (by positivity) hexp
+    hm_nn (Nat.cast_nonneg _) (Nat.cast_nonneg _) hexp
   calc czv / cxz
       ≤ pseudoMassG α (latticeDistance d z v : ℝ) m / cxz :=
         div_le_div_of_nonneg_right hzv_maj hcxz_pos.le
