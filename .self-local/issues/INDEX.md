@@ -1,4 +1,19 @@
-# ローカルミラー・インデックス (2026-07-22 更新 — #4662 CLOSED (merged PR #4661, squash a1ead114), #4653 OPEN (audit-gate self-test), #4635 CLOSED (merged PR #4652), #4639 CLOSED, #4640 CLOSED, #4642 OPEN, #4649 OPEN (pending CI), #4650 CLOSED (merged PR #4651))
+# ローカルミラー・インデックス (2026-07-25 更新 — #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4704 OPEN (9/156 re-anchored), #4692/#4559 OPEN pending user close approval)
+
+**2026-07-25 (final) #4706 CLOSED (merged PR #4707, squash main `673aabd8`)**: HLS
+`positivity` hot-site refactor — 3 of 35 call sites (folded into one shared `private lemma`)
+account for 77% of module own-cost; own-cost 3.05s → 2.48s (implementer) / **2.43s** (independent
+`dev-verify` re-measurement, median of 3). Remaining 32 sites (0.19s aggregate, ~3% of module)
+deliberately left untouched — issue comment records the 33/30 → 35/32 count correction and
+returns the unused portion of the user's authorization. Mirror: `4706.md`. Handoff:
+`.self-local/reports/handoff-2026-07-25-optionB-C1.md`.
+
+**2026-07-25 #4700 CLOSED (final, merged PR #4705, squash main `a3046ce6`)**: docs/tex retraction
+of the §18.4 Mayer order-3 claims left stale by PR #4702; both title deliverables (code deletion +
+docs retraction) now complete. Downstream: **#4704 re-anchored 12/159 → 9/156** (the 3-item delta
+= the retracted Mayer-order-3 references, excluded to avoid double-count); **#4692/#4559 remain
+OPEN** — all technical work is disposed, close is pending the user's explicit approval only
+(not closed by dev-pr-clerk). Mirrors: `4700.md`, `4704.md`, `4692.md`, `4559.md`.
 
 **2026-07-25 #4701 CLOSED (merged PR #4703, squash main `5090f6de`)**: LatticeSystemBridge scaffold
 removed (5 files, 323L, 12 reference-0 decls), docs retracted in same PR. `#4700 REOPENED`, body
