@@ -1,5 +1,68 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## FIFTH (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = `cfcead29` — PR #4716 MERGED, #4715 CLOSED
+
+This supersedes the FOURTH (FINAL) UPDATE below as the session's terminal state.
+
+**PR #4716 squash-merged** (issue #4715, branch `refactor/buildtime-isdefeq-cluster`, head
+`6ed1ad5c` → merge commit `cfcead29`, new `main` tip; branch deleted). All merge gates confirmed
+independently before merge: CI green (`build` pass, 3m32s @ `6ed1ad5c`), `dev-verify` PASS all 9
+items, `dev-review` + codex both APPROVE, `dev-audit-tier1` PASS (the "all 37 theorems" wording
+issue flagged by tier1 was already corrected to "37 of the 39 …" in the PR body before this
+merge), `dev-issue-manager` RESOLVED, remote-tip = gated commit confirmed via `git ls-remote` +
+non-empty `git diff origin/main..origin/<branch>` before merge and non-empty
+`git diff <base>..origin/main` after. Issue #4715 auto-closed via the PR's `Closes #4715`
+trailer.
+
+**Measured reduction — version chain (now reconciled everywhere)**: **-21.7s** (initial A/B
+planning estimate, `dev-perf`) → **-22.09s** (implementation back-to-back before/after
+measurement on the PR branch) → **-22.30s** (`dev-verify` independent re-measurement, same
+protocol). All three are mutually consistent (same protocol, small measurement noise); the
+number that matters for the acceptance criterion (≥18s) is -22.09s/-22.30s. The chain is now
+recorded in: the PR #4716 squash-merge message itself, a closing comment on GitHub #4715, the
+`.self-local/issues/4715.md` mirror, and an inline note in
+`.self-local/reports/perf-isdefeq-cluster-analysis.md` (right after its original -21.7s planning
+table, kept verbatim for history).
+
+**New process issue filed: #4718** — "artifacts committed straight to main bypassed the audit
+gate and left main red for two commits". Records the incident where 9 `dev-perf` A/B artifacts
+were committed directly to `main` (`b4bec721`) as tracked `.lean` files, tripping
+`scripts/test_audit_gate.py:851` and leaving `main` red for 2 commits (`b4bec721`/`b67b62fe`,
+fixed by `7991a01d`'s `.lean`→`.lean.txt` rename). Two root causes recorded: (a) a direct-to-main
+commit bypassing the PR/CI pipeline (a `dev-pr-workflow` process deviation — an orchestrator
+instruction is not authorization to bypass a process gate), (b) an asymmetry in
+`scripts/audit_gate.py`'s own invariants (V4 exempts `.self-local/`, the V1/V2 coverage
+self-test does not) — a config-change fix is proposed but **not implemented**, pending user
+approval. **Distinct defect class from #4709** (which is about PR-body-vs-diff, not
+direct-to-main commits).
+
+**Governance corrections found by `dev-issue-manager` and actioned this update**:
+- `.self-local/issues/4717.md` mirror was **missing** (the only open issue with no local
+  mirror) — created.
+- Issue #4717's GitHub body had a **stale-path defect** (2 occurrences of
+  `IsingModel/Lemma_17_5_2/...` missing the `Concrete/LatticeGraphCorrelation/` prefix; line
+  numbers were correct) — same defect class as #4704, corrected via `gh issue edit`.
+- `.self-local/issues/INDEX.md` was stale (last entry #4712/#4713, missing #4714–#4717) —
+  a new dated entry added covering #4715/#4716/#4717/#4718.
+
+**This update's own file changes did NOT go to `main` directly** (practicing the very lesson
+#4718 records): all of `.self-local/issues/4715.md`, `.self-local/issues/4717.md` (new),
+`.self-local/issues/4718.md` (new), `.self-local/issues/INDEX.md`, this handoff doc, and the
+`perf-isdefeq-cluster-analysis.md` version-chain note were bundled into a short-lived PR
+(`.self-local/`-only changes, CI green confirmed, gates simplified per instruction — see PR
+number recorded at the top of the next dated entry in `INDEX.md` once merged).
+
+**Next in-lane item needing no further authorization**: **#4717** (delete the `private`
+duplicate `finiteRegionPseudoMassDistFV_le_pair`;
+`GlobalPseudoMassDistCubicInfFV.lean` already imports `FiniteRegionPseudoMassDistFV`, so the
+dedup adds no import).
+
+**User-decision items outstanding are otherwise unchanged from the FOURTH update below** (PR
+#4713 merge authorization, `Meta.isDefEq` cluster — now resolved/superseded by #4716, so drop
+item 2 from that list — #4559/#4642/#4563/#4704 dispositions, #4709 implementation decision,
+§17.5.1 OZ). New item: **#4718's proposed `audit_gate.py`/`test_audit_gate.py` invariant fix**
+requires explicit user approval before any config change.
+
 ## FOURTH (FINAL) UPDATE 2026-07-25 (dev-pr-clerk) — main = see below; PR #4713 OPEN (unmerged)
 
 This supersedes the THIRD (FINAL) UPDATE below as the session's terminal state.

@@ -27,6 +27,12 @@ capture the true root cause below.
 | (additional finding) `IsingModel/Concrete/LatticeGraphCorrelation/Lemma_17_5_2/GlobalPseudoMassDistCubicInfFV.lean` | 3.76s | 1.77s | **-1.99s** |
 | **Total** | | | **-21.7s** |
 
+**Version chain (this A/B estimate superseded by later measurements — kept verbatim above for
+history, do not edit the table)**: **-21.7s** (this report, initial A/B estimate) →
+**-22.09s** (PR #4716 implementation, back-to-back before/after measurement on the branch) →
+**-22.30s** (`dev-verify` independent re-measurement, same protocol). See PR #4716 / issue
+#4715 for the final figures; this report documents the planning-stage A/B only.
+
 ## Mechanism (identical across all 6)
 
 A failed higher-order-unification path in `isDefEq`. The lambda body of an argument has its
