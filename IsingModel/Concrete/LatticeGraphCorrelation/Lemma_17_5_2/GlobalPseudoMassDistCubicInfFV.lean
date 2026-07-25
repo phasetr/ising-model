@@ -28,17 +28,6 @@ namespace Ambient
 
 open Real Filter Topology
 
-/-- **Finite-volume finite-region pseudo-mass is `≤` any contributing in-box pair's FV pseudo-mass**
-(`Finset.inf'_le`).  Isolated as a lemma so the heavy `pseudoMassExt`/`correlationAlongExhaustion`
-defeq check happens once, outside the bridge's `set`-folded context. -/
-private theorem finiteRegionPseudoMassDistFV_le_pair {α d : ℕ} (hα : 1 ≤ α) (p : IsingParams ℝ)
-    (n : ℕ) (hA : (finiteRegionDistinctPairs ((cubicExhaustion d).volume n)).Nonempty)
-    {x z : Fin d → ℤ}
-    (hmem : (x, z) ∈ finiteRegionDistinctPairs ((cubicExhaustion d).volume n)) :
-    finiteRegionPseudoMassDistFV hα p n hA ≤ pseudoMassFromParamsAtPairFV hα p n x z := by
-  unfold finiteRegionPseudoMassDistFV
-  exact Finset.inf'_le _ hmem
-
 /-- **GJ p.312 bridge, finite-volume form**: `globalPseudoMassDist` is the cubic-exhaustion infimum
 of the finite-volume finite-region pseudo-masses.  See the module docstring for the two
 directions. -/
@@ -145,7 +134,7 @@ theorem globalPseudoMassDist_eq_csInf_finiteRegionFV_cubic {α d : ℕ} (hα : 1
       have hne_n : (finiteRegionDistinctPairs (Λ.volume n)).Nonempty := ⟨(x, z), hpair_mem⟩
       have h1 : finiteRegionPseudoMassDistFV hα p n hne_n
           ≤ pseudoMassFromParamsAtPairFV hα p n x z :=
-        finiteRegionPseudoMassDistFV_le_pair hα p n hne_n hpair_mem
+        finiteRegionPseudoMassDistFV_le_of_mem hα p n hne_n hpair_mem
       exact (csInf_le hbdd ⟨⟨n, hne_n⟩, rfl⟩).trans h1
     exact ge_of_tendsto hmtend hev
 
