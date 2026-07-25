@@ -181,3 +181,44 @@ trusting the stale wave-3 family list.
 current constraint framing — verify against CLAUDE.local.md / memory for the exact concurrency cap
 in force this session, since prior notes mention both "≤3 concurrent Lean procs" and "no `-j`
 serialize builds"; when in doubt, serialize to 1 for build vs. review overlap).
+
+## Next-session confirmation items (user action required — do not resolve autonomously)
+
+Added 2026-07-25 by `dev-pr-clerk` after correcting the #4563/#4642 GitHub bodies (issue-manager
+governance re-verification). None of these are executed; all require the user's own decision:
+
+1. **#4692 / #4559 close approval** — all technical work is disposed (Option-D reference-0
+   campaign umbrella + folded-in predecessor); only the close itself is withheld pending user
+   approval per `feedback_approval_required`.
+2. **#4704 implementation authorization** — the issue body itself declares "tracking only,
+   implementation to be authorized separately"; no scope has been authorized yet (9 stale
+   `docs/index.md` refs + 156 stale `tex/proof-guide.tex` refs, needs a per-declaration audit
+   before any deletion/fix, see #4704 body for detail).
+3. **#4563 standing authorization currency** — confirm whether the 2026-07-18 "Blanket
+   Authorization Record" is still considered in force. Reasons this needs re-confirmation rather
+   than being assumed valid: (a) this repo's `gh` comments are all posted under the single
+   `phasetr` account regardless of whether the words are the user's own or an agent's paraphrase,
+   so the record has no independently verifiable primary-source text; (b) it has gone unexercised
+   for 6 days / 100+ commits since the last family PR (#4573, merged `45b770d7`, 2026-07-19),
+   during which the user issued several other item-specific authorizations (Option-B/C1) without
+   invoking this one. GitHub body corrected 2026-07-25 to state this explicitly (was previously
+   silent on the question).
+4. **#4642 disposition** — either (A) close as `not planned` (this is `dev-issue-manager`'s
+   recommendation — the true residue is only 3 reference-0 declarations K0/K2/K4, all docs-gated,
+   net value is negative once the required docstring/tex retraction is counted), or (B) authorize
+   the keep-criterion-(f) override (retract the `AlternatingCompleteGraph.lean:24-25` `c(K_4)=-6`
+   docstring + corresponding `tex/proof-guide.tex` prose) and retire K0/K2/K4 in a follow-up PR
+   (K1 and K3 must stay regardless — they are load-bearing / docs-cited, not deletable under
+   either option).
+
+## Repo hygiene note — benchmark worktree pollution in repo-wide scans
+
+`.self-local/benchmarks/4519/*/worktrees/` contains full duplicate copies of the repo tree (left
+over from the #4519/#4506 measurement-protocol campaign). A repo-wide `grep`/`rg` without a path
+restriction picks up these duplicates as false positives — this session's scan for the
+`SusceptibilityPointwiseRegularity*` family measurement returned ~181KB of duplicate noise from
+this source before the scope was narrowed to `IsingModel/`. **Future repo-wide scans should either
+restrict to `IsingModel/` (or the specific subtree under audit) or exclude `.self-local/benchmarks/`
+explicitly.** Deleting the benchmark worktree artifacts themselves is a candidate cleanup but is
+**not performed here** — it requires user approval (the artifacts are preserved evidence from a
+prior measurement campaign, per `.self-local/issues/4519.md`).

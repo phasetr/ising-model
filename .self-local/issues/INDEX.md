@@ -1,4 +1,24 @@
-# ローカルミラー・インデックス (2026-07-25 更新 — #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4704 OPEN (9/156 re-anchored), #4692/#4559 OPEN pending user close approval)
+# ローカルミラー・インデックス (2026-07-25 更新 — #4706 CLOSED (merged PR #4707, main `673aabd8`), #4700 CLOSED (merged PR #4705, main `a3046ce6`), #4701 CLOSED (merged PR #4703, main `5090f6de`), #4704 OPEN (9/156 re-anchored), #4692/#4559 OPEN pending user close approval), #4563/#4642 GitHub body corrected (dev-pr-clerk, per dev-issue-manager governance re-verification; both remain OPEN, no close)
+
+**2026-07-25 #4563 / #4642 body corrections (dev-pr-clerk, GitHub body edited, no build, no close)**:
+**#4563** — stale 253-module / "243 modules deferred" figures corrected to measured **193 modules /
+18-of-46 families completed / 28 remaining**; Next-concrete-step candidate recorded
+(`SusceptibilityPointwiseRegularity*`, 8 modules, 1 external dep) with an explicit pre-work
+condition (fresh `dev-perf` re-measurement required, prior estimates disagree ~4.5×); the
+2026-07-18 "Blanket Authorization Record" is now described honestly as **record-exists /
+no-independent-primary-evidence** (all `gh` comments post under the single `phasetr` account) and
+**unexercised for 6 days / 100+ commits** — body now requires user reconfirmation before resuming,
+does not assume it is still in force. **#4642** — 3 mis-statements corrected: the stated Goal
+(`alternatingConnectedSubgraphSum(completeGraph n)` closed form) is **already proven**
+(`RecurrenceClosedForm.lean:143`); the "4 modules K0/K2/K3/K4" are actually 2 files
+(`CompleteGraphSmallCases.lean` + `CompleteGraphK4.lean`); "0 codebase references" is false for K1
+(induction base of the closed form) and K3 (cited by `AlternatingFinThree.lean` + tex) — only
+K0/K2/K4 are true reference-0 and even those are docs-gated (keep-criterion (f), `c(K_4)=-6`
+docstring/tex). Body now presents 2 disposition options for the user (close not planned, or
+authorize keep-criterion-(f) override) without executing either. **Both issues remain OPEN**; no
+close performed (close is a user-approval step per repo policy). Mirrors: `4563.md`, `4642.md`.
+Handoff: `.self-local/reports/handoff-2026-07-25-optionB-C1.md` (added "next-session confirmation
+items" section).
 
 **2026-07-25 (final) #4706 CLOSED (merged PR #4707, squash main `673aabd8`)**: HLS
 `positivity` hot-site refactor — 3 of 35 call sites (folded into one shared `private lemma`)
