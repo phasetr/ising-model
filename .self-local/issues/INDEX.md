@@ -1,3 +1,14 @@
+**2026-07-26 governance sync (dev-pr-clerk)**: (1) **#4721 mirror was missing** (build-speed
+`Nat.cast_nonneg` A/B proposal, `dev-perf` measured -3.75s) — created (`4721.md`), verbatim from
+the GitHub issue body, no implementation started. (2) **#4709 was stale** (title/body still said
+"four false-claim incidents" while the actual count is **nine**: #4702/#4703/#4707/#4708 + #4710
+(provenance-claim error) + #4711 (mis-stated codepoint count) + #4716 + #4720 (two rounds)) —
+title and body updated via `gh issue edit` to the full count and to record a **new subclass**
+(#4716/#4720): draft-time plan-form body/mirror text never rewritten after implementation was
+pushed, which a pure fact-vs-diff check does not catch. A proposed (not-implemented, authorization
+-pending) fix is recorded in the GitHub body. Both changes ride PR
+`docs/4709-4721-governance-sync` (see PR for exact diff), not a direct `main` commit.
+
 # ローカルミラー・インデックス (2026-07-25 更新 — PR #4711 MERGED (main `4b188515`), #4704 GitHub body + mirror Scope section moved item (a) `.lean` doc-comment fix into Done (explicitly NOT user-authorized, main agent's own scope judgment recorded), #4704 stays OPEN with 2 remaining items; the #4303 dangling-reference cluster (docs + `.lean`) is now fully closed out across PR #4705/#4708/#4710/#4711; #4692/#4559 GitHub-side completion comments posted (bodies already updated, mirror #4692 stale checklist line fixed) — still OPEN pending user close approval; #4642 park/close judgement posted as a GitHub comment (still OPEN pending user decision); #4563 standing-authorization-validity language already present in body, not duplicated)
 
 **2026-07-25 #4715 CLOSED (merged PR #4716, squash main `cfcead29`) + #4717 governance fixes
