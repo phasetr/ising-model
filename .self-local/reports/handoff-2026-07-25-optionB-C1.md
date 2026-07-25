@@ -24,8 +24,8 @@ under `scripts/` (full path-suffix resolution, correct Verbatim/brace expansion,
 disclaim-exemptions, fixtures + mutation tests for the known miss-classes, self-referential-prose
 detection). No separate authorization needed for PR-1 itself.
 
-Synced this update via a short-lived PR (see `.self-local/issues/INDEX.md` for the PR number)
-containing only `.self-local/` mirror changes, merged with CI green.
+Synced this update via short-lived PR #4727 (`docs/4704-pr4714-close-sync`), containing only
+`.self-local/` mirror changes, merged with CI green.
 
 ## SIXTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — main = `40315d38` — PR #4722 MERGED (#4721 closed); PR #4714 ON HOLD
 

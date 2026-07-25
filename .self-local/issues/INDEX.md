@@ -1159,3 +1159,4 @@ collapsed-enumeration detector + reusable ephemeral scan assets) recorded as a c
 https://github.com/phasetr/ising-model/issues/4704#issuecomment-5080692428, and mirrored in
 `4704.md`. **#4704 stays OPEN**; next actionable step remains **PR-1 (fail-closed checker)**.
 GitHub open issues: #4704 / #4709 / #4642 / #4563 / #4559 / #4712 (#4714 now closed, not counted).
+Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local/` mirrors only).
