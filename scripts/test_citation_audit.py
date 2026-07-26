@@ -33,13 +33,19 @@ shorthand, verbatim source line wraps, bare prose tokens, archive-tag
 exoneration, basename-only citations, multiple suffix matches, ``\\_`` escapes,
 the coverage audit itself, resolution against untracked or benchmark copies, the
 anti-vacuity floors, self-reference detection, the multiset ratchet, path text
-glued to a match (``../X/Y.lean``, ``X/Y.lean.bak``), a directive read from a
-quotation instead of from a comment -- mid-sentence, inside a ``Verbatim`` block,
-inside any *other* verbatim environment, or inside an indented markdown code
-block -- a directive that outlived the block it was
-written for, an indented tree entry joined onto the heading above it, a census
-published from a provably incomplete run, and a baseline rewritten from a
-partial target set.
+glued to a match (``../X/Y.lean``, ``X/Y.lean.bak``), an indented tree entry
+joined onto the heading above it, a census published from a provably incomplete
+run, and a baseline rewritten from a partial target set.
+
+One class of test is here because the capability it guarded was **deleted**.
+The checker used to honour a ``citation-audit:`` comment directive, and three
+successive rounds of tests pinned one more spelling in which a *quotation* of
+that syntax armed a real exemption. The directive channel is gone (see the
+tool's "Why there is no exemption channel"), so those tests were not deleted
+with it but inverted: :class:`NoExemptionChannelTest` keeps every one of those
+documents -- the earnest spellings and the quoted ones alike -- and requires
+each to receive the ordinary verdict. A corpus of directive-shaped text that
+provably does nothing is what detects the channel growing back.
 
 Cost: fixtures build throwaway git repositories (the resolution set really is
 ``git ls-files``, so stubbing it away would test the wrong thing), plus one
@@ -368,6 +374,20 @@ INDENTED_PREFIX_TEX = (
     "\\end{Verbatim}\n"
 )
 
+# The same wrapped path in each environment of the verbatim family. Recognising
+# the family is now purely an extraction concern -- it is what lets the two
+# source lines be read as the one path the document wrote -- so this is where
+# the enumeration earns its place.
+WRAP_IN_VERBATIM_FAMILY_TEX = {
+    name: (
+        "\\begin{%s}\n" % name
+        + "Branches/LocalCoverPatch/Vitali/Ball/\n"
+        + "Bridge.lean\n"
+        + "\\end{%s}\n" % name
+    )
+    for name in ("Verbatim", "verbatim", "lstlisting", "alltt")
+}
+
 
 class VerbatimWrapTest(unittest.TestCase):
     """A path split across two source lines is one citation, and it is charged."""
@@ -381,6 +401,25 @@ class VerbatimWrapTest(unittest.TestCase):
             ["Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean"],
         )
         self.assertEqual(report.coverage, [])
+
+    def test_the_whole_verbatim_family_is_tokenised_alike(self) -> None:
+        """An unlisted environment would tokenise its block differently.
+
+        This is the enumeration's remaining job. It used to be justified by the
+        exemption channel (an unrecognised block let a quoted directive act);
+        with the channel deleted the reason is extraction alone -- inside a
+        recognised environment the two source lines are read as one path, and
+        outside one the continuation is charged as a bare basename instead.
+        """
+        for name, text in sorted(WRAP_IN_VERBATIM_FAMILY_TEX.items()):
+            with self.subTest(environment=name):
+                with fixture({"tex/g.tex": text}, tracked=["IsingModel/Other/Bridge.lean"]):
+                    report = ca.audit(["tex/g.tex"])
+                self.assertEqual(
+                    tokens_of(report, ca.MISSING),
+                    ["Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean"],
+                )
+                self.assertEqual(report.coverage, [])
 
     def test_ascii_tree_indentation_is_never_joined(self) -> None:
         """Rebuilding a directory from tree layout would be the banned inference.
@@ -433,12 +472,18 @@ class BareTokenTest(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# 4 - archive tags and directives
+# 4 - archive tags and directive-shaped text (there is no exemption channel)
 # ---------------------------------------------------------------------------
 
 
 ARCHIVED_TEX = "\\texttt{Peierls/RayExitAnchor.lean} was the old route.\n"
 
+# The documents below are every spelling in which a ``citation-audit:``
+# exemption was once written, and every spelling in which one could be quoted.
+# Telling those two apart is what the deleted mechanism had to do, and what it
+# got wrong three times running; with no exemption channel left they are one
+# thing -- text -- and each must receive the verdict its citation would have
+# received had the line not been there at all.
 DIRECTIVE_TEX = (
     "% citation-audit: archived archive/stub\n"
     "\\texttt{Peierls/RayExitAnchor.lean} was the old route.\n"
@@ -483,9 +528,8 @@ DIRECTIVE_IN_VERBATIM_TEX = (
 
 # The same sample, printed with a verbatim environment other than fancyvrb's
 # ``Verbatim``. Each of these armed the quoted directive for real until the
-# environment family was enumerated: the block was not recognised as verbatim,
-# so its ``%`` line was read as an instruction and exempted the citation under
-# it -- a rendered sample acting as an act.
+# environment family was enumerated -- round two of the three that ended in the
+# channel being deleted.
 DIRECTIVE_IN_OTHER_VERBATIM_TEX = {
     "verbatim": (
         "\\begin{verbatim}\n"
@@ -545,160 +589,148 @@ DIRECTIVE_BLANK_LINE_TEX = (
 
 STUB_TAG = {"archive/stub": ["Peierls/RayExitAnchor.lean"]}
 
+# The corpus: ``(name, target, document, fixture kwargs, required verdict)``.
+# Every entry contains directive-shaped text, and every entry's verdict is the
+# one the citation gets on its own merits -- ``MISSING`` for a path only an
+# archive tag has, ``BASENAME_ONLY`` for a bare basename. The earnest spellings
+# (column-0 tex comment, column-0 markdown comment, a prefix written above a
+# block) sit in the same table as the quoted ones on purpose: after the deletion
+# there is nothing to distinguish them by.
+#
+# Every case keeps a tracked ``.lean`` file that has nothing to do with the
+# citation, so the resolution set is never empty: a verdict read off a vacuous
+# run would be worth nothing.
+TAGGED = {"tags": STUB_TAG, "tracked": ["IsingModel/Other/Thing.lean"]}
+GKS = {"tracked": ["IsingModel/Inequalities/GKS.lean"]}
 
-class ArchiveTagTest(unittest.TestCase):
-    """An archive tag resolves nothing unless the document asks for it, in place."""
+INERT_DIRECTIVE_CASES = (
+    ("tex comment, archived", "tex/g.tex", DIRECTIVE_TEX, TAGGED, {"MISSING": 1}),
+    (
+        "tex comment, archived, path absent from the tag",
+        "tex/g.tex",
+        DIRECTIVE_WRONG_TEX,
+        TAGGED,
+        {"MISSING": 1},
+    ),
+    (
+        "tex comment, unknown tag",
+        "tex/g.tex",
+        DIRECTIVE_TEX,
+        {"tracked": ["IsingModel/Other/Thing.lean"]},
+        {"MISSING": 1},
+    ),
+    (
+        "tex comment, misspelled kind",
+        "tex/g.tex",
+        DIRECTIVE_TEX.replace("archived", "arcived"),
+        TAGGED,
+        {"MISSING": 1},
+    ),
+    (
+        "tex comment, separated by a blank line",
+        "tex/g.tex",
+        DIRECTIVE_BLANK_LINE_TEX,
+        TAGGED,
+        {"MISSING": 1},
+    ),
+    (
+        "tex comment, subject block deleted",
+        "tex/g.tex",
+        DIRECTIVE_ORPHANED_TEX,
+        TAGGED,
+        {"MISSING": 1},
+    ),
+    ("tex comment, prefix above a Verbatim block", "tex/g.tex", PREFIX_TEX, GKS,
+     {"BASENAME_ONLY": 1}),
+    ("markdown comment at column 0", "docs/g.md", DIRECTIVE_MD, GKS, {"BASENAME_ONLY": 1}),
+    ("quoted mid-sentence (tex)", "tex/g.tex", DIRECTIVE_QUOTED_TEX, GKS,
+     {"BASENAME_ONLY": 1}),
+    ("quoted mid-sentence (markdown)", "docs/g.md", DIRECTIVE_QUOTED_MD, GKS,
+     {"BASENAME_ONLY": 1}),
+    ("printed inside a Verbatim block", "tex/g.tex", DIRECTIVE_IN_VERBATIM_TEX, GKS,
+     {"BASENAME_ONLY": 1}),
+) + tuple(
+    (f"printed inside a {name} block", "tex/g.tex", text, GKS, {"BASENAME_ONLY": 1})
+    for name, text in sorted(DIRECTIVE_IN_OTHER_VERBATIM_TEX.items())
+) + (
+    ("printed in an indented markdown block", "docs/g.md", DIRECTIVE_INDENTED_MD, GKS,
+     {"BASENAME_ONLY": 1}),
+    ("printed at a shallow markdown indent", "docs/g.md", DIRECTIVE_INDENTED_SHALLOW_MD, GKS,
+     {"BASENAME_ONLY": 1}),
+)
 
-    def test_a_tagged_path_alone_does_not_resolve(self) -> None:
+
+class NoExemptionChannelTest(unittest.TestCase):
+    """Nothing written in a document can stop a citation being charged.
+
+    This replaces the suite that pinned the ``citation-audit:`` directive's
+    behaviour. That mechanism was deleted after the same defect -- a *quotation*
+    of the syntax arming a real exemption -- recurred three times and each fix
+    was one more enumerated spelling, with a live directive population of zero
+    throughout. What is pinned now is the property that survives the deletion
+    and does not depend on any enumeration: every one of those documents, the
+    earnest and the quoted alike, gets the ordinary verdict.
+    """
+
+    def test_a_path_only_an_archive_tag_has_does_not_resolve(self) -> None:
         """Measured: unconditional tag resolution exonerates 276 of 280 no-match
-        citations, so the mechanism does not exist."""
+        citations, so no tag is consulted at all."""
         with fixture({"tex/g.tex": ARCHIVED_TEX}, tags=STUB_TAG):
             report = ca.audit(["tex/g.tex"])
         self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
 
-    def test_verified_directive_resolves_that_one_citation(self) -> None:
-        """The exemption is written per citation and checked against the tag."""
-        with fixture({"tex/g.tex": DIRECTIVE_TEX}, tags=STUB_TAG):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"RESOLVED_BY_DIRECTIVE": 1})
-        self.assertEqual(report.findings, [])
-
-    def test_directive_naming_an_absent_path_is_a_finding(self) -> None:
-        """A wrong exemption is a finding, not a pass (R12)."""
-        with fixture({"tex/g.tex": DIRECTIVE_WRONG_TEX}, tags=STUB_TAG):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
-
-    def test_directive_naming_an_unknown_tag_is_a_finding(self) -> None:
-        """An unknown tag cannot verify anything, so nothing is exempted."""
-        with fixture({"tex/g.tex": DIRECTIVE_TEX}):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
-
-    def test_prefix_directive_resolves_a_block_of_basenames(self) -> None:
-        """The tree blocks get a written, verified prefix instead of a guess."""
-        with fixture({"tex/g.tex": PREFIX_TEX}, tracked=["IsingModel/Inequalities/GKS.lean"]):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"RESOLVED_BY_DIRECTIVE": 1})
-
-    def test_wrong_prefix_directive_is_a_finding(self) -> None:
-        """A prefix that does not lead to a tracked file resolves nothing."""
-        with fixture({"tex/g.tex": PREFIX_TEX}, tracked=["IsingModel/Peierls/GKS.lean"]):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
-
-    def test_unparseable_directive_grants_nothing(self) -> None:
-        """A typo in the directive keyword must not become a silent exemption."""
-        text = DIRECTIVE_TEX.replace("archived", "arcived")
-        with fixture({"tex/g.tex": text}, tags=STUB_TAG):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
-
-    def test_a_quoted_directive_is_not_an_instruction(self) -> None:
-        """Writing *about* the syntax mid-sentence must not arm it.
-
-        The pattern used to match anywhere on a line, so transcribing this
-        tool's own documentation into a document -- mid-sentence, inside
-        ``\\texttt{...}`` -- exempted the next citation for real. A directive is
-        now read only from a line that is itself a comment in that document's
-        syntax. The other renderings of the same quotation (a sample block, an
-        indented markdown block, a blockquote) are pinned separately below;
-        each was its own hole.
-        """
-        for target, text in (
-            ("tex/g.tex", DIRECTIVE_QUOTED_TEX),
-            ("docs/g.md", DIRECTIVE_QUOTED_MD),
-        ):
-            with self.subTest(target=target):
-                with fixture(
-                    {target: text}, tracked=["IsingModel/Inequalities/GKS.lean"]
-                ):
+    def test_every_directive_spelling_is_inert(self) -> None:
+        """The whole corpus, earnest and quoted, receives the ordinary verdict."""
+        for name, target, text, kwargs, expected in INERT_DIRECTIVE_CASES:
+            with self.subTest(case=name):
+                with fixture({target: text}, **kwargs):  # type: ignore[arg-type]
                     report = ca.audit([target])
-                self.assertEqual(classes(report, target), {"BASENAME_ONLY": 1})
+                self.assertEqual(classes(report, target), expected)
+                self.assertEqual(len(report.findings), sum(expected.values()))
+                self.assertEqual(report.coverage, [])
+                self.assertEqual(report.hard, [])
 
-    def test_a_markdown_comment_directive_is_honoured(self) -> None:
-        """The comment rule must still let a real directive through, in both syntaxes.
+    def test_the_corpus_covers_both_syntaxes_and_both_verdicts(self) -> None:
+        """A corpus that drifted to one shape would pin much less than it looks.
 
-        Without this the markdown half of the rule could be spelled so that it
-        never matches and every test would stay green -- a check that only ever
-        refuses is indistinguishable from one that is broken.
+        The sweep above is only as strong as its spread: without this, deleting
+        every markdown case (or every case whose citation is charged
+        ``MISSING``) would leave a green, much weaker test.
         """
-        with fixture({"docs/g.md": DIRECTIVE_MD}, tracked=["IsingModel/Inequalities/GKS.lean"]):
-            report = ca.audit(["docs/g.md"])
-        self.assertEqual(classes(report, "docs/g.md"), {"RESOLVED_BY_DIRECTIVE": 1})
+        targets = {target for _, target, _, _, _ in INERT_DIRECTIVE_CASES}
+        verdicts = {
+            name for _, _, _, _, expected in INERT_DIRECTIVE_CASES for name in expected
+        }
+        self.assertEqual(targets, {"tex/g.tex", "docs/g.md"})
+        self.assertEqual(verdicts, {"MISSING", "BASENAME_ONLY"})
+        self.assertGreaterEqual(len(INERT_DIRECTIVE_CASES), 14)
+        for _, _, text, _, _ in INERT_DIRECTIVE_CASES:
+            self.assertIn("citation-audit:", text)
 
-    def test_a_directive_inside_a_verbatim_block_is_content(self) -> None:
-        """A sample document printed in a block exempts nothing in the real one."""
-        with fixture(
-            {"tex/g.tex": DIRECTIVE_IN_VERBATIM_TEX},
-            tracked=["IsingModel/Inequalities/GKS.lean"],
+    def test_the_module_carries_no_exemption_machinery(self) -> None:
+        """Structural, not behavioural: the capability must be absent, not unused.
+
+        A dormant directive parser would be one edit away from being armed
+        again, and the argument for deleting the channel was precisely that its
+        correctness needed an adjudication a text scan cannot make.
+        """
+        for name in (
+            "DIRECTIVE",
+            "DIRECTIVE_KINDS",
+            "Directive",
+            "parse_directive",
+            "RESOLVED_BY_DIRECTIVE",
+            "tag_lean_files",
+            "TEX_COMMENT",
+            "MD_COMMENT",
+            "MD_FENCE",
         ):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
-
-    def test_a_directive_inside_a_non_fancyvrb_verbatim_block_is_content(self) -> None:
-        """The block test must cover the verbatim *family*, not one environment.
-
-        Only ``\\begin{Verbatim}`` was recognised, so the identical sample
-        printed with ``verbatim``, ``lstlisting`` or ``alltt`` was read as an
-        instruction and exempted the citation under it. Measured before the fix:
-        each of the three yielded ``RESOLVED_BY_DIRECTIVE`` and zero findings,
-        indistinguishable from a directive written in earnest at column 0.
-        """
-        for name, text in sorted(DIRECTIVE_IN_OTHER_VERBATIM_TEX.items()):
-            with self.subTest(environment=name):
-                with fixture(
-                    {"tex/g.tex": text}, tracked=["IsingModel/Inequalities/GKS.lean"]
-                ):
-                    report = ca.audit(["tex/g.tex"])
-                self.assertEqual(classes(report, "tex/g.tex"), {"BASENAME_ONLY": 1})
-
-    def test_an_indented_markdown_directive_is_content(self) -> None:
-        """In markdown, indentation is what turns the syntax into a rendering.
-
-        Four spaces make an indented code block, so a leading-whitespace-tolerant
-        comment pattern could not tell a printed sample from an act: measured
-        before the fix, the indented sample resolved the citation beneath it by
-        directive, exactly as a column-0 directive would have. The shallower
-        indent is refused as well -- renderers disagree about it and the tool
-        must not have to adjudicate, so column 0 is required and an author who
-        means the exemption un-indents. The tex half stays whitespace-tolerant
-        on purpose: an indented ``%`` line is still an invisible source comment
-        there, and its rendered form is the verbatim block covered above.
-        """
-        for name, text in (
-            ("indented code block", DIRECTIVE_INDENTED_MD),
-            ("shallow indent", DIRECTIVE_INDENTED_SHALLOW_MD),
-        ):
-            with self.subTest(rendering=name):
-                with fixture(
-                    {"docs/g.md": text}, tracked=["IsingModel/Inequalities/GKS.lean"]
-                ):
-                    report = ca.audit(["docs/g.md"])
-                self.assertEqual(classes(report, "docs/g.md"), {"BASENAME_ONLY": 1})
-
-    def test_a_directive_expires_when_its_subject_is_gone(self) -> None:
-        """An exemption must not outlive the block it was written for.
-
-        Nothing bounded the wait, so a directive left behind by a deletion armed
-        whatever citation appeared next -- dozens of lines later, in a passage
-        nobody wrote it for. It now expires at the first non-blank line that
-        carries no citation.
-        """
-        with fixture({"tex/g.tex": DIRECTIVE_ORPHANED_TEX}, tags=STUB_TAG):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"MISSING": 1})
-
-    def test_a_blank_line_does_not_expire_a_directive(self) -> None:
-        """The rule is "the next line with citations", not "the next line".
-
-        Pinned because it is the boundary of the expiry rule: paragraph spacing
-        between a directive and its citation is ordinary formatting and must
-        keep working, or authors would learn to distrust the mechanism.
-        """
-        with fixture({"tex/g.tex": DIRECTIVE_BLANK_LINE_TEX}, tags=STUB_TAG):
-            report = ca.audit(["tex/g.tex"])
-        self.assertEqual(classes(report, "tex/g.tex"), {"RESOLVED_BY_DIRECTIVE": 1})
+            self.assertFalse(hasattr(ca, name), f"{name} is still there")
+        self.assertNotIn("directive", ca.Citation._fields)
+        self.assertFalse(hasattr(ca.Resolver, "tag_matches"))
+        # No git history query of any kind: the tracked working set is the only
+        # resolution source, as ``ResolutionSetTest`` asserts from the other side.
+        self.assertNotIn("ls-tree", CITATION_AUDIT_PATH.read_text(encoding="utf-8"))
 
 
 # ---------------------------------------------------------------------------
@@ -1195,104 +1227,96 @@ class MutationTest(unittest.TestCase):
         self.assertTrue(report.coverage)
 
     # 4 - archive tags
-    def test_unconditional_tag_resolution_exonerates(self) -> None:
-        """The mechanism measured at 276/280 fail-open, reintroduced and caught."""
+    def test_re_added_tag_resolution_exonerates_a_deleted_file(self) -> None:
+        """The mechanism measured at 276/280 fail-open, rebuilt and caught.
+
+        The mutant is the deleted capability written back from scratch, which is
+        the honest form of this mutation now: there is no switch left to flip,
+        so what has to be shown is that adding one is detected.
+        """
         mutant = load_mutated(
             (
-                "    hits = resolver.matches(token)\n    if len(hits) == 0:\n        return (MISSING, None)",
-                "    hits = resolver.matches(token)\n    if len(hits) == 0:\n"
-                "        tagged = resolver.tag_matches('archive/stub', token)\n"
-                "        if tagged:\n            return (RESOLVED_BY_DIRECTIVE, None)\n"
+                "    hits = resolver.matches(token)\n"
+                "    if len(hits) == 0:\n"
+                "        return (MISSING, None)",
+                "    hits = resolver.matches(token)\n"
+                "    if len(hits) == 0:\n"
+                "        archived = suffix_map(\n"
+                "            path\n"
+                "            for path in _git(\n"
+                "                ['ls-tree', '-r', '--name-only', '-z', 'archive/stub']\n"
+                "            ).split(chr(0))\n"
+                "            if path.endswith('.lean')\n"
+                "        )\n"
+                "        if archived.get(token):\n"
+                "            return (RESOLVED, None)\n"
                 "        return (MISSING, None)",
             )
         )
-        report = self.audit_with(mutant, {"tex/g.tex": ARCHIVED_TEX}, tags=STUB_TAG)
-        self.assertEqual(report.findings, [])
-
-    # 4b - directive verification
-    def test_unverified_directive_exonerates_an_absent_path(self) -> None:
-        """A directive that is trusted instead of checked is just a comment."""
-        mutant = load_mutated(
-            (
-                '        if hits is not None and len(hits) == 1 and "/" in token:',
-                "        if True:",
-            )
-        )
-        report = self.audit_with(mutant, {"tex/g.tex": DIRECTIVE_WRONG_TEX}, tags=STUB_TAG)
-        self.assertEqual(report.findings, [])
-
-    # 4c - directive scope
-    def test_a_directive_matched_anywhere_arms_a_quotation(self) -> None:
-        """Dropping the comment test turns documentation into an exemption."""
-        mutant = load_mutated(
-            (
-                "    if not (TEX_COMMENT if is_tex else MD_COMMENT).match(line):\n"
-                "        return None",
-                "    if False:\n        return None",
-            )
-        )
         report = self.audit_with(
             mutant,
-            {"tex/g.tex": DIRECTIVE_QUOTED_TEX},
-            tracked=["IsingModel/Inequalities/GKS.lean"],
+            {"tex/g.tex": ARCHIVED_TEX},
+            tags=STUB_TAG,
+            tracked=["IsingModel/Other/Thing.lean"],
         )
         self.assertEqual(report.findings, [])
 
-    def test_a_directive_read_inside_a_block_exempts_its_sample(self) -> None:
-        """Without the block test, a printed sample document exempts for real."""
+    # 4b - the exemption channel as a whole
+    def test_a_re_added_exemption_channel_silences_the_whole_corpus(self) -> None:
+        """The pairing for :class:`NoExemptionChannelTest`.
+
+        The mutant re-adds the deleted capability in its most permissive form --
+        a ``citation-audit:`` line anywhere in the five lines above a citation
+        clears it -- and is required to silence *every* document in the corpus,
+        the quoted spellings included. That is what makes the sweep's fourteen
+        assertions non-vacuous: each of them is charging something that a
+        plausible reintroduction would stop charging.
+        """
         mutant = load_mutated(
             (
-                "        found = None if (verbatim_line or in_fence) "
-                "else parse_directive(line, is_tex)",
-                "        found = parse_directive(line, is_tex)",
+                "            verdict, resolved_path = classify(citation, resolver)",
+                "            verdict, resolved_path = classify(citation, resolver)\n"
+                "            if verdict in FINDING_CLASSES and any(\n"
+                "                'citation-audit:' in item\n"
+                "                for item in text.split(chr(10))[\n"
+                "                    max(0, citation.line - 6):citation.line\n"
+                "                ]\n"
+                "            ):\n"
+                "                verdict, resolved_path = (RESOLVED, None)",
             )
         )
-        report = self.audit_with(
-            mutant,
-            {"tex/g.tex": DIRECTIVE_IN_VERBATIM_TEX},
-            tracked=["IsingModel/Inequalities/GKS.lean"],
-        )
-        self.assertEqual(report.findings, [])
+        for name, target, text, kwargs, _ in INERT_DIRECTIVE_CASES:
+            with self.subTest(case=name):
+                report = self.audit_with(mutant, {target: text}, **kwargs)
+                self.assertEqual(report.findings, [])
 
-    def test_recognising_only_fancyvrb_arms_a_sample_in_any_other_block(self) -> None:
-        """Narrowing the family back to ``Verbatim`` reopens the measured hole."""
-        mutant = load_mutated(
-            (
-                '    r"(?:B|L|S|Save)?(?:verbatim|verbatimtab|semiverbatim|alltt'
-                '|lstlisting|listing|minted)\\*?",\n    re.IGNORECASE,\n',
-                '    r"Verbatim",\n',
-            )
-        )
-        report = self.audit_with(
-            mutant,
-            {"tex/g.tex": DIRECTIVE_IN_OTHER_VERBATIM_TEX["verbatim"]},
-            tracked=["IsingModel/Inequalities/GKS.lean"],
-        )
-        self.assertEqual(report.findings, [])
+    def test_recognising_only_fancyvrb_changes_how_another_block_is_read(self) -> None:
+        """Narrowing the family back to ``Verbatim`` loses the wrapped path.
 
-    def test_an_indent_tolerant_markdown_comment_arms_a_printed_sample(self) -> None:
-        """Accepting leading whitespace makes a code-block sample an instruction."""
-        mutant = load_mutated(
-            ('MD_COMMENT = re.compile(r"^<!--")', 'MD_COMMENT = re.compile(r"^\\s*<!--")')
-        )
-        report = self.audit_with(
-            mutant,
-            {"docs/g.md": DIRECTIVE_INDENTED_MD},
-            tracked=["IsingModel/Inequalities/GKS.lean"],
-        )
-        self.assertEqual(report.findings, [])
-
-    def test_a_directive_that_never_expires_drifts_onto_a_later_citation(self) -> None:
-        """The orphaned directive silently exempts a passage nobody wrote it for."""
-        mutant = load_mutated(
-            (
-                "        elif (\n            pending_directive is not None\n"
-                "            and not carried",
-                "        elif (\n            False\n            and not carried",
-            )
-        )
-        report = self.audit_with(mutant, {"tex/g.tex": DIRECTIVE_ORPHANED_TEX}, tags=STUB_TAG)
-        self.assertEqual(report.findings, [])
+        The hole this mutation used to open was an exemption; with the channel
+        deleted what it costs is extraction, and the loss is still silent: the
+        document's actual claim (a full path) stops being checked and a bare
+        basename is charged in its place.
+        """
+        for name in ("verbatim", "lstlisting", "alltt"):
+            with self.subTest(environment=name):
+                mutant = load_mutated(
+                    (
+                        '    r"(?:B|L|S|Save)?(?:verbatim|verbatimtab|semiverbatim|alltt'
+                        '|lstlisting|listing|minted)\\*?",\n    re.IGNORECASE,\n',
+                        '    r"Verbatim",\n',
+                    )
+                )
+                report = self.audit_with(
+                    mutant,
+                    {"tex/g.tex": WRAP_IN_VERBATIM_FAMILY_TEX[name]},
+                    tracked=["IsingModel/Other/Bridge.lean"],
+                )
+                self.assertNotIn(
+                    "Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean",
+                    tokens_of(report, mutant.MISSING),
+                )
+                self.assertEqual(tokens_of(report, mutant.BASENAME_ONLY), ["Bridge.lean"])
 
     # 5 - basename-only
     def test_accepting_bare_basenames_exonerates_them(self) -> None:

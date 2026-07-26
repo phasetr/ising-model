@@ -24,9 +24,9 @@ The two invariants
    tag, no section heading, no neighbouring line and no filesystem copy can
    resolve anything. Every other outcome -- no match, several matches, a bare
    basename, a token that does not normalise -- is a finding. There is
-   deliberately no "probably fine" bucket, and an exemption must be written in
-   the document, per citation, and machine-verified (see ``citation-audit:``
-   directives below).
+   deliberately no "probably fine" bucket and **no exemption channel at all**:
+   nothing written in a document can make a citation stop being charged (see
+   "Why there is no exemption channel" below).
 
 2. **Coverage audit.** Every raw ``.lean`` occurrence in every target must be
    accounted for by the extractor: per line ``line.count(".lean")`` must equal
@@ -60,13 +60,12 @@ R7   an unaccounted raw ``.lean`` occurrence                     hard failure ``
 R8   citations in a target below its floor                       hard failure ``VACUOUS``
 R9   tracked ``.lean`` files below ``MIN_TRACKED_LEAN``          hard failure ``VACUOUS``
 R10  a resolved path outside ``ALLOWED_TRACKED_PREFIXES``        hard failure ``CONTAMINATED``
-R11  a verified ``citation-audit:`` directive                    ``RESOLVED_BY_DIRECTIVE``
-R12  a directive whose target does not verify                    ``MISSING``
 ===  =========================================================  =========================
 
-``RESOLVED`` and ``RESOLVED_BY_DIRECTIVE`` are silent; ``MISSING``,
-``AMBIGUOUS``, ``BASENAME_ONLY`` and ``MALFORMED`` are findings and gate the
-exit code through the baseline ratchet. ``SELFREF`` (below) is advisory.
+``RESOLVED`` is silent; ``MISSING``, ``AMBIGUOUS``, ``BASENAME_ONLY`` and
+``MALFORMED`` are findings and gate the exit code through the baseline ratchet.
+``SELFREF`` (below) is advisory. The table is total and it is closed: a citation
+lands in exactly one row, and there is no row a document can put itself into.
 
 Why the resolution set is ``git ls-files``
 ------------------------------------------
@@ -80,52 +79,60 @@ owns, so a future tracked copy of the tree cannot silently widen the set.
 There is deliberately no ``--ref`` option: the working tree's tracked set is the
 only resolution source.
 
-Why archive tags are not a resolution channel
----------------------------------------------
-Measured: heading-scoped archive-tag resolution rescues **0** citations, while
-unconditional archive-tag resolution exonerates **276 of 280** no-match
-citations. The mechanism is 0% useful and 98.6% fail-open, so it is not
-implemented at all. The replacement is explicit, local and verified:
+Why there is no exemption channel
+---------------------------------
+Nothing a document says about a citation changes that citation's verdict. A
+reference to an archived, deleted or renamed artefact is charged like any other,
+and the *only* place an accepted finding is recorded is the committed baseline:
+a file outside the documents, keyed per finding, whose growth is reviewable.
 
-.. code-block:: latex
+That is a removal, not an omission. Two exoneration mechanisms were built or
+measured here, and both are gone:
 
-    % citation-audit: archived archive/peierls-rayexit-route
-    \\texttt{Peierls/RayExitAnchor.lean}
+* **Archive-tag resolution.** Measured: the heading-scoped variant rescues **0**
+  citations, while the unconditional variant exonerates **276 of 280** no-match
+  citations -- 0% useful, 98.6% fail-open. Never implemented.
+* **A per-citation ``citation-audit:`` comment directive**, verified against the
+  named archive tag. This one *was* implemented, and the same defect -- a
+  *quotation* of the syntax arming a real exemption -- was found three times,
+  each round answering it with one more enumerated spelling:
 
-    % citation-audit: prefix IsingModel/Inequalities/
-    \\begin{Verbatim}
-    GKS.lean                  GKS-I, GKS-II
-    \\end{Verbatim}
+  - ``6eefda79`` shipped the directive read from anywhere on any line;
+  - ``e4531116`` closed the mid-sentence quotation, and the sample printed
+    inside a ``Verbatim`` or a fenced block, by requiring a comment line;
+  - ``4093c387`` closed the sample printed inside any *other* verbatim
+    environment (``verbatim``, ``lstlisting``, ``alltt``) and the one indented
+    into a Markdown code block.
 
-A directive is read **only from a source comment**: in tex, a line whose first
-non-blank character is ``%``; in markdown, a line beginning with ``<!--`` in
-**column 0**. It is further ignored inside a verbatim environment -- the whole
-family, see :data:`VERBATIM_ENVIRONMENT`, not just ``Verbatim`` -- and inside a
-fenced Markdown block. So each of these ways of *showing* the syntax leaves the
-citations after it charged: a sample inside ``Verbatim``, ``verbatim``,
-``lstlisting`` or ``alltt``; a fenced block; an indented Markdown code block; a
-blockquote or list item (neither starts in column 0); a mid-sentence quotation.
-Each was measured: the first three of the verbatim family and the indented block
-armed a real exemption before these rules existed.
+  An enumeration is not an invariant: it covers the renderings *these two
+  documents* happen to use, while LaTeX and Markdown have unboundedly many more
+  (``VerbatimOut``, ``filecontents``, ``comment``, ``<pre>`` and ``<details>``
+  were all still open when the mechanism was deleted). Live population across
+  both targets, over all three rounds: **zero** directives -- the feature was
+  charging a maintenance cost against no use whatsoever.
 
-Like the rest of the extraction layer this is an enumeration of the spellings
-these documents use, not a proof that no rendering can arm a directive (a raw
-``<pre>`` HTML block in the markdown, say, is not tracked). The invariant it does
-hold to is the direction: every spelling not recognised as a comment, and every
-one recognised as quoted, **charges** rather than exonerates.
+``dev-principles`` fixes what to do here: a defect that recurs twice is removed
+structurally rather than patched again, and "do not have the capability" is the
+first candidate. Deciding whether a line is an instruction or a rendering of one
+means rendering LaTeX and Markdown, which a text approximation cannot do; and
+the rule this module is built on says an approximation may charge but may not
+exonerate. So the capability is gone, and with it the question of which
+environment names are enumerated for exemption purposes -- an unlisted
+environment can no longer arm anything, because there is nothing to arm.
 
-A directive's scope is the *single next line that carries citations*, or, when
-written immediately before a verbatim block or a fenced block, that one block; it
-**expires at the first non-blank line that carries no citation**, so deleting the
-block a directive was written for cannot let the exemption drift silently onto an
-unrelated citation further down.
+The cost is real and is accepted deliberately: a *legitimate* citation of an
+archived artefact can no longer be expressed as resolved. It stays a ``MISSING``
+finding and is carried as a baseline row. That is the intended trade -- charging
+is monotone and needs no adjudication, exonerating is neither. If a per-citation
+exemption is ever wanted, it belongs in the baseline file as an explicit,
+diffable registration outside the documents, never in a syntax the documents
+themselves can quote.
 
-``archived`` is checked against ``git ls-tree -r <tag>``; ``prefix``
-re-resolves each bare basename as ``<prefix><token>`` against the tracked set.
-Either way the exemption is verified, and a directive whose target does not
-verify yields ``MISSING`` (R12) -- a wrong exemption is a finding, not a pass.
-A directive that cannot be parsed grants nothing, so its citations are charged
-normally. Live population today: zero.
+Verbatim environments are still tracked (:data:`VERBATIM_ENVIRONMENT`), for
+*extraction* and not for exemption: they decide whether a tex line is scanned
+literally or split into macro arguments plus residue, and they are what allows a
+source-line wrap to be rejoined into the one path the document wrote. Both
+belong to reading the document, and both charge.
 
 Self-reference detection (``SELFREF``, advisory)
 ------------------------------------------------
@@ -214,7 +221,6 @@ ALLOWED_TRACKED_PREFIXES = ("IsingModel/", "IsingModel.lean", "test/")
 
 # Verdict classes.
 RESOLVED = "RESOLVED"
-RESOLVED_BY_DIRECTIVE = "RESOLVED_BY_DIRECTIVE"
 MISSING = "MISSING"
 AMBIGUOUS = "AMBIGUOUS"
 BASENAME_ONLY = "BASENAME_ONLY"
@@ -227,7 +233,6 @@ FINDING_CLASSES = (MISSING, AMBIGUOUS, BASENAME_ONLY, MALFORMED)
 ADVISORY_CLASSES = (SELFREF,)
 ALL_CLASSES = (
     RESOLVED,
-    RESOLVED_BY_DIRECTIVE,
     MISSING,
     AMBIGUOUS,
     BASENAME_ONLY,
@@ -243,12 +248,15 @@ ALL_CLASSES = (
 # (measured: 423 ``\begin{Verbatim}``, no ``verbatim``/``lstlisting``/``alltt``),
 # but the whole family is enumerated for the same reason ``MACRO`` below lists
 # ``\lstinline`` and ``\verb``: an unlisted spelling is an unhandled variant the
-# moment someone writes it. Here the stake is higher than a missed citation --
-# being inside a verbatim environment is what makes a quoted ``citation-audit:``
-# comment *content* instead of an instruction, so an unlisted environment is a
-# fail-open hole through which a sample block exempts real citations (measured:
-# ``\begin{verbatim}``, ``lstlisting`` and ``alltt`` each armed a quoted
-# directive before this list existed).
+# moment someone writes it.
+#
+# What being inside one of these environments changes is *extraction only*: the
+# line is scanned literally rather than split into macro arguments plus residue,
+# and a source-line wrap may be rejoined (see :data:`WRAP_PREFIX`) so the one
+# path the document wrote is the one that gets charged. It confers no exemption
+# on anything -- this module has no exemption channel to confer -- so an
+# environment missing from this list can only change how a block is tokenised,
+# never whether its citations are charged.
 #
 # The name test is case-insensitive and accepts the starred and prefixed forms,
 # so ``verbatim``, ``Verbatim*``, ``BVerbatim`` and ``SaveVerbatim`` are all
@@ -323,36 +331,6 @@ NON_CITATION_LEFT_DELIMITERS = frozenset(" \t`(\"'")
 # layout, which is the inference this tool exists to refuse.
 WRAP_PREFIX = re.compile(r"^[A-Za-z0-9_][A-Za-z0-9_.+/-]*/$")
 WRAP_CONTINUATION = re.compile(r"^[A-Za-z0-9_]")
-
-# Per-citation exemption directive, written as a comment in the document.
-DIRECTIVE = re.compile(r"citation-audit:\s*([A-Za-z][A-Za-z0-9_-]*)\s+(\S+)")
-DIRECTIVE_KINDS = ("archived", "prefix")
-
-# A directive is only read from a line that *is* a comment in the document's own
-# syntax. Without this the pattern would arm anywhere on any line -- inside
-# ``\texttt{...}``, inside a ``Verbatim`` block, in a sentence explaining the
-# syntax -- so transcribing this tool's own documentation into the proof guide
-# would grant a real exemption. An exemption has to be an act, not a quotation.
-#
-# The asymmetry between the two patterns is the difference between the two
-# syntaxes, and it is what closes the quotation route in each:
-#
-# * in tex, ``%`` starts a comment at any column, and leading whitespace is
-#   ordinary source indentation -- an indented ``%`` line is still invisible in
-#   the rendered document, hence still an act. A *visible* sample of the syntax
-#   has to sit inside a verbatim environment, which is handled above.
-# * in markdown there is no such thing as an indented comment: four spaces make
-#   an **indented code block**, so ``    <!-- citation-audit: ... -->`` is a
-#   rendered sample, and one or three spaces put the text inside a blockquote or
-#   a list item. Accepting leading whitespace here therefore made a quotation
-#   indistinguishable from an act (measured: an indented sample exempted the
-#   citation printed under it), so column 0 is required.
-TEX_COMMENT = re.compile(r"^\s*%")
-MD_COMMENT = re.compile(r"^<!--")
-
-# Fenced code block delimiter in Markdown (used only for directive block scope;
-# fenced content is scanned like any other line).
-MD_FENCE = re.compile(r"^\s*(?:```|~~~)")
 
 # Cue words that make a repeated citation inside one paragraph a self-reference
 # rather than an ordinary repetition.
@@ -516,15 +494,6 @@ def tracked_paths() -> Set[str]:
     return {path for path in out.split("\0") if path}
 
 
-def tag_lean_files(tag: str) -> Optional[List[str]]:
-    """Return the ``.lean`` paths in ``tag``, or ``None`` if the tag is unknown."""
-    try:
-        out = _git(["ls-tree", "-r", "--name-only", "-z", tag])
-    except GitError:
-        return None
-    return [path for path in out.split("\0") if path.endswith(".lean")]
-
-
 def suffix_map(paths: Iterable[str]) -> Dict[str, Set[str]]:
     """Map every component-aligned tail of every path to the paths having it.
 
@@ -546,40 +515,17 @@ def suffix_map(paths: Iterable[str]) -> Dict[str, Set[str]]:
 # ---------------------------------------------------------------------------
 
 
-class Directive(NamedTuple):
-    """A ``citation-audit:`` exemption request read from a document."""
-
-    kind: str
-    argument: str
-
-
 class Citation(NamedTuple):
-    """One citation occurrence, after unescaping and brace expansion."""
+    """One citation occurrence, after unescaping and brace expansion.
+
+    There is no field for an exemption because there is no exemption channel: a
+    citation carries what the document wrote and where, and nothing else.
+    """
 
     target: str
     line: int
     variant: str
     token: str
-    directive: Optional[Directive]
-
-
-def parse_directive(line: str, is_tex: bool) -> Optional[Directive]:
-    """Parse a ``citation-audit:`` directive from a comment line, or ``None``.
-
-    A line that is not a comment in the document's own syntax grants nothing,
-    and neither does an unrecognised kind: in both cases the citations the
-    writer meant to cover stay charged. That is the fail-closed reading of a
-    typo and of a quotation, and it is why neither needs a class of its own.
-    """
-    if not (TEX_COMMENT if is_tex else MD_COMMENT).match(line):
-        return None
-    match = DIRECTIVE.search(line)
-    if not match:
-        return None
-    kind, argument = match.group(1), match.group(2)
-    if kind not in DIRECTIVE_KINDS:
-        return None
-    return Directive(kind, argument)
 
 
 def scan_units(line: str, is_tex: bool, in_verbatim: bool) -> List[Tuple[str, str]]:
@@ -646,6 +592,11 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
     guard: it holds one entry per line whose raw ``.lean`` count differs from the
     number of tokens attributed to it, plus one entry if the per-file totals
     disagree (an attribution bug that cancels across lines).
+
+    The function reads the document only as a source of tokens. It parses no
+    instructions out of it -- no exemption directive, no comment syntax, no
+    fenced-block scope -- so the only thing a document can do to this pass is
+    contain more or fewer citations.
     """
     is_tex = target.endswith(".tex")
     lines = text.split("\n")
@@ -653,17 +604,13 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
     coverage: List[str] = []
 
     verbatim_env: Optional[str] = None
-    in_fence = False
     pending_wrap: Optional[Tuple[int, str]] = None
-    pending_directive: Optional[Directive] = None
-    block_directive: Optional[Directive] = None
     captured_total = 0
     raw_total = 0
 
     for number, line in enumerate(lines, start=1):
         raw = line.count(".lean")
         raw_total += raw
-        line_start = len(citations)
 
         in_verbatim = verbatim_env is not None
         opened = verbatim_environment_opened(line) if is_tex else None
@@ -673,7 +620,6 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
             and verbatim_env is not None
             and verbatim_environment_closes(line, verbatim_env)
         )
-        fence = bool(not is_tex and MD_FENCE.match(line))
         # The delimiter line is scanned as ordinary prose rather than skipped:
         # a ``.lean`` written in ``\begin{Verbatim}[label=Foo.lean]`` would
         # otherwise escape the coverage arithmetic entirely.
@@ -734,7 +680,6 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                                 line=report_line,
                                 variant=token_variant,
                                 token=expanded,
-                                directive=None,
                             )
                         )
                 captured += acknowledge_non_citations(unescaped, spans)
@@ -747,55 +692,17 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                     f"COVERAGE {target}:{number} raw={raw} captured={captured} :: {snippet}"
                 )
 
-        # Directive scope. A directive never covers its own line -- it is parsed
-        # after this line's citations have been attached -- so it applies to the
-        # next line carrying citations, or to the block it immediately precedes.
-        carried = len(citations) > line_start
-        if carried:
-            active = block_directive if block_directive is not None else pending_directive
-            if active is not None:
-                for index in range(line_start, len(citations)):
-                    citations[index] = citations[index]._replace(directive=active)
-                if block_directive is None:
-                    pending_directive = None
-
-        # A directive written inside a verbatim or fenced block is content, not
-        # an instruction: a document that quotes the syntax must not thereby
-        # exempt the citation printed after the block.
-        found = None if (verbatim_line or in_fence) else parse_directive(line, is_tex)
-        if found is not None:
-            pending_directive = found
-        elif (
-            pending_directive is not None
-            and not carried
-            and not begins
-            and not fence
-            and line.strip()
-        ):
-            # Expiry. A directive names the *next* citation line; if the first
-            # non-blank line after it carries no citation, its subject is gone
-            # (typically because the block it annotated was deleted). Letting it
-            # wait would silently exempt whatever citation appears next, dozens
-            # of lines away, which is an exemption nobody wrote.
-            pending_directive = None
-
+        # Verbatim state for the next line. With ``pending_wrap`` this is the
+        # whole of the per-line state machine, and both are extraction state:
+        # one line can change how the next is *read* (a wrapped path rejoined
+        # into the path the document wrote), never whether it is charged. The
+        # extractor holds no pending or active exemption of any kind.
         if begins:
             verbatim_env = opened
             pending_wrap = None
-            if pending_directive is not None:
-                block_directive, pending_directive = pending_directive, None
         elif ends:
             verbatim_env = None
             pending_wrap = None
-            block_directive = None
-        elif fence:
-            if in_fence:
-                in_fence = False
-                block_directive = None
-            else:
-                in_fence = True
-                if pending_directive is not None:
-                    block_directive, pending_directive = pending_directive, None
 
     if captured_total != raw_total:
         coverage.append(
@@ -822,29 +729,20 @@ class Finding(NamedTuple):
 class Resolver:
     """Answers "does this citation point at a file this repository has?".
 
-    Holds the tracked suffix table and a lazily built table per archive tag
-    named by a directive. Every method is total and side-effect free apart from
-    the tag cache, so classification is deterministic.
+    Holds exactly one table, built from the tracked set. There is no per-tag or
+    per-history table: a path that exists only in an archive tag, in an older
+    commit or in an untracked copy is not a file this repository has, and no
+    argument written in a document can add a second table to consult. Every
+    method is total, pure and deterministic.
     """
 
     def __init__(self, tracked: Sequence[str]) -> None:
         self.tracked = list(tracked)
         self.table = suffix_map(self.tracked)
-        self._tags: Dict[str, Optional[Dict[str, Set[str]]]] = {}
 
     def matches(self, token: str) -> Set[str]:
         """Return the tracked paths ``token`` is a component-aligned suffix of."""
         return self.table.get(token, set())
-
-    def tag_matches(self, tag: str, token: str) -> Optional[Set[str]]:
-        """Return the matches of ``token`` inside ``tag``, or ``None`` if unknown."""
-        if tag not in self._tags:
-            paths = tag_lean_files(tag)
-            self._tags[tag] = None if paths is None else suffix_map(paths)
-        table = self._tags[tag]
-        if table is None:
-            return None
-        return table.get(token, set())
 
 
 def classify(citation: Citation, resolver: Resolver) -> Tuple[str, Optional[str]]:
@@ -854,25 +752,15 @@ def classify(citation: Citation, resolver: Resolver) -> Tuple[str, Optional[str]
     ``ALLOWED_TRACKED_PREFIXES`` (R10). The order of the tests is the decision
     table of the module docstring, and there is no branch that turns "several
     matches" or "no directory component" into a pass.
+
+    The function's arguments are the whole of its input: a token and the tracked
+    suffix table. It cannot see the document's prose, so no wording anywhere can
+    reach this decision -- which is what makes "there is no exemption channel" a
+    property of the code rather than a promise about how it is used.
     """
     token = normalise(citation.token)
     if token is None:
         return (MALFORMED, None)
-
-    directive = citation.directive
-    if directive is not None and directive.kind == "archived":
-        hits = resolver.tag_matches(directive.argument, token)
-        if hits is not None and len(hits) == 1 and "/" in token:
-            return (RESOLVED_BY_DIRECTIVE, None)
-        return (MISSING, None)
-    if directive is not None and directive.kind == "prefix" and "/" not in token:
-        prefix = directive.argument
-        if not prefix.endswith("/"):
-            prefix += "/"
-        hits = resolver.matches(prefix + token)
-        if len(hits) == 1:
-            return (RESOLVED_BY_DIRECTIVE, None)
-        return (MISSING, None)
 
     hits = resolver.matches(token)
     if len(hits) == 0:
