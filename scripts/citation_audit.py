@@ -440,11 +440,27 @@ DEFAULT_MIN_CITATIONS = 1
 # prose" is the floor above, i.e. a cliff hundreds of citations away, reachable
 # by erosion nobody ever reviews. The budget is self-calibrating (a percentage
 # of what is committed) with an absolute minimum so that a small target does not
-# end up frozen. Measured against the committed census: 66 for the tex (1,333),
-# 134 for the markdown (2,698) -- comfortably above the 44 the first remediation
-# pass removed, and far below a gutting.
+# end up frozen.
+#
+# Sized against the frozen numbers rather than against today's census, which is
+# whatever the last accepted deletion left behind: at ``MEASURED_CITATIONS`` the
+# budget is 66 for the tex (1,333) and 134 for the markdown (2,698), and at the
+# lowest census R12 can ever admit -- ``measured - cap``, i.e. 1,134 and 2,294 --
+# it is still 56 and 114. Both ends clear ``MEASURED_REMEDIATION_DROP`` and are
+# far below a gutting. The test suite states that as a claim over the whole
+# range, so an ordinary remediation commit does not have to restate it.
 CITATION_DROP_BUDGET_FRACTION = 0.05
 MIN_CITATION_DROP_BUDGET = 25
+
+# The largest deletion a legitimate remediation pass has needed so far, frozen.
+# Nothing charges it at runtime -- like ``MEASURED_TRACKED_LEAN`` it is the test
+# suite's reference point -- and what it is for is the *lower* side of the
+# budget above, which has no other guard: a budget that stops clearing this
+# turns the work the tool exists to support into a hard failure, and a guard
+# that blocks legitimate work is a guard somebody deletes. Measured on the first
+# remediation pass over ``tex/proof-guide.tex`` (PR #4730), whose ``#census``
+# citation count moves 1,333 -> 1,289.
+MEASURED_REMEDIATION_DROP = 44
 
 # A resolved citation must land inside the part of the tree this project owns.
 # Measured: 2,017 of the 2,018 tracked ``.lean`` files match (the exception is
