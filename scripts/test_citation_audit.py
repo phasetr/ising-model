@@ -101,6 +101,7 @@ from __future__ import annotations
 import io
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -969,10 +970,12 @@ class NoExemptionChannelTest(unittest.TestCase):
         # ``rev-parse``, ``merge-base``), and the one thing that must never come
         # from a commit is what answers a citation. So the claim is stated where
         # it belongs: the resolution helpers read ``ls-files`` and nothing else,
-        # and the single tree query lives in the baseline-membership helper.
+        # and the tree queries live in the two baseline-destination helpers --
+        # membership, and the spelling of a path the filesystem does not hold.
         source = CITATION_AUDIT_PATH.read_text(encoding="utf-8")
-        self.assertEqual(source.count('"ls-tree"'), 1, "ls-tree is invoked in two places")
-        self.assertIn('"ls-tree"', function_source(source, "_git_path_in_tree"))
+        self.assertEqual(source.count('"ls-tree"'), 2, "ls-tree is invoked elsewhere")
+        for name in ("_git_path_in_tree", "_first_misspelled_component"):
+            self.assertIn('"ls-tree"', function_source(source, name), name)
         for name in ("tracked_lean_files", "tracked_paths", "suffix_map"):
             body = function_source(source, name)
             self.assertNotIn("ls-tree", body, name)
@@ -2218,33 +2221,69 @@ class CommittedCopyTest(unittest.TestCase):
         self.assertNotIn("wrote ", out)
         self.assertEqual(after, before)
 
-    def test_a_hard_linked_destination_is_refused(self) -> None:
-        """The membership question is about a pathname; the write is about an inode.
+    def test_a_hard_linked_destination_does_not_reach_the_committed_bytes(self) -> None:
+        """The membership question is about a pathname; the write is about a name.
 
         A second name for the committed baseline's bytes is listed by no tree, so
-        the carrier set is empty and the bootstrap branch is taken -- while
-        ``write_text`` still lands on the committed file. Measured at review
-        before this was charged: no refusal, exit 0, "writing it as a new file",
-        and a committed baseline of 1,000 rows left holding 300.
+        the carrier set is empty and the bootstrap branch is taken. Measured at
+        review when the write was a ``write_text`` through that name: exit 0,
+        "writing it as a new file", and a committed baseline of 1,000 rows left
+        holding 300, because the two names shared an inode. The write replaces
+        the name instead, which detaches it, so what the bootstrap creates here
+        is a second file and the committed one keeps its bytes.
+
+        Refusing the hard link outright was tried first and is not what ships: it
+        also refused the *tracked* path whenever anything else linked to it,
+        which is what ``cp -l`` and a hard-linked CI cache produce (the test
+        below).
         """
         with self._repo() as root:
             real = root / "audit" / "base.tsv"
-            os.link(real, root / "audit" / "hardlink.tsv")
+            alias = root / "audit" / "hardlink.tsv"
+            os.link(real, alias)
             (root / "tex" / "g.tex").write_text(stale_citations_tex(30), encoding="utf-8")
             before = real.read_text(encoding="utf-8")
             code, out = run_main(
                 ca, "--targets", "tex/g.tex", "--update-baseline", "audit/hardlink.tsv"
             )
             after = real.read_text(encoding="utf-8")
-        self.assertEqual(code, 1)
-        self.assertIn("ALIASED", out)
-        self.assertIn("hard link", out)
-        # Nothing else was standing in the way: no census was read, so R11 could
-        # not fire on a 70% deletion either.
-        self.assertNotIn("ERODED", out)
-        self.assertNotIn("no committed copy", out)
-        self.assertNotIn("wrote ", out)
+            written = alias.read_text(encoding="utf-8")
+            same_bytes = alias.samefile(real)
+        self.assertEqual(code, 0, out)
+        self.assertIn("no committed copy", out)
         self.assertEqual(after, before)
+        self.assertFalse(same_bytes, "the write went through the link")
+        self.assertIn("Corpus/Stale0000.lean", written)
+
+    def test_a_hard_linked_tracked_path_still_updates(self) -> None:
+        """The refusal's own opposite: a legitimate second name must not block it.
+
+        ``cp -l``, ``rsync --link-dest`` and a hard-linked CI cache all leave the
+        tracked baseline with ``st_nlink == 2``. Charging that was measured at
+        review to refuse a no-op regeneration of the *correct* tracked path --
+        the tool made unusable in exactly the setups that copy cheaply -- while
+        the thing it was defending against is answered by replacing the name
+        rather than writing through it. So the link is asserted to survive as a
+        *stale* copy: the update lands on the tracked path alone.
+        """
+        with self._repo() as root:
+            real = root / "audit" / "base.tsv"
+            cache = root / "audit" / "cache.tsv"
+            os.link(real, cache)
+            before = real.read_text(encoding="utf-8")
+            (root / "tex" / "g.tex").write_text(stale_citations_tex(90), encoding="utf-8")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = real.read_text(encoding="utf-8")
+            cached = cache.read_text(encoding="utf-8")
+            links = real.stat().st_nlink
+        self.assertEqual(code, 0, out)
+        self.assertIn("judged against", out)
+        self.assertIn("wrote ", out)
+        self.assertNotEqual(after, before)
+        self.assertEqual(cached, before)
+        self.assertEqual(links, 1)
 
     def test_a_mis_cased_destination_is_refused(self) -> None:
         """The same gap without a hard link, on the filesystem this repository uses.
@@ -2271,8 +2310,94 @@ class CommittedCopyTest(unittest.TestCase):
             after = real.read_text(encoding="utf-8")
         self.assertEqual(code, 1)
         self.assertIn("ALIASED", out)
-        self.assertIn("spells audit/Base.tsv differently", out)
+        self.assertIn("audit/Base.tsv is spelled differently", out)
         self.assertNotIn("no committed copy", out)
+        self.assertNotIn("wrote ", out)
+        self.assertEqual(after, before)
+
+    def test_a_mis_cased_destination_absent_from_the_worktree_is_refused(self) -> None:
+        """The spelling question when the filesystem cannot answer it.
+
+        A directory listing can only report the spelling of a name the directory
+        holds. Delete the baseline first -- or the whole directory -- and the
+        disk-only walk answers "not mis-spelled" for every spelling, while
+        ``git ls-tree`` is still asked about the mis-cased one, finds nothing,
+        and hands the run the bootstrap branch. Measured at review on the real
+        repository: exit 0, ``delta: +1367 finding(s)``, and ``git status``
+        empty, because the case-insensitive create landed on the tracked path.
+        So the absent component is asked of the revisions' trees, which do hold
+        the name.
+
+        Both components are covered: the leaf, and the directory above it.
+        """
+        cases = {
+            "the leaf": ("audit/base.tsv", "audit/Base.tsv", "audit/Base.tsv"),
+            "the directory": ("audit", "Audit/base.tsv", "Audit"),
+        }
+        for label, (removed, spelling, charged) in cases.items():
+            with self.subTest(component=label), self._repo() as root:
+                real = root / "audit" / "base.tsv"
+                if removed == "audit":
+                    shutil.rmtree(root / "audit")
+                else:
+                    real.unlink()
+                (root / "tex" / "g.tex").write_text(
+                    stale_citations_tex(30), encoding="utf-8"
+                )
+                code, out = run_main(
+                    ca, "--targets", "tex/g.tex", "--update-baseline", spelling
+                )
+                restored = real.exists()
+                status = _git_out(root, "status", "--porcelain")
+                self.assertEqual(code, 1, out)
+                self.assertIn("ALIASED", out)
+                self.assertIn(f"{charged} is spelled differently", out)
+                self.assertNotIn("no committed copy", out)
+                self.assertNotIn("wrote ", out)
+                self.assertFalse(restored, "a baseline was written under the alias")
+                self.assertIn("audit/base.tsv", status)
+
+    def test_a_destination_directory_that_cannot_be_listed_is_refused(self) -> None:
+        """The spelling question when the filesystem *refuses* to answer it.
+
+        A directory that is searchable and writable but not readable (mode
+        ``0o311``) opens its children by name while ``iterdir`` raises, so the
+        walk gets no answer at all -- and an unanswered question read as
+        "spelled correctly" is the same exoneration this module charges
+        everywhere else. Writable on purpose: with the refusal weakened to
+        ``return None`` the run must be able to reach its write, so what this
+        test measures is the refusal and not the mode. Both preconditions are
+        asserted, because as root the listing succeeds and the test would then
+        assert nothing.
+        """
+        with self._repo() as root:
+            audit = root / "audit"
+            real = audit / "base.tsv"
+            before = real.read_text(encoding="utf-8")
+            # Within R11's budget, which returns before the refusals are printed.
+            (root / "tex" / "g.tex").write_text(stale_citations_tex(90), encoding="utf-8")
+            audit.chmod(0o311)
+            try:
+                reachable = real.exists()
+                try:
+                    list(audit.iterdir())
+                    listable = True
+                except OSError:
+                    listable = False
+                if not (reachable and not listable):
+                    self.skipTest(
+                        "this user can list a 0o311 directory (root?), so the "
+                        "unanswered-question branch is not reached here"
+                    )
+                code, out = run_main(
+                    ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+                )
+            finally:
+                audit.chmod(0o755)
+            after = real.read_text(encoding="utf-8")
+        self.assertEqual(code, 1, out)
+        self.assertIn("ALIASED", out)
+        self.assertIn("audit/base.tsv is spelled differently", out)
         self.assertNotIn("wrote ", out)
         self.assertEqual(after, before)
 
@@ -3143,54 +3268,68 @@ class MutationTest(unittest.TestCase):
                 self.assertIn("Corpus/Stale0000.lean", written)
                 self.assertNotIn("Corpus/Stale0050.lean", written)
 
-    def test_without_the_destination_identity_check_a_hard_link_is_written_through(
+    def test_without_the_destination_identity_check_a_mis_cased_name_is_written(
         self,
     ) -> None:
-        """Asking about a pathname and writing to an inode, as it shipped.
+        """Asking about one spelling and writing through another, as it shipped.
 
-        The mutation removes the identity check and restores exactly the state
-        measured at review: the alias is listed by no tree, so the carrier set is
-        empty, so the bootstrap path is taken with no refusal -- and the bytes it
-        writes are the committed baseline's, because the two names share an
-        inode. The real module refuses; the mutant erodes the committed file.
+        The mutation removes the identity check and restores the state measured
+        at review: the mis-cased spelling is listed by no tree, so the carrier
+        set is empty, so the bootstrap path is taken with no refusal -- and the
+        case-insensitive open lands the write on the committed file anyway. The
+        real module refuses; the mutant erodes the committed file.
+
+        The absent-destination form of the same hole is the second case: the
+        disk-only spelling walk could not answer for a path the worktree no
+        longer held, so it answered "not mis-spelled".
         """
         mutant = load_mutated(
             (
-                "    refusals.extend(_destination_identity_refusals(destination, relative))",
-                "    refusals.extend([])",
+                "_destination_identity_refusals(destination, relative, revisions)",
+                "[]",
             )
         )
         committed = make_baseline(
             1, (("tex/g.tex", 100, 100, "MISSING=100"),), stale_rows(100)
         )
-        with fixture(
-            {"tex/g.tex": stale_citations_tex(100), "audit/base.tsv": committed},
-            tracked=["IsingModel/Corpus/Present.lean"],
-            module=mutant,
-            commit=True,
-            TARGETS=("tex/g.tex",),
-            MIN_CITATIONS={"tex/g.tex": 1},
-        ) as root:
-            real = root / "audit" / "base.tsv"
-            os.link(real, root / "audit" / "hardlink.tsv")
-            (root / "tex" / "g.tex").write_text(stale_citations_tex(30), encoding="utf-8")
-            code, out = run_main(
-                mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/hardlink.tsv"
-            )
-            after = real.read_text(encoding="utf-8")
-        self.assertEqual(code, 0, out)
-        self.assertIn("no committed copy", out)
-        self.assertIn("Corpus/Stale0000.lean", after)
-        self.assertNotIn("Corpus/Stale0050.lean", after)
+        for label, remove in (("present", False), ("absent", True)):
+            with self.subTest(destination=label), fixture(
+                {"tex/g.tex": stale_citations_tex(100), "audit/base.tsv": committed},
+                tracked=["IsingModel/Corpus/Present.lean"],
+                module=mutant,
+                commit=True,
+                TARGETS=("tex/g.tex",),
+                MIN_CITATIONS={"tex/g.tex": 1},
+            ) as root:
+                real = root / "audit" / "base.tsv"
+                alias = root / "audit" / "Base.tsv"
+                if not (alias.exists() and alias.samefile(real)):
+                    self.skipTest("case-sensitive filesystem: this spelling is a new file")
+                if remove:
+                    real.unlink()
+                (root / "tex" / "g.tex").write_text(
+                    stale_citations_tex(30), encoding="utf-8"
+                )
+                code, out = run_main(
+                    mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/Base.tsv"
+                )
+                after = real.read_text(encoding="utf-8")
+                self.assertEqual(code, 0, out)
+                self.assertIn("no committed copy", out)
+                self.assertIn("Corpus/Stale0000.lean", after)
+                self.assertNotIn("Corpus/Stale0050.lean", after)
 
     def test_an_outside_destination_read_as_absence_bootstraps(self) -> None:
         """And the same for a path the repository cannot be asked about at all.
 
         The mutation restores the early return the ``relative_to`` failure used
         to take, which reported no refusal and no rows -- the bootstrap
-        signature. Through an out-of-repository hard link the write still lands
-        on the tracked file, which is why the outcome has to be a refusal rather
-        than an omission.
+        signature. What that costs is the judgement: a baseline written with the
+        growth refusal and R11 both switched off, at a path no revision of this
+        repository could have been asked about, on a run that says "no committed
+        copy". The bytes of the tracked file it is hard-linked to are no longer
+        reachable that way -- the write replaces the out-of-repository name --
+        which is why this asserts the missing refusal rather than an erosion.
         """
         mutant = load_mutated(
             (
@@ -3216,17 +3355,20 @@ class MutationTest(unittest.TestCase):
             except OSError:
                 self.skipTest("the temporary directory is on another device")
             (root / "tex" / "g.tex").write_text(stale_citations_tex(30), encoding="utf-8")
+            before = real.read_text(encoding="utf-8")
             rows, _, _, refusals = mutant.committed_baseline(alias)
             code, out = run_main(
                 mutant, "--targets", "tex/g.tex", "--update-baseline", str(alias)
             )
             after = real.read_text(encoding="utf-8")
+            written = alias.read_text(encoding="utf-8")
         self.assertIsNone(rows)
         self.assertEqual(refusals, [])
         self.assertEqual(code, 0, out)
         self.assertIn("no committed copy", out)
-        self.assertIn("Corpus/Stale0000.lean", after)
-        self.assertNotIn("Corpus/Stale0050.lean", after)
+        self.assertEqual(after, before)
+        self.assertIn("Corpus/Stale0000.lean", written)
+        self.assertNotIn("Corpus/Stale0050.lean", written)
 
     def test_disabling_the_deletion_budget_passes_a_gutted_document(self) -> None:
         """Without R11, deleting the citing prose is the cheapest green run."""
