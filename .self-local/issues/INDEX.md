@@ -1,3 +1,17 @@
+**2026-07-27 PR #4743 MERGED (dev-pr-clerk, main `2a3a9baf`)**: closed the `docs/index.md`
+`MISSING` citation class (12 findings -> 0, 11 edited lines), completing the `MISSING`-class
+lane opened by #4704 (tex side was already closed by #4741). Re-measured: gating
+**972 -> 960**, advisory 94 -> 93, `docs/index.md` census 2698 -> 2693; `MISSING` now absent
+from `citation_audit.py`'s output for both `tex/proof-guide.tex` and `docs/index.md`. #4704
+GitHub title/body + mirror `4704.md` resynced to this count; **#4704 stays OPEN** (follow-ups:
+row-2019 evidence-path umbrella wording, a spelling-form inconsistency, CI-wiring decision
+pending). **Self-reported clerk defect (not amended, per no-main-amend rule)**: the PR body's
+own corrective footnote for a line-count error (2,331 -> 2,330) quoted the wrong figure
+inline, so the literal string `2,331` is present in the merged squash-commit body on `main`
+(`2a3a9baf`) even though the actual `docs/index.md` line count is correctly 2,330 everywhere
+else in that body — recorded here for a future corrective PR or explicit user decision, main
+was not amended/force-pushed.
+
 **2026-07-26 PR #4728 MERGED (dev-pr-clerk, main `365fb294`), session terminal state**: the
 fail-closed citation auditor (`scripts/citation_audit.py` + `scripts/test_citation_audit.py` +
 `scripts/audit/citation_baseline.tsv`) for `.lean` path citations in `tex/proof-guide.tex` and
