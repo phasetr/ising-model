@@ -20,9 +20,12 @@
 #   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv
 # which refuses to raise any key's count against the strictest committed copy,
 # refuses a drop past the budget or the cumulative cap, and refuses to run at all
-# where those committed copies cannot be read (a shallow clone). All of them
-# remain possible only as a hand edit of this file or of the constants, which is a
-# loud diff -- and that is the point.
+# where those committed copies cannot be read (a shallow clone, or a partial one
+# that holds trees without blobs) or where fewer than two commits carry this file
+# (a baseline created on a branch and not landed yet, or a stale fetch: the only
+# reference left is then the branch's own last write). All of them remain possible
+# only as a hand edit of this file or of the constants, which is a loud diff -- and
+# that is the point.
 #tracked	2018
 #census	tex/proof-guide.tex	1333	1324	RESOLVED=804,MISSING=280,AMBIGUOUS=106,BASENAME_ONLY=143,SELFREF=5
 #census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90

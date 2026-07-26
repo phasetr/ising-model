@@ -150,13 +150,45 @@ refuses, and has **no override flag**, when:
   the growth refusal and R11 together. Both are refused instead. The
   ``git show`` used to read a copy cannot tell the two apart (it exits non-zero
   for either), so the revision is separately resolved with ``git rev-parse
-  --verify``, and at least two readable revisions are required;
+  --verify``, and at least two resolvable revisions are required;
+* **fewer than two of those revisions actually carry the file.** Resolving a
+  revision and holding the baseline are different facts, and only the second
+  supplies an allowance. ``origin/main`` can resolve and still predate the commit
+  that introduced the path -- a baseline created on this branch, or a stale fetch
+  -- and then the one surviving reference is ``HEAD``, the branch's own last
+  write, with all three revisions resolving and no refusal raised. Measured at
+  review on that gap, with R12 out of the picture: six consecutive within-budget
+  updates accepted, 1,000 citations down to 738, ``ratchet: OK`` throughout.
+  With R12 armed the same walk is bounded by the cumulative cap instead -- which
+  is all that stood behind this. Tree membership is therefore established
+  separately (``git ls-tree``), and the "at least two" rule is applied to the
+  revisions that *carry* the path, not to the revisions that resolve;
+* **the path is in a revision's tree but its content cannot be read** -- a
+  partial clone fetches trees without blobs, and a damaged object store looks the
+  same. Read as absence, that can empty the carrier set, and an empty carrier set
+  is the bootstrap path, which disables the growth refusal and R11 together;
 * a target lost more citations than R11's budget allows, or R12's cap does.
 
-The written file is therefore provably per-key ``<=`` the committed one:
-laundering is not expressible through the tool. Growth, and a deletion past the
-budget, remain possible only as a hand edit of the committed file -- which is a
-loud, reviewable diff, and that is the intended control.
+**Bootstrapping** -- the one permissive outcome -- is correspondingly narrow, and
+is defined positively: at least two revisions resolve, every one of them answered
+the membership question, and *none* of them lists the path in its tree. Then the
+file is genuinely new, there is no allowance to launder yet, and its creation is
+a new file in the diff for review to see. "The revisions could not be read",
+"the content could not be read" and "only this branch carries it" are each a
+refusal instead, so a branch bootstraps a baseline exactly once: after the
+creating commit, ``HEAD`` carries the file and the upstream does not, and the
+next update waits until the file has landed on ``origin/main`` (or is a hand
+edit, which is a loud diff).
+
+The written file is therefore provably per-key ``<=`` a committed copy that at
+least two revisions carry. What that does *not* say is that the tool can never
+emit a smaller file: ``--format tsv`` renders the same bytes with none of these
+refusals, and under a partial ``--targets`` it renders the unscanned target's
+rows away. Installing such a file is a hand edit of the committed baseline, and
+that is where the control sits -- the diff is loud, and the next gating run
+charges every dropped row as a ratchet regression. Growth, and a deletion past
+the budget, are likewise possible only as a hand edit, which is the intended
+control.
 
 Only the update path needs the committed copies. A gating run reads the working
 tree's baseline, so a shallow CI clone still audits and still ratchets; what it
@@ -1192,10 +1224,14 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
         # gating run, ``--strict`` and ``--update-baseline`` alike -- and it
         # cannot be disarmed by pointing ``--baseline`` somewhere else.
         measured = MEASURED_CITATIONS.get(target, 0)
-        if target in TARGETS and target not in MEASURED_CITATIONS:
+        if target in TARGETS and measured <= 0:
+            # The *value* is checked, not just the key: ``measured`` of ``0`` is
+            # the "never measured" sentinel a line below, so an entry of
+            # ``{"tex/proof-guide.tex": 0}`` satisfies a membership-only arming
+            # check while disarming the cap exactly as deleting the entry does.
             hard.append(
-                f"VACUOUS {target}: default target with no frozen citation measurement, "
-                "so the cumulative erosion cap is unarmed"
+                f"VACUOUS {target}: default target with no positive frozen citation "
+                "measurement, so the cumulative erosion cap is unarmed"
             )
         cap = cumulative_loss_cap(measured)
         if measured and measured - len(citations) > cap:
@@ -1325,9 +1361,12 @@ def render_baseline(report: Report) -> str:
         "#   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv",
         "# which refuses to raise any key's count against the strictest committed copy,",
         "# refuses a drop past the budget or the cumulative cap, and refuses to run at all",
-        "# where those committed copies cannot be read (a shallow clone). All of them",
-        "# remain possible only as a hand edit of this file or of the constants, which is a",
-        "# loud diff -- and that is the point.",
+        "# where those committed copies cannot be read (a shallow clone, or a partial one",
+        "# that holds trees without blobs) or where fewer than two commits carry this file",
+        "# (a baseline created on a branch and not landed yet, or a stale fetch: the only",
+        "# reference left is then the branch's own last write). All of them remain possible",
+        "# only as a hand edit of this file or of the constants, which is a loud diff -- and",
+        "# that is the point.",
     ]
     if not report.ok_structurally:
         lines.append("#")
@@ -1468,15 +1507,16 @@ def erosion_failures(
 
 
 def _git_committed_text(revision: str, relative: str) -> Optional[str]:
-    """Return ``revision:relative``'s content, or ``None`` if it is not there.
+    """Return ``revision:relative``'s content, or ``None`` if it could not be read.
 
-    ``None`` means exactly one thing here -- *that commit does not contain this
-    path* -- and it means it only because the caller has already established
-    that ``revision`` resolves to a commit (:func:`_revision_commit`). Without
-    that separation ``None`` would also cover "no such revision", and the two
-    have opposite consequences: an absent path is the ordinary bootstrap case,
-    while an unresolvable revision means the strictest committed copy is not
-    the one being compared against.
+    ``git show`` answers "no such revision", "no such path in this revision" and
+    "the object is not in this clone" with the same non-zero exit status, so on
+    its own ``None`` is three outcomes with opposite consequences. Both of the
+    other two questions are therefore asked separately before this is called:
+    the revision resolves (:func:`_revision_commit`) and the path is listed in
+    its tree (:func:`_git_path_in_tree`). After those, ``None`` means exactly
+    one thing -- *the content of a path this commit does have could not be
+    read* -- which is a refusal and never the bootstrap case.
     """
     try:
         proc = subprocess.run(
@@ -1489,6 +1529,27 @@ def _git_committed_text(revision: str, relative: str) -> Optional[str]:
     except OSError as exc:  # pragma: no cover - git missing is an environment fault
         raise GitError(f"git show {revision}:{relative}: {exc}") from exc
     return proc.stdout if proc.returncode == 0 else None
+
+
+def _git_path_in_tree(revision: str, relative: str) -> Optional[bool]:
+    """Return whether ``revision``'s tree lists ``relative``; ``None`` if unknown.
+
+    The membership question, asked of the tree rather than of the blob. It is
+    what separates "this commit does not have the file" -- the only fact that
+    may lead to the bootstrap path -- from "this commit has it but the content
+    did not come back", which a blob read alone reports identically. A partial
+    clone (``--filter=blob:none``) has every tree and no blob, so the two are
+    not hypothetical alternatives of each other.
+
+    ``None`` is returned when git itself failed, i.e. when the question was not
+    answered; the caller refuses on it rather than guessing an answer, which is
+    the same rule the rest of this module applies to an approximation.
+    """
+    try:
+        listed = _git(["ls-tree", "--full-tree", "--name-only", revision, "--", relative])
+    except GitError:
+        return None
+    return bool(listed.strip())
 
 
 def _revision_commit(revision: str) -> Optional[str]:
@@ -1519,8 +1580,14 @@ def _committed_revisions() -> Tuple[List[str], List[str]]:
     branch's previous commit": ``origin/main`` is absent in every shallow or
     single-branch clone, and with it gone the remaining reference is ``HEAD``,
     which the branch itself wrote. The list is required to hold at least two
-    readable revisions for the same reason -- one reference is the branch
+    resolvable revisions for the same reason -- one reference is the branch
     judging itself, whatever it is called.
+
+    Resolvability is all this function establishes. Whether a revision *carries*
+    the baseline is a different question with the same failure mode -- three
+    revisions can resolve while only ``HEAD`` holds the file -- and it is asked,
+    against the same "at least two" rule, in :func:`committed_baseline`, which
+    is where the path is known.
 
     ``merge-base`` failing while both named revisions resolve (unrelated
     histories) is refused too: it means the reference review will diff against
@@ -1569,20 +1636,31 @@ def committed_baseline(
     refusal caused by a stale branch is a rebase, after which every revision
     agrees.
 
-    ``refusals`` is non-empty when the comparison could not be *set up*: a
-    revision that does not resolve, or fewer than two that do. The caller must
-    treat it as fatal, because every downstream verdict here -- including the
-    permissive ones -- is a claim about a set of revisions that was not read.
+    ``refusals`` is non-empty when the comparison could not be *set up*, which
+    is three separate outcomes: a revision that does not resolve, a revision
+    whose tree could not be listed or whose committed content could not be read,
+    and fewer than two revisions that **carry** the file. The caller must treat
+    it as fatal, because every downstream verdict here -- including the
+    permissive ones -- is a claim about copies that were not read.
 
-    ``rows is None`` means no commit has this path at all, i.e. the file is
-    being created, or it lies outside the repository entirely. That is not a
-    laundering opportunity -- a file no commit contains is not yet anyone's
-    allowance, and one outside the tree is not the gate the ratchet reads -- and
-    it is what makes the tool bootstrappable; the creation is a new file in the
-    diff, which review sees. It is reachable only with ``refusals`` empty, i.e.
-    when readable revisions genuinely agree the file is new; a run that could
-    not read them does not get the bootstrap path, which would otherwise switch
-    off the growth refusal and R11 at once.
+    The last of those is the one that is easy to lose. ``_committed_revisions``
+    guarantees two revisions *resolve*; only a revision that has the path
+    supplies an allowance, and the two sets differ exactly when the baseline is
+    newer than the upstream ref -- a branch that created it, or a stale fetch.
+    The reference would then be ``HEAD`` alone with every revision resolving and
+    nothing to report, which is the branch judging itself under another name.
+    So the counted quantity is carriers, not sources of a successful
+    ``rev-parse``.
+
+    ``rows is None`` is the **bootstrap** case and is stated positively: at least
+    two revisions resolved, each answered the membership question, and none of
+    them lists the path -- so the file is being created (or it lies outside the
+    repository, which is not the gate the ratchet reads either). A file no commit
+    contains is not yet anyone's allowance, and its creation is a new file in the
+    diff, which review sees. It is reachable only with ``refusals`` empty: a run
+    that could not read a revision, could not read a blob it does have, or found
+    exactly one carrier does not get this path, which would otherwise switch off
+    the growth refusal and R11 at once.
     """
     revisions, refusals = _committed_revisions()
     try:
@@ -1592,9 +1670,26 @@ def committed_baseline(
     rows: Optional[Counter] = None
     census: Dict[str, Dict[str, int]] = {}
     sources: List[str] = []
+    carriers = 0
     for revision in revisions:
+        present = _git_path_in_tree(revision, relative)
+        if present is None:
+            refusals.append(
+                f"UNREADABLE {revision}: git could not list {relative} in that revision's "
+                "tree, so whether it carries the file is unknown"
+            )
+            continue
+        if not present:
+            continue
+        carriers += 1
         text = _git_committed_text(revision, relative)
         if text is None:
+            refusals.append(
+                f"UNREADABLE {revision}:{relative}: the path is in that revision's tree "
+                "but its content did not come back (a partial clone holds trees without "
+                "blobs), so this copy cannot be compared against and reading it as an "
+                "absent file would be the bootstrap path"
+            )
             continue
         revision_rows, revision_census, _ = parse_baseline(text)
         sources.append(f"{revision}:{relative}")
@@ -1611,6 +1706,14 @@ def committed_baseline(
             census[target]["citations"] = max(
                 census[target].get("citations", 0), entries.get("citations", 0)
             )
+    if 0 < carriers < 2:
+        refusals.append(
+            f"UNCOMPARABLE only {carriers} committed revision(s) carry {relative}; at "
+            "least two are required, because a single reference is the branch judging "
+            "itself. The path is not new here -- bootstrapping is for a path no readable "
+            "revision has -- so land it on origin/main (or rebase onto an origin/main "
+            "that has it) before updating it again"
+        )
     if rows is not None:
         rows = Counter({key: count for key, count in rows.items() if count})
     return (rows, census, sources, refusals)
@@ -1804,8 +1907,10 @@ def update_baseline(report: Report, destination: Path) -> int:
             print(item)
         print(
             "refusing to write a baseline with no readable committed copy to be judged "
-            "against: fetch origin/main (an unshallowed, non-single-branch clone) and "
-            "run this again. There is no override flag"
+            "against: fetch origin/main (an unshallowed, non-single-branch clone, with "
+            "its blobs) and run this again; if the refusal above says only one revision "
+            "carries the file, land that file on origin/main first. There is no "
+            "override flag"
         )
         return 1
 
@@ -1874,8 +1979,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "against the strictest committed copy, refuses a citation drop past the "
             "per-run budget (R11) or the cumulative cap (R12), and refuses to run at "
             "all where those committed copies cannot be read -- a shallow or "
-            "single-branch clone, which is what a default CI checkout produces; "
-            "there is no override flag."
+            "single-branch clone, which is what a default CI checkout produces -- or "
+            "where fewer than two commits carry the file, which is a baseline this "
+            "branch created and has not landed upstream yet; there is no override flag."
         ),
     )
     parser.add_argument(

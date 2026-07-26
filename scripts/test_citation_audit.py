@@ -300,14 +300,18 @@ def fixture(
         settings: Dict[str, object] = {"REPO_ROOT": root, "MIN_TRACKED_LEAN": 1}
         # A fixture that renames the default targets must also give them a frozen
         # measurement, exactly as it must give them a floor: without one the run
-        # charges "default target with no frozen citation measurement" (R12's
-        # arming check) and every verdict below it would be about that instead.
-        # Zero means "never measured", which charges nothing -- these fixtures
-        # pin decision logic, and R12's own numbers are pinned against the real
-        # constants in :class:`RealTreePinTest`.
+        # charges "default target with no positive frozen citation measurement"
+        # (R12's arming check) and every verdict below it would be about that
+        # instead. ``1`` is the smallest value that *arms* the cap while charging
+        # nothing: its cap is zero, so R12 fires only on a document of no
+        # citations at all, which the floor has already failed. Zero would not do
+        # -- it is the "never measured" sentinel, and for a default target that
+        # is precisely the state the arming check exists to reject. These
+        # fixtures pin decision logic; R12's own numbers are pinned against the
+        # real constants in :class:`RealTreePinTest`.
         if "TARGETS" in overrides and "MEASURED_CITATIONS" not in overrides:
             settings["MEASURED_CITATIONS"] = {
-                name: 0 for name in overrides["TARGETS"]  # type: ignore[union-attr]
+                name: 1 for name in overrides["TARGETS"]  # type: ignore[union-attr]
             }
         settings.update(overrides)
         with patched(target, **settings):
@@ -346,6 +350,34 @@ def load_mutated(*substitutions: Sequence[str]) -> types.ModuleType:
     module.__file__ = str(CITATION_AUDIT_PATH)
     exec(compile(source, str(CITATION_AUDIT_PATH), "exec"), module.__dict__)  # noqa: S102
     return module
+
+
+def function_source(source: str, name: str) -> str:
+    """Return the text of the top-level ``def name`` in ``source``.
+
+    For structural assertions that have to say *where* something lives rather
+    than whether its spelling occurs somewhere in the file -- a whole-file
+    ``assertNotIn`` cannot distinguish a git query on the resolution path from
+    one in the baseline comparison, and banning the spelling outright bans the
+    second to protect the first. Raises when the function is not found, so a
+    rename fails the assertion instead of handing it an empty string that
+    satisfies every ``assertNotIn``.
+    """
+    lines = source.split("\n")
+    start = next(
+        (index for index, line in enumerate(lines) if line.startswith(f"def {name}(")), None
+    )
+    if start is None:
+        raise AssertionError(f"no top-level def {name}( in the module source")
+    end = next(
+        (
+            index
+            for index in range(start + 1, len(lines))
+            if lines[index].startswith(("def ", "class ", "# ---"))
+        ),
+        len(lines),
+    )
+    return "\n".join(lines[start:end])
 
 
 def run_main(module: types.ModuleType, *argv: str) -> Sequence[object]:
@@ -928,9 +960,23 @@ class NoExemptionChannelTest(unittest.TestCase):
             self.assertFalse(hasattr(ca, name), f"{name} is still there")
         self.assertNotIn("directive", ca.Citation._fields)
         self.assertFalse(hasattr(ca.Resolver, "tag_matches"))
-        # No git history query of any kind: the tracked working set is the only
-        # resolution source, as ``ResolutionSetTest`` asserts from the other side.
-        self.assertNotIn("ls-tree", CITATION_AUDIT_PATH.read_text(encoding="utf-8"))
+        # No git *history* query on the resolution path: the tracked working set
+        # is the only resolution source, as ``ResolutionSetTest`` asserts from
+        # the other side. This was a whole-file ban on the spelling ``ls-tree``,
+        # which is the wrong shape of claim -- the module has always queried
+        # history for the *baseline* comparison (``git show rev:path``,
+        # ``rev-parse``, ``merge-base``), and the one thing that must never come
+        # from a commit is what answers a citation. So the claim is stated where
+        # it belongs: the resolution helpers read ``ls-files`` and nothing else,
+        # and the single tree query lives in the baseline-membership helper.
+        source = CITATION_AUDIT_PATH.read_text(encoding="utf-8")
+        self.assertEqual(source.count('"ls-tree"'), 1, "ls-tree is invoked in two places")
+        self.assertIn('"ls-tree"', function_source(source, "_git_path_in_tree"))
+        for name in ("tracked_lean_files", "tracked_paths", "suffix_map"):
+            body = function_source(source, name)
+            self.assertNotIn("ls-tree", body, name)
+            self.assertNotIn("rev-parse", body, name)
+            self.assertNotIn("git show", body, name)
 
 
 # ---------------------------------------------------------------------------
@@ -1681,7 +1727,11 @@ def stale_rows(count: int) -> List[Sequence[object]]:
 
 
 def budgeted_walk(
-    module: types.ModuleType, start: int = 1333, floor: int = 700, rounds: int = 25
+    module: types.ModuleType,
+    start: int = 1333,
+    floor: int = 700,
+    rounds: int = 25,
+    upstream_carries: bool = True,
 ) -> Sequence[object]:
     """Delete exactly the per-run budget, merge, repeat; report where it stops.
 
@@ -1692,6 +1742,13 @@ def budgeted_walk(
     census, and therefore the next round's budget, is what this round left
     behind.
 
+    ``upstream_carries=False`` runs the same walk with the baseline introduced by
+    a branch commit and ``origin/main`` never advanced: the upstream resolves
+    throughout and never holds the file. That is the shape a newly created
+    baseline and a stale fetch both have, and with the carrier count not charged
+    it restores the whole walk, because the only surviving reference is the
+    branch's own previous commit.
+
     Returns ``(accepted counts, the round that was refused or None)``.
     """
     committed = make_baseline(
@@ -1699,10 +1756,13 @@ def budgeted_walk(
         (("tex/g.tex", start, start, "MISSING=%d" % start),),
         stale_rows(start),
     )
+    documents = {"tex/g.tex": stale_citations_tex(start)}
+    if upstream_carries:
+        documents["audit/base.tsv"] = committed
     accepted: List[int] = []
     refused: Optional[int] = None
     with fixture(
-        {"tex/g.tex": stale_citations_tex(start), "audit/base.tsv": committed},
+        documents,
         tracked=["IsingModel/Corpus/Present.lean"],
         module=module,
         commit=True,
@@ -1710,6 +1770,10 @@ def budgeted_walk(
         MIN_CITATIONS={"tex/g.tex": floor},
         MEASURED_CITATIONS={"tex/g.tex": start},
     ) as root:
+        if not upstream_carries:
+            (root / "audit").mkdir(parents=True, exist_ok=True)
+            (root / "audit" / "base.tsv").write_text(committed, encoding="utf-8")
+            _commit(root, "the branch adds the baseline")
         count = start
         for index in range(1, rounds + 1):
             _, census, _ = module.read_baseline(root / "audit" / "base.tsv")
@@ -1725,7 +1789,8 @@ def budgeted_walk(
                 break
             accepted.append(count)
             _commit(root, "round %d" % index)
-            _run_git(root, "update-ref", "refs/remotes/origin/main", "HEAD")
+            if upstream_carries:
+                _run_git(root, "update-ref", "refs/remotes/origin/main", "HEAD")
     return (accepted, refused)
 
 
@@ -1798,8 +1863,35 @@ class CumulativeErosionTest(unittest.TestCase):
         ):
             report = ca.audit(["tex/g.tex"])
         self.assertTrue(
-            any("no frozen citation measurement" in item for item in report.hard), report.hard
+            any("no positive frozen citation measurement" in item for item in report.hard),
+            report.hard,
         )
+
+    def test_a_default_target_measured_at_zero_is_a_hard_failure_too(self) -> None:
+        """The arming check reads the value, not just the key.
+
+        ``0`` is the "never measured" sentinel that makes ``cumulative_loss_cap``
+        charge nothing, so an entry of ``{target: 0}`` disarms R12 exactly as
+        deleting the entry does -- while satisfying a membership-only check. Both
+        spellings of "unmeasured" have to fail, and the run must not merely be
+        silent about the cap: it is a hard failure, so the census is suppressed.
+        """
+        committed = make_baseline(
+            1, (("tex/g.tex", 10, 10, "MISSING=10"),), stale_rows(10)
+        )
+        with fixture(
+            {"tex/g.tex": stale_citations_tex(10), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+            MEASURED_CITATIONS={"tex/g.tex": 0},
+        ):
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("no positive frozen citation measurement", out)
+        self.assertIn("citation audit: FAIL", out)
 
     def test_the_cap_stops_a_walk_the_per_run_budget_waves_through(self) -> None:
         """The demonstration, on the tex's own numbers.
@@ -1817,6 +1909,76 @@ class CumulativeErosionTest(unittest.TestCase):
 # ---------------------------------------------------------------------------
 # The committed copies an update is judged against
 # ---------------------------------------------------------------------------
+
+
+@contextmanager
+def branch_only_baseline(
+    module: types.ModuleType, upstream: int = 100, branch: int = 80
+) -> Iterator[Path]:
+    """A repository whose upstream resolves but predates the baseline.
+
+    ``origin/main`` points at a commit carrying the document (``upstream``
+    citations) and no baseline at all; this branch's ``HEAD`` adds the baseline,
+    recording ``branch``. So every revision resolves -- ``_committed_revisions``
+    has nothing to refuse -- and exactly one of them carries the file.
+
+    Two real situations have this shape: a baseline created on a branch and not
+    yet landed, and a stale fetch whose ``origin/main`` predates the commit that
+    introduced the path.
+    """
+    committed = make_baseline(
+        1, (("tex/g.tex", branch, branch, "MISSING=%d" % branch),), stale_rows(branch)
+    )
+    with fixture(
+        {"tex/g.tex": stale_citations_tex(upstream)},
+        tracked=["IsingModel/Corpus/Present.lean"],
+        module=module,
+        commit=True,
+        TARGETS=("tex/g.tex",),
+        MIN_CITATIONS={"tex/g.tex": 1},
+    ) as root:
+        (root / "tex" / "g.tex").write_text(stale_citations_tex(branch), encoding="utf-8")
+        (root / "audit").mkdir(parents=True, exist_ok=True)
+        (root / "audit" / "base.tsv").write_text(committed, encoding="utf-8")
+        _commit(root, "the branch adds the baseline")
+        yield root
+
+
+@contextmanager
+def unreadable_committed_blob(
+    module: types.ModuleType, citations: int = 100
+) -> Iterator[Path]:
+    """A repository whose commits list the baseline but cannot produce its bytes.
+
+    Built by deleting the committed blob from the object store, which is the
+    state a ``--filter=blob:none`` clone is in by construction and a damaged
+    store falls into by accident: ``git ls-tree`` still answers, ``git show
+    rev:path`` does not. The fixture asserts the object was loose before
+    deleting it, so a packed repository fails here as a fixture rather than
+    quietly leaving the blob readable and the test asserting nothing.
+    """
+    committed = make_baseline(
+        1,
+        (("tex/g.tex", citations, citations, "MISSING=%d" % citations),),
+        stale_rows(citations),
+    )
+    with fixture(
+        {"tex/g.tex": stale_citations_tex(citations), "audit/base.tsv": committed},
+        tracked=["IsingModel/Corpus/Present.lean"],
+        module=module,
+        commit=True,
+        TARGETS=("tex/g.tex",),
+        MIN_CITATIONS={"tex/g.tex": 1},
+    ) as root:
+        blob = _git_out(root, "rev-parse", "HEAD:audit/base.tsv")
+        loose = root / ".git" / "objects" / blob[:2] / blob[2:]
+        if not loose.is_file():
+            raise AssertionError(
+                f"fixture expected a loose object at {loose}: without deleting it the "
+                "committed blob stays readable and this test asserts nothing"
+            )
+        loose.unlink()
+        yield root
 
 
 class CommittedCopyTest(unittest.TestCase):
@@ -1887,6 +2049,102 @@ class CommittedCopyTest(unittest.TestCase):
         self.assertIn("UNREADABLE HEAD", out)
         self.assertIn("only 0 committed revision(s)", out)
         self.assertNotIn("no committed copy", out)
+
+    def test_a_baseline_only_this_branch_carries_is_refused(self) -> None:
+        """Resolving a revision is not carrying the file, and only the second counts.
+
+        The gap the "at least two revisions" rule had: it was applied to the
+        revisions that ``rev-parse`` resolved, while the copies were read with a
+        ``continue`` past every revision that did not have the path. All three
+        revisions resolve here, so nothing was refused, and the surviving
+        reference was ``HEAD`` -- the branch's own last write, which is verbatim
+        the state the tool exists to make unreachable.
+        """
+        with branch_only_baseline(ca) as root:
+            (root / "tex" / "g.tex").write_text(stale_citations_tex(60), encoding="utf-8")
+            revisions, revision_refusals = ca._committed_revisions()
+            rows, _, sources, refusals = ca.committed_baseline(root / "audit" / "base.tsv")
+            before = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        # The state being refused: three revisions resolve, one carries the file.
+        self.assertEqual(len(revisions), 3)
+        self.assertEqual(revision_refusals, [])
+        self.assertEqual(sources, ["HEAD:audit/base.tsv"])
+        self.assertIsNotNone(rows)
+        self.assertEqual(len(refusals), 1)
+        # ... and the drop it hides is inside R11's budget, so nothing else fires.
+        self.assertEqual(code, 1)
+        self.assertNotIn("ERODED", out)
+        self.assertIn("UNCOMPARABLE only 1 committed revision(s) carry audit/base.tsv", out)
+        self.assertIn("no readable committed copy", out)
+        self.assertNotIn("wrote ", out)
+        self.assertEqual(after, before)
+
+    def test_the_walk_this_gap_restored_is_refused_at_its_first_step(self) -> None:
+        """The consequence, on the walk R11 and R12 are measured on.
+
+        Same walk as :class:`CumulativeErosionTest`, with the baseline
+        introduced by a branch commit and ``origin/main`` never advanced. Every
+        round is then judged against the branch's own previous commit, and
+        before this rule the walk simply ran: measured at review with R12 out of
+        the picture, six rounds accepted, 1,000 citations down to 738,
+        ``ratchet: OK`` throughout. The first round is now the one that is
+        refused -- it is the round that introduces the single-carrier state, so
+        there is no accepted step at all. The contrast against the same walk with
+        the rule removed, and with R12 armed as it is in production, is the
+        mutation test below.
+        """
+        self.assertEqual(budgeted_walk(ca, upstream_carries=False), ([], 1))
+
+    def test_a_committed_copy_that_cannot_be_read_is_not_a_bootstrap(self) -> None:
+        """"In the tree but unfetchable" must not read as "the file is new".
+
+        Every revision resolves and every one of them lists the path, so the
+        conflated form -- ask only ``git show`` -- ends with no copy read, no
+        refusal, and the bootstrap branch, which switches off the growth refusal
+        and R11 in one step on a run that read nothing.
+        """
+        with unreadable_committed_blob(ca) as root:
+            before = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+            rows, _, sources, refusals = ca.committed_baseline(root / "audit" / "base.tsv")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertIsNone(rows)
+        self.assertEqual(sources, [])
+        self.assertEqual(len(refusals), 3)
+        self.assertEqual(code, 1)
+        self.assertIn("its content did not come back", out)
+        self.assertNotIn("no committed copy", out)
+        self.assertNotIn("wrote ", out)
+        self.assertEqual(after, before)
+
+    def test_a_path_no_revision_carries_is_the_bootstrap_case(self) -> None:
+        """The one permissive outcome, and the whole of it.
+
+        Stated positively: at least two revisions resolve, each answered the
+        membership question, and none of them lists the path. Then there is no
+        allowance to launder yet and the creation is a new file in the diff. This
+        has to keep working -- it is how the baseline came to exist -- so it is
+        pinned next to the refusals rather than left implicit.
+        """
+        with self._repo() as root:
+            rows, census, sources, refusals = ca.committed_baseline(root / "audit" / "new.tsv")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/new.tsv"
+            )
+            written = (root / "audit" / "new.tsv").is_file()
+        self.assertEqual(refusals, [])
+        self.assertEqual(sources, [])
+        self.assertEqual(census, {})
+        self.assertIsNone(rows)
+        self.assertEqual(code, 0, out)
+        self.assertIn("no committed copy", out)
+        self.assertTrue(written)
 
     def test_the_strictest_copy_is_the_minimum_over_three_distinct_revisions(self) -> None:
         """The merge itself: per-key minimum for rows, maximum for the census.
@@ -2460,12 +2718,17 @@ class MutationTest(unittest.TestCase):
         self.assertIn("Corpus/Missing39.lean", written)
 
     def test_judging_an_update_by_the_working_file_lets_a_branch_ratchet_itself(self) -> None:
-        """The wrong "previous" side: a PR's own last write becomes its licence."""
+        """The wrong "previous" side: a PR's own last write becomes its licence.
+
+        Only the *content* read is mutated, so the revision list, the membership
+        probe and the carrier count are all untouched and still see three
+        revisions carrying the file: what changes is which bytes each of them is
+        said to hold. That isolates this mutation from the carrier refusal below,
+        which would otherwise be the thing that stopped a one-element loop.
+        """
         mutant = load_mutated(
             (
-                "    for revision in revisions:\n"
                 "        text = _git_committed_text(revision, relative)",
-                "    for revision in ['worktree']:\n"
                 "        text = (\n"
                 "            destination.read_text(encoding='utf-8')\n"
                 "            if destination.is_file()\n"
@@ -2562,6 +2825,75 @@ class MutationTest(unittest.TestCase):
                     )
                 self.assertEqual(code, expected, out)
         self.assertIn("UNREADABLE origin/main", out)
+
+    def test_without_the_carrier_count_a_branch_only_baseline_judges_itself(self) -> None:
+        """Counting revisions that *resolve* instead of revisions that *carry*.
+
+        This is the defect as it shipped, not a hypothetical: ``origin/main``
+        resolves and predates the commit that added the baseline, so the read
+        loop skipped it, ``sources`` collapsed to ``HEAD`` alone and nothing was
+        refused. The mutant accepts the update and names the branch's own last
+        write as what it judged against; the real module refuses.
+        """
+        mutant = load_mutated(("    if 0 < carriers < 2:", "    if False:"))
+        outputs: Dict[str, str] = {}
+        for module, expected in ((mutant, 0), (ca, 1)):
+            with self.subTest(module=module.__name__):
+                with branch_only_baseline(module) as root:
+                    (root / "tex" / "g.tex").write_text(
+                        stale_citations_tex(60), encoding="utf-8"
+                    )
+                    code, out = run_main(
+                        module,
+                        "--targets",
+                        "tex/g.tex",
+                        "--update-baseline",
+                        "audit/base.tsv",
+                    )
+                    outputs[module.__name__] = out
+                self.assertEqual(code, expected, out)
+        self.assertIn("judged against HEAD:audit/base.tsv", outputs["citation_audit_mutant"])
+        self.assertIn("UNCOMPARABLE only 1", outputs["citation_audit"])
+
+    def test_without_the_carrier_count_the_compounding_walk_runs_again(self) -> None:
+        """And it is the whole walk that comes back, not one accepted commit.
+
+        With the rule removed, the upstream-resolves-but-lacks-it walk is
+        accepted round after round until R12 -- the cumulative cap, charged
+        against a constant -- stops it at the same place it stops the ordinary
+        walk. R12 is therefore the only thing that was standing behind this, and
+        it bounds the blast radius rather than preventing the erosion.
+        """
+        mutant = load_mutated(("    if 0 < carriers < 2:", "    if False:"))
+        self.assertEqual(
+            budgeted_walk(mutant, upstream_carries=False), ([1267, 1204, 1144], 4)
+        )
+        self.assertEqual(budgeted_walk(ca, upstream_carries=False), ([], 1))
+
+    def test_conflating_an_unreadable_blob_with_an_absent_path_bootstraps(self) -> None:
+        """Asking only ``git show`` turns a partial clone into a new file.
+
+        The mutation restores the single-question form: membership is inferred
+        from whether the content came back. With no blob readable, every
+        revision then looks like "this commit does not have the file", the
+        carrier set is empty, and an empty carrier set is the bootstrap path --
+        so the mutant writes the baseline, on a run that read no committed copy
+        at all. The real module refuses each unreadable copy by name.
+        """
+        mutant = load_mutated(
+            (
+                "        present = _git_path_in_tree(revision, relative)",
+                "        present = _git_committed_text(revision, relative) is not None",
+            )
+        )
+        with unreadable_committed_blob(mutant) as root:
+            code, out = run_main(
+                mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            written = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 0, out)
+        self.assertIn("no committed copy", out)
+        self.assertIn("Corpus/Stale0000.lean", written)
 
     def test_disabling_the_deletion_budget_passes_a_gutted_document(self) -> None:
         """Without R11, deleting the citing prose is the cheapest green run."""
