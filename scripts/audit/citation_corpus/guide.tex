@@ -1,0 +1,30 @@
+% Frozen extractor corpus, LaTeX half. Read only by scripts/test_citation_audit.py,
+% never by the audit itself: this file is what pins the extractor's behaviour, so
+% that pin stops moving when tex/proof-guide.tex is edited. Editing this file is
+% editing the expectation, and expected.tsv must move with it in the same commit.
+\section{Corpus}
+
+A macro citation: \texttt{Corpus/Resolved.lean} resolves.
+A path macro: \path{Corpus/Resolved.lean} resolves as well.
+An escaped underscore: \texttt{Corpus/Under\_Score.lean} names a real file.
+Brace shorthand: \texttt{Corpus/Pair/\{A, Gone\}.lean} is two citations.
+A bare prose token: Corpus/Gone.lean points nowhere.
+A bare basename: \texttt{Alone.lean} is evidence of a name, not of a path.
+An ambiguous tail: \texttt{Twin.lean} matches two tracked files.
+Glued: \texttt{../Corpus/Resolved.lean} and \texttt{Corpus/Resolved.lean.bak}.
+A tilde in a component: \texttt{Corpus/Resolved~1.lean} names no file here.
+A shorter tail: \texttt{Score.lean} is not a component of any tracked path.
+Not citations: *.lean patterns and the .lean extension itself.
+
+\begin{Verbatim}
+Corpus/Wrapped/
+Bridge.lean
++-- Corpus/
+    Alone.lean
+    Corpus/
+Alone.lean
+\end{Verbatim}
+
+The result now lives in \texttt{Corpus/Moved.lean},
+and it is re-exported for backward compatibility by
+the old \texttt{Moved.lean} shim.

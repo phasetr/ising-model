@@ -1,0 +1,66 @@
+# Expected census of the frozen extractor corpus -- the extractor pin.
+#
+# This is what scripts/citation_audit.py must say about guide.tex, notes.md,
+# tracked.txt and untracked.txt, which never change when a live document is
+# edited. A diff here is therefore a change in the *extractor* (a resolution rule
+# relaxed, a variant tokenised differently, a class re-attributed) and has to be
+# justified as one.
+#
+# Deliberately hand-maintained: there is no flag that regenerates it, because a
+# one-command refresh is how an extractor pin turns into a rubber stamp. Free-text
+# comment lines are not compared; #tracked, #census and the rows are.
+#
+# What each corpus line is here to catch, and the relaxation it detects:
+#   Corpus/Resolved.lean (macro, path)   the ordinary resolved citation
+#   Corpus/Under\_Score.lean             the LaTeX escape, unescaped before lookup
+#   Corpus/Pair/\{A, Gone\}.lean         brace shorthand: one token, two citations
+#   Corpus/Gone.lean (tex and md)        MISSING, and it must stay MISSING even
+#                                        though untracked.txt puts a copy of that
+#                                        file on disk -- swap git ls-files for a
+#                                        filesystem walk and this row moves
+#   Corpus/Pair/Gone.lean                MISSING through a brace alternative
+#   Alone.lean                           BASENAME_ONLY: a name is not a path
+#   Twin.lean                            AMBIGUOUS: two tracked files match
+#   ../Corpus/Resolved.lean              MALFORMED: the glued run is charged whole
+#   Corpus/Resolved.lean.bak             MALFORMED: the same, on the right
+#   Corpus/Resolved~1.lean               MALFORMED because '~' is in no component
+#                                        name here -- drop normalise's TOKEN_CHARS
+#                                        test and it becomes MISSING
+#   Score.lean                           MISSING: 'Under_Score.lean' does not end at
+#                                        a component boundary here. Loosen the
+#                                        suffix table to a string endswith and this
+#                                        becomes BASENAME_ONLY -- the corpus's own
+#                                        charge against the relaxation this suite's
+#                                        docstring names first
+#   Corpus/Wrapped/ then Bridge.lean     a wrapped source line, rejoined
+#   +-- Corpus/ then indented Alone.lean a tree heading, never joined
+#   indented Corpus/ then Alone.lean     the same rule from the other side: the
+#                                        *prefix* is the indented line, so it is a
+#                                        tree entry too. rstrip -> strip joins it
+#                                        and turns this BASENAME_ONLY into RESOLVED
+#   *.lean and .lean                     acknowledged non-citations
+#   Corpus/Moved.lean >> Moved.lean      SELFREF, in both syntaxes
+#
+# One relaxation is deliberately absent: dropping NON_CITATION's left-delimiter
+# test can only *add* acknowledgements, so it cannot move a census that already
+# accounts for every occurrence -- it surfaces as a coverage failure instead, and
+# is pinned by test_non_citation_list_is_an_enumeration_not_a_wildcard.
+#tracked	8
+#census	tex/guide.tex	17	18	RESOLVED=6,MISSING=3,AMBIGUOUS=1,BASENAME_ONLY=4,MALFORMED=3,SELFREF=1
+#census	docs/notes.md	6	8	RESOLVED=2,MISSING=1,AMBIGUOUS=1,BASENAME_ONLY=2,SELFREF=1
+class	target	token	count	first_line
+AMBIGUOUS	docs/notes.md	Twin.lean	1	11
+AMBIGUOUS	tex/guide.tex	Twin.lean	1	13
+BASENAME_ONLY	docs/notes.md	Alone.lean	1	11
+BASENAME_ONLY	docs/notes.md	Moved.lean	1	17
+BASENAME_ONLY	tex/guide.tex	Alone.lean	3	12
+BASENAME_ONLY	tex/guide.tex	Moved.lean	1	30
+MALFORMED	tex/guide.tex	../Corpus/Resolved.lean	1	14
+MALFORMED	tex/guide.tex	Corpus/Resolved.lean.bak	1	14
+MALFORMED	tex/guide.tex	Corpus/Resolved~1.lean	1	15
+MISSING	docs/notes.md	Corpus/Gone.lean	1	9
+MISSING	tex/guide.tex	Corpus/Gone.lean	1	11
+MISSING	tex/guide.tex	Corpus/Pair/Gone.lean	1	10
+MISSING	tex/guide.tex	Score.lean	1	16
+SELFREF	docs/notes.md	Corpus/Moved.lean >> Moved.lean	1	15
+SELFREF	tex/guide.tex	Corpus/Moved.lean >> Moved.lean	1	28

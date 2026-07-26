@@ -1,14 +1,39 @@
 # citation-audit v1 baseline -- the count-of-record for .lean citations.
 #
-# Rows are keyed on (class, target, token) with a multiplicity; first_line is
-# payload and is excluded from the ratchet comparison. SELFREF rows are
-# advisory: they are recorded so drift is visible in review, and they never
-# gate the exit code.
+# Three roles, three rules (see the module docstring):
+#   rows          gating. Ratcheted per (class, target, token); a count may only
+#                 fall. first_line is payload and is not part of the key. SELFREF
+#                 rows are advisory: they never gate an audit run's exit code,
+#                 though --update-baseline refuses a rise in any row, this class
+#                 included.
+#   #census       per-class counts: derived book-keeping, refreshed on update.
+#                 They are NOT pinned against the live documents -- an equality
+#                 pin there freezes the documents instead of the extractor. The
+#                 extractor is pinned on scripts/audit/citation_corpus/ instead.
+#   #census       citations/raw: the per-run deletion budget (R11). A target that
+#                 loses more than max(25, 5%) of its committed citations fails
+#                 hard, because the ratchet cannot tell a deleted citation from a
+#                 fixed one. The budget is recomputed from this file on every
+#                 update, so it bounds one run and not the total; the total is
+#                 bounded by R12 against MEASURED_CITATIONS, a constant in
+#                 scripts/citation_audit.py that no run rewrites.
 #
-# Regenerate with:
-#   python3 scripts/citation_audit.py --write-baseline scripts/audit/citation_baseline.tsv
-# A baseline that grew without a stated reason is a review signal: remediation
-# is supposed to shrink it monotonically.
+# Update with:
+#   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv
+# which refuses to raise any key's count against the strictest committed copy,
+# refuses a drop past the budget or the cumulative cap, and refuses to run at all
+# where those committed copies cannot be read (a shallow clone, or a partial one
+# that holds trees without blobs), where fewer than two commits carry this file
+# (a baseline created on a branch and not landed yet, or a stale fetch: the only
+# reference left is then the branch's own last write), or where one of those
+# copies' trees spells this path some other way (a mis-cased spelling names bytes
+# no tree lists, and a path outside the repository is not a tracked path at all).
+# The file is written by replacing the resolved path with a temporary file whose
+# own name is taken with O_EXCL next to it, so neither a hard link to these bytes
+# nor a pre-created temporary is written through. What the refusals leave is a
+# hand edit of this file or of the constants, and -- for a path no commit carries
+# any more -- removing the commit that created it; each of those is a loud diff,
+# and that is the point.
 #tracked	2018
 #census	tex/proof-guide.tex	1333	1324	RESOLVED=804,MISSING=280,AMBIGUOUS=106,BASENAME_ONLY=143,SELFREF=5
 #census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90

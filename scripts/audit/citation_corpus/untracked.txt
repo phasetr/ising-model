@@ -1,0 +1,12 @@
+# Frozen *untracked* half of the corpus fixture: .lean paths that exist on disk
+# in the throwaway repository but are never staged. One path per line, '#'
+# comments and blank lines ignored.
+#
+# This is the third half of the pin, and it is here so the corpus can state the
+# claim the module docstring measures (112,420 .lean files on disk, 2,018
+# tracked) rather than only assert it in a hand-built fixture: a citation of a
+# file this repository *deleted* must stay MISSING even while a copy of it sits
+# in the working tree, which is what an untracked scratch tree or a .lake/
+# checkout is. Swap git ls-files for a filesystem walk and Corpus/Gone.lean
+# starts resolving, which moves expected.tsv.
+IsingModel/Corpus/Gone.lean
