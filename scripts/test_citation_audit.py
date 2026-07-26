@@ -57,8 +57,11 @@ replaced by pins that keep the intent and drop the accidental document freeze:
    moves iff the extractor moves, and never when a live document is edited.
 3. **frozen constants** (:class:`RealTreePinTest` again): the floors, the
    cumulative cap and the measurement they are relative to, expressed against
-   ``MEASURED_CITATIONS`` -- a constant in the tool -- rather than against the
-   live run *or the committed census*. The census looks fixed and is not:
+   ``MEASURED_CITATIONS`` and ``MEASURED_TRACKED_LEAN`` -- constants in the tool
+   -- rather than against the live run *or the committed census*. The live tree
+   is still charged, in the loss direction only: growth is ordinary work here and
+   must never redden the suite, while a shrinking count is exactly what the
+   floors are for. The census looks fixed and is not:
    ``--update-baseline`` rewrites it from every accepted deletion, so a band
    anchored there descends with the erosion until the suite turns red and the
    cheapest repair is to lower the floor. A pin whose reference point is
@@ -96,6 +99,7 @@ Japanese, and this suite needs non-ASCII samples, so they are built with
 from __future__ import annotations
 
 import io
+import re
 import subprocess
 import sys
 import tempfile
@@ -407,7 +411,8 @@ def baseline_body(text: str) -> List[str]:
 
     The prose header explains the file to a reader and is allowed to be reworded
     without invalidating an expectation; ``#tracked``, ``#census``, ``#!`` and the
-    rows are the content, and they are compared exactly.
+    rows are the content, and they are compared exactly. What the header must
+    still say is checked separately, on :func:`baseline_header`.
     """
     return [
         line
@@ -415,6 +420,20 @@ def baseline_body(text: str) -> List[str]:
         if line.strip()
         and (not line.startswith("#") or line.startswith(("#tracked", "#census", "#!")))
     ]
+
+
+def baseline_header(text: str) -> str:
+    """Return a baseline's free-text comment header.
+
+    Exactly the part :func:`baseline_body` drops: the comment lines before the
+    first machine-readable one.
+    """
+    header: List[str] = []
+    for line in text.split("\n"):
+        if not line.startswith("#") or line.startswith(("#tracked", "#census", "#!")):
+            break
+        header.append(line)
+    return "\n".join(header)
 
 
 def make_baseline(
@@ -2673,6 +2692,48 @@ class RealTreePinTest(unittest.TestCase):
         regressions, _ = ca.ratchet(current, gating)
         self.assertEqual(regressions, [])
 
+    def test_the_committed_baseline_header_describes_the_running_tool(self) -> None:
+        """The count-of-record has to describe the rules that are actually charged.
+
+        :func:`baseline_body` compares the machine-readable half exactly and
+        drops the header, which is right for the rows and left a gap the header
+        promptly fell into: a commit that adds a refusal to
+        :func:`ca.render_baseline`'s template without regenerating the committed
+        file ships a count-of-record whose own description is one revision
+        behind. Measured: ``591fd1e1`` added R12 and the unreadable-revision
+        refusal to the template, and the committed file -- the copy a reader
+        opens -- mentioned neither.
+
+        Pinned by *content*, not by prose, because the wording is generated from
+        one template and rewording it must not be a test edit: what is required
+        is that every rule and every tool constant the template names is named in
+        the committed file too, plus the refusals that have no symbolic name. The
+        first two lists are derived from the template, so a future ``R13`` joins
+        this test by being written; the third is spelled out and is asserted
+        against the template as well, so a phrase that stops being a mechanism
+        cannot sit here passing silently.
+        """
+        committed = baseline_header(ca.BASELINE_FILE.read_text(encoding="utf-8"))
+        template = baseline_header(ca.render_baseline(live_report()))
+        self.assertTrue(template.strip(), "the template rendered no header")
+        rules = sorted(set(re.findall(r"\bR[0-9]+\b", template)))
+        self.assertTrue(rules, "the template names no rule")
+        for rule in rules:
+            self.assertIn(rule, committed, rule)
+        constants = sorted(
+            {
+                name
+                for name in re.findall(r"\b[A-Z][A-Z0-9_]{3,}\b", template)
+                if hasattr(ca, name)
+            }
+        )
+        self.assertTrue(constants, "the template names no tool constant")
+        for name in constants:
+            self.assertIn(name, committed, name)
+        for phrase in ("strictest committed copy", "cumulative cap", "shallow clone"):
+            self.assertIn(phrase, template, phrase)
+            self.assertIn(phrase, committed, phrase)
+
     def test_the_citation_floors_are_backstops_against_the_frozen_measurement(self) -> None:
         """A floor set to zero guards nothing; a floor set just below the live
         value is a document freeze.
@@ -2750,29 +2811,54 @@ class RealTreePinTest(unittest.TestCase):
                 target,
             )
 
-    def test_the_tracked_floor_is_below_but_close_to_the_live_value(self) -> None:
-        """``MIN_TRACKED_LEAN`` is about the Lean tree, which remediation does not
-        touch, so it stays pinned tightly against the live value."""
-        report = live_report()
-        self.assertLessEqual(ca.MIN_TRACKED_LEAN, report.tracked)
-        self.assertGreaterEqual(ca.MIN_TRACKED_LEAN, 0.75 * report.tracked)
+    def test_the_tracked_floor_is_below_but_close_to_the_frozen_measurement(self) -> None:
+        """``MIN_TRACKED_LEAN`` against the constant, with the live tree one-sided.
+
+        The "close to" half used to read ``report.tracked``, which is the defect
+        the citation floors above were rewritten to remove, in the one place it
+        survived. Both directions are wrong there: adding ``.lean`` files -- the
+        ordinary work of this repository -- walks the live value away from the
+        floor until the band turns red, and deleting them walks it *down onto*
+        the floor, so the band gets easier to satisfy exactly while the set it
+        guards is being eroded. Stated against :data:`MEASURED_TRACKED_LEAN`,
+        which only a hand edit of the tool and of the test pinning it can move,
+        the claim is the one that was meant: the floor sits a measured distance
+        below the tree this tool was written against. The live tree is charged in
+        the loss direction only -- it must clear the floor, and may grow without
+        limit.
+        """
+        self.assertLessEqual(ca.MIN_TRACKED_LEAN, ca.MEASURED_TRACKED_LEAN)
+        self.assertGreaterEqual(ca.MIN_TRACKED_LEAN, 0.75 * ca.MEASURED_TRACKED_LEAN)
+        self.assertLessEqual(ca.MIN_TRACKED_LEAN, live_report().tracked)
 
     def assert_tracked_field_is_sane(self, committed: int, live: int) -> None:
         """The claim the baseline's ``#tracked`` field actually supports.
 
-        A **band**, not an equality. ``#tracked`` is derived book-keeping that
+        A **band against frozen numbers**, not an equality and not a band around
+        the live count. ``#tracked`` is derived book-keeping that
         ``--update-baseline`` refreshes, and it gates nothing at runtime, so
         ``committed == live`` asserts something the field does not mean: that
         nobody has added or deleted a ``.lean`` file since the last refresh --
         i.e. exactly one commit of ordinary work in this repository turns the
-        suite red. That is the same defect class this PR removed from the census
-        (a document freeze wearing a pin's clothes) and it is fixed the same way:
-        state the property (the number is non-vacuous and not stale by a
-        refactor's worth) as an inequality.
+        suite red. Anchoring the band on ``live`` instead was the same defect one
+        step weaker: it still reddens on growth (only a tenth of a tree later),
+        and it *relaxes* as the tree shrinks, which is the direction worth
+        guarding.
+
+        What is left is one-sided by design. Downwards, against the frozen
+        measurement: the field is non-vacuous, above the floor, and has not
+        drifted a refactor's worth below the tree this tool was measured on.
+        Upwards, only an order-of-magnitude ceiling: adding ``.lean`` files is
+        normal work and is not suspect, but a ``#tracked`` at twice the
+        measurement is the signature of a count taken from a filesystem walk
+        (112,420 files here) instead of ``git ls-files`` (2,018), and past that
+        point re-measuring is the honest repair rather than a wider band.
+        ``live`` is charged in the loss direction alone.
         """
         self.assertGreaterEqual(committed, ca.MIN_TRACKED_LEAN)
-        self.assertGreaterEqual(committed, 0.9 * live)
-        self.assertLessEqual(committed, 1.1 * live)
+        self.assertGreaterEqual(committed, 0.9 * ca.MEASURED_TRACKED_LEAN)
+        self.assertLessEqual(committed, 2 * ca.MEASURED_TRACKED_LEAN)
+        self.assertGreaterEqual(live, ca.MIN_TRACKED_LEAN)
 
     def test_the_committed_baseline_carries_a_census_for_every_default_target(self) -> None:
         """Deleting a ``#census`` line would disarm R11 for that target.
@@ -2789,22 +2875,27 @@ class RealTreePinTest(unittest.TestCase):
             self.assertGreater(census[target]["citations"], 0, target)
             self.assertGreater(census[target]["raw"], 0, target)
 
-    def test_adding_one_lean_file_does_not_redden_the_tracked_pin(self) -> None:
+    def test_adding_lean_files_does_not_redden_the_tracked_pin(self) -> None:
         """The Lean tree is the thing this repository changes most, so measure it.
 
         The equality this replaces failed on the very next ``.lean`` file added
         or deleted -- normal work, unrelated to citations, with the "fix" being
-        to regenerate the baseline for a field nothing reads. The band absorbs a
-        refactor's worth of churn in both directions and still refuses a
-        ``#tracked`` that has gone vacuous.
+        to regenerate the baseline for a field nothing reads. The +-10% band that
+        replaced it only postponed that failure by a tenth of a tree. Against the
+        frozen measurement growth is free, which is checked here well past any
+        band a live anchor could have afforded, and the one live claim left is
+        the floor.
         """
         _, _, tracked = ca.read_baseline(ca.BASELINE_FILE)
         live = len(ca.tracked_lean_files())
-        for delta in (1, -1, 40, -40, int(0.09 * live), -int(0.09 * live)):
+        for delta in (1, -1, 40, -40, int(0.5 * live), 9 * live):
             with self.subTest(delta=delta):
                 self.assert_tracked_field_is_sane(tracked, live + delta)
-        # ... and the equality really would have gone red on the first of them.
+        # ... and both forms this replaces really would have gone red: the
+        # equality on the first file added, the +-10% band once a fifth of the
+        # tree had been added.
         self.assertNotEqual(tracked, live + 1)
+        self.assertLess(tracked, 0.9 * (live + int(0.2 * live)))
 
     def test_the_deletion_budget_is_calibrated_against_the_committed_census(self) -> None:
         """The guard that actually fires per commit, with its numbers stated.

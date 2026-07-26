@@ -8,16 +8,21 @@
 #                 They are NOT pinned against the live documents -- an equality
 #                 pin there freezes the documents instead of the extractor. The
 #                 extractor is pinned on scripts/audit/citation_corpus/ instead.
-#   #census       citations/raw: the deletion budget (R11). A target that loses
-#                 more than max(25, 5%) of its committed citations fails hard,
-#                 because the ratchet cannot tell a deleted citation from a
-#                 fixed one.
+#   #census       citations/raw: the per-run deletion budget (R11). A target that
+#                 loses more than max(25, 5%) of its committed citations fails
+#                 hard, because the ratchet cannot tell a deleted citation from a
+#                 fixed one. The budget is recomputed from this file on every
+#                 update, so it bounds one run and not the total; the total is
+#                 bounded by R12 against MEASURED_CITATIONS, a constant in
+#                 scripts/citation_audit.py that no run rewrites.
 #
 # Update with:
 #   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv
-# which refuses to raise any key's count against the committed copy, and refuses
-# a drop past the budget. Both remain possible only as a hand edit of this file,
-# which is a loud diff -- and that is the point.
+# which refuses to raise any key's count against the strictest committed copy,
+# refuses a drop past the budget or the cumulative cap, and refuses to run at all
+# where those committed copies cannot be read (a shallow clone). All of them
+# remain possible only as a hand edit of this file or of the constants, which is a
+# loud diff -- and that is the point.
 #tracked	2018
 #census	tex/proof-guide.tex	1333	1324	RESOLVED=804,MISSING=280,AMBIGUOUS=106,BASENAME_ONLY=143,SELFREF=5
 #census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90

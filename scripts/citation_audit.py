@@ -330,6 +330,15 @@ MIN_TRACKED_LEAN = 1800
 # a document nobody measured is not judged against an invented reference. That
 # the *default* targets are all listed is pinned by the test suite.
 MEASURED_CITATIONS = {"tex/proof-guide.tex": 1333, "docs/index.md": 2698}
+# The tracked-set half of the same measurement. Nothing charges it at runtime,
+# and that is deliberate: remediation edits documents and never deletes ``.lean``
+# files, so there is no per-run erosion of the tracked set to bound, and a gutted
+# tree is already a hard failure against ``MIN_TRACKED_LEAN`` (R9). What it is
+# for is the test suite, where it is the frozen reference the ``#tracked`` band
+# and the tracked floor's sanity check are stated against. Those two read the
+# *live* count until this constant was wired in, which is the defect R12 exists
+# to avoid one level up: a band around the live value reddens when the tree grows
+# (ordinary work here) and relaxes as it shrinks (the direction worth guarding).
 MEASURED_TRACKED_LEAN = 2018
 
 # How far below the frozen measurement a document may drift in total (R12).
@@ -1862,7 +1871,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         metavar="PATH",
         help=(
             "Rewrite a baseline file from this run. Refuses to raise any key's count "
-            "against the committed copy, and refuses a citation drop past the budget; "
+            "against the strictest committed copy, refuses a citation drop past the "
+            "per-run budget (R11) or the cumulative cap (R12), and refuses to run at "
+            "all where those committed copies cannot be read -- a shallow or "
+            "single-branch clone, which is what a default CI checkout produces; "
             "there is no override flag."
         ),
     )
