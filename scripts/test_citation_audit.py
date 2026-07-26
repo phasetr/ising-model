@@ -53,12 +53,25 @@ replaced by pins that keep the intent and drop the accidental document freeze:
    rows aggregate to the classes, ``matched + acknowledged == raw``.
 2. **frozen corpus** (:class:`FrozenCorpusTest`): the extractor's verdict on
    ``scripts/audit/citation_corpus/``, a committed document pair with a committed
-   resolution set and a committed expected census. It moves iff the extractor
-   moves, and never when a live document is edited.
-3. **committed constants** (:class:`RealTreePinTest` again): the floors and the
-   deletion budget, expressed against the committed census rather than the live
-   run, so that "the floor is not zero" stays checked while the check itself
-   stops drifting with the documents.
+   resolution set, a committed untracked set and a committed expected census. It
+   moves iff the extractor moves, and never when a live document is edited.
+3. **frozen constants** (:class:`RealTreePinTest` again): the floors, the
+   cumulative cap and the measurement they are relative to, expressed against
+   ``MEASURED_CITATIONS`` -- a constant in the tool -- rather than against the
+   live run *or the committed census*. The census looks fixed and is not:
+   ``--update-baseline`` rewrites it from every accepted deletion, so a band
+   anchored there descends with the erosion until the suite turns red and the
+   cheapest repair is to lower the floor. A pin whose reference point is
+   dragged along by what it pins is the same defect as the document freeze,
+   one level up.
+
+The counterpart in the tool is R12 (:class:`CumulativeErosionTest`): the per-run
+budget is measured from the census and therefore compounds -- measured, twelve
+within-budget updates take a document from 1,333 citations to 723 with no hard
+failure at any step -- so the *total* is bounded against the frozen constant
+instead. :class:`CommittedCopyTest` covers the other end of the same update
+path: which commits it is judged against, and the refusal when they cannot be
+read.
 
 One class of test is here because the capability it guarded was **deleted**.
 The checker used to honour a ``citation-audit:`` comment directive, and three
@@ -137,6 +150,29 @@ def _run_git(root: Path, *args: str) -> None:
     subprocess.run(["git", *args], cwd=str(root), check=True, capture_output=True)
 
 
+def _git_out(root: Path, *args: str) -> str:
+    """Run a git command in ``root`` and return its stdout, failing loudly."""
+    return subprocess.run(
+        ["git", *args], cwd=str(root), check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+def _commit(root: Path, message: str) -> None:
+    """Commit everything in ``root`` under a fixed identity."""
+    _run_git(root, "add", "-A")
+    _run_git(
+        root,
+        "-c",
+        "user.email=test@example.com",
+        "-c",
+        "user.name=test",
+        "commit",
+        "-q",
+        "-m",
+        message,
+    )
+
+
 def _staged_paths(root: Path) -> List[str]:
     """Return the paths in ``root``'s index, sorted."""
     out = subprocess.run(
@@ -157,6 +193,7 @@ def fixture(
     tags: Optional[Dict[str, Sequence[str]]] = None,
     module: Optional[types.ModuleType] = None,
     commit: bool = False,
+    upstream: bool = True,
     **overrides: object,
 ) -> Iterator[Path]:
     """Build a throwaway repository and point the checker at it.
@@ -169,6 +206,14 @@ def fixture(
     staged files, which is what the baseline-update tests need: the copy an
     update is judged against is the one in a *commit*, so without one there is
     nothing to judge against.
+
+    ``upstream`` (with ``commit``) also points ``refs/remotes/origin/main`` at
+    that commit, which is what an ordinary clone has. It is a parameter because
+    its *absence* is a real environment -- ``actions/checkout`` at its default
+    depth, ``--single-branch``, a fresh ``git init`` -- and the update path is
+    required to refuse there rather than quietly fall back to judging the branch
+    against its own previous commit. A fixture whose repository has no upstream
+    therefore has to say so.
 
     Staging uses ``git add -f`` with the paths named explicitly, and the
     resulting index is compared against them: a developer's global ignore file
@@ -242,11 +287,24 @@ def fixture(
                 "-m",
                 "fixture",
             )
+            if upstream:
+                _run_git(root, "update-ref", "refs/remotes/origin/main", "HEAD")
         for name in untracked:
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text("-- untracked\n", encoding="utf-8")
         settings: Dict[str, object] = {"REPO_ROOT": root, "MIN_TRACKED_LEAN": 1}
+        # A fixture that renames the default targets must also give them a frozen
+        # measurement, exactly as it must give them a floor: without one the run
+        # charges "default target with no frozen citation measurement" (R12's
+        # arming check) and every verdict below it would be about that instead.
+        # Zero means "never measured", which charges nothing -- these fixtures
+        # pin decision logic, and R12's own numbers are pinned against the real
+        # constants in :class:`RealTreePinTest`.
+        if "TARGETS" in overrides and "MEASURED_CITATIONS" not in overrides:
+            settings["MEASURED_CITATIONS"] = {
+                name: 0 for name in overrides["TARGETS"]  # type: ignore[union-attr]
+            }
         settings.update(overrides)
         with patched(target, **settings):
             yield root
@@ -313,19 +371,34 @@ def corpus_documents() -> Dict[str, str]:
     }
 
 
-def corpus_tracked() -> List[str]:
-    """Return the frozen resolution set the corpus is judged against."""
+def corpus_paths(name: str) -> List[str]:
+    """Return the frozen path list ``name`` holds, comments and blanks dropped."""
     return [
         line.strip()
-        for line in (CORPUS_DIR / "tracked.txt").read_text(encoding="utf-8").split("\n")
+        for line in (CORPUS_DIR / name).read_text(encoding="utf-8").split("\n")
         if line.strip() and not line.startswith("#")
     ]
+
+
+def corpus_tracked() -> List[str]:
+    """Return the frozen resolution set the corpus is judged against."""
+    return corpus_paths("tracked.txt")
+
+
+def corpus_untracked() -> List[str]:
+    """Return the frozen on-disk-but-unstaged half of the corpus fixture."""
+    return corpus_paths("untracked.txt")
 
 
 def corpus_report(module: Optional[types.ModuleType] = None) -> ca.Report:
     """Audit the frozen corpus in a throwaway repository built from it."""
     target = module if module is not None else ca
-    with fixture(corpus_documents(), tracked=corpus_tracked(), module=target):
+    with fixture(
+        corpus_documents(),
+        tracked=corpus_tracked(),
+        untracked=corpus_untracked(),
+        module=target,
+    ):
         return target.audit(list(CORPUS_TARGETS))
 
 
@@ -1206,6 +1279,7 @@ class RatchetTest(unittest.TestCase):
         with fixture(
             {"tex/g.tex": BARE_TEX},
             tracked=["IsingModel/A.lean"],
+            commit=True,
             TARGETS=("tex/g.tex",),
             MIN_CITATIONS={"tex/g.tex": 1},
         ) as root:
@@ -1275,10 +1349,12 @@ class FrozenCorpusTest(unittest.TestCase):
     """What the census equality pin was trying to say, said about frozen inputs.
 
     ``scripts/audit/citation_corpus/`` holds one document per syntax, a frozen
-    resolution set, and the census they must produce. Both halves are frozen
-    because a verdict is a claim about a document *and* about the set it is
-    resolved against; leaving either to follow the real tree would put the pin
-    back on live data, which is the defect this replaces.
+    resolution set, a frozen set of files that are on disk but *not* in the
+    index, and the census they must produce. Every part is frozen because a
+    verdict is a claim about a document, about the set it is resolved against,
+    and about what the tool refuses to resolve it against; leaving any of them
+    to follow the real tree would put the pin back on live data, which is the
+    defect this replaces.
 
     The distinction that matters: this expectation moves **iff the extractor
     moves**. Editing ``tex/proof-guide.tex`` cannot touch it, so remediation
@@ -1344,6 +1420,25 @@ class FrozenCorpusTest(unittest.TestCase):
         self.assertEqual(len(set(tracked)), len(tracked))
         for path in tracked:
             self.assertTrue(path.startswith(ca.ALLOWED_TRACKED_PREFIXES), path)
+
+    def test_the_corpus_has_an_untracked_half_that_a_citation_names(self) -> None:
+        """The third frozen half, and the reason it is not decorative.
+
+        An untracked ``.lean`` file only pins anything if a corpus document
+        cites it: that is what makes "the resolution set is the index, not the
+        disk" a claim the *census* carries rather than one only a hand-built
+        fixture makes. Without this the filesystem-walk relaxation moves nothing
+        here -- measured, before this file existed.
+        """
+        untracked = corpus_paths("untracked.txt")
+        self.assertEqual(untracked, ["IsingModel/Corpus/Gone.lean"])
+        self.assertEqual(set(untracked) & set(corpus_tracked()), set())
+        cited = {
+            finding.token
+            for finding in corpus_report().findings
+            if finding.cls == ca.MISSING
+        }
+        self.assertIn("Corpus/Gone.lean", cited)
 
     def test_the_corpus_is_not_audited_by_the_live_run(self) -> None:
         """It is fixture material: a document, not a document under audit."""
@@ -1441,8 +1536,15 @@ class BaselineUpdateTest(unittest.TestCase):
         self.assertIn("refusing to write a baseline that grows", out)
 
     def test_a_creation_is_allowed_and_says_so(self) -> None:
-        """No commit has the file, so there is no allowance to launder yet."""
-        with self._fixture(missing_citations_tex(3), "", commit=False) as root:
+        """No commit has the file, so there is no allowance to launder yet.
+
+        The repository *is* committed and does have an upstream: bootstrapping a
+        new baseline is "the readable revisions agree this path is new", never
+        "the revisions could not be read". Those two were the same code path
+        before, which is what let a clone with no ``origin/main`` reach the
+        permissive branch that skips both the growth refusal and R11.
+        """
+        with self._fixture(missing_citations_tex(3), "") as root:
             code, out = run_main(
                 ca, "--targets", "tex/g.tex", "--update-baseline", "audit/new.tsv"
             )
@@ -1537,6 +1639,284 @@ class DeletionBudgetTest(unittest.TestCase):
         code, out = self._run(140, 100, rows=140)
         self.assertEqual(code, 0, out)
         self.assertNotIn("ERODED", out)
+
+
+def stale_citations_tex(count: int) -> str:
+    """Return a document citing ``count`` distinct files that do not exist.
+
+    Separate from :func:`missing_citations_tex` because the erosion walk needs
+    four-digit indices, and because deleting from the tail must leave the rows
+    of the shorter document a subset of the longer one's -- otherwise the walk
+    would be refused for row *growth* and would prove nothing about erosion.
+    """
+    return "".join(
+        "Stale \\texttt{Corpus/Stale%04d.lean} here.\n" % index for index in range(count)
+    )
+
+
+def stale_rows(count: int) -> List[Sequence[object]]:
+    """Return the baseline rows :func:`stale_citations_tex` produces."""
+    return [
+        (ca.MISSING, "tex/g.tex", "Corpus/Stale%04d.lean" % index, 1) for index in range(count)
+    ]
+
+
+def budgeted_walk(
+    module: types.ModuleType, start: int = 1333, floor: int = 700, rounds: int = 25
+) -> Sequence[object]:
+    """Delete exactly the per-run budget, merge, repeat; report where it stops.
+
+    One iteration is one merged PR: the document loses
+    :func:`citation_drop_budget` citations, ``--update-baseline`` records the
+    loss, the result is committed and ``origin/main`` is advanced onto it. That
+    last step is what makes this the *compounding* case -- the next round's
+    census, and therefore the next round's budget, is what this round left
+    behind.
+
+    Returns ``(accepted counts, the round that was refused or None)``.
+    """
+    committed = make_baseline(
+        1,
+        (("tex/g.tex", start, start, "MISSING=%d" % start),),
+        stale_rows(start),
+    )
+    accepted: List[int] = []
+    refused: Optional[int] = None
+    with fixture(
+        {"tex/g.tex": stale_citations_tex(start), "audit/base.tsv": committed},
+        tracked=["IsingModel/Corpus/Present.lean"],
+        module=module,
+        commit=True,
+        TARGETS=("tex/g.tex",),
+        MIN_CITATIONS={"tex/g.tex": floor},
+        MEASURED_CITATIONS={"tex/g.tex": start},
+    ) as root:
+        count = start
+        for index in range(1, rounds + 1):
+            _, census, _ = module.read_baseline(root / "audit" / "base.tsv")
+            count -= module.citation_drop_budget(census["tex/g.tex"]["citations"])
+            (root / "tex" / "g.tex").write_text(
+                stale_citations_tex(max(count, 0)), encoding="utf-8"
+            )
+            code, _ = run_main(
+                module, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            if code != 0:
+                refused = index
+                break
+            accepted.append(count)
+            _commit(root, "round %d" % index)
+            _run_git(root, "update-ref", "refs/remotes/origin/main", "HEAD")
+    return (accepted, refused)
+
+
+class CumulativeErosionTest(unittest.TestCase):
+    """R12: the bound on the *total*, which R11 cannot be.
+
+    R11 charges a drop against the committed ``#census``, and
+    ``--update-baseline`` rewrites that census from the accepted drop. So the
+    reference point descends with the document and a 5% budget compounds: the
+    walk below is entirely within budget at every step, the ratchet reports
+    ``0 new`` throughout (deleting a citing sentence clears its finding), and
+    nothing in the tool objects until the document reaches a floor that is
+    roughly half of it. This class is the fixed point that stops that.
+    """
+
+    def _run(self, citations: int, measured: int, floor: int = 1) -> Sequence[object]:
+        """Audit a document of ``citations`` against a frozen ``measured``.
+
+        No baseline is involved on purpose: R12 is charged by :func:`audit`
+        itself, so it must fire in a plain gating run, and it must not need the
+        census that R11 reads.
+        """
+        committed = make_baseline(
+            1,
+            (("tex/g.tex", citations, citations, "MISSING=%d" % citations),),
+            stale_rows(citations),
+        )
+        with fixture(
+            {"tex/g.tex": stale_citations_tex(citations), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            MIN_CITATIONS={"tex/g.tex": floor},
+            MEASURED_CITATIONS={"tex/g.tex": measured},
+        ):
+            return run_main(ca, "--targets", "tex/g.tex", "--baseline", "audit/base.tsv")
+
+    def test_a_loss_within_the_cap_passes(self) -> None:
+        """Remediation up to the cap is exactly what the cap is sized for."""
+        code, out = self._run(870, 1000)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("ERODED", out)
+
+    def test_a_loss_past_the_cap_is_a_hard_failure(self) -> None:
+        """And, being hard, it suppresses the census like any untrustworthy run."""
+        code, out = self._run(840, 1000)
+        self.assertEqual(code, 1)
+        self.assertIn("ERODED tex/g.tex", out)
+        self.assertIn("cumulative cap 150", out)
+        self.assertIn("NOT reported", out)
+
+    def test_growth_is_never_charged(self) -> None:
+        """The cap is about content going away."""
+        code, out = self._run(1400, 1000)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("ERODED", out)
+
+    def test_an_unmeasured_target_is_not_charged_against_an_invented_number(self) -> None:
+        """Ad-hoc ``--targets`` runs are not judged against a reference nobody set."""
+        code, out = self._run(10, 0)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("ERODED", out)
+
+    def test_a_default_target_without_a_measurement_is_a_hard_failure(self) -> None:
+        """Deleting a constant must not be the quiet way to disarm the cap."""
+        with fixture(
+            {"tex/g.tex": stale_citations_tex(10)},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+            MEASURED_CITATIONS={},
+        ):
+            report = ca.audit(["tex/g.tex"])
+        self.assertTrue(
+            any("no frozen citation measurement" in item for item in report.hard), report.hard
+        )
+
+    def test_the_cap_stops_a_walk_the_per_run_budget_waves_through(self) -> None:
+        """The demonstration, on the tex's own numbers.
+
+        Three full-budget rounds are accepted (1333 -> 1267 -> 1204 -> 1144, a
+        14% loss); the fourth, which would land at 1087, is refused. Without
+        R12 the same walk continues to the floor -- that is the mutation test
+        below, and it is the behaviour this branch shipped before this commit.
+        """
+        accepted, refused = budgeted_walk(ca)
+        self.assertEqual(accepted, [1267, 1204, 1144])
+        self.assertEqual(refused, 4)
+
+
+# ---------------------------------------------------------------------------
+# The committed copies an update is judged against
+# ---------------------------------------------------------------------------
+
+
+class CommittedCopyTest(unittest.TestCase):
+    """``--update-baseline`` must know *which* commits it compared against.
+
+    ``git show rev:path`` reports "no such revision" and "no such path in this
+    revision" with the same non-zero exit status, and the first version of this
+    code turned both into "no committed copy". The consequences are opposite: a
+    missing path is the bootstrap case, while a missing revision means the
+    strictest copy silently became a weaker one -- or, when all of them are
+    missing, that the growth refusal and R11 both switched themselves off.
+    """
+
+    def _repo(self, upstream: bool = True, commit: bool = True):
+        """A repository with a committed baseline recording 100 citations."""
+        committed = make_baseline(
+            1, (("tex/g.tex", 100, 100, "MISSING=100"),), stale_rows(100)
+        )
+        return fixture(
+            {"tex/g.tex": stale_citations_tex(100), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            commit=commit,
+            upstream=upstream,
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        )
+
+    def test_an_ordinary_clone_names_the_three_revisions_it_judged_against(self) -> None:
+        """The report says what the refusal or acceptance was measured on."""
+        with self._repo():
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 0, out)
+        self.assertIn("judged against", out)
+        self.assertIn("origin/main:audit/base.tsv", out)
+        self.assertIn("HEAD:audit/base.tsv", out)
+
+    def test_a_clone_without_origin_main_is_refused(self) -> None:
+        """``actions/checkout`` at its default depth, and ``--single-branch``.
+
+        The remaining revisions would be the branch's own commits, so the
+        "strictest committed copy" would be a copy this branch wrote.
+        """
+        with self._repo(upstream=False) as root:
+            before = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 1)
+        self.assertIn("UNREADABLE origin/main", out)
+        self.assertIn("no readable committed copy", out)
+        self.assertEqual(after, before)
+
+    def test_a_repository_with_no_commits_is_refused_and_not_bootstrapped(self) -> None:
+        """The worst case: every revision unreadable, which *looks* like a new file.
+
+        Falling through to the bootstrap branch here would disable the growth
+        refusal and R11 in one step, on a run that read nothing at all.
+        """
+        with self._repo(commit=False) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/fresh.tsv"
+            )
+            self.assertFalse((root / "audit" / "fresh.tsv").is_file())
+        self.assertEqual(code, 1)
+        self.assertIn("UNREADABLE HEAD", out)
+        self.assertIn("only 0 committed revision(s)", out)
+        self.assertNotIn("no committed copy", out)
+
+    def test_the_strictest_copy_is_the_minimum_over_three_distinct_revisions(self) -> None:
+        """The merge itself: per-key minimum for rows, maximum for the census.
+
+        Built with three *different* committed copies -- a merge base, an
+        upstream commit and a branch commit -- because with fewer the merge is
+        indistinguishable from reading one file, which is how it stayed
+        untested.
+        """
+        base = make_baseline(
+            1,
+            (("tex/g.tex", 100, 100, "MISSING=2"),),
+            [(ca.MISSING, "tex/g.tex", "A.lean", 2), (ca.MISSING, "tex/g.tex", "B.lean", 2)],
+        )
+        upstream = make_baseline(
+            1,
+            (("tex/g.tex", 120, 120, "MISSING=3"),),
+            [(ca.MISSING, "tex/g.tex", "A.lean", 1), (ca.MISSING, "tex/g.tex", "B.lean", 2)],
+        )
+        branch = make_baseline(
+            1,
+            (("tex/g.tex", 90, 90, "MISSING=3"),),
+            [(ca.MISSING, "tex/g.tex", "A.lean", 2), (ca.MISSING, "tex/g.tex", "B.lean", 1)],
+        )
+        with fixture(
+            {"tex/g.tex": stale_citations_tex(100), "audit/base.tsv": base},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            commit=True,
+            upstream=False,
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ) as root:
+            trunk = _git_out(root, "rev-parse", "--abbrev-ref", "HEAD")
+            _run_git(root, "checkout", "-q", "-b", "upstream")
+            (root / "audit" / "base.tsv").write_text(upstream, encoding="utf-8")
+            _commit(root, "upstream")
+            _run_git(root, "update-ref", "refs/remotes/origin/main", "HEAD")
+            _run_git(root, "checkout", "-q", trunk)
+            (root / "audit" / "base.tsv").write_text(branch, encoding="utf-8")
+            _commit(root, "branch")
+            rows, census, sources, refusals = ca.committed_baseline(root / "audit" / "base.tsv")
+        self.assertEqual(refusals, [])
+        self.assertEqual(len(sources), 3)
+        # The per-key minimum: neither the branch's allowance for A nor the
+        # upstream's for B survives.
+        self.assertEqual(rows[(ca.MISSING, "tex/g.tex", "A.lean")], 1)
+        self.assertEqual(rows[(ca.MISSING, "tex/g.tex", "B.lean")], 1)
+        # The largest census charges the biggest drop.
+        self.assertEqual(census["tex/g.tex"]["citations"], 120)
 
 
 # ---------------------------------------------------------------------------
@@ -1945,6 +2325,7 @@ class MutationTest(unittest.TestCase):
             {"tex/a.tex": BARE_TEX, "tex/b.tex": BASENAME_TEX},
             tracked=["IsingModel/Foo/Bar.lean"],
             module=mutant,
+            commit=True,
             TARGETS=("tex/a.tex", "tex/b.tex"),
             MIN_CITATIONS={"tex/a.tex": 1, "tex/b.tex": 1},
         ) as root:
@@ -1979,6 +2360,36 @@ class MutationTest(unittest.TestCase):
                 "        right += 1\n"
                 "    return text[left:right]",
                 "    return text[start:end]",
+            ),
+            # The four the corpus used to miss. Each already had a hand-built
+            # fixture, and each is here as well because a relaxation shipped
+            # together with an adjusted fixture is exactly the move the frozen
+            # expectation exists to make visible: the developer has to edit a
+            # committed census too, in the same diff.
+            "suffix table loosened to endswith": (
+                "        return self.table.get(token, set())",
+                "        return {path for path in self.tracked if path.endswith(token)}",
+            ),
+            "resolution set taken from the filesystem": (
+                '    out = _git(["ls-files", "-z", "--", "*.lean"])\n'
+                '    return sorted(path for path in out.split("\\0") if path)',
+                "    import os\n"
+                "    found = []\n"
+                "    for base, _dirs, names in os.walk(str(REPO_ROOT)):\n"
+                "        if '.git' in base:\n            continue\n"
+                "        for name in names:\n"
+                "            if name.endswith('.lean'):\n"
+                "                found.append(\n"
+                "                    os.path.relpath(os.path.join(base, name), str(REPO_ROOT)))\n"
+                "    return sorted(found)",
+            ),
+            "wrap prefix stripped rather than rstripped": (
+                "            candidate = scan_text.rstrip()",
+                "            candidate = scan_text.strip()",
+            ),
+            "token character set not checked": (
+                "    if any(char not in TOKEN_CHARS for char in token):\n        return None",
+                "    if False:\n        return None",
             ),
         }
         for name, substitution in mutants.items():
@@ -2033,7 +2444,7 @@ class MutationTest(unittest.TestCase):
         """The wrong "previous" side: a PR's own last write becomes its licence."""
         mutant = load_mutated(
             (
-                "    for revision in _committed_revisions():\n"
+                "    for revision in revisions:\n"
                 "        text = _git_committed_text(revision, relative)",
                 "    for revision in ['worktree']:\n"
                 "        text = (\n"
@@ -2058,6 +2469,80 @@ class MutationTest(unittest.TestCase):
                 mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
             )
         self.assertEqual(code, 0)
+
+    def test_without_the_cumulative_cap_the_budget_walks_a_document_to_its_floor(
+        self,
+    ) -> None:
+        """R11 alone is not a brake, because its reference point erodes with it.
+
+        This is the state this branch shipped before the cap existed, measured:
+        twelve consecutive within-budget updates, every one accepted, every one
+        reporting ``ratchet: OK`` -- 1,333 citations down to 723, a 46% loss,
+        with no hard failure anywhere (66, 63, 60, ... 38). The thirteenth is
+        stopped by the floor, which is the cliff the module docstring says a
+        floor must not be asked to be.
+        """
+        mutant = load_mutated(
+            (
+                "        if measured and measured - len(citations) > cap:",
+                "        if False:",
+            )
+        )
+        accepted, refused = budgeted_walk(mutant)
+        self.assertEqual(
+            accepted, [1267, 1204, 1144, 1087, 1033, 982, 933, 887, 843, 801, 761, 723]
+        )
+        self.assertEqual(refused, 13)
+        # The real module stops the same walk at its fourth step.
+        self.assertEqual(budgeted_walk(ca), ([1267, 1204, 1144], 4))
+
+    def test_without_the_revision_check_a_shallow_clone_rearms_the_budget(self) -> None:
+        """"No such revision" read as "no such file" hands the branch its own copy.
+
+        ``origin/main`` records 100 citations and this branch's own last commit
+        records 80. With the upstream readable the census reference is 100 and
+        the drop to 60 is past the budget; delete the ref -- which is all a
+        ``--single-branch`` or default-depth checkout does -- and the mutant
+        falls back to the branch's 80, where the same document is a 20-citation
+        drop and passes. The real module refuses to judge at all.
+
+        The mutation is the *acting* on the refusals, not their computation:
+        that is what the code did before this commit, when an unresolvable
+        revision was simply dropped from the list.
+        """
+        mutant = load_mutated(("    if refusals:", "    if False:"))
+        upstream = make_baseline(
+            1, (("tex/g.tex", 100, 100, "MISSING=100"),), stale_rows(100)
+        )
+        branch = make_baseline(1, (("tex/g.tex", 80, 80, "MISSING=80"),), stale_rows(80))
+        for module, expected in ((mutant, 0), (ca, 1)):
+            with self.subTest(module=module.__name__):
+                with fixture(
+                    {"tex/g.tex": stale_citations_tex(100), "audit/base.tsv": upstream},
+                    tracked=["IsingModel/Corpus/Present.lean"],
+                    module=module,
+                    commit=True,
+                    TARGETS=("tex/g.tex",),
+                    MIN_CITATIONS={"tex/g.tex": 1},
+                ) as root:
+                    (root / "tex" / "g.tex").write_text(
+                        stale_citations_tex(80), encoding="utf-8"
+                    )
+                    (root / "audit" / "base.tsv").write_text(branch, encoding="utf-8")
+                    _commit(root, "branch")
+                    (root / "tex" / "g.tex").write_text(
+                        stale_citations_tex(60), encoding="utf-8"
+                    )
+                    _run_git(root, "update-ref", "-d", "refs/remotes/origin/main")
+                    code, out = run_main(
+                        module,
+                        "--targets",
+                        "tex/g.tex",
+                        "--update-baseline",
+                        "audit/base.tsv",
+                    )
+                self.assertEqual(code, expected, out)
+        self.assertIn("UNREADABLE origin/main", out)
 
     def test_disabling_the_deletion_budget_passes_a_gutted_document(self) -> None:
         """Without R11, deleting the citing prose is the cheapest green run."""
@@ -2188,23 +2673,82 @@ class RealTreePinTest(unittest.TestCase):
         regressions, _ = ca.ratchet(current, gating)
         self.assertEqual(regressions, [])
 
-    def test_the_citation_floors_are_backstops_against_the_committed_census(self) -> None:
+    def test_the_citation_floors_are_backstops_against_the_frozen_measurement(self) -> None:
         """A floor set to zero guards nothing; a floor set just below the live
         value is a document freeze.
 
-        Measured against the **committed census** rather than the live run, so
-        the pin stops moving when the documents are edited -- which is exactly
-        the property the census equality pin lacked. The band says what the
-        floor is for: far enough below to let ordinary remediation delete stale
-        citations (that is the drop budget's job, one hundredth of the distance
-        away), high enough that a gutted document still trips it.
+        Measured against :data:`MEASURED_CITATIONS`, a constant, and not against
+        the committed census. The census was the first attempt at "not the live
+        run", and it is not fixed either: ``--update-baseline`` rewrites it from
+        each accepted deletion, so this band would follow the erosion downwards
+        and turn red once the census fell below ``floor / 0.75`` -- at which
+        point the cheapest way to green the suite is to *lower the floor*, i.e.
+        the erosion buying itself permission to continue. A brake whose
+        reference point is dragged along by what it brakes is not a brake.
+
+        The band still says what the floor is for: far enough below the
+        measurement that ordinary remediation is not deciding document content,
+        high enough that a gutted document trips it.
         """
-        _, census, _ = ca.read_baseline(ca.BASELINE_FILE)
         for target in ca.TARGETS:
             floor = ca.MIN_CITATIONS[target]
-            committed = census[target]["citations"]
-            self.assertGreaterEqual(floor, 0.40 * committed, target)
-            self.assertLessEqual(floor, 0.75 * committed, target)
+            measured = ca.MEASURED_CITATIONS[target]
+            self.assertGreaterEqual(floor, 0.40 * measured, target)
+            self.assertLessEqual(floor, 0.75 * measured, target)
+
+    def test_the_cumulative_cap_fires_before_the_floor_is_ever_reached(self) -> None:
+        """The ordering that makes the floor a backstop rather than the brake.
+
+        R12 stops a document at ``measured - cap``; the floor sits strictly
+        below that, so it is only ever reached by a hand edit of the constants,
+        never by an accumulation of within-budget updates. If this inverted, the
+        floors would be back to doing the per-commit work they are too coarse
+        for.
+        """
+        for target in ca.TARGETS:
+            measured = ca.MEASURED_CITATIONS[target]
+            cap = ca.cumulative_loss_cap(measured)
+            self.assertLess(ca.MIN_CITATIONS[target], measured - cap, target)
+            # And the cap admits at least three consecutive full budgets, so an
+            # ordinary remediation commit never has to touch the constants.
+            self.assertGreater(cap, 3 * ca.citation_drop_budget(measured) * 0.9, target)
+
+    def test_the_frozen_measurement_is_the_tree_this_tool_was_written_against(self) -> None:
+        """The constants R12 measures from, pinned so that moving them is a diff.
+
+        Constant against constant on purpose: this reads no document, so unlike
+        the census equality pin it cannot fail on a remediation commit. What it
+        makes impossible is re-anchoring the measurement *silently*, which is
+        the one move that would restore the compounding walk.
+        """
+        self.assertEqual(
+            ca.MEASURED_CITATIONS, {"tex/proof-guide.tex": 1333, "docs/index.md": 2698}
+        )
+        self.assertEqual(ca.MEASURED_TRACKED_LEAN, 2018)
+        self.assertEqual(ca.MAX_CUMULATIVE_CITATION_LOSS_FRACTION, 0.15)
+        self.assertEqual(set(ca.TARGETS) - set(ca.MEASURED_CITATIONS), set())
+        self.assertEqual(
+            {target: ca.cumulative_loss_cap(ca.MEASURED_CITATIONS[target]) for target in ca.TARGETS},
+            {"tex/proof-guide.tex": 199, "docs/index.md": 404},
+        )
+
+    def test_the_frozen_measurement_still_describes_the_live_documents(self) -> None:
+        """R12 stated as a claim about today's tree, in the suite as well.
+
+        One inequality, in the loss direction only: growth is never suspect (the
+        cap is about content going away), and loss is allowed right up to the
+        cap. So this cannot fail on a remediation commit that R12 itself would
+        accept -- it fails exactly when the constants have gone stale enough
+        that somebody must re-measure and say so.
+        """
+        report = live_report()
+        for target in ca.TARGETS:
+            measured = ca.MEASURED_CITATIONS[target]
+            self.assertGreaterEqual(
+                report.citations[target],
+                measured - ca.cumulative_loss_cap(measured),
+                target,
+            )
 
     def test_the_tracked_floor_is_below_but_close_to_the_live_value(self) -> None:
         """``MIN_TRACKED_LEAN`` is about the Lean tree, which remediation does not
@@ -2212,6 +2756,23 @@ class RealTreePinTest(unittest.TestCase):
         report = live_report()
         self.assertLessEqual(ca.MIN_TRACKED_LEAN, report.tracked)
         self.assertGreaterEqual(ca.MIN_TRACKED_LEAN, 0.75 * report.tracked)
+
+    def assert_tracked_field_is_sane(self, committed: int, live: int) -> None:
+        """The claim the baseline's ``#tracked`` field actually supports.
+
+        A **band**, not an equality. ``#tracked`` is derived book-keeping that
+        ``--update-baseline`` refreshes, and it gates nothing at runtime, so
+        ``committed == live`` asserts something the field does not mean: that
+        nobody has added or deleted a ``.lean`` file since the last refresh --
+        i.e. exactly one commit of ordinary work in this repository turns the
+        suite red. That is the same defect class this PR removed from the census
+        (a document freeze wearing a pin's clothes) and it is fixed the same way:
+        state the property (the number is non-vacuous and not stale by a
+        refactor's worth) as an inequality.
+        """
+        self.assertGreaterEqual(committed, ca.MIN_TRACKED_LEAN)
+        self.assertGreaterEqual(committed, 0.9 * live)
+        self.assertLessEqual(committed, 1.1 * live)
 
     def test_the_committed_baseline_carries_a_census_for_every_default_target(self) -> None:
         """Deleting a ``#census`` line would disarm R11 for that target.
@@ -2223,10 +2784,27 @@ class RealTreePinTest(unittest.TestCase):
         """
         _, census, tracked = ca.read_baseline(ca.BASELINE_FILE)
         self.assertEqual(set(ca.TARGETS) - set(census), set())
-        self.assertEqual(tracked, ca.tracked_lean_files().__len__())
+        self.assert_tracked_field_is_sane(tracked, len(ca.tracked_lean_files()))
         for target in ca.TARGETS:
             self.assertGreater(census[target]["citations"], 0, target)
             self.assertGreater(census[target]["raw"], 0, target)
+
+    def test_adding_one_lean_file_does_not_redden_the_tracked_pin(self) -> None:
+        """The Lean tree is the thing this repository changes most, so measure it.
+
+        The equality this replaces failed on the very next ``.lean`` file added
+        or deleted -- normal work, unrelated to citations, with the "fix" being
+        to regenerate the baseline for a field nothing reads. The band absorbs a
+        refactor's worth of churn in both directions and still refuses a
+        ``#tracked`` that has gone vacuous.
+        """
+        _, _, tracked = ca.read_baseline(ca.BASELINE_FILE)
+        live = len(ca.tracked_lean_files())
+        for delta in (1, -1, 40, -40, int(0.09 * live), -int(0.09 * live)):
+            with self.subTest(delta=delta):
+                self.assert_tracked_field_is_sane(tracked, live + delta)
+        # ... and the equality really would have gone red on the first of them.
+        self.assertNotEqual(tracked, live + 1)
 
     def test_the_deletion_budget_is_calibrated_against_the_committed_census(self) -> None:
         """The guard that actually fires per commit, with its numbers stated.

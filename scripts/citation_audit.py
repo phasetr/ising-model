@@ -61,6 +61,7 @@ R8   citations in a target below its floor                       hard failure ``
 R9   tracked ``.lean`` files below ``MIN_TRACKED_LEAN``          hard failure ``VACUOUS``
 R10  a resolved path outside ``ALLOWED_TRACKED_PREFIXES``        hard failure ``CONTAMINATED``
 R11  citations lost since the committed census, beyond budget    hard failure ``ERODED``
+R12  citations lost since the frozen measurement, beyond the cap  hard failure ``ERODED``
 ===  =========================================================  =========================
 
 ``RESOLVED`` is silent; ``MISSING``, ``AMBIGUOUS``, ``BASENAME_ONLY`` and
@@ -84,12 +85,36 @@ gating rows                    the ratchet, per ``(class, target, token)`` key,
                                ``citations == sum over the citation classes``,
                                on the live run, where it holds whatever the
                                documents say.
-``#census`` ``citations`` /    the **deletion budget** (R11). Remediation may
-``raw``                        delete a stale citation, and the ratchet is blind
-                               to that -- a deleted citation is indistinguishable
-                               from a cleared finding -- so this is the one place
-                               content loss is charged.
+``#census`` ``citations`` /    the **per-run deletion budget** (R11). Remediation
+``raw``                        may delete a stale citation, and the ratchet is
+                               blind to that -- a deleted citation is
+                               indistinguishable from a cleared finding -- so this
+                               is where content loss is charged *per run*.
 =============================  ===============================================
+
+Why the cumulative cap is a frozen constant and not the census
+--------------------------------------------------------------
+R11 alone is not a brake on erosion, because ``--update-baseline`` rewrites the
+``#census`` from the live run: each accepted deletion lowers the reference the
+*next* run is judged against, so a budget of 5% compounds. Measured on the tex's
+numbers, twelve within-budget updates take it from 1,333 citations to 723 -- a
+46% loss, deletions of 66, 63, 60, ... 38 -- with no hard failure at any step
+and ``ratchet: OK`` reported throughout, because deleting the citing sentence
+clears its finding. Only the thirteenth is stopped, and only by the floor.
+
+The cumulative cap (R12) is therefore charged against
+:data:`MEASURED_CITATIONS`, a constant frozen in this file, and never against
+anything a run can rewrite. That is also why the floors' sanity band is
+expressed against the same constant in the test suite: a band anchored on the
+committed census follows the erosion down, so once the census has drifted far
+enough the suite turns red and the cheapest way to green it is to *lower the
+floor* -- the tool asking to be disarmed. A guard whose reference point moves
+with the thing it guards is not a guard.
+
+Re-anchoring ``MEASURED_CITATIONS`` after a large, legitimate remediation is a
+hand edit of this file plus the test that pins it, in one reviewable commit --
+the same control the baseline's own growth uses, and deliberately not something
+``--update-baseline`` can do.
 
 An **equality** pin of the whole census against the live documents was tried
 first and removed. Its intent was right (notice a silent change in the
@@ -114,12 +139,28 @@ refuses, and has **no override flag**, when:
   against the strictest committed copy available (``merge-base(HEAD,
   origin/main)``, ``origin/main`` and ``HEAD``) rather than against the file in
   the working tree, so a branch cannot ratchet against its own earlier write;
-* a target lost more citations than R11's budget allows.
+* **any of those three revisions cannot be read**, which is a separate outcome
+  from "that revision has no such file". Without the distinction the strictest
+  copy degenerates silently: in a clone with no ``origin/main`` -- the default
+  ``actions/checkout``, ``--depth 1`` and ``--single-branch`` all produce one --
+  the comparison would fall back to ``HEAD`` alone, i.e. the branch's own
+  previous commit, and a branch could re-arm the budget once per commit. If
+  *no* revision could be read the fallback is worse still: it looks like "no
+  committed copy at all", which is the bootstrap path, and that path disables
+  the growth refusal and R11 together. Both are refused instead. The
+  ``git show`` used to read a copy cannot tell the two apart (it exits non-zero
+  for either), so the revision is separately resolved with ``git rev-parse
+  --verify``, and at least two readable revisions are required;
+* a target lost more citations than R11's budget allows, or R12's cap does.
 
 The written file is therefore provably per-key ``<=`` the committed one:
 laundering is not expressible through the tool. Growth, and a deletion past the
 budget, remain possible only as a hand edit of the committed file -- which is a
 loud, reviewable diff, and that is the intended control.
+
+Only the update path needs the committed copies. A gating run reads the working
+tree's baseline, so a shallow CI clone still audits and still ratchets; what it
+cannot do there is *rewrite* the baseline.
 
 Why the resolution set is ``git ls-files``
 ------------------------------------------
@@ -228,7 +269,9 @@ exists is guesswork, and the obvious guess -- returning findings and
 self-references as one list -- would silently promote the advisory ``SELFREF``
 class into a gating one. A future wiring commit calls :func:`audit`, adds
 :func:`erosion_failures` to ``Report.hard`` (R11 needs the committed baseline,
-so :func:`audit` cannot charge it on its own) and reads ``Report.findings``
+so :func:`audit` cannot charge it on its own; R12 needs only a constant and is
+already in there, which is why forgetting this step leaves the cumulative
+tripwire armed and only the per-run one disarmed) and reads ``Report.findings``
 (gating), ``Report.coverage`` and ``Report.hard`` (hard failures),
 ``Report.visited`` (scanned-set honesty) and ``Report.selfrefs`` (advisory, must
 not gate) explicitly.
@@ -275,6 +318,35 @@ TARGETS = ("tex/proof-guide.tex", "docs/index.md")
 # fires per commit is the drop budget below; these two are the cliff behind it.
 MIN_CITATIONS = {"tex/proof-guide.tex": 700, "docs/index.md": 1400}
 MIN_TRACKED_LEAN = 1800
+
+# The measurement this tool was written against, frozen (R12). Unlike the
+# ``#census``, nothing regenerates these: they are the fixed point the
+# *cumulative* loss is measured from, and the module docstring's "Why the
+# cumulative cap is a frozen constant" says why that matters -- a cap measured
+# from the census would be recomputed from the eroded value on every update and
+# would permit an unbounded geometric walk down to the floor.
+#
+# Charged only for a target listed here, so an ad-hoc ``--targets`` run against
+# a document nobody measured is not judged against an invented reference. That
+# the *default* targets are all listed is pinned by the test suite.
+MEASURED_CITATIONS = {"tex/proof-guide.tex": 1333, "docs/index.md": 2698}
+MEASURED_TRACKED_LEAN = 2018
+
+# How far below the frozen measurement a document may drift in total (R12).
+#
+# Chosen against the two numbers it has to sit between. Above: the per-run
+# budget is 5%, and a cap below ~3 budgeted runs would make R11 unreachable and
+# turn every ordinary remediation commit into a re-anchoring ceremony -- which
+# is how a frozen constant becomes a rubber stamp. Below: the floors, at ~48%
+# loss, are a cliff that twelve compounding 5% runs get to within 23 citations
+# of. 15% (199 citations for the tex, 404 for the markdown) admits three
+# consecutive full-budget runs and the whole remediation programme measured so
+# far (PR #4730 removes 44 of the tex's), and stops that walk at its fourth
+# step, at 1,144.
+#
+# Exceeding it is not a defect to be forced through: it is the point at which
+# somebody re-measures the documents and says so in a diff.
+MAX_CUMULATIVE_CITATION_LOSS_FRACTION = 0.15
 
 # Floor applied to a target passed on the command line that has no entry in
 # ``MIN_CITATIONS``: auditing a document in which the extractor found nothing at
@@ -329,8 +401,24 @@ def citation_drop_budget(committed: int) -> int:
     ``committed`` is the citation count recorded in the baseline's ``#census``
     line for that target, so the budget shrinks with the document instead of
     being a constant that slowly stops meaning anything.
+
+    That self-calibration is also why this cannot be the only brake: the census
+    it reads is rewritten by ``--update-baseline``, so the budget is recomputed
+    from the value the previous deletion left behind. The bound on the total is
+    :func:`cumulative_loss_cap`, which reads a frozen constant instead.
     """
     return max(MIN_CITATION_DROP_BUDGET, int(committed * CITATION_DROP_BUDGET_FRACTION))
+
+
+def cumulative_loss_cap(measured: int) -> int:
+    """Return how far below its frozen measurement a target may drift (R12).
+
+    ``measured`` is :data:`MEASURED_CITATIONS`, not the census: the whole point
+    is a reference point no run can move. ``0`` means the target has never been
+    measured, and nothing is charged for it -- inventing a reference point would
+    be a number nobody reviewed, exactly as in :func:`erosion_failures`.
+    """
+    return int(measured * MAX_CUMULATIVE_CITATION_LOSS_FRACTION)
 
 # ---------------------------------------------------------------------------
 # Lexical layer
@@ -1020,7 +1108,10 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
     the run against the *committed* census and therefore needs the baseline
     file: it lives in :func:`erosion_failures`, and every caller that gates on
     this report must apply it (``main`` does, for both the reporting and the
-    update path). A caller that skips it keeps the deletion tripwire disarmed.
+    update path). A caller that skips it keeps the per-run deletion tripwire
+    disarmed. R12, the cumulative half, needs only a frozen constant and is
+    charged here, so it survives a caller that forgets R11 or points
+    ``--baseline`` at another file.
     """
     selected = list(targets) if targets is not None else list(TARGETS)
     visited: List[str] = []
@@ -1084,6 +1175,29 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
         if len(citations) < floor:
             hard.append(
                 f"VACUOUS {target}: {len(citations)} citations, below floor {floor}"
+            )
+
+        # R12, the cumulative half of the deletion charge. It is here rather
+        # than in :func:`erosion_failures` because it needs no baseline: it
+        # compares the run against a constant, so every mode charges it -- the
+        # gating run, ``--strict`` and ``--update-baseline`` alike -- and it
+        # cannot be disarmed by pointing ``--baseline`` somewhere else.
+        measured = MEASURED_CITATIONS.get(target, 0)
+        if target in TARGETS and target not in MEASURED_CITATIONS:
+            hard.append(
+                f"VACUOUS {target}: default target with no frozen citation measurement, "
+                "so the cumulative erosion cap is unarmed"
+            )
+        cap = cumulative_loss_cap(measured)
+        if measured and measured - len(citations) > cap:
+            hard.append(
+                f"ERODED {target}: {len(citations)} citations, "
+                f"{measured - len(citations)} below the frozen measurement of {measured} "
+                f"(cumulative cap {cap}). The per-run budget is charged against the "
+                "committed census, which every update rewrites; this one is charged "
+                "against MEASURED_CITATIONS, which only a reviewed edit of "
+                "citation_audit.py and its test can move. Re-measure the documents and "
+                "say so in that diff"
             )
 
         per_class: Dict[str, int] = {name: 0 for name in ALL_CLASSES}
@@ -1190,16 +1304,21 @@ def render_baseline(report: Report) -> str:
         "#                 They are NOT pinned against the live documents -- an equality",
         "#                 pin there freezes the documents instead of the extractor. The",
         "#                 extractor is pinned on scripts/audit/citation_corpus/ instead.",
-        "#   #census       citations/raw: the deletion budget (R11). A target that loses",
-        "#                 more than max(25, 5%) of its committed citations fails hard,",
-        "#                 because the ratchet cannot tell a deleted citation from a",
-        "#                 fixed one.",
+        "#   #census       citations/raw: the per-run deletion budget (R11). A target that",
+        "#                 loses more than max(25, 5%) of its committed citations fails",
+        "#                 hard, because the ratchet cannot tell a deleted citation from a",
+        "#                 fixed one. The budget is recomputed from this file on every",
+        "#                 update, so it bounds one run and not the total; the total is",
+        "#                 bounded by R12 against MEASURED_CITATIONS, a constant in",
+        "#                 scripts/citation_audit.py that no run rewrites.",
         "#",
         "# Update with:",
         "#   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv",
-        "# which refuses to raise any key's count against the committed copy, and refuses",
-        "# a drop past the budget. Both remain possible only as a hand edit of this file,",
-        "# which is a loud diff -- and that is the point.",
+        "# which refuses to raise any key's count against the strictest committed copy,",
+        "# refuses a drop past the budget or the cumulative cap, and refuses to run at all",
+        "# where those committed copies cannot be read (a shallow clone). All of them",
+        "# remain possible only as a hand edit of this file or of the constants, which is a",
+        "# loud diff -- and that is the point.",
     ]
     if not report.ok_structurally:
         lines.append("#")
@@ -1342,12 +1461,13 @@ def erosion_failures(
 def _git_committed_text(revision: str, relative: str) -> Optional[str]:
     """Return ``revision:relative``'s content, or ``None`` if it is not there.
 
-    Narrow on purpose: the only question asked is whether a *committed* copy of
-    one path exists, and the only caller (:func:`committed_baseline`) treats
-    ``None`` as "no such copy". That is safe because it runs after
-    :func:`audit`, which turns a broken or absent ``git`` into a hard failure of
-    its own, so ``None`` here cannot mean "git is unavailable" without the run
-    already being untrustworthy.
+    ``None`` means exactly one thing here -- *that commit does not contain this
+    path* -- and it means it only because the caller has already established
+    that ``revision`` resolves to a commit (:func:`_revision_commit`). Without
+    that separation ``None`` would also cover "no such revision", and the two
+    have opposite consequences: an absent path is the ordinary bootstrap case,
+    while an unresolvable revision means the strictest committed copy is not
+    the one being compared against.
     """
     try:
         proc = subprocess.run(
@@ -1362,60 +1482,108 @@ def _git_committed_text(revision: str, relative: str) -> Optional[str]:
     return proc.stdout if proc.returncode == 0 else None
 
 
-def _committed_revisions() -> List[str]:
-    """Return the revisions whose baseline copy may govern an update.
+def _revision_commit(revision: str) -> Optional[str]:
+    """Return the commit ``revision`` names, or ``None`` if it does not resolve.
+
+    The existence question, asked separately from the content question, because
+    ``git show rev:path`` answers both with the same non-zero exit status. This
+    is the whole of the distinction the update path is built on.
+    """
+    try:
+        resolved = _git(["rev-parse", "--verify", "--quiet", f"{revision}^{{commit}}"])
+    except GitError:
+        return None
+    return resolved.strip() or None
+
+
+def _committed_revisions() -> Tuple[List[str], List[str]]:
+    """Return ``(revisions, refusals)`` for the copies that govern an update.
 
     ``merge-base(HEAD, origin/main)`` is what review diffs against, ``origin/main``
     is where the file will land, and ``HEAD`` is the branch as committed so far.
     All three are *commits*: the working file is deliberately absent, because a
     branch that judged itself by its own last write could raise the baseline one
     commit at a time and never show a growth.
+
+    A revision that does not resolve is a **refusal**, not an omission. Dropping
+    it silently is how "the strictest committed copy" degenerates into "this
+    branch's previous commit": ``origin/main`` is absent in every shallow or
+    single-branch clone, and with it gone the remaining reference is ``HEAD``,
+    which the branch itself wrote. The list is required to hold at least two
+    readable revisions for the same reason -- one reference is the branch
+    judging itself, whatever it is called.
+
+    ``merge-base`` failing while both named revisions resolve (unrelated
+    histories) is refused too: it means the reference review will diff against
+    cannot be computed, and guessing one is exactly the exoneration this module
+    does not do.
     """
     revisions: List[str] = []
-    try:
-        merge_base = _git(["merge-base", "HEAD", "origin/main"]).strip()
-    except GitError:
-        # No ``origin/main`` (a fresh clone, or a fixture repository): that
-        # revision simply drops out of the list. The remaining two are commits
-        # too, so dropping it cannot turn the comparison into one against the
-        # working file.
-        merge_base = ""
-    if merge_base:
-        revisions.append(merge_base)
-    for revision in ("origin/main", "HEAD"):
-        if revision not in revisions:
-            revisions.append(revision)
-    return revisions
+    refusals: List[str] = []
+    for name in ("origin/main", "HEAD"):
+        if _revision_commit(name) is None:
+            refusals.append(
+                f"UNREADABLE {name}: not a commit in this clone. A shallow or "
+                "single-branch checkout has no origin/main, and judging an update "
+                "without it compares the branch against its own previous commit"
+            )
+        else:
+            revisions.append(name)
+    if len(revisions) == 2:
+        try:
+            merge_base = _git(["merge-base", "HEAD", "origin/main"]).strip()
+        except GitError as exc:
+            merge_base = ""
+            refusals.append(f"UNREADABLE merge-base(HEAD, origin/main): {exc}")
+        if merge_base:
+            revisions.insert(0, merge_base)
+    if len(revisions) < 2:
+        refusals.append(
+            f"UNREADABLE only {len(revisions)} committed revision(s) could be read; "
+            "at least two are required, because a single reference is the branch "
+            "judging itself"
+        )
+    return (revisions, refusals)
 
 
 def committed_baseline(
     destination: Path,
-) -> Tuple[Optional[Counter], Dict[str, Dict[str, int]], List[str]]:
+) -> Tuple[Optional[Counter], Dict[str, Dict[str, int]], List[str], List[str]]:
     """Return the committed baseline an update to ``destination`` is judged by.
 
-    ``(rows, census, sources)``. Both parts take the **strictest** value over
-    every revision of :func:`_committed_revisions` that has the file: the
-    per-key *minimum* for the rows (a smaller allowance refuses more, so a stale
-    branch cannot reintroduce a row ``origin/main`` has already cleared) and the
-    *maximum* recorded ``citations`` for the census (a larger reference charges
-    a bigger drop). Both err towards refusing, and the remedy for a refusal
-    caused by a stale branch is a rebase, after which every revision agrees.
+    ``(rows, census, sources, refusals)``. The first two take the **strictest**
+    value over every revision of :func:`_committed_revisions` that has the file:
+    the per-key *minimum* for the rows (a smaller allowance refuses more, so a
+    stale branch cannot reintroduce a row ``origin/main`` has already cleared)
+    and the *maximum* recorded ``citations`` for the census (a larger reference
+    charges a bigger drop). Both err towards refusing, and the remedy for a
+    refusal caused by a stale branch is a rebase, after which every revision
+    agrees.
+
+    ``refusals`` is non-empty when the comparison could not be *set up*: a
+    revision that does not resolve, or fewer than two that do. The caller must
+    treat it as fatal, because every downstream verdict here -- including the
+    permissive ones -- is a claim about a set of revisions that was not read.
 
     ``rows is None`` means no commit has this path at all, i.e. the file is
     being created, or it lies outside the repository entirely. That is not a
     laundering opportunity -- a file no commit contains is not yet anyone's
     allowance, and one outside the tree is not the gate the ratchet reads -- and
     it is what makes the tool bootstrappable; the creation is a new file in the
-    diff, which review sees.
+    diff, which review sees. It is reachable only with ``refusals`` empty, i.e.
+    when readable revisions genuinely agree the file is new; a run that could
+    not read them does not get the bootstrap path, which would otherwise switch
+    off the growth refusal and R11 at once.
     """
+    revisions, refusals = _committed_revisions()
     try:
         relative = destination.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
     except ValueError:
-        return (None, {}, [])
+        return (None, {}, [], refusals)
     rows: Optional[Counter] = None
     census: Dict[str, Dict[str, int]] = {}
     sources: List[str] = []
-    for revision in _committed_revisions():
+    for revision in revisions:
         text = _git_committed_text(revision, relative)
         if text is None:
             continue
@@ -1436,7 +1604,7 @@ def committed_baseline(
             )
     if rows is not None:
         rows = Counter({key: count for key, count in rows.items() if count})
-    return (rows, census, sources)
+    return (rows, census, sources, refusals)
 
 
 # ---------------------------------------------------------------------------
@@ -1611,7 +1779,7 @@ def update_baseline(report: Report, destination: Path) -> int:
         )
         return 1
 
-    committed, committed_census, sources = committed_baseline(destination)
+    committed, committed_census, sources, refusals = committed_baseline(destination)
     # R11 before anything is printed, so an eroded run suppresses its own census
     # here exactly as it does in the reporting path: the numbers a deletion
     # produced are not numbers to publish.
@@ -1619,6 +1787,17 @@ def update_baseline(report: Report, destination: Path) -> int:
     print(format_text(report, [], 0, False, committed_census), end="")
     if not report.ok_structurally:
         print("refusing to write a baseline that records a deletion past the budget")
+        return 1
+    if refusals:
+        # Before the growth and bootstrap branches below, both of which would
+        # otherwise draw a conclusion from revisions this run could not read.
+        for item in refusals:
+            print(item)
+        print(
+            "refusing to write a baseline with no readable committed copy to be judged "
+            "against: fetch origin/main (an unshallowed, non-single-branch clone) and "
+            "run this again. There is no override flag"
+        )
         return 1
 
     current: Counter = Counter()

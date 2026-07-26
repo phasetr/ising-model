@@ -12,6 +12,8 @@ A bare prose token: Corpus/Gone.lean points nowhere.
 A bare basename: \texttt{Alone.lean} is evidence of a name, not of a path.
 An ambiguous tail: \texttt{Twin.lean} matches two tracked files.
 Glued: \texttt{../Corpus/Resolved.lean} and \texttt{Corpus/Resolved.lean.bak}.
+A tilde in a component: \texttt{Corpus/Resolved~1.lean} names no file here.
+A shorter tail: \texttt{Score.lean} is not a component of any tracked path.
 Not citations: *.lean patterns and the .lean extension itself.
 
 \begin{Verbatim}
@@ -19,6 +21,8 @@ Corpus/Wrapped/
 Bridge.lean
 +-- Corpus/
     Alone.lean
+    Corpus/
+Alone.lean
 \end{Verbatim}
 
 The result now lives in \texttt{Corpus/Moved.lean},
