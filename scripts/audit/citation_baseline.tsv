@@ -1,0 +1,713 @@
+# citation-audit v1 baseline -- the count-of-record for .lean citations.
+#
+# Rows are keyed on (class, target, token) with a multiplicity; first_line is
+# payload and is excluded from the ratchet comparison. SELFREF rows are
+# advisory: they are recorded so drift is visible in review, and they never
+# gate the exit code.
+#
+# Regenerate with:
+#   python3 scripts/citation_audit.py --write-baseline scripts/audit/citation_baseline.tsv
+# A baseline that grew without a stated reason is a review signal: remediation
+# is supposed to shrink it monotonically.
+#tracked	2018
+#census	tex/proof-guide.tex	1333	1324	RESOLVED=804,MISSING=280,AMBIGUOUS=106,BASENAME_ONLY=143,SELFREF=5
+#census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90
+class	target	token	count	first_line
+AMBIGUOUS	docs/index.md	Analyticity.lean	24	2195
+AMBIGUOUS	docs/index.md	Basic.lean	1	1244
+AMBIGUOUS	docs/index.md	BetaDerivative.lean	17	1809
+AMBIGUOUS	docs/index.md	FieldDerivative.lean	7	1809
+AMBIGUOUS	docs/index.md	FreeEnergy.lean	21	364
+AMBIGUOUS	docs/index.md	HighTemperatureBounds.lean	1	2201
+AMBIGUOUS	docs/index.md	InfiniteVolume.lean	9	356
+AMBIGUOUS	docs/index.md	JDerivative.lean	7	1809
+AMBIGUOUS	docs/index.md	Lattice.lean	4	1558
+AMBIGUOUS	docs/index.md	Magnetization.lean	4	1408
+AMBIGUOUS	docs/index.md	Peierls.lean	4	860
+AMBIGUOUS	docs/index.md	TwoPoint.lean	8	1370
+AMBIGUOUS	tex/proof-guide.tex	Analyticity.lean	29	21171
+AMBIGUOUS	tex/proof-guide.tex	Basic.lean	5	124
+AMBIGUOUS	tex/proof-guide.tex	BetaDerivative.lean	7	22597
+AMBIGUOUS	tex/proof-guide.tex	BranchRelCompact.lean	1	15098
+AMBIGUOUS	tex/proof-guide.tex	DirectRange.lean	2	15261
+AMBIGUOUS	tex/proof-guide.tex	FieldDerivative.lean	4	22598
+AMBIGUOUS	tex/proof-guide.tex	FreeEnergy.lean	5	140
+AMBIGUOUS	tex/proof-guide.tex	FreeEnergyAnalyticity.lean	1	23699
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBounds.lean	10	24450
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviation.lean	1	24521
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviationContinuity.lean	1	24535
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviationStrict.lean	1	24529
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpSharper.lean	1	24546
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpSharperSandwich.lean	1	24560
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpansion.lean	1	24570
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsRatioBounds.lean	1	24498
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsRatioLogFe.lean	1	24507
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsTripleRatio.lean	1	24503
+AMBIGUOUS	tex/proof-guide.tex	HighTemperatureCapstones.lean	1	23468
+AMBIGUOUS	tex/proof-guide.tex	InfiniteVolume.lean	5	139
+AMBIGUOUS	tex/proof-guide.tex	JDerivative.lean	2	22584
+AMBIGUOUS	tex/proof-guide.tex	Lattice.lean	2	147
+AMBIGUOUS	tex/proof-guide.tex	Magnetization.lean	2	5242
+AMBIGUOUS	tex/proof-guide.tex	MayerFilterConnected.lean	1	23475
+AMBIGUOUS	tex/proof-guide.tex	MayerVdBounds.lean	2	21168
+AMBIGUOUS	tex/proof-guide.tex	PartitionFreeEnergyRegularity.lean	1	23462
+AMBIGUOUS	tex/proof-guide.tex	PartitionFunctionGeneralAnalyticity.lean	1	22999
+AMBIGUOUS	tex/proof-guide.tex	PartitionFunctionRegularity.lean	1	22990
+AMBIGUOUS	tex/proof-guide.tex	Peierls.lean	3	145
+AMBIGUOUS	tex/proof-guide.tex	PerStage.lean	1	17447
+AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyEpsilonSharpening.lean	1	23742
+AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyHighTemperatureBounds.lean	1	23721
+AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyTanhSharpening.lean	1	23771
+AMBIGUOUS	tex/proof-guide.tex	RelCompact.lean	1	15498
+AMBIGUOUS	tex/proof-guide.tex	SusceptibilityConvergence.lean	1	23492
+AMBIGUOUS	tex/proof-guide.tex	TwoPoint.lean	6	23532
+BASENAME_ONLY	docs/index.md	AlternatingFinThree.lean	1	2126
+BASENAME_ONLY	docs/index.md	AmbientComplexAnalyticity.lean	91	524
+BASENAME_ONLY	docs/index.md	AmbientLattice.lean	32	356
+BASENAME_ONLY	docs/index.md	AmbientLatticeSum.lean	20	424
+BASENAME_ONLY	docs/index.md	Asano.lean	1	522
+BASENAME_ONLY	docs/index.md	AvoidingDeleteEdges.lean	1	2105
+BASENAME_ONLY	docs/index.md	BallBoundaryInfinite.lean	2	2078
+BASENAME_ONLY	docs/index.md	BondConnectivityBridge.lean	1	896
+BASENAME_ONLY	docs/index.md	BondFilledEdgeConnected.lean	1	897
+BASENAME_ONLY	docs/index.md	BoundaryDart.lean	1	957
+BASENAME_ONLY	docs/index.md	BoxBridge.lean	1	922
+BASENAME_ONLY	docs/index.md	CEConditionalCapstone.lean	8	2196
+BASENAME_ONLY	docs/index.md	CapstoneIncrementFromComplexBound.lean	1	467
+BASENAME_ONLY	docs/index.md	CauchyDerivativeBridge.lean	1	478
+BASENAME_ONLY	docs/index.md	ClusterExpansion.lean	6	1980
+BASENAME_ONLY	docs/index.md	ComparisonTheorem.lean	1	1713
+BASENAME_ONLY	docs/index.md	ComplConnected.lean	1	873
+BASENAME_ONLY	docs/index.md	Complex.lean	2	1422
+BASENAME_ONLY	docs/index.md	ComplexAnalyticity.lean	28	517
+BASENAME_ONLY	docs/index.md	ComplexIsingPoly.lean	1	1423
+BASENAME_ONLY	docs/index.md	Conditioning.lean	10	987
+BASENAME_ONLY	docs/index.md	ConnectedDroplet.lean	1	865
+BASENAME_ONLY	docs/index.md	ContourCount.lean	1	913
+BASENAME_ONLY	docs/index.md	ContourCountAssembly.lean	1	949
+BASENAME_ONLY	docs/index.md	ContourCountCover.lean	1	948
+BASENAME_ONLY	docs/index.md	ContourEven.lean	1	955
+BASENAME_ONLY	docs/index.md	ContourInjective.lean	1	924
+BASENAME_ONLY	docs/index.md	CorrelationAlongExhaustionDeriv.lean	2	468
+BASENAME_ONLY	docs/index.md	CorrelationDerivativeIncrementBridge.lean	1	477
+BASENAME_ONLY	docs/index.md	CouplingDerivative.lean	1	2077
+BASENAME_ONLY	docs/index.md	CubicBoxBoundaryShell.lean	1	946
+BASENAME_ONLY	docs/index.md	CubicBoxExtremalCoincidence.lean	1	1710
+BASENAME_ONLY	docs/index.md	CubicBoxFreeLimit.lean	2	1710
+BASENAME_ONLY	docs/index.md	CubicBoxPreconnected.lean	1	945
+BASENAME_ONLY	docs/index.md	CubicBoxShellConnected.lean	1	947
+BASENAME_ONLY	docs/index.md	CubicDerivativeProfileInfiniteVolume.lean	2	449
+BASENAME_ONLY	docs/index.md	CubicDerivativeProfileLebowitz.lean	1	448
+BASENAME_ONLY	docs/index.md	CubicExhaustion.lean	1	2068
+BASENAME_ONLY	docs/index.md	CubicLayerCylinder.lean	1	1613
+BASENAME_ONLY	docs/index.md	CubicLayerOpenBoxTransport.lean	1	1650
+BASENAME_ONLY	docs/index.md	CubicPerStageIncrement.lean	3	441
+BASENAME_ONLY	docs/index.md	CubicPseudoMassClusterSummability.lean	2	1826
+BASENAME_ONLY	docs/index.md	CubicPseudoMassNamedRate.lean	4	1822
+BASENAME_ONLY	docs/index.md	CubicShellDecaySum.lean	6	444
+BASENAME_ONLY	docs/index.md	CubicShellInfiniteVolumeBound.lean	3	442
+BASENAME_ONLY	docs/index.md	CubicUrsellShellSum.lean	1	486
+BASENAME_ONLY	docs/index.md	CutCrossingParity.lean	1	868
+BASENAME_ONLY	docs/index.md	CutDeterminesRegion.lean	1	950
+BASENAME_ONLY	docs/index.md	DartBijection.lean	1	962
+BASENAME_ONLY	docs/index.md	DartBijective.lean	1	963
+BASENAME_ONLY	docs/index.md	DartCutChar.lean	1	918
+BASENAME_ONLY	docs/index.md	DartDualComponentBoxEulerian.lean	1	886
+BASENAME_ONLY	docs/index.md	DartDualComponentBoxIncidentEven.lean	1	887
+BASENAME_ONLY	docs/index.md	DartDualComponentEulerian.lean	1	883
+BASENAME_ONLY	docs/index.md	DartDualComponentImage.lean	1	881
+BASENAME_ONLY	docs/index.md	DartDualCutCard.lean	1	909
+BASENAME_ONLY	docs/index.md	DartDualCutEven.lean	1	884
+BASENAME_ONLY	docs/index.md	DartDualReachable.lean	1	907
+BASENAME_ONLY	docs/index.md	DartFinite.lean	1	959
+BASENAME_ONLY	docs/index.md	DartOfCut.lean	1	917
+BASENAME_ONLY	docs/index.md	DartOrbit.lean	1	964
+BASENAME_ONLY	docs/index.md	DartPrimalCut.lean	1	915
+BASENAME_ONLY	docs/index.md	DartPrimalCutCard.lean	1	919
+BASENAME_ONLY	docs/index.md	DartReachableFPath.lean	2	908
+BASENAME_ONLY	docs/index.md	DartStepReverse.lean	1	960
+BASENAME_ONLY	docs/index.md	DerivativeLimitProviderCriteria.lean	2	1858
+BASENAME_ONLY	docs/index.md	DerivativeLimitProviderFiniteHLS.lean	1	2071
+BASENAME_ONLY	docs/index.md	DerivativeLimitProviderFiniteProfile.lean	2	1858
+BASENAME_ONLY	docs/index.md	DerivativeLimitProviderInfiniteHLS.lean	1	2070
+BASENAME_ONLY	docs/index.md	Dir2.lean	1	956
+BASENAME_ONLY	docs/index.md	DropletInjective.lean	1	867
+BASENAME_ONLY	docs/index.md	DualComponentSeparatesOfStokes.lean	1	885
+BASENAME_ONLY	docs/index.md	DualCut.lean	1	953
+BASENAME_ONLY	docs/index.md	DualCutCardBridge.lean	1	920
+BASENAME_ONLY	docs/index.md	DualCutConnected.lean	1	876
+BASENAME_ONLY	docs/index.md	DualCutEdgeAdjacency.lean	1	906
+BASENAME_ONLY	docs/index.md	DualCutInBox.lean	1	912
+BASENAME_ONLY	docs/index.md	DualCutInBoxInjective.lean	1	916
+BASENAME_ONLY	docs/index.md	DualCutSubConnected.lean	1	911
+BASENAME_ONLY	docs/index.md	DualSupport.lean	1	910
+BASENAME_ONLY	docs/index.md	DualToPrimal.lean	1	914
+BASENAME_ONLY	docs/index.md	EdgeSideComponent.lean	1	880
+BASENAME_ONLY	docs/index.md	EdgeSiteSums.lean	1	1273
+BASENAME_ONLY	docs/index.md	FieldAvoidingRatio.lean	2	2105
+BASENAME_ONLY	docs/index.md	FieldSourcePeel.lean	1	2109
+BASENAME_ONLY	docs/index.md	FilledConnectedBound.lean	1	872
+BASENAME_ONLY	docs/index.md	FilledRegion.lean	1	869
+BASENAME_ONLY	docs/index.md	FilledRegionConnected.lean	1	871
+BASENAME_ONLY	docs/index.md	FilledRegionIdempotent.lean	1	870
+BASENAME_ONLY	docs/index.md	FiniteHLSLipschitzPackage.lean	1	1985
+BASENAME_ONLY	docs/index.md	FiniteRegionPseudoMassDistFV.lean	1	1928
+BASENAME_ONLY	docs/index.md	FixedRayRegion.lean	1	894
+BASENAME_ONLY	docs/index.md	FreeLayerWalshOpenDecay.lean	1	1675
+BASENAME_ONLY	docs/index.md	FreeLayerWalshOpenInfiniteVolume.lean	1	1675
+BASENAME_ONLY	docs/index.md	GHS.lean	2	1809
+BASENAME_ONLY	docs/index.md	GeometricMoment.lean	1	2166
+BASENAME_ONLY	docs/index.md	GibbsMeasure.lean	15	499
+BASENAME_ONLY	docs/index.md	GlobalPseudoMassDistExhaustion.lean	1	1848
+BASENAME_ONLY	docs/index.md	GridEdge2.lean	1	951
+BASENAME_ONLY	docs/index.md	GridEdge2Cut.lean	1	952
+BASENAME_ONLY	docs/index.md	HLSBridgeFromCubicTanh.lean	1	2031
+BASENAME_ONLY	docs/index.md	HLSBridgeFromSimonLieb.lean	1	2031
+BASENAME_ONLY	docs/index.md	HLSSubstantiveCanonicalSummary.lean	2	2014
+BASENAME_ONLY	docs/index.md	HLSSubstantiveExistingRate.lean	1	2013
+BASENAME_ONLY	docs/index.md	HLSSubstantiveSimonLieb.lean	1	2013
+BASENAME_ONLY	docs/index.md	Hamiltonian.lean	2	1110
+BASENAME_ONLY	docs/index.md	HighTempMassGap.lean	1	2066
+BASENAME_ONLY	docs/index.md	IncrementCapstone.lean	6	1858
+BASENAME_ONLY	docs/index.md	InducedUnion.lean	13	426
+BASENAME_ONLY	docs/index.md	Inequalities.lean	15	1803
+BASENAME_ONLY	docs/index.md	LatticeBoundaryBED.lean	1	2196
+BASENAME_ONLY	docs/index.md	LatticeGraphCorrelation.lean	4	1959
+BASENAME_ONLY	docs/index.md	LatticeMassHighTempLipschitz.lean	1	1849
+BASENAME_ONLY	docs/index.md	LatticeMassHighTemperature.lean	7	1807
+BASENAME_ONLY	docs/index.md	LatticeMassPseudoMassTransfer.lean	1	1816
+BASENAME_ONLY	docs/index.md	LatticeMassPseudoMassTransferTanhPowDist.lean	2	1841
+BASENAME_ONLY	docs/index.md	LatticeSphereCard.lean	2	1203
+BASENAME_ONLY	docs/index.md	LayerOpenExplicitSubdominantRatio.lean	1	1651
+BASENAME_ONLY	docs/index.md	LayerOpenSlab.lean	1	1621
+BASENAME_ONLY	docs/index.md	LayerOpenSpectralDecay.lean	1	1625
+BASENAME_ONLY	docs/index.md	LeeYang.lean	1	363
+BASENAME_ONLY	docs/index.md	LiftBoxCut.lean	1	954
+BASENAME_ONLY	docs/index.md	LiftBoxCutChar.lean	1	921
+BASENAME_ONLY	docs/index.md	LiftBoxCutInjective.lean	1	923
+BASENAME_ONLY	docs/index.md	LiminfBound.lean	1	941
+BASENAME_ONLY	docs/index.md	LocalObservableExtremalCoincidence.lean	1	1710
+BASENAME_ONLY	docs/index.md	Locality.lean	1	1709
+BASENAME_ONLY	docs/index.md	LowTempTail.lean	1	965
+BASENAME_ONLY	docs/index.md	MassContinuityConvolutionMassUniformDart.lean	1	1916
+BASENAME_ONLY	docs/index.md	MassContinuityCorrelationLengthUpperSemicontinuous.lean	1	1907
+BASENAME_ONLY	docs/index.md	MassContinuityDenomRatioGeneral.lean	1	1916
+BASENAME_ONLY	docs/index.md	MassContinuityDirectionalCorrelationLength.lean	1	1900
+BASENAME_ONLY	docs/index.md	MassContinuityFiniteVolumeCapstone.lean	1	1913
+BASENAME_ONLY	docs/index.md	MassContinuityFiniteVolumeContinuity.lean	1	1912
+BASENAME_ONLY	docs/index.md	MassContinuityFiniteVolumeUniformCombine.lean	1	1915
+BASENAME_ONLY	docs/index.md	MassContinuityFiniteVolumeUniformLipschitz.lean	1	1914
+BASENAME_ONLY	docs/index.md	MassContinuityFiniteVolumeUniformPowDeriv.lean	1	1915
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassAbscissa.lean	1	1909
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassContinuityGated.lean	1	1904
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassDirectionalAbscissa.lean	1	1908
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassDirectionalLowerBound.lean	1	1902
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassLogLipReduction.lean	1	1905
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassUpperSemicontinuous.lean	1	1903
+BASENAME_ONLY	docs/index.md	MassContinuityLatticeMassWindow.lean	3	1901
+BASENAME_ONLY	docs/index.md	MassContinuityOnAxisCorrelationLength.lean	1	1906
+BASENAME_ONLY	docs/index.md	MassContinuityPerPairRate.lean	1	1910
+BASENAME_ONLY	docs/index.md	MassContinuitySharpRFactor.lean	1	1915
+BASENAME_ONLY	docs/index.md	MayerCompleteContribution.lean	6	2126
+BASENAME_ONLY	docs/index.md	MayerMontroll.lean	4	2126
+BASENAME_ONLY	docs/index.md	MayerRootComponent.lean	6	2126
+BASENAME_ONLY	docs/index.md	NextDart.lean	1	958
+BASENAME_ONLY	docs/index.md	NonnegCorrelations.lean	1	503
+BASENAME_ONLY	docs/index.md	OrbitDualEdges.lean	1	875
+BASENAME_ONLY	docs/index.md	PartitionFunctionIso.lean	2	422
+BASENAME_ONLY	docs/index.md	PathGraphEdges.lean	1	1581
+BASENAME_ONLY	docs/index.md	PathGraphTwoPoint.lean	1	1581
+BASENAME_ONLY	docs/index.md	PeierlsContourCount.lean	3	899
+BASENAME_ONLY	docs/index.md	PeierlsContourCountFilled.lean	1	898
+BASENAME_ONLY	docs/index.md	PeierlsContourCountPow.lean	1	935
+BASENAME_ONLY	docs/index.md	PeierlsInfinite.lean	5	863
+BASENAME_ONLY	docs/index.md	PeierlsLiminf.lean	1	942
+BASENAME_ONLY	docs/index.md	PeierlsMagnetizationPos.lean	1	943
+BASENAME_ONLY	docs/index.md	PeierlsMagnetizationPosFilled.lean	1	944
+BASENAME_ONLY	docs/index.md	PeierlsPlusGibbs.lean	1	937
+BASENAME_ONLY	docs/index.md	PeierlsSum.lean	1	936
+BASENAME_ONLY	docs/index.md	PeierlsTendsto.lean	1	938
+BASENAME_ONLY	docs/index.md	PerStageComplex.lean	2	775
+BASENAME_ONLY	docs/index.md	PerStageIncrement.lean	5	436
+BASENAME_ONLY	docs/index.md	PhaseTransition.lean	34	512
+BASENAME_ONLY	docs/index.md	PlanarBondAssembly.lean	1	882
+BASENAME_ONLY	docs/index.md	PlanarBondDischarge.lean	20	877
+BASENAME_ONLY	docs/index.md	PlanarBondParityCore.lean	2	878
+BASENAME_ONLY	docs/index.md	PlanarBondReduction.lean	2	877
+BASENAME_ONLY	docs/index.md	PlanarBondSeparationBridge.lean	1	879
+BASENAME_ONLY	docs/index.md	PlusGibbsMono.lean	1	940
+BASENAME_ONLY	docs/index.md	PlusGibbsSign.lean	1	939
+BASENAME_ONLY	docs/index.md	PrevDart.lean	1	961
+BASENAME_ONLY	docs/index.md	PrimalSquareBoundary.lean	1	888
+BASENAME_ONLY	docs/index.md	Profile.lean	2	2044
+BASENAME_ONLY	docs/index.md	PseudoMass.lean	1	1844
+BASENAME_ONLY	docs/index.md	RandomCurrent.lean	3	1762
+BASENAME_ONLY	docs/index.md	RayAnchorBound.lean	1	932
+BASENAME_ONLY	docs/index.md	RayAnchorBox.lean	1	927
+BASENAME_ONLY	docs/index.md	RayAnchorDart.lean	1	926
+BASENAME_ONLY	docs/index.md	RayAnchorSet.lean	1	933
+BASENAME_ONLY	docs/index.md	RayExit.lean	1	925
+BASENAME_ONLY	docs/index.md	RayExitAnchorDart.lean	1	928
+BASENAME_ONLY	docs/index.md	RayExitAnchorPrefix.lean	1	929
+BASENAME_ONLY	docs/index.md	RayExitAnchorStep.lean	1	930
+BASENAME_ONLY	docs/index.md	RayExitBound.lean	1	931
+BASENAME_ONLY	docs/index.md	RightRayParity.lean	1	889
+BASENAME_ONLY	docs/index.md	RightRayVerticalParity.lean	1	893
+BASENAME_ONLY	docs/index.md	RightRayVerticalSquare.lean	1	890
+BASENAME_ONLY	docs/index.md	RightRayVerticalStep.lean	1	892
+BASENAME_ONLY	docs/index.md	RightRayVerticalXor.lean	1	891
+BASENAME_ONLY	docs/index.md	SameOrbit.lean	1	874
+BASENAME_ONLY	docs/index.md	ScaledBetaDerivative.lean	18	451
+BASENAME_ONLY	docs/index.md	ShellCovarianceInfiniteVolume.lean	1	484
+BASENAME_ONLY	docs/index.md	ShellCovarianceShellSum.lean	1	485
+BASENAME_ONLY	docs/index.md	SimonLiebDistanceDecay.lean	1	2067
+BASENAME_ONLY	docs/index.md	SingleOrbitCutDirDart.lean	1	904
+BASENAME_ONLY	docs/index.md	SingleOrbitDegTwoPairing.lean	1	905
+BASENAME_ONLY	docs/index.md	SingleOrbitEdgeValid.lean	1	901
+BASENAME_ONLY	docs/index.md	SingleOrbitEulerian.lean	1	903
+BASENAME_ONLY	docs/index.md	SingleOrbitFaceCard.lean	1	902
+BASENAME_ONLY	docs/index.md	SingleOrbitFaceDart.lean	1	900
+BASENAME_ONLY	docs/index.md	SiteIndepMag.lean	3	1357
+BASENAME_ONLY	docs/index.md	SumGraph.lean	7	407
+BASENAME_ONLY	docs/index.md	SumModel.lean	8	414
+BASENAME_ONLY	docs/index.md	SummabilityCluster.lean	1	1766
+BASENAME_ONLY	docs/index.md	SurjectiveLogWeight.lean	1	2126
+BASENAME_ONLY	docs/index.md	TheoremEtaLe1.lean	1	1765
+BASENAME_ONLY	docs/index.md	Tight.lean	3	443
+BASENAME_ONLY	docs/index.md	TraceSum1D.lean	1	1565
+BASENAME_ONLY	docs/index.md	TranslationInvariance.lean	9	1344
+BASENAME_ONLY	docs/index.md	TwoPointCorrelationInfiniteBetaDeriv.lean	1	564
+BASENAME_ONLY	docs/index.md	TwoPointRatioBound.lean	1	562
+BASENAME_ONLY	docs/index.md	TwoSiteInteractingOpenStripDecay.lean	1	2287
+BASENAME_ONLY	docs/index.md	UniformMag.lean	4	1809
+BASENAME_ONLY	docs/index.md	UniformTransferLargeK.lean	2	1850
+BASENAME_ONLY	docs/index.md	UrsellFinThree.lean	2	2126
+BASENAME_ONLY	docs/index.md	VolumeUniformHZ.lean	2	538
+BASENAME_ONLY	docs/index.md	WeakBound.lean	1	2077
+BASENAME_ONLY	tex/proof-guide.tex	AlternatingCompleteGraph.lean	1	19358
+BASENAME_ONLY	tex/proof-guide.tex	AlternatingFinThree.lean	1	20997
+BASENAME_ONLY	tex/proof-guide.tex	AmbientLattice.lean	8	96
+BASENAME_ONLY	tex/proof-guide.tex	AmbientLatticeSum.lean	1	26558
+BASENAME_ONLY	tex/proof-guide.tex	Asano.lean	4	136
+BASENAME_ONLY	tex/proof-guide.tex	CEConditionalCapstone.lean	2	23146
+BASENAME_ONLY	tex/proof-guide.tex	ChebyshevRateBridge.lean	1	7148
+BASENAME_ONLY	tex/proof-guide.tex	CompactGeometry.lean	3	16753
+BASENAME_ONLY	tex/proof-guide.tex	ComparisonTheorem.lean	1	33383
+BASENAME_ONLY	tex/proof-guide.tex	Conditioning.lean	2	141
+BASENAME_ONLY	tex/proof-guide.tex	CorrelationAlongExhaustionDeriv.lean	1	27512
+BASENAME_ONLY	tex/proof-guide.tex	CorrelationSymmetry.lean	3	6969
+BASENAME_ONLY	tex/proof-guide.tex	CountGeometricCapstone.lean	1	1941
+BASENAME_ONLY	tex/proof-guide.tex	CubicBoxComponentSize.lean	1	1890
+BASENAME_ONLY	tex/proof-guide.tex	CubicBoxFreeLimit.lean	1	33404
+BASENAME_ONLY	tex/proof-guide.tex	CubicBoxMagnetizationDecay.lean	1	2002
+BASENAME_ONLY	tex/proof-guide.tex	CubicShellDecaySum.lean	1	23400
+BASENAME_ONLY	tex/proof-guide.tex	DerivativeLimitProviderInfiniteHLS.lean	1	34625
+BASENAME_ONLY	tex/proof-guide.tex	EdgeSetDistance.lean	1	1824
+BASENAME_ONLY	tex/proof-guide.tex	EdgeSetHandshake.lean	1	1851
+BASENAME_ONLY	tex/proof-guide.tex	EdgeSiteSums.lean	1	898
+BASENAME_ONLY	tex/proof-guide.tex	EdgeWalkCounting.lean	1	1982
+BASENAME_ONLY	tex/proof-guide.tex	EdgeWalkExistence.lean	1	1960
+BASENAME_ONLY	tex/proof-guide.tex	FKG.lean	1	133
+BASENAME_ONLY	tex/proof-guide.tex	FiniteRegionPseudoMassDistLipschitz.lean	1	34744
+BASENAME_ONLY	tex/proof-guide.tex	FreeLayerWalshOpenAxisDecay.lean	2	10990
+BASENAME_ONLY	tex/proof-guide.tex	FreeLayerWalshOpenAxisInfiniteVolume.lean	1	11023
+BASENAME_ONLY	tex/proof-guide.tex	FunctionTheoryAxioms.lean	1	34514
+BASENAME_ONLY	tex/proof-guide.tex	GHS.lean	2	134
+BASENAME_ONLY	tex/proof-guide.tex	GKS.lean	4	132
+BASENAME_ONLY	tex/proof-guide.tex	GeometricTail.lean	1	1926
+BASENAME_ONLY	tex/proof-guide.tex	GibbsMeasure.lean	5	128
+BASENAME_ONLY	tex/proof-guide.tex	HLSBridgeFromSimonLieb.lean	1	27641
+BASENAME_ONLY	tex/proof-guide.tex	Hamiltonian.lean	5	126
+BASENAME_ONLY	tex/proof-guide.tex	HighTempMassGap.lean	1	32767
+BASENAME_ONLY	tex/proof-guide.tex	HighTempZeroMagnetization.lean	1	2023
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionRatioBounds.lean	2	24621
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionRatioLogFe.lean	1	24632
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionTripleRatio.lean	1	24626
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpSharperComplete.lean	1	24553
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionClosedForms.lean	1	24580
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionLowerUpper.lean	1	24599
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionVariants.lean	1	24587
+BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsFreeEnergyInfinite.lean	1	24608
+BASENAME_ONLY	tex/proof-guide.tex	IncrementCapstone.lean	1	23454
+BASENAME_ONLY	tex/proof-guide.tex	InduceDistanceTransfer.lean	1	1872
+BASENAME_ONLY	tex/proof-guide.tex	Inequalities.lean	1	22856
+BASENAME_ONLY	tex/proof-guide.tex	LatticeBoundaryBED.lean	1	23164
+BASENAME_ONLY	tex/proof-guide.tex	LatticeExpSum.lean	1	31904
+BASENAME_ONLY	tex/proof-guide.tex	LatticeGraphCorrelation.lean	2	22618
+BASENAME_ONLY	tex/proof-guide.tex	LatticeSphereCard.lean	1	32788
+BASENAME_ONLY	tex/proof-guide.tex	LeeYang.lean	4	137
+BASENAME_ONLY	tex/proof-guide.tex	LeeYangLower.lean	1	17410
+BASENAME_ONLY	tex/proof-guide.tex	LocalCoverPatch.lean	7	14334
+BASENAME_ONLY	tex/proof-guide.tex	MainTheorem.lean	1	32768
+BASENAME_ONLY	tex/proof-guide.tex	MassContinuityDartRatio.lean	1	34875
+BASENAME_ONLY	tex/proof-guide.tex	MassContinuityRatioBound.lean	1	34843
+BASENAME_ONLY	tex/proof-guide.tex	MayerCompleteContribution.lean	1	19366
+BASENAME_ONLY	tex/proof-guide.tex	NextDart.lean	1	2635
+BASENAME_ONLY	tex/proof-guide.tex	NonnegCorrelations.lean	4	131
+BASENAME_ONLY	tex/proof-guide.tex	PartitionFunctionIso.lean	1	26507
+BASENAME_ONLY	tex/proof-guide.tex	PeierlsContourCount.lean	1	3314
+BASENAME_ONLY	tex/proof-guide.tex	PhaseTransition.lean	3	143
+BASENAME_ONLY	tex/proof-guide.tex	PlanarBondReduction.lean	1	2414
+BASENAME_ONLY	tex/proof-guide.tex	PlusHighTempRepresentation.lean	1	1732
+BASENAME_ONLY	tex/proof-guide.tex	PlusOnePointConnectedBound.lean	1	1795
+BASENAME_ONLY	tex/proof-guide.tex	PlusOnePointRepresentation.lean	1	1766
+BASENAME_ONLY	tex/proof-guide.tex	PosReal.lean	2	15901
+BASENAME_ONLY	tex/proof-guide.tex	PositiveReal.lean	1	15500
+BASENAME_ONLY	tex/proof-guide.tex	PseudoMass.lean	8	21177
+BASENAME_ONLY	tex/proof-guide.tex	SharpHLSDenominatorComparison.lean	2	34661
+BASENAME_ONLY	tex/proof-guide.tex	SimonLiebDistanceDecay.lean	1	19253
+BASENAME_ONLY	tex/proof-guide.tex	SpontaneousMagnetizationTwoPoint.lean	1	1707
+BASENAME_ONLY	tex/proof-guide.tex	SumGraph.lean	2	26204
+BASENAME_ONLY	tex/proof-guide.tex	SumModel.lean	1	26328
+BASENAME_ONLY	tex/proof-guide.tex	Truncated2GeneralFieldCluster.lean	1	19268
+BASENAME_ONLY	tex/proof-guide.tex	Truncated2GeneralFieldDecay.lean	1	19254
+BASENAME_ONLY	tex/proof-guide.tex	UnconditionalFiniteRegionLipschitz.lean	1	34811
+BASENAME_ONLY	tex/proof-guide.tex	UnconditionalProfileLower.lean	1	34777
+BASENAME_ONLY	tex/proof-guide.tex	UpperLog.lean	3	17489
+BASENAME_ONLY	tex/proof-guide.tex	UrsellFinThree.lean	2	21010
+BASENAME_ONLY	tex/proof-guide.tex	ViaLocal.lean	2	15345
+BASENAME_ONLY	tex/proof-guide.tex	WalkCountDegreeBound.lean	1	1907
+BASENAME_ONLY	tex/proof-guide.tex	WeightedSystem.lean	1	6177
+MISSING	docs/index.md	Concrete/LatticeGraphCorrelation/Legacy.lean	2	1979
+MISSING	docs/index.md	HLSBridgeSummary.lean	1	2019
+MISSING	docs/index.md	HLSConsolidatedSummary.lean	1	2010
+MISSING	docs/index.md	HLSSusceptibilityBridge.lean	1	2012
+MISSING	docs/index.md	MassContinuityFiniteVolumeDerivCombine/BindingPairDeriv.lean	1	1915
+MISSING	docs/index.md	MassContinuityFiniteVolumeIncidentEdge/IncidentSum/DerivCombine/DerivSharp/BindingPairDeriv.lean	1	1916
+MISSING	docs/index.md	RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean	1	866
+MISSING	docs/index.md	SharpHLSScopeExcludedAxioms.lean	1	2000
+MISSING	docs/index.md	SpecialCases/Legacy.lean	3	1977
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/AscoliPatches/CompactTarget.lean	1	16262
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/AscoliPatches/ConstNormBounded.lean	1	16302
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/AscoliPatches/NormBounded.lean	1	16260
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CompactCoverPatches/CompactTarget.lean	1	14245
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CompactCoverPatches/FiniteCover.lean	1	14130
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CompactCoverPatches/LocalCover.lean	1	17053
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CompactCoverPatches/RealCover.lean	1	14189
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CoverPatches/ConstCompactTarget.lean	1	16308
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CoverPatches/LocallyBounded.lean	1	16350
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/CoverPatches/LocallyBoundedCompactTarget.lean	1	16352
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/EventualPatches/FiniteBallPatch.lean	1	14291
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/EventualPatches/PointwiseNorm.lean	1	16868
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/EventualPatches/RealEventualOverlap.lean	1	16829
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/RealCoverPatches/FiniteCover.lean	1	14121
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/RealCoverPatches/Patch.lean	1	14123
+MISSING	tex/proof-guide.tex	BranchAscoliCompactOpen/RealCoverPatches/RealPatch.lean	1	14042
+MISSING	tex/proof-guide.tex	BranchDeviationDirectRange/ViaLocal.lean	1	15468
+MISSING	tex/proof-guide.tex	BranchRelCompact/ConstNormBounded.lean	1	15096
+MISSING	tex/proof-guide.tex	BranchRelCompact/LocallyBounded.lean	1	15097
+MISSING	tex/proof-guide.tex	BranchRelCompact/NormBounded.lean	1	15095
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/OpenPatch.lean	1	14377
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/OpenPatch/LocalCover.lean	1	14373
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/Vitali.lean	2	13594
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/Vitali/Ball.lean	1	13593
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean	1	13588
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/Vitali/Ball/Real.lean	1	13589
+MISSING	tex/proof-guide.tex	Branches/LocalCoverPatch/Vitali/LocalCover.lean	1	13641
+MISSING	tex/proof-guide.tex	Branches/RealCompact/Vitali.lean	1	13650
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/AllStages.lean	1	14637
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/AllStages/Ball.lean	2	13486
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/AllStages/Pointwise.lean	1	14627
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/AllStages/Strong.lean	2	13543
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/BranchData.lean	1	14614
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Ball.lean	1	14636
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Ball/Basic.lean	2	13484
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Ball/Strong.lean	2	13541
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Point.lean	1	14635
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Point/Exists.lean	1	14619
+MISSING	tex/proof-guide.tex	Branches/StageLeeYang/Stage/Point/Family.lean	1	14621
+MISSING	tex/proof-guide.tex	Branches/VitaliBridge/Bridge/LeeYangDomain.lean	1	13428
+MISSING	tex/proof-guide.tex	Branches/VitaliBridge/Bridge/OpenSet.lean	1	13426
+MISSING	tex/proof-guide.tex	Branches/VitaliBridge/Real/Identified.lean	1	13435
+MISSING	tex/proof-guide.tex	Branches/VitaliBridge/Real/Limit.lean	1	13433
+MISSING	tex/proof-guide.tex	CompactGeometry/EventualDataGeometry.lean	2	16751
+MISSING	tex/proof-guide.tex	CompactGeometry/EventualDataGeometry/Pointwise.lean	1	16785
+MISSING	tex/proof-guide.tex	CompactGeometry/EventualDataGeometry/Structured.lean	1	16746
+MISSING	tex/proof-guide.tex	CompactGeometry/FinGeometry.lean	1	17000
+MISSING	tex/proof-guide.tex	CompactGeometry/FinsetCover.lean	1	16952
+MISSING	tex/proof-guide.tex	CompactGeometry/FinsetCover/LocalFamily.lean	1	16945
+MISSING	tex/proof-guide.tex	CompactGeometry/FinsetCover/RealFamily.lean	1	16947
+MISSING	tex/proof-guide.tex	Concrete/.../HighTemperature.lean	2	24384
+MISSING	tex/proof-guide.tex	DirectRange/CompactTarget.lean	1	15260
+MISSING	tex/proof-guide.tex	DirectRange/Core.lean	1	15259
+MISSING	tex/proof-guide.tex	EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/CompactTarget.lean	1	15301
+MISSING	tex/proof-guide.tex	EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/Core.lean	1	15300
+MISSING	tex/proof-guide.tex	EventualClosedBallPatches/EventualClosedBallDeviation/ViaLocal/CompactTarget.lean	1	15343
+MISSING	tex/proof-guide.tex	EventualClosedBallPatches/EventualClosedBallDeviation/ViaLocal/Core.lean	1	15342
+MISSING	tex/proof-guide.tex	EventualOverlap/CompactTarget.lean	1	15179
+MISSING	tex/proof-guide.tex	EventualOverlap/Core.lean	1	15176
+MISSING	tex/proof-guide.tex	EventualOverlapViaDeviation/CompactTarget.lean	1	15642
+MISSING	tex/proof-guide.tex	EventualOverlapViaDeviation/Core.lean	1	15639
+MISSING	tex/proof-guide.tex	EventuallyEqOn.lean	1	16478
+MISSING	tex/proof-guide.tex	EventuallyEqOn/LocalFamily.lean	1	16471
+MISSING	tex/proof-guide.tex	EventuallyEqOn/RealFamily.lean	1	16473
+MISSING	tex/proof-guide.tex	LeeYangLower/LocalBounded.lean	1	17405
+MISSING	tex/proof-guide.tex	LeeYangLower/LowerLog.lean	1	17403
+MISSING	tex/proof-guide.tex	Lemma_17_5_2/SharpHLSScopeExcludedAxioms.lean	1	34448
+MISSING	tex/proof-guide.tex	LocalCoverPatch/FamilyPatch.lean	1	16671
+MISSING	tex/proof-guide.tex	LocalCoverPatch/FamilyPatch/Pointwise.lean	1	16666
+MISSING	tex/proof-guide.tex	LocalCoverPatch/FamilyPatch/Structured.lean	1	16664
+MISSING	tex/proof-guide.tex	LocalCoverPatch/Patch.lean	1	16622
+MISSING	tex/proof-guide.tex	LocalCoverPatch/Patch/Pointwise.lean	1	16617
+MISSING	tex/proof-guide.tex	LocalCoverPatch/Patch/Structured.lean	1	16615
+MISSING	tex/proof-guide.tex	LocalViaDeviation.lean	1	15303
+MISSING	tex/proof-guide.tex	LocallyBounded/CompactTarget.lean	1	15134
+MISSING	tex/proof-guide.tex	LocallyBounded/Core.lean	1	15131
+MISSING	tex/proof-guide.tex	OpenPatch.lean	1	14334
+MISSING	tex/proof-guide.tex	OpenPatch/OpenCover.lean	1	14333
+MISSING	tex/proof-guide.tex	Peierls/ClosedWalkCount.lean	1	4873
+MISSING	tex/proof-guide.tex	Peierls/ConnectedDropletBound.lean	1	2065
+MISSING	tex/proof-guide.tex	Peierls/DartOrbitWalk.lean	1	4860
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorAdjacency.lean	1	3668
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorAdjacencyRoute.lean	1	3681
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalEqual.lean	1	3697
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridge.lean	1	3763
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeChain.lean	1	3785
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeGap.lean	1	3810
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeNonStrip.lean	2	3858
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeNonStripFrontier.lean	2	3884
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeNonStripNextDart.lean	2	3906
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurn.lean	2	3931
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean	2	3957
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictBridgeStrip.lean	2	3833
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictConnected.lean	1	3719
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchorVerticalStrictOrdered.lean	1	3743
+MISSING	tex/proof-guide.tex	Peierls/RayExitAnchoredRoute.lean	1	4372
+MISSING	tex/proof-guide.tex	Peierls/RayExitShadowRoute.lean	1	4388
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitAdvance.lean	1	2945
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitAdvanceConn.lean	1	2985
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitAdvanceMem.lean	1	2957
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitBase.lean	1	2603
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitBasepoint.lean	1	2998
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitConnTransfer.lean	1	3086
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitConnectedInputs.lean	1	3074
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContact.lean	1	2640
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactEquiv.lean	1	2865
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactGen.lean	1	2826
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactMove.lean	1	2810
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactPair.lean	1	2743
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactStep.lean	1	2793
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitContactSymm.lean	1	2879
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitDartEdge.lean	1	3179
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitDegFourPairing.lean	1	3283
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitDegTwo.lean	1	3152
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitDichotomy.lean	1	3137
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitDirCycle.lean	1	3099
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFaceDeg.lean	1	3165
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFan.lean	1	2656
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFanComplete.lean	1	2692
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFanOne.lean	1	2840
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFanPrefix.lean	1	2674
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFirstHit.lean	1	3112
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFromBasepoint.lean	1	3010
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitFromConnected.lean	1	2973
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitGeometric.lean	1	3046
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitHitAdjacent.lean	1	3125
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitInSitePath.lean	1	3021
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitOrbitReach.lean	1	2728
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitReach.lean	1	2708
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitRightFan.lean	1	2759
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitRightFanPrefix.lean	1	2775
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitSameInSite.lean	1	3060
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitSameLeftArc.lean	1	2932
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitSlide.lean	1	2623
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitToBasepoint.lean	1	3033
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitTransport.lean	1	2891
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitTurnStep.lean	1	2852
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitWedge.lean	1	2904
+MISSING	tex/proof-guide.tex	Peierls/SingleOrbitWedgeReach.lean	1	2918
+MISSING	tex/proof-guide.tex	Peierls/WalkEdgesConnected.lean	1	2541
+MISSING	tex/proof-guide.tex	PolynomialLower/LeeYangUpperLower.lean	2	17520
+MISSING	tex/proof-guide.tex	PolynomialLower/PolyBallAround.lean	2	17273
+MISSING	tex/proof-guide.tex	PolynomialLower/PolyLocalBounded.lean	2	17199
+MISSING	tex/proof-guide.tex	PosReal/DirectRange.lean	1	15953
+MISSING	tex/proof-guide.tex	PosReal/ViaLocal.lean	1	15900
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/Ascoli.lean	1	16053
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/Ascoli/CompactTarget.lean	1	16050
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/Ascoli/Core.lean	1	16048
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/ClosedProduct.lean	1	16105
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/ClosedProduct/CompactTarget.lean	1	16102
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/ClosedProduct/Core.lean	1	16100
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/NormBounded.lean	1	16155
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/NormBounded/CompactTarget.lean	1	16152
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/NormBounded/Core.lean	1	16150
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean	2	15035
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli.lean	1	16211
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli/CompactTarget.lean	1	16207
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli/Core.lean	1	16205
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact.lean	1	15034
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact/CompactTarget.lean	1	15030
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact/Core.lean	1	15028
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/DirectRange.lean	1	15431
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/CompactTarget.lean	1	15427
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/Core.lean	1	15425
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/RelCompact.lean	1	15392
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/CompactTarget.lean	1	15388
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/Core.lean	1	15386
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/CompactTarget.lean	1	15465
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/Core.lean	1	15464
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchLocalDirectRange/EventualOverlap.lean	1	15183
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean	1	15647
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean	1	15138
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchLocalDirectRange/ViaDeviation.lean	1	15646
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/ConstNormBounded/CompactTarget.lean	1	15084
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/ConstNormBounded/Core.lean	1	15082
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/LocallyBounded/CompactTarget.lean	1	15091
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/LocallyBounded/Core.lean	1	15089
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/NormBounded/CompactTarget.lean	1	15077
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/BranchRelCompact/NormBounded/Core.lean	1	15075
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RangeClosure.lean	1	14942
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RangeClosure/CompactTarget.lean	1	14938
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RangeClosure/Core.lean	1	14936
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RelCompact.lean	1	14988
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RelCompact/CompactTarget.lean	1	14984
+MISSING	tex/proof-guide.tex	RangeAscoliPatches/RangeCompactOpen/RelCompact/Core.lean	1	14982
+MISSING	tex/proof-guide.tex	RawBranchData.lean	1	16419
+MISSING	tex/proof-guide.tex	RawBranchData/LocalFamily.lean	1	16412
+MISSING	tex/proof-guide.tex	RawBranchData/RealFamily.lean	1	16414
+MISSING	tex/proof-guide.tex	RawPatch/BranchData.lean	1	16425
+MISSING	tex/proof-guide.tex	RawPatch/EventuallyEqOn.lean	1	16484
+MISSING	tex/proof-guide.tex	SharpHLSScopeExcludedAxioms.lean	1	34646
+MISSING	tex/proof-guide.tex	StructuredFamily.lean	3	16534
+MISSING	tex/proof-guide.tex	StructuredFamily/Pointwise.lean	2	16577
+MISSING	tex/proof-guide.tex	StructuredFamily/Structured.lean	1	16529
+MISSING	tex/proof-guide.tex	StructuredPatch.lean	6	14420
+MISSING	tex/proof-guide.tex	StructuredPatch/Patch.lean	2	14419
+MISSING	tex/proof-guide.tex	StructuredPatch/Patch/Data.lean	1	14415
+MISSING	tex/proof-guide.tex	StructuredPatch/Patch/Family.lean	1	14509
+MISSING	tex/proof-guide.tex	StructuredPatch/Pointwise.lean	1	16901
+MISSING	tex/proof-guide.tex	StructuredPatch/Real.lean	3	14464
+MISSING	tex/proof-guide.tex	StructuredPatch/Real/Data.lean	1	14460
+MISSING	tex/proof-guide.tex	StructuredPatch/Real/Family.lean	1	14510
+MISSING	tex/proof-guide.tex	StructuredPatch/Real/RealFamily.lean	1	14561
+MISSING	tex/proof-guide.tex	StructuredPatch/Structured.lean	1	16540
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/Ball.lean	1	13773
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/Ball/Bridge.lean	1	13767
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/Ball/Real.lean	1	13768
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean	2	13816
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/FinBall.lean	1	13856
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/TwoBall.lean	1	13808
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/CompactOpenVitali/Overlap.lean	1	13903
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean	2	14077
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/CompactOpen/FiniteFamily.lean	1	14073
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/CompactOpen/Pointwise.lean	1	14684
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/Patch.lean	2	14179
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/Patch/CompactTarget.lean	1	14231
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/Patch/FiniteCover.lean	1	14119
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteCoverPatches/Patch/RealCover.lean	1	14175
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean	2	13963
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/FiniteFamily.lean	1	13954
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/Pointwise.lean	1	14675
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean	2	13964
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Family.lean	1	13958
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Real.lean	1	14000
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/COpenData.lean	1	14891
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/COpenData/CompactTarget.lean	1	14887
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/COpenData/Patch.lean	1	14882
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/CompactGeometry.lean	1	14840
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Geometry.lean	1	14831
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Patch.lean	1	14836
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/FinCover.lean	1	14738
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/FinCover/Package.lean	1	14732
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/FinCover/Patch.lean	1	14734
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/RealCover.lean	1	14788
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/RealCover/CompactReal.lean	1	14785
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/PointwiseAllStage/RealCover/FinReal.lean	1	14780
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/SubseqVitali.lean	1	13720
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/SubseqVitali/Ball.lean	1	13708
+MISSING	tex/proof-guide.tex	SubseqCompactOpen/SubseqVitali/LocalCover.lean	1	13712
+MISSING	tex/proof-guide.tex	TransferMatrix/LayerDobrushinContraction.lean	1	34306
+MISSING	tex/proof-guide.tex	TransferMatrix/LayerDoeblin.lean	1	34306
+MISSING	tex/proof-guide.tex	TransferMatrix/LayerDoobSpectralGap.lean	1	34306
+MISSING	tex/proof-guide.tex	UpperLog/AbsLogFreeEnergy.lean	2	17621
+MISSING	tex/proof-guide.tex	UpperLog/CompactUpper.lean	1	17484
+MISSING	tex/proof-guide.tex	ViaDeviation/CompactTarget.lean	1	15636
+MISSING	tex/proof-guide.tex	ViaDeviation/Core.lean	1	15633
+SELFREF	docs/index.md	AmbientComplexAnalyticity.lean >> AmbientComplexAnalyticity.lean	1	524
+SELFREF	docs/index.md	AmbientLattice.lean >> AmbientLattice.lean	3	851
+SELFREF	docs/index.md	AmbientLattice/Analyticity.lean >> Analyticity.lean	1	2126
+SELFREF	docs/index.md	AmbientLattice/Analyticity.lean >> IsingModel/AmbientLattice/Analyticity.lean	1	2126
+SELFREF	docs/index.md	AmbientLattice/BetaDerivative.lean >> AmbientLattice/BetaDerivative.lean	1	1809
+SELFREF	docs/index.md	AmbientLattice/BetaDerivative.lean >> BetaDerivative.lean	1	1809
+SELFREF	docs/index.md	AmbientLattice/Defs.lean >> AmbientLattice/Defs.lean	2	1809
+SELFREF	docs/index.md	AmbientLattice/SpecialCases/HighTemperatureBounds.lean >> HighTemperatureBounds.lean	1	2125
+SELFREF	docs/index.md	AmbientLattice/SpecialCases/PartitionFunctionClosedForms.lean >> AmbientLattice/SpecialCases/PartitionFunctionClosedForms.lean	1	1378
+SELFREF	docs/index.md	AmbientLatticeSum.lean >> AmbientLatticeSum.lean	1	424
+SELFREF	docs/index.md	BetaDerivative.lean >> BetaDerivative.lean	1	1809
+SELFREF	docs/index.md	ClusterExpansion.lean >> ClusterExpansion.lean	1	2126
+SELFREF	docs/index.md	ClusterExpansion/TwoPointRatioBound.lean >> TwoPointRatioBound.lean	1	549
+SELFREF	docs/index.md	ComplexAnalyticity.lean >> ComplexAnalyticity.lean	1	517
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation.lean >> Concrete/LatticeGraphCorrelation.lean	1	1355
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/CorrelationDecay.lean >> Concrete/LatticeGraphCorrelation/CorrelationDecay.lean	2	1557
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean >> Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean	1	851
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean >> Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean	1	1413
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean >> Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean	1	1382
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean >> Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean	1	2125
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean >> HighTemperatureBounds.lean	1	2125
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Inequalities.lean >> Concrete/LatticeGraphCorrelation/Inequalities.lean	1	1809
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Inequalities.lean >> Inequalities.lean	1	1809
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/LatticeMassFoundation.lean >> Concrete/LatticeGraphCorrelation/LatticeMassFoundation.lean	1	1807
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/LatticeMassHighTempLipschitz.lean >> LatticeMassHighTempLipschitz.lean	1	1809
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean >> Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean	1	1803
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean >> LatticeMassPseudoMassTransfer.lean	1	1803
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Lemma_17_5_2.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2.lean	1	1849
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Lemma_17_5_2/DerivativeLimitProviderFiniteProfile.lean >> DerivativeLimitProviderFiniteProfile.lean	1	1985
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Lemma_17_5_2/FiniteHLSLipschitzPackage/Core.lean >> FiniteHLSLipschitzPackage/Core.lean	1	1985
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Lemma_17_5_2/HLSBridgeFromCubicTanh.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2/HLSBridgeFromCubicTanh.lean	1	2023
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Lemma_17_5_2/HLSSubstantiveCanonicalSummary.lean >> HLSSubstantiveCanonicalSummary.lean	1	2013
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean >> Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean	1	1378
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/PartitionFunctionSymmetry.lean >> Concrete/LatticeGraphCorrelation/PartitionFunctionSymmetry.lean	1	1380
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/PolynomialLower.lean >> PerStageComplex/Bounds/PolynomialLower.lean	1	524
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/SimonLiebDistanceDecay.lean >> Concrete/LatticeGraphCorrelation/SimonLiebDistanceDecay.lean	1	2017
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/SimonLiebDistanceDecay.lean >> SimonLiebDistanceDecay.lean	1	2017
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/SiteIndepMagTwoPoint.lean >> Concrete/LatticeGraphCorrelation/SiteIndepMagTwoPoint.lean	1	1357
+SELFREF	docs/index.md	Concrete/LatticeGraphCorrelation/Translation.lean >> Concrete/LatticeGraphCorrelation/Translation.lean	1	1347
+SELFREF	docs/index.md	DerivativeLimitProviderCriteria.lean >> DerivativeLimitProviderCriteria.lean	1	1858
+SELFREF	docs/index.md	DerivativeLimitProviderFiniteProfile.lean >> DerivativeLimitProviderFiniteProfile.lean	1	1858
+SELFREF	docs/index.md	FieldDerivative.lean >> AmbientLattice/FieldDerivative.lean	1	1809
+SELFREF	docs/index.md	FieldDerivative.lean >> IsingModel/AmbientLattice/FieldDerivative.lean	1	1809
+SELFREF	docs/index.md	FreeEnergy.lean >> FreeEnergy.lean	1	399
+SELFREF	docs/index.md	GlobalPseudoMassDistExhaustion.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2/GlobalPseudoMassDistExhaustion.lean	1	1848
+SELFREF	docs/index.md	HLSSubstantiveSimonLieb.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2/HLSSubstantiveSimonLieb.lean	1	2013
+SELFREF	docs/index.md	IncrementCapstone.lean >> IncrementCapstone.lean	1	1858
+SELFREF	docs/index.md	InducedUnion.lean >> InducedUnion.lean	1	426
+SELFREF	docs/index.md	Inequalities.lean >> Inequalities.lean	1	1803
+SELFREF	docs/index.md	IsingModel/AmbientComplexAnalyticity.lean >> IsingModel/AmbientComplexAnalyticity.lean	1	1442
+SELFREF	docs/index.md	IsingModel/AmbientComplexAnalyticity/CoverPatches/Pointwise.lean >> IsingModel/AmbientComplexAnalyticity/CoverPatches/Pointwise.lean	1	1465
+SELFREF	docs/index.md	IsingModel/ComplexAnalyticity.lean >> IsingModel/ComplexAnalyticity.lean	1	1416
+SELFREF	docs/index.md	IsingModel/PolyDecay.lean >> IsingModel/PolyDecay.lean	1	1861
+SELFREF	docs/index.md	JDerivative.lean >> AmbientLattice/JDerivative.lean	1	1809
+SELFREF	docs/index.md	JDerivative.lean >> IsingModel/AmbientLattice/JDerivative.lean	1	1809
+SELFREF	docs/index.md	JDerivative.lean >> JDerivative.lean	1	1809
+SELFREF	docs/index.md	Lattice.lean >> Lattice.lean	1	1558
+SELFREF	docs/index.md	LayerOpenSpectralDecay.lean >> TransferMatrix/LayerOpenSpectralDecay.lean	1	1625
+SELFREF	docs/index.md	Magnetization.lean >> Magnetization.lean	1	1408
+SELFREF	docs/index.md	PerStageComplex/Bounds.lean >> PerStageComplex/Bounds.lean	2	524
+SELFREF	docs/index.md	PerStageComplex/Bounds/PerStage.lean >> PerStageComplex/Bounds/PerStage.lean	1	1443
+SELFREF	docs/index.md	PerStageComplex/Bounds/PolynomialLower.lean >> PerStageComplex/Bounds/PolynomialLower.lean	1	524
+SELFREF	docs/index.md	PerStageComplex/BranchAscoliCompactOpen.lean >> PerStageComplex/BranchAscoliCompactOpen.lean	1	1457
+SELFREF	docs/index.md	PerStageComplex/BranchAscoliCompactOpen/EventualPatches.lean >> PerStageComplex/BranchAscoliCompactOpen/EventualPatches.lean	1	1465
+SELFREF	docs/index.md	PerStageComplex/Branches.lean >> PerStageComplex/Branches.lean	2	536
+SELFREF	docs/index.md	PerStageComplex/Branches/RealCompact.lean >> PerStageComplex/Branches/RealCompact.lean	1	1449
+SELFREF	docs/index.md	PerStageComplex/RangeAscoliPatches.lean >> PerStageComplex/RangeAscoliPatches.lean	1	1478
+SELFREF	docs/index.md	PerStageComplex/RangeAscoliPatches/AllStageAscoli.lean >> PerStageComplex/RangeAscoliPatches/AllStageAscoli.lean	1	1480
+SELFREF	docs/index.md	PerStageComplex/RangeAscoliPatches/BranchLocalDirectRange.lean >> PerStageComplex/RangeAscoliPatches/BranchLocalDirectRange.lean	1	1482
+SELFREF	docs/index.md	PhaseTransition.lean >> PhaseTransition.lean	2	839
+SELFREF	docs/index.md	PseudoMass.lean >> IsingModel/PseudoMass.lean	1	1844
+SELFREF	docs/index.md	PseudoMass/Basic.lean >> PseudoMass/Basic.lean	1	2008
+SELFREF	docs/index.md	PseudoMass/Lipschitz.lean >> PseudoMass/Lipschitz.lean	1	1919
+SELFREF	docs/index.md	SiteIndepMag.lean >> SiteIndepMag.lean	1	1357
+SELFREF	docs/index.md	SpecialCases/Legacy.lean >> SpecialCases/Legacy.lean	1	1977
+SELFREF	docs/index.md	Tight.lean >> BallBoundarySimonLieb/Tight.lean	1	443
+SELFREF	docs/index.md	TransferMatrix/CubicLayerCylinder.lean >> CubicLayerCylinder.lean	1	1594
+SELFREF	docs/index.md	TransferMatrix/FreeLayerWalshSpectralWindow.lean >> TransferMatrix/FreeLayerWalshSpectralWindow.lean	1	1618
+SELFREF	docs/index.md	TransferMatrix/LayerGibbs.lean >> TransferMatrix/LayerGibbs.lean	1	1591
+SELFREF	docs/index.md	TransferMatrix/LayerSpectral.lean >> TransferMatrix/LayerSpectral.lean	1	1595
+SELFREF	docs/index.md	UniformTransferLargeK.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformTransferLargeK.lean	1	1850
+SELFREF	docs/index.md	UniformTransferLargeK.lean >> UniformTransferLargeK.lean	1	1850
+SELFREF	docs/index.md	VitaliPorter/Theorem.lean >> VitaliPorter/Theorem.lean	1	539
+SELFREF	tex/proof-guide.tex	Analyticity.lean >> Analyticity.lean	1	24029
+SELFREF	tex/proof-guide.tex	Concrete/LatticeGraphCorrelation/Inequalities.lean >> Concrete/LatticeGraphCorrelation/Inequalities.lean	1	11826
+SELFREF	tex/proof-guide.tex	EventuallyEqOn.lean >> RawPatch/EventuallyEqOn.lean	1	16478
+SELFREF	tex/proof-guide.tex	IsingModel/AmbientLattice/Analyticity.lean >> Analyticity.lean	1	24139
+SELFREF	tex/proof-guide.tex	TwoPoint.lean >> TwoPoint.lean	1	23532
