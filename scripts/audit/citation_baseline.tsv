@@ -1,14 +1,23 @@
 # citation-audit v1 baseline -- the count-of-record for .lean citations.
 #
-# Rows are keyed on (class, target, token) with a multiplicity; first_line is
-# payload and is excluded from the ratchet comparison. SELFREF rows are
-# advisory: they are recorded so drift is visible in review, and they never
-# gate the exit code.
+# Three roles, three rules (see the module docstring):
+#   rows          gating. Ratcheted per (class, target, token); a count may only
+#                 fall. first_line is payload and is not part of the key. SELFREF
+#                 rows are advisory and never gate the exit code.
+#   #census       per-class counts: derived book-keeping, refreshed on update.
+#                 They are NOT pinned against the live documents -- an equality
+#                 pin there freezes the documents instead of the extractor. The
+#                 extractor is pinned on scripts/audit/citation_corpus/ instead.
+#   #census       citations/raw: the deletion budget (R11). A target that loses
+#                 more than max(25, 5%) of its committed citations fails hard,
+#                 because the ratchet cannot tell a deleted citation from a
+#                 fixed one.
 #
-# Regenerate with:
-#   python3 scripts/citation_audit.py --write-baseline scripts/audit/citation_baseline.tsv
-# A baseline that grew without a stated reason is a review signal: remediation
-# is supposed to shrink it monotonically.
+# Update with:
+#   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv
+# which refuses to raise any key's count against the committed copy, and refuses
+# a drop past the budget. Both remain possible only as a hand edit of this file,
+# which is a loud diff -- and that is the point.
 #tracked	2018
 #census	tex/proof-guide.tex	1333	1324	RESOLVED=804,MISSING=280,AMBIGUOUS=106,BASENAME_ONLY=143,SELFREF=5
 #census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90

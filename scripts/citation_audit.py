@@ -60,12 +60,66 @@ R7   an unaccounted raw ``.lean`` occurrence                     hard failure ``
 R8   citations in a target below its floor                       hard failure ``VACUOUS``
 R9   tracked ``.lean`` files below ``MIN_TRACKED_LEAN``          hard failure ``VACUOUS``
 R10  a resolved path outside ``ALLOWED_TRACKED_PREFIXES``        hard failure ``CONTAMINATED``
+R11  citations lost since the committed census, beyond budget    hard failure ``ERODED``
 ===  =========================================================  =========================
 
 ``RESOLVED`` is silent; ``MISSING``, ``AMBIGUOUS``, ``BASENAME_ONLY`` and
 ``MALFORMED`` are findings and gate the exit code through the baseline ratchet.
 ``SELFREF`` (below) is advisory. The table is total and it is closed: a citation
 lands in exactly one row, and there is no row a document can put itself into.
+
+The baseline file has three roles
+---------------------------------
+``scripts/audit/citation_baseline.tsv`` carries three kinds of number, and each
+obeys a *different* rule. Conflating them is what made the first version of this
+file's ``#census`` pin unusable (see below).
+
+=============================  ===============================================
+gating rows                    the ratchet, per ``(class, target, token)`` key,
+                               monotone non-increase. The **only** part the exit
+                               code reads.
+``#census`` per-class counts   derived book-keeping, refreshed by
+                               ``--update-baseline``. No rule of its own: what
+                               is checked instead is the identity
+                               ``citations == sum over the citation classes``,
+                               on the live run, where it holds whatever the
+                               documents say.
+``#census`` ``citations`` /    the **deletion budget** (R11). Remediation may
+``raw``                        delete a stale citation, and the ratchet is blind
+                               to that -- a deleted citation is indistinguishable
+                               from a cleared finding -- so this is the one place
+                               content loss is charged.
+=============================  ===============================================
+
+An **equality** pin of the whole census against the live documents was tried
+first and removed. Its intent was right (notice a silent change in the
+*extractor*, which the ratchet cannot see because a relaxed resolution rule looks
+exactly like remediation) but its input was wrong: with mutable documents,
+``extractor(live documents) == frozen numbers`` also asserts that the documents
+did not change, so it fails on every remediation commit by construction. It was
+a document freeze wearing an extractor pin's clothes. What it was meant to pin is
+pinned instead on a **frozen corpus**, ``scripts/audit/citation_corpus/``, whose
+expected census is committed and which no edit to ``tex/proof-guide.tex`` or
+``docs/index.md`` can move.
+
+Updating the baseline
+---------------------
+``--update-baseline`` regenerates the rows from the current run, which is the one
+operation that can retire a finding without fixing a citation. It therefore
+refuses, and has **no override flag**, when:
+
+* the run is not structurally sound, or scanned only some of the targets (a
+  partial run would drop the unscanned target's rows for good);
+* any key's count would be **higher** than in the committed baseline, compared
+  against the strictest committed copy available (``merge-base(HEAD,
+  origin/main)``, ``origin/main`` and ``HEAD``) rather than against the file in
+  the working tree, so a branch cannot ratchet against its own earlier write;
+* a target lost more citations than R11's budget allows.
+
+The written file is therefore provably per-key ``<=`` the committed one:
+laundering is not expressible through the tool. Growth, and a deletion past the
+budget, remain possible only as a hand edit of the committed file -- which is a
+loud, reviewable diff, and that is the intended control.
 
 Why the resolution set is ``git ls-files``
 ------------------------------------------
@@ -152,7 +206,7 @@ Usage
     python3 scripts/citation_audit.py --targets FILE ...   # explicit targets
     python3 scripts/citation_audit.py --format tsv         # the count-of-record
     python3 scripts/citation_audit.py --format json        # for tooling
-    python3 scripts/citation_audit.py --write-baseline PATH
+    python3 scripts/citation_audit.py --update-baseline PATH
     python3 scripts/citation_audit.py --strict             # require zero unresolved (end state)
     python3 scripts/citation_audit.py --self-test          # scripts/test_citation_audit.py
 
@@ -172,10 +226,12 @@ configuration change and is deliberately not part of this script: there is no
 adapter function here either, because an adapter written before its caller
 exists is guesswork, and the obvious guess -- returning findings and
 self-references as one list -- would silently promote the advisory ``SELFREF``
-class into a gating one. A future wiring commit calls :func:`audit` and reads
-``Report.findings`` (gating), ``Report.coverage`` and ``Report.hard`` (hard
-failures), ``Report.visited`` (scanned-set honesty) and ``Report.selfrefs``
-(advisory, must not gate) explicitly.
+class into a gating one. A future wiring commit calls :func:`audit`, adds
+:func:`erosion_failures` to ``Report.hard`` (R11 needs the committed baseline,
+so :func:`audit` cannot charge it on its own) and reads ``Report.findings``
+(gating), ``Report.coverage`` and ``Report.hard`` (hard failures),
+``Report.visited`` (scanned-set honesty) and ``Report.selfrefs`` (advisory, must
+not gate) explicitly.
 
 Runtime: Python 3.9 standard library only; no ``lake``, no network.
 """
@@ -198,19 +254,46 @@ BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 # Documents whose ``.lean`` citations are audited by default.
 TARGETS = ("tex/proof-guide.tex", "docs/index.md")
 
-# Anti-vacuity floors (R8/R9). A tokeniser that stops matching, or a target
-# accidentally emptied, would otherwise report "0 findings, all clean" -- the
-# most convincing possible false pass. Lowering these constants is the cheapest
-# way to disarm the whole tool, so each move must be deliberate, in the same
-# commit, with a reason. Measured on the tree this file was written against:
-# 1,333 citations in the tex, 2,698 in the markdown, 2,018 tracked .lean files.
-MIN_CITATIONS = {"tex/proof-guide.tex": 1200, "docs/index.md": 2400}
+# Anti-vacuity floors (R8/R9), and **catastrophic backstops only**: they answer
+# "was this document gutted", not "was it edited". A target accidentally emptied
+# would otherwise report "0 findings, all clean" -- the most convincing possible
+# false pass. Lowering these constants is the cheapest way to disarm the whole
+# tool, so each move must be deliberate, in the same commit, with a reason.
+# Measured on the tree this file was written against: 1,333 citations in the tex,
+# 2,698 in the markdown, 2,018 tracked .lean files.
+#
+# Why they sit near half of that and not just below it. A floor close to the
+# working value does not guard the tokeniser -- a tokeniser that stops matching
+# is caught earlier and more precisely by the coverage audit, whose raw side is
+# ``line.count(".lean")`` and never consults ``TOKEN`` -- it guards the document
+# *volume*, and at 1,200 it was already deciding the content of a published
+# document: the first remediation pass repointed the legacy re-export sentences
+# instead of deleting them because deleting them landed at 1,145. That is the
+# wrong actor making an editorial decision, and it is structural rather than
+# incidental, because the ``SELFREF`` class is *defined* as a duplicated legacy
+# citation, so its correct fix always lowers the count. The guard that actually
+# fires per commit is the drop budget below; these two are the cliff behind it.
+MIN_CITATIONS = {"tex/proof-guide.tex": 700, "docs/index.md": 1400}
 MIN_TRACKED_LEAN = 1800
 
 # Floor applied to a target passed on the command line that has no entry in
 # ``MIN_CITATIONS``: auditing a document in which the extractor found nothing at
 # all is never a meaningful pass.
 DEFAULT_MIN_CITATIONS = 1
+
+# Per-run deletion budget (R11), charged against the committed ``#census``.
+#
+# The ratchet cannot see a deletion: removing the sentence that carries a
+# dangling citation clears the finding exactly as fixing it does. Without a
+# budget the only thing standing between "remediation" and "delete the citing
+# prose" is the floor above, i.e. a cliff hundreds of citations away, reachable
+# by erosion nobody ever reviews. The budget is self-calibrating (a percentage
+# of what is committed) with an absolute minimum so that a small target does not
+# end up frozen. Measured against the committed census: 66 for the tex (1,333),
+# 134 for the markdown (2,698) -- comfortably above the 44 the first remediation
+# pass removed, and far below a gutting.
+CITATION_DROP_BUDGET_FRACTION = 0.05
+MIN_CITATION_DROP_BUDGET = 25
 
 # A resolved citation must land inside the part of the tree this project owns.
 # Measured: 2,017 of the 2,018 tracked ``.lean`` files match (the exception is
@@ -231,14 +314,23 @@ SELFREF = "SELFREF"
 FINDING_CLASSES = (MISSING, AMBIGUOUS, BASENAME_ONLY, MALFORMED)
 # Classes that are reported and baselined but never gate the exit code.
 ADVISORY_CLASSES = (SELFREF,)
-ALL_CLASSES = (
-    RESOLVED,
-    MISSING,
-    AMBIGUOUS,
-    BASENAME_ONLY,
-    MALFORMED,
-    SELFREF,
-)
+# The verdict of a citation is exactly one of these, so they partition the
+# citations of a target: ``sum(counts[t][c] for c in CITATION_CLASSES) ==
+# citations[t]``. ``SELFREF`` is deliberately outside the partition -- it counts
+# *paragraphs*, not citations -- which is why the identity names this tuple and
+# not ``ALL_CLASSES``.
+CITATION_CLASSES = (RESOLVED, MISSING, AMBIGUOUS, BASENAME_ONLY, MALFORMED)
+ALL_CLASSES = CITATION_CLASSES + ADVISORY_CLASSES
+
+
+def citation_drop_budget(committed: int) -> int:
+    """Return how many citations a target may lose in one run (R11).
+
+    ``committed`` is the citation count recorded in the baseline's ``#census``
+    line for that target, so the budget shrinks with the document instead of
+    being a constant that slowly stops meaning anything.
+    """
+    return max(MIN_CITATION_DROP_BUDGET, int(committed * CITATION_DROP_BUDGET_FRACTION))
 
 # ---------------------------------------------------------------------------
 # Lexical layer
@@ -585,13 +677,21 @@ def acknowledge_non_citations(text: str, spans: List[Tuple[int, int]]) -> int:
     return acknowledged
 
 
-def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
+def extract(target: str, text: str) -> Tuple[List[Citation], List[str], Dict[str, int]]:
     """Extract every citation from a document and audit the extractor's coverage.
 
-    Returns ``(citations, coverage_failures)``. The second list is the keystone
-    guard: it holds one entry per line whose raw ``.lean`` count differs from the
-    number of tokens attributed to it, plus one entry if the per-file totals
-    disagree (an attribution bug that cancels across lines).
+    Returns ``(citations, coverage_failures, accounting)``. The second list is
+    the keystone guard: it holds one entry per line whose raw ``.lean`` count
+    differs from the number of tokens attributed to it, plus one entry if the
+    per-file totals disagree (an attribution bug that cancels across lines).
+
+    ``accounting`` is that guard's arithmetic, published rather than discarded:
+    ``raw`` occurrences, ``matched`` (``TOKEN`` hits, before brace expansion) and
+    ``acknowledged`` (:data:`NON_CITATION` spellings). ``matched + acknowledged
+    == raw`` is what the coverage audit enforces, and exposing the two addends
+    lets a test pin *how* a document is accounted for -- in particular that the
+    acknowledgement list has not quietly become a wildcard that absorbs real
+    citations -- without pinning what the document says.
 
     The function reads the document only as a source of tokens. It parses no
     instructions out of it -- no exemption directive, no comment syntax, no
@@ -607,6 +707,8 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
     pending_wrap: Optional[Tuple[int, str]] = None
     captured_total = 0
     raw_total = 0
+    matched_total = 0
+    acknowledged_total = 0
 
     for number, line in enumerate(lines, start=1):
         raw = line.count(".lean")
@@ -660,6 +762,7 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                     spans.append((match.start(), match.end()))
                     raw_token = match.group(0)
                     captured += 1
+                    matched_total += 1
                     token_variant = "verbatim-wrap" if wrapped else unit_variant
                     if "{" in raw_token:
                         token_variant += "+brace"
@@ -682,7 +785,9 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
                                 token=expanded,
                             )
                         )
-                captured += acknowledge_non_citations(unescaped, spans)
+                acknowledged = acknowledge_non_citations(unescaped, spans)
+                captured += acknowledged
+                acknowledged_total += acknowledged
             captured_total += captured
             if captured != raw:
                 snippet = line.strip()
@@ -708,7 +813,12 @@ def extract(target: str, text: str) -> Tuple[List[Citation], List[str]]:
         coverage.append(
             f"COVERAGE {target}: file totals disagree raw={raw_total} captured={captured_total}"
         )
-    return citations, coverage
+    accounting = {
+        "raw": raw_total,
+        "matched": matched_total,
+        "acknowledged": acknowledged_total,
+    }
+    return citations, coverage, accounting
 
 
 # ---------------------------------------------------------------------------
@@ -885,6 +995,7 @@ class Report(NamedTuple):
     tracked: int
     citations: Dict[str, int]
     raw_occurrences: Dict[str, int]
+    accounting: Dict[str, Dict[str, int]]
     counts: Dict[str, Dict[str, int]]
     findings: List[Finding]
     selfrefs: List[Finding]
@@ -904,6 +1015,12 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
     and an environment fault (git unavailable, target missing) produces a hard
     failure. Both are visible in the returned report rather than as a traceback,
     so a caller cannot mistake an aborted run for a clean one.
+
+    Every rule of the decision table is charged here except R11, which compares
+    the run against the *committed* census and therefore needs the baseline
+    file: it lives in :func:`erosion_failures`, and every caller that gates on
+    this report must apply it (``main`` does, for both the reporting and the
+    update path). A caller that skips it keeps the deletion tripwire disarmed.
     """
     selected = list(targets) if targets is not None else list(TARGETS)
     visited: List[str] = []
@@ -913,6 +1030,7 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
     selfrefs: List[Finding] = []
     citation_counts: Dict[str, int] = {}
     raw_counts: Dict[str, int] = {}
+    accounting: Dict[str, Dict[str, int]] = {}
     counts: Dict[str, Dict[str, int]] = {}
 
     try:
@@ -925,6 +1043,7 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
             tracked=0,
             citations={},
             raw_occurrences={},
+            accounting={},
             counts={},
             findings=[],
             selfrefs=[],
@@ -948,10 +1067,11 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
             hard.append(f"TARGET {target}: not tracked by git")
             continue
         text = path.read_text(encoding="utf-8")
-        citations, target_coverage = extract(target, text)
+        citations, target_coverage, target_accounting = extract(target, text)
         visited.append(target)
         coverage.extend(target_coverage)
         raw_counts[target] = text.count(".lean")
+        accounting[target] = target_accounting
         citation_counts[target] = len(citations)
 
         floor = MIN_CITATIONS.get(target)
@@ -1004,6 +1124,7 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
         tracked=len(tracked),
         citations=citation_counts,
         raw_occurrences=raw_counts,
+        accounting=accounting,
         counts=counts,
         findings=findings,
         selfrefs=selfrefs,
@@ -1061,15 +1182,24 @@ def render_baseline(report: Report) -> str:
     lines = [
         "# citation-audit v1 baseline -- the count-of-record for .lean citations.",
         "#",
-        "# Rows are keyed on (class, target, token) with a multiplicity; first_line is",
-        "# payload and is excluded from the ratchet comparison. SELFREF rows are",
-        "# advisory: they are recorded so drift is visible in review, and they never",
-        "# gate the exit code.",
+        "# Three roles, three rules (see the module docstring):",
+        "#   rows          gating. Ratcheted per (class, target, token); a count may only",
+        "#                 fall. first_line is payload and is not part of the key. SELFREF",
+        "#                 rows are advisory and never gate the exit code.",
+        "#   #census       per-class counts: derived book-keeping, refreshed on update.",
+        "#                 They are NOT pinned against the live documents -- an equality",
+        "#                 pin there freezes the documents instead of the extractor. The",
+        "#                 extractor is pinned on scripts/audit/citation_corpus/ instead.",
+        "#   #census       citations/raw: the deletion budget (R11). A target that loses",
+        "#                 more than max(25, 5%) of its committed citations fails hard,",
+        "#                 because the ratchet cannot tell a deleted citation from a",
+        "#                 fixed one.",
         "#",
-        "# Regenerate with:",
-        "#   python3 scripts/citation_audit.py --write-baseline scripts/audit/citation_baseline.tsv",
-        "# A baseline that grew without a stated reason is a review signal: remediation",
-        "# is supposed to shrink it monotonically.",
+        "# Update with:",
+        "#   python3 scripts/citation_audit.py --update-baseline scripts/audit/citation_baseline.tsv",
+        "# which refuses to raise any key's count against the committed copy, and refuses",
+        "# a drop past the budget. Both remain possible only as a hand edit of this file,",
+        "# which is a loud diff -- and that is the point.",
     ]
     if not report.ok_structurally:
         lines.append("#")
@@ -1099,16 +1229,26 @@ def render_baseline(report: Report) -> str:
 
 
 def read_baseline(path: Path) -> Tuple[Counter, Dict[str, Dict[str, int]], int]:
-    """Read a baseline file into ``(multiset, census, tracked)``.
+    """Read a baseline file into ``(multiset, census, tracked)``."""
+    return parse_baseline(path.read_text(encoding="utf-8"))
 
-    The census comment lines are machine-readable on purpose: the committed
-    baseline records ``RESOLVED`` too, which the rows cannot, so a pin test can
-    detect a silent change in the extractor rather than only in the debt.
+
+def parse_baseline(text: str) -> Tuple[Counter, Dict[str, Dict[str, int]], int]:
+    """Parse baseline text into ``(multiset, census, tracked)``.
+
+    Text rather than a path because the copy that governs an update is the one
+    in a *commit*, read through ``git show`` (see :func:`committed_baseline`).
+
+    The census comment lines are machine-readable because the ``citations``
+    field is R11's reference point. The per-class counts are read as well, for
+    reporting and for the corpus expectation, but nothing compares them to a
+    live run: that comparison was the equality pin this file's header warns
+    about, and it made every remediation commit fail by construction.
     """
     multiset: Counter = Counter()
     census: Dict[str, Dict[str, int]] = {}
     tracked = 0
-    for line in path.read_text(encoding="utf-8").split("\n"):
+    for line in text.split("\n"):
         if not line.strip():
             continue
         if line.startswith("#tracked\t"):
@@ -1151,6 +1291,152 @@ def ratchet(current: Counter, baseline: Counter) -> Tuple[List[str], int]:
     for key, count in baseline.items():
         cleared += max(0, count - current.get(key, 0))
     return (regressions, cleared)
+
+
+def erosion_failures(
+    report: Report, census: Dict[str, Dict[str, int]], rows: Counter
+) -> List[str]:
+    """Charge the content loss the ratchet is blind to (R11).
+
+    ``census`` and ``rows`` come from the *committed* baseline. Two things are
+    charged, both hard failures:
+
+    * a target whose citation count fell further below its committed census than
+      :func:`citation_drop_budget` allows -- "remediation" by deleting the citing
+      sentence clears findings without fixing anything, and nothing else in the
+      tool can see it;
+    * a target that carries baseline rows but has lost its ``#census`` line,
+      which would leave the budget unarmed while looking like tidy-up.
+
+    A target with neither rows nor a census entry is not charged: that is an
+    ad-hoc ``--targets`` run against a document the baseline never covered, and
+    inventing a reference point for it would be a number nobody reviewed. That
+    the *default* targets always have a census entry is pinned by the test
+    suite against the committed file, where the claim actually belongs.
+    """
+    failures: List[str] = []
+    for target in report.visited:
+        recorded = census.get(target)
+        if recorded is None:
+            if any(key[1] == target for key in rows):
+                failures.append(
+                    f"ERODED {target}: the baseline carries rows for this target but no "
+                    "#census line, so the deletion budget is unarmed; restore it with "
+                    "--update-baseline instead of deleting it"
+                )
+            continue
+        committed = recorded.get("citations", 0)
+        now = report.citations.get(target, 0)
+        budget = citation_drop_budget(committed)
+        if committed - now > budget:
+            failures.append(
+                f"ERODED {target}: {now} citations, {committed - now} below the committed "
+                f"census of {committed} (per-run budget {budget}). Deleting cited text "
+                "clears findings without fixing them; a larger drop has to be stated "
+                "explicitly by editing the #census line in the same commit, where review "
+                "sees it"
+            )
+    return failures
+
+
+def _git_committed_text(revision: str, relative: str) -> Optional[str]:
+    """Return ``revision:relative``'s content, or ``None`` if it is not there.
+
+    Narrow on purpose: the only question asked is whether a *committed* copy of
+    one path exists, and the only caller (:func:`committed_baseline`) treats
+    ``None`` as "no such copy". That is safe because it runs after
+    :func:`audit`, which turns a broken or absent ``git`` into a hard failure of
+    its own, so ``None`` here cannot mean "git is unavailable" without the run
+    already being untrustworthy.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "show", f"{revision}:{relative}"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:  # pragma: no cover - git missing is an environment fault
+        raise GitError(f"git show {revision}:{relative}: {exc}") from exc
+    return proc.stdout if proc.returncode == 0 else None
+
+
+def _committed_revisions() -> List[str]:
+    """Return the revisions whose baseline copy may govern an update.
+
+    ``merge-base(HEAD, origin/main)`` is what review diffs against, ``origin/main``
+    is where the file will land, and ``HEAD`` is the branch as committed so far.
+    All three are *commits*: the working file is deliberately absent, because a
+    branch that judged itself by its own last write could raise the baseline one
+    commit at a time and never show a growth.
+    """
+    revisions: List[str] = []
+    try:
+        merge_base = _git(["merge-base", "HEAD", "origin/main"]).strip()
+    except GitError:
+        # No ``origin/main`` (a fresh clone, or a fixture repository): that
+        # revision simply drops out of the list. The remaining two are commits
+        # too, so dropping it cannot turn the comparison into one against the
+        # working file.
+        merge_base = ""
+    if merge_base:
+        revisions.append(merge_base)
+    for revision in ("origin/main", "HEAD"):
+        if revision not in revisions:
+            revisions.append(revision)
+    return revisions
+
+
+def committed_baseline(
+    destination: Path,
+) -> Tuple[Optional[Counter], Dict[str, Dict[str, int]], List[str]]:
+    """Return the committed baseline an update to ``destination`` is judged by.
+
+    ``(rows, census, sources)``. Both parts take the **strictest** value over
+    every revision of :func:`_committed_revisions` that has the file: the
+    per-key *minimum* for the rows (a smaller allowance refuses more, so a stale
+    branch cannot reintroduce a row ``origin/main`` has already cleared) and the
+    *maximum* recorded ``citations`` for the census (a larger reference charges
+    a bigger drop). Both err towards refusing, and the remedy for a refusal
+    caused by a stale branch is a rebase, after which every revision agrees.
+
+    ``rows is None`` means no commit has this path at all, i.e. the file is
+    being created, or it lies outside the repository entirely. That is not a
+    laundering opportunity -- a file no commit contains is not yet anyone's
+    allowance, and one outside the tree is not the gate the ratchet reads -- and
+    it is what makes the tool bootstrappable; the creation is a new file in the
+    diff, which review sees.
+    """
+    try:
+        relative = destination.resolve().relative_to(REPO_ROOT.resolve()).as_posix()
+    except ValueError:
+        return (None, {}, [])
+    rows: Optional[Counter] = None
+    census: Dict[str, Dict[str, int]] = {}
+    sources: List[str] = []
+    for revision in _committed_revisions():
+        text = _git_committed_text(revision, relative)
+        if text is None:
+            continue
+        revision_rows, revision_census, _ = parse_baseline(text)
+        sources.append(f"{revision}:{relative}")
+        if rows is None:
+            rows = revision_rows
+            census = revision_census
+            continue
+        for key in set(rows) | set(revision_rows):
+            rows[key] = min(rows.get(key, 0), revision_rows.get(key, 0))
+        for target, entries in revision_census.items():
+            if target not in census:
+                census[target] = dict(entries)
+                continue
+            census[target]["citations"] = max(
+                census[target].get("citations", 0), entries.get("citations", 0)
+            )
+    if rows is not None:
+        rows = Counter({key: count for key, count in rows.items() if count})
+    return (rows, census, sources)
 
 
 # ---------------------------------------------------------------------------
@@ -1209,9 +1495,18 @@ def format_json(report: Report) -> str:
 
 
 def format_text(
-    report: Report, regressions: Sequence[str], cleared: int, strict: bool = False
+    report: Report,
+    regressions: Sequence[str],
+    cleared: int,
+    strict: bool = False,
+    census: Optional[Dict[str, Dict[str, int]]] = None,
 ) -> str:
     """Render the human report.
+
+    ``census`` is the committed one, when the caller has it: the citation delta
+    against it is printed for every target that moved, so a within-budget
+    deletion is a number in the report -- and in the PR body quoting it --
+    rather than something a reader has to reconstruct from two TSV diffs.
 
     A coverage failure or a hard failure suppresses the finding census entirely,
     the same rule :func:`render_baseline` and :func:`format_json` apply, so no
@@ -1227,6 +1522,13 @@ def format_text(
             f"  {target}: {report.raw_occurrences[target]} raw .lean occurrences, "
             f"{report.citations[target]} citations"
         )
+        recorded = (census or {}).get(target, {}).get("citations")
+        if recorded is not None and recorded != report.citations[target]:
+            delta = report.citations[target] - recorded
+            out.append(
+                f"    citations {recorded} -> {report.citations[target]} ({delta:+d}); "
+                f"deletion budget {citation_drop_budget(recorded)}"
+            )
     if report.coverage:
         out.append("")
         out.append(f"COVERAGE FAIL: {len(report.coverage)} unaccounted .lean occurrence(s).")
@@ -1247,12 +1549,12 @@ def format_text(
     if report.ok_structurally:
         out.append("")
         for target in report.visited:
-            census = "  ".join(
+            class_census = "  ".join(
                 f"{name}={report.counts[target][name]}"
                 for name in ALL_CLASSES
                 if report.counts[target][name]
             )
-            out.append(f"{target}: {census}")
+            out.append(f"{target}: {class_census}")
         unresolved = len(report.findings)
         out.append("")
         out.append(f"findings (gating): {unresolved}    self-references (advisory): "
@@ -1276,6 +1578,81 @@ def format_text(
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
+
+def update_baseline(report: Report, destination: Path) -> int:
+    """Rewrite ``destination`` from ``report``; return the process exit code.
+
+    Regenerating the rows from the current run is the one operation that retires
+    a finding without fixing a citation, so it is fail-closed by construction:
+    what is written is provably per-key ``<=`` the committed copy, and every
+    refusal below is unconditional. There is no ``--force``, because the
+    operations refused here are exactly the ones that must be visible in a diff
+    rather than performed by a tool.
+    """
+    if not destination.is_absolute():
+        destination = REPO_ROOT / destination
+    if not report.ok_structurally:
+        print(format_text(report, [], 0), end="")
+        print("refusing to write a baseline from an untrustworthy run")
+        return 1
+    if set(report.visited) != set(TARGETS):
+        # The file is the count-of-record for *all* targets, and it is rendered
+        # from this run alone, so a partial run would silently drop every row of
+        # the targets it did not open -- shrinking the recorded debt without
+        # fixing a single citation, and leaving the ratchet with nothing to
+        # compare against later.
+        missing = sorted(set(TARGETS) - set(report.visited))
+        extra = sorted(set(report.visited) - set(TARGETS))
+        print(format_text(report, [], 0), end="")
+        print(
+            "refusing to write a baseline from a partial target set "
+            f"(not scanned: {missing or 'none'}; not a default target: {extra or 'none'})"
+        )
+        return 1
+
+    committed, committed_census, sources = committed_baseline(destination)
+    # R11 before anything is printed, so an eroded run suppresses its own census
+    # here exactly as it does in the reporting path: the numbers a deletion
+    # produced are not numbers to publish.
+    report.hard.extend(erosion_failures(report, committed_census, committed or Counter()))
+    print(format_text(report, [], 0, False, committed_census), end="")
+    if not report.ok_structurally:
+        print("refusing to write a baseline that records a deletion past the budget")
+        return 1
+
+    current: Counter = Counter()
+    for row in aggregate(list(report.findings) + list(report.selfrefs)):
+        current[(row.cls, row.target, row.token)] = row.count
+    if committed is None:
+        print(f"no committed copy of {destination}; writing it as a new file")
+        committed = Counter()
+    else:
+        print(f"judged against {', '.join(sources)}")
+        growth = sorted(
+            (key, count, committed.get(key, 0))
+            for key, count in current.items()
+            if count > committed.get(key, 0)
+        )
+        if growth:
+            for (cls, target, token), count, allowed in growth[:40]:
+                print(f"GROWN {cls} {target} {token} (committed {allowed}, now {count})")
+            if len(growth) > 40:
+                print(f"... {len(growth) - 40} more")
+            print(
+                f"refusing to write a baseline that grows by {len(growth)} key(s): a row "
+                "that rises is an unfixed finding turned into an allowance. Fix the "
+                "citations, or record the growth by hand so the diff shows it."
+            )
+            return 1
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(render_baseline(report), encoding="utf-8")
+    added = sum(max(0, count - committed.get(key, 0)) for key, count in current.items())
+    removed = sum(max(0, count - current.get(key, 0)) for key, count in committed.items())
+    print(f"wrote {destination}")
+    print(f"delta: +{added} finding(s), -{removed} finding(s) versus the committed file")
+    return 0
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -1302,9 +1679,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         help="Baseline to ratchet against (default: scripts/audit/citation_baseline.tsv).",
     )
     parser.add_argument(
-        "--write-baseline",
+        "--update-baseline",
         metavar="PATH",
-        help="Regenerate a baseline file (every default target must be scanned).",
+        help=(
+            "Rewrite a baseline file from this run. Refuses to raise any key's count "
+            "against the committed copy, and refuses a citation drop past the budget; "
+            "there is no override flag."
+        ),
     )
     parser.add_argument(
         "--strict",
@@ -1326,41 +1707,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     report = audit(args.targets)
 
-    if args.write_baseline:
-        destination = Path(args.write_baseline)
-        if not destination.is_absolute():
-            destination = REPO_ROOT / destination
-        if not report.ok_structurally:
-            print(format_text(report, [], 0), end="")
-            print("refusing to write a baseline from an untrustworthy run")
-            return 1
-        if set(report.visited) != set(TARGETS):
-            # The file is the count-of-record for *all* targets, and it is
-            # rendered from this run alone, so a partial run would silently drop
-            # every row of the targets it did not open -- shrinking the recorded
-            # debt without fixing a single citation, and leaving the ratchet with
-            # nothing to compare against later.
-            missing = sorted(set(TARGETS) - set(report.visited))
-            extra = sorted(set(report.visited) - set(TARGETS))
-            print(format_text(report, [], 0), end="")
-            print(
-                "refusing to write a baseline from a partial target set "
-                f"(not scanned: {missing or 'none'}; not a default target: {extra or 'none'})"
-            )
-            return 1
-        previous: Counter = Counter()
-        if destination.is_file():
-            previous, _, _ = read_baseline(destination)
-        current: Counter = Counter()
-        for row in aggregate(list(report.findings) + list(report.selfrefs)):
-            current[(row.cls, row.target, row.token)] = row.count
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(render_baseline(report), encoding="utf-8")
-        added = sum(max(0, count - previous.get(key, 0)) for key, count in current.items())
-        removed = sum(max(0, count - current.get(key, 0)) for key, count in previous.items())
-        print(f"wrote {destination}")
-        print(f"delta: +{added} finding(s), -{removed} finding(s) versus the previous file")
-        return 0
+    if args.update_baseline:
+        return update_baseline(report, Path(args.update_baseline))
 
     current = Counter()
     for row in aggregate(list(report.findings)):
@@ -1371,6 +1719,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     regressions: List[str] = []
     cleared = 0
+    committed_census: Dict[str, Dict[str, int]] = {}
     baseline_path = Path(args.baseline)
     if not baseline_path.is_absolute():
         baseline_path = REPO_ROOT / baseline_path
@@ -1379,15 +1728,22 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             f"UNRESOLVED {finding.cls} {finding.target}:{finding.line} {finding.token}"
             for finding in report.findings
         ]
-    elif report.ok_structurally:
-        if not baseline_path.is_file():
-            report.hard.append(f"BASELINE {baseline_path}: missing")
-        else:
-            baseline, _, _ = read_baseline(baseline_path)
+    if not baseline_path.is_file():
+        # Charged in both modes: the baseline is the ratchet's reference *and*
+        # R11's, so a run without one measures less than it appears to, even
+        # under ``--strict``.
+        report.hard.append(f"BASELINE {baseline_path}: missing")
+    else:
+        baseline, committed_census, _ = read_baseline(baseline_path)
+        # R11 before the ratchet, so a target whose citations were deleted away
+        # suppresses the report rather than being congratulated for the findings
+        # that went with them.
+        report.hard.extend(erosion_failures(report, committed_census, baseline))
+        audited = set(report.visited)
+        if not args.strict and report.ok_structurally:
             gating = Counter(
                 {key: count for key, count in baseline.items() if key[0] in FINDING_CLASSES}
             )
-            audited = set(report.visited)
             gating = Counter(
                 {key: count for key, count in gating.items() if key[1] in audited}
             )
@@ -1408,7 +1764,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     elif args.format == "json":
         print(format_json(report), end="")
     else:
-        print(format_text(report, regressions, cleared, args.strict), end="")
+        print(
+            format_text(report, regressions, cleared, args.strict, committed_census),
+            end="",
+        )
 
     ok = report.ok_structurally and not regressions
     if args.format == "text":

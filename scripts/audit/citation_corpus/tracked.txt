@@ -1,0 +1,13 @@
+# Frozen resolution set for the extractor corpus: the git-tracked .lean files the
+# throwaway fixture repository is built with. One path per line, '#' comments and
+# blank lines ignored. Both halves of the pin are frozen on purpose -- a verdict
+# is a claim about a document *and* about the set it is resolved against, so
+# leaving this list to follow the real tree would put the pin back on live data.
+IsingModel/Corpus/Resolved.lean
+IsingModel/Corpus/Under_Score.lean
+IsingModel/Corpus/Pair/A.lean
+IsingModel/Corpus/Wrapped/Bridge.lean
+IsingModel/Corpus/Alone.lean
+IsingModel/Corpus/Left/Twin.lean
+IsingModel/Corpus/Right/Twin.lean
+IsingModel/Corpus/Moved.lean

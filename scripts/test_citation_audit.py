@@ -35,7 +35,30 @@ the coverage audit itself, resolution against untracked or benchmark copies, the
 anti-vacuity floors, self-reference detection, the multiset ratchet, path text
 glued to a match (``../X/Y.lean``, ``X/Y.lean.bak``), an indented tree entry
 joined onto the heading above it, a census published from a provably incomplete
-run, and a baseline rewritten from a partial target set.
+run, a baseline rewritten from a partial target set, a baseline rewritten
+upwards, and a document remediated by deleting the citing prose.
+
+Three kinds of pin, and what each is allowed to depend on
+--------------------------------------------------------
+An earlier version of this suite pinned the per-class census of the **live**
+documents against the committed baseline. The intent was to notice a silent
+change in the *extractor* -- the one change the ratchet cannot see, because a
+relaxed resolution rule clears findings and so looks exactly like remediation --
+but the input was wrong: with mutable documents that assertion also says the
+documents did not change, so it failed on every remediation commit. It has been
+replaced by pins that keep the intent and drop the accidental document freeze:
+
+1. **live, remediation-invariant** (:class:`RealTreePinTest`): identities that
+   hold whatever the documents say -- the classes partition the citations, the
+   rows aggregate to the classes, ``matched + acknowledged == raw``.
+2. **frozen corpus** (:class:`FrozenCorpusTest`): the extractor's verdict on
+   ``scripts/audit/citation_corpus/``, a committed document pair with a committed
+   resolution set and a committed expected census. It moves iff the extractor
+   moves, and never when a live document is edited.
+3. **committed constants** (:class:`RealTreePinTest` again): the floors and the
+   deletion budget, expressed against the committed census rather than the live
+   run, so that "the floor is not zero" stays checked while the check itself
+   stops drifting with the documents.
 
 One class of test is here because the capability it guarded was **deleted**.
 The checker used to honour a ``citation-audit:`` comment directive, and three
@@ -133,6 +156,7 @@ def fixture(
     untracked: Sequence[str] = (),
     tags: Optional[Dict[str, Sequence[str]]] = None,
     module: Optional[types.ModuleType] = None,
+    commit: bool = False,
     **overrides: object,
 ) -> Iterator[Path]:
     """Build a throwaway repository and point the checker at it.
@@ -141,7 +165,10 @@ def fixture(
     ``.lean`` paths that are staged (and therefore resolvable); ``untracked``
     lists ``.lean`` paths written to disk but never staged, which is how "the
     filesystem is not the resolution set" is tested; ``tags`` maps a tag name to
-    the ``.lean`` paths that exist *only* in that tag.
+    the ``.lean`` paths that exist *only* in that tag. ``commit`` commits the
+    staged files, which is what the baseline-update tests need: the copy an
+    update is judged against is the one in a *commit*, so without one there is
+    nothing to judge against.
 
     Staging uses ``git add -f`` with the paths named explicitly, and the
     resulting index is compared against them: a developer's global ignore file
@@ -203,6 +230,18 @@ def fixture(
                 f"fixture staged {staged}, expected {wanted}: the resolution set is not "
                 "the one this test asked for, so its verdicts would be meaningless"
             )
+        if commit:
+            _run_git(
+                root,
+                "-c",
+                "user.email=test@example.com",
+                "-c",
+                "user.name=test",
+                "commit",
+                "-q",
+                "-m",
+                "fixture",
+            )
         for name in untracked:
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -253,6 +292,75 @@ def run_main(module: types.ModuleType, *argv: str) -> Sequence[object]:
     with redirect_stdout(buffer):
         code = module.main(list(argv))
     return (code, buffer.getvalue())
+
+
+# ---------------------------------------------------------------------------
+# The frozen corpus (see FrozenCorpusTest)
+# ---------------------------------------------------------------------------
+
+CORPUS_DIR = CITATION_AUDIT_PATH.parent / "audit" / "citation_corpus"
+
+# The order matters: the census lines are rendered in visited order, and the
+# expectation is compared line by line.
+CORPUS_TARGETS = ("tex/guide.tex", "docs/notes.md")
+
+
+def corpus_documents() -> Dict[str, str]:
+    """Return the frozen corpus documents, keyed by their in-fixture path."""
+    return {
+        "tex/guide.tex": (CORPUS_DIR / "guide.tex").read_text(encoding="utf-8"),
+        "docs/notes.md": (CORPUS_DIR / "notes.md").read_text(encoding="utf-8"),
+    }
+
+
+def corpus_tracked() -> List[str]:
+    """Return the frozen resolution set the corpus is judged against."""
+    return [
+        line.strip()
+        for line in (CORPUS_DIR / "tracked.txt").read_text(encoding="utf-8").split("\n")
+        if line.strip() and not line.startswith("#")
+    ]
+
+
+def corpus_report(module: Optional[types.ModuleType] = None) -> ca.Report:
+    """Audit the frozen corpus in a throwaway repository built from it."""
+    target = module if module is not None else ca
+    with fixture(corpus_documents(), tracked=corpus_tracked(), module=target):
+        return target.audit(list(CORPUS_TARGETS))
+
+
+def baseline_body(text: str) -> List[str]:
+    """Return a baseline's machine-readable lines, dropping free-text comments.
+
+    The prose header explains the file to a reader and is allowed to be reworded
+    without invalidating an expectation; ``#tracked``, ``#census``, ``#!`` and the
+    rows are the content, and they are compared exactly.
+    """
+    return [
+        line
+        for line in text.split("\n")
+        if line.strip()
+        and (not line.startswith("#") or line.startswith(("#tracked", "#census", "#!")))
+    ]
+
+
+def make_baseline(
+    tracked: int,
+    census: Sequence[Sequence[object]],
+    rows: Sequence[Sequence[object]],
+) -> str:
+    """Render a baseline file by hand, for tests that need a *committed* one.
+
+    Written out rather than produced by ``--update-baseline`` so that what a
+    refusal is judged against is visible in the test that asserts the refusal.
+    """
+    lines = ["# hand-built fixture baseline", f"#tracked\t{tracked}"]
+    for target, citations, raw, classes in census:
+        lines.append(f"#census\t{target}\t{citations}\t{raw}\t{classes}")
+    lines.append("class\ttarget\ttoken\tcount\tfirst_line")
+    for cls, target, token, count in rows:
+        lines.append(f"{cls}\t{target}\t{token}\t{count}\t1")
+    return "\n".join(lines) + "\n"
 
 
 # ---------------------------------------------------------------------------
@@ -1102,7 +1210,7 @@ class RatchetTest(unittest.TestCase):
             MIN_CITATIONS={"tex/g.tex": 1},
         ) as root:
             code, _ = run_main(
-                ca, "--targets", "tex/g.tex", "--write-baseline", "audit/base.tsv"
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
             )
             self.assertEqual(code, 0)
             multiset, census, tracked = ca.read_baseline(root / "audit" / "base.tsv")
@@ -1119,7 +1227,7 @@ class RatchetTest(unittest.TestCase):
             MIN_CITATIONS={"tex/g.tex": 1},
         ) as root:
             code, out = run_main(
-                ca, "--targets", "tex/g.tex", "--write-baseline", "audit/base.tsv"
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
             )
             # Inside the fixture: the temporary tree is gone once it exits, so
             # this assertion would hold for the wrong reason outside it.
@@ -1128,7 +1236,7 @@ class RatchetTest(unittest.TestCase):
         self.assertIn("refusing to write a baseline", out)
 
     def test_baseline_is_not_written_from_a_partial_target_set(self) -> None:
-        """``--targets`` plus ``--write-baseline`` must not shrink the record.
+        """``--targets`` plus ``--update-baseline`` must not shrink the record.
 
         The file is rendered from one run, so a run that opened one of the two
         targets would drop every row of the other -- the recorded debt falls, no
@@ -1143,7 +1251,7 @@ class RatchetTest(unittest.TestCase):
             MIN_CITATIONS={"tex/a.tex": 1, "tex/b.tex": 1},
         ) as root:
             code, out = run_main(
-                ca, "--targets", "tex/a.tex", "--write-baseline", "audit/base.tsv"
+                ca, "--targets", "tex/a.tex", "--update-baseline", "audit/base.tsv"
             )
             self.assertFalse((root / "audit" / "base.tsv").exists())
         self.assertEqual(code, 1)
@@ -1156,6 +1264,279 @@ class RatchetTest(unittest.TestCase):
             code, out = run_main(ca, "--targets", "tex/g.tex", "--baseline", "audit/none.tsv")
         self.assertEqual(code, 1)
         self.assertIn("BASELINE", out)
+
+
+# ---------------------------------------------------------------------------
+# 13 - the frozen corpus (the extractor pin)
+# ---------------------------------------------------------------------------
+
+
+class FrozenCorpusTest(unittest.TestCase):
+    """What the census equality pin was trying to say, said about frozen inputs.
+
+    ``scripts/audit/citation_corpus/`` holds one document per syntax, a frozen
+    resolution set, and the census they must produce. Both halves are frozen
+    because a verdict is a claim about a document *and* about the set it is
+    resolved against; leaving either to follow the real tree would put the pin
+    back on live data, which is the defect this replaces.
+
+    The distinction that matters: this expectation moves **iff the extractor
+    moves**. Editing ``tex/proof-guide.tex`` cannot touch it, so remediation
+    never has to update it -- and a relaxed resolution rule (the one change the
+    ratchet cannot see, because clearing findings is what remediation looks
+    like) shows up here as a diff nobody can mistake for progress.
+    """
+
+    def test_the_corpus_census_is_exactly_what_is_committed(self) -> None:
+        """Byte-for-byte, on the machine-readable half of the expectation."""
+        report = corpus_report()
+        self.assertEqual(report.coverage, [])
+        self.assertEqual(report.hard, [])
+        expected = (CORPUS_DIR / "expected.tsv").read_text(encoding="utf-8")
+        self.assertEqual(
+            baseline_body(ca.render_baseline(report)),
+            baseline_body(expected),
+            "the extractor's verdict on the frozen corpus changed",
+        )
+
+    def test_the_corpus_exercises_every_class(self) -> None:
+        """A corpus that lost a class would pin much less than it looks.
+
+        Without this, deleting the one ambiguous citation (or the one malformed
+        spelling) from the corpus would leave a green, much weaker test, and the
+        expectation file would happily be regenerated around the hole.
+        """
+        report = corpus_report()
+        seen = {
+            name
+            for target in CORPUS_TARGETS
+            for name in ca.ALL_CLASSES
+            if report.counts[target][name]
+        }
+        self.assertEqual(seen, set(ca.ALL_CLASSES))
+        for target in CORPUS_TARGETS:
+            self.assertGreater(report.counts[target][ca.RESOLVED], 0, target)
+
+    def test_the_corpus_exercises_every_extraction_variant(self) -> None:
+        """The other axis: how a citation is written, not how it is classified."""
+        report = corpus_report()
+        variants = {
+            finding.variant for finding in list(report.findings) + list(report.selfrefs)
+        }
+        for fragment in ("macro", "bare", "verbatim", "+brace", "+glued"):
+            self.assertTrue(
+                any(fragment in variant for variant in variants), f"no {fragment} variant"
+            )
+        tex = corpus_documents()["tex/guide.tex"]
+        for construct in ("\\texttt{", "\\path{", "\\begin{Verbatim}", "\\_", "*.lean"):
+            self.assertIn(construct, tex)
+        accounting = report.accounting["tex/guide.tex"]
+        # Brace shorthand adds citations, ``NON_CITATION`` spellings subtract
+        # them: both directions of the accounting are live in the corpus.
+        self.assertGreater(report.citations["tex/guide.tex"], accounting["matched"])
+        for target in CORPUS_TARGETS:
+            self.assertGreater(report.accounting[target]["acknowledged"], 0, target)
+
+    def test_the_corpus_resolution_set_is_frozen_and_owned(self) -> None:
+        """The tracked half of the fixture, pinned like the documents."""
+        tracked = corpus_tracked()
+        self.assertEqual(len(tracked), 8)
+        self.assertEqual(len(set(tracked)), len(tracked))
+        for path in tracked:
+            self.assertTrue(path.startswith(ca.ALLOWED_TRACKED_PREFIXES), path)
+
+    def test_the_corpus_is_not_audited_by_the_live_run(self) -> None:
+        """It is fixture material: a document, not a document under audit."""
+        self.assertEqual(
+            [target for target in ca.TARGETS if "citation_corpus" in target], []
+        )
+        self.assertEqual(live_report().visited, list(ca.TARGETS))
+
+
+# ---------------------------------------------------------------------------
+# 14 - updating the baseline, and the deletion budget
+# ---------------------------------------------------------------------------
+
+
+def missing_citations_tex(count: int) -> str:
+    """Return a document citing ``count`` distinct files that do not exist."""
+    return "".join(
+        "Citation \\texttt{Corpus/Missing%02d.lean} here.\n" % index for index in range(count)
+    )
+
+
+def missing_rows(count: int) -> List[Sequence[object]]:
+    """Return the baseline rows :func:`missing_citations_tex` produces."""
+    return [
+        (ca.MISSING, "tex/g.tex", "Corpus/Missing%02d.lean" % index, 1) for index in range(count)
+    ]
+
+
+BASE_CENSUS_40 = (("tex/g.tex", 40, 40, "MISSING=40"),)
+
+
+class BaselineUpdateTest(unittest.TestCase):
+    """``--update-baseline`` may lower the recorded debt, never raise it.
+
+    Rewriting the rows from the current run is the one operation that retires a
+    finding without fixing a citation, which is why the previous version -- it
+    printed ``+N`` and wrote anyway -- was the tool's own laundering hatch. The
+    refusals below are what make the written file provably per-key ``<=`` the
+    committed one.
+    """
+
+    def _fixture(self, document: str, committed: str, commit: bool = True):
+        """Build a repository holding a document and a *committed* baseline."""
+        return fixture(
+            {"tex/g.tex": document, "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            commit=commit,
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        )
+
+    def test_a_shrinking_update_is_written(self) -> None:
+        """The required act of a remediation commit, and it must stay possible."""
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(40))
+        with self._fixture(missing_citations_tex(30), committed) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            written = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 0, out)
+        self.assertIn("delta: +0 finding(s), -10 finding(s)", out)
+        self.assertIn("citations 40 -> 30 (-10)", out)
+        rows, census, _ = ca.parse_baseline(written)
+        self.assertEqual(len(rows), 30)
+        self.assertEqual(census["tex/g.tex"]["citations"], 30)
+
+    def test_a_growing_update_is_refused(self) -> None:
+        """One new key is one unfixed finding turned into an allowance."""
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(39))
+        with self._fixture(missing_citations_tex(40), committed) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 1)
+        self.assertIn("GROWN MISSING tex/g.tex Corpus/Missing39.lean", out)
+        self.assertIn("refusing to write a baseline that grows", out)
+        self.assertEqual(after, committed)
+
+    def test_the_reference_is_the_committed_copy_not_the_working_file(self) -> None:
+        """Otherwise a branch ratchets against its own earlier write.
+
+        The working file here already carries the grown row -- exactly the state
+        one unrefused write would leave behind -- and the refusal must still
+        fire, because what review compares against is the commit.
+        """
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(39))
+        grown = make_baseline(1, BASE_CENSUS_40, missing_rows(40))
+        with self._fixture(missing_citations_tex(40), committed) as root:
+            (root / "audit" / "base.tsv").write_text(grown, encoding="utf-8")
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("refusing to write a baseline that grows", out)
+
+    def test_a_creation_is_allowed_and_says_so(self) -> None:
+        """No commit has the file, so there is no allowance to launder yet."""
+        with self._fixture(missing_citations_tex(3), "", commit=False) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/new.tsv"
+            )
+            self.assertTrue((root / "audit" / "new.tsv").is_file())
+        self.assertEqual(code, 0, out)
+        self.assertIn("no committed copy", out)
+
+    def test_an_update_past_the_deletion_budget_is_refused(self) -> None:
+        """Deleting the citing text is not remediation, and it is not a refresh."""
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(40))
+        with self._fixture(missing_citations_tex(5), committed) as root:
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 1)
+        self.assertIn("ERODED tex/g.tex", out)
+        self.assertIn("refusing to write a baseline that records a deletion", out)
+        self.assertEqual(after, committed)
+
+
+class DeletionBudgetTest(unittest.TestCase):
+    """R11: the one place content loss is charged.
+
+    The ratchet cannot see a deletion -- removing the sentence that carries a
+    dangling citation clears the finding exactly as fixing it does -- and the
+    floors are a cliff hundreds of citations away. Without this the cheapest way
+    to a green run is to delete the prose.
+    """
+
+    def _run(
+        self, citations: int, committed_citations: int, rows: Optional[int] = None
+    ) -> Sequence[object]:
+        """Audit a document of ``citations`` against a census of that many.
+
+        ``rows`` is the row count of the committed baseline, which is separate
+        on purpose: this class is about the census, so the rows are kept wide
+        enough that the ratchet has nothing to say and the exit code is R11's.
+        """
+        recorded_rows = committed_citations if rows is None else rows
+        committed = make_baseline(
+            1,
+            (
+                (
+                    "tex/g.tex",
+                    committed_citations,
+                    committed_citations,
+                    "MISSING=%d" % committed_citations,
+                ),
+            ),
+            missing_rows(recorded_rows),
+        )
+        with fixture(
+            {"tex/g.tex": missing_citations_tex(citations), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ):
+            return run_main(ca, "--targets", "tex/g.tex", "--baseline", "audit/base.tsv")
+
+    def test_a_drop_within_the_budget_passes(self) -> None:
+        """Remediation is allowed to delete a stale citation."""
+        code, out = self._run(80, 100)
+        self.assertEqual(code, 0, out)
+        self.assertIn("citations 100 -> 80 (-20); deletion budget 25", out)
+        self.assertIn("citation audit: PASS", out)
+
+    def test_a_drop_past_the_budget_is_a_hard_failure(self) -> None:
+        """And, being hard, it suppresses the census like any untrustworthy run."""
+        code, out = self._run(60, 100)
+        self.assertEqual(code, 1)
+        self.assertIn("ERODED tex/g.tex", out)
+        self.assertIn("per-run budget 25", out)
+        self.assertIn("NOT reported", out)
+        self.assertIn("citation audit: FAIL", out)
+
+    def test_a_missing_census_line_for_a_target_with_rows_is_charged(self) -> None:
+        """Deleting the census line would disarm the budget while looking tidy."""
+        committed = make_baseline(1, (), missing_rows(40))
+        with fixture(
+            {"tex/g.tex": missing_citations_tex(40), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ):
+            code, out = run_main(
+                ca, "--targets", "tex/g.tex", "--baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("no #census line", out)
+
+    def test_growth_in_citations_is_never_charged(self) -> None:
+        """The budget is about loss; a document that grows is not suspect."""
+        code, out = self._run(140, 100, rows=140)
+        self.assertEqual(code, 0, out)
+        self.assertNotIn("ERODED", out)
 
 
 # ---------------------------------------------------------------------------
@@ -1558,7 +1939,7 @@ class MutationTest(unittest.TestCase):
     def test_without_the_target_check_a_partial_run_shrinks_the_baseline(self) -> None:
         """One ``--targets`` run would drop the other target's rows for good."""
         mutant = load_mutated(
-            ("        if set(report.visited) != set(TARGETS):", "        if False:")
+            ("    if set(report.visited) != set(TARGETS):", "    if False:")
         )
         with fixture(
             {"tex/a.tex": BARE_TEX, "tex/b.tex": BASENAME_TEX},
@@ -1568,12 +1949,131 @@ class MutationTest(unittest.TestCase):
             MIN_CITATIONS={"tex/a.tex": 1, "tex/b.tex": 1},
         ) as root:
             code, _ = run_main(
-                mutant, "--targets", "tex/a.tex", "--write-baseline", "audit/base.tsv"
+                mutant, "--targets", "tex/a.tex", "--update-baseline", "audit/base.tsv"
             )
             written = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
         self.assertEqual(code, 0)
         self.assertIn("tex/a.tex", written)
         self.assertNotIn("tex/b.tex", written)
+
+    # 13 - the frozen corpus
+    def test_a_relaxed_resolution_rule_moves_the_frozen_corpus_census(self) -> None:
+        """The pin's whole claim: an extractor change is a diff in expected.tsv.
+
+        Two weakenings the ratchet is blind to -- accepting a bare basename, and
+        dropping the boundary widening so glued spellings resolve -- both of
+        which look like remediation in the debt total (findings fall) and are
+        caught here because the frozen corpus says otherwise.
+        """
+        expected = baseline_body((CORPUS_DIR / "expected.tsv").read_text(encoding="utf-8"))
+        mutants = {
+            "basenames accepted": (
+                '    if "/" not in token:\n        return (BASENAME_ONLY, None)',
+                "    if False:\n        return (BASENAME_ONLY, None)",
+            ),
+            "glued text truncated": (
+                "    left, right = start, end\n"
+                "    while left > 0 and text[left - 1] in TOKEN_EDGE_CHARS:\n"
+                "        left -= 1\n"
+                "    while right < len(text) and text[right] in TOKEN_EDGE_CHARS:\n"
+                "        right += 1\n"
+                "    return text[left:right]",
+                "    return text[start:end]",
+            ),
+        }
+        for name, substitution in mutants.items():
+            with self.subTest(mutation=name):
+                mutant = load_mutated(substitution)
+                report = corpus_report(mutant)
+                self.assertNotEqual(baseline_body(mutant.render_baseline(report)), expected)
+
+    def test_a_mis_attributed_class_breaks_the_partition_identity(self) -> None:
+        """The live-run pin that replaced the census equality pin, exercised."""
+        mutant = load_mutated(
+            (
+                "            per_class[verdict] += 1",
+                "            per_class[verdict] += 0 if verdict == MALFORMED else 1",
+            )
+        )
+        report = self.audit_with(
+            mutant, {"tex/g.tex": GLUED_TEX}, tracked=["IsingModel/X/Y.lean"]
+        )
+        self.assertNotEqual(
+            sum(report.counts["tex/g.tex"][name] for name in mutant.CITATION_CLASSES),
+            report.citations["tex/g.tex"],
+        )
+
+    # 14 - the update path and the deletion budget
+    def test_without_the_growth_refusal_a_grown_baseline_is_written(self) -> None:
+        """The laundering hatch, as it actually shipped: print ``+N``, write anyway.
+
+        This is the mutation the whole of :class:`BaselineUpdateTest` exists to
+        make impossible to miss, and it is a defect fix rather than a
+        hypothetical: before this change the tool computed the growth delta and
+        wrote the file regardless.
+        """
+        mutant = load_mutated(("        if growth:", "        if False:"))
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(39))
+        with fixture(
+            {"tex/g.tex": missing_citations_tex(40), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            module=mutant,
+            commit=True,
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ) as root:
+            code, _ = run_main(
+                mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+            written = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
+        self.assertEqual(code, 0)
+        self.assertIn("Corpus/Missing39.lean", written)
+
+    def test_judging_an_update_by_the_working_file_lets_a_branch_ratchet_itself(self) -> None:
+        """The wrong "previous" side: a PR's own last write becomes its licence."""
+        mutant = load_mutated(
+            (
+                "    for revision in _committed_revisions():\n"
+                "        text = _git_committed_text(revision, relative)",
+                "    for revision in ['worktree']:\n"
+                "        text = (\n"
+                "            destination.read_text(encoding='utf-8')\n"
+                "            if destination.is_file()\n"
+                "            else None\n"
+                "        )",
+            )
+        )
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(39))
+        grown = make_baseline(1, BASE_CENSUS_40, missing_rows(40))
+        with fixture(
+            {"tex/g.tex": missing_citations_tex(40), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            module=mutant,
+            commit=True,
+            TARGETS=("tex/g.tex",),
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ) as root:
+            (root / "audit" / "base.tsv").write_text(grown, encoding="utf-8")
+            code, _ = run_main(
+                mutant, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 0)
+
+    def test_disabling_the_deletion_budget_passes_a_gutted_document(self) -> None:
+        """Without R11, deleting the citing prose is the cheapest green run."""
+        mutant = load_mutated(("        if committed - now > budget:", "        if False:"))
+        committed = make_baseline(1, BASE_CENSUS_40, missing_rows(40))
+        with fixture(
+            {"tex/g.tex": missing_citations_tex(2), "audit/base.tsv": committed},
+            tracked=["IsingModel/Corpus/Present.lean"],
+            module=mutant,
+            MIN_CITATIONS={"tex/g.tex": 1},
+        ):
+            code, out = run_main(
+                mutant, "--targets", "tex/g.tex", "--baseline", "audit/base.tsv"
+            )
+        self.assertEqual(code, 0)
+        self.assertIn("38 finding(s) cleared", out)
 
     # 12 - the ratchet
     def test_comparing_totals_hides_a_fix_paired_with_a_regression(self) -> None:
@@ -1611,18 +2111,68 @@ class RealTreePinTest(unittest.TestCase):
         """The targets exist, are tracked, and resolve inside the owned prefixes."""
         self.assertEqual(live_report().hard, [])
 
-    def test_class_census_matches_the_committed_baseline(self) -> None:
-        """A change in the extractor shows up here, not only in the debt total."""
+    def test_the_class_census_partitions_the_citations(self) -> None:
+        """Attribution pin, and it survives every edit to the documents.
+
+        This is half of what replaced the census *equality* pin. That pin
+        asserted ``extractor(live documents) == frozen numbers``, which is two
+        claims -- the extractor did not change, and the documents did not change
+        -- and only the first was ever wanted; the second made every remediation
+        commit fail by construction. What is checked here holds whatever the
+        documents say: every citation lands in exactly one class (the decision
+        table is total and closed), so the classes have to add up to the
+        citations. The other half is :class:`FrozenCorpusTest`.
+        """
         report = live_report()
-        _, census, tracked = ca.read_baseline(ca.BASELINE_FILE)
-        self.assertEqual(tracked, report.tracked)
         for target in report.visited:
-            recorded = census[target]
-            self.assertEqual(recorded["citations"], report.citations[target])
-            self.assertEqual(recorded["raw"], report.raw_occurrences[target])
+            self.assertEqual(
+                sum(report.counts[target][name] for name in ca.CITATION_CLASSES),
+                report.citations[target],
+                target,
+            )
+            # SELFREF counts paragraphs, not citations, so it must *not* be in
+            # that sum; a mutation that folded it in would double-count.
+            self.assertEqual(report.counts[target][ca.SELFREF],
+                             len([f for f in report.selfrefs if f.target == target]))
+
+    def test_every_raw_occurrence_is_matched_or_acknowledged(self) -> None:
+        """The coverage arithmetic, pinned on its addends rather than its result.
+
+        ``matched + acknowledged == raw`` is what the coverage audit enforces
+        line by line; asserting it on the published totals is what would catch
+        an acknowledgement list that had quietly turned into a wildcard --
+        coverage stays green in that case, because everything is "explained",
+        while real citations stop being charged.
+        """
+        report = live_report()
+        for target in report.visited:
+            accounting = report.accounting[target]
+            self.assertEqual(
+                accounting["matched"] + accounting["acknowledged"], accounting["raw"], target
+            )
+            self.assertEqual(accounting["raw"], report.raw_occurrences[target], target)
+            # Brace expansion is the only step that adds, so it is the only
+            # direction in which citations may exceed the matches.
+            self.assertGreaterEqual(report.citations[target], accounting["matched"], target)
+            self.assertLess(accounting["acknowledged"], accounting["raw"] // 2, target)
+
+    def test_the_rows_add_up_to_the_class_census(self) -> None:
+        """Aggregation pin: the baseline rows are the findings, regrouped.
+
+        A key or multiplicity lost in :func:`aggregate` would shrink the
+        recorded debt without fixing anything, and the ratchet -- which reads
+        only the rows -- could not see it.
+        """
+        report = live_report()
+        rows: Counter = Counter()
+        for row in ca.aggregate(list(report.findings) + list(report.selfrefs)):
+            rows[(row.target, row.cls)] += row.count
+        for target in report.visited:
             for name in ca.ALL_CLASSES:
+                if name == ca.RESOLVED:
+                    continue  # silent by design: resolved citations carry no row
                 self.assertEqual(
-                    recorded.get(name, 0), report.counts[target][name], f"{target}/{name}"
+                    rows.get((target, name), 0), report.counts[target][name], f"{target}/{name}"
                 )
 
     def test_the_live_run_is_at_the_baseline(self) -> None:
@@ -1638,15 +2188,70 @@ class RealTreePinTest(unittest.TestCase):
         regressions, _ = ca.ratchet(current, gating)
         self.assertEqual(regressions, [])
 
-    def test_floors_are_below_but_close_to_the_live_values(self) -> None:
-        """A floor set to zero passes "the floor exists" and guards nothing."""
+    def test_the_citation_floors_are_backstops_against_the_committed_census(self) -> None:
+        """A floor set to zero guards nothing; a floor set just below the live
+        value is a document freeze.
+
+        Measured against the **committed census** rather than the live run, so
+        the pin stops moving when the documents are edited -- which is exactly
+        the property the census equality pin lacked. The band says what the
+        floor is for: far enough below to let ordinary remediation delete stale
+        citations (that is the drop budget's job, one hundredth of the distance
+        away), high enough that a gutted document still trips it.
+        """
+        _, census, _ = ca.read_baseline(ca.BASELINE_FILE)
+        for target in ca.TARGETS:
+            floor = ca.MIN_CITATIONS[target]
+            committed = census[target]["citations"]
+            self.assertGreaterEqual(floor, 0.40 * committed, target)
+            self.assertLessEqual(floor, 0.75 * committed, target)
+
+    def test_the_tracked_floor_is_below_but_close_to_the_live_value(self) -> None:
+        """``MIN_TRACKED_LEAN`` is about the Lean tree, which remediation does not
+        touch, so it stays pinned tightly against the live value."""
         report = live_report()
         self.assertLessEqual(ca.MIN_TRACKED_LEAN, report.tracked)
         self.assertGreaterEqual(ca.MIN_TRACKED_LEAN, 0.75 * report.tracked)
+
+    def test_the_committed_baseline_carries_a_census_for_every_default_target(self) -> None:
+        """Deleting a ``#census`` line would disarm R11 for that target.
+
+        The runtime charges that only for a target the baseline still carries
+        rows for (:func:`erosion_failures` explains why); the claim that the
+        *default* targets always have one belongs here, against the committed
+        file itself.
+        """
+        _, census, tracked = ca.read_baseline(ca.BASELINE_FILE)
+        self.assertEqual(set(ca.TARGETS) - set(census), set())
+        self.assertEqual(tracked, ca.tracked_lean_files().__len__())
         for target in ca.TARGETS:
-            floor = ca.MIN_CITATIONS[target]
-            self.assertLessEqual(floor, report.citations[target])
-            self.assertGreaterEqual(floor, 0.75 * report.citations[target])
+            self.assertGreater(census[target]["citations"], 0, target)
+            self.assertGreater(census[target]["raw"], 0, target)
+
+    def test_the_deletion_budget_is_calibrated_against_the_committed_census(self) -> None:
+        """The guard that actually fires per commit, with its numbers stated.
+
+        Big enough that a real remediation pass (207 citations repointed, 44
+        stale ones removed, measured) is not blocked, small enough that a
+        document cannot be emptied a few dozen citations at a time without
+        someone saying so in a diff.
+        """
+        _, census, _ = ca.read_baseline(ca.BASELINE_FILE)
+        budgets = {
+            target: ca.citation_drop_budget(census[target]["citations"]) for target in ca.TARGETS
+        }
+        self.assertEqual(
+            budgets, {"tex/proof-guide.tex": 66, "docs/index.md": 134}
+        )
+        for target, budget in budgets.items():
+            committed = census[target]["citations"]
+            self.assertGreater(budget, 44, target)
+            self.assertLess(committed - budget, committed, target)
+            self.assertGreater(committed - budget, ca.MIN_CITATIONS[target], target)
+        # A budget that is a constant stops meaning anything as the document
+        # shrinks; a budget without a floor freezes a small target.
+        self.assertEqual(ca.citation_drop_budget(0), ca.MIN_CITATION_DROP_BUDGET)
+        self.assertEqual(ca.citation_drop_budget(10_000), 500)
 
     def test_every_allowed_prefix_matches_tracked_files(self) -> None:
         """A dead prefix is a review signal, exactly as in ``ScopeCoverageTest``."""

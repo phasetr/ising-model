@@ -1,0 +1,27 @@
+# Expected census of the frozen extractor corpus -- the extractor pin.
+#
+# This is what scripts/citation_audit.py must say about guide.tex, notes.md and
+# tracked.txt, which never change when a live document is edited. A diff here is
+# therefore a change in the *extractor* (a resolution rule relaxed, a variant
+# tokenised differently, a class re-attributed) and has to be justified as one.
+#
+# Deliberately hand-maintained: there is no flag that regenerates it, because a
+# one-command refresh is how an extractor pin turns into a rubber stamp. Free-text
+# comment lines are not compared; #tracked, #census and the rows are.
+#tracked	8
+#census	tex/guide.tex	14	15	RESOLVED=6,MISSING=2,AMBIGUOUS=1,BASENAME_ONLY=3,MALFORMED=2,SELFREF=1
+#census	docs/notes.md	6	8	RESOLVED=2,MISSING=1,AMBIGUOUS=1,BASENAME_ONLY=2,SELFREF=1
+class	target	token	count	first_line
+AMBIGUOUS	docs/notes.md	Twin.lean	1	11
+AMBIGUOUS	tex/guide.tex	Twin.lean	1	13
+BASENAME_ONLY	docs/notes.md	Alone.lean	1	11
+BASENAME_ONLY	docs/notes.md	Moved.lean	1	17
+BASENAME_ONLY	tex/guide.tex	Alone.lean	2	12
+BASENAME_ONLY	tex/guide.tex	Moved.lean	1	26
+MALFORMED	tex/guide.tex	../Corpus/Resolved.lean	1	14
+MALFORMED	tex/guide.tex	Corpus/Resolved.lean.bak	1	14
+MISSING	docs/notes.md	Corpus/Gone.lean	1	9
+MISSING	tex/guide.tex	Corpus/Gone.lean	1	11
+MISSING	tex/guide.tex	Corpus/Pair/Gone.lean	1	10
+SELFREF	docs/notes.md	Corpus/Moved.lean >> Moved.lean	1	15
+SELFREF	tex/guide.tex	Corpus/Moved.lean >> Moved.lean	1	24
