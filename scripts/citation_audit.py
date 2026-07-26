@@ -420,8 +420,8 @@ MEASURED_TRACKED_LEAN = 2018
 # loss, are a cliff that twelve compounding 5% runs get to within 23 citations
 # of. 15% (199 citations for the tex, 404 for the markdown) admits three
 # consecutive full-budget runs and the whole remediation programme measured so
-# far (PR #4730 removes 44 of the tex's), and stops that walk at its fourth
-# step, at 1,144.
+# far (PR #4730 removes 47 of the tex's, its batch-1 follow-up 5 more), and
+# stops that walk at its fourth step, at 1,144.
 #
 # Exceeding it is not a defect to be forced through: it is the point at which
 # somebody re-measures the documents and says so in a diff.
@@ -453,12 +453,12 @@ CITATION_DROP_BUDGET_FRACTION = 0.05
 MIN_CITATION_DROP_BUDGET = 25
 
 # The drop measured on the first remediation pass over ``tex/proof-guide.tex``
-# (PR #4730), whose ``#census`` citation count moves 1,333 -> 1,289. Frozen.
+# (PR #4730), whose ``#census`` citation count moves 1,333 -> 1,286. Frozen.
 #
 # It is not maintained as a running maximum of what remediation has needed, and
 # a later pass that deletes more is not required to update it: from a census of
-# 1,289 the tool accepts a 60-citation drop (inside R11's budget of 64 and
-# inside R12's cap, 1,333 - 1,229 = 104) with this constant still reading 44.
+# 1,281 the tool accepts a 60-citation drop (inside R11's budget of 64 and
+# inside R12's cap, 1,333 - 1,221 = 112) with this constant still reading 47.
 # Nothing charges it at runtime -- like ``MEASURED_TRACKED_LEAN`` it is the test
 # suite's reference point -- and what it is for is the *lower* side of the
 # budget above, which has no other guard: a budget that stops clearing this
@@ -466,7 +466,9 @@ MIN_CITATION_DROP_BUDGET = 25
 # that blocks legitimate work is a guard somebody deletes. Raising it honestly
 # is fail-closed in the suite: at or above the low-end budget of 56 the headroom
 # claim reddens, which is the point at which the sizing gets restated in a diff.
-MEASURED_REMEDIATION_DROP = 44
+# 47 leaves 9 of those 56, so a re-measurement much larger than this one is the
+# one that has to restate the sizing rather than edit this number again.
+MEASURED_REMEDIATION_DROP = 47
 
 # A resolved citation must land inside the part of the tree this project owns.
 # Measured: 2,017 of the 2,018 tracked ``.lean`` files match (the exception is
