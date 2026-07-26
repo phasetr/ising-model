@@ -75,7 +75,7 @@ defect survived. What a deletion budget has to satisfy is a claim about the
 document above its floor and inside the cumulative cap -- and not the value the
 rule happens to produce from today's ``#census``. The equality form was tried
 first here too: pinned at 66 for the tex, the suite went red on the very
-remediation commit that took the census to 1,289, and the cheapest repair there
+remediation commit that took the census to 1,286, and the cheapest repair there
 is to write 64 and repeat the edit on the next pass -- a guard number lowered
 without review, once per remediation. Because a range claim can be widened until
 it says nothing, :class:`BudgetCalibrationMutationTest` is its anti-vacuity
@@ -3545,7 +3545,7 @@ def budget_headroom_violations(module: types.ModuleType) -> List[str]:
     bounds the total independently of R11, so the real per-run allowance is
     ``min(citation_drop_budget(census), census - (measured - cap))``: at the
     binding low end (census 1,134 for the tex) R12 refuses even a one-citation
-    deletion, and a 44-citation drop needs a census of 1,178 or more. What is
+    deletion, and a 47-citation drop needs a census of 1,181 or more. What is
     claimed here is only that R11 is not the brake that stops it.
     """
     out: List[str] = []
@@ -3937,7 +3937,7 @@ class RealTreePinTest(unittest.TestCase):
         budget computed from the committed ``#census``
         (``{tex: 66, markdown: 134}``). That pin failed by construction on a
         remediation commit -- ``--update-baseline`` rewrites the census it read,
-        so the census that made 66 true became 1,289 and made it 64 -- and its
+        so the census that made 66 true became 1,286 and made it 64 -- and its
         repair, editing the literal, is a guard number lowered once per
         remediation with nothing said about whether the smaller budget still
         guards anything. The rule is a constant; only the value it is applied to
@@ -3990,7 +3990,7 @@ class RealTreePinTest(unittest.TestCase):
             },
             {"tex/proof-guide.tex": 66, "docs/index.md": 134},
         )
-        self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 44)
+        self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 47)
 
     def test_the_committed_census_is_inside_the_range_the_budget_is_stated_over(
         self,
@@ -4132,7 +4132,7 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
         catching it first.
         """
         mutant = load_mutated(
-            ("MEASURED_REMEDIATION_DROP = 44", "MEASURED_REMEDIATION_DROP = 0")
+            ("MEASURED_REMEDIATION_DROP = 47", "MEASURED_REMEDIATION_DROP = 0")
         )
         self.assertNotEqual(budget_headroom_violations(mutant), [])
         self.assertEqual(budget_rule_violations(mutant), [])

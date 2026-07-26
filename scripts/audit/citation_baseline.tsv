@@ -35,7 +35,7 @@
 # any more -- removing the commit that created it; each of those is a loud diff,
 # and that is the point.
 #tracked	2018
-#census	tex/proof-guide.tex	1286	1277	RESOLVED=983,MISSING=73,AMBIGUOUS=104,BASENAME_ONLY=126,SELFREF=4
+#census	tex/proof-guide.tex	1281	1274	RESOLVED=983,MISSING=68,AMBIGUOUS=104,BASENAME_ONLY=126,SELFREF=4
 #census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90
 class	target	token	count	first_line
 AMBIGUOUS	docs/index.md	Analyticity.lean	24	2195
@@ -396,7 +396,6 @@ MISSING	docs/index.md	MassContinuityFiniteVolumeIncidentEdge/IncidentSum/DerivCo
 MISSING	docs/index.md	RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean	1	866
 MISSING	docs/index.md	SharpHLSScopeExcludedAxioms.lean	1	2000
 MISSING	docs/index.md	SpecialCases/Legacy.lean	3	1977
-MISSING	tex/proof-guide.tex	Lemma_17_5_2/SharpHLSScopeExcludedAxioms.lean	1	34374
 MISSING	tex/proof-guide.tex	Peierls/ClosedWalkCount.lean	1	4873
 MISSING	tex/proof-guide.tex	Peierls/ConnectedDropletBound.lean	1	2065
 MISSING	tex/proof-guide.tex	Peierls/DartOrbitWalk.lean	1	4860
@@ -459,10 +458,6 @@ MISSING	tex/proof-guide.tex	Peierls/SingleOrbitTurnStep.lean	1	2852
 MISSING	tex/proof-guide.tex	Peierls/SingleOrbitWedge.lean	1	2904
 MISSING	tex/proof-guide.tex	Peierls/SingleOrbitWedgeReach.lean	1	2918
 MISSING	tex/proof-guide.tex	Peierls/WalkEdgesConnected.lean	1	2541
-MISSING	tex/proof-guide.tex	SharpHLSScopeExcludedAxioms.lean	1	34572
-MISSING	tex/proof-guide.tex	TransferMatrix/LayerDobrushinContraction.lean	1	34232
-MISSING	tex/proof-guide.tex	TransferMatrix/LayerDoeblin.lean	1	34232
-MISSING	tex/proof-guide.tex	TransferMatrix/LayerDoobSpectralGap.lean	1	34232
 SELFREF	docs/index.md	AmbientComplexAnalyticity.lean >> AmbientComplexAnalyticity.lean	1	524
 SELFREF	docs/index.md	AmbientLattice.lean >> AmbientLattice.lean	3	851
 SELFREF	docs/index.md	AmbientLattice/Analyticity.lean >> Analyticity.lean	1	2126

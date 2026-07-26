@@ -34229,7 +34229,7 @@ thermodynamic limit.  That route is \emph{obstructed}: the single-step Dobrushin
 is provably insufficient for the growing transverse box, and a transverse-uniform Kotecký--Preiss /
 Dobrushin estimate fails (counterexample $u \equiv 1$, $k = \exp(t \sum a\,b)$,
 $\rho \sim \exp(O(|S|))$); see the roadmap, Phase~5, and the documented obstruction in
-\texttt{TransferMatrix/Layer\{DobrushinContraction,Doeblin,DoobSpectralGap\}.lean}.
+\texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}.
 
 Issue~\#4214 item~B option~(ii), formalized in
 \texttt{TransferMatrix/ClusterExpansionSupersession.lean}, records the resolution: the \S18
@@ -34371,7 +34371,7 @@ analytic axioms}.
 PR~\#4278, the project followed the same temporary isolation used for the former Vitali--Porter
 axiom $\texttt{vitaliPorter\_tendstoLocallyUniformlyOn}$, which was later proved in Issue~\#4280.
 The single analytic input of the sharp constant was then declared as a documented \texttt{axiom} in
-$\texttt{Lemma\_17\_5\_2/SharpHLSScopeExcludedAxioms.lean}$:
+the module (removed PR~\#4297; not archived --- the axiom it declared is discharged):
 $\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$ (the locally-uniform convergence of
 the finite-stage $\beta$-derivatives $\partial_\beta c_n$ on $\mathrm{Ioo}\,0\,(1/(J\cdot 2d))$ --- the
 Montel / Vitali--Porter normal-families core).  It belongs to the same volume-uniform complex
@@ -34569,7 +34569,7 @@ $\texttt{Icc}\,\beta_1\,\beta_2\subseteq\texttt{ConvergenceRegion.window}\,d\,J$
 where the cluster expansion converges) and supplies the spine with
 $\texttt{derivativeLimit\_on\_window}$, $\texttt{isOpen}$ of the window, and
 $\texttt{window\_subset\_highTemp}$.  The axiom module
-$\texttt{SharpHLSScopeExcludedAxioms.lean}$ is deleted.
+(removed PR~\#4297; not archived --- the axiom it declared is discharged) is deleted.
 $\texttt{\#print axioms lemma\_17\_5\_2\_sandwich\_sharp\_cubicExhaustion}
 =[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$, and
 $\texttt{grep -rn 'axiom' IsingModel/}$ contains no declaration.  This closes audit
