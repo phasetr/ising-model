@@ -338,6 +338,13 @@ class MarkdownBacktickParityTest(unittest.TestCase):
     citations with no verbatim fallback (brace alternations, globs, elided
     suffixes). The line is therefore re-read without pairing -- a superset of
     every pairing -- and the defect is reported.
+
+    The fenced alternative is the same hole one level up. It is ``re.DOTALL``
+    and unbounded, so an unbalanced run of three or more backticks pairs with
+    the next run anywhere in the file. Crediting a fenced match with its whole
+    span therefore let the match that hides the citations certify their
+    backticks as read, and the tests below used to assert exactly that silence.
+    A fence now vouches for its two delimiters only.
     """
 
     def markdown(self, text: str) -> dcs.DocSource:
@@ -356,10 +363,63 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         "`synth_alpha{,_beta}_xyzzy` + `_delta_gen` done\n"
     )
 
-    def test_balanced_lines_and_fences_raise_nothing(self) -> None:
-        """The check must be silent on healthy Markdown, fenced blocks included."""
-        self.assertEqual(dcs.unpaired_backticks("a `x_y` b\n```lean\n`z_w`\n```\n"), {})
+    #: An unbalanced fence run: the first ``` pairs with the last one, and every
+    #: citation in between lands inside a body the whole-span reading called read.
+    SWALLOWED = (
+        "start ```\ncite `_alpha_gen` here\nand `beta{,_two}_gen`\nend ```\n"
+    )
+
+    def test_balanced_lines_and_backtick_free_fences_raise_nothing(self) -> None:
+        """The check is silent on healthy Markdown whose fences quote no backtick."""
+        self.assertEqual(dcs.unpaired_backticks("a `x_y` b\n```lean\ndef z_w\n```\n"), {})
         self.assertEqual(dcs.unpaired_backticks("plain prose, no code span\n"), {})
+
+    def test_a_backtick_inside_a_fence_is_charged_not_exonerated(self) -> None:
+        """A fenced match vouches for its delimiters, never for its body.
+
+        Crediting the whole match is the fail-open move: the fenced alternative
+        is unbounded and ``re.DOTALL``, so the match that swallows a citation is
+        also the match that certifies its backticks as read.
+        """
+        self.assertEqual(dcs.unpaired_backticks(self.SWALLOWED), {2: 2, 3: 2})
+        # A four-backtick run does it with a single well-formed fence after it.
+        four = "a ````\ncite `_alpha_gen`\nb ```\n"
+        self.assertEqual(dcs.unpaired_backticks(four), {1: 1, 2: 2})
+        # A well-formed fence that quotes a backtick is charged too: keep-only.
+        self.assertEqual(dcs.unpaired_backticks("```lean\n`z_w`\n```\n"), {2: 2})
+
+    def test_the_swallowed_citations_are_recovered_and_reported(self) -> None:
+        """End to end on the swallowed block: both fragment citations come back."""
+        source = self.markdown(self.SWALLOWED)
+        tokens = [token for token, _line in source.tokens]
+        self.assertIn("_alpha_gen", tokens)
+        self.assertIn("beta{,_two}_gen", tokens)
+        self.assertEqual(len(source.malformed), 2)
+        self.assertTrue(all("pair into no code span" in item for item in source.malformed))
+
+    def test_an_odd_number_of_fence_runs_is_reported(self) -> None:
+        """The run left over opens a block that ends wherever the next run is."""
+        self.assertIsNone(dcs.unbalanced_fence_run("```\ncode\n```\n"))
+        self.assertIsNone(dcs.unbalanced_fence_run("no fence here\n"))
+        self.assertEqual(dcs.unbalanced_fence_run("```\ncode\n```\nprose\n```\n"), 5)
+        warnings = self.markdown("```\ncode\n```\nprose\n```\n").malformed
+        self.assertEqual(len(warnings), 2)  # the leftover run is unpairable *and* odd
+        self.assertTrue(all(":5:" in item for item in warnings))
+        self.assertTrue(
+            any("odd number of fenced-block delimiters" in item for item in warnings)
+        )
+
+    def test_the_fence_parity_check_catches_what_the_backtick_count_cannot(self) -> None:
+        """A six-backtick run is one odd fence run whose backticks all pair off.
+
+        ``_MD_TOKEN_RE`` reads it as a fenced match with an empty body, so both
+        delimiters are accounted for and :func:`unpaired_backticks` is silent;
+        only the run count says the file is malformed.
+        """
+        self.assertEqual(dcs.unpaired_backticks("a ``````\nb\n"), {})
+        self.assertEqual(dcs.unbalanced_fence_run("a ``````\nb\n"), 1)
+        (warning,) = self.markdown("a ``````\nb\n").malformed
+        self.assertIn("odd number of fenced-block delimiters", warning)
 
     def test_an_unpairable_backtick_is_reported_with_its_line(self) -> None:
         """Both live shapes are caught: a stray backtick and a span across lines."""

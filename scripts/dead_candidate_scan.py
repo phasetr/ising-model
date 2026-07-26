@@ -61,7 +61,11 @@ A third rule follows from the first two and is just as load-bearing:
    that drops precisely the citations with no verbatim fallback -- but to re-read
    it without pairing (:func:`pairing_independent_tokens`), which is a superset
    of every pairing, and to report the defect
-   (:func:`unpaired_backticks`).
+   (:func:`unpaired_backticks`). A fenced run is the same failure one level up
+   and reaches further -- its grammar is unbounded, so an unbalanced run pairs
+   with the next one anywhere in the file -- so a fenced match is credited with
+   its two delimiters and never with its body, and an odd number of runs is
+   reported as well (:func:`unbalanced_fence_run`).
 
    The channel is deliberately *charge-only*: no span may deny a candidate.
    Seven successive attempts to decide *which* names an unread span could not be
@@ -1242,6 +1246,7 @@ def tex_citation_line_breaks(text: str) -> tuple[int, list[tuple[int, str]]]:
 
 _MD_TOKEN_RE = re.compile(r"`([^`\n]+)`|```(.*?)```", re.DOTALL)
 _BACKTICK_RE = re.compile("`")
+_FENCE_RUN_RE = re.compile("`{3,}")
 
 
 def unpaired_backticks(text: str) -> dict[int, int]:
@@ -1261,12 +1266,36 @@ def unpaired_backticks(text: str) -> dict[int, int]:
     1201 hold the sibling shape, a code span opened on one line and closed on
     the next, which ``[^`\\n]+`` cannot match at all.
 
-    A backtick left over after the scan is the signature of both, and it is
-    cheap: the spans are the matches of :data:`_MD_TOKEN_RE`, so a backtick
-    inside a fenced block or a well-formed span is covered by construction and
-    only the unpairable ones are reported.
+    A backtick left over after the scan is the signature of both. What counts as
+    "left over" is deliberately narrow on the *exonerating* side. A well-formed
+    span carries no backtick inside it (``[^`\\n]+`` forbids one), so covering
+    the whole match exonerates nothing but its own two delimiters. A fenced
+    match is not like that: its alternative is ``re.DOTALL`` and unbounded, so
+    an unbalanced run pairs with the next run *anywhere in the file* and its
+    body swallows every line in between. Covering the whole fenced match would
+    therefore let the very match that hides a citation certify the citation's
+    backticks as read::
+
+        text = "start ```\\ncite `_alpha_gen` here\\nand `beta{,_two}_gen`\\nend ```\\n"
+
+    Measured on that text, whole-match covering returns ``{}`` while both
+    citations are gone: the fenced body is tokenized by whitespace, and
+    :func:`_nameish` rejects the pieces that still carry a backtick, so neither
+    shape -- and neither has a verbatim fallback -- reaches a verdict. A fenced
+    match is therefore credited with its two delimiters only, and the backticks
+    in its body are reported like any other, which is what makes
+    :func:`_markdown_source` re-read those lines. A fenced block that
+    legitimately quotes a backtick is charged too; the price is one coverage
+    warning and a superset re-read, both keep-only, and that is the direction an
+    approximation is allowed to err in.
     """
-    covered = [(match.start(), match.end()) for match in _MD_TOKEN_RE.finditer(text)]
+    covered: list[tuple[int, int]] = []
+    for match in _MD_TOKEN_RE.finditer(text):
+        if match.group(1) is not None:
+            covered.append((match.start(), match.end()))
+        else:  # fenced: the delimiters are read, the body is not vouched for
+            covered.append((match.start(), match.start() + 3))
+            covered.append((match.end() - 3, match.end()))
     starts = line_starts(text)
     out: dict[int, int] = {}
     index = 0
@@ -1279,6 +1308,26 @@ def unpaired_backticks(text: str) -> dict[int, int]:
         line = offset_to_line(starts, offset)
         out[line] = out.get(line, 0) + 1
     return out
+
+
+def unbalanced_fence_run(text: str) -> int | None:
+    """Return the line of the fence delimiter left without a partner, else ``None``.
+
+    Runs of three or more backticks are paired positionally too, so an odd
+    number of them leaves one run to open a block that the *next* run closes --
+    possibly hundreds of lines later, possibly at what was meant to be the
+    opener of a real block. The citations caught inside are recovered anyway
+    (:func:`unpaired_backticks` charges the body of every fenced match), so this
+    check adds no token; it names the structural defect so the Markdown gets
+    repaired instead of the scan quietly reading half the file as one code
+    block. Charge-only, like every other coverage warning: it never reaches a
+    verdict or the exit code.
+
+    The line reported is the last run's, the one positional pairing leaves over.
+    """
+    starts = line_starts(text)
+    runs = [offset_to_line(starts, match.start()) for match in _FENCE_RUN_RE.finditer(text)]
+    return runs[-1] if len(runs) % 2 else None
 
 
 def pairing_independent_tokens(line: str) -> list[str]:
@@ -1402,7 +1451,10 @@ def _markdown_source(path: Path) -> DocSource:
     alternations, globs, elided suffixes). Its tokens are re-read with
     :func:`pairing_independent_tokens`, whose result is a superset of every
     pairing, and the defect is reported as a coverage warning so the Markdown
-    itself gets repaired rather than silently worked around.
+    itself gets repaired rather than silently worked around. The same holds
+    inside a fenced block, whose body is vouched for by nobody; an odd number of
+    fence delimiters is reported on top (:func:`unbalanced_fence_run`), because
+    the run left over reads an arbitrary stretch of the file as one block body.
     """
     raw = _read_doc(path)
     label = rel(path)
@@ -1428,6 +1480,14 @@ def _markdown_source(path: Path) -> DocSource:
             f"{label}:{lineno}: {unpaired} of {line.count('`')} backtick(s) pair into "
             "no code span, so the code-span grammar mis-reads this line; its tokens "
             f"were re-read without pairing ({recovered} added). Repair the Markdown."
+        )
+    leftover = unbalanced_fence_run(raw)
+    if leftover is not None:
+        malformed.append(
+            f"{label}:{leftover}: an odd number of fenced-block delimiters, so this "
+            "run has no partner and the grammar pairs it with the next one anywhere "
+            "in the file, reading every line in between as one block body. Repair "
+            "the Markdown."
         )
     return DocSource(
         label=label,
@@ -1853,19 +1913,31 @@ def elided_prefix_matches(fragment: str, matched: list[Decl], cited: set[str]) -
     ``safe-to-delete`` while docs/index.md:1809 cited it -- a false
     ``safe-to-delete``, the one fatal error class.
 
-    Charging *every* match instead was measured before it was rejected: 514 of
-    the 742 fragment-shaped tokens in the documentation match two declarations
-    or more, and charging all of them touches 5253 of the library's 11000
-    declarations, including all 92 currently-safe ``_ferromagnetic`` candidates.
-    That is not fail-closed, it is a tool with no reachable ``safe-to-delete``
-    verdict at all.
+    Charging *every* match instead was measured before it was rejected: 531 of
+    the 759 distinct fragment-shaped tokens that resolve at all match two
+    declarations or more, and charging all of them touches 5895 of the library's
+    11000 declarations, including all 92 currently-safe ``_ferromagnetic``
+    candidates. Swept over the whole library it collapses ``safe-to-delete``
+    from 1458 verdicts to 232 (an 84% reduction) and turns the fixtures red
+    (``--expect``: FAIL, 1 of 18). It is therefore rejected not as
+    unimplementable but as useless: the 232 survivors are what is left after the
+    rule has stopped tracking which citation names which result, so they are not
+    a basis anyone should delete from.
 
     The rule kept is the one the notation actually states: a match is charged
     when the prefix the fragment elides is *itself* cited on the same line
-    (932 declarations on main, measured). It only ever adds citations, so it can
-    only turn ``safe-to-delete`` into ``uncertain``, never the reverse; a
-    genuine family label (``_ferromagnetic``, ``_pos``) elides no prefix anyone
-    spelled out and is unaffected.
+    (2206 charges over 1077 distinct declarations, measured on the scanned
+    documentation). It only ever adds citations, so it can only turn
+    ``safe-to-delete`` into ``uncertain``, never the reverse. It is *not* inert
+    on genuine family labels, and the calibration this module ships is what that
+    costs: on the 223 ``_ferromagnetic`` candidates, switching the rule off
+    leaves 92 ``safe-to-delete`` and switching it on leaves 47. The label
+    ``_ferromagnetic`` is itself charged 155 times (``_pos`` 9 times), because
+    the documentation does spell a sibling out in full on those lines; charging
+    that one label accounts for 13 of the 45 that move, and other elided
+    fragments on the same rows for the remaining 32. What still rescues nobody
+    is a family label on a line that elides nothing -- the label alone, with no
+    prefix anyone wrote down.
     """
     out: list[Decl] = []
     for decl in matched:
@@ -2180,7 +2252,13 @@ L10 Markdown code spans are paired positionally, so one unbalanced backtick inve
    the parity of the rest of its line and the tokenizer swaps prose for citations.
    The line is not skipped (that would drop the brace/glob/suffix citations, the
    ones with no verbatim fallback) but re-read without pairing, which is a superset
-   of every pairing; the defect is printed as a Markdown coverage warning. Two
+   of every pairing; the defect is printed as a Markdown coverage warning. The
+   fenced alternative is unbounded and DOTALL, so an unbalanced run of three or
+   more backticks pairs with the next run anywhere in the file and would hide
+   every citation in between; a fenced match is therefore credited with its two
+   delimiters only, its body's backticks are reported like any other, and an odd
+   number of fence runs is reported on top. A fenced block that legitimately
+   quotes a backtick pays one warning and one superset re-read for that. Two
    shapes escape the *superset* step and stay editorial: a code span opened on one
    line and closed on the next is unmatchable by `[^`\n]+` in either pairing (the
    warning still fires on both lines), and prose read as a citation this way can
@@ -2188,10 +2266,15 @@ L10 Markdown code spans are paired positionally, so one unbalanced backtick inve
 L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic`)
    is a family label attributed to nobody, unless the prefix it elides is cited on
    the same line, which is the documentation's own abbreviation for a run of
-   siblings. Charging every match of every family label instead was measured and
-   rejected: it touches 5253 of 11000 declarations and leaves no reachable
-   `safe-to-delete`. So a family label still rescues nobody, and a lemma named only
-   by one is dead code whose *documentation* the deletion PR must update."""
+   siblings. That exception is not rare: `_ferromagnetic` is charged 155 times and
+   `_pos` 9 times, so the rule keeps real family labels alive wherever the row also
+   spells a sibling out. Charging every match of every family label regardless was
+   measured and rejected: it touches 5895 of 11000 declarations, collapses
+   `safe-to-delete` from 1458 to 232 (an 84% reduction) and turns `--expect` red,
+   which is not a stricter tool but one whose verdicts no longer track which
+   citation names which result. So a family label on a line that elides nothing
+   still rescues nobody, and a lemma named only by one is dead code whose
+   *documentation* the deletion PR must update."""
 
 
 def report(
