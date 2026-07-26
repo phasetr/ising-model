@@ -16,7 +16,11 @@ the declaration table, which turns its consumers into self-references),
 disappear), :class:`UnreadableCitationTest` (that warning must also *classify*,
 or coverage is fail-open exactly where it claims to be fail-closed),
 :class:`MissingDocumentationTest` (a documentation file that vanishes must abort
-the run instead of silently emptying its channel) and
+the run instead of silently emptying its channel),
+:class:`MarkdownBacktickParityTest` (one unbalanced backtick inverts the parity of
+its whole line, so the tokenizer swaps prose for citations without warning),
+:class:`ElidedFragmentTest` (a suffix citation whose elided prefix is spelled out
+on the same line is a shorthand, not a family label) and
 :class:`CharClassTest` (the identifier class must never be a superset of Lean's).
 :class:`FamilyCalibrationTest` asserts the calibration integers that used to live
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
@@ -315,6 +319,187 @@ class DocTokenTest(unittest.TestCase):
         many = dcs._resolve_fragment(tree(), "_ferromagnetic", cache)
         self.assertIsNotNone(many)
         self.assertGreaterEqual(len(many), 2)
+
+
+class MarkdownBacktickParityTest(unittest.TestCase):
+    """One unbalanced backtick swaps prose for citations for the rest of its line.
+
+    Markdown code spans are paired positionally, so an unbalanced backtick does
+    not lose only its own span: everything after it is read with the parity
+    inverted. ``docs/index.md:1809`` spells ``ContinuousOn`.continuousAt`` with
+    three backticks where two were meant, and from that column on the line's
+    real citations sat outside every span the tokenizer saw -- 218 tokens, none
+    of them naming ``magnetizationAlongExhaustion``, which the raw line spells
+    six times. Nothing warned, and
+    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
+    ``safe-to-delete``.
+
+    Skipping such a line is the fail-open repair: what it drops is exactly the
+    citations with no verbatim fallback (brace alternations, globs, elided
+    suffixes). The line is therefore re-read without pairing -- a superset of
+    every pairing -- and the defect is reported.
+    """
+
+    def markdown(self, text: str) -> dcs.DocSource:
+        """Return the ``DocSource`` of a scratch Markdown file carrying ``text``."""
+        scratch = dcs.REPO_ROOT / ".self-local" / "tmp"  # gitignored, inside the root
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as tmp:
+            path = Path(tmp) / "note.md"
+            path.write_text(text, encoding="utf-8")
+            return dcs._markdown_source(path)
+
+    #: The real defect, in miniature: the stray backtick after ``ContinuousOn``
+    #: inverts the parity, so the brace citation that follows is read as prose.
+    FLIPPED = (
+        "see `ContinuousOn`.continuousAt` and then "
+        "`synth_alpha{,_beta}_xyzzy` + `_delta_gen` done\n"
+    )
+
+    def test_balanced_lines_and_fences_raise_nothing(self) -> None:
+        """The check must be silent on healthy Markdown, fenced blocks included."""
+        self.assertEqual(dcs.unpaired_backticks("a `x_y` b\n```lean\n`z_w`\n```\n"), {})
+        self.assertEqual(dcs.unpaired_backticks("plain prose, no code span\n"), {})
+
+    def test_an_unpairable_backtick_is_reported_with_its_line(self) -> None:
+        """Both live shapes are caught: a stray backtick and a span across lines."""
+        self.assertEqual(dcs.unpaired_backticks(self.FLIPPED), {1: 1})
+        # docs/index.md:1200-1201: a span opened on one line, closed on the next.
+        across = "bound `|edges d r| <=\nO(r)` (`alpha_card_le_beta` + `gamma_le'`),\n"
+        self.assertEqual(dcs.unpaired_backticks(across), {1: 1, 2: 1})
+
+    def test_the_flip_hides_the_citations_from_the_span_grammar(self) -> None:
+        """Pin the defect itself: plain pairing sees neither citation after the flip."""
+        paired = [
+            token
+            for match in dcs._MD_TOKEN_RE.finditer(self.FLIPPED)
+            for token in dcs._citation_tokens(
+                match.group(1) if match.group(1) is not None else (match.group(2) or "")
+            )
+        ]
+        self.assertEqual(paired, [])
+
+    def test_the_recovery_finds_every_pairing_the_line_admits(self) -> None:
+        """Re-reading without pairing restores both hidden citations.
+
+        They are the two shapes with no verbatim fallback: a brace alternation
+        and an elided suffix. Neither can be rescued by the literal search that
+        saves a complete name, so losing the token loses the citation outright.
+        """
+        tokens = [token for token, _line in self.markdown(self.FLIPPED).tokens]
+        self.assertIn("synth_alpha{,_beta}_xyzzy", tokens)
+        self.assertIn("_delta_gen", tokens)
+
+    def test_the_defect_is_reported_not_only_repaired(self) -> None:
+        """A silent repair leaves the Markdown broken for every other reader."""
+        (warning,) = self.markdown(self.FLIPPED).malformed
+        self.assertIn(":1:", warning)
+        self.assertIn("pair into no code span", warning)
+
+    def test_the_real_index_raises_its_three_warnings(self) -> None:
+        """Measured on main: docs/index.md:1200, :1201 and :1809, nothing else."""
+        index = next(source for source in docs() if source.label == "docs/index.md")
+        self.assertEqual(
+            sorted(dcs.unpaired_backticks(index.text)), [1200, 1201, 1809]
+        )
+        self.assertEqual(len(index.malformed), 3)
+        self.assertTrue(any("docs/index.md:1809" in item for item in index.malformed))
+
+    def test_the_real_index_recovers_the_line_1809_citations(self) -> None:
+        """The elided suffixes of the Step 213 row are tokens again.
+
+        The row reads `` `magnetizationAlongExhaustion_continuous_beta_gen` +
+        `_differentiable_beta_gen` + ... ``; before the repair the line
+        contributed 218 tokens and not one of them was any of these.
+        """
+        index = next(source for source in docs() if source.label == "docs/index.md")
+        tokens = {token for token, line in index.tokens if line == 1809}
+        for token in (
+            "_differentiable_beta_gen",
+            "_continuous_field_gen",
+            "magnetizationAlongExhaustion_{continuous,differentiable}_beta_general_h_gen",
+        ):
+            self.assertIn(token, tokens)
+
+    def test_the_hidden_declaration_is_no_longer_safe_to_delete(self) -> None:
+        """End to end, on the declaration the defect offered up for deletion."""
+        name = "Ambient.magnetizationAlongExhaustion_differentiable_beta_gen"
+        verdicts, _cascade, _labels = dcs.classify(
+            tree(), [name], docs(), allow_homonym=False
+        )
+        self.assertNotEqual(verdicts[0].verdict, dcs.SAFE, verdicts[0].reasons)
+
+
+class ElidedFragmentTest(unittest.TestCase):
+    """A suffix whose elided prefix is cited on the same line is not a family label.
+
+    ``docs/index.md`` abbreviates a run of siblings by spelling the first in full
+    and eliding the shared prefix of the rest. ``_differentiable_beta_gen``
+    matches three declarations, so the family-label rule attributed it to nobody
+    and the magnetization member came out ``safe-to-delete`` although the line
+    cited it. Charging every match of every family label instead was measured
+    (5253 of 11000 declarations, no reachable ``safe-to-delete``) and rejected;
+    the rule kept is the one the notation states.
+    """
+
+    TREE = {
+        "IsingModel/SynthElision.lean": (
+            "namespace IsingModel\n"
+            "theorem alpha_xyzzy_continuous_gen : True := trivial\n"
+            "theorem alpha_xyzzy_differentiable_gen : True := trivial\n"
+            "theorem gamma_xyzzy_differentiable_gen : True := trivial\n"
+            "end IsingModel\n"
+        )
+    }
+
+    def doc(self, text: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
+        """Return a documentation source carrying ``text`` and ``tokens``."""
+        return dcs.DocSource(
+            label="docs/index.md",
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=tokens,
+            unreadable=[],
+        )
+
+    def verdicts(self, text: str, tokens: list[tuple[str, int]]) -> list[dcs.Verdict]:
+        """Classify both ``_differentiable_gen`` declarations against one doc line."""
+        synthetic = synthetic_tree(self.TREE)
+        names = [
+            "IsingModel.alpha_xyzzy_differentiable_gen",
+            "IsingModel.gamma_xyzzy_differentiable_gen",
+        ]
+        return dcs.classify(synthetic, names, [self.doc(text, tokens)], allow_homonym=False)[0]
+
+    def test_the_elided_prefix_charges_only_the_sibling_that_shares_it(self) -> None:
+        """``alpha_...`` cited in full lends its prefix to ``_differentiable_gen``."""
+        text = "`alpha_xyzzy_continuous_gen` + `_differentiable_gen`\n"
+        tokens = [("alpha_xyzzy_continuous_gen", 1), ("_differentiable_gen", 1)]
+        by_name = {v.decl.final: v for v in self.verdicts(text, tokens)}
+        self.assertEqual(by_name["alpha_xyzzy_differentiable_gen"].verdict, dcs.UNCERTAIN)
+        self.assertEqual(by_name["gamma_xyzzy_differentiable_gen"].verdict, dcs.SAFE)
+
+    def test_a_bare_family_label_still_rescues_nobody(self) -> None:
+        """Without a cited prefix the fragment stays a label, and the exit-0 path stays open."""
+        text = "the `_differentiable_gen` lemmas\n"
+        verdicts = self.verdicts(text, [("_differentiable_gen", 1)])
+        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
+
+    def test_the_helper_reads_the_prefix_and_not_the_suffix(self) -> None:
+        """``elided_prefix_matches`` is exact about where the elision starts."""
+        matched = [
+            decl
+            for final, decl in synthetic_tree(self.TREE).finals
+            if final.endswith("_differentiable_gen")
+        ]
+        self.assertEqual(len(matched), 2)
+        charged = dcs.elided_prefix_matches(
+            "_differentiable_gen", matched, {"alpha_xyzzy_continuous_gen"}
+        )
+        self.assertEqual([decl.final for decl in charged], ["alpha_xyzzy_differentiable_gen"])
+        self.assertEqual(
+            dcs.elided_prefix_matches("_differentiable_gen", matched, {"delta_unrelated"}), []
+        )
 
 
 class DocScopeTest(unittest.TestCase):
@@ -894,28 +1079,30 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 92 safe / 44 uncertain / 52 load-bearing / 35 published.
+        """223 candidates -> 47 safe / 77 uncertain / 64 load-bearing / 35 published.
 
-        Recalibrated when PR #4690 dropped the three safe-to-delete RatioLogFe
-        ``_ferromagnetic`` alongExhaustion bundle wrappers
-        (``log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic``,
-        ``log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic``,
-        ``log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic``):
-        all three were safe-to-delete, so total and safe both drop by three while
-        the other three classes are unchanged -- the healthy signature that no
-        live lemma was reclassified.
-        (Was 226 -> 95 safe after PR #4688 dropped the single safe-to-delete
-        ``freeEnergyΛ_high_temp_h_zero_ratio_sandwich_bundle_ferromagnetic``
-        Lambda-layer wrapper.)
+        Recalibrated when the elided-prefix rule landed
+        (:class:`ElidedFragmentTest`): a suffix citation whose elided prefix is
+        spelled out on the same documentation line is charged to the siblings
+        that share it. Exactly 45 candidates move, all of them out of
+        ``safe-to-delete``: 33 to ``uncertain`` (charged directly) and 12 to
+        ``load-bearing`` (their only consumer is now retained, so the
+        delete-closure no longer excuses it), with ``published-result``
+        unchanged at 35. That is the healthy signature -- the fix can add
+        citations, never remove one. Measured across the whole library the same
+        way: 235 of 11000 verdicts move, none of them toward ``safe-to-delete``.
+        (Was 223 -> 92 safe / 44 uncertain / 52 load-bearing / 35 published, after
+        PR #4690 dropped three safe-to-delete RatioLogFe ``_ferromagnetic``
+        alongExhaustion bundle wrappers; 226 -> 95 safe before PR #4688.)
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 92)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 44)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 52)
+        self.assertEqual(counts.get(dcs.SAFE), 47)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 77)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 64)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:

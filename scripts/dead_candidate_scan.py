@@ -51,6 +51,18 @@ A third rule follows from the first two and is just as load-bearing:
    charged to **every** candidate name, and those candidates come out
    ``uncertain``, never ``safe-to-delete``.
 
+5. **The Markdown channel has the same failure mode, through backtick parity.**
+   Code spans are paired positionally, so a single unbalanced backtick inverts
+   the parity of the rest of its line: prose is read as a citation and the
+   citations are read as prose, with nothing to warn about.
+   ``docs/index.md:1809`` does exactly that (three backticks where two were
+   meant), and none of its 218 tokens mentioned ``magnetizationAlongExhaustion``
+   though the raw line names it six times. The repair is not to skip the line --
+   that drops precisely the citations with no verbatim fallback -- but to re-read
+   it without pairing (:func:`pairing_independent_tokens`), which is a superset
+   of every pairing, and to report the defect
+   (:func:`unpaired_backticks`).
+
    The channel is deliberately *charge-only*: no span may deny a candidate.
    Seven successive attempts to decide *which* names an unread span could not be
    citing produced seven fail-open leaks of one shape -- text the normaliser had
@@ -1229,6 +1241,65 @@ def tex_citation_line_breaks(text: str) -> tuple[int, list[tuple[int, str]]]:
 
 
 _MD_TOKEN_RE = re.compile(r"`([^`\n]+)`|```(.*?)```", re.DOTALL)
+_BACKTICK_RE = re.compile("`")
+
+
+def unpaired_backticks(text: str) -> dict[int, int]:
+    """Return ``{line: count}`` for the backticks no code span could absorb.
+
+    The Markdown grammar above pairs backticks *positionally*: the first opens a
+    span, the second closes it, the third opens the next one. One unbalanced
+    backtick therefore does not merely lose its own span -- it inverts the
+    parity of everything that follows it, so real citations are read as prose
+    and prose is read as citations, with no error anywhere.
+
+    That is not hypothetical. ``docs/index.md:1809`` (one 52-186-character
+    progress row) spells ``ContinuousOn`.continuousAt`` with three backticks
+    where two were meant; from that column on, all six occurrences of
+    ``magnetizationAlongExhaustion`` on the line sit *outside* every span the
+    grammar sees, and the line's 218 tokens contain none of them. Lines 1200 and
+    1201 hold the sibling shape, a code span opened on one line and closed on
+    the next, which ``[^`\\n]+`` cannot match at all.
+
+    A backtick left over after the scan is the signature of both, and it is
+    cheap: the spans are the matches of :data:`_MD_TOKEN_RE`, so a backtick
+    inside a fenced block or a well-formed span is covered by construction and
+    only the unpairable ones are reported.
+    """
+    covered = [(match.start(), match.end()) for match in _MD_TOKEN_RE.finditer(text)]
+    starts = line_starts(text)
+    out: dict[int, int] = {}
+    index = 0
+    for match in _BACKTICK_RE.finditer(text):
+        offset = match.start()
+        while index < len(covered) and covered[index][1] <= offset:
+            index += 1
+        if index < len(covered) and covered[index][0] <= offset < covered[index][1]:
+            continue
+        line = offset_to_line(starts, offset)
+        out[line] = out.get(line, 0) + 1
+    return out
+
+
+def pairing_independent_tokens(line: str) -> list[str]:
+    """Return the name-shaped pieces of ``line``, ignoring backtick pairing.
+
+    Every code-span body is a maximal backtick-free substring of its line (the
+    grammar forbids a backtick inside a body), so splitting on backticks yields
+    a **superset** of the bodies *any* pairing could produce -- the correct one
+    included. That is what makes the recovery in :func:`_markdown_source`
+    fail-closed rather than a second guess: on a line whose parity is broken it
+    can add citations, never drop one, whichever way the parity ran.
+
+    The price is prose read as a citation, and it is small by construction: a
+    token only reaches a verdict if it carries ``{``, ``*``, ``..`` or a leading
+    ``_``/``.`` (see :func:`_apply_doc_channel`), and every such token can only
+    *keep* a candidate.
+    """
+    out: list[str] = []
+    for chunk in line.split("`"):
+        out.extend(_citation_tokens(chunk))
+    return out
 
 
 def _nameish(token: str) -> bool:
@@ -1273,6 +1344,7 @@ class DocSource:
     starts: list[int]
     tokens: list[tuple[str, int]]  # (token, line)
     unreadable: list[UnreadableSpan]  # coverage warnings *and* uncertainty triggers
+    malformed: list[str] = field(default_factory=list)  # coverage warnings, already repaired
 
 
 def markdown_sources() -> list[Path]:
@@ -1322,8 +1394,18 @@ def _read_doc(path: Path) -> str:
 
 
 def _markdown_source(path: Path) -> DocSource:
-    """Return the citation tokens of one Markdown file (its code spans)."""
+    """Return the citation tokens of one Markdown file (its code spans).
+
+    A line whose backticks do not pair (:func:`unpaired_backticks`) is **not
+    trusted and not dropped**: dropping it is the fail-open move, since the
+    citations it hides are exactly the ones with no verbatim fallback (brace
+    alternations, globs, elided suffixes). Its tokens are re-read with
+    :func:`pairing_independent_tokens`, whose result is a superset of every
+    pairing, and the defect is reported as a coverage warning so the Markdown
+    itself gets repaired rather than silently worked around.
+    """
     raw = _read_doc(path)
+    label = rel(path)
     tokens: list[tuple[str, int]] = []
     starts = line_starts(raw)
     for match in _MD_TOKEN_RE.finditer(raw):
@@ -1331,7 +1413,30 @@ def _markdown_source(path: Path) -> DocSource:
         lineno = offset_to_line(starts, match.start())
         for token in _citation_tokens(body):
             tokens.append((token, lineno))
-    return DocSource(label=rel(path), text=raw, starts=starts, tokens=tokens, unreadable=[])
+    malformed: list[str] = []
+    lines = raw.split("\n")
+    seen = set(tokens)
+    for lineno, unpaired in sorted(unpaired_backticks(raw).items()):
+        line = lines[lineno - 1] if lineno - 1 < len(lines) else ""
+        recovered = 0
+        for token in pairing_independent_tokens(line):
+            if (token, lineno) not in seen:
+                seen.add((token, lineno))
+                tokens.append((token, lineno))
+                recovered += 1
+        malformed.append(
+            f"{label}:{lineno}: {unpaired} of {line.count('`')} backtick(s) pair into "
+            "no code span, so the code-span grammar mis-reads this line; its tokens "
+            f"were re-read without pairing ({recovered} added). Repair the Markdown."
+        )
+    return DocSource(
+        label=label,
+        text=raw,
+        starts=starts,
+        tokens=tokens,
+        unreadable=[],
+        malformed=malformed,
+    )
 
 
 def load_docs() -> list[DocSource]:
@@ -1732,6 +1837,60 @@ def _resolve_fragment(
     return matched
 
 
+def elided_prefix_matches(fragment: str, matched: list[Decl], cited: set[str]) -> list[Decl]:
+    """Return the matches of a suffix ``fragment`` whose elided prefix is cited too.
+
+    Both documentation files abbreviate a run of sibling results by writing the
+    first one in full and eliding the shared prefix of the rest::
+
+        `magnetizationAlongExhaustion_continuous_beta_gen` + `_differentiable_beta_gen`
+        + `_continuous_field_gen` + ...
+
+    Those suffixes are **not** family labels, but ``_differentiable_beta_gen``
+    matches three declarations (correlation / magnetization / susceptibility),
+    so the family-label rule attributed the citation to nobody and
+    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
+    ``safe-to-delete`` while docs/index.md:1809 cited it -- a false
+    ``safe-to-delete``, the one fatal error class.
+
+    Charging *every* match instead was measured before it was rejected: 514 of
+    the 742 fragment-shaped tokens in the documentation match two declarations
+    or more, and charging all of them touches 5253 of the library's 11000
+    declarations, including all 92 currently-safe ``_ferromagnetic`` candidates.
+    That is not fail-closed, it is a tool with no reachable ``safe-to-delete``
+    verdict at all.
+
+    The rule kept is the one the notation actually states: a match is charged
+    when the prefix the fragment elides is *itself* cited on the same line
+    (932 declarations on main, measured). It only ever adds citations, so it can
+    only turn ``safe-to-delete`` into ``uncertain``, never the reverse; a
+    genuine family label (``_ferromagnetic``, ``_pos``) elides no prefix anyone
+    spelled out and is unaffected.
+    """
+    out: list[Decl] = []
+    for decl in matched:
+        prefix = decl.final[: len(decl.final) - len(fragment)]
+        if prefix and any(other.startswith(prefix) for other in cited):
+            out.append(decl)
+    return out
+
+
+def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
+    """Return ``{line: cited final names}`` for the tokens that name a declaration.
+
+    Only real declaration names are collected: prose that happens to be
+    name-shaped must not license an elision (:func:`elided_prefix_matches`).
+    """
+    finals = {final for final, _decl in tree.finals}
+    out: dict[int, set[str]] = defaultdict(set)
+    for token, lineno in doc.tokens:
+        for name in expand_braces(token) if "{" in token else [token]:
+            final = name.rsplit(".", 1)[-1]
+            if final in finals:
+                out[lineno].add(final)
+    return out
+
+
 def _apply_doc_channel(
     tree: Tree,
     verdicts: list[Verdict],
@@ -1743,7 +1902,9 @@ def _apply_doc_channel(
     Exact and brace-expanded citations mark a published result; wildcard and
     single-match fragment citations only make the candidate uncertain; a
     fragment matching two or more declarations is a *family label* and is
-    attributed to nobody (the ``_ferromagnetic`` trap).
+    attributed to nobody (the ``_ferromagnetic`` trap) **unless** the prefix it
+    elides is cited on the same line, in which case it is a shorthand for those
+    matches and charged to them (:func:`elided_prefix_matches`).
 
     A citation the normaliser could not read is attached too, to **every**
     candidate (:meth:`UnreadableSpan.could_cite`; the channel is charge-only).
@@ -1758,6 +1919,7 @@ def _apply_doc_channel(
 
     for doc in docs:
         lines = doc.text.splitlines()
+        cited_names = _cited_declaration_names(tree, doc)
         # (a) verbatim occurrences of the candidate name.
         for verdict in verdicts:
             needle = verdict.decl.final
@@ -1785,14 +1947,22 @@ def _apply_doc_channel(
                 matched = _resolve_fragment(tree, name, fragment_cache)
                 if matched is None:
                     continue
+                charged = matched
                 if len(matched) >= 2:
-                    family_labels.setdefault(
-                        f"{doc.label}:{lineno} `{token}`",
-                        [f"{len(matched)} declarations"],
+                    charged = (
+                        elided_prefix_matches(name, matched, cited_names.get(lineno, set()))
+                        if name.startswith(("_", "."))
+                        else []
                     )
-                elif len(matched) == 1:
+                    if not charged:
+                        family_labels.setdefault(
+                            f"{doc.label}:{lineno} `{token}`",
+                            [f"{len(matched)} declarations"],
+                        )
+                if charged:
+                    keys = {decl.key for decl in charged}
                     for verdict in verdicts:
-                        if verdict.decl.key == matched[0].key:
+                        if verdict.decl.key in keys:
                             verdict.doc_citations.append(
                                 f"shorthand {doc.label}:{lineno}: `{token}`"
                             )
@@ -2005,7 +2175,23 @@ L9 a name mentioned only in a comment or a module docstring is reported (with th
    of ordinary code spacing, which is why blank raw text is discarded. The *site*
    of a mention is exact; its *kind* label is a best effort, because a masked run
    that does not itself carry the opener (a continuation line of the same block)
-   inherits the kind of the preceding run. The label never changes a verdict."""
+   inherits the kind of the preceding run. The label never changes a verdict.
+L10 Markdown code spans are paired positionally, so one unbalanced backtick inverts
+   the parity of the rest of its line and the tokenizer swaps prose for citations.
+   The line is not skipped (that would drop the brace/glob/suffix citations, the
+   ones with no verbatim fallback) but re-read without pairing, which is a superset
+   of every pairing; the defect is printed as a Markdown coverage warning. Two
+   shapes escape the *superset* step and stay editorial: a code span opened on one
+   line and closed on the next is unmatchable by `[^`\n]+` in either pairing (the
+   warning still fires on both lines), and prose read as a citation this way can
+   only add `uncertain`, never remove it.
+L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic`)
+   is a family label attributed to nobody, unless the prefix it elides is cited on
+   the same line, which is the documentation's own abbreviation for a run of
+   siblings. Charging every match of every family label instead was measured and
+   rejected: it touches 5253 of 11000 declarations and leaves no reachable
+   `safe-to-delete`. So a family label still rescues nobody, and a lemma named only
+   by one is dead code whose *documentation* the deletion PR must update."""
 
 
 def report(
@@ -2013,6 +2199,7 @@ def report(
     cascade: list[str],
     family_labels: dict[str, list[str]],
     warnings: list[UnreadableSpan],
+    malformed: list[str],
     canary: tuple[int, dict[str, int]],
     tex_citations: int,
     elapsed: float,
@@ -2082,6 +2269,15 @@ def report(
         print(f"  {warning.message}")
     if len(warnings) > 10:
         print(f"  ... and {len(warnings) - 10} more")
+    print()
+    print(
+        f"-- coverage warnings, Markdown backtick parity: {len(malformed)} "
+        "(the line's tokens are re-read without pairing, so no citation is lost) --"
+    )
+    for item in malformed[:10]:
+        print(f"  {item}")
+    if len(malformed) > 10:
+        print(f"  ... and {len(malformed) - 10} more")
     print()
     print(f"elapsed: {elapsed:.1f}s")
     print()
@@ -2347,6 +2543,7 @@ def main(argv: list[str] | None = None) -> int:
         tex_citations = run_tex_canary()
         docs = load_docs()
         warnings = [span for doc in docs for span in doc.unreadable]
+        malformed = [item for doc in docs for item in doc.malformed]
 
         if args.expect:
             return run_expect(tree, docs, Path(args.expect))
@@ -2380,6 +2577,7 @@ def main(argv: list[str] | None = None) -> int:
             cascade,
             family_labels,
             warnings,
+            malformed,
             canary,
             tex_citations,
             time.time() - started,

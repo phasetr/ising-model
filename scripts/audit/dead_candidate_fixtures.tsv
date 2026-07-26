@@ -12,14 +12,20 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# Family-level calibration, main 0922a812, `--pattern '_ferromagnetic$'`:
-#   263 candidates -> 132 safe-to-delete, 44 uncertain, 52 load-bearing,
-#   35 published-result; 143 of the 263 have zero Lean consumers.
+# Family-level calibration, main 075bcd39, `--pattern '_ferromagnetic$'`:
+#   223 candidates -> 47 safe-to-delete, 77 uncertain, 64 load-bearing,
+#   35 published-result; 112 of the 223 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
+# Last move: the elided-prefix rule (a suffix citation whose elided prefix is
+# spelled out on the same documentation line is a shorthand for the siblings
+# that share it, not a family label) took 45 candidates out of safe-to-delete,
+# 33 into uncertain and 12 into load-bearing through the delete-closure. This
+# header had also drifted: it still carried 263/132/143 from main 0922a812
+# while the test asserted 223/92/112.
 #
-# The gap between "143 have no consumer" and "132 are safe" is the *delete*
+# The gap between "no consumer" and "safe" is the *delete*
 # closure: a lemma consumed only by another candidate is deletable with it, but
 # only if that other candidate is itself deleted. An earlier revision seeded the
 # closure with every candidate and then let the classifier retain some of them,
