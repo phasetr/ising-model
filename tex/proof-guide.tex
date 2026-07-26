@@ -4289,13 +4289,13 @@ Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 anchor --- grew to 62 modules and 55{,}158 lines and was abandoned with its geometric obligations
 still open.  It is superseded by the planar-bond / Euler route described above
 (\texttt{Peierls/PlanarBondReduction.lean}, \texttt{Peierls/PlanarBondParityCore.lean},
-\texttt{Peierls/PlanarBondDischarge.lean}), which discharges
+\texttt{Peierls/PlanarBondDischarge.lean}), which discharges the discrete-Jordan core of
 \texttt{peierls\_spontaneous\_magnetization\_pos\_cubic}
-(\texttt{Peierls/CubicBoxShellConnected.lean}) with no remaining hypothesis.  The 62 modules were
-removed from the build in commit \texttt{2499fd8c} (PR \#4299, Issue \#4298); their source is
-preserved at the git tag \texttt{archive/peierls-rayexit-route}, whose
-\texttt{IsingModel/Peierls} tree is \texttt{6bb634dce91e68b985196d92ad45e61bec6bf2b1}.  No
-statement in this guide depends on them.
+(\texttt{Peierls/CubicBoxShellConnected.lean}); that theorem's only remaining hypotheses are the
+low-temperature conditions on $e^{-2\beta J}$.  The 62 modules were removed from the build in
+commit \texttt{2499fd8c} (PR \#4299, Issue \#4298); their source is preserved at the git tag
+\texttt{archive/peierls-rayexit-route}, whose \texttt{IsingModel/Peierls} tree is
+\texttt{6bb634dce91e68b985196d92ad45e61bec6bf2b1}.  No result proved in this guide depends on them.
 Reference: Friedli--Velenik (Cambridge, 2017), \S3.7.2, pp. 109--116.
 
 \section{Asano Contraction (\texttt{Asano.lean})}
