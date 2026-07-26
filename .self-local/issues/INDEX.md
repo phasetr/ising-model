@@ -1,3 +1,20 @@
+**2026-07-26 PR #4728 MERGED (dev-pr-clerk, main `365fb294`), session terminal state**: the
+fail-closed citation auditor (`scripts/citation_audit.py` + `scripts/test_citation_audit.py` +
+`scripts/audit/citation_baseline.tsv`) for `.lean` path citations in `tex/proof-guide.tex` and
+`docs/index.md` merged (issue #4704 "Part of"; branch `refactor/4704-citation-checker` deleted,
+CI green, `dev-verify`/`dev-audit-tier1`/`dev-review`+codex/`dev-issue-manager` all PASS/RESOLVED
+before merge). No exemption channel of any kind (built and deleted again across 3 review rounds,
+per `dev-principles`' twice-recurring-defect rule). Count-of-record: **1,272 gating findings**
+(529 tex + 743 docs) **+ 95 advisory**. CI is **not** wired to it (separate authorization item).
+**#4704** GitHub title/body resynced to this count (clerical, no authorization needed), retiring
+157/268/285/"12 in docs, 159 in tex"; PR #4728 added to Scope 1 (Done); item 2(b)'s stated
+precondition recorded satisfied (not authorization) — stays **OPEN**. Session totals: **15 PRs
+merged**, aggregate build-time reduction **≈ −37s**. Closed this session: PR #4714 (user
+instruction, not merged) + issues #4700/#4701/#4706/#4715/#4717/#4721. New issues this session:
+#4704/#4709/#4718/#4724. **11 user-approval-pending items remain, next move = STOP-and-ask** (see
+`.self-local/reports/handoff-2026-07-25-optionB-C1.md` EIGHTH UPDATE for the full list and
+session lessons).
+
 **2026-07-26 #4724 filed (dev-pr-clerk)**: build-speed numeric-discrepancy tracking issue —
 measurement A (2026-07-18, #4563's decision basis, per-module fixed cost ≈7.0s) vs. measurement B
 (2026-07-24/25 full-coverage `dev-perf` sweep, `.self-local/reports/perf-full-coverage-buildtime-4b14a205.md`,

@@ -1,5 +1,102 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## EIGHTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — main = `365fb294` — PR #4728 MERGED; session terminal state
+
+This supersedes the SEVENTH (FINAL) UPDATE below as the session's terminal state.
+
+**PR #4728 squash-merged** (issue #4704 "Part of", branch `refactor/4704-citation-checker`,
+head `6227bb66` → merge commit `365fb294`; branch deleted). All merge gates confirmed
+independently before merge: CI `build` pass (3m26s @ `6227bb66`), `dev-verify` all 11 items
+PASS (zero exemption channels on 6 spelling inputs; the exemption-restoring mutant makes
+`NoExemptionChannelTest` fail on 16 cases, independently reproduced), `dev-audit-tier1` PASS
+(16 environment spellings confirmed), `dev-review` + codex REQUEST_CHANGES on the first
+revision → corrected, `dev-issue-manager` RESOLVED (the one authorization-claim sentence
+flagged by UPDATE #15 was corrected by the main agent before this clerk step). The mirror
+`.self-local/issues/4704.md` UPDATE #15 addition was committed + pushed on the branch
+(`6227bb66`) before merge, keeping the diff at the same 4 files (checker + tests + baseline +
+mirror). Squash body supplied via `--body-file` with a `Co-Authored-By: Claude` trailer added
+before merge.
+
+**This adds a fail-closed citation auditor for `.lean` path citations in `tex/proof-guide.tex`
+and `docs/index.md`.** It has **no exemption channel of any kind** (a per-citation directive
+mechanism was built and then deleted again across 3 review rounds, per `dev-principles`'
+twice-recurring-defect rule). Its count-of-record: **1,272 gating findings** (529 tex + 743
+docs) **+ 95 advisory** self-references. **CI is not wired to it** — wiring the checker into
+`.github/workflows/lean_action_ci.yml` or `scripts/audit_gate.py`'s exit code is a separate,
+unauthorized configuration change (per the PR body's explicit scope statement).
+
+**#4704 clerical resync (no authorization needed)**: GitHub issue title/body resynced to the
+count-of-record, retiring the superseded 157 / 268 / 285 / "12 in docs / 159 in tex" figures.
+PR #4728 added to Scope 1 (Done). Item 2(b)'s stated precondition ("a false-positive-reduced
+scanning method must be established first") is recorded as **satisfied** by the merged
+checker — explicitly noted alongside that **satisfying a precondition is not authorization**;
+the actual repointing work ("PR-2") remains unauthorized and awaits a fresh, explicit user
+instruction. **#4704 stays OPEN.**
+
+### Session totals (cumulative, this session)
+
+**15 PRs merged** (including #4728 above); aggregate measured build-time reduction across this
+session's build-speed items **≈ −37s**.
+
+**Closed this session**: PR #4714 (per explicit user instruction, not merged — see SEVENTH
+UPDATE below); issues #4700, #4701, #4706, #4715, #4717, #4721 (all `completed`, via their
+respective merged PRs).
+
+**New issues filed this session**: #4704, #4709, #4718, #4724.
+
+### Session lessons (for the next session — do not repeat these)
+
+1. **"Exhausted" was declared and then found wrong 3 separate times this session.** Each time,
+   a full-repo, all-approaches re-scan (a clean full build in a separate worktree) found an
+   outlier the prior "exhausted" declaration had missed. The measured outliers ended up
+   confined to **48 of 2,011 modules** — i.e. candidate selection by proxy (file size, import
+   cone, `maxHeartbeats`) was uncorrelated with actual build cost; only a real profiler
+   measurement located the real hot spots.
+2. **The mechanism behind the false "exonerated" scans is `Meta.isDefEq`'s non-pattern
+   higher-order unification failure path.** It is invisible to aggregate profiler summaries;
+   the only reliable detection is grepping `trace.profiler` output for
+   `[Meta.isDefEq] [>1.0] ❌` lines.
+3. **PR bodies had factual errors about their own diff in 12+ instances this session.**
+   Implementation was correct every time; the errors clustered entirely in the description
+   layer. A history/provenance claim inside a PR body **cannot be verified from that PR's own
+   diff** — it must be checked against the cited commits themselves
+   (`git show --stat <hash>`, `git merge-base --is-ancestor <hash> <base>`).
+4. **The same scan-methodology gap (a missed citation-format variant) recurred 4 times** (most
+   visibly in PR #4714, closed for this reason). The remedy applied, per `dev-principles`: an
+   approximate scan may be used to **charge** a finding but never to **exonerate** one, and
+   once a defect shape recurs twice the exonerating capability itself must be **removed**
+   rather than patched again (this is exactly what PR #4728's 3 review rounds did to its own
+   directive-exemption mechanism).
+5. **Self-authorization phrasing is a recurring trap.** "Authorized by [agent's own] design
+   doc" and "recorded as a next step, so it is already in scope" were both used this session
+   and are both **not** authorization; only an explicit user instruction is. Every PR body in
+   this session was checked for, and where found, corrected to retract, this pattern before
+   merge (see #4704's UPDATE #13/#15 for the concrete instances).
+
+### User-approval-pending items after PR #4728 (11, none resolved this update — do not action without explicit user instruction)
+
+1. **PR-2** — the actual `tex/proof-guide.tex` / `docs/index.md` repointing against the
+   checker's 1,272-finding count-of-record.
+2. **`docs/index.md:1974`** count correction (8→6, 12→10) — a progress-claim walkback.
+3. **A systematic `IsingModel/` doc-comment stale-reference sweep.**
+4. **Wiring the citation checker into CI** — prerequisite: the checker's own self-test flake
+   (observed, root cause unidentified per PR #4728's body) must be root-caused first.
+5. **#4559 close approval** (all 3 items already disposed).
+6. **#4642 disposition** — close `not planned`, or authorize the keep-criterion-(f) override.
+7. **#4563** — standing-authorization currency reconfirmation; also blocked on #4724.
+8. **#4724** — authorization to spend its measurement reconciliation (prerequisite of #4563).
+9. **#4709** — implementation of the PR-body/diff verification gate (design recorded, not
+   built).
+10. **#4718** — disposition (fix / park / close) of the incident it records.
+11. **§17.5.1 OZ / SL-D₂** (Aizenman 1982 Lemma 4.1) — unchanged long-standing item; requires
+    the user's own authorization or source material to proceed.
+
+**Next move: STOP-and-ask.** No item above can be actioned without new user input; per
+`CLAUDE.local.md`'s scope (GJ §17–18 new-theorem formalization, Done + axiom-free per GJ's own
+proofs) and the goal-scope check recorded in `.self-local/issues/4704.md` UPDATE #15, there is
+no on-book item and no already-authorized off-book item left to pick up autonomously.
+
+
 ## SEVENTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — PR #4714 CLOSED per user instruction (not merged); next = PR-1 under #4704
 
 This supersedes the SIXTH (FINAL) UPDATE below as the session's terminal state.
