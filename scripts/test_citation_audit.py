@@ -3467,15 +3467,23 @@ class MutationTest(unittest.TestCase):
 
 
 def admissible_censuses(module: types.ModuleType, target: str) -> List[int]:
-    """Return sampled ``#census`` values the tool can ever be asked about.
+    """Return sampled ``#census`` values ``--update-baseline`` can write.
 
     R12 is charged by :func:`citation_audit.audit` itself, in every mode,
     ``--update-baseline`` included, so a run whose live count is more than
     :func:`cumulative_loss_cap` below :data:`MEASURED_CITATIONS` never reaches
-    the write. Every census a default target can carry therefore lies at or
-    above ``measured - cap``, and *that* end -- not the number in the file
-    today -- is where the budget's claims are load-bearing: it is the smallest
-    budget R11 will ever compute.
+    the write. Every census the tool *writes* for a default target therefore
+    lies at or above ``measured - cap``, and *that* end -- not the number in the
+    file today -- is where the budget's claims are load-bearing: it is the
+    smallest budget R11 will ever compute.
+
+    That is a statement about written censuses, not about every census R11 can
+    be handed. R12 charges the live extracted count while R11 reads the census,
+    and the two are independent inputs: a hand-edited ``#census`` (which
+    :func:`citation_audit.erosion_failures` itself asks for when a deletion is
+    deliberate) or a ``--baseline`` pointing elsewhere can put R11 below this
+    range at runtime. What makes the range true of the committed file is
+    ``test_the_committed_census_is_inside_the_range_the_budget_is_stated_over``.
 
     Sampled rather than exhaustive: the budget is monotone in its argument
     (pinned in :func:`budget_rule_violations`), so the endpoints plus a few
@@ -3526,12 +3534,19 @@ def budget_rule_violations(module: types.ModuleType) -> List[str]:
 
 
 def budget_headroom_violations(module: types.ModuleType) -> List[str]:
-    """The budget must not turn a measured remediation pass into a hard failure.
+    """R11's sizing is never what binds below the measured remediation drop.
 
     Charged at every census R12 admits, so it is the *smallest* budget the rule
     can ever produce that has to clear the measurement -- a claim today's
     ``#census`` cannot move, and the one the literal pin this replaces was
     reaching for when it asserted ``66 > 44`` about one particular census.
+
+    This does not say a measured remediation pass always goes through. R12
+    bounds the total independently of R11, so the real per-run allowance is
+    ``min(citation_drop_budget(census), census - (measured - cap))``: at the
+    binding low end (census 1,134 for the tex) R12 refuses even a one-citation
+    deletion, and a 44-citation drop needs a census of 1,178 or more. What is
+    claimed here is only that R11 is not the brake that stops it.
     """
     out: List[str] = []
     drop = module.MEASURED_REMEDIATION_DROP
@@ -3551,13 +3566,24 @@ def budget_headroom_violations(module: types.ModuleType) -> List[str]:
 
 
 def budget_ordering_violations(module: types.ModuleType) -> List[str]:
-    """Where a full-budget run leaves a document: above the floor, inside the cap.
+    """The two brakes in order: one run's budget below the total allowance.
 
-    The two brakes have to stay in their order. R11 is the per-run charge and
-    R12 the bound on the total, so one run must never be able to spend the whole
-    cumulative allowance; and the floors are backstops, so no run R11 waves
-    through may land on one. Both are checked over the range of censuses rather
-    than at the committed value.
+    R11 is the per-run charge and R12 the bound on the total, so one run must
+    never be able to spend the whole cumulative allowance. What is checked for
+    that is the magnitude comparison ``budget < cap``, over the censuses R12
+    admits. It is *not* the claim that a full-budget run leaves the document
+    inside the cap -- it does not, and bounding the position after a run is
+    R12's job rather than R11's: at the binding low end (census 1,134 for the
+    tex) a full budget lands at 1,078, i.e. 255 below ``MEASURED_CITATIONS``
+    and past the cap of 199, and R12 is what refuses that run. The comparison
+    is also true only over the admitted range: far above it the per-run share
+    overtakes the fixed cap (first at census 3,980 for the tex, 8,080 for the
+    markdown), which is why the growth samples below are fed to the floor
+    sub-claim alone.
+
+    The floors are backstops, so no run R11 waves through may land on one. That
+    sub-claim is checked over growth as well, because "the budget is a share"
+    is exactly what a rule change breaks.
     """
     out: List[str] = []
     for target in module.TARGETS:
@@ -3920,22 +3946,30 @@ class RealTreePinTest(unittest.TestCase):
         """
         self.assertEqual(budget_rule_violations(ca), [])
 
-    def test_the_budget_clears_a_measured_remediation_pass_at_every_census(self) -> None:
+    def test_the_budget_clears_the_measured_remediation_drop_at_every_census(
+        self,
+    ) -> None:
         """The lower side of the sizing, which nothing else in the tool guards.
 
-        A budget too small is not a safe failure: it makes ordinary remediation
-        a hard failure, and a guard that blocks the work is a guard that gets
-        deleted. Charged at the smallest budget the rule can ever produce.
+        A budget too small is not a safe failure: it would make R11 itself the
+        thing that blocks ordinary remediation, and a guard that blocks the work
+        is a guard that gets deleted. Charged at the smallest budget the rule
+        can ever produce. Whether a given pass is admitted overall is R12's
+        question, not this one's (see :func:`budget_headroom_violations`).
         """
         self.assertEqual(budget_headroom_violations(ca), [])
 
-    def test_a_full_budget_run_stays_above_the_floor_and_inside_the_cap(self) -> None:
+    def test_a_full_budget_stays_above_the_floor_and_below_the_total_allowance(
+        self,
+    ) -> None:
         """The upper side, and the ordering of the three brakes.
 
         R11 per run, R12 on the total, the floors as backstops behind both. What
         the committed test asserted here was ``census - budget > floor`` for one
         census; the same claim over the range says it for every census that
-        census can become.
+        census can become. The second half compares R11's per-run number against
+        R12's total allowance; where a run *lands* is bounded by R12, not by
+        this claim (see :func:`budget_ordering_violations`).
         """
         self.assertEqual(budget_ordering_violations(ca), [])
 

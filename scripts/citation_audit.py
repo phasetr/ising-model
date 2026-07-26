@@ -452,14 +452,20 @@ DEFAULT_MIN_CITATIONS = 1
 CITATION_DROP_BUDGET_FRACTION = 0.05
 MIN_CITATION_DROP_BUDGET = 25
 
-# The largest deletion a legitimate remediation pass has needed so far, frozen.
+# The drop measured on the first remediation pass over ``tex/proof-guide.tex``
+# (PR #4730), whose ``#census`` citation count moves 1,333 -> 1,289. Frozen.
+#
+# It is not maintained as a running maximum of what remediation has needed, and
+# a later pass that deletes more is not required to update it: from a census of
+# 1,289 the tool accepts a 60-citation drop (inside R11's budget of 64 and
+# inside R12's cap, 1,333 - 1,229 = 104) with this constant still reading 44.
 # Nothing charges it at runtime -- like ``MEASURED_TRACKED_LEAN`` it is the test
 # suite's reference point -- and what it is for is the *lower* side of the
 # budget above, which has no other guard: a budget that stops clearing this
 # turns the work the tool exists to support into a hard failure, and a guard
-# that blocks legitimate work is a guard somebody deletes. Measured on the first
-# remediation pass over ``tex/proof-guide.tex`` (PR #4730), whose ``#census``
-# citation count moves 1,333 -> 1,289.
+# that blocks legitimate work is a guard somebody deletes. Raising it honestly
+# is fail-closed in the suite: at or above the low-end budget of 56 the headroom
+# claim reddens, which is the point at which the sizing gets restated in a diff.
 MEASURED_REMEDIATION_DROP = 44
 
 # A resolved citation must land inside the part of the tree this project owns.
