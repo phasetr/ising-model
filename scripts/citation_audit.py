@@ -167,20 +167,26 @@ refuses, and has **no override flag**, when:
   partial clone fetches trees without blobs, and a damaged object store looks the
   same. Read as absence, that can empty the carrier set, and an empty carrier set
   is the bootstrap path, which disables the growth refusal and R11 together;
-* **the destination is not the path the revisions were asked about.** Membership
-  is asked of a repository-relative, case-sensitive *pathname* while the write
-  lands on whatever that name opens: a mis-cased spelling on a case-insensitive
+* **a revision spells the destination's path some other way.** Membership is
+  asked of a repository-relative, case-sensitive *pathname* while the write lands
+  on whatever that name opens: a mis-cased spelling on a case-insensitive
   filesystem (macOS, where ``Path.resolve()`` does not canonicalise case) and a
   path outside the repository each name bytes no tree lists, so the carrier set
   is empty and the bootstrap path is taken while the write still reaches the
   committed file. Measured at review before either was charged: each rewrote a
-  committed baseline of 1,000 rows into one of 300, exit 0, no refusal. The
-  spelling is read from the filesystem where it holds the name and from the
-  revisions' trees where it does not, because reading it from disk alone
-  answered "not mis-spelled" for a destination that had been deleted first:
-  measured at review, that wrote 1,367 rows onto the tracked file at exit 0 with
-  ``git status`` reporting nothing at all. A hard link is the third way the two
-  identities come apart, and it is not refused -- see below;
+  committed baseline of 1,000 rows into one of 300, exit 0, no refusal. So each
+  revision's tree is listed whole and asked whether it holds a path differing
+  from this one only in case. **The filesystem is not consulted**: two earlier
+  forms of the check walked the destination's path on disk, and each stopped at
+  the first component the worktree did not hold -- once at the leaf, then one
+  level up. Measured at review on the second form, with ``scripts/audit`` moved
+  aside, ``scripts/audit/Citation_baseline.tsv`` wrote 1,368 rows at exit 0 and
+  left the tracked baseline modified, while the honest spelling refused. What
+  this bullet does *not* claim is that every mis-cased destination is refused: a
+  spelling of a path **no** revision carries under any case is a genuine creation
+  and takes the bootstrap path below, where there is no committed allowance to
+  launder. A hard link is the third way the two identities come apart, and it is
+  not refused -- see below;
 * a target lost more citations than R11's budget allows, or R12's cap does.
 
 The write itself renders to a temporary file next to the destination and
@@ -188,16 +194,20 @@ replaces it, rather than writing through the name. That is what answers the hard
 link: replacing a name detaches it from the inode any other name shares, where a
 write through the name would have reached the bytes those other names hold. It
 also means the path judged and the path written are one value, resolved once,
-instead of two lookups of the same string.
+instead of two lookups of the same string. The temporary's own name is taken
+with ``O_CREAT | O_EXCL`` (``tempfile.mkstemp``) rather than derived from the
+destination: a predictable one is the same write-through one step removed --
+measured at review, pre-creating ``.<name>.pending`` as a hard link or a symlink
+to the tracked baseline landed the render on the committed bytes at exit 0.
 
 **Bootstrapping** -- the one permissive outcome -- is correspondingly narrow, and
 is defined positively: at least two revisions resolve, every one of them answered
-the membership question, the destination is the repository path that question was
-asked about, and *none* of them lists it in its tree. Then no commit carries the
-file: there is no allowance to launder yet, and its creation adds a path no
-revision had, which ``git status`` shows. "The revisions could not be read",
-"the content could not be read", "the destination is spelled otherwise than the
-trees spell it" and "only this branch carries it" are each a refusal instead. So
+the membership question, no revision's tree spells the destination's path another
+way, and *none* of them lists it in its tree. Then no commit carries the file
+under any spelling: there is no allowance to launder yet, and its creation adds a
+path no revision had, which ``git status`` shows. "The revisions could not be
+read", "the content could not be read", "a revision spells that path otherwise"
+and "only this branch carries it" are each a refusal instead. So
 an ordinary branch bootstraps a baseline once: after the creating commit,
 ``HEAD`` carries the file and the upstream does not, and the next update waits
 until the file has landed on ``origin/main``. What that bounds is a *forward*
@@ -341,9 +351,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
+import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, Iterable, List, NamedTuple, Optional, Sequence, Set, Tuple
@@ -1370,7 +1382,9 @@ def render_baseline(report: Report) -> str:
         "# Three roles, three rules (see the module docstring):",
         "#   rows          gating. Ratcheted per (class, target, token); a count may only",
         "#                 fall. first_line is payload and is not part of the key. SELFREF",
-        "#                 rows are advisory and never gate the exit code.",
+        "#                 rows are advisory: they never gate an audit run's exit code,",
+        "#                 though --update-baseline refuses a rise in any row, this class",
+        "#                 included.",
         "#   #census       per-class counts: derived book-keeping, refreshed on update.",
         "#                 They are NOT pinned against the live documents -- an equality",
         "#                 pin there freezes the documents instead of the extractor. The",
@@ -1390,15 +1404,15 @@ def render_baseline(report: Report) -> str:
         "# where those committed copies cannot be read (a shallow clone, or a partial one",
         "# that holds trees without blobs), where fewer than two commits carry this file",
         "# (a baseline created on a branch and not landed yet, or a stale fetch: the only",
-        "# reference left is then the branch's own last write), or where the destination is",
-        "# spelled otherwise than the filesystem or those copies' trees spell this path (a",
-        "# mis-cased spelling names bytes no tree lists, and a path outside the repository",
-        "# is not a tracked path at all). The file is written by replacing the resolved",
-        "# path with a temporary file rendered next to it, so a hard link to these bytes is",
-        "# detached rather than written through. What the refusals leave is a hand edit of",
-        "# this file or of the constants, and -- for a path no commit carries any more --",
-        "# removing the commit that created it; each of those is a loud diff, and that is",
-        "# the point.",
+        "# reference left is then the branch's own last write), or where one of those",
+        "# copies' trees spells this path some other way (a mis-cased spelling names bytes",
+        "# no tree lists, and a path outside the repository is not a tracked path at all).",
+        "# The file is written by replacing the resolved path with a temporary file whose",
+        "# own name is taken with O_EXCL next to it, so neither a hard link to these bytes",
+        "# nor a pre-created temporary is written through. What the refusals leave is a",
+        "# hand edit of this file or of the constants, and -- for a path no commit carries",
+        "# any more -- removing the commit that created it; each of those is a loud diff,",
+        "# and that is the point.",
     ]
     if not report.ok_structurally:
         lines.append("#")
@@ -1584,105 +1598,77 @@ def _git_path_in_tree(revision: str, relative: str) -> Optional[bool]:
     return bool(listed.strip())
 
 
-def _first_misspelled_component(relative: str, revisions: Sequence[str]) -> Optional[str]:
-    """Return the first component of ``relative`` spelled otherwise where it lives.
-
-    ``None`` when every component is spelled -- by the filesystem where it holds
-    the name, by ``revisions``' trees where it does not -- exactly as it is
-    written here, which is the spelling :func:`_git_path_in_tree` asks about. On
-    a case-insensitive filesystem -- macOS by default, where this repository has
-    ``core.ignorecase=true`` -- ``audit/Base.tsv`` *opens* ``audit/base.tsv``
-    while git's pathspec matching, which is case-sensitive, lists nothing for it.
-    ``Path.resolve()`` does not canonicalise case and so cannot close that gap;
-    a directory listing can, and does it for directory components too
-    (``Audit/base.tsv`` has the same effect).
-
-    The listing has to come from whichever of the two holds the name, because a
-    filesystem cannot spell a path it does not have. Measured at review on the
-    disk-only form of this walk: deleting the baseline first and then naming it
-    mis-cased made the walk answer "not mis-spelled" while ``git ls-tree`` was
-    still being asked about the mis-cased spelling -- so the carrier set was
-    empty, which is the bootstrap path, and the write landed on the tracked file
-    through the case-insensitive open. 1,367 rows were written that way, exit 0,
-    with ``git status`` reporting nothing at all. So an absent component is asked
-    of the trees instead: a name they list under another case is the same alias
-    one component earlier, while a name nothing lists is a genuine creation and
-    ends the walk.
-
-    A directory whose entries cannot be listed is reported as mis-spelled, i.e.
-    the unanswered question is charged rather than assumed away. A revision whose
-    tree cannot be listed is skipped here and charged in
-    :func:`committed_baseline` instead: that is the same ``ls-tree`` query, for
-    the same revision, and it refuses ``UNREADABLE`` on it.
-    """
-    current = REPO_ROOT
-    walked: List[str] = []
-    for component in relative.split("/"):
-        walked.append(component)
-        candidate = current / component
-        if candidate.exists():
-            try:
-                entries = {entry.name for entry in current.iterdir()}
-            except OSError:
-                return "/".join(walked)
-            if component not in entries:
-                return "/".join(walked)
-            current = candidate
-            continue
-        parent = "/".join(walked[:-1])
-        for revision in revisions:
-            try:
-                listed = _git(
-                    ["ls-tree", "--full-tree", "--name-only", "-z", revision]
-                    + (["--", f"{parent}/"] if parent else [])
-                )
-            except GitError:
-                continue
-            for name in listed.split("\0"):
-                leaf = name.rsplit("/", 1)[-1]
-                if leaf != component and leaf.casefold() == component.casefold():
-                    return "/".join(walked)
-        return None
-    return None
-
-
 def _destination_identity_refusals(
     destination: Path, relative: str, revisions: Sequence[str]
 ) -> List[str]:
-    """Return refusals when ``destination`` is not the path ``relative`` names.
+    """Return refusals when ``revisions`` spell ``relative``'s path another way.
 
     Membership is asked of a **pathname** (``git ls-tree``, repository-relative
-    and case-sensitive) while the write lands on whatever that name opens. Where
-    those two come apart, every answer the revisions gave is about a different
-    file than the one about to be overwritten -- and because no tree lists the
-    alias, the carrier set is empty, which is the bootstrap path, which switches
-    off the growth refusal and R11 together. Measured at review before this was
-    charged: a mis-cased spelling and an in-repo hard link each took the
-    bootstrap branch with no refusal at all and rewrote a committed baseline of
-    1,000 rows into one of 300.
+    and case-sensitive) while the write lands on whatever that name opens. On a
+    case-insensitive filesystem -- macOS by default, where this repository has
+    ``core.ignorecase=true`` -- ``audit/Base.tsv`` *opens* ``audit/base.tsv``
+    while git lists nothing for it, and ``Path.resolve()`` does not canonicalise
+    case, so the two identities come apart with nothing to report it. Then every
+    answer the revisions gave is about a different file than the one about to be
+    overwritten -- and because no tree lists the alias, the carrier set is empty,
+    which is the bootstrap path, which switches off the growth refusal and R11
+    together. Measured at review before this was charged: a mis-cased spelling
+    and an in-repo hard link each took the bootstrap branch with no refusal at
+    all and rewrote a committed baseline of 1,000 rows into one of 300.
 
-    One way they come apart is charged here: a spelling neither the filesystem
-    nor the trees use for this path, which a case-insensitive open resolves to
-    the tracked file anyway. A destination spelled as the trees spell it is left
-    to the carrier count, and so is a symlink to the tracked path, which
-    ``resolve()`` has already turned into that path. Two other ways are handled
-    where they belong rather than here: a destination outside the repository is
-    refused by the caller, where ``relative`` cannot be formed at all, and a
-    second name for the tracked file's bytes (a hard link) no longer reaches
-    them, because :func:`update_baseline` renders to a temporary file and
-    replaces the resolved path with it, which severs the link instead of writing
-    through it.
+    So each revision's tree is listed whole (``ls-tree -r``, ~2,100 paths here,
+    one query per revision) and asked one question: does it hold a path that
+    differs from ``relative`` only in case? **The filesystem is not consulted at
+    all**, and that is the fix rather than an economy. Two earlier forms of this
+    check walked the path on disk, and each stopped at the first component the
+    worktree did not hold -- once at the leaf, then, one round later, one level
+    up. Measured at review on the second form, on this repository with
+    ``scripts/audit`` moved aside (what a sparse checkout gives for free) and one
+    citation added to ``docs/index.md``: the honest spelling refused with
+    ``GROWN`` while ``scripts/audit/Citation_baseline.tsv`` wrote 1,368 rows at
+    exit 0, after which ``git status`` reported the tracked baseline modified. A
+    disk walk cannot answer for a path the disk does not hold, and the trees are
+    what ``git ls-tree`` will match anyway, so they are the only authority here.
+
+    A revision whose tree cannot be listed is charged, not skipped: an unanswered
+    question read as "no alias" is the exoneration this module does not do. It is
+    charged here rather than left to :func:`committed_baseline` because the two
+    queries are not the same one -- this lists every subtree, that one only the
+    trees along a single path -- so a store that has lost a tree elsewhere can
+    fail here and answer there.
+
+    A destination spelled as the trees spell it is left to the carrier count, and
+    so is a symlink to the tracked path, which ``resolve()`` has already turned
+    into that path. Two other ways the identities come apart are handled where
+    they belong rather than here: a destination outside the repository is refused
+    by the caller, where ``relative`` cannot be formed at all, and a second name
+    for the tracked file's bytes (a hard link) no longer reaches them, because
+    :func:`update_baseline` renders to a temporary file and replaces the resolved
+    path with it, which severs the link instead of writing through it.
     """
-    misspelled = _first_misspelled_component(relative, revisions)
-    if misspelled is None:
-        return []
-    return [
-        f"ALIASED {destination}: the revisions were asked about {relative}, which "
-        f"no tree lists because {misspelled} is spelled differently where it lives. A "
-        "case-insensitive filesystem opens the file regardless, so the write would "
-        "land on a path the membership question was never asked about. Spell the "
-        "path as the tree spells it"
-    ]
+    refusals: List[str] = []
+    folded = relative.casefold()
+    for revision in revisions:
+        try:
+            listed = _git(["ls-tree", "-r", "--full-tree", "--name-only", "-z", revision])
+        except GitError as exc:
+            refusals.append(
+                f"UNREADABLE {revision}: git could not list that revision's tree, so "
+                f"whether it spells {relative} some other way is unknown ({exc})"
+            )
+            continue
+        for name in listed.split("\0"):
+            if name != relative and name.casefold() == folded:
+                refusals.append(
+                    f"ALIASED {destination}: {revision} lists {name}, which differs "
+                    f"from {relative} -- the path the membership question is asked "
+                    "about -- only in case. A case-insensitive filesystem opens both "
+                    "through one file, so the copies that were read and the bytes that "
+                    "would be overwritten need not be the same. Spell the path as the "
+                    "tree spells it"
+                )
+                return refusals
+    return refusals
 
 
 def _revision_commit(revision: str) -> Optional[str]:
@@ -1772,8 +1758,8 @@ def committed_baseline(
     ``refusals`` is non-empty when the comparison could not be *set up*, which
     is four separate outcomes: a revision that does not resolve, a revision
     whose tree could not be listed or whose committed content could not be read,
-    fewer than two revisions that **carry** the file, and a ``destination``
-    spelled otherwise than the filesystem or the trees spell that path (see
+    fewer than two revisions that **carry** the file, and a revision whose tree
+    spells ``destination``'s path some other way (see
     :func:`_destination_identity_refusals`). The caller must treat it as fatal,
     because every downstream verdict here -- including the permissive ones -- is
     a claim about copies that were not read, or about a different file.
@@ -1788,14 +1774,14 @@ def committed_baseline(
     ``rev-parse``.
 
     ``rows is None`` is the **bootstrap** case and is stated positively: at least
-    two revisions resolved, each answered the membership question, the
-    destination is spelled as the path that question was asked about, and none of
-    them lists it. Then no commit carries the file: it is not yet anyone's
+    two revisions resolved, each answered the membership question, none of their
+    trees spells the destination's path another way, and none of them lists it.
+    Then no commit carries the file under any spelling: it is not yet anyone's
     allowance, and its creation adds a path no revision had. It is reachable only
     with ``refusals`` empty: a run that could not read a revision, could not read
     a blob it does have, found exactly one carrier, or was pointed at a spelling
-    of the path that neither the filesystem nor the trees use does not get this
-    path, which would otherwise switch off the growth refusal and R11 at once.
+    a revision's tree holds under another case does not get this path, which
+    would otherwise switch off the growth refusal and R11 at once.
     """
     revisions, refusals = _committed_revisions()
     resolved = destination.resolve()
@@ -2023,6 +2009,20 @@ def update_baseline(report: Report, destination: Path) -> int:
     is what makes that true of the *bytes* as well: replacing a name detaches it
     from any other name that shared its inode, where writing through the name
     would have reached the file those other names hold.
+
+    That temporary is created by :func:`tempfile.mkstemp`, i.e. ``O_CREAT |
+    O_EXCL`` on a name this run picked, and is unlinked whatever happens. A
+    *predictable* temporary name is the same write-through one step removed: with
+    ``.<name>.pending`` next to the destination, that name was never resolved and
+    never judged, and ``write_text`` follows links, so pre-creating it as a hard
+    link or a symlink to the tracked baseline put the render straight onto the
+    committed bytes. Measured at review on this repository's own fixtures: both
+    spellings exited 0 and rewrote a committed 100-row baseline to 150 rows.
+    ``O_EXCL`` answers both at once -- the name cannot pre-exist -- without a
+    refusal to test or a branch in the gate. What it does not preserve is the
+    destination's mode: the temporary is created ``0600`` and ``replace`` carries
+    that to the destination. git records only the exec bit, so this leaves no
+    diff.
     """
     if not destination.is_absolute():
         destination = REPO_ROOT / destination
@@ -2097,9 +2097,16 @@ def update_baseline(report: Report, destination: Path) -> int:
             return 1
 
     destination.parent.mkdir(parents=True, exist_ok=True)
-    pending = destination.with_name(f".{destination.name}.pending")
-    pending.write_text(render_baseline(report), encoding="utf-8")
-    pending.replace(destination)
+    handle, name = tempfile.mkstemp(
+        dir=str(destination.parent), prefix=f".{destination.name}.", suffix=".pending"
+    )
+    pending = Path(name)
+    try:
+        with os.fdopen(handle, "w", encoding="utf-8") as stream:
+            stream.write(render_baseline(report))
+        pending.replace(destination)
+    finally:
+        pending.unlink(missing_ok=True)
     added = sum(max(0, count - committed.get(key, 0)) for key, count in current.items())
     removed = sum(max(0, count - current.get(key, 0)) for key, count in committed.items())
     print(f"wrote {destination}")
@@ -2140,12 +2147,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             "all where those committed copies cannot be read -- a shallow or "
             "single-branch clone, which is what a default CI checkout produces -- "
             "where fewer than two commits carry the file, which is a baseline this "
-            "branch created and has not landed upstream yet, or where the destination "
-            "is spelled otherwise than the filesystem or those copies' trees spell it "
-            "(a mis-cased spelling, a path outside the repository); there is no "
-            "override flag. The file is written by replacing the resolved path with a "
-            "temporary file rendered next to it, so a second name for its bytes (a "
-            "hard link) is detached rather than written through."
+            "branch created and has not landed upstream yet, or where one of those "
+            "copies' trees spells the destination's path some other way (a mis-cased "
+            "spelling, a path outside the repository); there is no override flag. The "
+            "file is written by replacing the resolved path with a temporary file "
+            "whose own name is taken with O_EXCL next to it, so neither a second name "
+            "for its bytes (a hard link) nor a pre-created temporary is written "
+            "through."
         ),
     )
     parser.add_argument(

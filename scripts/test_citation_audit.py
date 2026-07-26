@@ -971,10 +971,10 @@ class NoExemptionChannelTest(unittest.TestCase):
         # from a commit is what answers a citation. So the claim is stated where
         # it belongs: the resolution helpers read ``ls-files`` and nothing else,
         # and the tree queries live in the two baseline-destination helpers --
-        # membership, and the spelling of a path the filesystem does not hold.
+        # membership, and whether a tree spells the destination's path otherwise.
         source = CITATION_AUDIT_PATH.read_text(encoding="utf-8")
         self.assertEqual(source.count('"ls-tree"'), 2, "ls-tree is invoked elsewhere")
-        for name in ("_git_path_in_tree", "_first_misspelled_component"):
+        for name in ("_git_path_in_tree", "_destination_identity_refusals"):
             self.assertIn('"ls-tree"', function_source(source, name), name)
         for name in ("tracked_lean_files", "tracked_paths", "suffix_map"):
             body = function_source(source, name)
@@ -1191,25 +1191,21 @@ class ResolutionSetTest(unittest.TestCase):
         self.assertEqual([path for path in tracked if path.startswith(".self-local/")], [])
 
     def test_the_script_never_enumerates_the_filesystem(self) -> None:
-        """The resolution path must have no way to see an untracked file.
+        """No directory listing anywhere, which used to be a carve-out.
 
-        A recursive walk is banned outright: there is no honest use for one here.
-        A single-directory listing is not the same claim, and stating it as one
-        was the same over-broad shape the ``ls-tree`` ban already had to be
-        rewritten out of (see :meth:`test_the_module_carries_no_exemption_machinery`).
-        One listing is what answers "does the filesystem spell this path the way
-        the tree does", which no git query can answer on a case-insensitive
-        filesystem, and it resolves nothing. So it is allowed in exactly that
-        helper and nowhere else -- above all not where a citation is answered,
-        which is where the claim actually bites.
+        The ban was once "no recursive walk, and one single-directory listing in
+        the spelling helper", on the reading that a directory listing is the only
+        thing that can say whether the filesystem spells a path the way the tree
+        does. That carve-out is what two rounds of review kept breaking: a walk on
+        disk cannot answer for a component the worktree does not hold, so it
+        stopped early and exonerated exactly the destination an absent directory
+        made dangerous. The question is now asked of the trees alone, and with the
+        carve-out gone the claim is a plain absence -- which is a far cheaper
+        thing to keep true than a permitted exception with a boundary.
         """
         source = CITATION_AUDIT_PATH.read_text(encoding="utf-8")
-        for forbidden in ("os.walk", "rglob", "glob("):
-            self.assertNotIn(forbidden, source)
-        self.assertEqual(source.count("iterdir"), 1, "the filesystem is listed twice")
-        self.assertIn("iterdir", function_source(source, "_first_misspelled_component"))
-        for name in ("tracked_lean_files", "tracked_paths", "suffix_map", "audit"):
-            self.assertNotIn("iterdir", function_source(source, name), name)
+        for forbidden in ("os.walk", "rglob", "glob(", "iterdir", "scandir", "listdir"):
+            self.assertNotIn(forbidden, source, forbidden)
 
 
 # ---------------------------------------------------------------------------
@@ -2203,6 +2199,14 @@ class CommittedCopyTest(unittest.TestCase):
         the bootstrap path, which switches off the growth refusal and R11
         together. Both fail-open spellings of that reading are the mutation test
         below; measured there, they rewrite the committed 100-row baseline to 30.
+
+        The same fixture charges the *spelling* question twice over, which is why
+        six refusals are counted and not three: the alias check lists each
+        revision's tree whole, and a store that has lost a tree cannot answer that
+        either. It says so rather than skipping the revision -- the two ``ls-tree``
+        queries are not the same one (one walks every subtree, the other only the
+        trees along a single path), so a tree missing elsewhere would fail there
+        and answer here.
         """
         with unlistable_tree(ca) as root:
             before = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
@@ -2214,7 +2218,10 @@ class CommittedCopyTest(unittest.TestCase):
             after = (root / "audit" / "base.tsv").read_text(encoding="utf-8")
         self.assertIsNone(rows)
         self.assertEqual(sources, [])
-        self.assertEqual(len(refusals), 3)
+        self.assertEqual(len(refusals), 6)
+        self.assertEqual(
+            len([item for item in refusals if "some other way is unknown" in item]), 3
+        )
         self.assertEqual(code, 1)
         self.assertIn("could not list", out)
         self.assertNotIn("no committed copy", out)
@@ -2285,14 +2292,61 @@ class CommittedCopyTest(unittest.TestCase):
         self.assertEqual(cached, before)
         self.assertEqual(links, 1)
 
+    def test_a_pre_created_temporary_does_not_reach_the_committed_bytes(self) -> None:
+        """The temporary is a name too, and a predictable one is a way in.
+
+        Replacing the destination instead of writing through it answers the hard
+        link -- but only if the *temporary* cannot be pre-arranged. With the name
+        derived from the destination (``.<name>.pending`` beside it) it was
+        neither resolved nor judged, and ``write_text`` follows links, so
+        creating that name in advance as a hard link or a symlink to the tracked
+        baseline put the render straight onto the committed bytes: measured at
+        review, both spellings exited 0 and rewrote a committed 100-row baseline
+        to 150 rows, under a destination (``audit/alias.tsv``) no tree lists, i.e.
+        on the bootstrap path with every refusal switched off.
+
+        ``mkstemp`` takes its name with ``O_CREAT | O_EXCL``, so the pre-created
+        one is simply not the one written. It is asserted to survive untouched,
+        which is what says the run went somewhere else rather than merely failing.
+        """
+        for kind in ("hardlink", "symlink"):
+            with self.subTest(pre_created_as=kind), self._repo() as root:
+                real = root / "audit" / "base.tsv"
+                pending = root / "audit" / ".alias.tsv.pending"
+                if kind == "hardlink":
+                    os.link(real, pending)
+                else:
+                    pending.symlink_to(real)
+                before = real.read_text(encoding="utf-8")
+                (root / "tex" / "g.tex").write_text(
+                    stale_citations_tex(30), encoding="utf-8"
+                )
+                code, out = run_main(
+                    ca, "--targets", "tex/g.tex", "--update-baseline", "audit/alias.tsv"
+                )
+                after = real.read_text(encoding="utf-8")
+                written = (root / "audit" / "alias.tsv").read_text(encoding="utf-8")
+                survived = pending.read_text(encoding="utf-8")
+                leftovers = sorted(
+                    path.name
+                    for path in (root / "audit").iterdir()
+                    if path.name.endswith(".pending")
+                )
+                self.assertEqual(code, 0, out)
+                self.assertIn("no committed copy", out)
+                self.assertEqual(after, before, "the committed bytes were written through")
+                self.assertEqual(survived, before)
+                self.assertIn("Corpus/Stale0000.lean", written)
+                self.assertEqual(leftovers, [".alias.tsv.pending"])
+
     def test_a_mis_cased_destination_is_refused(self) -> None:
         """The same gap without a hard link, on the filesystem this repository uses.
 
         ``git`` matches pathspecs case-sensitively while macOS opens files
         case-insensitively, and ``Path.resolve()`` does not canonicalise case, so
         ``audit/Base.tsv`` is a path no tree lists *and* the committed file. The
-        spelling is therefore checked against the directory listing, which is the
-        only place the filesystem's own answer can be read.
+        spelling the refusal is measured against is the one a revision's tree
+        carries, which is the only spelling ``git ls-tree`` will ever match.
         """
         with self._repo() as root:
             real = root / "audit" / "base.tsv"
@@ -2310,7 +2364,7 @@ class CommittedCopyTest(unittest.TestCase):
             after = real.read_text(encoding="utf-8")
         self.assertEqual(code, 1)
         self.assertIn("ALIASED", out)
-        self.assertIn("audit/Base.tsv is spelled differently", out)
+        self.assertIn("lists audit/base.tsv, which differs from audit/Base.tsv", out)
         self.assertNotIn("no committed copy", out)
         self.assertNotIn("wrote ", out)
         self.assertEqual(after, before)
@@ -2319,23 +2373,31 @@ class CommittedCopyTest(unittest.TestCase):
         """The spelling question when the filesystem cannot answer it.
 
         A directory listing can only report the spelling of a name the directory
-        holds. Delete the baseline first -- or the whole directory -- and the
-        disk-only walk answers "not mis-spelled" for every spelling, while
-        ``git ls-tree`` is still asked about the mis-cased one, finds nothing,
+        holds, so a walk on disk stops at the first component the worktree lacks
+        and answers "not mis-spelled" for everything below it -- while
+        ``git ls-tree`` is still asked about the mis-cased path, finds nothing,
         and hands the run the bootstrap branch. Measured at review on the real
-        repository: exit 0, ``delta: +1367 finding(s)``, and ``git status``
-        empty, because the case-insensitive create landed on the tracked path.
-        So the absent component is asked of the revisions' trees, which do hold
-        the name.
+        repository, twice: the first form stopped at the leaf (1,367 rows written
+        at exit 0), and after that was patched the second stopped one level up,
+        so an absent ``scripts/audit`` still laundered a grown
+        ``scripts/audit/Citation_baseline.tsv`` -- 1,368 rows, exit 0, and
+        ``git status`` then reporting the tracked baseline modified.
 
-        Both components are covered: the leaf, and the directory above it.
+        So the filesystem is not asked at all: the question goes to the trees,
+        which hold the name whatever the worktree has. All four combinations of
+        "what is missing from the worktree" and "which component is mis-cased"
+        are asserted here, because the hole each round left was the *crossed*
+        one -- the directory gone and the leaf mis-spelled -- while the fixture
+        of the round before covered only the two aligned cases.
         """
         cases = {
-            "the leaf": ("audit/base.tsv", "audit/Base.tsv", "audit/Base.tsv"),
-            "the directory": ("audit", "Audit/base.tsv", "Audit"),
+            "leaf removed, leaf mis-cased": ("audit/base.tsv", "audit/Base.tsv"),
+            "directory removed, directory mis-cased": ("audit", "Audit/base.tsv"),
+            "directory removed, leaf mis-cased": ("audit", "audit/Base.tsv"),
+            "directory removed, both mis-cased": ("audit", "Audit/Base.tsv"),
         }
-        for label, (removed, spelling, charged) in cases.items():
-            with self.subTest(component=label), self._repo() as root:
+        for label, (removed, spelling) in cases.items():
+            with self.subTest(case=label), self._repo() as root:
                 real = root / "audit" / "base.tsv"
                 if removed == "audit":
                     shutil.rmtree(root / "audit")
@@ -2351,55 +2413,13 @@ class CommittedCopyTest(unittest.TestCase):
                 status = _git_out(root, "status", "--porcelain")
                 self.assertEqual(code, 1, out)
                 self.assertIn("ALIASED", out)
-                self.assertIn(f"{charged} is spelled differently", out)
+                self.assertIn(
+                    f"lists audit/base.tsv, which differs from {spelling}", out
+                )
                 self.assertNotIn("no committed copy", out)
                 self.assertNotIn("wrote ", out)
                 self.assertFalse(restored, "a baseline was written under the alias")
                 self.assertIn("audit/base.tsv", status)
-
-    def test_a_destination_directory_that_cannot_be_listed_is_refused(self) -> None:
-        """The spelling question when the filesystem *refuses* to answer it.
-
-        A directory that is searchable and writable but not readable (mode
-        ``0o311``) opens its children by name while ``iterdir`` raises, so the
-        walk gets no answer at all -- and an unanswered question read as
-        "spelled correctly" is the same exoneration this module charges
-        everywhere else. Writable on purpose: with the refusal weakened to
-        ``return None`` the run must be able to reach its write, so what this
-        test measures is the refusal and not the mode. Both preconditions are
-        asserted, because as root the listing succeeds and the test would then
-        assert nothing.
-        """
-        with self._repo() as root:
-            audit = root / "audit"
-            real = audit / "base.tsv"
-            before = real.read_text(encoding="utf-8")
-            # Within R11's budget, which returns before the refusals are printed.
-            (root / "tex" / "g.tex").write_text(stale_citations_tex(90), encoding="utf-8")
-            audit.chmod(0o311)
-            try:
-                reachable = real.exists()
-                try:
-                    list(audit.iterdir())
-                    listable = True
-                except OSError:
-                    listable = False
-                if not (reachable and not listable):
-                    self.skipTest(
-                        "this user can list a 0o311 directory (root?), so the "
-                        "unanswered-question branch is not reached here"
-                    )
-                code, out = run_main(
-                    ca, "--targets", "tex/g.tex", "--update-baseline", "audit/base.tsv"
-                )
-            finally:
-                audit.chmod(0o755)
-            after = real.read_text(encoding="utf-8")
-        self.assertEqual(code, 1, out)
-        self.assertIn("ALIASED", out)
-        self.assertIn("audit/base.tsv is spelled differently", out)
-        self.assertNotIn("wrote ", out)
-        self.assertEqual(after, before)
 
     def test_a_destination_outside_the_repository_is_refused(self) -> None:
         """No revision of this repository can be asked about a path it does not hold.
@@ -3241,7 +3261,24 @@ class MutationTest(unittest.TestCase):
         on a run that read no committed copy at all. Both mutants write a baseline
         of 30 rows over a committed one of 100, and both left the whole suite
         green until the fixture test above existed.
+
+        Each weakening is paired with the alias check's own reading of the same
+        failure, because a lost tree object stops both queries and either refusal
+        alone is enough to refuse the run. That the pair is needed to reach the
+        write is the assertion that the two are independent charges rather than
+        one charge counted twice.
         """
+        alias_side = (
+            "        except GitError as exc:\n"
+            "            refusals.append(\n"
+            '                f"UNREADABLE {revision}: git could not list that revision\'s '
+            'tree, so "\n'
+            '                f"whether it spells {relative} some other way is unknown '
+            '({exc})"\n'
+            "            )\n"
+            "            continue",
+            "        except GitError:\n            continue",
+        )
         weakenings = {
             "the ls-tree failure read as absence": (
                 "    except GitError:\n        return None\n    return bool(listed.strip())",
@@ -3254,7 +3291,7 @@ class MutationTest(unittest.TestCase):
         }
         for label, substitution in weakenings.items():
             with self.subTest(weakening=label):
-                mutant = load_mutated(substitution)
+                mutant = load_mutated(substitution, alias_side)
                 with unlistable_tree(mutant) as root:
                     (root / "tex" / "g.tex").write_text(
                         stale_citations_tex(30), encoding="utf-8"
@@ -3279,9 +3316,10 @@ class MutationTest(unittest.TestCase):
         case-insensitive open lands the write on the committed file anyway. The
         real module refuses; the mutant erodes the committed file.
 
-        The absent-destination form of the same hole is the second case: the
-        disk-only spelling walk could not answer for a path the worktree no
-        longer held, so it answered "not mis-spelled".
+        The absent-destination form of the same hole is the second case, and it
+        is the one two rounds of a disk-based check kept leaving open: a listing
+        cannot report the spelling of a name the directory no longer holds, so
+        the walk answered "not mis-spelled" for it.
         """
         mutant = load_mutated(
             (
