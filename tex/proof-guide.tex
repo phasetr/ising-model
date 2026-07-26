@@ -13420,21 +13420,18 @@ The proof uses mathlib's pointwise consequence
 formalised real-axis convergence of
 \texttt{freeEnergyComplexAlongExhaustion}, and uniqueness of limits in
 the Hausdorff space $\mathbb C$.
-The concrete \(\mathbb Z^d\) non-real wrappers now live in
+The concrete \(\mathbb Z^d\) non-real and real-axis wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Bridge/OpenSet.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Bridge/LeeYangDomain.lean
+  Branches/VitaliBridge.lean
 \end{Verbatim}
-and the real-axis wrappers live in
+the single module into which the four former bridge and real-axis
+micro-modules were collapsed,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Real/Limit.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/VitaliBridge/Real/Identified.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-with the old Vitali bridge and branches import paths kept as re-exports.
 \end{theorem}
 
 \begin{theorem}[Per-stage Lee-Yang local branches for the Vitali input; PR \#2674]
@@ -13481,12 +13478,14 @@ packages this for every nonempty stage.  The concrete $\mathbb Z^d$
 specializations are recorded in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Basic.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Ball.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
-with the old ball, all-stage, stage-Lee--Yang, and branches import paths
-kept as re-exports.
+which absorbed the former per-stage ball and all-stage ball micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 These are local branch inputs for the normal-family/Vitali part of
 GJ \S 4.6 Thm 4.6.2; they do not by themselves choose a coherent
@@ -13535,15 +13534,17 @@ with the principal \texttt{freeEnergyComplexAlongExhaustion} value at
 the centre.  This still does not prove coherent branch selection or
 locally uniform convergence; it fixes the normalised local input that a
 future normal-family/Vitali argument can consume.
-The concrete $\mathbb Z^d$ stage wrapper now lives in
+The concrete $\mathbb Z^d$ stage and all-stage strong wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Strong.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Strong.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
-with the old ball, all-stage, stage-Lee--Yang, and branches import paths
-kept as re-exports.
+which absorbed the former strong stage and strong all-stage micro-modules,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
@@ -13585,16 +13586,14 @@ Uniqueness of limits identifies
 \]
 The concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Branches/LocalCoverPatch/Vitali/Ball/Bridge.lean
-Branches/LocalCoverPatch/Vitali/Ball/Real.lean
-\end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-Branches/LocalCoverPatch/Vitali/Ball.lean
-Branches/LocalCoverPatch/Vitali.lean
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
-paths.
+which absorbed the former Vitali ball bridge and ball real micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This result does not construct the coherent branch family or prove its local
 uniform convergence.  It records the exact local theorem that can consume that
@@ -13638,22 +13637,19 @@ It selects the local ball supplied by the cover at $p.h$ and reuses the
 PR \#2676 centre-identification theorem.  The non-real concrete $\mathbb Z^d$
 wrapper lives in
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
-Branches/LocalCoverPatch/Vitali/LocalCover.lean
-\end{Verbatim}
-It is re-exported by the old
-\begin{Verbatim}[breaklines=true,breakanywhere=true]
-Branches/LocalCoverPatch/Vitali.lean
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
-paths.  The real wrapper lives in
-\begin{Verbatim}[breaklines=true,breakanywhere=true]
-Branches/RealCompact/Vitali.lean
-\end{Verbatim}
-and is re-exported by the old
+which absorbed the former Vitali local-cover micro-module.  The real
+wrapper lives in
 \begin{Verbatim}[breaklines=true,breakanywhere=true]
 Branches/RealCompact.lean
 \end{Verbatim}
-path.
+which absorbed the former Vitali real micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This result still does not construct the coherent local cover or prove local
 uniform convergence; it records the global conditional handoff that such a
@@ -13703,23 +13699,22 @@ globalises this post-extraction handoff on \(\texttt{leeYangDomain}\).  If each
 Lee--Yang point has such a local subsequence branch family and all local
 families converge to the same \(f\), then \(f\) is holomorphic on the
 Lee--Yang domain and agrees with the real infinite-volume free energy at real
-Lee--Yang centres.  The corresponding \(\mathbb Z^d\) ball wrappers now live in
+Lee--Yang centres.  The corresponding \(\mathbb Z^d\) ball and local-cover
+wrappers now live together in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/SubseqVitali/Ball.lean
-\end{Verbatim}
-and the local-cover wrappers now live in
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/SubseqVitali/LocalCover.lean
+SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 under
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
-and are re-exported by the old
+which absorbed the former subsequence-Vitali ball and local-cover
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/SubseqVitali.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-path.
 
 This theorem does not prove Montel extraction.  It records the exact
 post-extraction target consumed by the remaining normal-family construction.
@@ -13764,14 +13759,14 @@ identifies the centre value with the real infinite-volume free energy:
 \]
 The concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Ball/Bridge.lean
-SubseqCompactOpen/CompactOpenVitali/Ball/Real.lean
-\end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and are
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Ball.lean
 SubseqCompactOpen/CompactOpenVitali.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former ball bridge and ball real micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This result still does not prove Montel compactness of the branch family, nor
@@ -13805,21 +13800,18 @@ For two Lee--Yang balls the ambient theorem applies the PR \#2693 subsequence
 Vitali bridge on each ball, producing holomorphic local limits on both balls.
 The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/TwoBall.lean
+SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
 under
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex
 \end{Verbatim}
-and is re-exported by the old
+which absorbed the former finite-diagonal two-ball micro-module,
+and is exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali.lean
-\end{Verbatim}
-paths.
 
 This is the two-ball base case for the finite diagonal extraction theorem.  By
 itself it does not prove Montel compactness, compatibility of the two limits on
@@ -13853,18 +13845,15 @@ many Lee--Yang balls the ambient theorem then applies the PR \#2693 subsequence
 Vitali bridge on every ball, producing holomorphic local limits for the whole
 finite family.  The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal/FinBall.lean
-\end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/FiniteDiagonal.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
 SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
-paths.
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former finite-diagonal \texttt{Fin}-ball micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This result still assumes compact-open compactness for each branch family.  It
 does not prove Montel compactness, compatibility of arbitrary branch choices on
@@ -13900,11 +13889,15 @@ family of holomorphic local limits \(f_i\), and pairwise equalities
 whenever the selected stage branches are eventually equal on the same
 overlaps.  The concrete \(\mathbb Z^d\) wrapper now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/CompactOpenVitali/Overlap.lean
+SubseqCompactOpen/CompactOpenVitali.lean
 \end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old
-\texttt{SubseqCompactOpen/CompactOpenVitali.lean} path.
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former overlap micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is an explicit-hypothesis compatibility handoff.  It does not construct
 coherent branch choices, prove that arbitrary local logarithm branches agree on
@@ -13949,20 +13942,17 @@ single function differentiable on the finite union of balls.  The concrete
 freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_compactOpen_latticeGraph
 freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_latticeGraph
 \end{Verbatim}
-The compact-open package wrapper now lives in
+The compact-open package wrapper and the patch wrapper now live together in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/FiniteFamily.lean
-\end{Verbatim}
-The patch wrapper now lives in
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Family.lean
-\end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}; both are
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former compact-open finite-family and patch family
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is still a finite, explicit-hypothesis handoff.  It does not prove Montel
@@ -13997,13 +13987,14 @@ freeEnergyComplexAlongExhaustion_finiteSubseqBranchLimitFamily_patch_real_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch/Real.lean
-\end{Verbatim}
-under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, and is
-re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/Patch.lean
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
+\end{Verbatim}
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former real patch micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This remains a finite, conditional handoff.  It identifies the real centre for
@@ -14039,9 +14030,14 @@ freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_realPatch_la
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/RealPatch.lean
+  BranchAscoliCompactOpen/RealCoverPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy real-cover path.
+which absorbed the former real-patch micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains a finite, explicit-hypothesis handoff.  It eliminates the
 separate manual step of first extracting a finite package and then applying
@@ -14070,14 +14066,14 @@ freeEnergyComplexAlongExhaustion_finiteCompactOpenBranchLimitFamily_patch_lattic
 \end{Verbatim}
 It now lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen/FiniteFamily.lean
-\end{Verbatim}
-under the concrete per-stage complex directory, and is re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-path.
+under the concrete per-stage complex directory, which absorbed the former
+compact-open finite-family micro-module, and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains a finite, explicit-hypothesis handoff.  It removes the separate
 manual step of first extracting a packaged finite family and then applying the
@@ -14116,18 +14112,21 @@ field \(p.h\), identify the patched value with
 wrappers and compact-open package/patch wrappers are implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch/FiniteCover.lean
+  SubseqCompactOpen/FiniteCoverPatches.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/FiniteCover.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/RealCoverPatches/Patch.lean
+  BranchAscoliCompactOpen/RealCoverPatches.lean
 \end{Verbatim}
-and are re-exported through the legacy finite-cover patch and real-cover
-paths.  The compact-open
+the two modules into which the former finite-cover patch and real-cover
+micro-modules were collapsed.  The compact-open
 real-centre wrapper is implemented in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CompactCoverPatches/FiniteCover.lean
+  BranchAscoliCompactOpen/CompactCoverPatches.lean
+\end{Verbatim}
+They are exported through
+\begin{Verbatim}
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 including
 \begin{Verbatim}
@@ -14172,23 +14171,20 @@ freeEnergyComplexAlongExhaustion_finiteRealCoverFamily_compactOpen_patch_lattice
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch/RealCover.lean
+  SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches/Patch.lean
-\end{Verbatim}
-and
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-paths.  The compact-open
+which absorbed the former real-cover patch micro-module.  The compact-open
 wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CompactCoverPatches/RealCover.lean
+  BranchAscoliCompactOpen/CompactCoverPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy compact-cover path.
+which absorbed the former real-cover micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains a finite, conditional endpoint.  It records the real-centred
 finite-cover shape expected from the later local-cover extraction, but it does
@@ -14228,23 +14224,20 @@ freeEnergyComplexAlongExhaustion_compactFiniteRealCover_cOpenPatch_latticeGraph
 The first wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/FiniteCoverPatches/Patch/CompactTarget.lean
+  SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches/Patch.lean
-\end{Verbatim}
-and
-\begin{Verbatim}
-SubseqCompactOpen/FiniteCoverPatches.lean
-\end{Verbatim}
-paths.  The compact-open
-wrapper lives in
+which absorbed the former compact-target patch micro-module.  The
+compact-open wrapper lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CompactCoverPatches/CompactTarget.lean
+  BranchAscoliCompactOpen/CompactCoverPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy compact-cover path.
+which absorbed the former compact-target micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains a finite, explicit-hypothesis handoff.  It does not prove Montel
 compactness, coherent branch choices, finite-subcover extraction from an
@@ -14288,9 +14281,14 @@ agreement \(g=f_i\) on each ball, and differentiability of \(g\) on that finite
 union.  The concrete \(\mathbb Z^d\) wrapper is in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/FiniteBallPatch.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy eventual-patches path.
+which absorbed the former finite-ball patch micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still a finite, explicit-hypothesis handoff.  It does not construct the
 coherent stage branches that supply overlap equality, prove Montel compactness,
@@ -14329,9 +14327,14 @@ For a Lee--Yang open cover, the ambient theorem first applies the Vitali
 handoff on each cover member to obtain differentiable local limits, then
 applies the open-cover patching theorem.  If the cover contains
 \(\texttt{leeYangDomain}\), the resulting patched function is differentiable on
-\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in the
-\texttt{OpenPatch/OpenCover.lean} child, re-exported by the legacy
-\texttt{OpenPatch.lean} and \texttt{LocalCoverPatch.lean} paths.
+\(\texttt{leeYangDomain}\).  The concrete \(\mathbb Z^d\) wrapper is in
+\texttt{Branches/LocalCoverPatch.lean}, which absorbed the former
+open-patch open-cover micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still a conditional handoff.  It assumes the compatible local-cover
 limits explicitly, and does not prove coherent branch selection, Montel
@@ -14370,14 +14373,14 @@ freeEnergyComplexAlongExhaustion_branchFamily_localCover_patch_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Branches/LocalCoverPatch/OpenPatch/LocalCover.lean
-\end{Verbatim}
-and is re-exported by the legacy paths
-\begin{Verbatim}
-Branches/LocalCoverPatch/OpenPatch.lean
 Branches/LocalCoverPatch.lean
 \end{Verbatim}
-.
+which absorbed the former open-patch local-cover micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still a conditional post-extraction handoff.  It packages the pointed
 Lee--Yang ball cover, but it does not prove coherent branch selection, Montel
@@ -14410,15 +14413,15 @@ limit on its own ball, and \(g\) is differentiable on
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_patch_latticeGraph
 \end{Verbatim}
-in the patch child
+in
 \begin{Verbatim}
-StructuredPatch/Patch/Data.lean
+Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Patch.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
+which absorbed the former structured-patch data micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is still a conditional post-extraction handoff.  It makes the local-cover
@@ -14455,15 +14458,15 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_branchLimitData_localCover_real_latticeGraph
 \end{Verbatim}
-in the real-axis child
+in
 \begin{Verbatim}
-StructuredPatch/Real/Data.lean
+Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
+which absorbed the former structured-patch real-axis data micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is still a conditional post-extraction handoff: compatibility of the
@@ -14504,17 +14507,16 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-split between the children
+both in
 \begin{Verbatim}
-StructuredPatch/Patch/Family.lean
-StructuredPatch/Real/Family.lean
+Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Patch.lean
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
+which absorbed the former structured-patch family and real-axis family
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This remains conditional and post-extraction.  The new structure removes the
@@ -14556,15 +14558,15 @@ The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 freeEnergyComplexAlongExhaustion_realBranchLimitFamily_localCover_real_latticeGraph
 \end{Verbatim}
-in the real-axis child
+in
 \begin{Verbatim}
-StructuredPatch/Real/RealFamily.lean
+Branches/LocalCoverPatch.lean
 \end{Verbatim}
-and re-exported by the legacy chain
-\begin{Verbatim}
-StructuredPatch/Real.lean
-StructuredPatch.lean
-LocalCoverPatch.lean
+which absorbed the former structured-patch real-family micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is still a conditional post-extraction handoff.  It does not prove
@@ -14608,37 +14610,18 @@ each centre and stage.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}
 exists_leeYangPointwiseNormalisedAllStageBranchData_of_positive_real_latticeGraph
 \end{Verbatim}
-in
+and it, together with the related stage and all-stage branch wrappers,
+now sits in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/BranchData.lean
+  Branches/StageLeeYang.lean
 \end{Verbatim}
-with related stage and all-stage branch wrappers split into
+the single module into which the eight former branch-data, per-stage and
+all-stage micro-modules were collapsed; it is exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Point/Exists.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Point/Family.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Basic.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/Stage/Ball/Strong.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Pointwise.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Ball.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  Branches/StageLeeYang/AllStages/Strong.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and re-exported through the legacy
-\begin{Verbatim}[fontsize=\footnotesize]
-Branches/StageLeeYang/Stage/Point.lean
-Branches/StageLeeYang/Stage/Ball.lean
-Branches/StageLeeYang/AllStages.lean
-Branches/StageLeeYang.lean
-PerStageComplex/Branches.lean
-\end{Verbatim}
-paths.
 
 This is an unconditional pre-Montel package.  It still does not provide
 locally uniform subsequential limits, compactness of the branch families, or
@@ -14670,29 +14653,22 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCompactOpen_patch_latticeGraph
 \end{Verbatim}
-The package wrapper lives in
+The package wrapper now sits in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen/Pointwise.lean
-\end{Verbatim}
-and is re-exported by the old paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteSubseqCompactOpen/CompactOpen.lean
 SubseqCompactOpen/FiniteSubseqCompactOpen.lean
 \end{Verbatim}
-The patch wrapper lives in
+which absorbed the former pointwise compact-open micro-module.  The patch
+wrapper now sits in
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen/Pointwise.lean
-\end{Verbatim}
-under
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/FiniteCoverPatches/CompactOpen.lean
 SubseqCompactOpen/FiniteCoverPatches.lean
 \end{Verbatim}
-paths.
+under \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}, which
+absorbed the former pointwise compact-open patch micro-module,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This bridge remains finite and conditional.  It assumes compact-open
 compactness of the selected continuous restrictions and explicit eventual
@@ -14726,17 +14702,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finCoverCOpen_patch_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/FinCover/Package.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/FinCover/Patch.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+which absorbed the former finite-cover package and finite-cover patch
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage/FinCover.lean
-SubseqCompactOpen/PointwiseAllStage.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This bridge remains finite and conditional.  It assumes compact-open
@@ -14774,19 +14750,18 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_finRealCOpen_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStageData_compactRealCOpen_patch_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/RealCover/FinReal.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and
+which absorbed the former real-cover finite and real-cover compact
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/RealCover/CompactReal.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{SubseqCompactOpen/PointwiseAllStage/RealCover.lean} and
-\texttt{SubseqCompactOpen/PointwiseAllStage.lean} paths.
 
 This bridge remains finite and conditional.  It assumes compact-open
 compactness of the selected continuous restrictions, explicit eventual
@@ -14825,23 +14800,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 exists_pointwiseNormAllStageCompactRealFinGeometry_of_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormAllStage_compactRealCOpen_patch_geom_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Geometry.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and
+which absorbed the former compact-geometry and compact-geometry patch
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/CompactGeometry/Patch.lean
-\end{Verbatim}
-and are re-exported through the legacy paths
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage/CompactGeometry.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This closes the compact finite-subcover extraction layer for all-stage
@@ -14876,25 +14845,18 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageCOpenData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/COpenData/Patch.lean
+  SubseqCompactOpen/PointwiseAllStage.lean
 \end{Verbatim}
-and
+which absorbed the former compact-open data patch and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  SubseqCompactOpen/PointwiseAllStage/COpenData/CompactTarget.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/SubseqCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage/COpenData.lean
-\end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-SubseqCompactOpen/PointwiseAllStage.lean
-\end{Verbatim}
-paths.
 
 This packages the compact-target Montel/coherence output shape but still does
 not prove Montel compactness, locally uniform subsequential convergence, or
@@ -14930,17 +14892,17 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeClosureCOpenData_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the split child modules
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/RangeCompactOpen/RangeClosure/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/RangeCompactOpen/RangeClosure/CompactTarget.lean
+  RangeAscoliPatches/RangeCompactOpen.lean
 \end{Verbatim}
-and re-exported by the legacy paths
+which absorbed the former range-closure core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/RangeCompactOpen/RangeClosure.lean
-RangeAscoliPatches/RangeCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This matches the relative-compactness form naturally expected from a Montel
@@ -14976,17 +14938,17 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpen_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the split child modules
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/RangeCompactOpen/RelCompact/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/RangeCompactOpen/RelCompact/CompactTarget.lean
+  RangeAscoliPatches/RangeCompactOpen.lean
 \end{Verbatim}
-and re-exported by the legacy paths
+which absorbed the former relative-compactness core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/RangeCompactOpen/RelCompact.lean
-RangeAscoliPatches/RangeCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is the standard relative-compactness input shape for the Montel layer:
@@ -15022,23 +14984,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
+which absorbed the former range norm-bounded relative-compactness core and
+compact-target micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded/RelCompact.lean
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-paths.
 
 This exposes the compact carrier produced by the range norm-bounded Ascoli
 layer in the relative-compactness shape used by Montel.  It still leaves
@@ -15069,33 +15026,18 @@ Ambient.freeEnergyComplexAlongExhaustion_branchConstNormBoundedRelCompact_patch_
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch
 Ambient.freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_patch_of_isCompact
 \end{Verbatim}
-and the concrete \(\mathbb Z^d\) norm-bounded wrappers now live in
+and the concrete \(\mathbb Z^d\) norm-bounded, constant norm-bounded and
+locally bounded wrappers now sit together in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/NormBounded/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/NormBounded/CompactTarget.lean
+  RangeAscoliPatches/BranchRelCompact.lean
 \end{Verbatim}
-and the constant norm-bounded wrappers now live in
+which absorbed the six former core and compact-target micro-modules of
+those three families,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/ConstNormBounded/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/ConstNormBounded/CompactTarget.lean
-\end{Verbatim}
-and the locally bounded wrappers now live in
-\begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/LocallyBounded/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchRelCompact/LocallyBounded/CompactTarget.lean
-\end{Verbatim}
-The wrapper layers are re-exported by
-\begin{Verbatim}[fontsize=\footnotesize]
-BranchRelCompact/NormBounded.lean
-BranchRelCompact/ConstNormBounded.lean
-BranchRelCompact/LocallyBounded.lean
-BranchRelCompact.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This exposes the final relative-compactness input directly at the
@@ -15124,19 +15066,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    LocallyBounded/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    LocallyBounded/CompactTarget.lean
+  RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
+which absorbed the former locally bounded core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange/LocallyBounded.lean
-RangeAscoliPatches/BranchLocalDirectRange.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 This is a
 composition bridge; branch local bounds, closedness, equicontinuity, and
@@ -15169,19 +15109,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocallyBoundedRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocallyBoundedRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    EventualOverlap/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    EventualOverlap/CompactTarget.lean
+  RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
+which absorbed the former eventual-overlap core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange/EventualOverlap.lean
-RangeAscoliPatches/BranchLocalDirectRange.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 This removes
 the selected-overlap field from the branch-local Ascoli boundary once
@@ -15256,9 +15194,15 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{DirectRange/Core.lean} and
-\texttt{DirectRange/CompactTarget.lean} child modules, re-exported by the old
-\texttt{DirectRange.lean} umbrella path.  This
+in \texttt{EventualClosedBallPatches/EventualClosedBallDeviation.lean},
+which absorbed the former direct-range core and compact-target child
+modules.
+It is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/EventualClosedBallPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+This
 removes the selected-overlap field from the closed-ball branch-deviation Ascoli
 boundary once pointwise-normalised eventual-overlap data is available.  It
 still does not construct that eventual-overlap data, prove closed-ball
@@ -15294,14 +15238,19 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the following child modules under
+in the following module under
 \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}:
 \begin{Verbatim}[fontsize=\tiny]
-EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/Core.lean
-EventualClosedBallPatches/EventualClosedBallDeviation/LocalViaDeviation/CompactTarget.lean
+EventualClosedBallPatches/EventualClosedBallDeviation.lean
 \end{Verbatim}
-They are re-exported by the old \texttt{LocalViaDeviation.lean} umbrella in
-the same directory.  This records the closed-ball analogue of the
+It absorbed the former local-via-deviation core and compact-target child
+modules.
+It is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/EventualClosedBallPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+This records the closed-ball analogue of the
 local-bound-to-deviation triangle-inequality route for the eventual-overlap
 boundary.  It still does not construct eventual-overlap data, prove
 closed-ball containment, or prove branch local bounds, closedness,
@@ -15336,14 +15285,18 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapClosedBallBranchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the following child modules under
+in the following module under
 \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex}:
 \begin{Verbatim}[fontsize=\tiny]
-EventualClosedBallPatches/EventualClosedBallDeviation/ViaLocal/Core.lean
-EventualClosedBallPatches/EventualClosedBallDeviation/ViaLocal/CompactTarget.lean
+EventualClosedBallPatches/EventualClosedBallDeviation.lean
 \end{Verbatim}
-They are re-exported by the old \texttt{ViaLocal.lean} umbrella in the same
-directory.  This records the closed-ball analogue of the
+It absorbed the former via-local core and compact-target child modules.
+It is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/EventualClosedBallPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+This records the closed-ball analogue of the
 deviation-to-local-bound triangle-inequality route for the eventual-overlap
 boundary.  It still does not construct eventual-overlap data, prove
 closed-ball containment, or prove branch-deviation bounds, closedness,
@@ -15380,17 +15333,17 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the split child modules
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchDeviationDirectRange/RelCompact/CompactTarget.lean
+  RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and re-exported by the legacy paths
+which absorbed the former relative-compactness core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchDeviationDirectRange/RelCompact.lean
-RangeAscoliPatches/BranchDeviationDirectRange.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This isolates the branch-choice deviation estimate needed to turn the existing
@@ -15419,17 +15372,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the split child modules
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchDeviationDirectRange/DirectRange/CompactTarget.lean
+  RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and re-exported by the legacy paths
+which absorbed the former direct-range core and compact-target
+micro-modules.
+They are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchDeviationDirectRange/DirectRange.lean
-RangeAscoliPatches/BranchDeviationDirectRange.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 This is a composition bridge;
 branch-deviation bounds, closedness, equicontinuity, and coherent overlap inputs
@@ -15459,14 +15412,16 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_branchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\scriptsize]
-RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/Core.lean
-RangeAscoliPatches/BranchDeviationDirectRange/ViaLocal/CompactTarget.lean
+RangeAscoliPatches/BranchDeviationDirectRange.lean
 \end{Verbatim}
-and are re-exported by the legacy
-\texttt{BranchDeviationDirectRange/ViaLocal.lean} module and the umbrella
-module.
+which absorbed the former via-local core and compact-target modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 The named route is a composition result: the principal finite-volume
 free-energy bound and branch-deviation bound are combined by the triangle
@@ -15626,26 +15581,17 @@ freeEnergyComplexAlongExhaustion_branchLocalViaDeviationRelCompact_directRange_p
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchLocalViaDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+all four in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    ViaDeviation/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    ViaDeviation/CompactTarget.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    EventualOverlapViaDeviation/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/BranchLocalDirectRange/
-    EventualOverlapViaDeviation/CompactTarget.lean
+  RangeAscoliPatches/BranchLocalDirectRange.lean
 \end{Verbatim}
-and are re-exported through the legacy modules
+which absorbed the former via-deviation and eventual-overlap via-deviation
+core and compact-target micro-modules.
+They are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/BranchLocalDirectRange/ViaDeviation.lean
-RangeAscoliPatches/BranchLocalDirectRange/EventualOverlapViaDeviation.lean
-RangeAscoliPatches/BranchLocalDirectRange.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 This records
 the non-closed-ball analogue of the PR \#2762 closed-ball
@@ -15897,8 +15843,13 @@ endpoint.  The concrete \(\mathbb Z^d\) wrapper is
 \begin{Verbatim}[fontsize=\scriptsize]
 freeEnergyComplexAlongExhaustion_posRealClosedBallDeviationViaLocal_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-in the \texttt{PosReal/ViaLocal.lean} child module, re-exported by the old
-\texttt{PosReal.lean} umbrella path.
+in \texttt{EventualClosedBallPatches/EventualClosedBallDeviation.lean},
+which absorbed the former positive-real via-local child module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/EventualClosedBallPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is a positive-real wrapper for the named via-local route, not a new
 compactness step.  Closed-ball branch-deviation bounds, closedness,
@@ -15950,8 +15901,15 @@ freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange
 freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch_isCompact_latticeGraph
 freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_patch_isCompact_latticeGraph
 \end{Verbatim}
-with the positive-real wrapper in the \texttt{PosReal/DirectRange.lean} child
-module, re-exported by the old \texttt{PosReal.lean} umbrella path.  This is a
+with the positive-real wrapper in
+\texttt{EventualClosedBallPatches/EventualClosedBallDeviation.lean}, which
+absorbed the former positive-real direct-range child module.
+It is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/EventualClosedBallPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
+This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
@@ -16042,16 +16000,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageAscoliData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/Ascoli/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/Ascoli/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli/Ascoli.lean} and
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
+which absorbed the former Ascoli core and compact-target micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This narrows the remaining Montel input to compactness of the selected
 \(\texttt{ContinuousMap.toFun}\) images in the pointwise function-space
@@ -16094,16 +16053,18 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageClosedProductAscoliData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/ClosedProduct/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/ClosedProduct/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli/ClosedProduct.lean} and
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
+which absorbed the former closed-product core and compact-target
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This splits the remaining normal-family input into closedness of the
 pointwise function-space image, compact pointwise target bounds,
@@ -16144,16 +16105,18 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageNormBoundedAscoliData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/NormBounded/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/NormBounded/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
-\texttt{RangeAscoliPatches/AllStageAscoli/NormBounded.lean} and
-\texttt{RangeAscoliPatches/AllStageAscoli.lean} paths.
+which absorbed the former norm-bounded core and compact-target
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This removes the separately supplied compact pointwise target sets from the
 closed-product input.  It still does not derive the closedness, pointwise norm
@@ -16199,23 +16162,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageRangeNormBoundedAscoliData_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli/Core.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli/CompactTarget.lean
+  RangeAscoliPatches/AllStageAscoli.lean
 \end{Verbatim}
-and are re-exported through the legacy
+which absorbed the former range norm-bounded Ascoli core and compact-target
+micro-modules,
+and are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded/Ascoli.lean
-RangeAscoliPatches/AllStageAscoli/RangeNormBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/RangeAscoliPatches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-and
-\begin{Verbatim}[fontsize=\footnotesize]
-RangeAscoliPatches/AllStageAscoli.lean
-\end{Verbatim}
-paths.
 
 This removes the separate carrier and membership bookkeeping from the
 norm-bounded Ascoli input.  It still does not derive closedness of the range
@@ -16254,14 +16212,17 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchNormBoundedAscoliData_patch_of_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/AscoliPatches/NormBounded.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/AscoliPatches/CompactTarget.lean
+  BranchAscoliCompactOpen/AscoliPatches.lean
 \end{Verbatim}
-and are re-exported through the legacy AscoliPatches path.
+which absorbed the former norm-bounded and compact-target micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This removes the need to state norm bounds directly on the continuous
 restrictions.  It still does not derive the branch-family norm bounds,
@@ -16296,18 +16257,23 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchConstNormBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchConstAscoli_patch_isCompact_latticeGraph
 \end{Verbatim}
-The first lives in
+The first sits in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/AscoliPatches/ConstNormBounded.lean
+  BranchAscoliCompactOpen/AscoliPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy AscoliPatches path; the compact-target
-cover wrapper lives in
+which absorbed the former constant norm-bounded micro-module; the
+compact-target cover wrapper sits in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/ConstCompactTarget.lean
+  BranchAscoliCompactOpen/CoverPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy CoverPatches path.
+which absorbed the former constant compact-target micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This narrows the branch-family norm-bound input to ballwise uniform estimates.
 It still does not derive those estimates, closedness of the range pointwise
@@ -16344,14 +16310,18 @@ and the concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoliData_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_allStageBranchLocallyBoundedAscoli_patch_isCompact_latticeGraph
 \end{Verbatim}
-in
+both in
 \begin{Verbatim}[fontsize=\footnotesize]
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/LocallyBounded.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CoverPatches/LocallyBoundedCompactTarget.lean
+  BranchAscoliCompactOpen/CoverPatches.lean
 \end{Verbatim}
-and are re-exported through the legacy CoverPatches path.
+which absorbed the former locally bounded and locally bounded
+compact-target micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This narrows the branch-family norm-bound input to local boundedness witnesses
 on each selected ball.  It still does not prove those witnesses, closedness of
@@ -16408,27 +16378,19 @@ freeEnergyComplexAlongExhaustion_branchData_localCover_real_latticeGraph
 \end{Verbatim}
 The first two branch-family wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData/RealFamily.lean
-\end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  RawBranchData.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  RawPatch/BranchData.lean
-\end{Verbatim}
-and is re-exported by the old
+which absorbed the former raw branch-data local-family and real-family
+micro-modules.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-.
+which absorbed the former raw-patch branch-data micro-module,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still post-Montel.  It does not prove compactness, diagonal
 extraction, or coherent branch selection; it records the exact raw-data shape
@@ -16467,27 +16429,19 @@ global patch conclusion.
 
 The branch-family concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn/RealFamily.lean
-\end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  EventuallyEqOn.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  RawPatch/EventuallyEqOn.lean
-\end{Verbatim}
-and is re-exported by the old
+which absorbed the former eventually-equal-on local-family and real-family
+micro-modules.  The real local-cover patch wrapper now lives in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-.
+which absorbed the former raw-patch eventually-equal-on micro-module,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still a conditional coherent-overlap handoff.  It does not construct
 the coherent branch choices, prove Montel compactness, or perform the
@@ -16525,27 +16479,19 @@ identification.
 
 The branch-family concrete \(\mathbb Z^d\) wrappers now live in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily/Structured.lean
-\end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.  The real local-cover patch wrapper now lives in
+which absorbed the former structured-family micro-module.  The real
+local-cover patch wrapper now lives in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch/Structured.lean
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-.
+which absorbed the former structured patch micro-module,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is still a conditional post-Montel package.  It records the coherent
 data shape without constructing coherent branches, proving Montel compactness,
@@ -16573,16 +16519,14 @@ exists_leeYangLocalBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily/Pointwise.lean
-\end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.
+which absorbed the former structured-family pointwise micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16609,26 +16553,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_patch_latticeGraph
 \end{Verbatim}
-split between the children
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/Patch/Structured.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/Patch/Pointwise.lean
-\end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/Patch.lean
-\end{Verbatim}
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch.lean
-\end{Verbatim}
+both in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-paths.
+which absorbed the former local-cover patch structured and pointwise
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It patches already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16658,25 +16593,17 @@ The concrete \(\mathbb Z^d\) wrappers are
 freeEnergyComplexAlongExhaustion_eventualOverlapBranchData_localCover_family_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_family_patch_latticeGraph
 \end{Verbatim}
-in
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/FamilyPatch/Structured.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/FamilyPatch/Pointwise.lean
-\end{Verbatim}
-and are re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch/FamilyPatch.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  LocalCoverPatch.lean
-\end{Verbatim}
-and
+both in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.
+which absorbed the former family-patch structured and pointwise
+micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It packages and patches already
 supplied coherent eventual-overlap data, but does not construct coherent
@@ -16705,16 +16632,14 @@ exists_leeYangRealBranchLimitFamily_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily/Pointwise.lean
-\end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap/
-  StructuredFamily.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/EventualOverlap.lean
 \end{Verbatim}
-path.
+which absorbed the former structured-family pointwise micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It packages already supplied
 coherent eventual-overlap data, but does not construct coherent branches,
@@ -16742,16 +16667,13 @@ exists_compactLocalCoverFinGeometry_of_realEventualOverlapBranchData_latticeGrap
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry/Structured.lean
-\end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+which absorbed the former structured eventual-data geometry micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This remains conditional and post-Montel.  It extracts finite compact
@@ -16781,16 +16703,13 @@ exists_compactLocalCoverFinGeometry_of_pointwiseNormEventualData_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry/Pointwise.lean
-\end{Verbatim}
-and is re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/EventualDataGeometry.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+which absorbed the former pointwise eventual-data geometry micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This remains conditional and post-Montel.  It aligns the pointwise-normalised
@@ -16826,9 +16745,14 @@ freeEnergyComplexAlongExhaustion_realEventualOverlapBranchData_cOpenPatch_lattic
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/RealEventualOverlap.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy eventual-patches path.
+which absorbed the former real eventual-overlap micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It still assumes coherent
 eventual-overlap data, compact-open compactness of the selected branch-family
@@ -16865,9 +16789,14 @@ freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_cOpenPatch_latticeGra
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/EventualPatches/PointwiseNorm.lean
+  BranchAscoliCompactOpen/EventualPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy eventual-patches path.
+which absorbed the former pointwise-normalised micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It packages a stronger coherent
 data shape, but does not construct coherent branches, prove compactness of
@@ -16897,16 +16826,14 @@ freeEnergyComplexAlongExhaustion_pointwiseNormEventualData_localCover_real_latti
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch/Pointwise.lean
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  StructuredPatch.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-path.
+which absorbed the former structured-patch pointwise micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains conditional and post-Montel.  It narrows the local-cover endpoint
 for future pointwise-normalised extraction output, but does not construct
@@ -16939,20 +16866,16 @@ The concrete \(\mathbb Z^d\) wrappers are
 exists_finset_cover_of_isCompact_leeYangLocalBranchLimitFamily_latticeGraph
 exists_finset_cover_of_isCompact_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
-split between the children
+both in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover/LocalFamily.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover/RealFamily.lean
-\end{Verbatim}
-and are re-exported by the legacy chain
-\begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinsetCover.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
+\end{Verbatim}
+which absorbed the former \texttt{Finset}-cover local-family and
+real-family micro-modules,
+and are exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is the compactness finite-subcover step for an already packaged local
@@ -16996,14 +16919,14 @@ exists_compactLocalCoverFinGeometry_of_leeYangRealBranchLimitFamily_latticeGraph
 \end{Verbatim}
 in
 \begin{Verbatim}
-Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact/
-  CompactGeometry/FinGeometry.lean
-\end{Verbatim}
-and is re-exported by the old
-\begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/Branches/RealCompact.lean
 \end{Verbatim}
-path.
+which absorbed the former \texttt{Fin}-geometry micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/Branches.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This remains a geometry-only enumeration step.  It does not construct the
 finite subsequence branch-limit family needed by
@@ -17050,9 +16973,14 @@ freeEnergyComplexAlongExhaustion_compactLocalCoverFinGeometry_cOpenPatch_lattice
 in
 \begin{Verbatim}
 Concrete/LatticeGraphCorrelation/PerStageComplex/
-  BranchAscoliCompactOpen/CompactCoverPatches/LocalCover.lean
+  BranchAscoliCompactOpen/CompactCoverPatches.lean
 \end{Verbatim}
-and is re-exported through the legacy compact-cover path.
+which absorbed the former local-cover micro-module,
+and is exported through
+\begin{Verbatim}[fontsize=\footnotesize]
+Concrete/LatticeGraphCorrelation/PerStageComplex/BranchAscoliCompactOpen.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
+\end{Verbatim}
 
 This is a packaging bridge from compact local-cover finite geometry to the
 compact finite real-cover compact-open patch theorem.  It does not prove
@@ -17195,15 +17123,15 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyLocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and is re-exported through the legacy
+which absorbed the former locally bounded polynomial-lower micro-module,
+and is exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 This theorem still does not prove the lower normalised-log estimate for the
 polynomial witnesses.  It packages the exact route from that remaining input
@@ -17233,15 +17161,15 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_of_is
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyLocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and is re-exported through the legacy
+which absorbed the former locally bounded polynomial-lower micro-module,
+and is exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 The polynomial-witness lower normalised-log estimate remains an explicit
 hypothesis.  The wrapper only removes the bookkeeping real-part bound from the
@@ -17269,15 +17197,15 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_on_ba
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyBallAround.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and is re-exported through the legacy
+which absorbed the former ball-around polynomial-lower micro-module, and is
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 This is still conditional on the polynomial-witness lower normalised-log
 estimate.  It does not construct the Montel subsequence or coherent
@@ -17313,15 +17241,15 @@ exists_norm_freeEnergyComplexAlongExhaustion_le_poly_lower_ly_latticeGraph_aroun
 \end{Verbatim}
 It lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/PolyBallAround.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and is re-exported through the legacy
+which absorbed the former ball-around polynomial-lower micro-module, and is
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 This remains conditional on the polynomial-witness lower normalised-log
 estimate.  The wrapper supplies the point-local bounded-family shape needed by
@@ -17399,16 +17327,14 @@ Ambient.exists_norm_freeEnergyComplexAlongExhaustion_le_leeYang_around
 \end{Verbatim}
 The corresponding \(\mathbb Z^d\) wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower/LowerLog.lean
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower/LocalBounded.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/LeeYangLower.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+which absorbed the former lower-log and locally bounded micro-modules, and
+are exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  LeeYangLower.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This completes the lower normalised-log side of the Lee--Yang Vitali input.
@@ -17480,14 +17406,14 @@ the envelope of PR \#2678 to get the per-stage estimate
 Bounded edge density replaces the edge ratio by the single constant $c$.
 The concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/CompactUpper.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+which absorbed the former compact-upper micro-module, and are exported
+through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is not yet the absolute normalised-log bound used by PR \#2679 and
@@ -17516,15 +17442,15 @@ Lee--Yang gives
 \]
 at every finite stage.  The concrete $\mathbb Z^d$ wrapper lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/LeeYangUpperLower.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and is re-exported through the legacy
+which absorbed the former Lee--Yang upper/lower micro-module, and is
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 This is an upper normalised-log estimate only.  PR \#2692 supplies the matching
 compact Lee--Yang lower control needed to turn this into the absolute
@@ -17570,15 +17496,15 @@ and
 \texttt{exists\_norm\_freeEnergyComplexAlongExhaustion\_le\_lower\_log\_ly\_latticeGraph}.
 They live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  PolynomialLower/LeeYangUpperLower.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/PolynomialLower.lean
 \end{Verbatim}
-and are re-exported through the legacy
+which absorbed the former Lee--Yang upper/lower micro-module, and are
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-PerStageComplex/Bounds/PolynomialLower.lean
-PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
-paths.
 
 In this handoff theorem the lower normalised-log control is isolated as an
 explicit hypothesis; PR \#2692 supplies that hypothesis on compact Lee--Yang
@@ -17617,14 +17543,14 @@ The setwise companion
 packages one constant $C$ for all stages and all fields in a set $K$.  The
 concrete $\mathbb Z^d$ wrappers live in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/AbsLogFreeEnergy.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
-and are re-exported through the legacy paths
+which absorbed the former absolute-log free-energy micro-module, and are
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This is intentionally a conditional handoff.  It identifies the missing
@@ -17657,14 +17583,14 @@ The proof composes PR \#2679 with the elementary consequence of nonemptiness
 using \texttt{Fintype.card\_pos} in Lean.  The concrete $\mathbb Z^d$ wrapper
 lives in
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog/AbsLogFreeEnergy.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex/
+  Bounds/UpperLog.lean
 \end{Verbatim}
-and is re-exported through the legacy paths
+which absorbed the former absolute-log free-energy micro-module, and is
+exported through
 \begin{Verbatim}[fontsize=\footnotesize]
-Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds/
-  UpperLog.lean
 Concrete/LatticeGraphCorrelation/PerStageComplex/Bounds.lean
+Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 \end{Verbatim}
 
 This theorem packages the exact locally bounded family shape that a later
@@ -24381,7 +24307,7 @@ wrappers in total --- in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean},
 \texttt{AmbientLattice/SpecialCases/HighTemperature.lean}, and
 \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureVDPolymer.lean}
-(carved out of \texttt{Concrete/.../HighTemperature.lean} in PR~\#2101).
+(carved out of \texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean} in PR~\#2101).
 Each is a thin direct-instantiation wrapper of the abstract theorem on
 the corresponding induced subgraph. These high-temperature sandwich
 wrappers were moved to the dedicated child modules from the legacy
@@ -24414,7 +24340,7 @@ lifted to every volume layer:
     the along-exhaustion family on
     $\mathrm{Exhaustion}\,(\mathrm{Fin}\,d \to \mathbb{Z})$ in
     \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureAlongEx.lean}
-    (carved out of \texttt{Concrete/.../HighTemperature.lean} in PR~\#2102).
+    (carved out of \texttt{Concrete/LatticeGraphCorrelation/HighTemperature.lean} in PR~\#2102).
 \end{itemize}
 The convergence-radius condition $(1+t)^{|E|} < 2$ is exponentially
 restrictive in $|E|$; sharper polymer-density / Kotecky--Preiss
