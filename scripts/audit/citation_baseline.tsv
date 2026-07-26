@@ -36,7 +36,7 @@
 # and that is the point.
 #tracked	2018
 #census	tex/proof-guide.tex	1216	1209	RESOLVED=987,AMBIGUOUS=104,BASENAME_ONLY=125,SELFREF=4
-#census	docs/index.md	2698	2633	RESOLVED=1955,MISSING=12,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=90
+#census	docs/index.md	2693	2628	RESOLVED=1962,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=89
 class	target	token	count	first_line
 AMBIGUOUS	docs/index.md	Analyticity.lean	24	2195
 AMBIGUOUS	docs/index.md	Basic.lean	1	1244
@@ -386,15 +386,6 @@ BASENAME_ONLY	tex/proof-guide.tex	UrsellFinThree.lean	2	19549
 BASENAME_ONLY	tex/proof-guide.tex	ViaLocal.lean	1	14067
 BASENAME_ONLY	tex/proof-guide.tex	WalkCountDegreeBound.lean	1	1907
 BASENAME_ONLY	tex/proof-guide.tex	WeightedSystem.lean	1	4790
-MISSING	docs/index.md	Concrete/LatticeGraphCorrelation/Legacy.lean	2	1979
-MISSING	docs/index.md	HLSBridgeSummary.lean	1	2019
-MISSING	docs/index.md	HLSConsolidatedSummary.lean	1	2010
-MISSING	docs/index.md	HLSSusceptibilityBridge.lean	1	2012
-MISSING	docs/index.md	MassContinuityFiniteVolumeDerivCombine/BindingPairDeriv.lean	1	1915
-MISSING	docs/index.md	MassContinuityFiniteVolumeIncidentEdge/IncidentSum/DerivCombine/DerivSharp/BindingPairDeriv.lean	1	1916
-MISSING	docs/index.md	RayExitAnchorVerticalStrictBridgeNonStripTurnStep.lean	1	866
-MISSING	docs/index.md	SharpHLSScopeExcludedAxioms.lean	1	2000
-MISSING	docs/index.md	SpecialCases/Legacy.lean	3	1977
 SELFREF	docs/index.md	AmbientComplexAnalyticity.lean >> AmbientComplexAnalyticity.lean	1	524
 SELFREF	docs/index.md	AmbientLattice.lean >> AmbientLattice.lean	3	851
 SELFREF	docs/index.md	AmbientLattice/Analyticity.lean >> Analyticity.lean	1	2126
@@ -469,7 +460,6 @@ SELFREF	docs/index.md	PseudoMass.lean >> IsingModel/PseudoMass.lean	1	1844
 SELFREF	docs/index.md	PseudoMass/Basic.lean >> PseudoMass/Basic.lean	1	2008
 SELFREF	docs/index.md	PseudoMass/Lipschitz.lean >> PseudoMass/Lipschitz.lean	1	1919
 SELFREF	docs/index.md	SiteIndepMag.lean >> SiteIndepMag.lean	1	1357
-SELFREF	docs/index.md	SpecialCases/Legacy.lean >> SpecialCases/Legacy.lean	1	1977
 SELFREF	docs/index.md	Tight.lean >> BallBoundarySimonLieb/Tight.lean	1	443
 SELFREF	docs/index.md	TransferMatrix/CubicLayerCylinder.lean >> CubicLayerCylinder.lean	1	1594
 SELFREF	docs/index.md	TransferMatrix/FreeLayerWalshSpectralWindow.lean >> TransferMatrix/FreeLayerWalshSpectralWindow.lean	1	1618
