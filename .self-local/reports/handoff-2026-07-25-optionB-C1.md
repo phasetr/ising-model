@@ -1,5 +1,51 @@
 # Handoff — 2026-07-25 — Option-B deletion campaign + C1 (HLS positivity) — SESSION FINAL STATE
 
+## NINTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — #4724 resolved (measurement reconciled); #4563 ROI verdict = GO (implementation still gated)
+
+This supersedes the EIGHTH (FINAL) UPDATE below as the session's terminal state.
+
+**#4724 (per-module fixed-cost reconciliation): RESOLVED, awaiting close approval.** `dev-perf`
+re-measured at main `4f9b7235`
+(`.self-local/reports/perf-4724-fixed-cost-reconciliation.md`; comment
+https://github.com/phasetr/ising-model/issues/4724#issuecomment-5082030683). Measurement A's
+~7.0s/module figure was traced to two additive protocol artifacts, not a real disagreement: (1)
+`lake env` wrapper overhead +1.07s/invocation, which a real build never pays, and (2) OS page-cache
+state (not `.lake/build` state) being the dominant, highly volatile term — `import` ranged
+11.3s→1.75s across cache states on the identical file while `user` CPU stayed fixed at 1.8–2.0s.
+Confirmed baseline (warm, serial, bare `lean`, 3×8 replicates): per-module fixed cost `real`
+**2.22s** (import 1.68s + init/parse 0.55s), CPU **2.24s**; cross-validated against a 193-module
+serial sweep at 430.29s = **2.23s/module**. A direct disposable-worktree A/B on the 7-leaf pilot
+family measured **7.0x wall / 9.2x CPU** marginal reduction, confirming Measurement A's "10.5x"
+*ratio* was approximately right even though its absolute seconds were inflated ~3.2x. **Issue
+stays OPEN** (close is a user-approval item per `dev-pr-workflow`) — status recorded as "resolved,
+awaiting close approval".
+
+**#4563 (SpecialCases consolidation, 28 families remaining): ROI verdict = worth doing, but
+implementation remains item-specific-authorization-gated.** Comment posted:
+https://github.com/phasetr/ising-model/issues/4563#issuecomment-5082030721. At the confirmed
+per-module value, the remaining 28 families (~175 modules → 28 files, ~147 modules eliminated)
+are worth CPU ≈147×2.24s ≈**~330s** and clean-full-build wall ≈147×0.63s (10-way effective
+in-build cost) ≈**~93s** (range 70–150s) ≈**~9%** of the 1022s clean full build — by far the
+largest remaining build-time item, an order of magnitude larger than the sum of this session's
+entire hot-spot campaign (#4695/#4698/#4699/#4713/#4716/#4722). The conclusion survives
+Measurement A's 3.2x over-statement with a large margin, and the standard "incremental rebuild
+regresses" objection is empirically negligible (2.22s→2.53s per family). **The real cost is
+labour, not build time**: 28 separate multi-file PRs is inefficient use of review effort at
+~5.3s wall saved/family; recommend batching **4–7 families per PR** if/when authorized. This
+comment is a **precondition resolution + ROI judgement only, not an implementation
+authorization** — #4563's own body still requires explicit item-specific user approval before any
+consolidation PR is opened (including confirmation of the batching approach).
+
+**Mirrors synced**: `.self-local/issues/4724.md` (status line + full UPDATE section),
+`.self-local/issues/4563.md` (new UPDATE section at end), this handoff doc. Bundled into
+short-lived PR (see below for number/merge result).
+
+**User-decision items outstanding, updated**: item 7/8 from the EIGHTH UPDATE's list below are
+now **partially actioned** — #4724's measurement is done and resolved (only close approval is
+outstanding), and #4563's ROI judgement is recorded as GO, but #4563's actual implementation
+authorization (including the batching-approach confirmation) is still outstanding. All other
+items in the EIGHTH UPDATE's numbered list are unchanged.
+
 ## EIGHTH (FINAL) UPDATE 2026-07-26 (dev-pr-clerk) — main = `365fb294` — PR #4728 MERGED; session terminal state
 
 This supersedes the SEVENTH (FINAL) UPDATE below as the session's terminal state.
