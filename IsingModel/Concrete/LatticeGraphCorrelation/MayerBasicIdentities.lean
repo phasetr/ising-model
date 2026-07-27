@@ -77,10 +77,9 @@ The three wrappers
 
 /-! ## Moved: AlongExhaustion Mayer basic identity wrappers
 
-The eight `*AlongExhaustion_latticeGraph_*` Mayer basic identity wrappers
-(vdPolymerFamilies_sum / mayerPartialSum / mayerExpansionTerm at
-`zero` / `one` / `_at_zero`) now live in
-`MayerBasicIdentitiesAlongEx.lean`. -/
+The three `mayerExpansionTermAlongExhaustion_latticeGraph_*` Mayer basic
+identity wrappers (at `zero` / `one` / `_at_zero`) live in
+`MayerBasicIdentitiesAlongExMayerExpansionTerm.lean`. -/
 
 
 end Ambient

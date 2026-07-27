@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 
 Narrow child module for four ℤ^d
 `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*` regularity
-wrappers extracted from `MayerVdRegularityTanh.lean`:
+wrappers:
 
 * `mayerPartialSumAlongExhaustion_latticeGraph_tanh_continuous_beta`,
 * `mayerPartialSumAlongExhaustion_latticeGraph_tanh_continuous_J`,
@@ -15,8 +15,7 @@ wrappers extracted from `MayerVdRegularityTanh.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.mayerPartialSumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerVdRegularityTanh` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

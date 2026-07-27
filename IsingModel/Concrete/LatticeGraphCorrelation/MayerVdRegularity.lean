@@ -2,11 +2,15 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularity
 import IsingModel.Lattice
 
 /-!
-# Concrete Mayer and polymer-family regularity wrappers
+# Concrete along-exhaustion mayerPartialSum regularity wrappers
 
-Narrow child module for concrete `ℤ^d` wrappers around `mayerPartialSum`,
-`mayerExpansionTerm`, and `vdPolymerFamilies_sum` regularity and tanh
-forwarders. This keeps callers that only need these wrappers out of the
+Narrow child module for the four concrete `ℤ^d`
+`mayerPartialSumAlongExhaustion_latticeGraph_*` regularity wrappers
+(Continuous/Differentiable/ContinuousOn/DifferentiableOn in t). The
+Λ-direct `mayerPartialSum`, the `mayerExpansionTerm`, the tanh-variant
+and the `vdPolymerFamilies_sum` wrappers that this module used to carry
+now live in the sibling narrow children named in the "Moved" notes
+below. This keeps callers that only need these wrappers out of the
 monolithic lattice-correlation module.
 -/
 
@@ -80,24 +84,25 @@ wrappers now live in `MayerVdRegularityExpansionTerm.lean`. -/
 
 /-! ## Moved: ℤ^d Mayer tanh-variant regularity wrappers
 
-The 16 ℤ^d `mayerPartialSum_Λ_latticeGraph_tanh_*`,
-`mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
+The 12 ℤ^d `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
 `mayerExpansionTerm_Λ_latticeGraph_tanh_*`, and
 `mayerExpansionTermAlongExhaustion_latticeGraph_tanh_*` wrappers
-(continuous/differentiable in β/J) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityTanh`.
-The earlier import path is preserved by re-importing the new child.
+(continuous/differentiable in β/J) live in
+`MayerVdRegularityTanhAlongEx.lean`,
+`MayerVdRegularityTanhExpansionTermLambda.lean`, and
+`MayerVdRegularityTanhExpansionTermAlongEx.lean` respectively.
 -/
 
 
 /-! ## Moved: ℤ^d vdPolymerFamilies regularity wrappers
 
-The 12 ℤ^d `vdPolymerFamilies_sum_Λ_latticeGraph_*` and
+The 14 ℤ^d `vdPolymerFamilies_sum_Λ_latticeGraph_*` and
 `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` wrappers
 (Continuous/Differentiable/HasDerivAt in t, plus tanh-variants in
-β/J) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityPolymer`.
-The earlier import path is preserved by re-importing the new child.
+β/J) now live in `MayerVdRegularityPolymer.lean` (3, Λ-direct in t),
+`MayerVdRegularityPolymerAlongEx.lean` (3, along-ex in t),
+`MayerVdRegularityPolymerTanh.lean` (4, Λ-direct tanh in β/J), and
+`MayerVdRegularityPolymerTanhAlongEx.lean` (4, along-ex tanh in β/J).
 -/
 
 end Ambient
