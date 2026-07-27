@@ -4,7 +4,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d freeEnergyAlongExhaustion + freeEnergyInfinite cubicExhaustion wrappers
 
-Narrow child module for 34 ℤ^d `freeEnergyAlongExhaustion_latticeGraph`
+Narrow child module for 31 ℤ^d `freeEnergyAlongExhaustion_latticeGraph`
 / `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
 trivial-slice, monotonicity, neg-h / abs-h, `ge_log_two_cosh` /
 `ge_log_two` / `bounds` wrappers, plus the two

@@ -2,14 +2,13 @@ import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d absolute / neg / sq bounds wrappers
+# ℤ^d absolute / neg bounds wrappers
 
-Narrow child module for 13 ℤ^d wrappers covering pointwise
-`|correlation*| ≤ 1`, `|magnetization*| ≤ 1`,
-`-1 ≤ correlation*` / `-1 ≤ magnetization*`, and
-`correlation*_sq_le_one` for the Λ / AlongExhaustion / Infinite
-families on `latticeGraph d`. Theorem names are unchanged from the
-former `UniformMag` declarations.
+Narrow child module for 10 ℤ^d wrappers covering pointwise
+`|correlation*| ≤ 1`, `|magnetization*| ≤ 1`, and
+`-1 ≤ correlation*` / `-1 ≤ magnetization*` for the Λ /
+AlongExhaustion / Infinite families on `latticeGraph d`. Theorem
+names are unchanged from the former `UniformMag` declarations.
 -/
 
 namespace IsingModel

@@ -54,14 +54,16 @@ wrappers now live in
 The earlier import path is preserved by re-importing the new child.
 -/
 
-/-! ## Moved: abs / neg / sq bounds wrappers
+/-! ## Moved: abs / neg bounds wrappers
 
-The 13 ℤ^d `abs_*_latticeGraph_le_one` /
-`neg_one_le_*_latticeGraph` / `*_latticeGraph_sq_le_one` wrappers
+The 10 ℤ^d `abs_*_latticeGraph_le_one` /
+`neg_one_le_*_latticeGraph` wrappers
 (for `correlationΛ`, `correlationAlongExhaustion`,
 `correlationInfinite`, `magnetizationΛ`,
 `magnetizationAlongExhaustion`, `magnetizationInfinite`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAbsBounds`.
+The three `correlation*_latticeGraph_sq_le_one` wrappers of the same
+family were deleted; no consumer of them was found in this repository.
 The earlier import path is preserved by re-importing the new child.
 -/
 

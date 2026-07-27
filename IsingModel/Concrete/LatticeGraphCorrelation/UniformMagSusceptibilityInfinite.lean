@@ -2,7 +2,7 @@ import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d susceptibilityInfinite + magnetizationInfinite J_zero regularity wrappers
+# ℤ^d susceptibilityInfinite trivial-slice + J_zero regularity wrappers
 
 Narrow child module for seven ℤ^d
 `susceptibilityInfinite_latticeGraph_*` wrappers covering trivial
