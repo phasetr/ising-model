@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 # ℤ^d mayerExpansionTermAlongExhaustion_latticeGraph wrappers
 
 Narrow child module for three ℤ^d
-`mayerExpansionTermAlongExhaustion_latticeGraph_*` wrappers extracted
-from `MayerBasicIdentitiesAlongEx.lean`:
+`mayerExpansionTermAlongExhaustion_latticeGraph_*` wrappers:
 
 * `mayerExpansionTermAlongExhaustion_latticeGraph_zero`,
 * `mayerExpansionTermAlongExhaustion_latticeGraph_one`,

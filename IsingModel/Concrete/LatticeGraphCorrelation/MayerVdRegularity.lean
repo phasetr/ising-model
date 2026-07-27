@@ -80,13 +80,13 @@ wrappers now live in `MayerVdRegularityExpansionTerm.lean`. -/
 
 /-! ## Moved: ℤ^d Mayer tanh-variant regularity wrappers
 
-The 16 ℤ^d `mayerPartialSum_Λ_latticeGraph_tanh_*`,
-`mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
+The 12 ℤ^d `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
 `mayerExpansionTerm_Λ_latticeGraph_tanh_*`, and
 `mayerExpansionTermAlongExhaustion_latticeGraph_tanh_*` wrappers
-(continuous/differentiable in β/J) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityTanh`.
-The earlier import path is preserved by re-importing the new child.
+(continuous/differentiable in β/J) live in
+`MayerVdRegularityTanhAlongEx.lean`,
+`MayerVdRegularityTanhExpansionTermLambda.lean`, and
+`MayerVdRegularityTanhExpansionTermAlongEx.lean` respectively.
 -/
 
 

@@ -77,13 +77,5 @@ The five wrappers
 `MayerTrivialCasesLambdaIdentity.lean`. -/
 
 
-/-! ## Moved: AlongExhaustion Mayer identity trivial-case wrappers
-
-The five `mayer_identity_*_AlongExhaustion_latticeGraph_*` wrappers
-(`no_polymers`, `no_polymers_tanh`, `trivial`, `edgeFinset_empty`,
-`edgeFinset_empty_tanh`) now live in
-`MayerTrivialCasesAlongExIdentity.lean`. -/
-
-
 end Ambient
 end IsingModel

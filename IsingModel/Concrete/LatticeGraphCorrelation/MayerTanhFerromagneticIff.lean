@@ -101,8 +101,8 @@ live in `MayerTanhFerromagneticIffVdSum.lean`. -/
 
 /-! ## Moved: AlongExhaustion Mayer tanh ferromagnetic iff wrappers
 
-The nine `*AlongExhaustion_latticeGraph_tanh_*_ferro` wrappers now
-live in `MayerTanhFerromagneticIffAlongEx.lean`. -/
+The four `*AlongExhaustion_latticeGraph_tanh_*_ferro` tail wrappers
+live in `MayerTanhFerromagneticIffAlongExTail.lean`. -/
 
 
 end Ambient

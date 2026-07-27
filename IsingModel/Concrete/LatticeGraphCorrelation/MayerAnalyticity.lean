@@ -69,10 +69,12 @@ live in `MayerAnalyticityExpansionTerm.lean`. -/
 
 /-! ## Moved: Mayer tanh-composed analyticity wrappers
 
-The twelve `*_tanh_analytic*` wrappers
-(`mayerPartialSum_*` / `mayerPartialSumAlongExhaustion_*` /
-`mayerExpansionTerm_*` / `mayerExpansionTermAlongExhaustion_*` at the
-tanh substitution) now live in `MayerAnalyticityTanh.lean`. -/
+The eight `*_tanh_analytic*` wrappers at the tanh substitution live in
+`MayerAnalyticityTanhAlongEx.lean`
+(`mayerPartialSumAlongExhaustion_*`, four wrappers) and
+`MayerAnalyticityTanhExpansionTerm.lean`
+(`mayerExpansionTerm_Λ_*` / `mayerExpansionTermAlongExhaustion_*`,
+four wrappers). -/
 
 
 end Ambient

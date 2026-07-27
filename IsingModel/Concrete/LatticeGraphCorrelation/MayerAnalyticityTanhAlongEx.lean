@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 # ℤ^d AlongExhaustion mayerPartialSum tanh analyticity wrappers
 
 Narrow child module for four ℤ^d
-`mayerPartialSumAlongExhaustion_latticeGraph_tanh_analytic*` wrappers
-extracted from `MayerAnalyticityTanh.lean`:
+`mayerPartialSumAlongExhaustion_latticeGraph_tanh_analytic*` wrappers:
 
 * `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticAt_beta`,
 * `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticAt_J`,
@@ -15,8 +14,7 @@ extracted from `MayerAnalyticityTanh.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.mayerPartialSumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerAnalyticityTanh` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 
 Narrow child module for four ℤ^d
 `mayerExpansionTerm_{Λ,AlongExhaustion}_latticeGraph_tanh_analyticAt_{beta,J}`
-wrappers extracted from `MayerAnalyticityTanh.lean`. Each wrapper is a thin
+wrappers. Each wrapper is a thin
 pass-through to the corresponding ambient
 `mayerExpansionTerm_*_tanh_analyticAt_*` lemma at
 `IsingModel.latticeGraph d`.

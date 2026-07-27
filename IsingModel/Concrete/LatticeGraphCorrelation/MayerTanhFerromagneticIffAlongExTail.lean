@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
 # Concrete along-ex tanh ferromagnetic tail wrappers (vd + pow_sub_one)
 
 Narrow child module for 4 ℤ^d along-exhaustion ferromagnetic
-trailing wrappers extracted from
-`MayerTanhFerromagneticIffAlongEx.lean`:
+trailing wrappers:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_gt_one_iff_ferro`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_eq_one_iff_ferro`,
@@ -16,8 +15,7 @@ trailing wrappers extracted from
 Each result is a thin pass-through of the corresponding ambient
 `Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
 polymerFreeEnergyAlongExhaustion_*}_ferro` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `MayerTanhFerromagneticIffAlongEx` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel
