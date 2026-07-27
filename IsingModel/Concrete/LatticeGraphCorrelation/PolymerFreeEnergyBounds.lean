@@ -97,14 +97,13 @@ The four wrappers
 
 /-! ## Moved: ℤ^d polymerFreeEnergy tanh-bound wrappers
 
-The 8 ℤ^d polymerFreeEnergy tanh-bound wrappers
-(`polymerFreeEnergy_Λ_latticeGraph_{tanh_sandwich,
-le_card_log_two_of_le_one, tanh_le_card_log_two, tanh_double_bound}`
-and `polymerFreeEnergyAlongExhaustion_latticeGraph_{tanh_sandwich,
+The 4 remaining ℤ^d polymerFreeEnergy tanh-bound wrappers
+(`polymerFreeEnergyAlongExhaustion_latticeGraph_{tanh_sandwich,
 le_card_log_two_of_le_one, tanh_le_card_log_two, tanh_double_bound}`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsTanh`.
-The earlier import path is preserved by re-importing the new child.
+live in
+`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsTanhAlongEx`.
+The four Λ-direct `polymerFreeEnergy_Λ_latticeGraph_*` counterparts were
+deleted; no consumer of them was found in this repository.
 -/
 
 end Ambient

@@ -88,12 +88,14 @@ The four wrappers
 in `RegularityAlongExMag.lean`. -/
 
 
-/-! ## Moved: partitionFunction / freeEnergy along-ex hasDerivAt wrappers
+/-! ## Moved: freeEnergy along-ex hasDerivAt wrappers
 
-The six wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}` and
+The three wrappers
 `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_{beta_general_h,J,field}`
-now live in `RegularityAlongExPartitionFreeEnergy.lean`. -/
+now live in `RegularityAlongExPartitionFreeEnergyFE.lean`. The three
+`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}`
+wrappers were deleted; no consumer of them was found in this
+repository. -/
 
 
 

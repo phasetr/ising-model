@@ -28,12 +28,19 @@ The earlier import path is preserved by re-importing the new child.
 /-! ## Moved: magnetizationAlongExhaustion / correlationAlongExhaustion
 bounds + convergence wrappers
 
-The 17 ℤ^d `magnetizationAlongExhaustion_latticeGraph_*` and
-`correlationAlongExhaustion_latticeGraph_*` bound / monotone /
-convergent / bddAbove / bddBelow / `_le_*Infinite` /
-`_tendsto_ciSup` / `_eq_ciSup` wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAlongExConvergence`.
-The earlier import path is preserved by re-importing the new child.
+The 14 remaining ℤ^d `magnetizationAlongExhaustion_latticeGraph_*`,
+`correlationAlongExhaustion_latticeGraph_*` and `*_eq_ciSup` bound /
+monotone / convergent / bddAbove / bddBelow / `_le_*Infinite` wrappers
+live in four child modules:
+
+* `UniformMagAlongExConvergenceBasicBounds` (3 wrappers),
+* `UniformMagAlongExConvergenceCiSup` (4 wrappers),
+* `UniformMagAlongExConvergenceMain` (3 wrappers),
+* `UniformMagAlongExConvergenceCorrAlongEx` (4 wrappers).
+
+The `magnetizationAlongExhaustion_latticeGraph_{bddAbove, bddBelow,
+tendsto_ciSup}` wrappers were deleted; no consumer of them was found in
+this repository.
 -/
 
 

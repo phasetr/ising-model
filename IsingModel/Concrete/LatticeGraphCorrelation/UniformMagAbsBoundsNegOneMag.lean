@@ -4,8 +4,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # ℤ^d `neg_one_le_magnetization*_latticeGraph` wrappers
 
 Narrow child module for three ℤ^d `neg_one_le_magnetization*_latticeGraph`
-wrappers (Λ / AlongExhaustion / Infinite forms) extracted from
-`UniformMagAbsBoundsSqAndNegOneMag.lean`:
+wrappers (Λ / AlongExhaustion / Infinite forms):
 
 * `neg_one_le_magnetizationΛ_latticeGraph`,
 * `neg_one_le_magnetizationAlongExhaustion_latticeGraph`,
@@ -13,8 +12,7 @@ wrappers (Λ / AlongExhaustion / Infinite forms) extracted from
 
 Each result is a thin pass-through of the ambient
 `Ambient.neg_one_le_magnetization*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `UniformMagAbsBoundsSqAndNegOneMag` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

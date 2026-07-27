@@ -8,9 +8,8 @@ Narrow child module for four ℤ^d wrappers
 (`magnetizationInfinite_latticeGraph_eq_ciSup`,
 `correlationInfinite_latticeGraph_eq_ciSup`,
 `correlationAlongExhaustion_le_correlationInfinite_latticeGraph`,
-`magnetizationAlongExhaustion_le_magnetizationInfinite_latticeGraph`)
-extracted from `UniformMagAlongExConvergence.lean`. Each wrapper is a thin
-pass-through to the corresponding ambient lemma at
+`magnetizationAlongExhaustion_le_magnetizationInfinite_latticeGraph`).
+Each wrapper is a thin pass-through to the corresponding ambient lemma at
 `IsingModel.latticeGraph d`.
 -/
 

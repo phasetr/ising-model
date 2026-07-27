@@ -6,8 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 
 Narrow child module for four ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{J,joint}`
-pointwise regularity wrappers extracted from
-`PartitionFreeEnergyPointwiseRegularityFreeEnergy.lean`:
+pointwise regularity wrappers:
 
 * `freeEnergyAlongExhaustion_latticeGraph_continuousAt_J`,
 * `freeEnergyAlongExhaustion_latticeGraph_differentiableAt_J`,

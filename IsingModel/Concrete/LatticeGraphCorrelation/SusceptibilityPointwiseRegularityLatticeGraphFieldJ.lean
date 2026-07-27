@@ -7,8 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 
 Narrow child module for four ℤ^d
 `susceptibilityAlongExhaustion_latticeGraph_*At_{field,J}` pointwise
-wrappers extracted from
-`SusceptibilityPointwiseRegularityLatticeGraph.lean`:
+wrappers:
 
 * `susceptibilityAlongExhaustion_latticeGraph_continuousAt_field`,
 * `susceptibilityAlongExhaustion_latticeGraph_differentiableAt_field`,
@@ -17,9 +16,7 @@ wrappers extracted from
 
 Each result is a thin pass-through of the ambient
 `Ambient.susceptibilityAlongExhaustion_*_gen` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `SusceptibilityPointwiseRegularityLatticeGraph`
-declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 open scoped symmDiff

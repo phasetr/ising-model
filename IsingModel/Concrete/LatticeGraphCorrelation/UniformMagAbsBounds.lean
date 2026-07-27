@@ -52,12 +52,14 @@ The three wrappers
 `UniformMagAbsBoundsNegOneCorr.lean`. -/
 
 
-/-! ## Moved: correlation² ≤ 1 and -1 ≤ magnetization* wrappers
+/-! ## Moved: -1 ≤ magnetization* wrappers
 
-The six wrappers
-`correlation{Λ,AlongExhaustion,Infinite}_latticeGraph_sq_le_one` and
+The three wrappers
 `neg_one_le_magnetization{Λ,AlongExhaustion,Infinite}_latticeGraph`
-now live in `UniformMagAbsBoundsSqAndNegOneMag.lean`. -/
+now live in `UniformMagAbsBoundsNegOneMag.lean`. The three
+`correlation{Λ,AlongExhaustion,Infinite}_latticeGraph_sq_le_one`
+wrappers were deleted; no consumer of them was found in this
+repository. -/
 
 
 

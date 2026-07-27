@@ -8,8 +8,7 @@ Narrow child module for seven ℤ^d
 `susceptibilityInfinite_latticeGraph_*` wrappers covering trivial
 slices `J_zero` / `β_zero` / `zero_params` and the
 `continuousOn` / `differentiableOn` regularity in field /
-β-direction at `J = 0`. The four `magnetizationInfinite_latticeGraph_*_J_zero`
-wrappers now live in `UniformMagSusceptibilityInfiniteMagnetizationJZero.lean`.
+β-direction at `J = 0`.
 Theorem names are unchanged from the former `UniformMag` declarations.
 -/
 
@@ -48,11 +47,6 @@ The four wrappers
 `susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero`
 now live in `UniformMagSusceptibilityInfiniteRegJZero.lean`. -/
 
-
-/-! ## Moved: magnetizationInfinite J=0 regularity wrappers
-
-The four `magnetizationInfinite_latticeGraph_{continuousOn,differentiableOn}_{field,beta}_J_zero`
-wrappers now live in `UniformMagSusceptibilityInfiniteMagnetizationJZero.lean`. -/
 
 
 

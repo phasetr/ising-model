@@ -18,16 +18,20 @@ namespace Ambient
 
 /-! ## Moved: ℤ^d freeEnergyAlongExhaustion tendsto wrappers
 
-The 9 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*`
-convergence wrappers (`J_zero_tendsto_of_hcard_add`,
-`beta_zero_tendsto_of_hcard_add`, `tendsto_of_disjoint_tower`,
-`tendsto_of_disjointTowerHypotheses`, `tendsto_of_superadditive`,
-`tendsto_of_eventually_const`,
-`J_zero_tendsto_of_eventually_nonempty`,
-`beta_zero_tendsto_of_eventually_nonempty`,
-`zero_params_tendsto_of_eventually_nonempty`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyAlongExTendsto`.
-The earlier import path is preserved by re-importing the new child.
+The 6 remaining ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*`
+convergence wrappers live in two child modules:
+
+* `TwoPointFreeEnergyAlongExTendstoDisjointSuper`:
+  `tendsto_of_disjoint_tower`, `tendsto_of_disjointTowerHypotheses`,
+  `tendsto_of_superadditive`;
+* `TwoPointFreeEnergyAlongExTendstoEventuallyNonempty`:
+  `J_zero_tendsto_of_eventually_nonempty`,
+  `beta_zero_tendsto_of_eventually_nonempty`,
+  `zero_params_tendsto_of_eventually_nonempty`.
+
+The `J_zero_tendsto_of_hcard_add`, `beta_zero_tendsto_of_hcard_add` and
+`tendsto_of_eventually_const` wrappers were deleted; no consumer of them
+was found in this repository.
 -/
 
 /-! ## Moved: ℤ^d freeEnergyInfinite trivial-slice wrappers
