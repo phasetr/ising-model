@@ -97,7 +97,6 @@ The 12 ℤ^d `vdPolymerFamilies_sum_Λ_latticeGraph_*` and
 (Continuous/Differentiable/HasDerivAt in t, plus tanh-variants in
 β/J) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularityPolymer`.
-The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient
