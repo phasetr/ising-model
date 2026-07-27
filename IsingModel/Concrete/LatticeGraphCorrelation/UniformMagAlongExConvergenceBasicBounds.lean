@@ -5,8 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # ℤ^d magnetizationAlongEx basic per-stage bound wrappers
 
 Narrow child module for three ℤ^d basic per-stage
-`magnetizationAlongExhaustion_latticeGraph_*` bound wrappers extracted
-from `UniformMagAlongExConvergence.lean`:
+`magnetizationAlongExhaustion_latticeGraph_*` bound wrappers:
 
 * `magnetizationAlongExhaustion_latticeGraph_le_one`,
 * `magnetizationAlongExhaustion_latticeGraph_nonneg`,

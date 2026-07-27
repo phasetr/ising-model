@@ -21092,9 +21092,14 @@ DifferentiableAt wrappers
 (\S17.5--\S17.6, PR~\#1638).}
 \texttt{Concrete/LatticeGraphCorrelation.lean}:
 \texttt{partitionFunctionAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta\_h\_zero, J\_h\_zero, beta\_general\_h, J\_general\_h, h, joint\}} (12 thms) and
-\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta, field, J, joint\}} (8 thms). 20 new
+\texttt{freeEnergyAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{J, joint\}} (4 thms). 16
 pointwise wrappers at $G := \texttt{IsingModel.latticeGraph}\,d$,
-lifting the ambient versions from PR~\#1636.
+lifting the ambient versions from PR~\#1636.  PR~\#1638 added 20 of
+them; the four free-energy members at \texttt{beta} and \texttt{field}
+had no consumers and were deleted in PR~\#4749 together with the child
+module that carried them.  The ambient statements they wrapped are
+untouched and instantiate at $G := \texttt{IsingModel.latticeGraph}\,d$
+directly.
 
 \paragraph{$\mathbb{Z}^d$ concrete along-exhaustion
 ContinuousAt + DifferentiableAt wrappers
@@ -21102,9 +21107,13 @@ ContinuousAt + DifferentiableAt wrappers
 \texttt{Concrete/LatticeGraphCorrelation.lean}:
 \texttt{correlationAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_J} (2),
 \texttt{magnetizationAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta, field, J\}} (6),
-\texttt{susceptibilityAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{beta\_general\_h, field, J\}} (6). 14 new
+\texttt{susceptibilityAlongExhaustion\_latticeGraph\_\{continuousAt, differentiableAt\}\_\{field, J\}} (4). 12
 wrappers at $G := \texttt{IsingModel.latticeGraph}\,d$, lifting the
-ambient general-$G$ versions from PR~\#1635.
+ambient general-$G$ versions from PR~\#1635.  PR~\#1637 added 14 of
+them; the two susceptibility members in the $\beta$ direction at
+general $h$ had no consumers and were deleted in PR~\#4749 together
+with the child module that carried them.  The ambient statements they wrapped are untouched
+and instantiate at $G := \texttt{IsingModel.latticeGraph}\,d$ directly.
 
 \paragraph{\texttt{partitionFunctionAlongExhaustion} /
 \texttt{freeEnergyAlongExhaustion} ContinuousAt + DifferentiableAt
@@ -21185,13 +21194,16 @@ Along-ex layer:
 \texttt{freeEnergyAlongExhaustion\_hasDerivAt\_\{beta\_general\_h, J, field\}} (3) split across
 \texttt{AmbientLattice/\{BetaDerivative, JDerivative, FieldDerivative\}.lean}.
 $\mathbb{Z}^d$ concrete:
-\texttt{partitionFunctionAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
-(3) and
 \texttt{freeEnergyAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
 (3) in
 \texttt{Concrete/LatticeGraphCorrelation.lean}.
-12 new theorems in existence form
+9 theorems in existence form
 $\exists c \in \mathbb{R},\,\mathrm{HasDerivAt}\,f\,c\,x$.
+PR~\#1631 added 12 of them; the three $\mathbb{Z}^d$
+\texttt{partitionFunctionAlongExhaustion\_latticeGraph\_hasDerivAt\_*}
+wrappers had no consumers and were deleted in PR~\#4749 together with
+the child module that carried them.  The along-ex layer statements they
+wrapped are untouched.
 
 \paragraph{$\mathbb{Z}^d$ concrete (\texttt{latticeGraph} $d$)
 along-exhaustion \texttt{HasDerivAt} wrappers
@@ -22300,8 +22312,13 @@ $\beta/J$-strict-mono lemmas under polymers nonempty
 (\texttt{\_tanh\_lt\_of\_lt\_in\_beta},
 \texttt{\_tanh\_lt\_of\_lt\_in\_J},
 \texttt{\_tanh\_strictMonoOn\_beta},
-\texttt{\_tanh\_strictMonoOn\_J}). 36 new thin
-direct-instantiation wrappers. Several long
+\texttt{\_tanh\_strictMonoOn\_J}). PR~\#1605 added 36 thin
+direct-instantiation wrappers, of which 31 survive: the five
+$\mathbb{Z}^d$ along-exhaustion sharpening members had no consumers and
+were deleted in PR~\#4749 together with the child module that carried
+them, so those five sharpening statements no longer reach the
+$\mathbb{Z}^d$ along-exhaustion layer.
+Several long
 $\mathbb{Z}^d$ along-ex names abbreviate
 \texttt{\_of\_polymers\_nonempty} to \texttt{\_polymers\_nonempty}
 (or further to \texttt{\_polymers}) to fit under the
@@ -22808,7 +22825,11 @@ direct-instantiation wrappers in
 along-exhaustion and concrete wrappers now in
 \texttt{AmbientLattice/SpecialCases/PolymerFreeEnergyBounds.lean} and
 \texttt{Concrete/LatticeGraphCorrelation/PolymerFreeEnergyBounds.lean}
-(moved from the legacy modules in PR~\#1866).
+(moved from the legacy modules in PR~\#1866).  $12$ of the $16$
+survive: the four $\mathbb{Z}^d$ $\Lambda$-layer members had no
+consumers and were deleted in PR~\#4749 together with the child module
+that carried them, while the ferromagnetic variants at that layer are
+untouched.
 
 \paragraph{\texttt{polymerFreeEnergy} edge-cases + comparison
 family, all volume layers (\S18.5, PR~\#1579).} The four abstract

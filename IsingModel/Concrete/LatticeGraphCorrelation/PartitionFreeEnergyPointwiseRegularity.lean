@@ -86,9 +86,11 @@ The four `partitionFunctionAlongExhaustion_latticeGraph_*` wrappers
 
 /-! ## Moved: freeEnergyAlongExhaustion pointwise regularity wrappers
 
-The eight wrappers
-`freeEnergyAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_*`
-now live in `PartitionFreeEnergyPointwiseRegularityFreeEnergy.lean`. -/
+The four remaining wrappers
+`freeEnergyAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{J,joint}`
+now live in `PartitionFreeEnergyPointwiseRegularityFreeEnergyJJoint.lean`.
+The four `{continuousAt,differentiableAt}_{beta,field}` wrappers were
+deleted; no consumer of them was found in this repository. -/
 
 
 end Ambient

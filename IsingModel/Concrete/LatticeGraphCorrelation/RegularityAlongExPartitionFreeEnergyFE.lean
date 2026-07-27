@@ -7,8 +7,7 @@ import IsingModel.AmbientLattice.FieldDerivative
 # ℤ^d along-ex `freeEnergyAlongExhaustion` HasDerivAt wrappers
 
 Narrow child module for three ℤ^d along-exhaustion
-`freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_*` wrappers
-extracted from `RegularityAlongExPartitionFreeEnergy.lean`:
+`freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_*` wrappers:
 
 * `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h`,
 * `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_J`,
@@ -16,8 +15,7 @@ extracted from `RegularityAlongExPartitionFreeEnergy.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.freeEnergyAlongExhaustion_hasDerivAt_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `RegularityAlongExPartitionFreeEnergy` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

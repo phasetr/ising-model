@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanh
 # ℤ^d AlongExhaustion polymerFreeEnergy tanh-bound wrappers (§18.5)
 
 Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` tanh-bound wrappers
-extracted from `PolymerFreeEnergyBoundsTanh.lean`:
+`polymerFreeEnergyAlongExhaustion_latticeGraph_*` tanh-bound wrappers:
 
 * `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_sandwich`,
 * `polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_log_two_of_le_one`,
@@ -15,8 +14,7 @@ extracted from `PolymerFreeEnergyBoundsTanh.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.polymerFreeEnergyAlongExhaustion_*` tanh-bound lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyBoundsTanh` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

@@ -6,15 +6,15 @@ import IsingModel.AmbientLattice.FieldDerivative
 /-!
 # Concrete ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
 
-Narrow child module for the 18 ℤ^d along-exhaustion `hasDerivAt`
+Narrow child module for the 15 ℤ^d along-exhaustion `hasDerivAt`
 wrappers (`correlationAlongExhaustion`, `magnetizationAlongExhaustion`,
-`partitionFunctionAlongExhaustion`, `freeEnergyAlongExhaustion`,
-`susceptibilityAlongExhaustion` — in β/β_general_h/J/field directions)
-extracted from `Regularity.lean` in PR #2042. Each is a thin
-pass-through to the corresponding ambient along-exhaustion
-`hasDerivAt` lemma at `IsingModel.latticeGraph d`. All wrappers are
-stated in existence form `∃ d : ℝ, HasDerivAt _ d _`. The theorem
-names are unchanged from the former `Regularity` declarations.
+`freeEnergyAlongExhaustion`, `susceptibilityAlongExhaustion` — in
+β/β_general_h/J/field directions) extracted from `Regularity.lean` in
+PR #2042. Each is a thin pass-through to the corresponding ambient
+along-exhaustion `hasDerivAt` lemma at `IsingModel.latticeGraph d`.
+All wrappers are stated in existence form `∃ d : ℝ, HasDerivAt _ d _`.
+The theorem names are unchanged from the former `Regularity`
+declarations.
 -/
 
 open scoped symmDiff
@@ -88,12 +88,14 @@ The four wrappers
 in `RegularityAlongExMag.lean`. -/
 
 
-/-! ## Moved: partitionFunction / freeEnergy along-ex hasDerivAt wrappers
+/-! ## Moved: freeEnergy along-ex hasDerivAt wrappers
 
-The six wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}` and
+The three wrappers
 `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_{beta_general_h,J,field}`
-now live in `RegularityAlongExPartitionFreeEnergy.lean`. -/
+now live in `RegularityAlongExPartitionFreeEnergyFE.lean`. The three
+`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}`
+wrappers were deleted; no consumer of them was found in this
+repository. -/
 
 
 

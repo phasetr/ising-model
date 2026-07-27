@@ -94,13 +94,16 @@ now live in `UniformMagCorrelationTrivialCor4_3_5.lean`. -/
 
 
 
-/-! ## Moved: susceptibility / magnetizationInfinite J_zero regularity wrappers
+/-! ## Moved: susceptibilityInfinite trivial-slice + J_zero regularity wrappers
 
-The 11 ℤ^d `susceptibilityInfinite_latticeGraph_*` and
-`magnetizationInfinite_latticeGraph_*` J_zero / β_zero /
+The 7 ℤ^d `susceptibilityInfinite_latticeGraph_*` J_zero / β_zero /
 zero_params trivial-slice + continuousOn / differentiableOn
 regularity wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.UniformMagSusceptibilityInfinite`.
+The four `magnetizationInfinite_latticeGraph_{continuousOn,
+differentiableOn}_{field,beta}_J_zero` wrappers that were moved
+alongside them were deleted; no consumer of them was found in this
+repository.
 The earlier import path is preserved by re-importing the new child.
 -/
 

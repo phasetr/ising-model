@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening
 # Concrete along-ex polymer free-energy tanh-sharpening monotone wrappers
 
 Narrow child module for 4 ℤ^d along-exhaustion polymer free-energy
-tanh-sharpening monotone-in-(β,J) wrappers extracted from
-`PolymerFreeEnergyTanhSharpeningAlongEx.lean`:
+tanh-sharpening monotone-in-(β,J) wrappers:
 
 * `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_of_lt_in_beta_polymers_nonempty`,
 * `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_of_lt_in_J_polymers_nonempty`,
@@ -15,8 +14,7 @@ tanh-sharpening monotone-in-(β,J) wrappers extracted from
 
 Each result is a thin pass-through of the corresponding ambient
 `Ambient.polymerFreeEnergyAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyTanhSharpeningAlongEx` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

@@ -814,6 +814,24 @@ class V2TokenTest(unittest.TestCase):
 # ---------------------------------------------------------------------------
 
 
+# Count floors for the ratchet in ``CheckedFilesTest``.  They are not a
+# library-size target: their job is to make a scan that silently loses a whole
+# directory fail, so they are recalibrated -- downwards, on purpose, and only
+# together with the deletion that moved them -- whenever the library shrinks
+# deliberately.
+#
+# Measured 2026-07-27 on this branch: ``iter_checked_files()`` = 2003 and
+# ``iter_lib_files()`` = 1996, down from 2013 / 2006 before the ten
+# zero-consumer wrapper modules of this batch were deleted (the previous floor
+# of 2000 dated from before that deletion).  The floors sit 46 below the
+# measured counts: low enough that the next deletion batch of this size does
+# not trip them, high enough that losing any of the eight largest library
+# directories -- ``Conditioning`` (48 files) up to ``Concrete`` (869) -- still
+# does.
+CHECKED_FILE_FLOOR = 1957
+LIB_FILE_FLOOR = 1950
+
+
 class CheckedFilesTest(unittest.TestCase):
     """What V1 and V2 scan, pinned against the real tree.
 
@@ -855,8 +873,8 @@ class CheckedFilesTest(unittest.TestCase):
 
     def test_the_scan_covers_the_whole_library(self) -> None:
         """A count ratchet: dropping one library directory must be visible."""
-        self.assertGreater(len(ag.iter_checked_files()), 2000)
-        self.assertGreater(len(ag.iter_lib_files()), 2000)
+        self.assertGreater(len(ag.iter_checked_files()), CHECKED_FILE_FLOOR)
+        self.assertGreater(len(ag.iter_lib_files()), LIB_FILE_FLOOR)
 
     def test_the_umbrella_and_the_test_suite_are_scanned(self) -> None:
         """The two roots the old ``IsingModel/``-only scan left unchecked."""

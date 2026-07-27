@@ -270,10 +270,14 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: freeEnergy / magnetizationInfinite cubicExhaustion wrappers
 
-The 34 ℤ^d `freeEnergyAlongExhaustion_latticeGraph` /
+The 31 ℤ^d `freeEnergyAlongExhaustion_latticeGraph` /
 `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
 trivial-slice, monotonicity, and bound wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
+The 3 `freeEnergyAlongExhaustion_latticeGraph_{J_zero_tendsto_of_hcard_add,
+beta_zero_tendsto_of_hcard_add, tendsto_of_eventually_const}` wrappers
+of the same family were deleted; no consumer of them was found in this
+repository.
 The 2 `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
 and 3 `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
 variants were further narrowed in PR #2026 into

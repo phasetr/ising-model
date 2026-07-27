@@ -5,8 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # ℤ^d freeEnergyAlongExhaustion tendsto disjoint_tower / super wrappers
 
 Narrow child module for three ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_tendsto_*` wrappers extracted
-from `TwoPointFreeEnergyAlongExTendsto.lean`:
+`freeEnergyAlongExhaustion_latticeGraph_tendsto_*` wrappers:
 
 * `freeEnergyAlongExhaustion_latticeGraph_tendsto_of_disjoint_tower`,
 * `freeEnergyAlongExhaustion_latticeGraph_tendsto_of_disjointTowerHypotheses`,
@@ -14,8 +13,7 @@ from `TwoPointFreeEnergyAlongExTendsto.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.freeEnergyAlongExhaustion_tendsto_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `TwoPointFreeEnergyAlongExTendsto` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

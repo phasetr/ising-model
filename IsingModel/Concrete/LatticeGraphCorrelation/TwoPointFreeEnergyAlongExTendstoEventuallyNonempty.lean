@@ -6,7 +6,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for three ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_of_eventually_nonempty`
-wrappers extracted from `TwoPointFreeEnergyAlongExTendsto.lean`:
+wrappers:
 
 * `_J_zero_tendsto_of_eventually_nonempty`,
 * `_beta_zero_tendsto_of_eventually_nonempty`,

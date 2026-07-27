@@ -102,12 +102,14 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: ℤ^d along-exhaustion `hasDerivAt` wrappers
 
-The 18 ℤ^d along-exhaustion `hasDerivAt` wrappers
+The 15 ℤ^d along-exhaustion `hasDerivAt` wrappers
 (`correlationAlongExhaustion`, `magnetizationAlongExhaustion`,
-`partitionFunctionAlongExhaustion`, `freeEnergyAlongExhaustion`,
-`susceptibilityAlongExhaustion` — in β/β_general_h/J/field
-directions) now live in
+`freeEnergyAlongExhaustion`, `susceptibilityAlongExhaustion` — in
+β/β_general_h/J/field directions) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.RegularityAlongEx`.
+The three `partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_*`
+wrappers of the same family were deleted; no consumer of them was
+found in this repository.
 The earlier import path is preserved by re-importing the new child.
 -/
 

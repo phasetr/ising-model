@@ -110,8 +110,12 @@ and `*_strictMonoOn_{beta,J}_of_polymers_nonempty`) now live in
 
 /-! ## Moved: AlongExhaustion polymerFreeEnergy tanh sharpening wrappers
 
-The nine `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*`
-wrappers now live in `PolymerFreeEnergyTanhSharpeningAlongEx.lean`. -/
+The four remaining `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*`
+monotone-in-(β,J) wrappers now live in
+`PolymerFreeEnergyTanhSharpeningAlongExMonotone.lean`. The five
+`tanh_{eq_zero_iff_eps_eq_zero, lt_eps_iff_eps_pos, lt_eps_of_eps_pos,
+lt_pow_sub_one_of_eps_pos, pos_iff_eps_pos}` wrappers were deleted; no
+consumer of them was found in this repository. -/
 
 
 end Ambient
