@@ -47,20 +47,21 @@ The earlier import path is preserved by re-importing the new child. -/
 
 /-! ## Moved: ℤ^d per-stage complex analyticity wrappers
 
-The 12 ℤ^d per-stage complex analyticity / continuity / norm-bound
-wrappers
-(`partitionFunctionComplexAlongExhaustion_analyticAt_{h,J,beta,joint}_stage_latticeGraph`,
-`_continuous_h_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
-`_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
-`_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
-`_continuousOn_leeYangSubdomain_stage_latticeGraph`,
+The 8 remaining ℤ^d per-stage complex analyticity / continuity /
+norm-bound wrappers
+(`partitionFunctionComplexAlongExhaustion_continuous_h_stage_latticeGraph`,
 `norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_latticeGraph`,
 `partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph`,
+`freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
+`freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
+`freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
+`freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage_latticeGraph`,
 `freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses_latticeGraph`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`.
-The earlier import path is preserved by re-importing the new child.
+live under `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`,
+in its `Bounds.PerStage` (3) and `Branches.StageLeeYang` (1) children and
+in `PerStageComplexFreeEnergy` (4). The four
+`partitionFunctionComplexAlongExhaustion_analyticAt_{h,J,beta,joint}_stage_latticeGraph`
+wrappers were deleted; no consumer of them was found in this repository.
 -/
 
 
