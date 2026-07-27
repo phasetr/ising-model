@@ -1364,6 +1364,57 @@ def _nameish(token: str) -> bool:
     return all(is_id_rest(char) or char in allowed for char in token)
 
 
+def _brace_grouped_pieces(body: str) -> list[str]:
+    """Split ``body`` on the whitespace *outside* braces, dropping the rest.
+
+    Both documentation files write a brace alternation with the spacing of
+    ordinary prose -- ``freeEnergyAlongExhaustion_latticeGraph_{continuousAt,
+    differentiableAt}_{beta, field, J, joint}`` is one citation of eight results,
+    not seven words. Splitting the body on every whitespace run (what
+    :func:`_citation_tokens` did alone) cuts that citation at each comma-space,
+    and the pieces are not names: ``..._{continuousAt`` has no closing brace, so
+    :func:`expand_braces` finds no group and returns it verbatim, matching
+    nothing; ``field,`` and ``J,`` carry no ``_`` and :func:`_nameish` drops
+    them. The whole citation therefore reaches no verdict, and -- a brace
+    shorthand having no verbatim fallback -- the eight results it names come out
+    uncited. Measured on the scanned documentation at ``2380eb36``: 133 such
+    name-shaped tokens (102 in ``docs/index.md``, 31 in ``tex/proof-guide.tex``),
+    108 of which expand onto 307 real declarations, 160 of those declarations
+    reading ``safe-to-delete`` in a whole-library sweep with this citation as
+    their only one -- the fatal error class.
+
+    Whitespace *inside* a brace group is layout, so it is dropped rather than
+    split on; :func:`expand_braces` already strips each alternative, so the
+    canonical token this returns expands exactly like its unspaced spelling.
+
+    The result is **not** a replacement for the whitespace split but an addition
+    to it (see :func:`_citation_tokens`), because brace depth is itself an
+    approximation: a body with an unclosed ``{`` never returns to depth 0, so
+    every later whitespace run would be swallowed and the plain names after it
+    would be lost -- the fail-open direction. Taking both splits keeps the token
+    list a superset of today's, and the documentation channel is add-only (every
+    token can only charge a citation, never deny one), so a superset can only
+    move a verdict towards ``uncertain``/``published-result``.
+    """
+    out: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    for char in body:
+        if char == "{":
+            depth += 1
+        elif char == "}" and depth:
+            depth -= 1
+        if char.isspace():
+            if depth == 0 and buf:
+                out.append("".join(buf))
+                buf = []
+            continue
+        buf.append(char)
+    if buf:
+        out.append("".join(buf))
+    return out
+
+
 def _citation_tokens(body: str) -> list[str]:
     """Return the name-shaped pieces of one citation body, punctuation trimmed.
 
@@ -1375,11 +1426,24 @@ def _citation_tokens(body: str) -> list[str]:
     token just disappears -- and a brace or glob shorthand, unlike a complete
     name, has no verbatim search to fall back on. The trimmed form is what is
     kept: the punctuation is the prose's, not the name's.
+
+    The body is cut twice: first on every whitespace run, which is what this
+    function has always returned, then on the whitespace outside braces only
+    (:func:`_brace_grouped_pieces`), whose tokens are *appended* when they are
+    new. The output is therefore a superset of the previous one by construction,
+    and a body whose braces carry no whitespace produces the same two lists and
+    so is left byte-for-byte alone.
     """
     out: list[str] = []
     for piece in body.split():
         trimmed = piece.strip(",.;:()")
         if trimmed and (_nameish(piece) or _nameish(trimmed)):
+            out.append(trimmed)
+    seen = set(out)
+    for piece in _brace_grouped_pieces(body):
+        trimmed = piece.strip(",.;:()")
+        if trimmed and trimmed not in seen and (_nameish(piece) or _nameish(trimmed)):
+            seen.add(trimmed)
             out.append(trimmed)
     return out
 

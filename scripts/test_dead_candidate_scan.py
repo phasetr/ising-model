@@ -321,6 +321,111 @@ class DocTokenTest(unittest.TestCase):
         self.assertGreaterEqual(len(many), 2)
 
 
+class SpacedBraceCitationTest(unittest.TestCase):
+    """A brace alternation spaced like prose is one citation, not several words.
+
+    ``docs/index.md`` and ``tex/proof-guide.tex`` both write
+    ``freeEnergyAlongExhaustion_latticeGraph_{continuousAt, differentiableAt}_{beta,
+    field, J, joint}`` -- one shorthand for eight results, with the spacing of an
+    English list. Splitting the citation body on every whitespace run cut it at
+    each comma-space into pieces that name nothing: ``..._{continuousAt`` has no
+    closing brace, so :func:`dead_candidate_scan.expand_braces` finds no group
+    and returns it unchanged, and ``field,``/``J,`` carry no ``_`` for
+    :func:`dead_candidate_scan._nameish`. A brace shorthand has no verbatim
+    search to fall back on, so the eight results reached no verdict at all.
+
+    Measured at ``2380eb36``: 133 name-shaped tokens of this shape (102 in
+    ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
+    declarations, 160 of which a whole-library sweep called ``safe-to-delete``
+    -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
+    cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
+    the fatal error class, so the split is pinned here from both sides: the
+    spaced citation must survive whole, and the plain whitespace split must keep
+    every token it produced before.
+    """
+
+    SPACED = (
+        "freeEnergyAlongExhaustion_latticeGraph_{continuousAt, differentiableAt}"
+        "_{beta, field, J, joint}"
+    )
+
+    def test_a_spaced_brace_alternation_survives_as_one_token(self) -> None:
+        """The whole citation is tokenized and expands to all eight names."""
+        tokens = dcs._citation_tokens(self.SPACED)
+        whole = [token for token in tokens if token.endswith("}")]
+        self.assertEqual(len(whole), 1, tokens)
+        self.assertEqual(
+            dcs.expand_braces(whole[0]),
+            [
+                f"freeEnergyAlongExhaustion_latticeGraph_{regularity}_{parameter}"
+                for regularity in ("continuousAt", "differentiableAt")
+                for parameter in ("J", "beta", "field", "joint")
+            ],
+        )
+
+    def test_unspaced_brace_citations_are_untouched(self) -> None:
+        """The spellings that already worked must produce exactly what they did."""
+        self.assertEqual(
+            dcs._citation_tokens("correlationΛ_{,latticeGraph_}continuous_joint"),
+            ["correlationΛ_{,latticeGraph_}continuous_joint"],
+        )
+        self.assertEqual(dcs._citation_tokens("foo{,bar}."), ["foo{,bar}"])
+        self.assertEqual(dcs._citation_tokens("a_one b_two"), ["a_one", "b_two"])
+        self.assertEqual(dcs._citation_tokens("a_dup a_dup"), ["a_dup", "a_dup"])
+
+    def test_the_brace_split_only_ever_adds(self) -> None:
+        """Brace depth is an approximation, so it may not remove a plain token.
+
+        A body with an unclosed ``{`` never returns to depth 0, so a brace-aware
+        split *alone* would swallow every later whitespace run and lose the
+        plain names after it -- the fail-open direction. Both splits are taken
+        and concatenated, so the previous token list is always a prefix of the
+        new one.
+        """
+        for body in (
+            "foo_bar { unclosed and_more here",
+            "closes_only } here_after",
+            self.SPACED,
+            "plain_one plain_two",
+        ):
+            plain = [
+                piece.strip(",.;:()")
+                for piece in body.split()
+                if piece.strip(",.;:()")
+                and (dcs._nameish(piece) or dcs._nameish(piece.strip(",.;:()")))
+            ]
+            self.assertEqual(dcs._citation_tokens(body)[: len(plain)], plain, body)
+
+    def test_whitespace_inside_a_brace_group_is_layout(self) -> None:
+        """Only the whitespace outside braces separates tokens."""
+        self.assertEqual(
+            dcs._brace_grouped_pieces("a_{x, y}_b  c_{p , q}"),
+            ["a_{x,y}_b", "c_{p,q}"],
+        )
+
+    def test_the_real_documentation_cites_the_measured_example(self) -> None:
+        """End-to-end: the two real citation sites reach the declaration."""
+        target = "freeEnergyAlongExhaustion_latticeGraph_continuousAt_J"
+        labels = {
+            doc.label
+            for doc in docs()
+            for token, _line in doc.tokens
+            if "{" in token and target in dcs.expand_braces(token)
+        }
+        self.assertEqual(labels, {"docs/index.md", "tex/proof-guide.tex"})
+
+    def test_the_measured_example_is_not_safe_to_delete(self) -> None:
+        """The verdict the defect inverted, replayed against the real tree."""
+        verdicts, _cascade, _labels = dcs.classify(
+            tree(),
+            ["freeEnergyAlongExhaustion_latticeGraph_continuousAt_J"],
+            docs(),
+            allow_homonym=False,
+        )
+        self.assertEqual(len(verdicts), 1)
+        self.assertEqual(verdicts[0].verdict, dcs.PUBLISHED)
+
+
 class MarkdownBacktickParityTest(unittest.TestCase):
     """One unbalanced backtick swaps prose for citations for the rest of its line.
 
