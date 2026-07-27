@@ -498,7 +498,8 @@ class ElidedFragmentTest(unittest.TestCase):
     matches three declarations, so the family-label rule attributed it to nobody
     and the magnetization member came out ``safe-to-delete`` although the line
     cited it. Charging every match of every family label instead was measured
-    (5253 of 11000 declarations, no reachable ``safe-to-delete``) and rejected;
+    (it touches 5895 of 11000 declarations and collapses ``safe-to-delete`` from
+    1458 verdicts to 232, an 84% collapse, with ``--expect`` red) and rejected;
     the rule kept is the one the notation states.
     """
 
