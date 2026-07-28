@@ -831,6 +831,18 @@ class V2TokenTest(unittest.TestCase):
 CHECKED_FILE_FLOOR = 1957
 LIB_FILE_FLOOR = 1950
 
+# The same ratchet for V4's wider scope (tracked files under ``docs``, ``tex``,
+# ``README.md``, ``scripts`` and ``.github`` on top of the Lean sources), and
+# for the visited-list assertions in ``ScanExecutionTest`` and
+# ``V4JapaneseTest`` below.  Those three sites used to carry a bare ``2000``
+# literal, which is why the pre-deletion slack of the named floors above did not
+# describe the whole ratchet: ``iter_checked_files()`` was 2003, three above
+# that literal, so the next ten-module deletion tripped it.  Measured
+# 2026-07-28 on this branch: ``iter_v4_files()`` = 2023 (2033 before the ten
+# modules of this batch were deleted).  Calibrated 46 below the measurement,
+# like the two floors above.
+V4_FILE_FLOOR = 1977
+
 
 class CheckedFilesTest(unittest.TestCase):
     """What V1 and V2 scan, pinned against the real tree.
@@ -922,9 +934,9 @@ class ScanExecutionTest(unittest.TestCase):
     def test_the_visited_lists_are_the_real_scan_not_a_re_enumeration(self) -> None:
         """The counts are large: a shrunken scan is a visible number, not a hint."""
         real = real_tree_results()
-        self.assertGreater(len(real.v1_visited), 2000)
-        self.assertGreater(len(real.v2_visited), 2000)
-        self.assertGreater(len(real.v4_visited), 2000)
+        self.assertGreater(len(real.v1_visited), CHECKED_FILE_FLOOR)
+        self.assertGreater(len(real.v2_visited), CHECKED_FILE_FLOOR)
+        self.assertGreater(len(real.v4_visited), V4_FILE_FLOOR)
 
     def test_unvisited_failures_reports_both_directions(self) -> None:
         """The comparator itself: files never read, and files read off-list."""
@@ -1384,7 +1396,7 @@ class V4ScanTest(unittest.TestCase):
     def test_real_tree_is_japanese_free(self) -> None:
         """The measured ratchet: zero hits over every tracked scanned file."""
         self.assertEqual(real_tree_results().v4, [])
-        self.assertGreater(len(real_tree_results().v4_visited), 2000)
+        self.assertGreater(len(real_tree_results().v4_visited), V4_FILE_FLOOR)
 
 
 # ---------------------------------------------------------------------------

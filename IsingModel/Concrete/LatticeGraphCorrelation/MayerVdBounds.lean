@@ -68,12 +68,13 @@ wrappers (`ge_one_of_nonneg`, `le_one_plus_pow_of_nonneg`,
 
 
 
-/-! ## Moved: AlongEx vdPolymerFamilies_sum `_of_nonneg` family
+/-! ## Deleted: AlongEx vdPolymerFamilies_sum generic-`t` bound family
 
-The four
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*_of_nonneg`
-wrappers (`{ge_one, le_one_plus_pow, pos, eq_one_add}`) now live
-in `MayerVdBoundsAlongExNonneg.lean`. -/
+The four ℤ^d along-exhaustion generic-`t` bound wrappers of the
+`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` family (the lower
+bound, the `(1 + t)^|E|` upper bound, positivity under `0 ≤ t`, and the
+`1 + ε(t)` decomposition) were deleted; no consumer of them was found in
+this repository. -/
 
 
 end Ambient

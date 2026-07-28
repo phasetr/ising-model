@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
 
 Narrow child module for three ℤ^d
 `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` t-regularity
-wrappers extracted from `MayerVdRegularityPolymer.lean`:
+wrappers:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_continuous`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_differentiable`,
@@ -14,8 +14,7 @@ wrappers extracted from `MayerVdRegularityPolymer.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.vdPolymerFamilies_sumAlongExhaustion_*` regularity lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerVdRegularityPolymer` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

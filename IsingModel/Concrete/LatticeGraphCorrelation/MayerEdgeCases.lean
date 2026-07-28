@@ -24,18 +24,19 @@ The four wrappers
 `MayerEdgeCasesLambda.lean`. -/
 
 
-/-! ## Moved: along-ex Mayer identity edge-case wrappers
+/-! ## Deleted: along-ex Mayer identity edge-case wrappers
 
-The four wrappers
-`mayer_identity_at_{zero,betaJ_zero,beta_zero,J_zero}_AlongExhaustion_latticeGraph`
-now live in `MayerEdgeCasesAlongExIdentity.lean`. -/
+The four ℤ^d along-exhaustion `mayer_identity_at_*` wrappers at the
+trivial parameter slices were deleted; no consumer of them was found in
+this repository. -/
 
 
-/-! ## Moved: Λ polymerFreeEnergy = mayerPartialSum edge cases
+/-! ## Deleted: Λ polymerFreeEnergy = mayerPartialSum edge cases
 
-The four wrappers
-`polymerFreeEnergy_Λ_latticeGraph_eq_mayerPartialSum_at_{zero,betaJ_zero,beta_zero,J_zero}`
-now live in `MayerEdgeCasesLambdaPolymer.lean`. -/
+The four ℤ^d Λ-layer
+`polymerFreeEnergy_Λ_latticeGraph_eq_mayerPartialSum_at_*` wrappers at
+the trivial parameter slices were deleted; no consumer of them was found
+in this repository. -/
 
 /-! ## Moved: along-ex polymerFreeEnergy = mayerPartialSum edge cases
 

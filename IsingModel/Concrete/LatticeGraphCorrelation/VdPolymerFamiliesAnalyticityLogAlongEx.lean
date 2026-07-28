@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 # Concrete log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
 
 Narrow child module for 4 ℤ^d along-exhaustion
-`log_vdPolymerFamilies_sumAlongExhaustion_*` analyticity wrappers
-extracted from `VdPolymerFamiliesAnalyticityLog.lean`:
+`log_vdPolymerFamilies_sumAlongExhaustion_*` analyticity wrappers:
 
 * `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticAt`,
 * `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticOnNhd_Ici_zero`,
@@ -15,8 +14,7 @@ extracted from `VdPolymerFamiliesAnalyticityLog.lean`:
 
 Each result is a thin pass-through of the corresponding ambient
 `Ambient.log_vdPolymerFamilies_sumAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `VdPolymerFamiliesAnalyticityLog` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

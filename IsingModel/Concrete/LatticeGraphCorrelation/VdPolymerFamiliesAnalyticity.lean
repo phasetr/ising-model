@@ -52,8 +52,11 @@ live in `VdPolymerFamiliesAnalyticityTanh.lean`. -/
 /-! ### `log_vdPolymerFamilies_sum` analyticity ℤ^d wraps -/
 /-! ## Moved: log_vdPolymerFamilies_sum analyticity wrappers
 
-The eight `log_vdPolymerFamilies_sum_{Λ,AlongExhaustion}_latticeGraph_*`
-analyticity wrappers now live in `VdPolymerFamiliesAnalyticityLog.lean`. -/
+The four remaining
+`log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` analyticity
+wrappers now live in `VdPolymerFamiliesAnalyticityLogAlongEx.lean`. The
+four Λ-direct `log_vdPolymerFamilies_sum_Λ_latticeGraph_*` counterparts
+were deleted; no consumer of them was found in this repository. -/
 
 /-! ### Epsilon analyticity ℤ^d wraps -/
 

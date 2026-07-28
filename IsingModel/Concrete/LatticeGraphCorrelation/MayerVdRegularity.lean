@@ -75,34 +75,34 @@ theorem mayerPartialSumAlongExhaustion_latticeGraph_differentiableOn
   Ambient.mayerPartialSumAlongExhaustion_differentiableOn
     (IsingModel.latticeGraph d) Λ N n s
 
-/-! ## Moved: mayerExpansionTerm regularity wrappers
+/-! ## Deleted: mayerExpansionTerm regularity wrappers
 
-The four `mayerExpansionTerm_{Λ,AlongExhaustion}_latticeGraph_{continuous,differentiable}`
-wrappers now live in `MayerVdRegularityExpansionTerm.lean`. -/
+The four ℤ^d `mayerExpansionTerm` `Continuous` / `Differentiable` in `t`
+wrappers at the Λ and along-exhaustion layers were deleted; no consumer
+of them was found in this repository. -/
 
 
 
 /-! ## Moved: ℤ^d Mayer tanh-variant regularity wrappers
 
-The 12 ℤ^d `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`,
-`mayerExpansionTerm_Λ_latticeGraph_tanh_*`, and
-`mayerExpansionTermAlongExhaustion_latticeGraph_tanh_*` wrappers
-(continuous/differentiable in β/J) live in
-`MayerVdRegularityTanhAlongEx.lean`,
-`MayerVdRegularityTanhExpansionTermLambda.lean`, and
-`MayerVdRegularityTanhExpansionTermAlongEx.lean` respectively.
+The four remaining ℤ^d `mayerPartialSumAlongExhaustion_latticeGraph_tanh_*`
+wrappers (continuous/differentiable in β/J) live in
+`MayerVdRegularityTanhAlongEx.lean`. The eight ℤ^d `mayerExpansionTerm`
+tanh `Continuous` / `Differentiable` counterparts at the Λ and
+along-exhaustion layers were deleted; no consumer of them was found in
+this repository.
 -/
 
 
 /-! ## Moved: ℤ^d vdPolymerFamilies regularity wrappers
 
-The 14 ℤ^d `vdPolymerFamilies_sum_Λ_latticeGraph_*` and
+The seven remaining ℤ^d
 `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` wrappers
 (Continuous/Differentiable/HasDerivAt in t, plus tanh-variants in
-β/J) now live in `MayerVdRegularityPolymer.lean` (3, Λ-direct in t),
-`MayerVdRegularityPolymerAlongEx.lean` (3, along-ex in t),
-`MayerVdRegularityPolymerTanh.lean` (4, Λ-direct tanh in β/J), and
-`MayerVdRegularityPolymerTanhAlongEx.lean` (4, along-ex tanh in β/J).
+β/J) now live in `MayerVdRegularityPolymerAlongEx.lean` (3, along-ex
+in t) and `MayerVdRegularityPolymerTanhAlongEx.lean` (4, along-ex tanh
+in β/J). The seven Λ-direct counterparts of the same two groups were
+deleted; no consumer of them was found in this repository.
 -/
 
 end Ambient
