@@ -48,6 +48,7 @@ that made its own gate fail would be self-defeating.
 
 from __future__ import annotations
 
+import collections
 import io
 import os
 import signal
@@ -58,7 +59,7 @@ import types
 import unittest
 from contextlib import contextmanager, redirect_stdout
 from pathlib import Path
-from typing import Iterator, NamedTuple
+from typing import Iterable, Iterator, NamedTuple
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -815,31 +816,46 @@ class V2TokenTest(unittest.TestCase):
 
 
 # Count floors for the ratchet in ``CheckedFilesTest``.  They are not a
-# library-size target: their job is to make a scan that silently loses a whole
-# directory fail, so they are recalibrated -- downwards, on purpose, and only
-# together with the deletion that moved them -- whenever the library shrinks
-# deliberately.
+# library-size target: their job was to make a scan that silently loses a whole
+# directory fail.
 #
-# Measured 2026-07-28 on this branch (PR #4754, safe-to-delete batch 4):
-# ``iter_checked_files()`` = 1984 and ``iter_lib_files()`` = 1977, down from
-# 1993 / 1986 at ``fd7a2a71`` before this batch's nine zero-consumer wrapper
-# modules were deleted.  The floors are NOT moved by this PR; they now sit 27
-# below the measured counts, still high enough that losing any of the eight
-# largest library directories -- ``Conditioning`` (48 files) up to ``Concrete``
-# (851) -- trips them.
+# Until 2026-07-29 they were calibrated a few dozen files below the measured
+# count, so every deletion batch of the #4746 safe-to-delete lane had to move
+# them (2003 / 1996 at PR #4749, 1993 / 1986 at #4751, 1984 / 1977 at #4754),
+# which is the ratchet describing the deletions instead of constraining them.
+# The standing decision recorded here was that the first batch which would
+# actually trip a floor must land F1 -- per-directory assertions -- rather than
+# recalibrate once more.  This is that change: ``DirectoryCoverageTest`` below
+# now carries the directory-loss claim directly, by name and without
+# calibration, which is what lets these three blanket floors be derived from a
+# *budget* instead of from today's measurement.
 #
-# The numbers this block carried before (``2003`` / ``1996``, described as
-# "measured 2026-07-27 ... 46 below the floors") were wrong in two ways: they
-# were the counts from *before* PR #4751 deleted its ten modules, not after, and
-# so the derived "46 below" was really 36 below on ``fd7a2a71``.  Both are
-# corrected above against a fresh measurement.
+# Derivation (measured 2026-07-29 on main ``f8911169``, batch 6 merged;
+# ``python3 -c "import audit_gate as ag; print(len(ag.iter_checked_files()),
+# len(ag.iter_lib_files()), len(ag.iter_v4_files()[0]))"``):
 #
-# Standing decision: the next batch that would actually trip a floor must land
-# F1 (per-directory assertions) rather than another recalibration.  Lowering the
-# floors once per batch makes the ratchet describe the deletions instead of
-# constraining them.
-CHECKED_FILE_FLOOR = 1957
-LIB_FILE_FLOOR = 1950
+#   iter_checked_files() = 1964 -> 1964 - 200 = 1764 -> 1760
+#   iter_lib_files()     = 1957 -> 1957 - 200 = 1757 -> 1750
+#   iter_v4_files()      = 1994 -> 1994 - 200 = 1790
+#
+# The budget is 200 further deleted modules, rounded down to a multiple of ten:
+# about 100 for the derived remainder of the #4746 Item A lane, plus the
+# excluded #4563 ``SpecialCases`` cluster, plus room for cascade growth (the
+# lane is a fixed point of the dead-candidate scanner, so deleting a module can
+# promote its neighbours).  With that budget no further recalibration is
+# expected for the remainder of the lane.
+#
+# What the blanket floors still buy, now that parity carries directory loss:
+# they are the only assertions that survive the two ways
+# ``test_every_tracked_lean_file_is_scanned`` can be made vacuous -- narrowing
+# ``EXTRA_CHECKED_ROOTS`` and this file's ``ROOTS`` in one commit, and a ``git
+# ls-files`` pathspec that matches nothing (``set() - scanned`` is empty, so the
+# subset assertion passes trivially).  That is why they are kept rather than
+# deleted outright, and also why they are allowed to be loose.  Note the
+# off-by-one when reading slack off them: the assertions are ``assertGreater``,
+# so the last admissible count is ``floor + 1``.
+CHECKED_FILE_FLOOR = 1760
+LIB_FILE_FLOOR = 1750
 
 # The same ratchet for V4's wider scope (tracked files under ``docs``, ``tex``,
 # ``README.md``, ``scripts`` and ``.github`` on top of the Lean sources), and
@@ -847,12 +863,116 @@ LIB_FILE_FLOOR = 1950
 # ``V4ScanTest`` (one) below.  Those four sites used to carry a bare ``2000``
 # literal, which is why the pre-deletion slack of the named floors above did not
 # describe the whole ratchet: ``iter_checked_files()`` was three above that
-# literal, so a ten-module deletion tripped it.  Measured 2026-07-28 on this
-# branch (PR #4754): ``iter_v4_files()`` = 2014, down from 2023 at ``fd7a2a71``
-# before this batch's nine modules were deleted.  The floor is NOT moved by this
-# PR; it now sits 37 below the measurement, and the standing decision recorded
-# above applies to it as well.
-V4_FILE_FLOOR = 1977
+# literal, so a ten-module deletion tripped it.  ``iter_v4_files()`` includes
+# the Lean sources, so a lane deletion moves this counter too and it is
+# re-derived from the same 200-module budget as the two above.
+V4_FILE_FLOOR = 1790
+
+# Sentinel bucket for ``*.lean`` files sitting directly in ``IsingModel/``
+# rather than in one of its subdirectories (39 of them on ``f8911169``).
+LOOSE = "<top level>"
+
+# The library's top-level shape, pinned as a literal.  Losing one of these
+# directories from the scan is the failure the count floors above were a proxy
+# for; asserted directly it needs no recalibration when the library
+# legitimately shrinks, because a directory the deletion lane empties
+# disappears from the disk census as well and both sides of
+# ``test_the_pinned_directory_list_matches_the_disk`` move together.
+#
+# Measured 2026-07-29 on main ``f8911169``: 25 directories, 1957 library files.
+# Deleting a whole top-level directory (the last one was PR #4703,
+# ``IsingModel/LatticeSystemBridge``) must edit this literal in the same commit
+# as the deletion.  That explicit edit is the point of pinning, not an
+# inconvenience: without it, scan and disk can shrink together silently.
+LIB_TOP_LEVEL_DIRS = frozenset(
+    {
+        "AmbientComplexAnalyticity",
+        "AmbientLattice",
+        "AmbientLatticeSum",
+        "Analysis",
+        "BallBoundarySimonLieb",
+        "BetaDerivative",
+        "ClusterExpansion",
+        "Combinatorics",
+        "ComplexAnalyticity",
+        "Concrete",
+        "Conditioning",
+        "ContinuousSpin",
+        "Dobrushin",
+        "FieldDerivative",
+        "FreeEnergy",
+        "HLSConvolutionSharp",
+        "Inequalities",
+        "InfiniteVolume",
+        "LeeYang",
+        "Peierls",
+        "PhaseTransition",
+        "PseudoMass",
+        "RandomCurrent",
+        "TransferMatrix",
+        "TranslationInvariance",
+    }
+)
+
+# Coarse per-directory floors.  Parity above only requires *one* surviving file
+# per directory, so a scan thinned to three files of ``Conditioning`` passes it
+# (and passes the blanket floors, 45 files being well inside their budget).
+# These floors close that gap for the buckets large enough for a count to mean
+# anything -- the eight directories at 40+ files, plus the loose bucket -- and
+# are deliberately set at roughly 60-70 % of the 2026-07-29 measurement so that
+# the whole planned deletion lane fits underneath them:
+#
+#   Concrete 843 -> 600 (the entire remaining #4746 lane lands here, ~100
+#   modules), AmbientLattice 275 -> 180 (#4563 SpecialCases may resume),
+#   ClusterExpansion 205 -> 150, TransferMatrix 109 -> 80, Peierls 105 -> 80,
+#   AmbientComplexAnalyticity 76 -> 55, Inequalities 71 -> 50,
+#   Conditioning 48 -> 35, loose files 39 -> 25.
+#
+# Smaller directories get no count floor: parity is the whole guard for them,
+# and a floor of "3" would be noise.  The comparison is ``assertGreaterEqual``,
+# unlike the strict blanket floors above.
+#
+# Standing decision, the same one the blanket floors carry: a deletion batch
+# that would trip an entry here is a governance signal -- re-measure the lane
+# and get a decision -- not an invitation to lower the entry.
+LIB_DIR_FLOORS = {
+    "Concrete": 600,
+    "AmbientLattice": 180,
+    "ClusterExpansion": 150,
+    "TransferMatrix": 80,
+    "Peierls": 80,
+    "AmbientComplexAnalyticity": 55,
+    "Inequalities": 50,
+    "Conditioning": 35,
+    LOOSE: 25,
+}
+
+
+def library_census(paths: Iterable[Path], lib_dir: Path) -> collections.Counter:
+    """Bucket ``paths`` by the top-level ``IsingModel/`` subdirectory they live in.
+
+    Files sitting directly under ``lib_dir`` land in the :data:`LOOSE` bucket;
+    bucketing by ``rel(path).split("/")[0]`` instead would file each of them
+    under its own name and turn the directory-set assertions into noise.
+
+    Paths outside ``lib_dir`` -- the umbrella module, ``test/`` and
+    ``scripts/audit/`` -- are not counted. They are the subject of their own
+    assertion (``test_every_extra_checked_root_contributes_a_file``); folding
+    them in would make the directory equality depend on two unrelated claims.
+
+    ``lib_dir`` is a parameter rather than a read of ``ag.LIB_DIR`` so that a
+    mutant module (:func:`load_mutated`) can be censused through its own
+    library directory. Closing over the real module's constant is what would
+    make the mutation tests vacuous.
+    """
+    census: collections.Counter = collections.Counter()
+    for path in paths:
+        try:
+            parts = path.relative_to(lib_dir).parts
+        except ValueError:
+            continue
+        census[LOOSE if len(parts) == 1 else parts[0]] += 1
+    return census
 
 
 class CheckedFilesTest(unittest.TestCase):
@@ -895,7 +1015,14 @@ class CheckedFilesTest(unittest.TestCase):
         self.assertEqual(stray, [], "tracked Lean file outside the checked roots")
 
     def test_the_scan_covers_the_whole_library(self) -> None:
-        """A count ratchet: dropping one library directory must be visible."""
+        """A count ratchet: a wholesale collapse of the scan must be visible.
+
+        Deliberately coarse. Directory-level loss is asserted by name in
+        ``DirectoryCoverageTest``; what is left here is the case that assertion
+        and ``test_every_tracked_lean_file_is_scanned`` cannot see, namely both
+        sides of a comparison narrowing together (see the derivation comment
+        above the floors).
+        """
         self.assertGreater(len(ag.iter_checked_files()), CHECKED_FILE_FLOOR)
         self.assertGreater(len(ag.iter_lib_files()), LIB_FILE_FLOOR)
 
@@ -909,6 +1036,146 @@ class CheckedFilesTest(unittest.TestCase):
         """``iter_lib_files`` keeps its narrower meaning for its consumers."""
         for path in ag.iter_lib_files():
             self.assertTrue(ag.rel(path).startswith("IsingModel/"), ag.rel(path))
+
+
+class LibraryCensusTest(unittest.TestCase):
+    """The census primitive itself, on hand-built paths.
+
+    ``DirectoryCoverageTest`` below reads the real tree, so a census helper that
+    silently dropped files would make *all* of it pass; these fixtures pin the
+    cases that decide what the helper means.
+    """
+
+    LIB = Path("/repo/IsingModel")
+
+    def test_files_are_bucketed_by_their_top_level_directory(self) -> None:
+        """Depth beyond the first component does not create a new bucket."""
+        census = library_census(
+            [
+                self.LIB / "Concrete" / "A.lean",
+                self.LIB / "Concrete" / "Deep" / "Deeper" / "B.lean",
+                self.LIB / "Peierls" / "C.lean",
+            ],
+            self.LIB,
+        )
+        self.assertEqual(dict(census), {"Concrete": 2, "Peierls": 1})
+
+    def test_loose_files_get_their_own_bucket(self) -> None:
+        """Files directly under ``IsingModel/`` are not each their own directory."""
+        census = library_census([self.LIB / "A.lean", self.LIB / "B.lean"], self.LIB)
+        self.assertEqual(dict(census), {LOOSE: 2})
+
+    def test_paths_outside_the_library_are_not_counted(self) -> None:
+        """The umbrella, ``test/`` and ``scripts/audit/`` are asserted separately."""
+        census = library_census(
+            [Path("/repo/IsingModel.lean"), Path("/repo/test/T.lean"), self.LIB / "A.lean"],
+            self.LIB,
+        )
+        self.assertEqual(dict(census), {LOOSE: 1})
+
+    def test_a_missing_bucket_reads_as_zero_rather_than_raising(self) -> None:
+        """The floor comparisons below rely on this: absence must be a count."""
+        self.assertEqual(library_census([], self.LIB)["Concrete"], 0)
+
+
+class DirectoryCoverageTest(unittest.TestCase):
+    """The library's *shape* in the scan, asserted directly (issue #4746, F1).
+
+    The blanket floors ask "is the scan still big?", which is a proxy for the
+    question that matters -- "does the scan still reach every part of the
+    library?" -- and a proxy that has to be recalibrated every time the library
+    legitimately shrinks. The assertions here ask the real question: the set of
+    top-level directories the scan reaches is compared with a pinned literal
+    and, independently, with what is on disk. A filter such as ``if "Peierls"
+    not in p.parts`` fails here by name, at any library size, with no constant
+    to move.
+
+    The two comparisons are deliberately not the same assertion: one reads the
+    scan, the other reads the disk. Deriving the expected set from the scan
+    itself would be self-fulfilling -- the ``CAPSTONE_MIN_COUNT ==
+    len(read_capstones())`` anti-pattern this suite refuses elsewhere.
+    """
+
+    def scan_census(self) -> collections.Counter:
+        """Return the census of what V1/V2 enumerate on the real tree."""
+        return library_census(ag.iter_checked_files(), ag.LIB_DIR)
+
+    def disk_directories(self) -> set[str]:
+        """Return the top-level library directories that hold Lean sources, from disk."""
+        return {
+            entry.name
+            for entry in ag.LIB_DIR.iterdir()
+            if entry.is_dir() and next(entry.rglob("*.lean"), None) is not None
+        }
+
+    def test_the_scan_reaches_every_top_level_library_directory(self) -> None:
+        """The F1 assertion: no top-level directory is missing from the scan."""
+        self.assertEqual(
+            set(self.scan_census()) - {LOOSE},
+            set(LIB_TOP_LEVEL_DIRS),
+            "the V1/V2 scan no longer covers the pinned set of library directories",
+        )
+
+    def test_the_pinned_directory_list_matches_the_disk(self) -> None:
+        """The literal is kept honest by an independent traversal.
+
+        Failing here means the library's top-level shape changed on disk: edit
+        ``LIB_TOP_LEVEL_DIRS`` (and, if the directory was large,
+        ``LIB_DIR_FLOORS``) in the same commit as the addition or deletion that
+        changed it.
+        """
+        self.assertEqual(
+            self.disk_directories(),
+            set(LIB_TOP_LEVEL_DIRS),
+            "LIB_TOP_LEVEL_DIRS disagrees with IsingModel/ on disk; update the "
+            "literal in the same commit as the directory addition or deletion",
+        )
+
+    def test_the_loose_files_are_scanned(self) -> None:
+        """The bucket a naive ``parts[0]`` census would scatter or lose."""
+        self.assertGreater(self.scan_census()[LOOSE], 0)
+
+    def test_every_large_directory_keeps_its_coarse_floor(self) -> None:
+        """Parity needs one file per directory; these keep the big ones populated."""
+        census = self.scan_census()
+        for name, floor in sorted(LIB_DIR_FLOORS.items()):
+            self.assertGreaterEqual(
+                census[name],
+                floor,
+                f"{name} is down to {census[name]} scanned files (floor {floor}); "
+                "this is a governance signal, not an invitation to lower the entry",
+            )
+
+    def test_the_floor_table_names_only_buckets_that_exist(self) -> None:
+        """A stale entry would silently stop constraining anything."""
+        stale = sorted(set(LIB_DIR_FLOORS) - set(LIB_TOP_LEVEL_DIRS) - {LOOSE})
+        self.assertEqual(stale, [], "LIB_DIR_FLOORS names a directory that is gone")
+
+    def test_the_blanket_floor_still_catches_the_largest_directory(self) -> None:
+        """The residual job of ``CHECKED_FILE_FLOOR``, stated as arithmetic.
+
+        ``Concrete`` holds 843 of the 1964 scanned files, so losing it wholesale
+        must still take the count under the blanket floor even though that floor
+        is now derived from a deletion budget rather than from the measurement.
+        Smaller directories are covered by parity and by ``LIB_DIR_FLOORS``, not
+        by this floor -- that division of labour is the point of F1.
+        """
+        total = len(ag.iter_checked_files())
+        self.assertLessEqual(total - self.scan_census()["Concrete"], CHECKED_FILE_FLOOR)
+
+    def test_every_extra_checked_root_contributes_a_file(self) -> None:
+        """Each non-library Lean root is really represented in the scan.
+
+        ``test_the_umbrella_and_the_test_suite_are_scanned`` covers two of the
+        three; ``scripts/audit`` (the scanner's Lean helper) had no assertion at
+        all, so emptying or renaming it would have gone unnoticed.
+        """
+        scanned = {ag.rel(path) for path in ag.iter_checked_files()}
+        for name in ag.EXTRA_CHECKED_ROOTS:
+            self.assertTrue(
+                [item for item in scanned if item == name or item.startswith(f"{name}/")],
+                f"no scanned Lean file under EXTRA_CHECKED_ROOTS entry {name!r}",
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -1694,6 +1961,65 @@ class MutationTest(unittest.TestCase):
             self.assertEqual(len(ag.check_v2()[0]), 1)
         # And on the real tree the ratchet moves: the mutant scans strictly less.
         self.assertLess(len(mutant.iter_checked_files()), len(ag.iter_checked_files()))
+
+    def test_a_filtered_file_list_loses_a_directory_from_the_census(self) -> None:
+        """The power of the directory census: it names the missing directory.
+
+        Paired with
+        ``DirectoryCoverageTest.test_the_scan_reaches_every_top_level_library_directory``.
+        A different directory from the mutation above is filtered so the two
+        stay legible side by side. The final assertion is why F1 exists at all:
+        the blanket floor is blind to this edit -- 105 files is well inside the
+        200-module budget the floor is derived from -- while the census fails
+        with the directory's name and no constant to recalibrate.
+        """
+        mutant = load_mutated(
+            (
+                "    found = set(iter_lib_files())",
+                '    found = {p for p in iter_lib_files() if "Peierls" not in p.parts}',
+            )
+        )
+        mutant_census = library_census(mutant.iter_checked_files(), mutant.LIB_DIR)
+        real_census = library_census(ag.iter_checked_files(), ag.LIB_DIR)
+        self.assertNotIn("Peierls", mutant_census)
+        self.assertIn("Peierls", real_census)
+        self.assertNotEqual(set(mutant_census) - {LOOSE}, set(LIB_TOP_LEVEL_DIRS))
+        self.assertEqual(set(real_census) - {LOOSE}, set(LIB_TOP_LEVEL_DIRS))
+        self.assertGreater(len(mutant.iter_checked_files()), CHECKED_FILE_FLOOR)
+
+    def test_a_thinned_directory_survives_parity_but_not_its_count_floor(self) -> None:
+        """The gap between the two new assertions, exercised.
+
+        A filter that keeps three files of ``Conditioning`` leaves the directory
+        represented, so the census equality above is satisfied, and removes only
+        45 files, so both blanket floors are satisfied too. Of the count-based
+        assertions only ``LIB_DIR_FLOORS`` fails -- which is why the table exists
+        next to the directory set. (The exact git comparison in
+        ``CheckedFilesTest`` catches this mutation as well, by file name; the
+        count assertions are what remains when that comparison is narrowed on
+        both sides, which is the scenario the floors are kept for.)
+        """
+        mutant = load_mutated(
+            (
+                "    found = set(iter_lib_files())",
+                '    kept = sorted(p for p in iter_lib_files() if "Conditioning" in p.parts)[:3]\n'
+                '    found = {p for p in iter_lib_files() if "Conditioning" not in p.parts}\n'
+                "    found |= set(kept)",
+            )
+        )
+        census = library_census(mutant.iter_checked_files(), mutant.LIB_DIR)
+        self.assertEqual(set(census) - {LOOSE}, set(LIB_TOP_LEVEL_DIRS), "parity should be blind")
+        self.assertGreater(
+            len(mutant.iter_checked_files()),
+            CHECKED_FILE_FLOOR,
+            "the blanket floor should be blind",
+        )
+        self.assertEqual(census["Conditioning"], 3)
+        self.assertLess(census["Conditioning"], LIB_DIR_FLOORS["Conditioning"])
+        self.assertGreaterEqual(
+            library_census(ag.iter_checked_files(), ag.LIB_DIR)["Conditioning"],
+            LIB_DIR_FLOORS["Conditioning"],
+        )
 
     def test_v1v2_without_the_extra_roots_stop_scanning_the_umbrella_and_tests(self) -> None:
         """Narrowing the scan back to ``IsingModel/`` unchecks two real roots."""
