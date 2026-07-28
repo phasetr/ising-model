@@ -3,10 +3,10 @@ import IsingModel.Inequalities.NonnegCorrelations
 /-!
 # Concrete spinProduct + edgeSpin algebra wrappers
 
-Narrow child module for seven ℤ^d spinProduct / edgeSpin algebra
-wrappers (`sum_config_spinProduct_*`, `spinProduct_mul`, `edgeSpin_sq`,
-`one_sub_spinProduct_nonneg`, `abs_spinProduct_*`). Each wrapper is a
-thin pass-through to the corresponding `IsingModel.*` lemma.
+Narrow child module for four ℤ^d spinProduct / edgeSpin algebra
+wrappers (`sum_config_spinProduct_*`, `spinProduct_mul`,
+`edgeSpin_sq`). Each wrapper is a thin pass-through to the
+corresponding `IsingModel.*` lemma.
 -/
 
 open scoped symmDiff
@@ -45,15 +45,6 @@ theorem edgeSpin_sq_latticeGraph
     (σ : IsingModel.Config (↑Λ : Type _)) (e : Sym2 (↑Λ : Type _)) :
     IsingModel.edgeSpin (K := ℝ) σ e ^ 2 = 1 :=
   IsingModel.edgeSpin_sq σ e
-
-/-! ## Moved: spinProduct nonneg / abs wrappers
-
-The three wrappers
-`one_sub_spinProduct_nonneg_latticeGraph`,
-`abs_spinProduct_eq_one_latticeGraph`,
-`abs_spinProduct_le_one_latticeGraph` now live in
-`FiniteVolumeBasicsSpinBounds.lean`. -/
-
 
 end Ambient
 end IsingModel

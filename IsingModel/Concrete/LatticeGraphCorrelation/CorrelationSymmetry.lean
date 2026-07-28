@@ -94,17 +94,6 @@ theorem correlationInfinite_eq_abs_h_of_even_card_latticeGraph
           (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
   correlationInfinite_eq_abs_h_of_even_card (IsingModel.latticeGraph d) Λ J h β A heven
 
-/-! ## Moved: ℤ^d magnetization absolute-field wrappers
-
-The six magnetization absolute-field wrappers
-(`abs_magnetizationΛ_*`, `magnetizationAlongExhaustion_*_neg_h`,
-`abs_magnetizationAlongExhaustion_*_abs_h`,
-`abs_magnetizationInfinite_le_*_abs_h`,
-`magnetizationInfinite_*_nonpos_of_nonpos_h`,
-`magnetizationInfinite_*_eq_zero_of_exists_stage_not_mem`) now live in
-`CorrelationSymmetryMagnetization.lean`. -/
-
-
 /-! ## Moved: susceptibility h-symmetry wrappers
 
 The four wrappers `susceptibility*_latticeGraph_*_abs_h` now live in
