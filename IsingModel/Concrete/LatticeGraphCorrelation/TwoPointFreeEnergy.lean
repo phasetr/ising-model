@@ -4,7 +4,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d freeEnergyInfinite cubicExhaustion wrappers
 
-Narrow child module for 19 ℤ^d `freeEnergyInfinite_latticeGraph` /
+Narrow child module for 22 ℤ^d `freeEnergyInfinite_latticeGraph` /
 cubicExhaustion trivial-slice, monotonicity, neg-h / abs-h,
 `ge_log_two_cosh` / `ge_log_two` / `bounds` wrappers. Theorem names
 are unchanged from the former `TwoPoint` declarations.
@@ -110,9 +110,12 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: ℤ^d freeEnergyInfinite monotonicity wrappers
 
-The 4 ℤ^d `freeEnergyInfinite_latticeGraph_monotone_*` wrappers
-(`monotone_J`, `monotone_h`, `monotone_beta`, `monotone_abs_h`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfMonotone`.
+The 7 ℤ^d `freeEnergyInfinite_latticeGraph_*monotone_*` wrappers live in
+two child modules: the 4 generic-`Λ` ones (`monotone_J`, `monotone_h`,
+`monotone_beta`, `monotone_abs_h`) in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfMonotone`
+and the 3 `cubicExhaustion_monotone_{J,h,beta}` variants in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfMonotoneCubicEx`.
 -/
 
 end Ambient

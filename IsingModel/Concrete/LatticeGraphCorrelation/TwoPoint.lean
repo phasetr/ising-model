@@ -270,7 +270,7 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: freeEnergy / magnetizationInfinite cubicExhaustion wrappers
 
-The 19 ℤ^d `freeEnergyInfinite_latticeGraph` / cubicExhaustion
+The 22 ℤ^d `freeEnergyInfinite_latticeGraph` / cubicExhaustion
 trivial-slice, monotonicity, and bound wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
 The 9 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*` wrappers
@@ -318,7 +318,7 @@ and its `TwoPointTruncatedInfiniteTrivialSlice` child.
 
 /-! ## Moved: truncated3/4Infinite_latticeGraph trivial-slice wrappers
 
-The 15 ℤ^d `truncated3Infinite_latticeGraph_*` and
+The 12 ℤ^d `truncated3Infinite_latticeGraph_*` and
 `truncated4Infinite_latticeGraph_*` trivial-slice + nonpos wrappers,
 together with the three
 `truncated{2,3,4}Infinite_latticeGraph_indep_exhaustion` wrappers, now
