@@ -44,29 +44,6 @@ this repository.
 -/
 
 
-/-! ## Moved: magnetizationΛ + AlongExhaustion monotone + trivial-slice wrappers
-
-The 15 ℤ^d `magnetizationΛ_latticeGraph_*` and
-`magnetizationAlongExhaustion_latticeGraph_*` J/h/β monotonicity +
-trivial-slice (h_zero, beta_zero, zero_params, J_zero variants)
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.UniformMagMagnetizationTrivial`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: abs / neg bounds wrappers
-
-The 10 ℤ^d `abs_*_latticeGraph_le_one` /
-`neg_one_le_*_latticeGraph` wrappers
-(for `correlationΛ`, `correlationAlongExhaustion`,
-`correlationInfinite`, `magnetizationΛ`,
-`magnetizationAlongExhaustion`, `magnetizationInfinite`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.UniformMagAbsBounds`.
-The three `correlation*_latticeGraph_sq_le_one` wrappers of the same
-family were deleted; no consumer of them was found in this repository.
-The earlier import path is preserved by re-importing the new child.
--/
-
 /-! ## Moved: correlation trivial / GKS-II / FKG / h_zero / cor 4.3.5 wrappers
 
 The 15 ℤ^d wrappers covering `magnetizationInfinite_latticeGraph_*`
