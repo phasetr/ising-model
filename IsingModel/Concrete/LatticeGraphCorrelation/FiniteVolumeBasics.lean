@@ -24,15 +24,6 @@ theorem inducedGraph_mono_latticeGraph
     Ambient.inducedGraph G₁ Λ ≤ Ambient.inducedGraph G₂ Λ :=
   Ambient.inducedGraph_mono h Λ
 
-/-! ## Moved: partitionFunction_bot wrappers
-
-The three wrappers
-`partitionFunction_bot_latticeGraph`,
-`partitionFunction_bot_latticeGraph_ge_one`,
-`partitionFunction_bot_latticeGraph_ge_two_pow_card` now live in
-`FiniteVolumeBasicsPartitionBot.lean`. -/
-
-
 /-- **ℤ^d `partitionFunction_eq_bot_at_J_zero`** at Λ-induced: at `J = 0`
 the partition function is graph-independent (equals the `⊥`-graph value). -/
 theorem partitionFunctionΛ_eq_bot_at_J_zero_latticeGraph
@@ -67,11 +58,9 @@ theorem correlation_bot_closed_latticeGraph
 
 /-! ## Moved: spinProduct + edgeSpin algebra wrappers
 
-The seven wrappers
+The four wrappers
 `sum_config_spinProduct_{eq_zero,empty}_latticeGraph`,
-`spinProduct_mul_latticeGraph`, `edgeSpin_sq_latticeGraph`,
-`one_sub_spinProduct_nonneg_latticeGraph`,
-`abs_spinProduct_{eq_one,le_one}_latticeGraph`
+`spinProduct_mul_latticeGraph`, and `edgeSpin_sq_latticeGraph`
 now live in `FiniteVolumeBasicsSpin.lean`. -/
 
 

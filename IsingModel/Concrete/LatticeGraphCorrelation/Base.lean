@@ -75,18 +75,6 @@ theorem correlationInfinite_latticeGraph_empty
     correlationInfinite (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
   correlationInfinite_empty (IsingModel.latticeGraph d) Λ p
 
-/-! ## Moved: trivial-slice vanish wrappers
-
-The 4 ℤ^d wrappers
-`correlationΛ_latticeGraph_{beta_zero_vanish_of_nonempty,zero_params_vanish_of_nonempty}`
-and
-`correlationAlongExhaustion_latticeGraph_{beta_zero_vanish,zero_params_vanish}`
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseVanish`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
 /-! ## Moved: Λ-layer apply unfoldings
 
 The 3 ℤ^d `partitionFunctionΛ_latticeGraph_apply`,
@@ -110,24 +98,12 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: spontaneousCorrelation / spontaneousMagnetization_monotone_ambient_subgraph wrappers
 
-The 9 ℤ^d `spontaneousCorrelation_latticeGraph_*` wrappers
-(`neg_one_le`, `nonneg`, `le_one`, `monotone_J`, `monotone_beta`,
-`singleton_eq_spontaneousMagnetization`, `abs_le_one`, `sq_le_one`)
-plus the `spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
-companion now live in
+The two ℤ^d wrappers
+`abs_spontaneousCorrelation_latticeGraph_le_one` and
+`spontaneousCorrelation_latticeGraph_sq_le_one`, plus the
+`spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
+companion, now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: magnetization sq_le_one + correlation J=0 / ge_tanh wrappers
-
-The 8 ℤ^d wrappers
-`magnetization{Λ,AlongExhaustion,Infinite}_latticeGraph_sq_le_one`,
-`correlationΛ_latticeGraph_J_zero`,
-`correlation{Λ,Infinite}_latticeGraph_ge_tanh_pow_card`, and
-`magnetization{Λ,Infinite}_latticeGraph_ge_tanh` now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseBoundsTanh`.
-The earlier import path is preserved by re-importing the new child.
 -/
 
 

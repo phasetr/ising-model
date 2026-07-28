@@ -1,8 +1,11 @@
 /- BaseSpontaneousCorrelation.lean
-Narrow child module for the 9 ℤ^d `spontaneousCorrelation_latticeGraph_*`
-plus `spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
-wrappers extracted from `Base.lean` in PR #2032. Each is a thin
-pass-through to the abstract `spontaneousCorrelation_*` /
+Narrow child module for the two ℤ^d spontaneous-correlation bound
+wrappers `abs_spontaneousCorrelation_latticeGraph_le_one` and
+`spontaneousCorrelation_latticeGraph_sq_le_one`, plus the
+`spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
+companion, extracted from `Base.lean` in PR #2032. Each is a thin
+pass-through to the abstract `abs_spontaneousCorrelation_le_one` /
+`spontaneousCorrelation_sq_le_one` /
 `spontaneousMagnetization_monotone_ambient_subgraph` lemma at
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
@@ -14,24 +17,6 @@ open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: spontaneousCorrelation basic bound wrappers
-
-The three wrappers
-`neg_one_le_spontaneousCorrelation_latticeGraph`,
-`spontaneousCorrelation_latticeGraph_nonneg`,
-`spontaneousCorrelation_latticeGraph_le_one` now live in
-`BaseSpontaneousCorrelationBasicBounds.lean`. -/
-
-
-/-! ## Moved: spontaneousCorrelation monotonicity + singleton wrappers
-
-The three wrappers
-`spontaneousCorrelation_latticeGraph_monotone_J`,
-`spontaneousCorrelation_latticeGraph_monotone_beta`,
-`spontaneousCorrelation_latticeGraph_singleton_eq_spontaneousMagnetization`
-now live in `BaseSpontaneousCorrelationMonotone.lean`. -/
-
 
 /-- **ℤ^d `|spontaneousCorrelation| ≤ 1`** (ferromagnetic). -/
 theorem abs_spontaneousCorrelation_latticeGraph_le_one
