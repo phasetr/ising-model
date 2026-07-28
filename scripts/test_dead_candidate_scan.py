@@ -1546,7 +1546,10 @@ class FamilyCalibrationTest(unittest.TestCase):
 # defeat the bound: it can only promote modules that are already allow-listed.
 # 500 is that bound rounded down; the measured remaining lane would only reach
 # 926.  Predecessor: the same one-time re-derivation for the audit-gate file
-# counts, PR #4766 (#4746 Item F1).
+# counts, PR #4766 (#4746 Item F1).  Note what the bound is and is not: it is an
+# *authorisation* bound on the deletion campaign, not an invariant this file can
+# enforce -- a deletion outside the allow-list is caught by review, not by this
+# number.
 #
 # The floor was 1000 until #4746 batch 7, i.e. the census minus four.  A count
 # floor set just under the current measurement describes the deletions instead
@@ -1588,6 +1591,19 @@ class CanaryTest(unittest.TestCase):
         self.assertGreaterEqual(count, CANARY_DECL_FLOOR)
         for char, hits in per_char.items():
             self.assertGreater(hits, 0, char)
+
+    def test_the_canary_character_set_is_pinned(self) -> None:
+        """Shrinking ``CANARY_CHARS`` must be an explicit, reviewed edit.
+
+        Without this the fixture below is self-fulfilling: it derives both its
+        names and its expectations from ``CANARY_CHARS``, so dropping ``β`` from
+        the constant -- the cheapest way to silence the degeneracy abort when the
+        library's single ``β``-bearing declaration is renamed -- would leave every
+        canary assertion green while the character stopped being checked at all.
+        Same reason the suite refuses to derive a calibration from the quantity
+        it calibrates.
+        """
+        self.assertEqual(dcs.CANARY_CHARS, ("Λ", "β", "σ"))
 
     def test_the_canary_passes_on_one_name_per_character(self) -> None:
         """Each canary character is exercised by a fixture, not by the library.
