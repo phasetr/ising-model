@@ -4,11 +4,10 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d truncatedInfinite_latticeGraph wrappers
 
-Narrow child module for ℤ^d
-`truncated{2,3,4}Infinite_latticeGraph_*` apply / nonneg / pointwise
-wrappers. Bound wrappers and trivial-slice / symmetry / h-zero
-wrappers now live in `TwoPointTruncatedInfiniteBounds.lean` and
-`TwoPointTruncatedInfiniteTrivialSlice.lean` respectively.
+Narrow child module for ℤ^d `truncated2Infinite_latticeGraph_*`
+nonneg wrappers and the `correlationInfinite` comparison.
+Trivial-slice / symmetry / h-zero wrappers now live in
+`TwoPointTruncatedInfiniteTrivialSlice.lean`.
 -/
 
 namespace IsingModel
@@ -40,15 +39,6 @@ theorem truncated2Infinite_latticeGraph_nonneg_of_eq
   truncated2Infinite_nonneg_of_eq (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf i
 
-/-! ## Moved: truncatedNInfinite apply wrappers
-
-The three wrappers
-`truncated2Infinite_latticeGraph_apply`,
-`truncated4Infinite_latticeGraph_apply`,
-`truncated3Infinite_latticeGraph_apply` now live in
-`TwoPointTruncatedInfiniteApply.lean`. -/
-
-
 /-- **ℤ^d `truncated2Infinite ≤ correlationInfinite {i, j}`** (ferromagnetic). -/
 theorem truncated2Infinite_latticeGraph_le_correlationInfinite
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -56,14 +46,6 @@ theorem truncated2Infinite_latticeGraph_le_correlationInfinite
     truncated2Infinite (IsingModel.latticeGraph d) Λ p i j
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} :=
   truncated2Infinite_le_correlationInfinite (IsingModel.latticeGraph d) Λ p hf i j
-
-/-! ## Moved: truncated2Infinite bound wrappers
-
-The four wrappers
-`{truncated2Infinite_latticeGraph_le_one,neg_one_le_truncated2Infinite_latticeGraph,
-abs_truncated2Infinite_latticeGraph_le_one,truncated2Infinite_latticeGraph_sq_le_one}`
-now live in `TwoPointTruncatedInfiniteBounds.lean`. -/
-
 
 /-! ## Moved: trivial-slice / symmetry / h-zero wrappers
 

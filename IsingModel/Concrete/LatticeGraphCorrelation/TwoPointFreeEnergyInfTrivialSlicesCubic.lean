@@ -6,7 +6,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for three ℤ^d
 `freeEnergyInfinite_latticeGraph_cubicExhaustion_*` trivial-slice
-wrappers extracted from `TwoPointFreeEnergyInfTrivialSlices.lean`:
+wrappers:
 
 * `_beta_zero`, `_zero_params`, `_J_zero`.
 -/
