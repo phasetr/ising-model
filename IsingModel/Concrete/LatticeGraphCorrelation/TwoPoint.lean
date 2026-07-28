@@ -270,14 +270,13 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: freeEnergy / magnetizationInfinite cubicExhaustion wrappers
 
-The 31 ℤ^d `freeEnergyAlongExhaustion_latticeGraph` /
-`freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
+The 19 ℤ^d `freeEnergyInfinite_latticeGraph` / cubicExhaustion
 trivial-slice, monotonicity, and bound wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
-The 3 `freeEnergyAlongExhaustion_latticeGraph_{J_zero_tendsto_of_hcard_add,
-beta_zero_tendsto_of_hcard_add, tendsto_of_eventually_const}` wrappers
-of the same family were deleted; no consumer of them was found in this
-repository.
+The 9 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*` wrappers
+that used to sit beside them (3 `_of_hcard_add` / `_of_eventually_const`
+forms, then the 6 held by the two `AlongExTendsto*` child modules) were
+deleted; no consumer of them was found in this repository.
 The 2 `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
 and 3 `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
 variants were further narrowed in PR #2026 into
@@ -310,21 +309,22 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: truncatedInfinite_latticeGraph wrappers
 
-The 16 ℤ^d `truncated2Infinite_latticeGraph_*` wrappers (bounds,
-nonneg, symmetry, trivial slices `J_zero` / `β_zero` / `h_zero`),
-`truncated3Infinite_latticeGraph_apply`, and
-`truncated4Infinite_latticeGraph_apply` now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfinite`.
-The earlier import path is preserved by re-importing the new child.
+The 9 ℤ^d `truncated2Infinite_latticeGraph_*` wrappers (3 nonneg,
+symmetry, the `correlationInfinite` comparison, trivial slices
+`J_zero` / `β_zero` / `h_zero`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfinite`
+and its `TwoPointTruncatedInfiniteTrivialSlice` child.
 -/
 
 /-! ## Moved: truncated3/4Infinite_latticeGraph trivial-slice wrappers
 
-The 18 ℤ^d `truncated3Infinite_latticeGraph_*` and
-`truncated4Infinite_latticeGraph_*` trivial-slice + nonpos +
-exhaustion-independence wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedHigher`.
-The earlier import path is preserved by re-importing the new child.
+The 15 ℤ^d `truncated3Infinite_latticeGraph_*` and
+`truncated4Infinite_latticeGraph_*` trivial-slice + nonpos wrappers,
+together with the three
+`truncated{2,3,4}Infinite_latticeGraph_indep_exhaustion` wrappers, now
+live in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedHigher`
+and its child modules.
 -/
 
 /-! ## Moved: ℤ^d correlationInfinite wrappers

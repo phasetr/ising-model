@@ -4,7 +4,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d truncated3/4Infinite_latticeGraph trivial-slice wrappers
 
-Narrow child module for 18 ℤ^d `truncated3Infinite_latticeGraph_*`
+Narrow child module for 15 ℤ^d `truncated3Infinite_latticeGraph_*`
 and `truncated4Infinite_latticeGraph_*` trivial-slice + nonpos +
 exhaustion-independence wrappers (β = 0, J = 0 with various
 coincidence patterns, h = 0, nonpos, `_indep_exhaustion`).
@@ -35,9 +35,9 @@ The three wrappers
 
 /-! ## Moved: truncated4Infinite trivial-slice wrappers
 
-The six `truncated4Infinite_latticeGraph_*` trivial-slice wrappers
-(β = 0 and J = 0 under various coincidence patterns) now live in
-`TwoPointTruncatedHigherTruncated4.lean`. -/
+The three `truncated4Infinite_latticeGraph_*` trivial-slice wrappers
+(β = 0, and J = 0 at pairwise-distinct or one-pair-coincident sites)
+now live in `TwoPointTruncatedHigherTruncated4.lean`. -/
 
 /-- **ℤ^d truncated3Infinite h=0 pair coincidence** (#750):
 `truncated3Infinite ⟨J,0,β⟩ i i k = correlationInfinite ⟨J,0,β⟩ {i,k}`

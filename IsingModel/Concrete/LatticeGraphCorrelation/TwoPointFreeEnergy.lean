@@ -2,45 +2,24 @@ import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyAlongExhaustion + freeEnergyInfinite cubicExhaustion wrappers
+# ℤ^d freeEnergyInfinite cubicExhaustion wrappers
 
-Narrow child module for 31 ℤ^d `freeEnergyAlongExhaustion_latticeGraph`
-/ `freeEnergyInfinite_latticeGraph` / cubicExhaustion convergence,
-trivial-slice, monotonicity, neg-h / abs-h, `ge_log_two_cosh` /
-`ge_log_two` / `bounds` wrappers, plus the two
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_{J, beta}`
-variants. Theorem names are unchanged from the former `TwoPoint`
-declarations.
+Narrow child module for 19 ℤ^d `freeEnergyInfinite_latticeGraph` /
+cubicExhaustion trivial-slice, monotonicity, neg-h / abs-h,
+`ge_log_two_cosh` / `ge_log_two` / `bounds` wrappers. Theorem names
+are unchanged from the former `TwoPoint` declarations.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-/-! ## Moved: ℤ^d freeEnergyAlongExhaustion tendsto wrappers
-
-The 6 remaining ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*`
-convergence wrappers live in two child modules:
-
-* `TwoPointFreeEnergyAlongExTendstoDisjointSuper`:
-  `tendsto_of_disjoint_tower`, `tendsto_of_disjointTowerHypotheses`,
-  `tendsto_of_superadditive`;
-* `TwoPointFreeEnergyAlongExTendstoEventuallyNonempty`:
-  `J_zero_tendsto_of_eventually_nonempty`,
-  `beta_zero_tendsto_of_eventually_nonempty`,
-  `zero_params_tendsto_of_eventually_nonempty`.
-
-The `J_zero_tendsto_of_hcard_add`, `beta_zero_tendsto_of_hcard_add` and
-`tendsto_of_eventually_const` wrappers were deleted; no consumer of them
-was found in this repository.
--/
-
 /-! ## Moved: ℤ^d freeEnergyInfinite trivial-slice wrappers
 
-The 9 ℤ^d `freeEnergyInfinite_latticeGraph_{beta_zero,zero_params,J_zero}_*`
-trivial-slice wrappers (3 `_of_eventually_nonempty` + 3 unconditional +
-3 `cubicExhaustion_*`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfTrivialSlices`.
-The earlier import path is preserved by re-importing the new child.
+The 6 ℤ^d `freeEnergyInfinite_latticeGraph_{beta_zero,zero_params,J_zero}`
+trivial-slice wrappers live in two child modules: the 3 unconditional ones in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfTrivialSlicesNonempty`
+and the 3 `cubicExhaustion_*` ones in
+`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfTrivialSlicesCubic`.
 -/
 
 
@@ -131,11 +110,9 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: ℤ^d freeEnergyInfinite monotonicity wrappers
 
-The 7 ℤ^d `freeEnergyInfinite_latticeGraph_*monotone_*` wrappers
-(`monotone_J`, `monotone_h`, `monotone_beta`, `monotone_abs_h`, plus
-3 `cubicExhaustion_monotone_{J,h,beta}` variants) now live in
+The 4 ℤ^d `freeEnergyInfinite_latticeGraph_monotone_*` wrappers
+(`monotone_J`, `monotone_h`, `monotone_beta`, `monotone_abs_h`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfMonotone`.
-The earlier import path is preserved by re-importing the new child.
 -/
 
 end Ambient

@@ -6,7 +6,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for three ℤ^d
 `freeEnergyInfinite_latticeGraph_*` unconditional trivial-slice
-wrappers extracted from `TwoPointFreeEnergyInfTrivialSlices.lean`:
+wrappers:
 
 * `freeEnergyInfinite_latticeGraph_beta_zero` (`= log 2`),
 * `freeEnergyInfinite_latticeGraph_zero_params` (`= log 2`),
@@ -15,8 +15,6 @@ wrappers extracted from `TwoPointFreeEnergyInfTrivialSlices.lean`:
 Each result is a thin pass-through of the ambient
 `Ambient.freeEnergyInfinite_*_of_nonempty` lemma at
 `G := IsingModel.latticeGraph d` (under `[Nonempty (Fin d → ℤ)]`).
-The theorem names are unchanged from the former
-`TwoPointFreeEnergyInfTrivialSlices` declarations.
 -/
 
 namespace IsingModel

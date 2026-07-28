@@ -4,10 +4,11 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d truncated4Infinite trivial-slice wrappers
 
-Narrow child module for six ℤ^d `truncated4Infinite_latticeGraph_*`
-trivial-slice wrappers (β = 0 and J = 0 under various coincidence
-patterns). Each wrapper is a thin pass-through to the corresponding
-ambient `truncated4Infinite_*` lemma at `IsingModel.latticeGraph d`.
+Narrow child module for three ℤ^d `truncated4Infinite_latticeGraph_*`
+trivial-slice wrappers (β = 0, and J = 0 at pairwise-distinct or
+one-pair-coincident sites). Each wrapper is a thin pass-through to the
+corresponding ambient `truncated4Infinite_*` lemma at
+`IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel
@@ -45,15 +46,6 @@ theorem truncated4Infinite_latticeGraph_J_zero_of_one_pair_coincidence
       = -2 * Real.tanh (β * h) ^ 4 :=
   truncated4Infinite_J_zero_of_one_pair_coincidence
     (IsingModel.latticeGraph d) Λ h β hf hik hil hkl
-
-/-! ## Moved: J_zero coincidence-3 wrappers
-
-The three wrappers
-`truncated4Infinite_latticeGraph_J_zero_of_two_pair_coincidence`,
-`truncated4Infinite_latticeGraph_J_zero_of_triple_coincidence`,
-`truncated4Infinite_latticeGraph_J_zero_all_coincident` now live in
-`TwoPointTruncatedHigherTruncated4Coinc.lean`. -/
-
 
 end Ambient
 end IsingModel
