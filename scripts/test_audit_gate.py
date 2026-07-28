@@ -826,7 +826,7 @@ class V2TokenTest(unittest.TestCase):
 # modules were deleted.  The floors are NOT moved by this PR; they now sit 27
 # below the measured counts, still high enough that losing any of the eight
 # largest library directories -- ``Conditioning`` (48 files) up to ``Concrete``
-# (869) -- trips them.
+# (851) -- trips them.
 #
 # The numbers this block carried before (``2003`` / ``1996``, described as
 # "measured 2026-07-27 ... 46 below the floors") were wrong in two ways: they
