@@ -12,18 +12,29 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# Family-level calibration, main 075bcd39, `--pattern '_ferromagnetic$'`:
-#   223 candidates -> 47 safe-to-delete, 77 uncertain, 64 load-bearing,
+# Family-level calibration, main 171ddd4f, `--pattern '_ferromagnetic$'`:
+#   223 candidates -> 43 safe-to-delete, 79 uncertain, 66 load-bearing,
 #   35 published-result; 112 of the 223 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
-# Last move: the elided-prefix rule (a suffix citation whose elided prefix is
+# Last move: the narrow-glob repair (a glob/ellipsis citation naming at most
+# MAX_CHARGED_GLOB_MATCHES = 8 declarations is charged to all of them instead of
+# being attributed to nobody) took 3 candidates out of safe-to-delete, 2 into
+# uncertain and 1 into load-bearing through the delete-closure, and moved a
+# fourth from uncertain to load-bearing. Whole-library: safe-to-delete
+# 1091 -> 980, uncertain 691 -> 757, load-bearing 2081 -> 2126, published-result
+# unchanged at 7009, with no verdict moving toward safe-to-delete.
+# The row below that expects safe-to-delete is what caps the threshold at 10: it
+# is charged at 11 matches by the over-broad `correlationAlongExhaustion_..._
+# ferromagnetic` elision of docs/index.md:2193.
+# Before that: PR #4754 (safe-to-delete batch 4) took the family from 47/77 to
+# 46/78, and the elided-prefix rule (a suffix citation whose elided prefix is
 # spelled out on the same documentation line is a shorthand for the siblings
 # that share it, not a family label) took 45 candidates out of safe-to-delete,
 # 33 into uncertain and 12 into load-bearing through the delete-closure. This
-# header had also drifted: it still carried 263/132/143 from main 0922a812
-# while the test asserted 223/92/112.
+# header had also drifted twice: it carried 263/132/143 from main 0922a812 while
+# the test asserted 223/92/112, and then 47/77 while the test asserted 46/78.
 #
 # The gap between "no consumer" and "safe" is the *delete*
 # closure: a lemma consumed only by another candidate is deletable with it, but

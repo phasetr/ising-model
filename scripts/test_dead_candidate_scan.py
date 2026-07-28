@@ -20,7 +20,9 @@ the run instead of silently emptying its channel),
 :class:`MarkdownBacktickParityTest` (one unbalanced backtick inverts the parity of
 its whole line, so the tokenizer swaps prose for citations without warning),
 :class:`ElidedFragmentTest` (a suffix citation whose elided prefix is spelled out
-on the same line is a shorthand, not a family label) and
+on the same line is a shorthand, not a family label),
+:class:`NarrowGlobCitationTest` (the same exoneration on the *glob* channel: a
+citation naming two to eight declarations must be charged to all of them) and
 :class:`CharClassTest` (the identifier class must never be a superset of Lean's).
 :class:`FamilyCalibrationTest` asserts the calibration integers that used to live
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
@@ -676,6 +678,196 @@ class ElidedFragmentTest(unittest.TestCase):
         )
 
 
+class NarrowGlobCitationTest(unittest.TestCase):
+    """A glob citation naming few declarations is charged to all of them.
+
+    Same fail-open shape as :class:`ElidedFragmentTest`, one channel over. Until
+    :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` landed, *every*
+    glob/ellipsis token resolving to two or more declarations was filed as a
+    family label and attributed to nobody, so a citation that resolves exactly
+    -- ``docs/index.md:1427`` expands to
+    ``freeEnergyAlongExhaustion_latticeGraph_ge_log_two*`` (2 declarations),
+    ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``
+    (4 declarations) -- left every declaration it names printing "no citation in
+    the scanned documentation", the sentence that licenses a deletion. Neither
+    has a verbatim fallback: the brace/glob spelling means the full name is
+    nowhere in the file.
+
+    The threshold is a cost knob, so it is pinned from both sides: at or below
+    it every match is charged, above it nothing is and the label is *reported*.
+    """
+
+    NARROW_TREE = {
+        "IsingModel/SynthGlobPair.lean": (
+            "namespace IsingModel\n"
+            "theorem synth_glob_ge_log_two_left : True := trivial\n"
+            "theorem synth_glob_ge_log_two_right : True := trivial\n"
+            "end IsingModel\n"
+        )
+    }
+
+    @staticmethod
+    def wide_tree(count: int) -> dict[str, str]:
+        """Return a tree of ``count`` siblings that one glob names together."""
+        body = "".join(
+            f"theorem synth_wide_{index}_tendsto : True := trivial\n" for index in range(count)
+        )
+        return {"IsingModel/SynthGlobWide.lean": f"namespace IsingModel\n{body}end IsingModel\n"}
+
+    def doc(self, text: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
+        """Return a documentation source carrying ``text`` and ``tokens``."""
+        return dcs.DocSource(
+            label="docs/index.md",
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=tokens,
+            unreadable=[],
+        )
+
+    def classify(
+        self, sources: dict[str, str], names: list[str], token: str
+    ) -> tuple[list[dcs.Verdict], dict[str, list[str]]]:
+        """Classify ``names`` against a single documentation line citing ``token``."""
+        text = f"the `{token}` results\n"
+        verdicts, _cascade, labels = dcs.classify(
+            synthetic_tree(sources), names, [self.doc(text, [(token, 1)])], allow_homonym=False
+        )
+        return verdicts, labels
+
+    def pair_names(self) -> list[str]:
+        """The two declarations of :attr:`NARROW_TREE`."""
+        return [
+            "IsingModel.synth_glob_ge_log_two_left",
+            "IsingModel.synth_glob_ge_log_two_right",
+        ]
+
+    def test_a_glob_naming_two_declarations_charges_both(self) -> None:
+        """The ``ge_log_two*`` shape: both matches are cited, so neither is safe."""
+        verdicts, labels = self.classify(
+            self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
+        )
+        self.assertEqual([v.verdict for v in verdicts], [dcs.UNCERTAIN, dcs.UNCERTAIN])
+        self.assertEqual(labels, {})
+        for verdict in verdicts:
+            self.assertTrue(
+                any("synth_glob_ge_log_two*" in cit for cit in verdict.doc_citations),
+                verdict.doc_citations,
+            )
+
+    def test_a_glob_naming_four_declarations_charges_all_four(self) -> None:
+        """The ``freeEnergy_*_tendsto_of_abs_h`` shape, one slot in the middle."""
+        names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(4)]
+        verdicts, labels = self.classify(self.wide_tree(4), names, "synth_wide_*_tendsto")
+        self.assertEqual([v.verdict for v in verdicts], [dcs.UNCERTAIN] * 4)
+        self.assertEqual(labels, {})
+
+    def test_a_glob_above_the_threshold_charges_nobody_and_is_reported(self) -> None:
+        """One match past the knob the citation is a family label again.
+
+        ``correlation_*_*`` names 219 declarations in the real documentation;
+        charging such a label would drag whole subsystems into ``uncertain``.
+        The residue is fail-open by construction, so it must at least be
+        *printed*: the label lands in ``family_labels``, which :func:`report`
+        renders on every run.
+        """
+        count = dcs.MAX_CHARGED_GLOB_MATCHES + 1
+        names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(count)]
+        verdicts, labels = self.classify(self.wide_tree(count), names, "synth_wide_*_tendsto")
+        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE] * count)
+        self.assertEqual(list(labels), ["docs/index.md:1 `synth_wide_*_tendsto`"])
+        self.assertEqual(labels["docs/index.md:1 `synth_wide_*_tendsto`"], [f"{count} declarations"])
+
+    def test_the_old_exoneration_would_turn_this_red(self) -> None:
+        """Mutation test: with the knob at 1, every multi-match glob is exonerated.
+
+        ``MAX_CHARGED_GLOB_MATCHES = 1`` is exactly the rule this class repairs
+        (the branch read ``else []`` for every ``len(matched) >= 2``), so the
+        pinned verdicts above must depend on the threshold and not on some other
+        part of the pipeline.
+        """
+        original = dcs.MAX_CHARGED_GLOB_MATCHES
+        dcs.MAX_CHARGED_GLOB_MATCHES = 1
+        try:
+            verdicts, labels = self.classify(
+                self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
+            )
+        finally:
+            dcs.MAX_CHARGED_GLOB_MATCHES = original
+        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
+        self.assertEqual(list(labels), ["docs/index.md:1 `synth_glob_ge_log_two*`"])
+
+    def test_a_charged_glob_never_publishes(self) -> None:
+        """A glob is evidence of a citation, not of a verbatim one.
+
+        The charge string keeps the ``shorthand `` prefix, which is what makes
+        the repair monotone: only ``exact `` promotes to ``published-result``
+        (and ``published-result`` leaves the delete-closure seed alone), while
+        ``shorthand `` forces ``uncertain``. A glob charged as ``exact `` would
+        assert a verbatim citation that is not in the file.
+        """
+        verdicts, _labels = self.classify(
+            self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
+        )
+        for verdict in verdicts:
+            self.assertNotEqual(verdict.verdict, dcs.PUBLISHED)
+            self.assertTrue(
+                all(not cit.startswith("exact ") for cit in verdict.doc_citations),
+                verdict.doc_citations,
+            )
+
+    def test_the_glob_token_survives_the_real_tokenizer(self) -> None:
+        """The synthetic tokens above are what the Markdown channel really produces."""
+        self.assertEqual(
+            dcs._citation_tokens("freeEnergy_*_tendsto_of_abs_h"),
+            ["freeEnergy_*_tendsto_of_abs_h"],
+        )
+        self.assertEqual(
+            dcs.expand_braces("freeEnergyAlongExhaustion_latticeGraph_{nonneg*,ge_log_two*}"),
+            [
+                "freeEnergyAlongExhaustion_latticeGraph_ge_log_two*",
+                "freeEnergyAlongExhaustion_latticeGraph_nonneg*",
+            ],
+        )
+
+    def test_the_two_real_citations_still_resolve(self) -> None:
+        """End to end on the real tree: the six declarations of the report exist.
+
+        Pinned because the repair is worth nothing if the globs stop resolving:
+        both tokens are read off the real ``docs/index.md`` rows, and their
+        matches are the declarations that used to print "no citation".
+        """
+        cache: dict[str, list[dcs.Decl] | None] = {}
+        pair = dcs._resolve_fragment(
+            tree(), "freeEnergyAlongExhaustion_latticeGraph_ge_log_two*", cache
+        )
+        quad = dcs._resolve_fragment(tree(), "freeEnergy_*_tendsto_of_abs_h", cache)
+        self.assertEqual(len(pair), 2)
+        self.assertEqual(len(quad), 4)
+        for matched in (pair, quad):
+            self.assertLessEqual(len(matched), dcs.MAX_CHARGED_GLOB_MATCHES)
+
+    def test_the_six_declarations_are_no_longer_safe_to_delete(self) -> None:
+        """The named regression, on the real tree and the real documentation."""
+        names = [
+            "Ambient.freeEnergyAlongExhaustion_latticeGraph_ge_log_two",
+            "Ambient.freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh",
+            "Concrete.freeEnergy_centeredSlab_tendsto_of_abs_h",
+            "Concrete.freeEnergy_linearBox_tendsto_of_abs_h",
+            "Concrete.freeEnergy_slabBrick_tendsto_of_abs_h",
+            "Concrete.freeEnergy_stripeBrick2D_tendsto_of_abs_h",
+        ]
+        verdicts, _cascade, _labels = dcs.classify(tree(), names, docs(), allow_homonym=False)
+        for verdict in verdicts:
+            self.assertNotEqual(verdict.verdict, dcs.SAFE, verdict.name)
+            self.assertTrue(
+                any(
+                    cit.startswith("shorthand ") and "*" in cit
+                    for cit in verdict.doc_citations
+                ),
+                (verdict.name, verdict.doc_citations),
+            )
+
+
 class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
@@ -1253,9 +1445,34 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 46 safe / 78 uncertain / 64 load-bearing / 35 published.
+        """223 candidates -> 43 safe / 79 uncertain / 66 load-bearing / 35 published.
 
-        Recalibrated by PR #4754 (safe-to-delete batch 4), which moved exactly one
+        Recalibrated by the narrow-glob repair
+        (:class:`NarrowGlobCitationTest`): a glob citation naming at most
+        :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` declarations is
+        charged to all of them instead of being attributed to nobody. Exactly
+        four candidates move and not one moves toward ``safe-to-delete``:
+        ``correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic``
+        and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
+        deviation_pos_ferromagnetic`` go ``safe-to-delete -> uncertain`` (charged
+        by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
+        5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
+        ``log_*_deviation_pos_ferromagnetic``, 5 matches);
+        ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
+        ``safe-to-delete -> load-bearing`` and
+        ``log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_
+        ferromagnetic`` ``uncertain -> load-bearing``, both because the
+        delete-closure no longer excuses their only consumer. ``SAFE`` 46 -> 43,
+        ``UNCERTAIN`` 78 -> 79, ``LOAD_BEARING`` 64 -> 66; ``PUBLISHED`` (35),
+        the 223 total and :meth:`test_zero_consumer_count` (112) are unchanged.
+        Measured across the whole library the same way: 1091 -> 980
+        ``safe-to-delete``, 691 -> 757 ``uncertain``, 2081 -> 2126
+        ``load-bearing``, ``published-result`` unchanged at 7009, and the
+        ``safe-to-delete`` key set only shrinks (135 movers, none toward
+        ``safe-to-delete``).
+
+        Previously recalibrated by PR #4754 (safe-to-delete batch 4), which moved
+        exactly one
         candidate and moved it *away* from ``safe-to-delete``:
         ``freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic``
         ``safe-to-delete -> uncertain``. Batch 4 deleted the zero-consumer
@@ -1287,9 +1504,9 @@ class FamilyCalibrationTest(unittest.TestCase):
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 46)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 78)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 64)
+        self.assertEqual(counts.get(dcs.SAFE), 43)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 79)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 66)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
