@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh
 
 Narrow child module for four ℤ^d
 `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_*` regularity
-wrappers extracted from `MayerVdRegularityPolymerTanh.lean`:
+wrappers:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_beta`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_J`,
@@ -15,8 +15,7 @@ wrappers extracted from `MayerVdRegularityPolymerTanh.lean`:
 
 Each result is a thin pass-through of the ambient
 `Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerVdRegularityPolymerTanh` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel
