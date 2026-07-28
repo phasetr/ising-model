@@ -2042,8 +2042,8 @@ def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
 # Measured on the scanned documentation (main 171ddd4f): 254 occurrences of a
 # non-suffix wildcard token resolving to >= 2 declarations, 218 distinct
 # patterns, with match counts n distributed
-# ``2:98, 3:22, 4:27, 5:19, 6:9, 7:6, 8:4, 9:9, 11:4, 12:2, 13-24:21, 26-98:15,
-# 176-219:18``. The distribution is bimodal in *meaning*: small n is almost
+# ``2:98, 3:22, 4:27, 5:19, 6:9, 7:6, 8:4, 9:9, 10:0, 11:4, 12:2, 13-24:21,
+# 26-98:19, 176-219:14``. The distribution is bimodal in *meaning*: small n is almost
 # always one result with one variant slot (``mayerPartialSum_*_two``,
 # ``freeEnergyΛ_continuous_*``), large n is a genuine family label
 # (``correlation_*_*`` matches 219, ``freeEnergyAlongExhaustion_*`` 202).
