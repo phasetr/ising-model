@@ -24,6 +24,11 @@ on the same line is a shorthand, not a family label),
 :class:`NarrowGlobCitationTest` (the same exoneration on the *glob* channel: a
 citation naming two to eight declarations must be charged to all of them) and
 :class:`CharClassTest` (the identifier class must never be a superset of Lean's).
+:class:`CanaryTest` carries the unconditional Unicode guard in both directions:
+a fixture holding one name per canary character (so per-character coverage does
+not depend on which names the library happens to hold) and two mutations -- a
+cleaner that drops a Greek letter, and a tree with no Unicode names at all --
+that must abort the run rather than lower a count.
 :class:`FamilyCalibrationTest` asserts the calibration integers that used to live
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
 direction: a docstring mention is reported but must never rescue a lemma.
@@ -1525,15 +1530,111 @@ class FamilyCalibrationTest(unittest.TestCase):
         self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 112)
 
 
+# Anti-vacuity floor for the Unicode canary population.  The Unicode guarantee
+# itself is the *universal* in ``run_canary`` -- every Lambda/beta/sigma-bearing
+# declaration finds itself in its own defining file -- which holds at any
+# population size, plus the synthetic fixtures below.  This number exists only so
+# that universal cannot go trivially true because the population collapsed, and
+# it is therefore deliberately far below the measured census.
+#
+# Derivation (main ``ddf332d9``, measured, not calibrated): the census is 1005
+# (Lambda 1002, beta 1, sigma 2).  Of those, 457 live inside the #4746 Item A
+# path allow-list and 2 more inside ``AmbientLattice/SpecialCases`` (#4563); no
+# deletion batch is authorised to touch anything else, so no batch of that
+# campaign can push the census below 1005 - 457 - 2 = 546, even in the
+# counterfactual where every allow-listed module is deleted.  A cascade cannot
+# defeat the bound: it can only promote modules that are already allow-listed.
+# 500 is that bound rounded down; the measured remaining lane would only reach
+# 926.  Predecessor: the same one-time re-derivation for the audit-gate file
+# counts, PR #4766 (#4746 Item F1).
+#
+# The floor was 1000 until #4746 batch 7, i.e. the census minus four.  A count
+# floor set just under the current measurement describes the deletions instead
+# of constraining them, and had to be lowered once per batch.  Standing rule, as
+# for the audit-gate floors: **a batch that would trip this floor is a governance
+# signal -- re-measure the lane and get a decision, do not lower the entry.**
+CANARY_DECL_FLOOR = 500
+
+
 class CanaryTest(unittest.TestCase):
     """The cheapest possible regression detector, run on every invocation."""
 
+    def synthetic_tree(self, *sources: tuple[str, str]) -> dcs.Tree:
+        """Build a tree from ``(relpath, text)`` pairs, through the real pipeline.
+
+        Uses the scanner's own :func:`dead_candidate_scan.build_tree`, so the
+        fixture exercises stripping, declaration extraction and indexing rather
+        than a hand-built declaration table.  The paths need not exist on disk,
+        but they must sit under ``REPO_ROOT`` for ``rel()`` to name them.
+        """
+        return dcs.build_tree([(dcs.REPO_ROOT / relpath, text) for relpath, text in sources])
+
+    def canary_fixture(self) -> dcs.Tree:
+        """Return a tree holding exactly one declaration per canary character."""
+        names = [f"synthetic{char}_lemma" for char in dcs.CANARY_CHARS]
+        text = "".join(f"theorem {name} : True := trivial\n" for name in names)
+        return self.synthetic_tree(("IsingModel/Canary.lean", text))
+
     def test_unicode_declarations_find_themselves(self) -> None:
-        """Every Lambda/beta/sigma-bearing declaration matches its own name."""
+        """Every Lambda/beta/sigma-bearing declaration matches its own name.
+
+        ``run_canary`` itself raises on the first declaration that cannot find
+        itself, so this test adds only the anti-vacuity floor; see
+        :data:`CANARY_DECL_FLOOR` for why it is loose, and
+        :meth:`test_the_canary_passes_on_one_name_per_character` for where the
+        per-character guarantee actually comes from.
+        """
         count, per_char = dcs.run_canary(tree())
-        self.assertGreater(count, 1000)
+        self.assertGreaterEqual(count, CANARY_DECL_FLOOR)
         for char, hits in per_char.items():
             self.assertGreater(hits, 0, char)
+
+    def test_the_canary_passes_on_one_name_per_character(self) -> None:
+        """Each canary character is exercised by a fixture, not by the library.
+
+        On the real tree ``beta`` and ``sigma`` are carried by three
+        declarations in total (one of them unique), all of them incidental: the
+        claim "the scanner handles beta" was guaranteed by the accident that one
+        lemma in ``Inequalities/HighTemp`` happens to spell beta in its name.  A
+        fixture makes the claim independent of which names the library holds, and
+        of any deletion campaign.  All three characters must share one tree,
+        because ``run_canary`` aborts on a character with no bearer.
+        """
+        count, per_char = dcs.run_canary(self.canary_fixture())
+        self.assertEqual(count, len(dcs.CANARY_CHARS))
+        self.assertEqual(per_char, dict.fromkeys(dcs.CANARY_CHARS, 1))
+
+    def test_the_canary_rejects_a_cleaner_that_drops_a_greek_letter(self) -> None:
+        """The failing direction the canary was written for, finally tested.
+
+        Nothing used to prove ``run_canary`` can fail at all.  Dropping the Greek
+        letter from the cleaned text -- the exact signature of the
+        Unicode-splitting tokenizer that produced three bad deletion sweeps --
+        must abort the run, not merely lower a count.  The tampering happens
+        after ``build_tree`` on purpose: the declaration table is built *from*
+        the cleaned text, so an extracted name always finds itself until the text
+        underneath it changes.
+        """
+        broken = self.canary_fixture()
+        for source in broken.files:
+            source.cleaned = source.cleaned.replace("Λ", "")
+        with self.assertRaises(dcs.Inconsistency) as caught:
+            dcs.run_canary(broken)
+        self.assertIn("cannot find itself", str(caught.exception))
+
+    def test_the_canary_rejects_a_tree_with_no_unicode_declarations(self) -> None:
+        """A population of zero must abort, not pass a vacuous universal.
+
+        This is the degeneracy branch the loose :data:`CANARY_DECL_FLOOR` leans
+        on: the floor guards against a *collapsed* population, this guards
+        against an *empty* one, and neither is left to the count alone.
+        """
+        plain = self.synthetic_tree(
+            ("IsingModel/Plain.lean", "theorem plain_lemma : True := trivial\n")
+        )
+        with self.assertRaises(dcs.Inconsistency) as caught:
+            dcs.run_canary(plain)
+        self.assertIn("degenerated", str(caught.exception))
 
     def test_no_guide_citation_is_broken_across_a_line(self) -> None:
         """The real guide keeps every code citation on one line.
