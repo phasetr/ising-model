@@ -1,4 +1,4 @@
-import IsingModel.PseudoMass.FromParamsBasic.MonotonicityBounds
+import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
 # Pseudo-mass from parameters: general properties
@@ -78,8 +78,10 @@ theorem pseudoMassFromParamsAtPair_pos_iff {α : ℕ} (hα : 1 ≤ α)
 /-- **`pseudoMassFromParamsAtPair` sandwich**: if `c_min ≤ correlation ≤ c_max`
 all in `Ioo 0 2`, then `pseudoMassExt c_max ≤ pseudoMassFromParamsAtPair ≤ pseudoMassExt c_min`.
 
-This packages `_le_of_corr_ge` and `_ge_of_corr_le` into a single sandwich
-inequality, useful for the §17.5 Lemma 17.5.2 capstone. -/
+Both bounds come from the strict anti-monotonicity of `pseudoMassExt` on
+`Ioo 0 2` (`pseudoMassExt_strictAntiOn`), split on whether the correlation
+attains the bound: on equality the two sides coincide, otherwise the
+inequality is strict. Useful for the §17.5 Lemma 17.5.2 capstone. -/
 theorem pseudoMassFromParamsAtPair_sandwich_of_corr_mem {α : ℕ} (hα : 1 ≤ α)
     {r : ℝ} (hr : 0 < r) (d : ℕ)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -95,8 +97,19 @@ theorem pseudoMassFromParamsAtPair_sandwich_of_corr_mem {α : ℕ} (hα : 1 ≤ 
     (hle : Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z}
               ≤ c_max) :
     pseudoMassExt hα hr c_max ≤ pseudoMassFromParamsAtPair hα hr d Λ p x z ∧
-    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤ pseudoMassExt hα hr c_min :=
-  ⟨pseudoMassFromParamsAtPair_ge_of_corr_le hα hr d Λ p x z hc_max hcorr hle,
-   pseudoMassFromParamsAtPair_le_of_corr_ge hα hr d Λ p x z hc_min hcorr hge⟩
+    pseudoMassFromParamsAtPair hα hr d Λ p x z ≤ pseudoMassExt hα hr c_min := by
+  unfold pseudoMassFromParamsAtPair
+  constructor
+  · by_cases heq :
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} = c_max
+    · rw [heq]
+    · exact le_of_lt
+        (pseudoMassExt_strictAntiOn hα hr hcorr hc_max (lt_of_le_of_ne hle heq))
+  · by_cases heq :
+        Ambient.correlationInfinite (IsingModel.latticeGraph d) Λ p {x, z} = c_min
+    · rw [heq]
+    · exact le_of_lt
+        (pseudoMassExt_strictAntiOn hα hr hc_min hcorr
+          (lt_of_le_of_ne hge (Ne.symm heq)))
 
 end IsingModel
