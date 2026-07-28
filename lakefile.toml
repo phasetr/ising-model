@@ -8,6 +8,7 @@ pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
+warningAsError = true # builtin Lean option: no `weak.` prefix (a `weak.` prefix would silently disable it)
 
 [[require]]
 name = "mathlib"
