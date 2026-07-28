@@ -2027,6 +2027,60 @@ def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
     return out
 
 
+# A glob/ellipsis citation that resolves to at most this many declarations is
+# charged to *all* of them; above it the citation is filed as a family label and
+# charged to nobody. The knob exists because the same "attributed to nobody"
+# exoneration that produced the false ``safe-to-delete`` repaired by
+# :func:`elided_prefix_matches` on the *suffix* channel was still live on the
+# *glob* channel: ``docs/index.md:1427`` writes
+# ``freeEnergyAlongExhaustion_latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,
+# ge_log_two*}``, whose ``ge_log_two*`` alternative names 2 declarations, and
+# ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``, which names 4;
+# both resolve exactly, and both named only declarations the scanner then
+# reported as carrying "no citation in the scanned documentation".
+#
+# Measured on the scanned documentation (main 171ddd4f): 254 occurrences of a
+# non-suffix wildcard token resolving to >= 2 declarations, 218 distinct
+# patterns, with match counts n distributed
+# ``2:98, 3:22, 4:27, 5:19, 6:9, 7:6, 8:4, 9:9, 10:0, 11:4, 12:2, 13-24:21,
+# 26-98:19, 176-219:14``. The distribution is bimodal in *meaning*: small n is almost
+# always one result with one variant slot (``mayerPartialSum_*_two``,
+# ``freeEnergyΛ_continuous_*``), large n is a genuine family label
+# (``correlation_*_*`` matches 219, ``freeEnergyAlongExhaustion_*`` 202).
+#
+# **The count is a cost knob, not a semantic criterion.** No count separates the
+# two classes: ``docs/index.md:2193`` writes
+# ``correlationAlongExhaustion_..._ferromagnetic`` as a genuine elision whose
+# unbounded ``...`` also swallows an unrelated lower bound, giving a precise
+# citation with n = 11, and that over-match is what caps the threshold at 10 (at
+# N >= 11 the ground-truth ``safe-to-delete`` fixture row turns ``uncertain`` and
+# ``--expect`` goes red).
+#
+# The value below is that ceiling, because the knob is one-sided: raising it can
+# only *remove* declarations from ``safe-to-delete``, never add one, so the
+# largest value the fixtures still admit is also the safest. Measured on the
+# whole library (main 171ddd4f, 10872 declarations): N = 8 covers 185 of the 254
+# occurrences (73%) and reports 980 ``safe-to-delete``; N = 9 and N = 10 both
+# cover 194 (76%) and report 976. The four names N = 8 would still hand to a
+# deletion PR -- named by the nine 9-match occurrences of the bin list above --
+# are ``correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg``,
+# ``correlationAlongExhaustion_latticeGraph_nonneg`` and
+# ``vdPolymerFamilies_sumAlongExhaustion_sandwich{,_sharp}_ferromagnetic``. The
+# ``_ferromagnetic`` calibration family (43/79/66/35 of 223) and its 112
+# zero-consumer count are identical at 8, 9 and 10, so the stricter number costs
+# no test churn at all. The price of sitting on the ceiling is that a future
+# ``docs/index.md`` elision widening the 11-match citation turns ``--expect``
+# red; that is the fail-closed direction and is meant to be read as a signal,
+# not silenced by lowering the knob.
+#
+# **Globs above the threshold remain a known fail-open residue**: they still
+# charge nobody, so a declaration cited only by such a label can still be
+# reported ``safe-to-delete``. They are printed by :func:`report` under
+# "documentation family labels", and closing them is the human keep-check's job
+# -- candidate enumeration is not permission.
+MAX_CHARGED_GLOB_MATCHES = 10
+
+
 def _apply_doc_channel(
     tree: Tree,
     verdicts: list[Verdict],
@@ -2036,11 +2090,21 @@ def _apply_doc_channel(
     """Attach documentation citations to each candidate.
 
     Exact and brace-expanded citations mark a published result; wildcard and
-    single-match fragment citations only make the candidate uncertain; a
-    fragment matching two or more declarations is a *family label* and is
-    attributed to nobody (the ``_ferromagnetic`` trap) **unless** the prefix it
-    elides is cited on the same line, in which case it is a shorthand for those
-    matches and charged to them (:func:`elided_prefix_matches`).
+    single-match fragment citations only make the candidate uncertain. A
+    fragment matching two or more declarations is charged by channel:
+
+    * a ``_``/``.`` **suffix** fragment is a family label attributed to nobody
+      (the ``_ferromagnetic`` trap) **unless** the prefix it elides is cited on
+      the same line, in which case it is a shorthand for the siblings that share
+      that prefix and is charged to them (:func:`elided_prefix_matches`);
+    * a **glob/ellipsis** fragment is charged to every declaration it names when
+      it names at most :data:`MAX_CHARGED_GLOB_MATCHES` of them, and is a family
+      label attributed to nobody above that count. Exonerating *every*
+      multi-match glob (as this function did until the threshold landed) is the
+      same "attributed to nobody" fail-open the suffix channel was repaired for:
+      ``docs/index.md:1427`` cites ``..._ge_log_two*`` (as a brace alternative)
+      and both declarations it names came out ``safe-to-delete`` reading "no
+      citation in the scanned documentation".
 
     A citation the normaliser could not read is attached too, to **every**
     candidate (:meth:`UnreadableSpan.could_cite`; the channel is charge-only).
@@ -2085,11 +2149,14 @@ def _apply_doc_channel(
                     continue
                 charged = matched
                 if len(matched) >= 2:
-                    charged = (
-                        elided_prefix_matches(name, matched, cited_names.get(lineno, set()))
-                        if name.startswith(("_", "."))
-                        else []
-                    )
+                    if name.startswith(("_", ".")):
+                        charged = elided_prefix_matches(
+                            name, matched, cited_names.get(lineno, set())
+                        )
+                    elif len(matched) <= MAX_CHARGED_GLOB_MATCHES:
+                        charged = matched
+                    else:
+                        charged = []
                     if not charged:
                         family_labels.setdefault(
                             f"{doc.label}:{lineno} `{token}`",
@@ -2097,10 +2164,18 @@ def _apply_doc_channel(
                         )
                 if charged:
                     keys = {decl.key for decl in charged}
+                    # The count makes the report self-explaining: a reader can
+                    # tell a two-match glob charged in full from a family label
+                    # one of whose members the elided prefix rescued.
+                    detail = (
+                        f" ({len(charged)} of the {len(matched)} declarations it names)"
+                        if len(matched) > 1
+                        else ""
+                    )
                     for verdict in verdicts:
                         if verdict.decl.key in keys:
                             verdict.doc_citations.append(
-                                f"shorthand {doc.label}:{lineno}: `{token}`"
+                                f"shorthand {doc.label}:{lineno}: `{token}`{detail}"
                             )
         # (c) module citations.
         for verdict in verdicts:
@@ -2338,7 +2413,20 @@ L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic
    which is not a stricter tool but one whose verdicts no longer track which
    citation names which result. So a family label on a line that elides nothing
    still rescues nobody, and a lemma named only by one is dead code whose
-   *documentation* the deletion PR must update."""
+   *documentation* the deletion PR must update.
+L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
+   declarations is charged to nobody -- the live fail-open residue of this tool.
+   At or below the threshold every match is charged, which repairs the leak that
+   let `docs/index.md:1427` (`..._ge_log_two*`, a brace alternative naming 2
+   declarations) and `docs/index.md:1328` (`freeEnergy_*_tendsto_of_abs_h`,
+   naming 4) read as citing nobody; above it,
+   a broad label (`correlation_*_*` names 219 declarations) would charge whole
+   subsystems, so it is filed and printed instead. The count is a cost knob and
+   not a semantic criterion: `docs/index.md:2193` is a precise elision that
+   over-matches onto 11 declarations, so a precise citation *can* sit above the
+   threshold and rescue nobody. Mitigation: the labels are printed under
+   "documentation family labels" on every run and must be read by hand before a
+   deletion -- candidate enumeration is not permission."""
 
 
 def report(
@@ -2402,7 +2490,12 @@ def report(
     if len(cascade) > 40:
         print(f"  ... and {len(cascade) - 40} more")
     print()
-    print(f"-- documentation family labels (attributed to no declaration): {len(family_labels)} --")
+    print(
+        f"-- documentation family labels: {len(family_labels)} "
+        f"(a glob naming more than {MAX_CHARGED_GLOB_MATCHES} declarations, or a bare "
+        "suffix label; attributed to no declaration -- a KNOWN fail-open residue, "
+        "close it by hand before deleting anything these lines could be citing) --"
+    )
     for label in sorted(family_labels)[:20]:
         print(f"  {label}: {family_labels[label][0]}")
     if len(family_labels) > 20:
