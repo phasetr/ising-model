@@ -6,8 +6,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for three ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_*` any-Exhaustion
-trivial-slice wrappers extracted from
-`FreeEnergySpecialCasesAlongEx.lean`:
+trivial-slice wrappers:
 
 * `freeEnergyAlongExhaustion_latticeGraph_beta_zero`,
 * `freeEnergyAlongExhaustion_latticeGraph_zero_params`,
