@@ -8,6 +8,12 @@ pp.unicode.fun = true # pretty-prints `fun a ↦ b`
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
+# Lean core registers `warningAsError` with `register_builtin_option` (Lean/Log.lean), so the bare
+# name already resolves at startup and the `weak.` prefix is simply unnecessary here. It is not
+# harmful either: `reparseOptions` (Lean/Language/Lean.lean) strips a leading `weak` before applying
+# the option, so `weak.` only means "do not fail if no import registers this name" -- which is what
+# the `weak.linter.mathlibStandardSet` line above needs and this line does not.
+warningAsError = true
 
 [[require]]
 name = "mathlib"
