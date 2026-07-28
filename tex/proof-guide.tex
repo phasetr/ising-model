@@ -22666,10 +22666,10 @@ The four abstract named-wrapper restatements
 giving $16$ thin direct-instantiation wrappers; the four
 $\mathbb{Z}^d$ $\Lambda$-layer wrappers had no consumers and were
 deleted in PR~\#4751, leaving $12$ across three layers. The
-along-exhaustion and $\mathbb{Z}^d$ wrappers that remain live in
+along-exhaustion wrappers that remain live in
 \texttt{AmbientLattice/SpecialCases/MayerEdgeCases.lean}
-and
-\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCases.lean};
+and the $\mathbb{Z}^d$ along-exhaustion ones in
+\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCasesAlongExPolymer.lean};
 the $\Lambda$-layer wrappers live in
 \texttt{IsingModel/AmbientLattice/AnalyticityLambdaMayerIdentity.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1985).
@@ -22683,11 +22683,10 @@ statements at trivial parameter slices
 the four volume layers, giving $16$ thin direct-instantiation
 wrappers; the four $\mathbb{Z}^d$ along-exhaustion wrappers had no
 consumers and were deleted in PR~\#4751, leaving $12$ across three
-layers. The along-exhaustion and $\mathbb{Z}^d$
-wrappers that remain live in
+layers. The along-exhaustion wrappers that remain live in
 \texttt{AmbientLattice/SpecialCases/MayerEdgeCases.lean}
-and
-\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCases.lean};
+and the $\mathbb{Z}^d$ $\Lambda$-layer ones in
+\texttt{Concrete/LatticeGraphCorrelation/MayerEdgeCasesLambda.lean};
 the $\Lambda$-layer wrappers live in
 \texttt{IsingModel/AmbientLattice/AnalyticityLambdaMayerIdentity.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1985).
@@ -22705,9 +22704,11 @@ layers. The wrappers that remain live in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean} and
 \texttt{Concrete/LatticeGraphCorrelation.lean}. The along-exhaustion
 and concrete analytic wrappers from this family now live in
-\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean}
+(the two $\tanh$ members in
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLogTanh.lean})
 and
-\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticityLogAlongEx.lean};
 the $\Lambda$-layer wrappers live in
 \texttt{IsingModel/AmbientLattice/AnalyticityLambdaVdPolymer.lean}
 (moved from the legacy modules in PR~\#1863; narrowed out of
@@ -22724,15 +22725,16 @@ $\mathbb{Z}^d$ $\Lambda$-layer \texttt{Continuous} /
 \texttt{Differentiable} wrappers had no consumers and were deleted in
 PR~\#4751, leaving $20$, so that $\mathbb{Z}^d$ $\Lambda$ layer now
 carries only its two \texttt{AnalyticAt} members. The along-exhaustion
-and $\mathbb{Z}^d$ \texttt{Continuous} / \texttt{Differentiable} wrappers
-that remain live in
-\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean}
+\texttt{Continuous} / \texttt{Differentiable} wrappers that remain live in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerTanh.lean}
 and
-\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean};
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerTanhDifferentiable.lean},
+and the $\mathbb{Z}^d$ ones in
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularityPolymerTanhAlongEx.lean};
 the along-exhaustion and concrete \texttt{AnalyticAt} wrappers remain in
-\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
+\texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityTanh.lean}
 and
-\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticity.lean};
+\texttt{Concrete/LatticeGraphCorrelation/VdPolymerFamiliesAnalyticityTanh.lean};
 the $\Lambda$-layer wrappers live in
 \texttt{IsingModel/AmbientLattice/AnalyticityLambdaVdPolymer.lean}
 (moved from the legacy modules in PR~\#1863; narrowed out of
@@ -22751,11 +22753,13 @@ wrappers had no consumers and were deleted in PR~\#4751, leaving $13$,
 so that $\mathbb{Z}^d$ $\Lambda$ layer now carries only its
 \texttt{AnalyticAt} member.
 The along-exhaustion
-and $\mathbb{Z}^d$ \texttt{Continuous} / \texttt{Differentiable} /
+\texttt{Continuous} / \texttt{Differentiable} /
 \texttt{HasDerivAt} wrappers that remain live in
-\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean}
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityVdPolymer.lean}
 and
-\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularity.lean};
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerHasDerivAt.lean},
+and the $\mathbb{Z}^d$ ones in
+\texttt{Concrete/LatticeGraphCorrelation/MayerVdRegularityPolymerAlongEx.lean};
 the along-exhaustion and concrete \texttt{AnalyticAt} wrappers remain in
 \texttt{AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean}
 and
@@ -22810,10 +22814,12 @@ had no consumers and were deleted in PR~\#4751, leaving $12$, so each
 $\mathbb{Z}^d$ layer now carries only its two analytic members. The
 along-exhaustion \texttt{Continuous} / \texttt{Differentiable} wrappers
 that remain live in
-\texttt{AmbientLattice/SpecialCases/MayerVdRegularity.lean}; the
-along-exhaustion and concrete analytic wrappers remain in
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityExpansionTerm.lean}
+and
+\texttt{AmbientLattice/SpecialCases/MayerVdRegularityDifferentiableExpansionTerm.lean};
+the along-exhaustion and concrete analytic wrappers remain in
 \texttt{AmbientLattice/SpecialCases/MayerAnalyticity.lean} and
-\texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticity.lean}; the
+\texttt{Concrete/LatticeGraphCorrelation/MayerAnalyticityExpansionTerm.lean}; the
 $\Lambda$-layer wrappers remain in
 \texttt{IsingModel/AmbientLattice/Analyticity.lean}
 (moved from the legacy modules in PR~\#1862).

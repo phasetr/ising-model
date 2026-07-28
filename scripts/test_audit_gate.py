@@ -833,8 +833,8 @@ LIB_FILE_FLOOR = 1950
 
 # The same ratchet for V4's wider scope (tracked files under ``docs``, ``tex``,
 # ``README.md``, ``scripts`` and ``.github`` on top of the Lean sources), and
-# for the visited-list assertions in ``ScanExecutionTest`` and
-# ``V4JapaneseTest`` below.  Those three sites used to carry a bare ``2000``
+# for the visited-list assertions in ``ScanExecutionTest`` (three of them) and
+# ``V4ScanTest`` (one) below.  Those four sites used to carry a bare ``2000``
 # literal, which is why the pre-deletion slack of the named floors above did not
 # describe the whole ratchet: ``iter_checked_files()`` was 2003, three above
 # that literal, so the next ten-module deletion tripped it.  Measured
