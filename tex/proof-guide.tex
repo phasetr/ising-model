@@ -19701,10 +19701,13 @@ $\mathbb{Z}^d$ wraps for the three abstract bound theorems
 \texttt{\_le\_one\_plus\_tanh\_pow}, and
 \texttt{one\_le\_vdPolymerFamilies\_sum} (which had no wrappers
 before). The Lambda wrappers for the four sandwich abstracts already
-existed; this PR fills the bare-bound and \(\geq 1\) gaps. 12 new
-thin direct-instantiation wrappers (3 abstracts $\times$ 4
-layers). The along-exhaustion and concrete $\mathbb{Z}^d$ wrappers
-now live in the matching \texttt{MayerVdBounds.lean} child modules;
+existed; this PR fills the bare-bound and \(\geq 1\) gaps. PR~\#1595
+added 12 new thin direct-instantiation wrappers (3 abstracts
+$\times$ 4 layers); the three $\mathbb{Z}^d$ $\Lambda$-layer
+wrappers had no consumers and were deleted in PR~\#4754, leaving
+9 across three layers. The surviving along-exhaustion and concrete
+$\mathbb{Z}^d$ wrappers live in the matching
+\texttt{MayerVdBounds.lean} child modules;
 the $\Lambda$-layer wrappers live in
 \texttt{IsingModel/AmbientLattice/AnalyticityLambdaBasicIdentities.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1986).
@@ -21438,8 +21441,14 @@ $\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_filter\_connected\_one} (filter at $n=1$ equals full
 piFinset), and \texttt{\_two\_filter\_connected\_eq\_incompat}
 (filter-connected $\Leftrightarrow$ pair-incompatible at $n=2$).
-20 new thin direct-instantiation wrappers (5 abstracts $\times$
-4 layers). The longest $\mathbb{Z}^d$ along-ex name
+PR~\#1613 added 20 new thin direct-instantiation wrappers
+(5 abstracts $\times$ 4 layers); the four $\mathbb{Z}^d$
+$\Lambda$-layer wrappers of
+\texttt{vdPolymerFamilies\_sum\_minus\_one\_pow} and the three
+filter-connected boundary lemmas had no consumers and were
+deleted in PR~\#4754, leaving 16 (the $\mathbb{Z}^d$
+$\Lambda$-layer \texttt{mayerPartialSum\_analyticOnNhd} wrapper
+survives). The longest $\mathbb{Z}^d$ along-ex name
 abbreviates \texttt{\_filter\_connected\_eq\_incompat} to
 \texttt{\_filter\_conn\_eq\_incompat} to fit under the
 100-character linter budget.
@@ -21481,9 +21490,11 @@ $\mathbb{Z}^d$ layers (Lambda-layer wraps already exist via PRs
 \texttt{\_continuous\_h},
 \texttt{\_differentiable\_h}, plus
 \texttt{freeEnergy\_continuous\_joint} and
-\texttt{\_differentiable\_joint}. 24 new thin
+\texttt{\_differentiable\_joint}. PR~\#1611 added 24 new thin
 direct-instantiation wrappers (8 abstracts $\times$ 3 missing
-layers).
+layers); the four $\mathbb{Z}^d$ $\Lambda$-layer wrappers of the
+last four abstracts in that list had no consumers and were
+deleted in PR~\#4754, leaving 20 across the remaining layers.
 
 \paragraph{\texttt{partitionFunction} joint
 Continuous/Differentiable + general-$h$ analyticAt, all volume
@@ -21495,8 +21506,11 @@ $\mathbb{Z}^d$ along-ex):
 \texttt{\_differentiable\_joint},
 \texttt{\_analyticAt\_beta\_general\_h},
 \texttt{\_analyticAt\_J\_general\_h}, and
-\texttt{\_analyticAt\_h}. 20 new thin direct-instantiation
-wrappers (5 abstracts $\times$ 4 layers). Complements the
+\texttt{\_analyticAt\_h}. PR~\#1610 added 20 new thin
+direct-instantiation wrappers (5 abstracts $\times$ 4 layers);
+the five $\mathbb{Z}^d$ $\Lambda$-layer wrappers had no consumers
+and were deleted in PR~\#4754, leaving 15 across three layers.
+Complements the
 existing joint analyticity (PR~\#1535, joint analyticAt) and
 $h$-zero regularity (PR~\#1608) wrappers.
 
@@ -21545,9 +21559,11 @@ live in
 \path{IsingModel/AmbientLattice/AnalyticityLambdaSection186.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1992).
 
-The along-exhaustion and concrete $\mathbb{Z}^d$ joint/general-$h$
+The along-exhaustion joint/general-$h$
 \texttt{partitionFunction} wrappers are now collected in
-\texttt{PartitionFunctionGeneralAnalyticity.lean}; the
+\texttt{PartitionFunctionGeneralAnalyticity.lean} and its along-exhaustion
+child module; the $\mathbb{Z}^d$ $\Lambda$-layer child module was deleted in
+PR~\#4754 (no consumers). The
 $\Lambda$-layer wrappers live in
 \path{IsingModel/AmbientLattice/AnalyticityLambdaSection186.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1992).
@@ -22008,10 +22024,12 @@ Both inputs remain open at the volume-uniform level (complex cluster-expansion
 convergence is research-level).
 \end{theorem}
 
-The along-exhaustion and concrete $\mathbb{Z}^d$
+The along-exhaustion
 \texttt{partitionFunction}/\texttt{freeEnergy} Continuous and Differentiable
 wrappers now live in matching \texttt{PartitionFreeEnergyRegularity.lean}
-child modules; the $\Lambda$-layer wrappers remain in
+child modules; the $\mathbb{Z}^d$ $\Lambda$-layer child
+module was deleted in PR~\#4754 (no consumers). The $\Lambda$-layer
+wrappers remain in
 \path{IsingModel/AmbientLattice/Analyticity.lean}.
 
 The along-exhaustion and concrete $\mathbb{Z}^d$ high-temperature
@@ -22021,10 +22039,11 @@ $\Lambda$-layer wrappers live in
 \path{IsingModel/AmbientLattice/AnalyticityLambdaCapstones.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1993).
 
-The along-exhaustion and concrete $\mathbb{Z}^d$ Mayer filter-connected and
+The along-exhaustion Mayer filter-connected and
 epsilon-power wrappers now live in matching
-\texttt{MayerFilterConnected.lean} child modules; the $\Lambda$-layer wrappers
-live in
+\texttt{MayerFilterConnected.lean} child modules; the $\mathbb{Z}^d$
+$\Lambda$-layer child module was deleted in PR~\#4754 (no consumers).
+The $\Lambda$-layer wrappers live in
 \path{IsingModel/AmbientLattice/AnalyticityLambdaCapstones.lean}
 (narrowed out of \texttt{Analyticity.lean} in PR~\#1993).
 

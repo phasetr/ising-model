@@ -5,7 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # ℤ^d correlation trivial-slice wrappers on `latticeGraph d`
 
 Narrow child module for the four ℤ^d `correlation_*_latticeGraph`
-trivial-slice wrappers extracted from `MagnetizationCorrelationBasic`:
+trivial-slice wrappers of the concrete correlation basic family:
 
 * `correlation_beta_zero_vanish_of_nonempty_A_latticeGraph`,
 * `correlation_zero_params_vanish_of_nonempty_A_latticeGraph`,
@@ -14,9 +14,7 @@ trivial-slice wrappers extracted from `MagnetizationCorrelationBasic`:
 
 Each result is a thin pass-through of the abstract
 `IsingModel.correlation_*` lemma on
-`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem
-names are unchanged from the former `MagnetizationCorrelationBasic`
-declarations.
+`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`.
 -/
 
 namespace IsingModel

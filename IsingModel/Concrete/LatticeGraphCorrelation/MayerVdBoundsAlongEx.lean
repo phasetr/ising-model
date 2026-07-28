@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 # Concrete along-ex vdPolymerFamilies_sumAlongExhaustion tanh-bound wrappers
 
 Narrow child module for 3 ℤ^d along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_*` tanh-bound wrappers extracted
-from `MayerVdBounds.lean`:
+`vdPolymerFamilies_sumAlongExhaustion_*` tanh-bound wrappers:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_le_two_pow`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_le_one_plus_tanh_pow`,
@@ -15,8 +14,7 @@ from `MayerVdBounds.lean`:
 Each result is a thin pass-through of the corresponding ambient
 `Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
 one_le_vdPolymerFamilies_sumAlongExhaustion}` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerVdBounds` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

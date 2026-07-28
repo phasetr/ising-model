@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticit
 
 Narrow child module for five ℤ^d AlongExhaustion
 `partitionFunctionAlongExhaustion_latticeGraph_*` analyticity wrappers
-extracted from `PartitionFunctionGeneralAnalyticity.lean`:
+of the concrete general-analyticity family:
 
 * `partitionFunctionAlongExhaustion_latticeGraph_continuous_joint`,
 * `partitionFunctionAlongExhaustion_latticeGraph_differentiable_joint`,

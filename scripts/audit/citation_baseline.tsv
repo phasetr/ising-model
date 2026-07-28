@@ -72,10 +72,6 @@ AMBIGUOUS	tex/proof-guide.tex	InfiniteVolume.lean	5	139
 AMBIGUOUS	tex/proof-guide.tex	JDerivative.lean	2	21123
 AMBIGUOUS	tex/proof-guide.tex	Lattice.lean	2	147
 AMBIGUOUS	tex/proof-guide.tex	Magnetization.lean	2	3855
-AMBIGUOUS	tex/proof-guide.tex	MayerFilterConnected.lean	1	22014
-AMBIGUOUS	tex/proof-guide.tex	MayerVdBounds.lean	2	19707
-AMBIGUOUS	tex/proof-guide.tex	PartitionFreeEnergyRegularity.lean	1	22001
-AMBIGUOUS	tex/proof-guide.tex	PartitionFunctionGeneralAnalyticity.lean	1	21538
 AMBIGUOUS	tex/proof-guide.tex	PartitionFunctionRegularity.lean	1	21529
 AMBIGUOUS	tex/proof-guide.tex	Peierls.lean	3	145
 AMBIGUOUS	tex/proof-guide.tex	PerStage.lean	1	15986
@@ -363,7 +359,11 @@ BASENAME_ONLY	tex/proof-guide.tex	MainTheorem.lean	1	31307
 BASENAME_ONLY	tex/proof-guide.tex	MassContinuityDartRatio.lean	1	33414
 BASENAME_ONLY	tex/proof-guide.tex	MassContinuityRatioBound.lean	1	33382
 BASENAME_ONLY	tex/proof-guide.tex	MayerCompleteContribution.lean	1	17905
+BASENAME_ONLY	tex/proof-guide.tex	MayerFilterConnected.lean	1	22044
+BASENAME_ONLY	tex/proof-guide.tex	MayerVdBounds.lean	2	19710
 BASENAME_ONLY	tex/proof-guide.tex	NonnegCorrelations.lean	4	131
+BASENAME_ONLY	tex/proof-guide.tex	PartitionFreeEnergyRegularity.lean	1	22029
+BASENAME_ONLY	tex/proof-guide.tex	PartitionFunctionGeneralAnalyticity.lean	1	21564
 BASENAME_ONLY	tex/proof-guide.tex	PartitionFunctionIso.lean	1	25046
 BASENAME_ONLY	tex/proof-guide.tex	PeierlsContourCount.lean	1	2670
 BASENAME_ONLY	tex/proof-guide.tex	PhaseTransition.lean	3	143

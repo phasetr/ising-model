@@ -99,13 +99,15 @@ The earlier import path is preserved by re-importing the new child.
 -/
 
 
-/-! ## Moved: ℤ^d freeEnergyAlongExhaustion bridge / per-stage bound wrappers
+/-! ## Moved: ℤ^d freeEnergyAlongExhaustion per-stage `log 2` bound wrappers
 
-The 8 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` BddAbove /
-per-stage upper-bound / per-stage `log 2` and `log(2 cosh)`
-lower-bound / ferromagnetic per-stage nonneg wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsAlongExBridges`.
+The 4 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` per-stage `log 2` and
+`log(2 cosh)` lower-bound wrappers now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.PartitionFreeEnergyBoundsAlongExBridgesLogTwo`.
 The earlier import path is preserved by re-importing the new child.
+
+The 4 companion BddAbove / per-stage uniform-upper-bound / per-stage nonneg
+wrappers of the same family had no consumers and were deleted in PR #4754.
 -/
 
 end Ambient

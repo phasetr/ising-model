@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
 # Concrete §18.5 along-exhaustion Mayer filter-connected wrappers
 
 Narrow child module for 4 ℤ^d along-exhaustion §18.5 Mayer
-filter-connected wrappers extracted from `MayerFilterConnected.lean`:
+filter-connected wrappers:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pow`,
 * `mayerExpansionTermAlongExhaustion_latticeGraph_filter_connected_zero`,
@@ -15,8 +15,7 @@ filter-connected wrappers extracted from `MayerFilterConnected.lean`:
 Each result is a thin pass-through of the corresponding ambient
 `Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
 mayerExpansionTermAlongExhaustion_*}` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerFilterConnected` declarations.
+`G := IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

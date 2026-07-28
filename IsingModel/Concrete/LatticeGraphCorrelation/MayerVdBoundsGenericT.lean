@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 # ℤ^d Λ vdPolymerFamilies_sum generic-t bound wrappers
 
 Narrow child module for four ℤ^d Λ
-`vdPolymerFamilies_sum_Λ_latticeGraph_*` generic-`t` bound wrappers
-extracted from `MayerVdBounds.lean`:
+`vdPolymerFamilies_sum_Λ_latticeGraph_*` generic-`t` bound wrappers:
 
 * `vdPolymerFamilies_sum_Λ_latticeGraph_ge_one_of_nonneg`,
 * `vdPolymerFamilies_sum_Λ_latticeGraph_le_one_plus_pow_of_nonneg`,
