@@ -45,9 +45,11 @@ theorem freeEnergyAlongExhaustion_latticeGraph_upper_bound
 
 /-! ## Moved: freeEnergyAlongExhaustion monotonicity wrappers
 
-The six wrappers
-`freeEnergyAlongExhaustion_latticeGraph_(_cubicExhaustion)?_monotone_{J,h,beta}`
-now live in `PartitionFreeEnergyMonotonicityFreeEnergyAlongEx.lean`. -/
+The three wrappers
+`freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
+now live in `PartitionFreeEnergyMonotonicityFreeEnergyAlongExCubic.lean`.
+Their three non-`cubicExhaustion` companions had no consumers and were
+deleted in PR #4754. -/
 
 
 /-! ## Moved: along-exhaustion `log_partitionFunctionAlongExhaustion` monotonicity wrappers

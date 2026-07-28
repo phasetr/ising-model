@@ -5,8 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for three ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_*`
-wrappers extracted from
-`PartitionFreeEnergyMonotonicityFreeEnergyAlongEx.lean`:
+wrappers of the along-exhaustion free-energy monotonicity family:
 
 * `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_J`,
 * `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_h`,
@@ -14,8 +13,7 @@ wrappers extracted from
 
 Each result instantiates the corresponding generic
 `freeEnergyAlongExhaustion_monotone_*` lemma at the concrete cubic
-exhaustion. The theorem names are unchanged from the former
-`PartitionFreeEnergyMonotonicityFreeEnergyAlongEx` declarations.
+exhaustion.
 -/
 
 namespace IsingModel

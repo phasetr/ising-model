@@ -5,7 +5,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Narrow child module for four ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_{cubicExhaustion,}_ge_log_two{,_cosh}`
-wrappers extracted from `PartitionFreeEnergyBoundsAlongExBridges.lean`.
+wrappers of the per-stage free-energy bound family.
 -/
 
 namespace IsingModel

@@ -1,4 +1,4 @@
-import IsingModel.PseudoMass.FromParamsHZero.JZeroJointRegularity
+import IsingModel.PseudoMass.FromParamsHZero.JZeroHRegularity
 
 /-!
 # Pseudo-Mass h-zero parameter specializations compatibility umbrella

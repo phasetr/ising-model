@@ -72,11 +72,11 @@ The four wrappers
 now live in `PartitionFunctionSymmetryAlongEx.lean`. -/
 
 
-/-! ## Moved: cubicExhaustion abs-h wrappers
+/-! ## Removed: cubicExhaustion abs-h wrappers
 
-The two
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_{eq_abs_h,monotone_abs_h}`
-wrappers now live in `PartitionFunctionSymmetryCubicAbsH.lean`. -/
+The two ℤ^d cubic-exhaustion `partitionFunctionAlongExhaustion` absolute-field
+wrappers of this family had no consumers and were deleted in PR #4754.  The
+`log_` variants remain in `PartitionFunctionSymmetryLogCubic.lean`. -/
 
 
 

@@ -431,7 +431,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
 
     Markdown code spans are paired positionally, so an unbalanced backtick does
     not lose only its own span: everything after it is read with the parity
-    inverted. ``docs/index.md:1809`` spells ``ContinuousOn`.continuousAt`` with
+    inverted. ``docs/index.md:1801`` spells ``ContinuousOn`.continuousAt`` with
     three backticks where two were meant, and from that column on the line's
     real citations sat outside every span the tokenizer saw -- 218 tokens, none
     of them naming ``magnetizationAlongExhaustion``, which the raw line spells
@@ -529,7 +529,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
     def test_an_unpairable_backtick_is_reported_with_its_line(self) -> None:
         """Both live shapes are caught: a stray backtick and a span across lines."""
         self.assertEqual(dcs.unpaired_backticks(self.FLIPPED), {1: 1})
-        # docs/index.md:1200-1201: a span opened on one line, closed on the next.
+        # docs/index.md:1192-1193: a span opened on one line, closed on the next.
         across = "bound `|edges d r| <=\nO(r)` (`alpha_card_le_beta` + `gamma_le'`),\n"
         self.assertEqual(dcs.unpaired_backticks(across), {1: 1, 2: 1})
 
@@ -562,23 +562,31 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn("pair into no code span", warning)
 
     def test_the_real_index_raises_its_three_warnings(self) -> None:
-        """Measured on main: docs/index.md:1200, :1201 and :1809, nothing else."""
+        """Measured on main: docs/index.md:1192, :1193 and :1801, nothing else.
+
+        The three lines are the same three rows throughout; only their numbers
+        move. They were :1200, :1201 and :1809 until PR #4754 (safe-to-delete
+        batch 4) removed the eight module-directory bullet lines of the four
+        deleted modules that carried a documentation reference, shifting every
+        later line of ``docs/index.md`` up by eight.
+        """
         index = next(source for source in docs() if source.label == "docs/index.md")
         self.assertEqual(
-            sorted(dcs.unpaired_backticks(index.text)), [1200, 1201, 1809]
+            sorted(dcs.unpaired_backticks(index.text)), [1192, 1193, 1801]
         )
         self.assertEqual(len(index.malformed), 3)
-        self.assertTrue(any("docs/index.md:1809" in item for item in index.malformed))
+        self.assertTrue(any("docs/index.md:1801" in item for item in index.malformed))
 
-    def test_the_real_index_recovers_the_line_1809_citations(self) -> None:
+    def test_the_real_index_recovers_the_line_1801_citations(self) -> None:
         """The elided suffixes of the Step 213 row are tokens again.
 
         The row reads `` `magnetizationAlongExhaustion_continuous_beta_gen` +
         `_differentiable_beta_gen` + ... ``; before the repair the line
-        contributed 218 tokens and not one of them was any of these.
+        contributed 218 tokens and not one of them was any of these. The row was
+        at :1809 until PR #4754 shifted it up by eight.
         """
         index = next(source for source in docs() if source.label == "docs/index.md")
-        tokens = {token for token, line in index.tokens if line == 1809}
+        tokens = {token for token, line in index.tokens if line == 1801}
         for token in (
             "_differentiable_beta_gen",
             "_continuous_field_gen",
@@ -1245,9 +1253,22 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 47 safe / 77 uncertain / 64 load-bearing / 35 published.
+        """223 candidates -> 46 safe / 78 uncertain / 64 load-bearing / 35 published.
 
-        Recalibrated when the elided-prefix rule landed
+        Recalibrated by PR #4754 (safe-to-delete batch 4), which moved exactly one
+        candidate and moved it *away* from ``safe-to-delete``:
+        ``freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic``
+        ``safe-to-delete -> uncertain``. Batch 4 deleted the zero-consumer
+        ``freeEnergyAlongExhaustion_latticeGraph_nonneg``, which was the other
+        member of the ``nonneg*`` component of the ``freeEnergyAlongExhaustion_
+        latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,ge_log_two*}`` family label
+        in ``docs/index.md``; with the sibling gone the component's shorthand
+        citation now charges to the ferromagnetic wrapper alone. ``SAFE`` 47 -> 46
+        and ``UNCERTAIN`` 77 -> 78; ``LOAD_BEARING`` (64), ``PUBLISHED`` (35), the
+        223 total and :meth:`test_zero_consumer_count` (112) are unchanged. This is
+        the healthy direction -- a deletion may only add protection to survivors.
+
+        Previously recalibrated when the elided-prefix rule landed
         (:class:`ElidedFragmentTest`): a suffix citation whose elided prefix is
         spelled out on the same documentation line is charged to the siblings
         that share it. Exactly 45 candidates move, all of them out of
@@ -1266,8 +1287,8 @@ class FamilyCalibrationTest(unittest.TestCase):
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 47)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 77)
+        self.assertEqual(counts.get(dcs.SAFE), 46)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 78)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 64)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 

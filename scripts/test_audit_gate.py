@@ -820,14 +820,24 @@ class V2TokenTest(unittest.TestCase):
 # together with the deletion that moved them -- whenever the library shrinks
 # deliberately.
 #
-# Measured 2026-07-27 on this branch: ``iter_checked_files()`` = 2003 and
-# ``iter_lib_files()`` = 1996, down from 2013 / 2006 before the ten
-# zero-consumer wrapper modules of this batch were deleted (the previous floor
-# of 2000 dated from before that deletion).  The floors sit 46 below the
-# measured counts: low enough that the next deletion batch of this size does
-# not trip them, high enough that losing any of the eight largest library
-# directories -- ``Conditioning`` (48 files) up to ``Concrete`` (869) -- still
-# does.
+# Measured 2026-07-28 on this branch (PR #4754, safe-to-delete batch 4):
+# ``iter_checked_files()`` = 1984 and ``iter_lib_files()`` = 1977, down from
+# 1993 / 1986 at ``fd7a2a71`` before this batch's nine zero-consumer wrapper
+# modules were deleted.  The floors are NOT moved by this PR; they now sit 27
+# below the measured counts, still high enough that losing any of the eight
+# largest library directories -- ``Conditioning`` (48 files) up to ``Concrete``
+# (869) -- trips them.
+#
+# The numbers this block carried before (``2003`` / ``1996``, described as
+# "measured 2026-07-27 ... 46 below the floors") were wrong in two ways: they
+# were the counts from *before* PR #4751 deleted its ten modules, not after, and
+# so the derived "46 below" was really 36 below on ``fd7a2a71``.  Both are
+# corrected above against a fresh measurement.
+#
+# Standing decision: the next batch that would actually trip a floor must land
+# F1 (per-directory assertions) rather than another recalibration.  Lowering the
+# floors once per batch makes the ratchet describe the deletions instead of
+# constraining them.
 CHECKED_FILE_FLOOR = 1957
 LIB_FILE_FLOOR = 1950
 
@@ -836,11 +846,12 @@ LIB_FILE_FLOOR = 1950
 # for the visited-list assertions in ``ScanExecutionTest`` (three of them) and
 # ``V4ScanTest`` (one) below.  Those four sites used to carry a bare ``2000``
 # literal, which is why the pre-deletion slack of the named floors above did not
-# describe the whole ratchet: ``iter_checked_files()`` was 2003, three above
-# that literal, so the next ten-module deletion tripped it.  Measured
-# 2026-07-28 on this branch: ``iter_v4_files()`` = 2023 (2033 before the ten
-# modules of this batch were deleted).  Calibrated 46 below the measurement,
-# like the two floors above.
+# describe the whole ratchet: ``iter_checked_files()`` was three above that
+# literal, so a ten-module deletion tripped it.  Measured 2026-07-28 on this
+# branch (PR #4754): ``iter_v4_files()`` = 2014, down from 2023 at ``fd7a2a71``
+# before this batch's nine modules were deleted.  The floor is NOT moved by this
+# PR; it now sits 37 below the measurement, and the standing decision recorded
+# above applies to it as well.
 V4_FILE_FLOOR = 1977
 
 

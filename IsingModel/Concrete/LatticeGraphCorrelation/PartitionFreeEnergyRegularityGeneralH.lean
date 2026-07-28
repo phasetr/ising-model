@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 Narrow child module for four ℤ^d
 `partitionFunctionΛ_latticeGraph_{continuous,differentiable}_{beta,J}_general_h`
-wrappers extracted from `PartitionFreeEnergyRegularity.lean`.
+wrappers of the concrete partition/free-energy regularity family.
 -/
 
 namespace IsingModel

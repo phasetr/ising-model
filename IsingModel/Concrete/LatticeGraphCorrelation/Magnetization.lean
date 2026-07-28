@@ -65,10 +65,13 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: correlation basic wrappers
 
-The 8 ℤ^d `correlation_*_latticeGraph` thin pass-throughs (bounds +
-trivial slices + `correlation_empty`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationCorrelationBasic`.
+The 4 ℤ^d `correlation_*_latticeGraph` trivial-slice thin pass-throughs
+(including `correlation_empty`) now live in
+`IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationCorrelationBasicTrivialSlices`.
 The earlier import path is preserved by re-importing the new child.
+
+The 4 companion `correlation_*_latticeGraph` bound wrappers of the same family
+had no consumers and were deleted in PR #4754.
 -/
 
 /-! ## Moved: HNC / GKS / FKG wrappers
