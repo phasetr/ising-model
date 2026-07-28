@@ -141,7 +141,6 @@ import IsingModel.FieldDerivative
 import IsingModel.JDerivative
 import IsingModel.PseudoMass
 import IsingModel.PseudoMass.Composition
-import IsingModel.PseudoMass.FromParamsBounds.JZeroComparisons
 import IsingModel.LatticeExpSum
 import IsingModel.ComplexAnalyticity
 import IsingModel.Peierls.ConnectedDroplet

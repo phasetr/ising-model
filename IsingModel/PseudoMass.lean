@@ -1,4 +1,3 @@
-import IsingModel.PseudoMass.FromParamsBounds
 import IsingModel.PseudoMass.HLSPairBound
 import IsingModel.PseudoMass.HLSCorrelationCapstone
 import IsingModel.PseudoMass.HLSSharpPairBound
