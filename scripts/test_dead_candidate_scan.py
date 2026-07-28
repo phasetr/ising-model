@@ -1465,11 +1465,17 @@ class FamilyCalibrationTest(unittest.TestCase):
         delete-closure no longer excuses their only consumer. ``SAFE`` 46 -> 43,
         ``UNCERTAIN`` 78 -> 79, ``LOAD_BEARING`` 64 -> 66; ``PUBLISHED`` (35),
         the 223 total and :meth:`test_zero_consumer_count` (112) are unchanged.
-        Measured across the whole library the same way: 1091 -> 980
-        ``safe-to-delete``, 691 -> 757 ``uncertain``, 2081 -> 2126
+        Measured across the whole library the same way: 1091 -> 976
+        ``safe-to-delete``, 691 -> 761 ``uncertain``, 2081 -> 2126
         ``load-bearing``, ``published-result`` unchanged at 7009, and the
-        ``safe-to-delete`` key set only shrinks (135 movers, none toward
-        ``safe-to-delete``).
+        ``safe-to-delete`` key set only shrinks (139 movers -- 94
+        ``safe-to-delete -> uncertain``, 21 ``safe-to-delete -> load-bearing``,
+        24 ``uncertain -> load-bearing`` -- none toward ``safe-to-delete``).
+        The four integers asserted below are threshold-insensitive across
+        ``MAX_CHARGED_GLOB_MATCHES`` 8, 9 and 10; only the whole-library
+        ``safe-to-delete`` count moves (980 at 8, 976 at 9 and 10), which is why
+        raising the knob to its fixture ceiling of 10 needed no recalibration
+        here.
 
         Previously recalibrated by PR #4754 (safe-to-delete batch 4), which moved
         exactly one

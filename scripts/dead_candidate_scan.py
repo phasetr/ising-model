@@ -2053,17 +2053,32 @@ def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
 # ``correlationAlongExhaustion_..._ferromagnetic`` as a genuine elision whose
 # unbounded ``...`` also swallows an unrelated lower bound, giving a precise
 # citation with n = 11, and that over-match is what caps the threshold at 10 (at
-# N >= 11 the ground-truth ``safe-to-delete`` fixture row turns ``uncertain``).
-# 8 is chosen below that ceiling: it covers 185 of the 254 occurrences (73%) and
-# produces the same verdicts as 10 on the ``_ferromagnetic`` calibration family,
-# so it is the cheaper number to defend.
+# N >= 11 the ground-truth ``safe-to-delete`` fixture row turns ``uncertain`` and
+# ``--expect`` goes red).
+#
+# The value below is that ceiling, because the knob is one-sided: raising it can
+# only *remove* declarations from ``safe-to-delete``, never add one, so the
+# largest value the fixtures still admit is also the safest. Measured on the
+# whole library (main 171ddd4f, 10872 declarations): N = 8 covers 185 of the 254
+# occurrences (73%) and reports 980 ``safe-to-delete``; N = 9 and N = 10 both
+# cover 194 (76%) and report 976. The four names N = 8 would still hand to a
+# deletion PR -- named by the nine 9-match occurrences of the bin list above --
+# are ``correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg``,
+# ``correlationAlongExhaustion_latticeGraph_nonneg`` and
+# ``vdPolymerFamilies_sumAlongExhaustion_sandwich{,_sharp}_ferromagnetic``. The
+# ``_ferromagnetic`` calibration family (43/79/66/35 of 223) and its 112
+# zero-consumer count are identical at 8, 9 and 10, so the stricter number costs
+# no test churn at all. The price of sitting on the ceiling is that a future
+# ``docs/index.md`` elision widening the 11-match citation turns ``--expect``
+# red; that is the fail-closed direction and is meant to be read as a signal,
+# not silenced by lowering the knob.
 #
 # **Globs above the threshold remain a known fail-open residue**: they still
 # charge nobody, so a declaration cited only by such a label can still be
 # reported ``safe-to-delete``. They are printed by :func:`report` under
 # "documentation family labels", and closing them is the human keep-check's job
 # -- candidate enumeration is not permission.
-MAX_CHARGED_GLOB_MATCHES = 8
+MAX_CHARGED_GLOB_MATCHES = 10
 
 
 def _apply_doc_channel(
@@ -2399,7 +2414,7 @@ L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic
    citation names which result. So a family label on a line that elides nothing
    still rescues nobody, and a lemma named only by one is dead code whose
    *documentation* the deletion PR must update.
-L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (8)
+L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
    declarations is charged to nobody -- the live fail-open residue of this tool.
    At or below the threshold every match is charged, which repairs the leak that
    let `docs/index.md:1427` (`..._ge_log_two*`, a brace alternative naming 2
