@@ -62,20 +62,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_eq_bot_at_J_zero
   freeEnergyAlongExhaustion_eq_bot_at_J_zero
     (IsingModel.latticeGraph d) Λ h β n
 
-/-! ## Moved: ℤ^d finite-volume `freeEnergy_*_latticeGraph` wrappers
-
-The 16 ℤ^d finite-volume `freeEnergy_*_latticeGraph` wrappers
-(monotone in `h`/`J`/`β`/`|h|`, trivial slices
-`zero_params`/`beta_zero`/`J_zero`/`neg_h`/`eq_abs_h`,
-`eq_bot_at_J_zero`, `ge_log_two_cosh`, `bot_h_zero`,
-`card_mul_freeEnergy_eq_log_partitionFunction`,
-`ge_log_two_of_ferromagnetic`, `nonneg_of_ferromagnetic`, `bot`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesFiniteVol`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
 /-! ## Moved: ℤ^d `freeEnergyΛ` special-case wrappers
 
 The 12 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
@@ -86,15 +72,5 @@ The 12 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
 The earlier import path is preserved by re-importing the new child.
 -/
 
-/-! ## Moved: ℤ^d `freeEnergyAlongExhaustion` special-case wrappers
-
-The 12 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*` wrappers
-(`cubicExhaustion_neg_h`, `cubicExhaustion_eq_abs_h`,
-`cubicExhaustion_monotone_abs_h`, `neg_h`, `eq_abs_h`,
-`monotone_abs_h`, `beta_zero`, `zero_params`, `J_zero`, plus
-`cubicExhaustion_{beta_zero,zero_params,J_zero}`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesAlongEx`.
-The earlier import path is preserved by re-importing the new child.
--/
 end Ambient
 end IsingModel
