@@ -62,29 +62,11 @@ theorem freeEnergyΛ_latticeGraph_analyticOnNhd_J_h_zero
   Ambient.freeEnergyΛ_analyticOnNhd_J_h_zero
     (IsingModel.latticeGraph d) Λ β
 
-/-! ## Moved: freeEnergyΛ AnalyticAt at general h
-
-The three wrappers
-`freeEnergyΛ_latticeGraph_analyticAt_beta_general_h`,
-`freeEnergyΛ_latticeGraph_analyticAt_J_general_h`,
-`freeEnergyΛ_latticeGraph_analyticAt_h` now live in
-`FreeEnergyAnalyticityAtGeneralH.lean`. -/
-
-
-/-! ## Moved: freeEnergyΛ AnalyticOnNhd at general h
-
-The three wrappers
-`freeEnergyΛ_latticeGraph_analyticOnNhd_beta_general_h`,
-`freeEnergyΛ_latticeGraph_analyticOnNhd_J_general_h`,
-`freeEnergyΛ_latticeGraph_analyticOnNhd_h` now live in
-`FreeEnergyAnalyticityOnNhdGeneralH.lean`. -/
-
-
 /-! ## Moved: along-ex free-energy analyticity wrappers
 
-The ten `freeEnergyAlongExhaustion_latticeGraph_analytic*` wrappers
-(`analyticAt` / `analyticOnNhd` in β/J/h, at `h = 0` and at general h)
-now live in `FreeEnergyAnalyticityAlongEx.lean`. -/
+The three surviving `freeEnergyAlongExhaustion_latticeGraph_analytic*`
+wrappers (`analyticOnNhd` in β/J/h at general h) now live in
+`FreeEnergyAnalyticityAlongExOnNhdGeneralH.lean`. -/
 
 
 end Ambient

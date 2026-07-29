@@ -21494,7 +21494,11 @@ $\mathbb{Z}^d$ layers (Lambda-layer wraps already exist via PRs
 direct-instantiation wrappers (8 abstracts $\times$ 3 missing
 layers); the four $\mathbb{Z}^d$ $\Lambda$-layer wrappers of the
 last four abstracts in that list had no consumers and were
-deleted in PR~\#4754, leaving 20 across the remaining layers.
+deleted in PR~\#4754, and the four $\mathbb{Z}^d$
+$\Lambda$-layer general-$h$ \texttt{partitionFunction} wrappers
+together with the two $\mathbb{Z}^d$ along-ex $h$-direction
+wrappers were deleted in PR~\#4775, leaving 14 across the
+remaining layers ($24 - 4 - 6 = 14$).
 
 \paragraph{\texttt{partitionFunction} joint
 Continuous/Differentiable + general-$h$ analyticAt, all volume
@@ -21529,7 +21533,12 @@ $\mathbb{Z}^d$ \textit{Lambda}, $\mathbb{Z}^d$ along-ex):
 \texttt{\_analyticOnNhd\_beta\_general\_h},
 \texttt{\_analyticOnNhd\_J\_general\_h}, and
 \texttt{\_analyticOnNhd\_h}. 40 new thin
-direct-instantiation wrappers (10 abstracts $\times$ 4 layers).
+direct-instantiation wrappers (10 abstracts $\times$ 4 layers);
+the six $\mathbb{Z}^d$ $\Lambda$-layer general-$h$ wrappers and
+seven of the ten $\mathbb{Z}^d$ along-ex wrappers had no
+consumers and were deleted in PR~\#4775, leaving 27 across the
+remaining layers ($40 - 13 = 27$; the surviving $\mathbb{Z}^d$
+along-ex trio is the general-$h$ analyticOnNhd one).
 Complements the existing joint-direction
 \texttt{freeEnergy\LeanLambda\_analyticAt\_joint} (PR~\#1535) at the same
 volume layers.
@@ -21547,10 +21556,15 @@ four volume layers (\textit{Lambda}, along-ex, $\mathbb{Z}^d$
 \texttt{\_analyticAt\_J\_h\_zero},
 \texttt{\_analyticOnNhd\_beta\_h\_zero}, and
 \texttt{\_analyticOnNhd\_J\_h\_zero}. 32 new thin
-direct-instantiation wrappers (8 abstracts $\times$ 4 layers).
+direct-instantiation wrappers (8 abstracts $\times$ 4 layers);
+the eight $\mathbb{Z}^d$ continuity and differentiability
+wrappers (four at the $\Lambda$ layer, four along-ex) had no
+consumers and were deleted in PR~\#4775, leaving 24 across the
+remaining layers ($32 - 8 = 24$).
 These provide the polymer-expansion-derived h-zero regularity of
 $Z(J, 0, \beta)$ in $\beta / J$ at every volume layer, alongside
-the existing general-$h$ wrappers. The along-exhaustion and concrete
+the existing general-$h$ wrappers. The along-exhaustion and the
+surviving analyticAt / analyticOnNhd concrete
 $\mathbb{Z}^d$ wrappers from this family now live in the matching
 \texttt{PartitionFunctionRegularity.lean} child modules under
 \path{AmbientLattice/SpecialCases} and
