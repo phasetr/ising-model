@@ -15,9 +15,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReference
-import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMass
+import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReferencePos
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist
 
 /-!
@@ -71,15 +70,6 @@ The earlier import path is preserved by re-importing the new child.
 -/
 
 
-/-! ## Moved: pseudoMassFromParamsAtPair cubic variants
-
-The 6 cubic-variant pseudoMassFromParamsAtPair wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubic`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-
 /-! ## Moved: reference pseudoMassFromParamsAtPair variants
 
 The 6 reference-variant pseudoMassFromParamsAtPair wrappers now live in
@@ -90,9 +80,14 @@ The earlier import path is preserved by re-importing the new child.
 
 /-! ## Moved: cubic_pseudoMassFromParamsAtPair variants
 
-The 6 cubic_pseudoMassFromParamsAtPair variant wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMass`.
-The earlier import path is preserved by re-importing the new child.
+The 3 surviving cubic_pseudoMassFromParamsAtPair `_pseudoMassG_le_corr`
+variant wrappers live in
+`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMassCorr`,
+which this module does not import; import that child directly.
+
+The `LatticeMassPseudoMassTransferReferencePos` import above carries no declaration used here: it
+preserves transitive visibility of the surviving reference-positivity API for downstream modules,
+so it must not be removed as unused.
 -/
 
 

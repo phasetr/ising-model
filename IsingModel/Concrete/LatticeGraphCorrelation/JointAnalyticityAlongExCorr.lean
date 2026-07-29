@@ -2,10 +2,10 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
 
 /-!
-# Concrete AlongExhaustion correlation/mag/susc joint analyticity
+# Concrete AlongExhaustion correlation joint analyticity
 
-Narrow child module for six ℤ^d
-`{correlation,magnetization,susceptibility}AlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
+Narrow child module for two ℤ^d
+`correlationAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
 wrappers. Each wrapper is a thin pass-through to the corresponding
 ambient `*AlongExhaustion_analytic*_joint` lemma at
 `IsingModel.latticeGraph d`.
@@ -37,13 +37,6 @@ theorem correlationAlongExhaustion_latticeGraph_analyticOnNhd_joint
         ⟨p.2.1, p.2.2, p.1⟩ A n) Set.univ :=
   Ambient.correlationAlongExhaustion_analyticOnNhd_joint_gen
     (IsingModel.latticeGraph d) Λ A n
-
-/-! ## Moved: ℤ^d along-ex mag + susc joint analyticity wrappers
-
-The four wrappers
-`magnetizationAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint` and
-`susceptibilityAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
-now live in `JointAnalyticityAlongExMagSusc.lean`. -/
 
 end Ambient
 end IsingModel

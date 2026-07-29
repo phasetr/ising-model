@@ -10640,22 +10640,26 @@ and
 $\mathrm{latticeMass\_pos\_of\_pseudoMassFromParamsAtPair\_exhaustion\_le\_high\_temp\_rate}$
 allow that comparison to be checked on a reference exhaustion
 $\Lambda_0$ while producing the decay and mass conclusions on a target
-exhaustion $\Lambda$.  Their cubic-reference specialisations replace
-$\Lambda_0$ by $\mathrm{cubicExhaustion}\,d$, using
-$\mathrm{pseudoMassFromParamsAtPair\_indep\_exhaustion}$ under ferromagnetic
-parameters.  This packages the canonical-exhaustion comparison form needed for
-later Step~117l work, but it still does not prove the quantitative comparison
-itself.
+exhaustion $\Lambda$.  Three named $\mathbb{Z}^d$ specialisations replacing
+$\Lambda_0$ by $\mathrm{cubicExhaustion}\,d$ once existed; they had no
+consumer and were deleted in PR~\#4776.  The general-exhaustion statements
+above subsume them --- instantiate $\Lambda_0 := \mathrm{cubicExhaustion}\,d$
+and use $\mathrm{pseudoMassFromParamsAtPair\_indep\_exhaustion}$ under
+ferromagnetic parameters --- so the canonical-exhaustion comparison form
+needed for later Step~117l work is still available, and none of it proves the
+quantitative comparison itself.
 The reference-rate variants
 $\mathrm{HasExponentialDecay\_reference\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
 $\mathrm{latticeMass\_ge\_reference\_pseudoMassFromParamsAtPair\_of\_exhaustion\_le\_high\_temp\_rate}$,
 and
 $\mathrm{latticeMass\_pos\_of\_reference\_pseudoMassFromParamsAtPair\_exhaustion\_le\_high\_temp\_rate}$
 state the same target-exhaustion conclusions using the reference pseudo-mass
-itself.  The corresponding cubic-reference forms make a later comparison
-proved on $\mathrm{cubicExhaustion}\,d$ immediately usable as a target
-decay rate and target $\mathrm{latticeMass}$ lower bound for arbitrary
-exhaustions.
+itself.  A later comparison proved on $\mathrm{cubicExhaustion}\,d$ is
+immediately usable as a target decay rate and target
+$\mathrm{latticeMass}$ lower bound for arbitrary exhaustions by taking
+$\Lambda_0 := \mathrm{cubicExhaustion}\,d$ in these three; the three named
+cubic-reference wrappers that spelled that instantiation out had no consumer
+and were deleted in PR~\#4776.
 
 The profile-comparison refinement
 \path{pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr}
@@ -10675,10 +10679,12 @@ implicit characterization
 $\mathrm{pseudoMass}(c)\le t \iff \mathrm{pseudoMassG}(\alpha,r,t)\le c$.
 
 The companion profile-bound theorems compose this comparison with the
-transferred high-temperature rate.  Their reference-exhaustion and
-cubic-reference variants provide the same target decay and target
-$\mathrm{latticeMass}$ conclusions when the profile lower bound is checked on
-$\Lambda_0$ or on $\mathrm{cubicExhaustion}\,d$.
+transferred high-temperature rate.  Their reference-exhaustion variants, and
+the surviving cubic pseudo-mass profile trio, provide the same target decay
+and target $\mathrm{latticeMass}$ conclusions when the profile lower bound is
+checked on $\Lambda_0$ or on $\mathrm{cubicExhaustion}\,d$; the three
+$\mathrm{pseudoMassFromParamsAtPair}$-valued cubic variants of the same family
+had no consumer and were deleted in PR~\#4776.
 
 For the canonical anchored cubic pair, the lower-bound input can be reduced
 one step further to a tanh-power estimate.  The theorem
@@ -21039,7 +21045,12 @@ all 4 layers (\S17.5--\S17.6, PR~\#1641).} Adds joint (in
 $(\beta, J, h)$) AnalyticAt and AnalyticOnNhd wrappers for
 \texttt{magnetization}, \texttt{susceptibility}, and along-ex
 \texttt{correlation} across abstract, $\Lambda$, along-exhaustion,
-and $\mathbb{Z}^d$ concrete layers. 24 new theorems. The
+and $\mathbb{Z}^d$ concrete layers. 24 new theorems, of which 16
+survive: the 8 $\mathbb{Z}^d$ \texttt{magnetization} /
+\texttt{susceptibility} wrappers (4 at $\Lambda$, 4 along-exhaustion)
+were deleted as unreferenced in PR~\#4776, leaving the
+along-exhaustion \texttt{correlation} pair as the $\mathbb{Z}^d$
+layer. The
 susceptibility joint AnalyticAt case is proved as
 \texttt{Finset.analyticAt\_fun\_sum} over the
 \texttt{truncated2} summands. The along-exhaustion wrappers now live
@@ -21054,7 +21065,10 @@ all 4 layers (\S17.5--\S17.6, PR~\#1640).} Adds joint pointwise
 for \texttt{correlation}, \texttt{magnetization}, and
 \texttt{susceptibility} across abstract, $\Lambda$,
 along-exhaustion, and $\mathbb{Z}^d$ concrete layers. 30 new
-theorems, each derived from PR~\#1639 via
+theorems, of which 22 survive: the 8 $\mathbb{Z}^d$
+\texttt{magnetization} / \texttt{susceptibility} pointwise wrappers
+(4 at $\Lambda$, 4 along-exhaustion) were deleted as unreferenced in
+PR~\#4776. Each is derived from PR~\#1639 via
 \texttt{.continuousAt} / \texttt{.differentiableAt}. The
 along-exhaustion and $\mathbb{Z}^d$ wrapper layers now live in
 \texttt{AmbientLattice/SpecialCases/JointRegularity.lean} and
@@ -21062,7 +21076,8 @@ along-exhaustion and $\mathbb{Z}^d$ wrapper layers now live in
 (moved from the legacy modules in PR~\#1859). PR~\#2097 further carves
 the 12 \texttt{*\_continuousAt\_joint} /
 \texttt{*\_differentiableAt\_joint} concrete wrappers out into
-\texttt{Concrete/LatticeGraphCorrelation/JointRegularityPointwise.lean}.
+\texttt{Concrete/LatticeGraphCorrelation/JointRegularityPointwise.lean};
+4 of those 12 remain after PR~\#4776.
 PR~\#2098 further carves the 6 along-exhaustion
 \texttt{*\_continuous\_joint} / \texttt{*\_differentiable\_joint}
 concrete wrappers out into

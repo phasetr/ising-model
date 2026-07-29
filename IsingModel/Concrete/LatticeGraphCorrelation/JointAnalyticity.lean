@@ -13,22 +13,12 @@ namespace IsingModel
 namespace Ambient
 
 /-! ### ℤ^d joint AnalyticAt + AnalyticOnNhd wrappers
-(correlation / magnetization / susceptibility) at Λ + along-ex -/
+(partitionFunction / freeEnergy) along-ex -/
 
-/-! ## Moved: Λ-direct joint analyticity wrappers
+/-! ## Moved: AlongEx correlation joint analyticity
 
-The four wrappers
-`magnetizationΛ_latticeGraph_analyticAt_joint`,
-`magnetizationΛ_latticeGraph_analyticOnNhd_joint`,
-`susceptibilityΛ_latticeGraph_analyticAt_joint`,
-`susceptibilityΛ_latticeGraph_analyticOnNhd_joint` now live in
-`JointAnalyticityLambda.lean`. -/
-
-
-/-! ## Moved: AlongEx correlation/mag/susc joint analyticity
-
-The six wrappers
-`{correlation,magnetization,susceptibility}AlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
+The two wrappers
+`correlationAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
 now live in `JointAnalyticityAlongExCorr.lean`. -/
 
 /-- **ℤ^d along-ex: partitionFunctionAlongExhaustion jointly AnalyticAt**. -/
