@@ -4,26 +4,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d HNC / GKS / FKG wrappers on `latticeGraph d`
 
-Narrow child module for 12 `hasNonnegCorrelations_*_latticeGraph` /
-`gks_*_latticeGraph` / `boltzmannWeight_*_latticeGraph` /
-`fkg_ising_latticeGraph` thin pass-throughs of the abstract HNC /
-GKS / FKG bridges on the induced subgraph
-`inducedGraph (latticeGraph d) Λ`. Theorem names are unchanged from
-the former `Magnetization` declarations.
+Narrow child module for the remaining four direct HNC / GKS thin
+pass-throughs, plus the remaining four GKS / FKG / supermodular wrappers in
+`MagnetizationGksFkgTail.lean`, on the induced subgraph
+`inducedGraph (latticeGraph d) Λ`. Theorem names are unchanged from the former
+`Magnetization` declarations.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-
-/-! ## Moved: hasNonnegCorrelations primitive wrappers
-
-The four wrappers
-`hasNonnegCorrelations_one_latticeGraph`,
-`hasNonnegCorrelations_finset_prod_latticeGraph`,
-`hasNonnegCorrelations_mul_prod_latticeGraph`,
-`hasNonnegCorrelations_mul_latticeGraph` now live in
-`MagnetizationGksFkgPrimitives.lean`. -/
 
 
 /-- **ℤ^d hasNonnegCorrelations_general_coupling direct** (Λ-induced):
