@@ -15,16 +15,6 @@ namespace Ambient
 
 /-! ### magnetization regularity ℤ^d wraps -/
 
-/-! ## Moved: magnetizationΛ Λ-direct regularity wrappers
-
-The four wrappers
-`magnetizationΛ_latticeGraph_continuous_field`,
-`magnetizationΛ_latticeGraph_differentiable_field`,
-`magnetizationΛ_latticeGraph_continuous_J`,
-`magnetizationΛ_latticeGraph_differentiable_J` now live in
-`MagnetizationRegularityLambda.lean`. -/
-
-
 /-- **ℤ^d along-ex: magnetization Continuous in `h`**. -/
 theorem magnetizationAlongExhaustion_latticeGraph_continuous_field
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))

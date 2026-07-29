@@ -12,8 +12,6 @@ import IsingModel.Inequalities.FKG
    `PhaseTransition.lean`.
 2. **Site-level magnetization wrappers (GJ §5.3, pp. 77–80)** — bounds,
    vanishing slices, monotonicity.
-3. **Correlation forwarders (bounds, trivial slices, empty A)** —
-   basic correlation properties.
 
 The susceptibility / η family (with `truncated2_h_zero_latticeGraph`)
 moved to the narrow child `MagnetizationSusceptibility.lean`
@@ -63,20 +61,9 @@ The earlier import path is preserved by re-importing the new child.
 -/
 
 
-/-! ## Moved: correlation basic wrappers
-
-The 4 ℤ^d `correlation_*_latticeGraph` trivial-slice thin pass-throughs
-(including `correlation_empty`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationCorrelationBasicTrivialSlices`.
-The earlier import path is preserved by re-importing the new child.
-
-The 4 companion `correlation_*_latticeGraph` bound wrappers of the same family
-had no consumers and were deleted in PR #4754.
--/
-
 /-! ## Moved: HNC / GKS / FKG wrappers
 
-The 12 ℤ^d `hasNonnegCorrelations_*_latticeGraph` /
+The 8 ℤ^d `hasNonnegCorrelations_*_latticeGraph` /
 `gks_*_latticeGraph` / `boltzmannWeight_*_latticeGraph` /
 `fkg_ising_latticeGraph` wrappers now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationGksFkg`.
