@@ -4,16 +4,14 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 /-!
 # ℤ^d AlongExhaustion mayer-epsilon positivity / equality wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion mayer-epsilon
+Narrow child module for four ℤ^d AlongExhaustion mayer-epsilon
 positivity / equality wrappers extracted from
 `MayerEpsilonPositivity.lean`:
 
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pos_iff`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_eq_zero_iff`,
 * `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_pos_iff`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_eq_zero_iff`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_iff`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_eq_zero_iff`.
+* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_eq_zero_iff`.
 -/
 
 namespace IsingModel
