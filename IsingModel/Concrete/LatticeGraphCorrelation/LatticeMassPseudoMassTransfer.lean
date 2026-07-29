@@ -85,10 +85,9 @@ variant wrappers live in
 `IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMassCorr`,
 which this module does not import; import that child directly.
 
-The `LatticeMassPseudoMassTransferReferencePos` import above carries no
-declaration used here: it re-exports the transitive surface that the
-former `LatticeMassPseudoMassTransferCubicPseudoMass` import provided to
-downstream modules, so it must not be removed as unused.
+The `LatticeMassPseudoMassTransferReferencePos` import above carries no declaration used here: it
+preserves transitive visibility of the surviving reference-positivity API for downstream modules,
+so it must not be removed as unused.
 -/
 
 
