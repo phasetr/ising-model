@@ -22127,29 +22127,29 @@ now live in
 The bottom-graph comparison wrappers are the fixed instance
 $\bot \le \mathrm{latticeGraph}\,d$, rather than graph-to-graph ambient-subgraph
 wrappers.  In contrast, the 13 ambient-subgraph wrappers are fully enumerated
-as follows.  \path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBot.lean}
+as follows.  \path{Concrete/LatticeGraphCorrelation/TwoPointAmbientBot.lean}
 (narrowed out of \path{TwoPoint.lean} in PR~\#2009) contains
 \texttt{freeEnergyInfinite\_latticeGraph\_monotone\_ambient\_subgraph}, the sole
 specialisation of $G_1 \le \mathrm{latticeGraph}\,d$ using
 \texttt{cubicExhaustion}.  The other twelve accept arbitrary $G_1 \le G_2$:
-\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBotMonotone.lean}
+\path{Concrete/LatticeGraphCorrelation/TwoPointAmbientBotMonotone.lean}
 (PR~\#2093) contains
 \texttt{freeEnergy$\Lambda$\_latticeGraph\_monotone\_ambient\_subgraph},
 \texttt{freeEnergyAlongExhaustion\_latticeGraph\_monotone\_ambient\_subgraph},
 \texttt{partitionFunction$\Lambda$\_latticeGraph\_monotone\_ambient\_subgraph}, and
 \texttt{partitionFunctionAlongExhaustion\_latticeGraph\_monotone\_ambient\_subgraph};
-\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointAmbientBotMonotoneCorr.lean}
+\path{Concrete/LatticeGraphCorrelation/TwoPointAmbientBotMonotoneCorr.lean}
 (split from the preceding module in PR~\#2355) contains
 \texttt{correlation$\Lambda$\_latticeGraph\_monotone\_ambient\_subgraph},
 \texttt{correlationAlongExhaustion\_latticeGraph\_monotone\_ambient\_subgraph}, and
 \texttt{correlationInfinite\_latticeGraph\_monotone\_ambient\_subgraph};
-\path{IsingModel/Concrete/LatticeGraphCorrelation/BaseMonotoneAmbientSubgraph.lean}
+\path{Concrete/LatticeGraphCorrelation/BaseMonotoneAmbientSubgraph.lean}
 (PR~\#2033) contains
 \texttt{magnetization$\Lambda$\_latticeGraph\_monotone\_ambient\_subgraph},
 \texttt{magnetizationAlongExhaustion\_latticeGraph\_monotone\_ambient\_subgraph},
 \texttt{magnetizationInfinite\_latticeGraph\_monotone\_ambient\_subgraph}, and
 \texttt{spontaneousCorrelation\_latticeGraph\_monotone\_ambient\_subgraph}; and
-\path{IsingModel/Concrete/LatticeGraphCorrelation/BaseSpontaneousCorrelation.lean}
+\path{Concrete/LatticeGraphCorrelation/BaseSpontaneousCorrelation.lean}
 (PR~\#2032) contains
 \texttt{spontaneousMagnetization\_latticeGraph\_monotone\_ambient\_subgraph}.
 PR~\#2092 separately owns the seven $\Lambda$/along-exhaustion
