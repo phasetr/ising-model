@@ -2,31 +2,34 @@ import IsingModel.ClusterExpansion.HighTempKoteckyPreiss
 import IsingModel.ClusterExpansion.MayerCore.CubicMayerCouplingDirectionAnalyticity
 
 /-!
-# High-temperature Kotecký–Preiss discharge for the §18.6 regularity and coupling capstones
+# High-temperature Kotecký–Preiss discharge for lattice regularity and coupling capstones
 
-Completes the unconditional-in-the-KP-region story of §18.6 begun in `HighTempKoteckyPreiss.lean`.
-That file discharged the two Kotecký–Preiss tail conditions from the single threshold
-`r = Δ²e|t| < 1/6` (`kp_tail_conditions_of_lt`) and applied it to the §18.5 Mayer-series
-convergence and the §18.6 free-energy *analyticity* (pointwise + interval + unit coupling). Here the
-same discharge is applied to the remaining KP-conditional §18.6 capstones, all in terms of the two
+Completes the lattice-Ising, unconditional-in-the-KP-region story begun in
+`HighTempKoteckyPreiss.lean`.  That file discharged the two Kotecký–Preiss tail conditions
+from the single threshold `r = Δ²e|t| < 1/6` (`kp_tail_conditions_of_lt`) and applied it
+to Mayer-series convergence and free-energy analyticity.  Here the same discharge is applied
+to the remaining KP-conditional capstones, all in terms of the two
 thresholds `(2d)^2 e R < 1/6` and `(2d)^2 e T < 1/6`:
 
 * the **β-direction regularity** corollaries of the interval analyticity — continuity, `C^n`
   smoothness, real-analyticity of the internal energy density `∂_β f` and of the specific heat
   `∂_β² f` (no singularity / no phase transition in the high-temperature interval);
-* the **coupling-direction (`J`)** analyticity family — GJ §18.6 is literally about analyticity in
-  the coupling — pointwise, on the whole coupling interval, with continuity, `C^n` smoothness, and
-  real-analyticity of the bond energy density `∂_J f`.
+* the **coupling-direction (`J`)** analyticity family — pointwise, on the whole coupling
+  interval, with continuity, `C^n` smoothness, and real-analyticity of the bond energy
+  density `∂_J f`.
 
 Each result is a mechanical wrapper: discharge the KP pair via `kp_tail_conditions_of_lt` and feed
-it to the corresponding conditional theorem. Together with `HighTempKoteckyPreiss.lean` this removes
-the explicit `hkp`/`hρ` hypotheses from every public §18.6 high-temperature analyticity/regularity
-statement.
+it to the corresponding conditional theorem. Together with `HighTempKoteckyPreiss.lean` this
+removes the explicit `hkp`/`hρ` hypotheses from every public lattice high-temperature
+analyticity/regularity statement in this family.  The project uses “§18.x” only as an analogy
+label: Glimm–Jaffe Chapter 18 concerns continuum `P(φ)₂`, whereas the primary source for these
+lattice Kotecký–Preiss results is Friedli–Velenik §5.4 and §5.7.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.6, pp. 335–340.
 * Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §5.4 (Theorem 5.4, Kotecký–Preiss).
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., Chapter 18, as a continuum
+  cluster-expansion analogy only.
 -/
 
 namespace IsingModel

@@ -17009,7 +17009,7 @@ Bricks~2a and~2b exhibited the field-dependent partition function as a hard-core
 polymer gas with volume-uniform activity bounds.
 Brick~3 supplies the convergence input of the field-dependent Mayer expansion:
 the field cluster-sequence activity, the field Mayer term, and its
-term-by-term dominated summability by comparison to the already-established zero-field majorant.
+term-by-term dominated summability by comparison to the previously proved zero-field majorant.
 
 \begin{definition}[\texttt{fieldClusterSeqActivity}]
 \label{def:field_cluster_seq_activity}
@@ -17551,14 +17551,20 @@ the \emph{seventh PR} of the \emph{13--22 PR chain} toward that capstone (Issue~
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerComplexNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, analyticity and non-vanishing); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+Reference: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49)
+(magnetic-field expansion), and \S5.4/\S5.7 (Kotecky--Preiss and Mayer
+expansions). Glimm--Jaffe Chapter~18, pp.~321--343, is a continuum analogy only.
 
-\section{Cluster expansion (\S18.1--18.3)}
+\section{Lattice high-temperature expansion (project \S18.1--18.3 analogy)}
 
 The lattice Ising analogue of the cluster expansion is the
 \textbf{high-temperature expansion}, decomposing each Boltzmann factor:
 $\exp(\beta J \sigma_i\sigma_j) = \cosh(\beta J)(1 + \tanh(\beta J)\sigma_i\sigma_j)$.
 This is already proved as \texttt{exp\_edgeSpin\_decomp}.
+The \S18.x labels in this guide are project-internal analogy labels, not a literal
+correspondence with Glimm--Jaffe Chapter~18.  That chapter treats the continuum
+$P(\phi)_2$ cluster expansion.  The primary source for the lattice formulas and
+Kotecky--Preiss results below is Friedli--Velenik \S3.7.3, \S5.4, and \S5.7.
 
 \begin{definition}[\texttt{highTempParam}]
 $t = \tanh(\beta J)$, the high-temperature expansion parameter.
@@ -17572,8 +17578,8 @@ $|t| = |\tanh(\beta J)| < 1$ for all finite $\beta J$.
 $t < 1$.
 \end{theorem}
 
-\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion}; GJ~\S18.3,
-cf.\ FV~\S3.7.3 eq.\,(3.42)]
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion};
+FV~\S3.7.3 eq.\,(3.42)]
 For any Ising parameter $p = (J, h, \beta)$ on a finite simple graph
 $G = (\iota, E)$,
 \[
@@ -17595,7 +17601,8 @@ by \texttt{exp\_edgeSpin\_decomp} and $\cosh(\beta J) > 0$.
 Multiplying over edges and pulling out $\cosh(\beta J)^{|E|}$ gives the claim.
 \hfill$\square$
 
-\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero}; GJ~\S18.3 / FV~\S3.7.3 eq.\,(3.42)]
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero};
+FV~\S3.7.3 eq.\,(3.42)]
 At zero external field, the high-temperature expansion specialises to
 \[
 Z(G; J, 0, \beta) = (\cosh(\beta J))^{|E|}
@@ -17667,7 +17674,8 @@ cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \texttt{correlation\LeanLambda\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
 in \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean}).
 
-\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_general\_h\_subset\_form}; GJ~\S18.3/\S18.5]
+\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_general\_h\_subset\_form};
+FV~\S3.7.3 lattice expansion]
 For any $A \subseteq \iota$, any finite simple graph $G = (\iota, E)$, and
 any Ising parameter $p = (J, h, \beta)$,
 \[
@@ -17724,8 +17732,8 @@ arbitrary observable \(F : \mathrm{Config}~\iota \to \mathbb{R}\)
        {\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
         \sum_\sigma (\prod_{e \in X} \sigma_e) e^{\beta h \sum_i \sigma_i}}.
 \]
-This is the canonical GJ~\S18.3 high-temperature representation of thermal
-averages; the proof is identical, carrying \(F(\sigma)\) through the
+This is the lattice high-temperature representation of thermal averages from the
+Friedli--Velenik expansion; the proof is identical, carrying \(F(\sigma)\) through the
 \(\sigma\)-sum in the public numerator lemma
 \texttt{numerator\_observable\_high\_temp\_expansion\_subset\_form} (whose
 \(F = 1\) case is the partition-function subset form). The correlation theorem
@@ -17735,8 +17743,8 @@ above is the one-line specialisation \(F = \sigma_A\), and the magnetization
 (\texttt{AmbientLattice/GibbsExpectationHighTempExpansion.lean}) carries it to
 the infinite-volume exhaustion.
 
-\paragraph{External-field response in subset form (GJ~\S17.6, pp.~348--351;
-\S18.3, pp.~378--386).}
+\paragraph{External-field response in subset form (GJ~\S17.6; lattice expansion
+from Friedli--Velenik \S3.7.3).}
 The GJ~\S17.6 fluctuation-response derivative
 \[
 \frac{\partial}{\partial h}\langle\sigma_A\rangle_h
@@ -19494,10 +19502,11 @@ real-analytic. Hence the infinite-volume thermodynamic functions are real-analyt
 high-temperature phase: \textbf{no phase transition at high temperature}. Reference: Glimm--Jaffe,
 2nd ed., \S18.6.
 
-\paragraph{Coupling-direction analyticity (\S18.6).} File
-\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingDirectionAnalyticity.lean}. Glimm--Jaffe \S18.6
-is literally about analyticity in the \emph{coupling}; the results above are in the inverse
-temperature \(\beta\). The coupling-direction (\(J\)) analyticity follows from the \(\beta\)-direction
+\paragraph{Coupling-direction analyticity (project \S18.6 lattice analogy).} File
+\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingDirectionAnalyticity.lean}.  This is a
+lattice Kotecky--Preiss consequence with Friedli--Velenik \S5.4 and \S5.7 as its primary
+source; the GJ \S18.6 label is only an analogy.  The coupling-direction (\(J\))
+analyticity follows from the \(\beta\)-direction
 unit-coupling capstone through the zero-field scaling symmetry
 \(\texttt{freeEnergyInfinite}\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,\langle\beta
 J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\)): with \(g(c)=\texttt{freeEnergyInfinite}\,
@@ -30023,34 +30032,24 @@ of the $m^-$ identity in the GJ p.~312 $c$-denominator step.
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
 
-\subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
+\subsubsection*{Lemma 17.5.2 and Theorem 17.5.1 (superseded historical sketch)}
 
-Combining Steps 117a--g with the HLS convolution constant and the remaining
-analytic all-rate estimate:
+This early sketch is superseded by the rigorous capstone
+\texttt{gj\_theorem\_17\_5\_1\_rigorous}.  The implemented result proves continuity
+of the pseudo-mass $m^-$, the non-sharp sandwich $m^-\le m\le C m^-$ with
+$C>1$, and continuity of the true mass outside a countable exceptional set.
+The sandwich does not collapse, so it does not prove everywhere continuity of
+the true mass.  That stronger contract remains unresolved.
 
-\begin{theorem}[Lemma 17.5.2 (partial)]
-Lower bound: $0 < m^-(\beta)$ for all $c \in (0, 2)$ (Step 117g).
-
-Upper bound: $m(\beta) \le C \cdot m^-(\beta)$ for some HLS-uniform
-constant $C > 0$ once the all-decay-rate estimate is proved.
-\end{theorem}
-
-\begin{theorem}[Theorem 17.6.1: Continuity at critical point]
-The lattice mass function $m(\beta)$ is continuous at the critical point $\beta = \beta_c$.
-
-\textbf{Proof sketch}: Lemma 17.5.2 bounds + implicit differentiation (Step 117e)
-+ derivative bounds (Step 117f) + discrete HLS $\Rightarrow$ Lipschitz in $\beta$ $\Rightarrow$ continuity at $\beta_c$.
-\end{theorem}
-
-\noindent\textit{Status}: Historical sketch updated after the proved HLS
-convolution-constant package; the final HLS-uniform upper-bound proof is still
-deferred.
-Files: \texttt{PseudoMass.lean} and
-\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}.
-References: Glimm--Jaffe 2nd~ed. (1987), \S17.5 pp.~345--347, \S17.6 pp.~348--351.
+\noindent\textit{Status}: Superseded and corrected; no completion claim for
+everywhere true-mass continuity.
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/MassContinuityLatticeMassWindow.lean}.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1 and
+Lemma~17.5.2, pp.~311--312.
 
 %% ---------------------------------------------------------------
-\subsection*{Step 118 -- Theorem 17.6.1: $\partial/\partial h$ of correlations (Done)}
+\subsection*{Step 118 -- Finite-volume $\partial/\partial h$ of correlations (Done)}
 
 \subsubsection*{Mathematical structure}
 
@@ -30097,11 +30096,12 @@ Intermediate steps: \texttt{externalFieldEnergy\_eq}, \texttt{hasDerivAt\_hamilt
 \texttt{hasDerivAt\_partitionFunction\_field}, \texttt{hasDerivAt\_weightedBoltzmannSum\_field}.
 Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-factoring.
 
-\noindent\textit{Status}: Complete formalization (PR~\#931).
+\noindent\textit{Status}: Complete finite-volume formalization (PR~\#931).
 File: \texttt{FieldDerivative.lean}.
-Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6, Theorem~17.6.1, p.~313.
 
-\subsection*{Step 118b -- Theorem 17.6.1 Option B capstone: field/volume-uniform $\partial/\partial h$ bound (Done)}
+\subsection*{Step 118b -- Finite-volume field/volume-uniform
+$\partial/\partial h$ bound (Done)}
 
 \subsubsection*{Mathematical statement}
 
@@ -30176,7 +30176,8 @@ This capstone is the \emph{book-faithful finite deliverable}: differentiability 
 Cor.~4.3.4 of \S4.3).  It \textbf{deliberately does not} claim infinite-volume $\partial/\partial h$
 differentiability, which would require equicontinuity control of the general-$h$ four-point Lebowitz
 sign (the frozen wall of the class of Issue~\#4413; the naive $\kappa_4 \le 0$ is numerically false).
-The complex KP-window Vitali/Montel route (Option~A) is deferred separately.
+The separate complex-field route proves a small-coupling holomorphic local limit; it does
+not export the broader real infinite-volume \texttt{HasDerivAt}.
 
 \noindent\textit{Status}: Complete formalization (PR~\#4432).
 File: \texttt{Concrete/LatticeGraphCorrelation/Truncated2FieldDerivativeUniformBound.lean}.
@@ -31427,8 +31428,10 @@ is now a \emph{theorem} (\texttt{TheoremEtaLe1/Contraction/Factor.lean}). Under
 $\langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}\to 0$ along the cofinite
 filter), the contraction factor tends to zero,
 $\texttt{contractionFactor}\,d\,\Lambda\,p\,r \to 0$ as $r\to\infty$. With this,
-\textbf{GJ §17.8 Theorem 17.8.1 ($\eta \le 1$) is unconditional}, and the entire
-project is free of declared axioms (modulo Mathlib).
+\textbf{the general GJ \S17.8 Theorem 17.8.1 implication is proved under its
+stated \texttt{HasPolynomialDecay} hypothesis}.  The separate high-temperature
+corollary discharges that hypothesis when $\beta J\cdot2d<1$.  All proof inputs
+are theorems, so the project is free of declared axioms (modulo Mathlib).
 
 \paragraph{Surface cardinality.}
 The crux is that the boundary has only $O(r^{d-1})$ edges, a \emph{surface} count.

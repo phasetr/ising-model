@@ -17,16 +17,15 @@ regime**.  It is the field analogue of the `β`-route high-temperature capstone
 (`TwoPointCorrelationInfiniteAnalytic.lean`).  The `β` Vitali/analyticity stack and the
 already-merged field bricks are **not** modified — this is a pure addition.
 
-**Scope / positioning (important).**  This is **not** the primary formalization of
-Glimm–Jaffe Theorem 17.6.1.  The `∂/∂h` (`μ`-direction) infinite-volume *differentiability*
-of GJ Thm 17.6.1 is already established, **unconditionally and on a wider range** (the full
-Kotecký–Preiss window, general `h ≥ 0`, no small-coupling restriction), by the Lebowitz +
-M-test route (Issues #4413 / #4432, both closed).  The present cluster-expansion route is an
-**optional beyond-book strengthening**: it upgrades that already-established `h`-direction
-result to complex-field *holomorphy*, but only in the high-temperature (small-coupling)
-regime.  It does not replace or re-establish the primary Thm 17.6.1 formalization; the
-field-CE `h`-direction thread is explicitly an optional off-book exploration (tracking
-issue #4433).
+**Scope / positioning (important).**  This is not a full formalization of the real
+`∂/∂h` claim in Glimm–Jaffe Theorem 17.6.1.  Its exact contract is a small-coupling
+complex-field result: the finite-stage functions converge locally uniformly to a holomorphic
+limit, and that limit agrees with `correlationInfinite` at the stated real accumulation
+field.  The finite-volume theorem `hasDerivAt_correlation_h_uniform_bound` supplies a
+field- and volume-uniform derivative bound, but no broader real infinite-volume `HasDerivAt`
+declaration is currently exported.  Establishing that wider real theorem remains a separate
+unresolved task.  The field-CE thread tracked by #4433 is complete only for the local
+holomorphic-limit contract proved here.
 
 ## Variable roles (field vs `β`)
 For the field route the varying complex parameter is the field `b` (`= β·h`); the coupling
@@ -51,13 +50,13 @@ the `β` route where the small parameter and the accumulation point coincided.
   real accumulation field `b₀ ∈ [0, r)`, the per-stage complex field correlations converge
   locally uniformly on `Metric.ball 0 r` to a holomorphic `f` agreeing with
   `correlationInfinite … ⟨a, b₀, 1⟩ …` on the real axis — high-temperature `h`-direction
-  holomorphy (an **optional beyond-book strengthening** of the already-established, wider
-  `∂/∂h` differentiability of #4432; **not** the primary GJ Thm 17.6.1 formalization),
-  closing the optional field cluster-expansion thread.
+  holomorphy in the small-coupling regime.  The theorem does not export a wider real
+  infinite-volume `HasDerivAt`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6, Theorem 17.6.1,
-eq. (17.6.1), p. 313; §18.3, Theorem 18.3.1, eq. (18.3.3), p. 330.  Friedli–Velenik,
-*Statistical Mechanics of Lattice Systems* (CUP, 2017), §5.4, Theorem 5.4 (Kotecký–Preiss).
+References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
+Theorem 17.6.1, eq. (17.6.1), p. 313.  The lattice cluster expansion is sourced from
+Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (CUP, 2017), §5.4,
+Theorem 5.4 (Kotecký–Preiss); Glimm–Jaffe Chapter 18 is only a continuum analogy.
 -/
 
 namespace IsingModel
@@ -255,10 +254,10 @@ per-stage complex field correlations `fun n b => fieldCorrelationℂAlongExhaust
 holomorphic `f`, with `f (b₀) = ↑(correlationInfinite (latticeGraph d) Λ ⟨a, b₀, 1⟩ A)` on
 the real axis.  Since `b = β·h` with `β = 1` and `J = a` fixed, holomorphy in `b` is
 `h`-direction analyticity of the infinite-volume correlation, in the small-coupling
-(high-temperature) regime.  This is an **optional beyond-book strengthening** of the
-already-established, wider `∂/∂h` differentiability of GJ Thm 17.6.1 (Lebowitz + M-test,
-#4432, unconditional over the full Kotecký–Preiss window) — it adds complex-field
-holomorphy at high temperature, and is **not** the primary Thm 17.6.1 formalization.
+(high-temperature) regime.  This theorem exports exactly the displayed holomorphic
+local-limit contract.  It does not export a broader real infinite-volume `HasDerivAt`;
+`hasDerivAt_correlation_h_uniform_bound` is a finite-volume result, and the wider
+infinite-volume real derivative remains unresolved.
 
 Proof (assembly of the merged bricks):
 * `exists_ctanh_ball_bound` supplies the ball-uniform `Mr`;

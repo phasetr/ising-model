@@ -1,20 +1,22 @@
 ---
 layout: default
-title: Refactoring baseline and execution plan
+title: Archived refactoring baseline and final execution record
 ---
 
-# Refactoring baseline and execution plan (#4506)
+# Archived refactoring baseline and final execution record (#4506)
 
-This document is the repository-local canonical plan for issue #4506. It records the static
-baseline, reconciles the active issues, and defines the gates for refactoring aimed at faster Lean
-builds and simpler code. It supersedes the phase descriptions in older #4506 comments when those
-descriptions conflict with the issue state below.
+This document is the repository-local historical record for the completed issue #4506 campaign.
+It preserves the static baseline, the predeclared gates, and the measured outcomes.  It is not an
+active authorization for further refactoring.  Current structural decisions are tracked by #4793;
+fresh build-speed reconciliation and any SpecialCases re-merge measurement are tracked by #4794.
 
 ## Status and issue mapping
 
-Status as of 2026-07-16:
+Final status, archived 2026-07-30:
 
-- #4506 remains the open tracker for this refactoring programme.
+- #4506 is closed completed.  “Completed” means the bounded B0 measurement and B1 candidate
+  campaign reached a terminal audited state; it does not mean repository-wide refactoring is
+  complete.
 - #4521 is closed completed: its canonical measurement passed independent verification, but the
   primary performance result was **FAIL** (B 16.83 s, A 16.72 s, 0.6535948% improvement against the
   fixed 10% target).
@@ -24,11 +26,10 @@ Status as of 2026-07-16:
 - #4519 is closed not planned. Revisions 1--22 produced no admissible timing rows, medians,
   percentage deltas, or performance verdict. In particular, Rev22 ended with two passing static
   tests and one fixture error; it is not a performance baseline.
-- #4505 is reopened to correct the stale `docs/index.md` statement that Vitali--Porter remains an
-  axiom. The theorem has been proved since #4280.
+- #4505 is closed completed; its Vitali--Porter documentation correction merged in PR #4522.
 - #4523 tracks the pre-existing U+0085 byte that independently blocks proof-guide pdfLaTeX; it was
   not introduced by #4505, PR #4522, #4524, or PR #4525.
-- Draft PR #4520 is an archive boundary for the #4519 evidence. It does not authorize a new
+- PR #4520 is an archive boundary for the #4519 evidence. It does not authorize a new
   benchmark protocol or a source refactor.
 
 The completed historical work remains useful but does not establish a speedup:
@@ -102,10 +103,10 @@ The existing mathematical architecture is the default abstraction boundary:
 
 ## Execution order
 
-The canonical B0 measurement and the sole authorized B1 implementation are complete. No additional
-source refactor is active or authorized. The next programme step is to merge the independently
-verified #4505 documentation fix in PR #4522, then perform the #4506 completion audit. Tracker #4506
-remains open until that audit records the final state.
+The canonical B0 measurement and the sole authorized B1 implementation are complete, PR #4522 is
+merged, and the #4506 completion audit is recorded.  No additional source refactor is authorized
+by this archived plan.  A future candidate needs fresh evidence and its own issue under #4793 or
+#4794, as appropriate.
 
 ### B0: completed performance baseline (#4521)
 
@@ -215,9 +216,9 @@ Every source refactor must provide:
 - targeted module, downstream importer, and root builds with zero warnings;
 - `lake exe GKSTest` and the repository's sentinel/property checks;
 - no new placeholder hit in the diff, no `sorry` or `admit` in compiled library declarations, and
-  no new `native_decide` in library theorem/proof bodies. Current `main` has 16 accepted textual
-  hits: ten executable `native_decide` sanity-check `example`s in `IsingModel/TestGenerators.lean`
-  and six prose/comment mentions. They must remain unchanged; deleting them is outside this scope;
+  no `native_decide` in library theorem/proof bodies. Current `main` has one textual
+  `native_decide` mention in the `IsingModel/TestGenerators.lean` module documentation and no
+  executable use;
 - representative `#print axioms` output limited to `propext`, `Classical.choice`, and `Quot.sound`;
 - the `lean-verify-audit` V1--V3 verification/audit gate and focused Shake/import review for touched
   modules; `scripts/leaf_audit.py` is a separate import-graph orphan/dead-candidate report, not a
