@@ -32686,8 +32686,9 @@ vanishing, with the $\mathrm{Fin}\,n \leftrightarrow \mathrm{Fin}(n{+}1)$ index 
 $\texttt{tsum\_eq\_zero\_add}$).  Composing with PR 14
 ($\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp\|M_G - M_{\texttt{Gavoid}}\|$) gives
 $\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$, which (after
-$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) feeds $\texttt{hbdd}$ in the
-remaining 5c.6 step.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
+$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) fed $\texttt{hbdd}$ into what
+was then the remaining 5c.6 step; the later PR 21 and final capstone complete that composition.
+References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
 
 \subsection{Capstone prerequisites: complex-\texorpdfstring{$z$}{z} KP bound, connected
 support-card bound, and the tanh bridge (Issue \#4230 PR 20)}
@@ -33035,10 +33036,11 @@ correlations on an open set $U$, $\texttt{\_vitali\_bridge}$ gives that $f$ is h
 (via $\texttt{vitali\_bridge}$), and $\texttt{\_limit\_eq\_correlationInfinite\_at\_real}$ identifies
 $f$ on the real axis with $\uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\,A)$
 ($\texttt{tendsto\_nhds\_unique}$ of the locally-uniform pointwise limit and the real-axis limit).
-The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  The remaining input --- locally
-uniform convergence of the per-stage complex correlations on a high-temperature disc, from a
-volume-uniform cluster-expansion (Montel) bound --- is the genuine research-level core, deferred to
-follow-up PRs (Issue~\#4230).  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
+The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  Historical stage note: PR 1
+still took locally uniform convergence from a volume-uniform cluster-expansion (Montel) bound as an
+input; the later Issue~\#4230 rows discharge it and culminate in
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
+Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
 \subsection{Per-stage holomorphicity from volume-uniform partition non-vanishing
 (Issue \#4230 PR 2)}
@@ -33059,9 +33061,11 @@ non-vanishing on a high-temperature disc is available from
 hypotheses.  Feeding this into the conditional bridge,
 $\texttt{correlationComplexAlongExhaustion\_vitali\_identified\_at\_real\_of\_ne\_zero}$ obtains the
 holomorphicity-and-real-identification conclusion from only the partition non-vanishing and the
-locally uniform convergence $\texttt{hconv}$ --- the latter (the Montel / volume-uniform input)
-being the genuine research-level core deferred to follow-up PRs.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.6--18.7.
+locally uniform convergence $\texttt{hconv}$.  Historical stage note: PR 2 still accepted
+$\texttt{hconv}$ and partition non-vanishing as inputs; the later Issue~\#4230 rows discharge both
+and culminate in
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
+Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
 \subsection*{PR \#4277 --- Unconditional adjacent-pair susceptibility bridge (GJ~\S17.5 / \S5.1, audit B1 \#4268)}
 
