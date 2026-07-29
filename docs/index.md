@@ -2206,6 +2206,15 @@ inventory (2026-04-17).
 | §20.5 | Low-temperature expansion | **Done (lattice)** = Peierls |
 | §20.8 | 3D Ising roughening | Not formalized (specialized) |
 
+### Technical-debt documentation handoff (2026-07-29)
+
+PR #4781 completed the docs-first ambient-subgraph clarification at the §4.2--§4.6 inventory
+row above: it enumerates the 13 APIs and distinguishes the 12 arbitrary-graph-pair wrappers from
+the one cubic/lattice specialization. Do **not** start #4746 Item A batches 13--15 as routine
+deletion work. The independent documentation decisions at the §18.3 and §18.5 inventory rows
+(currently lines 2117 and 2187) require scoped investigation and tracking before implementation;
+this handoff grants no implementation authorization.
+
 ## Unformalized infinite-volume theorems
 
 The following GJ Ising infinite-volume discussions are **not yet
