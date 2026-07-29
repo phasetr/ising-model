@@ -3,9 +3,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 /-!
 # Concrete cubic-pseudoMass corr-profile wrappers
 
-Narrow child module for 3 ℤ^d cubic-pseudoMass
-`_pseudoMassG_le_corr` profile wrappers extracted from
-`LatticeMassPseudoMassTransferCubicPseudoMass.lean`:
+Narrow child module for the 3 ℤ^d cubic-pseudoMass
+`_pseudoMassG_le_corr` profile wrappers:
 
 * `HasExponentialDecay_cubic_pseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr`,
 * `latticeMass_ge_cubic_pseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr`,
@@ -13,8 +12,7 @@ Narrow child module for 3 ℤ^d cubic-pseudoMass
 
 Each result is a thin composition wrapper around the
 `*_reference_pseudoMassFromParamsAtPair_of_exhaustion_pseudoMassG_le_corr`
-lemma at the cubic exhaustion. The theorem names are unchanged from the
-former `LatticeMassPseudoMassTransferCubicPseudoMass` declarations.
+lemma at the cubic exhaustion.
 -/
 
 namespace IsingModel

@@ -5,8 +5,8 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularityAt
 /-!
 # ℤ^d AlongExhaustion joint pointwise regularity wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion joint pointwise wrappers
-(`{correlation,magnetization,susceptibility}AlongExhaustion_latticeGraph_*_joint`
+Narrow child module for two ℤ^d AlongExhaustion joint pointwise wrappers
+(`correlationAlongExhaustion_latticeGraph_*_joint`
 with `continuousAt` and `differentiableAt`) extracted from
 `JointRegularityPointwise.lean`. Each wrapper is a thin pass-through to the
 corresponding ambient joint pointwise lemma at `IsingModel.latticeGraph d`.
@@ -38,16 +38,6 @@ theorem correlationAlongExhaustion_latticeGraph_differentiableAt_joint
         ⟨q.2.1, q.2.2, q.1⟩ A n) p :=
   Ambient.correlationAlongExhaustion_differentiableAt_joint_gen
     (IsingModel.latticeGraph d) Λ A n p
-
-/-! ## Moved: AlongEx joint pointwise mag + susc wrappers
-
-The four wrappers
-`magnetizationAlongExhaustion_latticeGraph_continuousAt_joint`,
-`magnetizationAlongExhaustion_latticeGraph_differentiableAt_joint`,
-`susceptibilityAlongExhaustion_latticeGraph_continuousAt_joint`,
-`susceptibilityAlongExhaustion_latticeGraph_differentiableAt_joint` now
-live in `JointRegularityPointwiseAlongExMagSusc.lean`. -/
-
 
 end Ambient
 end IsingModel
