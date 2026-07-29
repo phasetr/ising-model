@@ -27,8 +27,8 @@ Final status, archived 2026-07-30:
   percentage deltas, or performance verdict. In particular, Rev22 ended with two passing static
   tests and one fixture error; it is not a performance baseline.
 - #4505 is closed completed; its Vitali--Porter documentation correction merged in PR #4522.
-- #4523 tracks the pre-existing U+0085 byte that independently blocks proof-guide pdfLaTeX; it was
-  not introduced by #4505, PR #4522, #4524, or PR #4525.
+- #4523 is closed completed.  Its pre-existing U+0085 blocker was fixed independently; it was not
+  introduced by #4505, PR #4522, #4524, or PR #4525.
 - PR #4520 is an archive boundary for the #4519 evidence. It does not authorize a new
   benchmark protocol or a source refactor.
 
@@ -101,7 +101,7 @@ The existing mathematical architecture is the default abstraction boundary:
 - a new record, typeclass, macro, or common helper requires demonstrated consumers, not anticipated
   reuse.
 
-## Execution order
+## Terminal disposition
 
 The canonical B0 measurement and the sole authorized B1 implementation are complete, PR #4522 is
 merged, and the #4506 completion audit is recorded.  No additional source refactor is authorized

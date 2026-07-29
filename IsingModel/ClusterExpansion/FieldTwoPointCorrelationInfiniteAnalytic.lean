@@ -5,14 +5,14 @@ import IsingModel.ClusterExpansion.FieldCorrelationBallUniform
 import IsingModel.RealTanhAux
 
 /-!
-# High-temperature `∂/∂h` analyticity capstone (GJ §17.6.1, brick F6c)
+# Small-coupling complex-field holomorphic local-limit capstone (brick F6c)
 
 This file discharges, **at high temperature** (small coupling `a = β·J`), the two shared
-hypotheses of the field (`∂/∂h`) Vitali/Montel consumer (brick F6a,
+hypotheses of the complex-field Vitali/Montel consumer (brick F6a,
 `fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound`), yielding
-`h`-direction **holomorphy** (analyticity in the complex field `b = β·h`) of the
-infinite-volume field two-point correlation, **in the small-coupling (high-temperature)
-regime**.  It is the field analogue of the `β`-route high-temperature capstone
+local uniform convergence of the finite-stage complex-field correlations to a holomorphic
+function of `b = β·h`, **in the small-coupling (high-temperature) regime**.  It is the
+field analogue of the `β`-route high-temperature capstone
 `correlationInfinite_latticeGraph_two_point_analytic_high_temp`
 (`TwoPointCorrelationInfiniteAnalytic.lean`).  The `β` Vitali/analyticity stack and the
 already-merged field bricks are **not** modified — this is a pure addition.
@@ -48,10 +48,10 @@ the `β` route where the small parameter and the accumulation point coincided.
 * `fieldCorrelationInfinite_latticeGraph_analytic_high_temp` — the capstone: for `r < π/2`
   there is an `a₀ > 0` such that for every high-temperature coupling `a ∈ [0, a₀)` and every
   real accumulation field `b₀ ∈ [0, r)`, the per-stage complex field correlations converge
-  locally uniformly on `Metric.ball 0 r` to a holomorphic `f` agreeing with
-  `correlationInfinite … ⟨a, b₀, 1⟩ …` on the real axis — high-temperature `h`-direction
-  holomorphy in the small-coupling regime.  The theorem does not export a wider real
-  infinite-volume `HasDerivAt`.
+  locally uniformly on `Metric.ball 0 r` to a holomorphic `f`, with the single displayed
+  equality `f (b₀ : ℂ) = ↑(correlationInfinite … ⟨a, b₀, 1⟩ …)`.  It does not identify
+  `f` with the real infinite-volume correlation at other real fields and does not export a
+  real infinite-volume `HasDerivAt`.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.  The lattice cluster expansion is sourced from
@@ -245,19 +245,19 @@ private theorem exists_field_high_temp_window (d Acard : ℕ) (Mr : ℝ) (_hMr1 
 
 namespace Ambient
 
-/-- **High-temperature `h`-direction holomorphy of the infinite-volume field correlation**
-(GJ §17.6.1, brick F6c capstone; related to Theorem 17.6.1, eq. (17.6.1), p. 313).  Fix a
+/-- **Small-coupling complex-field holomorphic local-limit capstone**
+(brick F6c; motivated by GJ §17.6.1, Theorem 17.6.1, eq. (17.6.1), p. 313).  Fix a
 nonempty observable `A` and a radius `r < π/2`.  Then there is `a₀ > 0` such that for every
 high-temperature coupling `a ∈ [0, a₀)` and every real accumulation field `b₀ ∈ [0, r)`, the
 per-stage complex field correlations `fun n b => fieldCorrelationℂAlongExhaustion
 (latticeGraph d) Λ A a b n` converge **locally uniformly** on `Metric.ball 0 r` to a
-holomorphic `f`, with `f (b₀) = ↑(correlationInfinite (latticeGraph d) Λ ⟨a, b₀, 1⟩ A)` on
-the real axis.  Since `b = β·h` with `β = 1` and `J = a` fixed, holomorphy in `b` is
-`h`-direction analyticity of the infinite-volume correlation, in the small-coupling
-(high-temperature) regime.  This theorem exports exactly the displayed holomorphic
-local-limit contract.  It does not export a broader real infinite-volume `HasDerivAt`;
-`hasDerivAt_correlation_h_uniform_bound` is a finite-volume result, and the wider
-infinite-volume real derivative remains unresolved.
+holomorphic `f`, with the equality
+`f (b₀ : ℂ) = ↑(correlationInfinite (latticeGraph d) Λ ⟨a, b₀, 1⟩ A)` at that quantified
+real point.  This theorem exports exactly the displayed holomorphic local-limit contract:
+it does not identify `f` with `correlationInfinite` at any other real field and does not
+export a real infinite-volume `HasDerivAt`.  The declaration
+`hasDerivAt_correlation_h_uniform_bound` is finite-volume; the wider infinite-volume real
+derivative remains unresolved.
 
 Proof (assembly of the merged bricks):
 * `exists_ctanh_ball_bound` supplies the ball-uniform `Mr`;

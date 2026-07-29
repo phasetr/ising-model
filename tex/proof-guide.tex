@@ -16833,18 +16833,24 @@ Combined with the high-temperature expansion (product form) over edge subsets,
 the closed form follows as a purely finite combinatorial identity.
 No cluster-expansion, Kotecký--Preiss, or new analytic input is required.
 
-This is the first brick of the on-book programme toward
-GJ Theorem~17.6.1 ($\partial/\partial h$ high-temperature differentiability
-and $h$-analyticity of the two-point function).
+For all field-polymer subsections through F6c below, the lattice high-temperature
+expansion, Koteck\'y--Preiss, and Mayer provenance is Friedli--Velenik
+\S3.7.3, \S5.4, and \S5.7.  GJ Theorem~17.6.1 is the comparison target;
+GJ Chapter~18 is a continuum analogy only.
+
+This is the first finite combinatorial brick of the project's complex-field
+local-limit chain.  It does not itself prove real infinite-volume
+$\partial/\partial h$ differentiability.
 The Lean proof (\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormField.lean})
 is axiom-free.
-Reference: Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
+Primary source: Friedli--Velenik, \S3.7.3.  GJ Theorem~17.6.1 motivates
+the comparison target; GJ Chapter~18 is only a continuum analogy.
 
 \subsection{Field-dependent polymer factorization identity (GJ \S17.6.1, brick 2a)}
 
 \label{subsec:field_polymer_factorization}
 
-Brick~2a of the on-book programme toward GJ Theorem~17.6.1.
+Brick~2a of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 The field-dependent high-temperature closed form (brick~1) decomposes the edge-subset sum
 into connected polymers via the factorization identity.
 
@@ -16908,7 +16914,7 @@ Friedli--Velenik, \S5.7 (polymer gas); Glimm--Jaffe, 2nd ed., \S18.4 (lattice cl
 
 \label{subsec:field_polymer_activity}
 
-Brick~2b of the on-book programme toward GJ Theorem~17.6.1.
+Brick~2b of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 The field-dependent polymer factorization identity (brick~2a) exhibits the finite-volume
 partition function as a hard-core gas of field-dependent polymers.
 Brick~2b supplies the volume-uniform activity bounds for that gas,
@@ -17004,7 +17010,7 @@ Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, fi
 
 \label{subsec:field_mayer_term}
 
-Brick~3 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~3 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Bricks~2a and~2b exhibited the field-dependent partition function as a hard-core
 polymer gas with volume-uniform activity bounds.
 Brick~3 supplies the convergence input of the field-dependent Mayer expansion:
@@ -17126,7 +17132,7 @@ Friedli--Velenik, \S5.7 (Mayer--Montroll expansion).
 
 \label{subsec:field_mayer_montroll_identity}
 
-Brick~4 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~4 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Brick~3 provided the convergence input via dominated summability of the field Mayer term.
 Brick~4 now supplies the \emph{algebraic Mayer--Montroll identity}:
 the field polymer free energy equals the sum of the field Mayer expansion terms,
@@ -17260,7 +17266,7 @@ Friedli--Velenik, \S5.7 (Mayer--Montroll identity) and \S3.7.3, eqs.~(3.48)--(3.
 
 \label{subsec:field_polymer_exp_nonvanishing}
 
-Brick~5 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~5 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Brick~4 provided the algebraic Mayer--Montroll \emph{log}-identity
 $\texttt{fieldPolymerFreeEnergy}(G, a, b) = \sum_n \texttt{fieldMayerExpansionTerm}(G, n, a, b)$.
 Brick~5 now converts that log-identity into an \emph{exponential} identity and
@@ -17377,18 +17383,17 @@ Its Koteck\'y--Preiss summability window is deferred to brick~6.
 \paragraph{Scope.}
 Brick~5 supplies the real-$h$ exponential identity and non-vanishing result,
 together with the \emph{type and estimate design} for the complex field parameter.
-The complex $Z_{\mathbb{C}} \ne 0$ statement itself (analytic continuation + non-vanishing on the complex KP ball)
-is the content of brick~6, the Montel/Vitali re-plumbing is brick~7,
-and the $\partial/\partial h$ capstone is brick~8.
-This is brick~5 of the on-book programme toward GJ Theorem~17.6.1's $\partial/\partial h$
-high-temperature differentiability; \textbf{it is not itself a $\partial/\partial h$ result}.
-It is the ~6th PR of the ~13--22 PR chain toward that capstone (Issue~\#4413, thread~\#4433).
+The complex $Z_{\mathbb{C}} \ne 0$ statement itself is supplied by brick~6;
+the subsequent F6a--F6c assembly reaches the small-coupling complex-field
+holomorphic local-limit endpoint.  Brick~5 is supporting infrastructure, not
+a real infinite-volume $\partial/\partial h$ result.
 
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerExpNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, non-vanishing);
-Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+Primary source: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49)
+(magnetic-field expansion), and \S5.4/\S5.7.  Glimm--Jaffe Chapter~18 is
+a continuum analogy only.
 
 \subsection{Complex field partition non-vanishing via analytic continuation (GJ \S17.6.1, brick 6)}
 
@@ -17543,10 +17548,8 @@ and $\text{Complex.exp}$ is never zero. \hfill$\square$
 
 \paragraph{Scope.}
 Brick~6 supplies the complex exponential identity and complex non-vanishing;
-it does \textbf{not} itself constitute a $\partial/\partial h$ result. The two-point Montel/Vitali re-plumbing
-is brick~7, and the $\partial/\partial h$ capstone is brick~8. This is brick~6 of the on-book programme
-toward GJ Theorem~17.6.1's $\partial/\partial h$ high-temperature differentiability; it is
-the \emph{seventh PR} of the \emph{13--22 PR chain} toward that capstone (Issue~\#4413, thread~\#4433).
+it does \textbf{not} itself constitute a $\partial/\partial h$ result.  The later F6a--F6c
+assembly uses this input for the small-coupling complex-field holomorphic local-limit endpoint.
 
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerComplexNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
@@ -17554,6 +17557,26 @@ are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound}
 Reference: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49)
 (magnetic-field expansion), and \S5.4/\S5.7 (Kotecky--Preiss and Mayer
 expansions). Glimm--Jaffe Chapter~18, pp.~321--343, is a continuum analogy only.
+
+\subsection{Small-coupling complex-field holomorphic local-limit endpoint (F6a--F6c)}
+
+For every \(r\) with \(0<r<\pi/2\), there is \(a_0>0\) such that, for every
+\(a\) with \(0\le a<a_0\) and every real \(b_0\) with \(0\le b_0<r\), there is
+\(f:\mathbb C\to\mathbb C\) which is differentiable on
+\(\operatorname{ball}(0,r)\), is the locally uniform limit there of the
+finite-stage complex-field correlations, and satisfies only the displayed
+identification
+\[
+  f(\uparrow b_0)=
+  \uparrow\!\left(\texttt{correlationInfinite}\,
+    (\texttt{latticeGraph}\,d)\,\Lambda\,\langle a,b_0,1\rangle\,A\right).
+\]
+This is the exact contract of
+\texttt{fieldCorrelationInfinite\_latticeGraph\_analytic\_high\_temp}.
+It does not identify \(f\) with the real infinite-volume correlation at other
+real fields and exports no broader real infinite-volume
+\texttt{HasDerivAt}.  The cluster-expansion inputs are sourced from
+Friedli--Velenik \S5.4 and \S5.7; GJ Theorem~17.6.1 is a comparison target.
 
 \section{Lattice high-temperature expansion (project \S18.1--18.3 analogy)}
 
@@ -19455,9 +19478,10 @@ uniform.  The holomorphic infinite-volume cluster free energy on the high-temper
 analytic object for the \S18.6 coupling-analyticity capstone (D2.4).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
-\paragraph{Infinite-volume free-energy coupling analyticity (\S18.6, Issue~\#4149, CAPSTONE).}
-The GJ \S18.6 capstone: the infinite-volume \(\mathbb Z^d\) Ising free-energy density is real-analytic
-in the coupling at high temperature, realised via the cluster expansion
+\paragraph{Infinite-volume free-energy coupling analyticity (project \S18.6 lattice analogue,
+Issue~\#4149).}
+The project lattice-analogue endpoint states that the infinite-volume \(\mathbb Z^d\) Ising
+free-energy density is real-analytic in the coupling at high temperature, realised via the cluster expansion
 (\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingAnalyticity.lean}).  The scaling
 \(\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,G\,\Lambda\,
 \langle\beta J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\); at zero field the Boltzmann weight
@@ -19475,11 +19499,12 @@ the holomorphic \(F_\infty\) restricted to the real axis, \(\texttt{AnalyticOnNh
   \texttt{AnalyticAt}\,\mathbb R\,(\beta'\mapsto\texttt{freeEnergyInfinite}\,(\mathrm{latticeGraph}\,d)\,
     (\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta'\rangle)\,\beta,
 \]
-with a \(J=1\) wrapper.  This is the \textbf{\S18.6 zero-field, high-temperature, cubic-exhaustion
-infinite-volume coupling-analyticity capstone} --- the endpoint of the cluster-expansion chain:
+with a \(J=1\) wrapper.  This is the \textbf{project \S18.6 lattice-analogue,
+zero-field, high-temperature, cubic-exhaustion endpoint} --- the endpoint of the cluster-expansion chain:
 volume-uniform per-site-KP Mayer identity \(\to\) free-energy bounds \(\to\) infinite-volume
 real-axis bound \(\to\) the Montel/Vitali holomorphic limit \(\to\) this analyticity capstone.
-Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335ff.; Friedli--Velenik \S5.4, \S5.7.
+Primary source: Friedli--Velenik \S5.4, \S5.7.  Glimm--Jaffe Chapter~18 is a
+continuum analogy only, not the literal source of this lattice theorem.
 
 \paragraph{High-temperature interval analyticity and absence of phase transition (\S18.6).}
 File \texttt{ClusterExpansion/MayerCore/CubicMayerHighTempIntervalAnalyticity.lean}. The capstone
@@ -30179,7 +30204,7 @@ sign (the frozen wall of the class of Issue~\#4413; the naive $\kappa_4 \le 0$ i
 The separate complex-field route proves a small-coupling holomorphic local limit; it does
 not export the broader real infinite-volume \texttt{HasDerivAt}.
 
-\noindent\textit{Status}: Complete formalization (PR~\#4432).
+\noindent\textit{Status}: Complete finite-volume formalization (PR~\#4432).
 File: \texttt{Concrete/LatticeGraphCorrelation/Truncated2FieldDerivativeUniformBound.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), Theorem~17.6.1 (p.~313); Cor.~4.3.3 (p.~61); Cor.~4.3.4 (p.~61).
 

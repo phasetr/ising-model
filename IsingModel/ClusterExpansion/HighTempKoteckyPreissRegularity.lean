@@ -36,7 +36,8 @@ namespace IsingModel
 
 open Finset Filter Topology Ambient
 
-/-- **§18.6 free-energy continuity at high temperature** (unconditional in the KP region): the
+/-- **Project §18.6 lattice analogue: free-energy continuity at high temperature**
+(unconditional in the KP region): the
 infinite-volume free-energy density is continuous on the high-temperature interval
 `β ∈ (0, artanh T / J)`, under the two thresholds `(2d)^2 e R < 1/6`, `(2d)^2 e T < 1/6`. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_high_temp_of_activity
@@ -51,7 +52,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_high_temp_o
   freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_high_temp
     d hJ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 free-energy `C^n` smoothness at high temperature** (unconditional in the KP region): the
+/-- **Project §18.6 lattice analogue: free-energy `C^n` smoothness at high temperature**
+(unconditional in the KP region): the
 infinite-volume free-energy density is `C^n` on the high-temperature interval, for every `n`. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_high_temp_of_activity
     (d : ℕ) {R T J : ℝ} (hJ : 0 < J) (hR : 0 < R) (hT : 0 < T) (hTR : T ≤ R) (hT1 : T < 1)
@@ -65,7 +67,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_high_temp_of_
   freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_high_temp
     d hJ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 internal energy density analyticity at high temperature** (unconditional in the KP
+/-- **Project §18.6 lattice analogue: internal energy density analyticity at high temperature**
+(unconditional in the KP
 region): the `β`-derivative of the free energy (internal energy density) is real-analytic on the
 high-temperature interval. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_energyDensity_high_temp_of_activity
@@ -80,7 +83,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_energyDensity_high_temp_
   freeEnergyInfinite_latticeGraph_cubicExhaustion_energyDensity_analyticOnNhd_high_temp
     d hJ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 specific heat analyticity at high temperature** (unconditional in the KP region): the
+/-- **Project §18.6 lattice analogue: specific heat analyticity at high temperature**
+(unconditional in the KP region): the
 second `β`-derivative of the free energy (specific heat) is real-analytic on the high-temperature
 interval — no singularity, hence no phase transition there. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_specificHeat_high_temp_of_activity
@@ -95,7 +99,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_specificHeat_high_temp_o
   freeEnergyInfinite_latticeGraph_cubicExhaustion_specificHeat_analyticOnNhd_high_temp
     d hJ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 coupling-direction analyticity at high temperature** (unconditional in the KP region):
+/-- **Project §18.6 lattice analogue: coupling-direction analyticity at high temperature**
+(unconditional in the KP region):
 the free energy at zero field is real-analytic in the **coupling** `J` near a high-temperature point
 (`0 < βJ`, `tanh(βJ) < T`), under the two thresholds. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticAt_J_h_zero_of_activity
@@ -110,7 +115,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticAt_J_h_zero_of_a
   freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticAt_J_h_zero
     d hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT hβJ_pos hβJ_tanh
 
-/-- **§18.6 coupling-interval analyticity at high temperature** (unconditional in the KP region):
+/-- **Project §18.6 lattice analogue: coupling-interval analyticity at high temperature**
+(unconditional in the KP region):
 the free energy at zero field is real-analytic in the coupling on the whole interval
 `J ∈ (0, artanh T / β)` (`β > 0`), under the two thresholds. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticOnNhd_J_high_temp_of_activity
@@ -125,7 +131,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticOnNhd_J_high_tem
   freeEnergyInfinite_latticeGraph_cubicExhaustion_analyticOnNhd_J_high_temp
     d hβ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 coupling-direction continuity at high temperature** (unconditional in the KP region):
+/-- **Project §18.6 lattice analogue: coupling-direction continuity at high temperature**
+(unconditional in the KP region):
 the free energy is continuous in the coupling on `J ∈ (0, artanh T / β)`. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_J_high_temp_of_activity
     (d : ℕ) {R T β : ℝ} (hβ : 0 < β) (hR : 0 < R) (hT : 0 < T) (hTR : T ≤ R) (hT1 : T < 1)
@@ -139,7 +146,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_J_high_temp
   freeEnergyInfinite_latticeGraph_cubicExhaustion_continuousOn_J_high_temp
     d hβ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 coupling-direction `C^n` smoothness at high temperature** (unconditional in the KP
+/-- **Project §18.6 lattice analogue: coupling-direction `C^n` smoothness at high temperature**
+(unconditional in the KP
 region): the free energy is `C^n` in the coupling on `J ∈ (0, artanh T / β)`, for every `n`. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_J_high_temp_of_activity
     (d : ℕ) {R T β : ℝ} (hβ : 0 < β) (hR : 0 < R) (hT : 0 < T) (hTR : T ≤ R) (hT1 : T < 1)
@@ -153,7 +161,8 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_J_high_temp_o
   freeEnergyInfinite_latticeGraph_cubicExhaustion_contDiffOn_J_high_temp
     d hβ hR hT hTR hT1 hkp2dR hρ2dR hkp2dT hρ2dT
 
-/-- **§18.6 bond energy density analyticity at high temperature** (unconditional in the KP region):
+/-- **Project §18.6 lattice analogue: bond energy density analyticity at high temperature**
+(unconditional in the KP region):
 the coupling derivative `∂_J f` (bond energy density) is real-analytic on the coupling interval. -/
 theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_couplingEnergy_J_high_temp_of_activity
     (d : ℕ) {R T β : ℝ} (hβ : 0 < β) (hR : 0 < R) (hT : 0 < T) (hTR : T ≤ R) (hT1 : T < 1)
