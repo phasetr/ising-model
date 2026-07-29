@@ -4,9 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
 /-!
 # Concrete partitionFunctionAlongExhaustion regularity at `h = 0`
 
-Narrow child module for eight ℤ^d
+Narrow child module for four ℤ^d
 `partitionFunctionAlongExhaustion_latticeGraph_*_h_zero` regularity
-wrappers (continuous/differentiable/analyticAt/analyticOnNhd in β/J at
+wrappers (analyticAt/analyticOnNhd in β/J at
 `h = 0`). Each wrapper is a thin pass-through to the corresponding
 ambient `partitionFunctionAlongExhaustion_*_h_zero` lemma at
 `IsingModel.latticeGraph d`.
@@ -14,14 +14,6 @@ ambient `partitionFunctionAlongExhaustion_*_h_zero` lemma at
 
 namespace IsingModel
 namespace Ambient
-/-! ## Moved: partitionFunctionAlongEx continuous/diff h=0 wrappers
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_continuous_beta_h_zero`,
-`partitionFunctionAlongExhaustion_latticeGraph_continuous_J_h_zero`,
-`partitionFunctionAlongExhaustion_latticeGraph_differentiable_beta_h_zero`,
-`partitionFunctionAlongExhaustion_latticeGraph_differentiable_J_h_zero`
-now live in `PartitionFunctionRegularityAlongExContinuousDiff.lean`. -/
 
 /-- **ℤ^d along-ex: partitionFunction `AnalyticAt ℝ` in `β` at
 `h = 0`**. -/

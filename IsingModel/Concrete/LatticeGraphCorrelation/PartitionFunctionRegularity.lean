@@ -4,26 +4,16 @@ import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 /-!
 # Concrete partition-function regularity wrappers
 
-This module contains concrete `latticeGraph` specializations of `Continuous`,
-`Differentiable`, `AnalyticAt`, and `AnalyticOnNhd` APIs for partition
-functions at zero external field. It is split out of the original concrete
-correlation module so downstream users can depend on a narrower child path.
+This module contains concrete `latticeGraph` specializations of `AnalyticAt`
+and `AnalyticOnNhd` APIs for partition functions at zero external field. It is
+split out of the original concrete correlation module so downstream users can
+depend on a narrower child path.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 /-! ### ℤ^d partition-function regularity at `h = 0` -/
-
-/-! ## Moved: partitionFunctionΛ continuous/diff h=0 wrappers
-
-The four wrappers
-`partitionFunctionΛ_latticeGraph_continuous_beta_h_zero`,
-`partitionFunctionΛ_latticeGraph_continuous_J_h_zero`,
-`partitionFunctionΛ_latticeGraph_differentiable_beta_h_zero`,
-`partitionFunctionΛ_latticeGraph_differentiable_J_h_zero` now live in
-`PartitionFunctionRegularityContinuousDiffHZero.lean`. -/
-
 
 /-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `β` at `h = 0`**. -/
 theorem partitionFunctionΛ_latticeGraph_analyticAt_beta_h_zero
@@ -73,8 +63,8 @@ theorem partitionFunctionΛ_latticeGraph_analyticOnNhd_J_h_zero
 
 /-! ## Moved: partitionFunctionAlongExhaustion regularity at `h = 0`
 
-The eight `partitionFunctionAlongExhaustion_latticeGraph_*_h_zero`
-regularity wrappers now live in
+The four `partitionFunctionAlongExhaustion_latticeGraph_*_h_zero`
+regularity wrappers (`AnalyticAt` / `AnalyticOnNhd` in β/J) now live in
 `PartitionFunctionRegularityAlongEx.lean`. -/
 
 

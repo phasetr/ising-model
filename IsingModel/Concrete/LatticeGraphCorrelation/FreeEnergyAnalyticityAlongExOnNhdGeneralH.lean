@@ -6,7 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 
 Narrow child module for three ℤ^d
 `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_*` general-h
-wrappers extracted from `FreeEnergyAnalyticityAlongEx.lean`:
+wrappers, the only surviving ℤ^d along-exhaustion members of the
+free-energy per-direction analyticity family:
 
 * `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_beta_general_h`,
 * `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_J_general_h`,

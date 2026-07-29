@@ -4,10 +4,10 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
 /-!
 # Concrete along-ex partitionFunction regularity wrappers
 
-Narrow child module for six ℤ^d
+Narrow child module for four ℤ^d
 `partitionFunctionAlongExhaustion_latticeGraph_*`
 `Continuous`/`Differentiable` regularity wrappers (continuous_*,
-differentiable_* in β, J, h at general h). Each wrapper is a thin
+differentiable_* in β, J at general h). Each wrapper is a thin
 pass-through to the corresponding ambient
 `partitionFunctionAlongExhaustion_*` lemma at
 `IsingModel.latticeGraph d`.
@@ -67,14 +67,6 @@ partitionFunctionAlongExhaustion_latticeGraph_differentiable_J_general_h
         (IsingModel.latticeGraph d) Λ ⟨J', h, β⟩ n) :=
   Ambient.partitionFunctionAlongExhaustion_differentiable_J_general_h
     (IsingModel.latticeGraph d) Λ β h n
-
-/-! ## Moved: along-ex partitionFunction h-direction wrappers
-
-The two along-ex `partitionFunctionAlongExhaustion_latticeGraph_*_h`
-wrappers (`_continuous_h`, `_differentiable_h`) now live in
-`PartitionFreeEnergyRegularityAlongExPartitionFnH.lean`. -/
-
-
 
 end Ambient
 end IsingModel

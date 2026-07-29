@@ -12,16 +12,14 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 ℤ^d forwarders for:
 
-1. **Complex Z / free energy along an exhaustion** — unfolding and real-complex
-   compatibility identities from `AmbientComplexAnalyticity.lean`.
-2. **Per-stage analyticity / continuity / norm-bound** — entire in `h`, `J`, `β`;
+1. **Per-stage analyticity / continuity / norm-bound** — entire in `h`, `J`, `β`;
    `AnalyticOnNhd` on the Lee–Yang subdomain; per-stage Montel norm bound;
    `Z_ℂ ≠ 0` on `leeYangDomain`. Foundation for the GJ §4.6 Vitali extraction.
-3. **Per-stage Gibbs expectation + FKG** — along-exhaustion Gibbs unfolding and
+2. **Per-stage Gibbs expectation + FKG** — along-exhaustion Gibbs unfolding and
    the GJ §4.4 FKG inequality per stage; GJ §5.4 Prop 5.4.2 `+`-BC bound.
-4. **GJ §17.7 critical-exponent bounds** — `η ≥ 0` and `ζ ≥ 0` at finite and
+3. **GJ §17.7 critical-exponent bounds** — `η ≥ 0` and `ζ ≥ 0` at finite and
    ∞ volume; absence of even bound states.
-5. **Subgraph monotonicity and convergence** — `partitionFunction`, `correlation`,
+4. **Subgraph monotonicity and convergence** — `partitionFunction`, `correlation`,
    `freeEnergy` monotone in subgraph; convergence of monotone subgraph sequences.
 
 ## References
@@ -33,17 +31,6 @@ open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: ℤ^d complex along-exhaustion unfolding + real-complex compatibility
-
-The four wrappers
-`partitionFunctionComplexAlongExhaustion_latticeGraph_apply`,
-`freeEnergyComplexAlongExhaustion_latticeGraph_apply`,
-`partitionFunctionComplexAlongExhaustion_at_real_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_at_real_latticeGraph` now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplexAlongEx`.
-The earlier import path is preserved by re-importing the new child. -/
-
 
 /-! ## Moved: ℤ^d per-stage complex analyticity wrappers
 

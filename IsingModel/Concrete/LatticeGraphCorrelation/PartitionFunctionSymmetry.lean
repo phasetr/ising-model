@@ -82,9 +82,11 @@ wrappers of this family had no consumers and were deleted in PR #4754.  The
 
 /-! ## Moved: log partition-function h-symmetry wrappers
 
-The nine `log_partitionFunction*_latticeGraph_{neg_h,eq_abs_h,monotone_abs_h}`
-wrappers (Λ-direct and along-exhaustion incl. cubicExhaustion) now live in
-`PartitionFunctionSymmetryLog.lean`. -/
+The six ℤ^d `log_partitionFunction*` h-symmetry wrappers (`_neg_h`,
+`_eq_abs_h`, `_monotone_abs_h`, at the Λ-direct and cubicExhaustion
+along-exhaustion variants) now live in
+`PartitionFunctionSymmetryLog.lean` and its
+`PartitionFunctionSymmetryLogCubic.lean` child. -/
 
 
 end Ambient
