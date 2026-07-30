@@ -67,8 +67,10 @@ ISSUE_REFERENCE_PATTERN = (
     + ISSUE_URL_PATTERN
     + r")"
 )
-CLOSE_KEYWORD_RE = re.compile(r"\b" + CLOSE_KEYWORD_PATTERN + r"\b", re.IGNORECASE)
-NON_CLOSING_DIRECTIVE_RE = re.compile(r"\b(?:Refs|Part\s+of)\b", re.IGNORECASE)
+CLOSE_KEYWORDS = tuple(
+    sorted((keyword.lower() for keyword in OFFICIAL_CLOSE_KEYWORDS), key=len, reverse=True)
+)
+NON_CLOSING_DIRECTIVES = ("part of", "refs")
 ISSUE_REFERENCE_AT_RE = re.compile(ISSUE_REFERENCE_PATTERN, re.IGNORECASE)
 ISSUE_MENTION_RE = re.compile(ISSUE_REFERENCE_PATTERN, re.IGNORECASE)
 MARKDOWN_SEPARATOR_CHARS = frozenset(""":;,.-–—!?()[]{}*_~`'"<>|/\\""")
@@ -327,6 +329,24 @@ def _fence(line: str) -> tuple[str, int, str] | None:
     return marker[0], len(marker), info
 
 
+def _strip_blockquote_prefix(line: str) -> str:
+    cursor = 0
+    found = False
+    while cursor < len(line):
+        probe = cursor
+        spaces = 0
+        while probe < len(line) and line[probe] == " " and spaces < 3:
+            probe += 1
+            spaces += 1
+        if probe >= len(line) or line[probe] != ">":
+            break
+        found = True
+        cursor = probe + 1
+        if cursor < len(line) and line[cursor] in " \t":
+            cursor += 1
+    return line[cursor:] if found else line
+
+
 def _fence_closes(line: str, marker: str, minimum: int) -> bool:
     stripped = line.removesuffix("\r")
     match = re.fullmatch(r" {0,3}(" + re.escape(marker) + r"{3,})[ \t]*", stripped)
@@ -335,7 +355,8 @@ def _fence_closes(line: str, marker: str, minimum: int) -> bool:
 
 def extract_managed_document(body: str) -> tuple[str, str]:
     """Return one managed JSON block and all Markdown outside that block."""
-    lines = body.split("\n")
+    raw_lines = body.split("\n")
+    lines = [_strip_blockquote_prefix(line) for line in raw_lines]
     active: tuple[str, int, int, bool] | None = None
     blocks: list[tuple[int, int, str]] = []
     for index, line in enumerate(lines):
@@ -368,12 +389,26 @@ def extract_managed_document(body: str) -> tuple[str, str]:
             active = (marker, minimum, index, False)
     if active is not None and active[3]:
         raise GateInputError("MALFORMED_MANAGED_BLOCK", "managed evidence block is unclosed")
-    if not blocks:
-        raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
     if len(blocks) != 1:
+        if not blocks and any(BLOCK_INFO in line for line in lines):
+            raise GateInputError(
+                "AMBIGUOUS_MANAGED_BLOCK",
+                "managed label occurs outside a recognized fenced block",
+            )
+        if not blocks:
+            raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
         raise GateInputError("DUPLICATE_MANAGED_BLOCK", "exactly one managed block is required")
     opening, closing, content = blocks[0]
-    unmanaged = "\n".join(lines[:opening] + lines[closing + 1 :])
+    if any(
+        BLOCK_INFO in line
+        for index, line in enumerate(lines)
+        if index < opening or index > closing
+    ):
+        raise GateInputError(
+            "AMBIGUOUS_MANAGED_BLOCK",
+            "managed label occurs outside the recognized fenced block",
+        )
+    unmanaged = "\n".join(raw_lines[:opening] + raw_lines[closing + 1 :])
     return content, unmanaged
 
 
@@ -384,21 +419,102 @@ def extract_managed_block(body: str) -> str:
 
 def _markdown_projection(body: str) -> str:
     normalized = unicodedata.normalize("NFKC", html.unescape(body))
-    normalized = "".join(
-        char for char in normalized if unicodedata.category(char) != "Cf"
-    )
-    normalized = re.sub(
-        r"\[(" + CLOSE_KEYWORD_PATTERN + r")\]\([^)\n]{0,512}\)",
-        r"\1",
-        normalized,
-        flags=re.IGNORECASE,
-    )
-    normalized = re.sub(
-        r"</?[A-Za-z][A-Za-z0-9-]*(?:\s[^>\n]{0,512})?>",
-        " ",
-        normalized,
-    )
-    return re.sub(r"\\([#*_[\](){}~`<>:;,.!?-])", r"\1", normalized)
+    projected: list[str] = []
+    cursor = 0
+    html_retry_at = 0
+    link_retry_at = 0
+    while cursor < len(normalized):
+        if normalized.startswith("<!--", cursor):
+            projected.append(" ")
+            cursor += 4
+            continue
+        if normalized.startswith("-->", cursor):
+            projected.append(" ")
+            cursor += 3
+            continue
+        char = normalized[cursor]
+        if unicodedata.category(char) == "Cf":
+            cursor += 1
+            continue
+        if char == "<" and cursor >= html_retry_at:
+            tag_end, html_retry_at = _html_tag_end(normalized, cursor)
+            if tag_end is not None:
+                projected.append(" ")
+                cursor = tag_end
+                continue
+        if (
+            char == "]"
+            and cursor >= link_retry_at
+            and cursor + 1 < len(normalized)
+            and normalized[cursor + 1] == "("
+        ):
+            destination_end, link_retry_at = _parenthesized_end(
+                normalized,
+                cursor + 1,
+            )
+            if destination_end is not None:
+                projected.append("] ")
+                cursor = destination_end
+                continue
+        if char == "\\" and cursor + 1 < len(normalized):
+            escaped = normalized[cursor + 1]
+            if escaped in MARKDOWN_SEPARATOR_CHARS or escaped == "#":
+                projected.append(escaped)
+                cursor += 2
+                continue
+        projected.append(char)
+        cursor += 1
+    return "".join(projected)
+
+
+def _html_tag_end(text: str, start: int) -> tuple[int | None, int]:
+    cursor = start + 1
+    if cursor < len(text) and text[cursor] == "/":
+        cursor += 1
+    name_start = cursor
+    while cursor < len(text) and (
+        text[cursor].isascii() and (text[cursor].isalnum() or text[cursor] == "-")
+    ):
+        cursor += 1
+    if cursor == name_start:
+        return None, cursor + 1
+    if cursor < len(text) and not (
+        text[cursor].isspace() or text[cursor] in "/>"
+    ):
+        return None, cursor + 1
+    quote: str | None = None
+    while cursor < len(text):
+        char = text[cursor]
+        if char in "\r\n":
+            return None, cursor + 1
+        if quote is None and char in "\"'":
+            quote = char
+        elif quote is not None and char == quote:
+            quote = None
+        elif quote is None and char == ">":
+            return cursor + 1, cursor + 1
+        cursor += 1
+    return None, len(text)
+
+
+def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:
+    depth = 1
+    cursor = start + 1
+    while cursor < len(text):
+        char = text[cursor]
+        if char in "\r\n":
+            return None, cursor + 1
+        if char == "\\" and cursor + 1 < len(text):
+            cursor += 2
+            continue
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+            if depth == 0:
+                return cursor + 1, cursor + 1
+        cursor += 1
+    return None, len(text)
 
 
 def _issue_number(reference: str) -> int:
@@ -413,10 +529,35 @@ def _is_markdown_separator(char: str) -> bool:
     return char.isspace() or char in MARKDOWN_SEPARATOR_CHARS
 
 
-def _references_after(projected: str, keywords: re.Pattern[str]) -> list[str]:
+def _ascii_alnum(char: str) -> bool:
+    return char.isascii() and char.isalnum()
+
+
+def _keyword_spans(projected: str, keywords: tuple[str, ...]) -> list[tuple[int, int]]:
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(projected):
+        matched = False
+        for keyword in keywords:
+            end = cursor + len(keyword)
+            if projected[cursor:end].lower() != keyword:
+                continue
+            before_ok = cursor == 0 or not _ascii_alnum(projected[cursor - 1])
+            after_ok = end == len(projected) or not _ascii_alnum(projected[end])
+            if before_ok and after_ok:
+                spans.append((cursor, end))
+                cursor = end
+                matched = True
+                break
+        if not matched:
+            cursor += 1
+    return spans
+
+
+def _references_after(projected: str, keywords: tuple[str, ...]) -> list[str]:
     references: list[str] = []
-    for keyword in keywords.finditer(projected):
-        cursor = keyword.end()
+    for _, keyword_end in _keyword_spans(projected, keywords):
+        cursor = keyword_end
         while cursor < len(projected) and _is_markdown_separator(projected[cursor]):
             cursor += 1
         reference = ISSUE_REFERENCE_AT_RE.match(projected, cursor)
@@ -650,7 +791,7 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
     if closing:
         raise GateInputError("CLOSING_REFERENCES_NOT_EMPTY", "references.closing must be empty")
     projected = _markdown_projection(body)
-    if _references_after(projected, CLOSE_KEYWORD_RE):
+    if _references_after(projected, CLOSE_KEYWORDS):
         raise GateInputError("AUTOCLOSE_REFERENCE", "body contains an auto-closing issue reference")
     if not non_closing:
         raise GateInputError("MISSING_NON_CLOSING_REF", "at least one non-closing ref is required")
@@ -662,7 +803,7 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
         match = NON_CLOSING_RE.fullmatch(reference)
         if match is None or int(match.group(2)) not in allowed:
             raise GateInputError("INVALID_ISSUE_REF", f"disallowed non-closing ref: {reference}")
-    for reference in _references_after(projected, NON_CLOSING_DIRECTIVE_RE):
+    for reference in _references_after(projected, NON_CLOSING_DIRECTIVES):
         if _issue_number(reference) not in allowed:
             raise GateInputError(
                 "UNMANAGED_ISSUE_REF",

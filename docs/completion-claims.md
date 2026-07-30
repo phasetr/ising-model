@@ -46,10 +46,13 @@ gate.
 
 The body must contain exactly one Markdown-valid fenced
 `completion-claims-v1` JSON block. Three or more backticks or tildes and up to
-three leading spaces are accepted. Mixed duplicate fences, nested managed
-fences, ambiguous info strings, short closers, and unclosed managed fences fail
-closed. Unknown or missing keys, duplicate JSON keys, malformed types, and
-unsupported schema versions also fail closed.
+three leading spaces are accepted, including fences inside nested blockquote
+containers. Mixed duplicate fences, nested managed fences, ambiguous info
+strings, short closers, and unclosed managed fences fail closed. A managed
+label outside the one recognized fence is also ambiguous, including
+list-indented and four-space-indented lookalikes. Unknown or missing keys,
+duplicate JSON keys, malformed types, and unsupported schema versions also fail
+closed.
 
 ```completion-claims-v1
 {
@@ -168,10 +171,13 @@ if it contains any case-insensitive official GitHub auto-close keyword
 (`close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`,
 or `resolved`) followed by a local issue, `owner/repository` issue, or GitHub
 issue URL. Detection handles punctuation, Markdown formatting, HTML entities,
-and Unicode NFKC forms, including when prose negates the keyword. Whitespace,
-newlines, and Markdown separators between the keyword and reference have no
-fixed length cutoff; a bounded one-direction scanner avoids both cutoff bypass
-and catastrophic regular-expression backtracking.
+underscore or asterisk emphasis, and Unicode NFKC forms, including when prose
+negates the keyword. Link destinations and HTML-tag attributes are scanned
+without a fixed length cutoff while visible labels and text remain subject to
+keyword detection. Whitespace, newlines, and Markdown separators between the
+keyword and reference likewise have no fixed length cutoff. Forward retry
+horizons make both closed and malformed projection candidates linear in the
+body size without catastrophic regular-expression backtracking.
 
 The only structured non-closing forms are `Refs #NUMBER` and
 `Part of #NUMBER`, and their numbers must be in `allowed_issue_refs`. The same
@@ -209,8 +215,9 @@ The suite includes baseline and incident-derived fixtures for #4709, #4718,
 and PR #4800. It mutates SHAs, paths, counts, digests, references, review heads,
 structured history commits/paths/actions, delivery, fences, keys, and ready
 placeholders. It probes Unicode/Markdown auto-close forms, separators longer
-than the former cutoff, large stress inputs, malformed URLs, lone surrogates,
-invalid controls, boolean-as-integer inputs, and unmanaged prose. It also kills
-representative weakened-checker mutants, pins `.self-local` path coverage, and
-verifies that the checker imports no process, network, or dynamic-execution
-facility.
+than the former cutoff, emphasized keywords, long links and HTML tags,
+blockquote-wrapped fences, and closed or malformed projection inputs beyond
+one MiB. It also covers malformed URLs, lone surrogates, invalid controls,
+boolean-as-integer inputs, and unmanaged prose; kills representative
+weakened-checker mutants; pins `.self-local` path coverage; and verifies that
+the checker imports no process, network, or dynamic-execution facility.

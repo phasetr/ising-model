@@ -219,6 +219,20 @@ class GateTest(GateHarness, unittest.TestCase):
             with self.subTest(prefix=prefix):
                 self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
 
+    def test_underscore_emphasis_cannot_hide_keyword(self) -> None:
+        for prefix in ["_Fixes_ #4801\n", "__Fixes__ #4801\n", "***Fixes*** #4801\n"]:
+            with self.subTest(prefix=prefix):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
+    def test_unbounded_link_and_html_tag_projection_repros_fail(self) -> None:
+        variants = [
+            "[Fixes](" + "x" * 513 + ") #4801\n",
+            '<span data-long="' + "x" * 600 + '">Fixes</span> #4801\n',
+        ]
+        for prefix in variants:
+            with self.subTest(length=len(prefix)):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
     def test_unbounded_separator_autoclose_repros_fail(self) -> None:
         variants = [
             "Closes" + " " * 65 + "#4801\n",
@@ -406,10 +420,40 @@ class GateTest(GateHarness, unittest.TestCase):
     def test_reference_scanner_is_linearish_on_large_separator_input(self) -> None:
         projected = ("close" + " " * 96 + "ordinary\n") * 8_000
         started = time.monotonic()
-        references = gate._references_after(projected, gate.CLOSE_KEYWORD_RE)
+        references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
         elapsed = time.monotonic() - started
         self.assertEqual(references, [])
         self.assertLess(elapsed, 5.0)
+
+    def test_projection_is_linearish_past_one_mibibyte(self) -> None:
+        cases = [
+            "[Fixes](" + "x" * 1_100_000 + ") #4801",
+            '<span data-long="' + "x" * 1_100_000 + '">Fixes</span> #4801',
+        ]
+        for source in cases:
+            with self.subTest(prefix=source[:10]):
+                started = time.monotonic()
+                projected = gate._markdown_projection(source)
+                references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
+                elapsed = time.monotonic() - started
+                self.assertTrue(references)
+                self.assertLess(len(projected), 100)
+                self.assertLess(elapsed, 5.0)
+
+    def test_unclosed_projection_candidates_are_linearish_past_one_mibibyte(self) -> None:
+        cases = [
+            "](" * 550_000 + "Fixes #4801",
+            "<span data-long='" + "<span " * 180_000 + "Fixes #4801",
+        ]
+        for source in cases:
+            with self.subTest(prefix=source[:10]):
+                started = time.monotonic()
+                projected = gate._markdown_projection(source)
+                references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
+                elapsed = time.monotonic() - started
+                self.assertTrue(references)
+                self.assertEqual(len(projected), len(source))
+                self.assertLess(elapsed, 5.0)
 
 
 class DigestTest(unittest.TestCase):
@@ -480,6 +524,47 @@ class ManagedFenceTest(GateHarness, unittest.TestCase):
         for body in bodies:
             with self.subTest(body=body[-20:]):
                 self.assert_code("MALFORMED_MANAGED_BLOCK", body=body)
+
+    def test_blockquote_wrapped_managed_fence_passes(self) -> None:
+        encoded = json.dumps(self.payload, indent=2)
+        for prefix in ["> ", "> > ", " > > "]:
+            body = "\n".join(
+                [prefix + gate.BLOCK_FENCE]
+                + [prefix + line for line in encoded.splitlines()]
+                + [prefix + "```", ""]
+            )
+            with self.subTest(prefix=prefix):
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_blockquote_wrapped_second_fence_is_duplicate(self) -> None:
+        encoded = json.dumps(self.payload, indent=2)
+        quoted = "\n".join(
+            ["> " + gate.BLOCK_FENCE]
+            + ["> " + line for line in encoded.splitlines()]
+            + ["> ```", ""]
+        )
+        self.assert_code(
+            "DUPLICATE_MANAGED_BLOCK",
+            body=managed_body(self.payload) + quoted,
+        )
+
+    def test_list_and_four_space_marker_variants_are_ambiguous(self) -> None:
+        variants = [
+            "- ```completion-claims-v1\n{}\n- ```\n",
+            "    ```completion-claims-v1\n{}\n    ```\n",
+            "- ~~~completion-claims-v1\n{}\n- ~~~\n",
+        ]
+        for suffix in variants:
+            with self.subTest(suffix=suffix[:10]):
+                self.assert_code(
+                    "AMBIGUOUS_MANAGED_BLOCK",
+                    body=managed_body(self.payload) + suffix,
+                )
+
+    def test_unclosed_blockquote_managed_fence_fails(self) -> None:
+        body = "> ```completion-claims-v1\n> {}\n"
+        self.assert_code("MALFORMED_MANAGED_BLOCK", body=body)
 
 
 class IncidentFixtureTest(GateHarness, unittest.TestCase):
@@ -634,7 +719,7 @@ class MutationTest(GateHarness, unittest.TestCase):
 
     def test_autoclose_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if _references_after(projected, CLOSE_KEYWORD_RE):",
+            "if _references_after(projected, CLOSE_KEYWORDS):",
             "if False:",
         )
         prefix = "[Resolves](https://example.test/reason): owner/repo#4801\n"
@@ -648,11 +733,53 @@ class MutationTest(GateHarness, unittest.TestCase):
             "_is_markdown_separator(projected[cursor]):",
             "while (cursor < len(projected) and "
             "_is_markdown_separator(projected[cursor]) and "
-            "cursor - keyword.end() < 64):",
+            "cursor - keyword_end < 64):",
         )
         prefix = "Closes" + " " * 65 + "#4801\n"
         self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_underscore_boundary_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "return char.isascii() and char.isalnum()",
+            'return char.isascii() and (char.isalnum() or char == "_")',
+        )
+        prefix = "__Fixes__ #4801\n"
+        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_link_projection_cutoff_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:\n"
+            "    depth = 1\n"
+            "    cursor = start + 1\n"
+            "    while cursor < len(text):",
+            "def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:\n"
+            "    depth = 1\n"
+            "    cursor = start + 1\n"
+            "    while cursor < len(text) and cursor - start <= 512:",
+        )
+        prefix = "[Fixes](" + "x" * 513 + ") #4801\n"
+        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_managed_marker_sweep_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if index < opening or index > closing",
+            "if False",
+        )
+        suffix = "- ```completion-claims-v1\n{}\n- ```\n"
+        self.assert_code(
+            "AMBIGUOUS_MANAGED_BLOCK",
+            body=managed_body(self.payload) + suffix,
+        )
+        code, _ = self.run_gate(
+            body=managed_body(self.payload) + suffix,
+            module=mutant,
+        )
         self.assertEqual(code, gate.EXIT_PASS)
 
     def test_unicode_validation_mutant_is_killed(self) -> None:
@@ -718,7 +845,7 @@ class MutationTest(GateHarness, unittest.TestCase):
         self.assertEqual(code, gate.EXIT_PASS)
         code, report = self.run_gate(module=mutant)
         self.assertEqual(code, gate.EXIT_FAIL)
-        self.assertEqual(report["diagnostics"][0]["code"], "MISSING_MANAGED_BLOCK")
+        self.assertEqual(report["diagnostics"][0]["code"], "AMBIGUOUS_MANAGED_BLOCK")
 
 
 class SecurityAndWiringTest(unittest.TestCase):
@@ -745,6 +872,7 @@ class SecurityAndWiringTest(unittest.TestCase):
         self.assertFalse(imported & forbidden_imports)
         self.assertFalse(called & forbidden_calls)
         self.assertNotIn("{0,64}", source)
+        self.assertNotIn("{0,512}", source)
 
     def test_fixture_set_is_exact_and_nonempty(self) -> None:
         names = sorted(path.name for path in FIXTURE_DIR.glob("*.json"))
