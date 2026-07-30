@@ -61,10 +61,9 @@ per-source norm bound, source counting and geometric aggregation into the
 volume-uniform correlation bound are F5a (the genuine new analysis, math-before-code).
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6, Theorem 17.6.1, p. 313; §18.3,
-  pp. 378–386 (high-temperature representation).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §3.7.3,
-  eqs. (3.41)–(3.46), pp. 116–117.
+- Friedli–Velenik §3.7.3, eq. (3.47), is the `h = 0` component template.
+  Exercise 5.8, p. 238, with its Appendix C solution, p. 531, gives the exact
+  field weight. The field collar peel is a project extension.
 -/
 
 namespace IsingModel

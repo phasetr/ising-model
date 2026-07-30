@@ -38,11 +38,11 @@ not export a real infinite-volume `HasDerivAt`; that broader contract remains
 unresolved under #4790.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.6, pp. 378–386 (lattice
-  cluster expansion, non-vanishing of the polymer partition function on the
-  Kotecký–Preiss domain, with analytic continuation in the fugacity/field).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7.3 and
-  §3.7.3, eqs. (3.48)–(3.49) (magnetic-field expansion).
+- Friedli–Velenik §5.4, Theorem 5.4, p. 224, gives convergence; Exercise 5.8,
+  p. 238, with its Appendix C solution, p. 531, gives the exact real-field setup.
+  The complex-field non-vanishing theorem is a project extension.
+- Glimm–Jaffe §18.5, Theorem 18.5.1, p. 335, is a continuum P(φ)₂ analogy only;
+  not a lattice-Ising source.
 -/
 
 namespace IsingModel

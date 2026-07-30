@@ -54,8 +54,9 @@ The per-factor closed-walk count and the capstone fiber bound `(2^{|A|} Δ²)^�
 ## Literature
 
 Friedli–Velenik (2017) §3.7.3, Lemma 3.38, pp.116–118 (closed-walk component
-counting); Glimm–Jaffe *Quantum Physics* (2nd ed.) Theorem 17.6.1, p.312, and
-Chapter 18 §18.4–18.7, pp.378–386 (cluster expansion).
+counting) is the `h = 0` template. The root assignment is a project extension.
+Glimm–Jaffe Theorem 17.6.1, p. 313, is retained for project comparison and
+motivation only, not as a direct source for the root construction.
 -/
 
 namespace IsingModel

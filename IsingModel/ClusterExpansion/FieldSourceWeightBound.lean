@@ -38,10 +38,11 @@ the fiber count `|{S : |S|=ℓ}| ≤ (c_A·Δ²)^ℓ` and the geometric sum are 
 to bricks F5a-2 / F5a-3.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6, Theorem 17.6.1, p. 313;
-  §18.3, Theorem 18.3.1, eq. (18.3.3), p. 330 (polymer activity bound).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §3.7.3,
-  eqs. (3.41)–(3.48), pp. 116–117.
+- Friedli–Velenik §3.7.3, eqs. (3.41)–(3.48), pp. 116–117, is the `h = 0`
+  template. Exercise 5.8, p. 238, with its Appendix C solution, p. 531, gives
+  the exact field weight. The per-source complex bound is a project extension.
+- Glimm–Jaffe §18.3, eq. (18.3.3), p. 330, is a continuum P(φ)₂ analogy only;
+  not a lattice-Ising source. It is not a polymer-activity source either.
 -/
 
 namespace IsingModel

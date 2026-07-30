@@ -42,10 +42,12 @@ The four continuation steps:
   the identity and `Complex.exp_ne_zero`.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.4–§18.6,
-  pp. 378–386 (lattice cluster expansion, analytic continuation in the fugacity).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7,
-  Theorem 5.4 (Kotecký–Preiss criterion).
+- Friedli–Velenik §5.3, Proposition 5.3, gives the formal Mayer/Ursell identity;
+  §5.4, Theorem 5.4, p. 224, gives convergence, and §5.7.3 is the `h = 0`
+  application.
+- Friedli–Velenik Exercise 5.8, p. 238, and its Appendix C solution, p. 531,
+  give the exact real-field weight. The complex analytic continuation is a
+  project extension.
 -/
 
 namespace IsingModel

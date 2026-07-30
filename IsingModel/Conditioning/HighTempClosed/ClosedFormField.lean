@@ -15,9 +15,9 @@ used. It is the first brick of the on-book programme toward GJ Theorem 17.6.1
 high-temperature window); see the design note
 `design-gj-17.6.1-field-cluster-firstbrick.md`.
 
-References: Friedli–Velenik §3.7.3 (high-temperature representation),
-eq. (3.45), p. 117 (2017 ed.); Glimm–Jaffe §18.4 (lattice cluster expansion,
-field version).
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, gives the `h = 0`
+template. Exercise 5.8, p. 238, and its solution in Appendix C, p. 531, give
+the exact general-field high-temperature weight used here.
 -/
 
 namespace IsingModel
@@ -118,8 +118,9 @@ At `h = 0` this collapses to the zero-field even-subgraph closed form
 (`cosh(βh) = 1`, `tanh(βh) = 0`, so `tanh(βh)^{#odd(X)} = 1` iff every vertex
 has even `X`-degree). No axiom, no new analytic input.
 
-References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117 (2017 ed.); Glimm–Jaffe
-§18.4 (lattice cluster expansion, field version). -/
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, gives the `h = 0`
+template. Exercise 5.8, p. 238, and its solution in Appendix C, p. 531, give
+the exact general-field high-temperature weight. -/
 theorem partitionFunction_high_temp_expansion_field_closed
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J h β : ℝ) :

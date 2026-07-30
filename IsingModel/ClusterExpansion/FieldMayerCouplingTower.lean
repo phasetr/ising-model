@@ -39,11 +39,11 @@ ingredients:
   connecting F2-pre to F1's real-coupling field Mayer term.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.4–§18.6,
-  pp. 378–386 (lattice cluster expansion, analytic continuation in the fugacity).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7,
-  Theorem 5.4 (Kotecký–Preiss criterion / tree-graph inequality).
-- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1.
+- Friedli–Velenik §5.3, Proposition 5.3, gives the formal Mayer/Ursell identity,
+  and §5.4, Theorem 5.4, p. 224, gives convergence.
+- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1, supplies
+  only the abstract convergence criterion.
+- The complex-coupling tower and its per-order bounds are project extensions.
 -/
 
 namespace IsingModel

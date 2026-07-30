@@ -41,11 +41,12 @@ with `r_∗ = Δ²·e·t_∗` and `Δ = G.maxDegree`, volume-uniform per site (d
 leaves a constant depending only on `Δ`, `a`, and the field ball radius through `M`).
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.4–§18.5,
-  pp. 332–336 (lattice cluster expansion, field version).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7,
-  Theorem 5.4 (Kotecký–Preiss criterion / tree-graph inequality).
-- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1.
+- Friedli–Velenik §5.3, Proposition 5.3, gives the formal Mayer/Ursell identity;
+  §5.4, Theorem 5.4, p. 224, gives convergence.
+- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1, supplies
+  only the abstract convergence criterion; it is not the tree-bound source.
+- Glimm–Jaffe §18.4, pp. 332–335, provides a continuum P(φ)₂ analogy only;
+  not a lattice-Ising source. The per-order tree bound is a project extension.
 -/
 
 namespace IsingModel

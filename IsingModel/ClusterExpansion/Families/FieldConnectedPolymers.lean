@@ -22,9 +22,10 @@ sum runs over *all* edge subsets, and the `tanh(βh)^{#odd}` factor replaces the
 even-subgraph indicator. It is a pure finite combinatorial identity carrying no
 convergence content (Kotecky–Preiss / activity bounds are brick 2b onward).
 
-References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117 (2017 ed.) (zero-field
-template); Friedli–Velenik §5.7 (polymer gas); Glimm–Jaffe §18.4 (lattice
-cluster expansion, field version).
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, and §5.7.3 give the
+zero-field templates; §5.2 gives the abstract polymer model. Exercise 5.8,
+p. 238, with its solution in Appendix C, p. 531, gives the exact magnetic-field
+weight. The connected-family factorization used here is a project extension.
 -/
 
 namespace IsingModel
@@ -248,8 +249,10 @@ The edge-subset sum factorizes over the edge-connected components (polymers) of
 mirror of `evenSubgraphs_sum_eq_vdPolymerFamilies_sum`. The weight identity is
 `fieldPolymerWeight_biUnion_of_vd`.
 
-References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117 (2017 ed.) (`h = 0`
-template); Glimm–Jaffe §18.4 (lattice cluster expansion, field version). -/
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, and §5.7.3 give the
+`h = 0` templates; §5.2 gives the abstract polymer model. Exercise 5.8, p. 238,
+with its Appendix C solution, p. 531, gives the exact field weight. The
+connected-family identity is a project extension. -/
 theorem allSubgraphs_sum_eq_vdConnectedPolymerFamilies_sum
     (G : SimpleGraph ι) [Fintype G.edgeSet] (a b : ℝ) :
     (∑ X ∈ G.edgeFinset.powerset,
