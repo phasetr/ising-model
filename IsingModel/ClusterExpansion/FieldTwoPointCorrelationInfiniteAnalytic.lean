@@ -22,10 +22,11 @@ already-merged field bricks are **not** modified — this is a pure addition.
 complex-field result: the finite-stage functions converge locally uniformly to a holomorphic
 limit, and that limit agrees with `correlationInfinite` at the stated real accumulation
 field.  The finite-volume theorem `hasDerivAt_correlation_h_uniform_bound` supplies a
-field- and volume-uniform derivative bound, but no broader real infinite-volume `HasDerivAt`
-declaration is currently exported.  Establishing that wider real theorem remains a separate
-unresolved task.  The field-CE thread tracked by #4433 is complete only for the local
-holomorphic-limit contract proved here.
+field- and volume-uniform derivative bound.  This file itself exports only the local
+holomorphic-limit contract.  The downstream module
+`FieldCorrelationInfiniteFieldDeriv.lean` derives real differentiability for normalized
+`⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; it does not cover `b = 0`, the full
+nonperturbative range, or a derivative-series identity, sign, or uniform bound.
 
 ## Variable roles (field vs `β`)
 For the field route the varying complex parameter is the field `b` (`= β·h`); the coupling
@@ -258,8 +259,10 @@ holomorphic `f`, with the equality
 real point.  This theorem exports exactly the displayed holomorphic local-limit contract:
 it does not identify `f` with `correlationInfinite` at any other real field and does not
 export a real infinite-volume `HasDerivAt`.  The declaration
-`hasDerivAt_correlation_h_uniform_bound` is finite-volume; the wider infinite-volume real
-derivative remains unresolved.
+`hasDerivAt_correlation_h_uniform_bound` is finite-volume.  The downstream
+`FieldCorrelationInfiniteFieldDeriv.lean` obtains a real derivative only for normalized
+`⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; the endpoint, full-range, series, sign, and
+uniform-bound questions remain outside this theorem.
 
 Proof (assembly of the merged bricks):
 * `exists_ctanh_ball_bound` supplies the ball-uniform `Mr`;

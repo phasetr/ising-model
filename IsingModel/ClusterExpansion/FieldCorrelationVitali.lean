@@ -45,8 +45,11 @@ non-vanishing) and `hbdd` (volume-uniform bound), exactly as the `β` route
 the volume-uniform `hden`, and F6c discharges the small-coupling window to obtain a
 holomorphic local limit with equality to the real infinite-volume correlation at
 one field value `b₀`.  Neither result exports an unconditional full GJ Theorem
-17.6.1 field derivative; real infinite-volume `HasDerivAt` remains unresolved
-under #4790.
+17.6.1 field derivative.  The downstream `FieldCorrelationInfiniteFieldDeriv.lean`
+uses the F6c limit to derive real differentiability only for normalized
+`⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; `b = 0`, the full
+nonperturbative range, and a derivative-series identity, sign, or uniform bound
+remain outside that result.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.
@@ -125,7 +128,10 @@ directly (a thin field-specific glue; the `β` Vitali stack is not modified).  T
 exports a holomorphic `f` and local-uniform convergence on the ball, together with equality
 to `correlationInfinite` only at the quantified real field `b₀`.  It does not identify `f`
 with the real infinite-volume correlation on a neighbourhood of `b₀` or export a real
-infinite-volume `HasDerivAt`; that broader contract remains unresolved under #4790. -/
+infinite-volume `HasDerivAt`.  The downstream field-derivative capstone obtains its
+restricted real result by separately applying this convergence at every positive real
+point and using uniqueness; that later argument does not strengthen this theorem's local
+contract. -/
 theorem fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

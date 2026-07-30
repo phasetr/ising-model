@@ -46,8 +46,12 @@ Both partitions are non-vanishing on the window
 `fieldPolymerZℂ_eq_exp_tsum_of_degree_window` used here), so the ratio is a
 genuine quotient.  `κ_Δ` depends only on `Δ`, `t_∗`, `c = 2`, **not** on the
 volume `|ι|`, which lets the ratio bound survive the infinite-volume limit and
-feed the completed small-coupling holomorphic local-limit assembly.  Any broader
-use in a real infinite-volume derivative theorem remains unresolved under #4790.
+feed the completed small-coupling holomorphic local-limit assembly.  This brick
+does not itself export a real derivative.  The downstream
+`FieldCorrelationInfiniteFieldDeriv.lean` derives a restricted real
+differentiability result from the completed F6c limit; `b = 0`, the full
+nonperturbative range, and a derivative-series identity, sign, or uniform bound
+remain outside that capstone.
 
 ## References
 - Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.4,

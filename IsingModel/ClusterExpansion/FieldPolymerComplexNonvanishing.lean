@@ -34,8 +34,11 @@ closed ball, fed to `Complex.differentiableOn_tsum_of_summable_norm`.  Honest
 scope: brick 6 delivers only the complex `exp` identity and `≠ 0`; the two-point
 Montel local bounds are brick 7, while brick 8/F6c is the small-coupling
 holomorphic local-limit endpoint with equality at one field value `b₀`.  It does
-not export a real infinite-volume `HasDerivAt`; that broader contract remains
-unresolved under #4790.
+not export a real infinite-volume `HasDerivAt`.  The downstream
+`FieldCorrelationInfiniteFieldDeriv.lean` derives real differentiability only
+for normalized `⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; the endpoint,
+full-range, series, sign, and uniform-bound questions remain outside that
+capstone.
 
 ## References
 - Friedli–Velenik §5.4, Theorem 5.4, p. 224, gives convergence; Exercise 5.8,

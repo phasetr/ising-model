@@ -30,9 +30,12 @@ volume-uniform ratio bound `‖Zᶠ(GavoidVertex G W)/Zᶠ(G)‖ ≤ exp(κ_Δ·
 exponent is `W.card` (the general-vertex-set analogue of F3's
 `|polymerSupport C|`), and `κ_Δ` depends only on `Δ`, `t_∗`, `c = 2`, **not** on
 the volume `|ι|`, which lets the ratio bound survive the infinite-volume limit
-and feed the completed small-coupling holomorphic local-limit assembly.  Any
-broader use in a real infinite-volume derivative theorem remains unresolved
-under #4790.  The delete-edges
+and feed the completed small-coupling holomorphic local-limit assembly.  This
+brick does not itself export a real derivative.  The downstream
+`FieldCorrelationInfiniteFieldDeriv.lean` derives real differentiability only
+for normalized `⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; `b = 0`, the
+full nonperturbative range, and a derivative-series identity, sign, or uniform
+bound remain outside that capstone.  The delete-edges
 machinery is re-derived here over a raw vertex set `W` (mirroring
 `AvoidingDeleteEdges.lean` + `FieldAvoidingRatio.lean` with `polymerSupport C`
 replaced by `W`); the bridge `Gavoid_eq_GavoidVertex_polymerSupport` records that

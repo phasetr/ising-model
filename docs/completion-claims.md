@@ -424,13 +424,18 @@ it is not completion evidence:
   bound. It is not an infinite-volume derivative contract. The disposition is
   `implemented` only at the finite-volume scope.
 - **#4790 high-temperature field CE.** A holomorphic locally uniform limit and
-  real-axis identification exist under stated hypotheses. No declared real
-  `HasDerivAt correlationInfinite ...` theorem matches the historical claim.
-  The disposition is `partial`.
-- **#4790 primary infinite-volume contract.** No positive declaration evidence
-  exists. Repository inspection records the absent named or
-  contract-equivalent theorem. The disposition is `unresolved`, unless a
-  narrower endpoint is accepted with a reopen condition.
+  real-axis identification exist under stated hypotheses. The downstream
+  `correlationInfinite_latticeGraph_general_hasDerivAt_field_high_temp`
+  declaration now converts that limit into a real derivative for a nonempty
+  general observable, normalized `⟨a,b,1⟩`, small `a`, and
+  `0 < b < r < π/2`. The disposition is `implemented` at that limited scope.
+- **#4790 residual infinite-volume contract.** Positive declaration evidence
+  now exists only for the normalized reduced-field window above. The endpoint
+  `b = 0`, arbitrary physical-parameter rescaling, the full nonperturbative
+  range, and a U3/series derivative identity, sign, or uniform bound remain
+  outside that theorem. This declaration upgrades the broader disposition from
+  `unresolved` to `partial`, pending #4790's separate post-merge acceptance
+  audit.
 
 The [final #4803 closure audit][audit-4803-final] records the completed
 semantic-evidence protocol and A–J lifecycle without upgrading #4786, #4790,

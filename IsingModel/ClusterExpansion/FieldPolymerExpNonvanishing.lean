@@ -33,8 +33,11 @@ universal lemma.  Honest scope: brick 5 supplies the real-`h` `exp`/non-vanishin
 and the complex **type/estimate** design only; the complex `Z_ℂ ≠ 0` body is
 brick 6, the Montel/Vitali re-plumbing is brick 7, and brick 8/F6c is the
 small-coupling holomorphic local-limit endpoint, with equality at one field value
-`b₀`.  It does not export a real infinite-volume `HasDerivAt`; that broader
-contract remains unresolved under #4790.
+`b₀`.  This brick does not export a real infinite-volume `HasDerivAt`.  The
+downstream `FieldCorrelationInfiniteFieldDeriv.lean` derives real
+differentiability only for normalized `⟨a, b, 1⟩`, small `a`, and
+`0 < b < r < π/2`; the endpoint, full-range, series, sign, and uniform-bound
+questions remain outside that capstone.
 
 ## References
 - Friedli–Velenik §5.4, Theorem 5.4, p. 224, gives convergence; Exercise 5.8,

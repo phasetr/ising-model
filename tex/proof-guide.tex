@@ -17400,7 +17400,11 @@ Glimm--Jaffe Chapter~18 is a continuum analogy only.
 Brick~6 (the complex-analytic body) establishes the nonvanishing of the field polymer partition function
 on a complex $h$-ball by lifting the real-$h$ identity from brick~5 to the complex plane via analytic continuation.
 It is the \emph{complex $Z_{\mathbb{C}} \ne 0$ body}; the two-point Montel/Vitali re-plumbing is brick~7, while
-brick~8/F6c is the small-coupling holomorphic local-limit endpoint, proving equality at one field value $b_0$, not a full $\partial/\partial h$ capstone; real infinite-volume \texttt{HasDerivAt} remains unresolved (Issue~\#4790).
+brick~8/F6c is the small-coupling holomorphic local-limit endpoint, proving equality at one field
+value $b_0$.  This brick itself is not a real derivative theorem.  The downstream reduced-field
+capstone derives real differentiability only for normalized $\langle a,b,1\rangle$, small $a$, and
+$0<b<r<\pi/2$; it does not cover $b=0$, the full nonperturbative range, or a derivative-series
+identity, sign, or uniform bound.
 
 \subsubsection*{Complex field Mayer term and Penrose majorant}
 
@@ -17574,9 +17578,67 @@ identification
 This is the exact contract of
 \texttt{fieldCorrelationInfinite\_latticeGraph\_analytic\_high\_temp}.
 It does not identify \(f\) with the real infinite-volume correlation at other
-real fields and exports no broader real infinite-volume
-\texttt{HasDerivAt}.  The cluster-expansion inputs are sourced from
+real fields and exports no real derivative by itself.  The cluster-expansion
+inputs are sourced from
 Friedli--Velenik Exercise~5.8 (field weight), \S\S5.2--5.3 (abstract polymer/Ursell formalism), \S5.4 (convergence), and \S5.5 (analytic context); the F6c local-limit assembly is a project extension, and GJ Theorem~17.6.1 is a comparison target.
+
+\subsection{Infinite-volume real reduced-field derivative from F6c}
+
+Let \(A\) be a nonempty finite observable and let \(0<r<\pi/2\).  There is
+\(a_0>0\) such that, whenever \(0\le a<a_0\) and \(0<b<r\), there is
+\(g'\in\mathbb R\) satisfying
+\[
+  \operatorname{HasDerivAt}\!
+  \left(
+    b'\longmapsto
+    \texttt{correlationInfinite}\,
+      (\texttt{latticeGraph}\,d)\,\Lambda\,
+      \langle a,b',1\rangle\,A
+  \right) g'\,b.
+\]
+This is
+\texttt{correlationInfinite\_latticeGraph\_general\_hasDerivAt\_field\_high\_temp}.
+The companion declaration
+\texttt{correlationInfinite\_latticeGraph\_general\_differentiableAt\_field\_high\_temp}
+packages the corresponding \texttt{DifferentiableAt} conclusion over \(\mathbb R\).
+Both declarations are in
+\texttt{IsingModel/ClusterExpansion/FieldCorrelationInfiniteFieldDeriv.lean}.
+
+\paragraph{Proof route.}
+Apply F6c at the target \(b\), obtaining one holomorphic witness \(f\) and
+locally uniform convergence on the whole ball.  Every real \(b'\in(0,r)\)
+lies in that complex ball.  At such a point,
+\texttt{TendstoLocallyUniformlyOn.tendsto\_at} and
+\texttt{fieldCorrelation\ensuremath{\mathbb{C}}AlongExhaustion\_tendsto\_at\_real}
+give two limits of the same finite-stage sequence, so uniqueness identifies
+\[
+  f(\uparrow b')=
+  \uparrow\!\left(
+    \texttt{correlationInfinite}\,
+      (\texttt{latticeGraph}\,d)\,\Lambda\,
+      \langle a,b',1\rangle\,A
+  \right)
+  \qquad (0<b'<r).
+\]
+Complex differentiability of \(f\) at \(\uparrow b\) restricts to the real
+axis via \texttt{comp\_ofReal}; composing with \texttt{Complex.reCLM} gives a
+real derivative for \(b'\mapsto\operatorname{Re}f(\uparrow b')\).  Since
+\((0,r)\) is a neighbourhood of \(b\), the displayed identity transfers this
+derivative to the physical infinite-volume correlation by eventual equality.
+
+\paragraph{Exact scope.}
+The differentiated variable is the reduced field \(b=\beta h\) in the
+normalized parameterization \(\langle a,b,1\rangle\), where \(a=\beta J\) and
+the third parameter is fixed to \(\beta=1\).  The theorem is for a nonempty
+general observable, not only a pair.  It does not establish a two-sided
+derivative at \(b=0\), arbitrary physical-parameter rescaling, the full
+nonperturbative GJ range, or a U3/series derivative identity, sign, or uniform
+bound.
+
+Glimm--Jaffe, Theorem~17.6.1, p.~313 motivates the field derivative.
+Friedli--Velenik Exercise~5.8 and \S\S5.4--5.5 supply the field-polymer and
+analyticity roles used upstream by F6c.  The final locally-uniform-limit
+uniqueness and real-axis derivative bridge is a project-specific refinement.
 
 \section{Lattice high-temperature expansion (project \S18.1--18.3 analogy)}
 
@@ -30201,8 +30263,11 @@ This capstone is the \emph{book-faithful finite deliverable}: differentiability 
 Cor.~4.3.4 of \S4.3).  It \textbf{deliberately does not} claim infinite-volume $\partial/\partial h$
 differentiability, which would require equicontinuity control of the general-$h$ four-point Lebowitz
 sign (the frozen wall of the class of Issue~\#4413; the naive $\kappa_4 \le 0$ is numerically false).
-The separate complex-field route proves a small-coupling holomorphic local limit; it does
-not export the broader real infinite-volume \texttt{HasDerivAt}.
+The separate complex-field route now exports real reduced-field differentiability only for a
+nonempty general observable, normalized $\langle a,b,1\rangle$, small $a$, and
+$0<b<r<\pi/2$.  It supplies neither this finite-volume theorem's U3-series identity and
+uniform bound nor a result at $b=0$, arbitrary physical parameters, or the full
+nonperturbative range.
 
 \noindent\textit{Status}: Complete finite-volume formalization (PR~\#4432).
 File: \texttt{Concrete/LatticeGraphCorrelation/Truncated2FieldDerivativeUniformBound.lean}.

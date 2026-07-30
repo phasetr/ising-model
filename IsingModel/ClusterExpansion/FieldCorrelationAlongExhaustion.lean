@@ -36,8 +36,11 @@ pure `β → b` transcriptions.
 ## Scope
 F5b is completed by this file.  F6a–F6c consume these bounds and holomorphy to
 obtain the small-coupling complex-field local-limit endpoint, not the full
-field-derivative contract of GJ Theorem 17.6.1.  A real infinite-volume
-`HasDerivAt` remains unresolved under #4790.
+field-derivative contract of GJ Theorem 17.6.1.  The downstream
+`FieldCorrelationInfiniteFieldDeriv.lean` derives real differentiability only
+for normalized `⟨a, b, 1⟩`, small `a`, and `0 < b < r < π/2`; it does not
+establish `b = 0`, the full nonperturbative range, or a derivative-series
+identity, sign, or uniform bound.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.
