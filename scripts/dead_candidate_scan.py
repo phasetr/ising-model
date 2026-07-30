@@ -1700,6 +1700,19 @@ def glob_to_regex(token: str) -> re.Pattern[str] | None:
     return re.compile("^" + pattern + "$", re.UNICODE)
 
 
+def is_fully_qualified_glob(token: str) -> bool:
+    """Return whether ``token`` is a supported absolute ``IsingModel.`` glob."""
+    if not token.startswith("IsingModel.") or token.count("*") != 1:
+        return False
+    namespace, separator, final = token.rpartition(".")
+    return (
+        bool(separator)
+        and bool(final)
+        and "*" not in namespace
+        and ".." not in token
+    )
+
+
 # ---------------------------------------------------------------------------
 # 7. Classification
 # ---------------------------------------------------------------------------
@@ -2029,7 +2042,14 @@ def _resolve_fragment(
     pattern = glob_to_regex(name)
     matched: list[Decl] | None
     if pattern is not None:
-        matched = [decl for final, decl in tree.finals if pattern.match(final)]
+        if name.startswith("IsingModel."):
+            matched = (
+                [decl for _final, decl in tree.finals if pattern.match(decl.full)]
+                if is_fully_qualified_glob(name)
+                else []
+            )
+        else:
+            matched = [decl for final, decl in tree.finals if pattern.match(final)]
     elif name.startswith(("_", ".")):
         matched = [decl for final, decl in tree.finals if final.endswith(name)]
     else:
