@@ -44,15 +44,15 @@ gate.
 
 ## Managed block
 
-The body must contain exactly one Markdown-valid fenced
-`completion-claims-v1` JSON block. Three or more backticks or tildes and up to
-three leading spaces are accepted, including fences inside nested blockquote
-containers. Mixed duplicate fences, nested managed fences, ambiguous info
-strings, short closers, and unclosed managed fences fail closed. A managed
-label outside the one recognized fence is also ambiguous, including
-list-indented and four-space-indented lookalikes. Unknown or missing keys,
-duplicate JSON keys, malformed types, and unsupported schema versions also fail
-closed.
+The body must contain exactly one canonical top-level JSON block copied from
+the pull-request template. Its opener is exactly
+```` ```completion-claims-v1 ```` at column zero and its closer is exactly three
+backticks at column zero. Tildes, longer runs, indentation, trailing info,
+blockquote/list containers, and cross-container openers or closers are not
+accepted. Any `completion-claims-v1` marker outside the sole recognized
+canonical opener is `AMBIGUOUS_MANAGED_BLOCK`; an unclosed canonical block is
+`MALFORMED_MANAGED_BLOCK`. Unknown or missing keys, duplicate JSON keys,
+malformed types, and unsupported schema versions also fail closed.
 
 ```completion-claims-v1
 {
@@ -167,17 +167,16 @@ of unrestricted historical prose remains human-reviewed.
 ### Issue references
 
 `references.closing` is mandatory and must be empty. The body is also rejected
-if it contains any case-insensitive official GitHub auto-close keyword
+if it contains any standalone, case-insensitive official GitHub closing
+directive token
 (`close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`,
-or `resolved`) followed by a local issue, `owner/repository` issue, or GitHub
-issue URL. Detection handles punctuation, Markdown formatting, HTML entities,
-underscore or asterisk emphasis, and Unicode NFKC forms, including when prose
-negates the keyword. Link destinations and HTML-tag attributes are scanned
-without a fixed length cutoff while visible labels and text remain subject to
-keyword detection. Whitespace, newlines, and Markdown separators between the
-keyword and reference likewise have no fixed length cutoff. Forward retry
-horizons make both closed and malformed projection candidates linear in the
-body size without catastrophic regular-expression backtracking.
+or `resolved`) anywhere in the pull-request body. No issue reference is needed
+for rejection. The conservative policy intentionally does not interpret
+Markdown: prose, emphasis, inline and reference-style links, link
+destinations, code, HTML, and comments are treated alike. HTML entities and
+Unicode NFKC forms are normalized first, and format controls cannot split a
+token. The bounded one-direction token scanner is linear in the body size.
+Authors must avoid these nine words until the post-merge issue action.
 
 The only structured non-closing forms are `Refs #NUMBER` and
 `Part of #NUMBER`, and their numbers must be in `allowed_issue_refs`. The same
@@ -214,10 +213,11 @@ python3 scripts/test_completion_claim_gate.py
 The suite includes baseline and incident-derived fixtures for #4709, #4718,
 and PR #4800. It mutates SHAs, paths, counts, digests, references, review heads,
 structured history commits/paths/actions, delivery, fences, keys, and ready
-placeholders. It probes Unicode/Markdown auto-close forms, separators longer
-than the former cutoff, emphasized keywords, long links and HTML tags,
-blockquote-wrapped fences, and closed or malformed projection inputs beyond
-one MiB. It also covers malformed URLs, lone surrogates, invalid controls,
-boolean-as-integer inputs, and unmanaged prose; kills representative
-weakened-checker mutants; pins `.self-local` path coverage; and verifies that
-the checker imports no process, network, or dynamic-execution facility.
+placeholders. It probes normalized completion-directive forms, separators longer
+than the former cutoff, emphasized and reference-link directive tokens, long
+links and HTML tags, exact canonical fences, and rejected blockquote/list or
+cross-container variants. Directive scans beyond one MiB remain bounded. The
+suite also covers malformed URLs, lone surrogates, invalid controls,
+boolean-as-integer inputs, and unmanaged prose; kills representative weakened
+checker mutants; pins `.self-local` path coverage; and verifies that the
+checker imports no process, network, or dynamic-execution facility.

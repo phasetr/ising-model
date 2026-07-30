@@ -55,7 +55,6 @@ OFFICIAL_CLOSE_KEYWORDS = (
     "resolves",
     "resolved",
 )
-CLOSE_KEYWORD_PATTERN = r"(?:" + "|".join(OFFICIAL_CLOSE_KEYWORDS) + r")"
 OWNER_REPO_PATTERN = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})/[A-Za-z0-9_.-]+"
 ISSUE_URL_PATTERN = (
     r"https?://github\.com/" + OWNER_REPO_PATTERN + r"/(?:issues|pull)/[1-9][0-9]*"
@@ -329,24 +328,6 @@ def _fence(line: str) -> tuple[str, int, str] | None:
     return marker[0], len(marker), info
 
 
-def _strip_blockquote_prefix(line: str) -> str:
-    cursor = 0
-    found = False
-    while cursor < len(line):
-        probe = cursor
-        spaces = 0
-        while probe < len(line) and line[probe] == " " and spaces < 3:
-            probe += 1
-            spaces += 1
-        if probe >= len(line) or line[probe] != ">":
-            break
-        found = True
-        cursor = probe + 1
-        if cursor < len(line) and line[cursor] in " \t":
-            cursor += 1
-    return line[cursor:] if found else line
-
-
 def _fence_closes(line: str, marker: str, minimum: int) -> bool:
     stripped = line.removesuffix("\r")
     match = re.fullmatch(r" {0,3}(" + re.escape(marker) + r"{3,})[ \t]*", stripped)
@@ -354,61 +335,67 @@ def _fence_closes(line: str, marker: str, minimum: int) -> bool:
 
 
 def extract_managed_document(body: str) -> tuple[str, str]:
-    """Return one managed JSON block and all Markdown outside that block."""
-    raw_lines = body.split("\n")
-    lines = [_strip_blockquote_prefix(line) for line in raw_lines]
-    active: tuple[str, int, int, bool] | None = None
+    """Return the sole canonical top-level JSON block and all other text."""
+    lines = body.split("\n")
+    ordinary_fence: tuple[str, int] | None = None
+    managed_opening: int | None = None
+    canonical_openings: list[int] = []
     blocks: list[tuple[int, int, str]] = []
     for index, line in enumerate(lines):
-        if active is not None:
-            marker, minimum, opening, managed = active
-            if _fence_closes(line, marker, minimum):
-                if managed:
-                    blocks.append((opening, index, "\n".join(lines[opening + 1 : index])))
-                active = None
-                continue
-            nested = _fence(line)
-            if nested is not None and nested[2].startswith(BLOCK_INFO):
-                raise GateInputError(
-                    "NESTED_MANAGED_BLOCK",
-                    "managed evidence block is nested inside another fence",
+        if managed_opening is not None:
+            if line.removesuffix("\r") == "```":
+                blocks.append(
+                    (
+                        managed_opening,
+                        index,
+                        "\n".join(lines[managed_opening + 1 : index]),
+                    )
                 )
+                managed_opening = None
+            continue
+        if ordinary_fence is not None:
+            marker, minimum = ordinary_fence
+            if _fence_closes(line, marker, minimum):
+                ordinary_fence = None
+            continue
+        if line.removesuffix("\r") == BLOCK_FENCE:
+            canonical_openings.append(index)
+            managed_opening = index
             continue
         opening_fence = _fence(line)
-        if opening_fence is None:
-            continue
-        marker, minimum, info = opening_fence
-        if info == BLOCK_INFO:
-            active = (marker, minimum, index, True)
-        elif info.startswith(BLOCK_INFO):
+        if opening_fence is not None:
+            marker, minimum, _ = opening_fence
+            ordinary_fence = (marker, minimum)
+
+    marker_lines = [
+        index for index, line in enumerate(lines) if BLOCK_INFO in line
+    ]
+    if len(canonical_openings) != 1:
+        if marker_lines:
             raise GateInputError(
                 "AMBIGUOUS_MANAGED_BLOCK",
-                "managed fence info must be exactly completion-claims-v1",
+                "managed label is not one canonical top-level opener",
             )
-        else:
-            active = (marker, minimum, index, False)
-    if active is not None and active[3]:
-        raise GateInputError("MALFORMED_MANAGED_BLOCK", "managed evidence block is unclosed")
-    if len(blocks) != 1:
-        if not blocks and any(BLOCK_INFO in line for line in lines):
-            raise GateInputError(
-                "AMBIGUOUS_MANAGED_BLOCK",
-                "managed label occurs outside a recognized fenced block",
-            )
-        if not blocks:
-            raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
-        raise GateInputError("DUPLICATE_MANAGED_BLOCK", "exactly one managed block is required")
-    opening, closing, content = blocks[0]
-    if any(
-        BLOCK_INFO in line
-        for index, line in enumerate(lines)
-        if index < opening or index > closing
-    ):
+        raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
+    opening = canonical_openings[0]
+    if marker_lines != [opening]:
         raise GateInputError(
             "AMBIGUOUS_MANAGED_BLOCK",
-            "managed label occurs outside the recognized fenced block",
+            "managed label occurs outside the canonical top-level opener",
         )
-    unmanaged = "\n".join(raw_lines[:opening] + raw_lines[closing + 1 :])
+    matching = [block for block in blocks if block[0] == opening]
+    if not matching:
+        raise GateInputError(
+            "MALFORMED_MANAGED_BLOCK",
+            "canonical managed evidence block is unclosed",
+        )
+    if len(blocks) != 1:
+        raise GateInputError(
+            "AMBIGUOUS_MANAGED_BLOCK",
+            "exactly one canonical managed block is required",
+        )
+    opening, closing, content = matching[0]
+    unmanaged = "\n".join(lines[:opening] + lines[closing + 1 :])
     return content, unmanaged
 
 
@@ -417,104 +404,11 @@ def extract_managed_block(body: str) -> str:
     return extract_managed_document(body)[0]
 
 
-def _markdown_projection(body: str) -> str:
+def _normalized_body_text(body: str) -> str:
     normalized = unicodedata.normalize("NFKC", html.unescape(body))
-    projected: list[str] = []
-    cursor = 0
-    html_retry_at = 0
-    link_retry_at = 0
-    while cursor < len(normalized):
-        if normalized.startswith("<!--", cursor):
-            projected.append(" ")
-            cursor += 4
-            continue
-        if normalized.startswith("-->", cursor):
-            projected.append(" ")
-            cursor += 3
-            continue
-        char = normalized[cursor]
-        if unicodedata.category(char) == "Cf":
-            cursor += 1
-            continue
-        if char == "<" and cursor >= html_retry_at:
-            tag_end, html_retry_at = _html_tag_end(normalized, cursor)
-            if tag_end is not None:
-                projected.append(" ")
-                cursor = tag_end
-                continue
-        if (
-            char == "]"
-            and cursor >= link_retry_at
-            and cursor + 1 < len(normalized)
-            and normalized[cursor + 1] == "("
-        ):
-            destination_end, link_retry_at = _parenthesized_end(
-                normalized,
-                cursor + 1,
-            )
-            if destination_end is not None:
-                projected.append("] ")
-                cursor = destination_end
-                continue
-        if char == "\\" and cursor + 1 < len(normalized):
-            escaped = normalized[cursor + 1]
-            if escaped in MARKDOWN_SEPARATOR_CHARS or escaped == "#":
-                projected.append(escaped)
-                cursor += 2
-                continue
-        projected.append(char)
-        cursor += 1
-    return "".join(projected)
-
-
-def _html_tag_end(text: str, start: int) -> tuple[int | None, int]:
-    cursor = start + 1
-    if cursor < len(text) and text[cursor] == "/":
-        cursor += 1
-    name_start = cursor
-    while cursor < len(text) and (
-        text[cursor].isascii() and (text[cursor].isalnum() or text[cursor] == "-")
-    ):
-        cursor += 1
-    if cursor == name_start:
-        return None, cursor + 1
-    if cursor < len(text) and not (
-        text[cursor].isspace() or text[cursor] in "/>"
-    ):
-        return None, cursor + 1
-    quote: str | None = None
-    while cursor < len(text):
-        char = text[cursor]
-        if char in "\r\n":
-            return None, cursor + 1
-        if quote is None and char in "\"'":
-            quote = char
-        elif quote is not None and char == quote:
-            quote = None
-        elif quote is None and char == ">":
-            return cursor + 1, cursor + 1
-        cursor += 1
-    return None, len(text)
-
-
-def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:
-    depth = 1
-    cursor = start + 1
-    while cursor < len(text):
-        char = text[cursor]
-        if char in "\r\n":
-            return None, cursor + 1
-        if char == "\\" and cursor + 1 < len(text):
-            cursor += 2
-            continue
-        if char == "(":
-            depth += 1
-        elif char == ")":
-            depth -= 1
-            if depth == 0:
-                return cursor + 1, cursor + 1
-        cursor += 1
-    return None, len(text)
+    return "".join(
+        char for char in normalized if unicodedata.category(char) != "Cf"
+    )
 
 
 def _issue_number(reference: str) -> int:
@@ -783,16 +677,25 @@ def _check_history_claims(
             )
 
 
-def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
+def _reject_directive_keywords(normalized: str) -> None:
+    if _keyword_spans(normalized, CLOSE_KEYWORDS):
+        raise GateInputError(
+            "DIRECTIVE_KEYWORD_FORBIDDEN",
+            "body contains a forbidden closing directive token",
+        )
+
+
+def _check_references(
+    raw: Any,
+    context: dict[str, Any],
+    normalized: str,
+) -> None:
     references = _object(raw, "references")
     _exact_keys(references, REFERENCE_KEYS, "references")
     non_closing = _array(references["non_closing"], "references.non_closing", 1_000)
     closing = _array(references["closing"], "references.closing", 1_000)
     if closing:
         raise GateInputError("CLOSING_REFERENCES_NOT_EMPTY", "references.closing must be empty")
-    projected = _markdown_projection(body)
-    if _references_after(projected, CLOSE_KEYWORDS):
-        raise GateInputError("AUTOCLOSE_REFERENCE", "body contains an auto-closing issue reference")
     if not non_closing:
         raise GateInputError("MISSING_NON_CLOSING_REF", "at least one non-closing ref is required")
     if len(set(map(str, non_closing))) != len(non_closing):
@@ -803,7 +706,7 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
         match = NON_CLOSING_RE.fullmatch(reference)
         if match is None or int(match.group(2)) not in allowed:
             raise GateInputError("INVALID_ISSUE_REF", f"disallowed non-closing ref: {reference}")
-    for reference in _references_after(projected, NON_CLOSING_DIRECTIVES):
+    for reference in _references_after(normalized, NON_CLOSING_DIRECTIVES):
         if _issue_number(reference) not in allowed:
             raise GateInputError(
                 "UNMANAGED_ISSUE_REF",
@@ -817,12 +720,12 @@ def _charge_unmanaged_prose(
     if not unmanaged.strip():
         return
     human_reviews.append(_human_review("unmanaged_prose", "body-outside-managed-block"))
-    projected = _markdown_projection(unmanaged)
-    if ISSUE_MENTION_RE.search(projected) is not None:
+    normalized = _normalized_body_text(unmanaged)
+    if ISSUE_MENTION_RE.search(normalized) is not None:
         human_reviews.append(
             _human_review("unmanaged_issue_reference", "body-issue-reference")
         )
-    if FUTURE_PLAN_RE.search(projected) is not None:
+    if FUTURE_PLAN_RE.search(normalized) is not None:
         human_reviews.append(_human_review("future_plan", "body-future-plan"))
 
 
@@ -879,6 +782,8 @@ def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
             raise GateInputError("INVALID_TYPE", "body must be a string")
         if len(_validate_unicode_text(body, "body")) > MAX_BODY_BYTES:
             raise GateInputError("INPUT_TOO_LARGE", "body exceeds the size limit")
+        normalized_body = _normalized_body_text(body)
+        _reject_directive_keywords(normalized_body)
         _validate_json_unicode(context_raw, "context")
         context = _validate_context(context_raw)
         managed, unmanaged = extract_managed_document(body)
@@ -899,7 +804,7 @@ def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
             human_reviews,
         )
         _check_history_claims(payload["history_claims"], context, errors)
-        _check_references(payload["references"], context, body)
+        _check_references(payload["references"], context, normalized_body)
         _check_semantic_claims(
             payload["semantic_claims"],
             context,

@@ -151,7 +151,7 @@ class GateTest(GateHarness, unittest.TestCase):
 
     def test_duplicate_block_fails(self) -> None:
         block = managed_body(self.payload)
-        self.assert_code("DUPLICATE_MANAGED_BLOCK", body=block + block)
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=block + block)
 
     def test_duplicate_json_key_fails(self) -> None:
         raw = '{"schema_version":1,"schema_version":1}'
@@ -189,70 +189,75 @@ class GateTest(GateHarness, unittest.TestCase):
 
     def test_nonempty_closing_refs_fail(self) -> None:
         payload = copy.deepcopy(self.payload)
-        payload["references"]["closing"] = ["Closes #4801"]
+        payload["references"]["closing"] = ["Refs #4801"]
         self.assert_code("CLOSING_REFERENCES_NOT_EMPTY", payload=payload)
 
-    def test_negated_autoclose_in_prose_fails(self) -> None:
-        self.assert_code("AUTOCLOSE_REFERENCE", prefix="This does not Closes #4801.\n")
+    def test_negated_directive_in_prose_fails(self) -> None:
+        self.assert_code(
+            "DIRECTIVE_KEYWORD_FORBIDDEN",
+            prefix="This does not Closes #4801.\n",
+        )
 
-    def test_all_official_autoclose_variants_fail(self) -> None:
-        references = [
-            "#4801",
-            "phasetr/ising-model#4801",
-            "https://github.com/phasetr/ising-model/issues/4801",
-        ]
-        for index, keyword in enumerate(gate.OFFICIAL_CLOSE_KEYWORDS):
-            punctuation = ": (**" if index % 2 else " "
-            suffix = "**)" if index % 2 else ""
-            prefix = f"{keyword.upper()}{punctuation}{references[index % 3]}{suffix}\n"
+    def test_all_official_directive_tokens_are_forbidden_without_a_reference(self) -> None:
+        for keyword in gate.OFFICIAL_CLOSE_KEYWORDS:
+            prefix = f"Ordinary prose says **{keyword.upper()}** without an issue number.\n"
             with self.subTest(prefix=prefix):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
-    def test_nfkc_and_markdown_autoclose_forms_fail(self) -> None:
+    def test_nfkc_entity_and_markdown_wrappers_cannot_hide_directives(self) -> None:
         variants = [
-            "\uff26\uff49\uff58\uff45\uff53\uff1a \uff034801\n",
-            "[Resolves](https://example.test/reason) **#4801**\n",
-            "<strong>Closed</strong>: (phasetr/ising-model#4801)\n",
-            "Fixes: <https://github.com/phasetr/ising-model/issues/4801>\n",
+            "\uff26\uff49\uff58\uff45\uff53\n",
+            "[Resolves](https://example.test/reason)\n",
+            "[Fixes][reason]\n",
+            "<strong>Closed</strong>\n",
+            "<span data-policy=\"Resolved\">ordinary</span>\n",
+            "<!-- Fixed -->\n",
+            "`Close`\n",
+            "Fi&#120;es\n",
+            "Fi\u200bxes\n",
         ]
         for prefix in variants:
             with self.subTest(prefix=prefix):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
     def test_underscore_emphasis_cannot_hide_keyword(self) -> None:
         for prefix in ["_Fixes_ #4801\n", "__Fixes__ #4801\n", "***Fixes*** #4801\n"]:
             with self.subTest(prefix=prefix):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
-    def test_unbounded_link_and_html_tag_projection_repros_fail(self) -> None:
+    def test_directives_anywhere_in_long_link_or_html_text_fail(self) -> None:
         variants = [
-            "[Fixes](" + "x" * 513 + ") #4801\n",
-            '<span data-long="' + "x" * 600 + '">Fixes</span> #4801\n',
+            "[label](https://example.test/" + "x" * 513 + "/Fixes)\n",
+            '<span data-long="' + "x" * 600 + ' Resolved">ordinary</span>\n',
         ]
         for prefix in variants:
             with self.subTest(length=len(prefix)):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
-    def test_unbounded_separator_autoclose_repros_fail(self) -> None:
+    def test_directive_tokens_with_arbitrary_following_text_fail(self) -> None:
         variants = [
-            "Closes" + " " * 65 + "#4801\n",
-            "Fixes" + "\n" * 100 + "owner/repo#4801\n",
-            "Resolved" + "*_~`-:;,.()[]" * 20
-            + "https://github.com/owner/repo/issues/4801\n",
+            "Closes" + " " * 65 + "ordinary\n",
+            "Fixes" + "\n" * 100 + "ordinary\n",
+            "Resolved" + "*_~`-:;,.()[]" * 20 + "ordinary\n",
         ]
         for prefix in variants:
             with self.subTest(length=len(prefix)):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
-    def test_code_comment_entity_autoclose_policy_is_pinned(self) -> None:
+    def test_code_comment_and_fence_directive_policy_is_pinned(self) -> None:
         variants = [
-            "<!-- Closes" + " " * 65 + "#4801 -->\n",
-            "`Fixes`&#58;" + "\n" * 100 + "#4801\n",
-            "~~~text\nResolved" + " " * 65 + "#4801\n~~~\n",
+            "<!-- Closes -->\n",
+            "`Fixes`\n",
+            "~~~text\nResolved\n~~~\n",
         ]
         for prefix in variants:
             with self.subTest(prefix=prefix[:20]):
-                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
+
+    def test_directive_ban_precedes_other_body_diagnostics(self) -> None:
+        body = "[Fixes][reason]\n> ```completion-claims-v1\n> {}\n> ```\n"
+        report = self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", body=body)
+        self.assertEqual(len(report["diagnostics"]), 1)
 
     def test_raw_wrong_nonclosing_ref_outside_block_fails(self) -> None:
         self.assert_code(
@@ -417,42 +422,27 @@ class GateTest(GateHarness, unittest.TestCase):
     def test_invalid_control_in_unmanaged_body_fails(self) -> None:
         self.assert_code("INVALID_UNICODE", prefix="prose\u0085claim\n")
 
-    def test_reference_scanner_is_linearish_on_large_separator_input(self) -> None:
-        projected = ("close" + " " * 96 + "ordinary\n") * 8_000
+    def test_directive_scanner_is_linearish_on_large_clean_input(self) -> None:
+        normalized = ("disclosed prefixes ordinary\n" * 40_000) + "still clean"
         started = time.monotonic()
-        references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
+        spans = gate._keyword_spans(normalized, gate.CLOSE_KEYWORDS)
         elapsed = time.monotonic() - started
-        self.assertEqual(references, [])
+        self.assertEqual(spans, [])
         self.assertLess(elapsed, 5.0)
 
-    def test_projection_is_linearish_past_one_mibibyte(self) -> None:
+    def test_normalized_directive_scan_is_linearish_past_one_mibibyte(self) -> None:
         cases = [
-            "[Fixes](" + "x" * 1_100_000 + ") #4801",
-            '<span data-long="' + "x" * 1_100_000 + '">Fixes</span> #4801',
+            "[label](" + "x" * 1_100_000 + "/Fixes)",
+            '<span data-long="' + "x" * 1_100_000 + ' Resolved">ordinary</span>',
         ]
         for source in cases:
             with self.subTest(prefix=source[:10]):
                 started = time.monotonic()
-                projected = gate._markdown_projection(source)
-                references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
+                normalized = gate._normalized_body_text(source)
+                spans = gate._keyword_spans(normalized, gate.CLOSE_KEYWORDS)
                 elapsed = time.monotonic() - started
-                self.assertTrue(references)
-                self.assertLess(len(projected), 100)
-                self.assertLess(elapsed, 5.0)
-
-    def test_unclosed_projection_candidates_are_linearish_past_one_mibibyte(self) -> None:
-        cases = [
-            "](" * 550_000 + "Fixes #4801",
-            "<span data-long='" + "<span " * 180_000 + "Fixes #4801",
-        ]
-        for source in cases:
-            with self.subTest(prefix=source[:10]):
-                started = time.monotonic()
-                projected = gate._markdown_projection(source)
-                references = gate._references_after(projected, gate.CLOSE_KEYWORDS)
-                elapsed = time.monotonic() - started
-                self.assertTrue(references)
-                self.assertEqual(len(projected), len(source))
+                self.assertTrue(spans)
+                self.assertEqual(len(normalized), len(source))
                 self.assertLess(elapsed, 5.0)
 
 
@@ -483,88 +473,92 @@ class DigestTest(unittest.TestCase):
 
 
 class ManagedFenceTest(GateHarness, unittest.TestCase):
-    def test_markdown_valid_fence_forms_pass(self) -> None:
-        forms = [
-            ("~~~~completion-claims-v1", "~~~~"),
-            ("   ```completion-claims-v1   ", "   ```"),
-            ("````completion-claims-v1", "`````"),
+    def test_exact_top_level_template_fence_passes(self) -> None:
+        code, report = self.run_gate(body=managed_body(self.payload))
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_noncanonical_managed_openers_are_ambiguous(self) -> None:
+        variants = [
+            "~~~~completion-claims-v1",
+            "   ```completion-claims-v1",
+            "````completion-claims-v1",
+            "```completion-claims-v1   ",
+            "```completion-claims-v1 extra",
         ]
-        for opening, closing in forms:
-            with self.subTest(opening=opening, closing=closing):
-                body = managed_body(self.payload, opening=opening, closing=closing)
-                code, report = self.run_gate(body=body)
-                self.assertEqual(code, gate.EXIT_PASS, report)
+        for opening in variants:
+            with self.subTest(opening=opening):
+                body = managed_body(self.payload, opening=opening)
+                self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
 
-    def test_mixed_fence_duplicate_fails(self) -> None:
-        first = managed_body(self.payload)
-        second = managed_body(
-            self.payload,
-            opening="~~~completion-claims-v1",
-            closing="~~~",
-        )
-        self.assert_code("DUPLICATE_MANAGED_BLOCK", body=first + second)
-
-    def test_managed_fence_nested_in_other_fence_fails(self) -> None:
+    def test_canonical_spelling_nested_in_other_fence_is_ambiguous(self) -> None:
         body = "````text\n" + managed_body(self.payload) + "````\n"
-        self.assert_code("NESTED_MANAGED_BLOCK", body=body)
-
-    def test_ambiguous_managed_info_fails(self) -> None:
-        body = managed_body(
-            self.payload,
-            opening="```completion-claims-v1 extra",
-        )
         self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
 
-    def test_unclosed_and_short_closing_fences_fail(self) -> None:
+    def test_duplicate_canonical_blocks_are_ambiguous(self) -> None:
+        block = managed_body(self.payload)
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=block + block)
+
+    def test_unclosed_and_noncanonical_closing_fences_fail(self) -> None:
         encoded = json.dumps(self.payload)
         bodies = [
             f"```completion-claims-v1\n{encoded}\n",
             f"````completion-claims-v1\n{encoded}\n```\n",
+            f"```completion-claims-v1\n{encoded}\n````\n",
+            f"```completion-claims-v1\n{encoded}\n~~~\n",
+            f"```completion-claims-v1\n{encoded}\n   ```\n",
         ]
         for body in bodies:
             with self.subTest(body=body[-20:]):
-                self.assert_code("MALFORMED_MANAGED_BLOCK", body=body)
+                expected = (
+                    "AMBIGUOUS_MANAGED_BLOCK"
+                    if body.startswith("````")
+                    else "MALFORMED_MANAGED_BLOCK"
+                )
+                self.assert_code(expected, body=body)
 
-    def test_blockquote_wrapped_managed_fence_passes(self) -> None:
+    def test_wrapped_or_list_managed_attempts_are_ambiguous(self) -> None:
         encoded = json.dumps(self.payload, indent=2)
-        for prefix in ["> ", "> > ", " > > "]:
+        for prefix in ["> ", "> > ", " > > ", "- ", "    "]:
             body = "\n".join(
                 [prefix + gate.BLOCK_FENCE]
                 + [prefix + line for line in encoded.splitlines()]
                 + [prefix + "```", ""]
             )
             with self.subTest(prefix=prefix):
-                code, report = self.run_gate(body=body)
-                self.assertEqual(code, gate.EXIT_PASS, report)
+                self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
 
-    def test_blockquote_wrapped_second_fence_is_duplicate(self) -> None:
+    def test_marker_outside_the_canonical_opener_is_ambiguous(self) -> None:
+        suffix = "> ```completion-claims-v1\n> {}\n> ```\n"
+        self.assert_code(
+            "AMBIGUOUS_MANAGED_BLOCK",
+            body=managed_body(self.payload) + suffix,
+        )
+
+    def test_top_open_with_blockquote_close_is_malformed(self) -> None:
         encoded = json.dumps(self.payload, indent=2)
-        quoted = "\n".join(
-            ["> " + gate.BLOCK_FENCE]
-            + ["> " + line for line in encoded.splitlines()]
+        body = "\n".join(
+            [gate.BLOCK_FENCE]
+            + encoded.splitlines()
             + ["> ```", ""]
         )
-        self.assert_code(
-            "DUPLICATE_MANAGED_BLOCK",
-            body=managed_body(self.payload) + quoted,
-        )
-
-    def test_list_and_four_space_marker_variants_are_ambiguous(self) -> None:
-        variants = [
-            "- ```completion-claims-v1\n{}\n- ```\n",
-            "    ```completion-claims-v1\n{}\n    ```\n",
-            "- ~~~completion-claims-v1\n{}\n- ~~~\n",
-        ]
-        for suffix in variants:
-            with self.subTest(suffix=suffix[:10]):
-                self.assert_code(
-                    "AMBIGUOUS_MANAGED_BLOCK",
-                    body=managed_body(self.payload) + suffix,
-                )
-
-    def test_unclosed_blockquote_managed_fence_fails(self) -> None:
-        body = "> ```completion-claims-v1\n> {}\n"
         self.assert_code("MALFORMED_MANAGED_BLOCK", body=body)
+
+    def test_blockquote_open_with_top_close_is_ambiguous(self) -> None:
+        encoded = json.dumps(self.payload, indent=2)
+        body = "\n".join(
+            ["> " + gate.BLOCK_FENCE]
+            + ["> " + line for line in encoded.splitlines()]
+            + ["```", ""]
+        )
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+
+    def test_blockquote_depth_mismatch_is_ambiguous(self) -> None:
+        body = (
+            "> ```completion-claims-v1\n"
+            "> > {}\n"
+            "> > ```\n"
+        )
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
 
 
 class IncidentFixtureTest(GateHarness, unittest.TestCase):
@@ -717,59 +711,50 @@ class MutationTest(GateHarness, unittest.TestCase):
         code, _ = self.run_gate(payload=payload, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
 
-    def test_autoclose_mutant_is_killed(self) -> None:
+    def test_directive_ban_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if _references_after(projected, CLOSE_KEYWORDS):",
+            "if _keyword_spans(normalized, CLOSE_KEYWORDS):",
             "if False:",
         )
-        prefix = "[Resolves](https://example.test/reason): owner/repo#4801\n"
-        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        prefix = "[Resolves][reason]\n"
+        self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
 
-    def test_separator_length_cap_mutant_is_killed(self) -> None:
-        mutant = self.mutant(
-            "while cursor < len(projected) and "
-            "_is_markdown_separator(projected[cursor]):",
-            "while (cursor < len(projected) and "
-            "_is_markdown_separator(projected[cursor]) and "
-            "cursor - keyword_end < 64):",
-        )
-        prefix = "Closes" + " " * 65 + "#4801\n"
-        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
-        code, _ = self.run_gate(prefix=prefix, module=mutant)
-        self.assertEqual(code, gate.EXIT_PASS)
-
-    def test_underscore_boundary_mutant_is_killed(self) -> None:
+    def test_directive_boundary_mutant_is_killed(self) -> None:
         mutant = self.mutant(
             "return char.isascii() and char.isalnum()",
             'return char.isascii() and (char.isalnum() or char == "_")',
         )
-        prefix = "__Fixes__ #4801\n"
-        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        prefix = "__Fixes__\n"
+        self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
 
-    def test_link_projection_cutoff_mutant_is_killed(self) -> None:
+    def test_directive_normalization_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:\n"
-            "    depth = 1\n"
-            "    cursor = start + 1\n"
-            "    while cursor < len(text):",
-            "def _parenthesized_end(text: str, start: int) -> tuple[int | None, int]:\n"
-            "    depth = 1\n"
-            "    cursor = start + 1\n"
-            "    while cursor < len(text) and cursor - start <= 512:",
+            'normalized = unicodedata.normalize("NFKC", html.unescape(body))',
+            "normalized = body",
         )
-        prefix = "[Fixes](" + "x" * 513 + ") #4801\n"
-        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        prefix = "[F&#105;xes][reason]\n"
+        self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_canonical_top_level_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if ordinary_fence is not None:",
+            "if False:",
+        )
+        body = "````text\n" + managed_body(self.payload) + "````\n"
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+        code, _ = self.run_gate(body=body, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
 
     def test_managed_marker_sweep_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if index < opening or index > closing",
-            "if False",
+            "if marker_lines != [opening]:",
+            "if False:",
         )
         suffix = "- ```completion-claims-v1\n{}\n- ```\n"
         self.assert_code(
@@ -836,16 +821,15 @@ class MutationTest(GateHarness, unittest.TestCase):
             {item["kind"] for item in weakened["human_reviews"]},
         )
 
-    def test_three_fence_minimum_mutant_is_killed(self) -> None:
+    def test_canonical_opener_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "FENCE_OPEN_RE = re.compile(r\"^( {0,3})(`{3,}|~{3,})([^\\r\\n]*)$\")",
-            "FENCE_OPEN_RE = re.compile(r\"^( {0,3})(`{4,}|~{4,})([^\\r\\n]*)$\")",
+            'if line.removesuffix("\\r") == BLOCK_FENCE:',
+            'if line.removesuffix("\\r").lstrip() == BLOCK_FENCE:',
         )
-        code, _ = self.run_gate()
-        self.assertEqual(code, gate.EXIT_PASS)
-        code, report = self.run_gate(module=mutant)
-        self.assertEqual(code, gate.EXIT_FAIL)
-        self.assertEqual(report["diagnostics"][0]["code"], "AMBIGUOUS_MANAGED_BLOCK")
+        body = managed_body(self.payload, opening="   " + gate.BLOCK_FENCE)
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
 
 
 class SecurityAndWiringTest(unittest.TestCase):

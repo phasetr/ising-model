@@ -23,7 +23,7 @@
     {
       "id": "negated_autoclose_still_fails",
       "body_prefix": "This does not Closes #4800.\n",
-      "expected_code": "AUTOCLOSE_REFERENCE"
+      "expected_code": "DIRECTIVE_KEYWORD_FORBIDDEN"
     },
     {
       "id": "stale_unrestricted_prose_is_human",

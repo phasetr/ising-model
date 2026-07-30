@@ -23,6 +23,9 @@
 Replace every placeholder before requesting ready review. Draft pull requests
 may leave `PENDING` in documented evidence fields and will remain incomplete.
 Replace `ISSUE` with an issue number allowed by the offline context.
+Do not use any GitHub issue-completion directive token in this body; the nine
+forbidden words and conservative whole-body policy are listed in
+`docs/completion-claims.md`.
 
 ```completion-claims-v1
 {
