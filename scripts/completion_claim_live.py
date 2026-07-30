@@ -39,6 +39,7 @@ MAX_DIAGNOSTIC_BYTES = 8192
 MAX_CHANGED_FILES = 3000
 FILES_PER_PAGE = 100
 MAX_FILE_PAGES = 30
+MAX_STRUCTURED_REFERENCES = 16
 MAX_ISSUES = 64
 MAX_ISSUE_DEPTH = 8
 MAX_HISTORY_FACTS = 128
@@ -48,6 +49,7 @@ MAX_BACKFILL_PAGES = 2
 REQUEST_TIMEOUT_SECONDS = 10
 REQUEST_RETRIES = 2
 MAX_STATUS_DESCRIPTION = 140
+WORKFLOW_SHA256 = "f5a9633578e3c3506d89cb6f6eff17dcb15a3cf31674fb8247d9241bd57ce6b2"
 
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 REPOSITORY_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
@@ -105,6 +107,35 @@ class Snapshot:
             self.changed_file_count,
             self.path_digest,
         )
+
+
+@dataclass(frozen=True)
+class BasicSnapshot:
+    """Validated fresh PR metadata available before fact endpoint reads."""
+
+    number: int
+    state: str
+    draft: bool
+    base_sha: str
+    head_sha: str
+    body: str
+    body_digest: str
+    changed_file_count: int
+    repository: str
+    head_repository: str
+    head_actor: str
+
+
+@dataclass(frozen=True)
+class PendingIdentity:
+    """Minimal trusted identity required before writing exact-head pending."""
+
+    pr: dict[str, object]
+    number: int
+    state: str
+    base_sha: str
+    head_sha: str
+    repository: str
 
 
 def _object(value: object, code: str) -> dict[str, object]:
@@ -170,13 +201,24 @@ def structured_references(payload: dict[str, object]) -> list[tuple[str, int]]:
     """Return exact non-closing references from the managed payload."""
     references = _object(payload.get("references"), "INVALID_STRUCTURED_REFERENCES")
     raw = _array(references.get("non_closing"), "INVALID_STRUCTURED_REFERENCES")
+    if len(raw) > MAX_STRUCTURED_REFERENCES:
+        raise LiveGateError("STRUCTURED_REFERENCE_LIMIT_EXCEEDED")
     result: list[tuple[str, int]] = []
+    texts: set[str] = set()
+    numbers: set[int] = set()
     for value in raw:
         text = _string(value, "INVALID_STRUCTURED_REFERENCES")
         match = STRUCTURED_REF_RE.fullmatch(text)
         if match is None:
             raise LiveGateError("INVALID_STRUCTURED_REFERENCES")
-        result.append((match.group(1), int(match.group(2))))
+        number = int(match.group(2))
+        if text in texts:
+            raise LiveGateError("DUPLICATE_STRUCTURED_REFERENCE")
+        if number in numbers:
+            raise LiveGateError("DUPLICATE_STRUCTURED_ISSUE")
+        texts.add(text)
+        numbers.add(number)
+        result.append((match.group(1), number))
     if not result or not any(kind == "Refs" for kind, _ in result):
         raise LiveGateError("MISSING_STRUCTURED_REFERENCE")
     return result
@@ -280,16 +322,17 @@ def _validated_issue(
     return number
 
 
-def derive_allowed_issue_refs(
+def _derive_allowed_issue_refs(
     transport: Transport,
     repository: str,
-    body: str,
+    references: list[tuple[str, int]],
 ) -> list[int]:
     """Derive declared issue authority through structural parent chains."""
-    references = structured_references(structured_payload(body))
     declared = {number for _, number in references}
     seeds = [number for kind, number in references if kind == "Refs"]
     allowed: set[int] = set()
+    issue_cache: dict[int, object] = {}
+    parent_cache: dict[int, int | None] = {}
     for seed in seeds:
         current: int | None = seed
         chain_seen: set[int] = set()
@@ -303,28 +346,50 @@ def derive_allowed_issue_refs(
                 raise LiveGateError("ISSUE_LIMIT_EXCEEDED")
             chain_seen.add(current)
             allowed.add(current)
-            issue_endpoint = f"/repos/{repository}/issues/{current}"
-            _validated_issue(
-                transport.get(issue_endpoint),
-                repository,
-                current,
-                "INVALID_ISSUE_RESPONSE",
-            )
-            parent_endpoint = f"/repos/{repository}/issues/{current}/parent"
-            raw_parent = transport.get(parent_endpoint, allow_not_found=True)
-            if raw_parent is None:
-                current = None
-            else:
-                current = _validated_issue(
-                    raw_parent,
+            if current not in issue_cache:
+                issue_endpoint = f"/repos/{repository}/issues/{current}"
+                raw_issue = transport.get(issue_endpoint)
+                _validated_issue(
+                    raw_issue,
                     repository,
-                    None,
-                    "INVALID_ISSUE_PARENT",
+                    current,
+                    "INVALID_ISSUE_RESPONSE",
                 )
+                issue_cache[current] = raw_issue
+            if current not in parent_cache:
+                parent_endpoint = (
+                    f"/repos/{repository}/issues/{current}/parent"
+                )
+                raw_parent = transport.get(
+                    parent_endpoint,
+                    allow_not_found=True,
+                )
+                if raw_parent is None:
+                    parent_cache[current] = None
+                else:
+                    parent_number = _validated_issue(
+                        raw_parent,
+                        repository,
+                        None,
+                        "INVALID_ISSUE_PARENT",
+                    )
+                    parent_cache[current] = parent_number
+                    issue_cache.setdefault(parent_number, raw_parent)
+            current = parent_cache[current]
             depth += 1
     if not declared.issubset(allowed):
         raise LiveGateError("ISSUE_OUTSIDE_HIERARCHY")
     return sorted(allowed)
+
+
+def derive_allowed_issue_refs(
+    transport: Transport,
+    repository: str,
+    body: str,
+) -> list[int]:
+    """Parse references first, then derive their bounded structural graph."""
+    references = structured_references(structured_payload(body))
+    return _derive_allowed_issue_refs(transport, repository, references)
 
 
 def _content_blob_sha(
@@ -549,23 +614,38 @@ def read_pr_metadata(
     return pr, head
 
 
-def snapshot_pr(
-    transport: Transport,
+def validate_pending_identity(
     repository: str,
     pr_number: int,
-    metadata: tuple[dict[str, object], str] | None = None,
-) -> Snapshot:
-    """Read one complete bounded PR snapshot."""
-    pr, head_sha = (
-        read_pr_metadata(transport, repository, pr_number)
-        if metadata is None
-        else metadata
-    )
+    metadata: tuple[dict[str, object], str],
+) -> PendingIdentity:
+    """Validate only immutable routing identity needed for exact-head pending."""
+    pr, head_sha = metadata
     if _integer(pr.get("number"), "INVALID_PR_NUMBER") != pr_number:
         raise LiveGateError("PR_NUMBER_MISMATCH")
     state = _string(pr.get("state"), "INVALID_PR_STATE")
     if state not in {"open", "closed"}:
         raise LiveGateError("INVALID_PR_STATE")
+    base = _object(pr.get("base"), "INVALID_PR_RESPONSE")
+    base_sha = _sha(base.get("sha"), "INVALID_BASE_SHA")
+    if base.get("ref") != "main":
+        raise LiveGateError("PR_BASE_NOT_MAIN")
+    base_repository = _base_repository_name(pr)
+    if base_repository != repository:
+        raise LiveGateError("CROSS_REPOSITORY_PR")
+    return PendingIdentity(
+        pr=pr,
+        number=pr_number,
+        state=state,
+        base_sha=base_sha,
+        head_sha=head_sha,
+        repository=repository,
+    )
+
+
+def validate_basic_snapshot(identity: PendingIdentity) -> BasicSnapshot:
+    """Validate mutable PR fields immediately after pending."""
+    pr = identity.pr
     draft = pr.get("draft")
     if not isinstance(draft, bool):
         raise LiveGateError("INVALID_PR_DRAFT")
@@ -574,38 +654,68 @@ def snapshot_pr(
     body_bytes = body.encode("utf-8")
     if len(body_bytes) > MAX_BODY_BYTES:
         raise LiveGateError("BODY_LIMIT_EXCEEDED")
-    base = _object(pr.get("base"), "INVALID_PR_RESPONSE")
-    base_sha = _sha(base.get("sha"), "INVALID_BASE_SHA")
-    if base.get("ref") != "main":
-        raise LiveGateError("PR_BASE_NOT_MAIN")
     changed_count = _integer(pr.get("changed_files"), "INVALID_CHANGED_COUNT")
-    paths = collect_changed_paths(
-        transport,
-        repository,
-        pr_number,
-        changed_count,
-    )
-    base_repository = _base_repository_name(pr)
-    if base_repository != repository:
-        raise LiveGateError("CROSS_REPOSITORY_PR")
+    if changed_count < 0:
+        raise LiveGateError("INVALID_CHANGED_COUNT")
+    if changed_count > MAX_CHANGED_FILES:
+        raise LiveGateError("FILE_LIMIT_EXCEEDED")
     head_repository = _nested_repository_name(pr, "head")
     head_data = _object(pr.get("head"), "INVALID_PR_RESPONSE")
     actor_data = _object(head_data.get("user"), "INVALID_PR_RESPONSE")
     actor = _string(actor_data.get("login"), "INVALID_PR_RESPONSE")
-    return Snapshot(
-        number=pr_number,
-        state=state,
+    return BasicSnapshot(
+        number=identity.number,
+        state=identity.state,
         draft=draft,
-        base_sha=base_sha,
-        head_sha=head_sha,
+        base_sha=identity.base_sha,
+        head_sha=identity.head_sha,
         body=body,
         body_digest="sha256:" + hashlib.sha256(body_bytes).hexdigest(),
         changed_file_count=changed_count,
-        changed_paths=tuple(paths),
-        path_digest=offline.sorted_path_digest(paths),
-        repository=repository,
+        repository=identity.repository,
         head_repository=head_repository,
         head_actor=actor,
+    )
+
+
+def snapshot_pr(
+    transport: Transport,
+    repository: str,
+    pr_number: int,
+    basic: BasicSnapshot | None = None,
+) -> Snapshot:
+    """Read one complete bounded PR snapshot."""
+    current = (
+        validate_basic_snapshot(
+            validate_pending_identity(
+                repository,
+                pr_number,
+                read_pr_metadata(transport, repository, pr_number),
+            )
+        )
+        if basic is None
+        else basic
+    )
+    paths = collect_changed_paths(
+        transport,
+        repository,
+        pr_number,
+        current.changed_file_count,
+    )
+    return Snapshot(
+        number=pr_number,
+        state=current.state,
+        draft=current.draft,
+        base_sha=current.base_sha,
+        head_sha=current.head_sha,
+        body=current.body,
+        body_digest=current.body_digest,
+        changed_file_count=current.changed_file_count,
+        changed_paths=tuple(paths),
+        path_digest=offline.sorted_path_digest(paths),
+        repository=current.repository,
+        head_repository=current.head_repository,
+        head_actor=current.head_actor,
     )
 
 
@@ -698,18 +808,39 @@ def evaluate_pr(
 ) -> int:
     """Evaluate one PR and publish pending plus an exact-head terminal state."""
     head_sha: str | None = None
+    pending_written = False
     failure_code = "LIVE_GATE_FAILURE"
     try:
         p1_metadata = read_pr_metadata(transport, repository, pr_number)
         head_sha = p1_metadata[1]
-        p1 = snapshot_pr(transport, repository, pr_number, p1_metadata)
-        if p1.state != "open":
+        p1_identity = validate_pending_identity(
+            repository,
+            pr_number,
+            p1_metadata,
+        )
+        if p1_identity.state != "open":
             raise LiveGateError("PR_NOT_OPEN")
-        payload = structured_payload(p1.body)
-        allowed_refs = derive_allowed_issue_refs(
+        _write_status(
             transport,
             repository,
-            p1.body,
+            p1_identity.head_sha,
+            "pending",
+            "PENDING",
+        )
+        pending_written = True
+        p1_basic = validate_basic_snapshot(p1_identity)
+        payload = structured_payload(p1_basic.body)
+        references = structured_references(payload)
+        p1 = snapshot_pr(
+            transport,
+            repository,
+            pr_number,
+            p1_basic,
+        )
+        allowed_refs = _derive_allowed_issue_refs(
+            transport,
+            repository,
+            references,
         )
         claims = structured_history(payload)
         history_facts = derive_history_facts(
@@ -719,15 +850,21 @@ def evaluate_pr(
             claims,
         )
         context = build_offline_context(p1, allowed_refs, history_facts)
-        _write_status(
+        exit_code, report = checker(context, p1.body)
+        p2_basic = validate_basic_snapshot(
+            validate_pending_identity(
+                repository,
+                pr_number,
+                read_pr_metadata(transport, repository, pr_number),
+            )
+        )
+        structured_references(structured_payload(p2_basic.body))
+        p2 = snapshot_pr(
             transport,
             repository,
-            p1.head_sha,
-            "pending",
-            "PENDING",
+            pr_number,
+            p2_basic,
         )
-        exit_code, report = checker(context, p1.body)
-        p2 = snapshot_pr(transport, repository, pr_number)
         if p1.comparison_key() != p2.comparison_key():
             raise LiveGateError("SNAPSHOT_MISMATCH")
         if not _valid_success_report(exit_code, report):
@@ -744,7 +881,7 @@ def evaluate_pr(
         failure_code = exc.code
     except Exception:
         failure_code = "UNEXPECTED_ADAPTER_ERROR"
-    if head_sha is not None:
+    if head_sha is not None and pending_written:
         try:
             _write_status(
                 transport,
@@ -833,6 +970,37 @@ def process_pr(
 
 def validate_workflow_text(text: str) -> None:
     """Fail if the trusted workflow's static security contract is weakened."""
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if digest != WORKFLOW_SHA256:
+        raise LiveGateError("WORKFLOW_DIGEST_MISMATCH")
+    expected_step_names = [
+        "Checkout trusted workflow revision",
+        "Select bounded pull requests",
+        "Checkout trusted workflow revision",
+        "Evaluate one bounded live completion claim",
+    ]
+    step_names = re.findall(r"(?m)^      - name: ([^\r\n]+)$", text)
+    if step_names != expected_step_names:
+        raise LiveGateError("WORKFLOW_STEP_MISMATCH")
+    checkout = (
+        "actions/checkout@"
+        "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09"
+    )
+    expected_execution = [
+        ("uses", checkout),
+        (
+            "run",
+            'python3 scripts/completion_claim_live.py select >> "$GITHUB_OUTPUT"',
+        ),
+        ("uses", checkout),
+        ("run", "python3 scripts/completion_claim_live.py process"),
+    ]
+    execution = re.findall(
+        r"(?m)^[ ]+(uses|run): ([^\r\n]+)$",
+        text,
+    )
+    if execution != expected_execution:
+        raise LiveGateError("WORKFLOW_EXECUTION_MISMATCH")
     required = (
         "pull_request_target:",
         "types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]",

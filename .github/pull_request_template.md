@@ -35,6 +35,11 @@ Pull-request events, main backfill, and default-branch replay share one
 per-pull-request matrix cancellation domain. Cancellation is not an atomic
 guard for a status request already in flight, so status residue remains
 advisory and requires human review.
+The live adapter writes exact-head pending after minimal routing identity and
+before validating body size, structured references, changed files, issues, or
+history. At most 16 structured references are allowed; exact strings and issue
+numbers must be unique. Workflow actions and one-line commands are
+byte-canonical, and extra steps or command suffixes are rejected.
 
 ```completion-claims-v1
 {

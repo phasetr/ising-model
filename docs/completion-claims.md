@@ -33,6 +33,11 @@ The discovery job has only `contents: read` and `pull-requests: read`.
 It emits a bounded JSON array of pull-request numbers and cannot write a
 status. The matrix evaluation job adds only `issues: read` and
 `statuses: write`. Workflow-level permissions are empty.
+The workflow is byte-canonical: its SHA-256 digest, four step names, two
+full-SHA checkout actions, and two one-line Python commands are pinned by the
+adapter self-test. Any extra action, step, `uses`, `run`, block scalar, command
+suffix, expression, permission, or whitespace change is rejected until the
+canonical digest and structural contract receive a coordinated review.
 
 It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
 action, one-commit depth, and credential persistence disabled. It never checks
@@ -45,14 +50,23 @@ evaluates exactly one pull request.
 
 ### Live snapshot and bounds
 
-The adapter records P1 from fresh REST responses: repository and pull-request
-identity, state, draft flag, exact base and head SHAs, complete body bytes and
-digest, changed-file count, sorted paths and digest, structural issue facts,
-and bounded primary history facts. It writes `pending` to the P1 head, invokes
-the existing offline evaluator with the derived context, then reads P2.
-State, draft flag, base SHA, head SHA, body digest, changed-file count, and
-path digest must remain exactly equal. A mismatch writes `failure` to the P1
-head; a newer event owns the newer body or head.
+The adapter first reads fresh pull-request metadata and validates only the
+minimum status identity: open state, pull-request number, target repository,
+main base, and exact base and head SHAs. It immediately writes `pending` to
+that head. A failed pending write stops the process without a second status
+attempt. Body type and size, draft flag, changed-file count, head metadata,
+managed JSON, and every primary fact are validated only after pending.
+Therefore a same-head body edit cannot leave an older success untouched merely
+by making the new body oversized or malformed.
+
+After pending, the adapter records P1 from fresh REST responses: repository and
+pull-request identity, state, draft flag, exact base and head SHAs, complete
+body bytes and digest, changed-file count, sorted paths and digest, structural
+issue facts, and bounded primary history facts. It invokes the existing
+offline evaluator with the derived context, then reads P2. State, draft flag,
+base SHA, head SHA, body digest, changed-file count, and path digest must remain
+exactly equal. A mismatch attempts `failure` on the P1 head; a newer event owns
+the newer body or head.
 
 Changed files use fixed 100-entry pages. Metadata, page sizes, unique paths,
 and the collected count must agree exactly. The adapter always requests the
@@ -70,15 +84,21 @@ never produce partial acceptance.
 Issue authority begins only with `Refs` entries in the managed JSON. Each seed
 issue and every formal parent must be an open, same-repository issue rather
 than a pull request. The chain is read through structural issue-parent
-endpoints; unrestricted prose cannot widen the allowlist. Structured history
-is derived from bounded commit-file pages, the requested commit, its sole
-parent, ancestry comparison, and exact repository blob identities. The cited
-path must have matching `added`, `modified`, or `removed` commit-file status.
-Modified content must exist on both sides with distinct blob SHAs; added and
-removed content must have the matching existence transition and blob identity.
-Unchanged, unrelated, renamed, copied, unknown, merge, and unreachable history
-is rejected. Matching those facts does not certify natural-language relevance,
-which remains human review.
+endpoints; unrestricted prose cannot widen the allowlist. At most 16 total
+structured references are accepted. Every exact reference string and every
+issue number must be unique, and at least one `Refs` child seed is required.
+These checks run before changed-file, issue, or history endpoint reads. Issue
+objects and parent results are memoized across shared chains, bounding the
+issue graph to at most 16 seed issue reads plus 64 parent reads.
+
+Structured history is derived from bounded commit-file pages, the requested
+commit, its sole parent, ancestry comparison, and exact repository blob
+identities. The cited path must have matching `added`, `modified`, or `removed`
+commit-file status. Modified content must exist on both sides with distinct
+blob SHAs; added and removed content must have the matching existence
+transition and blob identity. Unchanged, unrelated, renamed, copied, unknown,
+merge, and unreachable history is rejected. Matching those facts does not
+certify natural-language relevance, which remains human review.
 
 The same-head body-edit interval before `pending` and production commit-status
 behavior for a fork-owned head remain documented canary questions for #4802.
@@ -89,6 +109,11 @@ cancelled-run residue remains a residual race and never becomes semantic or
 merge authority. Mocked tests exercise these shapes but cannot turn production
 behavior into a proven fact. #4801 remains open after the code merge until
 bounded backfill and real same-repository and fork observations are recorded.
+If the pull-request metadata HTTP response itself is unavailable, malformed,
+truncated, or oversized before a valid head SHA can be obtained, no exact head
+exists on which the adapter can publish pending. That pre-identity condition
+is fail-shut in the workflow result but cannot clear an older commit status;
+it remains a documented operational canary.
 
 ## Inputs
 
