@@ -50,9 +50,13 @@ the pull-request template. Its opener is exactly
 backticks at column zero. Tildes, longer runs, indentation, trailing info,
 blockquote/list containers, and cross-container openers or closers are not
 accepted. Any `completion-claims-v1` marker outside the sole recognized
-canonical opener is `AMBIGUOUS_MANAGED_BLOCK`; an unclosed canonical block is
-`MALFORMED_MANAGED_BLOCK`. Unknown or missing keys, duplicate JSON keys,
-malformed types, and unsupported schema versions also fail closed.
+canonical opener is `AMBIGUOUS_MANAGED_BLOCK`. Marker counting uses the same
+HTML-entity decoding, Unicode NFKC normalization, and format-control removal as
+the directive scan, so disguised markers count too. The marker remains
+case-sensitive, while raw canonical parsing still accepts only the literal
+template opener. An unclosed canonical block is `MALFORMED_MANAGED_BLOCK`.
+Unknown or missing keys, duplicate JSON keys, malformed types, and unsupported
+schema versions also fail closed.
 
 ```completion-claims-v1
 {
@@ -216,8 +220,10 @@ structured history commits/paths/actions, delivery, fences, keys, and ready
 placeholders. It probes normalized completion-directive forms, separators longer
 than the former cutoff, emphasized and reference-link directive tokens, long
 links and HTML tags, exact canonical fences, and rejected blockquote/list or
-cross-container variants. Directive scans beyond one MiB remain bounded. The
-suite also covers malformed URLs, lone surrogates, invalid controls,
-boolean-as-integer inputs, and unmanaged prose; kills representative weakened
-checker mutants; pins `.self-local` path coverage; and verifies that the
-checker imports no process, network, or dynamic-execution facility.
+cross-container variants. Entity, NFKC, and format-control marker disguises,
+mixed duplicate disguises, and normalized marker-count mutants are pinned.
+Directive and marker scans beyond one MiB remain bounded. The suite also covers
+malformed URLs, lone surrogates, invalid controls, boolean-as-integer inputs,
+and unmanaged prose; kills representative weakened checker mutants; pins
+`.self-local` path coverage; and verifies that the checker imports no process,
+network, or dynamic-execution facility.

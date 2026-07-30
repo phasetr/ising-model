@@ -534,6 +534,57 @@ class ManagedFenceTest(GateHarness, unittest.TestCase):
             body=managed_body(self.payload) + suffix,
         )
 
+    def test_five_normalized_marker_disguises_are_ambiguous(self) -> None:
+        variants = [
+            "completion&#45;claims-v1",
+            "ｃｏｍｐｌｅｔｉｏｎ－ｃｌａｉｍｓ－ｖ１",
+            "completion\u200b-claims-v1",
+            "completion-claims-v&#49;",
+            "&#99;ompletion-claims-v1",
+        ]
+        for disguised in variants:
+            with self.subTest(disguised=disguised):
+                body = managed_body(self.payload) + f"Prose marker: {disguised}\n"
+                self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+
+    def test_mixed_and_multiple_disguised_markers_are_ambiguous(self) -> None:
+        suffix = (
+            "completion&#45;claims-v1 and completion\u200b-claims-v1 "
+            "and ｃｏｍｐｌｅｔｉｏｎ－ｃｌａｉｍｓ－ｖ１\n"
+        )
+        self.assertEqual(gate._normalized_marker_count(suffix), 3)
+        self.assert_code(
+            "AMBIGUOUS_MANAGED_BLOCK",
+            body=managed_body(self.payload) + suffix,
+        )
+
+    def test_disguised_opener_is_not_a_raw_canonical_opener(self) -> None:
+        body = managed_body(
+            self.payload,
+            opening="```completion&#45;claims-v1",
+        )
+        self.assertEqual(gate._normalized_marker_count(body), 1)
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+
+    def test_marker_contract_is_case_sensitive(self) -> None:
+        body = managed_body(self.payload) + "COMPLETION-CLAIMS-V1\n"
+        self.assertEqual(gate._normalized_marker_count(body), 1)
+        code, report = self.run_gate(body=body)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_normalized_marker_count_is_linearish_past_one_mibibyte(self) -> None:
+        source = (
+            managed_body(self.payload)
+            + "ordinary text " * 85_000
+            + "completion&#45;claims-v1"
+        )
+        self.assertGreater(len(source), 1_048_576)
+        started = time.monotonic()
+        count = gate._normalized_marker_count(source)
+        elapsed = time.monotonic() - started
+        self.assertEqual(count, 2)
+        self.assertLess(elapsed, 5.0)
+
     def test_top_open_with_blockquote_close_is_malformed(self) -> None:
         encoded = json.dumps(self.payload, indent=2)
         body = "\n".join(
@@ -753,7 +804,7 @@ class MutationTest(GateHarness, unittest.TestCase):
 
     def test_managed_marker_sweep_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if marker_lines != [opening]:",
+            "if normalized_marker_count != 1:",
             "if False:",
         )
         suffix = "- ```completion-claims-v1\n{}\n- ```\n"
@@ -766,6 +817,17 @@ class MutationTest(GateHarness, unittest.TestCase):
             module=mutant,
         )
         self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_normalized_marker_count_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "return _normalized_body_text(body).count(BLOCK_INFO)",
+            "return body.count(BLOCK_INFO)",
+        )
+        suffix = "Prose marker: completion&#45;claims-v1\n"
+        body = managed_body(self.payload) + suffix
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_unicode_validation_mutant_is_killed(self) -> None:
         mutant = self.mutant(

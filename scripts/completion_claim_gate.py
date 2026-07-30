@@ -367,22 +367,20 @@ def extract_managed_document(body: str) -> tuple[str, str]:
             marker, minimum, _ = opening_fence
             ordinary_fence = (marker, minimum)
 
-    marker_lines = [
-        index for index, line in enumerate(lines) if BLOCK_INFO in line
-    ]
+    normalized_marker_count = _normalized_marker_count(body)
     if len(canonical_openings) != 1:
-        if marker_lines:
+        if normalized_marker_count:
             raise GateInputError(
                 "AMBIGUOUS_MANAGED_BLOCK",
                 "managed label is not one canonical top-level opener",
             )
         raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
-    opening = canonical_openings[0]
-    if marker_lines != [opening]:
+    if normalized_marker_count != 1:
         raise GateInputError(
             "AMBIGUOUS_MANAGED_BLOCK",
-            "managed label occurs outside the canonical top-level opener",
+            "normalized managed marker count must equal one canonical opener",
         )
+    opening = canonical_openings[0]
     matching = [block for block in blocks if block[0] == opening]
     if not matching:
         raise GateInputError(
@@ -409,6 +407,10 @@ def _normalized_body_text(body: str) -> str:
     return "".join(
         char for char in normalized if unicodedata.category(char) != "Cf"
     )
+
+
+def _normalized_marker_count(body: str) -> int:
+    return _normalized_body_text(body).count(BLOCK_INFO)
 
 
 def _issue_number(reference: str) -> int:
