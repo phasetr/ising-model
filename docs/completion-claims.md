@@ -168,7 +168,10 @@ if it contains any case-insensitive official GitHub auto-close keyword
 (`close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`,
 or `resolved`) followed by a local issue, `owner/repository` issue, or GitHub
 issue URL. Detection handles punctuation, Markdown formatting, HTML entities,
-and Unicode NFKC forms, including when prose negates the keyword.
+and Unicode NFKC forms, including when prose negates the keyword. Whitespace,
+newlines, and Markdown separators between the keyword and reference have no
+fixed length cutoff; a bounded one-direction scanner avoids both cutoff bypass
+and catastrophic regular-expression backtracking.
 
 The only structured non-closing forms are `Refs #NUMBER` and
 `Part of #NUMBER`, and their numbers must be in `allowed_issue_refs`. The same
@@ -189,6 +192,11 @@ exact-head review records. When all deterministic checks succeed, the machine
 status is `PASS` and the process exits 0; any accompanying semantic records
 still say `HUMAN_REVIEW_REQUIRED`.
 
+All JSON strings and keys pass through one Unicode validator. Lone high or low
+surrogates, NUL, U+0085, and other C0/C1 controls fail as `INVALID_UNICODE`
+instead of escaping as an encoding or URL-parser exception. Tab, LF, and CR
+remain valid text controls and retain their normal JSON/Markdown meaning.
+
 ## Self-test
 
 Run:
@@ -200,7 +208,9 @@ python3 scripts/test_completion_claim_gate.py
 The suite includes baseline and incident-derived fixtures for #4709, #4718,
 and PR #4800. It mutates SHAs, paths, counts, digests, references, review heads,
 structured history commits/paths/actions, delivery, fences, keys, and ready
-placeholders. It probes Unicode/Markdown auto-close forms, malformed URLs,
-boolean-as-integer inputs, and unmanaged prose. It also kills representative
-weakened-checker mutants, pins `.self-local` path coverage, and verifies that
-the checker imports no process, network, or dynamic-execution facility.
+placeholders. It probes Unicode/Markdown auto-close forms, separators longer
+than the former cutoff, large stress inputs, malformed URLs, lone surrogates,
+invalid controls, boolean-as-integer inputs, and unmanaged prose. It also kills
+representative weakened-checker mutants, pins `.self-local` path coverage, and
+verifies that the checker imports no process, network, or dynamic-execution
+facility.

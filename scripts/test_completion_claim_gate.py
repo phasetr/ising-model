@@ -7,6 +7,7 @@ import ast
 import copy
 import json
 import sys
+import time
 import types
 import unittest
 from pathlib import Path
@@ -218,10 +219,37 @@ class GateTest(GateHarness, unittest.TestCase):
             with self.subTest(prefix=prefix):
                 self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
 
+    def test_unbounded_separator_autoclose_repros_fail(self) -> None:
+        variants = [
+            "Closes" + " " * 65 + "#4801\n",
+            "Fixes" + "\n" * 100 + "owner/repo#4801\n",
+            "Resolved" + "*_~`-:;,.()[]" * 20
+            + "https://github.com/owner/repo/issues/4801\n",
+        ]
+        for prefix in variants:
+            with self.subTest(length=len(prefix)):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
+    def test_code_comment_entity_autoclose_policy_is_pinned(self) -> None:
+        variants = [
+            "<!-- Closes" + " " * 65 + "#4801 -->\n",
+            "`Fixes`&#58;" + "\n" * 100 + "#4801\n",
+            "~~~text\nResolved" + " " * 65 + "#4801\n~~~\n",
+        ]
+        for prefix in variants:
+            with self.subTest(prefix=prefix[:20]):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
     def test_raw_wrong_nonclosing_ref_outside_block_fails(self) -> None:
         self.assert_code(
             "UNMANAGED_ISSUE_REF",
             prefix="Copied evidence says Refs #4709.\n",
+        )
+
+    def test_raw_wrong_ref_after_long_separator_fails(self) -> None:
+        self.assert_code(
+            "UNMANAGED_ISSUE_REF",
+            prefix="Refs" + "\n" * 100 + "#4709\n",
         )
 
     def test_push_delivery_fails(self) -> None:
@@ -319,6 +347,69 @@ class GateTest(GateHarness, unittest.TestCase):
         second = gate.evaluate(context, managed_body(self.payload))
         self.assertEqual(first, second)
         self.assertEqual(context, before)
+
+    def test_lone_surrogates_are_structured_unicode_failures(self) -> None:
+        for value in ["\ud800", "\udfff"]:
+            with self.subTest(codepoint=hex(ord(value))):
+                payload = copy.deepcopy(self.payload)
+                payload["semantic_claims"] = [
+                    {
+                        "id": "invalid-unicode",
+                        "kind": "source",
+                        "statement": value,
+                        "evidence_urls": ["https://example.test/evidence"],
+                    }
+                ]
+                self.assert_code("INVALID_UNICODE", payload=payload)
+
+    def test_surrogates_in_path_url_and_key_never_traceback(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["changed_paths"][0] += "\ud800"
+        self.assert_code("INVALID_UNICODE", context=context)
+        payload = self.mutated_payload(
+            "review_records.0.url",
+            "https://example.test/\udfff",
+        )
+        self.assert_code("INVALID_UNICODE", payload=payload)
+        payload = copy.deepcopy(self.payload)
+        payload["\ud800"] = "invalid-key"
+        self.assert_code("INVALID_UNICODE", payload=payload)
+
+    def test_invalid_controls_fail_but_json_whitespace_controls_are_allowed(self) -> None:
+        for value in ["\x00", "\u0085"]:
+            with self.subTest(codepoint=hex(ord(value))):
+                payload = copy.deepcopy(self.payload)
+                payload["semantic_claims"] = [
+                    {
+                        "id": "invalid-control",
+                        "kind": "provenance",
+                        "statement": value,
+                        "evidence_urls": ["https://example.test/evidence"],
+                    }
+                ]
+                self.assert_code("INVALID_UNICODE", payload=payload)
+        payload = copy.deepcopy(self.payload)
+        payload["semantic_claims"] = [
+            {
+                "id": "valid-whitespace-controls",
+                "kind": "source",
+                "statement": "line one\n\tline two\r",
+                "evidence_urls": ["https://example.test/evidence"],
+            }
+        ]
+        code, report = self.run_gate(payload=payload)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_invalid_control_in_unmanaged_body_fails(self) -> None:
+        self.assert_code("INVALID_UNICODE", prefix="prose\u0085claim\n")
+
+    def test_reference_scanner_is_linearish_on_large_separator_input(self) -> None:
+        projected = ("close" + " " * 96 + "ordinary\n") * 8_000
+        started = time.monotonic()
+        references = gate._references_after(projected, gate.CLOSE_KEYWORD_RE)
+        elapsed = time.monotonic() - started
+        self.assertEqual(references, [])
+        self.assertLess(elapsed, 5.0)
 
 
 class DigestTest(unittest.TestCase):
@@ -543,12 +634,43 @@ class MutationTest(GateHarness, unittest.TestCase):
 
     def test_autoclose_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if CLOSING_RE.search(projected) is not None:",
+            "if _references_after(projected, CLOSE_KEYWORD_RE):",
             "if False:",
         )
         prefix = "[Resolves](https://example.test/reason): owner/repo#4801\n"
         self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_separator_length_cap_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "while cursor < len(projected) and "
+            "_is_markdown_separator(projected[cursor]):",
+            "while (cursor < len(projected) and "
+            "_is_markdown_separator(projected[cursor]) and "
+            "cursor - keyword.end() < 64):",
+        )
+        prefix = "Closes" + " " * 65 + "#4801\n"
+        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_unicode_validation_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            'if category == "Cs" or category == "Cc" and char not in "\\t\\n\\r":',
+            "if False:",
+        )
+        payload = copy.deepcopy(self.payload)
+        payload["semantic_claims"] = [
+            {
+                "id": "control-mutation",
+                "kind": "source",
+                "statement": "\u0085",
+                "evidence_urls": ["https://example.test/evidence"],
+            }
+        ]
+        self.assert_code("INVALID_UNICODE", payload=payload)
+        code, _ = self.run_gate(payload=payload, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
 
     def test_path_exemption_mutant_is_killed(self) -> None:
@@ -601,7 +723,8 @@ class MutationTest(GateHarness, unittest.TestCase):
 
 class SecurityAndWiringTest(unittest.TestCase):
     def test_checker_has_no_process_network_or_dynamic_execution(self) -> None:
-        tree = ast.parse(GATE_PATH.read_text(encoding="utf-8"))
+        source = GATE_PATH.read_text(encoding="utf-8")
+        tree = ast.parse(source)
         forbidden_imports = {
             "http.client",
             "requests",
@@ -621,6 +744,7 @@ class SecurityAndWiringTest(unittest.TestCase):
                 called.add(node.func.id)
         self.assertFalse(imported & forbidden_imports)
         self.assertFalse(called & forbidden_calls)
+        self.assertNotIn("{0,64}", source)
 
     def test_fixture_set_is_exact_and_nonempty(self) -> None:
         names = sorted(path.name for path in FIXTURE_DIR.glob("*.json"))

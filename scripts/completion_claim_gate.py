@@ -67,24 +67,11 @@ ISSUE_REFERENCE_PATTERN = (
     + ISSUE_URL_PATTERN
     + r")"
 )
-MARKDOWN_SEPARATOR_PATTERN = r"""[\s:;,.\-–—!?()[\]{}*_~`'"<>|/\\]{0,64}"""
-CLOSING_RE = re.compile(
-    r"\b"
-    + CLOSE_KEYWORD_PATTERN
-    + r"\b"
-    + MARKDOWN_SEPARATOR_PATTERN
-    + ISSUE_REFERENCE_PATTERN,
-    re.IGNORECASE,
-)
-NON_CLOSING_BODY_RE = re.compile(
-    r"\b(?:Refs|Part\s+of)\b"
-    + MARKDOWN_SEPARATOR_PATTERN
-    + r"(?P<reference>"
-    + ISSUE_REFERENCE_PATTERN
-    + r")",
-    re.IGNORECASE,
-)
+CLOSE_KEYWORD_RE = re.compile(r"\b" + CLOSE_KEYWORD_PATTERN + r"\b", re.IGNORECASE)
+NON_CLOSING_DIRECTIVE_RE = re.compile(r"\b(?:Refs|Part\s+of)\b", re.IGNORECASE)
+ISSUE_REFERENCE_AT_RE = re.compile(ISSUE_REFERENCE_PATTERN, re.IGNORECASE)
 ISSUE_MENTION_RE = re.compile(ISSUE_REFERENCE_PATTERN, re.IGNORECASE)
+MARKDOWN_SEPARATOR_CHARS = frozenset(""":;,.-–—!?()[]{}*_~`'"<>|/\\""")
 FUTURE_PLAN_RE = re.compile(
     r"\b(?:future|later|next\s+phase|phase\s+[0-9]+|plan(?:ned)?|"
     r"remain(?:s|ing)?|todo|follow[- ]?up|will)\b",
@@ -154,6 +141,38 @@ class GateInputError(ValueError):
         self.message = message
 
 
+def _validate_unicode_text(text: str, where: str) -> bytes:
+    for char in text:
+        category = unicodedata.category(char)
+        if category == "Cs" or category == "Cc" and char not in "\t\n\r":
+            raise GateInputError(
+                "INVALID_UNICODE",
+                f"{where} contains a surrogate or invalid control character",
+            )
+    try:
+        return text.encode("utf-8")
+    except UnicodeEncodeError as error:
+        raise GateInputError("INVALID_UNICODE", f"{where} is not valid Unicode") from error
+
+
+def _validate_json_unicode(value: Any, label: str) -> None:
+    stack: list[tuple[Any, str]] = [(value, label)]
+    while stack:
+        current, where = stack.pop()
+        if isinstance(current, str):
+            _validate_unicode_text(current, where)
+        elif isinstance(current, dict):
+            for key, child in current.items():
+                if isinstance(key, str):
+                    _validate_unicode_text(key, f"{where} key")
+                stack.append((child, f"{where}.{key!r}"))
+        elif isinstance(current, list):
+            stack.extend(
+                (child, f"{where}[{index}]")
+                for index, child in enumerate(current)
+            )
+
+
 def _duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
@@ -165,7 +184,9 @@ def _duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
 
 def _parse_json(text: str, label: str) -> Any:
     try:
-        return json.loads(text, object_pairs_hook=_duplicate_keys)
+        value = json.loads(text, object_pairs_hook=_duplicate_keys)
+        _validate_json_unicode(value, label)
+        return value
     except GateInputError:
         raise
     except (json.JSONDecodeError, RecursionError) as error:
@@ -202,14 +223,17 @@ def _array(value: Any, where: str, limit: int) -> list[Any]:
 def _string(value: Any, where: str, *, allow_pending: bool = False) -> str:
     if not isinstance(value, str):
         raise GateInputError("INVALID_TYPE", f"{where} must be a string")
+    encoded = _validate_unicode_text(value, where)
     if value == PENDING and allow_pending:
         return value
-    if not value or len(value.encode("utf-8")) > MAX_TEXT_BYTES:
+    if not value or len(encoded) > MAX_TEXT_BYTES:
         raise GateInputError("INVALID_TEXT", f"{where} must be nonempty and bounded")
     return value
 
 
 def _exact_keys(value: dict[str, Any], expected: frozenset[str], where: str) -> None:
+    for key in value:
+        _string(key, f"{where} key")
     unknown = sorted(set(value) - expected)
     missing = sorted(expected - set(value))
     if unknown:
@@ -383,6 +407,22 @@ def _issue_number(reference: str) -> int:
     if match is None:
         raise GateInputError("INVALID_ISSUE_REF", f"invalid issue reference: {reference}")
     return int(match.group(1))
+
+
+def _is_markdown_separator(char: str) -> bool:
+    return char.isspace() or char in MARKDOWN_SEPARATOR_CHARS
+
+
+def _references_after(projected: str, keywords: re.Pattern[str]) -> list[str]:
+    references: list[str] = []
+    for keyword in keywords.finditer(projected):
+        cursor = keyword.end()
+        while cursor < len(projected) and _is_markdown_separator(projected[cursor]):
+            cursor += 1
+        reference = ISSUE_REFERENCE_AT_RE.match(projected, cursor)
+        if reference is not None:
+            references.append(reference.group(0))
+    return references
 
 
 def _diagnostic(code: str, message: str) -> dict[str, str]:
@@ -610,7 +650,7 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
     if closing:
         raise GateInputError("CLOSING_REFERENCES_NOT_EMPTY", "references.closing must be empty")
     projected = _markdown_projection(body)
-    if CLOSING_RE.search(projected) is not None:
+    if _references_after(projected, CLOSE_KEYWORD_RE):
         raise GateInputError("AUTOCLOSE_REFERENCE", "body contains an auto-closing issue reference")
     if not non_closing:
         raise GateInputError("MISSING_NON_CLOSING_REF", "at least one non-closing ref is required")
@@ -622,8 +662,7 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
         match = NON_CLOSING_RE.fullmatch(reference)
         if match is None or int(match.group(2)) not in allowed:
             raise GateInputError("INVALID_ISSUE_REF", f"disallowed non-closing ref: {reference}")
-    for match in NON_CLOSING_BODY_RE.finditer(projected):
-        reference = match.group("reference")
+    for reference in _references_after(projected, NON_CLOSING_DIRECTIVE_RE):
         if _issue_number(reference) not in allowed:
             raise GateInputError(
                 "UNMANAGED_ISSUE_REF",
@@ -695,6 +734,11 @@ def _check_semantic_claims(
 def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
     """Evaluate parsed context and Markdown; return ``(exit_code, report)``."""
     try:
+        if not isinstance(body, str):
+            raise GateInputError("INVALID_TYPE", "body must be a string")
+        if len(_validate_unicode_text(body, "body")) > MAX_BODY_BYTES:
+            raise GateInputError("INPUT_TOO_LARGE", "body exceeds the size limit")
+        _validate_json_unicode(context_raw, "context")
         context = _validate_context(context_raw)
         managed, unmanaged = extract_managed_document(body)
         payload = _object(_parse_json(managed, "managed block"), "payload")
