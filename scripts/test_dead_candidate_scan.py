@@ -1442,6 +1442,289 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         )
 
 
+class ResolvedGlobElisionHeadTest(unittest.TestCase):
+    """F6: a chargeable resolved glob head may seed a same-line sibling suffix."""
+
+    ROW_HEAD = "freeEnergyInfinite_..._bounds"
+    ROW_SUFFIX = "_monotone_{J,h,beta}"
+    ROW_PREFIX = "freeEnergyInfinite_latticeGraph_cubicExhaustion"
+    ROW_TARGETS = [
+        "IsingModel.Ambient."
+        f"freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_{parameter}"
+        for parameter in ("J", "h", "beta")
+    ]
+
+    @staticmethod
+    def synthetic_tree(finals: list[str]) -> dcs.Tree:
+        """Return a one-file tree containing independent theorems named by ``finals``."""
+        body = "".join(f"theorem {final} : True := trivial\n" for final in finals)
+        return synthetic_tree(
+            {
+                "IsingModel/SynthResolvedGlobElision.lean": (
+                    f"namespace IsingModel\n{body}end IsingModel\n"
+                )
+            }
+        )
+
+    @staticmethod
+    def doc(label: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
+        """Return token-only documentation with enough physical lines for ``tokens``."""
+        line_count = max((lineno for _token, lineno in tokens), default=1)
+        text = "citation\n" * line_count
+        return dcs.DocSource(
+            label=label,
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=tokens,
+            unreadable=[],
+        )
+
+    def classify(
+        self,
+        finals: list[str],
+        candidates: list[str],
+        docs_list: list[dcs.DocSource],
+    ) -> tuple[list[dcs.Verdict], dict[str, list[str]]]:
+        """Classify ``candidates`` in a synthetic tree and return verdicts and labels."""
+        verdicts, _cascade, labels = dcs.classify(
+            self.synthetic_tree(finals),
+            [f"IsingModel.{candidate}" for candidate in candidates],
+            docs_list,
+            allow_homonym=False,
+        )
+        return verdicts, labels
+
+    def test_F6_HEAD_RESOLVE_unqualified_ellipsis_seeds_shorthand_in_either_order(
+        self,
+    ) -> None:
+        """A resolved head licenses its three immediate siblings, never exact evidence."""
+        head = "alpha_xyzzy_bounds"
+        targets = [f"alpha_xyzzy_monotone_{parameter}" for parameter in ("J", "h", "beta")]
+        decoys = [f"gamma_xyzzy_monotone_{parameter}" for parameter in ("J", "h", "beta")]
+        finals = [head, *targets, *decoys]
+        token_orders = (
+            [("alpha_..._bounds", 1), ("_monotone_{J,h,beta}", 1)],
+            [("_monotone_{J,h,beta}", 1), ("alpha_..._bounds", 1)],
+        )
+
+        observed = []
+        for tokens in token_orders:
+            verdicts, _labels = self.classify(
+                finals, targets, [self.doc("docs/f6-order.md", tokens)]
+            )
+            observed.append(
+                [
+                    (
+                        verdict.verdict,
+                        sum(
+                            citation.startswith("shorthand docs/f6-order.md:1:")
+                            and "`_monotone_{J,h,beta}`" in citation
+                            for citation in verdict.doc_citations
+                        ),
+                        any(
+                            citation.startswith("exact ")
+                            for citation in verdict.doc_citations
+                        ),
+                    )
+                    for verdict in verdicts
+                ]
+            )
+
+        expected = [[(dcs.UNCERTAIN, 1, False)] * 3] * 2
+        self.assertEqual(observed, expected)
+
+    def test_F6_REAL_1387_resolved_head_protects_the_exact_target_triple(self) -> None:
+        """The real row adds one suffix shorthand, and no exact claim, to each target."""
+        index = next(source for source in docs() if source.label == "docs/index.md")
+        self.assertIn((self.ROW_HEAD, 1387), index.tokens)
+        self.assertIn((self.ROW_SUFFIX, 1387), index.tokens)
+        resolved = dcs._resolve_fragment(tree(), self.ROW_HEAD, {})
+        self.assertEqual(
+            [decl.full for decl in resolved or []],
+            [f"IsingModel.Ambient.{self.ROW_PREFIX}_bounds"],
+        )
+
+        verdicts = dcs.classify(
+            tree(), self.ROW_TARGETS, docs(), allow_homonym=False
+        )[0]
+        observed = []
+        for verdict in verdicts:
+            row_shorthand = [
+                citation
+                for citation in verdict.doc_citations
+                if citation.startswith("shorthand docs/index.md:1387:")
+                and f"`{self.ROW_SUFFIX}`" in citation
+            ]
+            observed.append(
+                (
+                    verdict.decl.full,
+                    verdict.verdict,
+                    len(row_shorthand),
+                    any(
+                        citation.startswith("exact ")
+                        for citation in verdict.doc_citations
+                    ),
+                )
+            )
+        self.assertEqual(
+            observed,
+            [(name, dcs.UNCERTAIN, 1, False) for name in self.ROW_TARGETS],
+        )
+
+    def test_F6_HEAD_RESOLVE_ten_match_head_seeds_an_immediate_sibling(self) -> None:
+        """The positive threshold edge is eligible to establish a suffix prefix."""
+        heads = ["limit_seed_bounds"] + [
+            f"limit_extra_{index}_bounds"
+            for index in range(dcs.MAX_CHARGED_GLOB_MATCHES - 1)
+        ]
+        targets = ["limit_seed_monotone_J", "decoy_seed_monotone_J"]
+        synthetic = self.synthetic_tree([*heads, *targets])
+        token = "limit_..._bounds"
+        resolved = dcs._resolve_fragment(synthetic, token, {})
+        self.assertEqual(len(resolved or []), dcs.MAX_CHARGED_GLOB_MATCHES)
+        verdicts, _cascade, _labels = dcs.classify(
+            synthetic,
+            [f"IsingModel.{target}" for target in targets],
+            [self.doc("docs/f6-ten.md", [(token, 1), ("_monotone_J", 1)])],
+            allow_homonym=False,
+        )
+        self.assertEqual(
+            [
+                (
+                    verdict.verdict,
+                    any(
+                        citation.startswith("shorthand docs/f6-ten.md:1:")
+                        and "`_monotone_J`" in citation
+                        for citation in verdict.doc_citations
+                    ),
+                )
+                for verdict in verdicts
+            ],
+            [(dcs.UNCERTAIN, True), (dcs.SAFE, False)],
+        )
+
+    def test_F6_PREFIX_BOUNDARY_blocks_divergent_and_colliding_heads(self) -> None:
+        """Resolved heads cannot cross the immediate-component or family boundary."""
+        cases = (
+            (
+                ["alpha_xyzzy_monotone_bounds", "alpha_xyzzy_monotone_J",
+                 "gamma_xyzzy_monotone_J"],
+                "alpha_..._monotone_bounds",
+                "_monotone_J",
+                "alpha_xyzzy_monotone_J",
+            ),
+            (
+                ["alphabet_any_bounds", "alpha_xyzzy_monotone_J",
+                 "gamma_xyzzy_monotone_J"],
+                "alphabet_..._bounds",
+                "_xyzzy_monotone_J",
+                "alpha_xyzzy_monotone_J",
+            ),
+            (
+                ["delta_xyzzy_bounds", "alpha_xyzzy_monotone_J",
+                 "gamma_xyzzy_monotone_J"],
+                "delta_..._bounds",
+                "_monotone_J",
+                "alpha_xyzzy_monotone_J",
+            ),
+        )
+        observed = []
+        for finals, head, suffix, target in cases:
+            verdicts, _labels = self.classify(
+                finals,
+                [target],
+                [self.doc("docs/f6-boundary.md", [(head, 1), (suffix, 1)])],
+            )
+            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
+        self.assertEqual(observed, [(dcs.SAFE, [])] * len(cases))
+
+    def test_F6_PREFIX_BOUNDARY_blocks_adjacent_lines_and_other_sources(self) -> None:
+        """A head seed cannot cross a physical line or a documentation source."""
+        finals = [
+            "alpha_xyzzy_bounds",
+            "alpha_xyzzy_monotone_J",
+            "gamma_xyzzy_monotone_J",
+        ]
+        separated = (
+            [
+                self.doc(
+                    "docs/f6-lines.md",
+                    [("alpha_..._bounds", 1), ("_monotone_J", 2)],
+                )
+            ],
+            [
+                self.doc("docs/f6-head.md", [("alpha_..._bounds", 1)]),
+                self.doc("docs/f6-suffix.md", [("_monotone_J", 1)]),
+            ],
+        )
+        observed = []
+        for docs_list in separated:
+            verdicts, _labels = self.classify(
+                finals, ["alpha_xyzzy_monotone_J"], docs_list
+            )
+            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
+        self.assertEqual(observed, [(dcs.SAFE, []), (dcs.SAFE, [])])
+
+    def test_F6_CONSERVATIVE_bad_or_broad_heads_do_not_license_suffixes(self) -> None:
+        """Unresolved, malformed, zero, relative, and eleven-match heads stay inert."""
+        base_finals = [
+            "alpha_xyzzy_bounds",
+            "alpha_xyzzy_monotone_J",
+            "gamma_xyzzy_monotone_J",
+        ]
+        bad_heads = (
+            "alpha_missing_bounds",
+            "IsingModel.",
+            "missing_..._bounds",
+            "Ambient.alpha_..._bounds",
+        )
+        observed = []
+        for index, head in enumerate(bad_heads):
+            verdicts, _labels = self.classify(
+                base_finals,
+                ["alpha_xyzzy_monotone_J"],
+                [
+                    self.doc(
+                        f"docs/f6-bad-{index}.md",
+                        [(head, 1), ("_monotone_J", 1)],
+                    )
+                ],
+            )
+            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
+
+        broad_heads = ["limit_seed_bounds"] + [
+            f"limit_extra_{index}_bounds"
+            for index in range(dcs.MAX_CHARGED_GLOB_MATCHES)
+        ]
+        broad_targets = ["limit_seed_monotone_J", "decoy_seed_monotone_J"]
+        broad_tree = self.synthetic_tree([*broad_heads, *broad_targets])
+        broad_token = "limit_..._bounds"
+        self.assertEqual(
+            len(dcs._resolve_fragment(broad_tree, broad_token, {}) or []),
+            dcs.MAX_CHARGED_GLOB_MATCHES + 1,
+        )
+        broad_verdicts, _cascade, labels = dcs.classify(
+            broad_tree,
+            [f"IsingModel.{target}" for target in broad_targets],
+            [
+                self.doc(
+                    "docs/f6-eleven.md",
+                    [(broad_token, 1), ("_monotone_J", 1)],
+                )
+            ],
+            allow_homonym=False,
+        )
+        observed.append(
+            (broad_verdicts[0].verdict, broad_verdicts[0].doc_citations)
+        )
+
+        self.assertEqual(observed, [(dcs.SAFE, [])] * (len(bad_heads) + 1))
+        self.assertEqual(
+            labels["docs/f6-eleven.md:1 `limit_..._bounds`"],
+            ["11 declarations"],
+        )
+
+
 class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
