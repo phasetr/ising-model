@@ -1364,6 +1364,12 @@ def _nameish(token: str) -> bool:
     return all(is_id_rest(char) or char in allowed for char in token)
 
 
+def _citation_nameish(token: str) -> bool:
+    """Recognise existing name shapes plus the one supported slash shorthand."""
+    token = token.strip()
+    return _nameish(token) or expand_slash_alternation(token) != [token]
+
+
 def _brace_grouped_pieces(body: str) -> list[str]:
     """Split ``body`` on the whitespace *outside* braces, dropping the rest.
 
@@ -1437,12 +1443,14 @@ def _citation_tokens(body: str) -> list[str]:
     out: list[str] = []
     for piece in body.split():
         trimmed = piece.strip(",.;:()")
-        if trimmed and (_nameish(piece) or _nameish(trimmed)):
+        if trimmed and (_citation_nameish(piece) or _citation_nameish(trimmed)):
             out.append(trimmed)
     seen = set(out)
     for piece in _brace_grouped_pieces(body):
         trimmed = piece.strip(",.;:()")
-        if trimmed and trimmed not in seen and (_nameish(piece) or _nameish(trimmed)):
+        if trimmed and trimmed not in seen and (
+            _citation_nameish(piece) or _citation_nameish(trimmed)
+        ):
             seen.add(trimmed)
             out.append(trimmed)
     return out
@@ -1656,6 +1664,56 @@ def expand_braces(token: str) -> list[str]:
         head, tail = current[:start], current[end + 1 :]
         pending.extend(head + alternative.strip() + tail for alternative in alternatives)
     return sorted(out)
+
+
+def expand_slash_alternation(token: str) -> list[str]:
+    """Expand the documented ``truncated3/4Infinite_...`` family spelling.
+
+    This is deliberately not a general slash grammar.  URLs, paths, division,
+    qualified names, globs and malformed or ambiguous alternations must remain
+    one original token: partially interpreting them could invent a citation.
+    """
+    match = re.fullmatch(r"truncated([0-9])/([0-9])(Infinite_.+)", token)
+    if (
+        match is None
+        or token.count("/") != 1
+        or match.group(1) == match.group(2)
+    ):
+        return [token]
+    if any(char in token for char in ".*"):
+        return [token]
+
+    depth = 0
+    for char in token:
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth < 0:
+                return [token]
+        elif not (is_id_rest(char) or char in "_,/"):
+            return [token]
+    if depth != 0:
+        return [token]
+
+    suffix = match.group(3)
+    expanded = sorted(
+        {
+            f"truncated{arity}{suffix}"
+            for arity in (match.group(1), match.group(2))
+        }
+    )
+    if len(expanded) != 2 or not all(_nameish(name) for name in expanded):
+        return [token]
+    return expanded
+
+
+def expand_citation_token(token: str) -> list[str]:
+    """Expand a supported slash family first, then its brace alternatives."""
+    stems = expand_slash_alternation(token)
+    if "/" in token and stems == [token]:
+        return [token]
+    return sorted({name for stem in stems for name in expand_braces(stem)})
 
 
 def glob_to_regex(token: str) -> re.Pattern[str] | None:
@@ -2068,7 +2126,7 @@ def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
     finals = {final for final, _decl in tree.finals}
     out: dict[int, set[str]] = defaultdict(set)
     for token, lineno in doc.tokens:
-        for name in expand_braces(token) if "{" in token else [token]:
+        for name in expand_citation_token(token):
             final = name.rsplit(".", 1)[-1]
             if final in finals:
                 out[lineno].add(final)
@@ -2182,13 +2240,17 @@ def _apply_doc_channel(
                 break
         # (b) brace-alternation, wildcard and fragment tokens.
         for token, lineno in doc.tokens:
-            expanded = expand_braces(token) if "{" in token else [token]
+            expanded = expand_citation_token(token)
+            has_slash_alternation = expand_slash_alternation(token) != [token]
             for name in expanded:
                 targets = by_name.get(name) or by_name.get(name.rsplit(".", 1)[-1])
-                if targets and "{" in token:
+                if targets and ("{" in token or has_slash_alternation):
+                    citation_kind = (
+                        "slash citation" if has_slash_alternation else "brace citation"
+                    )
                     for verdict in targets:
                         verdict.doc_citations.append(
-                            f"exact {doc.label}:{lineno}: brace citation `{token}`"
+                            f"exact {doc.label}:{lineno}: {citation_kind} `{token}`"
                         )
                 if "*" not in name and ".." not in name and not name.startswith(("_", ".")):
                     continue
