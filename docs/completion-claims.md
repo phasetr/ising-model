@@ -269,7 +269,7 @@ All nonempty prose outside the managed block is conservatively charged as
 additional human-review records. Thus an unmanaged claim cannot silently
 inherit the machine `PASS` status.
 
-## Human semantic evidence and lifecycle protocol
+## Human semantic evidence and closure protocol
 
 The mechanical gate cannot establish semantic completion. A pull request that
 makes a semantic completion claim must follow this human protocol in addition
@@ -439,17 +439,40 @@ The implementation pull request for this protocol remains a same-repository
 draft until its evidence is complete. Record each observation with the event,
 run URL, exact head, status sequence, and cancelled-run or status residue:
 
-1. On draft open, use documented `PENDING` fields and observe exact-head
-   pending followed by non-success.
-2. On synchronize, push the final two-file candidate and confirm that stale
-   candidate or review evidence cannot produce success.
-3. On the same head, set one allowed review or evidence field back to
-   `PENDING`; observe a new pending transition followed by non-success.
-4. Restore exact candidate identity and both current review URLs; observe
-   pending followed by success on the same exact head.
-5. Convert the unchanged draft to ready and observe another exact-head success
-   before merge.
-6. After merge, record candidate-to-squash tree or exact-content identity,
+The pre-observation design expectation was that a draft body with `PENDING`
+review fields would produce `DRAFT_INCOMPLETE`. The actual opened canary
+superseded that expectation because it used an empty kickoff candidate. Its
+exact head received pending and then failure with `INVALID_CHANGED_PATH`;
+empty-path validation occurred before review-field evaluation. That
+observation is fail-shut evidence, but it is not an observed
+`DRAFT_INCOMPLETE` result.
+
+The exact two-file candidate was then synchronized with both review records
+still `PENDING`. Its exact head received pending and then failure with the
+generic live description `OFFLINE_CHECK_FAILED`. A separate offline evaluation
+of the same exact candidate and body returned `DRAFT_INCOMPLETE` with exactly
+two `PENDING_REVIEW` diagnostics, one for each required record. The generic
+live description does not expose those offline diagnostics and is not an
+exact-head success.
+
+The superseding issue record will carry the observed run URLs, exact heads,
+status sequences, timestamps, offline report, and any cancelled-run or status
+residue. The remaining lifecycle must occur in this order. These are required
+future observations, not current outcomes:
+
+1. Bind a valid body to the current exact head, changed-file count, and path
+   digest. Supply separate durable exact-head source-review and issue-audit
+   URLs. Trigger evaluation on that same head, require pending followed by
+   success, and record the actual result before any invalidation.
+2. Only after that success, change one allowed review-record value to the
+   canonical `PENDING` string on the unchanged head. Trigger evaluation,
+   require pending followed by failure, and record the actual result.
+3. Restore the exact durable URL for that record on the unchanged head.
+   Trigger evaluation, require pending followed by success, and record the
+   actual result.
+4. Convert the unchanged draft to ready. Require another pending transition
+   followed by exact-head success and record the actual result before merge.
+5. After merge, record candidate-to-squash tree or exact-content identity,
    main CI, hierarchy, issue-body and mirror synchronization, and an honest
    issue disposition.
 

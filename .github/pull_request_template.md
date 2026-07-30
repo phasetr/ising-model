@@ -20,9 +20,9 @@ Identify deterministic checks and separate human semantic review.
 
 ## Human semantic evidence
 
-Follow the full [semantic evidence and lifecycle protocol][human-protocol].
+Follow the full [semantic evidence and closure protocol][human-protocol].
 
-[human-protocol]: ../docs/completion-claims.md#human-semantic-evidence-and-lifecycle-protocol
+[human-protocol]: https://github.com/phasetr/ising-model/blob/main/docs/completion-claims.md#human-semantic-evidence-and-closure-protocol
 
 - Inventory every in-scope semantic unit with a stable ID, role, locator,
   bounded claim, positive and negative evidence, disposition, any required
