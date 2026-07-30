@@ -472,6 +472,13 @@ class SlashAlternationCitationTest(unittest.TestCase):
         "truncated3/5Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
         "truncated3/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
     ]
+    MALFORMED_OUTER_ALTERNATIVES = [
+        "truncated3/4Infinite_latticeGraph_"
+        "{beta_zero,,J_zero_of_pairwise_distinct}",
+        "truncated3/4Infinite_latticeGraph_{,beta_zero}",
+        "truncated3/4Infinite_latticeGraph_{beta_zero,}",
+        "truncated3/4Infinite_latticeGraph_{}",
+    ]
     NON_CITATIONS = [
         "https://example.test/truncated3/4Infinite_latticeGraph_beta_zero",
         "docs/truncated3/4Infinite_latticeGraph_beta_zero",
@@ -567,6 +574,36 @@ class SlashAlternationCitationTest(unittest.TestCase):
             tokens=[
                 (token, lineno)
                 for lineno, token in enumerate(self.OUT_OF_SCOPE_NUMERIC_TOKENS, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
+            for name in self.TARGETS
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        self.assertEqual(
+            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
+            {name: [] for name in self.TARGETS},
+        )
+
+    def test_empty_outer_alternatives_are_inert(self) -> None:
+        """Empty outer alternatives make an exact-stem slash token malformed."""
+        for token in self.MALFORMED_OUTER_ALTERNATIVES:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_empty_outer_alternatives_charge_no_declaration(self) -> None:
+        """Malformed outer products may not exact-publish their valid siblings."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.MALFORMED_OUTER_ALTERNATIVES, 1)
             ],
             unreadable=[],
         )
