@@ -433,9 +433,10 @@ it is not completion evidence:
   now exists only for the normalized reduced-field window above. The endpoint
   `b = 0`, arbitrary physical-parameter rescaling, the full nonperturbative
   range, and a U3/series derivative identity, sign, or uniform bound remain
-  outside that theorem. This declaration upgrades the broader disposition from
-  `unresolved` to `partial`, pending #4790's separate post-merge acceptance
-  audit.
+  outside that theorem. At the post-merge checkpoint for PR #4810, this
+  declaration upgraded the broader mathematical disposition from `unresolved`
+  to `partial`. The current durable GitHub acceptance records for #4790 govern
+  its issue lifecycle separately; this tracked demonstration does not.
 
 The [final #4803 closure audit][audit-4803-final] records the completed
 semantic-evidence protocol and A–J lifecycle without upgrading #4786, #4790,
