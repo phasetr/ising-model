@@ -403,35 +403,68 @@ class NestedBraceCitationTest(unittest.TestCase):
 
 
 class SlashAlternationCitationTest(unittest.TestCase):
-    """The exact row-1393 numeric shorthand must reach all four declarations.
+    """The two row-1393 numeric shorthands must reach all six declarations.
 
-    The pinned base drops the citation body during tokenization. Applying only
-    brace expansion is insufficient too: it emits two spellings that retain
-    ``3/4`` and therefore name no declaration.
+    The pinned base drops both citation bodies during tokenization. Applying
+    only brace expansion is insufficient too: every spelling retains ``3/4``
+    and therefore names no declaration.
     """
 
-    TOKEN = (
+    BETA_TOKEN = (
         "truncated3/4Infinite_latticeGraph_"
         "{beta_zero,J_zero_of_pairwise_distinct}"
     )
-    BRACE_ONLY = sorted(
+    NONPOS_TOKEN = "truncated3/4Infinite_latticeGraph_{nonpos{,_h_zero}}"
+    TOKENS = [BETA_TOKEN, NONPOS_TOKEN]
+    BRACE_ONLY = {
+        BETA_TOKEN: sorted(
+            [
+                "truncated3/4Infinite_latticeGraph_beta_zero",
+                "truncated3/4Infinite_latticeGraph_J_zero_of_pairwise_distinct",
+            ]
+        ),
+        NONPOS_TOKEN: sorted(
+            [
+                "truncated3/4Infinite_latticeGraph_nonpos",
+                "truncated3/4Infinite_latticeGraph_nonpos_h_zero",
+            ]
+        ),
+    }
+    EXPANDED = {
+        BETA_TOKEN: sorted(
+            [
+                f"truncated{arity}Infinite_latticeGraph_{suffix}"
+                for arity in (3, 4)
+                for suffix in ("beta_zero", "J_zero_of_pairwise_distinct")
+            ]
+        ),
+        NONPOS_TOKEN: sorted(
+            [
+                f"truncated{arity}Infinite_latticeGraph_{suffix}"
+                for arity in (3, 4)
+                for suffix in ("nonpos", "nonpos_h_zero")
+            ]
+        ),
+    }
+    TARGET_TOKENS = {
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_beta_zero": BETA_TOKEN,
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_J_zero_of_pairwise_distinct": (
+            BETA_TOKEN
+        ),
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_beta_zero": BETA_TOKEN,
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_J_zero_of_pairwise_distinct": (
+            BETA_TOKEN
+        ),
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_nonpos": NONPOS_TOKEN,
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_nonpos_h_zero": NONPOS_TOKEN,
+    }
+    TARGETS = list(TARGET_TOKENS)
+    NONPOS_EXISTING = sorted(
         [
-            "truncated3/4Infinite_latticeGraph_beta_zero",
-            "truncated3/4Infinite_latticeGraph_J_zero_of_pairwise_distinct",
+            "truncated3Infinite_latticeGraph_nonpos",
+            "truncated4Infinite_latticeGraph_nonpos_h_zero",
         ]
     )
-    EXPANDED = sorted(
-        [
-            f"truncated{arity}Infinite_latticeGraph_{suffix}"
-            for arity in (3, 4)
-            for suffix in ("beta_zero", "J_zero_of_pairwise_distinct")
-        ]
-    )
-    TARGETS = [
-        f"IsingModel.Ambient.truncated{arity}Infinite_latticeGraph_{suffix}"
-        for arity in (3, 4)
-        for suffix in ("beta_zero", "J_zero_of_pairwise_distinct")
-    ]
     NON_CITATIONS = [
         "https://example.test/truncated3/4Infinite_latticeGraph_beta_zero",
         "docs/truncated3/4Infinite_latticeGraph_beta_zero",
@@ -442,52 +475,69 @@ class SlashAlternationCitationTest(unittest.TestCase):
     ]
     UNSUPPORTED = NON_CITATIONS + [
         "family3/4Infinite_name",
+        "family3/4Infinite_{left,right}",
         "truncated3/4/5Infinite_latticeGraph_beta_zero",
+        "truncated3/4Infinite_latticeGraph_beta/zero",
         "truncated/4Infinite_latticeGraph_beta_zero",
         "truncated3/Infinite_latticeGraph_beta_zero",
         "truncatedthree/fourInfinite_latticeGraph_beta_zero",
         "truncated3/fourInfinite_latticeGraph_beta_zero",
         "truncated3/3Infinite_latticeGraph_beta_zero",
+        "truncated3/4Infinite_latticeGraph_{beta_zero,J_zero",
+        "truncated3/4Infinite_latticeGraph_beta_zero}",
     ]
 
     def verdicts(self) -> list[dcs.Verdict]:
-        """Classify the four row-1393 declarations against the real docs."""
+        """Classify the six row-1393 declarations against the real docs."""
         return dcs.classify(tree(), self.TARGETS, docs(), allow_homonym=False)[0]
 
-    def test_exact_body_is_one_citation_token(self) -> None:
-        """The slash-family spelling must survive the real tokenizer whole."""
-        self.assertEqual(dcs._citation_tokens(self.TOKEN), [self.TOKEN])
+    def test_exact_bodies_are_each_one_citation_token(self) -> None:
+        """Both slash-family spellings must survive the real tokenizer whole."""
+        for token in self.TOKENS:
+            self.assertEqual(dcs._citation_tokens(token), [token], token)
 
-    def test_slash_expansion_composes_after_brace_expansion(self) -> None:
-        """Brace-only output retains the slash; composition yields four names."""
-        self.assertEqual(dcs.expand_braces(self.TOKEN), self.BRACE_ONLY)
-        self.assertEqual(dcs.expand_citation_token(self.TOKEN), self.EXPANDED)
-        self.assertTrue(
-            all("/" not in name and "{" not in name and "}" not in name for name in self.EXPANDED)
+    def test_slash_expansion_precedes_brace_expansion(self) -> None:
+        """Brace-only retains the slash; slash-then-brace yields both products."""
+        for token in self.TOKENS:
+            self.assertEqual(dcs.expand_braces(token), self.BRACE_ONLY[token], token)
+            self.assertEqual(dcs.expand_citation_token(token), self.EXPANDED[token], token)
+            self.assertTrue(
+                all(
+                    "/" not in name and "{" not in name and "}" not in name
+                    for name in self.EXPANDED[token]
+                ),
+                token,
+            )
+        existing_finals = {decl.final for decl in tree().decls}
+        self.assertEqual(
+            sorted(set(self.EXPANDED[self.NONPOS_TOKEN]) & existing_finals),
+            self.NONPOS_EXISTING,
         )
 
     def test_real_row_attaches_one_exact_charge_to_each_target(self) -> None:
         """Every target receives the exact public citation at row 1393."""
         counts = [
             sum(
-                citation.startswith("exact docs/index.md:1393:") and self.TOKEN in citation
+                citation.startswith("exact docs/index.md:1393:")
+                and self.TARGET_TOKENS[verdict.decl.full] in citation
                 for citation in verdict.doc_citations
             )
             for verdict in self.verdicts()
         ]
-        self.assertEqual(counts, [1, 1, 1, 1])
+        self.assertEqual(counts, [1, 1, 1, 1, 1, 1])
 
-    def test_real_row_publishes_all_four_targets(self) -> None:
-        """The two J-zero targets must no longer remain safe to delete."""
+    def test_real_row_publishes_all_six_targets(self) -> None:
+        """The four base-safe targets must no longer remain safe to delete."""
         self.assertEqual(
             [verdict.verdict for verdict in self.verdicts()],
-            [dcs.PUBLISHED, dcs.PUBLISHED, dcs.PUBLISHED, dcs.PUBLISHED],
+            [dcs.PUBLISHED] * 6,
         )
 
     def test_unsupported_slashes_are_preserved_without_partial_expansion(self) -> None:
         """Ambiguous syntax remains one original token and invents no variants."""
         for token in self.UNSUPPORTED:
             self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
 
     def test_non_citation_slashes_stay_out_of_the_tokenizer(self) -> None:
         """URLs, paths, division, qualified names, globs and suffixes stay inert."""
