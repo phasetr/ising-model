@@ -1673,12 +1673,8 @@ def expand_slash_alternation(token: str) -> list[str]:
     qualified names, globs and malformed or ambiguous alternations must remain
     one original token: partially interpreting them could invent a citation.
     """
-    match = re.fullmatch(r"truncated([0-9])/([0-9])(Infinite_.+)", token)
-    if (
-        match is None
-        or token.count("/") != 1
-        or match.group(1) == match.group(2)
-    ):
+    match = re.fullmatch(r"truncated3/4(Infinite_.+)", token)
+    if match is None or token.count("/") != 1:
         return [token]
     if any(char in token for char in ".*"):
         return [token]
@@ -1696,11 +1692,11 @@ def expand_slash_alternation(token: str) -> list[str]:
     if depth != 0:
         return [token]
 
-    suffix = match.group(3)
+    suffix = match.group(1)
     expanded = sorted(
         {
             f"truncated{arity}{suffix}"
-            for arity in (match.group(1), match.group(2))
+            for arity in ("3", "4")
         }
     )
     if len(expanded) != 2 or not all(_nameish(name) for name in expanded):
