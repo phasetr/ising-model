@@ -1680,15 +1680,28 @@ def expand_slash_alternation(token: str) -> list[str]:
         return [token]
 
     depth = 0
+    outer_alternative_has_content = False
     for char in token:
         if char == "{":
+            if depth == 0:
+                outer_alternative_has_content = False
+            elif depth == 1:
+                outer_alternative_has_content = True
             depth += 1
         elif char == "}":
+            if depth == 1 and not outer_alternative_has_content:
+                return [token]
             depth -= 1
             if depth < 0:
                 return [token]
+        elif char == "," and depth == 1:
+            if not outer_alternative_has_content:
+                return [token]
+            outer_alternative_has_content = False
         elif not (is_id_rest(char) or char in "_,/"):
             return [token]
+        elif depth == 1:
+            outer_alternative_has_content = True
     if depth != 0:
         return [token]
 
