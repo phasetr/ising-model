@@ -1667,54 +1667,16 @@ def expand_braces(token: str) -> list[str]:
 
 
 def expand_slash_alternation(token: str) -> list[str]:
-    """Expand the documented ``truncated3/4Infinite_...`` family spelling.
-
-    This is deliberately not a general slash grammar.  URLs, paths, division,
-    qualified names, globs and malformed or ambiguous alternations must remain
-    one original token: partially interpreting them could invent a citation.
-    """
-    match = re.fullmatch(r"truncated3/4(Infinite_.+)", token)
-    if match is None or token.count("/") != 1:
-        return [token]
-    if any(char in token for char in ".*"):
-        return [token]
-
-    depth = 0
-    outer_alternative_has_content = False
-    for char in token:
-        if char == "{":
-            if depth == 0:
-                outer_alternative_has_content = False
-            elif depth == 1:
-                outer_alternative_has_content = True
-            depth += 1
-        elif char == "}":
-            if depth == 1 and not outer_alternative_has_content:
-                return [token]
-            depth -= 1
-            if depth < 0:
-                return [token]
-        elif char == "," and depth == 1:
-            if not outer_alternative_has_content:
-                return [token]
-            outer_alternative_has_content = False
-        elif not (is_id_rest(char) or char in "_,/"):
-            return [token]
-        elif depth == 1:
-            outer_alternative_has_content = True
-    if depth != 0:
-        return [token]
-
-    suffix = match.group(1)
-    expanded = sorted(
-        {
-            f"truncated{arity}{suffix}"
-            for arity in ("3", "4")
-        }
+    """Expand only the two observed ``truncated3/4Infinite_...`` spellings."""
+    supported = (
+        "truncated3/4Infinite_latticeGraph_"
+        "{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated3/4Infinite_latticeGraph_{nonpos{,_h_zero}}",
     )
-    if len(expanded) != 2 or not all(_nameish(name) for name in expanded):
+    if token not in supported:
         return [token]
-    return expanded
+    suffix = token[len("truncated3/4") :]
+    return [f"truncated3{suffix}", f"truncated4{suffix}"]
 
 
 def expand_citation_token(token: str) -> list[str]:
