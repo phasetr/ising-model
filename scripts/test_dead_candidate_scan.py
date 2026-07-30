@@ -280,6 +280,12 @@ class DocTokenTest(unittest.TestCase):
             ["correlation_convergent", "correlation_convergent_beta", "correlation_convergent_h"],
         )
         self.assertEqual(len(dcs.expand_braces("a{1,2}_b{x,y}")), 4)
+        self.assertEqual(dcs.expand_braces("a{2,1,2}"), ["a1", "a2"])
+
+    def test_unbalanced_braces_are_preserved_verbatim(self) -> None:
+        """An unreadable group must never make an existing token disappear."""
+        for token in ("family_{left,right", "family_left,right}", "family_{{left,right}"):
+            self.assertEqual(dcs.expand_braces(token), [token])
 
     def test_glob_regex(self) -> None:
         """Ellipsis and star citations become anchored regexes."""
@@ -326,6 +332,74 @@ class DocTokenTest(unittest.TestCase):
         many = dcs._resolve_fragment(tree(), "_ferromagnetic", cache)
         self.assertIsNotNone(many)
         self.assertGreaterEqual(len(many), 2)
+
+
+class NestedBraceCitationTest(unittest.TestCase):
+    """The exact F-1 citation must reach every declaration it denotes.
+
+    At the pinned base, :func:`dead_candidate_scan.expand_braces` processes the
+    innermost ``{J,h,beta,abs_h}`` group and then recurses over only the suffix.
+    The outer ``{neg_h,eq_abs_h,monotone_...}`` group is consequently left in
+    every result, so none of the three declarations from
+    ``PartitionFunctionSymmetryLogCubic.lean`` receives a documentation charge.
+    """
+
+    PREFIX = "log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_"
+    TOKEN = PREFIX + "{neg_h,eq_abs_h,monotone_{J,h,beta,abs_h}}"
+    EXPANDED = sorted(
+        [
+            PREFIX + "neg_h",
+            PREFIX + "eq_abs_h",
+            PREFIX + "monotone_J",
+            PREFIX + "monotone_h",
+            PREFIX + "monotone_beta",
+            PREFIX + "monotone_abs_h",
+        ]
+    )
+    TARGETS = [
+        "IsingModel.Ambient." + PREFIX + "neg_h",
+        "IsingModel.Ambient." + PREFIX + "eq_abs_h",
+        "IsingModel.Ambient." + PREFIX + "monotone_abs_h",
+    ]
+
+    def test_nested_group_expands_to_six_concrete_names(self) -> None:
+        """Processing an inner group must not strand the enclosing group."""
+        expanded = dcs.expand_braces(self.TOKEN)
+        self.assertEqual(expanded, self.EXPANDED)
+        self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
+
+    def test_depth_1000_balanced_singleton_terminates(self) -> None:
+        """Every balanced token accepted by the citation grammar must terminate."""
+        token = "family_" + "{" * 1000 + "left" + "}" * 1000
+        self.assertIn(token, dcs._citation_tokens(token))
+        expanded = dcs.expand_braces(token)
+        self.assertEqual(expanded, ["family_left"])
+        self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
+
+    def test_real_nested_citation_publishes_the_three_excluded_declarations(self) -> None:
+        """End to end on the exact ``docs/index.md:1406`` citation shape."""
+        index = next(source for source in docs() if source.label == "docs/index.md")
+        self.assertIn((self.TOKEN, 1406), index.tokens)
+
+        verdicts, _cascade, _labels = dcs.classify(
+            tree(), self.TARGETS, docs(), allow_homonym=False
+        )
+        self.assertEqual([verdict.decl.full for verdict in verdicts], self.TARGETS)
+        for verdict in verdicts:
+            self.assertEqual(verdict.verdict, dcs.PUBLISHED, verdict.decl.full)
+            self.assertTrue(
+                any(
+                    citation.startswith("exact docs/index.md:1406:")
+                    and self.TOKEN in citation
+                    for citation in verdict.doc_citations
+                ),
+                (verdict.decl.full, verdict.doc_citations),
+            )
+            self.assertIn(
+                "cited verbatim in the public documentation",
+                verdict.reasons,
+                verdict.decl.full,
+            )
 
 
 class SpacedBraceCitationTest(unittest.TestCase):

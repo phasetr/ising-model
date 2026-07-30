@@ -1596,18 +1596,66 @@ def expand_braces(token: str) -> list[str]:
     Both documentation files use brace alternation for families of theorem
     names (``correlation_convergent{,_h,_beta}``). Failing to expand it is a
     silent false-negative generator, so the product is expanded and matched
-    exactly, with the same confidence as a verbatim citation.
+    exactly, with the same confidence as a verbatim citation. Nested groups are
+    expanded from the outside in so an alternative may itself contain another
+    family. An explicit worklist keeps accepted deeply nested tokens independent
+    of Python's recursion limit. An unbalanced token is preserved verbatim:
+    partially interpreting a malformed citation could discard the only
+    spelling available to later conservative citation channels.
     """
-    match = re.search(r"\{([^{}]*)\}", token)
-    if not match:
+    depth = 0
+    for char in token:
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth < 0:
+                return [token]
+    if depth != 0:
         return [token]
-    alternatives = match.group(1).split(",")
-    head, tail = token[: match.start()], token[match.end() :]
-    out: list[str] = []
-    for alt in alternatives:
-        for rest in expand_braces(tail):
-            out.append(head + alt.strip() + rest)
-    return sorted(set(out))
+
+    pending = [token]
+    seen: set[str] = set()
+    out: set[str] = set()
+    while pending:
+        current = pending.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+
+        start = current.find("{")
+        if start < 0:
+            out.add(current)
+            continue
+
+        depth = 0
+        end = -1
+        for index in range(start, len(current)):
+            if current[index] == "{":
+                depth += 1
+            elif current[index] == "}":
+                depth -= 1
+                if depth == 0:
+                    end = index
+                    break
+
+        body = current[start + 1 : end]
+        alternatives: list[str] = []
+        alternative_start = 0
+        depth = 0
+        for index, char in enumerate(body):
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+            elif char == "," and depth == 0:
+                alternatives.append(body[alternative_start:index])
+                alternative_start = index + 1
+        alternatives.append(body[alternative_start:])
+
+        head, tail = current[:start], current[end + 1 :]
+        pending.extend(head + alternative.strip() + tail for alternative in alternatives)
+    return sorted(out)
 
 
 def glob_to_regex(token: str) -> re.Pattern[str] | None:
