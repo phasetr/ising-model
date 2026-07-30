@@ -106,8 +106,9 @@ theorem fieldCorrelationℂAlongExhaustion_tendsto_at_real
     (tendsto_correlationAlongExhaustion_correlationInfinite G Λ
       (⟨a, b, 1⟩ : IsingParams ℝ) ⟨ha, hb, one_pos⟩ A)
 
-/-- **Infinite-volume field correlation analyticity from a volume-uniform bound** (GJ §17.6.1,
-brick F6a capstone): fix a coupling `a ≥ 0` and a radius `0 < r ≤ π/2`.  On the ball
+/-- **Conditional holomorphic field-correlation local limit from a volume-uniform bound**
+(GJ §17.6.1, brick F6a capstone): fix a coupling `a ≥ 0` and a radius
+`0 < r ≤ π/2`.  On the ball
 `Metric.ball 0 r`, given that the per-stage complex field polymer partition function is
 non-vanishing (`hden`, gated — discharged in F6b) and that the per-stage complex field
 correlations are volume-uniformly locally bounded (`hbdd`, gated), the per-stage complex
@@ -120,9 +121,11 @@ segment `(b₀, b₀ + δ)` (each interior field `t > 0` is ferromagnetic togeth
 `fieldCorrelationℂAlongExhaustion_tendsto_at_real`), with `(b₀ : ℂ)` an accumulation point;
 the value at `b₀` is identified via pointwise uniqueness at the real point.  The proof body
 consumes the family-agnostic provider `FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn`
-directly (a thin field-specific glue; the `β` Vitali stack is not modified).  Here `b = β·h`
-with `β = 1` and `J = a` fixed, so holomorphy in `b` is the `∂/∂h` analyticity of the
-infinite-volume two-point correlation. -/
+directly (a thin field-specific glue; the `β` Vitali stack is not modified).  The theorem
+exports a holomorphic `f` and local-uniform convergence on the ball, together with equality
+to `correlationInfinite` only at the quantified real field `b₀`.  It does not identify `f`
+with the real infinite-volume correlation on a neighbourhood of `b₀` or export a real
+infinite-volume `HasDerivAt`; that broader contract remains unresolved under #4790. -/
 theorem fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
