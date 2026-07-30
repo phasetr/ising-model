@@ -32,7 +32,10 @@ pole-avoidance `‖b‖ < π/2 ⟹ Complex.cosh b ≠ 0` (so `Complex.tanh` is a
 the ball) and the `b`-uniform inflated majorant at activity `Mr²·|tanh a|` on the
 closed ball, fed to `Complex.differentiableOn_tsum_of_summable_norm`.  Honest
 scope: brick 6 delivers only the complex `exp` identity and `≠ 0`; the two-point
-Montel local bounds are brick 7 and the Vitali–Porter `∂/∂h` capstone is brick 8.
+Montel local bounds are brick 7, while brick 8/F6c is the small-coupling
+holomorphic local-limit endpoint with equality at one field value `b₀`.  It does
+not export a real infinite-volume `HasDerivAt`; that broader contract remains
+unresolved under #4790.
 
 ## References
 - Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.6, pp. 378–386 (lattice

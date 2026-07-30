@@ -31,8 +31,10 @@ non-vanishing in brick 6.  The combinatorial input is the parity bound
 `#odd(P) ≤ 2·|P|` (an edge set covers at most `2·|P|` vertices), proved here as a
 universal lemma.  Honest scope: brick 5 supplies the real-`h` `exp`/non-vanishing
 and the complex **type/estimate** design only; the complex `Z_ℂ ≠ 0` body is
-brick 6, the Montel/Vitali re-plumbing is brick 7, and the `∂/∂h` capstone is
-brick 8.
+brick 6, the Montel/Vitali re-plumbing is brick 7, and brick 8/F6c is the
+small-coupling holomorphic local-limit endpoint, with equality at one field value
+`b₀`.  It does not export a real infinite-volume `HasDerivAt`; that broader
+contract remains unresolved under #4790.
 
 ## References
 - Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.6, pp. 378–386
@@ -110,7 +112,11 @@ theorem fieldPolymerZ_eq_exp_tsum_fieldMayerExpansionTerm (G : SimpleGraph ι)
 field parameter `b` made complex (the coupling `a` stays real).  The
 `#odd(P) = (oddBoundary P).card` factor reuses the odd-degree vertex set
 `oddBoundary` (`SourceGeneratingFunction.lean`), definitionally the same filter
-used by `fieldPolymerWeight`.  Entire in `b`. -/
+used by `fieldPolymerWeight`.  `Complex.tanh` is meromorphic, with poles at
+`(2k+1)πi/2`; when `#odd(P) > 0`, the weight is analytic in `b` only on pole-free
+neighbourhoods such as the ball used later (apart from a trivial zero coupling
+prefactor).  When `#odd(P) = 0`, the field factor is `1`, so the weight is a
+constant polynomial in `b`. -/
 noncomputable def fieldPolymerWeightℂ (a : ℝ) (b : ℂ) (P : Finset (Sym2 ι)) : ℂ :=
   (Real.tanh a : ℂ) ^ P.card * (Complex.tanh b) ^ (oddBoundary P).card
 

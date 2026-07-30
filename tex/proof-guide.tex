@@ -16833,18 +16833,24 @@ Combined with the high-temperature expansion (product form) over edge subsets,
 the closed form follows as a purely finite combinatorial identity.
 No cluster-expansion, Kotecký--Preiss, or new analytic input is required.
 
-This is the first brick of the on-book programme toward
-GJ Theorem~17.6.1 ($\partial/\partial h$ high-temperature differentiability
-and $h$-analyticity of the two-point function).
+For the exact field-dependent closed weight, Friedli--Velenik
+Exercise~5.8 and its answer on p.~531 are the primary lattice source;
+\S3.7.3, eqs.~(3.41)--(3.45), give the $h=0$ template only.  The later
+Koteck\'y--Preiss/Mayer chain is a project extension; GJ Theorem~17.6.1 is the comparison target and GJ Chapter~18 is a continuum analogy only.
+
+This is the first finite combinatorial brick of the project's complex-field
+local-limit chain.  It does not itself prove real infinite-volume
+$\partial/\partial h$ differentiability.
 The Lean proof (\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormField.lean})
 is axiom-free.
-Reference: Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
+Source roles: Friedli--Velenik Exercise~5.8 and its answer on p.~531 give the exact field weight; \S3.7.3 is the $h=0$ template.
+GJ Theorem~17.6.1 motivates the comparison target; GJ Chapter~18 is only a continuum analogy.
 
 \subsection{Field-dependent polymer factorization identity (GJ \S17.6.1, brick 2a)}
 
 \label{subsec:field_polymer_factorization}
 
-Brick~2a of the on-book programme toward GJ Theorem~17.6.1.
+Brick~2a of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 The field-dependent high-temperature closed form (brick~1) decomposes the edge-subset sum
 into connected polymers via the factorization identity.
 
@@ -16901,14 +16907,14 @@ The Lean proofs (\texttt{IsingModel/ClusterExpansion/Families/FieldConnectedPoly
 \texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormFieldPolymer.lean})
 are axiom-free.
 
-Reference: Friedli--Velenik, \S3.7.3, eq.~(3.45), p.~117 (2017 ed.) (zero-field template);
-Friedli--Velenik, \S5.7 (polymer gas); Glimm--Jaffe, 2nd ed., \S18.4 (lattice cluster expansion, field version).
+Reference: Friedli--Velenik Exercise~5.8 gives the field weight, \S\S5.2--5.3 and \S5.6 give the abstract hard-core formalism, and \S3.7.3, eq.~(3.45), p.~117 gives the $h=0$ template;
+the field-dependent connected-component factorization is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent polymer activity bounds (GJ \S17.6.1, brick 2b)}
 
 \label{subsec:field_polymer_activity}
 
-Brick~2b of the on-book programme toward GJ Theorem~17.6.1.
+Brick~2b of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 The field-dependent polymer factorization identity (brick~2a) exhibits the finite-volume
 partition function as a hard-core gas of field-dependent polymers.
 Brick~2b supplies the volume-uniform activity bounds for that gas,
@@ -16992,24 +16998,24 @@ The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerActivity.lean})
 are axiom-free.
 The scope is honest: the bounds are always $\ge 1$, hence furnish only the
 \emph{finiteness} input to the KP theorem, not the smallness criterion;
-complex field (where $|\tanh(\beta h)|$ need not be $\le 1$) is deferred to a
-non-vanishing brick; and this is the field-dependent mirror of the zero-field
+Bricks~5--6 later in this implemented chain handle complex field, where $|\tanh(\beta h)|$ need not be $\le 1$;
+this brick is the real-field finiteness stage and does not claim the KP smallness criterion.  It is the field-dependent mirror of the zero-field
 even-polymer bounds, with the field factor always helping rather than breaking
 the bound for real $h$.
 
-Reference: Friedli--Velenik, \S5.7 (polymer gas and Kotečský--Preiss); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (subgraph enumeration);
-Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version).
+Reference: Friedli--Velenik \S3.7.3, Lemma~3.38 and eqs.~(3.48)--(3.49) give $h=0$ counting templates, Exercise~5.8 gives the field weight, and \S5.4, Theorem~5.4, p.~224 gives convergence;
+the field activity bounds are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent Mayer term and dominated summability (GJ \S17.6.1, brick 3)}
 
 \label{subsec:field_mayer_term}
 
-Brick~3 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~3 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Bricks~2a and~2b exhibited the field-dependent partition function as a hard-core
 polymer gas with volume-uniform activity bounds.
 Brick~3 supplies the convergence input of the field-dependent Mayer expansion:
 the field cluster-sequence activity, the field Mayer term, and its
-term-by-term dominated summability by comparison to the already-established zero-field majorant.
+term-by-term dominated summability by comparison to the previously proved zero-field majorant.
 
 \begin{definition}[\texttt{fieldClusterSeqActivity}]
 \label{def:field_cluster_seq_activity}
@@ -17114,19 +17120,19 @@ Brick~3 is completely algebraic and combinatorial: no Kotečský--Preiss machine
 no differential or analytic input, and no new weights or majorants are introduced.
 The convergence is collapsed onto the zero-field route via the domination
 Theorem~\ref{thm:field_cluster_seq_activity_bound}.
-Real field $h$ only (complex $h$ deferred);
+This brick is real-field only; the implemented complex-field weights and non-vanishing are supplied by bricks~5--6.
 regression at $b = 0$ recovers the zero-field even-polymer restriction.
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerTerm.lean}) are axiom-free.
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version);
-Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (polymer gas);
-Friedli--Velenik, \S5.7 (Mayer--Montroll expansion).
+Reference: Friedli--Velenik \S\S5.2--5.4 and Proposition~5.3 give the abstract polymer/Ursell and convergence framework,
+while Exercise~5.8 gives the field weight; the field dominated-summability comparison is a project extension.
+Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent Mayer--Montroll identity (GJ \S17.6.1, brick 4)}
 
 \label{subsec:field_mayer_montroll_identity}
 
-Brick~4 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~4 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Brick~3 provided the convergence input via dominated summability of the field Mayer term.
 Brick~4 now supplies the \emph{algebraic Mayer--Montroll identity}:
 the field polymer free energy equals the sum of the field Mayer expansion terms,
@@ -17236,7 +17242,7 @@ The genuinely new content is re-running the weight-carrying
 
 \paragraph{Scope.}
 Brick~4 is the algebraic assembly of the colour-degree double sum into the Mayer identity.
-Real field $h$ only (complex $h$, where $|\tanh(b)|$ need not satisfy $< 1$, is deferred to a later non-vanishing brick).
+This brick is real-field only; implemented bricks~5--6 supply the complex-$h$ estimates and non-vanishing where $|\tanh(b)|$ need not satisfy $< 1$.
 Regression at $b = 0$ (where $\tanh(0) = 0$): the field weight collapses to zero-field monomials,
 the field Mayer term reduces to the even-polymer-restricted zero-field term, and the identity
 recovers the zero-field \texttt{mayer\_identity\_general\_t} (up to the species relabelling).
@@ -17250,17 +17256,17 @@ and the activity sum $A_C(a) = \sum_P |\tanh(a)|^{|P|} \to 0$, so $e \cdot A_C(a
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerIdentity.lean}) are axiom-free
 (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 The field Mayer identity itself does \emph{not} discharge Theorem~17.6.1:
-bricks~5--13+ (non-vanishing and volume-uniform bounds) remain.
+implemented bricks~5--13+ supply the non-vanishing and volume-uniform bounds used by the completed local-limit chain.
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386 (lattice cluster expansion, field version);
-Friedli--Velenik, \S5.7 (Mayer--Montroll identity) and \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+Reference: Friedli--Velenik \S\S5.2--5.4 and Proposition~5.3 give the abstract polymer/Ursell and log-$\Xi$ formalism, while Exercise~5.8 gives the field weight;
+the field Mayer--Montroll identity is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 
 \subsection{Field polymer exponential identity, real-$h$ non-vanishing, and complex-$h$ prelude (GJ \S17.6.1, brick 5)}
 
 \label{subsec:field_polymer_exp_nonvanishing}
 
-Brick~5 of the on-book programme toward GJ Theorem~17.6.1.
+Brick~5 of the project complex-field local-limit chain, motivated by GJ Theorem~17.6.1.
 Brick~4 provided the algebraic Mayer--Montroll \emph{log}-identity
 $\texttt{fieldPolymerFreeEnergy}(G, a, b) = \sum_n \texttt{fieldMayerExpansionTerm}(G, n, a, b)$.
 Brick~5 now converts that log-identity into an \emph{exponential} identity and
@@ -17279,9 +17285,9 @@ The four main theorems are:
 \texttt{fieldPolymerZ\_pos}: $0 < \texttt{fieldPolymerZ}(G, a, b)$ under $|\varepsilon_{a,b}| < 1$.
 Since $\texttt{fieldPolymerZ} = 1 + \varepsilon_{a,b}$ and $|\varepsilon| < 1$ implies $\varepsilon > -1$,
 we have $1 + \varepsilon > 0$.
-Note: the zero-field route relied on every monomial $\geq 0$ to conclude $\sum \geq 1$.
-With the field factor $\tanh(b)^{\#\text{odd}(P)}$, monomials can be negative (at non-integer $\tanh b$),
-so the $1 + \varepsilon > 0$ argument is mandatory.
+For real $b$, the field factor $\tanh(b)^{\#\text{odd}(P)}$ is nonnegative because
+\texttt{oddBoundary\_card\_even} makes $\#\text{odd}(P)$ even. A negative monomial can only come from
+$\tanh(a)^{|P|}$ when $a<0$ and $|P|$ is odd, so without a sign hypothesis on $a$ the $|\varepsilon|<1$ control and $1+\varepsilon>0$ argument are mandatory.
 
 \item
 \texttt{exp\_fieldPolymerFreeEnergy}: $\exp(\texttt{fieldPolymerFreeEnergy}(G, a, b)) = \texttt{fieldPolymerZ}(G, a, b)$
@@ -17302,7 +17308,7 @@ This combines the exponential identity with brick~4's Mayer--Montroll identity.
 
 \paragraph{Complex-$h$ prelude (complex field `$b \in \mathbb{C}$`, coupling `$a \in \mathbb{R}$`).}
 The role of brick~5's complex machinery is \emph{type design} and \emph{estimates only};
-the complex non-vanishing body is deferred to brick~6.
+the implemented complex non-vanishing body is supplied by brick~6.
 The main definitions and lemmas are:
 
 \begin{definition}[\texttt{fieldPolymerWeight\ensuremath{\mathbb{C}}}]
@@ -17310,8 +17316,8 @@ The complex field polymer weight, for $b \in \mathbb{C}$:
 \[
 w^{\mathbb{C}}_{a,b}(P) := (\tanh(a) : \mathbb{C})^{|P|} \cdot (\text{Complex.tanh}(b))^{\#\text{odd}(P)},
 \]
-where $\tanh(a)$ is real, and $\text{Complex.tanh}(b)$ is the complex-hyperbolic-tangent.
-Entire in $b$.
+Here $\text{Complex.tanh}(b)$ is meromorphic with poles at $(2k+1)\pi i/2$; for positive $\#\text{odd}(P)$ and a nonzero coupling prefactor, the weight is analytic on pole-free domains.
+The ball used below is one such domain; if $\#\text{odd}(P)=0$ the weight is constant in $b$, while a zero coupling prefactor makes it the identically zero entire function.
 \end{definition}
 
 \begin{definition}[\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}]
@@ -17359,7 +17365,7 @@ Then
 Since $|\text{Complex.tanh}(b)|$ need not be $\leq 1$ at complex $b$, we use $M \geq 1$ to get
 $\|\text{Complex.tanh}(b)\|^{\#\text{odd}(P)} \leq M^{\#\text{odd}(P)} \leq M^{2|P|} = (M^2)^{|P|}$
 via the parity bound.
-This majorant will feed the complex Koteck\'y--Preiss window of brick~6.
+This majorant is used by the implemented complex Koteck\'y--Preiss window in brick~6.
 \end{theorem}
 
 \begin{theorem}[\texttt{norm\_fieldPolymerZ\ensuremath{\mathbb{C}}\_le}; $M^2$-inflated aggregate majorant]
@@ -17371,31 +17377,30 @@ Then
 \prod_{P \in \Gamma} (M^2 \cdot |\tanh(a)|)^{|P|}.
 \]
 The right-hand side is the connected-species gas at the inflated activity $t_* = M^2 \cdot |\tanh(a)|$.
-Its Koteck\'y--Preiss summability window is deferred to brick~6.
+Brick~6 supplies its implemented Koteck\'y--Preiss summability window.
 \end{theorem}
 
 \paragraph{Scope.}
 Brick~5 supplies the real-$h$ exponential identity and non-vanishing result,
 together with the \emph{type and estimate design} for the complex field parameter.
-The complex $Z_{\mathbb{C}} \ne 0$ statement itself (analytic continuation + non-vanishing on the complex KP ball)
-is the content of brick~6, the Montel/Vitali re-plumbing is brick~7,
-and the $\partial/\partial h$ capstone is brick~8.
-This is brick~5 of the on-book programme toward GJ Theorem~17.6.1's $\partial/\partial h$
-high-temperature differentiability; \textbf{it is not itself a $\partial/\partial h$ result}.
-It is the ~6th PR of the ~13--22 PR chain toward that capstone (Issue~\#4413, thread~\#4433).
+The complex $Z_{\mathbb{C}} \ne 0$ statement itself is supplied by brick~6;
+the subsequent F6a--F6c assembly reaches the small-coupling complex-field
+holomorphic local-limit endpoint.  Brick~5 is supporting infrastructure, not
+a real infinite-volume $\partial/\partial h$ result.
 
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerExpNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, non-vanishing);
-Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+Source roles: Friedli--Velenik \S\S5.2--5.5 and Proposition~5.3 give the abstract polymer/Ursell, convergence, and analytic context,
+while Exercise~5.8 gives the field weight; the real/complex exponential identities and non-vanishing package are project extensions.
+Glimm--Jaffe Chapter~18 is a continuum analogy only.
 
 \subsection{Complex field partition non-vanishing via analytic continuation (GJ \S17.6.1, brick 6)}
 
 Brick~6 (the complex-analytic body) establishes the nonvanishing of the field polymer partition function
 on a complex $h$-ball by lifting the real-$h$ identity from brick~5 to the complex plane via analytic continuation.
-It is the \emph{complex $Z_{\mathbb{C}} \ne 0$ body}; the two-point Montel/Vitali re-plumbing is brick~7 and the full
-$\partial/\partial h$ capstone is brick~8.
+It is the \emph{complex $Z_{\mathbb{C}} \ne 0$ body}; the two-point Montel/Vitali re-plumbing is brick~7, while
+brick~8/F6c is the small-coupling holomorphic local-limit endpoint, proving equality at one field value $b_0$, not a full $\partial/\partial h$ capstone; real infinite-volume \texttt{HasDerivAt} remains unresolved (Issue~\#4790).
 
 \subsubsection*{Complex field Mayer term and Penrose majorant}
 
@@ -17524,10 +17529,10 @@ for any $b \in \mathcal{B}_r$,
 
 \emph{Proof.} \textbf{Analytic continuation via the identity theorem.}
 Both sides are $\mathtt{AnalyticOnNhd}$ on the preconnected open ball $\mathcal{B}_r$ (LHS and RHS holomorphy).
-They agree on a dense subset: by the real-axis seed theorem, they agree on a sequence
+They agree frequently along a tail of an accumulating sequence: by the real-axis seed theorem, they agree at
 $b_k = 1/(k+1) \to 0$ (after casting the real identity through $\mathbb{C}$ via $\mathbb{C}.ofReal\_exp$ and
 $\mathbb{C}.ofReal\_tsum$). The analytic identity theorem (two analytic functions on a preconnected domain
-that agree on a set accumulating at an interior point agree everywhere) extends the agreement to the
+that agree frequently with interior limit point $0$ agree everywhere) extends the agreement to the
 whole ball. \hfill$\square$
 \end{theorem}
 
@@ -17543,22 +17548,46 @@ and $\text{Complex.exp}$ is never zero. \hfill$\square$
 
 \paragraph{Scope.}
 Brick~6 supplies the complex exponential identity and complex non-vanishing;
-it does \textbf{not} itself constitute a $\partial/\partial h$ result. The two-point Montel/Vitali re-plumbing
-is brick~7, and the $\partial/\partial h$ capstone is brick~8. This is brick~6 of the on-book programme
-toward GJ Theorem~17.6.1's $\partial/\partial h$ high-temperature differentiability; it is
-the \emph{seventh PR} of the \emph{13--22 PR chain} toward that capstone (Issue~\#4413, thread~\#4433).
+it does \textbf{not} itself constitute a $\partial/\partial h$ result.  The later F6a--F6c
+assembly uses this input for the small-coupling complex-field holomorphic local-limit endpoint.
 
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerComplexNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Reference: Glimm--Jaffe, 2nd ed., \S18.4--18.6, pp.~378--386 (lattice cluster expansion, field version, analyticity and non-vanishing); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion).
+Reference: Friedli--Velenik \S5.5, Theorem~5.8, p.~228 gives parameter-analyticity context, \S\S5.2--5.4 and Proposition~5.3 give the prior abstract roles,
+and Exercise~5.8 gives the field weight; the complex identity-theorem continuation and non-vanishing result are project extensions.
+Glimm--Jaffe Chapter~18, pp.~321--343, is a continuum analogy only.
 
-\section{Cluster expansion (\S18.1--18.3)}
+\subsection{Small-coupling complex-field holomorphic local-limit endpoint (F6a--F6c)}
+
+For every \(r\) with \(0<r<\pi/2\), there is \(a_0>0\) such that, for every
+\(a\) with \(0\le a<a_0\) and every real \(b_0\) with \(0\le b_0<r\), there is
+\(f:\mathbb C\to\mathbb C\) which is differentiable on
+\(\operatorname{ball}(0,r)\), is the locally uniform limit there of the
+finite-stage complex-field correlations, and satisfies only the displayed
+identification
+\[
+  f(\uparrow b_0)=
+  \uparrow\!\left(\texttt{correlationInfinite}\,
+    (\texttt{latticeGraph}\,d)\,\Lambda\,\langle a,b_0,1\rangle\,A\right).
+\]
+This is the exact contract of
+\texttt{fieldCorrelationInfinite\_latticeGraph\_analytic\_high\_temp}.
+It does not identify \(f\) with the real infinite-volume correlation at other
+real fields and exports no broader real infinite-volume
+\texttt{HasDerivAt}.  The cluster-expansion inputs are sourced from
+Friedli--Velenik Exercise~5.8 (field weight), \S\S5.2--5.3 (abstract polymer/Ursell formalism), \S5.4 (convergence), and \S5.5 (analytic context); the F6c local-limit assembly is a project extension, and GJ Theorem~17.6.1 is a comparison target.
+
+\section{Lattice high-temperature expansion (project \S18.1--18.3 analogy)}
 
 The lattice Ising analogue of the cluster expansion is the
 \textbf{high-temperature expansion}, decomposing each Boltzmann factor:
 $\exp(\beta J \sigma_i\sigma_j) = \cosh(\beta J)(1 + \tanh(\beta J)\sigma_i\sigma_j)$.
 This is already proved as \texttt{exp\_edgeSpin\_decomp}.
+The \S18.x labels in this guide are project-internal analogy labels, not a literal
+correspondence with Glimm--Jaffe Chapter~18.  That chapter treats the continuum
+$P(\phi)_2$ cluster expansion.  The lattice source roles are Friedli--Velenik Exercise~5.8 (field weight),
+\S\S5.2--5.3 (abstract polymer/Ursell formalism), \S5.4 (convergence), and \S5.5 (analytic context); the guide's field/Mayer assemblies are project extensions.
 
 \begin{definition}[\texttt{highTempParam}]
 $t = \tanh(\beta J)$, the high-temperature expansion parameter.
@@ -17572,8 +17601,8 @@ $|t| = |\tanh(\beta J)| < 1$ for all finite $\beta J$.
 $t < 1$.
 \end{theorem}
 
-\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion}; GJ~\S18.3,
-cf.\ FV~\S3.7.3 eq.\,(3.42)]
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion};
+FV Exercise~5.8 exact any-$h$ product weight; FV~\S3.7.3 eq.~(3.42) $h=0$ template only; finite-graph assembly project extension]
 For any Ising parameter $p = (J, h, \beta)$ on a finite simple graph
 $G = (\iota, E)$,
 \[
@@ -17595,7 +17624,8 @@ by \texttt{exp\_edgeSpin\_decomp} and $\cosh(\beta J) > 0$.
 Multiplying over edges and pulling out $\cosh(\beta J)^{|E|}$ gives the claim.
 \hfill$\square$
 
-\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero}; GJ~\S18.3 / FV~\S3.7.3 eq.\,(3.42)]
+\begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero};
+FV~\S3.7.3 eq.\,(3.42)]
 At zero external field, the high-temperature expansion specialises to
 \[
 Z(G; J, 0, \beta) = (\cosh(\beta J))^{|E|}
@@ -17631,7 +17661,7 @@ odd-degree vertices vanish, leaving the sum over even-degree
 subgraphs.
 \hfill$\square$
 
-\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_h\_zero\_closed}; FV~\S3.7.3 eq.\,(3.46)]
+\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_h\_zero\_closed}; singleton FV~(3.46), pair Exercise~3.23, arbitrary-$A$ $h=0$ project extension]
 For any $A \subseteq \iota$ on a finite simple graph $G = (\iota, E)$,
 \[
 \langle \sigma_A \rangle_{\beta, 0} =
@@ -17667,7 +17697,8 @@ cancels the prefactor $2^{|\iota|} (\cosh \beta J)^{|E|}$.
 \texttt{correlation\LeanLambda\_latticeGraph\_high\_temp\_expansion\_h\_zero\_closed}
 in \texttt{Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean}).
 
-\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_general\_h\_subset\_form}; GJ~\S18.3/\S18.5]
+\begin{theorem}[\texttt{correlation\_high\_temp\_expansion\_general\_h\_subset\_form};
+FV~\S3.7.3 $h=0$ template, Exercise~5.8 general-field weight, arbitrary-$A$ subset assembly project extension]
 For any $A \subseteq \iota$, any finite simple graph $G = (\iota, E)$, and
 any Ising parameter $p = (J, h, \beta)$,
 \[
@@ -17701,8 +17732,8 @@ The matching denominator is
 \texttt{partitionFunction\_high\_temp\_expansion\_subset\_form}; dividing
 cancels the common prefactor $(\cosh \beta J)^{|E|}$ via
 \texttt{inv\_mul\_cancel}$_0$, using only $\cosh(\beta J) \neq 0$ (no
-nonvanishing hypothesis on the denominator). At $h = 0$ this specialises to
-FV~(3.46) above.
+nonvanishing hypothesis on the denominator). At $h = 0$ this specialises to the
+project's arbitrary-$A$ formula; only the singleton case is FV~(3.46), while the pair template is Exercise~3.23.
 \hfill$\square$
 
 \paragraph{Wrappers.} Lifted to the \(\Lambda\)-layer
@@ -17724,8 +17755,8 @@ arbitrary observable \(F : \mathrm{Config}~\iota \to \mathbb{R}\)
        {\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
         \sum_\sigma (\prod_{e \in X} \sigma_e) e^{\beta h \sum_i \sigma_i}}.
 \]
-This is the canonical GJ~\S18.3 high-temperature representation of thermal
-averages; the proof is identical, carrying \(F(\sigma)\) through the
+This lattice high-temperature representation uses the exact general-field weight of Friedli--Velenik Exercise~5.8
+and the $h=0$ template of \S3.7.3; the arbitrary-observable general-$h$ representation is a project extension, with the proof carrying \(F(\sigma)\) through the
 \(\sigma\)-sum in the public numerator lemma
 \texttt{numerator\_observable\_high\_temp\_expansion\_subset\_form} (whose
 \(F = 1\) case is the partition-function subset form). The correlation theorem
@@ -17735,8 +17766,8 @@ above is the one-line specialisation \(F = \sigma_A\), and the magnetization
 (\texttt{AmbientLattice/GibbsExpectationHighTempExpansion.lean}) carries it to
 the infinite-volume exhaustion.
 
-\paragraph{External-field response in subset form (GJ~\S17.6, pp.~348--351;
-\S18.3, pp.~378--386).}
+\paragraph{External-field response in subset form (GJ~\S17.6 motivation; Exercise~5.8 field weight;
+the arbitrary-observable response/subset assembly is a project extension; GJ Chapter~18 is a continuum analogy only).}
 The GJ~\S17.6 fluctuation-response derivative
 \[
 \frac{\partial}{\partial h}\langle\sigma_A\rangle_h
@@ -17756,8 +17787,8 @@ specialisation \(A=\{i\}\),
 local field susceptibility \(\partial\langle\sigma_i\rangle/\partial h\), and
 connects the \S5.3/\S17.6 susceptibility machinery to the \S18.3 expansion.
 
-\paragraph{Connected correlations in subset form (GJ~\S18.5, pp.~313--316;
-\S18.7, pp.~319--322).}
+\paragraph{Connected correlations in subset form (project extension; GJ Chapter~18
+is a continuum connected-correlation analogy only, not a lattice source).}
 Writing
 \(N[F] = \sum_{X\subseteq E}\tanh(\beta J)^{|X|}\sum_\sigma F(\sigma)(\prod_{e\in X}\sigma_e)e^{\beta h\sum_i\sigma_i}\)
 (\texttt{highTempSubsetNumerator}) and \(D = N[1]\)
@@ -17771,12 +17802,12 @@ GJ~\S18.7 — then take the general-\(h\) subset form
 \]
 (\texttt{truncated2\_high\_temp\_expansion\_general\_h\_subset\_form}), and
 likewise the three-point Ursell function
-(\texttt{truncated3\_high\_temp\_expansion\_general\_h\_subset\_form}). These
-are finite-volume lattice Ising identities (no continuum limit) furnishing the
-general-\(h\) foundation for connected-correlation decay.
+(\texttt{truncated3\_high\_temp\_expansion\_general\_h\_subset\_form}). Friedli--Velenik
+Exercise~5.8 supplies the exact field weight; the truncation/subset algebra is a
+self-contained finite-volume project extension with no continuum or direct GJ lattice input.
 
-\paragraph{General-\(h\) exponential decay of the connected 2-point function
-(GJ~\S18.7, pp.~319--322).} On \(\mathbb{Z}^d\), for a ferromagnetic field
+\paragraph{General-\(h\) exponential decay of the connected 2-point function (project
+extension; GJ Chapter~18 is a continuum decay analogy only, not a lattice source).} On \(\mathbb{Z}^d\), for a ferromagnetic field
 \(\langle J,h,\beta\rangle\) with \(h\ge 0\) and distinct sites \(i\neq j\), the
 \emph{connected} two-point function \(\langle\sigma_i;\sigma_j\rangle =
 \texttt{truncated2Infinite}\) decays (unlike the full two-point function, which
@@ -17795,12 +17826,12 @@ connected 2-point is antitone in \(h\) on \([0,\infty)\), so
 \(\texttt{truncated2Infinite\_h\_zero}\) (\(=\langle\sigma_i\sigma_j\rangle_{h=0}\)
 since \(\langle\sigma_i\rangle=0\) by \(\mathbb{Z}_2\) symmetry), and the
 existing \(h=0\) Simon--Lieb decay of the full two-point function
-(\texttt{SimonLiebDistanceDecay.lean}). The three general-\(h\) decay theorems
-live in \texttt{Truncated2GeneralFieldDecay.lean}. Lattice Ising, no continuum
-limit.
+(\texttt{SimonLiebDistanceDecay.lean}). Thus the lattice inputs are GHS field monotonicity and the project's \(h=0\) Simon--Lieb bound;
+the assembled general-\(h\) decay in \texttt{Truncated2GeneralFieldDecay.lean} is a project extension;
+this uses no continuum input or limit.
 
-\paragraph{General-\(h\) cluster property (GJ~\S18.7).} For \(0<J\),
-\(0\le h\), \(0<\beta\) and \(\beta J\cdot 2d<1\) on \(\mathbb{Z}^d\), the
+\paragraph{General-\(h\) cluster property (project extension; GJ Chapter~18 is a
+continuum cluster-property analogy only, not a lattice source).} For \(0<J\), \(0\le h\), \(0<\beta\) and \(\beta J\cdot 2d<1\) on \(\mathbb{Z}^d\), the
 connected two-point function clusters: \(j\mapsto\langle\sigma_i;\sigma_j\rangle
 \to 0\) along the cofinite filter (as \(d_{\mathbb{Z}^d}(i,j)\to\infty\)). The
 existing \(h=0\) exponential-decay witness
@@ -17810,8 +17841,8 @@ lifted to general \(h\) by GHS field-monotonicity — the same constant and rate
 \(0\le\langle\sigma_i;\sigma_j\rangle_h\le\langle\sigma_i;\sigma_j\rangle_0\)
 for \(h\ge 0\) and \(i\neq j\) — and fed into the existing squeeze-based
 \texttt{clusterProperty\_latticeGraph\_of\_HasExponentialDecay}
-(\texttt{Truncated2GeneralFieldCluster.lean}). Lattice Ising, no continuum
-limit.
+(\texttt{Truncated2GeneralFieldCluster.lean}). Its lattice inputs are GHS monotonicity and the project's prior decay theorem;
+the cluster-property assembly is a project extension with no continuum input.
 
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
@@ -17884,9 +17915,9 @@ were computed by \texttt{decide +kernel} on:
   \item Cycle graphs \(C_n\) for \(n = 3,\dots,7\) with values
     \(2, -3, 4, -5, 6\) (PRs~\#1545, \#1546, \#1553).
 \end{itemize}
-The general formula
-$\mathrm{alternatingConnectedSubgraphSum}(K_n) = (-1)^{n-1}(n-1)!$
-is being established by the \emph{root-component recurrence}, which avoids the
+The completed general formula
+$\mathrm{alternatingConnectedSubgraphSum}(K_n) = (-1)^{n-1}(n-1)\mathord{!}$
+was established by the \emph{root-component recurrence}, which avoids the
 chromatic-polynomial / matrix-tree machinery absent from Mathlib. Classifying
 every spanning edge-subset by the connected component of vertex $0$ gives
 $D_n = \sum_{C \ni 0} c_{|C|}\, D_{n-|C|}$, where
@@ -17908,7 +17939,7 @@ $S \mapsto S.\mathrm{map}(\mathrm{Sym2.map}\,\varphi)$ is a cardinality- and
 connectivity-preserving bijection on edge-subsets, via
 \texttt{SimpleGraph.Iso.connected\_iff}) supplies the
 $c_{|C|} = c(K_{|C|})$, $D_{n-|C|} = D(K_{n-|C|})$ ingredients through
-$K_n|_C \cong K_{|C|}$. The \emph{iso-invariance corollaries} \texttt{alternatingConnectedSubgraphSum\_completeGraph\_card}, \texttt{allSignedSubgraphSum\_completeGraph\_card} give that $c$, $D$ of $K_V$ depend only on $|V|$, and \texttt{connectedComponentMk\_eq\_of\_mem} establishes the crossing-edge-free property (no edge of $S$ joins distinct components of $\mathrm{fromEdgeSet}\,S$). The vertex set \texttt{rootComponentFinset}\,S\,r (the component of the root $r$) and its membership/crossing-free characterisations (\texttt{mem\_rootComponentFinset\_iff\_of\_mem\_edge}: both endpoints of an edge of $S$ lie in the root component together) set up the within-$C$/outside-$C$ split. The crux \texttt{induce\_fromEdgeSet\_inside\_connected} shows the within-$C$ edges induce a \emph{connected} graph on $C$ (since $C$ is exactly $r$'s component support, the induced graph is the component's \texttt{toSimpleGraph}, connected by \texttt{connected\_toSimpleGraph}), and \texttt{rootComponent\_edge\_card\_split} gives $|S|=|S_{\mathrm{in}}|+|S_{\mathrm{out}}|$. The root-component bijection and closed form follow. The \emph{fibre product split} (lemma 6) is now formalised: \texttt{reachable\_stays\_in\_of\_no\_cross} (with no crossing edge, reachability from the root stays inside $C$, by \texttt{ReflTransGen} induction); \texttt{rootComponentFinset\_eq\_iff} characterises the fibre $\{S : \mathrm{rootComponentFinset}\,S\,r = C\}$ as $r \in C$, no crossing edge, and $S \cap C.\mathrm{sym2}$ inducing a connected graph on $C$; \texttt{mem\_sym2\_and\_compl\_sym2\_false} records the disjointness $C.\mathrm{sym2} \cap C^c.\mathrm{sym2} = \varnothing$; and the inside/outside ambient signed-subgraph sets \texttt{insideConnectedEdgeSubsets}, \texttt{outsideEdgeSubsets} carry the two factors. The capstone \texttt{fiber\_signed\_sum\_eq\_product} proves $\sum_{S : \mathrm{rootComponentFinset}\,S\,r = C} (-1)^{|S|} = \bigl(\sum_{A} (-1)^{|A|}\bigr)\bigl(\sum_{B} (-1)^{|B|}\bigr)$ over the inside/outside sets, via the crossing-free bijection $S \mapsto (S \cap C.\mathrm{sym2}, S \cap C^c.\mathrm{sym2})$ with inverse $(A,B) \mapsto A \cup B$ (\texttt{Finset.sum\_bij'}), giving the ambient multiplicative core of $D_n = \sum_{C \ni 0} c_{|C|} D_{n-|C|}$. The fibrewise summation over $C$ and the reindex $\mathrm{inside} \cong c(K_C)$, $\mathrm{outside} \cong D(K_{C^c})$ collapsing to the closed form remain. The \emph{fibrewise recurrence} (lemma 7) is now formalised: \texttt{real\_signed\_sum\_powerset} ($\sum_{B \subseteq X}(-1)^{|B|} = [X = \varnothing]$, a real cast of \texttt{Finset.sum\_powerset\_neg\_one\_pow\_card}), \texttt{allSignedSubgraphSum\_eq\_ite} ($D(G) = [G.\mathrm{edgeFinset} = \varnothing]$), and the capstone \texttt{allSignedSubgraphSum\_eq\_sum\_fiber\_product}: $D(G) = \sum_{C : r \in C} \Sigma_{\mathrm{in}}(C)\cdot\Sigma_{\mathrm{out}}(C)$ via \texttt{Finset.sum\_fiberwise\_of\_maps\_to} on the root-component map $S \mapsto \mathrm{rootComponentFinset}\,S\,r$ combined with the per-fibre product split. The outside factor is evaluated in ambient terms by \texttt{outsideEdgeSubsets\_eq\_powerset} (the outside subsets are the powerset of $G.\mathrm{edgeFinset} \cap C^c.\mathrm{sym2}$) and \texttt{outsideEdgeSubsets\_signed\_sum\_eq\_ite} ($\Sigma_{\mathrm{out}}(C) = [G.\mathrm{edgeFinset} \cap C^c.\mathrm{sym2} = \varnothing]$). The ambient recurrence $D_n = \sum_{C \ni 0} \Sigma_{\mathrm{in}}(C)\cdot\Sigma_{\mathrm{out}}(C)$ is in place; the remaining reindex identifies $\Sigma_{\mathrm{in}}(C) = c(K_C)$, $\Sigma_{\mathrm{out}}(C) = D(K_{C^c})$ on the subtype complete graphs and collapses to $c_n + (n-1)c_{n-1} = 0$. The \emph{outside half} of the reindex (lemma 8) is now formalised by reduction to the complement cardinality: \texttt{completeGraph\_edgeFinset\_inter\_compl\_sym2\_empty\_iff} ($(\top).\mathrm{edgeFinset} \cap C^c.\mathrm{sym2} = \varnothing \iff |C^c| \le 1$, since an edge inside $C^c$ needs two distinct complement vertices), \texttt{allSignedSubgraphSum\_completeGraph\_subtype\_eq\_ite} ($D(K_C) = [\,|C| \le 1\,]$ via \texttt{allSignedSubgraphSum\_completeGraph\_card} and the $\mathrm{Fin}$ boundary lemmas), and \texttt{outsideEdgeSubsets\_completeGraph\_signed\_sum}: $\Sigma_{\mathrm{out}}(C) = \mathrm{allSignedSubgraphSum}(\top : \mathrm{SimpleGraph}\,\uparrow\!C^c) = D(K_{C^c})$, both sides collapsing to $[\,|C^c| \le 1\,]$ (avoiding subtype edge-set rewrites). The \emph{inside half} of the reindex, and with it the full root-component recurrence, are now formalised. The graph-equality crux \texttt{induce\_fromEdgeSet\_map\_subtype} ($(\mathrm{fromEdgeSet}\,\uparrow\!(T.\mathrm{map}\,e)).\mathrm{induce}\,\uparrow\!C = \mathrm{fromEdgeSet}\,\uparrow\!T$ on $\uparrow\!C$, $e$ the subtype $\mathrm{sym2}$-embedding) transfers connectivity; the roundtrip helpers \texttt{inside\_mem\_range\_sym2Map} (every inside edge is $e\,z$) and \texttt{inside\_preimage\_map\_eq} ($(A.\mathrm{preimage}\,e).\mathrm{map}\,e = A$) handle the bijection bookkeeping; \texttt{insideConnectedEdgeSubsets\_completeGraph\_signed\_sum} proves $\Sigma_{\mathrm{in}}(C) = \mathrm{alternatingConnectedSubgraphSum}(\top : \mathrm{SimpleGraph}\,\uparrow\!C) = c(K_C)$ via the connectivity-preserving bijection $T \mapsto T.\mathrm{map}\,e$ / $A \mapsto A.\mathrm{preimage}\,e$ (\texttt{Finset.sum\_bij'}, \texttt{Finset.preimage\_map}). The capstone \texttt{allSignedSubgraphSum\_completeGraph\_root\_recurrence} assembles lemma 7 with both reindexes into the full recurrence $D_n = \sum_{C \ni r} c(K_C)\cdot D(K_{C^c}) = \sum_{C \ni 0} c_{|C|} D_{n-|C|}$. The collapse and closed form are now formalised, completing the programme. \texttt{mayer\_surviving\_set} identifies the $C \ni 0$ with $|C^c| \le 1$ as exactly $\mathrm{univ}$ together with the $n-1$ cofinite singletons $\{j\}^c$ ($j \ne 0$); \texttt{alternatingConnectedSubgraphSum\_completeGraph\_recurrence} collapses the root-component recurrence to $c_n + (n-1)c_{n-1} = 0$ ($n \ge 2$), using $D(K_{C^c}) = 0$ unless $|C^c| \le 1$, the cardinality-invariance of $c$, and $D_n = 0$; and the capstone \texttt{alternatingConnectedSubgraphSum\_completeGraph\_closed\_form} proves $\mathrm{alternatingConnectedSubgraphSum}\,K_n = (-1)^{n-1}(n-1)!$ for $n \ge 1$ by induction from the recurrence (base $c_1 = 1$, step via $m! = m\,(m-1)!$ and $(-1)^m = -(-1)^{m-1}$). This is the general-$n$ Mayer/Ursell coefficient of the complete-graph cluster expansion, obtained through the root-component recurrence without any chromatic-polynomial or matrix-tree machinery. The companion \emph{general cycle formula} \texttt{alternatingConnectedSubgraphSum\_cycleGraph} (\texttt{ClusterExpansion/CycleGraphAlternatingSum.lean}) proves $\mathrm{alternatingConnectedSubgraphSum}(\mathrm{cycleGraph}\,n) = (-1)^{n-1}(n-1)$ for $n \ge 3$, by the explicit characterisation that the connected spanning subgraphs of the cycle $C_n$ are exactly the full edge set (size $n$) together with the $n$ single-edge deletions (Hamiltonian paths, size $n-1$): the forward bound is \texttt{Connected.card\_vert\_le\_card\_edgeSet\_add\_one}, and each single-edge deletion is shown connected by the rotation automorphism \texttt{circulantGraph\_adj\_translate} reducing it to the wrap edge $s(0,\mathrm{last})$, where \texttt{pathGraph\_connected.mono} applies. The sum $(-1)^n + n\,(-1)^{n-1} = (-1)^{n-1}(n-1)$ then follows. This general theorem \emph{replaces} the former per-$n$ \texttt{decide} cases (\texttt{cycleGraph\_\{three,\dots,seven\}}), removing the $4{\times}10^6$-heartbeat cycle-$7$ \texttt{decide} (a ${\sim}280$\,s clean-build long-pole, now ${\sim}7$\,s). The companion \emph{general path formula} \texttt{alternatingConnectedSubgraphSum\_pathGraph} (\texttt{ClusterExpansion/PathGraphAlternatingSum.lean}) proves $\mathrm{alternatingConnectedSubgraphSum}(\mathrm{pathGraph}\,(n+1)) = (-1)^n$ for \emph{every} $n$, by a pure edge count with no tree or bridge theory: a connected spanning subgraph on $n+1$ vertices has at least $n$ edges (\texttt{Connected.card\_vert\_le\_card\_edgeSet\_add\_one}) while the path has exactly $n$ (\texttt{card\_pathGraph\_edgeFinset}), so the two bounds squeeze and the full edge set is the unique connected spanning subset (\texttt{pathGraph\_connectedSpanning\_charac}), leaving the single term $(-1)^{|E|} = (-1)^n$. This \emph{replaces} the former per-$n$ \texttt{decide +kernel} cases (\texttt{pathGraph\_\{three,\dots,eight\}}), removes the \texttt{maxHeartbeats 400000} escalation at $P_8$ (module cost ${\sim}38$\,s, now ${\sim}2$\,s), and extends the coverage from $P_3,\dots,P_8$ to all $P_{n+1}$, including $P_1 = 1$ and $P_2 = -1$. As a corollary, the closed form is connected to the actual Ursell coefficient: \texttt{ursellCoefficient\_eq\_alternatingConnectedSubgraphSum\_div} ($\phi^T(\omega) = c(G(\omega))/n!$), \texttt{polymerSeqIncompatibilityGraph\_eq\_top\_of\_pairwise} (pairwise incompatibility gives $G(\omega) = \top$), \texttt{alternatingConnectedSubgraphSum\_polymerSeq\_complete} (the complete cluster's connected-spanning sum is $(-1)^{n-1}(n-1)!$, via the identity isomorphism $G(\omega) \simeq_g \top$), and \texttt{ursellCoefficient\_complete\_eq}: the classic single-cluster Mayer value $\phi^T(\omega) = (-1)^{n-1}(n-1)!/n! = (-1)^{n-1}/n$ for $n$ pairwise incompatible polymers. The companion file \texttt{MayerCompleteContribution.lean} records $|\phi^T(\omega)| = 1/n$ (\texttt{ursellCoefficient\_complete\_abs\_eq}), the $n=2$ consistency $\phi^T = -1/2$ (\texttt{ursellCoefficient\_complete\_eq\_two}, matching the pair Ursell value), and \texttt{mayerExpansionTerm\_completeClusterSubsum\_eq}: the Mayer-term contribution of the fully-incompatible sequences factors as $\bigl((-1)^{n-1}/n\bigr)\sum_\omega z(\omega)$, the constant Ursell coefficient pulled out of the activity sum. The capstone \texttt{hasSum\_singlePolymer\_ursell\_eq\_log} / \texttt{tsum\_singlePolymer\_ursell\_eq\_log} proves the classic identity that a single polymer $P$ contributes $\log(1+t^{|P|})$ to $\log\Xi$: summing the repeated-polymer term $\phi^T(P,\dots,P)\cdot(t^{|P|})^m = \bigl((-1)^{m-1}/m\bigr)(t^{|P|})^m$ over the multiplicity gives $\sum_{m\ge 1}\phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ for $|t^{|P|}|<1$, via the closed form (a repeated polymer is a self-incompatible complete cluster) and the logarithm power series \texttt{Real.hasSum\_pow\_div\_log\_of\_abs\_lt\_one}. This is the log structure at the heart of why the cluster expansion exponentiates. The convergence side (GJ §18.5) is recorded by \texttt{hasSum\_abs\_singlePolymer\_ursell} / \texttt{tsum\_abs\_singlePolymer\_ursell}: for $0 \le t$ and $t^{|P|} < 1$ the absolute values sum to $\sum_m (t^{|P|})^{m+1}/(m+1) = -\log(1 - t^{|P|})$ (the explicit convergence radius $t^{|P|} < 1$), together with \texttt{summable\_singlePolymer\_ursell} and the domination \texttt{singlePolymer\_log\_le\_neg\_log} ($\log(1+z) \le -\log(1-z)$ for $0 \le z < 1$). The independent-polymer upper bound (GJ §18.5) is \texttt{vdPolymerFamilies\_sum\_le\_prod\_one\_add} ($\sum_\Gamma \prod_{P\in\Gamma} t^{|P|} \le \prod_P (1+t^{|P|})$ for $t\ge 0$, the compatible families being a subset of all subsets, \texttt{Finset.prod\_one\_add}), \texttt{polymerFreeEnergy\_le\_sum\_log\_one\_add} ($\mathrm{polymerFreeEnergy}\,G\,t \le \sum_P \log(1+t^{|P|})$ by $\log$-monotonicity and \texttt{Real.log\_prod}), and \texttt{polymerFreeEnergy\_le\_sum\_singlePolymer\_contribution} (for $t^{|P|}<1$ the free energy is dominated by the sum of independent single-polymer Mayer contributions $\sum_P\sum'_m \phi^T(P,\dots,P)\,z$). The matching lower bound uses the empty and single-polymer families (\texttt{IsCompatiblePolymerFamilyVertexDisjoint.singleton}): \texttt{one\_add\_sum\_le\_vdPolymerFamilies\_sum} ($1 + \sum_P t^{|P|} \le \sum_\Gamma \prod_{P\in\Gamma} t^{|P|}$) gives \texttt{log\_one\_add\_sum\_le\_polymerFreeEnergy}, and \texttt{polymerFreeEnergy\_sandwich\_independent} bundles the two-sided estimate $\log(1+\sum_P t^{|P|}) \le \mathrm{polymerFreeEnergy}\,G\,t \le \sum_P \log(1+t^{|P|})$. Substituting into the polymer decomposition \texttt{freeEnergy\_eq\_polymerFreeEnergy} gives the Ising free energy sandwich \texttt{freeEnergy\_sandwich\_independent\_polymer}: for $0 \le \beta J$ and $|\iota|>0$, $\log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J) + \frac{1}{|\iota|}\log(1+\sum_P \tanh(\beta J)^{|P|}) \le \mathrm{freeEnergy}\,G\,\langle J,0,\beta\rangle \le \dots + \frac{1}{|\iota|}\sum_P \log(1+\tanh(\beta J)^{|P|})$, with the coarser explicit upper bound \texttt{freeEnergy\_le\_log\_two\_plus\_sum\_tanh\_pow} (via $\log(1+x)\le x$).
+$K_n|_C \cong K_{|C|}$. The \emph{iso-invariance corollaries} \texttt{alternatingConnectedSubgraphSum\_completeGraph\_card}, \texttt{allSignedSubgraphSum\_completeGraph\_card} give that $c$, $D$ of $K_V$ depend only on $|V|$, and \texttt{connectedComponentMk\_eq\_of\_mem} establishes the crossing-edge-free property (no edge of $S$ joins distinct components of $\mathrm{fromEdgeSet}\,S$). The vertex set \texttt{rootComponentFinset}\,S\,r (the component of the root $r$) and its membership/crossing-free characterisations (\texttt{mem\_rootComponentFinset\_iff\_of\_mem\_edge}: both endpoints of an edge of $S$ lie in the root component together) set up the within-$C$/outside-$C$ split. The crux \texttt{induce\_fromEdgeSet\_inside\_connected} shows the within-$C$ edges induce a \emph{connected} graph on $C$ (since $C$ is exactly $r$'s component support, the induced graph is the component's \texttt{toSimpleGraph}, connected by \texttt{connected\_toSimpleGraph}), and \texttt{rootComponent\_edge\_card\_split} gives $|S|=|S_{\mathrm{in}}|+|S_{\mathrm{out}}|$. The root-component bijection and closed form follow. The \emph{fibre product split} (lemma 6) is now formalised: \texttt{reachable\_stays\_in\_of\_no\_cross} (with no crossing edge, reachability from the root stays inside $C$, by \texttt{ReflTransGen} induction); \texttt{rootComponentFinset\_eq\_iff} characterises the fibre $\{S : \mathrm{rootComponentFinset}\,S\,r = C\}$ as $r \in C$, no crossing edge, and $S \cap C.\mathrm{sym2}$ inducing a connected graph on $C$; \texttt{mem\_sym2\_and\_compl\_sym2\_false} records the disjointness $C.\mathrm{sym2} \cap C^c.\mathrm{sym2} = \varnothing$; and the inside/outside ambient signed-subgraph sets \texttt{insideConnectedEdgeSubsets}, \texttt{outsideEdgeSubsets} carry the two factors. The capstone \texttt{fiber\_signed\_sum\_eq\_product} proves $\sum_{S : \mathrm{rootComponentFinset}\,S\,r = C} (-1)^{|S|} = \bigl(\sum_{A} (-1)^{|A|}\bigr)\bigl(\sum_{B} (-1)^{|B|}\bigr)$ over the inside/outside sets, via the crossing-free bijection $S \mapsto (S \cap C.\mathrm{sym2}, S \cap C^c.\mathrm{sym2})$ with inverse $(A,B) \mapsto A \cup B$ (\texttt{Finset.sum\_bij'}), giving the ambient multiplicative core of $D_n = \sum_{C \ni 0} c_{|C|} D_{n-|C|}$. At that historical stage, the fibrewise summation over $C$ and the reindex $\mathrm{inside} \cong c(K_C)$, $\mathrm{outside} \cong D(K_{C^c})$ were the then-pending substeps. The \emph{fibrewise recurrence} (lemma 7) is now formalised: \texttt{real\_signed\_sum\_powerset} ($\sum_{B \subseteq X}(-1)^{|B|} = [X = \varnothing]$, a real cast of \texttt{Finset.sum\_powerset\_neg\_one\_pow\_card}), \texttt{allSignedSubgraphSum\_eq\_ite} ($D(G) = [G.\mathrm{edgeFinset} = \varnothing]$), and the capstone \texttt{allSignedSubgraphSum\_eq\_sum\_fiber\_product}: $D(G) = \sum_{C : r \in C} \Sigma_{\mathrm{in}}(C)\cdot\Sigma_{\mathrm{out}}(C)$ via \texttt{Finset.sum\_fiberwise\_of\_maps\_to} on the root-component map $S \mapsto \mathrm{rootComponentFinset}\,S\,r$ combined with the per-fibre product split. The outside factor is evaluated in ambient terms by \texttt{outsideEdgeSubsets\_eq\_powerset} (the outside subsets are the powerset of $G.\mathrm{edgeFinset} \cap C^c.\mathrm{sym2}$) and \texttt{outsideEdgeSubsets\_signed\_sum\_eq\_ite} ($\Sigma_{\mathrm{out}}(C) = [G.\mathrm{edgeFinset} \cap C^c.\mathrm{sym2} = \varnothing]$). The ambient recurrence $D_n = \sum_{C \ni 0} \Sigma_{\mathrm{in}}(C)\cdot\Sigma_{\mathrm{out}}(C)$ is in place; the subsequently completed reindex identifies $\Sigma_{\mathrm{in}}(C) = c(K_C)$, $\Sigma_{\mathrm{out}}(C) = D(K_{C^c})$ on the subtype complete graphs and collapses to $c_n + (n-1)c_{n-1} = 0$. The \emph{outside half} of the reindex (lemma 8) is now formalised by reduction to the complement cardinality: \texttt{completeGraph\_edgeFinset\_inter\_compl\_sym2\_empty\_iff} ($(\top).\mathrm{edgeFinset} \cap C^c.\mathrm{sym2} = \varnothing \iff |C^c| \le 1$, since an edge inside $C^c$ needs two distinct complement vertices), \texttt{allSignedSubgraphSum\_completeGraph\_subtype\_eq\_ite} ($D(K_C) = [\,|C| \le 1\,]$ via \texttt{allSignedSubgraphSum\_completeGraph\_card} and the $\mathrm{Fin}$ boundary lemmas), and \texttt{outsideEdgeSubsets\_completeGraph\_signed\_sum}: $\Sigma_{\mathrm{out}}(C) = \mathrm{allSignedSubgraphSum}(\top : \mathrm{SimpleGraph}\,\uparrow\!C^c) = D(K_{C^c})$, both sides collapsing to $[\,|C^c| \le 1\,]$ (avoiding subtype edge-set rewrites). The \emph{inside half} of the reindex, and with it the full root-component recurrence, are now formalised. The graph-equality crux \texttt{induce\_fromEdgeSet\_map\_subtype} ($(\mathrm{fromEdgeSet}\,\uparrow\negthinspace(T.\mathrm{map}\,e)).\mathrm{induce}\,\uparrow\!C = \mathrm{fromEdgeSet}\,\uparrow\!T$ on $\uparrow\!C$, $e$ the subtype $\mathrm{sym2}$-embedding) transfers connectivity; the roundtrip helpers \texttt{inside\_mem\_range\_sym2Map} (every inside edge is $e\,z$) and \texttt{inside\_preimage\_map\_eq} ($(A.\mathrm{preimage}\,e).\mathrm{map}\,e = A$) handle the bijection bookkeeping; \texttt{insideConnectedEdgeSubsets\_completeGraph\_signed\_sum} proves $\Sigma_{\mathrm{in}}(C) = \mathrm{alternatingConnectedSubgraphSum}(\top : \mathrm{SimpleGraph}\,\uparrow\!C) = c(K_C)$ via the connectivity-preserving bijection $T \mapsto T.\mathrm{map}\,e$ / $A \mapsto A.\mathrm{preimage}\,e$ (\texttt{Finset.sum\_bij'}, \texttt{Finset.preimage\_map}). The capstone \texttt{allSignedSubgraphSum\_completeGraph\_root\_recurrence} assembles lemma 7 with both reindexes into the full recurrence $D_n = \sum_{C \ni r} c(K_C)\cdot D(K_{C^c}) = \sum_{C \ni 0} c_{|C|} D_{n-|C|}$. The collapse and closed form are now formalised, completing the programme. \texttt{mayer\_surviving\_set} identifies the $C \ni 0$ with $|C^c| \le 1$ as exactly $\mathrm{univ}$ together with the $n-1$ cofinite singletons $\{j\}^c$ ($j \ne 0$); \texttt{alternatingConnectedSubgraphSum\_completeGraph\_recurrence} collapses the root-component recurrence to $c_n + (n-1)c_{n-1} = 0$ ($n \ge 2$), using $D(K_{C^c}) = 0$ unless $|C^c| \le 1$, the cardinality-invariance of $c$, and $D_n = 0$; and the capstone \texttt{alternatingConnectedSubgraphSum\_completeGraph\_closed\_form} proves $\mathrm{alternatingConnectedSubgraphSum}\,K_n = (-1)^{n-1}(n-1)\mathord{!}$ for $n \ge 1$ by induction from the recurrence (base $c_1 = 1$, step via $m\mathord{!} = m\,(m-1)\mathord{!}$ and $(-1)^m = -(-1)^{m-1}$). This is the general-$n$ Mayer/Ursell coefficient of the complete-graph cluster expansion, obtained through the root-component recurrence without any chromatic-polynomial or matrix-tree machinery. The companion \emph{general cycle formula} \texttt{alternatingConnectedSubgraphSum\_cycleGraph} (\texttt{ClusterExpansion/CycleGraphAlternatingSum.lean}) proves $\mathrm{alternatingConnectedSubgraphSum}(\mathrm{cycleGraph}\,n) = (-1)^{n-1}(n-1)$ for $n \ge 3$, by the explicit characterisation that the connected spanning subgraphs of the cycle $C_n$ are exactly the full edge set (size $n$) together with the $n$ single-edge deletions (Hamiltonian paths, size $n-1$): the forward bound is \texttt{Connected.card\_vert\_le\_card\_edgeSet\_add\_one}, and each single-edge deletion is shown connected by the rotation automorphism \texttt{circulantGraph\_adj\_translate} reducing it to the wrap edge $s(0,\mathrm{last})$, where \texttt{pathGraph\_connected.mono} applies. The sum $(-1)^n + n\,(-1)^{n-1} = (-1)^{n-1}(n-1)$ then follows. This general theorem \emph{replaces} the former per-$n$ \texttt{decide} cases (\texttt{cycleGraph\_\{three,\dots,seven\}}), removing the $4{\times}10^6$-heartbeat cycle-$7$ \texttt{decide} (a ${\sim}280$\,s clean-build long-pole, now ${\sim}7$\,s). The companion \emph{general path formula} \texttt{alternatingConnectedSubgraphSum\_pathGraph} (\texttt{ClusterExpansion/PathGraphAlternatingSum.lean}) proves $\mathrm{alternatingConnectedSubgraphSum}(\mathrm{pathGraph}\,(n+1)) = (-1)^n$ for \emph{every} $n$, by a pure edge count with no tree or bridge theory: a connected spanning subgraph on $n+1$ vertices has at least $n$ edges (\texttt{Connected.card\_vert\_le\_card\_edgeSet\_add\_one}) while the path has exactly $n$ (\texttt{card\_pathGraph\_edgeFinset}), so the two bounds squeeze and the full edge set is the unique connected spanning subset (\texttt{pathGraph\_connectedSpanning\_charac}), leaving the single term $(-1)^{|E|} = (-1)^n$. This \emph{replaces} the former per-$n$ \texttt{decide +kernel} cases (\texttt{pathGraph\_\{three,\dots,eight\}}), removes the \texttt{maxHeartbeats 400000} escalation at $P_8$ (module cost ${\sim}38$\,s, now ${\sim}2$\,s), and extends the coverage from $P_3,\dots,P_8$ to all $P_{n+1}$, including $P_1 = 1$ and $P_2 = -1$. As a corollary, the closed form is connected to the actual Ursell coefficient: \texttt{ursellCoefficient\_eq\_alternatingConnectedSubgraphSum\_div} ($\phi^T(\omega) = c(G(\omega))/n\mathord{!}$), \texttt{polymerSeqIncompatibilityGraph\_eq\_top\_of\_pairwise} (pairwise incompatibility gives $G(\omega) = \top$), \texttt{alternatingConnectedSubgraphSum\_polymerSeq\_complete} (the complete cluster's connected-spanning sum is $(-1)^{n-1}(n-1)\mathord{!}$, via the identity isomorphism $G(\omega) \simeq_g \top$), and \texttt{ursellCoefficient\_complete\_eq}: the classic single-cluster Mayer value $\phi^T(\omega) = (-1)^{n-1}(n-1)\mathord{!}/n\mathord{!} = (-1)^{n-1}/n$ for $n$ pairwise incompatible polymers. The companion file \texttt{MayerCompleteContribution.lean} records $|\phi^T(\omega)| = 1/n$ (\texttt{ursellCoefficient\_complete\_abs\_eq}), the $n=2$ consistency $\phi^T = -1/2$ (\texttt{ursellCoefficient\_complete\_eq\_two}, matching the pair Ursell value), and \texttt{mayerExpansionTerm\_completeClusterSubsum\_eq}: the Mayer-term contribution of the fully-incompatible sequences factors as $\bigl((-1)^{n-1}/n\bigr)\sum_\omega z(\omega)$, the constant Ursell coefficient pulled out of the activity sum. The capstone \texttt{hasSum\_singlePolymer\_ursell\_eq\_log} / \texttt{tsum\_singlePolymer\_ursell\_eq\_log} proves the classic identity that a single polymer $P$ contributes $\log(1+t^{|P|})$ to $\log\Xi$: summing the repeated-polymer term $\phi^T(P,\dots,P)\cdot(t^{|P|})^m = \bigl((-1)^{m-1}/m\bigr)(t^{|P|})^m$ over the multiplicity gives $\sum_{m\ge 1}\phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ for $|t^{|P|}|<1$, via the closed form (a repeated polymer is a self-incompatible complete cluster) and the logarithm power series \texttt{Real.hasSum\_pow\_div\_log\_of\_abs\_lt\_one}. This is the log structure at the heart of why the cluster expansion exponentiates. The convergence side (GJ §18.5) is recorded by \texttt{hasSum\_abs\_singlePolymer\_ursell} / \texttt{tsum\_abs\_singlePolymer\_ursell}: for $0 \le t$ and $t^{|P|} < 1$ the absolute values sum to $\sum_m (t^{|P|})^{m+1}/(m+1) = -\log(1 - t^{|P|})$ (the explicit convergence radius $t^{|P|} < 1$), together with \texttt{summable\_singlePolymer\_ursell} and the domination \texttt{singlePolymer\_log\_le\_neg\_log} ($\log(1+z) \le -\log(1-z)$ for $0 \le z < 1$). The independent-polymer upper bound (GJ §18.5) is \texttt{vdPolymerFamilies\_sum\_le\_prod\_one\_add} ($\sum_\Gamma \prod_{P\in\Gamma} t^{|P|} \le \prod_P (1+t^{|P|})$ for $t\ge 0$, the compatible families being a subset of all subsets, \texttt{Finset.prod\_one\_add}), \texttt{polymerFreeEnergy\_le\_sum\_log\_one\_add} ($\mathrm{polymerFreeEnergy}\,G\,t \le \sum_P \log(1+t^{|P|})$ by $\log$-monotonicity and \texttt{Real.log\_prod}), and \texttt{polymerFreeEnergy\_le\_sum\_singlePolymer\_contribution} (for $t^{|P|}<1$ the free energy is dominated by the sum of independent single-polymer Mayer contributions $\sum_P\sum'_m \phi^T(P,\dots,P)\,z$). The matching lower bound uses the empty and single-polymer families (\texttt{IsCompatiblePolymerFamilyVertexDisjoint.singleton}): \texttt{one\_add\_sum\_le\_vdPolymerFamilies\_sum} ($1 + \sum_P t^{|P|} \le \sum_\Gamma \prod_{P\in\Gamma} t^{|P|}$) gives \texttt{log\_one\_add\_sum\_le\_polymerFreeEnergy}, and \texttt{polymerFreeEnergy\_sandwich\_independent} bundles the two-sided estimate $\log(1+\sum_P t^{|P|}) \le \mathrm{polymerFreeEnergy}\,G\,t \le \sum_P \log(1+t^{|P|})$. Substituting into the polymer decomposition \texttt{freeEnergy\_eq\_polymerFreeEnergy} gives the Ising free energy sandwich \texttt{freeEnergy\_sandwich\_independent\_polymer}: for $0 \le \beta J$ and $|\iota|>0$, $\log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J) + \frac{1}{|\iota|}\log(1+\sum_P \tanh(\beta J)^{|P|}) \le \mathrm{freeEnergy}\,G\,\langle J,0,\beta\rangle \le \dots + \frac{1}{|\iota|}\sum_P \log(1+\tanh(\beta J)^{|P|})$, with the coarser explicit upper bound \texttt{freeEnergy\_le\_log\_two\_plus\_sum\_tanh\_pow} (via $\log(1+x)\le x$).
 
 \paragraph{Mayer–Montroll identity via the colour-degree double sum (\S18.4, Issue~\#1499).}
 The general-$t$ Mayer–Montroll identity
@@ -17941,7 +17972,7 @@ Both convergence hypotheses hold near $t = 0$, giving the unconditional eventual
 \texttt{mayer\_identity\_general\_t\_eventually} ($\forall^f t \in \mathrm{nhds}\,0$): $\varepsilon(t)
 \to 0$ and $A(t) \to 0$ (every polymer is nonempty, so $A(0) = 0$ by \texttt{IsPolymer.nonempty}).
 This completes the cluster identity $\log\Xi = \sum_n (\text{Mayer term})$ for general interacting
-polymers in the convergence regime. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~332--335.
+polymers in the convergence regime. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the finite-graph reassembly is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Independent (non-interacting) polymer free energy (\S18.5).} When the
 polymers of $G$ are pairwise vertex-disjoint (no two distinct polymers share a
@@ -17962,7 +17993,7 @@ $f = \log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J)
 + \frac{1}{|\iota|}\sum_P \log(1+\tanh(\beta J)^{|P|})$
 (\texttt{freeEnergy\_eq\_sum\_log\_of\_pairwise\_disjoint}, for $0 \le \beta J$,
 $|\iota| > 0$). The general interacting case requires the full Mayer–Montroll
-expansion. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+expansion. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the pairwise-disjoint closed form is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Mixed-cluster vanishing for non-interacting polymers (\S18.4--\S18.5).}
 On the cluster-expansion side, a non-interacting gas makes the $n$-th Mayer term
@@ -17980,7 +18011,7 @@ $n \ge 1$ (the non-constant sequences vanish; the constant sequences reindex to
 $\mathrm{allPolymers}\,G$). Summed over the multiplicity $n$, the single-polymer
 series $\sum_m \phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ then recovers the
 independent free energy, the cluster-expansion verification of the exactly-solvable
-case. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+case. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework), with \S5.4 (convergence); the mixed-cluster diagonal computation is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{The Mayer expansion converges to the free energy (non-interacting case,
 \S18.5).} Assembling the previous two paragraphs gives the cluster-expansion
@@ -18004,7 +18035,7 @@ sums the single-polymer multiplicity series per polymer
 finitely many polymers (\texttt{hasSum\_sum}). This is the first proof in the
 project that the Mayer/cluster expansion sums to the free energy beyond the trivial
 cases; the general interacting case requires the Kotecky–Preiss convergence
-estimate. Reference: Glimm–Jaffe, 2nd ed., \S18.4--\S18.5, pp.~378--386.
+estimate. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting capstone is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Ising free energy as a Mayer expansion (non-interacting case, \S18.5).}
 The physical payoff (\texttt{MayerCore/IndependentFreeEnergyMayer.lean}): combining
@@ -18020,8 +18051,8 @@ $0 < |\iota|$,
 (\texttt{freeEnergy\_eq\_tsum\_mayer\_of\_pairwise\_disjoint}, with the ferromagnetic
 form $0 \le J$, $0 < \beta$). The convergence condition $\tanh(\beta J)^{|P|} < 1$ is
 automatic (\texttt{tanh\_pow\_lt\_one\_of\_mem\_allPolymers}): polymers are non-empty
-($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Glimm–Jaffe, 2nd ed.,
-\S18.4--\S18.5, pp.~378--386.
+($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Friedli--Velenik, \S\S5.2--5.3 and
+Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting Ising specialization is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Interacting Ising free energy as a Mayer expansion (\S18.5).}
 The interacting analogue (\texttt{MayerCore/InteractingFreeEnergyMayer.lean})
@@ -18039,10 +18070,10 @@ $e\sum_P|\tanh\beta J|^{|P|}<1$ (and $0\le\beta J$, $0<|\iota|$),
 $0\le J$, $0<\beta$ form).  This expresses the interacting finite-volume free
 energy directly through its convergent cluster terms -- the finite-volume step
 toward the \S18.5 infinite-volume analyticity of the pressure; the
-high-temperature discharge of the convergence hypotheses and the volume-uniform /
-infinite-volume limit are later work.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.4--\S18.5, pp.~378--386 (the cluster-expansion convergence mechanism for
-the pressure / free energy).
+high-temperature discharge is supplied by the following high-temperature row, while later implemented KP rows supply the volume-uniform
+inputs for the infinite-volume route.  Reference: Friedli--Velenik, \S\S5.2--5.3 and
+Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the
+interacting finite-graph Ising assembly is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only, not a lattice source).
 
 \paragraph{High-temperature discharge of the interacting Mayer expansion
 (\S18.5).}
@@ -18057,9 +18088,9 @@ Both conditions are trivially satisfied as $\beta J\to0$, so
 \texttt{freeEnergy\_eq\_tsum\_mayer\_of\_high\_temp} (with a ferromagnetic form)
 gives the interacting free energy as its convergent cluster expansion in the
 genuine high-temperature regime, with no separate convergence hypotheses.  This is
-a finite-volume statement; the volume-uniform / infinite-volume analyticity of the
-pressure is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
-pp.~378--386.
+a finite-volume statement; the subsequent implemented activity/KP rows supply the volume-uniform inputs for
+infinite-volume analyticity.  Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence);
+the finite-volume high-temperature discharge is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{$\Lambda$-layer / along-exhaustion high-temperature Mayer expansion
 (\S18.5).}
@@ -18075,10 +18106,10 @@ expansion, by composing the finite-graph theorem at $\mathrm{inducedGraph}\,G\,
 $(1+\tanh\beta J)^{|E_\Lambda|}<2$ and
 $e\,|\mathrm{allPolymers}(\mathrm{inducedGraph}\,G\,\Lambda)|\,\tanh(\beta J)<1$
 grow with $|\Lambda|$, so for fixed positive $\tanh(\beta J)$ they fail at large
-volume.  A volume-uniform Kotecky--Preiss / Dobrushin activity bound (not these
-per-volume conditions) is what a genuine infinite-volume Mayer pressure identity
-requires; that is later work.  Reference: Glimm--Jaffe, 2nd ed., \S18.4--\S18.5,
-pp.~378--386.
+volume.  The subsequent implemented Kotecky--Preiss / Dobrushin rows supply the volume-uniform
+activity bound needed beyond these per-volume conditions; this exhaustion wrapper is a stage-local
+finite-volume identity.  Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence);
+the exhaustion wrappers are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Rooted polymer counting, volume-uniform max-degree bound (\S18.5).}
 The volume-uniform combinatorial input to the Kotecky--Preiss criterion
@@ -18097,9 +18128,9 @@ injection with \texttt{walksFromCount\_le\_pow}).  Crucially this count depends
 only on the maximum degree, not on the volume -- the first reusable
 volume-uniform object for the \S18.5 infinite-volume cluster expansion (unlike the
 per-volume conditions of the high-temperature wrappers).  The per-vertex activity
-geometric bound $\sum_{P\ni v}t^{|P|}\le(1-\Delta^2 t)^{-1}$ and the volume-uniform
-Mayer convergence are the next assembly.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+geometric bound $\sum_{P\ni v}t^{|P|}\le(1-\Delta^2 t)^{-1}$ is supplied by the following activity row, and the later implemented KP rows supply
+volume-uniform Mayer convergence.  Reference: Friedli--Velenik, \S3.7.3, Lemma~3.38
+(direct closed-walk counting support); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Per-vertex polymer activity bound, volume-uniform (\S18.5).}
 Summing the volume-uniform rooted polymer count against the activity weight
@@ -18123,8 +18154,8 @@ sum by the convergent geometric series (\texttt{Summable.sum\_le\_tsum},
 \texttt{tsum\_geometric\_of\_lt\_one}).  The bound depends only on the maximum
 degree, not on the volume -- the per-vertex Kotecky--Preiss activity input that
 survives the infinite-volume limit, unlike the per-volume conditions of
-\texttt{InteractingFreeEnergyMayerHighTemp}.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+\texttt{InteractingFreeEnergyMayerHighTemp}.  Reference: Friedli--Velenik, \S3.7.3, eq.~(3.49)
+($h=0$ aggregation context); the per-vertex activity capstone is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Total and per-site polymer activity bound, volume-uniform (\S18.5).}
 Double-counting the per-vertex bound over all vertices
@@ -18148,8 +18179,8 @@ activity is bounded by the volume-uniform constant,
   \frac1{|\iota|}\sum_{P}t^{|P|}\le\frac1{1-\Delta^2 t}
 \]
 (\texttt{allPolymersActivity\_div\_card\_le\_geometric}, for $\iota$ nonempty),
-$\Delta=\mathrm{maxDegree}\,G$.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.4--\S18.5, pp.~378--386; Friedli--Velenik \S3.7.3, eq.~(3.49).
+$\Delta=\mathrm{maxDegree}\,G$.  Reference: Friedli--Velenik, \S3.7.3, eq.~(3.49)
+($h=0$ counting/aggregation context); the total and per-site activity capstones are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Weighted per-vertex and incompatibility-neighbourhood activity
 (Kotecky--Preiss inputs, \S18.5).}
@@ -19447,9 +19478,10 @@ uniform.  The holomorphic infinite-volume cluster free energy on the high-temper
 analytic object for the \S18.6 coupling-analyticity capstone (D2.4).  Reference: Glimm--Jaffe, 2nd ed.,
 \S18.5--\S18.6, pp.~335--340; Friedli--Velenik \S5.4.
 
-\paragraph{Infinite-volume free-energy coupling analyticity (\S18.6, Issue~\#4149, CAPSTONE).}
-The GJ \S18.6 capstone: the infinite-volume \(\mathbb Z^d\) Ising free-energy density is real-analytic
-in the coupling at high temperature, realised via the cluster expansion
+\paragraph{Infinite-volume free-energy coupling analyticity (project \S18.6 lattice analogue,
+Issue~\#4149).}
+The project lattice-analogue endpoint states that the infinite-volume \(\mathbb Z^d\) Ising
+free-energy density is real-analytic in the coupling at high temperature, realised via the cluster expansion
 (\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingAnalyticity.lean}).  The scaling
 \(\texttt{freeEnergyInfinite}\,G\,\Lambda\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,G\,\Lambda\,
 \langle\beta J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\); at zero field the Boltzmann weight
@@ -19467,11 +19499,12 @@ the holomorphic \(F_\infty\) restricted to the real axis, \(\texttt{AnalyticOnNh
   \texttt{AnalyticAt}\,\mathbb R\,(\beta'\mapsto\texttt{freeEnergyInfinite}\,(\mathrm{latticeGraph}\,d)\,
     (\mathrm{cubicExhaustion}\,d)\,\langle J,0,\beta'\rangle)\,\beta,
 \]
-with a \(J=1\) wrapper.  This is the \textbf{\S18.6 zero-field, high-temperature, cubic-exhaustion
-infinite-volume coupling-analyticity capstone} --- the endpoint of the cluster-expansion chain:
+with a \(J=1\) wrapper.  This is the \textbf{project \S18.6 lattice-analogue,
+zero-field, high-temperature, cubic-exhaustion endpoint} --- the endpoint of the cluster-expansion chain:
 volume-uniform per-site-KP Mayer identity \(\to\) free-energy bounds \(\to\) infinite-volume
 real-axis bound \(\to\) the Montel/Vitali holomorphic limit \(\to\) this analyticity capstone.
-Reference: Glimm--Jaffe, 2nd ed., \S18.6, pp.~335ff.; Friedli--Velenik \S5.4, \S5.7.
+Primary source: Friedli--Velenik \S5.4, \S5.7.  Glimm--Jaffe Chapter~18 is a
+continuum analogy only, not the literal source of this lattice theorem.
 
 \paragraph{High-temperature interval analyticity and absence of phase transition (\S18.6).}
 File \texttt{ClusterExpansion/MayerCore/CubicMayerHighTempIntervalAnalyticity.lean}. The capstone
@@ -19494,10 +19527,11 @@ real-analytic. Hence the infinite-volume thermodynamic functions are real-analyt
 high-temperature phase: \textbf{no phase transition at high temperature}. Reference: Glimm--Jaffe,
 2nd ed., \S18.6.
 
-\paragraph{Coupling-direction analyticity (\S18.6).} File
-\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingDirectionAnalyticity.lean}. Glimm--Jaffe \S18.6
-is literally about analyticity in the \emph{coupling}; the results above are in the inverse
-temperature \(\beta\). The coupling-direction (\(J\)) analyticity follows from the \(\beta\)-direction
+\paragraph{Coupling-direction analyticity (project \S18.6 lattice analogy).} File
+\texttt{ClusterExpansion/MayerCore/CubicMayerCouplingDirectionAnalyticity.lean}.  This is a
+lattice Kotecky--Preiss consequence with Friedli--Velenik \S5.4 and \S5.7 as its primary
+source; the GJ \S18.6 label is only an analogy.  The coupling-direction (\(J\))
+analyticity follows from the \(\beta\)-direction
 unit-coupling capstone through the zero-field scaling symmetry
 \(\texttt{freeEnergyInfinite}\,\langle J,0,\beta\rangle=\texttt{freeEnergyInfinite}\,\langle\beta
 J,0,1\rangle\) (\(\texttt{freeEnergyInfinite\_scaling}\)): with \(g(c)=\texttt{freeEnergyInfinite}\,
@@ -19547,8 +19581,8 @@ $\mathrm{connectedSpanningEdgeSubsets}$) complete the classification alongside t
 triangle (\texttt{alternatingConnectedSubgraphSum\_K3} $= 2$) and the disconnected
 cases ($= 0$). These are the $n = 3$ Mayer/Ursell numerators: $\phi^T = 1/3! = 1/6$
 for a path-shaped incompatibility cluster, $1/3$ for the fully-incompatible
-triangle (\texttt{ursellCoefficient\_complete\_eq}). Reference: Glimm–Jaffe, 2nd
-ed., \S18.4, pp.~378--386.
+triangle (\texttt{ursellCoefficient\_complete\_eq}). Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework);
+the explicit $n=3$ alternating-sum computation is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{The $n = 3$ Ursell coefficient by incompatibility pattern (\S18.4).}
 The closed-form $\phi^T(\omega)$ for a $3$-element polymer sequence
@@ -19575,8 +19609,8 @@ $\mathrm{fromEdgeSet}\,\{\emptyset \text{ or a single edge}\}$ followed by
 \texttt{SimpleGraph.Iso.connected\_iff} and \texttt{decide}-disconnectedness,
 then \texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}. Together with the
 path lemmas these eight lemmas give the complete explicit $n = 3$
-Ursell-coefficient classification by incompatibility pattern. Reference:
-Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
+Ursell-coefficient classification by incompatibility pattern. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework);
+the explicit $n=3$ pattern classification is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Closed form of the Mayer term for a non-interacting gas (\S18.5).}
 For a non-interacting polymer gas (distinct polymers pairwise compatible, i.e.
@@ -19600,7 +19634,7 @@ give the first Mayer coefficients $\sum_P t^{|P|}$,
 $-\tfrac12\sum_P (t^{|P|})^2$, $\tfrac13\sum_P (t^{|P|})^3$; the $n = 3$
 value $1/3$ matches the fully-incompatible triangle Ursell value, the
 non-interacting counterpart of \texttt{ursellCoefficient\_fin\_three\_*}.
-Reference: Glimm–Jaffe, 2nd ed., \S18.4--18.5, pp.~378--386.
+Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting closed form and its explicit coefficients are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Unified $n = 3$ Ursell classification (\S18.4).}
 The eight per-pattern lemmas above are packaged into a single statement
@@ -19608,7 +19642,7 @@ The eight per-pattern lemmas above are packaged into a single statement
 $\phi^T(\omega)$ as a nested \texttt{if} on the three pair-incompatibility
 flags ($1/3$ for the triangle, $1/6$ for a path, $0$ otherwise), proved by case
 analysis dispatching to the per-pattern lemmas.
-Reference: Glimm–Jaffe, 2nd ed., \S18.4, pp.~378--386.
+Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework); the unified explicit $n=3$ classification is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
@@ -30023,34 +30057,24 @@ of the $m^-$ identity in the GJ p.~312 $c$-denominator step.
 
 \textit{Reference}: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1, p.~312.
 
-\subsubsection*{Lemma 17.5.2 and Theorem 17.6.1 (sketch)}
+\subsubsection*{Lemma 17.5.2 and Theorem 17.5.1 (superseded historical sketch)}
 
-Combining Steps 117a--g with the HLS convolution constant and the remaining
-analytic all-rate estimate:
+This early sketch is superseded by the rigorous capstone
+\texttt{gj\_theorem\_17\_5\_1\_rigorous}.  The implemented result proves continuity
+of the pseudo-mass $m^-$, the non-sharp sandwich $m^-\le m\le C m^-$ with
+$C>1$, and continuity of the true mass outside a countable exceptional set.
+The sandwich does not collapse, so it does not prove everywhere continuity of
+the true mass.  That stronger contract remains unresolved.
 
-\begin{theorem}[Lemma 17.5.2 (partial)]
-Lower bound: $0 < m^-(\beta)$ for all $c \in (0, 2)$ (Step 117g).
-
-Upper bound: $m(\beta) \le C \cdot m^-(\beta)$ for some HLS-uniform
-constant $C > 0$ once the all-decay-rate estimate is proved.
-\end{theorem}
-
-\begin{theorem}[Theorem 17.6.1: Continuity at critical point]
-The lattice mass function $m(\beta)$ is continuous at the critical point $\beta = \beta_c$.
-
-\textbf{Proof sketch}: Lemma 17.5.2 bounds + implicit differentiation (Step 117e)
-+ derivative bounds (Step 117f) + discrete HLS $\Rightarrow$ Lipschitz in $\beta$ $\Rightarrow$ continuity at $\beta_c$.
-\end{theorem}
-
-\noindent\textit{Status}: Historical sketch updated after the proved HLS
-convolution-constant package; the final HLS-uniform upper-bound proof is still
-deferred.
-Files: \texttt{PseudoMass.lean} and
-\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2.lean}.
-References: Glimm--Jaffe 2nd~ed. (1987), \S17.5 pp.~345--347, \S17.6 pp.~348--351.
+\noindent\textit{Status}: Superseded and corrected; no completion claim for
+everywhere true-mass continuity.
+File:
+\texttt{Concrete/LatticeGraphCorrelation/Lemma\_17\_5\_2/MassContinuityLatticeMassWindow.lean}.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.5, Theorem~17.5.1 and
+Lemma~17.5.2, pp.~311--312.
 
 %% ---------------------------------------------------------------
-\subsection*{Step 118 -- Theorem 17.6.1: $\partial/\partial h$ of correlations (Done)}
+\subsection*{Step 118 -- Finite-volume $\partial/\partial h$ of correlations (Done)}
 
 \subsubsection*{Mathematical structure}
 
@@ -30097,11 +30121,12 @@ Intermediate steps: \texttt{externalFieldEnergy\_eq}, \texttt{hasDerivAt\_hamilt
 \texttt{hasDerivAt\_partitionFunction\_field}, \texttt{hasDerivAt\_weightedBoltzmannSum\_field}.
 Ring closure uses \texttt{simp\_rw} + \texttt{Finset.mul\_sum} for $\beta$-factoring.
 
-\noindent\textit{Status}: Complete formalization (PR~\#931).
+\noindent\textit{Status}: Complete finite-volume formalization (PR~\#931).
 File: \texttt{FieldDerivative.lean}.
-Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6 pp.~348--351.
+Reference: Glimm--Jaffe 2nd~ed. (1987), \S17.6, Theorem~17.6.1, p.~313.
 
-\subsection*{Step 118b -- Theorem 17.6.1 Option B capstone: field/volume-uniform $\partial/\partial h$ bound (Done)}
+\subsection*{Step 118b -- Finite-volume field/volume-uniform
+$\partial/\partial h$ bound (Done)}
 
 \subsubsection*{Mathematical statement}
 
@@ -30176,9 +30201,10 @@ This capstone is the \emph{book-faithful finite deliverable}: differentiability 
 Cor.~4.3.4 of \S4.3).  It \textbf{deliberately does not} claim infinite-volume $\partial/\partial h$
 differentiability, which would require equicontinuity control of the general-$h$ four-point Lebowitz
 sign (the frozen wall of the class of Issue~\#4413; the naive $\kappa_4 \le 0$ is numerically false).
-The complex KP-window Vitali/Montel route (Option~A) is deferred separately.
+The separate complex-field route proves a small-coupling holomorphic local limit; it does
+not export the broader real infinite-volume \texttt{HasDerivAt}.
 
-\noindent\textit{Status}: Complete formalization (PR~\#4432).
+\noindent\textit{Status}: Complete finite-volume formalization (PR~\#4432).
 File: \texttt{Concrete/LatticeGraphCorrelation/Truncated2FieldDerivativeUniformBound.lean}.
 Reference: Glimm--Jaffe 2nd~ed. (1987), Theorem~17.6.1 (p.~313); Cor.~4.3.3 (p.~61); Cor.~4.3.4 (p.~61).
 
@@ -31427,8 +31453,10 @@ is now a \emph{theorem} (\texttt{TheoremEtaLe1/Contraction/Factor.lean}). Under
 $\langle\sigma_0\sigma_x\rangle_\infty\cdot|x|^{d-1}\to 0$ along the cofinite
 filter), the contraction factor tends to zero,
 $\texttt{contractionFactor}\,d\,\Lambda\,p\,r \to 0$ as $r\to\infty$. With this,
-\textbf{GJ §17.8 Theorem 17.8.1 ($\eta \le 1$) is unconditional}, and the entire
-project is free of declared axioms (modulo Mathlib).
+\textbf{the general GJ \S17.8 Theorem 17.8.1 implication is proved under its
+stated \texttt{HasPolynomialDecay} hypothesis}.  The separate high-temperature
+corollary discharges that hypothesis when $\beta J\cdot2d<1$.  All proof inputs
+are theorems, so the project is free of declared axioms (modulo Mathlib).
 
 \paragraph{Surface cardinality.}
 The crux is that the boundary has only $O(r^{d-1})$ edges, a \emph{surface} count.
@@ -32658,8 +32686,9 @@ vanishing, with the $\mathrm{Fin}\,n \leftrightarrow \mathrm{Fin}(n{+}1)$ index 
 $\texttt{tsum\_eq\_zero\_add}$).  Composing with PR 14
 ($\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp\|M_G - M_{\texttt{Gavoid}}\|$) gives
 $\|\texttt{ZAvoid}_C/Q_\emptyset\| \le \exp(\kappa\,|\!\operatorname{supp} C|)$, which (after
-$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) feeds $\texttt{hbdd}$ in the
-remaining 5c.6 step.  References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
+$|\!\operatorname{supp} C| \le |C|+1$ and the $A,a$ substitution) fed $\texttt{hbdd}$ into what
+was then the remaining 5c.6 step; the later PR 21 and final capstone complete that composition.
+References: Glimm--Jaffe, 2nd ed., \S18.5--18.6; Friedli--Velenik, \S3.7.3.
 
 \subsection{Capstone prerequisites: complex-\texorpdfstring{$z$}{z} KP bound, connected
 support-card bound, and the tanh bridge (Issue \#4230 PR 20)}
@@ -33007,10 +33036,11 @@ correlations on an open set $U$, $\texttt{\_vitali\_bridge}$ gives that $f$ is h
 (via $\texttt{vitali\_bridge}$), and $\texttt{\_limit\_eq\_correlationInfinite\_at\_real}$ identifies
 $f$ on the real axis with $\uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\,A)$
 ($\texttt{tendsto\_nhds\_unique}$ of the locally-uniform pointwise limit and the real-axis limit).
-The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  The remaining input --- locally
-uniform convergence of the per-stage complex correlations on a high-temperature disc, from a
-volume-uniform cluster-expansion (Montel) bound --- is the genuine research-level core, deferred to
-follow-up PRs (Issue~\#4230).  Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
+The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  Historical stage note: PR 1
+still took locally uniform convergence from a volume-uniform cluster-expansion (Montel) bound as an
+input; the later Issue~\#4230 rows discharge it and culminate in
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
+Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
 \subsection{Per-stage holomorphicity from volume-uniform partition non-vanishing
 (Issue \#4230 PR 2)}
@@ -33031,9 +33061,11 @@ non-vanishing on a high-temperature disc is available from
 hypotheses.  Feeding this into the conditional bridge,
 $\texttt{correlationComplexAlongExhaustion\_vitali\_identified\_at\_real\_of\_ne\_zero}$ obtains the
 holomorphicity-and-real-identification conclusion from only the partition non-vanishing and the
-locally uniform convergence $\texttt{hconv}$ --- the latter (the Montel / volume-uniform input)
-being the genuine research-level core deferred to follow-up PRs.  Reference: Glimm--Jaffe, 2nd ed.,
-\S18.6--18.7.
+locally uniform convergence $\texttt{hconv}$.  Historical stage note: PR 2 still accepted
+$\texttt{hconv}$ and partition non-vanishing as inputs; the later Issue~\#4230 rows discharge both
+and culminate in
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
+Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
 \subsection*{PR \#4277 --- Unconditional adjacent-pair susceptibility bridge (GJ~\S17.5 / \S5.1, audit B1 \#4268)}
 

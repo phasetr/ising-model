@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 /-!
 # Field Vitali plumbing for the infinite-volume two-point correlation (GJ §17.6.1, brick F6a)
 
-This file assembles the **field (`∂/∂h`) Vitali/Montel step** for the infinite-volume
-two-point correlation, brick F6a of Glimm–Jaffe Theorem 17.6.1.  It is the field
+This file assembles the **conditional field Vitali/Montel local-limit plumbing** for
+the infinite-volume two-point correlation, brick F6a.  It is the field
 analogue of the `β`-route real-axis Vitali application
 (`AmbientComplexAnalyticity/Vitali/CorrelationRealAxisVitali.lean`), obtained by
 consuming the *family-agnostic* Vitali–Porter provider
@@ -39,12 +39,14 @@ object is introduced (F6 is plumbing, not a research core).
   provider.
 
 ## Scope
-F6a proves the Vitali body under the hypotheses `hden` (per-stage non-vanishing) and `hbdd`
-(volume-uniform bound), exactly as the `β` route
-`correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound`.  The volume-uniform
-discharge of `hden` along the lattice exhaustion (F6b, via
-`fieldPolymerZℂ_ne_zero_of_degree_window`) and the high-temperature window discharge of
-`hden`/`hbdd` giving the unconditional GJ Theorem 17.6.1 (F6c) are **not** in scope here.
+F6a proves the conditional Vitali/local-limit body under `hden` (per-stage
+non-vanishing) and `hbdd` (volume-uniform bound), exactly as the `β` route
+`correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound`.  F6b supplies
+the volume-uniform `hden`, and F6c discharges the small-coupling window to obtain a
+holomorphic local limit with equality to the real infinite-volume correlation at
+one field value `b₀`.  Neither result exports an unconditional full GJ Theorem
+17.6.1 field derivative; real infinite-volume `HasDerivAt` remains unresolved
+under #4790.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.
@@ -104,8 +106,9 @@ theorem fieldCorrelationℂAlongExhaustion_tendsto_at_real
     (tendsto_correlationAlongExhaustion_correlationInfinite G Λ
       (⟨a, b, 1⟩ : IsingParams ℝ) ⟨ha, hb, one_pos⟩ A)
 
-/-- **Infinite-volume field correlation analyticity from a volume-uniform bound** (GJ §17.6.1,
-brick F6a capstone): fix a coupling `a ≥ 0` and a radius `0 < r ≤ π/2`.  On the ball
+/-- **Conditional holomorphic field-correlation local limit from a volume-uniform bound**
+(GJ §17.6.1, brick F6a capstone): fix a coupling `a ≥ 0` and a radius
+`0 < r ≤ π/2`.  On the ball
 `Metric.ball 0 r`, given that the per-stage complex field polymer partition function is
 non-vanishing (`hden`, gated — discharged in F6b) and that the per-stage complex field
 correlations are volume-uniformly locally bounded (`hbdd`, gated), the per-stage complex
@@ -118,9 +121,11 @@ segment `(b₀, b₀ + δ)` (each interior field `t > 0` is ferromagnetic togeth
 `fieldCorrelationℂAlongExhaustion_tendsto_at_real`), with `(b₀ : ℂ)` an accumulation point;
 the value at `b₀` is identified via pointwise uniqueness at the real point.  The proof body
 consumes the family-agnostic provider `FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn`
-directly (a thin field-specific glue; the `β` Vitali stack is not modified).  Here `b = β·h`
-with `β = 1` and `J = a` fixed, so holomorphy in `b` is the `∂/∂h` analyticity of the
-infinite-volume two-point correlation. -/
+directly (a thin field-specific glue; the `β` Vitali stack is not modified).  The theorem
+exports a holomorphic `f` and local-uniform convergence on the ball, together with equality
+to `correlationInfinite` only at the quantified real field `b₀`.  It does not identify `f`
+with the real infinite-volume correlation on a neighbourhood of `b₀` or export a real
+infinite-volume `HasDerivAt`; that broader contract remains unresolved under #4790. -/
 theorem fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

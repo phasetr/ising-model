@@ -45,8 +45,9 @@ Both partitions are non-vanishing on the window
 (`fieldPolymerZℂ_ne_zero_of_degree_window`, immediate from the `exp` identities
 `fieldPolymerZℂ_eq_exp_tsum_of_degree_window` used here), so the ratio is a
 genuine quotient.  `κ_Δ` depends only on `Δ`, `t_∗`, `c = 2`, **not** on the
-volume `|ι|`, which is what makes the ratio bound survive the infinite-volume
-limit and feed the §17.6.1 derivative-existence argument.
+volume `|ι|`, which lets the ratio bound survive the infinite-volume limit and
+feed the completed small-coupling holomorphic local-limit assembly.  Any broader
+use in a real infinite-volume derivative theorem remains unresolved under #4790.
 
 ## References
 - Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.4–§18.6,

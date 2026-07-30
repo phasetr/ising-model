@@ -5,12 +5,11 @@ import IsingModel.ClusterExpansion.MayerTsumPerSiteAmbient
 # Along-exhaustion complex field correlation: the F5b exhaustion wrap (GJ §17.6.1, brick F5b-2)
 
 This file assembles the **exhaustion wrap** of the field cluster expansion, completing
-brick F5b of Glimm–Jaffe Theorem 17.6.1 (the `∂/∂h` infinite-volume derivative).  It
-packages the degree-bound ball-&-volume-uniform bound
+brick F5b.  It packages the degree-bound ball-&-volume-uniform bound
 `fieldCorrelationℂ_norm_le_ball_uniform_of_degree_le` (F5b-2(b),
 `FieldCorrelationBallUniform.lean`) along a lattice exhaustion, and records the
-per-stage holomorphy — the two inputs that the (gated, research-level) Vitali/Montel
-brick F6 consumes.
+per-stage holomorphy — the two inputs that F6 consumes for the completed
+small-coupling complex-field holomorphic local-limit assembly.
 
 These are the field (`∂/∂h`) transcriptions of the `β`-route along-exhaustion
 templates (`correlationComplexAlongExhaustion`,
@@ -35,9 +34,10 @@ pure `β → b` transcriptions.
   `fieldPolymerZℂ_ne_zero_of_degree_window`).
 
 ## Scope
-F5b is completed by this file.  The infinite-volume capstone — a field-specific
-Vitali/Montel consumer, the uniform `hden` discharge, and GJ Theorem 17.6.1 itself —
-is brick F6 (gated, research-level) and is **not** in scope here.
+F5b is completed by this file.  F6a–F6c consume these bounds and holomorphy to
+obtain the small-coupling complex-field local-limit endpoint, not the full
+field-derivative contract of GJ Theorem 17.6.1.  A real infinite-volume
+`HasDerivAt` remains unresolved under #4790.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.

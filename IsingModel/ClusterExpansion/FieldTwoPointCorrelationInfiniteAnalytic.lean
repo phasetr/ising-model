@@ -5,28 +5,27 @@ import IsingModel.ClusterExpansion.FieldCorrelationBallUniform
 import IsingModel.RealTanhAux
 
 /-!
-# High-temperature `∂/∂h` analyticity capstone (GJ §17.6.1, brick F6c)
+# Small-coupling complex-field holomorphic local-limit capstone (brick F6c)
 
 This file discharges, **at high temperature** (small coupling `a = β·J`), the two shared
-hypotheses of the field (`∂/∂h`) Vitali/Montel consumer (brick F6a,
+hypotheses of the complex-field Vitali/Montel consumer (brick F6a,
 `fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound`), yielding
-`h`-direction **holomorphy** (analyticity in the complex field `b = β·h`) of the
-infinite-volume field two-point correlation, **in the small-coupling (high-temperature)
-regime**.  It is the field analogue of the `β`-route high-temperature capstone
+local uniform convergence of the finite-stage complex-field correlations to a holomorphic
+function of `b = β·h`, **in the small-coupling (high-temperature) regime**.  It is the
+field analogue of the `β`-route high-temperature capstone
 `correlationInfinite_latticeGraph_two_point_analytic_high_temp`
 (`TwoPointCorrelationInfiniteAnalytic.lean`).  The `β` Vitali/analyticity stack and the
 already-merged field bricks are **not** modified — this is a pure addition.
 
-**Scope / positioning (important).**  This is **not** the primary formalization of
-Glimm–Jaffe Theorem 17.6.1.  The `∂/∂h` (`μ`-direction) infinite-volume *differentiability*
-of GJ Thm 17.6.1 is already established, **unconditionally and on a wider range** (the full
-Kotecký–Preiss window, general `h ≥ 0`, no small-coupling restriction), by the Lebowitz +
-M-test route (Issues #4413 / #4432, both closed).  The present cluster-expansion route is an
-**optional beyond-book strengthening**: it upgrades that already-established `h`-direction
-result to complex-field *holomorphy*, but only in the high-temperature (small-coupling)
-regime.  It does not replace or re-establish the primary Thm 17.6.1 formalization; the
-field-CE `h`-direction thread is explicitly an optional off-book exploration (tracking
-issue #4433).
+**Scope / positioning (important).**  This is not a full formalization of the real
+`∂/∂h` claim in Glimm–Jaffe Theorem 17.6.1.  Its exact contract is a small-coupling
+complex-field result: the finite-stage functions converge locally uniformly to a holomorphic
+limit, and that limit agrees with `correlationInfinite` at the stated real accumulation
+field.  The finite-volume theorem `hasDerivAt_correlation_h_uniform_bound` supplies a
+field- and volume-uniform derivative bound, but no broader real infinite-volume `HasDerivAt`
+declaration is currently exported.  Establishing that wider real theorem remains a separate
+unresolved task.  The field-CE thread tracked by #4433 is complete only for the local
+holomorphic-limit contract proved here.
 
 ## Variable roles (field vs `β`)
 For the field route the varying complex parameter is the field `b` (`= β·h`); the coupling
@@ -49,15 +48,15 @@ the `β` route where the small parameter and the accumulation point coincided.
 * `fieldCorrelationInfinite_latticeGraph_analytic_high_temp` — the capstone: for `r < π/2`
   there is an `a₀ > 0` such that for every high-temperature coupling `a ∈ [0, a₀)` and every
   real accumulation field `b₀ ∈ [0, r)`, the per-stage complex field correlations converge
-  locally uniformly on `Metric.ball 0 r` to a holomorphic `f` agreeing with
-  `correlationInfinite … ⟨a, b₀, 1⟩ …` on the real axis — high-temperature `h`-direction
-  holomorphy (an **optional beyond-book strengthening** of the already-established, wider
-  `∂/∂h` differentiability of #4432; **not** the primary GJ Thm 17.6.1 formalization),
-  closing the optional field cluster-expansion thread.
+  locally uniformly on `Metric.ball 0 r` to a holomorphic `f`, with the single displayed
+  equality `f (b₀ : ℂ) = ↑(correlationInfinite … ⟨a, b₀, 1⟩ …)`.  It does not identify
+  `f` with the real infinite-volume correlation at other real fields and does not export a
+  real infinite-volume `HasDerivAt`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6, Theorem 17.6.1,
-eq. (17.6.1), p. 313; §18.3, Theorem 18.3.1, eq. (18.3.3), p. 330.  Friedli–Velenik,
-*Statistical Mechanics of Lattice Systems* (CUP, 2017), §5.4, Theorem 5.4 (Kotecký–Preiss).
+References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
+Theorem 17.6.1, eq. (17.6.1), p. 313.  The lattice cluster expansion is sourced from
+Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (CUP, 2017), §5.4,
+Theorem 5.4 (Kotecký–Preiss); Glimm–Jaffe Chapter 18 is only a continuum analogy.
 -/
 
 namespace IsingModel
@@ -109,8 +108,10 @@ private theorem kpRegion8_of_le_sixteenth {X : ℝ} (_h0 : 0 ≤ X) (h16 : X ≤
   rw [div_lt_one hpos]
   nlinarith [sq_nonneg X, h16]
 
-/-- **High-temperature window existence** (GJ §17.6.1, brick F6c(ii); TeX §F6c, the sole new
-mathematics of the `∂/∂h` capstone).  Given `d`, an observable cardinality `Acard`, and a
+/-- **High-temperature window existence** (GJ §17.6.1, brick F6c(ii); TeX §F6c).
+This private arithmetic theorem supplies the numerical small-coupling window used by the
+holomorphic local-limit capstone; it is not by itself the mathematics of a full `∂/∂h`
+theorem.  Given `d`, an observable cardinality `Acard`, and a
 ball-uniform bound `Mr ≥ 1` for `Complex.tanh`, there is a simultaneous window
 `(ρ, Awin, a₀)` with `0 < ρ`, `0 < Awin`, `0 < a₀ ≤ Awin`, `tanh Awin < ρ`, meeting the two
 shared Kotecký–Preiss conditions
@@ -246,19 +247,19 @@ private theorem exists_field_high_temp_window (d Acard : ℕ) (Mr : ℝ) (_hMr1 
 
 namespace Ambient
 
-/-- **High-temperature `h`-direction holomorphy of the infinite-volume field correlation**
-(GJ §17.6.1, brick F6c capstone; related to Theorem 17.6.1, eq. (17.6.1), p. 313).  Fix a
+/-- **Small-coupling complex-field holomorphic local-limit capstone**
+(brick F6c; motivated by GJ §17.6.1, Theorem 17.6.1, eq. (17.6.1), p. 313).  Fix a
 nonempty observable `A` and a radius `r < π/2`.  Then there is `a₀ > 0` such that for every
 high-temperature coupling `a ∈ [0, a₀)` and every real accumulation field `b₀ ∈ [0, r)`, the
 per-stage complex field correlations `fun n b => fieldCorrelationℂAlongExhaustion
 (latticeGraph d) Λ A a b n` converge **locally uniformly** on `Metric.ball 0 r` to a
-holomorphic `f`, with `f (b₀) = ↑(correlationInfinite (latticeGraph d) Λ ⟨a, b₀, 1⟩ A)` on
-the real axis.  Since `b = β·h` with `β = 1` and `J = a` fixed, holomorphy in `b` is
-`h`-direction analyticity of the infinite-volume correlation, in the small-coupling
-(high-temperature) regime.  This is an **optional beyond-book strengthening** of the
-already-established, wider `∂/∂h` differentiability of GJ Thm 17.6.1 (Lebowitz + M-test,
-#4432, unconditional over the full Kotecký–Preiss window) — it adds complex-field
-holomorphy at high temperature, and is **not** the primary Thm 17.6.1 formalization.
+holomorphic `f`, with the equality
+`f (b₀ : ℂ) = ↑(correlationInfinite (latticeGraph d) Λ ⟨a, b₀, 1⟩ A)` at that quantified
+real point.  This theorem exports exactly the displayed holomorphic local-limit contract:
+it does not identify `f` with `correlationInfinite` at any other real field and does not
+export a real infinite-volume `HasDerivAt`.  The declaration
+`hasDerivAt_correlation_h_uniform_bound` is finite-volume; the wider infinite-volume real
+derivative remains unresolved.
 
 Proof (assembly of the merged bricks):
 * `exists_ctanh_ball_bound` supplies the ball-uniform `Mr`;
