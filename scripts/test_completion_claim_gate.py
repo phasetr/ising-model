@@ -1,0 +1,495 @@
+#!/usr/bin/env python3
+"""Hermetic tests for the offline completion-claim evidence gate."""
+
+from __future__ import annotations
+
+import ast
+import copy
+import json
+import sys
+import types
+import unittest
+from pathlib import Path
+from typing import Any
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+FIXTURE_DIR = SCRIPT_DIR / "testdata" / "completion_claim_gate"
+GATE_PATH = SCRIPT_DIR / "completion_claim_gate.py"
+REPO_ROOT = SCRIPT_DIR.parent
+sys.path.insert(0, str(SCRIPT_DIR))
+
+import completion_claim_gate as gate  # noqa: E402
+
+
+def managed_body(payload: dict[str, Any], prefix: str = "") -> str:
+    encoded = json.dumps(payload, indent=2, sort_keys=True)
+    return f"{prefix}{gate.BLOCK_FENCE}\n{encoded}\n```\n"
+
+
+def fixture(name: str) -> dict[str, Any]:
+    return json.loads((FIXTURE_DIR / name).read_text(encoding="utf-8"))
+
+
+def set_field(value: dict[str, Any], dotted: str, replacement: Any) -> None:
+    target: Any = value
+    parts = dotted.split(".")
+    for part in parts[:-1]:
+        target = target[int(part)] if isinstance(target, list) else target[part]
+    final = parts[-1]
+    if isinstance(target, list):
+        target[int(final)] = replacement
+    else:
+        target[final] = replacement
+
+
+class GateHarness:
+    @classmethod
+    def setUpClass(cls) -> None:
+        source = fixture("issue_4709.json")["control"]
+        cls.context = source["context"]
+        cls.payload = source["payload"]
+
+    def run_gate(
+        self,
+        *,
+        context: dict[str, Any] | None = None,
+        payload: dict[str, Any] | None = None,
+        prefix: str = "",
+        body: str | None = None,
+        module: types.ModuleType = gate,
+    ) -> tuple[int, dict[str, Any]]:
+        selected_context = copy.deepcopy(context if context is not None else self.context)
+        selected_payload = copy.deepcopy(payload if payload is not None else self.payload)
+        selected_body = body if body is not None else managed_body(selected_payload, prefix)
+        return module.evaluate(selected_context, selected_body)
+
+    def assert_code(
+        self,
+        expected: str,
+        *,
+        context: dict[str, Any] | None = None,
+        payload: dict[str, Any] | None = None,
+        prefix: str = "",
+        body: str | None = None,
+        module: types.ModuleType = gate,
+    ) -> dict[str, Any]:
+        code, report = self.run_gate(
+            context=context,
+            payload=payload,
+            prefix=prefix,
+            body=body,
+            module=module,
+        )
+        self.assertEqual(code, gate.EXIT_FAIL, report)
+        self.assertEqual(report["machine_status"], gate.FAIL)
+        codes = [entry["code"] for entry in report["diagnostics"]]
+        self.assertIn(expected, codes, report)
+        return report
+
+    def mutated_payload(self, field: str, value: Any) -> dict[str, Any]:
+        payload = copy.deepcopy(self.payload)
+        set_field(payload, field, value)
+        return payload
+
+
+class GateTest(GateHarness, unittest.TestCase):
+    def test_ready_control_passes_nonvacuously(self) -> None:
+        code, report = self.run_gate()
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertEqual(report["machine_status"], gate.PASS)
+        self.assertEqual(len(self.context["changed_paths"]), 2)
+        self.assertNotEqual(self.payload["candidate"]["sorted_path_digest"], "sha256:" + "0" * 64)
+
+    def test_sha_nibble_mutation_fails(self) -> None:
+        self.assert_code(
+            "HEAD_SHA_MISMATCH",
+            payload=self.mutated_payload("candidate.head_sha", "b" * 39 + "c"),
+        )
+
+    def test_add_path_fails_count_and_digest(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["changed_paths"].append("docs/completion-claims.md")
+        _, report = self.run_gate(context=context)
+        codes = {entry["code"] for entry in report["diagnostics"]}
+        self.assertEqual(report["machine_status"], gate.FAIL)
+        self.assertTrue({"FILE_COUNT_MISMATCH", "PATH_DIGEST_MISMATCH"} <= codes)
+
+    def test_remove_path_fails_count_and_digest(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["changed_paths"].pop()
+        _, report = self.run_gate(context=context)
+        codes = {entry["code"] for entry in report["diagnostics"]}
+        self.assertEqual(report["machine_status"], gate.FAIL)
+        self.assertTrue({"FILE_COUNT_MISMATCH", "PATH_DIGEST_MISMATCH"} <= codes)
+
+    def test_count_mutation_fails(self) -> None:
+        self.assert_code(
+            "FILE_COUNT_MISMATCH",
+            payload=self.mutated_payload("candidate.changed_file_count", 1),
+        )
+
+    def test_digest_nibble_mutation_fails(self) -> None:
+        old = self.payload["candidate"]["sorted_path_digest"]
+        replacement = old[:-1] + ("a" if old[-1] != "a" else "b")
+        self.assert_code(
+            "PATH_DIGEST_MISMATCH",
+            payload=self.mutated_payload("candidate.sorted_path_digest", replacement),
+        )
+
+    def test_duplicate_block_fails(self) -> None:
+        block = managed_body(self.payload)
+        self.assert_code("DUPLICATE_MANAGED_BLOCK", body=block + block)
+
+    def test_duplicate_json_key_fails(self) -> None:
+        raw = '{"schema_version":1,"schema_version":1}'
+        self.assert_code(
+            "DUPLICATE_JSON_KEY",
+            body=f"{gate.BLOCK_FENCE}\n{raw}\n```\n",
+        )
+
+    def test_duplicate_path_fails(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["changed_paths"].append(context["changed_paths"][0])
+        self.assert_code("DUPLICATE_PATH", context=context)
+
+    def test_unknown_payload_key_fails(self) -> None:
+        payload = copy.deepcopy(self.payload)
+        payload["surprise"] = True
+        self.assert_code("UNKNOWN_KEY", payload=payload)
+
+    def test_unknown_claim_level_fails(self) -> None:
+        payload = copy.deepcopy(self.payload)
+        payload["claim_levels"] = ["trust_me"]
+        self.assert_code("UNKNOWN_CLAIM_LEVEL", payload=payload)
+
+    def test_review_sha_mutation_fails(self) -> None:
+        self.assert_code(
+            "REVIEW_HEAD_MISMATCH",
+            payload=self.mutated_payload("review_records.0.head_sha", "c" * 40),
+        )
+
+    def test_wrong_issue_ref_fails(self) -> None:
+        self.assert_code(
+            "INVALID_ISSUE_REF",
+            payload=self.mutated_payload("references.non_closing.0", "Refs #4709"),
+        )
+
+    def test_nonempty_closing_refs_fail(self) -> None:
+        payload = copy.deepcopy(self.payload)
+        payload["references"]["closing"] = ["Closes #4801"]
+        self.assert_code("CLOSING_REFERENCES_NOT_EMPTY", payload=payload)
+
+    def test_negated_autoclose_in_prose_fails(self) -> None:
+        self.assert_code("AUTOCLOSE_REFERENCE", prefix="This does not Closes #4801.\n")
+
+    def test_push_delivery_fails(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["delivery"] = "push"
+        self.assert_code("INVALID_DELIVERY", context=context)
+
+    def test_ready_placeholder_fails(self) -> None:
+        self.assert_code(
+            "READY_PLACEHOLDER",
+            payload=self.mutated_payload("review_records.0.url", gate.PENDING),
+        )
+
+    def test_draft_placeholder_is_incomplete(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["is_draft"] = True
+        payload = self.mutated_payload("review_records.0.url", gate.PENDING)
+        code, report = self.run_gate(context=context, payload=payload)
+        self.assertEqual(code, gate.EXIT_DRAFT_INCOMPLETE, report)
+        self.assertEqual(report["machine_status"], gate.DRAFT_INCOMPLETE)
+
+    def test_draft_deterministic_mismatch_still_fails(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["is_draft"] = True
+        payload = self.mutated_payload("candidate.head_sha", "c" * 40)
+        self.assert_code("HEAD_SHA_MISMATCH", context=context, payload=payload)
+
+    def test_all_semantic_kinds_are_human_only(self) -> None:
+        payload = copy.deepcopy(self.payload)
+        payload["semantic_claims"] = [
+            {
+                "id": f"semantic-{kind}",
+                "kind": kind,
+                "statement": f"{kind} evidence requires review.",
+                "evidence_urls": [f"https://example.test/{kind}"],
+            }
+            for kind in sorted(gate.SEMANTIC_KINDS)
+        ]
+        code, report = self.run_gate(payload=payload)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        statuses = [entry["status"] for entry in report["human_reviews"]]
+        self.assertEqual(statuses, [gate.HUMAN_REVIEW_REQUIRED] * 3)
+        self.assertNotIn(gate.PASS, statuses)
+
+    def test_semantic_claim_levels_are_human_only(self) -> None:
+        payload = copy.deepcopy(self.payload)
+        payload["claim_levels"] = sorted(gate.SEMANTIC_CLAIM_LEVELS)
+        code, report = self.run_gate(payload=payload)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        statuses = [entry["status"] for entry in report["human_reviews"]]
+        self.assertEqual(
+            statuses,
+            [gate.HUMAN_REVIEW_REQUIRED] * len(gate.SEMANTIC_CLAIM_LEVELS),
+        )
+
+
+class DigestTest(unittest.TestCase):
+    def test_utf8_byte_order_and_length_framing_are_pinned(self) -> None:
+        paths = ["z", "a/b", "\u03b1.lean"]
+        expected = "sha256:cb5187a15b084966d9ee2784f53758a1b1f6f263f2b1a2e8d62f9d33a25bce31"
+        self.assertEqual(gate.sorted_path_digest(paths), expected)
+        self.assertEqual(gate.sorted_path_digest(list(reversed(paths))), expected)
+
+    def test_self_local_lean_has_no_exemption(self) -> None:
+        included = gate.sorted_path_digest(
+            [".self-local/reports/incident.lean", "scripts/completion_claim_gate.py"]
+        )
+        excluded = gate.sorted_path_digest(["scripts/completion_claim_gate.py"])
+        self.assertEqual(
+            included,
+            "sha256:c563c95c14b6f005f8c5676a52cbb8be20d8c42003feb49142fe204d4725bcab",
+        )
+        self.assertNotEqual(included, excluded)
+
+    def test_rejects_absolute_parent_newline_nul_and_backslash(self) -> None:
+        invalid = ["/tmp/a", ".", "./a", "a/./b", "../a", "a/../b", "a\nb", "a\x00b", "a\\b"]
+        for path in invalid:
+            with self.subTest(path=repr(path)):
+                with self.assertRaises(gate.GateInputError):
+                    gate.sorted_path_digest([path])
+
+
+class IncidentFixtureTest(GateHarness, unittest.TestCase):
+    def test_baseline_cases(self) -> None:
+        data = fixture("baseline.json")
+        self.assertEqual(data["incident"], "baseline")
+        self.assertEqual(len(data["cases"]), 3)
+        for case in data["cases"]:
+            with self.subTest(case=case["id"]):
+                code, report = self.run_gate(
+                    context=case["context"],
+                    payload=case["payload"],
+                    prefix=case["body_prefix"],
+                )
+                self.assertEqual(code, case["expected_exit"], report)
+                self.assertEqual(report["machine_status"], case["expected_status"])
+                if case["expected_code"] is not None:
+                    codes = [entry["code"] for entry in report["diagnostics"]]
+                    self.assertIn(case["expected_code"], codes)
+
+    def test_issue_4709_mutations_and_human_boundary(self) -> None:
+        data = fixture("issue_4709.json")
+        self.assertEqual(data["incident"], "4709")
+        control = data["control"]
+        for case in data["cases"]:
+            with self.subTest(case=case["id"]):
+                if "mutation" in case:
+                    payload = copy.deepcopy(control["payload"])
+                    mutation = case["mutation"]
+                    self.assertEqual(
+                        self._field(payload, mutation["field"]),
+                        mutation["from"],
+                    )
+                    set_field(payload, mutation["field"], mutation["to"])
+                    self.assert_code(
+                        case["expected_code"],
+                        context=control["context"],
+                        payload=payload,
+                    )
+                else:
+                    payload = copy.deepcopy(control["payload"])
+                    payload["semantic_claims"] = [
+                        {
+                            "id": f"incident-4709-{kind}",
+                            "kind": kind,
+                            "statement": "Historical prose needs independent review.",
+                            "evidence_urls": [f"https://example.test/4709/{kind}"],
+                        }
+                        for kind in case["semantic_kinds"]
+                    ]
+                    _, report = self.run_gate(
+                        context=control["context"],
+                        payload=payload,
+                    )
+                    self.assertTrue(
+                        all(
+                            item["status"] == case["expected_status"]
+                            for item in report["human_reviews"]
+                        )
+                    )
+
+    def test_issue_4718_delivery_and_self_local_coverage(self) -> None:
+        data = fixture("issue_4718.json")
+        self.assertEqual(data["incident"], "4718")
+        control = data["control"]
+        delivery = data["cases"][0]
+        context = copy.deepcopy(control["context"])
+        mutation = delivery["context_mutation"]
+        self.assertEqual(context[mutation["field"]], mutation["from"])
+        context[mutation["field"]] = mutation["to"]
+        self.assert_code(
+            delivery["expected_code"],
+            context=context,
+            payload=control["payload"],
+        )
+        coverage = data["cases"][1]
+        self.assertIn(coverage["required_path"], control["context"]["changed_paths"])
+        self.assertEqual(
+            control["payload"]["candidate"]["changed_file_count"],
+            coverage["expected_count"],
+        )
+        self.assertEqual(
+            gate.sorted_path_digest(control["context"]["changed_paths"]),
+            coverage["expected_digest"],
+        )
+        code, _ = self.run_gate(context=control["context"], payload=control["payload"])
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_pr_4800_stale_negated_and_human_cases(self) -> None:
+        data = fixture("pr_4800.json")
+        self.assertEqual(data["incident"], "4800")
+        control = data["control"]
+        for case in data["cases"]:
+            with self.subTest(case=case["id"]):
+                if "mutation" in case:
+                    payload = copy.deepcopy(control["payload"])
+                    set_field(payload, case["mutation"]["field"], case["mutation"]["to"])
+                    self.assert_code(
+                        case["expected_code"],
+                        context=control["context"],
+                        payload=payload,
+                    )
+                elif "body_prefix" in case:
+                    self.assert_code(
+                        case["expected_code"],
+                        context=control["context"],
+                        payload=control["payload"],
+                        prefix=case["body_prefix"],
+                    )
+                else:
+                    payload = copy.deepcopy(control["payload"])
+                    kind = case["semantic_kind"]
+                    payload["semantic_claims"] = [
+                        {
+                            "id": case["id"],
+                            "kind": kind,
+                            "statement": "Green deterministic fields do not prove this prose.",
+                            "evidence_urls": [f"https://example.test/4800/{kind}"],
+                        }
+                    ]
+                    code, report = self.run_gate(
+                        context=control["context"],
+                        payload=payload,
+                    )
+                    self.assertEqual(code, gate.EXIT_PASS)
+                    self.assertEqual(
+                        report["human_reviews"][0]["status"],
+                        case["expected_status"],
+                    )
+
+    @staticmethod
+    def _field(value: dict[str, Any], dotted: str) -> Any:
+        target: Any = value
+        for part in dotted.split("."):
+            target = target[int(part)] if isinstance(target, list) else target[part]
+        return target
+
+
+class MutationTest(GateHarness, unittest.TestCase):
+    @staticmethod
+    def mutant(old: str, new: str) -> types.ModuleType:
+        source = GATE_PATH.read_text(encoding="utf-8")
+        if source.count(old) != 1:
+            raise AssertionError(f"mutation target count is {source.count(old)}")
+        module = types.ModuleType("completion_claim_gate_mutant")
+        module.__file__ = str(GATE_PATH)
+        exec(compile(source.replace(old, new), str(GATE_PATH), "exec"), module.__dict__)
+        return module
+
+    def test_candidate_comparison_mutant_is_killed(self) -> None:
+        mutant = self.mutant("elif actual != expected:", "elif False:")
+        payload = self.mutated_payload("candidate.head_sha", "c" * 40)
+        self.assert_code("HEAD_SHA_MISMATCH", payload=payload)
+        code, _ = self.run_gate(payload=payload, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_autoclose_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if CLOSING_RE.search(body) is not None:",
+            "if False:",
+        )
+        prefix = "This does not Closes #4801.\n"
+        self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+        code, _ = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_path_exemption_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "encoded_paths = [\n"
+            "        _path_bytes(path, f\"changed_paths[{index}]\")\n"
+            "        for index, path in enumerate(paths)\n"
+            "    ]",
+            "encoded_paths = [\n"
+            "        _path_bytes(path, f\"changed_paths[{index}]\")\n"
+            "        for index, path in enumerate(paths)\n"
+            "        if not path.startswith('.self-local/')\n"
+            "    ]",
+        )
+        paths = [".self-local/reports/incident.lean", "scripts/completion_claim_gate.py"]
+        self.assertNotEqual(mutant.sorted_path_digest(paths), gate.sorted_path_digest(paths))
+
+
+class SecurityAndWiringTest(unittest.TestCase):
+    def test_checker_has_no_process_network_or_dynamic_execution(self) -> None:
+        tree = ast.parse(GATE_PATH.read_text(encoding="utf-8"))
+        forbidden_imports = {
+            "http.client",
+            "requests",
+            "socket",
+            "subprocess",
+            "urllib.request",
+        }
+        forbidden_calls = {"eval", "exec", "__import__", "compile"}
+        imported: set[str] = set()
+        called: set[str] = set()
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imported.update(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module is not None:
+                imported.add(node.module)
+            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
+                called.add(node.func.id)
+        self.assertFalse(imported & forbidden_imports)
+        self.assertFalse(called & forbidden_calls)
+
+    def test_fixture_set_is_exact_and_nonempty(self) -> None:
+        names = sorted(path.name for path in FIXTURE_DIR.glob("*.json"))
+        self.assertEqual(
+            names,
+            ["baseline.json", "issue_4709.json", "issue_4718.json", "pr_4800.json"],
+        )
+        for name in names:
+            data = fixture(name)
+            self.assertTrue(data["cases"], name)
+
+    def test_existing_build_job_runs_the_self_test(self) -> None:
+        workflow = (REPO_ROOT / ".github/workflows/lean_action_ci.yml").read_text(
+            encoding="utf-8"
+        )
+        command = "python3 scripts/test_completion_claim_gate.py"
+        self.assertEqual(workflow.count(command), 1)
+        self.assertIn("jobs:\n  build:", workflow)
+
+    def test_no_separate_completion_claim_workflow_exists(self) -> None:
+        workflows = REPO_ROOT / ".github" / "workflows"
+        names = {path.name for path in workflows.iterdir()}
+        self.assertFalse(
+            {"completion_claim_gate.yml", "completion-claim-gate.yml"} & names
+        )
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

@@ -1,0 +1,108 @@
+{
+  "fixture_version": 1,
+  "incident": "4709",
+  "cases": [
+    {
+      "id": "count_mismatch",
+      "mutation": {
+        "field": "candidate.changed_file_count",
+        "from": 2,
+        "to": 1
+      },
+      "expected_code": "FILE_COUNT_MISMATCH"
+    },
+    {
+      "id": "path_digest_mismatch",
+      "mutation": {
+        "field": "candidate.sorted_path_digest",
+        "from": "sha256:a7a931cfd1940cca51eea2a00950758fca5041bb5b041526edc297a7f2ea6c9b",
+        "to": "sha256:a7a931cfd1940cca51eea2a00950758fca5041bb5b041526edc297a7f2ea6c9a"
+      },
+      "expected_code": "PATH_DIGEST_MISMATCH"
+    },
+    {
+      "id": "copied_wrong_issue_reference",
+      "mutation": {
+        "field": "references.non_closing.0",
+        "from": "Refs #4801",
+        "to": "Refs #4709"
+      },
+      "expected_code": "INVALID_ISSUE_REF"
+    },
+    {
+      "id": "stale_review_head",
+      "mutation": {
+        "field": "review_records.0.head_sha",
+        "from": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "to": "cccccccccccccccccccccccccccccccccccccccc"
+      },
+      "expected_code": "REVIEW_HEAD_MISMATCH"
+    },
+    {
+      "id": "structured_history_tuple_wrong_head",
+      "mutation": {
+        "field": "review_records.1.head_sha",
+        "from": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "to": "dddddddddddddddddddddddddddddddddddddddd"
+      },
+      "expected_code": "REVIEW_HEAD_MISMATCH"
+    },
+    {
+      "id": "source_and_provenance_remain_human",
+      "semantic_kinds": [
+        "source",
+        "provenance"
+      ],
+      "expected_status": "HUMAN_REVIEW_REQUIRED"
+    }
+  ],
+  "control": {
+    "context": {
+      "schema_version": 1,
+      "is_draft": false,
+      "delivery": "pull_request",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "changed_paths": [
+        "scripts/completion_claim_gate.py",
+        "scripts/test_completion_claim_gate.py"
+      ],
+      "allowed_issue_refs": [
+        4796,
+        4801
+      ]
+    },
+    "payload": {
+      "schema_version": 1,
+      "candidate": {
+        "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "changed_file_count": 2,
+        "sorted_path_digest":
+          "sha256:a7a931cfd1940cca51eea2a00950758fca5041bb5b041526edc297a7f2ea6c9b"
+      },
+      "claim_levels": [
+        "exact_candidate_diff"
+      ],
+      "review_records": [
+        {
+          "kind": "source_review",
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-10"
+        },
+        {
+          "kind": "issue_resolution_audit",
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-11"
+        }
+      ],
+      "references": {
+        "non_closing": [
+          "Refs #4801"
+        ],
+        "closing": []
+      },
+      "semantic_claims": []
+    }
+  }
+}

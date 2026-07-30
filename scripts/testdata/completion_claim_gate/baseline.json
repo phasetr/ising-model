@@ -1,0 +1,159 @@
+{
+  "fixture_version": 1,
+  "incident": "baseline",
+  "cases": [
+    {
+      "id": "ready_nonempty_control",
+      "context": {
+        "schema_version": 1,
+        "is_draft": false,
+        "delivery": "pull_request",
+        "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "changed_paths": [
+          "docs/completion-claims.md"
+        ],
+        "allowed_issue_refs": [
+          4796,
+          4801
+        ]
+      },
+      "payload": {
+        "schema_version": 1,
+        "candidate": {
+          "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "changed_file_count": 1,
+          "sorted_path_digest":
+            "sha256:94cc51de668b0abb71d6ea00809cd3a66fae168cb8dde6c0b4fcc67a24d18794"
+        },
+        "claim_levels": [
+          "exact_candidate_diff"
+        ],
+        "review_records": [
+          {
+            "kind": "source_review",
+            "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-1"
+          },
+          {
+            "kind": "issue_resolution_audit",
+            "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-2"
+          }
+        ],
+        "references": {
+          "non_closing": [
+            "Refs #4801",
+            "Part of #4796"
+          ],
+          "closing": []
+        },
+        "semantic_claims": []
+      },
+      "body_prefix": "Ready control.\n",
+      "expected_exit": 0,
+      "expected_status": "PASS",
+      "expected_code": null
+    },
+    {
+      "id": "draft_incomplete_control",
+      "context": {
+        "schema_version": 1,
+        "is_draft": true,
+        "delivery": "pull_request",
+        "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "changed_paths": [
+          "docs/completion-claims.md"
+        ],
+        "allowed_issue_refs": [
+          4801
+        ]
+      },
+      "payload": {
+        "schema_version": 1,
+        "candidate": {
+          "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "changed_file_count": 1,
+          "sorted_path_digest":
+            "sha256:94cc51de668b0abb71d6ea00809cd3a66fae168cb8dde6c0b4fcc67a24d18794"
+        },
+        "claim_levels": [
+          "exact_candidate_diff"
+        ],
+        "review_records": [
+          {
+            "kind": "source_review",
+            "head_sha": "PENDING",
+            "url": "PENDING"
+          }
+        ],
+        "references": {
+          "non_closing": [
+            "Refs #4801"
+          ],
+          "closing": []
+        },
+        "semantic_claims": []
+      },
+      "body_prefix": "Draft control.\n",
+      "expected_exit": 2,
+      "expected_status": "DRAFT_INCOMPLETE",
+      "expected_code": "PENDING_REVIEW"
+    },
+    {
+      "id": "nonclosing_reference_control",
+      "context": {
+        "schema_version": 1,
+        "is_draft": false,
+        "delivery": "pull_request",
+        "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "changed_paths": [
+          "docs/completion-claims.md"
+        ],
+        "allowed_issue_refs": [
+          4801
+        ]
+      },
+      "payload": {
+        "schema_version": 1,
+        "candidate": {
+          "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "changed_file_count": 1,
+          "sorted_path_digest":
+            "sha256:94cc51de668b0abb71d6ea00809cd3a66fae168cb8dde6c0b4fcc67a24d18794"
+        },
+        "claim_levels": [
+          "build_health"
+        ],
+        "review_records": [
+          {
+            "kind": "source_review",
+            "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-3"
+          },
+          {
+            "kind": "issue_resolution_audit",
+            "head_sha": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "url": "https://github.com/phasetr/ising-model/issues/4801#issuecomment-4"
+          }
+        ],
+        "references": {
+          "non_closing": [
+            "Refs #4801"
+          ],
+          "closing": []
+        },
+        "semantic_claims": []
+      },
+      "body_prefix": "This text references work without closing it.\n",
+      "expected_exit": 0,
+      "expected_status": "PASS",
+      "expected_code": null
+    }
+  ]
+}
