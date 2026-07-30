@@ -16833,18 +16833,18 @@ Combined with the high-temperature expansion (product form) over edge subsets,
 the closed form follows as a purely finite combinatorial identity.
 No cluster-expansion, Kotecký--Preiss, or new analytic input is required.
 
-For all field-polymer subsections through F6c below, the lattice high-temperature
-expansion, Koteck\'y--Preiss, and Mayer provenance is Friedli--Velenik
-\S3.7.3, \S5.4, and \S5.7.  GJ Theorem~17.6.1 is the comparison target;
-GJ Chapter~18 is a continuum analogy only.
+For the exact field-dependent closed weight, Friedli--Velenik
+Exercise~5.8 and its answer on p.~531 are the primary lattice source;
+\S3.7.3, eqs.~(3.41)--(3.45), give the $h=0$ template only.  The later
+Koteck\'y--Preiss/Mayer chain is a project extension; GJ Theorem~17.6.1 is the comparison target and GJ Chapter~18 is a continuum analogy only.
 
 This is the first finite combinatorial brick of the project's complex-field
 local-limit chain.  It does not itself prove real infinite-volume
 $\partial/\partial h$ differentiability.
 The Lean proof (\texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormField.lean})
 is axiom-free.
-Primary source: Friedli--Velenik, \S3.7.3.  GJ Theorem~17.6.1 motivates
-the comparison target; GJ Chapter~18 is only a continuum analogy.
+Source roles: Friedli--Velenik Exercise~5.8 and its answer on p.~531 give the exact field weight; \S3.7.3 is the $h=0$ template.
+GJ Theorem~17.6.1 motivates the comparison target; GJ Chapter~18 is only a continuum analogy.
 
 \subsection{Field-dependent polymer factorization identity (GJ \S17.6.1, brick 2a)}
 
@@ -16907,8 +16907,8 @@ The Lean proofs (\texttt{IsingModel/ClusterExpansion/Families/FieldConnectedPoly
 \texttt{IsingModel/Conditioning/HighTempClosed/ClosedFormFieldPolymer.lean})
 are axiom-free.
 
-Reference: Friedli--Velenik, \S3.7.3, eq.~(3.45), p.~117 (2017 ed.) (zero-field template);
-Friedli--Velenik, \S5.7 (polymer gas); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
+Reference: Friedli--Velenik Exercise~5.8 gives the field weight, \S\S5.2--5.3 and \S5.6 give the abstract hard-core formalism, and \S3.7.3, eq.~(3.45), p.~117 gives the $h=0$ template;
+the field-dependent connected-component factorization is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent polymer activity bounds (GJ \S17.6.1, brick 2b)}
 
@@ -17003,8 +17003,8 @@ non-vanishing brick; and this is the field-dependent mirror of the zero-field
 even-polymer bounds, with the field factor always helping rather than breaking
 the bound for real $h$.
 
-Reference: Friedli--Velenik, \S5.7 (polymer gas and Kotečský--Preiss); Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (subgraph enumeration);
-Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
+Reference: Friedli--Velenik \S3.7.3, Lemma~3.38 and eqs.~(3.48)--(3.49) give $h=0$ counting templates, Exercise~5.8 gives the field weight, and \S5.4, Theorem~5.4, p.~224 gives convergence;
+the field activity bounds are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent Mayer term and dominated summability (GJ \S17.6.1, brick 3)}
 
@@ -17124,8 +17124,8 @@ Real field $h$ only (complex $h$ deferred);
 regression at $b = 0$ recovers the zero-field even-polymer restriction.
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerTerm.lean}) are axiom-free.
 
-Reference: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49) (lattice polymer gas);
-Friedli--Velenik, \S5.7 (Mayer--Montroll expansion);
+Reference: Friedli--Velenik \S\S5.2--5.4 and Proposition~5.3 give the abstract polymer/Ursell and convergence framework,
+while Exercise~5.8 gives the field weight; the field dominated-summability comparison is a project extension.
 Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 \subsection{Field-dependent Mayer--Montroll identity (GJ \S17.6.1, brick 4)}
@@ -17258,8 +17258,8 @@ The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldMayerIdentity.lean}) a
 The field Mayer identity itself does \emph{not} discharge Theorem~17.6.1:
 bricks~5--13+ (non-vanishing and volume-uniform bounds) remain.
 
-Reference: Friedli--Velenik, \S5.7 (Mayer--Montroll identity) and \S3.7.3, eqs.~(3.48)--(3.49) (magnetic-field expansion);
-Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
+Reference: Friedli--Velenik \S\S5.2--5.4 and Proposition~5.3 give the abstract polymer/Ursell and log-$\Xi$ formalism, while Exercise~5.8 gives the field weight;
+the field Mayer--Montroll identity is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only; not a lattice source).
 
 
 \subsection{Field polymer exponential identity, real-$h$ non-vanishing, and complex-$h$ prelude (GJ \S17.6.1, brick 5)}
@@ -17391,9 +17391,9 @@ a real infinite-volume $\partial/\partial h$ result.
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerExpNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Primary source: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49)
-(magnetic-field expansion), and \S5.4/\S5.7.  Glimm--Jaffe Chapter~18 is
-a continuum analogy only.
+Source roles: Friedli--Velenik \S\S5.2--5.5 and Proposition~5.3 give the abstract polymer/Ursell, convergence, and analytic context,
+while Exercise~5.8 gives the field weight; the real/complex exponential identities and non-vanishing package are project extensions.
+Glimm--Jaffe Chapter~18 is a continuum analogy only.
 
 \subsection{Complex field partition non-vanishing via analytic continuation (GJ \S17.6.1, brick 6)}
 
@@ -17554,9 +17554,9 @@ assembly uses this input for the small-coupling complex-field holomorphic local-
 The Lean proofs (\texttt{IsingModel/ClusterExpansion/FieldPolymerComplexNonvanishing.lean})
 are axiom-free (\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound} only).
 
-Reference: Friedli--Velenik, \S3.7.3, eqs.~(3.48)--(3.49)
-(magnetic-field expansion), and \S5.4/\S5.7 (Kotecky--Preiss and Mayer
-expansions). Glimm--Jaffe Chapter~18, pp.~321--343, is a continuum analogy only.
+Reference: Friedli--Velenik \S5.5, Theorem~5.8, p.~228 gives parameter-analyticity context, \S\S5.2--5.4 and Proposition~5.3 give the prior abstract roles,
+and Exercise~5.8 gives the field weight; the complex identity-theorem continuation and non-vanishing result are project extensions.
+Glimm--Jaffe Chapter~18, pp.~321--343, is a continuum analogy only.
 
 \subsection{Small-coupling complex-field holomorphic local-limit endpoint (F6a--F6c)}
 
@@ -17576,7 +17576,7 @@ This is the exact contract of
 It does not identify \(f\) with the real infinite-volume correlation at other
 real fields and exports no broader real infinite-volume
 \texttt{HasDerivAt}.  The cluster-expansion inputs are sourced from
-Friedli--Velenik \S5.4 and \S5.7; GJ Theorem~17.6.1 is a comparison target.
+Friedli--Velenik Exercise~5.8 (field weight), \S\S5.2--5.3 (abstract polymer/Ursell formalism), \S5.4 (convergence), and \S5.5 (analytic context); the F6c local-limit assembly is a project extension, and GJ Theorem~17.6.1 is a comparison target.
 
 \section{Lattice high-temperature expansion (project \S18.1--18.3 analogy)}
 
@@ -17586,8 +17586,8 @@ $\exp(\beta J \sigma_i\sigma_j) = \cosh(\beta J)(1 + \tanh(\beta J)\sigma_i\sigm
 This is already proved as \texttt{exp\_edgeSpin\_decomp}.
 The \S18.x labels in this guide are project-internal analogy labels, not a literal
 correspondence with Glimm--Jaffe Chapter~18.  That chapter treats the continuum
-$P(\phi)_2$ cluster expansion.  The primary source for the lattice formulas and
-Kotecky--Preiss results below is Friedli--Velenik \S3.7.3, \S5.4, and \S5.7.
+$P(\phi)_2$ cluster expansion.  The lattice source roles are Friedli--Velenik Exercise~5.8 (field weight),
+\S\S5.2--5.3 (abstract polymer/Ursell formalism), \S5.4 (convergence), and \S5.5 (analytic context); the guide's field/Mayer assemblies are project extensions.
 
 \begin{definition}[\texttt{highTempParam}]
 $t = \tanh(\beta J)$, the high-temperature expansion parameter.
@@ -17755,8 +17755,8 @@ arbitrary observable \(F : \mathrm{Config}~\iota \to \mathbb{R}\)
        {\sum_{X \subseteq E} \tanh(\beta J)^{|X|}
         \sum_\sigma (\prod_{e \in X} \sigma_e) e^{\beta h \sum_i \sigma_i}}.
 \]
-This is the lattice high-temperature representation of thermal averages from the
-Friedli--Velenik expansion; the proof is identical, carrying \(F(\sigma)\) through the
+This lattice high-temperature representation uses the exact general-field weight of Friedli--Velenik Exercise~5.8
+and the $h=0$ template of \S3.7.3; the arbitrary-observable general-$h$ representation is a project extension, with the proof carrying \(F(\sigma)\) through the
 \(\sigma\)-sum in the public numerator lemma
 \texttt{numerator\_observable\_high\_temp\_expansion\_subset\_form} (whose
 \(F = 1\) case is the partition-function subset form). The correlation theorem
@@ -17766,8 +17766,8 @@ above is the one-line specialisation \(F = \sigma_A\), and the magnetization
 (\texttt{AmbientLattice/GibbsExpectationHighTempExpansion.lean}) carries it to
 the infinite-volume exhaustion.
 
-\paragraph{External-field response in subset form (GJ~\S17.6; lattice expansion
-from Friedli--Velenik \S3.7.3).}
+\paragraph{External-field response in subset form (GJ~\S17.6 motivation; Exercise~5.8 field weight;
+the arbitrary-observable response/subset assembly is a project extension; GJ Chapter~18 is a continuum analogy only).}
 The GJ~\S17.6 fluctuation-response derivative
 \[
 \frac{\partial}{\partial h}\langle\sigma_A\rangle_h
@@ -17787,8 +17787,8 @@ specialisation \(A=\{i\}\),
 local field susceptibility \(\partial\langle\sigma_i\rangle/\partial h\), and
 connects the \S5.3/\S17.6 susceptibility machinery to the \S18.3 expansion.
 
-\paragraph{Connected correlations in subset form (GJ~\S18.5, pp.~313--316;
-\S18.7, pp.~319--322).}
+\paragraph{Connected correlations in subset form (project extension; GJ Chapter~18
+is a continuum connected-correlation analogy only, not a lattice source).}
 Writing
 \(N[F] = \sum_{X\subseteq E}\tanh(\beta J)^{|X|}\sum_\sigma F(\sigma)(\prod_{e\in X}\sigma_e)e^{\beta h\sum_i\sigma_i}\)
 (\texttt{highTempSubsetNumerator}) and \(D = N[1]\)
@@ -17802,12 +17802,12 @@ GJ~\S18.7 — then take the general-\(h\) subset form
 \]
 (\texttt{truncated2\_high\_temp\_expansion\_general\_h\_subset\_form}), and
 likewise the three-point Ursell function
-(\texttt{truncated3\_high\_temp\_expansion\_general\_h\_subset\_form}). These
-are finite-volume lattice Ising identities (no continuum limit) furnishing the
-general-\(h\) foundation for connected-correlation decay.
+(\texttt{truncated3\_high\_temp\_expansion\_general\_h\_subset\_form}). Friedli--Velenik
+Exercise~5.8 supplies the exact field weight; the truncation/subset algebra is a
+self-contained finite-volume project extension with no continuum or direct GJ lattice input.
 
-\paragraph{General-\(h\) exponential decay of the connected 2-point function
-(GJ~\S18.7, pp.~319--322).} On \(\mathbb{Z}^d\), for a ferromagnetic field
+\paragraph{General-\(h\) exponential decay of the connected 2-point function (project
+extension; GJ Chapter~18 is a continuum decay analogy only, not a lattice source).} On \(\mathbb{Z}^d\), for a ferromagnetic field
 \(\langle J,h,\beta\rangle\) with \(h\ge 0\) and distinct sites \(i\neq j\), the
 \emph{connected} two-point function \(\langle\sigma_i;\sigma_j\rangle =
 \texttt{truncated2Infinite}\) decays (unlike the full two-point function, which
@@ -17826,12 +17826,12 @@ connected 2-point is antitone in \(h\) on \([0,\infty)\), so
 \(\texttt{truncated2Infinite\_h\_zero}\) (\(=\langle\sigma_i\sigma_j\rangle_{h=0}\)
 since \(\langle\sigma_i\rangle=0\) by \(\mathbb{Z}_2\) symmetry), and the
 existing \(h=0\) Simon--Lieb decay of the full two-point function
-(\texttt{SimonLiebDistanceDecay.lean}). The three general-\(h\) decay theorems
-live in \texttt{Truncated2GeneralFieldDecay.lean}. Lattice Ising, no continuum
-limit.
+(\texttt{SimonLiebDistanceDecay.lean}). Thus the lattice inputs are GHS field monotonicity and the project's \(h=0\) Simon--Lieb bound;
+the assembled general-\(h\) decay in \texttt{Truncated2GeneralFieldDecay.lean} is a project extension;
+this uses no continuum input or limit.
 
-\paragraph{General-\(h\) cluster property (GJ~\S18.7).} For \(0<J\),
-\(0\le h\), \(0<\beta\) and \(\beta J\cdot 2d<1\) on \(\mathbb{Z}^d\), the
+\paragraph{General-\(h\) cluster property (project extension; GJ Chapter~18 is a
+continuum cluster-property analogy only, not a lattice source).} For \(0<J\), \(0\le h\), \(0<\beta\) and \(\beta J\cdot 2d<1\) on \(\mathbb{Z}^d\), the
 connected two-point function clusters: \(j\mapsto\langle\sigma_i;\sigma_j\rangle
 \to 0\) along the cofinite filter (as \(d_{\mathbb{Z}^d}(i,j)\to\infty\)). The
 existing \(h=0\) exponential-decay witness
@@ -17841,8 +17841,8 @@ lifted to general \(h\) by GHS field-monotonicity — the same constant and rate
 \(0\le\langle\sigma_i;\sigma_j\rangle_h\le\langle\sigma_i;\sigma_j\rangle_0\)
 for \(h\ge 0\) and \(i\neq j\) — and fed into the existing squeeze-based
 \texttt{clusterProperty\_latticeGraph\_of\_HasExponentialDecay}
-(\texttt{Truncated2GeneralFieldCluster.lean}). Lattice Ising, no continuum
-limit.
+(\texttt{Truncated2GeneralFieldCluster.lean}). Its lattice inputs are GHS monotonicity and the project's prior decay theorem;
+the cluster-property assembly is a project extension with no continuum input.
 
 \begin{theorem}[\texttt{partitionFunction\_high\_temp\_expansion\_h\_zero\_lower\_bound}]
 For \(0 \le \beta J\),
@@ -18129,8 +18129,8 @@ only on the maximum degree, not on the volume -- the first reusable
 volume-uniform object for the \S18.5 infinite-volume cluster expansion (unlike the
 per-volume conditions of the high-temperature wrappers).  The per-vertex activity
 geometric bound $\sum_{P\ni v}t^{|P|}\le(1-\Delta^2 t)^{-1}$ and the volume-uniform
-Mayer convergence are the next assembly.  Reference: Friedli--Velenik, \S3.7.3, eq.~(3.49)
-(primary lattice counting source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+Mayer convergence are the next assembly.  Reference: Friedli--Velenik, \S3.7.3, Lemma~3.38
+(direct closed-walk counting support); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Per-vertex polymer activity bound, volume-uniform (\S18.5).}
 Summing the volume-uniform rooted polymer count against the activity weight
@@ -18155,7 +18155,7 @@ sum by the convergent geometric series (\texttt{Summable.sum\_le\_tsum},
 degree, not on the volume -- the per-vertex Kotecky--Preiss activity input that
 survives the infinite-volume limit, unlike the per-volume conditions of
 \texttt{InteractingFreeEnergyMayerHighTemp}.  Reference: Friedli--Velenik, \S3.7.3, eq.~(3.49)
-(primary lattice activity source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+($h=0$ aggregation context); the per-vertex activity capstone is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Total and per-site polymer activity bound, volume-uniform (\S18.5).}
 Double-counting the per-vertex bound over all vertices
@@ -18180,7 +18180,7 @@ activity is bounded by the volume-uniform constant,
 \]
 (\texttt{allPolymersActivity\_div\_card\_le\_geometric}, for $\iota$ nonempty),
 $\Delta=\mathrm{maxDegree}\,G$.  Reference: Friedli--Velenik, \S3.7.3, eq.~(3.49)
-(primary lattice activity source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+($h=0$ counting/aggregation context); the total and per-site activity capstones are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Weighted per-vertex and incompatibility-neighbourhood activity
 (Kotecky--Preiss inputs, \S18.5).}
