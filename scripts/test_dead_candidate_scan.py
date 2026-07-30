@@ -367,6 +367,14 @@ class NestedBraceCitationTest(unittest.TestCase):
         self.assertEqual(expanded, self.EXPANDED)
         self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
 
+    def test_depth_1000_balanced_singleton_terminates(self) -> None:
+        """Every balanced token accepted by the citation grammar must terminate."""
+        token = "family_" + "{" * 1000 + "left" + "}" * 1000
+        self.assertIn(token, dcs._citation_tokens(token))
+        expanded = dcs.expand_braces(token)
+        self.assertEqual(expanded, ["family_left"])
+        self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
+
     def test_real_nested_citation_publishes_the_three_excluded_declarations(self) -> None:
         """End to end on the exact ``docs/index.md:1406`` citation shape."""
         index = next(source for source in docs() if source.label == "docs/index.md")
