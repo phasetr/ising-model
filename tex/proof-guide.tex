@@ -17972,7 +17972,7 @@ Both convergence hypotheses hold near $t = 0$, giving the unconditional eventual
 \texttt{mayer\_identity\_general\_t\_eventually} ($\forall^f t \in \mathrm{nhds}\,0$): $\varepsilon(t)
 \to 0$ and $A(t) \to 0$ (every polymer is nonempty, so $A(0) = 0$ by \texttt{IsPolymer.nonempty}).
 This completes the cluster identity $\log\Xi = \sum_n (\text{Mayer term})$ for general interacting
-polymers in the convergence regime. Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+polymers in the convergence regime. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the finite-graph reassembly is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Independent (non-interacting) polymer free energy (\S18.5).} When the
 polymers of $G$ are pairwise vertex-disjoint (no two distinct polymers share a
@@ -17993,7 +17993,7 @@ $f = \log 2 + \frac{|E|}{|\iota|}\log\cosh(\beta J)
 + \frac{1}{|\iota|}\sum_P \log(1+\tanh(\beta J)^{|P|})$
 (\texttt{freeEnergy\_eq\_sum\_log\_of\_pairwise\_disjoint}, for $0 \le \beta J$,
 $|\iota| > 0$). The general interacting case requires the full Mayer–Montroll
-expansion. Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+expansion. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the pairwise-disjoint closed form is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Mixed-cluster vanishing for non-interacting polymers (\S18.4--\S18.5).}
 On the cluster-expansion side, a non-interacting gas makes the $n$-th Mayer term
@@ -18011,7 +18011,7 @@ $n \ge 1$ (the non-constant sequences vanish; the constant sequences reindex to
 $\mathrm{allPolymers}\,G$). Summed over the multiplicity $n$, the single-polymer
 series $\sum_m \phi^T(P,\dots,P)\,(t^{|P|})^m = \log(1+t^{|P|})$ then recovers the
 independent free energy, the cluster-expansion verification of the exactly-solvable
-case. Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+case. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework), with \S5.4 (convergence); the mixed-cluster diagonal computation is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{The Mayer expansion converges to the free energy (non-interacting case,
 \S18.5).} Assembling the previous two paragraphs gives the cluster-expansion
@@ -18035,7 +18035,7 @@ sums the single-polymer multiplicity series per polymer
 finitely many polymers (\texttt{hasSum\_sum}). This is the first proof in the
 project that the Mayer/cluster expansion sums to the free energy beyond the trivial
 cases; the general interacting case requires the Kotecky–Preiss convergence
-estimate. Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+estimate. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting capstone is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Ising free energy as a Mayer expansion (non-interacting case, \S18.5).}
 The physical payoff (\texttt{MayerCore/IndependentFreeEnergyMayer.lean}): combining
@@ -18051,8 +18051,8 @@ $0 < |\iota|$,
 (\texttt{freeEnergy\_eq\_tsum\_mayer\_of\_pairwise\_disjoint}, with the ferromagnetic
 form $0 \le J$, $0 < \beta$). The convergence condition $\tanh(\beta J)^{|P|} < 1$ is
 automatic (\texttt{tanh\_pow\_lt\_one\_of\_mem\_allPolymers}): polymers are non-empty
-($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Friedli--Velenik, \S5.7
-(primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+($|P| \ge 1$) and $\tanh(\beta J) < 1$. Reference: Friedli--Velenik, \S\S5.2--5.3 and
+Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting Ising specialization is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Interacting Ising free energy as a Mayer expansion (\S18.5).}
 The interacting analogue (\texttt{MayerCore/InteractingFreeEnergyMayer.lean})
@@ -18071,9 +18071,9 @@ $0\le J$, $0<\beta$ form).  This expresses the interacting finite-volume free
 energy directly through its convergent cluster terms -- the finite-volume step
 toward the \S18.5 infinite-volume analyticity of the pressure; the
 high-temperature discharge of the convergence hypotheses and the volume-uniform /
-infinite-volume limit are later work.  Reference: Friedli--Velenik, \S5.7
-(primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18,
-pp.~321--343 (continuum $P(\phi)_2$ analogy only, not a lattice source).
+infinite-volume limit are later work.  Reference: Friedli--Velenik, \S\S5.2--5.3 and
+Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the
+interacting finite-graph Ising assembly is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only, not a lattice source).
 
 \paragraph{High-temperature discharge of the interacting Mayer expansion
 (\S18.5).}
@@ -18089,8 +18089,8 @@ Both conditions are trivially satisfied as $\beta J\to0$, so
 gives the interacting free energy as its convergent cluster expansion in the
 genuine high-temperature regime, with no separate convergence hypotheses.  This is
 a finite-volume statement; the volume-uniform / infinite-volume analyticity of the
-pressure is later work.  Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source);
-Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+pressure is later work.  Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence);
+the finite-volume high-temperature discharge is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{$\Lambda$-layer / along-exhaustion high-temperature Mayer expansion
 (\S18.5).}
@@ -18108,8 +18108,8 @@ $e\,|\mathrm{allPolymers}(\mathrm{inducedGraph}\,G\,\Lambda)|\,\tanh(\beta J)<1$
 grow with $|\Lambda|$, so for fixed positive $\tanh(\beta J)$ they fail at large
 volume.  A volume-uniform Kotecky--Preiss / Dobrushin activity bound (not these
 per-volume conditions) is what a genuine infinite-volume Mayer pressure identity
-requires; that is later work.  Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source);
-Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+requires; that is later work.  Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence);
+the exhaustion wrappers are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Rooted polymer counting, volume-uniform max-degree bound (\S18.5).}
 The volume-uniform combinatorial input to the Kotecky--Preiss criterion
@@ -19581,8 +19581,8 @@ $\mathrm{connectedSpanningEdgeSubsets}$) complete the classification alongside t
 triangle (\texttt{alternatingConnectedSubgraphSum\_K3} $= 2$) and the disconnected
 cases ($= 0$). These are the $n = 3$ Mayer/Ursell numerators: $\phi^T = 1/3! = 1/6$
 for a path-shaped incompatibility cluster, $1/3$ for the fully-incompatible
-triangle (\texttt{ursellCoefficient\_complete\_eq}). Reference: Friedli--Velenik, \S5.7
-(primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+triangle (\texttt{ursellCoefficient\_complete\_eq}). Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework);
+the explicit $n=3$ alternating-sum computation is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{The $n = 3$ Ursell coefficient by incompatibility pattern (\S18.4).}
 The closed-form $\phi^T(\omega)$ for a $3$-element polymer sequence
@@ -19609,8 +19609,8 @@ $\mathrm{fromEdgeSet}\,\{\emptyset \text{ or a single edge}\}$ followed by
 \texttt{SimpleGraph.Iso.connected\_iff} and \texttt{decide}-disconnectedness,
 then \texttt{ursellCoefficient\_eq\_zero\_of\_disconnected}. Together with the
 path lemmas these eight lemmas give the complete explicit $n = 3$
-Ursell-coefficient classification by incompatibility pattern. Reference: Friedli--Velenik, \S5.7
-(primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+Ursell-coefficient classification by incompatibility pattern. Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework);
+the explicit $n=3$ pattern classification is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Closed form of the Mayer term for a non-interacting gas (\S18.5).}
 For a non-interacting polymer gas (distinct polymers pairwise compatible, i.e.
@@ -19634,7 +19634,7 @@ give the first Mayer coefficients $\sum_P t^{|P|}$,
 $-\tfrac12\sum_P (t^{|P|})^2$, $\tfrac13\sum_P (t^{|P|})^3$; the $n = 3$
 value $1/3$ matches the fully-incompatible triangle Ursell value, the
 non-interacting counterpart of \texttt{ursellCoefficient\_fin\_three\_*}.
-Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract log-$\Xi$/Ursell framework), with \S5.4 (convergence); the non-interacting closed form and its explicit coefficients are project extensions. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Unified $n = 3$ Ursell classification (\S18.4).}
 The eight per-pattern lemmas above are packaged into a single statement
@@ -19642,7 +19642,7 @@ The eight per-pattern lemmas above are packaged into a single statement
 $\phi^T(\omega)$ as a nested \texttt{if} on the three pair-incompatibility
 flags ($1/3$ for the triangle, $1/6$ for a path, $0$ otherwise), proved by case
 analysis dispatching to the per-pattern lemmas.
-Reference: Friedli--Velenik, \S5.7 (primary lattice/polymer-gas source); Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
+Reference: Friedli--Velenik, \S\S5.2--5.3 and Proposition~5.3 (abstract Ursell framework); the unified explicit $n=3$ classification is a project extension. Glimm--Jaffe, 2nd ed., Chapter~18, pp.~321--343 (continuum $P(\phi)_2$ analogy only).
 
 \paragraph{Polymer free energy bounds and characterisations
 (PRs~\#1517--\#1566).} A coordinated set of sharpenings was added
