@@ -38,9 +38,10 @@ advisory and requires human review.
 The live adapter writes exact-head pending after minimal routing identity and
 before validating body size, structured references, changed files, issues, or
 history. At most 16 structured references are allowed; exact strings and issue
-numbers must be unique. Workflow actions and one-line commands are
-structurally enumerated before the byte digest is checked. Unnamed, nested, or
-extra execution, step fields, block scalars, and command suffixes are rejected.
+numbers must be unique. Workflow UTF-8 text must exactly equal the embedded
+canonical value, including its final line feed. Flow YAML, anchors, aliases,
+extra keys, jobs, steps, comments, whitespace, and CRLF are rejected before
+secondary structure, permission, expression, and digest checks.
 
 ```completion-claims-v1
 {

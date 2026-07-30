@@ -33,16 +33,16 @@ The discovery job has only `contents: read` and `pull-requests: read`.
 It emits a bounded JSON array of pull-request numbers and cannot write a
 status. The matrix evaluation job adds only `issues: read` and
 `statuses: write`. Workflow-level permissions are empty.
-The workflow validator first parses each job's `steps` block by indentation.
-It enumerates named and unnamed list-item forms plus every nested or top-level
-`uses` and `run`, then requires the exact job ownership, four records, names,
-field order, checkout `with` fields, two full-SHA checkout actions, and two
-one-line Python commands. Extra actions, commands, block scalars, command
-suffixes, step fields, and misplaced list items are rejected structurally.
-Permission and expression contracts run next. The byte-canonical SHA-256
-digest runs last as defense-in-depth, so coordinating an attacker workflow
-with a new digest cannot mask structural rejection. Uncoordinated whitespace
-changes remain digest failures.
+The validator first requires the supplied UTF-8 workflow text to equal the
+single `canonical_workflow_text` value, including its final line feed. Any
+difference fails before all secondary diagnostics. This includes flow-style
+YAML, anchors, aliases, extra top-level keys, jobs or steps, comments,
+whitespace, and CRLF line endings; semantically equivalent YAML is not
+accepted. Only the exact canonical text reaches the secondary indentation
+record check, permission and expression checks, and SHA-256 digest check.
+Those checks provide independent consistency evidence; the indentation check
+is deliberately not presented as a general YAML parser. Coordinating a
+changed digest therefore cannot authorize changed workflow text.
 
 It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
 action, one-commit depth, and credential persistence disabled. It never checks

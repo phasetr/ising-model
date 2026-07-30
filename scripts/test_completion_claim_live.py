@@ -1240,13 +1240,41 @@ class MutationTest(unittest.TestCase):
             "if digest != WORKFLOW_SHA256:",
             "if False:",
         )
-        text = WORKFLOW_PATH.read_text(encoding="utf-8")
-        with self.assertRaisesRegex(
-            live.LiveGateError,
-            "WORKFLOW_DIGEST_MISMATCH",
+        text = WORKFLOW_PATH.read_bytes().decode("utf-8")
+        wrong_digest = "0" * 64
+        with (
+            mock.patch.object(live, "WORKFLOW_SHA256", wrong_digest),
+            self.assertRaisesRegex(
+                live.LiveGateError,
+                "WORKFLOW_DIGEST_MISMATCH",
+            ),
         ):
-            live.validate_workflow_text(text + "\n")
-        mutant.validate_workflow_text(text + "\n")
+            live.validate_workflow_text(text)
+        with mock.patch.object(mutant, "WORKFLOW_SHA256", wrong_digest):
+            mutant.validate_workflow_text(text)
+
+    def test_workflow_canonical_text_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "if text != canonical_workflow_text():",
+            "if False:",
+        )
+        text = WORKFLOW_PATH.read_bytes().decode("utf-8")
+        mutation = (
+            text
+            + "\n  attacker: {runs-on: ubuntu-latest, "
+            + "steps: [{run: curl https://attacker.invalid}]}\n"
+        )
+        coordinated = hashlib.sha256(mutation.encode("utf-8")).hexdigest()
+        with (
+            mock.patch.object(live, "WORKFLOW_SHA256", coordinated),
+            self.assertRaisesRegex(
+                live.LiveGateError,
+                "WORKFLOW_CANONICAL_TEXT_MISMATCH",
+            ),
+        ):
+            live.validate_workflow_text(mutation)
+        with mock.patch.object(mutant, "WORKFLOW_SHA256", coordinated):
+            mutant.validate_workflow_text(mutation)
 
     def test_pending_finalizer_mutant_is_killed(self) -> None:
         mutant = self.mutant(
@@ -1419,9 +1447,14 @@ class MutationTest(unittest.TestCase):
 
 class WorkflowSecurityTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.text = WORKFLOW_PATH.read_text(encoding="utf-8")
+        self.text = WORKFLOW_PATH.read_bytes().decode("utf-8")
 
     def test_static_workflow_contract(self) -> None:
+        self.assertEqual(self.text, live.canonical_workflow_text())
+        self.assertEqual(
+            WORKFLOW_PATH.read_bytes(),
+            live.canonical_workflow_text().encode("utf-8"),
+        )
         live.validate_workflow_text(self.text)
         self.assertNotIn("workflow_dispatch", self.text)
         self.assertIn("repository_dispatch:", self.text)
@@ -1450,6 +1483,57 @@ class WorkflowSecurityTest(unittest.TestCase):
             "pull_request_head",
         ]:
             self.assertNotIn(forbidden, self.text)
+
+    def test_coordinated_digest_rejects_flow_style_extra_job_canonically(self) -> None:
+        mutation = (
+            self.text
+            + "\n  attacker: {runs-on: ubuntu-latest, "
+            + "steps: [{run: curl https://attacker.invalid}]}\n"
+        )
+        coordinated = hashlib.sha256(mutation.encode("utf-8")).hexdigest()
+        with (
+            mock.patch.object(live, "WORKFLOW_SHA256", coordinated),
+            self.assertRaisesRegex(
+                live.LiveGateError,
+                "WORKFLOW_CANONICAL_TEXT_MISMATCH",
+            ),
+        ):
+            live.validate_workflow_text(mutation)
+
+    def test_every_noncanonical_yaml_or_byte_mutation_fails_first(self) -> None:
+        mutations = {
+            "flow-step": self.text.replace(
+                "    steps:\n      - name:",
+                "    steps:\n"
+                "      - {run: curl https://attacker.invalid}\n"
+                "      - name:",
+                1,
+            ),
+            "anchor-alias": (
+                self.text
+                + "\nattacker: &attacker {run: curl https://attacker.invalid}\n"
+                + "attacker_alias: *attacker\n"
+            ),
+            "extra-top-key": self.text + "\nattacker: true\n",
+            "comment": self.text + "# unreviewed comment\n",
+            "whitespace": self.text.replace(
+                "name: Completion Claim Live",
+                "name: Completion Claim Live ",
+                1,
+            ),
+            "crlf": self.text.replace("\n", "\r\n"),
+        }
+        for name, mutation in mutations.items():
+            coordinated = hashlib.sha256(mutation.encode("utf-8")).hexdigest()
+            with (
+                self.subTest(name=name),
+                mock.patch.object(live, "WORKFLOW_SHA256", coordinated),
+                self.assertRaisesRegex(
+                    live.LiveGateError,
+                    "WORKFLOW_CANONICAL_TEXT_MISMATCH",
+                ),
+            ):
+                live.validate_workflow_text(mutation)
 
     def test_security_mutations_are_killed(self) -> None:
         mutations = [
@@ -1512,7 +1596,7 @@ class WorkflowSecurityTest(unittest.TestCase):
                 with self.assertRaises(live.LiveGateError):
                     live.validate_workflow_text(mutation)
 
-    def test_coordinated_digest_cannot_hide_structural_step_attacks(self) -> None:
+    def test_coordinated_digest_cannot_hide_noncanonical_step_attacks(self) -> None:
         checkout_line = (
             "      - uses: attacker/action@"
             "0123456789abcdef0123456789abcdef01234567"
@@ -1586,12 +1670,12 @@ class WorkflowSecurityTest(unittest.TestCase):
                 mock.patch.object(live, "WORKFLOW_SHA256", coordinated),
                 self.assertRaisesRegex(
                     live.LiveGateError,
-                    "WORKFLOW_STEP_STRUCTURE_MISMATCH",
+                    "WORKFLOW_CANONICAL_TEXT_MISMATCH",
                 ),
             ):
                 live.validate_workflow_text(mutation)
 
-    def test_coordinated_permission_and_expression_mutants_keep_exact_codes(self) -> None:
+    def test_coordinated_permission_and_expression_mutants_fail_canonical(self) -> None:
         permission_mutant = self.text.replace(
             "      statuses: write",
             "      actions: write",
@@ -1608,7 +1692,7 @@ class WorkflowSecurityTest(unittest.TestCase):
             ),
             self.assertRaisesRegex(
                 live.LiveGateError,
-                "WORKFLOW_PERMISSION_MISMATCH",
+                "WORKFLOW_CANONICAL_TEXT_MISMATCH",
             ),
         ):
             live.validate_workflow_text(permission_mutant)
@@ -1629,7 +1713,7 @@ class WorkflowSecurityTest(unittest.TestCase):
             ),
             self.assertRaisesRegex(
                 live.LiveGateError,
-                "UNTRUSTED_WORKFLOW_EXPRESSION",
+                "WORKFLOW_CANONICAL_TEXT_MISMATCH",
             ),
         ):
             live.validate_workflow_text(expression_text)
