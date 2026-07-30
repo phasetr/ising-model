@@ -9,6 +9,117 @@ historical statement is true.
 It is not a semantic completion verdict. Every semantic claim and every
 semantic claim level is reported as `HUMAN_REVIEW_REQUIRED`.
 
+## Trusted live adapter
+
+Phase 2 wraps the offline calculation in
+`scripts/completion_claim_live.py`. The live adapter publishes the advisory
+commit-status context `completion-claim/live` on the exact pull-request head.
+Only offline exit 0 with a well-formed `PASS` report can publish `success`.
+Draft-incomplete, deterministic rejection, unexpected checker output, API or
+timeout errors, bounded-input violations, snapshot races, and status-write
+errors all fail shut. This status is advisory during #4801; repository
+required-check policy remains in #4802.
+
+The isolated `.github/workflows/completion_claim_live.yml` workflow runs for
+the exact `pull_request_target` actions `opened`, `reopened`, `synchronize`,
+`edited`, `ready_for_review`, and `converted_to_draft`. A `main` push performs
+a bounded open-pull-request backfill. A default-branch-only
+`repository_dispatch` event of type `completion_claim_replay` accepts one
+positive integer in `client_payload.pr_number`; branch-selectable
+`workflow_dispatch` is intentionally absent. Actor identity never bypasses
+evaluation.
+
+The discovery job has only `contents: read` and `pull-requests: read`.
+It emits a bounded JSON array of pull-request numbers and cannot write a
+status. The matrix evaluation job adds only `issues: read` and
+`statuses: write`. Workflow-level permissions are empty.
+The validator first requires the supplied UTF-8 workflow text to equal the
+single `canonical_workflow_text` value, including its final line feed. Any
+difference fails before all secondary diagnostics. This includes flow-style
+YAML, anchors, aliases, extra top-level keys, jobs or steps, comments,
+whitespace, and CRLF line endings; semantically equivalent YAML is not
+accepted. Only the exact canonical text reaches the secondary indentation
+record check, permission and expression checks, and SHA-256 digest check.
+Those checks provide independent consistency evidence; the indentation check
+is deliberately not presented as a general YAML parser. Coordinating a
+changed digest therefore cannot authorize changed workflow text.
+
+It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
+action, one-commit depth, and credential persistence disabled. It never checks
+out or executes the pull-request head, merge revision, fork content, artifact,
+cache, dependency installer, or candidate-supplied action. Concurrency is
+keyed only by repository ID and matrix pull-request number. Pull-request
+events, main backfill, and replay therefore use the same cancellation domain.
+The adapter selection phase never writes status and each matrix process
+evaluates exactly one pull request.
+
+### Live snapshot and bounds
+
+The adapter first reads fresh pull-request metadata and validates only the
+minimum status identity: open state, pull-request number, target repository,
+main base, and exact base and head SHAs. It immediately writes `pending` to
+that head. A failed pending write stops the process without a second status
+attempt. Body type and size, draft flag, changed-file count, head metadata,
+managed JSON, and every primary fact are validated only after pending.
+Therefore a same-head body edit cannot leave an older success untouched merely
+by making the new body oversized or malformed.
+
+After pending, the adapter records P1 from fresh REST responses: repository and
+pull-request identity, state, draft flag, exact base and head SHAs, complete
+body bytes and digest, changed-file count, sorted paths and digest, structural
+issue facts, and bounded primary history facts. It invokes the existing
+offline evaluator with the derived context, then reads P2. State, draft flag,
+base SHA, head SHA, body digest, changed-file count, and path digest must remain
+exactly equal. A mismatch attempts `failure` on the P1 head; a newer event owns
+the newer body or head.
+
+Changed files use fixed 100-entry pages. Metadata, page sizes, unique paths,
+and the collected count must agree exactly. The adapter always requests the
+next fixed sentinel page after the expected entries, including metadata counts
+0, 100, and 3,000, and requires that page to be empty. At most 30 data pages
+and 3,000 paths are accepted; 3,001 paths, underreported metadata, a missing or
+extra entry, a duplicate, an incomplete page, or a partial digest is rejected.
+The body and derived context are each limited to one MiB, each API response to
+two MiB, structural issue ancestry to 64 issues and depth 8, history to 128
+facts, each cited commit to three 100-file data pages plus an empty sentinel,
+push backfill to 100 pull requests, diagnostics to 8,192 bytes, and HTTP
+attempts to one request plus two bounded retries. Oversize and truncation
+never produce partial acceptance.
+
+Issue authority begins only with `Refs` entries in the managed JSON. Each seed
+issue and every formal parent must be an open, same-repository issue rather
+than a pull request. The chain is read through structural issue-parent
+endpoints; unrestricted prose cannot widen the allowlist. At most 16 total
+structured references are accepted. Every exact reference string and every
+issue number must be unique, and at least one `Refs` child seed is required.
+These checks run before changed-file, issue, or history endpoint reads. Issue
+objects and parent results are memoized across shared chains, bounding the
+issue graph to at most 16 seed issue reads plus 64 parent reads.
+
+Structured history is derived from bounded commit-file pages, the requested
+commit, its sole parent, ancestry comparison, and exact repository blob
+identities. The cited path must have matching `added`, `modified`, or `removed`
+commit-file status. Modified content must exist on both sides with distinct
+blob SHAs; added and removed content must have the matching existence
+transition and blob identity. Unchanged, unrelated, renamed, copied, unknown,
+merge, and unreachable history is rejected. Matching those facts does not
+certify natural-language relevance, which remains human review.
+
+The same-head body-edit interval before `pending` and production commit-status
+behavior for a fork-owned head remain documented canary questions for #4802.
+Per-PR concurrency prevents independent active jobs from intentionally writing
+in different event-specific groups, but it is not an atomic compare-and-set
+for an HTTP status request already issued when cancellation begins. Such
+cancelled-run residue remains a residual race and never becomes semantic or
+merge authority. Mocked tests exercise these shapes but cannot turn production
+behavior into a proven fact. #4801 remains open after the code merge until
+bounded backfill and real same-repository and fork observations are recorded.
+If the pull-request metadata HTTP response itself is unavailable, malformed,
+truncated, or oversized before a valid head SHA can be obtained, no exact head
+exists on which the adapter can publish pending. That pre-identity condition
+is fail-shut in the workflow result but cannot clear an older commit status;
+it remains a documented operational canary.
+
 ## Inputs
 
 Invoke the checker with two explicit UTF-8 files:
@@ -223,6 +334,7 @@ Run:
 
 ```text
 python3 scripts/test_completion_claim_gate.py
+python3 scripts/test_completion_claim_live.py
 ```
 
 The suite includes baseline and incident-derived fixtures for #4709, #4718,
@@ -240,3 +352,10 @@ suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
 checker mutants; pins `.self-local` path coverage; and verifies that the
 checker imports no process, network, or dynamic-execution facility.
+
+The live-adapter suite is hermetic and performs no network requests. Its
+injected transport covers pull-request actions, draft and ready transitions,
+dispatch and backfill, same-repository, fork, and Dependabot-shaped metadata,
+fixed-page boundaries through 3,000 paths, structural issue ancestry, primary
+history actions, P1/P2 races, checker exit mapping, status payloads, API and
+size errors, and workflow security mutations.

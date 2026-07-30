@@ -1,0 +1,63 @@
+name: Completion Claim Live
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [completion_claim_replay]
+
+permissions: {}
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      pr_numbers: ${{ steps.select.outputs.pr_numbers }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout trusted workflow revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Select bounded pull requests
+        id: select
+        run: python3 scripts/completion_claim_live.py select >> "$GITHUB_OUTPUT"
+
+  evaluate:
+    needs: discover
+    if: needs.discover.outputs.pr_numbers != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        pr_number: ${{ fromJSON(needs.discover.outputs.pr_numbers) }}
+    concurrency:
+      group: completion-claim-live-${{ github.repository_id }}-${{ matrix.pr_number }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      statuses: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      COMPLETION_CLAIM_PR_NUMBER: ${{ matrix.pr_number }}
+    steps:
+      - name: Checkout trusted workflow revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Evaluate one bounded live completion claim
+        run: python3 scripts/completion_claim_live.py process

@@ -1,0 +1,10 @@
+{
+  "id": "fork-and-dependabot-metadata",
+  "repository": "phasetr/ising-model",
+  "pr_number": 4806,
+  "head_repository": "contributor/ising-model",
+  "head_actor": "dependabot[bot]",
+  "draft": false,
+  "checker_exit": 0,
+  "expected_terminal": "success"
+}
