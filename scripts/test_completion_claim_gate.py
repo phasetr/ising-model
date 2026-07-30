@@ -48,6 +48,10 @@ def set_field(value: dict[str, Any], dotted: str, replacement: Any) -> None:
         target[final] = replacement
 
 
+def fullwidth_ascii(text: str) -> str:
+    return "".join(chr(ord(char) + 0xFEE0) for char in text)
+
+
 class GateHarness:
     @classmethod
     def setUpClass(cls) -> None:
@@ -537,7 +541,7 @@ class ManagedFenceTest(GateHarness, unittest.TestCase):
     def test_five_normalized_marker_disguises_are_ambiguous(self) -> None:
         variants = [
             "completion&#45;claims-v1",
-            "ｃｏｍｐｌｅｔｉｏｎ－ｃｌａｉｍｓ－ｖ１",
+            fullwidth_ascii(gate.BLOCK_INFO),
             "completion\u200b-claims-v1",
             "completion-claims-v&#49;",
             "&#99;ompletion-claims-v1",
@@ -550,7 +554,7 @@ class ManagedFenceTest(GateHarness, unittest.TestCase):
     def test_mixed_and_multiple_disguised_markers_are_ambiguous(self) -> None:
         suffix = (
             "completion&#45;claims-v1 and completion\u200b-claims-v1 "
-            "and ｃｏｍｐｌｅｔｉｏｎ－ｃｌａｉｍｓ－ｖ１\n"
+            f"and {fullwidth_ascii(gate.BLOCK_INFO)}\n"
         )
         self.assertEqual(gate._normalized_marker_count(suffix), 3)
         self.assert_code(
