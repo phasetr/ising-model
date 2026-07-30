@@ -1,23 +1,31 @@
-## 2026-07-30 — #4786 hierarchy and #4803 post-merge synchronization
+## 2026-07-30 audit checkpoint — #4786 hierarchy and #4803 evidence
 
-- `main` and `origin/main` are
-  `c2a06741c65c2f31d26d2c95af4aa78c3d304858`.
 - PR #4806 candidate `f425143c96c865d40efb401c24b49d0ffdd970ef` was
   squash-merged as `c2a06741c65c2f31d26d2c95af4aa78c3d304858`; both
   commits have tree `b9784c5ed3a82c7e7612033d0187478aba1e5c46`.
-- The two-file #4803 protocol and complete same-repository A–J lifecycle
-  canary are merged.
-- Main Completion Claim Live
+- Completion Claim Live
   [run 30539037148](https://github.com/phasetr/ising-model/actions/runs/30539037148)
-  is `SUCCESS`.
-- Main Lean Action CI
+  and Lean Action CI
   [run 30539037390](https://github.com/phasetr/ising-model/actions/runs/30539037390)
-  is `SUCCESS`.
-- #4803 remains OPEN solely through this bounded INDEX PR, its terminal main
-  evidence, and the final child-first disposition synchronization.
-- #4786, #4790, #4796, #4801, and #4802 remain OPEN.
-- The direct OPEN #4786 children #4788, #4789, #4790, #4791, #4792, #4793,
-  #4794, #4795, and #4796 remain governed by their own acceptance criteria.
+  succeeded on PR #4806 squash `c2a06741c65c2f31d26d2c95af4aa78c3d304858`.
+- By the 2026-07-30 audit checkpoint, the two-file #4803 protocol and complete
+  same-repository A–J lifecycle canary had merged.
+- PR #4807 candidate `564ad7d2448b431894eaa3d38a09be836309c2db` was
+  squash-merged as `2e87b4b1e1cacad5c98bf169cfd136ea6c717d9e`; both
+  commits have tree `f81031ffe33b709839641cfa618f216b56b58874`.
+- Completion Claim Live
+  [run 30543098347](https://github.com/phasetr/ising-model/actions/runs/30543098347)
+  and Lean Action CI
+  [run 30543098366](https://github.com/phasetr/ising-model/actions/runs/30543098366)
+  succeeded on PR #4807 squash `2e87b4b1e1cacad5c98bf169cfd136ea6c717d9e`.
+- At the 2026-07-30 audit checkpoint, #4786, #4790, #4796, #4801, #4802,
+  and #4803 were OPEN.
+- At the 2026-07-30 audit checkpoint, the direct OPEN #4786 children #4788,
+  #4789, #4790, #4791, #4792, #4793, #4794, #4795, and #4796 were governed
+  by their own acceptance criteria.
+- GitHub issue bodies and durable comments are canonical for current lifecycle
+  state. This INDEX entry is historical and must not be read as a current-state
+  assertion.
 
 **2026-07-27 PR #4743 MERGED (dev-pr-clerk, main `2a3a9baf`)**: closed the `docs/index.md`
 `MISSING` citation class (12 findings -> 0, 11 edited lines), completing the `MISSING`-class
