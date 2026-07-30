@@ -968,39 +968,168 @@ def process_pr(
     return evaluate_pr(transport, repository, pr_number, checker)
 
 
+def _workflow_step_records(
+    text: str,
+) -> list[
+    tuple[
+        str,
+        tuple[tuple[str, str], ...],
+        tuple[tuple[str, str], ...],
+    ]
+]:
+    """Parse exact step records without accepting YAML execution shorthand."""
+    if "\t" in text:
+        raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+    lines = text.splitlines()
+    try:
+        jobs_index = lines.index("jobs:")
+    except ValueError as exc:
+        raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH") from exc
+    job_headers: list[tuple[int, str]] = []
+    for index in range(jobs_index + 1, len(lines)):
+        match = re.fullmatch(r"  ([a-z][a-z0-9_-]*):", lines[index])
+        if match is not None:
+            job_headers.append((index, match.group(1)))
+    if [name for _, name in job_headers] != ["discover", "evaluate"]:
+        raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+
+    records: list[
+        tuple[
+            str,
+            tuple[tuple[str, str], ...],
+            tuple[tuple[str, str], ...],
+        ]
+    ] = []
+    for job_position, (job_start, job_name) in enumerate(job_headers):
+        job_end = (
+            job_headers[job_position + 1][0]
+            if job_position + 1 < len(job_headers)
+            else len(lines)
+        )
+        step_headers = [
+            index
+            for index in range(job_start + 1, job_end)
+            if lines[index] == "    steps:"
+        ]
+        if len(step_headers) != 1:
+            raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+        index = step_headers[0] + 1
+        current_fields: list[tuple[str, str]] | None = None
+        current_with: list[tuple[str, str]] = []
+
+        def finish_current() -> None:
+            nonlocal current_fields, current_with
+            if current_fields is None:
+                return
+            records.append(
+                (
+                    job_name,
+                    tuple(current_fields),
+                    tuple(current_with),
+                )
+            )
+            current_fields = None
+            current_with = []
+
+        while index < job_end:
+            line = lines[index]
+            if not line.strip():
+                index += 1
+                continue
+            indent = len(line) - len(line.lstrip(" "))
+            if indent <= 4:
+                finish_current()
+                break
+            stripped = line[indent:]
+            if indent == 6 and stripped.startswith("- "):
+                finish_current()
+                item = stripped[2:]
+                if ":" not in item:
+                    raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+                key, value = item.split(":", 1)
+                current_fields = [(key, value.lstrip(" "))]
+            elif indent == 8 and current_fields is not None:
+                if stripped.startswith("- ") or ":" not in stripped:
+                    raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+                key, value = stripped.split(":", 1)
+                if any(existing == key for existing, _ in current_fields):
+                    raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+                current_fields.append((key, value.lstrip(" ")))
+            elif (
+                indent == 10
+                and current_fields is not None
+                and current_fields[-1] == ("with", "")
+            ):
+                if stripped.startswith("- ") or ":" not in stripped:
+                    raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+                key, value = stripped.split(":", 1)
+                if any(existing == key for existing, _ in current_with):
+                    raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+                current_with.append((key, value.lstrip(" ")))
+            else:
+                raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+            index += 1
+        else:
+            finish_current()
+
+    all_execution = re.findall(
+        r"(?m)^[ ]*(?:-[ ]+)?(uses|run):[ ]*([^\r\n]*)$",
+        text,
+    )
+    parsed_execution = [
+        (key, value)
+        for _, fields, _ in records
+        for key, value in fields
+        if key in {"uses", "run"}
+    ]
+    if all_execution != parsed_execution:
+        raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
+    return records
+
+
 def validate_workflow_text(text: str) -> None:
     """Fail if the trusted workflow's static security contract is weakened."""
-    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    if digest != WORKFLOW_SHA256:
-        raise LiveGateError("WORKFLOW_DIGEST_MISMATCH")
-    expected_step_names = [
-        "Checkout trusted workflow revision",
-        "Select bounded pull requests",
-        "Checkout trusted workflow revision",
-        "Evaluate one bounded live completion claim",
-    ]
-    step_names = re.findall(r"(?m)^      - name: ([^\r\n]+)$", text)
-    if step_names != expected_step_names:
-        raise LiveGateError("WORKFLOW_STEP_MISMATCH")
     checkout = (
         "actions/checkout@"
         "fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09"
     )
-    expected_execution = [
+    checkout_fields = (
+        ("name", "Checkout trusted workflow revision"),
         ("uses", checkout),
-        (
-            "run",
-            'python3 scripts/completion_claim_live.py select >> "$GITHUB_OUTPUT"',
-        ),
-        ("uses", checkout),
-        ("run", "python3 scripts/completion_claim_live.py process"),
-    ]
-    execution = re.findall(
-        r"(?m)^[ ]+(uses|run): ([^\r\n]+)$",
-        text,
+        ("with", ""),
     )
-    if execution != expected_execution:
-        raise LiveGateError("WORKFLOW_EXECUTION_MISMATCH")
+    checkout_with = (
+        ("ref", "${{ github.workflow_sha }}"),
+        ("persist-credentials", "false"),
+        ("fetch-depth", "1"),
+    )
+    expected_records = [
+        ("discover", checkout_fields, checkout_with),
+        (
+            "discover",
+            (
+                ("name", "Select bounded pull requests"),
+                ("id", "select"),
+                (
+                    "run",
+                    "python3 scripts/completion_claim_live.py select"
+                    ' >> "$GITHUB_OUTPUT"',
+                ),
+            ),
+            (),
+        ),
+        ("evaluate", checkout_fields, checkout_with),
+        (
+            "evaluate",
+            (
+                ("name", "Evaluate one bounded live completion claim"),
+                ("run", "python3 scripts/completion_claim_live.py process"),
+            ),
+            (),
+        ),
+    ]
+    if _workflow_step_records(text) != expected_records:
+        raise LiveGateError("WORKFLOW_STEP_STRUCTURE_MISMATCH")
     required = (
         "pull_request_target:",
         "types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]",
@@ -1114,6 +1243,9 @@ def validate_workflow_text(text: str) -> None:
     }
     if any(expression not in allowed_expressions for expression in expressions):
         raise LiveGateError("UNTRUSTED_WORKFLOW_EXPRESSION")
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    if digest != WORKFLOW_SHA256:
+        raise LiveGateError("WORKFLOW_DIGEST_MISMATCH")
 
 
 class GitHubTransport:

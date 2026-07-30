@@ -39,7 +39,8 @@ The live adapter writes exact-head pending after minimal routing identity and
 before validating body size, structured references, changed files, issues, or
 history. At most 16 structured references are allowed; exact strings and issue
 numbers must be unique. Workflow actions and one-line commands are
-byte-canonical, and extra steps or command suffixes are rejected.
+structurally enumerated before the byte digest is checked. Unnamed, nested, or
+extra execution, step fields, block scalars, and command suffixes are rejected.
 
 ```completion-claims-v1
 {
