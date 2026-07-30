@@ -42,6 +42,7 @@ MAX_FILE_PAGES = 30
 MAX_ISSUES = 64
 MAX_ISSUE_DEPTH = 8
 MAX_HISTORY_FACTS = 128
+MAX_HISTORY_FILE_PAGES = 3
 MAX_BACKFILL_PRS = 100
 MAX_BACKFILL_PAGES = 2
 REQUEST_TIMEOUT_SECONDS = 10
@@ -210,10 +211,10 @@ def collect_changed_paths(
     pr_number: int,
     expected_count: int,
 ) -> list[str]:
-    """Collect the complete fixed-page changed-file set."""
+    """Collect the complete fixed-page changed-file set plus an empty sentinel."""
     _repository(repository)
-    if expected_count < 1:
-        raise LiveGateError("EMPTY_CHANGED_FILES")
+    if expected_count < 0:
+        raise LiveGateError("INVALID_CHANGED_COUNT")
     if expected_count > MAX_CHANGED_FILES:
         raise LiveGateError("FILE_LIMIT_EXCEEDED")
     page_count = (expected_count + FILES_PER_PAGE - 1) // FILES_PER_PAGE
@@ -235,6 +236,16 @@ def collect_changed_paths(
         for raw_file in raw_page:
             file_data = _object(raw_file, "INVALID_FILE_ENTRY")
             paths.append(_string(file_data.get("filename"), "INVALID_FILE_ENTRY"))
+    sentinel_endpoint = (
+        f"/repos/{repository}/pulls/{pr_number}/files"
+        f"?per_page={FILES_PER_PAGE}&page={page_count + 1}"
+    )
+    sentinel = _array(
+        transport.get(sentinel_endpoint),
+        "INVALID_FILES_RESPONSE",
+    )
+    if sentinel:
+        raise LiveGateError("EXTRA_CHANGED_PATHS")
     if len(paths) != expected_count:
         raise LiveGateError("FILE_COUNT_MISMATCH")
     if len(set(paths)) != len(paths):
@@ -244,6 +255,29 @@ def collect_changed_paths(
     except offline.GateInputError as exc:
         raise LiveGateError("INVALID_CHANGED_PATH") from exc
     return paths
+
+
+def _validated_issue(
+    value: object,
+    repository: str,
+    expected_number: int | None,
+    code: str,
+) -> int:
+    """Validate one same-repository open issue, excluding pull requests."""
+    issue = _object(value, code)
+    if "pull_request" in issue:
+        raise LiveGateError("ISSUE_IS_PULL_REQUEST")
+    number = _integer(issue.get("number"), code)
+    if number < 1:
+        raise LiveGateError(code)
+    if expected_number is not None and number != expected_number:
+        raise LiveGateError("ISSUE_NUMBER_MISMATCH")
+    if issue.get("state") != "open":
+        raise LiveGateError("ISSUE_NOT_OPEN")
+    expected_repository_url = f"{API_BASE}/repos/{repository}"
+    if issue.get("repository_url") != expected_repository_url:
+        raise LiveGateError("ISSUE_REPOSITORY_MISMATCH")
+    return number
 
 
 def derive_allowed_issue_refs(
@@ -270,33 +304,126 @@ def derive_allowed_issue_refs(
             chain_seen.add(current)
             allowed.add(current)
             issue_endpoint = f"/repos/{repository}/issues/{current}"
-            issue = _object(transport.get(issue_endpoint), "INVALID_ISSUE_RESPONSE")
-            if _integer(issue.get("number"), "INVALID_ISSUE_RESPONSE") != current:
-                raise LiveGateError("ISSUE_NUMBER_MISMATCH")
+            _validated_issue(
+                transport.get(issue_endpoint),
+                repository,
+                current,
+                "INVALID_ISSUE_RESPONSE",
+            )
             parent_endpoint = f"/repos/{repository}/issues/{current}/parent"
             raw_parent = transport.get(parent_endpoint, allow_not_found=True)
             if raw_parent is None:
                 current = None
             else:
-                parent = _object(raw_parent, "INVALID_ISSUE_PARENT")
-                current = _integer(parent.get("number"), "INVALID_ISSUE_PARENT")
-                if current < 1:
-                    raise LiveGateError("INVALID_ISSUE_PARENT")
+                current = _validated_issue(
+                    raw_parent,
+                    repository,
+                    None,
+                    "INVALID_ISSUE_PARENT",
+                )
             depth += 1
     if not declared.issubset(allowed):
         raise LiveGateError("ISSUE_OUTSIDE_HIERARCHY")
     return sorted(allowed)
 
 
-def _content_exists(
+def _content_blob_sha(
     transport: Transport,
     repository: str,
     sha: str,
     path: str,
-) -> bool:
+) -> str | None:
     encoded = parse.quote(path, safe="/")
     endpoint = f"/repos/{repository}/contents/{encoded}?ref={sha}"
-    return transport.get(endpoint, allow_not_found=True) is not None
+    raw = transport.get(endpoint, allow_not_found=True)
+    if raw is None:
+        return None
+    content = _object(raw, "INVALID_CONTENT_RESPONSE")
+    if content.get("type") != "file":
+        raise LiveGateError("INVALID_CONTENT_RESPONSE")
+    return _sha(content.get("sha"), "INVALID_CONTENT_BLOB")
+
+
+def _commit_parent_shas(commit: dict[str, object]) -> tuple[str, ...]:
+    parents = _array(commit.get("parents"), "INVALID_COMMIT_RESPONSE")
+    if len(parents) > 1:
+        raise LiveGateError("HISTORY_MERGE_UNSUPPORTED")
+    return tuple(
+        _sha(
+            _object(parent, "INVALID_COMMIT_PARENT").get("sha"),
+            "INVALID_COMMIT_PARENT",
+        )
+        for parent in parents
+    )
+
+
+def _collect_commit_files(
+    transport: Transport,
+    repository: str,
+    commit_sha: str,
+) -> tuple[tuple[str, ...], dict[str, tuple[str, str]]]:
+    """Read bounded commit-file pages through an explicit empty sentinel."""
+    parent_shas: tuple[str, ...] | None = None
+    files: dict[str, tuple[str, str]] = {}
+    for page in range(1, MAX_HISTORY_FILE_PAGES + 2):
+        endpoint = (
+            f"/repos/{repository}/commits/{commit_sha}"
+            f"?per_page={FILES_PER_PAGE}&page={page}"
+        )
+        commit = _object(
+            transport.get(endpoint),
+            "INVALID_COMMIT_RESPONSE",
+        )
+        if _sha(commit.get("sha"), "INVALID_COMMIT_RESPONSE") != commit_sha:
+            raise LiveGateError("HISTORY_COMMIT_MISMATCH")
+        current_parents = _commit_parent_shas(commit)
+        if parent_shas is None:
+            parent_shas = current_parents
+        elif current_parents != parent_shas:
+            raise LiveGateError("HISTORY_COMMIT_PAGE_MISMATCH")
+        raw_files = _array(commit.get("files"), "INVALID_COMMIT_FILES")
+        if len(raw_files) > FILES_PER_PAGE:
+            raise LiveGateError("HISTORY_FILE_PAGE_SIZE")
+        if page == MAX_HISTORY_FILE_PAGES + 1:
+            if raw_files:
+                raise LiveGateError("HISTORY_FILE_LIMIT_EXCEEDED")
+            break
+        for raw_file in raw_files:
+            file_data = _object(raw_file, "INVALID_COMMIT_FILE")
+            filename = _string(
+                file_data.get("filename"),
+                "INVALID_COMMIT_FILE",
+            )
+            try:
+                offline.sorted_path_digest([filename])
+            except offline.GateInputError as exc:
+                raise LiveGateError("INVALID_COMMIT_FILE") from exc
+            status = _string(file_data.get("status"), "INVALID_COMMIT_FILE")
+            if status not in {"added", "modified", "removed"}:
+                raise LiveGateError("UNSUPPORTED_COMMIT_FILE_STATUS")
+            blob_sha = _sha(file_data.get("sha"), "INVALID_COMMIT_FILE_BLOB")
+            if filename in files:
+                raise LiveGateError("DUPLICATE_COMMIT_FILE")
+            files[filename] = (status, blob_sha)
+        if not raw_files:
+            break
+    if parent_shas is None:
+        raise LiveGateError("INVALID_COMMIT_RESPONSE")
+    return parent_shas, files
+
+
+def _validate_parent_commit(
+    transport: Transport,
+    repository: str,
+    parent_sha: str,
+) -> None:
+    endpoint = (
+        f"/repos/{repository}/commits/{parent_sha}"
+        f"?per_page=1&page=1"
+    )
+    parent = _object(transport.get(endpoint), "INVALID_COMMIT_PARENT")
+    if _sha(parent.get("sha"), "INVALID_COMMIT_PARENT") != parent_sha:
+        raise LiveGateError("HISTORY_PARENT_MISMATCH")
 
 
 def derive_history_facts(
@@ -309,18 +436,35 @@ def derive_history_facts(
     if len(claims) > MAX_HISTORY_FACTS:
         raise LiveGateError("HISTORY_LIMIT_EXCEEDED")
     facts: list[dict[str, object]] = []
+    commit_cache: dict[
+        str,
+        tuple[tuple[str, ...], dict[str, tuple[str, str]]],
+    ] = {}
     for raw_claim in claims:
         claim = _object(raw_claim, "INVALID_HISTORY_CLAIMS")
         commit_sha = _sha(claim.get("commit_sha"), "INVALID_HISTORY_COMMIT")
         path = _string(claim.get("path"), "INVALID_HISTORY_PATH")
         action = _string(claim.get("action"), "INVALID_HISTORY_ACTION")
-        commit_endpoint = f"/repos/{repository}/commits/{commit_sha}"
-        commit = _object(transport.get(commit_endpoint), "INVALID_COMMIT_RESPONSE")
-        if _sha(commit.get("sha"), "INVALID_COMMIT_RESPONSE") != commit_sha:
-            raise LiveGateError("HISTORY_COMMIT_MISMATCH")
-        parents = _array(commit.get("parents"), "INVALID_COMMIT_RESPONSE")
-        if len(parents) > 1:
-            raise LiveGateError("HISTORY_MERGE_UNSUPPORTED")
+        if commit_sha not in commit_cache:
+            commit_cache[commit_sha] = _collect_commit_files(
+                transport,
+                repository,
+                commit_sha,
+            )
+        parent_shas, commit_files = commit_cache[commit_sha]
+        expected_file_status = {
+            "added": "added",
+            "modified": "modified",
+            "deleted": "removed",
+        }
+        if action not in expected_file_status:
+            raise LiveGateError("INVALID_HISTORY_ACTION")
+        file_evidence = commit_files.get(path)
+        if file_evidence is None:
+            raise LiveGateError("HISTORY_PATH_NOT_IN_COMMIT")
+        file_status, file_blob_sha = file_evidence
+        if file_status != expected_file_status[action]:
+            raise LiveGateError("HISTORY_COMMIT_STATUS_MISMATCH")
         if commit_sha != head_sha:
             compare_endpoint = (
                 f"/repos/{repository}/compare/{commit_sha}...{head_sha}"
@@ -331,41 +475,43 @@ def derive_history_facts(
             )
             if comparison.get("status") not in {"ahead", "identical"}:
                 raise LiveGateError("HISTORY_UNREACHABLE")
-        commit_exists = _content_exists(
+        commit_blob_sha = _content_blob_sha(
             transport,
             repository,
             commit_sha,
             path,
         )
-        if not parents:
+        if not parent_shas:
             if action != "added":
                 raise LiveGateError("HISTORY_ROOT_ACTION")
-            parent_exists = False
+            parent_blob_sha = None
         else:
-            parent = _object(parents[0], "INVALID_COMMIT_PARENT")
-            parent_sha = _sha(parent.get("sha"), "INVALID_COMMIT_PARENT")
-            parent_endpoint = f"/repos/{repository}/commits/{parent_sha}"
-            parent_data = _object(
-                transport.get(parent_endpoint),
-                "INVALID_COMMIT_PARENT",
-            )
-            if _sha(parent_data.get("sha"), "INVALID_COMMIT_PARENT") != parent_sha:
-                raise LiveGateError("HISTORY_PARENT_MISMATCH")
-            parent_exists = _content_exists(
+            parent_sha = parent_shas[0]
+            _validate_parent_commit(transport, repository, parent_sha)
+            parent_blob_sha = _content_blob_sha(
                 transport,
                 repository,
                 parent_sha,
                 path,
             )
-        expected = {
+        expected_existence = {
             "added": (False, True),
             "modified": (True, True),
             "deleted": (True, False),
-        }
-        if action not in expected:
-            raise LiveGateError("INVALID_HISTORY_ACTION")
-        if (parent_exists, commit_exists) != expected[action]:
+        }[action]
+        actual_existence = (
+            parent_blob_sha is not None,
+            commit_blob_sha is not None,
+        )
+        if actual_existence != expected_existence:
             raise LiveGateError("HISTORY_ACTION_MISMATCH")
+        if action == "modified" and parent_blob_sha == commit_blob_sha:
+            raise LiveGateError("HISTORY_BLOB_UNCHANGED")
+        observed_blob = (
+            parent_blob_sha if action == "deleted" else commit_blob_sha
+        )
+        if observed_blob != file_blob_sha:
+            raise LiveGateError("HISTORY_FILE_BLOB_MISMATCH")
         facts.append(
             {"commit_sha": commit_sha, "path": path, "action": action}
         )
@@ -656,12 +802,14 @@ def select_pr_numbers(
         if action not in PR_EVENT_TYPES:
             raise LiveGateError("UNSUPPORTED_EVENT")
         return [_event_pr_number(event)]
-    if event_name == "workflow_dispatch":
-        inputs = _object(event.get("inputs"), "INVALID_PR_NUMBER")
-        raw_number = _string(inputs.get("pr_number"), "INVALID_PR_NUMBER")
-        if PR_NUMBER_RE.fullmatch(raw_number) is None:
+    if event_name == "repository_dispatch":
+        if event.get("action") != "completion_claim_replay":
+            raise LiveGateError("UNSUPPORTED_EVENT")
+        payload = _object(event.get("client_payload"), "INVALID_PR_NUMBER")
+        number = _integer(payload.get("pr_number"), "INVALID_PR_NUMBER")
+        if number < 1:
             raise LiveGateError("INVALID_PR_NUMBER")
-        return [int(raw_number)]
+        return [number]
     if event_name == "push":
         if event.get("ref") != "refs/heads/main":
             raise LiveGateError("UNSUPPORTED_EVENT")
@@ -669,28 +817,18 @@ def select_pr_numbers(
     raise LiveGateError("UNSUPPORTED_EVENT")
 
 
-def run_event(
+def process_pr(
     transport: Transport,
     repository: str,
-    event_name: str,
-    event: dict[str, object],
+    pr_number: int,
     checker: Checker = offline.evaluate,
 ) -> int:
-    """Evaluate every bounded PR selected by the trusted event."""
-    try:
-        numbers = select_pr_numbers(
-            event_name,
-            event,
-            transport,
-            repository,
-        )
-    except LiveGateError:
-        return 1
-    result = 0
-    for number in numbers:
-        if evaluate_pr(transport, repository, number, checker) != 0:
-            result = 1
-    return result
+    """Evaluate exactly one matrix-selected pull request."""
+    if isinstance(pr_number, bool) or not isinstance(pr_number, int):
+        raise LiveGateError("INVALID_PR_NUMBER")
+    if pr_number < 1:
+        raise LiveGateError("INVALID_PR_NUMBER")
+    return evaluate_pr(transport, repository, pr_number, checker)
 
 
 def validate_workflow_text(text: str) -> None:
@@ -700,24 +838,34 @@ def validate_workflow_text(text: str) -> None:
         "types: [opened, reopened, synchronize, edited, ready_for_review, converted_to_draft]",
         "push:",
         "branches: [main]",
-        "workflow_dispatch:",
-        "contents: read",
-        "pull-requests: read",
-        "issues: read",
-        "statuses: write",
+        "repository_dispatch:",
+        "types: [completion_claim_replay]",
+        "permissions: {}",
+        "  discover:",
+        "  evaluate:",
+        "needs: discover",
+        "if: needs.discover.outputs.pr_numbers != '[]'",
+        "pr_number: ${{ fromJSON(needs.discover.outputs.pr_numbers) }}",
+        "group: completion-claim-live-${{ github.repository_id }}-${{ matrix.pr_number }}",
         "cancel-in-progress: true",
         "timeout-minutes: 5",
         "ref: ${{ github.workflow_sha }}",
         "persist-credentials: false",
         "fetch-depth: 1",
-        "python3 scripts/completion_claim_live.py",
+        'python3 scripts/completion_claim_live.py select >> "$GITHUB_OUTPUT"',
+        "python3 scripts/completion_claim_live.py process",
     )
     for token in required:
         if token not in text:
             raise LiveGateError("WORKFLOW_CONTRACT_MISMATCH")
-    if re.search(r"actions/checkout@[0-9a-f]{40}", text) is None:
+    checkout_pins = re.findall(r"actions/checkout@([0-9a-f]{40})", text)
+    if len(checkout_pins) != 2 or len(set(checkout_pins)) != 1:
         raise LiveGateError("WORKFLOW_CHECKOUT_NOT_PINNED")
     forbidden = (
+        "workflow_dispatch",
+        "github.event",
+        "github.head_ref",
+        "github.ref",
         "github.event.pull_request.head",
         "github.event.pull_request.merge",
         "actions/cache",
@@ -725,24 +873,79 @@ def validate_workflow_text(text: str) -> None:
         "upload-artifact",
         "persist-credentials: true",
         "statuses: read",
+        "permissions: write-all",
+        "permissions: read-all",
     )
     if any(token in text for token in forbidden):
         raise LiveGateError("WORKFLOW_FORBIDDEN_CAPABILITY")
-    permission_lines = {
-        line.strip()
-        for line in text.splitlines()
-        if re.fullmatch(r"[a-z-]+: (?:read|write)", line.strip())
-    }
-    if permission_lines != {
+    if text.count("ref: ${{ github.workflow_sha }}") != 2:
+        raise LiveGateError("WORKFLOW_CONTRACT_MISMATCH")
+    if text.count("persist-credentials: false") != 2:
+        raise LiveGateError("WORKFLOW_CONTRACT_MISMATCH")
+    if text.count("fetch-depth: 1") != 2:
+        raise LiveGateError("WORKFLOW_CONTRACT_MISMATCH")
+    if text.count("cancel-in-progress: true") != 1:
+        raise LiveGateError("WORKFLOW_CONTRACT_MISMATCH")
+
+    permission_headers = list(
+        re.finditer(r"(?m)^([ ]*)permissions:(.*)$", text)
+    )
+    if len(permission_headers) != 3:
+        raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+    if permission_headers[0].group(1) != "" or permission_headers[0].group(2) != " {}":
+        raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+
+    def permission_block(header: re.Match[str]) -> set[str]:
+        indent = len(header.group(1))
+        if header.group(2) != "":
+            raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+        entries: set[str] = set()
+        following = text[header.end() :].splitlines()
+        for line in following[1:]:
+            if not line.strip():
+                continue
+            line_indent = len(line) - len(line.lstrip(" "))
+            if line_indent <= indent:
+                break
+            if line_indent != indent + 2:
+                raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+            stripped = line.strip()
+            if re.fullmatch(r"[a-z-]+: (?:read|write)", stripped) is None:
+                raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+            entries.add(stripped)
+        return entries
+
+    if permission_headers[1].group(1) != "    ":
+        raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+    if permission_headers[2].group(1) != "    ":
+        raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+    if permission_block(permission_headers[1]) != {
+        "contents: read",
+        "pull-requests: read",
+    }:
+        raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
+    if permission_block(permission_headers[2]) != {
         "contents: read",
         "pull-requests: read",
         "issues: read",
         "statuses: write",
     }:
         raise LiveGateError("WORKFLOW_PERMISSION_MISMATCH")
-    for line in text.splitlines():
-        if line.lstrip().startswith("run:") and "${{" in line:
-            raise LiveGateError("UNTRUSTED_SHELL_EXPRESSION")
+
+    expressions = re.findall(r"\${{\s*(.*?)\s*}}", text, flags=re.DOTALL)
+    if text.count("${{") != len(expressions):
+        raise LiveGateError("WORKFLOW_EXPRESSION_MALFORMED")
+    allowed_expressions = {
+        "steps.select.outputs.pr_numbers",
+        "secrets.GITHUB_TOKEN",
+        "github.workflow_sha",
+        "needs.discover.outputs.pr_numbers != '[]'",
+        "fromJSON(needs.discover.outputs.pr_numbers)",
+        "github.repository_id",
+        "matrix.pr_number",
+    }
+    if any(expression not in allowed_expressions for expression in expressions):
+        raise LiveGateError("UNTRUSTED_WORKFLOW_EXPRESSION")
 
 
 class GitHubTransport:
@@ -759,7 +962,8 @@ class GitHubTransport:
         self._trusted_get = re.compile(
             rf"(?:pulls/{number}|"
             rf"pulls/{number}/files\?per_page=100&page={number}|"
-            rf"issues/{number}|issues/{number}/parent|commits/{sha}|"
+            rf"issues/{number}|issues/{number}/parent|"
+            rf"commits/{sha}(?:\?per_page=(?:1|100)&page={number})?|"
             rf"compare/{sha}\.\.\.{sha}|"
             rf"contents/[A-Za-z0-9%._~!$&'()*+,;=:@/-]+\?ref={sha}|"
             rf"pulls\?state=open&base=main&per_page=100&page={number})\Z"
@@ -847,22 +1051,46 @@ def _read_event(path: Path) -> dict[str, object]:
     return _object(value, "INVALID_EVENT")
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     """Run from the trusted workflow environment."""
     try:
-        event_name = _string(os.environ.get("GITHUB_EVENT_NAME"), "INVALID_EVENT")
+        arguments = sys.argv[1:] if argv is None else argv
+        if arguments not in (["select"], ["process"]):
+            raise LiveGateError("INVALID_MODE")
+        mode = arguments[0]
         repository = _repository(os.environ.get("GITHUB_REPOSITORY"))
-        event_path = Path(
-            _string(os.environ.get("GITHUB_EVENT_PATH"), "INVALID_EVENT")
-        )
         token = _string(os.environ.get("GITHUB_TOKEN"), "MISSING_TOKEN")
-        event = _read_event(event_path)
         transport = GitHubTransport(token, repository)
-        return run_event(
+        if mode == "select":
+            event_name = _string(
+                os.environ.get("GITHUB_EVENT_NAME"),
+                "INVALID_EVENT",
+            )
+            event_path = Path(
+                _string(os.environ.get("GITHUB_EVENT_PATH"), "INVALID_EVENT")
+            )
+            event = _read_event(event_path)
+            numbers = select_pr_numbers(
+                event_name,
+                event,
+                transport,
+                repository,
+            )
+            print(
+                "pr_numbers="
+                + json.dumps(numbers, separators=(",", ":"))
+            )
+            return 0
+        raw_number = _string(
+            os.environ.get("COMPLETION_CLAIM_PR_NUMBER"),
+            "INVALID_PR_NUMBER",
+        )
+        if PR_NUMBER_RE.fullmatch(raw_number) is None:
+            raise LiveGateError("INVALID_PR_NUMBER")
+        return process_pr(
             transport,
             repository,
-            event_name,
-            event,
+            int(raw_number),
         )
     except LiveGateError as exc:
         code = sanitize_diagnostic(exc.code)

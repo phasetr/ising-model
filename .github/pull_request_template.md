@@ -31,6 +31,10 @@ this body. Write comparisons in words and use ordinary Markdown links.
 The advisory `completion-claim/live` status binds mechanical evidence to the
 exact head. It does not replace source review, issue audit, semantic review,
 or reviewer-independence review.
+Pull-request events, main backfill, and default-branch replay share one
+per-pull-request matrix cancellation domain. Cancellation is not an atomic
+guard for a status request already in flight, so status residue remains
+advisory and requires human review.
 
 ```completion-claims-v1
 {

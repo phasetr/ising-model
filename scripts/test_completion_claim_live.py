@@ -131,8 +131,12 @@ class FakeTransport:
         self.fail_post_at: set[int] = set()
         self.file_overrides: dict[int, list[dict[str, str]]] = {}
         self.commit_data: dict[str, dict[str, object]] = {}
+        self.commit_files: dict[str, list[dict[str, str]]] = {}
         self.content_exists: set[tuple[str, str]] = set()
+        self.content_blobs: dict[tuple[str, str], str] = {}
         self.compare_status: dict[tuple[str, str], str] = {}
+        self.issue_overrides: dict[int, dict[str, object]] = {}
+        self.parent_overrides: dict[int, object] = {}
 
     def get(self, path: str, *, allow_not_found: bool = False) -> object:
         """Return one scripted response."""
@@ -162,24 +166,49 @@ class FakeTransport:
             number = int(issue_match.group(1))
             if number not in self.parents:
                 raise live.LiveGateError("ISSUE_NOT_FOUND")
-            return {"number": number, "repository_url": "trusted"}
+            return copy.deepcopy(
+                self.issue_overrides.get(
+                    number,
+                    {
+                        "number": number,
+                        "state": "open",
+                        "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+                    },
+                )
+            )
         parent_match = re.fullmatch(
             r"/repos/phasetr/ising-model/issues/([1-9][0-9]*)/parent", path
         )
         if parent_match:
             number = int(parent_match.group(1))
+            if number in self.parent_overrides:
+                return copy.deepcopy(self.parent_overrides[number])
             parent = self.parents.get(number)
             if parent is None:
                 return None
-            return {"number": parent}
+            return {
+                "number": parent,
+                "state": "open",
+                "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+            }
         commit_match = re.fullmatch(
-            r"/repos/phasetr/ising-model/commits/([0-9a-f]{40})", path
+            r"/repos/phasetr/ising-model/commits/([0-9a-f]{40})"
+            r"(?:\?per_page=(1|100)&page=([1-9][0-9]*))?",
+            path,
         )
         if commit_match:
             sha = commit_match.group(1)
             if sha not in self.commit_data:
                 raise live.LiveGateError("COMMIT_NOT_FOUND")
-            return copy.deepcopy(self.commit_data[sha])
+            response = copy.deepcopy(self.commit_data[sha])
+            if commit_match.group(2) is not None:
+                per_page = int(commit_match.group(2))
+                page = int(commit_match.group(3))
+                start = (page - 1) * per_page
+                response["files"] = copy.deepcopy(
+                    self.commit_files.get(sha, [])[start : start + per_page]
+                )
+            return response
         compare_match = re.fullmatch(
             r"/repos/phasetr/ising-model/compare/([0-9a-f]{40})"
             r"\.\.\.([0-9a-f]{40})",
@@ -194,8 +223,11 @@ class FakeTransport:
         )
         if content_match:
             key = (content_match.group(2), content_match.group(1))
+            if key in self.content_blobs:
+                return {"type": "file", "sha": self.content_blobs[key]}
             if key in self.content_exists:
-                return {"type": "file"}
+                blob = "5" * 40 if key[0] == HISTORY_SHA else "6" * 40
+                return {"type": "file", "sha": blob}
             if allow_not_found:
                 return None
             raise live.LiveGateError("CONTENT_NOT_FOUND")
@@ -328,6 +360,13 @@ class FixtureTest(unittest.TestCase):
             "sha": parent_sha,
             "parents": [],
         }
+        transport.commit_files[commit_sha] = [
+            {
+                "filename": path,
+                "status": "modified",
+                "sha": "5" * 40,
+            }
+        ]
         transport.compare_status[(commit_sha, HEAD_SHA)] = "ahead"
         transport.content_exists.update(
             {(parent_sha, path), (commit_sha, path)}
@@ -362,19 +401,31 @@ class RoutingTest(unittest.TestCase):
         with self.assertRaisesRegex(live.LiveGateError, "UNSUPPORTED_EVENT"):
             live.select_pr_numbers("pull_request_target", event, self.transport, REPOSITORY)
 
-    def test_dispatch_accepts_only_positive_decimal(self) -> None:
-        event = {"inputs": {"pr_number": "4805"}}
+    def test_repository_dispatch_accepts_only_positive_integer(self) -> None:
+        event = {
+            "action": "completion_claim_replay",
+            "client_payload": {"pr_number": 4805},
+        }
         self.assertEqual(
-            live.select_pr_numbers("workflow_dispatch", event, self.transport, REPOSITORY),
+            live.select_pr_numbers(
+                "repository_dispatch", event, self.transport, REPOSITORY
+            ),
             [4805],
         )
-        for value in ["", "0", "-1", "1.0", " 1", "1 ", "x", "01"]:
+        for value in [None, "", 0, -1, 1.0, "4805", True]:
             with self.subTest(value=value):
-                event["inputs"]["pr_number"] = value
+                event["client_payload"]["pr_number"] = value
                 with self.assertRaisesRegex(live.LiveGateError, "INVALID_PR_NUMBER"):
                     live.select_pr_numbers(
-                        "workflow_dispatch", event, self.transport, REPOSITORY
+                        "repository_dispatch", event, self.transport, REPOSITORY
                     )
+        with self.assertRaisesRegex(live.LiveGateError, "UNSUPPORTED_EVENT"):
+            live.select_pr_numbers(
+                "workflow_dispatch",
+                {"inputs": {"pr_number": "4805"}},
+                self.transport,
+                REPOSITORY,
+            )
 
     def test_main_push_backfill_is_bounded_and_complete(self) -> None:
         self.transport.backfill = list(range(1, live.MAX_BACKFILL_PRS + 1))
@@ -388,6 +439,16 @@ class RoutingTest(unittest.TestCase):
             live.select_pr_numbers(
                 "push", {"ref": "refs/heads/main"}, self.transport, REPOSITORY
             )
+        self.transport.backfill = []
+        self.assertEqual(
+            live.select_pr_numbers(
+                "push",
+                {"ref": "refs/heads/main"},
+                self.transport,
+                REPOSITORY,
+            ),
+            [],
+        )
 
     def test_actor_never_bypasses_routing(self) -> None:
         for actor in ["phasetr", "dependabot[bot]", "github-actions[bot]"]:
@@ -407,6 +468,13 @@ class RoutingTest(unittest.TestCase):
             ("push", {"ref": "refs/heads/topic"}),
             ("pull_request", {"action": "opened"}),
             ("schedule", {}),
+            (
+                "repository_dispatch",
+                {
+                    "action": "other",
+                    "client_payload": {"pr_number": 4805},
+                },
+            ),
         ]:
             with self.subTest(name=name):
                 with self.assertRaisesRegex(live.LiveGateError, "UNSUPPORTED_EVENT"):
@@ -421,13 +489,43 @@ class RoutingTest(unittest.TestCase):
 class PaginationTest(unittest.TestCase):
     def collect(self, count: int) -> list[str]:
         paths = [f"p/{index:04d}.txt" for index in range(count)]
-        transport = FakeTransport([pr_data(paths)], paths)
+        transport = FakeTransport([pr_data(paths or ["placeholder"])], paths)
         return live.collect_changed_paths(transport, REPOSITORY, 4805, count)
 
     def test_boundaries_one_hundred_one_and_three_thousand(self) -> None:
         for count in [1, 100, 101, 3000]:
             with self.subTest(count=count):
                 self.assertEqual(len(self.collect(count)), count)
+
+    def test_zero_count_queries_sentinel_before_failing_empty(self) -> None:
+        transport = FakeTransport([pr_data(["placeholder"])], [])
+        with self.assertRaisesRegex(live.LiveGateError, "INVALID_CHANGED_PATH"):
+            live.collect_changed_paths(transport, REPOSITORY, 4805, 0)
+        self.assertEqual(
+            transport.gets,
+            [f"/repos/{REPOSITORY}/pulls/4805/files?per_page=100&page=1"],
+        )
+
+    def test_fixed_sentinel_rejects_underreported_metadata(self) -> None:
+        for count in [0, 1, 100, 101, 3000]:
+            with self.subTest(count=count):
+                paths = [f"p/{index:04d}.txt" for index in range(count)]
+                transport = FakeTransport(
+                    [pr_data(paths or ["placeholder"])],
+                    paths,
+                )
+                sentinel = (count + live.FILES_PER_PAGE - 1) // live.FILES_PER_PAGE + 1
+                transport.file_overrides[sentinel] = [{"filename": "unreported.txt"}]
+                with self.assertRaisesRegex(
+                    live.LiveGateError,
+                    "EXTRA_CHANGED_PATHS",
+                ):
+                    live.collect_changed_paths(
+                        transport,
+                        REPOSITORY,
+                        4805,
+                        count,
+                    )
 
     def test_three_thousand_one_is_rejected_without_fetching(self) -> None:
         transport = FakeTransport([pr_data(["x"])], ["x"])
@@ -483,6 +581,43 @@ class ContextDerivationTest(unittest.TestCase):
             transport.gets,
         )
 
+    def test_issue_authority_rejects_pr_closed_cross_repo_and_invalid_parent(self) -> None:
+        paths = ["scripts/example.py"]
+        body = managed_body(paths)
+        invalid_issues = [
+            {
+                "number": 4801,
+                "state": "open",
+                "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+                "pull_request": {"url": "untrusted"},
+            },
+            {
+                "number": 4801,
+                "state": "closed",
+                "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+            },
+            {
+                "number": 4801,
+                "state": "open",
+                "repository_url": f"{live.API_BASE}/repos/other/project",
+            },
+        ]
+        for issue in invalid_issues:
+            with self.subTest(issue=issue):
+                transport = FakeTransport([pr_data(paths)], paths)
+                transport.issue_overrides[4801] = issue
+                with self.assertRaises(live.LiveGateError):
+                    live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+        transport = FakeTransport([pr_data(paths)], paths)
+        transport.parent_overrides[4801] = {
+            "number": 4796,
+            "state": "open",
+            "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+            "pull_request": {"url": "untrusted"},
+        }
+        with self.assertRaises(live.LiveGateError):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+
     def test_issue_depth_count_and_history_count_are_bounded(self) -> None:
         paths = ["scripts/example.py"]
         body = managed_body(paths)
@@ -513,6 +648,17 @@ class ContextDerivationTest(unittest.TestCase):
             "parents": [{"sha": PARENT_SHA}],
         }
         transport.commit_data[PARENT_SHA] = {"sha": PARENT_SHA, "parents": []}
+        transport.commit_files[HISTORY_SHA] = [
+            {
+                "filename": path,
+                "status": {
+                    "added": "added",
+                    "modified": "modified",
+                    "deleted": "removed",
+                }[action],
+                "sha": ("6" if action == "deleted" else "5") * 40,
+            }
+        ]
         transport.compare_status[(HISTORY_SHA, HEAD_SHA)] = "ahead"
         return transport, [claim]
 
@@ -535,6 +681,117 @@ class ContextDerivationTest(unittest.TestCase):
                     ),
                     claims,
                 )
+
+    def test_history_reviewer_repro_rejects_unrelated_and_unchanged_blob(self) -> None:
+        path = "scripts/example.py"
+        transport, claims = self.history_transport("modified")
+        transport.commit_files[HISTORY_SHA] = [
+            {
+                "filename": "scripts/unrelated.py",
+                "status": "modified",
+                "sha": "5" * 40,
+            }
+        ]
+        transport.content_blobs[(PARENT_SHA, path)] = "5" * 40
+        transport.content_blobs[(HISTORY_SHA, path)] = "5" * 40
+        with self.assertRaises(live.LiveGateError):
+            live.derive_history_facts(transport, REPOSITORY, HEAD_SHA, claims)
+
+        transport, claims = self.history_transport("modified")
+        transport.content_blobs[(PARENT_SHA, path)] = "5" * 40
+        transport.content_blobs[(HISTORY_SHA, path)] = "5" * 40
+        with self.assertRaisesRegex(live.LiveGateError, "HISTORY_BLOB_UNCHANGED"):
+            live.derive_history_facts(transport, REPOSITORY, HEAD_SHA, claims)
+
+    def test_history_commit_files_use_bounded_pages_and_empty_sentinel(self) -> None:
+        path = "scripts/example.py"
+        transport, claims = self.history_transport("modified")
+        transport.commit_files[HISTORY_SHA] = [
+            {"filename": path, "status": "modified", "sha": "5" * 40}
+        ] + [
+            {
+                "filename": f"scripts/other-{index:03d}.py",
+                "status": "modified",
+                "sha": f"{index + 10:040x}",
+            }
+            for index in range(99)
+        ]
+        transport.content_exists.update(
+            {(PARENT_SHA, path), (HISTORY_SHA, path)}
+        )
+        self.assertEqual(
+            live.derive_history_facts(
+                transport,
+                REPOSITORY,
+                HEAD_SHA,
+                claims,
+            ),
+            claims,
+        )
+        self.assertIn(
+            f"/repos/{REPOSITORY}/commits/{HISTORY_SHA}?per_page=100&page=2",
+            transport.gets,
+        )
+
+        transport, claims = self.history_transport("modified")
+        transport.commit_files[HISTORY_SHA] = [
+            {
+                "filename": f"scripts/file-{index:03d}.py",
+                "status": "modified",
+                "sha": f"{index + 10:040x}",
+            }
+            for index in range(live.MAX_HISTORY_FILE_PAGES * 100 + 1)
+        ]
+        with self.assertRaisesRegex(
+            live.LiveGateError,
+            "HISTORY_FILE_LIMIT_EXCEEDED",
+        ):
+            live.derive_history_facts(
+                transport,
+                REPOSITORY,
+                HEAD_SHA,
+                claims,
+            )
+
+    def test_history_blob_must_match_commit_file_evidence(self) -> None:
+        path = "scripts/example.py"
+        for action, parent_blob, commit_blob in [
+            ("added", None, "7" * 40),
+            ("modified", "6" * 40, "7" * 40),
+            ("deleted", "7" * 40, None),
+        ]:
+            with self.subTest(action=action):
+                transport, claims = self.history_transport(action)
+                if parent_blob is not None:
+                    transport.content_blobs[(PARENT_SHA, path)] = parent_blob
+                if commit_blob is not None:
+                    transport.content_blobs[(HISTORY_SHA, path)] = commit_blob
+                with self.assertRaisesRegex(
+                    live.LiveGateError,
+                    "HISTORY_FILE_BLOB_MISMATCH",
+                ):
+                    live.derive_history_facts(
+                        transport,
+                        REPOSITORY,
+                        HEAD_SHA,
+                        claims,
+                    )
+
+    def test_history_rejects_wrong_or_unsupported_commit_file_status(self) -> None:
+        for status in ["added", "removed", "renamed", "copied", "unchanged", "unknown"]:
+            with self.subTest(status=status):
+                transport, claims = self.history_transport("modified")
+                transport.commit_files[HISTORY_SHA][0]["status"] = status
+                transport.content_exists.update(
+                    {(PARENT_SHA, "scripts/example.py"), (HISTORY_SHA, "scripts/example.py")}
+                )
+                with self.assertRaises(live.LiveGateError):
+                    live.derive_history_facts(
+                        transport,
+                        REPOSITORY,
+                        HEAD_SHA,
+                        claims,
+                    )
 
     def test_history_rejects_unreachable_merge_and_invalid_root_action(self) -> None:
         transport, claims = self.history_transport("modified")
@@ -916,6 +1173,14 @@ class WorkflowSecurityTest(unittest.TestCase):
 
     def test_static_workflow_contract(self) -> None:
         live.validate_workflow_text(self.text)
+        self.assertNotIn("workflow_dispatch", self.text)
+        self.assertIn("repository_dispatch:", self.text)
+        self.assertIn("types: [completion_claim_replay]", self.text)
+        self.assertIn("matrix.pr_number", self.text)
+        self.assertIn("github.repository_id", self.text)
+        self.assertEqual(self.text.count("cancel-in-progress: true"), 1)
+        self.assertEqual(self.text.count("ref: ${{ github.workflow_sha }}"), 2)
+        self.assertEqual(self.text.count("persist-credentials: false"), 2)
         self.assertIn("contents: read", self.text)
         self.assertIn("pull-requests: read", self.text)
         self.assertIn("issues: read", self.text)
@@ -944,6 +1209,7 @@ class WorkflowSecurityTest(unittest.TestCase):
             ("persist-credentials: false", "persist-credentials: true"),
             ("cancel-in-progress: true", "cancel-in-progress: false"),
             ("actions/checkout@", "actions/checkout@v"),
+            ("matrix.pr_number", "github.event_name"),
         ]
         for old, new in mutations:
             with self.subTest(old=old):
@@ -951,10 +1217,41 @@ class WorkflowSecurityTest(unittest.TestCase):
                 with self.assertRaises(live.LiveGateError):
                     live.validate_workflow_text(self.text.replace(old, new, 1))
 
-    def test_no_untrusted_expression_appears_in_shell(self) -> None:
-        for line in self.text.splitlines():
-            if line.lstrip().startswith("run:"):
-                self.assertNotIn("${{", line)
+    def test_scalar_extra_permissions_and_multiline_event_expression_fail(self) -> None:
+        for mutation in [
+            self.text + "\npermissions: write-all\n",
+            self.text.replace("permissions: {}", "permissions: read-all", 1),
+            self.text.replace("permissions: {}", "permissions: {contents: write}", 1),
+            self.text.replace(
+                "      statuses: write",
+                "      statuses: write\n      actions: write",
+                1,
+            ),
+            self.text
+            + "\n  injected:\n    runs-on: ubuntu-latest\n"
+            + "    steps:\n      - run: |\n"
+            + "          echo \"${{ github.event.pull_request.title }}\"\n",
+            self.text
+            + "\n  injected:\n    runs-on: ubuntu-latest\n"
+            + "    steps:\n      - run: |\n"
+            + "          echo \"${{ github.head_ref }}\"\n",
+        ]:
+            with self.assertRaises(live.LiveGateError):
+                live.validate_workflow_text(mutation)
+
+    def test_all_events_share_one_pr_matrix_concurrency_key(self) -> None:
+        expected = (
+            "completion-claim-live-${{ github.repository_id }}-"
+            "${{ matrix.pr_number }}"
+        )
+        self.assertIn(expected, self.text)
+        for stale_key in [
+            "github.event_name",
+            "github.run_id",
+            "main-backfill",
+            "inputs.pr_number",
+        ]:
+            self.assertNotIn(stale_key, self.text)
 
 
 class WiringTest(unittest.TestCase):
@@ -983,6 +1280,52 @@ class WiringTest(unittest.TestCase):
         self.assertFalse(called & forbidden_calls)
         self.assertNotIn("importlib", source)
         self.assertNotIn("pickle", source)
+
+    def test_adapter_selects_then_processes_exactly_one_pr_without_status_loop(self) -> None:
+        source = LIVE_PATH.read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        functions = {
+            node.name: node
+            for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        self.assertIn("select_pr_numbers", functions)
+        self.assertIn("process_pr", functions)
+        self.assertNotIn("run_event", functions)
+        process_source = ast.get_source_segment(source, functions["process_pr"])
+        assert process_source is not None
+        self.assertNotIn("for ", process_source)
+
+    def test_cli_modes_emit_matrix_json_or_process_one_number(self) -> None:
+        paths = ["scripts/example.py"]
+        transport = FakeTransport([pr_data(paths)], paths)
+        event = {"action": "opened", "pull_request": {"number": 4805}}
+        environment = {
+            "GITHUB_REPOSITORY": REPOSITORY,
+            "GITHUB_TOKEN": "token",
+            "GITHUB_EVENT_NAME": "pull_request_target",
+            "GITHUB_EVENT_PATH": "event.json",
+        }
+        with (
+            mock.patch.dict(os.environ, environment, clear=True),
+            mock.patch.object(live, "GitHubTransport", return_value=transport),
+            mock.patch.object(live, "_read_event", return_value=event),
+            mock.patch("builtins.print") as print_mock,
+        ):
+            self.assertEqual(live.main(["select"]), 0)
+            print_mock.assert_called_once_with("pr_numbers=[4805]")
+        process_environment = {
+            "GITHUB_REPOSITORY": REPOSITORY,
+            "GITHUB_TOKEN": "token",
+            "COMPLETION_CLAIM_PR_NUMBER": "4805",
+        }
+        with (
+            mock.patch.dict(os.environ, process_environment, clear=True),
+            mock.patch.object(live, "GitHubTransport", return_value=transport),
+            mock.patch.object(live, "process_pr", return_value=0) as process_mock,
+        ):
+            self.assertEqual(live.main(["process"]), 0)
+            process_mock.assert_called_once_with(transport, REPOSITORY, 4805)
 
 
 if __name__ == "__main__":

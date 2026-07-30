@@ -23,23 +23,25 @@ required-check policy remains in #4802.
 The isolated `.github/workflows/completion_claim_live.yml` workflow runs for
 the exact `pull_request_target` actions `opened`, `reopened`, `synchronize`,
 `edited`, `ready_for_review`, and `converted_to_draft`. A `main` push performs
-a bounded open-pull-request backfill, and manual dispatch accepts one positive
-decimal pull-request number. Actor identity never bypasses evaluation.
+a bounded open-pull-request backfill. A default-branch-only
+`repository_dispatch` event of type `completion_claim_replay` accepts one
+positive integer in `client_payload.pr_number`; branch-selectable
+`workflow_dispatch` is intentionally absent. Actor identity never bypasses
+evaluation.
 
-The workflow has exactly these permissions:
-
-- `contents: read`
-- `pull-requests: read`
-- `issues: read`
-- `statuses: write`
+The discovery job has only `contents: read` and `pull-requests: read`.
+It emits a bounded JSON array of pull-request numbers and cannot write a
+status. The matrix evaluation job adds only `issues: read` and
+`statuses: write`. Workflow-level permissions are empty.
 
 It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
 action, one-commit depth, and credential persistence disabled. It never checks
 out or executes the pull-request head, merge revision, fork content, artifact,
 cache, dependency installer, or candidate-supplied action. Concurrency is
-cancelled per repository and pull-request selection so an older active run
-cannot overwrite a newer terminal observation. Cancelled pending residue is
-fail-shut, not merge authority.
+keyed only by repository ID and matrix pull-request number. Pull-request
+events, main backfill, and replay therefore use the same cancellation domain.
+The adapter selection phase never writes status and each matrix process
+evaluates exactly one pull request.
 
 ### Live snapshot and bounds
 
@@ -53,28 +55,40 @@ path digest must remain exactly equal. A mismatch writes `failure` to the P1
 head; a newer event owns the newer body or head.
 
 Changed files use fixed 100-entry pages. Metadata, page sizes, unique paths,
-and the collected count must agree exactly. At most 30 pages and 3,000 paths
-are accepted; 3,001 paths, a missing or extra entry, a duplicate, an
-incomplete page, or a partial digest is rejected. The body and derived context
-are each limited to one MiB, each API response to two MiB, structural issue
-ancestry to 64 issues and depth 8, history to 128 facts, push backfill to 100
-pull requests, diagnostics to 8,192 bytes, and HTTP attempts to one request
-plus two bounded retries. Oversize and truncation never produce partial
-acceptance.
+and the collected count must agree exactly. The adapter always requests the
+next fixed sentinel page after the expected entries, including metadata counts
+0, 100, and 3,000, and requires that page to be empty. At most 30 data pages
+and 3,000 paths are accepted; 3,001 paths, underreported metadata, a missing or
+extra entry, a duplicate, an incomplete page, or a partial digest is rejected.
+The body and derived context are each limited to one MiB, each API response to
+two MiB, structural issue ancestry to 64 issues and depth 8, history to 128
+facts, each cited commit to three 100-file data pages plus an empty sentinel,
+push backfill to 100 pull requests, diagnostics to 8,192 bytes, and HTTP
+attempts to one request plus two bounded retries. Oversize and truncation
+never produce partial acceptance.
 
 Issue authority begins only with `Refs` entries in the managed JSON. Each seed
-issue and its parent chain are read through structural issue endpoints;
-unrestricted prose cannot widen the allowlist. Structured history is likewise
-derived from the requested commit, its sole parent, ancestry comparison, and
-repository-content existence at the commit and parent. Merge commits and
-unreachable history are rejected. Matching those facts does not certify their
-natural-language relevance, which remains human review.
+issue and every formal parent must be an open, same-repository issue rather
+than a pull request. The chain is read through structural issue-parent
+endpoints; unrestricted prose cannot widen the allowlist. Structured history
+is derived from bounded commit-file pages, the requested commit, its sole
+parent, ancestry comparison, and exact repository blob identities. The cited
+path must have matching `added`, `modified`, or `removed` commit-file status.
+Modified content must exist on both sides with distinct blob SHAs; added and
+removed content must have the matching existence transition and blob identity.
+Unchanged, unrelated, renamed, copied, unknown, merge, and unreachable history
+is rejected. Matching those facts does not certify natural-language relevance,
+which remains human review.
 
 The same-head body-edit interval before `pending` and production commit-status
 behavior for a fork-owned head remain documented canary questions for #4802.
-Mocked tests exercise both shapes but cannot turn either production behavior
-into a proven fact. #4801 remains open after the code merge until bounded
-backfill and real same-repository and fork observations are recorded.
+Per-PR concurrency prevents independent active jobs from intentionally writing
+in different event-specific groups, but it is not an atomic compare-and-set
+for an HTTP status request already issued when cancellation begins. Such
+cancelled-run residue remains a residual race and never becomes semantic or
+merge authority. Mocked tests exercise these shapes but cannot turn production
+behavior into a proven fact. #4801 remains open after the code merge until
+bounded backfill and real same-repository and fork observations are recorded.
 
 ## Inputs
 
