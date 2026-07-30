@@ -50,13 +50,18 @@ forbidden words and conservative whole-body policy are listed in
 `docs/completion-claims.md`.
 Do not use a less-than character, raw HTML, or an angle autolink anywhere in
 this body. Write comparisons in words and use ordinary Markdown links.
-The advisory `completion-claim/live` status binds mechanical evidence to the
-exact head. It does not replace source review, issue audit, semantic review,
-or reviewer-independence review.
+Under active ruleset `14892885`, `build` and `completion-claim/live` from
+integration ID `15368` are mechanically required for pull requests targeting
+`main`, with strict latest-base policy and no bypass actors. Integration
+binding does not authenticate a particular workflow file, trigger, or matrix
+producer. A successful `completion-claim/live` status binds mechanical
+evidence to the exact head but remains semantically non-authoritative. It does
+not replace source review, issue audit, semantic review, or
+reviewer-independence review.
 Pull-request events, main backfill, and default-branch replay share one
 per-pull-request matrix cancellation domain. Cancellation is not an atomic
 guard for a status request already in flight, so status residue remains
-advisory and requires human review.
+operational evidence requiring human review under #4801.
 The live adapter writes exact-head pending after minimal routing identity and
 before validating body size, structured references, changed files, issues, or
 history. At most 16 structured references are allowed; exact strings and issue
