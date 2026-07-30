@@ -18,6 +18,11 @@
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
+# The fully-qualified IsingModel-glob repair was measured against fixed base
+# a09267ce over all 10606 declarations: the 18 fixture verdicts stay unchanged,
+# citation evidence removes 0 and adds exactly 20 shorthand / 0 exact charges,
+# verdict changes and unsafe movements are both 0, and family labels move
+# 378 -> 387 by adding exactly the nine wide qualified-token sites.
 # Last move: the narrow-glob repair (a glob/ellipsis citation naming at most
 # MAX_CHARGED_GLOB_MATCHES = 10 declarations is charged to all of them instead of
 # being attributed to nobody) took 3 candidates out of safe-to-delete, 2 into
