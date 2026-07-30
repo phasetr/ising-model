@@ -13,9 +13,9 @@ that product gives the bound
 
 `(Finset.Nat.antidiagonalTuple k ℓ).card ≤ (ℓ + 1) ^ k`.
 
-This is the composition-count ("stars and bars") factor used in the Glimm–Jaffe §17.6.1 field
-cluster-expansion source-configuration fiber count (F5a-2a).  It is purely arithmetic and depends
-only on mathlib, so it is kept in its own reusable file.
+This is the composition-count ("stars and bars") factor used in the project's field
+cluster-expansion source-configuration fiber count (F5a-2a).  It is purely arithmetic
+and depends only on mathlib, so it is kept in its own reusable file.
 
 ## References
 
