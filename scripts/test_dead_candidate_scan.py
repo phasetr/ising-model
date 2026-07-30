@@ -415,6 +415,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
         "{beta_zero,J_zero_of_pairwise_distinct}"
     )
     NONPOS_TOKEN = "truncated3/4Infinite_latticeGraph_{nonpos{,_h_zero}}"
+    PREFIX = "truncated3/4Infinite_latticeGraph_"
     TOKENS = [BETA_TOKEN, NONPOS_TOKEN]
     BRACE_ONLY = {
         BETA_TOKEN: sorted(
@@ -478,6 +479,26 @@ class SlashAlternationCitationTest(unittest.TestCase):
         "truncated3/4Infinite_latticeGraph_{,beta_zero}",
         "truncated3/4Infinite_latticeGraph_{beta_zero,}",
         "truncated3/4Infinite_latticeGraph_{}",
+    ]
+    UNSUPPORTED_PAYLOAD_TOKENS = MALFORMED_OUTER_ALTERNATIVES + [
+        PREFIX + "{nonpos{,,_h_zero}}",
+        PREFIX + "{nonpos{,_h_zero,}}",
+        PREFIX + "{nonpos{}}",
+        PREFIX + "{{beta_zero}}",
+        PREFIX + "{{}}",
+        PREFIX + "{beta_zero,{}}",
+        PREFIX + "{beta_zero,{,J_zero_of_pairwise_distinct}}",
+        PREFIX + "{beta_zero,{J_zero_of_pairwise_distinct,}}",
+        PREFIX + "{nonpos{,_h_zero}{}}",
+        PREFIX + "{beta_zero,J_zero_of_pairwise_distinct,nonpos}",
+        PREFIX + "{J_zero_of_pairwise_distinct,beta_zero}",
+        PREFIX
+        + "{beta_zero,J_zero_of_pairwise_distinct}"
+        + "{nonpos{,_h_zero}}",
+        PREFIX + "{nonpos{,{,_h_zero}}}",
+        PREFIX + "{" + "a" * 74 + "}",
+        PREFIX
+        + "{beta_zero,J_zero_of_pairwise_distinct,nonpos,nonpos_h_zero}",
     ]
     NON_CITATIONS = [
         "https://example.test/truncated3/4Infinite_latticeGraph_beta_zero",
@@ -617,6 +638,42 @@ class SlashAlternationCitationTest(unittest.TestCase):
             {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
             {name: [] for name in self.TARGETS},
         )
+
+    def test_only_the_two_observed_payloads_are_supported(self) -> None:
+        """Balanced BNF lookalikes and every budget violation remain inert."""
+        self.assertLessEqual(max(map(len, self.TOKENS)), 73)
+        for token in self.TOKENS:
+            self.assertEqual(len(self.EXPANDED[token]), 4, token)
+        for token in self.UNSUPPORTED_PAYLOAD_TOKENS:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_unsupported_payloads_charge_no_declaration(self) -> None:
+        """No rejected payload may exact-publish or fragment-charge any result."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.UNSUPPORTED_PAYLOAD_TOKENS, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=decl.full, decl=decl)
+            for decl in real_tree.decls
+            if not decl.anonymous
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        charged = [
+            (verdict.decl.full, verdict.doc_citations)
+            for verdict in verdicts
+            if verdict.doc_citations
+        ]
+        self.assertEqual(charged, [])
 
 
 class SpacedBraceCitationTest(unittest.TestCase):
