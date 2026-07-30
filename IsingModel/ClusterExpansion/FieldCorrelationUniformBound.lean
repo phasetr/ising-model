@@ -39,10 +39,11 @@ exhaustion precisely when `Δ = G.maxDegree` stays bounded along it: for a latti
 exhaustion `Δ = 2d` is constant, so the constants freeze and the bound is
 genuinely exhaustion-uniform (the property F5b/F6 build on).
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
-Theorem 17.6.1, eq. (17.6.1), p. 313, and §18.3, Theorem 18.3.1, eq. (18.3.3),
-p. 330; Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (CUP, 2017),
-§3.7.3, eqs. (3.48)–(3.49), pp. 117–118.
+References: Friedli–Velenik §5.4, Theorem 5.4, p. 224, is the convergence
+source; Kotecký–Preiss Theorem 1 supplies only the abstract convergence
+criterion. Glimm–Jaffe §18.3, Theorem 18.3.1, eq. (18.3.3), p. 330, is a
+continuum P(φ)₂ analogy only; not a lattice-Ising source. This uniform bound is
+a project extension.
 -/
 
 namespace IsingModel

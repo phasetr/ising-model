@@ -34,10 +34,9 @@ bridge (`fieldPolymerZℂ = all-subgraphs ℂ`) and the complex-`h` correlation 
 are deferred to F4b-2.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6, Theorem 17.6.1, p. 313; §18.3,
-  pp. 378–386 (high-temperature representation).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §3.7.3,
-  eqs. (3.41)–(3.46), pp. 116–117.
+- Friedli–Velenik §3.7.3, eqs. (3.41)–(3.46), pp. 116–117, gives the `h = 0`
+  formula. Exercise 5.8, p. 238, with its Appendix C solution, p. 531, gives the
+  exact real-field factor. The complex numerator is a project extension.
 -/
 
 namespace IsingModel
@@ -154,8 +153,9 @@ right-hand side is written in `oddBoundary` form so that, after simplifying
 `∂X △ ∅ = ∂X`, it matches `fieldTwoPointNumℂ G ∅` (see the capstone
 `fieldTwoPointNumℂ_empty_eq_fieldPolymerZℂ`).
 
-References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117 (2017 ed.) (`h = 0`
-template); Glimm–Jaffe §18.4 (lattice cluster expansion, field version). -/
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, gives the `h = 0`
+identity; Exercise 5.8, p. 238, with its Appendix C solution, p. 531, gives the
+exact real-field identity. This complex bridge is a project extension. -/
 theorem fieldPolymerZℂ_eq_allSubgraphs_sumℂ (G : SimpleGraph ι) [Fintype G.edgeSet]
     (a : ℝ) (b : ℂ) :
     fieldPolymerZℂ G a b

@@ -45,10 +45,11 @@ downcasts to the pointwise positivity of F5a-3 via `D ≤ D*`.  The scalars `D` 
 `q` are distinct (`q = 2^{|A|}·e^{2κ_Δ-1}·D`); monotonicity of `q` in `D` is
 derived, not definitional.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
-Theorem 17.6.1, eq. (17.6.1), p. 313, and §18.3, Theorem 18.3.1, eq. (18.3.3),
-p. 330; Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (CUP, 2017),
-§5.4, Theorem 5.4 (Kotecký–Preiss criterion), and §3.7.3, pp. 116–118.
+References: Friedli–Velenik §5.4, Theorem 5.4, p. 224, is the convergence
+source; Kotecký–Preiss Theorem 1 supplies only the abstract convergence
+criterion. Glimm–Jaffe §18.3, Theorem 18.3.1, eq. (18.3.3), p. 330, is a
+continuum P(φ)₂ analogy only; not a lattice-Ising source. The ball-uniform field
+bound is a project extension.
 -/
 
 namespace IsingModel

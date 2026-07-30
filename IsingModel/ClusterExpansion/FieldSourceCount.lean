@@ -38,9 +38,10 @@ constant `2^{|A|}` depends only on the observable support `A`.
 ## Literature
 
 Friedli–Velenik (2017) §3.7.3, Lemma 3.38 and eqs. (3.47)–(3.49), pp.116–118
-(closed-walk component counting, the `(2d)^{2ℓ}` bound); Glimm–Jaffe
-*Quantum Physics* (2nd ed.) Theorem 17.6.1, p.312, and Chapter 18 §18.4–18.7,
-pp.378–386 (cluster expansion).
+(closed-walk component counting and the `(2d)^{2ℓ}` bound) is the `h = 0`
+template. The field source-fiber count is a project extension. Glimm–Jaffe
+Theorem 17.6.1, p. 313, is retained for project comparison and motivation only,
+not as a direct source for this counting argument.
 -/
 
 namespace IsingModel

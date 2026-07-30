@@ -50,11 +50,12 @@ feed the completed small-coupling holomorphic local-limit assembly.  Any broader
 use in a real infinite-volume derivative theorem remains unresolved under #4790.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.4–§18.6,
-  pp. 378–386 (lattice cluster expansion, analytic continuation in the fugacity).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7,
-  Theorem 5.4 (Kotecký–Preiss criterion).
-- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1.
+- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.4,
+  Theorem 5.4, p. 224, supplies the polymer-gas convergence result.
+- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1, supplies
+  only the abstract convergence criterion.
+- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4, Proposition 18.4.2,
+  pp. 332–333: continuum P(φ)₂ analogy only; not a lattice-Ising source.
 -/
 
 namespace IsingModel

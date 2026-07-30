@@ -42,10 +42,12 @@ even polymers and vanishes otherwise, matching the `h = 0` even restriction.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.5, pp. 378–386
-  (lattice cluster expansion, field version).
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7.3,
-  eqs. (3.48)–(3.49); §5.7 (polymer / cluster gas, Mayer–Montroll).
+* Friedli–Velenik §5.3, Proposition 5.3, gives the formal Mayer/Ursell identity,
+  and §5.4, Theorem 5.4, p. 224, gives convergence.
+* Friedli–Velenik Exercise 5.8, p. 238, with its Appendix C solution, p. 531,
+  gives the exact real-field weight. The dominated term comparison here is a
+  project extension.
+* Kotecký–Preiss Theorem 1 supplies only the abstract convergence criterion.
 -/
 
 namespace IsingModel

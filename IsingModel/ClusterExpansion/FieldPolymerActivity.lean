@@ -36,10 +36,12 @@ non-vanishing brick; this file is for real `h` only.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.5, pp. 378–386
-  (lattice cluster expansion, field version).
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7.3,
-  eqs. (3.48)–(3.49); §5.7 (polymer / cluster gas, Kotecky–Preiss).
+* Friedli–Velenik §3.7.3, eqs. (3.48)–(3.49), and §5.7.3 are the `h = 0`
+  templates. Exercise 5.8, p. 238, with its Appendix C solution, p. 531, gives
+  the exact real-field weight.
+* Friedli–Velenik §§5.2–5.3, including Proposition 5.3, give the abstract model
+  and formal expansion; §5.4, Theorem 5.4, p. 224, gives convergence. The
+  activity count is a project extension.
 -/
 
 namespace IsingModel

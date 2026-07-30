@@ -19,7 +19,8 @@ only on mathlib, so it is kept in its own reusable file.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics* (2nd ed.), §18.4–18.7, pp. 378–386 (polymer counting).
+This elementary tuple-count identity is a project arithmetic lemma; no external
+source is claimed.
 -/
 
 namespace IsingModel

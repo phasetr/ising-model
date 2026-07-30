@@ -39,11 +39,12 @@ replaced by `W`); the bridge `Gavoid_eq_GavoidVertex_polymerSupport` records tha
 F3's edge-support graph is the special case `W = polymerSupport C`.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.6.1, pp. 313–314, and §18.3–§18.6,
-  pp. 378–386 (lattice cluster expansion, analytic continuation in the fugacity).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7,
-  Theorem 5.4 (Kotecký–Preiss criterion); §3.7.3, eqs. (3.41)–(3.46), pp. 116–117.
-- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1.
+- Friedli–Velenik §5.4, Theorem 5.4, p. 224, supplies the polymer-gas
+  convergence result.
+- Kotecký–Preiss, Comm. Math. Phys. **103** (1986) 491–498, Theorem 1, supplies
+  only the abstract convergence criterion.
+- Glimm–Jaffe §18.4, Proposition 18.4.2, pp. 332–333, is a
+  continuum P(φ)₂ analogy only; not a lattice-Ising source.
 -/
 
 namespace IsingModel

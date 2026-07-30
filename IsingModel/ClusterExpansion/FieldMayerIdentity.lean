@@ -35,8 +35,10 @@ even-species reduced partition sum and the identity lands on the `h = 0`
 allConnectedPolymers`.
 
 ## References
-- Glimm–Jaffe, *Quantum Physics*, 2nd ed., §18.4–§18.5, pp. 378–386
-  (lattice cluster expansion, field version).
-- Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017), §5.7.3
-  (Mayer–Montroll) and §3.7.3, eqs. (3.48)–(3.49) (magnetic-field expansion).
+- Friedli–Velenik §5.3, Proposition 5.3, gives the formal Mayer/Ursell identity;
+  §5.4, Theorem 5.4, p. 224, supplies convergence. Exercise 5.8, p. 238, with
+  its Appendix C solution, p. 531, gives the exact lattice magnetic-field weight.
+- Glimm–Jaffe §§18.2 and 18.5, pp. 321–343, provide the continuum
+  Kirkwood–Salsburg/Mayer–Montroll structure as a continuum P(φ)₂ analogy only;
+  not a lattice-Ising source.
 -/

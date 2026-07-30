@@ -33,9 +33,10 @@ nonzero since `cosh > 0`, so no `Z ≠ 0` hypothesis is needed).  The denominato
 is identified with the field polymer partition function `fieldPolymerZ`
 (`fieldPolymerZ_eq_allSubgraphs_sum`).
 
-References: Friedli–Velenik §3.7.3, eqs. (3.41)–(3.46), pp. 116–117;
-Glimm–Jaffe §18.3 (high-temperature representation), pp. 378–386; Glimm–Jaffe
-§17.6, Theorem 17.6.1, p. 313.
+References: Friedli–Velenik §3.7.3, eqs. (3.41)–(3.46), pp. 116–117, gives the
+`h = 0` partition template. Exercise 5.8, p. 238, with its Appendix C solution,
+p. 531, gives the exact field factor. The general-observable numerator is a
+project extension.
 
 Part of the split `IsingModel.Conditioning.CorrelationClosed` development.
 -/
@@ -88,7 +89,9 @@ set with `∂X △ A` via Helper 0 (`oddFilter_add_indicator_eq_symmDiff`).  The
 field-observable counterpart of the parity collapse in
 `partitionFunction_high_temp_expansion_field_closed`.
 
-References: Friedli–Velenik §3.7.3, eq. (3.46), p. 117; Glimm–Jaffe §18.3. -/
+References: Friedli–Velenik §3.7.3, eq. (3.46), p. 117, gives the `h = 0`
+observable template; Exercise 5.8, p. 238, with its Appendix C solution, p. 531,
+gives the field factor. Arbitrary-observable parity is a project extension. -/
 theorem sum_spinProduct_edgeSpin_field_closed
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A : Finset ι) {X : Finset (Sym2 ι)}
@@ -143,8 +146,9 @@ since `cosh > 0`, so no `Z ≠ 0` hypothesis is needed).  At `h = 0` the field
 factor is `1` on `∂X △ A = ∅` (i.e. `∂X = A`) and `0` otherwise, recovering the
 even-subgraph boundary condition of the `h = 0` form.
 
-References: Friedli–Velenik §3.7.3, eqs. (3.41)–(3.46), pp. 116–117; Glimm–Jaffe
-§18.3, pp. 378–386; Glimm–Jaffe §17.6, Theorem 17.6.1, p. 313. -/
+References: Friedli–Velenik §3.7.3, eqs. (3.41)–(3.46), pp. 116–117, gives the
+`h = 0` template; Exercise 5.8, p. 238, with its Appendix C solution, p. 531,
+gives the exact field factor. This general-observable closed form is a project extension. -/
 theorem correlation_high_temp_expansion_general_h_closed
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (A : Finset ι) :
@@ -211,7 +215,9 @@ This identifies the denominator of
 `correlation_high_temp_expansion_general_h_closed` with the field cluster-gas
 partition function, the entry point to the complexified F4b/F5 bricks.
 
-References: Glimm–Jaffe §18.4 (lattice cluster expansion, field version). -/
+References: Friedli–Velenik §3.7.3, eq. (3.45), p. 117, gives the `h = 0`
+denominator template; Exercise 5.8, p. 238, with its Appendix C solution, p. 531,
+gives the exact field denominator. This bridge is a project extension. -/
 theorem correlation_high_temp_expansion_general_h_closed_denom_eq_fieldPolymerZ
     (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
     (∑ X ∈ G.edgeFinset.powerset,
