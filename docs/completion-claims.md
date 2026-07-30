@@ -269,6 +269,202 @@ All nonempty prose outside the managed block is conservatively charged as
 additional human-review records. Thus an unmanaged claim cannot silently
 inherit the machine `PASS` status.
 
+## Human semantic evidence and lifecycle protocol
+
+The mechanical gate cannot establish semantic completion. A pull request that
+makes a semantic completion claim must follow this human protocol in addition
+to satisfying the managed block. The
+[authoritative bounded design for #4803][design-4803] governs this protocol.
+
+[design-4803]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5129563555
+
+### Semantic-unit inventory
+
+Decompose every claim into stable review units. Each inventory row must record
+all of the following:
+
+- a stable local unit ID;
+- an artifact role: module, declaration, theorem/API contract, documentation
+  block, tracker row, source claim, or history/provenance claim;
+- a stable locator: repository path plus declaration name, heading or block
+  identity, tracker row key, or another justified content identity;
+- the exact claim and bounded scope, including the observable, parameters,
+  volume, quantifiers, and source role where applicable;
+- positive evidence showing what exists;
+- negative evidence showing the scope searched and what does not exist;
+- one disposition: `implemented`, `partial`, `unresolved`, `contradicted`,
+  `not_applicable`, `accepted_scoped_endpoint`, or `deferred`;
+- a reopen condition for every `accepted_scoped_endpoint` or `deferred` unit;
+  and
+- the reviewer finding and status for the current exact candidate.
+
+Line numbers and diff hunks are navigation aids, not stable unit identities or
+proof of inventory completeness. A module-wide claim requires an inventory of
+the whole module. A theorem/API claim requires the named declaration and its
+actual contract. A documentation claim requires review of the complete
+semantic block, not a selected sentence.
+
+The inventory itself is durable evidence. Give it a version or stable scope
+identity, and link that identity from both exact-head review records. A claim
+whose in-scope units are not fully inventoried remains incomplete even when
+builds and deterministic checks pass.
+
+### Theorem/API, source, and history evidence
+
+For each theorem/API unit, record:
+
+- the exact repository path and declaration name;
+- the candidate-head signature or statement;
+- all relevant hypotheses and the result;
+- parameter, observable, quantifier, and volume scope; and
+- the commands or source inspection used to rule out a stronger absent
+  declaration.
+
+Build success and axiom health are separate evidence. They do not establish
+that a declaration has the claimed meaning or scope.
+
+For each source unit, identify the primary source and a durable locator such
+as chapter, section, theorem, or page. State the role actually supported, plus
+every mismatch or project-local extension. Repository prose copied from that
+source is not primary-source evidence.
+
+For each history/provenance unit, cite the exact commit, path, change kind,
+parent or content comparison, and a natural-language relevance judgment. A
+mechanically valid commit/path tuple establishes only the primary history
+fact, not the truth of prose about its significance.
+
+PR #4800 row 20 is the mandatory regression example for documentation review.
+A selected line anchor appeared corrected while the same
+`AntidiagonalTupleCard.lean` documentation block retained an unsupported
+attribution. Review must therefore reset to the stable documentation block
+and inspect positive and negative evidence beyond the original hunk or anchor.
+
+### Two independent exact-head records
+
+Every exact candidate requires two durable review records. Both records bind
+to the full 40-character candidate-head SHA, use separate URLs, and represent
+separate review passes.
+
+The source-review record must state:
+
+- reviewer identity and independence from implementation authorship;
+- the exact candidate-head SHA and inventory version or scope;
+- commands, repository content, primary sources, and history inspected;
+- findings for every declared semantic unit and the whole in-scope diff;
+- review of positive and negative evidence, theorem/API contracts,
+  source roles, history relevance, scope, and exclusions; and
+- whether the current round is clean.
+
+The issue-resolution-audit record must state:
+
+- reviewer identity and independence from implementation authorship;
+- the exact candidate-head SHA;
+- a mapping from every issue acceptance criterion and every attached child
+  disposition to exact evidence;
+- one classification per criterion or child: `resolved`, `partial`,
+  `unresolved`, `contradicted`, or `not_applicable`;
+- evidence URLs, lifecycle and hierarchy checks, and the resulting issue
+  verdict.
+
+Neither record substitutes for the other. If one independent reviewer performs
+both roles, disclose that fact and use fresh, separately prompted and
+separately recorded review passes. Self-review, a checkbox, prior issue state,
+or green CI is not either record.
+
+### Clean round, invalidation, and draft boundary
+
+A clean round is the latest complete review of the current exact candidate
+with zero open findings. Correcting one finding does not create a clean round.
+All in-scope units and the full diff must be reviewed again on the new head.
+
+Any candidate-content change invalidates both exact-head records. A material
+PR-body or evidence change on the same head invalidates the affected semantic
+review or audit until it is explicitly rechecked. A change to scope,
+acceptance criteria, issue hierarchy, or disposition resets the issue audit.
+Old findings may remain as history, but an older verdict cannot be promoted to
+the new round.
+
+Keep the pull request in draft while inventory or review evidence is
+incomplete. Ready review requires current source-review and issue-audit URLs,
+the exact head in both records, a clean round, honest exclusions, and no
+blocking criterion hidden by prose.
+
+### Child, parent, and post-merge source of truth
+
+The child issue owns its acceptance criteria and evidence-backed disposition.
+A parent summarizes child state but cannot turn a partial child into a
+completed child. Link durable design, source-review, issue-audit, merge, and
+canary records from the child first, then synchronize the summary upward to
+its parents.
+
+After merge, verify all of the following:
+
+- the reviewed candidate against the merged tree or exact two-file content;
+- the squash or main SHA, final CI, and changed paths;
+- branch removal and the issue hierarchy; and
+- synchronized GitHub issue bodies and ignored `.self-local/issues/` mirrors.
+
+Issue closure is a separate action. Perform it only after the child has its
+own supported disposition and every parent summary agrees. Candidate CI or a
+merged pull request alone never changes issue lifecycle state.
+
+### Honest partial demonstration
+
+The current #4786 and #4790 hierarchy demonstrates the classification method;
+it is not completion evidence:
+
+- **#4786 repository-wide claim.** Build, audit, and bounded prevention work
+  are positive evidence. Multiple mathematical and governance children remain
+  open. The disposition is `partial`.
+- **#4790 finite-volume field derivative.**
+  `hasDerivAt_correlation_h_uniform_bound` gives the recorded finite-volume
+  bound. It is not an infinite-volume derivative contract. The disposition is
+  `implemented` only at the finite-volume scope.
+- **#4790 high-temperature field CE.** A holomorphic locally uniform limit and
+  real-axis identification exist under stated hypotheses. No declared real
+  `HasDerivAt correlationInfinite ...` theorem matches the historical claim.
+  The disposition is `partial`.
+- **#4790 primary infinite-volume contract.** No positive declaration evidence
+  exists. Repository inspection records the absent named or
+  contract-equivalent theorem. The disposition is `unresolved`, unless a
+  narrower endpoint is accepted with a reopen condition.
+
+Accordingly #4786, #4790, #4796, and #4803 remain open. This record does not
+satisfy an exact-candidate source review, a full hierarchy audit, or issue
+closure criteria.
+
+### Same-repository canary record
+
+The implementation pull request for this protocol remains a same-repository
+draft until its evidence is complete. Record each observation with the event,
+run URL, exact head, status sequence, and cancelled-run or status residue:
+
+1. On draft open, use documented `PENDING` fields and observe exact-head
+   pending followed by non-success.
+2. On synchronize, push the final two-file candidate and confirm that stale
+   candidate or review evidence cannot produce success.
+3. On the same head, set one allowed review or evidence field back to
+   `PENDING`; observe a new pending transition followed by non-success.
+4. Restore exact candidate identity and both current review URLs; observe
+   pending followed by success on the same exact head.
+5. Convert the unchanged draft to ready and observe another exact-head success
+   before merge.
+6. After merge, record candidate-to-squash tree or exact-content identity,
+   main CI, hierarchy, issue-body and mirror synchronization, and an honest
+   issue disposition.
+
+The live status remains mechanical and advisory. It does not certify semantic
+inventory completeness or reviewer independence. Fork-head and
+replay/backfill ownership belong to #4801; required-status and ruleset policy
+belong to #4802.
+
+The acceptance boundary for #4803 is this two-file documentation and template
+change, a clean exact-candidate source review, a separate issue-resolution
+audit, the same-repository lifecycle canary, post-merge verification, and the
+honest #4786/#4790 demonstration. Full #4786 completion, the absent #4790
+theorem or acceptance of a narrower endpoint, fork behavior, replay/backfill,
+and ruleset enforcement remain dependencies or adjacent work.
+
 ### Structured history
 
 `context.history_facts` and payload `history_claims` contain exact ordered

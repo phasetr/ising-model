@@ -18,6 +18,28 @@ List exact commands and distinguish planned runs from completed runs.
 
 Identify deterministic checks and separate human semantic review.
 
+## Human semantic evidence
+
+Follow the full [semantic evidence and lifecycle protocol][human-protocol].
+
+[human-protocol]: ../docs/completion-claims.md#human-semantic-evidence-and-lifecycle-protocol
+
+- Inventory every in-scope semantic unit with a stable ID, role, locator,
+  bounded claim, positive and negative evidence, disposition, any required
+  reopen condition, and current reviewer finding.
+- For theorem/API, source, and history units, record the exact contract,
+  primary-source locator, or commit/content comparison required by the
+  protocol.
+- Recheck the whole stable documentation block in the PR #4800 row 20
+  regression shape, not only the original line or hunk.
+- Link separate exact-head source-review and issue-audit records, with reviewer
+  identity, independence, commands, evidence, findings, and verdict.
+- Require a clean round on the current head. Candidate content or material
+  evidence changes reset the affected record as defined by the protocol.
+- Keep the pull request in draft until the inventory and both review records
+  are current. Record parent, child, canary, and post-merge synchronization
+  separately.
+
 ## Completion-claim evidence
 
 Replace every placeholder before requesting ready review. Draft pull requests
