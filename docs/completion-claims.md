@@ -105,20 +105,23 @@ transition and blob identity. Unchanged, unrelated, renamed, copied, unknown,
 merge, and unreachable history is rejected. Matching those facts does not
 certify natural-language relevance, which remains human review.
 
-The same-head body-edit interval before `pending` and production commit-status
-behavior for a fork-owned head remain documented canary questions for #4802.
-Per-PR concurrency prevents independent active jobs from intentionally writing
-in different event-specific groups, but it is not an atomic compare-and-set
-for an HTTP status request already issued when cancellation begins. Such
+The production same-head body-edit invalidation and recovery sequence is
+completed in the #4803 A–J canary record below. Non-empty push backfill and
+fork-owned-head behavior remain production observations for #4801; the
+default-branch replay incident and corrective lifecycle are recorded below and
+governed by [the authoritative incident record][replay-4801-incident]. Per-PR
+concurrency prevents independent active jobs from intentionally writing in
+different event-specific groups, but it is not an atomic compare-and-set for
+an HTTP status request already issued when cancellation begins. Such
 cancelled-run residue remains a residual race and never becomes semantic or
 merge authority. Mocked tests exercise these shapes but cannot turn production
-behavior into a proven fact. #4801 remains open after the code merge until
-bounded backfill and real same-repository and fork observations are recorded.
-If the pull-request metadata HTTP response itself is unavailable, malformed,
-truncated, or oversized before a valid head SHA can be obtained, no exact head
-exists on which the adapter can publish pending. That pre-identity condition
-is fail-shut in the workflow result but cannot clear an older commit status;
-it remains a documented operational canary.
+behavior into a proven fact. If the pull-request metadata HTTP response itself
+is unavailable, malformed, truncated, or oversized before a valid head SHA can
+be obtained, no exact head exists on which the adapter can publish pending.
+That pre-identity condition is fail-shut in the workflow result but cannot
+clear an older commit status. Honest final operational dispositions for
+cancellation-window residue, pre-identity failure, and fork limitations remain
+under #4801; unsafe fault injection is excluded.
 
 ## Inputs
 
@@ -429,15 +432,16 @@ it is not completion evidence:
   contract-equivalent theorem. The disposition is `unresolved`, unless a
   narrower endpoint is accepted with a reopen condition.
 
-Accordingly #4786, #4790, #4796, and #4803 remain open. This record does not
-satisfy an exact-candidate source review, a full hierarchy audit, or issue
+The [final #4803 closure audit][audit-4803-final] records the completed
+semantic-evidence protocol and A–J lifecycle without upgrading #4786, #4790,
+or #4796. This partial demonstration does not satisfy those issues' own
 closure criteria.
 
 ### Same-repository canary record
 
-The implementation pull request for this protocol remains a same-repository
-draft until its evidence is complete. Record each observation with the event,
-run URL, exact head, status sequence, and cancelled-run or status residue:
+The same-repository lifecycle completed under #4803. Each durable observation
+records its event, run URL, exact head, status sequence, and cancelled-run or
+status residue.
 
 The [superseding canary design correction][design-4803-canary] replaces the
 original opened-event expectation and canary ordering. The original bounded
@@ -448,7 +452,7 @@ lifecycle requirement.
 
 The [durable A/B/C observation record][canary-4803-abc] carries the run URLs,
 exact heads, status sequences, timestamps, offline report, trusted-checkout
-evidence, and status residue for these completed observations:
+evidence, and status residue:
 
 [canary-4803-abc]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130004142
 
@@ -466,38 +470,88 @@ evidence, and status residue for these completed observations:
 
 The A and B results are fail-shut evidence, but neither is an observed
 `DRAFT_INCOMPLETE` result. The generic C live description does not expose the
-offline diagnostics and is not an exact-head success.
+offline diagnostics and is not an exact-head success. The later durable
+records complete the lifecycle:
 
-The remaining lifecycle must occur in this order. These are requirements for
-future observations, not claims that those outcomes already exist:
+4. **D/E/F, synchronize corrections.** The first correction and the pre-sync
+   body edit plus second correction are recorded with old/new-head status and
+   trusted-checkout evidence in [D][canary-4803-d] and
+   [E/F][canary-4803-ef].
+5. **G, reviewed exact-body success.** Both exact-head review records were
+   bound and the unchanged candidate reached pending followed by success in
+   [G][canary-4803-g].
+6. **H, same-head invalidation.** One review field returned to canonical
+   `PENDING`; the unchanged head received pending followed by failure in
+   [H][canary-4803-h].
+7. **I, same-head recovery.** Restoring the durable review URL on the
+   unchanged head produced pending followed by success in
+   [I][canary-4803-i].
+8. **J, unchanged-head ready.** The ready transition produced another
+   pending-to-success evaluation in [J][canary-4803-j].
+9. **Post-merge and disposition.** Candidate/squash identity, merged-main CI,
+   hierarchy and source-of-truth synchronization, the non-recursive INDEX
+   correction, and the completed #4803 disposition are recorded in the
+   [final audit][audit-4803-final].
 
-1. Bind a valid body to the current exact head, changed-file count, and path
-   digest. Supply separate durable exact-head source-review and issue-audit
-   URLs. Trigger evaluation on that same head, require pending followed by
-   success, and record the actual result before any invalidation.
-2. Only after that success, change one allowed review-record value to the
-   canonical `PENDING` string on the unchanged head. Trigger evaluation,
-   require pending followed by failure, and record the actual result.
-3. Restore the exact durable URL for that record on the unchanged head.
-   Trigger evaluation, require pending followed by success, and record the
-   actual result.
-4. Convert the unchanged draft to ready. Require another pending transition
-   followed by exact-head success and record the actual result before merge.
-5. After merge, record candidate-to-squash tree or exact-content identity,
-   main CI, hierarchy, issue-body and mirror synchronization, and an honest
-   issue disposition.
+[canary-4803-d]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130018031
+[canary-4803-ef]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130070443
+[canary-4803-g]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130152008
+[canary-4803-h]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130197969
+[canary-4803-i]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130243470
+[canary-4803-j]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130290648
+[audit-4803-final]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5131139086
 
 The live status remains mechanical and advisory. It does not certify semantic
 inventory completeness or reviewer independence. Fork-head and
 replay/backfill ownership belong to #4801; required-status and ruleset policy
 belong to #4802.
 
-The acceptance boundary for #4803 is this two-file documentation and template
-change, a clean exact-candidate source review, a separate issue-resolution
-audit, the same-repository lifecycle canary, post-merge verification, and the
-honest #4786/#4790 demonstration. Full #4786 completion, the absent #4790
-theorem or acceptance of a narrower endpoint, fork behavior, replay/backfill,
-and ruleset enforcement remain dependencies or adjacent work.
+The final audit records #4803's bounded two-file protocol, separate reviews,
+same-repository A–J lifecycle, post-merge verification, and honest
+#4786/#4790 demonstration as completed. The live status remains advisory and
+mechanical rather than semantic or merge authority. Non-empty push backfill,
+fork-owned-head behavior, and final operational dispositions for
+cancellation-window residue, pre-identity failure, and fork limitations remain
+under #4801. Replay lifecycle and disposition are owned by the authoritative
+incident record below. Required-status and ruleset enforcement remain under
+#4802.
+
+### Default-branch replay incident record
+
+The [authoritative replay incident][replay-4801-incident] records that the
+first exact-one procedure failed: two `completion_claim_replay` dispatches
+were sent for the fully bound PR #4809 head
+`df96820621ef72a4d94dd8ab11461a6f13949a87`.
+
+1. [Run 30546819296][replay-4801-cancelled] used event
+   `repository_dispatch` and trusted default-branch workflow SHA
+   `31a01b6b0fa91dd2c7babf03f56181b5b2dd844a`. Discovery selected PR #4809,
+   then the overlapping evaluation was cancelled. The run conclusion was
+   `CANCELLED`.
+2. [Run 30546834736][replay-4801-success] used the same event and trusted
+   workflow SHA, selected exactly PR #4809, and completed evaluation. The
+   exact candidate head received `PENDING` at `2026-07-30T13:25:41Z`, then
+   `SUCCESS` at `2026-07-30T13:25:45Z`.
+
+Both runs checked out only the trusted default-branch workflow revision;
+neither checked out or executed the candidate head. The observations establish
+replay routing, shared per-PR cancellation, and one complete replay evaluation,
+but they do not satisfy the requirement to send exactly one dispatch. No
+status write was attributed to the cancelled first evaluation, which does not
+prove that cancellation can never leave residue after a request is issued.
+
+At this incident checkpoint, exactly one corrective replay was required after
+the corrected exact head had current CI, independent reviews, bound-body
+currency, and normal live success. Any later run and disposition are carried
+by [the authoritative incident record][replay-4801-incident], updated in place.
+This historical paragraph does not assert the replay lifecycle's current
+state. Non-empty push backfill, fork-owned-head production behavior, and final
+operational dispositions for cancellation-window residue, pre-identity
+failure, and fork limitations remain unresolved under #4801.
+
+[replay-4801-incident]: https://github.com/phasetr/ising-model/issues/4801#issuecomment-5131434810
+[replay-4801-cancelled]: https://github.com/phasetr/ising-model/actions/runs/30546819296
+[replay-4801-success]: https://github.com/phasetr/ising-model/actions/runs/30546834736
 
 ### Structured history
 
