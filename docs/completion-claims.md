@@ -12,13 +12,21 @@ semantic claim level is reported as `HUMAN_REVIEW_REQUIRED`.
 ## Trusted live adapter
 
 Phase 2 wraps the offline calculation in
-`scripts/completion_claim_live.py`. The live adapter publishes the advisory
+`scripts/completion_claim_live.py`. The live adapter publishes the
 commit-status context `completion-claim/live` on the exact pull-request head.
-Only offline exit 0 with a well-formed `PASS` report can publish `success`.
+Under active ruleset `14892885` and immutable enforcement-history version
+`44903447`, `build` and `completion-claim/live` from integration ID `15368`
+are mechanically required for a pull request targeting `main`, with strict
+latest-base policy and no bypass actors. Integration binding does not
+authenticate a particular workflow file, trigger, or matrix producer. Only
+offline exit 0 with a well-formed `PASS` report can publish `success`.
 Draft-incomplete, deterministic rejection, unexpected checker output, API or
 timeout errors, bounded-input violations, snapshot races, and status-write
-errors all fail shut. This status is advisory during #4801; repository
-required-check policy remains in #4802.
+errors all fail shut. A successful status remains semantically
+non-authoritative: it does not certify theorem meaning, parameter or volume
+scope, source or citation validity, semantic-unit completeness, issue
+resolution, or reviewer independence, and it does not replace exact-head
+source review or issue-resolution audit.
 
 The isolated `.github/workflows/completion_claim_live.yml` workflow runs for
 the exact `pull_request_target` actions `opened`, `reopened`, `synchronize`,
@@ -507,20 +515,30 @@ records complete the lifecycle:
 [canary-4803-j]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130290648
 [audit-4803-final]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5131139086
 
-The live status remains mechanical and advisory. It does not certify semantic
-inventory completeness or reviewer independence. Fork-head and
-replay/backfill ownership belong to #4801; required-status and ruleset policy
-belong to #4802.
+The [independent #4802 audit][review-4802-enforcement] and
+[final #4802 closure audit][audit-4802-final] record the active enforcement:
+ruleset `14892885`, history version `44903447`, an empty bypass list, strict
+latest-base policy, and the integration-bound contexts `build` and
+`completion-claim/live`. Those contexts are mechanically required for a pull
+request targeting `main`; their integration IDs do not authenticate a
+particular workflow file, trigger, or matrix producer. A successful live
+status remains semantically non-authoritative and does not replace exact-head
+source review or issue-resolution audit. Fork-head and replay/backfill
+ownership remain with #4801.
 
 The final audit records #4803's bounded two-file protocol, separate reviews,
 same-repository A–J lifecycle, post-merge verification, and honest
-#4786/#4790 demonstration as completed. The live status remains advisory and
-mechanical rather than semantic or merge authority. Non-empty push backfill,
-fork-owned-head behavior, and final operational dispositions for
-cancellation-window residue, pre-identity failure, and fork limitations remain
-under #4801. Replay lifecycle and disposition are owned by the authoritative
-incident record below. Required-status and ruleset enforcement remain under
-#4802.
+#4786/#4790 demonstration as completed. Required-context enforcement does not
+make the live status semantic authority. It does not certify theorem meaning,
+source or citation validity, semantic completeness, issue resolution, or
+reviewer independence. Non-empty push backfill, fork-owned-head behavior, and
+final operational dispositions for cancellation-window residue, pre-identity
+failure, and fork limitations remain human judgments under #4801. Replay
+lifecycle and disposition are owned by the authoritative incident record
+below.
+
+[review-4802-enforcement]: https://github.com/phasetr/ising-model/issues/4802#issuecomment-5133601140
+[audit-4802-final]: https://github.com/phasetr/ising-model/issues/4802#issuecomment-5133631946
 
 ### Default-branch replay incident record
 
