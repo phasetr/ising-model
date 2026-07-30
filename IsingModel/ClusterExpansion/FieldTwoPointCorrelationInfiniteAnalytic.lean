@@ -108,8 +108,10 @@ private theorem kpRegion8_of_le_sixteenth {X : ℝ} (_h0 : 0 ≤ X) (h16 : X ≤
   rw [div_lt_one hpos]
   nlinarith [sq_nonneg X, h16]
 
-/-- **High-temperature window existence** (GJ §17.6.1, brick F6c(ii); TeX §F6c, the sole new
-mathematics of the `∂/∂h` capstone).  Given `d`, an observable cardinality `Acard`, and a
+/-- **High-temperature window existence** (GJ §17.6.1, brick F6c(ii); TeX §F6c).
+This private arithmetic theorem supplies the numerical small-coupling window used by the
+holomorphic local-limit capstone; it is not by itself the mathematics of a full `∂/∂h`
+theorem.  Given `d`, an observable cardinality `Acard`, and a
 ball-uniform bound `Mr ≥ 1` for `Complex.tanh`, there is a simultaneous window
 `(ρ, Awin, a₀)` with `0 < ρ`, `0 < Awin`, `0 < a₀ ≤ Awin`, `tanh Awin < ρ`, meeting the two
 shared Kotecký–Preiss conditions

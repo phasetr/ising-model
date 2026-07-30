@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 /-!
 # Field Vitali plumbing for the infinite-volume two-point correlation (GJ §17.6.1, brick F6a)
 
-This file assembles the **field (`∂/∂h`) Vitali/Montel step** for the infinite-volume
-two-point correlation, brick F6a of Glimm–Jaffe Theorem 17.6.1.  It is the field
+This file assembles the **conditional field Vitali/Montel local-limit plumbing** for
+the infinite-volume two-point correlation, brick F6a.  It is the field
 analogue of the `β`-route real-axis Vitali application
 (`AmbientComplexAnalyticity/Vitali/CorrelationRealAxisVitali.lean`), obtained by
 consuming the *family-agnostic* Vitali–Porter provider
@@ -39,12 +39,14 @@ object is introduced (F6 is plumbing, not a research core).
   provider.
 
 ## Scope
-F6a proves the Vitali body under the hypotheses `hden` (per-stage non-vanishing) and `hbdd`
-(volume-uniform bound), exactly as the `β` route
-`correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound`.  The volume-uniform
-discharge of `hden` along the lattice exhaustion (F6b, via
-`fieldPolymerZℂ_ne_zero_of_degree_window`) and the high-temperature window discharge of
-`hden`/`hbdd` giving the unconditional GJ Theorem 17.6.1 (F6c) are **not** in scope here.
+F6a proves the conditional Vitali/local-limit body under `hden` (per-stage
+non-vanishing) and `hbdd` (volume-uniform bound), exactly as the `β` route
+`correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound`.  F6b supplies
+the volume-uniform `hden`, and F6c discharges the small-coupling window to obtain a
+holomorphic local limit with equality to the real infinite-volume correlation at
+one field value `b₀`.  Neither result exports an unconditional full GJ Theorem
+17.6.1 field derivative; real infinite-volume `HasDerivAt` remains unresolved
+under #4790.
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), §17.6,
 Theorem 17.6.1, eq. (17.6.1), p. 313.
