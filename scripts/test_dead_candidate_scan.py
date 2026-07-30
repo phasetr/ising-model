@@ -402,6 +402,280 @@ class NestedBraceCitationTest(unittest.TestCase):
             )
 
 
+class SlashAlternationCitationTest(unittest.TestCase):
+    """The two row-1393 numeric shorthands must reach all six declarations.
+
+    The pinned base drops both citation bodies during tokenization. Applying
+    only brace expansion is insufficient too: every spelling retains ``3/4``
+    and therefore names no declaration.
+    """
+
+    BETA_TOKEN = (
+        "truncated3/4Infinite_latticeGraph_"
+        "{beta_zero,J_zero_of_pairwise_distinct}"
+    )
+    NONPOS_TOKEN = "truncated3/4Infinite_latticeGraph_{nonpos{,_h_zero}}"
+    PREFIX = "truncated3/4Infinite_latticeGraph_"
+    TOKENS = [BETA_TOKEN, NONPOS_TOKEN]
+    BRACE_ONLY = {
+        BETA_TOKEN: sorted(
+            [
+                "truncated3/4Infinite_latticeGraph_beta_zero",
+                "truncated3/4Infinite_latticeGraph_J_zero_of_pairwise_distinct",
+            ]
+        ),
+        NONPOS_TOKEN: sorted(
+            [
+                "truncated3/4Infinite_latticeGraph_nonpos",
+                "truncated3/4Infinite_latticeGraph_nonpos_h_zero",
+            ]
+        ),
+    }
+    EXPANDED = {
+        BETA_TOKEN: sorted(
+            [
+                f"truncated{arity}Infinite_latticeGraph_{suffix}"
+                for arity in (3, 4)
+                for suffix in ("beta_zero", "J_zero_of_pairwise_distinct")
+            ]
+        ),
+        NONPOS_TOKEN: sorted(
+            [
+                f"truncated{arity}Infinite_latticeGraph_{suffix}"
+                for arity in (3, 4)
+                for suffix in ("nonpos", "nonpos_h_zero")
+            ]
+        ),
+    }
+    TARGET_TOKENS = {
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_beta_zero": BETA_TOKEN,
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_J_zero_of_pairwise_distinct": (
+            BETA_TOKEN
+        ),
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_beta_zero": BETA_TOKEN,
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_J_zero_of_pairwise_distinct": (
+            BETA_TOKEN
+        ),
+        "IsingModel.Ambient.truncated3Infinite_latticeGraph_nonpos": NONPOS_TOKEN,
+        "IsingModel.Ambient.truncated4Infinite_latticeGraph_nonpos_h_zero": NONPOS_TOKEN,
+    }
+    TARGETS = list(TARGET_TOKENS)
+    NONPOS_EXISTING = sorted(
+        [
+            "truncated3Infinite_latticeGraph_nonpos",
+            "truncated4Infinite_latticeGraph_nonpos_h_zero",
+        ]
+    )
+    OUT_OF_SCOPE_NUMERIC_TOKENS = [
+        "truncated2/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated4/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated0/9Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated3/5Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated3/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+    ]
+    MALFORMED_OUTER_ALTERNATIVES = [
+        "truncated3/4Infinite_latticeGraph_"
+        "{beta_zero,,J_zero_of_pairwise_distinct}",
+        "truncated3/4Infinite_latticeGraph_{,beta_zero}",
+        "truncated3/4Infinite_latticeGraph_{beta_zero,}",
+        "truncated3/4Infinite_latticeGraph_{}",
+    ]
+    UNSUPPORTED_PAYLOAD_TOKENS = MALFORMED_OUTER_ALTERNATIVES + [
+        PREFIX + "{nonpos{,,_h_zero}}",
+        PREFIX + "{nonpos{,_h_zero,}}",
+        PREFIX + "{nonpos{}}",
+        PREFIX + "{{beta_zero}}",
+        PREFIX + "{{}}",
+        PREFIX + "{beta_zero,{}}",
+        PREFIX + "{beta_zero,{,J_zero_of_pairwise_distinct}}",
+        PREFIX + "{beta_zero,{J_zero_of_pairwise_distinct,}}",
+        PREFIX + "{nonpos{,_h_zero}{}}",
+        PREFIX + "{beta_zero,J_zero_of_pairwise_distinct,nonpos}",
+        PREFIX + "{J_zero_of_pairwise_distinct,beta_zero}",
+        PREFIX
+        + "{beta_zero,J_zero_of_pairwise_distinct}"
+        + "{nonpos{,_h_zero}}",
+        PREFIX + "{nonpos{,{,_h_zero}}}",
+        PREFIX + "{" + "a" * 74 + "}",
+        PREFIX
+        + "{beta_zero,J_zero_of_pairwise_distinct,nonpos,nonpos_h_zero}",
+    ]
+    NON_CITATIONS = [
+        "https://example.test/truncated3/4Infinite_latticeGraph_beta_zero",
+        "docs/truncated3/4Infinite_latticeGraph_beta_zero",
+        "ratio_3/4_value",
+        "IsingModel.truncated3/4Infinite_latticeGraph_beta_zero",
+        "truncated3/4Infinite_latticeGraph_*",
+        "_truncated3/4Infinite_latticeGraph_beta_zero",
+    ]
+    UNSUPPORTED = NON_CITATIONS + [
+        "family3/4Infinite_name",
+        "family3/4Infinite_{left,right}",
+        "truncated3/4/5Infinite_latticeGraph_beta_zero",
+        "truncated3/4Infinite_latticeGraph_beta/zero",
+        "truncated/4Infinite_latticeGraph_beta_zero",
+        "truncated3/Infinite_latticeGraph_beta_zero",
+        "truncatedthree/fourInfinite_latticeGraph_beta_zero",
+        "truncated3/fourInfinite_latticeGraph_beta_zero",
+        "truncated3/3Infinite_latticeGraph_beta_zero",
+        "truncated3/4Infinite_latticeGraph_{beta_zero,J_zero",
+        "truncated3/4Infinite_latticeGraph_beta_zero}",
+    ]
+
+    def verdicts(self) -> list[dcs.Verdict]:
+        """Classify the six row-1393 declarations against the real docs."""
+        return dcs.classify(tree(), self.TARGETS, docs(), allow_homonym=False)[0]
+
+    def test_exact_bodies_are_each_one_citation_token(self) -> None:
+        """Both slash-family spellings must survive the real tokenizer whole."""
+        for token in self.TOKENS:
+            self.assertEqual(dcs._citation_tokens(token), [token], token)
+
+    def test_slash_expansion_precedes_brace_expansion(self) -> None:
+        """Brace-only retains the slash; slash-then-brace yields both products."""
+        for token in self.TOKENS:
+            self.assertEqual(dcs.expand_braces(token), self.BRACE_ONLY[token], token)
+            self.assertEqual(dcs.expand_citation_token(token), self.EXPANDED[token], token)
+            self.assertTrue(
+                all(
+                    "/" not in name and "{" not in name and "}" not in name
+                    for name in self.EXPANDED[token]
+                ),
+                token,
+            )
+        existing_finals = {decl.final for decl in tree().decls}
+        self.assertEqual(
+            sorted(set(self.EXPANDED[self.NONPOS_TOKEN]) & existing_finals),
+            self.NONPOS_EXISTING,
+        )
+
+    def test_real_row_attaches_one_exact_charge_to_each_target(self) -> None:
+        """Every target receives the exact public citation at row 1393."""
+        counts = [
+            sum(
+                citation.startswith("exact docs/index.md:1393:")
+                and self.TARGET_TOKENS[verdict.decl.full] in citation
+                for citation in verdict.doc_citations
+            )
+            for verdict in self.verdicts()
+        ]
+        self.assertEqual(counts, [1, 1, 1, 1, 1, 1])
+
+    def test_real_row_publishes_all_six_targets(self) -> None:
+        """The four base-safe targets must no longer remain safe to delete."""
+        self.assertEqual(
+            [verdict.verdict for verdict in self.verdicts()],
+            [dcs.PUBLISHED] * 6,
+        )
+
+    def test_unsupported_slashes_are_preserved_without_partial_expansion(self) -> None:
+        """Ambiguous syntax remains one original token and invents no variants."""
+        for token in self.UNSUPPORTED:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+
+    def test_non_citation_slashes_stay_out_of_the_tokenizer(self) -> None:
+        """URLs, paths, division, qualified names, globs and suffixes stay inert."""
+        for token in self.NON_CITATIONS:
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_out_of_scope_numeric_pairs_are_inert(self) -> None:
+        """Only the exact documented 3/4 pair is a supported numeric stem."""
+        for token in self.OUT_OF_SCOPE_NUMERIC_TOKENS:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_out_of_scope_numeric_pairs_charge_no_declaration(self) -> None:
+        """Neighboring or reversed numeric pairs invent no documentation charge."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.OUT_OF_SCOPE_NUMERIC_TOKENS, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
+            for name in self.TARGETS
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        self.assertEqual(
+            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
+            {name: [] for name in self.TARGETS},
+        )
+
+    def test_empty_outer_alternatives_are_inert(self) -> None:
+        """Empty outer alternatives make an exact-stem slash token malformed."""
+        for token in self.MALFORMED_OUTER_ALTERNATIVES:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_empty_outer_alternatives_charge_no_declaration(self) -> None:
+        """Malformed outer products may not exact-publish their valid siblings."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.MALFORMED_OUTER_ALTERNATIVES, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
+            for name in self.TARGETS
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        self.assertEqual(
+            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
+            {name: [] for name in self.TARGETS},
+        )
+
+    def test_only_the_two_observed_payloads_are_supported(self) -> None:
+        """Balanced BNF lookalikes and every budget violation remain inert."""
+        self.assertLessEqual(max(map(len, self.TOKENS)), 73)
+        for token in self.TOKENS:
+            self.assertEqual(len(self.EXPANDED[token]), 4, token)
+        for token in self.UNSUPPORTED_PAYLOAD_TOKENS:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_unsupported_payloads_charge_no_declaration(self) -> None:
+        """No rejected payload may exact-publish or fragment-charge any result."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.UNSUPPORTED_PAYLOAD_TOKENS, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=decl.full, decl=decl)
+            for decl in real_tree.decls
+            if not decl.anonymous
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        charged = [
+            (verdict.decl.full, verdict.doc_citations)
+            for verdict in verdicts
+            if verdict.doc_citations
+        ]
+        self.assertEqual(charged, [])
+
+
 class SpacedBraceCitationTest(unittest.TestCase):
     """A brace alternation spaced like prose is one citation, not several words.
 
