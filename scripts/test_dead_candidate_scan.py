@@ -280,6 +280,7 @@ class DocTokenTest(unittest.TestCase):
             ["correlation_convergent", "correlation_convergent_beta", "correlation_convergent_h"],
         )
         self.assertEqual(len(dcs.expand_braces("a{1,2}_b{x,y}")), 4)
+        self.assertEqual(dcs.expand_braces("a{2,1,2}"), ["a1", "a2"])
 
     def test_unbalanced_braces_are_preserved_verbatim(self) -> None:
         """An unreadable group must never make an existing token disappear."""
