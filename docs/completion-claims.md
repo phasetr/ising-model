@@ -168,6 +168,17 @@ Counts and every tuple component must match exactly. A structured match says
 only that the payload repeats the caller-supplied primary fact; interpretation
 of unrestricted historical prose remains human-reviewed.
 
+### Body syntax restriction
+
+After HTML-entity decoding, Unicode NFKC normalization, and format-control
+removal, the body must contain no less-than character (`<`). This check runs
+before managed-block extraction and reports `RAW_HTML_FORBIDDEN`. The checker
+does not parse HTML and has no tag-length cutoff: comments, block containers,
+tags, closing or self-closing tags, quoted or multiline attributes, angle
+autolinks, entity-encoded delimiters, and fullwidth delimiters are all rejected
+by the same character test. Comparisons must be written in words, and links
+must use ordinary Markdown link syntax.
+
 ### Issue references
 
 `references.closing` is mandatory and must be empty. The body is also rejected
@@ -222,8 +233,10 @@ than the former cutoff, emphasized and reference-link directive tokens, long
 links and HTML tags, exact canonical fences, and rejected blockquote/list or
 cross-container variants. Entity, NFKC, and format-control marker disguises,
 mixed duplicate disguises, and normalized marker-count mutants are pinned.
-Directive and marker scans beyond one MiB remain bounded. The suite also covers
-malformed URLs, lone surrogates, invalid controls, boolean-as-integer inputs,
-and unmanaged prose; kills representative weakened checker mutants; pins
-`.self-local` path coverage; and verifies that the checker imports no process,
-network, or dynamic-execution facility.
+Hidden HTML block containers, tags, comments, autolinks, normalized less-than
+delimiters, comparison prose, and weakened raw-HTML guards are also pinned.
+Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
+suite also covers malformed URLs, lone surrogates, invalid controls,
+boolean-as-integer inputs, and unmanaged prose; kills representative weakened
+checker mutants; pins `.self-local` path coverage; and verifies that the
+checker imports no process, network, or dynamic-execution facility.

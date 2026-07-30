@@ -1,22 +1,22 @@
 ## Purpose
 
-<!-- State the bounded purpose. Do not claim completion before evidence exists. -->
+State the bounded purpose. Do not claim completion before evidence exists.
 
 ## Scope
 
-<!-- List the files or behavior intentionally changed. -->
+List the files or behavior intentionally changed.
 
 ## Exclusions
 
-<!-- List adjacent work that this pull request does not perform. -->
+List adjacent work that this pull request does not perform.
 
 ## Test plan
 
-<!-- List exact commands and distinguish planned runs from completed runs. -->
+List exact commands and distinguish planned runs from completed runs.
 
 ## Review focus
 
-<!-- Identify deterministic checks and separate human semantic review. -->
+Identify deterministic checks and separate human semantic review.
 
 ## Completion-claim evidence
 
@@ -26,6 +26,8 @@ Replace `ISSUE` with an issue number allowed by the offline context.
 Do not use any GitHub issue-completion directive token in this body; the nine
 forbidden words and conservative whole-body policy are listed in
 `docs/completion-claims.md`.
+Do not use a less-than character, raw HTML, or an angle autolink anywhere in
+this body. Write comparisons in words and use ordinary Markdown links.
 
 ```completion-claims-v1
 {

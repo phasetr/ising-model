@@ -213,9 +213,6 @@ class GateTest(GateHarness, unittest.TestCase):
             "\uff26\uff49\uff58\uff45\uff53\n",
             "[Resolves](https://example.test/reason)\n",
             "[Fixes][reason]\n",
-            "<strong>Closed</strong>\n",
-            "<span data-policy=\"Resolved\">ordinary</span>\n",
-            "<!-- Fixed -->\n",
             "`Close`\n",
             "Fi&#120;es\n",
             "Fi\u200bxes\n",
@@ -229,14 +226,9 @@ class GateTest(GateHarness, unittest.TestCase):
             with self.subTest(prefix=prefix):
                 self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
-    def test_directives_anywhere_in_long_link_or_html_text_fail(self) -> None:
-        variants = [
-            "[label](https://example.test/" + "x" * 513 + "/Fixes)\n",
-            '<span data-long="' + "x" * 600 + ' Resolved">ordinary</span>\n',
-        ]
-        for prefix in variants:
-            with self.subTest(length=len(prefix)):
-                self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
+    def test_directives_anywhere_in_long_link_text_fail(self) -> None:
+        prefix = "[label](https://example.test/" + "x" * 513 + "/Fixes)\n"
+        self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
 
     def test_directive_tokens_with_arbitrary_following_text_fail(self) -> None:
         variants = [
@@ -250,13 +242,78 @@ class GateTest(GateHarness, unittest.TestCase):
 
     def test_code_comment_and_fence_directive_policy_is_pinned(self) -> None:
         variants = [
-            "<!-- Closes -->\n",
             "`Fixes`\n",
             "~~~text\nResolved\n~~~\n",
         ]
         for prefix in variants:
             with self.subTest(prefix=prefix[:20]):
                 self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
+
+    def test_raw_html_block_tag_and_autolink_forms_are_forbidden(self) -> None:
+        variants = [
+            "<!-- hidden block -->\n",
+            "<details>\n",
+            "<div>\n",
+            "<script>\n",
+            "<template>\n",
+            "<style>\n",
+            "<textarea>\n",
+            "</div>\n",
+            "<br />\n",
+            '<div data-note="quoted > value">\n',
+            "<div\nclass=\"multiline\">\n",
+            "<https://example.test/evidence>\n",
+            "<reviewer@example.test>\n",
+        ]
+        for prefix in variants:
+            with self.subTest(prefix=prefix[:30]):
+                self.assert_code("RAW_HTML_FORBIDDEN", prefix=prefix)
+
+    def test_hidden_html_containers_cannot_wrap_the_control_payload(self) -> None:
+        containers = [
+            ("<details>", "</details>"),
+            ("<div>", "</div>"),
+            ("<script>", "</script>"),
+            ("<template>", "</template>"),
+            ("<style>", "</style>"),
+            ("<textarea>", "</textarea>"),
+        ]
+        for opening, closing in containers:
+            body = f"{opening}\n{managed_body(self.payload)}{closing}\n"
+            with self.subTest(opening=opening):
+                self.assert_code("RAW_HTML_FORBIDDEN", body=body)
+
+    def test_encoded_and_fullwidth_less_than_normalize_to_forbidden(self) -> None:
+        fullwidth_less_than = chr(ord("<") + 0xFEE0)
+        variants = [
+            "&lt;details>\n",
+            "&#60;div>\n",
+            "&#x3c;script>\n",
+            fullwidth_less_than + "template>\n",
+            "<\u200bstyle>\n",
+        ]
+        for prefix in variants:
+            with self.subTest(prefix=prefix):
+                self.assert_code("RAW_HTML_FORBIDDEN", prefix=prefix)
+
+    def test_raw_html_diagnostic_precedes_directive_diagnostic(self) -> None:
+        self.assert_code("RAW_HTML_FORBIDDEN", prefix="<!-- Fixes -->\n")
+
+    def test_comparison_prose_must_avoid_less_than(self) -> None:
+        self.assert_code("RAW_HTML_FORBIDDEN", prefix="Measured value < bound.\n")
+        code, report = self.run_gate(prefix="Measured value is below the bound.\n")
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_raw_html_guard_is_linearish_past_one_mibibyte(self) -> None:
+        source = "ordinary text " * 85_000 + "&lt;details>"
+        self.assertGreater(len(source), 1_048_576)
+        started = time.monotonic()
+        normalized = gate._normalized_body_text(source)
+        with self.assertRaises(gate.GateInputError) as raised:
+            gate._reject_raw_html(normalized)
+        elapsed = time.monotonic() - started
+        self.assertEqual(raised.exception.code, "RAW_HTML_FORBIDDEN")
+        self.assertLess(elapsed, 5.0)
 
     def test_directive_ban_precedes_other_body_diagnostics(self) -> None:
         body = "[Fixes][reason]\n> ```completion-claims-v1\n> {}\n> ```\n"
@@ -795,6 +852,26 @@ class MutationTest(GateHarness, unittest.TestCase):
         self.assert_code("DIRECTIVE_KEYWORD_FORBIDDEN", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_raw_html_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            'if "<" in normalized:',
+            "if False:",
+        )
+        body = "<details>\n" + managed_body(self.payload) + "</details>\n"
+        self.assert_code("RAW_HTML_FORBIDDEN", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_raw_html_normalization_stage_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "_reject_raw_html(normalized_body)",
+            "_reject_raw_html(body)",
+        )
+        prefix = "&lt;details&gt;\n"
+        self.assert_code("RAW_HTML_FORBIDDEN", prefix=prefix)
+        code, report = self.run_gate(prefix=prefix, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_canonical_top_level_guard_mutant_is_killed(self) -> None:
         mutant = self.mutant(

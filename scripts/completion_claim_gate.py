@@ -687,6 +687,14 @@ def _reject_directive_keywords(normalized: str) -> None:
         )
 
 
+def _reject_raw_html(normalized: str) -> None:
+    if "<" in normalized:
+        raise GateInputError(
+            "RAW_HTML_FORBIDDEN",
+            "body contains a forbidden less-than delimiter",
+        )
+
+
 def _check_references(
     raw: Any,
     context: dict[str, Any],
@@ -785,6 +793,7 @@ def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
         if len(_validate_unicode_text(body, "body")) > MAX_BODY_BYTES:
             raise GateInputError("INPUT_TOO_LARGE", "body exceeds the size limit")
         normalized_body = _normalized_body_text(body)
+        _reject_raw_html(normalized_body)
         _reject_directive_keywords(normalized_body)
         _validate_json_unicode(context_raw, "context")
         context = _validate_context(context_raw)
