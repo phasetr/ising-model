@@ -439,26 +439,37 @@ The implementation pull request for this protocol remains a same-repository
 draft until its evidence is complete. Record each observation with the event,
 run URL, exact head, status sequence, and cancelled-run or status residue:
 
-The pre-observation design expectation was that a draft body with `PENDING`
-review fields would produce `DRAFT_INCOMPLETE`. The actual opened canary
-superseded that expectation because it used an empty kickoff candidate. Its
-exact head received pending and then failure with `INVALID_CHANGED_PATH`;
-empty-path validation occurred before review-field evaluation. That
-observation is fail-shut evidence, but it is not an observed
-`DRAFT_INCOMPLETE` result.
+The [superseding canary design correction][design-4803-canary] replaces the
+original opened-event expectation and canary ordering. The original bounded
+design continues to govern every other scope, evidence, review, reset, and
+lifecycle requirement.
 
-The exact two-file candidate was then synchronized with both review records
-still `PENDING`. Its exact head received pending and then failure with the
-generic live description `OFFLINE_CHECK_FAILED`. A separate offline evaluation
-of the same exact candidate and body returned `DRAFT_INCOMPLETE` with exactly
-two `PENDING_REVIEW` diagnostics, one for each required record. The generic
-live description does not expose those offline diagnostics and is not an
-exact-head success.
+[design-4803-canary]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130003919
 
-The superseding issue record will carry the observed run URLs, exact heads,
-status sequences, timestamps, offline report, and any cancelled-run or status
-residue. The remaining lifecycle must occur in this order. These are required
-future observations, not current outcomes:
+The [durable A/B/C observation record][canary-4803-abc] carries the run URLs,
+exact heads, status sequences, timestamps, offline report, trusted-checkout
+evidence, and status residue for these completed observations:
+
+[canary-4803-abc]: https://github.com/phasetr/ising-model/issues/4803#issuecomment-5130004142
+
+1. **A, opened.** The empty kickoff head received `PENDING` and then `FAILURE`
+   with `INVALID_CHANGED_PATH`. This supersedes the pre-observation
+   `DRAFT_INCOMPLETE` expectation because empty-path validation occurred
+   before review-field evaluation.
+2. **B, edited.** A body edit on the unchanged empty kickoff head again
+   received `PENDING` and then `FAILURE` with `INVALID_CHANGED_PATH`.
+3. **C, synchronize.** The exact two-file candidate with both review records
+   still `PENDING` received live `PENDING` and then `FAILURE` with the generic
+   description `OFFLINE_CHECK_FAILED`. A separate offline evaluation of the
+   same exact candidate and body returned `DRAFT_INCOMPLETE` with exactly two
+   `PENDING_REVIEW` diagnostics, one for each required record.
+
+The A and B results are fail-shut evidence, but neither is an observed
+`DRAFT_INCOMPLETE` result. The generic C live description does not expose the
+offline diagnostics and is not an exact-head success.
+
+The remaining lifecycle must occur in this order. These are requirements for
+future observations, not claims that those outcomes already exist:
 
 1. Bind a valid body to the current exact head, changed-file count, and path
    digest. Supply separate durable exact-head source-review and issue-audit
