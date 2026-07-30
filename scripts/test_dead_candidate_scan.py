@@ -465,6 +465,13 @@ class SlashAlternationCitationTest(unittest.TestCase):
             "truncated4Infinite_latticeGraph_nonpos_h_zero",
         ]
     )
+    OUT_OF_SCOPE_NUMERIC_TOKENS = [
+        "truncated2/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated4/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated0/9Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated3/5Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+        "truncated3/3Infinite_latticeGraph_{beta_zero,J_zero_of_pairwise_distinct}",
+    ]
     NON_CITATIONS = [
         "https://example.test/truncated3/4Infinite_latticeGraph_beta_zero",
         "docs/truncated3/4Infinite_latticeGraph_beta_zero",
@@ -543,6 +550,36 @@ class SlashAlternationCitationTest(unittest.TestCase):
         """URLs, paths, division, qualified names, globs and suffixes stay inert."""
         for token in self.NON_CITATIONS:
             self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_out_of_scope_numeric_pairs_are_inert(self) -> None:
+        """Only the exact documented 3/4 pair is a supported numeric stem."""
+        for token in self.OUT_OF_SCOPE_NUMERIC_TOKENS:
+            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
+            self.assertEqual(dcs.expand_citation_token(token), [token], token)
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+    def test_out_of_scope_numeric_pairs_charge_no_declaration(self) -> None:
+        """Neighboring or reversed numeric pairs invent no documentation charge."""
+        synthetic = dcs.DocSource(
+            label="synthetic.md",
+            text="",
+            starts=[0],
+            tokens=[
+                (token, lineno)
+                for lineno, token in enumerate(self.OUT_OF_SCOPE_NUMERIC_TOKENS, 1)
+            ],
+            unreadable=[],
+        )
+        real_tree = tree()
+        verdicts = [
+            dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
+            for name in self.TARGETS
+        ]
+        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
+        self.assertEqual(
+            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
+            {name: [] for name in self.TARGETS},
+        )
 
 
 class SpacedBraceCitationTest(unittest.TestCase):
