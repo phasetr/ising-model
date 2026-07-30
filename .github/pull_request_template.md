@@ -28,6 +28,9 @@ forbidden words and conservative whole-body policy are listed in
 `docs/completion-claims.md`.
 Do not use a less-than character, raw HTML, or an angle autolink anywhere in
 this body. Write comparisons in words and use ordinary Markdown links.
+The advisory `completion-claim/live` status binds mechanical evidence to the
+exact head. It does not replace source review, issue audit, semantic review,
+or reviewer-independence review.
 
 ```completion-claims-v1
 {

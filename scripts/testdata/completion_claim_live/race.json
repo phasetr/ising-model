@@ -1,0 +1,9 @@
+{
+  "id": "same-head-body-edit",
+  "repository": "phasetr/ising-model",
+  "pr_number": 4807,
+  "mutation": "body",
+  "draft": false,
+  "checker_exit": 0,
+  "expected_terminal": "failure"
+}

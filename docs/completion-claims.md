@@ -9,6 +9,73 @@ historical statement is true.
 It is not a semantic completion verdict. Every semantic claim and every
 semantic claim level is reported as `HUMAN_REVIEW_REQUIRED`.
 
+## Trusted live adapter
+
+Phase 2 wraps the offline calculation in
+`scripts/completion_claim_live.py`. The live adapter publishes the advisory
+commit-status context `completion-claim/live` on the exact pull-request head.
+Only offline exit 0 with a well-formed `PASS` report can publish `success`.
+Draft-incomplete, deterministic rejection, unexpected checker output, API or
+timeout errors, bounded-input violations, snapshot races, and status-write
+errors all fail shut. This status is advisory during #4801; repository
+required-check policy remains in #4802.
+
+The isolated `.github/workflows/completion_claim_live.yml` workflow runs for
+the exact `pull_request_target` actions `opened`, `reopened`, `synchronize`,
+`edited`, `ready_for_review`, and `converted_to_draft`. A `main` push performs
+a bounded open-pull-request backfill, and manual dispatch accepts one positive
+decimal pull-request number. Actor identity never bypasses evaluation.
+
+The workflow has exactly these permissions:
+
+- `contents: read`
+- `pull-requests: read`
+- `issues: read`
+- `statuses: write`
+
+It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
+action, one-commit depth, and credential persistence disabled. It never checks
+out or executes the pull-request head, merge revision, fork content, artifact,
+cache, dependency installer, or candidate-supplied action. Concurrency is
+cancelled per repository and pull-request selection so an older active run
+cannot overwrite a newer terminal observation. Cancelled pending residue is
+fail-shut, not merge authority.
+
+### Live snapshot and bounds
+
+The adapter records P1 from fresh REST responses: repository and pull-request
+identity, state, draft flag, exact base and head SHAs, complete body bytes and
+digest, changed-file count, sorted paths and digest, structural issue facts,
+and bounded primary history facts. It writes `pending` to the P1 head, invokes
+the existing offline evaluator with the derived context, then reads P2.
+State, draft flag, base SHA, head SHA, body digest, changed-file count, and
+path digest must remain exactly equal. A mismatch writes `failure` to the P1
+head; a newer event owns the newer body or head.
+
+Changed files use fixed 100-entry pages. Metadata, page sizes, unique paths,
+and the collected count must agree exactly. At most 30 pages and 3,000 paths
+are accepted; 3,001 paths, a missing or extra entry, a duplicate, an
+incomplete page, or a partial digest is rejected. The body and derived context
+are each limited to one MiB, each API response to two MiB, structural issue
+ancestry to 64 issues and depth 8, history to 128 facts, push backfill to 100
+pull requests, diagnostics to 8,192 bytes, and HTTP attempts to one request
+plus two bounded retries. Oversize and truncation never produce partial
+acceptance.
+
+Issue authority begins only with `Refs` entries in the managed JSON. Each seed
+issue and its parent chain are read through structural issue endpoints;
+unrestricted prose cannot widen the allowlist. Structured history is likewise
+derived from the requested commit, its sole parent, ancestry comparison, and
+repository-content existence at the commit and parent. Merge commits and
+unreachable history are rejected. Matching those facts does not certify their
+natural-language relevance, which remains human review.
+
+The same-head body-edit interval before `pending` and production commit-status
+behavior for a fork-owned head remain documented canary questions for #4802.
+Mocked tests exercise both shapes but cannot turn either production behavior
+into a proven fact. #4801 remains open after the code merge until bounded
+backfill and real same-repository and fork observations are recorded.
+
 ## Inputs
 
 Invoke the checker with two explicit UTF-8 files:
@@ -223,6 +290,7 @@ Run:
 
 ```text
 python3 scripts/test_completion_claim_gate.py
+python3 scripts/test_completion_claim_live.py
 ```
 
 The suite includes baseline and incident-derived fixtures for #4709, #4718,
@@ -240,3 +308,10 @@ suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
 checker mutants; pins `.self-local` path coverage; and verifies that the
 checker imports no process, network, or dynamic-execution facility.
+
+The live-adapter suite is hermetic and performs no network requests. Its
+injected transport covers pull-request actions, draft and ready transitions,
+dispatch and backfill, same-repository, fork, and Dependabot-shaped metadata,
+fixed-page boundaries through 3,000 paths, structural issue ancestry, primary
+history actions, P1/P2 races, checker exit mapping, status payloads, API and
+size errors, and workflow security mutations.

@@ -1,0 +1,14 @@
+{
+  "id": "primary-linear-history",
+  "repository": "phasetr/ising-model",
+  "pr_number": 4808,
+  "history": [
+    {
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "parent_sha": "1111111111111111111111111111111111111111",
+      "path": "scripts/example.py",
+      "action": "modified"
+    }
+  ],
+  "expected_terminal": "success"
+}

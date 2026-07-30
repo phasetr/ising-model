@@ -1,0 +1,10 @@
+{
+  "id": "same-repository-ready",
+  "repository": "phasetr/ising-model",
+  "pr_number": 4805,
+  "head_repository": "phasetr/ising-model",
+  "head_actor": "phasetr",
+  "draft": false,
+  "checker_exit": 0,
+  "expected_terminal": "success"
+}

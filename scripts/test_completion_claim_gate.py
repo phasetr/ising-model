@@ -1019,6 +1019,24 @@ class SecurityAndWiringTest(unittest.TestCase):
         self.assertEqual(workflow.count(command), 1)
         self.assertIn("jobs:\n  build:", workflow)
 
+    def test_live_adapter_is_separate_and_keeps_phase1_self_test(self) -> None:
+        workflow = (
+            REPO_ROOT / ".github/workflows/completion_claim_live.yml"
+        ).read_text(encoding="utf-8")
+        build_workflow = (
+            REPO_ROOT / ".github/workflows/lean_action_ci.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("pull_request_target:", workflow)
+        self.assertIn("python3 scripts/completion_claim_live.py", workflow)
+        self.assertEqual(
+            build_workflow.count("python3 scripts/test_completion_claim_live.py"),
+            1,
+        )
+        self.assertEqual(
+            build_workflow.count("python3 scripts/test_completion_claim_gate.py"),
+            1,
+        )
+
     def test_no_separate_completion_claim_workflow_exists(self) -> None:
         workflows = REPO_ROOT / ".github" / "workflows"
         names = {path.name for path in workflows.iterdir()}
