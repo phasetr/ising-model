@@ -39,13 +39,31 @@
       "expected_code": "REVIEW_HEAD_MISMATCH"
     },
     {
-      "id": "structured_history_tuple_wrong_head",
+      "id": "structured_history_wrong_commit",
       "mutation": {
-        "field": "review_records.1.head_sha",
-        "from": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "field": "history_claims.0.commit_sha",
+        "from": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
         "to": "dddddddddddddddddddddddddddddddddddddddd"
       },
-      "expected_code": "REVIEW_HEAD_MISMATCH"
+      "expected_code": "HISTORY_COMMIT_MISMATCH"
+    },
+    {
+      "id": "structured_history_wrong_path",
+      "mutation": {
+        "field": "history_claims.0.path",
+        "from": "scripts/completion_claim_gate.py",
+        "to": "scripts/test_completion_claim_gate.py"
+      },
+      "expected_code": "HISTORY_PATH_MISMATCH"
+    },
+    {
+      "id": "structured_history_wrong_action",
+      "mutation": {
+        "field": "history_claims.0.action",
+        "from": "modified",
+        "to": "deleted"
+      },
+      "expected_code": "HISTORY_ACTION_MISMATCH"
     },
     {
       "id": "source_and_provenance_remain_human",
@@ -70,6 +88,13 @@
       "allowed_issue_refs": [
         4796,
         4801
+      ],
+      "history_facts": [
+        {
+          "commit_sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "path": "scripts/completion_claim_gate.py",
+          "action": "modified"
+        }
       ]
     },
     "payload": {
@@ -102,6 +127,13 @@
         ],
         "closing": []
       },
+      "history_claims": [
+        {
+          "commit_sha": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "path": "scripts/completion_claim_gate.py",
+          "action": "modified"
+        }
+      ],
       "semantic_claims": []
     }
   }

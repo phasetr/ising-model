@@ -21,9 +21,14 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import completion_claim_gate as gate  # noqa: E402
 
 
-def managed_body(payload: dict[str, Any], prefix: str = "") -> str:
+def managed_body(
+    payload: dict[str, Any],
+    prefix: str = "",
+    opening: str = gate.BLOCK_FENCE,
+    closing: str = "```",
+) -> str:
     encoded = json.dumps(payload, indent=2, sort_keys=True)
-    return f"{prefix}{gate.BLOCK_FENCE}\n{encoded}\n```\n"
+    return f"{prefix}{opening}\n{encoded}\n{closing}\n"
 
 
 def fixture(name: str) -> dict[str, Any]:
@@ -99,6 +104,13 @@ class GateTest(GateHarness, unittest.TestCase):
         self.assertEqual(report["machine_status"], gate.PASS)
         self.assertEqual(len(self.context["changed_paths"]), 2)
         self.assertNotEqual(self.payload["candidate"]["sorted_path_digest"], "sha256:" + "0" * 64)
+        review_items = [
+            item for item in report["human_reviews"] if item["kind"] == "review_record"
+        ]
+        self.assertEqual(len(review_items), 2)
+        self.assertTrue(
+            all(item["status"] == gate.HUMAN_REVIEW_REQUIRED for item in review_items)
+        )
 
     def test_sha_nibble_mutation_fails(self) -> None:
         self.assert_code(
@@ -182,6 +194,36 @@ class GateTest(GateHarness, unittest.TestCase):
     def test_negated_autoclose_in_prose_fails(self) -> None:
         self.assert_code("AUTOCLOSE_REFERENCE", prefix="This does not Closes #4801.\n")
 
+    def test_all_official_autoclose_variants_fail(self) -> None:
+        references = [
+            "#4801",
+            "phasetr/ising-model#4801",
+            "https://github.com/phasetr/ising-model/issues/4801",
+        ]
+        for index, keyword in enumerate(gate.OFFICIAL_CLOSE_KEYWORDS):
+            punctuation = ": (**" if index % 2 else " "
+            suffix = "**)" if index % 2 else ""
+            prefix = f"{keyword.upper()}{punctuation}{references[index % 3]}{suffix}\n"
+            with self.subTest(prefix=prefix):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
+    def test_nfkc_and_markdown_autoclose_forms_fail(self) -> None:
+        variants = [
+            "\uff26\uff49\uff58\uff45\uff53\uff1a \uff034801\n",
+            "[Resolves](https://example.test/reason) **#4801**\n",
+            "<strong>Closed</strong>: (phasetr/ising-model#4801)\n",
+            "Fixes: <https://github.com/phasetr/ising-model/issues/4801>\n",
+        ]
+        for prefix in variants:
+            with self.subTest(prefix=prefix):
+                self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
+
+    def test_raw_wrong_nonclosing_ref_outside_block_fails(self) -> None:
+        self.assert_code(
+            "UNMANAGED_ISSUE_REF",
+            prefix="Copied evidence says Refs #4709.\n",
+        )
+
     def test_push_delivery_fails(self) -> None:
         context = copy.deepcopy(self.context)
         context["delivery"] = "push"
@@ -220,7 +262,11 @@ class GateTest(GateHarness, unittest.TestCase):
         ]
         code, report = self.run_gate(payload=payload)
         self.assertEqual(code, gate.EXIT_PASS, report)
-        statuses = [entry["status"] for entry in report["human_reviews"]]
+        statuses = [
+            entry["status"]
+            for entry in report["human_reviews"]
+            if entry["kind"] in gate.SEMANTIC_KINDS
+        ]
         self.assertEqual(statuses, [gate.HUMAN_REVIEW_REQUIRED] * 3)
         self.assertNotIn(gate.PASS, statuses)
 
@@ -229,11 +275,50 @@ class GateTest(GateHarness, unittest.TestCase):
         payload["claim_levels"] = sorted(gate.SEMANTIC_CLAIM_LEVELS)
         code, report = self.run_gate(payload=payload)
         self.assertEqual(code, gate.EXIT_PASS, report)
-        statuses = [entry["status"] for entry in report["human_reviews"]]
+        statuses = [
+            entry["status"]
+            for entry in report["human_reviews"]
+            if entry["kind"] == "claim_level"
+        ]
         self.assertEqual(
             statuses,
             [gate.HUMAN_REVIEW_REQUIRED] * len(gate.SEMANTIC_CLAIM_LEVELS),
         )
+
+    def test_unmanaged_claims_are_charged_to_human_review(self) -> None:
+        prefix = "Future phase work will prove the source claim for issue #4800.\n"
+        code, report = self.run_gate(prefix=prefix)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        kinds = {entry["kind"] for entry in report["human_reviews"]}
+        self.assertTrue(
+            {"unmanaged_prose", "unmanaged_issue_reference", "future_plan"} <= kinds
+        )
+        self.assertNotIn(gate.PASS, {entry["status"] for entry in report["human_reviews"]})
+
+    def test_malformed_url_is_structured_fail_not_traceback(self) -> None:
+        payload = self.mutated_payload("review_records.0.url", "https://[::1")
+        self.assert_code("INVALID_URL", payload=payload)
+
+    def test_bool_schema_versions_and_integer_fields_fail(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["schema_version"] = True
+        self.assert_code("INVALID_TYPE", context=context)
+        payload = copy.deepcopy(self.payload)
+        payload["schema_version"] = True
+        self.assert_code("INVALID_TYPE", payload=payload)
+        payload = self.mutated_payload("candidate.changed_file_count", True)
+        self.assert_code("INVALID_TYPE", payload=payload)
+        context = copy.deepcopy(self.context)
+        context["allowed_issue_refs"] = [True, 4801]
+        self.assert_code("INVALID_ISSUE_REF", context=context)
+
+    def test_reusing_context_is_deterministic_and_does_not_mutate_input(self) -> None:
+        context = copy.deepcopy(self.context)
+        before = copy.deepcopy(context)
+        first = gate.evaluate(context, managed_body(self.payload))
+        second = gate.evaluate(context, managed_body(self.payload))
+        self.assertEqual(first, second)
+        self.assertEqual(context, before)
 
 
 class DigestTest(unittest.TestCase):
@@ -260,6 +345,50 @@ class DigestTest(unittest.TestCase):
             with self.subTest(path=repr(path)):
                 with self.assertRaises(gate.GateInputError):
                     gate.sorted_path_digest([path])
+
+
+class ManagedFenceTest(GateHarness, unittest.TestCase):
+    def test_markdown_valid_fence_forms_pass(self) -> None:
+        forms = [
+            ("~~~~completion-claims-v1", "~~~~"),
+            ("   ```completion-claims-v1   ", "   ```"),
+            ("````completion-claims-v1", "`````"),
+        ]
+        for opening, closing in forms:
+            with self.subTest(opening=opening, closing=closing):
+                body = managed_body(self.payload, opening=opening, closing=closing)
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_mixed_fence_duplicate_fails(self) -> None:
+        first = managed_body(self.payload)
+        second = managed_body(
+            self.payload,
+            opening="~~~completion-claims-v1",
+            closing="~~~",
+        )
+        self.assert_code("DUPLICATE_MANAGED_BLOCK", body=first + second)
+
+    def test_managed_fence_nested_in_other_fence_fails(self) -> None:
+        body = "````text\n" + managed_body(self.payload) + "````\n"
+        self.assert_code("NESTED_MANAGED_BLOCK", body=body)
+
+    def test_ambiguous_managed_info_fails(self) -> None:
+        body = managed_body(
+            self.payload,
+            opening="```completion-claims-v1 extra",
+        )
+        self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+
+    def test_unclosed_and_short_closing_fences_fail(self) -> None:
+        encoded = json.dumps(self.payload)
+        bodies = [
+            f"```completion-claims-v1\n{encoded}\n",
+            f"````completion-claims-v1\n{encoded}\n```\n",
+        ]
+        for body in bodies:
+            with self.subTest(body=body[-20:]):
+                self.assert_code("MALFORMED_MANAGED_BLOCK", body=body)
 
 
 class IncidentFixtureTest(GateHarness, unittest.TestCase):
@@ -362,7 +491,7 @@ class IncidentFixtureTest(GateHarness, unittest.TestCase):
                         context=control["context"],
                         payload=payload,
                     )
-                elif "body_prefix" in case:
+                elif "expected_code" in case:
                     self.assert_code(
                         case["expected_code"],
                         context=control["context"],
@@ -370,24 +499,20 @@ class IncidentFixtureTest(GateHarness, unittest.TestCase):
                         prefix=case["body_prefix"],
                     )
                 else:
-                    payload = copy.deepcopy(control["payload"])
-                    kind = case["semantic_kind"]
-                    payload["semantic_claims"] = [
-                        {
-                            "id": case["id"],
-                            "kind": kind,
-                            "statement": "Green deterministic fields do not prove this prose.",
-                            "evidence_urls": [f"https://example.test/4800/{kind}"],
-                        }
-                    ]
                     code, report = self.run_gate(
                         context=control["context"],
-                        payload=payload,
+                        payload=control["payload"],
+                        prefix=case["body_prefix"],
                     )
                     self.assertEqual(code, gate.EXIT_PASS)
-                    self.assertEqual(
-                        report["human_reviews"][0]["status"],
-                        case["expected_status"],
+                    matching = [
+                        item
+                        for item in report["human_reviews"]
+                        if item["kind"] == case["expected_human_kind"]
+                    ]
+                    self.assertTrue(matching, report)
+                    self.assertTrue(
+                        all(item["status"] == case["expected_status"] for item in matching)
                     )
 
     @staticmethod
@@ -418,10 +543,10 @@ class MutationTest(GateHarness, unittest.TestCase):
 
     def test_autoclose_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            "if CLOSING_RE.search(body) is not None:",
+            "if CLOSING_RE.search(projected) is not None:",
             "if False:",
         )
-        prefix = "This does not Closes #4801.\n"
+        prefix = "[Resolves](https://example.test/reason): owner/repo#4801\n"
         self.assert_code("AUTOCLOSE_REFERENCE", prefix=prefix)
         code, _ = self.run_gate(prefix=prefix, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS)
@@ -440,6 +565,38 @@ class MutationTest(GateHarness, unittest.TestCase):
         )
         paths = [".self-local/reports/incident.lean", "scripts/completion_claim_gate.py"]
         self.assertNotEqual(mutant.sorted_path_digest(paths), gate.sorted_path_digest(paths))
+
+    def test_history_action_comparison_mutant_is_killed(self) -> None:
+        mutant = self.mutant("if claim[2] != fact[2]:", "if False:")
+        payload = self.mutated_payload("history_claims.0.action", "deleted")
+        self.assert_code("HISTORY_ACTION_MISMATCH", payload=payload)
+        code, _ = self.run_gate(payload=payload, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+    def test_unmanaged_prose_charging_mutant_is_killed(self) -> None:
+        mutant = self.mutant("if not unmanaged.strip():", "if True:")
+        prefix = "Future source work will be handled in issue #4800.\n"
+        _, real = self.run_gate(prefix=prefix)
+        _, weakened = self.run_gate(prefix=prefix, module=mutant)
+        self.assertIn(
+            "unmanaged_prose",
+            {item["kind"] for item in real["human_reviews"]},
+        )
+        self.assertNotIn(
+            "unmanaged_prose",
+            {item["kind"] for item in weakened["human_reviews"]},
+        )
+
+    def test_three_fence_minimum_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "FENCE_OPEN_RE = re.compile(r\"^( {0,3})(`{3,}|~{3,})([^\\r\\n]*)$\")",
+            "FENCE_OPEN_RE = re.compile(r\"^( {0,3})(`{4,}|~{4,})([^\\r\\n]*)$\")",
+        )
+        code, _ = self.run_gate()
+        self.assertEqual(code, gate.EXIT_PASS)
+        code, report = self.run_gate(module=mutant)
+        self.assertEqual(code, gate.EXIT_FAIL)
+        self.assertEqual(report["diagnostics"][0]["code"], "MISSING_MANAGED_BLOCK")
 
 
 class SecurityAndWiringTest(unittest.TestCase):

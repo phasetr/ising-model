@@ -31,7 +31,8 @@
       ],
       "allowed_issue_refs": [
         4801
-      ]
+      ],
+      "history_facts": []
     },
     "payload": {
       "schema_version": 1,
@@ -63,6 +64,7 @@
         ],
         "closing": []
       },
+      "history_claims": [],
       "semantic_claims": []
     }
   }

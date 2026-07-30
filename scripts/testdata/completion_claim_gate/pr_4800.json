@@ -27,12 +27,14 @@
     },
     {
       "id": "stale_unrestricted_prose_is_human",
-      "semantic_kind": "provenance",
+      "body_prefix": "The old source audit proves all later changes are safe.\n",
+      "expected_human_kind": "unmanaged_prose",
       "expected_status": "HUMAN_REVIEW_REQUIRED"
     },
     {
       "id": "row_20_source_role_is_human",
-      "semantic_kind": "source",
+      "body_prefix": "Row 20 is the definitive source role for issue #4800.\n",
+      "expected_human_kind": "unmanaged_issue_reference",
       "expected_status": "HUMAN_REVIEW_REQUIRED"
     }
   ],
@@ -50,7 +52,8 @@
       "allowed_issue_refs": [
         4796,
         4801
-      ]
+      ],
+      "history_facts": []
     },
     "payload": {
       "schema_version": 1,
@@ -82,6 +85,7 @@
         ],
         "closing": []
       },
+      "history_claims": [],
       "semantic_claims": []
     }
   }

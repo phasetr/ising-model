@@ -27,7 +27,14 @@ The context has this exact schema:
   "base_sha": "0000000000000000000000000000000000000000",
   "head_sha": "1111111111111111111111111111111111111111",
   "changed_paths": ["repo/relative/path"],
-  "allowed_issue_refs": [4796, 4801]
+  "allowed_issue_refs": [4796, 4801],
+  "history_facts": [
+    {
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "path": "repo/relative/path",
+      "action": "modified"
+    }
+  ]
 }
 ```
 
@@ -37,9 +44,12 @@ gate.
 
 ## Managed block
 
-The body must contain exactly one fenced `completion-claims-v1` JSON block.
-Unknown or missing keys, duplicate JSON keys, duplicate blocks, malformed
-types, and unsupported schema versions fail closed.
+The body must contain exactly one Markdown-valid fenced
+`completion-claims-v1` JSON block. Three or more backticks or tildes and up to
+three leading spaces are accepted. Mixed duplicate fences, nested managed
+fences, ambiguous info strings, short closers, and unclosed managed fences fail
+closed. Unknown or missing keys, duplicate JSON keys, malformed types, and
+unsupported schema versions also fail closed.
 
 ```completion-claims-v1
 {
@@ -67,6 +77,13 @@ types, and unsupported schema versions fail closed.
     "non_closing": ["Refs #4801", "Part of #4796"],
     "closing": []
   },
+  "history_claims": [
+    {
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "path": "repo/relative/path",
+      "action": "modified"
+    }
+  ],
   "semantic_claims": [
     {
       "id": "stable-local-id",
@@ -112,26 +129,52 @@ Allowed claim levels are:
 - `repository_wide_completion`
 
 The list must be nonempty and duplicate-free. The checker validates the enum;
-it does not certify that a selected level is honest.
+it does not certify that a selected level is honest. Only
+`exact_candidate_diff` is fully bound to context fields. Every other level
+emits `HUMAN_REVIEW_REQUIRED`; this includes the explicitly semantic
 `bounded_tracker_completion`, `theorem_api_contract`, and
-`repository_wide_completion` always emit `HUMAN_REVIEW_REQUIRED`.
+`repository_wide_completion` levels.
 
 Review records must contain exactly the `source_review` and
 `issue_resolution_audit` kinds, durable HTTPS URL syntax, and the exact
-candidate head. URL relevance, reviewer independence, authorship, source role,
-theorem meaning, and historical or provenance prose remain human decisions.
+candidate head. These checks prove only record syntax and head binding. Each
+record itself emits `HUMAN_REVIEW_REQUIRED`: URL relevance, reviewer
+independence, authorship, source role, theorem meaning, and historical or
+provenance prose remain human decisions.
 
 Semantic claim kinds are `source`, `theorem`, and `provenance`. Every semantic
 claim emits `HUMAN_REVIEW_REQUIRED`; a semantic result is never reported as
 `PASS`.
 
+All nonempty prose outside the managed block is conservatively charged as
+`HUMAN_REVIEW_REQUIRED`. Issue mentions and future-plan language receive
+additional human-review records. Thus an unmanaged claim cannot silently
+inherit the machine `PASS` status.
+
+### Structured history
+
+`context.history_facts` and payload `history_claims` contain exact ordered
+tuples with only `commit_sha`, `path`, and `action`. The SHA is full lowercase
+hex, the path follows the same repository-relative normalization rules as a
+changed path, and the action is one of `added`, `modified`, or `deleted`.
+Counts and every tuple component must match exactly. A structured match says
+only that the payload repeats the caller-supplied primary fact; interpretation
+of unrestricted historical prose remains human-reviewed.
+
 ### Issue references
 
 `references.closing` is mandatory and must be empty. The body is also rejected
-if it contains a GitHub auto-close keyword followed by an issue number,
-including when prose negates the keyword. The only structured non-closing forms
-are `Refs #NUMBER` and `Part of #NUMBER`, and their numbers must be in
-`allowed_issue_refs`.
+if it contains any case-insensitive official GitHub auto-close keyword
+(`close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`,
+or `resolved`) followed by a local issue, `owner/repository` issue, or GitHub
+issue URL. Detection handles punctuation, Markdown formatting, HTML entities,
+and Unicode NFKC forms, including when prose negates the keyword.
+
+The only structured non-closing forms are `Refs #NUMBER` and
+`Part of #NUMBER`, and their numbers must be in `allowed_issue_refs`. The same
+allowlist is applied to raw `Refs` or `Part of` directives elsewhere in the
+body, so copied evidence cannot hide a wrong issue number outside the managed
+block.
 
 ## Draft and ready behavior
 
@@ -156,6 +199,8 @@ python3 scripts/test_completion_claim_gate.py
 
 The suite includes baseline and incident-derived fixtures for #4709, #4718,
 and PR #4800. It mutates SHAs, paths, counts, digests, references, review heads,
-delivery, blocks, keys, and ready placeholders. It also kills representative
+structured history commits/paths/actions, delivery, fences, keys, and ready
+placeholders. It probes Unicode/Markdown auto-close forms, malformed URLs,
+boolean-as-integer inputs, and unmanaged prose. It also kills representative
 weakened-checker mutants, pins `.self-local` path coverage, and verifies that
 the checker imports no process, network, or dynamic-execution facility.

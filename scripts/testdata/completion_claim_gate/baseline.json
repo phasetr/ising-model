@@ -16,7 +16,8 @@
         "allowed_issue_refs": [
           4796,
           4801
-        ]
+        ],
+        "history_facts": []
       },
       "payload": {
         "schema_version": 1,
@@ -49,6 +50,7 @@
           ],
           "closing": []
         },
+        "history_claims": [],
         "semantic_claims": []
       },
       "body_prefix": "Ready control.\n",
@@ -69,7 +71,8 @@
         ],
         "allowed_issue_refs": [
           4801
-        ]
+        ],
+        "history_facts": []
       },
       "payload": {
         "schema_version": 1,
@@ -96,6 +99,7 @@
           ],
           "closing": []
         },
+        "history_claims": [],
         "semantic_claims": []
       },
       "body_prefix": "Draft control.\n",
@@ -116,7 +120,8 @@
         ],
         "allowed_issue_refs": [
           4801
-        ]
+        ],
+        "history_facts": []
       },
       "payload": {
         "schema_version": 1,
@@ -148,6 +153,7 @@
           ],
           "closing": []
         },
+        "history_claims": [],
         "semantic_claims": []
       },
       "body_prefix": "This text references work without closing it.\n",

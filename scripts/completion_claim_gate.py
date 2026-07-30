@@ -10,14 +10,17 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import re
 import sys
+import unicodedata
 from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import urlsplit
 
 SCHEMA_VERSION = 1
+BLOCK_INFO = "completion-claims-v1"
 BLOCK_FENCE = "```completion-claims-v1"
 PENDING = "PENDING"
 PASS = "PASS"
@@ -35,15 +38,60 @@ MAX_CHANGED_PATHS = 10_000
 MAX_PATH_BYTES = 4_096
 MAX_REVIEW_RECORDS = 16
 MAX_SEMANTIC_CLAIMS = 1_000
+MAX_HISTORY_FACTS = 10_000
 MAX_TEXT_BYTES = 16_384
 
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}\Z")
 NON_CLOSING_RE = re.compile(r"(Refs|Part of) #([1-9][0-9]*)\Z")
+OFFICIAL_CLOSE_KEYWORDS = (
+    "close",
+    "closes",
+    "closed",
+    "fix",
+    "fixes",
+    "fixed",
+    "resolve",
+    "resolves",
+    "resolved",
+)
+CLOSE_KEYWORD_PATTERN = r"(?:" + "|".join(OFFICIAL_CLOSE_KEYWORDS) + r")"
+OWNER_REPO_PATTERN = r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})/[A-Za-z0-9_.-]+"
+ISSUE_URL_PATTERN = (
+    r"https?://github\.com/" + OWNER_REPO_PATTERN + r"/(?:issues|pull)/[1-9][0-9]*"
+)
+ISSUE_REFERENCE_PATTERN = (
+    r"(?:#[1-9][0-9]*|"
+    + OWNER_REPO_PATTERN
+    + r"#[1-9][0-9]*|"
+    + ISSUE_URL_PATTERN
+    + r")"
+)
+MARKDOWN_SEPARATOR_PATTERN = r"""[\s:;,.\-–—!?()[\]{}*_~`'"<>|/\\]{0,64}"""
 CLOSING_RE = re.compile(
-    r"\b(?:close[sd]?|fix(?:e[sd]?|es)?|resolve[sd]?)\s+#[1-9][0-9]*\b",
+    r"\b"
+    + CLOSE_KEYWORD_PATTERN
+    + r"\b"
+    + MARKDOWN_SEPARATOR_PATTERN
+    + ISSUE_REFERENCE_PATTERN,
     re.IGNORECASE,
 )
+NON_CLOSING_BODY_RE = re.compile(
+    r"\b(?:Refs|Part\s+of)\b"
+    + MARKDOWN_SEPARATOR_PATTERN
+    + r"(?P<reference>"
+    + ISSUE_REFERENCE_PATTERN
+    + r")",
+    re.IGNORECASE,
+)
+ISSUE_MENTION_RE = re.compile(ISSUE_REFERENCE_PATTERN, re.IGNORECASE)
+FUTURE_PLAN_RE = re.compile(
+    r"\b(?:future|later|next\s+phase|phase\s+[0-9]+|plan(?:ned)?|"
+    r"remain(?:s|ing)?|todo|follow[- ]?up|will)\b",
+    re.IGNORECASE,
+)
+FENCE_OPEN_RE = re.compile(r"^( {0,3})(`{3,}|~{3,})([^\r\n]*)$")
+HISTORY_ACTIONS = frozenset({"added", "modified", "deleted"})
 
 CLAIM_LEVELS = frozenset(
     {
@@ -74,6 +122,7 @@ CONTEXT_KEYS = frozenset(
         "head_sha",
         "changed_paths",
         "allowed_issue_refs",
+        "history_facts",
     }
 )
 PAYLOAD_KEYS = frozenset(
@@ -84,6 +133,7 @@ PAYLOAD_KEYS = frozenset(
         "review_records",
         "references",
         "semantic_claims",
+        "history_claims",
     }
 )
 CANDIDATE_KEYS = frozenset(
@@ -92,6 +142,7 @@ CANDIDATE_KEYS = frozenset(
 REVIEW_KEYS = frozenset({"kind", "head_sha", "url"})
 REFERENCE_KEYS = frozenset({"non_closing", "closing"})
 SEMANTIC_KEYS = frozenset({"id", "kind", "statement", "evidence_urls"})
+HISTORY_KEYS = frozenset({"commit_sha", "path", "action"})
 
 
 class GateInputError(ValueError):
@@ -180,13 +231,20 @@ def _url(value: Any, where: str, *, allow_pending: bool = False) -> str:
     text = _string(value, where, allow_pending=allow_pending)
     if text == PENDING and allow_pending:
         return text
-    parsed = urlsplit(text)
+    try:
+        parsed = urlsplit(text)
+        hostname = parsed.hostname
+        port = parsed.port
+    except (UnicodeError, ValueError) as error:
+        raise GateInputError("INVALID_URL", f"{where} is not a valid URL") from error
     if (
         parsed.scheme != "https"
         or not parsed.netloc
+        or hostname is None
+        or port is not None and not 1 <= port <= 65535
         or parsed.username is not None
         or parsed.password is not None
-        or any(char.isspace() for char in text)
+        or any(char.isspace() or unicodedata.category(char) == "Cc" for char in text)
     ):
         raise GateInputError("INVALID_URL", f"{where} must be an HTTPS URL")
     return text
@@ -234,22 +292,97 @@ def sorted_path_digest(paths: list[str]) -> str:
     return f"sha256:{digest.hexdigest()}"
 
 
-def extract_managed_block(body: str) -> str:
-    """Extract exactly one complete completion-claims-v1 fenced block."""
+def _fence(line: str) -> tuple[str, int, str] | None:
+    match = FENCE_OPEN_RE.fullmatch(line.removesuffix("\r"))
+    if match is None:
+        return None
+    marker = match.group(2)
+    info = match.group(3).strip()
+    if marker[0] == "`" and "`" in info:
+        return None
+    return marker[0], len(marker), info
+
+
+def _fence_closes(line: str, marker: str, minimum: int) -> bool:
+    stripped = line.removesuffix("\r")
+    match = re.fullmatch(r" {0,3}(" + re.escape(marker) + r"{3,})[ \t]*", stripped)
+    return match is not None and len(match.group(1)) >= minimum
+
+
+def extract_managed_document(body: str) -> tuple[str, str]:
+    """Return one managed JSON block and all Markdown outside that block."""
     lines = body.split("\n")
-    openings = [index for index, line in enumerate(lines) if line == BLOCK_FENCE]
-    if not openings:
-        raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
-    if len(openings) != 1:
-        raise GateInputError("DUPLICATE_MANAGED_BLOCK", "exactly one managed block is required")
-    opening = openings[0]
-    closing = next(
-        (index for index in range(opening + 1, len(lines)) if lines[index] == "```"),
-        None,
-    )
-    if closing is None:
+    active: tuple[str, int, int, bool] | None = None
+    blocks: list[tuple[int, int, str]] = []
+    for index, line in enumerate(lines):
+        if active is not None:
+            marker, minimum, opening, managed = active
+            if _fence_closes(line, marker, minimum):
+                if managed:
+                    blocks.append((opening, index, "\n".join(lines[opening + 1 : index])))
+                active = None
+                continue
+            nested = _fence(line)
+            if nested is not None and nested[2].startswith(BLOCK_INFO):
+                raise GateInputError(
+                    "NESTED_MANAGED_BLOCK",
+                    "managed evidence block is nested inside another fence",
+                )
+            continue
+        opening_fence = _fence(line)
+        if opening_fence is None:
+            continue
+        marker, minimum, info = opening_fence
+        if info == BLOCK_INFO:
+            active = (marker, minimum, index, True)
+        elif info.startswith(BLOCK_INFO):
+            raise GateInputError(
+                "AMBIGUOUS_MANAGED_BLOCK",
+                "managed fence info must be exactly completion-claims-v1",
+            )
+        else:
+            active = (marker, minimum, index, False)
+    if active is not None and active[3]:
         raise GateInputError("MALFORMED_MANAGED_BLOCK", "managed evidence block is unclosed")
-    return "\n".join(lines[opening + 1 : closing])
+    if not blocks:
+        raise GateInputError("MISSING_MANAGED_BLOCK", "managed evidence block is missing")
+    if len(blocks) != 1:
+        raise GateInputError("DUPLICATE_MANAGED_BLOCK", "exactly one managed block is required")
+    opening, closing, content = blocks[0]
+    unmanaged = "\n".join(lines[:opening] + lines[closing + 1 :])
+    return content, unmanaged
+
+
+def extract_managed_block(body: str) -> str:
+    """Compatibility helper returning the JSON text from the managed document."""
+    return extract_managed_document(body)[0]
+
+
+def _markdown_projection(body: str) -> str:
+    normalized = unicodedata.normalize("NFKC", html.unescape(body))
+    normalized = "".join(
+        char for char in normalized if unicodedata.category(char) != "Cf"
+    )
+    normalized = re.sub(
+        r"\[(" + CLOSE_KEYWORD_PATTERN + r")\]\([^)\n]{0,512}\)",
+        r"\1",
+        normalized,
+        flags=re.IGNORECASE,
+    )
+    normalized = re.sub(
+        r"</?[A-Za-z][A-Za-z0-9-]*(?:\s[^>\n]{0,512})?>",
+        " ",
+        normalized,
+    )
+    return re.sub(r"\\([#*_[\](){}~`<>:;,.!?-])", r"\1", normalized)
+
+
+def _issue_number(reference: str) -> int:
+    normalized = unicodedata.normalize("NFKC", reference)
+    match = re.search(r"(?:#|/(?:issues|pull)/)([1-9][0-9]*)\Z", normalized)
+    if match is None:
+        raise GateInputError("INVALID_ISSUE_REF", f"invalid issue reference: {reference}")
+    return int(match.group(1))
 
 
 def _diagnostic(code: str, message: str) -> dict[str, str]:
@@ -260,11 +393,37 @@ def _human_review(kind: str, identifier: str) -> dict[str, str]:
     return {"kind": kind, "id": identifier, "status": HUMAN_REVIEW_REQUIRED}
 
 
+def _schema_version(value: Any, where: str) -> None:
+    if type(value) is not int:
+        raise GateInputError("INVALID_TYPE", f"{where} must be an integer")
+    if value != SCHEMA_VERSION:
+        raise GateInputError("UNSUPPORTED_SCHEMA", f"unsupported {where}")
+
+
+def _history_tuple(value: Any, where: str) -> tuple[str, str, str]:
+    record = _object(value, where)
+    _exact_keys(record, HISTORY_KEYS, where)
+    commit_sha = _sha(record["commit_sha"], f"{where}.commit_sha")
+    path = _string(record["path"], f"{where}.path")
+    _path_bytes(path, f"{where}.path")
+    action = _string(record["action"], f"{where}.action")
+    if action not in HISTORY_ACTIONS:
+        raise GateInputError("UNKNOWN_HISTORY_ACTION", f"{where}.action is unsupported")
+    return commit_sha, path, action
+
+
+def _history_tuples(raw: Any, where: str) -> list[tuple[str, str, str]]:
+    values = _array(raw, where, MAX_HISTORY_FACTS)
+    tuples = [_history_tuple(value, f"{where}[{index}]") for index, value in enumerate(values)]
+    if len(set(tuples)) != len(tuples):
+        raise GateInputError("DUPLICATE_HISTORY_TUPLE", f"{where} contains duplicates")
+    return tuples
+
+
 def _validate_context(raw: Any) -> dict[str, Any]:
-    context = _object(raw, "context")
+    context = dict(_object(raw, "context"))
     _exact_keys(context, CONTEXT_KEYS, "context")
-    if context["schema_version"] != SCHEMA_VERSION:
-        raise GateInputError("UNSUPPORTED_SCHEMA", "unsupported context schema_version")
+    _schema_version(context["schema_version"], "context.schema_version")
     if type(context["is_draft"]) is not bool:
         raise GateInputError("INVALID_TYPE", "context.is_draft must be a boolean")
     if context["delivery"] != "pull_request":
@@ -285,6 +444,9 @@ def _validate_context(raw: Any) -> dict[str, Any]:
         raise GateInputError("DUPLICATE_ISSUE_REF", "allowed_issue_refs contains duplicates")
     if not allowed:
         raise GateInputError("INVALID_ISSUE_REF", "allowed_issue_refs must be nonempty")
+    context["history_facts"] = _history_tuples(
+        context["history_facts"], "context.history_facts"
+    )
     return context
 
 
@@ -352,7 +514,7 @@ def _check_claim_levels(
     if len(set(levels)) != len(levels):
         raise GateInputError("DUPLICATE_CLAIM_LEVEL", "claim_levels contains duplicates")
     for level in levels:
-        if level in SEMANTIC_CLAIM_LEVELS:
+        if level != "exact_candidate_diff":
             human_reviews.append(_human_review("claim_level", level))
 
 
@@ -361,6 +523,7 @@ def _check_review_records(
     context: dict[str, Any],
     errors: list[dict[str, str]],
     incomplete: list[dict[str, str]],
+    human_reviews: list[dict[str, str]],
 ) -> None:
     records = _array(raw, "review_records", MAX_REVIEW_RECORDS)
     draft = context["is_draft"]
@@ -374,6 +537,7 @@ def _check_review_records(
         if kind in seen:
             raise GateInputError("DUPLICATE_REVIEW_KIND", f"duplicate review kind: {kind}")
         seen.add(kind)
+        human_reviews.append(_human_review("review_record", kind))
         head = _sha(
             record["head_sha"],
             f"review_records[{index}].head_sha",
@@ -399,6 +563,45 @@ def _check_review_records(
             )
 
 
+def _check_history_claims(
+    raw: Any,
+    context: dict[str, Any],
+    errors: list[dict[str, str]],
+) -> None:
+    claims = _history_tuples(raw, "history_claims")
+    facts = context["history_facts"]
+    if len(claims) != len(facts):
+        errors.append(
+            _diagnostic(
+                "HISTORY_COUNT_MISMATCH",
+                "history_claims count differs from trusted history_facts",
+            )
+        )
+        return
+    for index, (claim, fact) in enumerate(zip(claims, facts)):
+        if claim[0] != fact[0]:
+            errors.append(
+                _diagnostic(
+                    "HISTORY_COMMIT_MISMATCH",
+                    f"history_claims[{index}] commit_sha differs",
+                )
+            )
+        if claim[1] != fact[1]:
+            errors.append(
+                _diagnostic(
+                    "HISTORY_PATH_MISMATCH",
+                    f"history_claims[{index}] path differs",
+                )
+            )
+        if claim[2] != fact[2]:
+            errors.append(
+                _diagnostic(
+                    "HISTORY_ACTION_MISMATCH",
+                    f"history_claims[{index}] action differs",
+                )
+            )
+
+
 def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
     references = _object(raw, "references")
     _exact_keys(references, REFERENCE_KEYS, "references")
@@ -406,7 +609,8 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
     closing = _array(references["closing"], "references.closing", 1_000)
     if closing:
         raise GateInputError("CLOSING_REFERENCES_NOT_EMPTY", "references.closing must be empty")
-    if CLOSING_RE.search(body) is not None:
+    projected = _markdown_projection(body)
+    if CLOSING_RE.search(projected) is not None:
         raise GateInputError("AUTOCLOSE_REFERENCE", "body contains an auto-closing issue reference")
     if not non_closing:
         raise GateInputError("MISSING_NON_CLOSING_REF", "at least one non-closing ref is required")
@@ -418,6 +622,28 @@ def _check_references(raw: Any, context: dict[str, Any], body: str) -> None:
         match = NON_CLOSING_RE.fullmatch(reference)
         if match is None or int(match.group(2)) not in allowed:
             raise GateInputError("INVALID_ISSUE_REF", f"disallowed non-closing ref: {reference}")
+    for match in NON_CLOSING_BODY_RE.finditer(projected):
+        reference = match.group("reference")
+        if _issue_number(reference) not in allowed:
+            raise GateInputError(
+                "UNMANAGED_ISSUE_REF",
+                f"body has a disallowed non-closing reference: {reference}",
+            )
+
+
+def _charge_unmanaged_prose(
+    unmanaged: str, human_reviews: list[dict[str, str]]
+) -> None:
+    if not unmanaged.strip():
+        return
+    human_reviews.append(_human_review("unmanaged_prose", "body-outside-managed-block"))
+    projected = _markdown_projection(unmanaged)
+    if ISSUE_MENTION_RE.search(projected) is not None:
+        human_reviews.append(
+            _human_review("unmanaged_issue_reference", "body-issue-reference")
+        )
+    if FUTURE_PLAN_RE.search(projected) is not None:
+        human_reviews.append(_human_review("future_plan", "body-future-plan"))
 
 
 def _check_semantic_claims(
@@ -470,17 +696,24 @@ def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
     """Evaluate parsed context and Markdown; return ``(exit_code, report)``."""
     try:
         context = _validate_context(context_raw)
-        payload = _object(_parse_json(extract_managed_block(body), "managed block"), "payload")
+        managed, unmanaged = extract_managed_document(body)
+        payload = _object(_parse_json(managed, "managed block"), "payload")
         _exact_keys(payload, PAYLOAD_KEYS, "payload")
-        if payload["schema_version"] != SCHEMA_VERSION:
-            raise GateInputError("UNSUPPORTED_SCHEMA", "unsupported payload schema_version")
+        _schema_version(payload["schema_version"], "payload.schema_version")
 
         errors: list[dict[str, str]] = []
         incomplete: list[dict[str, str]] = []
         human_reviews: list[dict[str, str]] = []
         _check_candidate(payload["candidate"], context, errors, incomplete)
         _check_claim_levels(payload["claim_levels"], human_reviews)
-        _check_review_records(payload["review_records"], context, errors, incomplete)
+        _check_review_records(
+            payload["review_records"],
+            context,
+            errors,
+            incomplete,
+            human_reviews,
+        )
+        _check_history_claims(payload["history_claims"], context, errors)
         _check_references(payload["references"], context, body)
         _check_semantic_claims(
             payload["semantic_claims"],
@@ -489,6 +722,7 @@ def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
             incomplete,
             human_reviews,
         )
+        _charge_unmanaged_prose(unmanaged, human_reviews)
         if errors:
             status = FAIL
             code = EXIT_FAIL

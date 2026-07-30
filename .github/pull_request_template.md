@@ -54,6 +54,7 @@ Replace `ISSUE` with an issue number allowed by the offline context.
     ],
     "closing": []
   },
+  "history_claims": [],
   "semantic_claims": []
 }
 ```
