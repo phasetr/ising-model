@@ -106,20 +106,22 @@ merge, and unreachable history is rejected. Matching those facts does not
 certify natural-language relevance, which remains human review.
 
 The production same-head body-edit invalidation and recovery sequence is
-completed in the #4803 A–J canary record below. Non-empty push backfill,
-default-branch replay, and fork-owned-head behavior remain production
-observations for #4801. Per-PR concurrency prevents independent active jobs
-from intentionally writing in different event-specific groups, but it is not
-an atomic compare-and-set for an HTTP status request already issued when
-cancellation begins. Such cancelled-run residue remains a residual race and
-never becomes semantic or merge authority. Mocked tests exercise these shapes
-but cannot turn production behavior into a proven fact. If the pull-request
-metadata HTTP response itself is unavailable, malformed, truncated, or
-oversized before a valid head SHA can be obtained, no exact head exists on
-which the adapter can publish pending. That pre-identity condition is
-fail-shut in the workflow result but cannot clear an older commit status.
-Honest final operational dispositions for cancellation-window residue and
-pre-identity failure remain under #4801; unsafe fault injection is excluded.
+completed in the #4803 A–J canary record below. Non-empty push backfill and
+fork-owned-head behavior remain production observations for #4801; the
+default-branch replay incident and corrective lifecycle are recorded below and
+governed by [the authoritative incident record][replay-4801-incident]. Per-PR
+concurrency prevents independent active jobs from intentionally writing in
+different event-specific groups, but it is not an atomic compare-and-set for
+an HTTP status request already issued when cancellation begins. Such
+cancelled-run residue remains a residual race and never becomes semantic or
+merge authority. Mocked tests exercise these shapes but cannot turn production
+behavior into a proven fact. If the pull-request metadata HTTP response itself
+is unavailable, malformed, truncated, or oversized before a valid head SHA can
+be obtained, no exact head exists on which the adapter can publish pending.
+That pre-identity condition is fail-shut in the workflow result but cannot
+clear an older commit status. Honest final operational dispositions for
+cancellation-window residue, pre-identity failure, and fork limitations remain
+under #4801; unsafe fault injection is excluded.
 
 ## Inputs
 
@@ -508,9 +510,48 @@ The final audit records #4803's bounded two-file protocol, separate reviews,
 same-repository A–J lifecycle, post-merge verification, and honest
 #4786/#4790 demonstration as completed. The live status remains advisory and
 mechanical rather than semantic or merge authority. Non-empty push backfill,
-default-branch replay, fork-owned-head behavior, and final operational
-dispositions remain under #4801. Required-status and ruleset enforcement
-remain under #4802.
+fork-owned-head behavior, and final operational dispositions for
+cancellation-window residue, pre-identity failure, and fork limitations remain
+under #4801. Replay lifecycle and disposition are owned by the authoritative
+incident record below. Required-status and ruleset enforcement remain under
+#4802.
+
+### Default-branch replay incident record
+
+The [authoritative replay incident][replay-4801-incident] records that the
+first exact-one procedure failed: two `completion_claim_replay` dispatches
+were sent for the fully bound PR #4809 head
+`df96820621ef72a4d94dd8ab11461a6f13949a87`.
+
+1. [Run 30546819296][replay-4801-cancelled] used event
+   `repository_dispatch` and trusted default-branch workflow SHA
+   `31a01b6b0fa91dd2c7babf03f56181b5b2dd844a`. Discovery selected PR #4809,
+   then the overlapping evaluation was cancelled. The run conclusion was
+   `CANCELLED`.
+2. [Run 30546834736][replay-4801-success] used the same event and trusted
+   workflow SHA, selected exactly PR #4809, and completed evaluation. The
+   exact candidate head received `PENDING` at `2026-07-30T13:25:41Z`, then
+   `SUCCESS` at `2026-07-30T13:25:45Z`.
+
+Both runs checked out only the trusted default-branch workflow revision;
+neither checked out or executed the candidate head. The observations establish
+replay routing, shared per-PR cancellation, and one complete replay evaluation,
+but they do not satisfy the requirement to send exactly one dispatch. No
+status write was attributed to the cancelled first evaluation, which does not
+prove that cancellation can never leave residue after a request is issued.
+
+At this incident checkpoint, exactly one corrective replay was required after
+the corrected exact head had current CI, independent reviews, bound-body
+currency, and normal live success. Any later run and disposition are carried
+by [the authoritative incident record][replay-4801-incident], updated in place.
+This historical paragraph does not assert the replay lifecycle's current
+state. Non-empty push backfill, fork-owned-head production behavior, and final
+operational dispositions for cancellation-window residue, pre-identity
+failure, and fork limitations remain unresolved under #4801.
+
+[replay-4801-incident]: https://github.com/phasetr/ising-model/issues/4801#issuecomment-5131434810
+[replay-4801-cancelled]: https://github.com/phasetr/ising-model/actions/runs/30546819296
+[replay-4801-success]: https://github.com/phasetr/ising-model/actions/runs/30546834736
 
 ### Structured history
 
