@@ -1219,6 +1219,229 @@ class NarrowGlobCitationTest(unittest.TestCase):
             )
 
 
+class QualifiedGlobCitationTest(unittest.TestCase):
+    """Fully-qualified ``IsingModel.`` globs resolve against full names only."""
+
+    ROW_3861_TOKEN = (
+        "IsingModel.{magnetization,truncated2,susceptibility,"
+        "magnetization_total}_convergent_*"
+    )
+    ROW_3861 = {
+        "IsingModel.magnetization_convergent_*": [
+            "IsingModel.magnetization_convergent_subgraph",
+            "IsingModel.magnetization_convergent_J",
+            "IsingModel.magnetization_convergent_beta",
+            "IsingModel.magnetization_convergent_h",
+        ],
+        "IsingModel.magnetization_total_convergent_*": [
+            "IsingModel.magnetization_total_convergent_subgraph",
+        ],
+        "IsingModel.susceptibility_convergent_*": [
+            "IsingModel.susceptibility_convergent_J",
+            "IsingModel.susceptibility_convergent_h",
+            "IsingModel.susceptibility_convergent_beta",
+            "IsingModel.susceptibility_convergent_subgraph",
+        ],
+        "IsingModel.truncated2_convergent_*": [
+            "IsingModel.truncated2_convergent_J",
+            "IsingModel.truncated2_convergent_h",
+            "IsingModel.truncated2_convergent_beta",
+            "IsingModel.truncated2_convergent_subgraph",
+        ],
+    }
+    ROW_26785_TOKEN = (
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_*"
+    )
+    ROW_26785 = [
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_smallReg",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_pow_largeReg",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_pow_smallReg",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_trichotomy",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_exp_div_max_pow",
+        "IsingModel.Ambient."
+        "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_tanh_exp_trichotomy",
+    ]
+    HOMONYM_TREE = {
+        "IsingModel/SynthQualifiedGlob.lean": (
+            "namespace IsingModel\n"
+            "theorem foo_same : True := trivial\n"
+            "namespace Ambient\n"
+            "theorem foo_same : True := trivial\n"
+            "end Ambient\n"
+            "end IsingModel\n"
+            "namespace Elsewhere\n"
+            "theorem foo_same : True := trivial\n"
+            "end Elsewhere\n"
+        )
+    }
+
+    @staticmethod
+    def doc(tokens: list[tuple[str, int]]) -> dcs.DocSource:
+        """Return a synthetic token-only documentation source."""
+        return dcs.DocSource(
+            label="docs/index.md",
+            text="",
+            starts=[0],
+            tokens=tokens,
+            unreadable=[],
+        )
+
+    def real_names(self) -> list[str]:
+        """Return the exact 20 declarations named at the two real sites."""
+        return [
+            name
+            for names in self.ROW_3861.values()
+            for name in names
+        ] + self.ROW_26785
+
+    def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
+        """Brace composition yields 4/1/4/4 matches, then the second site 7."""
+        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
+        self.assertIn((self.ROW_3861_TOKEN, 3861), guide.tokens)
+        self.assertIn((self.ROW_26785_TOKEN, 26785), guide.tokens)
+        patterns = dcs.expand_citation_token(self.ROW_3861_TOKEN)
+        self.assertEqual(patterns, sorted(self.ROW_3861))
+
+        cache: dict[str, list[dcs.Decl] | None] = {}
+        resolved = [dcs._resolve_fragment(tree(), pattern, cache) for pattern in patterns]
+        resolved.append(dcs._resolve_fragment(tree(), self.ROW_26785_TOKEN, cache))
+        self.assertEqual([len(matches or []) for matches in resolved], [4, 1, 4, 4, 7])
+        expected = [self.ROW_3861[pattern] for pattern in patterns] + [self.ROW_26785]
+        self.assertEqual(
+            [[decl.full for decl in matches or []] for matches in resolved],
+            expected,
+        )
+
+    def test_the_two_real_sites_add_exactly_20_shorthand_charges(self) -> None:
+        """The raw row tokens charge 13 plus 7 declarations, never as exact."""
+        verdicts = dcs.classify(
+            tree(), self.real_names(), docs(), allow_homonym=False
+        )[0]
+        counts = {3861: 0, 26785: 0}
+        for verdict in verdicts:
+            for citation in verdict.doc_citations:
+                for line, token in (
+                    (3861, self.ROW_3861_TOKEN),
+                    (26785, self.ROW_26785_TOKEN),
+                ):
+                    if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
+                        self.assertIn(token, citation)
+                        counts[line] += 1
+                    self.assertFalse(
+                        citation.startswith(f"exact tex/proof-guide.tex:{line}:")
+                        and token in citation,
+                        (verdict.decl.full, citation),
+                    )
+        self.assertEqual(counts, {3861: 13, 26785: 7})
+
+    def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
+        """A qualified glob selects the root namespace, while bare keeps finals."""
+        synthetic = synthetic_tree(self.HOMONYM_TREE)
+        expected_bare = [
+            "IsingModel.foo_same",
+            "IsingModel.Ambient.foo_same",
+            "Elsewhere.foo_same",
+        ]
+        for qualified_first in (False, True):
+            cache: dict[str, list[dcs.Decl] | None] = {}
+            names = (
+                ["IsingModel.foo_*", "foo_*"]
+                if qualified_first
+                else ["foo_*", "IsingModel.foo_*"]
+            )
+            resolved = {
+                name: dcs._resolve_fragment(synthetic, name, cache)
+                for name in names
+            }
+            self.assertEqual(
+                [decl.full for decl in resolved["IsingModel.foo_*"] or []],
+                ["IsingModel.foo_same"],
+            )
+            self.assertEqual(
+                [decl.full for decl in resolved["foo_*"] or []],
+                expected_bare,
+            )
+
+    def test_qualified_globs_keep_the_1_2_10_11_threshold(self) -> None:
+        """At most ten matches are shorthand-only; eleven is a family label."""
+        groups = ((1, "one"), (2, "two"), (10, "ten"), (11, "eleven"))
+        body = "namespace IsingModel\n"
+        names_by_count: dict[int, list[str]] = {}
+        for count, label in groups:
+            names_by_count[count] = [
+                f"IsingModel.qglob_{label}_{index}" for index in range(count)
+            ]
+            body += "".join(
+                f"theorem qglob_{label}_{index} : True := trivial\n"
+                for index in range(count)
+            )
+        body += "end IsingModel\n"
+        synthetic = synthetic_tree({"IsingModel/SynthQualifiedThreshold.lean": body})
+        tokens = [
+            (f"IsingModel.qglob_{label}_*", lineno)
+            for lineno, (_count, label) in enumerate(groups, 1)
+        ]
+        names = [name for count, _label in groups for name in names_by_count[count]]
+        verdicts, _cascade, labels = dcs.classify(
+            synthetic, names, [self.doc(tokens)], allow_homonym=False
+        )
+        by_name = {verdict.decl.full: verdict for verdict in verdicts}
+        for count, label in groups[:3]:
+            token = f"IsingModel.qglob_{label}_*"
+            for name in names_by_count[count]:
+                verdict = by_name[name]
+                self.assertEqual(verdict.verdict, dcs.UNCERTAIN, name)
+                self.assertEqual(len(verdict.doc_citations), 1, name)
+                self.assertTrue(verdict.doc_citations[0].startswith("shorthand "))
+                self.assertIn(token, verdict.doc_citations[0])
+        for name in names_by_count[11]:
+            self.assertEqual(by_name[name].verdict, dcs.SAFE, name)
+            self.assertEqual(by_name[name].doc_citations, [], name)
+        key = "docs/index.md:4 `IsingModel.qglob_eleven_*`"
+        self.assertEqual(labels, {key: ["11 declarations"]})
+
+    def test_unsupported_relative_and_broad_patterns_remain_conservative(self) -> None:
+        """Relative/malformed prose stays inert; the broad real glob is a label."""
+        synthetic = synthetic_tree(self.HOMONYM_TREE)
+        for token in (
+            "Unknown.foo_*",
+            "Ambient.foo_*",
+            "IsingModel..foo_*",
+            "IsingModel.*.foo_*",
+            "IsingModel.foo_**",
+        ):
+            self.assertEqual(dcs._resolve_fragment(synthetic, token, {}), [], token)
+        for token in (
+            "https://example.test/IsingModel.foo_*",
+            "docs/IsingModel.foo_*",
+        ):
+            self.assertEqual(dcs._citation_tokens(token), [], token)
+
+        broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
+        self.assertEqual(len(broad or []), 10571)
+        selected = [
+            dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
+            for name in self.real_names()
+        ]
+        labels: dict[str, list[str]] = {}
+        dcs._apply_doc_channel(
+            tree(), selected, [self.doc([("IsingModel.*", 1)])], labels
+        )
+        self.assertTrue(all(not verdict.doc_citations for verdict in selected))
+        self.assertEqual(
+            labels,
+            {"docs/index.md:1 `IsingModel.*`": ["10571 declarations"]},
+        )
+
+
 class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
