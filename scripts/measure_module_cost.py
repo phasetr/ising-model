@@ -79,6 +79,29 @@ so a child reporting an ``import`` above that wall clock is not reporting a
 slow import, it is reporting something this harness must not average. Such a
 sample is rejected, not recorded as a measurement with a negative ``own``.
 
+The profiler states the import figure **twice** -- once as the standalone
+``import took ...`` line and once as the ``import`` row of the cumulative table
+-- and this harness reads the first while the artifact publishes both. The two
+are cross-checked against each other and a disagreement fails the sample: two
+figures for one quantity that are never compared are one unchecked figure and
+one decoration.
+
+Conditions the run refuses to proceed without
+---------------------------------------------
+The protocol's discard rules can only operate on facts that were recorded, so
+each of them is recorded as a *value*, never as "unknown":
+
+* **no foreign ``lean``/``lake`` process.** Counted before the first sample and
+  after the last (``pgrep``, falling back to ``ps``). A count that cannot be
+  taken at all is a refusal to start, not a ``null`` in the artifact: a null
+  there silently disables the rule that a contaminated sample is discarded. A
+  count above zero fails the run, with every sample still written.
+* **which bytes were measured.** ``git`` HEAD alone does not identify them on a
+  dirty tree, so the artifact also carries the ``git status --porcelain``
+  digest, the dirty paths themselves, and a SHA-256 of every measured module's
+  content. A later reader can then tell whether a re-run measured the same
+  source, instead of inferring it from a branch name.
+
 What this harness does not reproduce
 ------------------------------------
 ``lake build`` passes the package's ``[leanOptions]`` (``lakefile.toml``) to
@@ -109,23 +132,28 @@ newline-separated list. Examples::
 
 Output: a JSON document holding **every individual sample** (warm-up samples
 included, flagged and excluded from the statistics), per-module and overall
-summaries (median / min / max / spread / n), and an environment fingerprint
-(git HEAD and dirty flag, ``lean-toolchain``, lean binary and version, target
-and repository module counts, load average, hardware, timestamp). Written to
+summaries (median / min / max / spread / n), the provenance of the measured
+bytes (git HEAD, branch, porcelain digest and dirty paths, plus a SHA-256 per
+measured module), and an environment fingerprint (``lean-toolchain``, lean
+binary and version, target and repository module counts, load average,
+hardware, timestamp, and the process-guard counts). Written to
 ``--out``, or to
 ``.self-local/reports/measure-module-cost-<label>-<timestamp>.json``. An
 existing file is never overwritten without ``--force``.
 
 Exit code 0 iff **every** sample was valid (lean exited 0, the profiler output
-parsed, and the import figure was possible), warm-up passes included: a run
-whose warm-up did not complete never warmed the page cache, so its measured
-samples were not taken under this protocol at all. 1 if any sample failed;
-2 on a usage/environment error, including a ``lean`` that cannot be executed.
+parsed, and the import figure was possible) *and* the process guard held,
+warm-up passes included: a run whose warm-up did not complete never warmed the
+page cache, so its measured samples were not taken under this protocol at all.
+1 if any sample failed or a foreign ``lean``/``lake`` process was seen; 2 on a
+usage/environment error, including a ``lean`` that cannot be executed and an
+environment where the process guard cannot be evaluated.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -152,17 +180,22 @@ LAKEFILE = REPO_ROOT / "lakefile.toml"
 DEFAULT_OUT_DIR = REPO_ROOT / ".self-local" / "reports"
 
 # Version tag of the JSON schema, so a consumer can tell two artifacts apart
-# after a field is added or renamed. Bumped to 2 when ``protocol.invocation``
-# became the exact argv record and ``environment.platform.machine`` started
-# reporting the hardware instead of the interpreter's own (possibly translated)
-# architecture.
-SCHEMA = "ising-model/measure_module_cost/2"
+# after a field is added or renamed. 2 made ``protocol.invocation`` the exact
+# argv record and ``environment.platform.machine`` the hardware rather than the
+# interpreter's own (possibly translated) architecture; 3 made the process
+# guard a recorded value instead of a nullable one and added the provenance of
+# the measured bytes (porcelain digest, dirty paths, per-module hashes).
+SCHEMA = "ising-model/measure_module_cost/3"
 
 # Schema tags whose artifacts remain readable by this file's consumers. Listed
 # rather than open-ended: an artifact written by a *newer* schema must fail a
 # reader that predates it instead of being parsed on the assumption that fields
 # only ever get added.
-KNOWN_SCHEMAS = (SCHEMA, "ising-model/measure_module_cost/1")
+KNOWN_SCHEMAS = (
+    SCHEMA,
+    "ising-model/measure_module_cost/2",
+    "ising-model/measure_module_cost/1",
+)
 
 # The canonical protocol's replicate floor. Enforced rather than defaulted: the
 # floor is the part of the protocol that a hurried run drops first, and a
@@ -183,9 +216,20 @@ MIN_WARMUP = 1
 IMPORT_REL_TOLERANCE = 0.01
 IMPORT_ABS_TOLERANCE_S = 0.05
 
+# Tolerance when checking the standalone ``import took`` line against the
+# ``import`` row of the same report. These are one quantity printed twice by one
+# process, so they agree exactly in every sample recorded so far; the slack is
+# only against a future formatting change, not against a real disagreement.
+IMPORT_CONSISTENCY_ABS_TOLERANCE_S = 1e-6
+
 # Timeout for a single ``lean`` invocation. Generous: a cold page cache has been
 # observed to turn a 2 s module into a 28 s one without anything being wrong.
 DEFAULT_TIMEOUT_S = 900.0
+
+# Process names whose presence voids the serial-run precondition. ``lake`` as
+# well as ``lean``: a concurrent ``lake build`` competes for the same cores and
+# the same page cache even before it has spawned its first ``lean``.
+GUARDED_PROCESS_NAMES = ("lean", "lake")
 
 # Glob metacharacters that make an argument a pattern rather than a literal path.
 _GLOB_CHARS = "*?["
@@ -252,6 +296,12 @@ def parse_profile(output: str) -> tuple[float, dict[str, float]]:
     ``import took ...`` line, which the import phase emits directly. The
     cumulative table is returned whole (phase name -> seconds) so the artifact
     keeps every phase the run saw, not only the ones summarised here.
+
+    The report states the import figure twice, and the two statements are
+    checked against each other here. A missing ``import`` row, or a row that
+    disagrees with the standalone line, means the output is not the report this
+    parser was written against, so the sample fails instead of being recorded
+    from whichever of the two the parser happened to read.
     """
     match = _IMPORT_LINE_RE.search(output)
     if match is None:
@@ -263,6 +313,16 @@ def parse_profile(output: str) -> tuple[float, dict[str, float]]:
         if row is None:
             continue
         phases[row.group("name").strip()] = parse_duration(row.group("dur"))
+    if "import" not in phases:
+        raise MeasurementError(
+            "profiler output has an `import took ...` line but no `import` row in the "
+            "cumulative table, so the two statements of the import time cannot be compared"
+        )
+    if abs(phases["import"] - import_s) > IMPORT_CONSISTENCY_ABS_TOLERANCE_S:
+        raise MeasurementError(
+            f"profiler disagrees with itself: `import took` says {import_s:.6f}s while the "
+            f"cumulative table says {phases['import']:.6f}s"
+        )
     return (import_s, phases)
 
 
@@ -292,10 +352,15 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
 
     Every entry is resolved against the repository root when relative, so a run
     from any working directory selects the same files. Results are deduplicated
-    and sorted, which makes the sample order (and therefore the artifact)
-    deterministic. A pattern that matches nothing, or a path that is missing or
-    is not a ``.lean`` file, is an error: silently measuring a smaller set than
-    was asked for is how a "family" quietly becomes three modules.
+    **by resolved path** and sorted, which makes the sample order (and therefore
+    the artifact) deterministic. Resolving before deduplicating is what makes
+    the deduplication real: a pattern such as ``IsingModel/**/../*.lean`` names
+    the same file once per traversed directory, and comparing the unresolved
+    spellings kept all 7620 of them for 1174 distinct files -- a run 6.5x longer
+    whose "median over 3 replicates" was silently a median over 19.5. A pattern
+    that matches nothing, or a path that is missing or is not a ``.lean`` file,
+    is an error: silently measuring a smaller set than was asked for is how a
+    "family" quietly becomes three modules.
     """
     entries = list(args)
     if from_file:
@@ -323,14 +388,14 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
                 matches = sorted(REPO_ROOT.glob(entry))
             if not matches:
                 raise MeasurementError(f"pattern matched no file: {entry}")
-            found.update(matches)
+            found.update(match.resolve() for match in matches)
             continue
         path = Path(entry)
         if not path.is_absolute():
             path = REPO_ROOT / path
         if not path.is_file():
             raise MeasurementError(f"no such file: {entry}")
-        found.add(path)
+        found.add(path.resolve())
 
     modules = sorted(found)
     bad = [str(path) for path in modules if path.suffix != ".lean"]
@@ -455,25 +520,62 @@ def obtain_lean_path(override: str | None) -> tuple[str, str]:
     return (out.strip(), "lake env printenv LEAN_PATH")
 
 
-def concurrent_lean_processes() -> int | None:
-    """Return how many other ``lean`` processes are running, or ``None`` if unknown.
+def _census_via_pgrep() -> int:
+    """Count resident ``lean``/``lake`` processes with ``pgrep``; raise if it cannot."""
+    total = 0
+    for name in GUARDED_PROCESS_NAMES:
+        code, out, err = run_capture(["pgrep", "-x", name])
+        # 1 is "no match", which is an answer; anything else is a refusal to
+        # answer (inside this repository's sandbox `pgrep` exits 3 with
+        # "Cannot get process list", which must not read as "zero processes").
+        if code not in (0, 1):
+            raise MeasurementError(
+                f"`pgrep -x {name}` exited {code}: {err.strip() or out.strip() or 'no output'}"
+            )
+        total += len([token for token in out.split() if token.strip()])
+    return total
 
-    Best effort and *advisory only*. The harness never kills anything: a foreign
-    Lean or editor server may legitimately be resident, and killing a process
-    this tool did not spawn has already caused real damage in this repository.
-    When ``pgrep`` is unavailable (it is, inside some sandboxes) the answer is
-    ``None`` and is recorded as such, so a reader can see that the serial-run
-    precondition was unverified rather than verified-clean.
-    """
-    try:
-        proc = subprocess.run(
-            ["pgrep", "-x", "lean"], capture_output=True, text=True, check=False
+
+def _census_via_ps() -> int:
+    """Count resident ``lean``/``lake`` processes with ``ps``; raise if it cannot."""
+    code, out, err = run_capture(["ps", "-Ao", "comm="])
+    if code != 0:
+        raise MeasurementError(
+            f"`ps -Ao comm=` exited {code}: {err.strip() or out.strip() or 'no output'}"
         )
-    except OSError:
-        return None
-    if proc.returncode not in (0, 1):
-        return None
-    return len([line for line in proc.stdout.split() if line.strip()])
+    return len(
+        [
+            line
+            for line in out.splitlines()
+            if line.strip() and Path(line.strip()).name in GUARDED_PROCESS_NAMES
+        ]
+    )
+
+
+def lean_process_census() -> dict[str, object]:
+    """Return how many foreign ``lean``/``lake`` processes are resident, and how it was learned.
+
+    ``{"method": str | None, "count": int | None, "error": str | None}``. The
+    harness never kills anything: a foreign Lean or editor server may
+    legitimately be resident, and killing a process this tool did not spawn has
+    already caused real damage in this repository. What it does is *count*, so
+    that the protocol's "discard any sample taken beside a non-experiment
+    ``lean``" rule has an input.
+
+    Two probes, because one of them being unavailable is not the same as the
+    machine being quiet: ``pgrep`` first, ``ps`` as the fallback. If neither can
+    answer, the count is ``None`` and :func:`main` refuses to measure. Recording
+    ``None`` and continuing is what made the rule inert once already: the
+    artifact then carries a guard field that no reader can act on, and the run
+    looks compliant.
+    """
+    errors: list[str] = []
+    for method, probe in (("pgrep", _census_via_pgrep), ("ps", _census_via_ps)):
+        try:
+            return {"method": method, "count": probe(), "error": None}
+        except MeasurementError as exc:
+            errors.append(f"{method}: {exc}")
+    return {"method": None, "count": None, "error": "; ".join(errors)}
 
 
 def measure_once(
@@ -600,18 +702,48 @@ def summarise_samples(samples: list[dict[str, object]]) -> dict[str, dict[str, o
     return out
 
 
+def digest(text: str) -> str:
+    """Return ``sha256:<hex>`` over ``text``, so a record can be compared without being read."""
+    return "sha256:" + hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def git_fingerprint() -> dict[str, object]:
-    """Return the git identity of the tree being measured (HEAD, branch, dirty flag)."""
+    """Return the git identity of the tree being measured, including *how* it was dirty.
+
+    A bare ``dirty: true`` says the measured bytes were not ``head``'s without
+    saying what they were, which leaves the measurement unattributable to any
+    tree state at all. So the porcelain listing is recorded whole, together with
+    a digest over it: the digest is what a re-run compares against cheaply, and
+    the paths are what a reader needs when the digests differ.
+    """
     code_head, head, _ = run_capture(["git", "rev-parse", "HEAD"])
     code_branch, branch, _ = run_capture(["git", "rev-parse", "--abbrev-ref", "HEAD"])
     code_status, status, _ = run_capture(["git", "status", "--porcelain"])
+    dirty_paths = (
+        sorted(line.rstrip() for line in status.splitlines() if line.strip())
+        if code_status == 0
+        else None
+    )
     return {
         "head": head.strip() if code_head == 0 else None,
         "branch": branch.strip() if code_branch == 0 else None,
         # A dirty tree is not an error, but a measurement taken on one is not
         # attributable to ``head`` alone, so the artifact says which it was.
-        "dirty": bool(status.strip()) if code_status == 0 else None,
+        "dirty": None if dirty_paths is None else bool(dirty_paths),
+        "status_digest": digest(status) if code_status == 0 else None,
+        "dirty_paths": dirty_paths,
     }
+
+
+def module_digests(modules: list[Path]) -> dict[str, str]:
+    """Return ``{module -> sha256}`` over the exact bytes handed to ``lean``.
+
+    The tree's git state pins everything *except* the files a dirty tree
+    changed, and those are precisely the ones a timing is most likely to be
+    about. Hashing each measured module closes that gap: a later run can prove
+    it measured the same source rather than assume it from a matching HEAD.
+    """
+    return {rel(module): digest(module.read_text(encoding="utf-8")) for module in modules}
 
 
 def hardware_fingerprint() -> dict[str, object]:
@@ -645,9 +777,15 @@ def hardware_fingerprint() -> dict[str, object]:
 
 
 def environment_fingerprint(
-    lean_bin: str, lean_path: str, modules: list[Path]
+    lean_bin: str, lean_path: str, modules: list[Path], census: dict[str, object]
 ) -> dict[str, object]:
-    """Return everything needed to judge, later, whether a re-run is comparable."""
+    """Return everything needed to judge, later, whether a re-run is comparable.
+
+    ``census`` is the already-taken start-of-run process count (:func:`main`
+    takes it before anything is timed and refuses to run without it), passed in
+    rather than re-probed so that the number in the artifact is the number the
+    guard was evaluated on.
+    """
     code_version, version_out, version_err = run_capture([lean_bin, "--version"])
     version = (version_out or version_err).strip().splitlines()
     try:
@@ -675,7 +813,17 @@ def environment_fingerprint(
         "library_module_count": len(list(LIB_DIR.rglob("*.lean"))) if LIB_DIR.is_dir() else None,
         "platform": hardware_fingerprint(),
         "loadavg_at_start": loadavg,
-        "other_lean_processes_at_start": concurrent_lean_processes(),
+        "other_lean_processes_at_start": census["count"],
+        # ``at_end`` is filled in by :func:`main` once the last sample is taken:
+        # a process that appeared halfway through is exactly what the guard is
+        # for, and only the pair of counts can show it.
+        "process_guard": {
+            "method": census["method"],
+            "at_start": census["count"],
+            "at_end": None,
+            "clean": None,
+            "names_counted": list(GUARDED_PROCESS_NAMES),
+        },
     }
 
 
@@ -818,6 +966,14 @@ def main(argv: list[str] | None = None) -> int:
                 f"--warmup {args.warmup} is below the protocol floor of {MIN_WARMUP}; "
                 "without a warm-up pass the statistics describe the page cache"
             )
+        # ``float`` accepts "nan" and "inf", and both reach ``subprocess.run``
+        # as a timeout it converts to an integer -- a ValueError/OverflowError
+        # with no artifact and no diagnosis. A timeout is a duration or it is a
+        # usage error.
+        if not math.isfinite(args.timeout) or args.timeout <= 0.0:
+            raise MeasurementError(
+                f"--timeout {args.timeout!r} is not a positive finite number of seconds"
+            )
         out_path = Path(args.out) if args.out else default_out_path(args.label)
         if not out_path.is_absolute():
             out_path = REPO_ROOT / out_path
@@ -826,11 +982,18 @@ def main(argv: list[str] | None = None) -> int:
         modules = expand_modules(args.modules, args.from_file)
         lean_bin = resolve_lean_binary(args.lean_bin)
         lean_path, lean_path_source = obtain_lean_path(args.lean_path)
+        census = lean_process_census()
+        if census["count"] is None:
+            raise MeasurementError(
+                "cannot count foreign lean/lake processes, so the protocol's serial-run "
+                "precondition cannot be evaluated and its discard rule would be inert "
+                f"({census['error']}); refusing to record the guard as unknown"
+            )
     except MeasurementError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
 
-    fingerprint = environment_fingerprint(lean_bin, lean_path, modules)
+    fingerprint = environment_fingerprint(lean_bin, lean_path, modules, census)
     env = dict(os.environ)
     env["LEAN_PATH"] = lean_path
 
@@ -841,8 +1004,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  LEAN_PATH  : {fingerprint['lean_path_entries']} entries via {lean_path_source}")
     print(f"  protocol   : bare lean, serial, {args.warmup} warm-up pass(es) discarded, "
           f"{args.replicates} replicates")
-    others = fingerprint["other_lean_processes_at_start"]
-    print(f"  other lean : {'unknown (pgrep unavailable)' if others is None else others}")
+    guard = fingerprint["process_guard"]
+    print(f"  other lean : {guard['at_start']} (via {guard['method']})")
     print()
 
     started = time.monotonic()
@@ -854,6 +1017,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
     elapsed = time.monotonic() - started
+    census_end = lean_process_census()
+    guard["at_end"] = census_end["count"]
+    # Unknown at the end is not clean either: the guard is a claim about the
+    # whole run, and half of it missing leaves the claim unmade.
+    guard["clean"] = guard["at_start"] == 0 and guard["at_end"] == 0
 
     measured = [sample for sample in samples if sample["phase"] == "measure"]
     warmup_samples = [sample for sample in samples if sample["phase"] == "warmup"]
@@ -892,6 +1060,10 @@ def main(argv: list[str] | None = None) -> int:
         },
         "environment": fingerprint,
         "modules": [rel(module) for module in modules],
+        # The bytes actually handed to ``lean``, hashed. ``git.head`` does not
+        # pin them on a dirty tree, and a dirty tree is the normal case while a
+        # harness is being written.
+        "module_digests": module_digests(modules),
         "wall_clock_total_s": round(elapsed, 3),
         "samples": samples,
         "per_module": per_module,
@@ -930,8 +1102,15 @@ def main(argv: list[str] | None = None) -> int:
                 f"  [{sample['phase']}] {sample['module']}: "
                 f"{'; '.join(sample['problems'])}"
             )
-        return 1
-    return 0
+    if not guard["clean"]:
+        # Nothing is killed and nothing is deleted: the samples stay, and the
+        # run reports that they were taken beside something else.
+        print(
+            f"FAIL: process guard violated (lean/lake resident: {guard['at_start']} at "
+            f"start, {guard['at_end']} at end); these samples are contaminated by the "
+            "protocol's own discard rule"
+        )
+    return 1 if failed or not guard["clean"] else 0
 
 
 if __name__ == "__main__":

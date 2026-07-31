@@ -27,19 +27,30 @@ runs incomparable while every printed number still looks plausible:
    samples and no valid one. That run's artifact was never committed -- a
    failed run is not a record worth publishing -- so the episode is
    development history, not something a reader can check from the tree.
-3. **An impossible timing must be rejected.** ``import`` is a subinterval of
-   the process ``real`` was measured around, so a child claiming more is not a
-   slow module.
+3. **An impossible timing must be rejected**, and the profiler's two statements
+   of the import figure must agree. ``import`` is a subinterval of the process
+   ``real`` was measured around, so a child claiming more is not a slow module;
+   and a report whose ``import took`` line contradicts its own ``import`` table
+   row is not the report this parser was written against.
 4. **Warm-up samples must stay out of the statistics and inside the record**,
    and a failed warm-up must fail the run. Counting warm-up samples
    re-introduces the cold-page-cache inflation that produced the historical
    7.0 s figure; dropping them from the JSON removes the evidence that the
    warm-up happened at all.
-5. **The target set must be exactly what was asked for.** A glob that matches
-   nothing, or a path that is missing, must stop the run rather than shrink a
-   "family" to whatever happened to exist.
+5. **The target set must be exactly what was asked for**, each file once. A
+   glob that matches nothing, or a path that is missing, must stop the run
+   rather than shrink a "family" to whatever happened to exist; and a glob that
+   reaches one file by several spellings must not measure it several times.
 6. **An artifact must not be silently replaced**, and a committed artifact must
-   be a complete, fully valid record.
+   be a complete, fully valid record -- judged from its samples, never from the
+   tally it reports about itself.
+7. **A guard that cannot be evaluated must stop the run.** The protocol
+   discards samples taken beside a foreign ``lean``; a harness that records the
+   count as ``null`` when it cannot take it leaves that rule inert while the
+   artifact still looks compliant.
+8. **The measured bytes must be identifiable afterwards.** ``git`` HEAD does
+   not identify them on a dirty tree, so the porcelain digest, the dirty paths
+   and a hash per measured module have to be in the record.
 
 The mutation cases follow the idiom of ``scripts/test_audit_gate.py``: a
 fixture with a known verdict, and a :func:`load_mutated` re-import with one
@@ -53,6 +64,7 @@ a filter the test re-implements, which would pass whatever the harness did.
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -204,6 +216,92 @@ def sample(module: str, phase: str, real: float, import_s: float | None, valid: 
     }
 
 
+# A stubbed run's two regimes: the discarded warm-up pass is expensive (cold
+# page cache), every measured pass afterwards is cheap. The gap is what makes
+# "did a warm-up sample reach the statistics" visible in the summary.
+STUB_WARM_REAL = 10.0
+STUB_STEADY_REAL = 2.0
+
+
+def install_stub_measure(module: types.ModuleType, *, fail_warmup: bool = False) -> list[str]:
+    """Replace ``measure_once`` with a fake child and return the call log.
+
+    10 s on the first pass over the target set, 2 s on every pass after it.
+    ``fail_warmup`` makes the first pass report a problem, which is how a
+    warm-up that never warmed anything is simulated.
+    """
+    calls: list[str] = []
+
+    def fake(lean_bin, module_path, env, timeout_s):  # noqa: ANN001, ARG001
+        calls.append(str(module_path))
+        first_pass = len(calls) <= len(TWO_MODULES)
+        real = STUB_WARM_REAL if first_pass else STUB_STEADY_REAL
+        problems = ["stub warm-up failure"] if (first_pass and fail_warmup) else []
+        return {
+            "module": module.rel(Path(module_path)),
+            "real": real,
+            "user": 1.2,
+            "sys": 1.0,
+            "import": real - 0.5,
+            "own": 0.5,
+            "phases": {},
+            "returncode": 0,
+            "timed_out": False,
+            "problems": problems,
+            "valid": not problems,
+        }
+
+    module.measure_once = fake
+    return calls
+
+
+def install_stub_census(module: types.ModuleType, counts: tuple[int | None, ...]) -> None:
+    """Pin the process guard to ``counts``, consumed one per census, last value repeating.
+
+    Real ``pgrep``/``ps`` results would make every stubbed run depend on what
+    else happens to be resident, and the sandbox this suite also runs in cannot
+    answer either probe at all.
+    """
+    remaining = list(counts)
+
+    def fake() -> dict[str, object]:
+        count = remaining.pop(0) if len(remaining) > 1 else remaining[0]
+        return {"method": "stub", "count": count, "error": None if count is not None else "stub"}
+
+    module.lean_process_census = fake
+
+
+def run_stub_cli(
+    module: types.ModuleType,
+    *,
+    fail_warmup: bool = False,
+    census_counts: tuple[int | None, ...] = (0,),
+    argv_extra: tuple[str, ...] = (),
+) -> tuple[int, dict[str, object]]:
+    """Run the whole CLI with the timed child and the process census stubbed.
+
+    Returns the exit code and the artifact the harness wrote, because that
+    artifact -- not a filter the test re-implements -- is the thing under test.
+    """
+    install_stub_measure(module, fail_warmup=fail_warmup)
+    install_stub_census(module, census_counts)
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "artifact.json"
+        code, _, _ = run_cli(
+            module,
+            [
+                "--out", str(out),
+                "--lean-bin", "/nonexistent/lean",
+                "--lean-path", "/nonexistent/lean-path",
+                "--label", "stub",
+                *argv_extra,
+                *[str(mmc.REPO_ROOT / name) for name in TWO_MODULES],
+            ],
+        )
+        payload = json.loads(out.read_text(encoding="utf-8"))
+    return code, payload
+
+
 class DurationTest(unittest.TestCase):
     """Duration parsing: every unit Lean emits, and hard failure on the rest."""
 
@@ -262,6 +360,45 @@ class ProfileParseTest(unittest.TestCase):
         """The report lives on stderr: reading stdout alone yields no sample at all."""
         with self.assertRaises(mmc.MeasurementError):
             mmc.parse_profile("")
+
+    def test_table_row_must_agree_with_the_standalone_line(self) -> None:
+        """One quantity printed twice: if the two disagree, neither is this run's import."""
+        with self.assertRaises(mmc.MeasurementError) as caught:
+            mmc.parse_profile("import took 1.6s\ncumulative profiling times:\n\timport 0.9s\n")
+        self.assertIn("disagrees with itself", str(caught.exception))
+
+    def test_missing_table_row_is_refused(self) -> None:
+        """A report the cross-check cannot be performed on is not a report to record."""
+        with self.assertRaises(mmc.MeasurementError) as caught:
+            mmc.parse_profile(
+                "import took 1.6s\ncumulative profiling times:\n\telaboration 36.8ms\n"
+            )
+        self.assertIn("cannot be compared", str(caught.exception))
+
+    def test_the_committed_samples_satisfy_the_cross_check(self) -> None:
+        """Every recorded sample already agrees with itself, so the check refuses nothing real."""
+        for path in ArtifactShapeTest().committed_artifacts():
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            for record in payload["samples"]:
+                self.assertAlmostEqual(
+                    float(record["import"]),
+                    float(record["phases"]["import"]),
+                    places=6,
+                    msg=f"{path.name}: {record['module']}",
+                )
+
+    def test_mutant_skipping_the_cross_check_accepts_a_contradiction(self) -> None:
+        """Mutation: drop the comparison -- a self-contradicting report parses again."""
+        mutant = load_mutated(
+            (
+                '    if abs(phases["import"] - import_s) > IMPORT_CONSISTENCY_ABS_TOLERANCE_S:',
+                "    if False:",
+            )
+        )
+        import_s, _ = mutant.parse_profile(
+            "import took 1.6s\ncumulative profiling times:\n\timport 0.9s\n"
+        )
+        self.assertAlmostEqual(import_s, 1.6)
 
     def test_residual_is_empty_for_a_clean_module(self) -> None:
         """A clean run's whole output is profiler report, so no diagnostic remains."""
@@ -418,58 +555,9 @@ class WarmupTest(unittest.TestCase):
     prevent.
     """
 
-    STUB_WARM_REAL = 10.0
-    STUB_STEADY_REAL = 2.0
-
-    def stub_measure(self, monkeypatched: types.ModuleType, fail_warmup: bool = False):
-        """Install a fake ``measure_once``: 10 s on the first pass, 2 s afterwards."""
-        calls: list[str] = []
-
-        def fake(lean_bin, module, env, timeout_s):  # noqa: ANN001, ARG001
-            calls.append(str(module))
-            first_pass = len(calls) <= len(TWO_MODULES)
-            real = self.STUB_WARM_REAL if first_pass else self.STUB_STEADY_REAL
-            problems = ["stub warm-up failure"] if (first_pass and fail_warmup) else []
-            return {
-                "module": monkeypatched.rel(Path(module)),
-                "real": real,
-                "user": 1.2,
-                "sys": 1.0,
-                "import": real - 0.5,
-                "own": 0.5,
-                "phases": {},
-                "returncode": 0,
-                "timed_out": False,
-                "problems": problems,
-                "valid": not problems,
-            }
-
-        monkeypatched.measure_once = fake
-        return calls
-
-    def run_harness(
-        self, module: types.ModuleType, *, fail_warmup: bool = False
-    ) -> tuple[int, dict[str, object]]:
-        """Run the whole CLI with the child stubbed; return exit code and artifact."""
-        self.stub_measure(module, fail_warmup=fail_warmup)
-        with tempfile.TemporaryDirectory() as tmp:
-            out = Path(tmp) / "artifact.json"
-            code, _, _ = run_cli(
-                module,
-                [
-                    "--out", str(out),
-                    "--lean-bin", "/nonexistent/lean",
-                    "--lean-path", "/nonexistent/lean-path",
-                    "--label", "stub",
-                    *[str(mmc.REPO_ROOT / name) for name in TWO_MODULES],
-                ],
-            )
-            payload = json.loads(out.read_text(encoding="utf-8"))
-        return code, payload
-
     def test_warmup_excluded_from_the_summary_but_kept_in_the_record(self) -> None:
         """The 10 s warm-up pass must not reach the summary, and must still be stored."""
-        code, payload = self.run_harness(fresh_module())
+        code, payload = run_stub_cli(fresh_module())
         self.assertEqual(code, 0)
         self.assertEqual(
             payload["sample_counts"],
@@ -481,7 +569,7 @@ class WarmupTest(unittest.TestCase):
         )
         self.assertEqual(
             [record["real"] for record in payload["samples"] if record["phase"] == "warmup"],
-            [self.STUB_WARM_REAL, self.STUB_WARM_REAL],
+            [STUB_WARM_REAL, STUB_WARM_REAL],
         )
         self.assertIs(payload["protocol"]["warmup_samples_excluded_from_statistics"], True)
 
@@ -493,21 +581,21 @@ class WarmupTest(unittest.TestCase):
                 "measured = samples",
             )
         )
-        _, payload = self.run_harness(mutant)
+        _, payload = run_stub_cli(mutant)
         self.assertEqual(payload["summary"]["real"]["n"], 8)
-        self.assertEqual(payload["summary"]["real"]["max"], self.STUB_WARM_REAL)
+        self.assertEqual(payload["summary"]["real"]["max"], STUB_WARM_REAL)
         self.assertEqual(payload["sample_counts"]["warmup"], 0)
 
     def test_mutant_labelling_warmup_as_measured_is_caught(self) -> None:
         """Mutation: label the warm-up pass ``measure`` -- the cold samples come back in."""
         mutant = load_mutated(('passes = [("warmup", index)', 'passes = [("measure", index)'))
-        _, payload = self.run_harness(mutant)
+        _, payload = run_stub_cli(mutant)
         self.assertEqual(payload["summary"]["real"]["n"], 8)
-        self.assertEqual(payload["summary"]["real"]["max"], self.STUB_WARM_REAL)
+        self.assertEqual(payload["summary"]["real"]["max"], STUB_WARM_REAL)
 
     def test_failed_warmup_fails_the_run(self) -> None:
         """A warm-up that did not complete did not warm anything: exit 1, not 0."""
-        code, payload = self.run_harness(fresh_module(), fail_warmup=True)
+        code, payload = run_stub_cli(fresh_module(), fail_warmup=True)
         self.assertEqual(code, 1)
         self.assertEqual(payload["sample_counts"]["warmup_valid"], 0)
         self.assertEqual(payload["sample_counts"]["measured_valid"], 6)
@@ -515,7 +603,7 @@ class WarmupTest(unittest.TestCase):
     def test_pass_major_order(self) -> None:
         """Every module is visited once per pass, so drift spreads instead of pooling."""
         module = fresh_module()
-        self.stub_measure(module)
+        install_stub_measure(module)
         with contextlib.redirect_stdout(io.StringIO()):
             samples = module.measure(
                 [Path("A.lean"), Path("B.lean")], "lean", {}, warmup=0, replicates=3, timeout_s=1.0
@@ -528,6 +616,14 @@ class TargetSetTest(unittest.TestCase):
     """The measured set is exactly the requested set, or the run stops."""
 
     FAMILY = "IsingModel/AmbientLattice/SpecialCases/PartitionFreeEnergyRegularity*.lean"
+    # The same eight files, reached through a directory the pattern steps into
+    # and back out of. Spelled differently, resolved identically -- the shape
+    # ``IsingModel/**/../*.lean`` takes to an extreme (7620 paths for 1174
+    # files) when the deduplication compares spellings.
+    DETOUR = (
+        "IsingModel/AmbientLattice/SpecialCases/../SpecialCases/"
+        "PartitionFreeEnergyRegularity*.lean"
+    )
 
     def test_glob_and_dedup(self) -> None:
         """A glob resolves against the repository root; duplicates collapse; order is sorted."""
@@ -535,6 +631,24 @@ class TargetSetTest(unittest.TestCase):
         self.assertEqual(modules, sorted(set(modules)))
         self.assertTrue(all(path.suffix == ".lean" for path in modules))
         self.assertGreaterEqual(len(modules), 2)
+
+    def test_the_same_file_under_two_spellings_is_measured_once(self) -> None:
+        """Deduplication is by resolved path, so a detour cannot double the sample count."""
+        direct = mmc.expand_modules([self.FAMILY], None)
+        both = mmc.expand_modules([self.FAMILY, self.DETOUR], None)
+        self.assertEqual(both, direct)
+        self.assertTrue(all(path == path.resolve() for path in both), both)
+
+    def test_mutant_deduplicating_by_spelling_measures_each_file_twice(self) -> None:
+        """Mutation: keep the unresolved match -- every module is timed once per spelling."""
+        mutant = load_mutated(
+            (
+                "found.update(match.resolve() for match in matches)",
+                "found.update(matches)",
+            )
+        )
+        both = mutant.expand_modules([self.FAMILY, self.DETOUR], None)
+        self.assertEqual(len(both), 2 * len(mmc.expand_modules([self.FAMILY], None)))
 
     def test_empty_glob_raises(self) -> None:
         """A pattern matching nothing must not silently measure the empty set."""
@@ -598,12 +712,35 @@ class CliGuardTest(unittest.TestCase):
             self.assertIn("artifact already exists", err)
             self.assertEqual(out.read_text(encoding="utf-8"), "{}\n")
 
+    def test_non_finite_or_non_positive_timeout_is_a_usage_error(self) -> None:
+        """``--timeout nan``/``inf`` used to raise from ``subprocess`` with no artifact."""
+        for value in ("nan", "inf", "-inf", "0", "-5"):
+            # ``--timeout=-5`` rather than two tokens: argparse reads a leading
+            # ``-inf`` as an option name and never reaches the guard.
+            code, _, err = run_cli(mmc, [f"--timeout={value}", *TWO_MODULES])
+            self.assertEqual(code, 2, value)
+            self.assertIn("not a positive finite number of seconds", err)
+
+    def test_a_non_finite_timeout_would_raise_from_subprocess(self) -> None:
+        """Why the guard exists: the value is converted to an integer deep inside."""
+        with tempfile.TemporaryDirectory() as tmp:
+            stub = write_stub_lean(Path(tmp))
+            with self.assertRaises(ValueError):
+                mmc.measure_once(
+                    str(stub),
+                    mmc.REPO_ROOT / TWO_MODULES[0],
+                    dict(os.environ),
+                    float("nan"),
+                )
+
     def test_unspawnable_lean_exits_two(self) -> None:
         """A ``lean`` that cannot be executed is an environment exit, not a crash."""
+        module = fresh_module()
+        install_stub_census(module, (0,))
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "artifact.json"
             code, _, err = run_cli(
-                mmc,
+                module,
                 [
                     "--out", str(out),
                     "--lean-bin", "/nonexistent/lean",
@@ -649,6 +786,156 @@ class FingerprintTest(unittest.TestCase):
         self.assertIs(mmc.LIB_DIR, audit_gate.LIB_DIR)
 
 
+class ProcessGuardTest(unittest.TestCase):
+    """The serial-run precondition: counted, recorded as a number, or the run stops.
+
+    The committed 2026-07-31 artifact recorded ``other_lean_processes_at_start:
+    null`` because ``pgrep`` cannot answer inside this repository's sandbox.
+    Nothing was wrong with that run, but the protocol's "discard any sample
+    taken beside a foreign ``lean``" rule had no input and could not have fired,
+    which is indistinguishable in the artifact from a rule that fired and passed.
+    """
+
+    def test_census_answers_with_a_method_or_with_an_error(self) -> None:
+        """Whatever the environment allows, the shape is a count and its provenance."""
+        census = mmc.lean_process_census()
+        self.assertEqual(set(census), {"method", "count", "error"})
+        if census["count"] is None:
+            self.assertIsNone(census["method"])
+            self.assertTrue(census["error"])
+        else:
+            self.assertIsInstance(census["count"], int)
+            self.assertGreaterEqual(int(census["count"]), 0)
+            self.assertIn(census["method"], ("pgrep", "ps"))
+            self.assertIsNone(census["error"])
+
+    def test_a_refusing_pgrep_is_not_read_as_zero(self) -> None:
+        """``pgrep`` exiting 3 means "cannot get the process list", not "none running"."""
+        module = fresh_module()
+        module.run_capture = lambda cmd, cwd=None: (3, "", "pgrep: Cannot get process list")
+        with self.assertRaises(module.MeasurementError):
+            module._census_via_pgrep()
+
+    def test_ps_is_the_fallback_and_counts_lean_and_lake(self) -> None:
+        """One probe being unavailable is not evidence that the machine is quiet."""
+        module = fresh_module()
+
+        def fake(cmd, cwd=None):  # noqa: ANN001, ARG001
+            if cmd[0] == "pgrep":
+                return (3, "", "Cannot get process list")
+            if cmd[0] == "ps":
+                return (0, "/usr/bin/lean\n/bin/zsh\nlake\n/usr/bin/leanls\n", "")
+            return (127, "", "unexpected command")
+
+        module.run_capture = fake
+        self.assertEqual(
+            module.lean_process_census(), {"method": "ps", "count": 2, "error": None}
+        )
+
+    def test_an_uncountable_guard_refuses_to_measure(self) -> None:
+        """No count, no run: recording ``null`` is what made the discard rule inert."""
+        module = fresh_module()
+        install_stub_measure(module)
+        install_stub_census(module, (None,))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "artifact.json"
+            code, _, err = run_cli(
+                module,
+                [
+                    "--out", str(out),
+                    "--lean-bin", "/nonexistent/lean",
+                    "--lean-path", "/nonexistent/lean-path",
+                    *[str(mmc.REPO_ROOT / name) for name in TWO_MODULES],
+                ],
+            )
+            self.assertEqual(code, 2)
+            self.assertIn("refusing to record the guard as unknown", err)
+            self.assertFalse(out.exists())
+
+    def test_a_clean_guard_is_recorded_as_such(self) -> None:
+        """Zero at both ends is the only state that lets the run succeed."""
+        code, payload = run_stub_cli(fresh_module(), census_counts=(0,))
+        self.assertEqual(code, 0)
+        guard = payload["environment"]["process_guard"]
+        self.assertEqual(guard["at_start"], 0)
+        self.assertEqual(guard["at_end"], 0)
+        self.assertIs(guard["clean"], True)
+        self.assertEqual(payload["environment"]["other_lean_processes_at_start"], 0)
+
+    def test_a_process_appearing_mid_run_fails_the_run(self) -> None:
+        """Clean at the start is not clean: the end count is what catches an intruder."""
+        code, payload = run_stub_cli(fresh_module(), census_counts=(0, 1))
+        self.assertEqual(code, 1)
+        guard = payload["environment"]["process_guard"]
+        self.assertEqual((guard["at_start"], guard["at_end"]), (0, 1))
+        self.assertIs(guard["clean"], False)
+        # The samples are kept: nothing is killed and nothing is deleted, the
+        # run simply reports what it was taken beside.
+        self.assertEqual(payload["sample_counts"]["measured_valid"], 6)
+
+    def test_mutant_treating_an_unknown_count_as_clean_is_caught(self) -> None:
+        """Mutation: accept a ``None`` count -- the exact state the committed run was in."""
+        mutant = load_mutated(('if census["count"] is None:', "if False:"))
+        install_stub_measure(mutant)
+        install_stub_census(mutant, (None,))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "artifact.json"
+            code, _, _ = run_cli(
+                mutant,
+                [
+                    "--out", str(out),
+                    "--lean-bin", "/nonexistent/lean",
+                    "--lean-path", "/nonexistent/lean-path",
+                    *[str(mmc.REPO_ROOT / name) for name in TWO_MODULES],
+                ],
+            )
+            payload = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(code, 1)
+        self.assertIsNone(payload["environment"]["other_lean_processes_at_start"])
+
+
+class ProvenanceTest(unittest.TestCase):
+    """Which bytes were measured: HEAD alone does not say, on a dirty tree."""
+
+    def test_git_record_names_the_dirty_paths_and_digests_them(self) -> None:
+        """``dirty: true`` without the paths leaves the measurement unattributable."""
+        fingerprint = mmc.git_fingerprint()
+        self.assertIsNotNone(fingerprint["head"])
+        self.assertIsInstance(fingerprint["dirty_paths"], list)
+        self.assertEqual(fingerprint["dirty"], bool(fingerprint["dirty_paths"]))
+        self.assertTrue(str(fingerprint["status_digest"]).startswith("sha256:"))
+        self.assertEqual(len(str(fingerprint["status_digest"])), len("sha256:") + 64)
+
+    def test_module_digests_pin_the_measured_bytes(self) -> None:
+        """The hash is over the file handed to ``lean``, computed here independently."""
+        modules = [mmc.REPO_ROOT / name for name in TWO_MODULES]
+        digests = mmc.module_digests(modules)
+        self.assertEqual(sorted(digests), sorted(TWO_MODULES))
+        for name, recorded in digests.items():
+            expected = hashlib.sha256(
+                (mmc.REPO_ROOT / name).read_text(encoding="utf-8").encode("utf-8")
+            ).hexdigest()
+            self.assertEqual(recorded, f"sha256:{expected}", name)
+
+    def test_the_artifact_carries_the_provenance(self) -> None:
+        """A run records the digests beside the modules it names, one per target."""
+        code, payload = run_stub_cli(fresh_module())
+        self.assertEqual(code, 0)
+        self.assertEqual(sorted(payload["module_digests"]), sorted(payload["modules"]))
+        self.assertIsNotNone(payload["environment"]["git"]["status_digest"])
+        self.assertIsInstance(payload["environment"]["git"]["dirty_paths"], list)
+
+    def test_mutant_recording_only_the_dirty_flag_is_caught(self) -> None:
+        """Mutation: drop the porcelain digest -- back to a boolean nobody can act on."""
+        mutant = load_mutated(
+            ('"status_digest": digest(status) if code_status == 0 else None,',
+             '"status_digest": None,')
+        )
+        _, payload = run_stub_cli(mutant)
+        self.assertIsNone(payload["environment"]["git"]["status_digest"])
+        self.assertIsNotNone(mmc.git_fingerprint()["status_digest"])
+
+
 class ArtifactShapeTest(unittest.TestCase):
     """The committed artifacts keep every sample, and every sample is valid."""
 
@@ -670,6 +957,54 @@ class ArtifactShapeTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
         return [mmc.REPO_ROOT / name for name in proc.stdout.split("\0") if name]
 
+    @staticmethod
+    def derive_counts(samples: list[dict[str, object]]) -> dict[str, int]:
+        """Re-derive the tally from the samples, rather than reading the artifact's own.
+
+        This is the whole point of the case below. An artifact that says
+        ``measured_valid == measured`` says only that its author's arithmetic
+        was consistent with itself; flipping one measured sample to
+        ``valid: false`` and leaving the tally alone passed the earlier version
+        of this test unchanged.
+        """
+        def count(phase: str, valid: bool | None = None) -> int:
+            return len(
+                [
+                    record
+                    for record in samples
+                    if record["phase"] == phase and (valid is None or record["valid"] is valid)
+                ]
+            )
+
+        return {
+            "total": len(samples),
+            "warmup": count("warmup"),
+            "warmup_valid": count("warmup", True),
+            "measured": count("measure"),
+            "measured_valid": count("measure", True),
+        }
+
+    def assert_artifact_sound(self, payload: dict[str, object], name: str) -> None:
+        """Assert that ``payload`` is a whole record of a run with no failed sample."""
+        self.assertIn(payload["schema"], mmc.KNOWN_SCHEMAS, name)
+        self.assertTrue(payload["samples"], name)
+        derived = self.derive_counts(payload["samples"])
+        # The artifact's own tally must agree with its samples...
+        for key, recorded in payload["sample_counts"].items():
+            self.assertEqual(recorded, derived[key], f"{name}: sample_counts.{key}")
+        # ...and the properties themselves are asserted on the derived numbers,
+        # so a tampered or mistaken tally cannot vouch for them.
+        self.assertGreater(derived["measured"], 0, name)
+        self.assertGreaterEqual(
+            derived["measured"] // max(len(payload["modules"]), 1), mmc.MIN_REPLICATES, name
+        )
+        self.assertGreaterEqual(derived["warmup"], len(payload["modules"]), name)
+        self.assertEqual(derived["measured_valid"], derived["measured"], name)
+        self.assertEqual(derived["warmup_valid"], derived["warmup"], name)
+        self.assertIs(payload["protocol"]["warmup_samples_excluded_from_statistics"], True, name)
+        self.assertIsNotNone(payload["environment"]["git"]["head"], name)
+        self.assertIsNotNone(payload["environment"]["lean_toolchain"], name)
+
     def test_committed_artifacts_are_complete_and_valid(self) -> None:
         """Every committed artifact is a whole record of a run with no failed sample."""
         artifacts = self.committed_artifacts()
@@ -677,26 +1012,28 @@ class ArtifactShapeTest(unittest.TestCase):
         # is how a check survives the deletion of the thing it checks.
         self.assertTrue(artifacts, "no committed measurement artifact found")
         for path in artifacts:
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            self.assertIn(payload["schema"], mmc.KNOWN_SCHEMAS, path.name)
-            self.assertTrue(payload["samples"], path.name)
-            counts = payload["sample_counts"]
-            self.assertEqual(counts["total"], len(payload["samples"]), path.name)
-            self.assertGreater(counts["measured"], 0, path.name)
-            self.assertGreaterEqual(
-                counts["measured"] // max(len(payload["modules"]), 1),
-                mmc.MIN_REPLICATES,
-                path.name,
-            )
-            self.assertGreaterEqual(counts["warmup"], len(payload["modules"]), path.name)
-            self.assertEqual(counts["measured_valid"], counts["measured"], path.name)
-            if payload["schema"] == mmc.SCHEMA:
-                self.assertEqual(counts["warmup_valid"], counts["warmup"], path.name)
-            self.assertIs(
-                payload["protocol"]["warmup_samples_excluded_from_statistics"], True, path.name
-            )
-            self.assertIsNotNone(payload["environment"]["git"]["head"], path.name)
-            self.assertIsNotNone(payload["environment"]["lean_toolchain"], path.name)
+            self.assert_artifact_sound(json.loads(path.read_text(encoding="utf-8")), path.name)
+
+    def test_a_sample_flipped_to_invalid_is_caught(self) -> None:
+        """Tamper with a sample, leave the tally: the check must read the samples."""
+        path = self.committed_artifacts()[0]
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        for record in payload["samples"]:
+            if record["phase"] == "measure":
+                record["valid"] = False
+                record["problems"] = ["tampered"]
+                break
+        with self.assertRaises(AssertionError):
+            self.assert_artifact_sound(payload, "tampered-sample")
+
+    def test_a_tally_that_contradicts_the_samples_is_caught(self) -> None:
+        """The other direction: an inflated tally over an untouched sample list."""
+        path = self.committed_artifacts()[0]
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        payload["sample_counts"]["measured"] += 1
+        payload["sample_counts"]["measured_valid"] += 1
+        with self.assertRaises(AssertionError):
+            self.assert_artifact_sound(payload, "tampered-tally")
 
 
 def run_suite() -> int:

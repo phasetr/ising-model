@@ -389,8 +389,20 @@ S-scope 7 pairs + F-scope 2 pairs.
 
 ## 7. Committed tooling (so this is not re-derived a fifth time)
 
-Every past protocol survives only as prose in a report; `scripts/` currently holds audit scripts
-only, with no timing target. Recommend committing a small, re-runnable harness:
+The protocol that produced the disputed figures survives only as prose in a report; `scripts/`
+currently holds audit scripts only, with no timing target. Recommend committing a small,
+re-runnable harness:
+
+> **Correction, 2026-07-31 (post-design; thresholds and Section 5 untouched).** The sentence
+> above originally read "Every past protocol survives only as prose in a report", which is
+> false and repeats the same overstatement the harness docstring was corrected for. Commit
+> `b4bec721` (2026-07-26) committed `.self-local/reports/perf-isdefeq-cluster-artifacts/measure.sh`
+> together with about 260 KB of raw `*_trace.out` samples. The true, narrower statement is D1's:
+> *the reconciliation's* protocol was prose only and its samples were deleted. That committed
+> exception does not weaken the recommendation - it strengthens it. It sits under `.self-local/`
+> with no owner, it times `lake env lean` (the invocation section 7 of the reconciliation
+> retires), and nothing beside it said so until it was annotated as superseded. An executable
+> protocol nobody maintains becomes a superseded twin someone re-runs.
 
 * `scripts/perf/guard.sh` - pre/post environment guard; emits one JSON row (load1, thermal state, AC
   status, `lean`/`lake` process count, foreign `codex` pid and `%cpu`, git sha, `lean-toolchain`,
