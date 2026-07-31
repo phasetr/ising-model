@@ -95,7 +95,13 @@ each of them is recorded as a *value*, never as "unknown":
   after the last (``pgrep``, falling back to ``ps``). A count that cannot be
   taken at all is a refusal to start, not a ``null`` in the artifact: a null
   there silently disables the rule that a contaminated sample is discarded. A
-  count above zero fails the run, with every sample still written.
+  count above zero fails the run, with every sample still written. Two counts
+  are not a watch, and this is a stated limitation rather than an oversight:
+  a ``lean`` that starts and exits between the two censuses is invisible, so
+  what the guard establishes is that the run *began and ended* alone, not that
+  it ran alone throughout. Turning it into a claim about the whole run needs a
+  sampler running beside the measurement -- machinery this harness does not
+  have, and whose own cost would land in the samples it is watching.
 * **which bytes were measured.** ``git`` HEAD alone does not identify them on a
   dirty tree, so the artifact also carries the ``git status --porcelain``
   digest, the dirty paths themselves, and a SHA-256 of every measured module's
@@ -352,15 +358,19 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
 
     Every entry is resolved against the repository root when relative, so a run
     from any working directory selects the same files. Results are deduplicated
-    **by resolved path** and sorted, which makes the sample order (and therefore
-    the artifact) deterministic. Resolving before deduplicating is what makes
-    the deduplication real: a pattern such as ``IsingModel/**/../*.lean`` names
-    the same file once per traversed directory, and comparing the unresolved
-    spellings kept all 7620 of them for 1174 distinct files -- a run 6.5x longer
-    whose "median over 3 replicates" was silently a median over 19.5. A pattern
-    that matches nothing, or a path that is missing or is not a ``.lean`` file,
-    is an error: silently measuring a smaller set than was asked for is how a
-    "family" quietly becomes three modules.
+    **by the identity of the file itself** (device plus inode) and sorted, which
+    makes the sample order (and therefore the artifact) deterministic. Comparing
+    paths instead of identities is what silently multiplies a run: a pattern
+    such as ``IsingModel/**/../*.lean`` names the same file once per traversed
+    directory, and comparing the unresolved spellings kept all 7620 of them for
+    1174 distinct files -- a run 6.5x longer whose "median over 3 replicates"
+    was silently a median over 19.5. Resolving the spellings is not enough on
+    its own: this repository lives on a case-insensitive filesystem (APFS),
+    where ``IsingModel/X.lean`` and ``isingmodel/x.lean`` both resolve, to two
+    different strings naming one file, and would be timed twice. A pattern that
+    matches nothing, or a path that is missing or is not a ``.lean`` file, is an
+    error: silently measuring a smaller set than was asked for is how a "family"
+    quietly becomes three modules.
     """
     entries = list(args)
     if from_file:
@@ -376,7 +386,17 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
     if not entries:
         raise MeasurementError("no target module given (pass paths, a glob, or --from-file)")
 
-    found: set[Path] = set()
+    found: dict[tuple[int, int], Path] = {}
+
+    def keep(path: Path) -> None:
+        """Record ``path`` once per file it names, keyed by that file's identity."""
+        resolved = path.resolve()
+        try:
+            info = resolved.stat()
+        except OSError as exc:
+            raise MeasurementError(f"cannot stat {rel(resolved)}: {exc}") from exc
+        found.setdefault((info.st_dev, info.st_ino), resolved)
+
     for entry in entries:
         if any(ch in entry for ch in _GLOB_CHARS):
             base = Path(entry)
@@ -388,16 +408,17 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
                 matches = sorted(REPO_ROOT.glob(entry))
             if not matches:
                 raise MeasurementError(f"pattern matched no file: {entry}")
-            found.update(match.resolve() for match in matches)
+            for match in matches:
+                keep(match)
             continue
         path = Path(entry)
         if not path.is_absolute():
             path = REPO_ROOT / path
         if not path.is_file():
             raise MeasurementError(f"no such file: {entry}")
-        found.add(path.resolve())
+        keep(path)
 
-    modules = sorted(found)
+    modules = sorted(found.values())
     bad = [str(path) for path in modules if path.suffix != ".lean"]
     if bad:
         raise MeasurementError(f"not Lean sources: {bad}")
@@ -736,14 +757,24 @@ def git_fingerprint() -> dict[str, object]:
 
 
 def module_digests(modules: list[Path]) -> dict[str, str]:
-    """Return ``{module -> sha256}`` over the exact bytes handed to ``lean``.
+    """Return ``{module -> sha256}`` over each module's bytes, as they are on disk.
 
     The tree's git state pins everything *except* the files a dirty tree
     changed, and those are precisely the ones a timing is most likely to be
     about. Hashing each measured module closes that gap: a later run can prove
     it measured the same source rather than assume it from a matching HEAD.
+
+    Raw bytes, not decoded text: reading with an encoding also translates line
+    endings, so a CRLF file and its LF twin -- two different inputs to ``lean``
+    -- would hash alike. :func:`main` calls this *before* the first sample, so
+    the recorded hash is the source as the run found it; a file edited while
+    the run is in progress is not silently recorded as the version that
+    replaced it.
     """
-    return {rel(module): digest(module.read_text(encoding="utf-8")) for module in modules}
+    return {
+        rel(module): "sha256:" + hashlib.sha256(module.read_bytes()).hexdigest()
+        for module in modules
+    }
 
 
 def hardware_fingerprint() -> dict[str, object]:
@@ -1008,6 +1039,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  other lean : {guard['at_start']} (via {guard['method']})")
     print()
 
+    # Taken before the first sample, so the record answers "which bytes were
+    # measured" rather than "which bytes survived the run".
+    digests = module_digests(modules)
+
     started = time.monotonic()
     try:
         samples = measure(modules, lean_bin, env, args.warmup, args.replicates, args.timeout)
@@ -1060,10 +1095,10 @@ def main(argv: list[str] | None = None) -> int:
         },
         "environment": fingerprint,
         "modules": [rel(module) for module in modules],
-        # The bytes actually handed to ``lean``, hashed. ``git.head`` does not
-        # pin them on a dirty tree, and a dirty tree is the normal case while a
-        # harness is being written.
-        "module_digests": module_digests(modules),
+        # The measured sources, hashed as raw bytes before sampling started.
+        # ``git.head`` does not pin them on a dirty tree, and a dirty tree is
+        # the normal case while a harness is being written.
+        "module_digests": digests,
         "wall_clock_total_s": round(elapsed, 3),
         "samples": samples,
         "per_module": per_module,

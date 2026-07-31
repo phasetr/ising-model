@@ -41,9 +41,10 @@ runs incomparable while every printed number still looks plausible:
    glob that matches nothing, or a path that is missing, must stop the run
    rather than shrink a "family" to whatever happened to exist; and a glob that
    reaches one file by several spellings must not measure it several times.
-6. **An artifact must not be silently replaced**, and a committed artifact must
-   be a complete, fully valid record -- judged from its samples, never from the
-   tally it reports about itself.
+6. **An artifact must not be silently replaced**, and every committed artifact
+   -- found by its schema tag, wherever in the tree it was written -- must be a
+   complete, fully valid record whose process guard held, judged from its
+   samples and never from the tally it reports about itself.
 7. **A guard that cannot be evaluated must stop the run.** The protocol
    discards samples taken beside a foreign ``lean``; a harness that records the
    count as ``null`` when it cannot take it leaves that rule inert while the
@@ -633,18 +634,18 @@ class TargetSetTest(unittest.TestCase):
         self.assertGreaterEqual(len(modules), 2)
 
     def test_the_same_file_under_two_spellings_is_measured_once(self) -> None:
-        """Deduplication is by resolved path, so a detour cannot double the sample count."""
+        """Deduplication is by file identity, so a detour cannot double the sample count."""
         direct = mmc.expand_modules([self.FAMILY], None)
         both = mmc.expand_modules([self.FAMILY, self.DETOUR], None)
         self.assertEqual(both, direct)
         self.assertTrue(all(path == path.resolve() for path in both), both)
 
     def test_mutant_deduplicating_by_spelling_measures_each_file_twice(self) -> None:
-        """Mutation: keep the unresolved match -- every module is timed once per spelling."""
+        """Mutation: key by the spelling instead of the file -- one timing per spelling."""
         mutant = load_mutated(
             (
-                "found.update(match.resolve() for match in matches)",
-                "found.update(matches)",
+                "found.setdefault((info.st_dev, info.st_ino), resolved)",
+                "found.setdefault(path.as_posix(), resolved)",
             )
         )
         both = mutant.expand_modules([self.FAMILY, self.DETOUR], None)
@@ -907,14 +908,12 @@ class ProvenanceTest(unittest.TestCase):
         self.assertEqual(len(str(fingerprint["status_digest"])), len("sha256:") + 64)
 
     def test_module_digests_pin_the_measured_bytes(self) -> None:
-        """The hash is over the file handed to ``lean``, computed here independently."""
+        """The hash is over the module's raw bytes, computed here independently."""
         modules = [mmc.REPO_ROOT / name for name in TWO_MODULES]
         digests = mmc.module_digests(modules)
         self.assertEqual(sorted(digests), sorted(TWO_MODULES))
         for name, recorded in digests.items():
-            expected = hashlib.sha256(
-                (mmc.REPO_ROOT / name).read_text(encoding="utf-8").encode("utf-8")
-            ).hexdigest()
+            expected = hashlib.sha256((mmc.REPO_ROOT / name).read_bytes()).hexdigest()
             self.assertEqual(recorded, f"sha256:{expected}", name)
 
     def test_the_artifact_carries_the_provenance(self) -> None:
@@ -940,22 +939,35 @@ class ArtifactShapeTest(unittest.TestCase):
     """The committed artifacts keep every sample, and every sample is valid."""
 
     def committed_artifacts(self) -> list[Path]:
-        """Return the ``measure-module-cost-*.json`` files this repository commits.
+        """Return every measurement artifact this repository commits, wherever it sits.
 
-        Scoped to what ``git`` tracks, not to what the reports directory
-        happens to contain: that directory is also where local scratch runs
-        land, including failed ones, and the claim under test is about the
-        record the repository publishes.
+        Scoped to what ``git`` tracks, not to what a directory happens to
+        contain: the reports directory is also where local scratch runs land,
+        including failed ones, and the claim under test is about the record the
+        repository publishes.
+
+        Selected by what the file *is* -- its schema tag -- and not by where it
+        was written or what it was named. An earlier version looked only in
+        ``.self-local/reports/``, which is not where the design report's own
+        retention rule sends raw data (``.self-local/perf/4794/raw/``), and
+        ``--out`` can put an artifact anywhere under any name: a committed
+        artifact outside the searched directory was simply not checked, and the
+        case still passed.
         """
-        pattern = f"{mmc.rel(mmc.DEFAULT_OUT_DIR)}/measure-module-cost-*.json"
         proc = subprocess.run(
-            ["git", "-C", str(mmc.REPO_ROOT), "ls-files", "-z", "--", pattern],
+            ["git", "-C", str(mmc.REPO_ROOT), "ls-files", "-z", "--", "*.json"],
             capture_output=True,
             text=True,
             check=False,
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
-        return [mmc.REPO_ROOT / name for name in proc.stdout.split("\0") if name]
+        tracked = [mmc.REPO_ROOT / name for name in proc.stdout.split("\0") if name]
+        marker = mmc.SCHEMA.rsplit("/", 1)[0]
+        return [
+            path
+            for path in tracked
+            if marker in path.read_text(encoding="utf-8", errors="replace")
+        ]
 
     @staticmethod
     def derive_counts(samples: list[dict[str, object]]) -> dict[str, int]:
@@ -989,7 +1001,14 @@ class ArtifactShapeTest(unittest.TestCase):
         self.assertIn(payload["schema"], mmc.KNOWN_SCHEMAS, name)
         self.assertTrue(payload["samples"], name)
         derived = self.derive_counts(payload["samples"])
-        # The artifact's own tally must agree with its samples...
+        # The artifact's own tally must agree with its samples on every count
+        # its schema states. Iterating the recorded keys alone let an *empty*
+        # tally agree with everything: no key, no comparison, no failure.
+        # Schema 1 is the one schema that predates ``warmup_valid``.
+        stated = set(derived)
+        if payload["schema"] == "ising-model/measure_module_cost/1":
+            stated -= {"warmup_valid"}
+        self.assertEqual(set(payload["sample_counts"]), stated, f"{name}: sample_counts keys")
         for key, recorded in payload["sample_counts"].items():
             self.assertEqual(recorded, derived[key], f"{name}: sample_counts.{key}")
         # ...and the properties themselves are asserted on the derived numbers,
@@ -1004,6 +1023,12 @@ class ArtifactShapeTest(unittest.TestCase):
         self.assertIs(payload["protocol"]["warmup_samples_excluded_from_statistics"], True, name)
         self.assertIsNotNone(payload["environment"]["git"]["head"], name)
         self.assertIsNotNone(payload["environment"]["lean_toolchain"], name)
+        if payload["schema"] == mmc.SCHEMA:
+            # The current schema is the first that records the guard as a value.
+            # An artifact stating it was taken beside a foreign ``lean`` says so
+            # about its own samples; publishing it as a sound record anyway is
+            # the discard rule going unread at the one place it is readable.
+            self.assertIs(payload["environment"]["process_guard"]["clean"], True, name)
 
     def test_committed_artifacts_are_complete_and_valid(self) -> None:
         """Every committed artifact is a whole record of a run with no failed sample."""
