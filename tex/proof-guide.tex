@@ -22295,9 +22295,16 @@ PR~\#2103 carves the five Walsh-basis / spin-config wrappers out into
 PR~\#2104 carves the seven spinProduct / edgeSpin algebra wrappers
 out into
 \path{IsingModel/Concrete/LatticeGraphCorrelation/FiniteVolumeBasicsSpin.lean};
-PR~\#2105 carves the five Hamiltonian flip / negative-field
-wrappers out into
-\path{IsingModel/Concrete/LatticeGraphCorrelation/FiniteVolumeBasicsHamiltonian.lean}.
+PR~\#2105 carves the flip / bottom-graph wrappers out into
+\path{IsingModel/Concrete/LatticeGraphCorrelation/FiniteVolumeBasicsHamiltonian.lean},
+which now holds three of them, \texttt{edgeSpin\_flip\_latticeGraph},
+\texttt{interactionEnergy\_flip\_latticeGraph} and
+\texttt{hamiltonian\_bot\_latticeGraph}.
+The two Hamiltonian flip / negative-field wrappers that module also received
+restated \texttt{hamiltonian\_flip\_eq\_latticeGraph} and
+\texttt{hamiltonian\_neg\_h\_latticeGraph} with the very same proof terms and
+have been removed, so those two propositions are now stated once, in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean}.
 \par}
 
 {\raggedright
@@ -22364,16 +22371,28 @@ live in
 \par}
 
 {\raggedright
-The concrete $\mathbb{Z}^d$ finite-volume Boltzmann-weight, Hamiltonian,
+The concrete $\mathbb{Z}^d$ finite-volume Boltzmann-weight,
 partition-function, and free-energy bound wrappers now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/FiniteVolumeEnergyBounds.lean}.
+Boltzmann positivity and the $|H|$ bound at the same induced graph
+were stated twice; the copies in that module have been removed, so
+\texttt{boltzmannWeight\_pos\_latticeGraph} and
+\texttt{hamiltonian\_abs\_le\_latticeGraph} are now stated once, in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean}.
 \par}
 
 {\raggedright
-The concrete $\mathbb{Z}^d$ finite-volume Hamiltonian closed forms, direct
-energy and partition-function bounds, and spinProduct helper wrappers now live
-in
+The concrete $\mathbb{Z}^d$ finite-volume direct energy and partition-function
+bounds and spinProduct helper wrappers now live in
 \path{IsingModel/Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean}.
+The three $\mathbb{Z}^d$ Hamiltonian closed forms at $J = 0$, at zero
+parameters, and against the edgeless graph each had a second copy in that
+module; those copies have been removed, so
+\texttt{hamiltonian\_J\_zero\_latticeGraph},
+\texttt{hamiltonian\_zero\_params\_latticeGraph} and
+\texttt{hamiltonian\_eq\_bot\_at\_J\_zero\_latticeGraph} are now stated once,
+in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean}.
 \par}
 
 {\raggedright

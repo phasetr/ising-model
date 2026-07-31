@@ -2,14 +2,17 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete Hamiltonian flip / symmetry wrappers
+# Concrete edgeSpin / interaction-energy flip and bottom-graph wrappers
 
-Narrow child module for five ℤ^d Hamiltonian flip / negative-field /
-bottom-graph wrappers at the Λ layer (`edgeSpin_flip`,
-`interactionEnergy_flip`, `hamiltonianΛ_flip_eq`,
-`hamiltonianΛ_neg_h`, and `hamiltonian_bot`). Each wrapper is a thin
-pass-through to the corresponding `IsingModel.*` lemma at the induced
-graph.
+Narrow child module for three ℤ^d flip / bottom-graph wrappers at the Λ layer
+(`edgeSpin_flip`, `interactionEnergy_flip`, and `hamiltonian_bot`). Each
+wrapper is a thin pass-through to the corresponding `IsingModel.*` lemma at the
+induced graph.
+
+The Hamiltonian's own spin-flip invariance at `h = 0` and its `h ↦ -h`
+reflection are stated once, in `EnergyClosedFormsHamiltonian.lean`, as
+`hamiltonian_flip_eq_latticeGraph` and `hamiltonian_neg_h_latticeGraph`; the
+identically-stated copies that used to sit here have been removed.
 -/
 
 open scoped symmDiff
@@ -36,32 +39,6 @@ theorem interactionEnergy_flip_latticeGraph
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J σ :=
   IsingModel.interactionEnergy_flip
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J σ
-
-/-- **ℤ^d hamiltonian_flip_eq at Λ-induced**: at `h = 0` the Hamiltonian
-is invariant under spin flip. -/
-theorem hamiltonianΛ_flip_eq_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hp : p.h = 0)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ.flip
-      = IsingModel.hamiltonian
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ :=
-  IsingModel.hamiltonian_flip_eq
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hp σ
-
-/-- **ℤ^d hamiltonian_neg_h at Λ-induced**:
-`H_Λ(σ; -h) = H_Λ(σ.flip; h)`. -/
-theorem hamiltonianΛ_neg_h_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J h β : ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨J, -h, β⟩ : IsingParams ℝ) σ
-      = IsingModel.hamiltonian
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-          (⟨J, h, β⟩ : IsingParams ℝ) σ.flip :=
-  IsingModel.hamiltonian_neg_h
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β σ
 
 /-- **ℤ^d hamiltonian_bot at Λ**: `H_⊥(σ) = -h · Σ sign σ`. -/
 theorem hamiltonian_bot_latticeGraph

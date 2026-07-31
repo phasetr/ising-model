@@ -2,18 +2,23 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume energy and partition bounds
+# Concrete finite-volume Boltzmann factorization and partition non-vanishing
 
-Narrow child module for direct concrete `latticeGraph` finite-volume
-Boltzmann-weight, Hamiltonian, partition-function, and free-energy bound
-wrappers. The theorem names are the same as the former declarations, but
-callers can now avoid importing the monolithic concrete module.
+Narrow child module for the two direct concrete `latticeGraph` finite-volume
+wrappers `boltzmannWeight_subgraph_factor_latticeGraph` and
+`partitionFunctionΛ_latticeGraph_ne_zero`, so that callers can avoid importing
+the monolithic concrete module.
+
+Boltzmann positivity and the `|H|` bound at the same induced graph are stated
+once, in `EnergyClosedForms.lean`, as `boltzmannWeight_pos_latticeGraph` and
+`hamiltonian_abs_le_latticeGraph`; the identically-stated copies that used to
+sit here have been removed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-/-! ### ℤ^d finite-volume energy and partition bounds -/
+/-! ### ℤ^d Boltzmann subgraph factorization and partition non-vanishing -/
 
 /-- **ℤ^d boltzmannWeight_subgraph_factor direct** (Λ-induced):
 `w_{G₂} = (∏_e exp(...)) · w_{G₁}` for `G₁ ≤ G₂` on `↑Λ`. -/
@@ -29,35 +34,12 @@ theorem boltzmannWeight_subgraph_factor_latticeGraph
         * IsingModel.boltzmannWeight G₁ p σ :=
   IsingModel.boltzmannWeight_subgraph_factor h₁₂ p σ
 
-/-- **ℤ^d boltzmannWeight positivity** at Λ-induced subgraph:
-`0 < exp(-β H_Λ(σ))`. -/
-theorem boltzmannWeightΛ_latticeGraph_pos
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    0 < IsingModel.boltzmannWeight
-          (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ :=
-  IsingModel.boltzmannWeight_pos
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
-
 /-- **ℤ^d partitionFunctionΛ ≠ 0** at Λ-induced subgraph. -/
 theorem partitionFunctionΛ_latticeGraph_ne_zero
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) :
     partitionFunctionΛ (IsingModel.latticeGraph d) Λ p ≠ 0 :=
   IsingModel.partitionFunction_ne_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
-
-/-- **ℤ^d `hamiltonian` absolute value bound** at Λ-induced subgraph:
-`|H_Λ(σ)| ≤ |J|·|E| + |h|·|Λ|`. -/
-theorem hamiltonianΛ_latticeGraph_abs_le
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    |IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ|
-      ≤ |p.J|
-          * (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card
-        + |p.h| * Fintype.card (↑Λ : Type _) :=
-  IsingModel.hamiltonian_abs_le
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
 
 /-! ## Moved: freeEnergyΛ / partitionFunctionΛ upper / lower wrappers
 
