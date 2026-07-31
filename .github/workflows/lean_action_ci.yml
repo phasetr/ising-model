@@ -34,6 +34,13 @@ jobs:
         run: python3 scripts/audit_gate.py --self-test
       - name: Dead-candidate scanner self-tests
         run: python3 scripts/dead_candidate_scan.py --self-test
+      # Same reason as the two suites above: the harness only claims that two
+      # timings are comparable, so what has to be defended is the protocol it
+      # encodes (stderr report, warm-up excluded, replicate floor, impossible
+      # timings rejected, committed artifacts complete). Pure Python, no lake
+      # and no lean: the timed child is stubbed, and it costs a few seconds.
+      - name: Module-cost harness self-tests
+        run: python3 scripts/test_measure_module_cost.py
       - name: Audit gate (V1-V4 axiom/sorry/capstone/no-Japanese checks)
         run: python3 scripts/audit_gate.py --full
 

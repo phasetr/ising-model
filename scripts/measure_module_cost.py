@@ -7,14 +7,26 @@ repository settled on in ``.self-local/reports/perf-4724-fixed-cost-reconciliati
 
 Why this exists as a script and not as prose
 --------------------------------------------
-Every earlier build-timing protocol here survived only as a paragraph inside a
-report, and every run deleted its raw samples. The consequence was measured, not
-feared: two per-module figures (~7.0 s and ~1.8 s) were carried in issue #4794 as
-a "4.5x unresolved disagreement" for three days after the reconciliation report
-had already explained them as a *units* mismatch, because neither figure could be
-re-derived without re-inventing the protocol. A protocol that has to be
-re-invented is a protocol that will differ, and two runs under different
-protocols are not comparable at all.
+The protocol that produced the figures in dispute survived only as prose, and
+its raw samples are gone: the reconciliation report's own "Artifacts" section
+records every sample directory as ephemeral and already deleted. The
+consequence was observed, not feared. That report (2026-07-26) decomposes the
+two per-module figures (~7.0 s and ~1.8 s) into a metric difference plus a
+page-cache difference, yet issue #4794 was opened three days later, on
+2026-07-29, still describing them as measurements of one quantity that
+"disagree by approximately 4.5x" -- because neither figure could be re-derived
+without re-inventing the protocol. A protocol that has to be re-invented is a
+protocol that will differ, and two runs under different protocols are not
+comparable at all.
+
+The narrower claim is the true one: *this* protocol was prose only. One earlier
+build-timing protocol here was committed, with its raw samples --
+``.self-local/reports/perf-isdefeq-cluster-artifacts/measure.sh`` and the
+``*_trace.out`` logs beside it, added by commit ``b4bec721``. That script is
+also the reason a committed harness needs an owner: it times ``lake env lean``,
+the exact invocation section 7 of the reconciliation retires, and nothing
+beside it said so until it was annotated as superseded by this harness. An
+executable protocol nobody maintains becomes a superseded twin someone re-runs.
 
 So the protocol is executable, and the samples are an artifact:
 
@@ -62,6 +74,23 @@ Plus the whole ``cumulative profiling times`` table, verbatim as parsed, so a
 later question about a phase this docstring does not name can be answered from
 the artifact instead of from a new run.
 
+``import`` is a subinterval of the very process ``real`` was measured around,
+so a child reporting an ``import`` above that wall clock is not reporting a
+slow import, it is reporting something this harness must not average. Such a
+sample is rejected, not recorded as a measurement with a negative ``own``.
+
+What this harness does not reproduce
+------------------------------------
+``lake build`` passes the package's ``[leanOptions]`` (``lakefile.toml``) to
+every ``lean`` it spawns; this harness passes only ``-Dprofiler=true``. The
+exact argv and the list of omitted options are recorded in
+``protocol.invocation``, so the gap is checkable in the artifact instead of
+resting on this paragraph. An A/B run during the review of this harness put the
+difference inside run-to-run noise on the measured family (``own`` median
+0.552 s bare against 0.587 s with the options, versus a 0.177 s ``own`` spread
+within the run itself), so the recorded medians stand as measured; the omission
+is a known bias to re-check, not a correction to apply.
+
 Usage
 -----
     python3 scripts/measure_module_cost.py [options] MODULE [MODULE ...]
@@ -82,18 +111,23 @@ Output: a JSON document holding **every individual sample** (warm-up samples
 included, flagged and excluded from the statistics), per-module and overall
 summaries (median / min / max / spread / n), and an environment fingerprint
 (git HEAD and dirty flag, ``lean-toolchain``, lean binary and version, target
-and repository module counts, load average, timestamp). Written to ``--out``, or
-to ``.self-local/reports/measure-module-cost-<label>-<timestamp>.json``. An
+and repository module counts, load average, hardware, timestamp). Written to
+``--out``, or to
+``.self-local/reports/measure-module-cost-<label>-<timestamp>.json``. An
 existing file is never overwritten without ``--force``.
 
-Exit code 0 iff every non-warm-up sample was valid (lean exited 0 and the
-profiler output parsed); 1 if any sample failed; 2 on a usage/environment error.
+Exit code 0 iff **every** sample was valid (lean exited 0, the profiler output
+parsed, and the import figure was possible), warm-up passes included: a run
+whose warm-up did not complete never warmed the page cache, so its measured
+samples were not taken under this protocol at all. 1 if any sample failed;
+2 on a usage/environment error, including a ``lean`` that cannot be executed.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import platform
 import re
@@ -105,15 +139,30 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Repository root = parent of the ``scripts`` directory holding this file.
-REPO_ROOT = Path(__file__).resolve().parent.parent
-LIB_DIR = REPO_ROOT / "IsingModel"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from audit_gate import (  # noqa: E402  (path bootstrap must precede the import)
+    LIB_DIR,
+    REPO_ROOT,
+    rel as _repo_rel,
+)
+
 TOOLCHAIN_FILE = REPO_ROOT / "lean-toolchain"
+LAKEFILE = REPO_ROOT / "lakefile.toml"
 DEFAULT_OUT_DIR = REPO_ROOT / ".self-local" / "reports"
 
 # Version tag of the JSON schema, so a consumer can tell two artifacts apart
-# after a field is added or renamed.
-SCHEMA = "ising-model/measure_module_cost/1"
+# after a field is added or renamed. Bumped to 2 when ``protocol.invocation``
+# became the exact argv record and ``environment.platform.machine`` started
+# reporting the hardware instead of the interpreter's own (possibly translated)
+# architecture.
+SCHEMA = "ising-model/measure_module_cost/2"
+
+# Schema tags whose artifacts remain readable by this file's consumers. Listed
+# rather than open-ended: an artifact written by a *newer* schema must fail a
+# reader that predates it instead of being parsed on the assumption that fields
+# only ever get added.
+KNOWN_SCHEMAS = (SCHEMA, "ising-model/measure_module_cost/1")
 
 # The canonical protocol's replicate floor. Enforced rather than defaulted: the
 # floor is the part of the protocol that a hurried run drops first, and a
@@ -121,12 +170,37 @@ SCHEMA = "ising-model/measure_module_cost/1"
 # unless the tool refuses to produce it.
 MIN_REPLICATES = 3
 
+# The warm-up floor, enforced for the same reason. Without a warm-up pass the
+# statistics describe the OS page cache rather than the modules (5-15x on
+# ``import``), and the artifact would still carry the protocol's
+# "warm-up samples excluded" wording while no warm-up had run.
+MIN_WARMUP = 1
+
+# Tolerance when checking a profiler figure against the wall clock measured
+# around the same process. Lean prints durations to two or three significant
+# digits, so a genuine import can round *up* past ``real`` by a hair; anything
+# beyond this is a child that is not reporting on the run just timed.
+IMPORT_REL_TOLERANCE = 0.01
+IMPORT_ABS_TOLERANCE_S = 0.05
+
 # Timeout for a single ``lean`` invocation. Generous: a cold page cache has been
 # observed to turn a 2 s module into a 28 s one without anything being wrong.
 DEFAULT_TIMEOUT_S = 900.0
 
 # Glob metacharacters that make an argument a pattern rather than a literal path.
 _GLOB_CHARS = "*?["
+
+# The only flag the timed child is given. A constant because the argv recorded
+# in the artifact and the argv actually spawned are both built from it by
+# :func:`lean_argv`; a protocol field maintained by hand drifts from the run it
+# claims to describe, and nothing in the artifact would show it.
+LEAN_FLAGS = ("-Dprofiler=true",)
+
+# Placeholder standing for the absolute module path in the recorded argv.
+MODULE_PLACEHOLDER = "MODULE"
+
+# ``[leanOptions]`` key/value lines of ``lakefile.toml``, comments stripped.
+_LEAN_OPTION_RE = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_.]*)\s*=\s*([^#\s]+)")
 
 # ``-Dprofiler=true`` prints ``import took <duration>`` before the cumulative
 # table, and repeats the same figure inside the table as the ``import`` row.
@@ -266,11 +340,72 @@ def expand_modules(args: list[str], from_file: str | None) -> list[Path]:
 
 
 def rel(path: Path) -> str:
-    """Return ``path`` relative to the repository root when possible, POSIX style."""
+    """Return ``path`` relative to the repository root when possible, POSIX style.
+
+    :func:`audit_gate.rel` widened in exactly two ways this harness needs:
+    ``path`` is resolved first (targets arrive as globs and as symlinked
+    directories), and a path outside the repository -- an artifact written to a
+    temporary directory, say -- comes back absolute instead of raising.
+    """
+    resolved = path.resolve()
     try:
-        return path.resolve().relative_to(REPO_ROOT).as_posix()
+        return _repo_rel(resolved)
     except ValueError:
-        return path.resolve().as_posix()
+        return resolved.as_posix()
+
+
+def lean_options_declared() -> list[str]:
+    """Return the package's ``[leanOptions]`` as ``key=value`` strings.
+
+    Read from ``lakefile.toml`` rather than listed here, so the artifact records
+    what the package actually declares on the day of the run. None of these
+    options is passed to the timed child (see the module docstring): this list
+    is the record of what a real ``lake build`` adds and this harness does not.
+    Returns an empty list if the section is absent or the file is unreadable,
+    which the artifact then shows as an empty omission list.
+    """
+    if not LAKEFILE.is_file():
+        return []
+    options: list[str] = []
+    in_section = False
+    for raw in LAKEFILE.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if line.startswith("["):
+            in_section = line == "[leanOptions]"
+            continue
+        if not in_section or line.startswith("#"):
+            continue
+        match = _LEAN_OPTION_RE.match(raw)
+        if match is not None:
+            options.append(f"{match.group(1)}={match.group(2)}")
+    return options
+
+
+def lean_argv(lean_bin: str, module: str) -> list[str]:
+    """Return the exact child argv: bare ``lean``, profiler on, one module."""
+    return [lean_bin, *LEAN_FLAGS, module]
+
+
+def import_plausibility_problem(import_s: float, real: float) -> str | None:
+    """Return why ``import_s`` cannot be this run's import time, or ``None``.
+
+    The profiler's import figure is a subinterval of the process the harness
+    timed, so ``0 <= import <= real`` up to the profiler's own rounding. Without
+    this check a child reporting ``import took 9999s`` enters the artifact as a
+    valid sample whose ``own`` is a large negative number, and the summary of a
+    set containing it is not a measurement of anything.
+    """
+    if not math.isfinite(import_s):
+        return f"import time is not finite: {import_s!r}"
+    if import_s < 0.0:
+        return f"import time is negative: {import_s:.4f}s"
+    ceiling = real * (1.0 + IMPORT_REL_TOLERANCE) + IMPORT_ABS_TOLERANCE_S
+    if import_s > ceiling:
+        return (
+            f"import {import_s:.4f}s exceeds the {real:.4f}s wall clock of the "
+            "process that reported it"
+        )
+    return None
 
 
 def run_capture(cmd: list[str], cwd: Path = REPO_ROOT) -> tuple[int, str, str]:
@@ -352,13 +487,18 @@ def measure_once(
     ``user``/``sys`` come from the ``RUSAGE_CHILDREN`` delta around the child.
     The run is serial and this process is single-threaded, so no other child is
     reaped inside the window and the delta is exactly this invocation.
+
+    A child that cannot be spawned at all (no such ``lean``, not executable) is
+    an environment error, not a slow sample: it raises
+    :class:`MeasurementError` for the caller's exit-2 path rather than leaving
+    an uncaught ``FileNotFoundError`` and no artifact.
     """
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
     timed_out = False
     try:
         proc = subprocess.run(
-            [lean_bin, "-Dprofiler=true", str(module)],
+            lean_argv(lean_bin, str(module)),
             cwd=str(REPO_ROOT),
             env=env,
             capture_output=True,
@@ -374,6 +514,8 @@ def measure_once(
         returncode = None
         stdout = exc.stdout.decode() if isinstance(exc.stdout, bytes) else (exc.stdout or "")
         stderr = exc.stderr.decode() if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+    except OSError as exc:
+        raise MeasurementError(f"cannot execute lean binary {lean_bin!r}: {exc}") from exc
     real = time.monotonic() - started
     after = resource.getrusage(resource.RUSAGE_CHILDREN)
 
@@ -405,6 +547,11 @@ def measure_once(
         sample["import"] = round(import_s, 4)
         sample["own"] = round(real - import_s, 4)
         sample["phases"] = {name: round(value, 6) for name, value in sorted(phases.items())}
+        # Kept in the record even when impossible -- the number is the evidence
+        # of what went wrong -- but the sample stops being a measurement.
+        implausible = import_plausibility_problem(import_s, real)
+        if implausible is not None:
+            problems.append(implausible)
     except MeasurementError as exc:
         sample["import"] = None
         sample["own"] = None
@@ -467,6 +614,36 @@ def git_fingerprint() -> dict[str, object]:
     }
 
 
+def hardware_fingerprint() -> dict[str, object]:
+    """Return what the machine is, not what this interpreter thinks it is.
+
+    ``platform.machine()`` describes the *interpreter*: a Python running under
+    Rosetta answers ``x86_64`` on Apple Silicon, which would put "x86_64" next
+    to timings of a native arm64 ``lean`` in the artifact. A freshly spawned
+    ``uname -m`` is not translated and reports the real architecture, so it is
+    what ``machine`` means here; the interpreter's own answer and the
+    translation flag are kept beside it rather than dropped, because a
+    translated harness is itself worth seeing when timings look odd.
+    """
+    code, out, _ = run_capture(["uname", "-m"])
+    native = out.strip() if code == 0 and out.strip() else None
+    interpreter = platform.machine()
+    model = None
+    if platform.system() == "Darwin":
+        code_model, out_model, _ = run_capture(["sysctl", "-n", "hw.model"])
+        model = out_model.strip() if code_model == 0 and out_model.strip() else None
+    return {
+        "system": platform.system(),
+        "release": platform.release(),
+        "machine": native,
+        "hw_model": model,
+        "interpreter_machine": interpreter,
+        "interpreter_translated": None if native is None else native != interpreter,
+        "python": platform.python_version(),
+        "cpu_count": os.cpu_count(),
+    }
+
+
 def environment_fingerprint(
     lean_bin: str, lean_path: str, modules: list[Path]
 ) -> dict[str, object]:
@@ -496,13 +673,7 @@ def environment_fingerprint(
         # here (module count x per-module fixed cost), so a later comparison can
         # tell "the family changed" from "the library grew".
         "library_module_count": len(list(LIB_DIR.rglob("*.lean"))) if LIB_DIR.is_dir() else None,
-        "platform": {
-            "system": platform.system(),
-            "release": platform.release(),
-            "machine": platform.machine(),
-            "python": platform.python_version(),
-            "cpu_count": os.cpu_count(),
-        },
+        "platform": hardware_fingerprint(),
         "loadavg_at_start": loadavg,
         "other_lean_processes_at_start": concurrent_lean_processes(),
     }
@@ -556,8 +727,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--warmup",
         type=int,
-        default=1,
-        help="page-cache warm-up passes whose samples are recorded but not counted (default 1)",
+        default=MIN_WARMUP,
+        help=(
+            "page-cache warm-up passes whose samples are recorded but not counted "
+            f"(minimum {MIN_WARMUP}; default {MIN_WARMUP})"
+        ),
     )
     parser.add_argument(
         "--label", default="run", help="short run name, used in the default filename"
@@ -629,22 +803,29 @@ def main(argv: list[str] | None = None) -> int:
 
         return run_suite()
 
+    # Order matters: every check that can be made from the arguments alone runs
+    # before ``lake``/``elan`` are consulted. A refusal to overwrite must be
+    # cheap, must not depend on a toolchain being installed, and must not first
+    # spend a minute of ``lean`` on modules whose result has nowhere to go.
     try:
         if args.replicates < MIN_REPLICATES:
             raise MeasurementError(
                 f"--replicates {args.replicates} is below the protocol floor of "
                 f"{MIN_REPLICATES}; a median over fewer samples is not a median"
             )
-        if args.warmup < 0:
-            raise MeasurementError("--warmup must be >= 0")
-        modules = expand_modules(args.modules, args.from_file)
-        lean_bin = resolve_lean_binary(args.lean_bin)
-        lean_path, lean_path_source = obtain_lean_path(args.lean_path)
+        if args.warmup < MIN_WARMUP:
+            raise MeasurementError(
+                f"--warmup {args.warmup} is below the protocol floor of {MIN_WARMUP}; "
+                "without a warm-up pass the statistics describe the page cache"
+            )
         out_path = Path(args.out) if args.out else default_out_path(args.label)
         if not out_path.is_absolute():
             out_path = REPO_ROOT / out_path
         if out_path.exists() and not args.force:
             raise MeasurementError(f"artifact already exists (use --force): {rel(out_path)}")
+        modules = expand_modules(args.modules, args.from_file)
+        lean_bin = resolve_lean_binary(args.lean_bin)
+        lean_path, lean_path_source = obtain_lean_path(args.lean_path)
     except MeasurementError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
@@ -665,10 +846,17 @@ def main(argv: list[str] | None = None) -> int:
     print()
 
     started = time.monotonic()
-    samples = measure(modules, lean_bin, env, args.warmup, args.replicates, args.timeout)
+    try:
+        samples = measure(modules, lean_bin, env, args.warmup, args.replicates, args.timeout)
+    except MeasurementError as exc:
+        # The child could not be spawned at all; there is nothing to write and
+        # nothing partial worth keeping, so this is the environment exit.
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
     elapsed = time.monotonic() - started
 
     measured = [sample for sample in samples if sample["phase"] == "measure"]
+    warmup_samples = [sample for sample in samples if sample["phase"] == "warmup"]
     per_module = {
         rel(module): summarise_samples(
             [sample for sample in measured if sample["module"] == rel(module)]
@@ -679,12 +867,24 @@ def main(argv: list[str] | None = None) -> int:
         "schema": SCHEMA,
         "label": args.label,
         "protocol": {
-            "invocation": "bare lean -Dprofiler=true (no `lake env` wrapper)",
+            "invocation": {
+                "argv": lean_argv(lean_bin, MODULE_PLACEHOLDER),
+                "argv_note": (
+                    f"{MODULE_PLACEHOLDER} is the absolute path of each target module; "
+                    "no `lake env` wrapper, no output flag"
+                ),
+                # A real ``lake build`` adds the package's own options to every
+                # child. This harness adds none of them, so the artifact says
+                # which ones are missing instead of implying an equivalence.
+                "lake_lean_options_omitted": lean_options_declared(),
+            },
             "lean_path_source": lean_path_source,
             "execution": "serial (one lean process at a time)",
             "warmup_passes": args.warmup,
             "replicates": args.replicates,
-            "warmup_samples_excluded_from_statistics": True,
+            # Derived, never asserted: with ``--warmup 0`` this must read false
+            # rather than describe a warm-up that did not happen.
+            "warmup_samples_excluded_from_statistics": args.warmup > 0,
             "statistics": "median with min-max spread; no mean",
             "writes_build_artifacts": False,
             "timeout_s": args.timeout,
@@ -699,6 +899,7 @@ def main(argv: list[str] | None = None) -> int:
         "sample_counts": {
             "total": len(samples),
             "warmup": len(samples) - len(measured),
+            "warmup_valid": len([sample for sample in warmup_samples if sample["valid"]]),
             "measured": len(measured),
             "measured_valid": len([sample for sample in measured if sample["valid"]]),
         },
@@ -714,14 +915,21 @@ def main(argv: list[str] | None = None) -> int:
     counts = payload["sample_counts"]
     print(
         f"samples: {counts['measured_valid']}/{counts['measured']} measured valid "
-        f"(+{counts['warmup']} warm-up discarded); wall {elapsed:.1f}s"
+        f"(+{counts['warmup_valid']}/{counts['warmup']} warm-up valid, discarded from "
+        f"the statistics); wall {elapsed:.1f}s"
     )
     print(f"artifact: {rel(out_path)}")
-    failed = [sample for sample in measured if not sample["valid"]]
+    # Warm-up failures count. A warm-up pass that did not complete did not warm
+    # the page cache, so the measured samples that follow it were not taken
+    # under this protocol -- exactly the confusion the protocol exists to end.
+    failed = [sample for sample in samples if not sample["valid"]]
     if failed:
-        print(f"FAIL: {len(failed)} measured sample(s) invalid:")
+        print(f"FAIL: {len(failed)} sample(s) invalid (warm-up passes included):")
         for sample in failed[:10]:
-            print(f"  {sample['module']}: {'; '.join(sample['problems'])}")
+            print(
+                f"  [{sample['phase']}] {sample['module']}: "
+                f"{'; '.join(sample['problems'])}"
+            )
         return 1
     return 0
 
