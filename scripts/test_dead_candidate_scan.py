@@ -322,13 +322,17 @@ class DocTokenTest(unittest.TestCase):
         an exoneration channel wearing a lexer's clothes -- a rejected piece
         reached no citation channel, so it could not charge, could not warn and
         could not be counted. Punctuation is still trimmed, because it belongs to
-        the prose, and an all-punctuation shard trims to nothing.
+        the prose, but a shard the trimming *empties* keeps its untrimmed
+        spelling: dropping it was the same exoneration under another name, and
+        is how the 657 punctuation-only shards of the documentation (39 of them
+        ``...``) reached no disposition at all.
         """
         self.assertEqual(dcs._citation_tokens("foo{,bar}."), ["foo{,bar}"])
         self.assertEqual(dcs._citation_tokens("synthetic{,_h}_xyzzy:"), ["synthetic{,_h}_xyzzy"])
         self.assertEqual(dcs._citation_tokens("(plain_xyzzy)"), ["plain_xyzzy"])
         self.assertEqual(dcs._citation_tokens("prose here"), ["prose", "here"])
-        self.assertEqual(dcs._citation_tokens("..."), [])  # trims to nothing
+        self.assertEqual(dcs._citation_tokens("..."), ["..."])
+        self.assertEqual(dcs._citation_tokens("a ... b"), ["a", "...", "b"])
         self.assertEqual(dcs._citation_tokens("  "), [])
 
     def test_a_family_label_resolves_and_is_charged_in_full(self) -> None:
@@ -2178,6 +2182,26 @@ class FailClosedChargingTest(unittest.TestCase):
                         (token, final, verdict.doc_citations),
                     )
 
+    def test_M11_an_elision_written_in_a_document_reaches_a_disposition(self) -> None:
+        """M11: the table above injects its tokens, so it cannot see this.
+
+        ``*`` survives the tokenizer; ``...`` did not, because the punctuation
+        trim emptied it and an emptied piece was dropped, so end to end no
+        document could produce the token the row above tests. This one starts
+        from Markdown, where the 657 punctuation-only shards actually live.
+        """
+        doc = _scratch_source("elided `alpha_xyzzy ... _gen` family\n")
+        self.assertIn("...", [token for token, _line in doc.tokens])
+        classified = dcs.classify(
+            synthetic_tree(self.TREE), self.TARGETS, [doc], allow_homonym=False
+        )[0]
+        self.assertEqual(doc.dispositions[(1, "...")], dcs.UNRESOLVED)
+        for verdict in classified:
+            self.assertTrue(
+                any(cit.startswith("unresolved ") for cit in verdict.doc_citations),
+                (verdict.decl.final, verdict.doc_citations),
+            )
+
     def test_M1_the_disposition_function_is_total(self) -> None:
         """The property behind the table: every token gets a disposition.
 
@@ -2233,14 +2257,52 @@ class LedgerTest(unittest.TestCase):
     """INV-LEDGER: every code-span shard reaches a disposition, or the run aborts."""
 
     def test_the_real_documentation_balances(self) -> None:
-        """The whole corpus accounts for every shard, with no residue."""
+        """The whole corpus accounts for every shard, with no residue.
+
+        ``unrelated`` is 0 as well, and structurally: the tokenizer keeps every
+        whitespace shard and trims it with the punctuation set the ledger
+        re-declares, so the excuse branch is unreachable. It was 657 while an
+        emptied shard could be dropped.
+        """
         parsed, sources = tree(), docs()
         dcs.classify(parsed, ["pseudoMassG_analyticAt"], sources, allow_homonym=False)
         counts = dcs.ledger_check(parsed, sources)
         self.assertEqual(counts["residue"], 0)
+        self.assertEqual(counts["unrelated"], 0)
         shards = sum(len(dcs.ledger_shards(doc)) for doc in sources)
         self.assertEqual(sum(counts.values()), shards)
         self.assertGreater(shards, 50000)
+
+    def test_M12_the_excuse_sees_every_final_component_the_scanner_does(self) -> None:
+        """M12: the excuse's alphabet is the identifier alphabet, with no floor.
+
+        ``[0-9A-Za-z_']{3,}`` sees neither ``ρOf``, ``σOf``, ``s₁`` (not ASCII)
+        nor ``C``, ``j``, ``X`` (below the floor) -- sixteen real final
+        components of this library between them -- so a dropped shard spelling
+        one of them was excused as ``unrelated`` instead of raised as residue.
+        Unicode-naive tokenizing is this repository's recurring defect, and the
+        ledger is where it may least appear: the ledger audits the others.
+        """
+        synthetic = synthetic_tree(
+            {
+                "IsingModel/SynthFinal.lean": (
+                    "namespace IsingModel\n"
+                    "theorem ρOf : True := trivial\n"
+                    "theorem C : True := trivial\n"
+                    "end IsingModel\n"
+                )
+            }
+        )
+        self.assertEqual({final for final, _decl in synthetic.finals}, {"ρOf", "C"})
+        for shard in ("ρOf", "C"):
+            with self.subTest(shard=shard):
+                doc = dcs.DocSource(
+                    label="docs/index.md", text="", starts=[0], tokens=[],
+                    unreadable=[], spans=[(shard, 1)],
+                )
+                with self.assertRaises(dcs.Inconsistency) as caught:
+                    dcs.ledger_check(synthetic, [doc])
+                self.assertIn(shard, str(caught.exception))
 
     def test_M6_a_narrowed_tokenizer_is_caught_as_residue(self) -> None:
         """M6: drop the brace-bearing tokens and the accounting must fail.
@@ -2321,6 +2383,130 @@ class LedgerTest(unittest.TestCase):
         self.assertIn("magnetizationAlongExhaustion_{neg_h", str(caught.exception))
 
 
+class GateOrderTest(unittest.TestCase):
+    """The residue check must run on every route out of the tool, and run first.
+
+    Order is the whole content of these two: a gate a failing run returns past
+    never sees a failing run, and an artifact written before the gate outlives
+    the failure that withheld it.
+    """
+
+    TREE = {
+        "IsingModel/SynthOrder.lean": (
+            "namespace IsingModel\n"
+            "theorem synthOrderKeeper : True := trivial\n"
+            "end IsingModel\n"
+        )
+    }
+
+    def residue_doc(self) -> dcs.DocSource:
+        """Return a doc whose only shard names a declaration and has no token."""
+        return dcs.DocSource(
+            label="docs/index.md", text="", starts=[0], tokens=[],
+            unreadable=[], spans=[("synthOrderKeeper", 1)],
+        )
+
+    def scratch(self) -> Path:
+        """Return the gitignored scratch directory, created."""
+        path = dcs.REPO_ROOT / ".self-local" / "tmp"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def test_a_failing_fixture_does_not_skip_the_residue_check(self) -> None:
+        """``--expect`` must not return on a failing fixture before the ledger.
+
+        A run already known to be wrong is the run whose dropped shards matter.
+        """
+        with tempfile.TemporaryDirectory(dir=self.scratch()) as tmp:
+            path = Path(tmp) / "fixtures.tsv"
+            path.write_text(
+                "synthOrderKeeper\tload-bearing\tsynthetic\n", encoding="utf-8"
+            )
+            with redirect_stdout(io.StringIO()), self.assertRaises(
+                dcs.Inconsistency
+            ) as caught:
+                dcs.run_expect(synthetic_tree(self.TREE), [self.residue_doc()], path)
+        self.assertIn("reached no disposition", str(caught.exception))
+
+    def test_no_artifact_is_written_by_a_run_the_ledger_fails(self) -> None:
+        """``--json`` must not be written before the ledger has passed."""
+        saved = (dcs.load_tree, dcs.load_docs, dcs.run_canary, dcs.run_tex_canary)
+        dcs.load_tree = lambda verbose=False: synthetic_tree(self.TREE)
+        dcs.load_docs = lambda: [self.residue_doc()]
+        dcs.run_canary = lambda _tree: (0, {})
+        dcs.run_tex_canary = lambda: 0
+        try:
+            with tempfile.TemporaryDirectory(dir=self.scratch()) as tmp:
+                artifact = Path(tmp) / "verdicts.json"
+                out, err = io.StringIO(), io.StringIO()
+                with redirect_stdout(out), redirect_stderr(err):
+                    code = dcs.main(
+                        ["--name", "synthOrderKeeper", "--json", str(artifact)]
+                    )
+                self.assertEqual(code, dcs.EXIT_INCONSISTENT)
+                self.assertIn("reached no disposition", err.getvalue())
+                self.assertFalse(artifact.exists(), "artifact survived a failed run")
+        finally:
+            (dcs.load_tree, dcs.load_docs, dcs.run_canary, dcs.run_tex_canary) = saved
+
+
+class LeanCrossCheckTest(unittest.TestCase):
+    """``--lean``'s hard failure must have a condition that can occur.
+
+    Keyed on the ``no-citation-found`` verdict alone it could not fire: the
+    fail-closed charging of this very PR lifts every candidate to at least
+    ``uncertain``, so the one hard cross-check against the elaborated graph was
+    decorative -- the shape this PR retires, reproduced inside it.
+    """
+
+    TREE = {
+        "IsingModel/SynthLean.lean": (
+            "namespace IsingModel\n"
+            "theorem synthLeanTarget : True := trivial\n"
+            "theorem synthLeanUser : True := trivial\n"
+            "end IsingModel\n"
+        )
+    }
+    EDGES = {"IsingModel.synthLeanUser": {"IsingModel.synthLeanTarget"}}
+
+    def verdict(self, decl_final: str = "synthLeanTarget") -> dcs.Verdict:
+        """Return an ``uncertain`` verdict for one synthetic declaration."""
+        parsed = synthetic_tree(self.TREE)
+        decl = next(item for item in parsed.decls if item.final == decl_final)
+        made = dcs.Verdict(name=decl_final, decl=decl)
+        made.verdict = dcs.UNCERTAIN
+        return made
+
+    def test_no_text_consumer_at_all_is_fatal(self) -> None:
+        """The scan attributed nothing while Lean holds a consumer."""
+        problems, advisories = dcs.lean_cross_check([self.verdict()], self.EDGES)
+        self.assertEqual(advisories, [])
+        self.assertEqual(len(problems), 1)
+        self.assertIn("synthLeanUser", problems[0])
+
+    def test_a_partly_seen_consumer_set_stays_advisory(self) -> None:
+        """One attributed consumer makes the gap a wrong reason, not a wrong action.
+
+        Lean sees references no source text carries (``simp`` sets, instances),
+        so a hard failure here would be noise rather than a gate.
+        """
+        parsed = synthetic_tree(self.TREE)
+        made = self.verdict()
+        other = next(item for item in parsed.decls if item.final == "synthLeanUser")
+        made.cross_file = [
+            dcs.Occurrence(
+                file="IsingModel/SynthLean.lean", line=3, context="term",
+                prefix="", owner=other, snippet="",
+            )
+        ]
+        edges = dict(self.EDGES)
+        edges["IsingModel.synthLeanOther"] = {"IsingModel.synthLeanTarget"}
+        problems, advisories = dcs.lean_cross_check([made], edges)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(advisories), 1)
+        self.assertIn("synthLeanOther", advisories[0])
+
+
 class VerdictVocabularyTest(unittest.TestCase):
     """M9: the tool must emit no word a reader can take for permission.
 
@@ -2363,7 +2549,19 @@ class MutationMetaTest(unittest.TestCase):
     """
 
     def run_witness(self, case: str) -> bool:
-        """Return whether the named test passes right now."""
+        """Return whether the named test passes right now.
+
+        The name is resolved first. ``loadTestsFromName`` turns a name it cannot
+        find into a synthetic *failing* test, so a witness renamed away or
+        misspelled would read as "red" and certify its mutation without running
+        anything -- a check incapable of firing.
+        """
+        class_name, _, method_name = case.partition(".")
+        klass = getattr(sys.modules[__name__], class_name, None)
+        self.assertTrue(
+            klass is not None and callable(getattr(klass, method_name, None)),
+            f"mutation witness {case!r} does not exist",
+        )
         suite = unittest.TestLoader().loadTestsFromName(case, sys.modules[__name__])
         result = unittest.TextTestRunner(
             stream=io.StringIO(), verbosity=0
@@ -2438,6 +2636,23 @@ class MutationMetaTest(unittest.TestCase):
             dcs._LEDGER_RUN_RE = re.compile(r"[A-Z][0-9A-Za-z_']{2,}")
             return original
 
+        def drop_emptied_shards() -> object:
+            """M11: a shard the punctuation trim empties is dropped again."""
+            original = dcs._citation_tokens
+
+            def trimmed_away(body):
+                punctuation = dcs.TOKEN_PUNCTUATION
+                return [tok for tok in original(body) if tok.strip(punctuation)]
+
+            dcs._citation_tokens = trimmed_away
+            return original
+
+        def ascii_excuse() -> object:
+            """M12: the ledger's excuse goes back to ASCII runs of three."""
+            original = dcs._LEDGER_RUN_RE
+            dcs._LEDGER_RUN_RE = re.compile(r"[0-9A-Za-z_']{3,}")
+            return original
+
         def refuting_span() -> object:
             """M7: an unreadable LaTeX span may deny a candidate again."""
             original = dcs.UnreadableSpan.refutes
@@ -2468,6 +2683,12 @@ class MutationMetaTest(unittest.TestCase):
              "test_M8_unrelated_is_a_fact_about_the_declaration_table"),
             ("M9", restore_the_authorising_label, "NO_CITATION",
              "VerdictVocabularyTest.test_no_authorising_label_is_emitted"),
+            ("M11", drop_emptied_shards, "_citation_tokens",
+             "FailClosedChargingTest."
+             "test_M11_an_elision_written_in_a_document_reaches_a_disposition"),
+            ("M12", ascii_excuse, "_LEDGER_RUN_RE",
+             "LedgerTest."
+             "test_M12_the_excuse_sees_every_final_component_the_scanner_does"),
         )
         survived = []
         for label, mutate, attribute, witness in cases:

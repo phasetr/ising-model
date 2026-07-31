@@ -1470,18 +1470,25 @@ def _citation_tokens(body: str) -> list[str]:
     unresolvable and charges every candidate. Prose read as a citation is the
     cost, and it is one-sided -- a token can only keep a candidate.
 
+    A piece the trimming *empties* keeps its untrimmed spelling instead of being
+    dropped. Dropping it was the shape test again under another name: 657 shards
+    of the scanned documentation, 39 of them ``...``, reached no channel and so
+    no disposition, and the ledger's one excuse then filed them as
+    ``unrelated``. An elision is the least excusable of them -- ``...`` stands
+    for text this scan cannot read, which is what ``unresolved`` is for.
+
     Duplicate pieces of the whitespace split are kept (``a_dup a_dup`` returns
     two tokens), because :func:`ledger_shards` counts shards and a deduplicating
     tokenizer would make the accounting depend on repetition.
     """
-    out = [piece.strip(TOKEN_PUNCTUATION) for piece in body.split()]
+    out = [piece.strip(TOKEN_PUNCTUATION) or piece for piece in body.split()]
     seen = set(out)
     for piece in _brace_grouped_pieces(body):
-        trimmed = piece.strip(TOKEN_PUNCTUATION)
-        if trimmed and trimmed not in seen:
+        trimmed = piece.strip(TOKEN_PUNCTUATION) or piece
+        if trimmed not in seen:
             seen.add(trimmed)
             out.append(trimmed)
-    return [token for token in out if token]
+    return out
 
 
 @dataclass
@@ -2143,7 +2150,7 @@ def _apply_doc_channel(
       candidate, exactly as an unreadable LaTeX span is
       (:meth:`UnreadableSpan.could_cite`). The charge is written once per
       candidate with the site count and two sample sites rather than once per
-      site: the semantics are "every candidate is charged", and 31,964 sites
+      site: the semantics are "every candidate is charged", and 32,233 sites
       times every candidate is a report nobody can read.
 
     Note what is *not* here: no threshold on the match count, no
@@ -2244,7 +2251,12 @@ def _apply_doc_channel(
 # ---------------------------------------------------------------------------
 
 _LEDGER_PUNCTUATION = ",.;:()"  # deliberately a second copy: see ledger_shards
-_LEDGER_RUN_RE = re.compile(r"[0-9A-Za-z_']{3,}")
+# The runs the excuse is decided on: the *identifier* alphabet (the table
+# ``is_id_rest`` uses), with no length floor. Both restrictions of the previous
+# `[0-9A-Za-z_']{3,}` were exonerations -- ASCII cannot see `ρOf`, `σOf` or
+# `s₁`, and a floor of three cannot see `C`, `j` or `X`: sixteen real final
+# components between them, each one something a dropped shard could be citing.
+_LEDGER_RUN_RE = re.compile(_id_char_class())
 
 
 def ledger_shards(doc: DocSource) -> list[tuple[str, int]]:
@@ -2277,11 +2289,13 @@ def ledger_check(tree: Tree, docs: list[DocSource]) -> dict[str, int]:
     Buckets: ``exact``/``charged``/``unresolved`` are what
     :func:`_apply_doc_channel` recorded for the token covering the shard;
     ``unrelated`` is the single permitted excuse and is a decidable fact about
-    the declaration table -- no maximal identifier run of the shard occurs in
-    any declaration name, so no spelling of it can be a citation; ``residue`` is
-    a shard that reached neither, i.e. citation-shaped material this scan
-    dropped without a disposition. Residue is a hard failure: the alternative
-    (report it and continue) is what four PRs of #4792 did with warnings.
+    the declaration table -- no dot-component of any maximal identifier run of
+    the shard (:data:`_LEDGER_RUN_RE`, the identifier alphabet, no length floor)
+    is a substring of any final component, so no spelling of it can be a
+    citation; ``residue`` is a shard that reached neither, i.e. citation-shaped
+    material this scan dropped without a disposition. Residue is a hard failure:
+    the alternative (report it and continue) is what four PRs of #4792 did with
+    warnings.
 
     Coverage is by *exact* token match on the shard's line, after trimming the
     prose punctuation. A substring test would be laxer and would let an
@@ -2302,7 +2316,12 @@ def ledger_check(tree: Tree, docs: list[DocSource]) -> dict[str, int]:
             disposition = seen.get(shard) or seen.get(shard.strip(_LEDGER_PUNCTUATION))
             if disposition is not None:
                 counts[disposition] += 1
-            elif any(run in finals_blob for run in _LEDGER_RUN_RE.findall(shard)):
+            elif any(
+                part in finals_blob
+                for run in _LEDGER_RUN_RE.findall(shard)
+                for part in run.split(".")
+                if part
+            ):
                 counts["residue"] += 1
                 residue.append(f"{doc.label}:{line} {shard!r}")
             else:
@@ -2537,7 +2556,7 @@ L11 no citation channel exonerates any more (INV-CHARGE), and the cost is that
    exact, resolved-match and literal channels together charge 10588 of the 10618
    declarations, leaving 30 uncharged of which 28 are in `test/`; the two library
    survivors are SimpleGraph.edgeSet_sum_finite and SimpleGraph.fintypeEdgeSetSum.
-   Charging every unresolvable citation as well -- 31964 sites, mostly prose inside
+   Charging every unresolvable citation as well -- 32233 sites, mostly prose inside
    code spans -- leaves nothing at all. So this scan is no longer a classifier of
    deletability, and `no-citation-found` is expected to be empty on the real
    documentation. What it still does is *list the evidence*: for each candidate,
@@ -2677,6 +2696,10 @@ def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
 
     ``keep`` is the weak expectation (any verdict but ``no-citation-found``)
     and is what a keeper actually has to satisfy.
+
+    The ledger runs before the fixture verdict is returned: returning first let
+    a dropped shard through unreported on exactly the runs where the scanner is
+    already known to be wrong.
     """
     rows = read_fixtures(path)
     verdicts, _cascade, wide_citations = classify(
@@ -2695,13 +2718,13 @@ def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
         if not ok:
             failures.append(name)
     print()
+    ledger = ledger_check(tree, docs)
+    print("ledger: " + ", ".join(f"{k} {ledger[k]}" for k in sorted(ledger)))
     if failures:
         print(f"fixtures: FAIL ({len(failures)} of {len(rows)})")
         return EXIT_KEPT
     print(f"fixtures: PASS ({len(rows)} rows)")
     print(f"wide citations observed: {len(wide_citations)}")
-    ledger = ledger_check(tree, docs)
-    print("ledger: " + ", ".join(f"{k} {ledger[k]}" for k in sorted(ledger)))
     return EXIT_OK
 
 
@@ -2768,9 +2791,19 @@ def lean_cross_check(
 
     Every candidate is compared, not only the ``no-citation-found`` ones: an
     unseen consumer is a defect of the text scanner wherever it appears. It is
-    fatal on a ``no-citation-found`` verdict (the scan claims to have found no
-    evidence while Lean holds some) and advisory elsewhere (the verdict is
-    already "keep", so the risk is a wrong *reason*, not a wrong action).
+    fatal when the text scan attributed **no** consumer at all while Lean holds
+    some (the scan found no evidence while Lean has it), and advisory otherwise
+    (the scan saw some of the consumers, so the risk is an incomplete *reason*,
+    not a wrong action).
+
+    Keying the fatal branch on the ``no-citation-found`` verdict alone -- as the
+    first revision did -- made it unable to fire: an unresolvable citation site
+    charges every candidate (rule (e) of :func:`_apply_doc_channel`) and so
+    lifts it to at least ``uncertain``, and the documentation holds 32,233 such
+    sites. The verdict condition is kept, since a ``no-citation-found``
+    candidate *may* have consumers (all inside the delete set) and is therefore
+    not implied by the emptiness test; what is gone is its being the *only*
+    trigger.
     """
     reverse: dict[str, set[str]] = defaultdict(set)
     for source, targets in edges.items():
@@ -2795,7 +2828,7 @@ def lean_cross_check(
         if not unseen:
             continue
         message = f"{full}: Lean sees consumers {unseen[:5]} that the text scan does not"
-        if verdict.verdict == NO_CITATION:
+        if not text_consumers or verdict.verdict == NO_CITATION:
             problems.append(message)
         else:
             advisories.append(f"[{verdict.verdict}] {message}")
@@ -2937,9 +2970,13 @@ def main(argv: list[str] | None = None) -> int:
                 )
             print(
                 f"--lean cross-check: {len(verdicts)} candidate(s) compared against the "
-                "elaborated graph; no consumer seen by Lean was missed on a "
-                "no-citation-found verdict"
+                "elaborated graph; every candidate Lean gives a consumer has at "
+                "least one consumer the text scan attributed too"
             )
+        # The ledger runs before anything is written: an artifact produced by a
+        # run whose shard accounting then fails outlives the failure and is read
+        # as the run's result.
+        ledger = ledger_check(tree, docs)
         if args.json_path:
             write_json(Path(args.json_path), verdicts, cascade)
         report(
@@ -2950,7 +2987,7 @@ def main(argv: list[str] | None = None) -> int:
             malformed,
             canary,
             tex_citations,
-            ledger_check(tree, docs),
+            ledger,
             time.time() - started,
             args.report_only,
         )
