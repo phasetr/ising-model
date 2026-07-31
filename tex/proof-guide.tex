@@ -683,7 +683,8 @@ $w_J(\sigma) w_J(\sigma') \le w_J(\sigma \vee \sigma') w_J(\sigma \wedge \sigma'
 
 \noindent The proof is the uniform-coupling argument with the single $J$ replaced
 by the per-edge weights: each edge term is supermodular
-(\texttt{spin\_edge\_supermodularJ}, 16-case check), and the nonnegative weights
+(\texttt{spin\_edge\_supermodular}, the shared 16-case check stated once in
+\texttt{Inequalities/FKG.lean}), and the nonnegative weights
 $J(e)$ preserve the inequality under summation, while the field term is modular.
 
 \begin{theorem}[\texttt{fkg\_isingJ\_of\_monotone}, FV Thm 3.21 free boundary]
@@ -25996,7 +25997,7 @@ For a non-degenerate edge $\{u,v\}$ ($u\ne v$),
       - \langle\sigma^A\rangle_s\,\langle\sigma_u\sigma_v\rangle_s,
 \]
 using $\sigma_e=\mathrm{spinProduct}\{u,v\}$
-(\texttt{edgeSpin\_quot\_eq\_spinProduct'}) and the spin-product fusion
+(\texttt{edgeSpin\_quot\_eq\_spinProduct}) and the spin-product fusion
 $\sigma^A\sigma^{\{u,v\}}=\sigma^{A\triangle\{u,v\}}$ (\texttt{spinProduct\_mul}).
 Substituting at the endpoints $s=0,1$ expresses each coupling-difference summand as
 \[
@@ -26919,10 +26920,10 @@ The supporting wrappers
 \texttt{correlationInfinite\_pair\_eq\_displacement},
 \texttt{pseudoMassFromParamsAtPair\_eq\_displacement},
 \texttt{correlationInfinite\_pair\_mem\_Ioo\_zero\_two\_of\_cubicTanhProfileBound\_displacement},
-\texttt{latticeDistance\_pair\_eq\_displacement},
 \texttt{pseudoMassFromParamsAtPair\_lower\_bound\_of\_zero\_anchored}, and
 \texttt{correlationInfinite\_pair\_active\_of\_cubicTanhProfileBound\_family}
-expose each piece of the lift.
+expose each piece of the lift; the lattice-distance step carries no separate
+wrapper and uses \texttt{latticeDistance\_translate\_eq} directly.
 \end{theorem}
 
 \begin{theorem}[\texttt{IsingModel.Ambient.PseudoMassLatticeDistanceBridge},
