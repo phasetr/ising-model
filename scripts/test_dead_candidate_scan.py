@@ -7,8 +7,8 @@ trusting: the failures it pins down -- a Unicode-splitting tokenizer, a LaTeX
 channel that silently matches nothing, a line-anchored declaration parser --
 are the three defects that produced three bad deletion sweeps.
 
-Every route to a **false ``safe-to-delete``** has a test aimed at it, because
-that is the only verdict of this tool that can destroy work:
+Every route to a **declaration falsely reported uncited** has a test aimed at
+it, because that is the only output of this tool that can destroy work:
 :class:`DeleteClosureTest` (a candidate consumed only by a candidate the same run
 retains), :class:`SameLineAttributeTest` (``@[simp] theorem foo`` vanishing from
 the declaration table, which turns its consumers into self-references),
@@ -19,10 +19,11 @@ or coverage is fail-open exactly where it claims to be fail-closed),
 the run instead of silently emptying its channel),
 :class:`MarkdownBacktickParityTest` (one unbalanced backtick inverts the parity of
 its whole line, so the tokenizer swaps prose for citations without warning),
-:class:`ElidedFragmentTest` (a suffix citation whose elided prefix is spelled out
-on the same line is a shorthand, not a family label),
-:class:`NarrowGlobCitationTest` (the same exoneration on the *glob* channel: a
-citation naming two to eight declarations must be charged to all of them) and
+:class:`FailClosedChargingTest` (INV-CHARGE: no citation channel may exonerate,
+pinned by the mutation table of #4792 -- every mutation restoring an exoneration
+must turn a named test red, and :class:`MutationMetaTest` asserts that it does),
+:class:`LedgerTest` (INV-LEDGER: every code-span shard reaches a disposition, and
+the audit lexer is independent of the tokenizer it audits) and
 :class:`CharClassTest` (the identifier class must never be a superset of Lean's).
 :class:`CanaryTest` carries the unconditional Unicode guard in both directions:
 a fixture holding one name per canary character (so per-character coverage does
@@ -32,6 +33,8 @@ that must abort the run rather than lower a count.
 :class:`FamilyCalibrationTest` asserts the calibration integers that used to live
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
 direction: a docstring mention is reported but must never rescue a lemma.
+:class:`VerdictVocabularyTest` guards the rename: the tool must emit no word a
+reader can take for a deletion authorisation.
 
 Fast unit tests use synthetic strings. The tree-dependent tests (canary,
 fixtures, exit codes, determinism, performance) parse the real repository once
@@ -41,6 +44,7 @@ and share it.
 from __future__ import annotations
 
 import io
+import re
 import sys
 import tempfile
 import time
@@ -311,23 +315,24 @@ class DocTokenTest(unittest.TestCase):
             tokens = [token for token, _line in dcs._markdown_source(path).tokens]
         self.assertEqual(tokens, ["synthetic{,_h}_xyzzy", "plain_xyzzy"])
 
-    def test_the_name_shape_is_tested_before_and_after_trimming(self) -> None:
-        """Either order alone drops a shorthand, so both forms are tested.
+    def test_the_tokenizer_keeps_every_shard(self) -> None:
+        """The name-shape filter is gone: a shard is a token whatever it looks like.
 
-        Trimming first loses a citation whose only ``_``/``.`` *is* the sentence
-        punctuation (`` `foo{,bar}.` ``); testing first loses one that merely
-        carries punctuation (`` `foo{,_bar}:` ``). Both are brace shorthands, so
-        neither has a verbatim search to fall back on. The token kept is always
-        the trimmed one -- the punctuation belongs to the prose.
+        The filter (a ``_`` or a ``.``, identifier characters plus ``{},*``) was
+        an exoneration channel wearing a lexer's clothes -- a rejected piece
+        reached no citation channel, so it could not charge, could not warn and
+        could not be counted. Punctuation is still trimmed, because it belongs to
+        the prose, and an all-punctuation shard trims to nothing.
         """
         self.assertEqual(dcs._citation_tokens("foo{,bar}."), ["foo{,bar}"])
         self.assertEqual(dcs._citation_tokens("synthetic{,_h}_xyzzy:"), ["synthetic{,_h}_xyzzy"])
         self.assertEqual(dcs._citation_tokens("(plain_xyzzy)"), ["plain_xyzzy"])
-        self.assertEqual(dcs._citation_tokens("..."), [])  # never an empty token
-        self.assertEqual(dcs._citation_tokens("prose here"), [])
+        self.assertEqual(dcs._citation_tokens("prose here"), ["prose", "here"])
+        self.assertEqual(dcs._citation_tokens("..."), [])  # trims to nothing
+        self.assertEqual(dcs._citation_tokens("  "), [])
 
-    def test_family_label_threshold(self) -> None:
-        """``_ferromagnetic`` labels a family; it may never rescue one lemma."""
+    def test_a_family_label_resolves_and_is_charged_in_full(self) -> None:
+        """``_ferromagnetic`` names a family, and every member is charged."""
         cache: dict[str, list[dcs.Decl] | None] = {}
         many = dcs._resolve_fragment(tree(), "_ferromagnetic", cache)
         self.assertIsNotNone(many)
@@ -574,106 +579,53 @@ class SlashAlternationCitationTest(unittest.TestCase):
             self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
             self.assertEqual(dcs.expand_citation_token(token), [token], token)
 
-    def test_non_citation_slashes_stay_out_of_the_tokenizer(self) -> None:
-        """URLs, paths, division, qualified names, globs and suffixes stay inert."""
-        for token in self.NON_CITATIONS:
-            self.assertEqual(dcs._citation_tokens(token), [], token)
+    def test_every_unsupported_spelling_is_charged_and_not_dropped(self) -> None:
+        """An unsupported slash spelling is unresolvable, so it charges everybody.
 
-    def test_out_of_scope_numeric_pairs_are_inert(self) -> None:
-        """Only the exact documented 3/4 pair is a supported numeric stem."""
-        for token in self.OUT_OF_SCOPE_NUMERIC_TOKENS:
+        It used to vanish at the tokenizer: ``_citation_nameish`` accepted a
+        slash only in the two hard-coded ``truncated3/4...`` forms, so a URL, a
+        path, a division or any other numeric pair reached no channel at all --
+        not the charging one and not the warning one. That is the fail-open
+        direction (E5 of the #4792 design), and the fix is not a sixth spelling
+        but the removal of the shape test: whatever the token is, it now reaches
+        a disposition, and "I cannot resolve this" charges every candidate.
+        """
+        unsupported = (
+            self.NON_CITATIONS
+            + self.OUT_OF_SCOPE_NUMERIC_TOKENS
+            + self.MALFORMED_OUTER_ALTERNATIVES
+        )
+        for token in unsupported:
             self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
-            self.assertEqual(dcs.expand_citation_token(token), [token], token)
-            self.assertEqual(dcs._citation_tokens(token), [], token)
-
-    def test_out_of_scope_numeric_pairs_charge_no_declaration(self) -> None:
-        """Neighboring or reversed numeric pairs invent no documentation charge."""
+            self.assertEqual(dcs._citation_tokens(token), [token], token)
+        real_tree = tree()
         synthetic = dcs.DocSource(
             label="synthetic.md",
             text="",
             starts=[0],
-            tokens=[
-                (token, lineno)
-                for lineno, token in enumerate(self.OUT_OF_SCOPE_NUMERIC_TOKENS, 1)
-            ],
+            tokens=[(token, lineno) for lineno, token in enumerate(unsupported, 1)],
             unreadable=[],
         )
-        real_tree = tree()
         verdicts = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
             for name in self.TARGETS
         ]
         dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
-        self.assertEqual(
-            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
-            {name: [] for name in self.TARGETS},
-        )
+        for verdict in verdicts:
+            self.assertTrue(
+                any(cit.startswith("unresolved ") for cit in verdict.doc_citations),
+                (verdict.decl.full, verdict.doc_citations),
+            )
 
-    def test_empty_outer_alternatives_are_inert(self) -> None:
-        """Empty outer alternatives make an exact-stem slash token malformed."""
-        for token in self.MALFORMED_OUTER_ALTERNATIVES:
-            self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
-            self.assertEqual(dcs.expand_citation_token(token), [token], token)
-            self.assertEqual(dcs._citation_tokens(token), [], token)
-
-    def test_empty_outer_alternatives_charge_no_declaration(self) -> None:
-        """Malformed outer products may not exact-publish their valid siblings."""
-        synthetic = dcs.DocSource(
-            label="synthetic.md",
-            text="",
-            starts=[0],
-            tokens=[
-                (token, lineno)
-                for lineno, token in enumerate(self.MALFORMED_OUTER_ALTERNATIVES, 1)
-            ],
-            unreadable=[],
-        )
-        real_tree = tree()
-        verdicts = [
-            dcs.Verdict(name=name, decl=dcs.resolve_candidate(real_tree, name, False)[0])
-            for name in self.TARGETS
-        ]
-        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
-        self.assertEqual(
-            {verdict.decl.full: verdict.doc_citations for verdict in verdicts},
-            {name: [] for name in self.TARGETS},
-        )
-
-    def test_only_the_two_observed_payloads_are_supported(self) -> None:
-        """Balanced BNF lookalikes and every budget violation remain inert."""
+    def test_the_supported_payloads_still_expand_and_the_rest_do_not(self) -> None:
+        """Expansion is unchanged; only the *dropping* of the rest is gone."""
         self.assertLessEqual(max(map(len, self.TOKENS)), 73)
         for token in self.TOKENS:
             self.assertEqual(len(self.EXPANDED[token]), 4, token)
         for token in self.UNSUPPORTED_PAYLOAD_TOKENS:
             self.assertEqual(dcs.expand_slash_alternation(token), [token], token)
             self.assertEqual(dcs.expand_citation_token(token), [token], token)
-            self.assertEqual(dcs._citation_tokens(token), [], token)
-
-    def test_unsupported_payloads_charge_no_declaration(self) -> None:
-        """No rejected payload may exact-publish or fragment-charge any result."""
-        synthetic = dcs.DocSource(
-            label="synthetic.md",
-            text="",
-            starts=[0],
-            tokens=[
-                (token, lineno)
-                for lineno, token in enumerate(self.UNSUPPORTED_PAYLOAD_TOKENS, 1)
-            ],
-            unreadable=[],
-        )
-        real_tree = tree()
-        verdicts = [
-            dcs.Verdict(name=decl.full, decl=decl)
-            for decl in real_tree.decls
-            if not decl.anonymous
-        ]
-        dcs._apply_doc_channel(real_tree, verdicts, [synthetic], {})
-        charged = [
-            (verdict.decl.full, verdict.doc_citations)
-            for verdict in verdicts
-            if verdict.doc_citations
-        ]
-        self.assertEqual(charged, [])
+            self.assertEqual(dcs._citation_tokens(token), [token], token)
 
 
 class SpacedBraceCitationTest(unittest.TestCase):
@@ -686,12 +638,12 @@ class SpacedBraceCitationTest(unittest.TestCase):
     each comma-space into pieces that name nothing: ``..._{continuousAt`` has no
     closing brace, so :func:`dead_candidate_scan.expand_braces` finds no group
     and returns it unchanged, and ``field,``/``J,`` carry no ``_`` for
-    :func:`dead_candidate_scan._nameish`. A brace shorthand has no verbatim
-    search to fall back on, so the eight results reached no verdict at all.
+    no ``_``. A brace shorthand has no verbatim search to fall back on, so the
+    eight results were named by no shard of the citation.
 
     Measured at ``2380eb36``: 133 name-shaped tokens of this shape (102 in
     ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
-    declarations, 160 of which a whole-library sweep called ``safe-to-delete``
+    declarations, 160 of which a whole-library sweep reported as uncited
     -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
     cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
     the fatal error class, so the split is pinned here from both sides: the
@@ -707,7 +659,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
     def test_a_spaced_brace_alternation_survives_as_one_token(self) -> None:
         """The whole citation is tokenized and expands to all eight names."""
         tokens = dcs._citation_tokens(self.SPACED)
-        whole = [token for token in tokens if token.endswith("}")]
+        whole = [token for token in tokens if token.startswith("freeEnergy") and "}" in token]
         self.assertEqual(len(whole), 1, tokens)
         self.assertEqual(
             dcs.expand_braces(whole[0]),
@@ -747,7 +699,6 @@ class SpacedBraceCitationTest(unittest.TestCase):
                 piece.strip(",.;:()")
                 for piece in body.split()
                 if piece.strip(",.;:()")
-                and (dcs._nameish(piece) or dcs._nameish(piece.strip(",.;:()")))
             ]
             self.assertEqual(dcs._citation_tokens(body)[: len(plain)], plain, body)
 
@@ -791,8 +742,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
     real citations sat outside every span the tokenizer saw -- 218 tokens, none
     of them naming ``magnetizationAlongExhaustion``, which the raw line spells
     six times. Nothing warned, and
-    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete``.
+    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out uncited.
 
     Skipping such a line is the fail-open repair: what it drops is exactly the
     citations with no verbatim fallback (brace alternations, globs, elided
@@ -897,7 +847,8 @@ class MarkdownBacktickParityTest(unittest.TestCase):
                 match.group(1) if match.group(1) is not None else (match.group(2) or "")
             )
         ]
-        self.assertEqual(paired, [])
+        self.assertNotIn("synth_alpha{,_beta}_xyzzy", paired)
+        self.assertNotIn("_delta_gen", paired)
 
     def test_the_recovery_finds_every_pairing_the_line_admits(self) -> None:
         """Re-reading without pairing restores both hidden citations.
@@ -947,276 +898,13 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         ):
             self.assertIn(token, tokens)
 
-    def test_the_hidden_declaration_is_no_longer_safe_to_delete(self) -> None:
+    def test_the_hidden_declaration_is_no_longer_reported_uncited(self) -> None:
         """End to end, on the declaration the defect offered up for deletion."""
         name = "Ambient.magnetizationAlongExhaustion_differentiable_beta_gen"
         verdicts, _cascade, _labels = dcs.classify(
             tree(), [name], docs(), allow_homonym=False
         )
-        self.assertNotEqual(verdicts[0].verdict, dcs.SAFE, verdicts[0].reasons)
-
-
-class ElidedFragmentTest(unittest.TestCase):
-    """A suffix whose elided prefix is cited on the same line is not a family label.
-
-    ``docs/index.md`` abbreviates a run of siblings by spelling the first in full
-    and eliding the shared prefix of the rest. ``_differentiable_beta_gen``
-    matches three declarations, so the family-label rule attributed it to nobody
-    and the magnetization member came out ``safe-to-delete`` although the line
-    cited it. Charging every match of every family label instead was measured
-    (it touches 5895 of 11000 declarations and collapses ``safe-to-delete`` from
-    1458 verdicts to 232, an 84% collapse, with ``--expect`` red) and rejected;
-    the rule kept is the one the notation states.
-    """
-
-    TREE = {
-        "IsingModel/SynthElision.lean": (
-            "namespace IsingModel\n"
-            "theorem alpha_xyzzy_continuous_gen : True := trivial\n"
-            "theorem alpha_xyzzy_differentiable_gen : True := trivial\n"
-            "theorem gamma_xyzzy_differentiable_gen : True := trivial\n"
-            "end IsingModel\n"
-        )
-    }
-
-    def doc(self, text: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
-        """Return a documentation source carrying ``text`` and ``tokens``."""
-        return dcs.DocSource(
-            label="docs/index.md",
-            text=text,
-            starts=dcs.line_starts(text),
-            tokens=tokens,
-            unreadable=[],
-        )
-
-    def verdicts(self, text: str, tokens: list[tuple[str, int]]) -> list[dcs.Verdict]:
-        """Classify both ``_differentiable_gen`` declarations against one doc line."""
-        synthetic = synthetic_tree(self.TREE)
-        names = [
-            "IsingModel.alpha_xyzzy_differentiable_gen",
-            "IsingModel.gamma_xyzzy_differentiable_gen",
-        ]
-        return dcs.classify(synthetic, names, [self.doc(text, tokens)], allow_homonym=False)[0]
-
-    def test_the_elided_prefix_charges_only_the_sibling_that_shares_it(self) -> None:
-        """``alpha_...`` cited in full lends its prefix to ``_differentiable_gen``."""
-        text = "`alpha_xyzzy_continuous_gen` + `_differentiable_gen`\n"
-        tokens = [("alpha_xyzzy_continuous_gen", 1), ("_differentiable_gen", 1)]
-        by_name = {v.decl.final: v for v in self.verdicts(text, tokens)}
-        self.assertEqual(by_name["alpha_xyzzy_differentiable_gen"].verdict, dcs.UNCERTAIN)
-        self.assertEqual(by_name["gamma_xyzzy_differentiable_gen"].verdict, dcs.SAFE)
-
-    def test_a_bare_family_label_still_rescues_nobody(self) -> None:
-        """Without a cited prefix the fragment stays a label, and the exit-0 path stays open."""
-        text = "the `_differentiable_gen` lemmas\n"
-        verdicts = self.verdicts(text, [("_differentiable_gen", 1)])
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
-
-    def test_the_helper_reads_the_prefix_and_not_the_suffix(self) -> None:
-        """``elided_prefix_matches`` is exact about where the elision starts."""
-        matched = [
-            decl
-            for final, decl in synthetic_tree(self.TREE).finals
-            if final.endswith("_differentiable_gen")
-        ]
-        self.assertEqual(len(matched), 2)
-        charged = dcs.elided_prefix_matches(
-            "_differentiable_gen", matched, {"alpha_xyzzy_continuous_gen"}
-        )
-        self.assertEqual([decl.final for decl in charged], ["alpha_xyzzy_differentiable_gen"])
-        self.assertEqual(
-            dcs.elided_prefix_matches("_differentiable_gen", matched, {"delta_unrelated"}), []
-        )
-
-
-class NarrowGlobCitationTest(unittest.TestCase):
-    """A glob citation naming few declarations is charged to all of them.
-
-    Same fail-open shape as :class:`ElidedFragmentTest`, one channel over. Until
-    :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` landed, *every*
-    glob/ellipsis token resolving to two or more declarations was filed as a
-    family label and attributed to nobody, so a citation that resolves exactly
-    -- ``docs/index.md:1427`` expands to
-    ``freeEnergyAlongExhaustion_latticeGraph_ge_log_two*`` (2 declarations),
-    ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``
-    (4 declarations) -- left every declaration it names printing "no citation in
-    the scanned documentation", the sentence that licenses a deletion. Neither
-    has a verbatim fallback: the brace/glob spelling means the full name is
-    nowhere in the file.
-
-    The threshold is a cost knob, so it is pinned from both sides: at or below
-    it every match is charged, above it nothing is and the label is *reported*.
-    """
-
-    NARROW_TREE = {
-        "IsingModel/SynthGlobPair.lean": (
-            "namespace IsingModel\n"
-            "theorem synth_glob_ge_log_two_left : True := trivial\n"
-            "theorem synth_glob_ge_log_two_right : True := trivial\n"
-            "end IsingModel\n"
-        )
-    }
-
-    @staticmethod
-    def wide_tree(count: int) -> dict[str, str]:
-        """Return a tree of ``count`` siblings that one glob names together."""
-        body = "".join(
-            f"theorem synth_wide_{index}_tendsto : True := trivial\n" for index in range(count)
-        )
-        return {"IsingModel/SynthGlobWide.lean": f"namespace IsingModel\n{body}end IsingModel\n"}
-
-    def doc(self, text: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
-        """Return a documentation source carrying ``text`` and ``tokens``."""
-        return dcs.DocSource(
-            label="docs/index.md",
-            text=text,
-            starts=dcs.line_starts(text),
-            tokens=tokens,
-            unreadable=[],
-        )
-
-    def classify(
-        self, sources: dict[str, str], names: list[str], token: str
-    ) -> tuple[list[dcs.Verdict], dict[str, list[str]]]:
-        """Classify ``names`` against a single documentation line citing ``token``."""
-        text = f"the `{token}` results\n"
-        verdicts, _cascade, labels = dcs.classify(
-            synthetic_tree(sources), names, [self.doc(text, [(token, 1)])], allow_homonym=False
-        )
-        return verdicts, labels
-
-    def pair_names(self) -> list[str]:
-        """The two declarations of :attr:`NARROW_TREE`."""
-        return [
-            "IsingModel.synth_glob_ge_log_two_left",
-            "IsingModel.synth_glob_ge_log_two_right",
-        ]
-
-    def test_a_glob_naming_two_declarations_charges_both(self) -> None:
-        """The ``ge_log_two*`` shape: both matches are cited, so neither is safe."""
-        verdicts, labels = self.classify(
-            self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
-        )
-        self.assertEqual([v.verdict for v in verdicts], [dcs.UNCERTAIN, dcs.UNCERTAIN])
-        self.assertEqual(labels, {})
-        for verdict in verdicts:
-            self.assertTrue(
-                any("synth_glob_ge_log_two*" in cit for cit in verdict.doc_citations),
-                verdict.doc_citations,
-            )
-
-    def test_a_glob_naming_four_declarations_charges_all_four(self) -> None:
-        """The ``freeEnergy_*_tendsto_of_abs_h`` shape, one slot in the middle."""
-        names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(4)]
-        verdicts, labels = self.classify(self.wide_tree(4), names, "synth_wide_*_tendsto")
-        self.assertEqual([v.verdict for v in verdicts], [dcs.UNCERTAIN] * 4)
-        self.assertEqual(labels, {})
-
-    def test_a_glob_above_the_threshold_charges_nobody_and_is_reported(self) -> None:
-        """One match past the knob the citation is a family label again.
-
-        ``correlation_*_*`` names 219 declarations in the real documentation;
-        charging such a label would drag whole subsystems into ``uncertain``.
-        The residue is fail-open by construction, so it must at least be
-        *printed*: the label lands in ``family_labels``, which :func:`report`
-        renders on every run.
-        """
-        count = dcs.MAX_CHARGED_GLOB_MATCHES + 1
-        names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(count)]
-        verdicts, labels = self.classify(self.wide_tree(count), names, "synth_wide_*_tendsto")
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE] * count)
-        self.assertEqual(list(labels), ["docs/index.md:1 `synth_wide_*_tendsto`"])
-        self.assertEqual(labels["docs/index.md:1 `synth_wide_*_tendsto`"], [f"{count} declarations"])
-
-    def test_the_old_exoneration_would_turn_this_red(self) -> None:
-        """Mutation test: with the knob at 1, every multi-match glob is exonerated.
-
-        ``MAX_CHARGED_GLOB_MATCHES = 1`` is exactly the rule this class repairs
-        (the branch read ``else []`` for every ``len(matched) >= 2``), so the
-        pinned verdicts above must depend on the threshold and not on some other
-        part of the pipeline.
-        """
-        original = dcs.MAX_CHARGED_GLOB_MATCHES
-        dcs.MAX_CHARGED_GLOB_MATCHES = 1
-        try:
-            verdicts, labels = self.classify(
-                self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
-            )
-        finally:
-            dcs.MAX_CHARGED_GLOB_MATCHES = original
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
-        self.assertEqual(list(labels), ["docs/index.md:1 `synth_glob_ge_log_two*`"])
-
-    def test_a_charged_glob_never_publishes(self) -> None:
-        """A glob is evidence of a citation, not of a verbatim one.
-
-        The charge string keeps the ``shorthand `` prefix, which is what makes
-        the repair monotone: only ``exact `` promotes to ``published-result``
-        (and ``published-result`` leaves the delete-closure seed alone), while
-        ``shorthand `` forces ``uncertain``. A glob charged as ``exact `` would
-        assert a verbatim citation that is not in the file.
-        """
-        verdicts, _labels = self.classify(
-            self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
-        )
-        for verdict in verdicts:
-            self.assertNotEqual(verdict.verdict, dcs.PUBLISHED)
-            self.assertTrue(
-                all(not cit.startswith("exact ") for cit in verdict.doc_citations),
-                verdict.doc_citations,
-            )
-
-    def test_the_glob_token_survives_the_real_tokenizer(self) -> None:
-        """The synthetic tokens above are what the Markdown channel really produces."""
-        self.assertEqual(
-            dcs._citation_tokens("freeEnergy_*_tendsto_of_abs_h"),
-            ["freeEnergy_*_tendsto_of_abs_h"],
-        )
-        self.assertEqual(
-            dcs.expand_braces("freeEnergyAlongExhaustion_latticeGraph_{nonneg*,ge_log_two*}"),
-            [
-                "freeEnergyAlongExhaustion_latticeGraph_ge_log_two*",
-                "freeEnergyAlongExhaustion_latticeGraph_nonneg*",
-            ],
-        )
-
-    def test_the_two_real_citations_still_resolve(self) -> None:
-        """End to end on the real tree: the six declarations of the report exist.
-
-        Pinned because the repair is worth nothing if the globs stop resolving:
-        both tokens are read off the real ``docs/index.md`` rows, and their
-        matches are the declarations that used to print "no citation".
-        """
-        cache: dict[str, list[dcs.Decl] | None] = {}
-        pair = dcs._resolve_fragment(
-            tree(), "freeEnergyAlongExhaustion_latticeGraph_ge_log_two*", cache
-        )
-        quad = dcs._resolve_fragment(tree(), "freeEnergy_*_tendsto_of_abs_h", cache)
-        self.assertEqual(len(pair), 2)
-        self.assertEqual(len(quad), 4)
-        for matched in (pair, quad):
-            self.assertLessEqual(len(matched), dcs.MAX_CHARGED_GLOB_MATCHES)
-
-    def test_the_six_declarations_are_no_longer_safe_to_delete(self) -> None:
-        """The named regression, on the real tree and the real documentation."""
-        names = [
-            "Ambient.freeEnergyAlongExhaustion_latticeGraph_ge_log_two",
-            "Ambient.freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh",
-            "Concrete.freeEnergy_centeredSlab_tendsto_of_abs_h",
-            "Concrete.freeEnergy_linearBox_tendsto_of_abs_h",
-            "Concrete.freeEnergy_slabBrick_tendsto_of_abs_h",
-            "Concrete.freeEnergy_stripeBrick2D_tendsto_of_abs_h",
-        ]
-        verdicts, _cascade, _labels = dcs.classify(tree(), names, docs(), allow_homonym=False)
-        for verdict in verdicts:
-            self.assertNotEqual(verdict.verdict, dcs.SAFE, verdict.name)
-            self.assertTrue(
-                any(
-                    cit.startswith("shorthand ") and "*" in cit
-                    for cit in verdict.doc_citations
-                ),
-                (verdict.name, verdict.doc_citations),
-            )
+        self.assertNotEqual(verdicts[0].verdict, dcs.NO_CITATION, verdicts[0].reasons)
 
 
 class QualifiedGlobCitationTest(unittest.TestCase):
@@ -1370,8 +1058,17 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                 expected_bare,
             )
 
-    def test_qualified_globs_keep_the_1_2_10_11_threshold(self) -> None:
-        """At most ten matches are shorthand-only; eleven is a family label."""
+    def test_every_qualified_glob_is_charged_whatever_its_breadth(self) -> None:
+        """One match or eleven, every declaration a glob names is charged.
+
+        The threshold this replaces (``MAX_CHARGED_GLOB_MATCHES = 10``) was a
+        cost knob presented as a semantic criterion: at eleven matches the
+        citation was "a family label attributed to nobody", so a declaration
+        whose only citation was such a label was reported uncited. No count
+        separates a label from an elision -- ``docs/index.md:2219`` is a precise
+        citation with eleven matches -- so the count is gone and breadth is
+        reported instead of acted on.
+        """
         groups = ((1, "one"), (2, "two"), (10, "ten"), (11, "eleven"))
         body = "namespace IsingModel\n"
         names_by_count: dict[int, list[str]] = {}
@@ -1390,11 +1087,11 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             for lineno, (_count, label) in enumerate(groups, 1)
         ]
         names = [name for count, _label in groups for name in names_by_count[count]]
-        verdicts, _cascade, labels = dcs.classify(
+        verdicts, _cascade, wide = dcs.classify(
             synthetic, names, [self.doc(tokens)], allow_homonym=False
         )
         by_name = {verdict.decl.full: verdict for verdict in verdicts}
-        for count, label in groups[:3]:
+        for count, label in groups:
             token = f"IsingModel.qglob_{label}_*"
             for name in names_by_count[count]:
                 verdict = by_name[name]
@@ -1402,14 +1099,24 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                 self.assertEqual(len(verdict.doc_citations), 1, name)
                 self.assertTrue(verdict.doc_citations[0].startswith("shorthand "))
                 self.assertIn(token, verdict.doc_citations[0])
-        for name in names_by_count[11]:
-            self.assertEqual(by_name[name].verdict, dcs.SAFE, name)
-            self.assertEqual(by_name[name].doc_citations, [], name)
-        key = "docs/index.md:4 `IsingModel.qglob_eleven_*`"
-        self.assertEqual(labels, {key: ["11 declarations"]})
+        self.assertEqual(
+            wide,
+            {
+                "docs/index.md:2 `IsingModel.qglob_two_*`": 2,
+                "docs/index.md:3 `IsingModel.qglob_ten_*`": 10,
+                "docs/index.md:4 `IsingModel.qglob_eleven_*`": 11,
+            },
+        )
 
-    def test_unsupported_relative_and_broad_patterns_remain_conservative(self) -> None:
-        """Relative/malformed prose stays inert; the broad real glob is a label."""
+    def test_unsupported_and_broad_patterns_charge_rather_than_exonerate(self) -> None:
+        """A glob this scan cannot resolve is UNRESOLVED, and charges everybody.
+
+        Those five spellings used to resolve to ``[]`` -- "names nothing" -- which
+        the doc channel then read as "cites nobody". ``[]`` and ``None`` are both
+        ``UNRESOLVED`` now, and the widest real glob (``IsingModel.*``, 10548
+        matches, written in the prose sentence "No `IsingModel.*` semantics
+        changed") is charged to every declaration it names.
+        """
         synthetic = synthetic_tree(self.HOMONYM_TREE)
         for token in (
             "Unknown.foo_*",
@@ -1418,325 +1125,41 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             "IsingModel.*.foo_*",
             "IsingModel.foo_**",
         ):
-            self.assertEqual(dcs._resolve_fragment(synthetic, token, {}), [], token)
-        for token in (
-            "https://example.test/IsingModel.foo_*",
-            "docs/IsingModel.foo_*",
-        ):
-            self.assertEqual(dcs._citation_tokens(token), [], token)
+            self.assertIsNone(dcs._resolve_fragment(synthetic, token, {}), token)
 
         # Main-relative inventory size: it moves whenever the library gains or
-        # loses a declaration name, so it is refreshed together with the label
-        # assertion below. 10562 -> 10548 by the cluster C/D duplicate removal:
-        # 16 declarations were deleted and 2 added, and one of the deleted names
-        # (`IsingModel.edgeSpin_spinMul`) was re-added in another module. So 15
-        # unique full names leave the tree and 1 (`IsingModel.Spin.sign_mul`)
-        # enters it, a net -14.
+        # loses a declaration name, so it is refreshed together with the charge
+        # assertion below. Re-derive it, never carry it forward and never adjust
+        # it by arithmetic, by running this line's own resolver over the tree:
+        #   dead_candidate_scan._resolve_fragment(load_tree(), "IsingModel.*", {})
+        # and reading its length. Measured at ``4bfe4aeb``: 10548.
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
         self.assertEqual(len(broad or []), 10548)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
         ]
-        labels: dict[str, list[str]] = {}
+        wide: dict[str, int] = {}
         dcs._apply_doc_channel(
-            tree(), selected, [self.doc([("IsingModel.*", 1)])], labels
+            tree(), selected, [self.doc([("IsingModel.*", 1)])], wide
         )
-        self.assertTrue(all(not verdict.doc_citations for verdict in selected))
-        self.assertEqual(
-            labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10548 declarations"]},
-        )
-
-
-class ResolvedGlobElisionHeadTest(unittest.TestCase):
-    """F6: a chargeable resolved glob head may seed a same-line sibling suffix."""
-
-    ROW_HEAD = "freeEnergyInfinite_..._bounds"
-    ROW_SUFFIX = "_monotone_{J,h,beta}"
-    ROW_PREFIX = "freeEnergyInfinite_latticeGraph_cubicExhaustion"
-    ROW_TARGETS = [
-        "IsingModel.Ambient."
-        f"freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_{parameter}"
-        for parameter in ("J", "h", "beta")
-    ]
-
-    @staticmethod
-    def synthetic_tree(finals: list[str]) -> dcs.Tree:
-        """Return a one-file tree containing independent theorems named by ``finals``."""
-        body = "".join(f"theorem {final} : True := trivial\n" for final in finals)
-        return synthetic_tree(
-            {
-                "IsingModel/SynthResolvedGlobElision.lean": (
-                    f"namespace IsingModel\n{body}end IsingModel\n"
-                )
-            }
-        )
-
-    @staticmethod
-    def doc(label: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
-        """Return token-only documentation with enough physical lines for ``tokens``."""
-        line_count = max((lineno for _token, lineno in tokens), default=1)
-        text = "citation\n" * line_count
-        return dcs.DocSource(
-            label=label,
-            text=text,
-            starts=dcs.line_starts(text),
-            tokens=tokens,
-            unreadable=[],
-        )
-
-    def classify(
-        self,
-        finals: list[str],
-        candidates: list[str],
-        docs_list: list[dcs.DocSource],
-    ) -> tuple[list[dcs.Verdict], dict[str, list[str]]]:
-        """Classify ``candidates`` in a synthetic tree and return verdicts and labels."""
-        verdicts, _cascade, labels = dcs.classify(
-            self.synthetic_tree(finals),
-            [f"IsingModel.{candidate}" for candidate in candidates],
-            docs_list,
-            allow_homonym=False,
-        )
-        return verdicts, labels
-
-    def test_F6_HEAD_RESOLVE_unqualified_ellipsis_seeds_shorthand_in_either_order(
-        self,
-    ) -> None:
-        """A resolved head licenses its three immediate siblings, never exact evidence."""
-        head = "alpha_xyzzy_bounds"
-        targets = [f"alpha_xyzzy_monotone_{parameter}" for parameter in ("J", "h", "beta")]
-        decoys = [f"gamma_xyzzy_monotone_{parameter}" for parameter in ("J", "h", "beta")]
-        finals = [head, *targets, *decoys]
-        token_orders = (
-            [("alpha_..._bounds", 1), ("_monotone_{J,h,beta}", 1)],
-            [("_monotone_{J,h,beta}", 1), ("alpha_..._bounds", 1)],
-        )
-
-        observed = []
-        for tokens in token_orders:
-            verdicts, _labels = self.classify(
-                finals, targets, [self.doc("docs/f6-order.md", tokens)]
+        for verdict in selected:
+            self.assertTrue(
+                any(
+                    citation.startswith("shorthand docs/index.md:1:")
+                    and "IsingModel.*" in citation
+                    for citation in verdict.doc_citations
+                ),
+                (verdict.decl.full, verdict.doc_citations),
             )
-            observed.append(
-                [
-                    (
-                        verdict.verdict,
-                        sum(
-                            citation.startswith("shorthand docs/f6-order.md:1:")
-                            and "`_monotone_{J,h,beta}`" in citation
-                            for citation in verdict.doc_citations
-                        ),
-                        any(
-                            citation.startswith("exact ")
-                            for citation in verdict.doc_citations
-                        ),
-                    )
-                    for verdict in verdicts
-                ]
-            )
-
-        expected = [[(dcs.UNCERTAIN, 1, False)] * 3] * 2
-        self.assertEqual(observed, expected)
-
-    def test_F6_REAL_1387_resolved_head_protects_the_exact_target_triple(self) -> None:
-        """The real row adds one suffix shorthand, and no exact claim, to each target."""
-        index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertIn((self.ROW_HEAD, 1387), index.tokens)
-        self.assertIn((self.ROW_SUFFIX, 1387), index.tokens)
-        resolved = dcs._resolve_fragment(tree(), self.ROW_HEAD, {})
-        self.assertEqual(
-            [decl.full for decl in resolved or []],
-            [f"IsingModel.Ambient.{self.ROW_PREFIX}_bounds"],
-        )
-
-        verdicts = dcs.classify(
-            tree(), self.ROW_TARGETS, docs(), allow_homonym=False
-        )[0]
-        observed = []
-        for verdict in verdicts:
-            row_shorthand = [
-                citation
-                for citation in verdict.doc_citations
-                if citation.startswith("shorthand docs/index.md:1387:")
-                and f"`{self.ROW_SUFFIX}`" in citation
-            ]
-            observed.append(
-                (
-                    verdict.decl.full,
-                    verdict.verdict,
-                    len(row_shorthand),
-                    any(
-                        citation.startswith("exact ")
-                        for citation in verdict.doc_citations
-                    ),
-                )
-            )
-        self.assertEqual(
-            observed,
-            [(name, dcs.UNCERTAIN, 1, False) for name in self.ROW_TARGETS],
-        )
-
-    def test_F6_HEAD_RESOLVE_ten_match_head_seeds_an_immediate_sibling(self) -> None:
-        """The positive threshold edge is eligible to establish a suffix prefix."""
-        heads = ["limit_seed_bounds"] + [
-            f"limit_extra_{index}_bounds"
-            for index in range(dcs.MAX_CHARGED_GLOB_MATCHES - 1)
-        ]
-        targets = ["limit_seed_monotone_J", "decoy_seed_monotone_J"]
-        synthetic = self.synthetic_tree([*heads, *targets])
-        token = "limit_..._bounds"
-        resolved = dcs._resolve_fragment(synthetic, token, {})
-        self.assertEqual(len(resolved or []), dcs.MAX_CHARGED_GLOB_MATCHES)
-        verdicts, _cascade, _labels = dcs.classify(
-            synthetic,
-            [f"IsingModel.{target}" for target in targets],
-            [self.doc("docs/f6-ten.md", [(token, 1), ("_monotone_J", 1)])],
-            allow_homonym=False,
-        )
-        self.assertEqual(
-            [
-                (
-                    verdict.verdict,
-                    any(
-                        citation.startswith("shorthand docs/f6-ten.md:1:")
-                        and "`_monotone_J`" in citation
-                        for citation in verdict.doc_citations
-                    ),
-                )
-                for verdict in verdicts
-            ],
-            [(dcs.UNCERTAIN, True), (dcs.SAFE, False)],
-        )
-
-    def test_F6_PREFIX_BOUNDARY_blocks_divergent_and_colliding_heads(self) -> None:
-        """Resolved heads cannot cross the immediate-component or family boundary."""
-        cases = (
-            (
-                ["alpha_xyzzy_monotone_bounds", "alpha_xyzzy_monotone_J",
-                 "gamma_xyzzy_monotone_J"],
-                "alpha_..._monotone_bounds",
-                "_monotone_J",
-                "alpha_xyzzy_monotone_J",
-            ),
-            (
-                ["alphabet_any_bounds", "alpha_xyzzy_monotone_J",
-                 "gamma_xyzzy_monotone_J"],
-                "alphabet_..._bounds",
-                "_xyzzy_monotone_J",
-                "alpha_xyzzy_monotone_J",
-            ),
-            (
-                ["delta_xyzzy_bounds", "alpha_xyzzy_monotone_J",
-                 "gamma_xyzzy_monotone_J"],
-                "delta_..._bounds",
-                "_monotone_J",
-                "alpha_xyzzy_monotone_J",
-            ),
-        )
-        observed = []
-        for finals, head, suffix, target in cases:
-            verdicts, _labels = self.classify(
-                finals,
-                [target],
-                [self.doc("docs/f6-boundary.md", [(head, 1), (suffix, 1)])],
-            )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
-        self.assertEqual(observed, [(dcs.SAFE, [])] * len(cases))
-
-    def test_F6_PREFIX_BOUNDARY_blocks_adjacent_lines_and_other_sources(self) -> None:
-        """A head seed cannot cross a physical line or a documentation source."""
-        finals = [
-            "alpha_xyzzy_bounds",
-            "alpha_xyzzy_monotone_J",
-            "gamma_xyzzy_monotone_J",
-        ]
-        separated = (
-            [
-                self.doc(
-                    "docs/f6-lines.md",
-                    [("alpha_..._bounds", 1), ("_monotone_J", 2)],
-                )
-            ],
-            [
-                self.doc("docs/f6-head.md", [("alpha_..._bounds", 1)]),
-                self.doc("docs/f6-suffix.md", [("_monotone_J", 1)]),
-            ],
-        )
-        observed = []
-        for docs_list in separated:
-            verdicts, _labels = self.classify(
-                finals, ["alpha_xyzzy_monotone_J"], docs_list
-            )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
-        self.assertEqual(observed, [(dcs.SAFE, []), (dcs.SAFE, [])])
-
-    def test_F6_CONSERVATIVE_bad_or_broad_heads_do_not_license_suffixes(self) -> None:
-        """Unresolved, malformed, zero, relative, and eleven-match heads stay inert."""
-        base_finals = [
-            "alpha_xyzzy_bounds",
-            "alpha_xyzzy_monotone_J",
-            "gamma_xyzzy_monotone_J",
-        ]
-        bad_heads = (
-            "alpha_missing_bounds",
-            "IsingModel.",
-            "missing_..._bounds",
-            "Ambient.alpha_..._bounds",
-        )
-        observed = []
-        for index, head in enumerate(bad_heads):
-            verdicts, _labels = self.classify(
-                base_finals,
-                ["alpha_xyzzy_monotone_J"],
-                [
-                    self.doc(
-                        f"docs/f6-bad-{index}.md",
-                        [(head, 1), ("_monotone_J", 1)],
-                    )
-                ],
-            )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
-
-        broad_heads = ["limit_seed_bounds"] + [
-            f"limit_extra_{index}_bounds"
-            for index in range(dcs.MAX_CHARGED_GLOB_MATCHES)
-        ]
-        broad_targets = ["limit_seed_monotone_J", "decoy_seed_monotone_J"]
-        broad_tree = self.synthetic_tree([*broad_heads, *broad_targets])
-        broad_token = "limit_..._bounds"
-        self.assertEqual(
-            len(dcs._resolve_fragment(broad_tree, broad_token, {}) or []),
-            dcs.MAX_CHARGED_GLOB_MATCHES + 1,
-        )
-        broad_verdicts, _cascade, labels = dcs.classify(
-            broad_tree,
-            [f"IsingModel.{target}" for target in broad_targets],
-            [
-                self.doc(
-                    "docs/f6-eleven.md",
-                    [(broad_token, 1), ("_monotone_J", 1)],
-                )
-            ],
-            allow_homonym=False,
-        )
-        observed.append(
-            (broad_verdicts[0].verdict, broad_verdicts[0].doc_citations)
-        )
-
-        self.assertEqual(observed, [(dcs.SAFE, [])] * (len(bad_heads) + 1))
-        self.assertEqual(
-            labels["docs/f6-eleven.md:1 `limit_..._bounds`"],
-            ["11 declarations"],
-        )
+        self.assertEqual(wide, {"docs/index.md:1 `IsingModel.*`": 10548})
 
 
 class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
-    A ``safe-to-delete`` verdict prints "no citation in the scanned
-    documentation". While only ``docs/index.md`` and the guide were read, that
+    A ``no-citation-found`` verdict prints "no citation this scan could read".
+    While only ``docs/index.md`` and the guide were read, that
     sentence was a claim about two files: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
     """
@@ -1765,7 +1188,7 @@ class MissingDocumentationTest(unittest.TestCase):
     -- moved, renamed, checked out partially -- the channel contributes no token
     and no literal text, so every name cited *only* there becomes uncited, and
     the run still prints "no citation in the scanned documentation": a
-    ``safe-to-delete`` verdict resting on evidence that was never read. So the
+    a ``no-citation-found`` verdict resting on evidence never read. So the
     absence is a hard failure (exit 2), like the canaries.
     """
 
@@ -1827,7 +1250,7 @@ class DeleteClosureTest(unittest.TestCase):
     The failure this pins down: a candidate retained by the very same run
     (published, uncertain, attribute- or kind-driven) was still counted as
     deleted by the closure, so a lemma consumed *only* by that keeper came out
-    ``safe-to-delete``. False safe is the one fatal verdict of this tool.
+    reported as uncited. That is the one fatal verdict of this tool.
     """
 
     BASE = "IsingModel.synthetic_closure_base_xyzzy"
@@ -1861,8 +1284,8 @@ class DeleteClosureTest(unittest.TestCase):
     def test_both_deleted_together_is_still_safe(self) -> None:
         """The closure must keep working: nothing retains either candidate here."""
         result = self.classify([])
-        self.assertEqual(result[self.BASE], dcs.SAFE)
-        self.assertEqual(result[self.USER], dcs.SAFE)
+        self.assertEqual(result[self.BASE], dcs.NO_CITATION)
+        self.assertEqual(result[self.USER], dcs.NO_CITATION)
 
     def test_candidate_consumed_by_a_retained_candidate_is_not_safe(self) -> None:
         """A module citation retains the consumer, so the consumed lemma stays."""
@@ -1870,24 +1293,28 @@ class DeleteClosureTest(unittest.TestCase):
         # the consumer uncertain while leaving the base candidate untouched.
         result = self.classify([synthetic_doc("see SynthClosureB.lean for the proof")])
         self.assertEqual(result[self.USER], dcs.UNCERTAIN)
-        self.assertNotEqual(result[self.BASE], dcs.SAFE)
+        self.assertNotEqual(result[self.BASE], dcs.NO_CITATION)
         self.assertEqual(result[self.BASE], dcs.LOAD_BEARING)
 
-    def test_no_safe_candidate_is_consumed_by_a_retained_one_on_the_real_family(self) -> None:
-        """The same invariant, over the 245-candidate ``_ferromagnetic`` family."""
+    def test_the_real_family_reports_nobody_uncited(self) -> None:
+        """The same invariant on the real family, plus what makes it vacuous.
+
+        The closure invariant (an uncited candidate\'s consumers are themselves
+        uncited) is asserted below over the 223-candidate ``_ferromagnetic``
+        family, and it now holds vacuously: after the #4792 change the family has
+        no uncited member. Both halves are pinned, because the emptiness is the
+        measured terminal result of the issue and a later change that repopulates
+        the bucket must be noticed, not silently welcomed.
+        """
         verdicts = family_verdicts()
-        safe_keys = {v.decl.key for v in verdicts if v.verdict == dcs.SAFE}
+        uncited = {v.decl.key for v in verdicts if v.verdict == dcs.NO_CITATION}
+        self.assertEqual(uncited, set())
         for verdict in verdicts:
-            if verdict.verdict != dcs.SAFE:
+            if verdict.verdict != dcs.NO_CITATION:
                 continue
-            for occ in verdict.consumers:
+            for occ in verdict.consumers:  # pragma: no cover - empty by the above
                 self.assertIsNotNone(occ.owner, f"{verdict.name}: file-level consumer")
-                self.assertIn(
-                    occ.owner.key,
-                    safe_keys,
-                    f"{verdict.name} is safe-to-delete but consumed by the retained "
-                    f"{occ.owner.full} ({occ.file}:{occ.line})",
-                )
+                self.assertIn(occ.owner.key, uncited, verdict.name)
 
 
 class SameLineAttributeTest(unittest.TestCase):
@@ -1896,7 +1323,7 @@ class SameLineAttributeTest(unittest.TestCase):
     Dropping the rest of that line deletes ``foo`` from the declaration table,
     which silently re-attributes its body to the *previous* declaration; every
     reference in that body then looks like a self-reference and is discarded --
-    the second route to a false ``safe-to-delete``.
+    the second route to a declaration falsely reported uncited.
     """
 
     SOURCE = (
@@ -2081,7 +1508,7 @@ class UnreadableCitationTest(unittest.TestCase):
         LaTeX-standard unbraced spelling carries no braces to swallow: the
         argument ``e`` survived as a readable fragment, the span refuted the
         name it spelled, no literal search could find that name either, and the
-        declaration came out ``safe-to-delete``. It is charged now because no
+        declaration came out uncited. It is charged now because no
         span refutes anything.
         """
         _normalized, warnings = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
@@ -2096,7 +1523,7 @@ class UnreadableCitationTest(unittest.TestCase):
         clean parse, an unparsable body, a brace no macro swallowed -- now
         charges, and charges names that have nothing to do with the citation.
         Over-charging can only produce ``uncertain``, never a false
-        ``safe-to-delete``.
+        "no citation".
         """
         shapes = (
             (dcs.MACRO_RESIDUE, r"foo\unknownmacro bar"),
@@ -2137,7 +1564,7 @@ class TexChannelLimitTest(unittest.TestCase):
     Charging fixes every leak that produced an :class:`dcs.UnreadableSpan`, but
     a citation that leaves **nothing to charge and no literal hit** never reaches
     the charging step at all: it leaves the TeX channel silently, and the name it
-    cites can still come out ``safe-to-delete``. There are three, not two, and
+    cites can still come out uncited. There are three, not two, and
     they escape differently: a ``%`` comment inside a citation (``L7a``) and a
     bare line break inside one (``L7c``) parse into a clean span, so there is no
     residue to charge, while an unrecognised wrapper (``L7b``) yields no span at
@@ -2198,7 +1625,7 @@ class TexChannelLimitTest(unittest.TestCase):
         self.assertIn("L7c", dcs.LIMITATIONS)
         self.assertIn("run_tex_canary", dcs.LIMITATIONS)
 
-    def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
+    def test_unreadable_citation_blocks_the_no_citation_verdict(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
         tree_ = synthetic_tree(
             {
@@ -2211,7 +1638,7 @@ class TexChannelLimitTest(unittest.TestCase):
         )
         name = "IsingModel.synthetic_unreadableβ_xyzzy"
         blind = synthetic_doc("nothing here")
-        self.assertEqual(dcs.classify(tree_, [name], [blind], False)[0][0].verdict, dcs.SAFE)
+        self.assertEqual(dcs.classify(tree_, [name], [blind], False)[0][0].verdict, dcs.NO_CITATION)
         blind.unreadable.append(
             dcs.UnreadableSpan("tex", 7, dcs.MACRO_RESIDUE, r"synthetic_unreadable\beta\_xyzzy")
         )
@@ -2249,7 +1676,7 @@ class ProseMentionTest(unittest.TestCase):
     def test_docstring_mention_is_reported_but_does_not_rescue(self) -> None:
         """Prose is not a reference: the verdict stays safe, with a warning."""
         verdict = self.verdict()
-        self.assertEqual(verdict.verdict, dcs.SAFE)
+        self.assertEqual(verdict.verdict, dcs.NO_CITATION)
         self.assertTrue(any("module docstring" in item for item in verdict.info))
         self.assertTrue(any("leaves that text stale" in item for item in verdict.info))
 
@@ -2305,103 +1732,38 @@ class FamilyCalibrationTest(unittest.TestCase):
     """The calibration integers recorded in the fixtures header, asserted.
 
     They were prose in a comment, so nothing noticed when the delete-closure
-    defect moved 15 candidates into ``safe-to-delete``.
+    defect moved 15 candidates into the delete set.
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 19 safe / 88 uncertain / 81 load-bearing / 35 published.
+        """223 candidates -> 0 uncited / 101 uncertain / 87 load-bearing / 35 published.
 
-        Recalibrated by the resolved-glob elision-head repair
-        (:class:`ResolvedGlobElisionHeadTest`). On the same documentation line,
-        a supported glob head resolving to at most ten declarations can now
-        establish the immediate-sibling prefix of a suffix citation. Exactly
-        24 formerly-safe family members leave ``safe-to-delete``: 15 receive
-        shorthand evidence directly and nine become load-bearing because their
-        newly retained latticeGraph consumers receive it. Six previously
-        uncertain members become load-bearing through the same closure. Thus
-        the pre-closure distribution 19/103/66/35 becomes the final
-        19/88/81/35; the 223 total, 35 published results, and
-        :meth:`test_zero_consumer_count` (112) are unchanged. Whole-library
-        evidence is additive (+205 shorthand, zero removals), the safe set only
-        shrinks (49 safe-to-delete -> uncertain, 11 safe-to-delete ->
-        load-bearing, 12 uncertain -> load-bearing), and family labels move
-        387 -> 381 as six formerly-unattributed suffixes acquire concrete
-        targets.
-
-        Recalibrated by the narrow-glob repair
-        (:class:`NarrowGlobCitationTest`): a glob citation naming at most
-        :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` declarations is
-        charged to all of them instead of being attributed to nobody. Exactly
-        four candidates move and not one moves toward ``safe-to-delete``:
-        ``correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic``
-        and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
-        deviation_pos_ferromagnetic`` go ``safe-to-delete -> uncertain`` (charged
-        by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
-        5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
-        ``log_*_deviation_pos_ferromagnetic``, 5 matches);
-        ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
-        ``safe-to-delete -> load-bearing`` and
-        ``log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_
-        ferromagnetic`` ``uncertain -> load-bearing``, both because the
-        delete-closure no longer excuses their only consumer. ``SAFE`` 46 -> 43,
-        ``UNCERTAIN`` 78 -> 79, ``LOAD_BEARING`` 64 -> 66; ``PUBLISHED`` (35),
-        the 223 total and :meth:`test_zero_consumer_count` (112) are unchanged.
-        Measured across the whole library the same way: 1091 -> 976
-        ``safe-to-delete``, 691 -> 761 ``uncertain``, 2081 -> 2126
-        ``load-bearing``, ``published-result`` unchanged at 7009, and the
-        ``safe-to-delete`` key set only shrinks (139 movers -- 94
-        ``safe-to-delete -> uncertain``, 21 ``safe-to-delete -> load-bearing``,
-        24 ``uncertain -> load-bearing`` -- none toward ``safe-to-delete``).
-        The four integers asserted below are threshold-insensitive across
-        ``MAX_CHARGED_GLOB_MATCHES`` 8, 9 and 10; only the whole-library
-        ``safe-to-delete`` count moves (980 at 8, 976 at 9 and 10), which is why
-        raising the knob to its fixture ceiling of 10 needed no recalibration
-        here.
-
-        Previously recalibrated by PR #4754 (safe-to-delete batch 4), which moved
-        exactly one
-        candidate and moved it *away* from ``safe-to-delete``:
-        ``freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic``
-        ``safe-to-delete -> uncertain``. Batch 4 deleted the zero-consumer
-        ``freeEnergyAlongExhaustion_latticeGraph_nonneg``, which was the other
-        member of the ``nonneg*`` component of the ``freeEnergyAlongExhaustion_
-        latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,ge_log_two*}`` family label
-        in ``docs/index.md``; with the sibling gone the component's shorthand
-        citation now charges to the ferromagnetic wrapper alone. ``SAFE`` 47 -> 46
-        and ``UNCERTAIN`` 77 -> 78; ``LOAD_BEARING`` (64), ``PUBLISHED`` (35), the
-        223 total and :meth:`test_zero_consumer_count` (112) are unchanged. This is
-        the healthy direction -- a deletion may only add protection to survivors.
-
-        Previously recalibrated when the elided-prefix rule landed
-        (:class:`ElidedFragmentTest`): a suffix citation whose elided prefix is
-        spelled out on the same documentation line is charged to the siblings
-        that share it. Exactly 45 candidates move, all of them out of
-        ``safe-to-delete``: 33 to ``uncertain`` (charged directly) and 12 to
-        ``load-bearing`` (their only consumer is now retained, so the
-        delete-closure no longer excuses it), with ``published-result``
-        unchanged at 35. That is the healthy signature -- the fix can add
-        citations, never remove one. Measured across the whole library the same
-        way: 235 of 11000 verdicts move, none of them toward ``safe-to-delete``.
-        (Was 223 -> 92 safe / 44 uncertain / 52 load-bearing / 35 published, after
-        PR #4690 dropped three safe-to-delete RatioLogFe ``_ferromagnetic``
-        alongExhaustion bundle wrappers; 226 -> 95 safe before PR #4688.)
+        Re-measured, not carried over, at the #4792 fail-closed terminal change
+        (base ``4bfe4aeb``). Every previous line of this docstring recorded one
+        more exoneration being narrowed -- the elided-prefix rule, the glob
+        threshold, the resolved-glob head -- and each recalibration moved a
+        handful of candidates. Removing the exonerations outright moves the last
+        of them: the family holds **no** ``no-citation-found`` member at all
+        (19 before), 101 are uncertain (88) and 87 load-bearing (81), while
+        ``published-result`` (35), the 223 total and
+        :meth:`test_zero_consumer_count` (112) are unchanged. The direction is
+        the healthy one -- charging can add protection, never remove it.
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 19)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
+        self.assertEqual(counts.get(dcs.NO_CITATION), None)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 101)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 87)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
         """112 of the 223 have no Lean consumer at all.
 
-        Was 114 of 226 before PR #4690 dropped the three safe-to-delete
-        RatioLogFe ``_ferromagnetic`` alongExhaustion bundle wrappers; two of the
-        three were zero-consumer, so the count drops by two.
+        Unchanged by the #4792 change, as it must be: charging is a property of
+        the documentation channel and cannot move a Lean reference.
         """
         self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 112)
 
@@ -2551,7 +1913,7 @@ class CanaryTest(unittest.TestCase):
 
         Each was cited only in a citation the guide split across a line, so the
         TeX channel saw nothing while reporting zero coverage warnings; only an
-        unrelated ``docs/`` citation kept them off ``safe-to-delete``.
+        unrelated ``docs/`` citation kept them cited.
         """
         guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
         for name in (
@@ -2583,7 +1945,7 @@ class FixtureTest(unittest.TestCase):
         ]
         self.assertEqual(len(keepers), 10)
         verdicts, _cascade, _labels = dcs.classify(tree(), keepers, docs(), allow_homonym=False)
-        self.assertTrue(all(v.verdict != dcs.SAFE for v in verdicts))
+        self.assertTrue(all(v.verdict != dcs.NO_CITATION for v in verdicts))
         with_lean_consumers = [v for v in verdicts if v.consumers]
         self.assertEqual(len(with_lean_consumers), 7)
         docs_only = [v for v in verdicts if not v.consumers]
@@ -2602,12 +1964,19 @@ class ExitCodeTest(unittest.TestCase):
         return code, buffer.getvalue()
 
     def test_keeper_exits_one(self) -> None:
-        """A candidate that is not safe fails the run."""
+        """A candidate the scan shows to be kept fails the run."""
         code, _out = self.run_main(["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"])
-        self.assertEqual(code, dcs.EXIT_NOT_SAFE)
+        self.assertEqual(code, dcs.EXIT_KEPT)
 
-    def test_isolated_candidate_exits_zero(self) -> None:
-        """The exit-0 path must stay reachable, or the tool blocks everything."""
+    def test_an_uncertain_candidate_exits_zero_without_authorising_anything(self) -> None:
+        """Exit 0 now means "the scan completed and its ledger balanced".
+
+        The candidate below was the one declaration of the fixtures with no
+        consumer and no citation this scan could read; under INV-CHARGE it is
+        charged by the wide labels of ``docs/index.md`` and comes out
+        ``uncertain``. Exit 0 must therefore not be readable as permission, so
+        the run is asserted to print no authorising word.
+        """
         code, out = self.run_main(
             [
                 "--name",
@@ -2616,7 +1985,10 @@ class ExitCodeTest(unittest.TestCase):
             ]
         )
         self.assertEqual(code, dcs.EXIT_OK, out)
-        self.assertIn("safe-to-delete: 1", out)
+        self.assertIn("uncertain: 1", out)
+        self.assertIn("no-citation-found: 0", out)
+        self.assertNotIn("safe-to-delete", out)
+        self.assertIn("EMITS NO DELETION AUTHORISATION", out)
 
     def test_report_only_exits_zero_with_the_non_evidential_banner(self) -> None:
         """Exploration mode is allowed, but must announce that it is not evidence."""
@@ -2627,7 +1999,7 @@ class ExitCodeTest(unittest.TestCase):
         self.assertIn("NON-EVIDENTIAL", out)
 
     def test_unknown_name_is_a_hard_failure(self) -> None:
-        """A stale candidate list must never be reported as deletable."""
+        """A stale candidate list must never be reported as uncited."""
         code, _out = self.run_main(["--name", "no_such_declaration_anywhere_xyzzy"])
         self.assertEqual(code, dcs.EXIT_INCONSISTENT)
 
@@ -2672,6 +2044,453 @@ class DeterminismAndCostTest(unittest.TestCase):
         started = time.time()
         dcs.classify(parsed, names, docs(), allow_homonym=False)
         self.assertLess(time.time() - started, max(_LOAD_SECONDS, 1.0) * 4)
+
+
+class FailClosedChargingTest(unittest.TestCase):
+    """INV-CHARGE: no citation channel may convert "unread" into "uncited".
+
+    Each method below is the *witness* of one mutation in the #4792 table, and
+    :class:`MutationMetaTest` applies that mutation to the production symbols and
+    asserts this witness turns red. A witness nobody can break is decoration.
+
+    The synthetic tree holds one three-member family plus a decoy, which is the
+    smallest shape that distinguishes "charge the matches" from every selection
+    rule the four preceding PRs shipped: the decoy shares the suffix but not the
+    prefix, so a rule charging only same-line-prefix siblings leaves it uncited.
+    """
+
+    TREE = {
+        "IsingModel/SynthCharge.lean": (
+            "namespace IsingModel\n"
+            "theorem alpha_xyzzy_continuous_gen : True := trivial\n"
+            "theorem alpha_xyzzy_differentiable_gen : True := trivial\n"
+            "theorem gamma_xyzzy_differentiable_gen : True := trivial\n"
+            "end IsingModel\n"
+        )
+    }
+    TARGETS = [
+        "IsingModel.alpha_xyzzy_differentiable_gen",
+        "IsingModel.gamma_xyzzy_differentiable_gen",
+    ]
+
+    def doc(self, text: str, tokens: list[tuple[str, int]]) -> dcs.DocSource:
+        """Return a documentation source carrying ``text`` and ``tokens``."""
+        return dcs.DocSource(
+            label="docs/index.md",
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=tokens,
+            unreadable=[],
+        )
+
+    def verdicts(
+        self, tokens: list[tuple[str, int]], text: str = "citation\n"
+    ) -> dict[str, dcs.Verdict]:
+        """Classify both ``_differentiable_gen`` declarations against one doc line."""
+        classified = dcs.classify(
+            synthetic_tree(self.TREE), self.TARGETS, [self.doc(text, tokens)],
+            allow_homonym=False,
+        )[0]
+        return {verdict.decl.final: verdict for verdict in classified}
+
+    def test_M3_a_bare_family_label_charges_every_member(self) -> None:
+        """M3: a suffix naming three declarations, on a line eliding nothing.
+
+        This is the ``_ferromagnetic`` trap and the live leak of #4792: the label
+        matched two or more declarations, so it was "attributed to nobody" and
+        every declaration it named could be reported uncited. Both members are
+        charged now, including the one whose prefix nobody wrote down.
+        """
+        by_final = self.verdicts([("_differentiable_gen", 1)], "the labels\n")
+        for final, verdict in by_final.items():
+            self.assertEqual(verdict.verdict, dcs.UNCERTAIN, final)
+            self.assertTrue(
+                any(
+                    citation.startswith("shorthand docs/index.md:1:")
+                    and "_differentiable_gen" in citation
+                    for citation in verdict.doc_citations
+                ),
+                (final, verdict.doc_citations),
+            )
+
+    def test_M5_a_suffix_charges_the_sibling_whose_prefix_is_absent(self) -> None:
+        """M5: the elided-prefix selection is gone, so the decoy is charged too.
+
+        ``elided_prefix_matches`` charged only the matches whose elided prefix
+        was itself cited on the line. It was a real repair of a real leak, and it
+        was still a selection: the sibling nobody spelled out kept coming back
+        uncited. Both are charged whatever the line spells.
+        """
+        by_final = self.verdicts(
+            [("alpha_xyzzy_continuous_gen", 1), ("_differentiable_gen", 1)],
+            "`alpha_xyzzy_continuous_gen` + `_differentiable_gen`\n",
+        )
+        self.assertEqual(
+            [by_final[final].verdict for final in sorted(by_final)],
+            [dcs.UNCERTAIN, dcs.UNCERTAIN],
+        )
+
+    def test_M4_a_glob_above_any_threshold_is_charged(self) -> None:
+        """M4: eleven matches used to charge nobody; the count is gone."""
+        body = "namespace IsingModel\n" + "".join(
+            f"theorem wide_{index}_tendsto : True := trivial\n" for index in range(11)
+        ) + "end IsingModel\n"
+        synthetic = synthetic_tree({"IsingModel/SynthWide.lean": body})
+        names = [f"IsingModel.wide_{index}_tendsto" for index in range(11)]
+        verdicts, _cascade, wide = dcs.classify(
+            synthetic, names, [self.doc("citation\n", [("wide_*_tendsto", 1)])],
+            allow_homonym=False,
+        )
+        self.assertEqual([verdict.verdict for verdict in verdicts], [dcs.UNCERTAIN] * 11)
+        self.assertEqual(wide, {"docs/index.md:1 `wide_*_tendsto`": 11})
+
+    def test_M1_M2_every_unresolvable_spelling_charges_every_candidate(self) -> None:
+        """M1/M2/E0/E4/E5: the unreadable spellings, as a table and as a property.
+
+        The table is the eight shapes that reached ``matched is None`` or
+        ``matched == []`` or never reached resolution at all -- a bare wildcard,
+        an unbalanced brace, an unsupported slash, a qualified-but-not-fully
+        qualified glob, a glob matching nothing, a name that is not a name. The
+        property is the one that cannot be satisfied by teaching the parser a
+        ninth spelling: **every** token of a documentation line either charges at
+        least one declaration or charges every candidate.
+        """
+        unresolvable = [
+            "*",
+            "...",
+            "magnetizationAlongExhaustion_{neg_h",
+            "truncated5/6Infinite_latticeGraph_beta_zero",
+            "IsingModel.Ns.*a*b*",
+            "alpha_no_such_name_*",
+            "IsingModel.qualified.*.glob_*",
+            "a.e",
+        ]
+        for token in unresolvable:
+            with self.subTest(token=token):
+                by_final = self.verdicts([(token, 1)])
+                for final, verdict in by_final.items():
+                    self.assertEqual(verdict.verdict, dcs.UNCERTAIN, (token, final))
+                    self.assertTrue(
+                        any(
+                            citation.startswith("unresolved ")
+                            for citation in verdict.doc_citations
+                        ),
+                        (token, final, verdict.doc_citations),
+                    )
+
+    def test_M1_the_disposition_function_is_total(self) -> None:
+        """The property behind the table: every token gets a disposition.
+
+        Quantified over the tokens of the *real* documentation rather than over a
+        list somebody maintains, so a spelling nobody thought of is covered by
+        construction. ``exact``/``charged``/``unresolved`` are the three of
+        INV-CHARGE; there is no fourth, and no token is missing.
+        """
+        parsed, sources = tree(), docs()
+        dcs.classify(parsed, ["pseudoMassG_analyticAt"], sources, allow_homonym=False)
+        for doc in sources:
+            self.assertEqual(
+                {(token, line) for line, token in doc.dispositions},
+                set(doc.tokens),
+                doc.label,
+            )
+            self.assertLessEqual(
+                set(doc.dispositions.values()), {"exact", "charged", dcs.UNRESOLVED}
+            )
+
+    def test_M8_unrelated_is_a_fact_about_the_declaration_table(self) -> None:
+        """M8: the ledger's one excuse may not become a judgement about prose.
+
+        A lowercase single word is exactly what a prose heuristic would excuse,
+        and exactly what a declaration named ``window`` makes a citation. The
+        excuse is therefore substring containment against the declaration table:
+        a shard sharing an identifier run with some declaration is never
+        ``unrelated``, whatever it looks like.
+        """
+        synthetic = synthetic_tree(
+            {
+                "IsingModel/SynthWord.lean": (
+                    "namespace IsingModel\n"
+                    "theorem derivativeLimit_on_window : True := trivial\n"
+                    "end IsingModel\n"
+                )
+            }
+        )
+        doc = self.doc("`window` and `zzqqxx`\n", [])
+        doc.spans = [("window", 1), ("zzqqxx", 1)]
+        with self.assertRaises(dcs.Inconsistency) as caught:
+            dcs.ledger_check(synthetic, [doc])
+        self.assertIn("'window'", str(caught.exception))
+        self.assertNotIn("zzqqxx", str(caught.exception))
+        doc.dispositions[(1, "window")] = dcs.UNRESOLVED
+        self.assertEqual(
+            dcs.ledger_check(synthetic, [doc]),
+            {"exact": 0, "charged": 0, dcs.UNRESOLVED: 1, "unrelated": 1, "residue": 0},
+        )
+
+
+class LedgerTest(unittest.TestCase):
+    """INV-LEDGER: every code-span shard reaches a disposition, or the run aborts."""
+
+    def test_the_real_documentation_balances(self) -> None:
+        """The whole corpus accounts for every shard, with no residue."""
+        parsed, sources = tree(), docs()
+        dcs.classify(parsed, ["pseudoMassG_analyticAt"], sources, allow_homonym=False)
+        counts = dcs.ledger_check(parsed, sources)
+        self.assertEqual(counts["residue"], 0)
+        shards = sum(len(dcs.ledger_shards(doc)) for doc in sources)
+        self.assertEqual(sum(counts.values()), shards)
+        self.assertGreater(shards, 50000)
+
+    def test_M6_a_narrowed_tokenizer_is_caught_as_residue(self) -> None:
+        """M6: drop the brace-bearing tokens and the accounting must fail.
+
+        This is the mutation the ledger exists for. It is applied to the
+        production tokenizer, and the shards it removes are citation-shaped, so
+        they cannot be excused as ``unrelated`` and land in ``residue``.
+        """
+        parsed = tree()
+        doc = _scratch_source("see `a_{x, y}_b` and `plain_z`\n")
+        self.assertIn("a_{x,y}_b", [token for token, _line in doc.tokens])
+        original = dcs._citation_tokens
+        dcs._citation_tokens = lambda body: [  # noqa: E731 - deliberate mutation
+            token for token in original(body) if "{" not in token
+        ]
+        try:
+            mutated = _scratch_source(
+                "see `magnetizationAlongExhaustion_{neg_h, nonneg}`\n"
+            )
+        finally:
+            dcs._citation_tokens = original
+        for (line, token) in mutated.tokens:
+            mutated.dispositions[(line, token)] = dcs.UNRESOLVED
+        with self.assertRaises(dcs.Inconsistency) as caught:
+            dcs.ledger_check(parsed, [mutated])
+        self.assertIn("reached no disposition", str(caught.exception))
+
+    def test_the_ledger_lexer_does_not_use_the_tokenizer_it_audits(self) -> None:
+        """Independence, asserted by breaking the tokenizer and re-lexing.
+
+        A conservation check whose two sides share a lexer balances under any
+        lexer bug, which is how a suite passes under the mutation representing
+        the real defect. So the audit lexer is re-derived from the span bodies,
+        and this test proves it by making every tokenizer symbol raise.
+        """
+        sources = docs()
+        expected = {doc.label: len(dcs.ledger_shards(doc)) for doc in sources}
+
+        def explode(*_args: object, **_kwargs: object) -> list[str]:
+            raise AssertionError("the ledger lexer called the tokenizer it audits")
+
+        saved = (dcs._citation_tokens, dcs._brace_grouped_pieces, dcs.expand_citation_token)
+        dcs._citation_tokens = explode
+        dcs._brace_grouped_pieces = explode
+        dcs.expand_citation_token = explode
+        try:
+            observed = {doc.label: len(dcs.ledger_shards(doc)) for doc in sources}
+        finally:
+            (
+                dcs._citation_tokens,
+                dcs._brace_grouped_pieces,
+                dcs.expand_citation_token,
+            ) = saved
+        self.assertEqual(observed, expected)
+        self.assertGreater(sum(observed.values()), 50000)
+
+    def test_coverage_is_exact_and_not_substring(self) -> None:
+        """A neighbouring token may not certify a dropped shard as read.
+
+        Substring coverage is the "archive tag resolves unconditionally" shape:
+        the token ``neg_h`` sits inside the dropped shard
+        ``magnetizationAlongExhaustion_{neg_h``, so a containment test would file
+        the drop as accounted for.
+        """
+        parsed = tree()
+        doc = dcs.DocSource(
+            label="docs/index.md",
+            text="",
+            starts=[0],
+            tokens=[],
+            unreadable=[],
+            spans=[("magnetizationAlongExhaustion_{neg_h nonneg}", 1)],
+        )
+        doc.dispositions[(1, "nonneg}")] = "charged"
+        doc.dispositions[(1, "neg_h")] = "charged"
+        with self.assertRaises(dcs.Inconsistency) as caught:
+            dcs.ledger_check(parsed, [doc])
+        self.assertIn("magnetizationAlongExhaustion_{neg_h", str(caught.exception))
+
+
+class VerdictVocabularyTest(unittest.TestCase):
+    """M9: the tool must emit no word a reader can take for permission.
+
+    The rename is the operative half of the repair. A tool that charges every
+    citation channel and still prints ``safe-to-delete`` is the worst
+    intermediate state, because the word -- not the verdict semantics -- is what
+    a human or an agent reads as authorisation.
+    """
+
+    def test_no_authorising_label_is_emitted(self) -> None:
+        """Neither the verdict vocabulary nor the banner says "safe"."""
+        self.assertEqual(dcs.NO_CITATION, "no-citation-found")
+        for verdict in dcs.VERDICT_ORDER:
+            self.assertNotIn("safe", verdict)
+            self.assertNotIn("delete", verdict)
+        self.assertNotIn("safe-to-delete", dcs.BANNER)
+        self.assertIn("EMITS NO DELETION AUTHORISATION", dcs.BANNER)
+        self.assertFalse(hasattr(dcs, "SAFE"))
+
+    def test_the_removed_selectors_are_gone_rather_than_narrowed(self) -> None:
+        """The exoneration machinery must not survive under a new calibration."""
+        for symbol in (
+            "MAX_CHARGED_GLOB_MATCHES",
+            "elided_prefix_matches",
+            "_is_chargeable_resolved_glob",
+            "_resolved_head_is_immediate_sibling",
+            "_cited_declaration_names",
+            "_citation_nameish",
+            "_nameish",
+        ):
+            self.assertFalse(hasattr(dcs, symbol), symbol)
+
+
+class MutationMetaTest(unittest.TestCase):
+    """M10: every mutation must turn its named witness red, checked in-process.
+
+    A mutation table nobody runs is a promise. This runs each one against the
+    production symbol and asserts the witness fails -- the direct answer to a
+    suite that stayed green under the exact mutation representing the real bug.
+    """
+
+    def run_witness(self, case: str) -> bool:
+        """Return whether the named test passes right now."""
+        suite = unittest.TestLoader().loadTestsFromName(case, sys.modules[__name__])
+        result = unittest.TextTestRunner(
+            stream=io.StringIO(), verbosity=0
+        ).run(suite)
+        return result.wasSuccessful()
+
+    def test_each_mutation_turns_its_witness_red(self) -> None:
+        """The table of #4792 §6, applied for real.
+
+        Each mutation restores one exoneration exactly as it used to read -- a
+        resolution that charges **nobody** (``[]``) or that charges a *selection*
+        of its matches -- because a mutation that merely makes the resolver fail
+        would be charged to every candidate by the very rule under test and
+        would leave the witness green for the wrong reason.
+        """
+        def exonerate_family_labels() -> object:
+            """M3: a multi-match suffix label is attributed to nobody again."""
+            original = dcs._resolve_fragment
+
+            def labelled(tree_, name, cache):
+                matched = original(tree_, name, cache)
+                if matched and len(matched) > 1 and name.startswith(("_", ".")):
+                    return []
+                return matched
+
+            dcs._resolve_fragment = labelled
+            return original
+
+        def select_one_match() -> object:
+            """M5: a multi-match suffix charges a *selection* of its matches."""
+            original = dcs._resolve_fragment
+
+            def selected(tree_, name, cache):
+                matched = original(tree_, name, cache)
+                if matched and len(matched) > 1 and name.startswith(("_", ".")):
+                    return matched[:1]
+                return matched
+
+            dcs._resolve_fragment = selected
+            return original
+
+        def restore_threshold() -> object:
+            """M4: a glob naming more than ten declarations charges nobody."""
+            original = dcs._resolve_fragment
+
+            def capped(tree_, name, cache):
+                matched = original(tree_, name, cache)
+                return [] if matched and len(matched) > 10 else matched
+
+            dcs._resolve_fragment = capped
+            return original
+
+        def skip_unresolved() -> object:
+            """M1/M2: an unresolvable citation is skipped again."""
+            original = dcs._apply_doc_channel
+
+            def without_unresolved(tree_, verdicts, sources, wide):
+                original(tree_, verdicts, sources, wide)
+                for verdict in verdicts:
+                    verdict.doc_citations = [
+                        citation
+                        for citation in verdict.doc_citations
+                        if not citation.startswith("unresolved ")
+                    ]
+
+            dcs._apply_doc_channel = without_unresolved
+            return original
+
+        def prose_excuse() -> object:
+            """M8: ``unrelated`` becomes a judgement about the shard's shape."""
+            original = dcs._LEDGER_RUN_RE
+            dcs._LEDGER_RUN_RE = re.compile(r"[A-Z][0-9A-Za-z_']{2,}")
+            return original
+
+        def refuting_span() -> object:
+            """M7: an unreadable LaTeX span may deny a candidate again."""
+            original = dcs.UnreadableSpan.refutes
+            dcs.UnreadableSpan.refutes = property(lambda self: True)
+            return original
+
+        def restore_the_authorising_label() -> object:
+            """M9: the weakest verdict is called ``safe-to-delete`` again."""
+            original = dcs.NO_CITATION
+            dcs.NO_CITATION = "safe-to-delete"
+            return original
+
+        cases = (
+            ("M1/M2", skip_unresolved, "_apply_doc_channel",
+             "FailClosedChargingTest."
+             "test_M1_M2_every_unresolvable_spelling_charges_every_candidate"),
+            ("M3", exonerate_family_labels, "_resolve_fragment",
+             "FailClosedChargingTest.test_M3_a_bare_family_label_charges_every_member"),
+            ("M4", restore_threshold, "_resolve_fragment",
+             "FailClosedChargingTest.test_M4_a_glob_above_any_threshold_is_charged"),
+            ("M5", select_one_match, "_resolve_fragment",
+             "FailClosedChargingTest."
+             "test_M5_a_suffix_charges_the_sibling_whose_prefix_is_absent"),
+            ("M7", refuting_span, "UnreadableSpan.refutes",
+             "UnreadableCitationTest.test_no_span_shape_may_refute"),
+            ("M8", prose_excuse, "_LEDGER_RUN_RE",
+             "FailClosedChargingTest."
+             "test_M8_unrelated_is_a_fact_about_the_declaration_table"),
+            ("M9", restore_the_authorising_label, "NO_CITATION",
+             "VerdictVocabularyTest.test_no_authorising_label_is_emitted"),
+        )
+        survived = []
+        for label, mutate, attribute, witness in cases:
+            original = mutate()
+            try:
+                if self.run_witness(witness):
+                    survived.append(f"{label}: {witness} still passes")
+            finally:
+                if attribute == "UnreadableSpan.refutes":
+                    dcs.UnreadableSpan.refutes = original
+                else:
+                    setattr(dcs, attribute, original)
+        self.assertEqual(survived, [])
+
+
+def _scratch_source(text: str) -> dcs.DocSource:
+    """Return the ``DocSource`` of a scratch Markdown file carrying ``text``."""
+    scratch = dcs.REPO_ROOT / ".self-local" / "tmp"  # gitignored, inside the root
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=scratch) as tmp:
+        path = Path(tmp) / "note.md"
+        path.write_text(text, encoding="utf-8")
+        return dcs._markdown_source(path)
 
 
 def run_suite() -> int:

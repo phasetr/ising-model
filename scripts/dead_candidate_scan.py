@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""Deletion-candidate safety scanner for the IsingModel Lean library.
+"""Documentation-citation evidence lister for the IsingModel Lean library.
 
-Answers one question, mechanically and reproducibly: *is it safe to delete
-these declarations?* It is a pre-flight for a destructive operation, not a
-health gate, so it lives outside ``audit_gate.py`` (whose V1-V4 run on every
-push and must stay sub-second) while **importing** that module's validated
-primitives -- ``strip_noncode``, ``read_capstones``, ``REPO_ROOT``, ``LIB_DIR``,
-``rel`` -- so the repository keeps a single comment/string stripper.
+Answers one question, mechanically and reproducibly: *what evidence is there
+that these declarations are still referenced?* It is a pre-flight for a
+destructive operation, not a health gate, so it lives outside ``audit_gate.py``
+(whose V1-V4 run on every push and must stay sub-second) while **importing**
+that module's validated primitives -- ``strip_noncode``, ``read_capstones``,
+``REPO_ROOT``, ``LIB_DIR``, ``rel`` -- so the repository keeps a single
+comment/string stripper.
+
+It no longer answers "is it safe to delete this". Issue #4792 records why: four
+successive PRs taught the citation parser one more spelling each
+(#4815/#4816/#4817/#4819) and released no exclusion, deleted no declaration and
+recovered no build time, because each of them repaired a *symptom* of one
+structural defect -- a parser that could not read a citation exonerated the
+declarations that citation might name. The exoneration is gone (INV-CHARGE
+below), and with it the ``safe-to-delete`` verdict; what is left is an evidence
+lister for a human keep-check.
 
 Why the tool exists
 -------------------
@@ -39,17 +49,28 @@ A third rule follows from the first two and is just as load-bearing:
    candidate really goes away. Candidates the run itself retains -- published,
    uncertain, attribute- or kind-driven -- are therefore removed from the delete
    set *before* the fixpoint, never after. Seeding the fixpoint with every
-   candidate reports a lemma as safe because its only consumer is a lemma the
-   same report tells you to keep: a false ``safe-to-delete``, which for a tool
-   that authorises deletions is the only fatal error class.
+   candidate reports a lemma as uncited because its only consumer is a lemma the
+   same report tells you to keep: a false "no citation", which for a tool whose
+   output is read as pre-flight evidence is the only fatal error class.
 
-4. **A documentation citation that cannot be read charges every candidate.** The
-   LaTeX macro table is incomplete by construction, so the normaliser meets
-   spans it cannot resolve. Counting them as coverage warnings is not enough: a
-   warning that changes no verdict and no exit code leaves the tool fail-open
-   exactly where it claims to be fail-closed. Each unreadable span is therefore
-   charged to **every** candidate name, and those candidates come out
-   ``uncertain``, never ``safe-to-delete``.
+4. **No citation channel may exonerate. INV-CHARGE:** for every name ``n``
+   obtained by expanding a documentation citation token, the scan performs
+   exactly one of -- (a) record an exact citation for the declaration(s) ``n``
+   names; (b) charge **every** declaration ``n`` resolves to, whatever the match
+   count; (c) charge **every** candidate, when ``n`` cannot be resolved at all.
+   There is no branch that records nothing. The rule covers the unreadable LaTeX
+   span (:meth:`UnreadableSpan.could_cite`, already charge-only), the
+   unrecognised spelling, the unbalanced brace, the unsupported slash form, the
+   bare wildcard, and -- the one that actually mattered -- the wide family label
+   (``_nonneg``, ``correlation_*_*``), which until this revision was "attributed
+   to nobody" and therefore silently exonerated 1,061 multi-match expansions.
+   The price is stated plainly in :data:`LIMITATIONS` L11 and in §5 of
+   ``.self-local/reports/design-4792-fail-closed-terminal.md``: charging
+   everything the documentation could be naming leaves essentially nothing
+   uncited, so the tool stops being a classifier. That is the correct answer for
+   this corpus, not a tuning failure -- ``docs/index.md:2065`` writes the prose
+   sentence "No ``IsingModel.*`` semantics changed", which is locally
+   indistinguishable from a citation of all 10,548 declarations it names.
 
 5. **The Markdown channel has the same failure mode, through backtick parity.**
    Code spans are paired positionally, so a single unbalanced backtick inverts
@@ -67,17 +88,27 @@ A third rule follows from the first two and is just as load-bearing:
    its two delimiters and never with its body, and an odd number of runs is
    reported as well (:func:`unbalanced_fence_run`).
 
-   The channel is deliberately *charge-only*: no span may deny a candidate.
-   Seven successive attempts to decide *which* names an unread span could not be
-   citing produced seven fail-open leaks of one shape -- text the normaliser had
-   not explained (a macro argument, a second word, the argument of an unbraced
-   accent) was read as literal name evidence and refuted the very name the macro
-   spelled, so the citation was charged to nobody and the name it hid fell out
-   as ``safe-to-delete``. Refutation from partially read TeX is not robustly
-   implementable, so :attr:`UnreadableSpan.refutes` is now ``False``
-   unconditionally and the rule set it gated is gone. Over-charging costs
-   ``uncertain`` verdicts and nothing else; on the real guide it costs nothing,
-   since the guide leaves no unreadable span at all.
+6. **A silent drop is structurally impossible, because the shards are counted.**
+   INV-LEDGER: the whitespace-separated shards of every code-span body are
+   re-derived by :func:`ledger_shards`, a lexer that shares no code with
+   :func:`_citation_tokens`, and every shard must reach a disposition
+   (``exact``/``charged``/``unresolved-charged``, or ``unrelated`` -- the single
+   permitted excuse, and a decidable fact about the declaration table rather
+   than a judgement about prose). A shard that reaches none is ``residue`` and
+   aborts the run with exit code 2. A conservation check computed twice with the
+   same tokenizer balances under any tokenizer bug, which is exactly how a suite
+   passes under the mutation representing the real defect; the independence is
+   therefore the point, not an implementation detail.
+
+The TeX channel is the oldest instance of INV-CHARGE and states its price best.
+Seven successive attempts to decide *which* names an unread span could not be
+citing produced seven fail-open leaks of one shape -- text the normaliser had
+not explained (a macro argument, a second word, the argument of an unbraced
+accent) was read as literal name evidence and refuted the very name the macro
+spelled, so the citation was charged to nobody and the name it hid fell out as
+deletable. Refutation from partially read TeX is not robustly implementable, so
+:attr:`UnreadableSpan.refutes` is now ``False`` unconditionally and the rule set
+it gated is gone. Over-charging costs ``uncertain`` verdicts and nothing else.
 
 Boundary predicate
 ------------------
@@ -87,7 +118,7 @@ characters while ``lambda``/``Pi``/``Sigma`` are not -- Lean reserves those).
 The error directions are asymmetric and the invariant is therefore one-sided:
 
 * class too **wide**  -> real matches rejected -> references under-counted ->
-  **false safe-to-delete**. Catastrophic.
+  **a declaration falsely reported uncited**. Catastrophic.
 * class too **narrow** -> longer identifiers split -> references over-counted ->
   false load-bearing. Merely annoying.
 
@@ -102,11 +133,12 @@ Usage
     python3 scripts/dead_candidate_scan.py --expect scripts/audit/dead_candidate_fixtures.tsv
     python3 scripts/dead_candidate_scan.py --self-test
 
-Exit codes: ``0`` every candidate is ``safe-to-delete`` (or ``--report-only`` /
-``--expect`` satisfied); ``1`` at least one candidate is not safe; ``2``
+Exit codes: ``0`` the scan completed and its shard accounting balanced (it is
+**not** a deletion authorisation, and no output of this tool is one); ``1`` at
+least one candidate is load-bearing or published, i.e. demonstrably kept; ``2``
 internal inconsistency (canary failure, escaped identifier, candidate/index
-disagreement, unknown candidate name, unreadable file). **``2`` must never be
-swallowed by a PR script.**
+disagreement, unknown candidate name, unreadable file, ledger residue).
+**``2`` must never be swallowed by a PR script.**
 """
 
 from __future__ import annotations
@@ -136,15 +168,21 @@ DOCS_DIR = REPO_ROOT / "docs"
 README = REPO_ROOT / "README.md"
 TEX_GUIDE = REPO_ROOT / "tex" / "proof-guide.tex"
 
-# Verdicts, ordered by decreasing severity for reporting.
+# Verdicts, ordered by decreasing severity for reporting. The weakest one is
+# deliberately named after the *evidence* and not after an action: it says a
+# citation was not found, which is a fact about this scan, where
+# ``safe-to-delete`` asserted an authorisation no textual scan can support. The
+# rename is the operative half of the #4792 repair -- a tool that charges every
+# citation channel and still prints "safe" is the worst intermediate state,
+# because the word is what a human or an agent reads as permission.
 PUBLISHED = "published-result"
 LOAD_BEARING = "load-bearing"
 UNCERTAIN = "uncertain"
-SAFE = "safe-to-delete"
-VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN, SAFE)
+NO_CITATION = "no-citation-found"
+VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN, NO_CITATION)
 
 EXIT_OK = 0
-EXIT_NOT_SAFE = 1
+EXIT_KEPT = 1
 EXIT_INCONSISTENT = 2
 
 
@@ -315,7 +353,7 @@ DECL_KINDS = (
     "example",
 )
 # Kinds whose deletion changes the surface API rather than only a proof: forced
-# out of ``safe-to-delete`` because this tool is aimed at dead *lemmas*.
+# out of ``no-citation-found`` because this tool is aimed at dead *lemmas*.
 SURFACE_KINDS = frozenset({"structure", "class", "inductive", "abbrev", "def", "instance"})
 
 # Attributes that make a declaration reachable by *tactics* rather than by name.
@@ -1096,7 +1134,7 @@ class UnreadableSpan:
         one opened a new fail-open face through the same move: material the
         normaliser had not explained was read as literal name evidence and
         refuted the name it actually spelled, so the citation was charged to
-        nobody and the name it hid could come out `safe-to-delete`.
+        nobody and the name it hid could come out uncited.
 
         The last of them is why the rules were dropped rather than extended
         again. Macro arguments were swallowed with their macro so that
@@ -1109,7 +1147,7 @@ class UnreadableSpan:
         refutation at all.
 
         Charging every candidate can only produce `uncertain` verdicts, never a
-        false `safe-to-delete`. On the real guide it costs nothing at all: the
+        false "no citation". On the real guide it costs nothing at all: the
         coverage warnings are zero, so no candidate is charged this way today.
         """
         return False
@@ -1279,9 +1317,9 @@ def unpaired_backticks(text: str) -> dict[int, int]:
         text = "start ```\\ncite `_alpha_gen` here\\nand `beta{,_two}_gen`\\nend ```\\n"
 
     Measured on that text, whole-match covering returns ``{}`` while both
-    citations are gone: the fenced body is tokenized by whitespace, and
-    :func:`_nameish` rejects the pieces that still carry a backtick, so neither
-    shape -- and neither has a verbatim fallback -- reaches a verdict. A fenced
+    citations are gone: the fenced body is tokenized by whitespace, and the
+    pieces that still carry a backtick spell no declaration, so neither shape --
+    and neither has a verbatim fallback -- names its result. A fenced
     match is therefore credited with its two delimiters only, and the backticks
     in its body are reported like any other, which is what makes
     :func:`_markdown_source` re-read those lines. A fenced block that
@@ -1340,10 +1378,9 @@ def pairing_independent_tokens(line: str) -> list[str]:
     fail-closed rather than a second guess: on a line whose parity is broken it
     can add citations, never drop one, whichever way the parity ran.
 
-    The price is prose read as a citation, and it is small by construction: a
-    token only reaches a verdict if it carries ``{``, ``*``, ``..`` or a leading
-    ``_``/``.`` (see :func:`_apply_doc_channel`), and every such token can only
-    *keep* a candidate.
+    The price is prose read as a citation, and under INV-CHARGE that price is
+    paid deliberately: every token can only *keep* a candidate, never release
+    one.
     """
     out: list[str] = []
     for chunk in line.split("`"):
@@ -1351,23 +1388,11 @@ def pairing_independent_tokens(line: str) -> list[str]:
     return out
 
 
-def _nameish(token: str) -> bool:
-    """Return whether ``token`` could be a declaration name or a name pattern."""
-    token = token.strip()
-    if not token or " " in token:
-        return False
-    if not ("_" in token or "." in token):
-        return False
-    if token.endswith(".lean"):
-        return False
-    allowed = set("._{},*")
-    return all(is_id_rest(char) or char in allowed for char in token)
-
-
-def _citation_nameish(token: str) -> bool:
-    """Recognise existing name shapes plus the one supported slash shorthand."""
-    token = token.strip()
-    return _nameish(token) or expand_slash_alternation(token) != [token]
+# The punctuation a citation may carry from the surrounding prose. Trimmed from
+# both ends of every shard; :func:`ledger_shards` re-declares it rather than
+# importing it, so a change here that the ledger does not follow is caught as
+# residue instead of silently shrinking the token population.
+TOKEN_PUNCTUATION = ",.;:()"
 
 
 def _brace_grouped_pieces(body: str) -> list[str]:
@@ -1380,14 +1405,16 @@ def _brace_grouped_pieces(body: str) -> list[str]:
     :func:`_citation_tokens` did alone) cuts that citation at each comma-space,
     and the pieces are not names: ``..._{continuousAt`` has no closing brace, so
     :func:`expand_braces` finds no group and returns it verbatim, matching
-    nothing; ``field,`` and ``J,`` carry no ``_`` and :func:`_nameish` drops
-    them. The whole citation therefore reaches no verdict, and -- a brace
-    shorthand having no verbatim fallback -- the eight results it names come out
-    uncited. Measured on the scanned documentation at ``2380eb36``: 133 such
+    nothing, while ``field,`` and ``J,`` name nothing on their own. The eight
+    results the citation abbreviates are therefore named by no shard of it, and
+    a brace shorthand has no verbatim fallback. (Since the #4792 repair the
+    shards are at least *charged*, because an unresolvable token charges every
+    candidate; the grouped token is what keeps that charge precise rather than
+    global.) Measured on the scanned documentation at ``2380eb36``: 133 such
     name-shaped tokens (102 in ``docs/index.md``, 31 in ``tex/proof-guide.tex``),
     108 of which expand onto 307 real declarations, 160 of those declarations
-    reading ``safe-to-delete`` in a whole-library sweep with this citation as
-    their only one -- the fatal error class.
+    reading "no citation in the scanned documentation" in a whole-library sweep
+    with this citation as their only one -- the fatal error class.
 
     Whitespace *inside* a brace group is layout, so it is dropped rather than
     split on; :func:`expand_braces` already strips each alternative, so the
@@ -1422,38 +1449,39 @@ def _brace_grouped_pieces(body: str) -> list[str]:
 
 
 def _citation_tokens(body: str) -> list[str]:
-    """Return the name-shaped pieces of one citation body, punctuation trimmed.
+    """Return **every** piece of one citation body, punctuation trimmed.
 
-    Both the raw piece and the trimmed one are tested, because either order
-    alone loses a shape, silently. Testing *before* trimming rejects a brace
-    shorthand that carries its sentence punctuation (`` `foo{,_bar}:` ``) on
-    the colon; testing *only* after trimming rejects one whose only ``_``/``.``
-    lived in that punctuation (`` `foo{,bar}.` ``). Neither failure warns -- the
-    token just disappears -- and a brace or glob shorthand, unlike a complete
-    name, has no verbatim search to fall back on. The trimmed form is what is
-    kept: the punctuation is the prose's, not the name's.
+    The function used to keep only the name-shaped pieces (a ``_`` or a ``.``,
+    identifier characters plus ``{},*``). That predicate was a fifth exoneration
+    channel wearing a lexer's clothes: a piece it rejected reached no citation
+    channel at all, so it could not charge, could not warn, and could not be
+    counted -- ``docs/index.md:868`` writes
+    ``magnetizationAlongExhaustion_{neg_h, nonneg}``, whose shard ``c}``-shaped
+    tail was dropped on exactly that ground, and an unsupported slash spelling
+    (``truncated3/4Infinite_...`` outside the two hard-coded forms) was dropped
+    before every later channel including the warning one.
 
-    The body is cut twice: first on every whitespace run, which is what this
-    function has always returned, then on the whitespace outside braces only
-    (:func:`_brace_grouped_pieces`), whose tokens are *appended* when they are
-    new. The output is therefore a superset of the previous one by construction,
-    and a body whose braces carry no whitespace produces the same two lists and
-    so is left byte-for-byte alone.
+    So the shape test is gone and the split is total: the body is cut on every
+    whitespace run, each piece is trimmed of the prose's punctuation
+    (:data:`TOKEN_PUNCTUATION`), and the pieces of the brace-aware split
+    (:func:`_brace_grouped_pieces`) are appended when they are new. Whatever a
+    piece turns out to be, it now reaches :func:`_apply_doc_channel` and gets a
+    disposition there: it names declarations, or it resolves onto some, or it is
+    unresolvable and charges every candidate. Prose read as a citation is the
+    cost, and it is one-sided -- a token can only keep a candidate.
+
+    Duplicate pieces of the whitespace split are kept (``a_dup a_dup`` returns
+    two tokens), because :func:`ledger_shards` counts shards and a deduplicating
+    tokenizer would make the accounting depend on repetition.
     """
-    out: list[str] = []
-    for piece in body.split():
-        trimmed = piece.strip(",.;:()")
-        if trimmed and (_citation_nameish(piece) or _citation_nameish(trimmed)):
-            out.append(trimmed)
+    out = [piece.strip(TOKEN_PUNCTUATION) for piece in body.split()]
     seen = set(out)
     for piece in _brace_grouped_pieces(body):
-        trimmed = piece.strip(",.;:()")
-        if trimmed and trimmed not in seen and (
-            _citation_nameish(piece) or _citation_nameish(trimmed)
-        ):
+        trimmed = piece.strip(TOKEN_PUNCTUATION)
+        if trimmed and trimmed not in seen:
             seen.add(trimmed)
             out.append(trimmed)
-    return out
+    return [token for token in out if token]
 
 
 @dataclass
@@ -1466,6 +1494,8 @@ class DocSource:
     tokens: list[tuple[str, int]]  # (token, line)
     unreadable: list[UnreadableSpan]  # coverage warnings *and* uncertainty triggers
     malformed: list[str] = field(default_factory=list)  # coverage warnings, already repaired
+    spans: list[tuple[str, int]] = field(default_factory=list)  # (code-span body, line)
+    dispositions: dict[tuple[int, str], str] = field(default_factory=dict)
 
 
 def markdown_sources() -> list[Path]:
@@ -1475,7 +1505,7 @@ def markdown_sources() -> list[Path]:
     that cites results: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and ``docs/plans/`` cites
     modules and lemmas of a refactoring plan. Reading only the index made
-    "no documentation citation" -- the sentence a ``safe-to-delete`` verdict
+    "no documentation citation" -- the sentence a ``no-citation-found`` verdict
     prints -- a claim about one file while sounding like a claim about the
     documentation, so the whole set is read.
     """
@@ -1531,10 +1561,12 @@ def _markdown_source(path: Path) -> DocSource:
     raw = _read_doc(path)
     label = rel(path)
     tokens: list[tuple[str, int]] = []
+    spans: list[tuple[str, int]] = []
     starts = line_starts(raw)
     for match in _MD_TOKEN_RE.finditer(raw):
         body = match.group(1) if match.group(1) is not None else (match.group(2) or "")
         lineno = offset_to_line(starts, match.start())
+        spans.append((body, lineno))
         for token in _citation_tokens(body):
             tokens.append((token, lineno))
     malformed: list[str] = []
@@ -1568,6 +1600,7 @@ def _markdown_source(path: Path) -> DocSource:
         tokens=tokens,
         unreadable=[],
         malformed=malformed,
+        spans=spans,
     )
 
 
@@ -1581,8 +1614,10 @@ def load_docs() -> list[DocSource]:
     partial = _normalize_tex_body(raw)
     partial_starts = line_starts(partial)
     tokens = []
+    spans = []
     for body, offset in code_citation_spans(partial):
         lineno = offset_to_line(partial_starts, offset)
+        spans.append((body, lineno))
         for token in _citation_tokens(body):
             tokens.append((token, lineno))
     text, unreadable = normalize_tex(raw)
@@ -1593,6 +1628,7 @@ def load_docs() -> list[DocSource]:
             starts=line_starts(text),
             tokens=tokens,
             unreadable=unreadable,
+            spans=spans,
         )
     )
     return out
@@ -1667,7 +1703,12 @@ def expand_braces(token: str) -> list[str]:
 
 
 def expand_slash_alternation(token: str) -> list[str]:
-    """Expand only the two observed ``truncated3/4Infinite_...`` spellings."""
+    """Expand only the two observed ``truncated3/4Infinite_...`` spellings.
+
+    Any other slash spelling is returned verbatim and is therefore unresolvable,
+    which since the #4792 repair means it charges every candidate rather than
+    disappearing before the tokenizer (:func:`_citation_tokens`).
+    """
     supported = (
         "truncated3/4Infinite_latticeGraph_"
         "{beta_zero,J_zero_of_pairwise_distinct}",
@@ -1688,12 +1729,19 @@ def expand_citation_token(token: str) -> list[str]:
 
 
 def glob_to_regex(token: str) -> re.Pattern[str] | None:
-    """Return an anchored regex for an ellipsis/glob citation, else ``None``."""
+    """Return an anchored regex for an ellipsis/glob citation, else ``None``.
+
+    ``None`` means *unusable*, never *harmless*: a bare wildcard used to be
+    dismissed on the ground that it "names everything and cites nothing", which
+    is an exoneration rule of exactly the class #4792 removed. The caller
+    (:func:`_resolve_fragment`) now turns every ``None`` into ``UNRESOLVED``,
+    and an unresolved citation charges every candidate.
+    """
     if not re.search(r"\.\.\.|\*|\.\.", token):
         return None
     pieces = re.split(r"(\.\.\.|\.\.|\*)", token)
     if not any(piece and piece not in {"...", "..", "*"} for piece in pieces):
-        return None  # a bare wildcard names everything and cites nothing
+        return None  # a bare wildcard: unusable as a pattern, so unresolved
     pattern = "".join(
         ".*?" if piece in {"...", "..", "*"} else re.escape(piece) for piece in pieces
     )
@@ -1724,7 +1772,7 @@ class Verdict:
 
     name: str
     decl: Decl
-    verdict: str = SAFE
+    verdict: str = NO_CITATION
     reasons: list[str] = field(default_factory=list)
     same_file: list[Occurrence] = field(default_factory=list)
     cross_file: list[Occurrence] = field(default_factory=list)
@@ -1773,7 +1821,7 @@ def classify(
     docs: list[DocSource],
     allow_homonym: bool,
 ) -> tuple[list[Verdict], list[str], dict[str, list[str]]]:
-    """Classify every candidate. Return ``(verdicts, cascade, family_labels)``."""
+    """Classify every candidate. Return ``(verdicts, cascade, wide_citations)``."""
     capstones = set(read_capstones())
     capstone_finals = {name.rsplit(".", 1)[-1] for name in capstones}
 
@@ -1832,8 +1880,8 @@ def classify(
         )
 
     # Documentation channel.
-    family_labels: dict[str, list[str]] = {}
-    _apply_doc_channel(tree, verdicts, docs, family_labels)
+    wide_citations: dict[str, int] = {}
+    _apply_doc_channel(tree, verdicts, docs, wide_citations)
 
     graph = build_dependency_graph(tree)
     reverse: dict[str, set[str]] = defaultdict(set)
@@ -1874,7 +1922,7 @@ def classify(
         if decl.kind in SURFACE_KINDS:
             reasons.append(f"`{decl.kind}` deletion changes the surface, not only a proof")
         if verdict.notes or any(
-            cit.startswith(("shorthand ", "module-cited ", "unreadable "))
+            cit.startswith(("shorthand ", "module-cited ", "unreadable ", "unresolved "))
             for cit in verdict.doc_citations
         ):
             uncertain_keys.add(key)
@@ -1883,9 +1931,9 @@ def classify(
     # that is closed under consumers. The closure is only sound over the
     # candidates that are actually going to be deleted, so the ones phase 1
     # already retained are removed *before* the fixpoint runs. Seeding it with
-    # every candidate (as an earlier revision did) declared a candidate safe
-    # because its only consumer was another candidate that the very same run
-    # reported as a keeper -- a false safe-to-delete, the one fatal error class.
+    # every candidate (as an earlier revision did) reported a candidate as
+    # uncited because its only consumer was another candidate that the very same
+    # run reported as a keeper -- the one fatal error class.
     deletable = {
         key
         for key in keyed
@@ -1935,14 +1983,15 @@ def classify(
             )
             continue
 
-        verdict.verdict = SAFE
+        verdict.verdict = NO_CITATION
         verdict.reasons.append(
-            "no reference outside the delete set, no citation in the scanned "
-            "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
+            "no reference outside the delete set and no citation this scan could "
+            "read in README.md, docs/**/*.md or tex/proof-guide.tex -- evidence "
+            "of absence only to the limits in --explain, never an authorisation"
         )
 
     cascade = _cascade(tree, deletable, reverse, graph, key_to_decl)
-    return verdicts, cascade, family_labels
+    return verdicts, cascade, wide_citations
 
 
 def _capstone_closure(graph: dict[str, set[str]], roots: set[str]) -> set[str]:
@@ -2027,257 +2076,94 @@ def _cascade(
     return out
 
 
+UNRESOLVED = "unresolved"  # the disposition of a citation this scan cannot read
+
+
 def _resolve_fragment(
     tree: Tree, name: str, cache: dict[str, list[Decl] | None]
 ) -> list[Decl] | None:
-    """Return the declarations a documentation *fragment* could denote.
+    """Return the declarations a documentation *fragment* denotes, or ``None``.
 
     A fragment is a suffix (``_univ_zero_eq``) or a wildcard citation
-    (``..._J_deriv_eq_le``, ``*_continuous_joint``). ``None`` means the fragment
-    is unusable. Results are cached because documentation repeats the same
-    family labels dozens of times.
+    (``..._J_deriv_eq_le``, ``*_continuous_joint``). ``None`` is ``UNRESOLVED``:
+    the fragment is unusable *or* names nothing, and the caller charges every
+    candidate for it. The two used to be different -- an unreadable spelling
+    returned ``None`` and was skipped, an ``IsingModel.``-qualified glob that is
+    not fully qualified returned ``[]`` and was likewise skipped -- and both
+    spellings of "I did not understand this" were read as "this declaration has
+    no citation". A resolution is therefore either a non-empty match list or
+    ``None``; there is no empty resolution. Results are cached because
+    documentation repeats the same family labels dozens of times.
     """
     if name in cache:
         return cache[name]
     pattern = glob_to_regex(name)
     matched: list[Decl] | None
-    if pattern is not None:
-        if name.startswith("IsingModel."):
-            matched = (
-                [decl for _final, decl in tree.finals if pattern.match(decl.full)]
-                if is_fully_qualified_glob(name)
-                else []
-            )
-        else:
-            matched = [decl for final, decl in tree.finals if pattern.match(final)]
+    if pattern is not None and name.startswith("IsingModel."):
+        matched = (
+            [decl for _final, decl in tree.finals if pattern.match(decl.full)]
+            if is_fully_qualified_glob(name)
+            else None
+        )
+    elif pattern is not None:
+        matched = [decl for final, decl in tree.finals if pattern.match(final)]
     elif name.startswith(("_", ".")):
         matched = [decl for final, decl in tree.finals if final.endswith(name)]
     else:
         matched = None
-    cache[name] = matched
-    return matched
-
-
-def _is_chargeable_resolved_glob(name: str, matched: list[Decl]) -> bool:
-    """Return whether a resolved non-suffix glob may be charged as shorthand."""
-    return (
-        not name.startswith(("_", "."))
-        and ("*" in name or ".." in name)
-        and 1 <= len(matched) <= MAX_CHARGED_GLOB_MATCHES
-    )
-
-
-def _resolved_head_is_immediate_sibling(
-    prefix: str, fragment: str, head: str
-) -> bool:
-    """Return whether ``head`` establishes ``prefix`` for this suffix fragment.
-
-    A resolved glob is weaker than a concrete head citation.  Requiring the
-    first component after the candidate prefix to diverge from the fragment's
-    first component prevents a longer head from licensing its own ancestor
-    family, while the separator boundary rejects lexical-prefix collisions.
-    """
-    if head == prefix:
-        return True
-    separator = fragment[0]
-    boundary = prefix + separator
-    if not head.startswith(boundary):
-        return False
-    head_component = head[len(boundary) :].split(separator, 1)[0]
-    fragment_component = fragment[1:].split(separator, 1)[0]
-    return (
-        bool(head_component)
-        and bool(fragment_component)
-        and head_component != fragment_component
-    )
-
-
-def elided_prefix_matches(
-    fragment: str,
-    matched: list[Decl],
-    cited: set[str],
-    resolved_heads: set[str] | None = None,
-) -> list[Decl]:
-    """Return the matches of a suffix ``fragment`` whose elided prefix is cited too.
-
-    Both documentation files abbreviate a run of sibling results by writing the
-    first one in full and eliding the shared prefix of the rest::
-
-        `magnetizationAlongExhaustion_continuous_beta_gen` + `_differentiable_beta_gen`
-        + `_continuous_field_gen` + ...
-
-    Those suffixes are **not** family labels, but ``_differentiable_beta_gen``
-    matches three declarations (correlation / magnetization / susceptibility),
-    so the family-label rule attributed the citation to nobody and
-    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete`` while docs/index.md:1809 cited it -- a false
-    ``safe-to-delete``, the one fatal error class.
-
-    Charging *every* match instead was measured before it was rejected: 531 of
-    the 759 distinct fragment-shaped tokens that resolve at all match two
-    declarations or more, and charging all of them touches 5895 of the library's
-    11000 declarations, including all 92 currently-safe ``_ferromagnetic``
-    candidates. Swept over the whole library it collapses ``safe-to-delete``
-    from 1458 verdicts to 232 (an 84% reduction) and turns the fixtures red
-    (``--expect``: FAIL, 1 of 18). It is therefore rejected not as
-    unimplementable but as useless: the 232 survivors are what is left after the
-    rule has stopped tracking which citation names which result, so they are not
-    a basis anyone should delete from.
-
-    The rule kept is the one the notation actually states: a match is charged
-    when the prefix the fragment elides is *itself* cited on the same line
-    (2206 charges over 1077 distinct declarations, measured on the scanned
-    documentation). It only ever adds citations, so it can only turn
-    ``safe-to-delete`` into ``uncertain``, never the reverse. It is *not* inert
-    on genuine family labels, and the calibration this module ships is what that
-    costs: on the 223 ``_ferromagnetic`` candidates, switching the rule off
-    leaves 92 ``safe-to-delete`` and switching it on leaves 47. The label
-    ``_ferromagnetic`` is itself charged 155 times (``_pos`` 9 times), because
-    the documentation does spell a sibling out in full on those lines; charging
-    that one label accounts for 13 of the 45 that move, and other elided
-    fragments on the same rows for the remaining 32. What still rescues nobody
-    is a family label on a line that elides nothing -- the label alone, with no
-    prefix anyone wrote down.
-    """
-    glob_heads = resolved_heads or set()
-    out: list[Decl] = []
-    for decl in matched:
-        prefix = decl.final[: len(decl.final) - len(fragment)]
-        if prefix and (
-            any(other.startswith(prefix) for other in cited)
-            or any(
-                _resolved_head_is_immediate_sibling(prefix, fragment, head)
-                for head in glob_heads
-            )
-        ):
-            out.append(decl)
-    return out
-
-
-def _cited_declaration_names(
-    tree: Tree,
-    doc: DocSource,
-    fragment_cache: dict[str, list[Decl] | None],
-) -> tuple[dict[int, set[str]], dict[int, set[str]]]:
-    """Return exact and resolved-glob final-name inventories for each line.
-
-    Exact names retain the legacy elision rule.  Resolved wildcard heads are
-    kept separately so they can use the stricter immediate-sibling boundary in
-    :func:`elided_prefix_matches`.  Both inventories contain only real
-    declarations; prose that merely looks name-shaped cannot license elision.
-    """
-    finals = {final for final, _decl in tree.finals}
-    exact: dict[int, set[str]] = defaultdict(set)
-    resolved: dict[int, set[str]] = defaultdict(set)
-    for token, lineno in doc.tokens:
-        for name in expand_citation_token(token):
-            final = name.rsplit(".", 1)[-1]
-            if final in finals:
-                exact[lineno].add(final)
-            if name.startswith(("_", ".")) or ("*" not in name and ".." not in name):
-                continue
-            matched = _resolve_fragment(tree, name, fragment_cache)
-            if matched is not None and _is_chargeable_resolved_glob(name, matched):
-                resolved[lineno].update(decl.final for decl in matched)
-    return exact, resolved
-
-
-# A glob/ellipsis citation that resolves to at most this many declarations is
-# charged to *all* of them; above it the citation is filed as a family label and
-# charged to nobody. The knob exists because the same "attributed to nobody"
-# exoneration that produced the false ``safe-to-delete`` repaired by
-# :func:`elided_prefix_matches` on the *suffix* channel was still live on the
-# *glob* channel: ``docs/index.md:1427`` writes
-# ``freeEnergyAlongExhaustion_latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,
-# ge_log_two*}``, whose ``ge_log_two*`` alternative names 2 declarations, and
-# ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``, which names 4;
-# both resolve exactly, and both named only declarations the scanner then
-# reported as carrying "no citation in the scanned documentation".
-#
-# Measured on the scanned documentation (main 171ddd4f): 254 occurrences of a
-# non-suffix wildcard token resolving to >= 2 declarations, 218 distinct
-# patterns, with match counts n distributed
-# ``2:98, 3:22, 4:27, 5:19, 6:9, 7:6, 8:4, 9:9, 10:0, 11:4, 12:2, 13-24:21,
-# 26-98:19, 176-219:14``. The distribution is bimodal in *meaning*: small n is almost
-# always one result with one variant slot (``mayerPartialSum_*_two``,
-# ``freeEnergyΛ_continuous_*``), large n is a genuine family label
-# (``correlation_*_*`` matches 219, ``freeEnergyAlongExhaustion_*`` 202).
-#
-# **The count is a cost knob, not a semantic criterion.** No count separates the
-# two classes: ``docs/index.md:2193`` writes
-# ``correlationAlongExhaustion_..._ferromagnetic`` as a genuine elision whose
-# unbounded ``...`` also swallows an unrelated lower bound, giving a precise
-# citation with n = 11, and that over-match is what caps the threshold at 10 (at
-# N >= 11 the ground-truth ``safe-to-delete`` fixture row turns ``uncertain`` and
-# ``--expect`` goes red).
-#
-# The value below is that ceiling, because the knob is one-sided: raising it can
-# only *remove* declarations from ``safe-to-delete``, never add one, so the
-# largest value the fixtures still admit is also the safest. Measured on the
-# whole library (main 171ddd4f, 10872 declarations): N = 8 covers 185 of the 254
-# occurrences (73%) and reports 980 ``safe-to-delete``; N = 9 and N = 10 both
-# cover 194 (76%) and report 976. The four names N = 8 would still hand to a
-# deletion PR -- named by the nine 9-match occurrences of the bin list above --
-# are ``correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg``,
-# ``correlationAlongExhaustion_latticeGraph_nonneg`` and
-# ``vdPolymerFamilies_sumAlongExhaustion_sandwich{,_sharp}_ferromagnetic``. The
-# ``_ferromagnetic`` calibration family (43/79/66/35 of 223) and its 112
-# zero-consumer count are identical at 8, 9 and 10, so the stricter number costs
-# no test churn at all. The price of sitting on the ceiling is that a future
-# ``docs/index.md`` elision widening the 11-match citation turns ``--expect``
-# red; that is the fail-closed direction and is meant to be read as a signal,
-# not silenced by lowering the knob.
-#
-# **Globs above the threshold remain a known fail-open residue**: they still
-# charge nobody, so a declaration cited only by such a label can still be
-# reported ``safe-to-delete``. They are printed by :func:`report` under
-# "documentation family labels", and closing them is the human keep-check's job
-# -- candidate enumeration is not permission.
-MAX_CHARGED_GLOB_MATCHES = 10
+    cache[name] = matched or None
+    return cache[name]
 
 
 def _apply_doc_channel(
     tree: Tree,
     verdicts: list[Verdict],
     docs: list[DocSource],
-    family_labels: dict[str, list[str]],
+    wide_citations: dict[str, int],
 ) -> None:
-    """Attach documentation citations to each candidate.
+    """Attach documentation citations to each candidate, exonerating nothing.
 
-    Exact and brace-expanded citations mark a published result; wildcard and
-    single-match fragment citations only make the candidate uncertain. A
-    fragment matching two or more declarations is charged by channel:
+    The dispositions are INV-CHARGE's three, and every expanded name gets
+    exactly one of them (recorded in :attr:`DocSource.dispositions`, which is
+    what :func:`ledger_check` audits):
 
-    * a ``_``/``.`` **suffix** fragment is a family label attributed to nobody
-      (the ``_ferromagnetic`` trap) **unless** the prefix it elides is cited on
-      the same line, in which case it is a shorthand for the siblings that share
-      that prefix and is charged to them (:func:`elided_prefix_matches`);
-    * a **glob/ellipsis** fragment is charged to every declaration it names when
-      it names at most :data:`MAX_CHARGED_GLOB_MATCHES` of them, and is a family
-      label attributed to nobody above that count. Exonerating *every*
-      multi-match glob (as this function did until the threshold landed) is the
-      same "attributed to nobody" fail-open the suffix channel was repaired for:
-      ``docs/index.md:1427`` cites ``..._ge_log_two*`` (as a brace alternative)
-      and both declarations it names came out ``safe-to-delete`` reading "no
-      citation in the scanned documentation".
+    * ``exact`` -- the name is a declaration name. Brace- and slash-expanded
+      spellings are recorded as verbatim citations, which publish.
+    * ``charged`` -- the name resolves onto declarations, and **all** of them are
+      charged whatever their number. A wide label (``_nonneg`` names 276,
+      ``correlation_*_*`` names 215) is still *reported* as wide, in
+      ``wide_citations``, because breadth is evidence a human keep-check needs;
+      what is gone is its power to be "attributed to nobody". That exoneration
+      was the live leak of #4792: measured on this corpus, 1,061 multi-match
+      expansions under the previous revision, and charging them all takes the
+      documentation channel to 10,588 of the 10,618 declarations (99.7 %).
+    * ``unresolved`` -- the name cannot be read (unbalanced brace, unsupported
+      slash form, bare wildcard, ``IsingModel.``-qualified but not fully
+      qualified, or simply not a name at all), so it is charged to **every**
+      candidate, exactly as an unreadable LaTeX span is
+      (:meth:`UnreadableSpan.could_cite`). The charge is written once per
+      candidate with the site count and two sample sites rather than once per
+      site: the semantics are "every candidate is charged", and 31,964 sites
+      times every candidate is a report nobody can read.
 
-    A citation the normaliser could not read is attached too, to **every**
-    candidate (:meth:`UnreadableSpan.could_cite`; the channel is charge-only).
-    That is what turns the coverage warnings into a verdict: without it a name
-    invisible to the TeX channel could still come out ``safe-to-delete``.
+    Note what is *not* here: no threshold on the match count, no
+    same-line-prefix rule deciding which of a fragment's matches "really" mean
+    it, no selection of any kind. Four PRs added one spelling each to those
+    selectors and released nothing; the function they were repairing is the one
+    this revision deletes.
     """
     by_name: dict[str, list[Verdict]] = defaultdict(list)
+    by_key: dict[str, list[Verdict]] = defaultdict(list)
     for verdict in verdicts:
         by_name[verdict.decl.final].append(verdict)
         by_name[verdict.decl.full].append(verdict)
+        by_key[verdict.decl.key].append(verdict)
+    finals = {final for final, _decl in tree.finals}
     fragment_cache: dict[str, list[Decl] | None] = {}
-    resolved_glob_evidence: set[tuple[str, str]] = set()
+    unresolved_sites: set[str] = set()
 
     for doc in docs:
         lines = doc.text.splitlines()
-        cited_names, resolved_heads = _cited_declaration_names(
-            tree, doc, fragment_cache
-        )
         # (a) verbatim occurrences of the candidate name.
         for verdict in verdicts:
             needle = verdict.decl.final
@@ -2292,9 +2178,9 @@ def _apply_doc_channel(
                 break
         # (b) brace-alternation, wildcard and fragment tokens.
         for token, lineno in doc.tokens:
-            expanded = expand_citation_token(token)
             has_slash_alternation = expand_slash_alternation(token) != [token]
-            for name in expanded:
+            disposition = "exact"
+            for name in expand_citation_token(token):
                 targets = by_name.get(name) or by_name.get(name.rsplit(".", 1)[-1])
                 if targets and ("{" in token or has_slash_alternation):
                     citation_kind = (
@@ -2304,68 +2190,28 @@ def _apply_doc_channel(
                         verdict.doc_citations.append(
                             f"exact {doc.label}:{lineno}: {citation_kind} `{token}`"
                         )
-                if "*" not in name and ".." not in name and not name.startswith(("_", ".")):
-                    continue
+                if name in tree.by_full or name.rsplit(".", 1)[-1] in finals:
+                    continue  # (a) or the brace/slash channel above has it
                 matched = _resolve_fragment(tree, name, fragment_cache)
                 if matched is None:
+                    disposition = UNRESOLVED
+                    unresolved_sites.add(f"{doc.label}:{lineno} `{token}`")
                     continue
-                charged = matched
-                legacy_seeded_keys: set[str] = set()
-                resolved_seeded_keys: set[str] = set()
-                if name.startswith(("_", ".")):
-                    if len(matched) >= 2:
-                        legacy_charged = elided_prefix_matches(
-                            name, matched, cited_names.get(lineno, set())
+                if disposition == "exact":
+                    disposition = "charged"
+                if len(matched) > 1:
+                    wide_citations[f"{doc.label}:{lineno} `{token}`"] = len(matched)
+                detail = (
+                    f" (charged to all {len(matched)} declarations it names)"
+                    if len(matched) > 1
+                    else ""
+                )
+                for decl in matched:
+                    for verdict in by_key.get(decl.key, ()):
+                        verdict.doc_citations.append(
+                            f"shorthand {doc.label}:{lineno}: `{token}`{detail}"
                         )
-                        glob_charged = elided_prefix_matches(
-                            name, matched, set(), resolved_heads.get(lineno, set())
-                        )
-                        legacy_keys = {decl.key for decl in legacy_charged}
-                        glob_keys = {decl.key for decl in glob_charged}
-                        legacy_seeded_keys = legacy_keys
-                        resolved_seeded_keys = glob_keys - legacy_keys
-                        charged_keys = legacy_keys | glob_keys
-                        charged = [
-                            decl for decl in matched if decl.key in charged_keys
-                        ]
-                elif not _is_chargeable_resolved_glob(name, matched):
-                    charged = []
-                if len(matched) >= 2:
-                    if not charged:
-                        family_labels.setdefault(
-                            f"{doc.label}:{lineno} `{token}`",
-                            [f"{len(matched)} declarations"],
-                        )
-                if charged:
-                    keys = {decl.key for decl in charged}
-                    # The count makes the report self-explaining: a reader can
-                    # tell a two-match glob charged in full from a family label
-                    # one of whose members the elided prefix rescued.
-                    for verdict in verdicts:
-                        if verdict.decl.key in keys:
-                            charged_count = (
-                                len(legacy_seeded_keys)
-                                if verdict.decl.key in legacy_seeded_keys
-                                else len(charged)
-                            )
-                            detail = (
-                                f" ({charged_count} of the "
-                                f"{len(matched)} declarations it names)"
-                                if len(matched) > 1
-                                else ""
-                            )
-                            citation = (
-                                f"shorthand {doc.label}:{lineno}: `{token}`{detail}"
-                            )
-                            evidence_key = (verdict.decl.key, citation)
-                            if (
-                                verdict.decl.key in resolved_seeded_keys
-                                and evidence_key in resolved_glob_evidence
-                            ):
-                                continue
-                            verdict.doc_citations.append(citation)
-                            if verdict.decl.key in resolved_seeded_keys:
-                                resolved_glob_evidence.add(evidence_key)
+            doc.dispositions[(lineno, token)] = disposition
         # (c) module citations.
         for verdict in verdicts:
             tail = verdict.decl.file.split("/", 1)[-1]
@@ -2382,10 +2228,96 @@ def _apply_doc_channel(
                         f"unreadable {doc.label}:{span.line}: a citation this scan "
                         f"cannot read ({span.kind}) may name this declaration"
                     )
+    # (e) citations that resolved onto nothing at all, charged to every
+    # candidate: the same rule as (d), for the tokens rather than the spans.
+    if unresolved_sites:
+        sample = ", ".join(sorted(unresolved_sites)[:2])
+        for verdict in verdicts:
+            verdict.doc_citations.append(
+                f"unresolved {len(unresolved_sites)} citation site(s) this scan "
+                f"cannot resolve, each charged to every candidate (e.g. {sample})"
+            )
 
 
 # ---------------------------------------------------------------------------
-# 8. Canary and self-tests
+# 8. The shard ledger (INV-LEDGER)
+# ---------------------------------------------------------------------------
+
+_LEDGER_PUNCTUATION = ",.;:()"  # deliberately a second copy: see ledger_shards
+_LEDGER_RUN_RE = re.compile(r"[0-9A-Za-z_']{3,}")
+
+
+def ledger_shards(doc: DocSource) -> list[tuple[str, int]]:
+    """Return every whitespace-separated shard of every code span of ``doc``.
+
+    This is the *independent* half of INV-LEDGER and it shares no code with
+    :func:`_citation_tokens`, :func:`_brace_grouped_pieces` or
+    :func:`expand_citation_token` -- not for style, but because a conservation
+    check whose two sides are computed by the same lexer balances under any
+    lexer bug. That is precisely the shape of a suite passing under the mutation
+    that represents the real defect, twice observed in this repository. The
+    duplication (``split``, the punctuation set) is the mechanism, not an
+    oversight.
+
+    It reads :attr:`DocSource.spans`, the code-span bodies with their line
+    numbers as the loader saw them, so a Markdown or TeX span the loader never
+    produced is out of scope by definition: INV-LEDGER audits the step from a
+    span body to citation tokens, which is where every drop of #4792 lived.
+    """
+    return [
+        (piece, line)
+        for body, line in doc.spans
+        for piece in body.split()
+    ]
+
+
+def ledger_check(tree: Tree, docs: list[DocSource]) -> dict[str, int]:
+    """Return the shard disposition histogram, or abort on residue (exit 2).
+
+    Buckets: ``exact``/``charged``/``unresolved`` are what
+    :func:`_apply_doc_channel` recorded for the token covering the shard;
+    ``unrelated`` is the single permitted excuse and is a decidable fact about
+    the declaration table -- no maximal identifier run of the shard occurs in
+    any declaration name, so no spelling of it can be a citation; ``residue`` is
+    a shard that reached neither, i.e. citation-shaped material this scan
+    dropped without a disposition. Residue is a hard failure: the alternative
+    (report it and continue) is what four PRs of #4792 did with warnings.
+
+    Coverage is by *exact* token match on the shard's line, after trimming the
+    prose punctuation. A substring test would be laxer and would let an
+    unrelated token on the same line certify a dropped shard as read -- the
+    "archive tag resolves unconditionally" pattern recorded in the same issue.
+    """
+    finals_blob = "\n".join(sorted({final for final, _decl in tree.finals}))
+    counts: dict[str, int] = {
+        "exact": 0, "charged": 0, UNRESOLVED: 0, "unrelated": 0, "residue": 0
+    }
+    residue: list[str] = []
+    for doc in docs:
+        by_line: dict[int, dict[str, str]] = defaultdict(dict)
+        for (line, token), disposition in doc.dispositions.items():
+            by_line[line][token] = disposition
+        for shard, line in ledger_shards(doc):
+            seen = by_line.get(line, {})
+            disposition = seen.get(shard) or seen.get(shard.strip(_LEDGER_PUNCTUATION))
+            if disposition is not None:
+                counts[disposition] += 1
+            elif any(run in finals_blob for run in _LEDGER_RUN_RE.findall(shard)):
+                counts["residue"] += 1
+                residue.append(f"{doc.label}:{line} {shard!r}")
+            else:
+                counts["unrelated"] += 1
+    if residue:
+        raise Inconsistency(
+            f"citation ledger: {len(residue)} code-span shard(s) reached no "
+            "disposition, so this scan dropped citation-shaped material "
+            "silently:\n  " + "\n  ".join(sorted(residue)[:20])
+        )
+    return counts
+
+
+# ---------------------------------------------------------------------------
+# 9. Canary and self-tests
 # ---------------------------------------------------------------------------
 
 CANARY_CHARS = ("Λ", "β", "σ")  # capital Lambda, beta, sigma
@@ -2475,7 +2407,7 @@ def char_class_selftest() -> None:
 
 
 # ---------------------------------------------------------------------------
-# 9. Reporting
+# 10. Reporting
 # ---------------------------------------------------------------------------
 
 BANNER = """\
@@ -2484,7 +2416,9 @@ references, open/export-shortened names, or metaprogrammed names. It does not ch
 autoImplicit binder drift (a `#check @` dump is a separate gate). Doc rows that depend
 on a lemma without naming it are invisible. Run with --lean on a green build to
 cross-check the elaborated dependency graph; run --explain for the full table.
-A "safe-to-delete" verdict is a necessary, not a sufficient, condition for deletion."""
+THIS TOOL EMITS NO DELETION AUTHORISATION. `no-citation-found` says only that this
+scan read no citation, subject to every limit above; deciding to delete is a human
+keep-check on the Lean *and* the documentation side, which no textual scan supplies."""
 
 # Raw: the text quotes LaTeX (``\texttt``, ``\verb``, ``\beta``), and a cooked
 # literal turned those backslashes into control characters -- ``--explain``
@@ -2567,8 +2501,8 @@ L7d the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
-   such a lemma really is dead code -- it is the surrounding *documentation* the
-   deletion PR must update, or the tree keeps building green while its headers lie.
+   the mention alone keeps nothing -- it is the surrounding *documentation* a
+   deletion must update, or the tree keeps building green while its headers lie.
    The prose is recovered from the comment mask, down to a single blanked
    character, so a one-character name on its own line inside a block comment is
    seen too; what the mask cannot distinguish is prose from an equally long run
@@ -2591,47 +2525,41 @@ L10 Markdown code spans are paired positionally, so one unbalanced backtick inve
    line and closed on the next is unmatchable by `[^`\n]+` in either pairing (the
    warning still fires on both lines), and prose read as a citation this way can
    only add `uncertain`, never remove it.
-L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic`)
-   is a family label attributed to nobody, unless the prefix it elides is cited on
-   the same line, which is the documentation's own abbreviation for a run of
-   siblings. That exception is not rare: `_ferromagnetic` is charged 155 times and
-   `_pos` 9 times, so the rule keeps real family labels alive wherever the row also
-   spells a sibling out. Charging every match of every family label regardless was
-   measured and rejected: it touches 5895 of 11000 declarations, collapses
-   `safe-to-delete` from 1458 to 232 (an 84% reduction) and turns `--expect` red,
-   which is not a stricter tool but one whose verdicts no longer track which
-   citation names which result. So a family label on a line that elides nothing
-   still rescues nobody, and a lemma named only by one is dead code whose
-   *documentation* the deletion PR must update.
-L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
-   declarations is charged to nobody -- the live fail-open residue of this tool.
-   At or below the threshold every match is charged, which repairs the leak that
-   let `docs/index.md:1427` (`..._ge_log_two*`, a brace alternative naming 2
-   declarations) and `docs/index.md:1328` (`freeEnergy_*_tendsto_of_abs_h`,
-   naming 4) read as citing nobody; above it,
-   a broad label (`correlation_*_*` names 219 declarations) would charge whole
-   subsystems, so it is filed and printed instead. The count is a cost knob and
-   not a semantic criterion: `docs/index.md:2193` is a precise elision that
-   over-matches onto 11 declarations, so a precise citation *can* sit above the
-   threshold and rescue nobody. Mitigation: the labels are printed under
-   "documentation family labels" on every run and must be read by hand before a
-   deletion -- candidate enumeration is not permission."""
+L11 no citation channel exonerates any more (INV-CHARGE), and the cost is that
+   almost nothing is reported uncited. Every wide label is charged in full: `m*`
+   names 746 declarations, `_latticeGraph` 481, `_nonneg` 276, `correlation_*_*`
+   215, and `docs/index.md:2065` writes `IsingModel.*`, which names 10548 -- in the
+   prose sentence "No `IsingModel.*` semantics changed", i.e. a namespace mention
+   rather than a citation. There is no parser-side rule that separates those from
+   the real elision `magnetizationAlongExhaustion_{neg_h, nonneg}`, because the
+   difference is in the prose, and every attempt to read the prose is the
+   exoneration this tool removed. Measured on this corpus (main 4bfe4aeb): the
+   exact, resolved-match and literal channels together charge 10588 of the 10618
+   declarations, leaving 30 uncharged of which 28 are in `test/`; the two library
+   survivors are SimpleGraph.edgeSet_sum_finite and SimpleGraph.fintypeEdgeSetSum.
+   Charging every unresolvable citation as well -- 31964 sites, mostly prose inside
+   code spans -- leaves nothing at all. So this scan is no longer a classifier of
+   deletability, and `no-citation-found` is expected to be empty on the real
+   documentation. What it still does is *list the evidence*: for each candidate,
+   which citation charged it and how wide that citation is, which is the input a
+   human keep-check needs. The deletion decision is that keep-check."""
 
 
 def report(
     verdicts: list[Verdict],
     cascade: list[str],
-    family_labels: dict[str, list[str]],
+    wide_citations: dict[str, int],
     warnings: list[UnreadableSpan],
     malformed: list[str],
     canary: tuple[int, dict[str, int]],
     tex_citations: int,
+    ledger: dict[str, int],
     elapsed: float,
     report_only: bool,
 ) -> None:
     """Print the human-readable report (deterministic: every list is sorted)."""
     count, per_char = canary
-    print("== dead-candidate scan ==")
+    print("== documentation-citation evidence scan ==")
     print(
         f"canary: {count} declarations carrying "
         + ", ".join(f"{char!r}x{per_char[char]}" for char in CANARY_CHARS)
@@ -2640,6 +2568,11 @@ def report(
     print(
         f"canary: {tex_citations} code citations in {rel(TEX_GUIDE)}, none broken "
         "across a line: PASS"
+    )
+    print(
+        "ledger: "
+        + ", ".join(f"{bucket} {ledger[bucket]}" for bucket in sorted(ledger))
+        + f" (of {sum(ledger.values())} code-span shards): PASS"
     )
     print()
     buckets: dict[str, list[Verdict]] = {name: [] for name in VERDICT_ORDER}
@@ -2665,7 +2598,10 @@ def report(
                     print(f"      {label} consumer: {occ.file}:{occ.line} in {owner}")
                 if len(group_occs) > 10:
                     print(f"      ... and {len(group_occs) - 10} more {label} consumers")
-            for citation in sorted(set(verdict.doc_citations))[:6]:
+            # The evidence list is what is left of this tool's usefulness, so it
+            # is printed generously: a keep-check reads the citations, not the
+            # verdict.
+            for citation in sorted(set(verdict.doc_citations))[:12]:
                 print(f"      doc: {citation}")
             if verdict.witness:
                 print("      witness path: " + " -> ".join(verdict.witness))
@@ -2680,15 +2616,14 @@ def report(
         print(f"  ... and {len(cascade) - 40} more")
     print()
     print(
-        f"-- documentation family labels: {len(family_labels)} "
-        f"(a glob naming more than {MAX_CHARGED_GLOB_MATCHES} declarations, or a bare "
-        "suffix label; attributed to no declaration -- a KNOWN fail-open residue, "
-        "close it by hand before deleting anything these lines could be citing) --"
+        f"-- widest documentation citations: {len(wide_citations)} "
+        "(each names two or more declarations and is charged to ALL of them; the "
+        "breadth is the evidence a keep-check needs, since the widest are prose) --"
     )
-    for label in sorted(family_labels)[:20]:
-        print(f"  {label}: {family_labels[label][0]}")
-    if len(family_labels) > 20:
-        print(f"  ... and {len(family_labels) - 20} more")
+    for label in sorted(wide_citations, key=lambda k: (-wide_citations[k], k))[:20]:
+        print(f"  {label}: {wide_citations[label]} declarations")
+    if len(wide_citations) > 20:
+        print(f"  ... and {len(wide_citations) - 20} more")
     print()
     print(
         f"-- coverage warnings: {len(warnings)} "
@@ -2719,7 +2654,7 @@ def report(
 
 
 # ---------------------------------------------------------------------------
-# 10. Fixture (regression) mode
+# 11. Fixture (regression) mode
 # ---------------------------------------------------------------------------
 
 
@@ -2738,17 +2673,21 @@ def read_fixtures(path: Path) -> list[tuple[str, str, str]]:
 
 
 def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
-    """Run the fixture regression suite. Return the process exit code."""
+    """Run the fixture regression suite. Return the process exit code.
+
+    ``keep`` is the weak expectation (any verdict but ``no-citation-found``)
+    and is what a keeper actually has to satisfy.
+    """
     rows = read_fixtures(path)
-    verdicts, _cascade, family_labels = classify(
+    verdicts, _cascade, wide_citations = classify(
         tree, [row[0] for row in rows], docs, allow_homonym=False
     )
     by_name = {verdict.name: verdict for verdict in verdicts}
     failures: list[str] = []
     for name, expected, provenance in rows:
         actual = by_name[name].verdict
-        if expected == "not-safe":
-            ok = actual != SAFE
+        if expected == "keep":
+            ok = actual != NO_CITATION
         else:
             ok = actual == expected
         status = "ok  " if ok else "FAIL"
@@ -2758,14 +2697,16 @@ def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
     print()
     if failures:
         print(f"fixtures: FAIL ({len(failures)} of {len(rows)})")
-        return EXIT_NOT_SAFE
+        return EXIT_KEPT
     print(f"fixtures: PASS ({len(rows)} rows)")
-    print(f"family labels observed: {len(family_labels)}")
+    print(f"wide citations observed: {len(wide_citations)}")
+    ledger = ledger_check(tree, docs)
+    print("ledger: " + ", ".join(f"{k} {ledger[k]}" for k in sorted(ledger)))
     return EXIT_OK
 
 
 # ---------------------------------------------------------------------------
-# 11. Optional Lean cross-check (--lean)
+# 12. Optional Lean cross-check (--lean)
 # ---------------------------------------------------------------------------
 
 DUMP_DEPS = REPO_ROOT / "scripts" / "audit" / "DumpDeps.lean"
@@ -2825,11 +2766,11 @@ def lean_cross_check(
 ) -> tuple[list[str], list[str]]:
     """Return ``(hard failures, advisory findings)`` from the elaborated graph.
 
-    Every candidate is compared, not only the ``safe-to-delete`` ones: an unseen
-    consumer is a defect of the text scanner wherever it appears. It is fatal on
-    a ``safe-to-delete`` verdict (the tool would authorise a bad deletion) and
-    advisory elsewhere (the verdict is already "keep", so the risk is a wrong
-    *reason*, not a wrong action).
+    Every candidate is compared, not only the ``no-citation-found`` ones: an
+    unseen consumer is a defect of the text scanner wherever it appears. It is
+    fatal on a ``no-citation-found`` verdict (the scan claims to have found no
+    evidence while Lean holds some) and advisory elsewhere (the verdict is
+    already "keep", so the risk is a wrong *reason*, not a wrong action).
     """
     reverse: dict[str, set[str]] = defaultdict(set)
     for source, targets in edges.items():
@@ -2854,7 +2795,7 @@ def lean_cross_check(
         if not unseen:
             continue
         message = f"{full}: Lean sees consumers {unseen[:5]} that the text scan does not"
-        if verdict.verdict == SAFE:
+        if verdict.verdict == NO_CITATION:
             problems.append(message)
         else:
             advisories.append(f"[{verdict.verdict}] {message}")
@@ -2862,7 +2803,7 @@ def lean_cross_check(
 
 
 # ---------------------------------------------------------------------------
-# 12. CLI
+# 13. CLI
 # ---------------------------------------------------------------------------
 
 
@@ -2982,7 +2923,7 @@ def main(argv: list[str] | None = None) -> int:
             print("no candidate names given (pass a NAMES_FILE, --name or --pattern)")
             return EXIT_INCONSISTENT
 
-        verdicts, cascade, family_labels = classify(tree, names, docs, args.allow_homonym)
+        verdicts, cascade, wide_citations = classify(tree, names, docs, args.allow_homonym)
         if args.lean:
             problems, advisories = lean_cross_check(verdicts, lean_dependency_edges())
             for advisory in advisories[:20]:
@@ -2997,24 +2938,29 @@ def main(argv: list[str] | None = None) -> int:
             print(
                 f"--lean cross-check: {len(verdicts)} candidate(s) compared against the "
                 "elaborated graph; no consumer seen by Lean was missed on a "
-                "safe-to-delete verdict"
+                "no-citation-found verdict"
             )
         if args.json_path:
             write_json(Path(args.json_path), verdicts, cascade)
         report(
             verdicts,
             cascade,
-            family_labels,
+            wide_citations,
             warnings,
             malformed,
             canary,
             tex_citations,
+            ledger_check(tree, docs),
             time.time() - started,
             args.report_only,
         )
         if args.report_only:
             return EXIT_OK
-        return EXIT_OK if all(v.verdict == SAFE for v in verdicts) else EXIT_NOT_SAFE
+        # ``1`` means "demonstrably kept". ``0`` means the scan completed and its
+        # shard accounting balanced -- it is not an authorisation, and reading it
+        # as one is the misuse the verdict rename exists to prevent.
+        kept = (PUBLISHED, LOAD_BEARING)
+        return EXIT_KEPT if any(v.verdict in kept for v in verdicts) else EXIT_OK
     except Inconsistency as exc:
         print(f"INCONSISTENT: {exc}", file=sys.stderr)
         return EXIT_INCONSISTENT
