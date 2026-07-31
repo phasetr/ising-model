@@ -607,13 +607,20 @@ def machine_state() -> dict[str, object]:
     """Return the machine-load facts the registered guard names -- recorded, never judged.
 
     Section 4.3 of ``.self-local/reports/design-4794-module-cost-protocol.md``
-    registers a **per-replicate** guard: 1-minute load average below 2.0, AC
-    power, no thermal throttling. This harness records those inputs and
-    evaluates none of them. Enforcing a threshold here would put a second,
-    unreviewed copy of a rule beside the report that owns it; recording is what
-    lets a reader apply the registered rule to samples that already exist,
-    which is exactly what an earlier run made impossible by recording the load
-    average once for the whole run and nothing else at all.
+    registers the guard **pre and post per replicate** -- 1-minute load average
+    below 2.0, AC power, no thermal throttling -- and section 4.4 makes a
+    failure at either end a discard-and-replace. This harness records those
+    inputs and evaluates none of them: enforcing a threshold here would put a
+    second, unreviewed copy of a rule beside the report that owns it.
+
+    **Only the pre-sample endpoint is recorded.** :func:`measure_once` calls
+    this once, before the timed window opens, and nothing reads the machine
+    again after the child exits, so the record supports the registered rule
+    only in part -- a replicate that began inside the band and left it before
+    its child finished is not distinguishable here. That is more than the
+    earlier run, which recorded one load average for the whole run and nothing
+    else at all, but it is not the whole rule; recording the closing endpoint
+    is deferred to #4827.
 
     Nothing is ``None`` on failure. A probe that cannot answer records its exit
     code and what it printed -- including ``pmset -g therm``, which exits 0
