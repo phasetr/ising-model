@@ -23,8 +23,10 @@ runs incomparable while every printed number still looks plausible:
    the artifact, from a real one.
 2. **The profiler report must be read from stderr.** Lean writes the whole
    report there; a stdout-only reader records no import figure at all. This is
-   not hypothetical: the first run of this harness produced an artifact with
-   24 measured samples and 0 valid ones for exactly that reason.
+   not hypothetical: it made this harness's own first run produce 24 measured
+   samples and no valid one. That run's artifact was never committed -- a
+   failed run is not a record worth publishing -- so the episode is
+   development history, not something a reader can check from the tree.
 3. **An impossible timing must be rejected.** ``import`` is a subinterval of
    the process ``real`` was measured around, so a child claiming more is not a
    slow module.
