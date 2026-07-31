@@ -1060,6 +1060,121 @@ class ArtifactShapeTest(unittest.TestCase):
         with self.assertRaises(AssertionError):
             self.assert_artifact_sound(payload, "tampered-tally")
 
+    def test_a_tally_that_states_nothing_is_caught(self) -> None:
+        """An empty ``sample_counts`` must fail, and the real artifact must still pass.
+
+        Comparing only the keys an artifact happens to state let ``{}`` agree
+        with everything: no key, no comparison, no failure. The positive control
+        is half of this case -- a key check that also refused the committed
+        artifact would "close" the hole by rejecting everything.
+        """
+        path = self.committed_artifacts()[0]
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        self.assert_artifact_sound(payload, path.name)
+        stated = dict(payload["sample_counts"])
+        self.assertTrue(stated, path.name)
+        payload["sample_counts"] = {}
+        with self.assertRaises(AssertionError) as caught:
+            self.assert_artifact_sound(payload, "empty-tally")
+        self.assertIn("sample_counts keys", str(caught.exception))
+        # One dropped key is the same hole in miniature, and the one an
+        # artifact could reach by accident rather than by tampering.
+        for omitted in stated:
+            payload["sample_counts"] = {
+                key: value for key, value in stated.items() if key != omitted
+            }
+            with self.assertRaises(AssertionError, msg=omitted):
+                self.assert_artifact_sound(payload, f"tally-without-{omitted}")
+
+    def test_an_artifact_outside_the_reports_directory_is_found_and_fails(self) -> None:
+        """A tracked artifact where the retention rule sends raw data is checked too.
+
+        The design report retains raw data under ``.self-local/perf/4794/raw/``
+        and ``--out`` writes anywhere under any name, so a search bounded to
+        ``.self-local/reports/`` left such a file unchecked while this class
+        still passed green. The decoy is staged in a scratch ``GIT_INDEX_FILE``
+        seeded from ``HEAD``: it is tracked for the duration of this case and by
+        nothing afterwards, the repository's own index is never written, and
+        ``--info-only`` keeps the blob out of the object database as well.
+        """
+        payload = json.loads(self.committed_artifacts()[0].read_text(encoding="utf-8"))
+        for record in payload["samples"]:
+            if record["phase"] == "measure":
+                record["valid"] = False
+                record["problems"] = ["decoy"]
+        # The tally is re-derived over the key set the record already states, so
+        # the decoy's only defect is its samples: a stale tally would fail it
+        # for the other reason and the case would prove nothing about the search.
+        derived = self.derive_counts(payload["samples"])
+        payload["sample_counts"] = {key: derived[key] for key in payload["sample_counts"]}
+        raw_dir = mmc.REPO_ROOT / ".self-local" / "perf" / "4794" / "raw"
+        decoy = raw_dir / "measure-module-cost-decoy.json"
+        created = [
+            parent
+            for parent in (raw_dir, *raw_dir.parents)
+            if mmc.REPO_ROOT in parent.parents and not parent.exists()
+        ]
+        previous_index = os.environ.get("GIT_INDEX_FILE")
+        with tempfile.TemporaryDirectory() as tmp:
+            os.environ["GIT_INDEX_FILE"] = str(Path(tmp) / "scratch.index")
+            try:
+                raw_dir.mkdir(parents=True, exist_ok=True)
+                decoy.write_text(json.dumps(payload), encoding="utf-8")
+                for command in (
+                    ["read-tree", "HEAD"],
+                    ["update-index", "--add", "--info-only", "--",
+                     str(decoy.relative_to(mmc.REPO_ROOT))],
+                ):
+                    proc = subprocess.run(
+                        ["git", "-C", str(mmc.REPO_ROOT), *command],
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertIn(decoy, self.committed_artifacts())
+                with self.assertRaises(AssertionError) as caught:
+                    self.test_committed_artifacts_are_complete_and_valid()
+                # Named: otherwise the case would pass if some *other* artifact
+                # happened to be the one that failed.
+                self.assertIn(decoy.name, str(caught.exception))
+            finally:
+                if previous_index is None:
+                    os.environ.pop("GIT_INDEX_FILE", None)
+                else:
+                    os.environ["GIT_INDEX_FILE"] = previous_index
+                decoy.unlink(missing_ok=True)
+                for directory in created:
+                    with contextlib.suppress(OSError):
+                        directory.rmdir()
+
+    def test_a_dirty_process_guard_fails_where_a_clean_one_passes(self) -> None:
+        """The recorded guard is read at the one place it is readable.
+
+        The committed run predates the field, so the record is lifted to the
+        current schema here rather than a synthetic payload being invented --
+        schema 3 is exactly the version that records the guard as a value, and
+        the check is conditional on that. An artifact stating it was taken
+        beside a foreign ``lean`` says so about its own samples; publishing it
+        as sound is the protocol's discard rule going unread.
+        """
+        payload = json.loads(self.committed_artifacts()[0].read_text(encoding="utf-8"))
+        payload["schema"] = mmc.SCHEMA
+        payload["sample_counts"] = self.derive_counts(payload["samples"])
+        guard = {
+            "method": "pgrep",
+            "at_start": 0,
+            "at_end": 0,
+            "clean": True,
+            "names_counted": list(mmc.GUARDED_PROCESS_NAMES),
+        }
+        payload["environment"]["process_guard"] = guard
+        self.assert_artifact_sound(payload, "guard-clean")
+        guard.update({"at_end": 1, "clean": False})
+        with self.assertRaises(AssertionError) as caught:
+            self.assert_artifact_sound(payload, "guard-dirty")
+        self.assertIn("guard-dirty", str(caught.exception))
+
 
 def run_suite() -> int:
     """Run every test. Return ``0`` on success, ``1`` otherwise."""
