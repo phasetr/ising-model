@@ -2302,7 +2302,24 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 43 safe / 79 uncertain / 66 load-bearing / 35 published.
+        """223 candidates -> 19 safe / 88 uncertain / 81 load-bearing / 35 published.
+
+        Recalibrated by the resolved-glob elision-head repair
+        (:class:`ResolvedGlobElisionHeadTest`). On the same documentation line,
+        a supported glob head resolving to at most ten declarations can now
+        establish the immediate-sibling prefix of a suffix citation. Exactly
+        24 formerly-safe family members leave ``safe-to-delete``: 15 receive
+        shorthand evidence directly and nine become load-bearing because their
+        newly retained latticeGraph consumers receive it. Six previously
+        uncertain members become load-bearing through the same closure. Thus
+        the pre-closure distribution 19/103/66/35 becomes the final
+        19/88/81/35; the 223 total, 35 published results, and
+        :meth:`test_zero_consumer_count` (112) are unchanged. Whole-library
+        evidence is additive (+205 shorthand, zero removals), the safe set only
+        shrinks (49 safe-to-delete -> uncertain, 11 safe-to-delete ->
+        load-bearing, 12 uncertain -> load-bearing), and family labels move
+        387 -> 381 as six formerly-unattributed suffixes acquire concrete
+        targets.
 
         Recalibrated by the narrow-glob repair
         (:class:`NarrowGlobCitationTest`): a glob citation naming at most
@@ -2367,9 +2384,9 @@ class FamilyCalibrationTest(unittest.TestCase):
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 43)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 79)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 66)
+        self.assertEqual(counts.get(dcs.SAFE), 19)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:

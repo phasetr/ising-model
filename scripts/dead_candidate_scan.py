@@ -2058,7 +2058,46 @@ def _resolve_fragment(
     return matched
 
 
-def elided_prefix_matches(fragment: str, matched: list[Decl], cited: set[str]) -> list[Decl]:
+def _is_chargeable_resolved_glob(name: str, matched: list[Decl]) -> bool:
+    """Return whether a resolved non-suffix glob may be charged as shorthand."""
+    return (
+        not name.startswith(("_", "."))
+        and ("*" in name or ".." in name)
+        and 1 <= len(matched) <= MAX_CHARGED_GLOB_MATCHES
+    )
+
+
+def _resolved_head_is_immediate_sibling(
+    prefix: str, fragment: str, head: str
+) -> bool:
+    """Return whether ``head`` establishes ``prefix`` for this suffix fragment.
+
+    A resolved glob is weaker than a concrete head citation.  Requiring the
+    first component after the candidate prefix to diverge from the fragment's
+    first component prevents a longer head from licensing its own ancestor
+    family, while the separator boundary rejects lexical-prefix collisions.
+    """
+    if head == prefix:
+        return True
+    separator = fragment[0]
+    boundary = prefix + separator
+    if not head.startswith(boundary):
+        return False
+    head_component = head[len(boundary) :].split(separator, 1)[0]
+    fragment_component = fragment[1:].split(separator, 1)[0]
+    return (
+        bool(head_component)
+        and bool(fragment_component)
+        and head_component != fragment_component
+    )
+
+
+def elided_prefix_matches(
+    fragment: str,
+    matched: list[Decl],
+    cited: set[str],
+    resolved_heads: set[str] | None = None,
+) -> list[Decl]:
     """Return the matches of a suffix ``fragment`` whose elided prefix is cited too.
 
     Both documentation files abbreviate a run of sibling results by writing the
@@ -2100,28 +2139,47 @@ def elided_prefix_matches(fragment: str, matched: list[Decl], cited: set[str]) -
     is a family label on a line that elides nothing -- the label alone, with no
     prefix anyone wrote down.
     """
+    glob_heads = resolved_heads or set()
     out: list[Decl] = []
     for decl in matched:
         prefix = decl.final[: len(decl.final) - len(fragment)]
-        if prefix and any(other.startswith(prefix) for other in cited):
+        if prefix and (
+            any(other.startswith(prefix) for other in cited)
+            or any(
+                _resolved_head_is_immediate_sibling(prefix, fragment, head)
+                for head in glob_heads
+            )
+        ):
             out.append(decl)
     return out
 
 
-def _cited_declaration_names(tree: Tree, doc: DocSource) -> dict[int, set[str]]:
-    """Return ``{line: cited final names}`` for the tokens that name a declaration.
+def _cited_declaration_names(
+    tree: Tree,
+    doc: DocSource,
+    fragment_cache: dict[str, list[Decl] | None],
+) -> tuple[dict[int, set[str]], dict[int, set[str]]]:
+    """Return exact and resolved-glob final-name inventories for each line.
 
-    Only real declaration names are collected: prose that happens to be
-    name-shaped must not license an elision (:func:`elided_prefix_matches`).
+    Exact names retain the legacy elision rule.  Resolved wildcard heads are
+    kept separately so they can use the stricter immediate-sibling boundary in
+    :func:`elided_prefix_matches`.  Both inventories contain only real
+    declarations; prose that merely looks name-shaped cannot license elision.
     """
     finals = {final for final, _decl in tree.finals}
-    out: dict[int, set[str]] = defaultdict(set)
+    exact: dict[int, set[str]] = defaultdict(set)
+    resolved: dict[int, set[str]] = defaultdict(set)
     for token, lineno in doc.tokens:
         for name in expand_citation_token(token):
             final = name.rsplit(".", 1)[-1]
             if final in finals:
-                out[lineno].add(final)
-    return out
+                exact[lineno].add(final)
+            if name.startswith(("_", ".")) or ("*" not in name and ".." not in name):
+                continue
+            matched = _resolve_fragment(tree, name, fragment_cache)
+            if matched is not None and _is_chargeable_resolved_glob(name, matched):
+                resolved[lineno].update(decl.final for decl in matched)
+    return exact, resolved
 
 
 # A glob/ellipsis citation that resolves to at most this many declarations is
@@ -2213,10 +2271,13 @@ def _apply_doc_channel(
         by_name[verdict.decl.final].append(verdict)
         by_name[verdict.decl.full].append(verdict)
     fragment_cache: dict[str, list[Decl] | None] = {}
+    resolved_glob_evidence: set[tuple[str, str]] = set()
 
     for doc in docs:
         lines = doc.text.splitlines()
-        cited_names = _cited_declaration_names(tree, doc)
+        cited_names, resolved_heads = _cited_declaration_names(
+            tree, doc, fragment_cache
+        )
         # (a) verbatim occurrences of the candidate name.
         for verdict in verdicts:
             needle = verdict.decl.final
@@ -2249,15 +2310,27 @@ def _apply_doc_channel(
                 if matched is None:
                     continue
                 charged = matched
-                if len(matched) >= 2:
-                    if name.startswith(("_", ".")):
-                        charged = elided_prefix_matches(
+                legacy_seeded_keys: set[str] = set()
+                resolved_seeded_keys: set[str] = set()
+                if name.startswith(("_", ".")):
+                    if len(matched) >= 2:
+                        legacy_charged = elided_prefix_matches(
                             name, matched, cited_names.get(lineno, set())
                         )
-                    elif len(matched) <= MAX_CHARGED_GLOB_MATCHES:
-                        charged = matched
-                    else:
-                        charged = []
+                        glob_charged = elided_prefix_matches(
+                            name, matched, set(), resolved_heads.get(lineno, set())
+                        )
+                        legacy_keys = {decl.key for decl in legacy_charged}
+                        glob_keys = {decl.key for decl in glob_charged}
+                        legacy_seeded_keys = legacy_keys
+                        resolved_seeded_keys = glob_keys - legacy_keys
+                        charged_keys = legacy_keys | glob_keys
+                        charged = [
+                            decl for decl in matched if decl.key in charged_keys
+                        ]
+                elif not _is_chargeable_resolved_glob(name, matched):
+                    charged = []
+                if len(matched) >= 2:
                     if not charged:
                         family_labels.setdefault(
                             f"{doc.label}:{lineno} `{token}`",
@@ -2268,16 +2341,31 @@ def _apply_doc_channel(
                     # The count makes the report self-explaining: a reader can
                     # tell a two-match glob charged in full from a family label
                     # one of whose members the elided prefix rescued.
-                    detail = (
-                        f" ({len(charged)} of the {len(matched)} declarations it names)"
-                        if len(matched) > 1
-                        else ""
-                    )
                     for verdict in verdicts:
                         if verdict.decl.key in keys:
-                            verdict.doc_citations.append(
+                            charged_count = (
+                                len(legacy_seeded_keys)
+                                if verdict.decl.key in legacy_seeded_keys
+                                else len(charged)
+                            )
+                            detail = (
+                                f" ({charged_count} of the "
+                                f"{len(matched)} declarations it names)"
+                                if len(matched) > 1
+                                else ""
+                            )
+                            citation = (
                                 f"shorthand {doc.label}:{lineno}: `{token}`{detail}"
                             )
+                            evidence_key = (verdict.decl.key, citation)
+                            if (
+                                verdict.decl.key in resolved_seeded_keys
+                                and evidence_key in resolved_glob_evidence
+                            ):
+                                continue
+                            verdict.doc_citations.append(citation)
+                            if verdict.decl.key in resolved_seeded_keys:
+                                resolved_glob_evidence.add(evidence_key)
         # (c) module citations.
         for verdict in verdicts:
             tail = verdict.decl.file.split("/", 1)[-1]
