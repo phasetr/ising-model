@@ -12,12 +12,20 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# Family-level calibration, main 171ddd4f, `--pattern '_ferromagnetic$'`:
-#   223 candidates -> 43 safe-to-delete, 79 uncertain, 66 load-bearing,
+# Family-level calibration, candidate scanner blob 9b927c68, `--pattern '_ferromagnetic$'`:
+#   223 candidates -> 19 safe-to-delete, 88 uncertain, 81 load-bearing,
 #   35 published-result; 112 of the 223 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
+# The resolved-glob elision-head repair was measured against exact base
+# 370f7033 over all 10606 unique declaration names. It adds 205 unique shorthand
+# evidence strings and removes no evidence; exact/module/unreadable evidence is
+# unchanged. Verdicts move only away from deletion eligibility: 49 safe-to-delete
+# -> uncertain, 11 safe-to-delete -> load-bearing, and 12 uncertain ->
+# load-bearing. Family labels move 387 -> 381 by removing six labels that now
+# have concrete immediate-sibling targets; no label is added. All 18 fixture
+# verdict rows below remain unchanged.
 # The fully-qualified IsingModel-glob repair was measured against fixed base
 # a09267ce over all 10606 declarations: the 18 fixture verdicts stay unchanged,
 # citation evidence removes 0 and adds exactly 20 shorthand / 0 exact charges,
