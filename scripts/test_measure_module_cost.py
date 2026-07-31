@@ -9,8 +9,18 @@ in Python or replaced by a small stub executable that prints a canned profiler
 report, so nothing here compiles anything and the suite is safe to run while a
 build holds the machine. It is not instantaneous -- the stub-executable cases
 sleep a few tenths of a second on purpose, so that a reported ``import`` is
-below the wall clock the harness measures around them -- and it shells out to
-``git ls-files`` once to find the committed artifacts. Expect a few seconds.
+below the wall clock the harness measures around them. Expect a few seconds.
+
+Scope: the harness, never a committed artifact
+----------------------------------------------
+Every case here is about what ``measure_module_cost.py`` *does*. None reads a
+committed measurement artifact and judges it. That second layer existed and was
+deleted: three rounds of review found seven fail-open holes in it, three of them
+introduced by the round that was meant to close the previous three, and the
+rule declared before that round -- another round of fail-open holes in the
+artifact-validation layer and the layer goes rather than being hardened again --
+fired. The evidence it used to guard is committed and unchanged; what is gone is
+the machinery that re-judged it on every CI run without converging.
 
 What is worth testing in a stopwatch
 ------------------------------------
@@ -41,10 +51,9 @@ runs incomparable while every printed number still looks plausible:
    glob that matches nothing, or a path that is missing, must stop the run
    rather than shrink a "family" to whatever happened to exist; and a glob that
    reaches one file by several spellings must not measure it several times.
-6. **An artifact must not be silently replaced**, and every committed artifact
-   -- found by its schema tag, wherever in the tree it was written -- must be a
-   complete, fully valid record whose process guard held, judged from its
-   samples and never from the tally it reports about itself.
+6. **An artifact must not be silently replaced.** ``--out`` onto an existing
+   file needs ``--force``, and the refusal has to come before any module is
+   timed.
 7. **A guard that cannot be evaluated must stop the run.** The protocol
    discards samples taken beside a foreign ``lean``; a harness that records the
    count as ``null`` when it cannot take it leaves that rule inert while the
@@ -52,6 +61,10 @@ runs incomparable while every printed number still looks plausible:
 8. **The measured bytes must be identifiable afterwards.** ``git`` HEAD does
    not identify them on a dirty tree, so the porcelain digest, the dirty paths
    and a hash per measured module have to be in the record.
+9. **The registered machine-load guard's inputs must be recorded per sample**,
+   with a probe that cannot answer saying so rather than leaving a ``null``.
+   The harness records them and judges none of them: section 4.3 of the design
+   report owns that rule.
 
 The mutation cases follow the idiom of ``scripts/test_audit_gate.py``: a
 fixture with a known verdict, and a :func:`load_mutated` re-import with one
@@ -71,7 +84,6 @@ import json
 import os
 import platform
 import stat
-import subprocess
 import sys
 import tempfile
 import types
@@ -375,18 +387,6 @@ class ProfileParseTest(unittest.TestCase):
                 "import took 1.6s\ncumulative profiling times:\n\telaboration 36.8ms\n"
             )
         self.assertIn("cannot be compared", str(caught.exception))
-
-    def test_the_committed_samples_satisfy_the_cross_check(self) -> None:
-        """Every recorded sample already agrees with itself, so the check refuses nothing real."""
-        for path in ArtifactShapeTest().committed_artifacts():
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            for record in payload["samples"]:
-                self.assertAlmostEqual(
-                    float(record["import"]),
-                    float(record["phases"]["import"]),
-                    places=6,
-                    msg=f"{path.name}: {record['module']}",
-                )
 
     def test_mutant_skipping_the_cross_check_accepts_a_contradiction(self) -> None:
         """Mutation: drop the comparison -- a self-contradicting report parses again."""
@@ -786,6 +786,36 @@ class FingerprintTest(unittest.TestCase):
         self.assertIs(mmc.REPO_ROOT, audit_gate.REPO_ROOT)
         self.assertIs(mmc.LIB_DIR, audit_gate.LIB_DIR)
 
+    def test_machine_state_records_every_input_and_nulls_none_of_them(self) -> None:
+        """The registered guard's three inputs are recorded, a failed probe included.
+
+        ``pmset -g therm`` exits 0 in this sandbox while printing that it could
+        not read the thermal state, so the assertion is that the record shows
+        the exit code and the output -- not that the state was readable.
+        """
+        state = mmc.machine_state()
+        self.assertEqual(set(state), {"loadavg", "ac_power", "thermal"})
+        load = state["loadavg"]
+        if isinstance(load, list):
+            self.assertEqual(len(load), 3)
+        else:
+            self.assertIn("unavailable", str(load))
+        for key in ("ac_power", "thermal"):
+            probe = state[key]
+            self.assertEqual(set(probe), {"command", "exit_code", "output"}, key)
+            self.assertTrue(str(probe["command"]).startswith("pmset "), key)
+            self.assertIsInstance(probe["exit_code"], int, key)
+            self.assertIsInstance(probe["output"], list, key)
+
+    def test_every_sample_carries_its_own_machine_state(self) -> None:
+        """Per sample, not once per run: the registered guard is per replicate."""
+        with tempfile.TemporaryDirectory() as tmp:
+            stub = write_stub_lean(Path(tmp), stream="stderr", sleep_s=STUB_SLEEP_S)
+            result = mmc.measure_once(
+                str(stub), mmc.REPO_ROOT / TWO_MODULES[0], dict(os.environ), 60.0
+            )
+        self.assertEqual(set(result["machine_state"]), {"loadavg", "ac_power", "thermal"})
+
 
 class ProcessGuardTest(unittest.TestCase):
     """The serial-run precondition: counted, recorded as a number, or the run stops.
@@ -933,247 +963,6 @@ class ProvenanceTest(unittest.TestCase):
         _, payload = run_stub_cli(mutant)
         self.assertIsNone(payload["environment"]["git"]["status_digest"])
         self.assertIsNotNone(mmc.git_fingerprint()["status_digest"])
-
-
-class ArtifactShapeTest(unittest.TestCase):
-    """The committed artifacts keep every sample, and every sample is valid."""
-
-    def committed_artifacts(self) -> list[Path]:
-        """Return every measurement artifact this repository commits, wherever it sits.
-
-        Scoped to what ``git`` tracks, not to what a directory happens to
-        contain: the reports directory is also where local scratch runs land,
-        including failed ones, and the claim under test is about the record the
-        repository publishes.
-
-        Selected by what the file *is* -- its schema tag -- and not by where it
-        was written or what it was named. An earlier version looked only in
-        ``.self-local/reports/``, which is not where the design report's own
-        retention rule sends raw data (``.self-local/perf/4794/raw/``), and
-        ``--out`` can put an artifact anywhere under any name: a committed
-        artifact outside the searched directory was simply not checked, and the
-        case still passed.
-        """
-        proc = subprocess.run(
-            ["git", "-C", str(mmc.REPO_ROOT), "ls-files", "-z", "--", "*.json"],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(proc.returncode, 0, proc.stderr)
-        tracked = [mmc.REPO_ROOT / name for name in proc.stdout.split("\0") if name]
-        marker = mmc.SCHEMA.rsplit("/", 1)[0]
-        return [
-            path
-            for path in tracked
-            if marker in path.read_text(encoding="utf-8", errors="replace")
-        ]
-
-    @staticmethod
-    def derive_counts(samples: list[dict[str, object]]) -> dict[str, int]:
-        """Re-derive the tally from the samples, rather than reading the artifact's own.
-
-        This is the whole point of the case below. An artifact that says
-        ``measured_valid == measured`` says only that its author's arithmetic
-        was consistent with itself; flipping one measured sample to
-        ``valid: false`` and leaving the tally alone passed the earlier version
-        of this test unchanged.
-        """
-        def count(phase: str, valid: bool | None = None) -> int:
-            return len(
-                [
-                    record
-                    for record in samples
-                    if record["phase"] == phase and (valid is None or record["valid"] is valid)
-                ]
-            )
-
-        return {
-            "total": len(samples),
-            "warmup": count("warmup"),
-            "warmup_valid": count("warmup", True),
-            "measured": count("measure"),
-            "measured_valid": count("measure", True),
-        }
-
-    def assert_artifact_sound(self, payload: dict[str, object], name: str) -> None:
-        """Assert that ``payload`` is a whole record of a run with no failed sample."""
-        self.assertIn(payload["schema"], mmc.KNOWN_SCHEMAS, name)
-        self.assertTrue(payload["samples"], name)
-        derived = self.derive_counts(payload["samples"])
-        # The artifact's own tally must agree with its samples on every count
-        # its schema states. Iterating the recorded keys alone let an *empty*
-        # tally agree with everything: no key, no comparison, no failure.
-        # Schema 1 is the one schema that predates ``warmup_valid``.
-        stated = set(derived)
-        if payload["schema"] == "ising-model/measure_module_cost/1":
-            stated -= {"warmup_valid"}
-        self.assertEqual(set(payload["sample_counts"]), stated, f"{name}: sample_counts keys")
-        for key, recorded in payload["sample_counts"].items():
-            self.assertEqual(recorded, derived[key], f"{name}: sample_counts.{key}")
-        # ...and the properties themselves are asserted on the derived numbers,
-        # so a tampered or mistaken tally cannot vouch for them.
-        self.assertGreater(derived["measured"], 0, name)
-        self.assertGreaterEqual(
-            derived["measured"] // max(len(payload["modules"]), 1), mmc.MIN_REPLICATES, name
-        )
-        self.assertGreaterEqual(derived["warmup"], len(payload["modules"]), name)
-        self.assertEqual(derived["measured_valid"], derived["measured"], name)
-        self.assertEqual(derived["warmup_valid"], derived["warmup"], name)
-        self.assertIs(payload["protocol"]["warmup_samples_excluded_from_statistics"], True, name)
-        self.assertIsNotNone(payload["environment"]["git"]["head"], name)
-        self.assertIsNotNone(payload["environment"]["lean_toolchain"], name)
-        if payload["schema"] == mmc.SCHEMA:
-            # The current schema is the first that records the guard as a value.
-            # An artifact stating it was taken beside a foreign ``lean`` says so
-            # about its own samples; publishing it as a sound record anyway is
-            # the discard rule going unread at the one place it is readable.
-            self.assertIs(payload["environment"]["process_guard"]["clean"], True, name)
-
-    def test_committed_artifacts_are_complete_and_valid(self) -> None:
-        """Every committed artifact is a whole record of a run with no failed sample."""
-        artifacts = self.committed_artifacts()
-        # Without this the whole case passes when the glob finds nothing, which
-        # is how a check survives the deletion of the thing it checks.
-        self.assertTrue(artifacts, "no committed measurement artifact found")
-        for path in artifacts:
-            self.assert_artifact_sound(json.loads(path.read_text(encoding="utf-8")), path.name)
-
-    def test_a_sample_flipped_to_invalid_is_caught(self) -> None:
-        """Tamper with a sample, leave the tally: the check must read the samples."""
-        path = self.committed_artifacts()[0]
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        for record in payload["samples"]:
-            if record["phase"] == "measure":
-                record["valid"] = False
-                record["problems"] = ["tampered"]
-                break
-        with self.assertRaises(AssertionError):
-            self.assert_artifact_sound(payload, "tampered-sample")
-
-    def test_a_tally_that_contradicts_the_samples_is_caught(self) -> None:
-        """The other direction: an inflated tally over an untouched sample list."""
-        path = self.committed_artifacts()[0]
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        payload["sample_counts"]["measured"] += 1
-        payload["sample_counts"]["measured_valid"] += 1
-        with self.assertRaises(AssertionError):
-            self.assert_artifact_sound(payload, "tampered-tally")
-
-    def test_a_tally_that_states_nothing_is_caught(self) -> None:
-        """An empty ``sample_counts`` must fail, and the real artifact must still pass.
-
-        Comparing only the keys an artifact happens to state let ``{}`` agree
-        with everything: no key, no comparison, no failure. The positive control
-        is half of this case -- a key check that also refused the committed
-        artifact would "close" the hole by rejecting everything.
-        """
-        path = self.committed_artifacts()[0]
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        self.assert_artifact_sound(payload, path.name)
-        stated = dict(payload["sample_counts"])
-        self.assertTrue(stated, path.name)
-        payload["sample_counts"] = {}
-        with self.assertRaises(AssertionError) as caught:
-            self.assert_artifact_sound(payload, "empty-tally")
-        self.assertIn("sample_counts keys", str(caught.exception))
-        # One dropped key is the same hole in miniature, and the one an
-        # artifact could reach by accident rather than by tampering.
-        for omitted in stated:
-            payload["sample_counts"] = {
-                key: value for key, value in stated.items() if key != omitted
-            }
-            with self.assertRaises(AssertionError, msg=omitted):
-                self.assert_artifact_sound(payload, f"tally-without-{omitted}")
-
-    def test_an_artifact_outside_the_reports_directory_is_found_and_fails(self) -> None:
-        """A tracked artifact where the retention rule sends raw data is checked too.
-
-        The design report retains raw data under ``.self-local/perf/4794/raw/``
-        and ``--out`` writes anywhere under any name, so a search bounded to
-        ``.self-local/reports/`` left such a file unchecked while this class
-        still passed green. The decoy is staged in a scratch ``GIT_INDEX_FILE``
-        seeded from ``HEAD``: it is tracked for the duration of this case and by
-        nothing afterwards, the repository's own index is never written, and
-        ``--info-only`` keeps the blob out of the object database as well.
-        """
-        payload = json.loads(self.committed_artifacts()[0].read_text(encoding="utf-8"))
-        for record in payload["samples"]:
-            if record["phase"] == "measure":
-                record["valid"] = False
-                record["problems"] = ["decoy"]
-        # The tally is re-derived over the key set the record already states, so
-        # the decoy's only defect is its samples: a stale tally would fail it
-        # for the other reason and the case would prove nothing about the search.
-        derived = self.derive_counts(payload["samples"])
-        payload["sample_counts"] = {key: derived[key] for key in payload["sample_counts"]}
-        raw_dir = mmc.REPO_ROOT / ".self-local" / "perf" / "4794" / "raw"
-        decoy = raw_dir / "measure-module-cost-decoy.json"
-        created = [
-            parent
-            for parent in (raw_dir, *raw_dir.parents)
-            if mmc.REPO_ROOT in parent.parents and not parent.exists()
-        ]
-        previous_index = os.environ.get("GIT_INDEX_FILE")
-        with tempfile.TemporaryDirectory() as tmp:
-            os.environ["GIT_INDEX_FILE"] = str(Path(tmp) / "scratch.index")
-            try:
-                raw_dir.mkdir(parents=True, exist_ok=True)
-                decoy.write_text(json.dumps(payload), encoding="utf-8")
-                for command in (
-                    ["read-tree", "HEAD"],
-                    ["update-index", "--add", "--info-only", "--",
-                     str(decoy.relative_to(mmc.REPO_ROOT))],
-                ):
-                    proc = subprocess.run(
-                        ["git", "-C", str(mmc.REPO_ROOT), *command],
-                        capture_output=True,
-                        text=True,
-                        check=False,
-                    )
-                    self.assertEqual(proc.returncode, 0, proc.stderr)
-                self.assertIn(decoy, self.committed_artifacts())
-                with self.assertRaises(AssertionError) as caught:
-                    self.test_committed_artifacts_are_complete_and_valid()
-                # Named: otherwise the case would pass if some *other* artifact
-                # happened to be the one that failed.
-                self.assertIn(decoy.name, str(caught.exception))
-            finally:
-                if previous_index is None:
-                    os.environ.pop("GIT_INDEX_FILE", None)
-                else:
-                    os.environ["GIT_INDEX_FILE"] = previous_index
-                decoy.unlink(missing_ok=True)
-                for directory in created:
-                    with contextlib.suppress(OSError):
-                        directory.rmdir()
-
-    def test_a_dirty_process_guard_fails_where_a_clean_one_passes(self) -> None:
-        """The recorded guard is read at the one place it is readable.
-
-        The committed run predates the field, so the record is lifted to the
-        current schema here rather than a synthetic payload being invented --
-        schema 3 is exactly the version that records the guard as a value, and
-        the check is conditional on that. An artifact stating it was taken
-        beside a foreign ``lean`` says so about its own samples; publishing it
-        as sound is the protocol's discard rule going unread.
-        """
-        payload = json.loads(self.committed_artifacts()[0].read_text(encoding="utf-8"))
-        payload["schema"] = mmc.SCHEMA
-        payload["sample_counts"] = self.derive_counts(payload["samples"])
-        guard = {
-            "method": "pgrep",
-            "at_start": 0,
-            "at_end": 0,
-            "clean": True,
-            "names_counted": list(mmc.GUARDED_PROCESS_NAMES),
-        }
-        payload["environment"]["process_guard"] = guard
-        self.assert_artifact_sound(payload, "guard-clean")
-        guard.update({"at_end": 1, "clean": False})
-        with self.assertRaises(AssertionError) as caught:
-            self.assert_artifact_sound(payload, "guard-dirty")
-        self.assertIn("guard-dirty", str(caught.exception))
 
 
 def run_suite() -> int:

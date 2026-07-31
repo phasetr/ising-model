@@ -108,6 +108,17 @@ each of them is recorded as a *value*, never as "unknown":
   content. A later reader can then tell whether a re-run measured the same
   source, instead of inferring it from a branch name.
 
+Recorded and *not* judged
+-------------------------
+Section 4.3 of ``.self-local/reports/design-4794-module-cost-protocol.md``
+registers a per-replicate machine-load guard -- 1-minute load average below
+2.0, AC power, no thermal throttling -- which this harness records
+(:func:`machine_state`, once per sample) and does not evaluate. The report owns
+that rule; a threshold enforced here would be a second copy of it, drifting
+from the one review reads. Recording per sample is the part that matters: an
+earlier run recorded a single start-of-run load average, which cannot say
+whether the guard held for the samples that came after it.
+
 What this harness does not reproduce
 ------------------------------------
 ``lake build`` passes the package's ``[leanOptions]`` (``lakefile.toml``) to
@@ -141,8 +152,9 @@ included, flagged and excluded from the statistics), per-module and overall
 summaries (median / min / max / spread / n), the provenance of the measured
 bytes (git HEAD, branch, porcelain digest and dirty paths, plus a SHA-256 per
 measured module), and an environment fingerprint (``lean-toolchain``, lean
-binary and version, target and repository module counts, load average,
-hardware, timestamp, and the process-guard counts). Written to
+binary and version, target and repository module counts, hardware, timestamp,
+the process-guard counts, and the machine state at the start of the run beside
+the per-sample one). Written to
 ``--out``, or to
 ``.self-local/reports/measure-module-cost-<label>-<timestamp>.json``. An
 existing file is never overwritten without ``--force``.
@@ -190,18 +202,10 @@ DEFAULT_OUT_DIR = REPO_ROOT / ".self-local" / "reports"
 # argv record and ``environment.platform.machine`` the hardware rather than the
 # interpreter's own (possibly translated) architecture; 3 made the process
 # guard a recorded value instead of a nullable one and added the provenance of
-# the measured bytes (porcelain digest, dirty paths, per-module hashes).
-SCHEMA = "ising-model/measure_module_cost/3"
-
-# Schema tags whose artifacts remain readable by this file's consumers. Listed
-# rather than open-ended: an artifact written by a *newer* schema must fail a
-# reader that predates it instead of being parsed on the assumption that fields
-# only ever get added.
-KNOWN_SCHEMAS = (
-    SCHEMA,
-    "ising-model/measure_module_cost/2",
-    "ising-model/measure_module_cost/1",
-)
+# the measured bytes (porcelain digest, dirty paths, per-module hashes); 4
+# moved the machine-load record from one start-of-run load average to a
+# per-sample :func:`machine_state`.
+SCHEMA = "ising-model/measure_module_cost/4"
 
 # The canonical protocol's replicate floor. Enforced rather than defaulted: the
 # floor is the part of the protocol that a hurried run drops first, and a
@@ -599,6 +603,39 @@ def lean_process_census() -> dict[str, object]:
     return {"method": None, "count": None, "error": "; ".join(errors)}
 
 
+def machine_state() -> dict[str, object]:
+    """Return the machine-load facts the registered guard names -- recorded, never judged.
+
+    Section 4.3 of ``.self-local/reports/design-4794-module-cost-protocol.md``
+    registers a **per-replicate** guard: 1-minute load average below 2.0, AC
+    power, no thermal throttling. This harness records those inputs and
+    evaluates none of them. Enforcing a threshold here would put a second,
+    unreviewed copy of a rule beside the report that owns it; recording is what
+    lets a reader apply the registered rule to samples that already exist,
+    which is exactly what an earlier run made impossible by recording the load
+    average once for the whole run and nothing else at all.
+
+    Nothing is ``None`` on failure. A probe that cannot answer records its exit
+    code and what it printed -- including ``pmset -g therm``, which exits 0
+    inside this repository's sandbox while reporting that it could not read the
+    thermal state. A null field reads as "not applicable", and that reading is
+    how the process-guard field went unnoticed once already.
+    """
+    try:
+        loadavg: object = [round(value, 2) for value in os.getloadavg()]
+    except OSError as exc:
+        loadavg = f"unavailable: os.getloadavg() failed: {exc}"
+    state: dict[str, object] = {"loadavg": loadavg}
+    for key, cmd in (("ac_power", ("pmset", "-g", "batt")), ("thermal", ("pmset", "-g", "therm"))):
+        code, out, err = run_capture(list(cmd))
+        state[key] = {
+            "command": " ".join(cmd),
+            "exit_code": code,
+            "output": [line.rstrip() for line in (out + err).splitlines() if line.strip()],
+        }
+    return state
+
+
 def measure_once(
     lean_bin: str,
     module: Path,
@@ -615,7 +652,12 @@ def measure_once(
     an environment error, not a slow sample: it raises
     :class:`MeasurementError` for the caller's exit-2 path rather than leaving
     an uncaught ``FileNotFoundError`` and no artifact.
+
+    :func:`machine_state` is taken *before* the timed window opens, so the two
+    ``pmset`` probes it spawns cost wall clock on the run and nothing on the
+    sample.
     """
+    state = machine_state()
     before = resource.getrusage(resource.RUSAGE_CHILDREN)
     started = time.monotonic()
     timed_out = False
@@ -649,6 +691,8 @@ def measure_once(
         "sys": round(after.ru_stime - before.ru_stime, 4),
         "returncode": returncode,
         "timed_out": timed_out,
+        # The registered guard is per replicate, so its inputs are too.
+        "machine_state": state,
     }
     # Both streams: the profiler report is on stderr, and a diagnostic may be on
     # either, so the parse and the cleanliness check both read the union.
@@ -819,11 +863,6 @@ def environment_fingerprint(
     """
     code_version, version_out, version_err = run_capture([lean_bin, "--version"])
     version = (version_out or version_err).strip().splitlines()
-    try:
-        load1, load5, load15 = os.getloadavg()
-        loadavg = [round(load1, 2), round(load5, 2), round(load15, 2)]
-    except OSError:
-        loadavg = None
     toolchain = None
     if TOOLCHAIN_FILE.is_file():
         toolchain = TOOLCHAIN_FILE.read_text(encoding="utf-8").strip()
@@ -843,7 +882,11 @@ def environment_fingerprint(
         # tell "the family changed" from "the library grew".
         "library_module_count": len(list(LIB_DIR.rglob("*.lean"))) if LIB_DIR.is_dir() else None,
         "platform": hardware_fingerprint(),
-        "loadavg_at_start": loadavg,
+        # The machine-load record lives on each sample (``samples[*].
+        # machine_state``), not here: the guard section 4.3 of the design
+        # report registers is per replicate, and one start-of-run reading
+        # cannot answer it for the samples that follow.
+        "machine_state_at_start": machine_state(),
         "other_lean_processes_at_start": census["count"],
         # ``at_end`` is filled in by :func:`main` once the last sample is taken:
         # a process that appeared halfway through is exactly what the guard is
