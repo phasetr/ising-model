@@ -4,32 +4,21 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d Λ-induced spinProduct and `J = 0` bot wrappers
 
-Narrow child module for five ℤ^d Λ-induced wrappers extracted from
+Narrow child module for four ℤ^d Λ-induced wrappers extracted from
 `EnergyClosedForms.lean`:
 
-* `partitionFunction_eq_bot_at_J_zero_latticeGraph`,
 * `correlation_eq_bot_at_J_zero_latticeGraph`,
 * `spinProduct_singleton_latticeGraph`,
 * `spinProduct_union_latticeGraph`,
 * `spinProduct_sq_latticeGraph`.
+
+The `J = 0` graph-independence of the partition function is stated once, in
+`FiniteVolumeBasics.lean`, as
+`partitionFunctionΛ_eq_bot_at_J_zero_latticeGraph`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-- **ℤ^d partitionFunction_eq_bot_at_J_zero direct** (Λ-induced):
-`Z_G ⟨0, h, β⟩ = Z_⊥ ⟨0, h, β⟩`. Thin pass-through of
-`IsingModel.partitionFunction_eq_bot_at_J_zero`. -/
-theorem partitionFunction_eq_bot_at_J_zero_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) :
-    IsingModel.partitionFunction
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨0, h, β⟩ : IsingParams ℝ)
-      = IsingModel.partitionFunction
-          (⊥ : SimpleGraph (↑Λ : Type _))
-          (⟨0, h, β⟩ : IsingParams ℝ) :=
-  IsingModel.partitionFunction_eq_bot_at_J_zero
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
 /-- **ℤ^d correlation_eq_bot_at_J_zero direct** (Λ-induced):
 `⟨σ^A⟩_G = ⟨σ^A⟩_⊥` at `J = 0`. Thin pass-through of

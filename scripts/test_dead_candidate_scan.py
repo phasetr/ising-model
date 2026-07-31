@@ -1426,7 +1426,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             self.assertEqual(dcs._citation_tokens(token), [], token)
 
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
-        self.assertEqual(len(broad or []), 10571)
+        self.assertEqual(len(broad or []), 10562)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1438,7 +1438,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10571 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10562 declarations"]},
         )
 
 

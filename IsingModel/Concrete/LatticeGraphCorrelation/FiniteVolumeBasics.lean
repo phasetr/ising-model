@@ -35,18 +35,6 @@ theorem partitionFunctionΛ_eq_bot_at_J_zero_latticeGraph
   IsingModel.partitionFunction_eq_bot_at_J_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β
 
-/-- **ℤ^d `correlation_eq_bot_at_J_zero`** at Λ-induced: at `J = 0`
-the correlation is graph-independent. -/
-theorem correlationΛ_eq_bot_at_J_zero_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ) (A : Finset (↑Λ : Type _)) :
-    IsingModel.correlation
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨0, h, β⟩ : IsingParams ℝ) A
-      = IsingModel.correlation (⊥ : SimpleGraph (↑Λ : Type _))
-          (⟨0, h, β⟩ : IsingParams ℝ) A :=
-  IsingModel.correlation_eq_bot_at_J_zero
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β A
-
 /-- **ℤ^d `correlation_bot_closed`** at Λ-induced:
 `⟨σ^A⟩_⊥ = tanh(β·h)^|A|`. -/
 theorem correlation_bot_closed_latticeGraph
@@ -74,11 +62,12 @@ and `card_config_eq_two_pow_latticeGraph` now live in
 
 /-! ## Moved: Hamiltonian flip / symmetry wrappers
 
-The five wrappers
+The three wrappers
 `edgeSpin_flip_latticeGraph`, `interactionEnergy_flip_latticeGraph`,
-`hamiltonianΛ_flip_eq_latticeGraph`, `hamiltonianΛ_neg_h_latticeGraph`,
 and `hamiltonian_bot_latticeGraph` now live in
-`FiniteVolumeBasicsHamiltonian.lean`. -/
+`FiniteVolumeBasicsHamiltonian.lean`. The spin-flip invariance at `h = 0` and
+the `h ↦ -h` reflection are stated once, in `EnergyClosedFormsHamiltonian.lean`,
+as `hamiltonian_flip_eq_latticeGraph` and `hamiltonian_neg_h_latticeGraph`. -/
 
 
 end Ambient

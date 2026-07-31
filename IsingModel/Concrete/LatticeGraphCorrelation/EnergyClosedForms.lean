@@ -2,57 +2,24 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume energy closed forms and direct graph wrappers
+# Concrete finite-volume Boltzmann positivity and Hamiltonian bound
 
-Narrow child module for concrete `latticeGraph` finite-volume Hamiltonian
-closed-form wrappers, direct finite-volume energy / partition / free-energy
-bounds, and base spin-product helper wrappers. The theorem names are the same
-as the former declarations, but callers can now avoid importing the
-monolithic concrete module.
+Narrow child module for the two direct `latticeGraph` finite-volume wrappers
+`boltzmannWeight_pos_latticeGraph` and `hamiltonian_abs_le_latticeGraph`. Each
+is a thin pass-through to the corresponding general `IsingModel.*` statement at
+`Ambient.inducedGraph (latticeGraph d) Λ`, so that callers can avoid importing
+the monolithic concrete module.
+
+The ℤ^d Hamiltonian closed forms at `J = 0`, at zero parameters, and against the
+edgeless graph are stated once, in `EnergyClosedFormsHamiltonian.lean`, as
+`hamiltonian_{J_zero,zero_params,eq_bot_at_J_zero}_latticeGraph`; the
+identically-stated copies that used to sit here have been removed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-/-! ### ℤ^d finite-volume Hamiltonian closed forms -/
-
-/-- **ℤ^d hamiltonianΛ at `J = 0`** (Λ-induced subgraph): the Hamiltonian
-reduces to `-h · Σ sign σ`. -/
-theorem hamiltonianΛ_latticeGraph_J_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨0, h, β⟩ : IsingParams ℝ) σ
-      = -h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
-  IsingModel.hamiltonian_J_zero
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
-
-/-- **ℤ^d hamiltonianΛ at zero parameters** (Λ-induced subgraph):
-`H_Λ ⟨0, 0, β⟩ σ = 0`. -/
-theorem hamiltonianΛ_latticeGraph_zero_params
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (β : ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨0, 0, β⟩ : IsingParams ℝ) σ = 0 :=
-  IsingModel.hamiltonian_zero_params
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) β σ
-
-/-- **ℤ^d hamiltonianΛ equals `⊥`-hamiltonian at `J = 0`** (Λ-induced subgraph):
-at `J = 0` the Hamiltonian is graph-independent. -/
-theorem hamiltonianΛ_latticeGraph_eq_bot_at_J_zero
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h β : ℝ)
-    (σ : IsingModel.Config (↑Λ : Type _)) :
-    IsingModel.hamiltonian
-        (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-        (⟨0, h, β⟩ : IsingParams ℝ) σ
-      = IsingModel.hamiltonian (⊥ : SimpleGraph (↑Λ : Type _))
-          (⟨0, h, β⟩ : IsingParams ℝ) σ :=
-  IsingModel.hamiltonian_eq_bot_at_J_zero
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
-
-/-! ### Hamiltonian / Z bound / `J = 0` closed-form wrappers -/
+/-! ### ℤ^d Boltzmann positivity and finite-volume energy bound -/
 
 /-- **ℤ^d boltzmannWeight_pos direct** (Λ-induced): `0 < w(σ)` pointwise.
 Thin pass-through of `IsingModel.boltzmannWeight_pos`. -/
@@ -95,8 +62,7 @@ now live in `EnergyClosedFormsHamiltonian.lean`. -/
 
 /-! ## Moved: spinProduct and `J = 0` bot wrappers
 
-The five wrappers `partitionFunction_eq_bot_at_J_zero_latticeGraph`,
-`correlation_eq_bot_at_J_zero_latticeGraph`,
+The four wrappers `correlation_eq_bot_at_J_zero_latticeGraph`,
 `spinProduct_singleton_latticeGraph`, `spinProduct_union_latticeGraph`,
 `spinProduct_sq_latticeGraph` now live in
 `EnergyClosedFormsSpinProductAndBot.lean`. -/
