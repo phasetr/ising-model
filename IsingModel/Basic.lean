@@ -112,7 +112,7 @@ on signs in any commutative ring `K`.  The `K`-valued companion of `toSign_mul`,
 used by every spin-flip change of variables `ω ↦ (fun i => Spin.mul (ω i) (t i))`. -/
 theorem sign_mul {K : Type*} [CommRing K] (a b : Spin) :
     Spin.sign K (a.mul b) = Spin.sign K a * Spin.sign K b := by
-  simp [sign, toSign_mul]
+  cases a <;> cases b <;> simp [sign, mul, flip, toSign]
 
 /-- `mul a` is an involution (hence a bijection). -/
 @[simp]
