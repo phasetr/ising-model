@@ -1,3 +1,21 @@
+## 2026-07-31 postmerge handoff — #4818 completed, #4792 remains OPEN
+
+- PR #4819 candidate `9427d0d0b9e21439934fad170085f814bfb9c3ab`
+  was squash-merged as
+  `f23fa1e732d6985a59d305c85e018f06d62b2f88`; both have tree
+  `de8a817a7f34191d9b9efdccad87b2165237cf12`.
+- Lean Action CI
+  [run 30596619625](https://github.com/phasetr/ising-model/actions/runs/30596619625)
+  is terminal success at the exact squash; reviewer final postmerge PASS is
+  [comment 5138208568](https://github.com/phasetr/ising-model/issues/4818#issuecomment-5138208568).
+- #4818 is CLOSED completed by PR #4819; completion record is
+  [comment 5138231469](https://github.com/phasetr/ising-model/issues/4818#issuecomment-5138231469).
+- #4792 remains OPEN. Formal hierarchy is #4786 → #4792 → #4818, and the closed
+  child remains attached. All four standing exclusions remain in force; no
+  deletion, exclusion release, #4801 credit, or next-lane start occurred.
+- Current handoff:
+  `.self-local/reports/handoff-4792-post4819-2026-07-31.md`.
+
 ## 2026-07-30 audit checkpoint — #4786 hierarchy and #4803 evidence
 
 - PR #4806 candidate `f425143c96c865d40efb401c24b49d0ffdd970ef` was
