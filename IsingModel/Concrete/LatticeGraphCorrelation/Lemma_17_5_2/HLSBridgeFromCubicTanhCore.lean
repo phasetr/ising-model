@@ -8,10 +8,11 @@ import IsingModel.PolyDecay
 
 Core (Step 119 plan Step 5.7) building blocks for the conditional
 `PseudoMassLatticeDistanceBridge` constructor: the translation reductions of the
-pair correlation, `pseudoMassFromParamsAtPair`, and lattice distance, the
-zero-anchored bound lift, the `cubicTanhProfileBound`-family active-range lift,
-the family-based bridge constructor, and the `pseudoMassG`-shaped atomic
-reductions.
+pair correlation and of `pseudoMassFromParamsAtPair`, the zero-anchored bound
+lift, the `cubicTanhProfileBound`-family active-range lift, the family-based
+bridge constructor, and the `pseudoMassG`-shaped atomic reductions. The
+lattice-distance translation step carries no wrapper here; the proofs use
+`latticeDistance_translate_eq` from `PolyDecay.lean` directly.
 
 This is a structural child of `HLSBridgeFromCubicTanh.lean`; see that umbrella
 module for the full overview.

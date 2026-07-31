@@ -108,8 +108,14 @@ theorem toSign_mul (a b : Spin) : (a.mul b).toSign = a.toSign * b.toSign := by
   cases a <;> cases b <;> simp [mul, flip, toSign]
 
 /-- `sign K (mul a b) = sign K a * sign K b`: spin multiplication is multiplicative
-on signs in any commutative ring `K`.  The `K`-valued companion of `toSign_mul`,
-used by every spin-flip change of variables `ω ↦ (fun i => Spin.mul (ω i) (t i))`. -/
+on signs in any commutative ring `K`.  The `K`-valued companion of `toSign_mul`.
+Its consumers are `edgeSpin_spinMul` (`Hamiltonian.lean`) and the doubled-system
+weight factorisations in `BallBoundarySimonLieb/ScaledGKS.lean` and
+`Inequalities/GKSBoundaryConditionII.lean`, all three being `Spin.sign`-level steps
+of the spin-flip change of variables `ω ↦ (fun i => Spin.mul (ω i) (t i))`.  Not
+every use of that change of variables routes through it: `Inequalities/GKS.lean`
+reproves the same facts inline from `toSign_mul`, and the `spinProduct` steps
+elsewhere stay at `toSign`. -/
 theorem sign_mul {K : Type*} [CommRing K] (a b : Spin) :
     Spin.sign K (a.mul b) = Spin.sign K a * Spin.sign K b := by
   cases a <;> cases b <;> simp [sign, mul, flip, toSign]

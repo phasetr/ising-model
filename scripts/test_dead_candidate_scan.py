@@ -1427,9 +1427,11 @@ class QualifiedGlobCitationTest(unittest.TestCase):
 
         # Main-relative inventory size: it moves whenever the library gains or
         # loses a declaration name, so it is refreshed together with the label
-        # assertion below. 10562 -> 10548 by the cluster C/D duplicate removal
-        # (16 declarations deleted, 2 added, one deleted name re-added in
-        # another module, so 14 unique full names leave the tree).
+        # assertion below. 10562 -> 10548 by the cluster C/D duplicate removal:
+        # 16 declarations were deleted and 2 added, and one of the deleted names
+        # (`IsingModel.edgeSpin_spinMul`) was re-added in another module. So 15
+        # unique full names leave the tree and 1 (`IsingModel.Spin.sign_mul`)
+        # enters it, a net -14.
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
         self.assertEqual(len(broad or []), 10548)
         selected = [
