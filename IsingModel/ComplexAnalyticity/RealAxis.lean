@@ -189,12 +189,6 @@ theorem freeEnergyComplex_differentiableOn_slitPlane_locus_joint
                         ∈ Complex.slitPlane} := fun z hmem =>
   (freeEnergyComplex_analyticAt_joint G z hmem).differentiableAt.differentiableWithinAt
 
-/-- **log Z analyticity locus is open**. -/
-theorem isOpen_logZ_slitPlane_locus
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (J β : ℂ) :
-    IsOpen {h : ℂ | partitionFunctionComplex G J h β ∈ Complex.slitPlane} :=
-  isOpen_freeEnergy_analyticity_locus G J β
-
 /-- Jointly in (h, β) at fixed real `J > 0`, the slitPlane locus is open. -/
 theorem isOpen_slitPlane_locus_h_beta
     (G : SimpleGraph ι) [Fintype G.edgeSet] (J : ℂ) :
@@ -297,13 +291,6 @@ theorem freeEnergyComplex_restrict_joint_real_eq
   funext p
   exact freeEnergyComplex_ofReal_eq_freeEnergy G p
 
-/-- `partitionFunctionComplex` norm (modulus) at real parameters. -/
-theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (p : IsingParams ℝ) :
-    ‖partitionFunctionComplex G (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)‖
-      = partitionFunction G p :=
-  norm_partitionFunctionComplex_at_real G p
-
 /-- `freeEnergyComplex` jointly continuous on its slitPlane locus
 (including the real slice). -/
 theorem continuous_freeEnergyComplex_on_locus
@@ -356,17 +343,6 @@ theorem partitionFunctionComplex_entire_joint
     Differentiable ℂ
       (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2) :=
     fun z => (partitionFunctionComplex_analyticAt_joint G z).differentiableAt
-
-/-- `partitionFunctionComplex` is `AnalyticOnNhd` on all of ℂ³. -/
-theorem partitionFunctionComplex_analyticOnNhd_univ_joint'
-    (G : SimpleGraph ι) [Fintype G.edgeSet] :
-    AnalyticOnNhd ℂ
-      (fun z : ℂ × ℂ × ℂ => partitionFunctionComplex G z.1 z.2.1 z.2.2)
-      Set.univ := fun z _ =>
-  partitionFunctionComplex_analyticAt_joint G z
-
-
-
 
 
 /-- **GJ §4.6 Thm 4.6.2 finite-volume (AnalyticOnNhd form)**: there is

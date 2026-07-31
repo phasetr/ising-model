@@ -44,17 +44,6 @@ theorem mayerPartialSum_one_nonneg_of_nonneg
   rw [mayerPartialSum_one]
   exact Finset.sum_nonneg (fun _ _ => pow_nonneg ht _)
 
-/-- **`mayerPartialSum G 0 t = 0`** (§18.4 sharpening):
-trivial corollary of `mayerExpansionTerm_zero` and the def of
-`mayerPartialSum` (sum from 0 to N+1, only the n=0 term for N=0). -/
-theorem mayerPartialSum_zero_eq_zero
-    {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (G : SimpleGraph ι) [Fintype G.edgeSet] (t : ℝ) :
-    mayerPartialSum G 0 t = 0 := by
-  unfold mayerPartialSum
-  rw [show Finset.range (0 + 1) = {0} from rfl, Finset.sum_singleton]
-  exact mayerExpansionTerm_zero G t
-
 /-! ## §18.4 ferromagnetic strict / iff bundle (J ≥ 0, β ≥ 0)
 
 Ferromagnetic forms of the recent tanh-based iff / strict-mono /

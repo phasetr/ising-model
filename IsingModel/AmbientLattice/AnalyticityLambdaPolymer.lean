@@ -135,7 +135,7 @@ theorem mayerPartialSum_Λ_zero_eq_zero
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (t : ℝ) :
     IsingModel.mayerPartialSum (inducedGraph G Λ) 0 t = 0 :=
-  IsingModel.mayerPartialSum_zero_eq_zero (inducedGraph G Λ) t
+  IsingModel.mayerPartialSum_zero (inducedGraph G Λ) t
 
 /-- **Λ-layer: `mayerPartialSum G 1 t > 0` under `0 < t` and polymers exist**
 (§18.4 Λ wrap). -/

@@ -35,16 +35,6 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Per-edge spin supermodularity** for ±1 spins (companion of the private
-`spin_edge_supermodular` in `FKG.lean`):
-`s(a)s(b) + s(c)s(d) ≤ s(a⊔c)s(b⊔d) + s(a⊓c)s(b⊓d)`.  Verified by exhausting the
-16 cases. -/
-private theorem spin_edge_supermodularJ (a b c d : Spin) :
-    Spin.sign ℝ a * Spin.sign ℝ b + Spin.sign ℝ c * Spin.sign ℝ d ≤
-    Spin.sign ℝ (a ⊔ c) * Spin.sign ℝ (b ⊔ d) +
-    Spin.sign ℝ (a ⊓ c) * Spin.sign ℝ (b ⊓ d) := by
-  cases a <;> cases b <;> cases c <;> cases d <;> norm_num [Spin.sign, Spin.toSign]
-
 /-! ## Inhomogeneous-coupling energy and Boltzmann weight -/
 
 /-- **Inhomogeneous interaction energy**: `-∑_{e ∈ edges} J(e)·s(σ_i)s(σ_j)` for a
@@ -107,7 +97,7 @@ theorem boltzmannWeightJ_log_supermodular (G : SimpleGraph ι) [Fintype G.edgeSe
         edgeSpin (K := ℝ) (σ ⊔ σ') e + edgeSpin (K := ℝ) (σ ⊓ σ') e := by
       refine Sym2.ind (fun i j => ?_) e
       simp only [edgeSpin, Sym2.lift_mk, Spin.sign]
-      exact spin_edge_supermodularJ (σ i) (σ j) (σ' i) (σ' j)
+      exact spin_edge_supermodular (σ i) (σ j) (σ' i) (σ' j)
     rw [← mul_add, ← mul_add]
     exact mul_le_mul_of_nonneg_left hsm (hJ e)
   have hedge_sum : ∑ e ∈ G.edgeFinset, J e * edgeSpin (K := ℝ) σ e +

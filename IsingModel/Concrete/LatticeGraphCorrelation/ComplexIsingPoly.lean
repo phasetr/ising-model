@@ -25,7 +25,7 @@ theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real_latticeGraph
         (p.J : ℂ) (p.h : ℂ) (p.β : ℂ)‖
       = IsingModel.partitionFunction
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
-  IsingModel.norm_partitionFunctionComplex_eq_partitionFunction_at_real
+  IsingModel.norm_partitionFunctionComplex_at_real
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
 /-! #### Friedli-Velenik / Lee-Yang polynomial helpers

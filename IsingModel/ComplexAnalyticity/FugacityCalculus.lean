@@ -26,11 +26,6 @@ theorem partitionFunctionComplex_analyticOn_leeYangDomain
     AnalyticOn ℂ (fun h => partitionFunctionComplex G J h β) leeYangDomain :=
   (partitionFunctionComplex_analyticOnNhd_leeYangDomain G J β).analyticOn
 
-/-- `leeYangFugacity β` is continuous (everywhere on `ℂ`). Restatement
-of `continuous_leeYangFugacity`. -/
-theorem continuous_leeYangFugacity' (β : ℂ) :
-    Continuous (leeYangFugacity β) := continuous_leeYangFugacity β
-
 /-- `leeYangFugacity β` is `AnalyticOn` on any set. -/
 theorem leeYangFugacity_analyticOn (β : ℂ) (U : Set ℂ) :
     AnalyticOn ℂ (leeYangFugacity β) U :=

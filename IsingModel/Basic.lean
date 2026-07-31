@@ -107,6 +107,13 @@ def mul : Spin → Spin → Spin
 theorem toSign_mul (a b : Spin) : (a.mul b).toSign = a.toSign * b.toSign := by
   cases a <;> cases b <;> simp [mul, flip, toSign]
 
+/-- `sign K (mul a b) = sign K a * sign K b`: spin multiplication is multiplicative
+on signs in any commutative ring `K`.  The `K`-valued companion of `toSign_mul`,
+used by every spin-flip change of variables `ω ↦ (fun i => Spin.mul (ω i) (t i))`. -/
+theorem sign_mul {K : Type*} [CommRing K] (a b : Spin) :
+    Spin.sign K (a.mul b) = Spin.sign K a * Spin.sign K b := by
+  simp [sign, toSign_mul]
+
 /-- `mul a` is an involution (hence a bijection). -/
 @[simp]
 theorem mul_mul_cancel (a b : Spin) : a.mul (a.mul b) = b := by
