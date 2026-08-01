@@ -1,4 +1,5 @@
-import IsingModel.GibbsMeasure
+import Mathlib.Analysis.Complex.Exponential
+import IsingModel.Hamiltonian
 import IsingModel.TransferMatrix.LayerGibbs
 
 /-!
