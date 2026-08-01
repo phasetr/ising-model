@@ -1104,22 +1104,24 @@ SUITE_COMMAND = ("python3", "scripts/test_import_dag_contract.py")
 #: rather than a prefix is also what rejects a trailing ``|| true``.
 GATE_INVOCATION = (*CONTRACT_COMMAND, "--check")
 
-#: Keys that would keep the pinned steps looking wired while changing what they
+#: Keys that would leave the pinned steps looking wired while changing what they
 #: mean: ``if`` (GitHub reports a *skipped* job as successful),
 #: ``continue-on-error`` (the exit status is discarded), ``shell`` (a custom
-#: template decides what the exit status even is), ``with`` (``ref:`` would
-#: point checkout at another tree, so the gate would grade the wrong commit),
-#: ``env`` (a nested ``run`` key is an environment variable, not a command),
-#: ``needs`` / ``strategy`` / ``defaults`` / ``uses``-only shapes.
+#: template decides what the exit status even is), ``with`` (``ref:`` would aim
+#: checkout at another tree, so the gate would grade the wrong commit), ``env``
+#: (a nested ``run`` key is an environment variable, not a command), and the
+#: job-shape keys ``needs`` / ``strategy`` / ``defaults`` / ``<<``.
 FORBIDDEN_KEYS = (
     "if", "continue-on-error", "shell", "with", "env", "needs", "strategy",
     "defaults", "container", "services", "<<",
 )
 
-#: Top-level keys the workflow is allowed to have.  A new one (``defaults:``,
-#: ``concurrency:``, a workflow-level ``env:``) can change how every job below
-#: behaves, so introducing one has to be a reviewed edit.
-TOP_LEVEL_KEYS = {"name", "on", "permissions", "jobs"}
+#: Every top-level line of the workflow, pinned verbatim.  Verbatim rather than
+#: by key, because ``jobs: |`` parses as a *string* holding the job definitions
+#: -- the key survives, the jobs do not -- and ``"jobs":`` or an anchor would do
+#: the same job of looking unchanged.  Compared as a multiset, so a duplicate
+#: top-level key (last one wins in YAML) is red too.
+PINNED_TOP_LEVEL = ("name: Lean Action CI", "on:", "permissions:", "jobs:")
 
 #: The trigger block, pinned verbatim.
 PINNED_TRIGGERS = """\
@@ -1132,12 +1134,13 @@ on:
 #: The gate job, pinned verbatim.
 #:
 #: Whitelisting the *text* rather than blacklisting spellings is what makes this
-#: pin converge.  Three independent review rounds each produced a new way to
-#: spell "disabled" -- ``if: false``, then a ``run`` key nested under ``env:``
-#: and ``if : false`` with a space, then a merge-key alias and ``with: ref:``
-#: pointing checkout at another tree -- and each round the enumeration was one
-#: spelling behind.  An exact region cannot be out-spelled: every edit inside it
-#: is red until it is made here too, which is the reviewed edit we want.
+#: pin converge.  Four independent review rounds each produced a new way to
+#: spell "disabled" -- ``if: false``; a ``run`` key nested under ``env:`` and
+#: ``if : false`` respaced; a merge-key alias and ``with: ref:`` aiming checkout
+#: at another tree; ``jobs: |`` and a duplicate job header shadowing this one --
+#: and each round the enumeration was one spelling behind.  An exact region
+#: cannot be out-spelled: every edit inside it is red until it is made here too,
+#: which is the reviewed edit we want.
 PINNED_JOB = """\
   import-dag-contract:
     runs-on: ubuntu-latest
@@ -1169,75 +1172,93 @@ def yaml_key(text: str) -> str | None:
     return key or None
 
 
-def yaml_region(lines: list[str], key: str, indent: int) -> list[str] | None:
-    """The ``key:`` line at ``indent`` plus everything nested under it.
+def content_lines(lines: list[str]) -> list[int]:
+    """Indices of the lines that are neither blank nor a whole-line comment."""
+    return [
+        i for i, line in enumerate(lines)
+        if line.strip() and not line.strip().startswith("#")
+    ]
 
-    Blank and comment lines are dropped rather than ending the region, so a
-    comment neither terminates the scan nor lands in the compared text.
-    ``None`` when the key is absent, which fails the assertions below.
-    """
-    header = next(
-        (i for i, line in enumerate(lines)
-         if yaml_indent(line) == indent and yaml_key(line.strip()) == key),
-        None,
-    )
-    if header is None:
-        return None
-    region = [lines[header]]
-    for line in lines[header + 1 :]:
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
+
+def block_indices(lines: list[str], header: int) -> list[int]:
+    """Indices of ``header`` and everything nested under it."""
+    indent = yaml_indent(lines[header])
+    block = [header]
+    for i in content_lines(lines):
+        if i <= header:
             continue
-        if yaml_indent(line) <= indent:
+        if yaml_indent(lines[i]) <= indent:
             break
-        region.append(line)
-    return region
+        block.append(i)
+    return block
+
+
+def headers(lines: list[str], indent: int, within: list[int] | None = None) -> list[int]:
+    """Indices of the mapping keys at ``indent``, optionally inside ``within``."""
+    candidates = content_lines(lines) if within is None else within
+    return [
+        i for i in candidates
+        if yaml_indent(lines[i]) == indent and yaml_key(lines[i].strip()) is not None
+    ]
 
 
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
     The wiring is *read out of* the workflow rather than assumed, and it is
-    pinned as **exact text** rather than as a set of properties: a property list
-    has to enumerate every way a workflow can be spelled into a no-op, and three
-    review rounds showed that enumeration losing a spelling at a time (a
-    commented-out step, a step in a job that never runs, ``--check | | true``,
-    a ``run`` nested under ``env:``, ``if : false``, a merge-key alias,
-    ``with: ref:`` aimed at another tree).  Two regions -- the trigger block and
-    the job -- are therefore compared verbatim, the set of top-level keys is
-    closed, and the pinned text is itself checked to still mean what it claims,
-    so weakening the workflow *and* the pin together stays a visible edit rather
-    than a quiet one.
+    pinned as **exact text** rather than as a list of properties: a property
+    list has to enumerate every way a workflow can be spelled into a no-op, and
+    four review rounds watched that enumeration lose a spelling at a time (a
+    commented-out step; a step in a job that never runs; ``--check || true``; a
+    ``run`` nested under ``env:``; ``if : false``; a merge-key alias;
+    ``with: ref:`` aimed at another tree; ``jobs: |``; a duplicate job header).
 
-    Deliberately brittle: reformatting either region, bumping the checkout
-    version or adding a step turns this red until the constant above is updated
-    with it.  That is the point -- the update is a diff a reviewer sees.
+    So the top-level lines, the trigger block and the job are compared verbatim,
+    the job header must be unique, the pinned text is itself checked to still
+    mean what it claims -- and a coverage audit proves the pin leaves nothing
+    unexamined except the *bodies of other jobs*, which cannot reach this one.
+
+    Deliberately brittle: reformatting a pinned region, bumping the checkout
+    version or adding a step turns this red until the constants above are
+    updated with it.  That is the point -- the update is a diff a reviewer sees.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
         cls.lines = WORKFLOW_FILE.read_text(encoding="utf-8").splitlines()
+        cls.top_level = headers(cls.lines, 0)
+        jobs = [i for i in cls.top_level if cls.lines[i] == "jobs:"]
+        cls.jobs_block = block_indices(cls.lines, jobs[0]) if jobs else []
+        cls.job_headers = headers(cls.lines, 2, cls.jobs_block)
+        cls.gate_headers = [
+            i for i in cls.job_headers if yaml_key(cls.lines[i].strip()) == WORKFLOW_JOB
+        ]
+
+    def region(self, header: int) -> str:
+        """The pinned-format text of the block starting at ``header``."""
+        return "\n".join(self.lines[i] for i in block_indices(self.lines, header))
+
+    def test_the_top_level_shape_is_pinned(self) -> None:
+        """`jobs: |` keeps the key and loses every job under it."""
+        self.assertEqual(
+            sorted(self.lines[i] for i in self.top_level), sorted(PINNED_TOP_LEVEL)
+        )
 
     def test_the_trigger_block_is_pinned(self) -> None:
         """Dropping or filtering ``pull_request:`` exempts pull requests."""
-        region = yaml_region(self.lines, "on", 0)
-        self.assertIsNotNone(region, "no top-level `on:` key")
-        self.assertEqual("\n".join(region), PINNED_TRIGGERS)
+        on = [i for i in self.top_level if self.lines[i] == "on:"]
+        self.assertEqual(len(on), 1, "no unique top-level `on:` key")
+        self.assertEqual(self.region(on[0]), PINNED_TRIGGERS)
 
     def test_the_gate_job_is_pinned(self) -> None:
-        """Every edit inside the job -- of any spelling -- lands here."""
-        jobs = yaml_region(self.lines, "jobs", 0)
-        self.assertIsNotNone(jobs, "no top-level `jobs:` key")
-        region = yaml_region(jobs, WORKFLOW_JOB, 2)
-        self.assertIsNotNone(region, f"job {WORKFLOW_JOB!r} not found")
-        self.assertEqual("\n".join(region), PINNED_JOB)
+        """Every edit inside the job -- of any spelling -- lands here.
 
-    def test_the_workflow_grows_no_new_top_level_key(self) -> None:
-        """`defaults:`, `concurrency:` and friends re-aim every job below."""
-        keys = {
-            yaml_key(line) for line in self.lines if line and yaml_indent(line) == 0
-        }
-        self.assertEqual(keys - {None}, TOP_LEVEL_KEYS)
+        The header must also be *unique*: YAML keeps the last of two duplicate
+        keys, so a second ``import-dag-contract:`` job further down would be the
+        one GitHub runs.
+        """
+        self.assertEqual(len(self.gate_headers), 1, f"job {WORKFLOW_JOB!r} is not unique")
+        self.assertEqual(self.region(self.gate_headers[0]), PINNED_JOB)
 
     def test_the_pinned_job_still_means_what_it_claims(self) -> None:
         """The pin is only worth the commands and keys it pins.
@@ -1251,9 +1272,30 @@ class CIWiringTest(unittest.TestCase):
             if yaml_key(line.strip()) == "run"
         ]
         self.assertEqual(commands, [SUITE_COMMAND, GATE_INVOCATION])
-        keys = {yaml_key(line.strip().removeprefix("- ")) for line in PINNED_JOB.splitlines()}
+        keys = {
+            yaml_key(line.strip().removeprefix("- ")) for line in PINNED_JOB.splitlines()
+        }
         for forbidden in FORBIDDEN_KEYS:
             self.assertNotIn(forbidden, keys, f"pinned job carries {forbidden!r}")
+
+    def test_the_pin_leaves_only_other_jobs_unexamined(self) -> None:
+        """Coverage audit: what is *not* pinned cannot reach this job.
+
+        Every content line is either top-level (pinned verbatim), inside the
+        trigger block or this job (pinned verbatim), or inside another job's
+        body -- and a sibling job with no ``needs`` edge into this one cannot
+        change whether it runs or what it grades.  An unaccounted line means
+        some construct exists that this suite has never looked at, which is a
+        failure rather than a silence.
+        """
+        accounted = set(self.top_level)
+        for header in self.top_level:
+            if self.lines[header] in ("on:", "permissions:"):
+                accounted.update(block_indices(self.lines, header))
+        for header in self.job_headers:
+            accounted.update(block_indices(self.lines, header))
+        unaccounted = [self.lines[i] for i in content_lines(self.lines) if i not in accounted]
+        self.assertEqual(unaccounted, [], "workflow lines outside every known region")
 
 
 def run_suite() -> int:

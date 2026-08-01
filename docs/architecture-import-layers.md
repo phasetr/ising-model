@@ -290,27 +290,34 @@ python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
 CI runs the standalone suite and then `--check`, in that order, and
-`CIWiringTest` reads the workflow back to pin that it still does. It pins the
-`on:` trigger block and the whole `import-dag-contract` job **verbatim**, closes
-the set of top-level workflow keys, and separately checks that the pinned text
-still says what it claims: the two `run:` commands in that order, and none of
-the keys that would change what they mean.
+`CIWiringTest` reads the workflow back to pin that it still does. It compares
+the top-level lines, the `on:` trigger block and the whole
+`import-dag-contract` job **verbatim**, requires the job header to be unique,
+checks that the pinned text still says what it claims (the two `run:` commands
+in that order, and none of the keys that would change what they mean), and
+finally audits coverage: every content line of the workflow must be one of
+those pinned regions or sit inside *another job's* body.
 
-Pinning the text rather than a list of properties is what makes this converge.
-Three independent review rounds each found a new way to spell "disabled" while
-a property list stayed green — `if: false`, then a `run` key nested under `env:`
-(an environment variable executes nothing) and `if : false` with a space (the
-same mapping to YAML), then a merge-key alias and `with: ref:` pointing checkout
-at another tree so the gate would grade the base commit. Each round the
-enumeration was one spelling behind; an exact region cannot be out-spelled.
-Closing the top-level key set covers the same ground one level up, where a new
-`defaults:` or `concurrency:` would re-aim every job below.
+Pinning text rather than properties is what makes this converge. Four
+independent review rounds each found a new way to spell "disabled" while a
+property list stayed green — `if: false`; a `run` key nested under `env:` (an
+environment variable executes nothing) and `if : false` respaced (the same
+mapping to YAML); a merge-key alias, and `with: ref:` aiming checkout at
+another tree so the gate would grade the base commit; `jobs: |`, which keeps
+the key and turns every job under it into a *string*, and a duplicate job
+header, since YAML keeps the last of two identical keys. Each round the
+enumeration was one spelling behind. An exact region cannot be out-spelled, and
+the coverage audit is what stops the same game being played in the space
+*around* the regions: an unaccounted line fails the suite rather than passing
+unseen, and what it does leave unexamined — a sibling job's body, with no
+`needs:` edge into this job — cannot decide whether this job runs or what it
+grades.
 
-The pin is deliberately brittle: reformatting either region, bumping the
+The pin is deliberately brittle: reformatting a pinned region, bumping the
 checkout version or adding a step turns the suite red until the constant in
 `scripts/test_import_dag_contract.py` is updated to match. That is the intent —
-the update is a diff a reviewer sees. It is scoped, though: edits to the `build`
-job (or to any other job) are none of its business and stay green, which is
-verified rather than asserted. What it cannot defend against is an edit that
-changes the workflow *and* the pin together, or a required-status-check decision
-taken outside the repository; those are review questions, not test questions.
+the update is a diff a reviewer sees. Edits to the `build` job stay green,
+which is verified by control mutations rather than asserted. What no test here
+can defend against is an edit that changes the workflow *and* the pin together,
+or a required-status-check decision taken outside the repository; those are
+review questions, not test questions.
