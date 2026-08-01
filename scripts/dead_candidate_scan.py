@@ -55,7 +55,7 @@ A third rule follows from the first two and is just as load-bearing:
    Code spans are paired positionally, so a single unbalanced backtick inverts
    the parity of the rest of its line: prose is read as a citation and the
    citations are read as prose, with nothing to warn about.
-   ``docs/index.md:1809`` does exactly that (three backticks where two were
+   ``docs/index.md:1813`` does exactly that (three backticks where two were
    meant), and none of its 218 tokens mentioned ``magnetizationAlongExhaustion``
    though the raw line names it six times. The repair is not to skip the line --
    that drops precisely the citations with no verbatim fallback -- but to re-read
@@ -1258,7 +1258,7 @@ def unpaired_backticks(text: str) -> dict[int, int]:
     parity of everything that follows it, so real citations are read as prose
     and prose is read as citations, with no error anywhere.
 
-    That is not hypothetical. ``docs/index.md:1809`` (one 52-186-character
+    That is not hypothetical. ``docs/index.md:1813`` (one 52-186-character
     progress row) spells ``ContinuousOn`.continuousAt`` with three backticks
     where two were meant; from that column on, all six occurrences of
     ``magnetizationAlongExhaustion`` on the line sit *outside* every span the
@@ -2110,7 +2110,7 @@ def elided_prefix_matches(
     matches three declarations (correlation / magnetization / susceptibility),
     so the family-label rule attributed the citation to nobody and
     ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete`` while docs/index.md:1809 cited it -- a false
+    ``safe-to-delete`` while docs/index.md:1813 cited it -- a false
     ``safe-to-delete``, the one fatal error class.
 
     Charging *every* match instead was measured before it was rejected: 531 of
@@ -2187,10 +2187,10 @@ def _cited_declaration_names(
 # charged to nobody. The knob exists because the same "attributed to nobody"
 # exoneration that produced the false ``safe-to-delete`` repaired by
 # :func:`elided_prefix_matches` on the *suffix* channel was still live on the
-# *glob* channel: ``docs/index.md:1427`` writes
+# *glob* channel: ``docs/index.md:1431`` writes
 # ``freeEnergyAlongExhaustion_latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,
 # ge_log_two*}``, whose ``ge_log_two*`` alternative names 2 declarations, and
-# ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``, which names 4;
+# ``docs/index.md:1332`` writes ``freeEnergy_*_tendsto_of_abs_h``, which names 4;
 # both resolve exactly, and both named only declarations the scanner then
 # reported as carrying "no citation in the scanned documentation".
 #
@@ -2204,7 +2204,7 @@ def _cited_declaration_names(
 # (``correlation_*_*`` matches 219, ``freeEnergyAlongExhaustion_*`` 202).
 #
 # **The count is a cost knob, not a semantic criterion.** No count separates the
-# two classes: ``docs/index.md:2193`` writes
+# two classes: ``docs/index.md:2197`` writes
 # ``correlationAlongExhaustion_..._ferromagnetic`` as a genuine elision whose
 # unbounded ``...`` also swallows an unrelated lower bound, giving a precise
 # citation with n = 11, and that over-match is what caps the threshold at 10 (at
@@ -2257,7 +2257,7 @@ def _apply_doc_channel(
       label attributed to nobody above that count. Exonerating *every*
       multi-match glob (as this function did until the threshold landed) is the
       same "attributed to nobody" fail-open the suffix channel was repaired for:
-      ``docs/index.md:1427`` cites ``..._ge_log_two*`` (as a brace alternative)
+      ``docs/index.md:1431`` cites ``..._ge_log_two*`` (as a brace alternative)
       and both declarations it names came out ``safe-to-delete`` reading "no
       citation in the scanned documentation".
 
@@ -2606,12 +2606,12 @@ L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic
 L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
    declarations is charged to nobody -- the live fail-open residue of this tool.
    At or below the threshold every match is charged, which repairs the leak that
-   let `docs/index.md:1427` (`..._ge_log_two*`, a brace alternative naming 2
-   declarations) and `docs/index.md:1328` (`freeEnergy_*_tendsto_of_abs_h`,
+   let `docs/index.md:1431` (`..._ge_log_two*`, a brace alternative naming 2
+   declarations) and `docs/index.md:1332` (`freeEnergy_*_tendsto_of_abs_h`,
    naming 4) read as citing nobody; above it,
    a broad label (`correlation_*_*` names 219 declarations) would charge whole
    subsystems, so it is filed and printed instead. The count is a cost knob and
-   not a semantic criterion: `docs/index.md:2193` is a precise elision that
+   not a semantic criterion: `docs/index.md:2197` is a precise elision that
    over-matches onto 11 declarations, so a precise citation *can* sit above the
    threshold and rescue nobody. Mitigation: the labels are printed under
    "documentation family labels" on every run and must be read by hand before a
