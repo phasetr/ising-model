@@ -55,7 +55,9 @@ jobs:
       # weakened or dropped, so the suite's mutation canaries are what actually
       # defend R1/R2/R3/R6 (and its `CIWiringTest` defends these two steps).
       # Both commands are pure Python -- no lake, no network -- and cost about
-      # 20 s and 5 s on a runner.
+      # 20 s and 5 s on a runner. NOTE: `CIWiringTest` pins THIS WHOLE FILE
+      # byte for byte, so any edit here -- to either job -- must be mirrored
+      # into `PINNED_WORKFLOW` in scripts/test_import_dag_contract.py.
       - name: Import-DAG contract self-tests (test the checker, not just the tree)
         run: python3 scripts/test_import_dag_contract.py
       - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)

@@ -290,34 +290,33 @@ python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
 CI runs the standalone suite and then `--check`, in that order, and
-`CIWiringTest` reads the workflow back to pin that it still does. It compares
-the top-level lines, the `on:` trigger block and the whole
-`import-dag-contract` job **verbatim**, requires the job header to be unique,
-checks that the pinned text still says what it claims (the two `run:` commands
-in that order, and none of the keys that would change what they mean), and
-finally audits coverage: every content line of the workflow must be one of
-those pinned regions or sit inside *another job's* body.
+`CIWiringTest` pins that it still does — by comparing the workflow file
+**byte for byte** against a copy held in `scripts/test_import_dag_contract.py`,
+and then re-deriving from that copy that the job exists exactly once, that its
+two steps are the suite followed by the tree gate, that neither carries a key
+which changes what it means (`if:`, `continue-on-error:`, `shell:`, `with:`,
+`env:`), and that `pull_request:` is triggered unfiltered.
 
-Pinning text rather than properties is what makes this converge. Four
-independent review rounds each found a new way to spell "disabled" while a
-property list stayed green — `if: false`; a `run` key nested under `env:` (an
-environment variable executes nothing) and `if : false` respaced (the same
-mapping to YAML); a merge-key alias, and `with: ref:` aiming checkout at
-another tree so the gate would grade the base commit; `jobs: |`, which keeps
-the key and turns every job under it into a *string*, and a duplicate job
-header, since YAML keeps the last of two identical keys. Each round the
-enumeration was one spelling behind. An exact region cannot be out-spelled, and
-the coverage audit is what stops the same game being played in the space
-*around* the regions: an unaccounted line fails the suite rather than passing
-unseen, and what it does leave unexamined — a sibling job's body, with no
-`needs:` edge into this job — cannot decide whether this job runs or what it
-grades.
+Both halves are load-bearing, and the shape is the outcome of five independent
+review rounds that broke every *partial* pin — each time from the part the pin
+had declared irrelevant:
 
-The pin is deliberately brittle: reformatting a pinned region, bumping the
-checkout version or adding a step turns the suite red until the constant in
-`scripts/test_import_dag_contract.py` is updated to match. That is the intent —
-the update is a diff a reviewer sees. Edits to the `build` job stay green,
-which is verified by control mutations rather than asserted. What no test here
-can defend against is an edit that changes the workflow *and* the pin together,
-or a required-status-check decision taken outside the repository; those are
-review questions, not test questions.
+| pin | what got past it |
+|---|---|
+| command prefixes, file-wide | `--check \|\| true`, `--help`, a step in a job that never runs |
+| scoped to the job | a `run` key under `env:` (an environment variable executes nothing), `if : false` respaced |
+| structural reader | a merge-key alias, `with: ref:` aiming checkout at another tree |
+| the job pinned verbatim | `jobs: \|` (the key survives, every job below it becomes a string), a duplicate job header (YAML keeps the last) |
+| the frame pinned, coverage audited | a multi-line quoted scalar *opened in the sibling job* that swallows this one, a widened top-level `permissions:` letting a sibling cancel the run |
+
+The whole file is the one region about which no relevance argument is needed,
+so that is what is pinned. Re-deriving the semantics from the pinned copy is
+what stops the obvious answer — mirror the weakened workflow into the pin —
+from buying silence: mutations that gut the gate fail the derivation even when
+both sides are edited together, which is verified rather than asserted.
+
+The pin is deliberately brittle. Touching the workflow at all — a new step in
+the Lean build, a checkout version bump, a reworded comment — turns the suite
+red until the copy is updated to match, and that update is a diff a reviewer
+sees. What no test here can settle is whether the check should *block* merges;
+that is a branch-protection decision taken outside the repository.

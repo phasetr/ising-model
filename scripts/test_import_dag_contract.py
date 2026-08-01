@@ -1116,32 +1116,71 @@ FORBIDDEN_KEYS = (
     "defaults", "container", "services", "<<",
 )
 
-#: Every top-level line of the workflow, pinned verbatim.  Verbatim rather than
-#: by key, because ``jobs: |`` parses as a *string* holding the job definitions
-#: -- the key survives, the jobs do not -- and ``"jobs":`` or an anchor would do
-#: the same job of looking unchanged.  Compared as a multiset, so a duplicate
-#: top-level key (last one wins in YAML) is red too.
-PINNED_TOP_LEVEL = ("name: Lean Action CI", "on:", "permissions:", "jobs:")
+#: The workflow, pinned in its entirety.
+#:
+#: Five independent review rounds broke every *partial* pin, each time from the
+#: part that was not covered.  Matching command prefixes lost to ``|| true`` and
+#: ``--help``; scoping to the job lost to a ``run`` key nested under ``env:`` and
+#: to ``if : false`` respaced; a structural reader lost to a merge-key alias and
+#: to ``with: ref:`` aiming checkout at another tree; pinning the job verbatim
+#: lost to ``jobs: |``, which keeps the key and turns every job below it into a
+#: string, and to a duplicate job header, since YAML keeps the last of two
+#: identical keys; pinning the frame and auditing coverage lost to a multi-line
+#: quoted scalar *opened in the sibling job* that swallows this one, and to a
+#: widened top-level ``permissions:`` body that lets a sibling cancel the run.
+#:
+#: Every one of those lived in a region some argument had declared irrelevant.
+#: The whole file is the one region about which no such argument is needed, so
+#: that is what is pinned: **any** edit to the workflow must be mirrored here,
+#: in a diff a reviewer sees, and the assertions below then re-derive from this
+#: text that the wiring still means what it claims -- so mirroring a *weakened*
+#: workflow into the pin does not buy silence either.
+PINNED_WORKFLOW = """\
+name: Lean Action CI
 
-#: The trigger block, pinned verbatim.
-PINNED_TRIGGERS = """\
 on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:"""
+  workflow_dispatch:
 
-#: The gate job, pinned verbatim.
-#:
-#: Whitelisting the *text* rather than blacklisting spellings is what makes this
-#: pin converge.  Four independent review rounds each produced a new way to
-#: spell "disabled" -- ``if: false``; a ``run`` key nested under ``env:`` and
-#: ``if : false`` respaced; a merge-key alias and ``with: ref:`` aiming checkout
-#: at another tree; ``jobs: |`` and a duplicate job header shadowing this one --
-#: and each round the enumeration was one spelling behind.  An exact region
-#: cannot be out-spelled: every edit inside it is red until it is made here too,
-#: which is the reviewed edit we want.
-PINNED_JOB = """\
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read # Read access to repository contents
+  pages: write # Write access to GitHub Pages
+  id-token: write # Write access to ID tokens
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: leanprover/lean-action@v1
+      - name: Completion-claim gate self-tests
+        run: python3 scripts/test_completion_claim_gate.py
+      - name: Live completion-claim adapter self-tests
+        run: python3 scripts/test_completion_claim_live.py
+      - name: Run GKS numerical tests
+        run: lake exe GKSTest
+      - name: Build sentinel property suite (Issue #888 Step P3)
+        run: lake build test.IsingModel.SentinelProps
+      # The gate's own tests run *before* the gate: `--full` only says whether
+      # the current tree passes, which stays true when a check is weakened, so
+      # the self tests are what actually defend V1-V4. Both suites are pure
+      # Python (no lake, no network) and cost about 20 s and 80 s respectively.
+      - name: Audit gate self-tests (test the gate, not just the tree)
+        run: python3 scripts/audit_gate.py --self-test
+      - name: Dead-candidate scanner self-tests
+        run: python3 scripts/dead_candidate_scan.py --self-test
+      - name: Audit gate (V1-V4 axiom/sorry/capstone/no-Japanese checks)
+        run: python3 scripts/audit_gate.py --full
+
+  # Architecture gate for Issue #4833: the import-DAG layer contract. It is a
+  # separate job rather than another step of `build` because it needs no Lean
+  # toolchain, so it reports an inversion in about a minute instead of behind
+  # the Lean build -- and, more importantly, a red or cancelled Lean build can
+  # then never mask an architecture violation. It is not (yet) a required
+  # check; making it blocking is a separate governance decision.
   import-dag-contract:
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -1149,10 +1188,36 @@ PINNED_JOB = """\
       contents: read
     steps:
       - uses: actions/checkout@v5
+      # Same order as the audit gate above, for the same reason: `--check` only
+      # says whether the current tree passes, which stays true when a rule is
+      # weakened or dropped, so the suite's mutation canaries are what actually
+      # defend R1/R2/R3/R6 (and its `CIWiringTest` defends these two steps).
+      # Both commands are pure Python -- no lake, no network -- and cost about
+      # 20 s and 5 s on a runner. NOTE: `CIWiringTest` pins THIS WHOLE FILE
+      # byte for byte, so any edit here -- to either job -- must be mirrored
+      # into `PINNED_WORKFLOW` in scripts/test_import_dag_contract.py.
       - name: Import-DAG contract self-tests (test the checker, not just the tree)
         run: python3 scripts/test_import_dag_contract.py
       - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)
-        run: python3 scripts/import_dag_contract.py --check"""
+        run: python3 scripts/import_dag_contract.py --check
+
+  # NOTE: docs generation via `leanprover-community/docgen-action` has been
+  # temporarily disabled because every main-push run takes ~1 hour and
+  # CI queues backed up. Re-enable once the docgen step is accelerated
+  # (e.g. by caching or by running on a schedule instead of every push).
+  # See README / docs/index.md for user-facing notice.
+  #
+  # docs:
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: leanprover/lean-action@v1
+  #     - uses: leanprover-community/docgen-action@main
+  #       with:
+  #         use-github-cache: false
+"""
 
 
 def yaml_indent(line: str) -> int:
@@ -1161,11 +1226,7 @@ def yaml_indent(line: str) -> int:
 
 
 def yaml_key(text: str) -> str | None:
-    """Mapping key of already-stripped ``text``, or ``None`` if it has none.
-
-    Normalised rather than matched literally, because ``if : false`` and
-    ``"if": false`` are the same mapping to YAML.
-    """
+    """Mapping key of already-stripped ``text``, or ``None`` if it has none."""
     if not text or text.startswith("#") or ":" not in text:
         return None
     key = text.split(":", 1)[0].strip().strip("\"'")
@@ -1193,109 +1254,79 @@ def block_indices(lines: list[str], header: int) -> list[int]:
     return block
 
 
-def headers(lines: list[str], indent: int, within: list[int] | None = None) -> list[int]:
-    """Indices of the mapping keys at ``indent``, optionally inside ``within``."""
-    candidates = content_lines(lines) if within is None else within
-    return [
-        i for i in candidates
-        if yaml_indent(lines[i]) == indent and yaml_key(lines[i].strip()) is not None
-    ]
-
-
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
-    The wiring is *read out of* the workflow rather than assumed, and it is
-    pinned as **exact text** rather than as a list of properties: a property
-    list has to enumerate every way a workflow can be spelled into a no-op, and
-    four review rounds watched that enumeration lose a spelling at a time (a
-    commented-out step; a step in a job that never runs; ``--check || true``; a
-    ``run`` nested under ``env:``; ``if : false``; a merge-key alias;
-    ``with: ref:`` aimed at another tree; ``jobs: |``; a duplicate job header).
+    The workflow is pinned byte for byte, and the wiring is then re-derived
+    *from the pin*.  Both halves are load-bearing: the first makes any edit to
+    CI a visible diff here, the second makes a mirrored edit that guts the gate
+    fail anyway.
 
-    So the top-level lines, the trigger block and the job are compared verbatim,
-    the job header must be unique, the pinned text is itself checked to still
-    mean what it claims -- and a coverage audit proves the pin leaves nothing
-    unexamined except the *bodies of other jobs*, which cannot reach this one.
-
-    Deliberately brittle: reformatting a pinned region, bumping the checkout
-    version or adding a step turns this red until the constants above are
-    updated with it.  That is the point -- the update is a diff a reviewer sees.
+    Deliberately brittle.  Touching the workflow at all -- a new step in the
+    Lean build, a checkout version bump, a reworded comment -- turns this red
+    until :data:`PINNED_WORKFLOW` is updated to match.  That cost buys the one
+    property five review rounds could not otherwise deliver: there is no part
+    of the file left over for a bypass to live in.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.lines = WORKFLOW_FILE.read_text(encoding="utf-8").splitlines()
-        cls.top_level = headers(cls.lines, 0)
-        jobs = [i for i in cls.top_level if cls.lines[i] == "jobs:"]
-        cls.jobs_block = block_indices(cls.lines, jobs[0]) if jobs else []
-        cls.job_headers = headers(cls.lines, 2, cls.jobs_block)
-        cls.gate_headers = [
-            i for i in cls.job_headers if yaml_key(cls.lines[i].strip()) == WORKFLOW_JOB
+        cls.actual = WORKFLOW_FILE.read_text(encoding="utf-8")
+        cls.lines = PINNED_WORKFLOW.splitlines()
+        headers = [
+            i for i in content_lines(cls.lines)
+            if yaml_indent(cls.lines[i]) == 2
+            and yaml_key(cls.lines[i].strip()) == WORKFLOW_JOB
         ]
+        cls.job = [cls.lines[i] for i in block_indices(cls.lines, headers[0])] if headers else []
+        cls.job_count = len(headers)
 
-    def region(self, header: int) -> str:
-        """The pinned-format text of the block starting at ``header``."""
-        return "\n".join(self.lines[i] for i in block_indices(self.lines, header))
+    def test_the_workflow_is_pinned_byte_for_byte(self) -> None:
+        """Any edit to CI, anywhere in the file, has to be mirrored here."""
+        self.assertEqual(self.actual, PINNED_WORKFLOW)
 
-    def test_the_top_level_shape_is_pinned(self) -> None:
-        """`jobs: |` keeps the key and loses every job under it."""
-        self.assertEqual(
-            sorted(self.lines[i] for i in self.top_level), sorted(PINNED_TOP_LEVEL)
-        )
+    def test_the_pinned_workflow_runs_the_gate_after_its_tests(self) -> None:
+        """Mirroring a gutted workflow into the pin must not buy silence.
 
-    def test_the_trigger_block_is_pinned(self) -> None:
-        """Dropping or filtering ``pull_request:`` exempts pull requests."""
-        on = [i for i in self.top_level if self.lines[i] == "on:"]
-        self.assertEqual(len(on), 1, "no unique top-level `on:` key")
-        self.assertEqual(self.region(on[0]), PINNED_TRIGGERS)
-
-    def test_the_gate_job_is_pinned(self) -> None:
-        """Every edit inside the job -- of any spelling -- lands here.
-
-        The header must also be *unique*: YAML keeps the last of two duplicate
-        keys, so a second ``import-dag-contract:`` job further down would be the
-        one GitHub runs.
+        The job has to exist exactly once -- YAML keeps the last of two
+        identical keys, so a duplicate header would be the one GitHub runs --
+        and its steps have to be this suite followed by the tree gate, with no
+        key that changes what either one means.
         """
-        self.assertEqual(len(self.gate_headers), 1, f"job {WORKFLOW_JOB!r} is not unique")
-        self.assertEqual(self.region(self.gate_headers[0]), PINNED_JOB)
-
-    def test_the_pinned_job_still_means_what_it_claims(self) -> None:
-        """The pin is only worth the commands and keys it pins.
-
-        Read off :data:`PINNED_JOB` rather than off the workflow: this is what
-        makes updating the constant to match a weakened job fail as well.
-        """
+        self.assertEqual(self.job_count, 1, f"job {WORKFLOW_JOB!r} is not unique")
         commands = [
             tuple(line.strip()[len("run:") :].split())
-            for line in PINNED_JOB.splitlines()
+            for line in self.job
             if yaml_key(line.strip()) == "run"
         ]
         self.assertEqual(commands, [SUITE_COMMAND, GATE_INVOCATION])
-        keys = {
-            yaml_key(line.strip().removeprefix("- ")) for line in PINNED_JOB.splitlines()
-        }
+        keys = {yaml_key(line.strip().removeprefix("- ")) for line in self.job}
         for forbidden in FORBIDDEN_KEYS:
             self.assertNotIn(forbidden, keys, f"pinned job carries {forbidden!r}")
 
-    def test_the_pin_leaves_only_other_jobs_unexamined(self) -> None:
-        """Coverage audit: what is *not* pinned cannot reach this job.
+    def test_the_pinned_workflow_runs_on_every_pull_request(self) -> None:
+        """A gate no pull request triggers enforces nothing.
 
-        Every content line is either top-level (pinned verbatim), inside the
-        trigger block or this job (pinned verbatim), or inside another job's
-        body -- and a sibling job with no ``needs`` edge into this one cannot
-        change whether it runs or what it grades.  An unaccounted line means
-        some construct exists that this suite has never looked at, which is a
-        failure rather than a silence.
+        The trigger must be an unfiltered ``pull_request:``; a branch, path or
+        event filter under it would silently exempt some pull requests.
         """
-        accounted = set(self.top_level)
-        for header in self.top_level:
-            if self.lines[header] in ("on:", "permissions:"):
-                accounted.update(block_indices(self.lines, header))
-        for header in self.job_headers:
-            accounted.update(block_indices(self.lines, header))
-        unaccounted = [self.lines[i] for i in content_lines(self.lines) if i not in accounted]
-        self.assertEqual(unaccounted, [], "workflow lines outside every known region")
+        on = [
+            i for i in content_lines(self.lines)
+            if yaml_indent(self.lines[i]) == 0 and self.lines[i] == "on:"
+        ]
+        self.assertEqual(len(on), 1, "no unique top-level `on:` key")
+        triggers = block_indices(self.lines, on[0])
+        pull_request = [
+            i for i in triggers
+            if yaml_indent(self.lines[i]) == 2
+            and yaml_key(self.lines[i].strip()) == "pull_request"
+        ]
+        self.assertEqual(len(pull_request), 1, "no unique `pull_request:` trigger")
+        self.assertEqual(
+            block_indices(self.lines, pull_request[0]),
+            [pull_request[0]],
+            "`pull_request:` carries a filter",
+        )
 
 
 def run_suite() -> int:
