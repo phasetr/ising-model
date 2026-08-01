@@ -1,6 +1,6 @@
-import Mathlib.Analysis.Complex.Exponential
 import IsingModel.Hamiltonian
 import IsingModel.TransferMatrix.LayerGibbs
+import Mathlib.Analysis.Complex.Exponential
 
 /-!
 # Finite cyclic layer cylinders (GJ §17.1)
