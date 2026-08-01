@@ -1,9 +1,9 @@
-import IsingModel.InfiniteVolume
-import IsingModel.FreeEnergy
-import IsingModel.Inequalities.GHS
+import IsingModel.Basic
+import IsingModel.GibbsMeasure
+import IsingModel.FreeEnergy.Basic
+import IsingModel.FreeEnergy.ParameterMonotonicity
+import IsingModel.FreeEnergy.SpecialValues
 import IsingModel.Conditioning.Bounds
-import IsingModel.PhaseTransition
-import IsingModel.FieldDerivative
 
 /-!
 # Ambient lattice core finite-volume definitions
