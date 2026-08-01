@@ -184,6 +184,13 @@ or a bracket is already excluded, which leaves a short closed list of command an
 modifier words; an umbrella candidate whose file mentions any of them, anywhere,
 is demoted to a real module.
 
+Both sieves read comment-stripped text, so the stripper is load-bearing and is
+a hand-written scan rather than a regex: Lean's block comments **nest**, and a
+non-greedy `/-.*?-/` closes `/- outer /- inner -/ still a comment -/` at the
+first terminator, leaving the remainder behind as apparent code — enough to
+demote a genuine umbrella. `--` inside a block comment, `/-` inside a line
+comment, and `/-` inside a string literal are all inert.
+
 **An independent parser.** The resulting set is re-derived over the real tree by
 `scripts/dead_candidate_scan.py`, a separately written declaration parser in this
 repository, and the two must agree in both directions. The reverse half of that
@@ -196,12 +203,16 @@ is not exactly one column-0 import. `leaf_audit.build_import_graph` — the
 repository's single import scanner, reused here so the two tools cannot disagree
 about the edges — reads one import per physical line anchored at column 0, while
 Lean also accepts `import A import B`, an indented `  import A`, a bare `import`
-with the module name on the next line, and a non-`IsingModel` import in front of
-an `IsingModel` one. Each of those makes an edge invisible to the graph and
-therefore to every rule, so the contract refuses to certify a file it cannot read
-rather than reporting it clean. Erring towards a false failure here is
-deliberate: it is loud and fixable. No line in `IsingModel/` has this shape
-today.
+with the module name on the next line, `import/- c -/ A`, and a non-`IsingModel`
+import in front of an `IsingModel` one. Each of those makes an edge invisible to
+the graph and therefore to every rule, so the contract refuses to certify a file
+it cannot read rather than reporting it clean. Which lines are examined is
+decided on the comment-stripped text, so prose mentioning "import" cannot trip
+the guard, but whether an examined line is *readable* is decided on the **raw**
+line — that is what the scanner reads, and normalising first would accept
+`import/- c -/ A`, whose comment vanishes under normalisation while the scanner
+still sees nothing. Erring towards a false failure here is deliberate: it is loud
+and fixable. No line in `IsingModel/` has this shape today.
 
 Two rules follow:
 

@@ -308,6 +308,51 @@ class DeclarationFormTest(unittest.TestCase):
                 self.assertEqual(report.violations["R3"], [])
 
 
+class CommentLexerTest(unittest.TestCase):
+    """Comment stripping decides what the classifier sees, so it is pinned here.
+
+    Lean's block comments nest.  A non-greedy ``/-.*?-/`` closes at the first
+    ``-/`` and leaves the remainder of a nested comment behind as apparent code,
+    which demotes a genuine umbrella and hides an ``L3 -> umbrella -> L4``
+    inversion -- the failure an independent review reproduced.
+    """
+
+    def code(self, text: str) -> str:
+        """Return the comment-stripped text with whitespace collapsed."""
+        return " ".join(contract.strip_comments(text).split())
+
+    def test_nested_block_comments_are_consumed_whole(self) -> None:
+        """The residue of the inner comment must not survive as code."""
+        self.assertEqual(self.code("/- a /- b -/ c -/"), "")
+        self.assertEqual(self.code("/- /- /- deep -/ -/ -/"), "")
+        self.assertEqual(self.code("/- /- x -/ -/ theorem d"), "theorem d")
+
+    def test_a_line_comment_inside_a_block_comment_is_inert(self) -> None:
+        """``--`` must not start a line comment while inside ``/- ... -/``."""
+        self.assertEqual(self.code("/- -- not a line comment\n-/ theorem d"), "theorem d")
+
+    def test_a_block_opener_inside_a_line_comment_is_inert(self) -> None:
+        """``/-`` after ``--`` must not swallow the rest of the file."""
+        self.assertEqual(self.code("-- /- not a block\ntheorem d"), "theorem d")
+
+    def test_a_block_opener_inside_a_string_is_inert(self) -> None:
+        """A string literal is not a comment, escapes included."""
+        self.assertEqual(self.code('def s := "/- not a comment"\ntheorem d'), 'def s := "/- not a comment" theorem d')
+        self.assertEqual(self.code('def s := "a \\" /- b"\ntheorem d'), 'def s := "a \\" /- b" theorem d')
+
+    def test_the_line_count_is_preserved(self) -> None:
+        """The readability guard reads raw lines by index, so lines must align."""
+        for text in (
+            "import A\n/- one\ntwo\nthree -/\ntheorem d\n",
+            "/- a /- b\nc -/ d -/\ntheorem e\n",
+            "-- x\n-- y\ntheorem z\n",
+        ):
+            with self.subTest(text=text.splitlines()[0]):
+                self.assertEqual(
+                    len(contract.strip_comments(text).splitlines()), len(text.splitlines())
+                )
+
+
 class AggregatorOracleTest(unittest.TestCase):
     """The umbrella set, re-derived on the real tree by an independent parser.
 
@@ -434,6 +479,23 @@ class ReadableImportTest(unittest.TestCase):
     def test_a_non_ising_import_cannot_shadow_an_ising_one(self) -> None:
         """The scanner's regex anchors on ``import IsingModel``, so this hides too."""
         root = self.tree_with("import Mathlib.Order.Basic import IsingModel.Concrete.Sink", "mixed")
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+
+    def test_a_comment_between_import_and_module_fails(self) -> None:
+        """``import/- c -/ Foo`` is legal Lean and unreadable to the scanner.
+
+        The guard has to judge the *raw* line: normalising the comment away
+        first turns this into a canonical import that validates, while the
+        scanner -- which sees the raw text and needs whitespace after the
+        keyword -- still records nothing.
+        """
+        root = self.tree_with("import/- separator -/ IsingModel.Concrete.Sink", "commented")
+        graph = contract.load_graph(root)
+        self.assertEqual(
+            graph.imports.get("IsingModel.AmbientLattice.Ambient", set()), set(),
+            "the scanner unexpectedly saw the import; this test is now vacuous",
+        )
         ok, text = self.verdict(root)
         self.assertFalse(ok, text)
 

@@ -61,6 +61,26 @@ import IsingModel.Fixture.RealPlain
 
 -- theorem thisIsALineComment : True := trivial
 
+--- IsingModel/Fixture/AggNestedComment.lean
+import IsingModel.Fixture.RealPlain
+
+/- Lean block comments nest, so this whole thing is one comment.
+   /- An inner comment. -/
+   A non-greedy regex closes the outer comment at the inner terminator and
+   leaves this text behind as apparent code, which would demote a genuine
+   umbrella to a real module. -/
+
+--- IsingModel/Fixture/AggNestedCommentAroundDeclaration.lean
+import IsingModel.Fixture.RealPlain
+
+/- /- inner -/ theorem thisIsCommentedOut : True := trivial -/
+
+--- IsingModel/Fixture/RealAfterNestedComment.lean
+import IsingModel.Fixture.RealPlain
+
+/- /- inner -/ -/
+theorem realAfterNestedComment : True := trivial
+
 --- IsingModel/Fixture/RealPlain.lean
 /-! One ordinary theorem. -/
 

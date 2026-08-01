@@ -238,12 +238,14 @@ def layer_of(module: str) -> str:
 # Aggregator (re-export umbrella) classification
 # --------------------------------------------------------------------------
 
-_BLOCK_COMMENT_RE = re.compile(r"/-.*?-/", re.DOTALL)
-_LINE_COMMENT_RE = re.compile(r"--.*$", re.MULTILINE)
-
 #: A whole line holding exactly one ``import`` command, at column 0, and nothing
-#: else -- which is also exactly what ``leaf_audit``'s scanner can read.
-_IMPORT_LINE_RE = re.compile(r"^import\s+\S+\s*$")
+#: else -- which is also exactly what ``leaf_audit``'s scanner can read.  Applied
+#: to the **raw** line, because the scanner reads raw lines: normalising first
+#: and then validating would accept ``import/- c -/ Foo``, which the scanner
+#: cannot read (no whitespace after the keyword) but which Lean accepts.  A
+#: trailing line comment is allowed because the scanner's own ``\\S+`` capture
+#: stops at whitespace and so reads such a line correctly.
+_IMPORT_LINE_RE = re.compile(r"^import[ \t]+\S+[ \t]*(?:--[^\n]*)?$")
 
 #: Any ``import`` command token, used to detect a line the scanner cannot read
 #: (see :func:`malformed_import_lines`).  The trailing boundary is ``\b`` rather
@@ -356,11 +358,63 @@ def module_source(module: str, root: Path) -> str | None:
 def strip_comments(text: str) -> str:
     """Blank out Lean comments while preserving the line structure.
 
-    Block comments are replaced by their own newlines rather than deleted, so
-    line numbers stay usable for reporting.
+    A hand-written scan rather than a regex, because Lean's block comments
+    **nest**: ``/- outer /- inner -/ still a comment -/`` is one comment, and a
+    non-greedy ``/-.*?-/`` closes it at the first ``-/``, leaving ``still a
+    comment -/`` behind as apparent code.  That residue is enough to demote a
+    genuine umbrella to a real module and hide an ``L3 -> umbrella -> L4``
+    inversion, so the nesting has to be tracked.  ``--`` inside a block comment
+    and ``/-`` inside a line comment or a string literal are likewise inert.
+
+    Newlines are preserved, so line numbers stay usable for reporting.
     """
-    text = _BLOCK_COMMENT_RE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
-    return _LINE_COMMENT_RE.sub("", text)
+    out: list[str] = []
+    index = 0
+    depth = 0
+    in_line_comment = False
+    length = len(text)
+    while index < length:
+        char = text[index]
+        if in_line_comment:
+            if char == "\n":
+                in_line_comment = False
+                out.append("\n")
+            index += 1
+            continue
+        if depth == 0 and text.startswith("--", index):
+            in_line_comment = True
+            index += 2
+            continue
+        if text.startswith("/-", index):
+            depth += 1
+            index += 2
+            continue
+        if depth > 0:
+            if text.startswith("-/", index):
+                depth -= 1
+                index += 2
+                continue
+            out.append("\n" if char == "\n" else "")
+            index += 1
+            continue
+        if char == '"':
+            out.append(char)
+            index += 1
+            while index < length and text[index] != '"':
+                if text[index] == "\\":
+                    out.append(text[index])
+                    index += 1
+                    if index >= length:
+                        break
+                out.append(text[index])
+                index += 1
+            if index < length:
+                out.append('"')
+                index += 1
+            continue
+        out.append(char)
+        index += 1
+    return "".join(out)
 
 
 def is_aggregator(module: str, root: Path) -> bool:
@@ -408,15 +462,26 @@ def malformed_import_lines(graph: Graph) -> list[str]:
     is not exactly one column-0 import is a hard failure: the contract refuses to
     certify a file it cannot read.  Erring towards a false failure is deliberate
     -- it is loud and fixable, whereas the alternative is an unreported edge.
+
+    Which lines to *examine* is decided on the comment-stripped text, so prose
+    mentioning "import" cannot trip the guard; whether an examined line is
+    readable is then decided on the **raw** line, because that is what the
+    scanner reads.  Validating the normalised line instead would accept
+    ``import/- c -/ Foo``, whose comment vanishes under normalisation while the
+    scanner still sees nothing.
     """
     reports: list[str] = []
     for module in sorted(graph.modules):
         text = module_source(module, graph.root)
         if text is None:
             continue
+        raw_lines = text.splitlines()
         for lineno, line in enumerate(strip_comments(text).splitlines(), start=1):
-            if _IMPORT_TOKEN_RE.search(line) and not _IMPORT_LINE_RE.match(line):
-                reports.append(f"{module}:{lineno}: {line.strip()}")
+            if not _IMPORT_TOKEN_RE.search(line):
+                continue
+            raw = raw_lines[lineno - 1] if lineno <= len(raw_lines) else ""
+            if not _IMPORT_LINE_RE.match(raw):
+                reports.append(f"{module}:{lineno}: {raw.strip()}")
     return reports
 
 
