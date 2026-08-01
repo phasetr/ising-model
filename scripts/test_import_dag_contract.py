@@ -1089,9 +1089,7 @@ class RealTreeTest(unittest.TestCase):
 #: Workflow expected to run the contract on every pull request (Issue #4833).
 WORKFLOW_FILE = contract.REPO_ROOT / ".github" / "workflows" / "lean_action_ci.yml"
 
-#: Job of that workflow which must do it.  Pinned by name because everything
-#: below is scoped to this job: commands living anywhere else in the file (a
-#: conditional job, a job that is never triggered) must not satisfy the suite.
+#: Job of that workflow which must do it.
 WORKFLOW_JOB = "import-dag-contract"
 
 #: Command word and script of the checker itself, as CI spells them.
@@ -1100,23 +1098,58 @@ CONTRACT_COMMAND = ("python3", "scripts/import_dag_contract.py")
 #: The same, for this suite run standalone.
 SUITE_COMMAND = ("python3", "scripts/test_import_dag_contract.py")
 
-#: Argument tuples under which an invocation is the *tree gate*: ``--baseline``
-#: exits ``0`` by construction and ``--help`` checks nothing, so neither can
-#: report an inversion, and ``--self-test`` is the suite rather than the gate
-#: (it is counted as such below).  Matching the whole argument list rather than
-#: a prefix is also what rejects a trailing ``|| true``.
-GATE_ARGUMENTS = ((), ("--check",))
+#: The gate's exact invocation.  ``--baseline`` exits ``0`` by construction and
+#: ``--help`` checks nothing, so neither can report an inversion; ``--self-test``
+#: runs this suite, which is the *other* step.  Matching the whole argument list
+#: rather than a prefix is also what rejects a trailing ``|| true``.
+GATE_INVOCATION = (*CONTRACT_COMMAND, "--check")
 
-#: Argument tuples that run this suite, either spelling.
-SUITE_ARGUMENTS = {CONTRACT_COMMAND: (("--self-test",),), SUITE_COMMAND: ((),)}
+#: Keys that would keep the pinned steps looking wired while changing what they
+#: mean: ``if`` (GitHub reports a *skipped* job as successful),
+#: ``continue-on-error`` (the exit status is discarded), ``shell`` (a custom
+#: template decides what the exit status even is), ``with`` (``ref:`` would
+#: point checkout at another tree, so the gate would grade the wrong commit),
+#: ``env`` (a nested ``run`` key is an environment variable, not a command),
+#: ``needs`` / ``strategy`` / ``defaults`` / ``uses``-only shapes.
+FORBIDDEN_KEYS = (
+    "if", "continue-on-error", "shell", "with", "env", "needs", "strategy",
+    "defaults", "container", "services", "<<",
+)
 
-#: Job keys that turn a green job into a non-event: GitHub reports a *skipped*
-#: job as successful, and ``continue-on-error`` discards the exit status.
-JOB_DISABLING_KEYS = ("if", "continue-on-error")
+#: Top-level keys the workflow is allowed to have.  A new one (``defaults:``,
+#: ``concurrency:``, a workflow-level ``env:``) can change how every job below
+#: behaves, so introducing one has to be a reviewed edit.
+TOP_LEVEL_KEYS = {"name", "on", "permissions", "jobs"}
 
-#: The same at step level, plus ``shell``: a custom shell template decides what
-#: the step's exit status even is, so the pinned steps must not carry one.
-STEP_DISABLING_KEYS = (*JOB_DISABLING_KEYS, "shell")
+#: The trigger block, pinned verbatim.
+PINNED_TRIGGERS = """\
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:"""
+
+#: The gate job, pinned verbatim.
+#:
+#: Whitelisting the *text* rather than blacklisting spellings is what makes this
+#: pin converge.  Three independent review rounds each produced a new way to
+#: spell "disabled" -- ``if: false``, then a ``run`` key nested under ``env:``
+#: and ``if : false`` with a space, then a merge-key alias and ``with: ref:``
+#: pointing checkout at another tree -- and each round the enumeration was one
+#: spelling behind.  An exact region cannot be out-spelled: every edit inside it
+#: is red until it is made here too, which is the reviewed edit we want.
+PINNED_JOB = """\
+  import-dag-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Import-DAG contract self-tests (test the checker, not just the tree)
+        run: python3 scripts/test_import_dag_contract.py
+      - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)
+        run: python3 scripts/import_dag_contract.py --check"""
 
 
 def yaml_indent(line: str) -> int:
@@ -1128,8 +1161,7 @@ def yaml_key(text: str) -> str | None:
     """Mapping key of already-stripped ``text``, or ``None`` if it has none.
 
     Normalised rather than matched literally, because ``if : false`` and
-    ``"if": false`` are the same mapping to YAML and would otherwise slip past a
-    ``startswith("if:")`` test.
+    ``"if": false`` are the same mapping to YAML.
     """
     if not text or text.startswith("#") or ":" not in text:
         return None
@@ -1137,191 +1169,91 @@ def yaml_key(text: str) -> str | None:
     return key or None
 
 
-def yaml_value(text: str) -> str:
-    """Inline scalar of already-stripped ``text`` (empty when the key nests)."""
-    return text.split(":", 1)[1].strip() if ":" in text else ""
+def yaml_region(lines: list[str], key: str, indent: int) -> list[str] | None:
+    """The ``key:`` line at ``indent`` plus everything nested under it.
 
-
-def yaml_block(lines: list[str], start: int, indent: int) -> list[str]:
-    """Lines strictly deeper than ``indent``, starting after ``start``.
-
-    Blank and comment lines are skipped rather than treated as the end of the
-    block, so a commented-out step neither terminates the scan nor contributes
-    anything to it.
+    Blank and comment lines are dropped rather than ending the region, so a
+    comment neither terminates the scan nor lands in the compared text.
+    ``None`` when the key is absent, which fails the assertions below.
     """
-    block: list[str] = []
-    for line in lines[start + 1 :]:
+    header = next(
+        (i for i, line in enumerate(lines)
+         if yaml_indent(line) == indent and yaml_key(line.strip()) == key),
+        None,
+    )
+    if header is None:
+        return None
+    region = [lines[header]]
+    for line in lines[header + 1 :]:
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
             continue
         if yaml_indent(line) <= indent:
             break
-        block.append(line)
-    return block
+        region.append(line)
+    return region
 
 
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
-    The wiring is *read out of* the workflow rather than assumed, and every
-    assertion is scoped to the :data:`WORKFLOW_JOB` block: a substring search
-    over the file would be satisfied by a commented-out step, by a step in a job
-    that never runs, by an invocation that cannot fail, or by a ``run`` key
-    nested under ``env:`` (where it is an environment variable, not a command).
+    The wiring is *read out of* the workflow rather than assumed, and it is
+    pinned as **exact text** rather than as a set of properties: a property list
+    has to enumerate every way a workflow can be spelled into a no-op, and three
+    review rounds showed that enumeration losing a spelling at a time (a
+    commented-out step, a step in a job that never runs, ``--check | | true``,
+    a ``run`` nested under ``env:``, ``if : false``, a merge-key alias,
+    ``with: ref:`` aimed at another tree).  Two regions -- the trigger block and
+    the job -- are therefore compared verbatim, the set of top-level keys is
+    closed, and the pinned text is itself checked to still mean what it claims,
+    so weakening the workflow *and* the pin together stays a visible edit rather
+    than a quiet one.
 
-    The reader is hand-rolled to keep this suite dependency-free -- PyYAML is
-    guaranteed neither on the runner nor on a developer machine, and the checker
-    deliberately shells out to nothing -- but it is *structural*: it descends
-    ``jobs -> <job> -> steps -> <step>`` by indentation and only ever reads the
-    direct keys of a step, with key spelling normalised.  It understands the
-    block-mapping, one-line-per-``run`` shape this repository writes; a workflow
-    spelled any other way (block scalar, flow mapping) is not understood, and
-    *fails* these assertions rather than passing them.
+    Deliberately brittle: reformatting either region, bumping the checkout
+    version or adding a step turns this red until the constant above is updated
+    with it.  That is the point -- the update is a diff a reviewer sees.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
         cls.lines = WORKFLOW_FILE.read_text(encoding="utf-8").splitlines()
-        cls.job_lines = cls.job_block(cls.lines)
-        cls.steps = cls.step_entries(cls.job_lines)
-        cls.commands = [
-            tuple(step["run"].split()) for step in cls.steps if step.get("run")
-        ]
 
-    @staticmethod
-    def job_block(lines: list[str]) -> list[str]:
-        """The body of :data:`WORKFLOW_JOB` under the top-level ``jobs:`` key.
+    def test_the_trigger_block_is_pinned(self) -> None:
+        """Dropping or filtering ``pull_request:`` exempts pull requests."""
+        region = yaml_region(self.lines, "on", 0)
+        self.assertIsNotNone(region, "no top-level `on:` key")
+        self.assertEqual("\n".join(region), PINNED_TRIGGERS)
 
-        Empty if the job is absent, which fails every assertion below.
-        """
-        jobs = next(
-            (i for i, line in enumerate(lines)
-             if yaml_indent(line) == 0 and yaml_key(line.strip()) == "jobs"),
-            None,
-        )
-        if jobs is None:
-            return []
-        body = yaml_block(lines, jobs, 0)
-        header = next(
-            (i for i, line in enumerate(body)
-             if yaml_indent(line) == 2 and yaml_key(line.strip()) == WORKFLOW_JOB),
-            None,
-        )
-        return [] if header is None else yaml_block(body, header, 2)
+    def test_the_gate_job_is_pinned(self) -> None:
+        """Every edit inside the job -- of any spelling -- lands here."""
+        jobs = yaml_region(self.lines, "jobs", 0)
+        self.assertIsNotNone(jobs, "no top-level `jobs:` key")
+        region = yaml_region(jobs, WORKFLOW_JOB, 2)
+        self.assertIsNotNone(region, f"job {WORKFLOW_JOB!r} not found")
+        self.assertEqual("\n".join(region), PINNED_JOB)
 
-    @staticmethod
-    def step_entries(job_lines: list[str]) -> list[dict[str, str]]:
-        """Direct ``key -> inline value`` mapping of each step, in order.
-
-        Only keys at the step's own indentation are collected, so a ``run``
-        nested under ``env:`` (an environment variable, which executes nothing)
-        is not mistaken for the step's command.
-        """
-        steps_key = next(
-            (i for i, line in enumerate(job_lines)
-             if yaml_indent(line) == 4 and yaml_key(line.strip()) == "steps"),
-            None,
-        )
-        if steps_key is None:
-            return []
-        steps: list[dict[str, str]] = []
-        item_indent: int | None = None
-        key_indent = 0
-        for line in yaml_block(job_lines, steps_key, 4):
-            indent, stripped = yaml_indent(line), line.strip()
-            if stripped.startswith("- "):
-                if item_indent is None:
-                    item_indent, key_indent = indent, indent + 2
-                if indent != item_indent:
-                    continue
-                steps.append({})
-                stripped = stripped[2:].strip()
-            elif indent != key_indent or not steps:
-                continue
-            key = yaml_key(stripped)
-            if key is not None:
-                steps[-1][key] = yaml_value(stripped)
-        return steps
-
-    def gate_indices(self) -> list[int]:
-        """Indices of the steps that can actually fail the workflow."""
-        return [
-            i
-            for i, command in enumerate(self.commands)
-            if command[:2] == CONTRACT_COMMAND and command[2:] in GATE_ARGUMENTS
-        ]
-
-    def suite_indices(self) -> list[int]:
-        """Indices of the steps that run this suite, either spelling."""
-        return [
-            i
-            for i, command in enumerate(self.commands)
-            if command[2:] in SUITE_ARGUMENTS.get(command[:2], ())
-        ]
-
-    def test_the_reader_found_the_job_and_its_steps(self) -> None:
-        """Vacuity guard: a job the reader cannot see fails, never passes."""
-        self.assertTrue(self.job_lines, f"job {WORKFLOW_JOB!r} not found")
-        self.assertGreaterEqual(len(self.steps), 3, f"steps seen = {self.steps}")
-
-    def test_the_workflow_runs_on_every_pull_request(self) -> None:
-        """A gate that no pull request triggers enforces nothing.
-
-        The trigger must be an unfiltered ``pull_request:``; an event, branch or
-        path filter underneath it would silently exempt some pull requests, so
-        adding one has to be a reviewed edit rather than a quiet one.
-        """
-        on = next(
-            (i for i, line in enumerate(self.lines)
-             if yaml_indent(line) == 0 and yaml_key(line.strip()) == "on"),
-            None,
-        )
-        self.assertIsNotNone(on, "no top-level `on:` key")
-        triggers = yaml_block(self.lines, on, 0)
-        index = next(
-            (i for i, line in enumerate(triggers)
-             if yaml_indent(line) == 2 and yaml_key(line.strip()) == "pull_request"),
-            None,
-        )
-        self.assertIsNotNone(index, f"no `pull_request:` trigger in {triggers}")
-        self.assertEqual(
-            yaml_block(triggers, index, 2), [], "`pull_request:` carries a filter"
-        )
-
-    def test_ci_runs_the_contract_as_a_gate(self) -> None:
-        """An enforcing invocation exists, so a violation cannot land green."""
-        self.assertTrue(
-            self.gate_indices(),
-            f"no enforcing `{' '.join(CONTRACT_COMMAND)}` step in job "
-            f"{WORKFLOW_JOB!r}: commands seen = {self.commands}",
-        )
-
-    def test_ci_runs_the_checkers_own_tests(self) -> None:
-        """The tree passing says nothing about whether the rules still fire."""
-        self.assertTrue(
-            self.suite_indices(),
-            f"no `{' '.join(SUITE_COMMAND)}` step in job {WORKFLOW_JOB!r}: "
-            f"commands seen = {self.commands}",
-        )
-
-    def test_the_self_tests_run_before_the_gate(self) -> None:
-        """Order matters: a weakened checker would report a clean tree first."""
-        suite, gate = self.suite_indices(), self.gate_indices()
-        self.assertTrue(suite and gate, f"commands seen = {self.commands}")
-        self.assertLess(min(suite), min(gate))
-
-    def test_the_gate_job_is_unconditional(self) -> None:
-        """A skipped or error-tolerant job is reported as a successful one."""
-        self.assertTrue(self.job_lines, f"job {WORKFLOW_JOB!r} not found")
-        job_keys = {
-            yaml_key(line.strip()) for line in self.job_lines if yaml_indent(line) == 4
+    def test_the_workflow_grows_no_new_top_level_key(self) -> None:
+        """`defaults:`, `concurrency:` and friends re-aim every job below."""
+        keys = {
+            yaml_key(line) for line in self.lines if line and yaml_indent(line) == 0
         }
-        for key in JOB_DISABLING_KEYS:
-            self.assertNotIn(key, job_keys, f"job {WORKFLOW_JOB!r} can be neutralised")
-        self.assertTrue(self.steps, "no step parsed")
-        for step in self.steps:
-            for key in STEP_DISABLING_KEYS:
-                self.assertNotIn(key, step, f"step can be neutralised: {step}")
+        self.assertEqual(keys - {None}, TOP_LEVEL_KEYS)
+
+    def test_the_pinned_job_still_means_what_it_claims(self) -> None:
+        """The pin is only worth the commands and keys it pins.
+
+        Read off :data:`PINNED_JOB` rather than off the workflow: this is what
+        makes updating the constant to match a weakened job fail as well.
+        """
+        commands = [
+            tuple(line.strip()[len("run:") :].split())
+            for line in PINNED_JOB.splitlines()
+            if yaml_key(line.strip()) == "run"
+        ]
+        self.assertEqual(commands, [SUITE_COMMAND, GATE_INVOCATION])
+        keys = {yaml_key(line.strip().removeprefix("- ")) for line in PINNED_JOB.splitlines()}
+        for forbidden in FORBIDDEN_KEYS:
+            self.assertNotIn(forbidden, keys, f"pinned job carries {forbidden!r}")
 
 
 def run_suite() -> int:

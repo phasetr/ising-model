@@ -290,27 +290,27 @@ python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
 CI runs the standalone suite and then `--check`, in that order, and
-`CIWiringTest` reads the workflow back to pin that it still does. It requires,
-all of it scoped to the `import-dag-contract` job — a command elsewhere in the
-file proves nothing — that
+`CIWiringTest` reads the workflow back to pin that it still does. It pins the
+`on:` trigger block and the whole `import-dag-contract` job **verbatim**, closes
+the set of top-level workflow keys, and separately checks that the pinned text
+still says what it claims: the two `run:` commands in that order, and none of
+the keys that would change what they mean.
 
-* a **tree gate** is present: the argument list is matched whole, so
-  `--baseline` (exits 0 by construction), `--help` (checks nothing), a trailing
-  `|| true` and any other spelling are rejected. `--self-test` is *counted as
-  the suite*, not as the gate, so both roles have to be present;
-* the suite runs **before** it, since a weakened checker reports a clean tree;
-* neither the job nor a step carries `if:` or `continue-on-error:` — GitHub
-  reports a *skipped* job as successful — nor a custom `shell:`, which would
-  decide what the step's exit status even is;
-* the workflow keeps an **unfiltered** `pull_request:` trigger.
+Pinning the text rather than a list of properties is what makes this converge.
+Three independent review rounds each found a new way to spell "disabled" while
+a property list stayed green — `if: false`, then a `run` key nested under `env:`
+(an environment variable executes nothing) and `if : false` with a space (the
+same mapping to YAML), then a merge-key alias and `with: ref:` pointing checkout
+at another tree so the gate would grade the base commit. Each round the
+enumeration was one spelling behind; an exact region cannot be out-spelled.
+Closing the top-level key set covers the same ground one level up, where a new
+`defaults:` or `concurrency:` would re-aim every job below.
 
-The reader is hand-rolled, because PyYAML is guaranteed neither on the runner
-nor on a developer machine and the checker shells out to nothing, but it is
-*structural*: it descends `jobs → <job> → steps → <step>` by indentation and
-reads only a step's own keys, with key spelling normalised. Both properties are
-load-bearing. A `run` nested under `env:` is an environment variable that
-executes nothing, and `if : false` is the same mapping as `if: false` to YAML;
-a flat line scan would have accepted the first as a command and missed the
-second. A workflow spelling the reader does not understand — a block scalar, a
-flow mapping — fails these assertions rather than passing them, and so does a
-job it cannot find at all.
+The pin is deliberately brittle: reformatting either region, bumping the
+checkout version or adding a step turns the suite red until the constant in
+`scripts/test_import_dag_contract.py` is updated to match. That is the intent —
+the update is a diff a reviewer sees. It is scoped, though: edits to the `build`
+job (or to any other job) are none of its business and stay green, which is
+verified rather than asserted. What it cannot defend against is an edit that
+changes the workflow *and* the pin together, or a required-status-check decision
+taken outside the repository; those are review questions, not test questions.
