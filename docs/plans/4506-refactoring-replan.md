@@ -7,8 +7,9 @@ title: Archived refactoring baseline and final execution record
 
 This document is the repository-local historical record for the completed issue #4506 campaign.
 It preserves the static baseline, the predeclared gates, and the measured outcomes.  It is not an
-active authorization for further refactoring.  Current structural decisions are tracked by #4793;
-fresh build-speed reconciliation and any SpecialCases re-merge measurement are tracked by #4794.
+active authorization for further refactoring.  #4793 and #4794, which formerly tracked current
+structural decisions and fresh build-speed reconciliation respectively, have both been deleted on
+GitHub; see `docs/index.md` for current tracking.
 
 ## Status and issue mapping
 
@@ -105,8 +106,8 @@ The existing mathematical architecture is the default abstraction boundary:
 
 The canonical B0 measurement and the sole authorized B1 implementation are complete, PR #4522 is
 merged, and the #4506 completion audit is recorded.  No additional source refactor is authorized
-by this archived plan.  A future candidate needs fresh evidence and its own issue under #4793 or
-#4794, as appropriate.
+by this archived plan.  A future candidate needs fresh evidence and its own new issue (#4793 and
+#4794, which formerly served this purpose, have both been deleted on GitHub).
 
 ### B0: completed performance baseline (#4521)
 
