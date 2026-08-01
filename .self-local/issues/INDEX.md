@@ -14,7 +14,7 @@
   - #4853 (P1) — audit/extract the shared numeric core of spectral-gap certificates.
   - #4854 (P2) — canonicalize one identical-statement Patches group with compatibility aliases.
   All five are children of #4830's "Second-wave plan (2026-08-02)" section; mirrors exist for
-  #4850/#4851 only (`4850.md`, `4851.md`) as of this entry.
+  all five (`4850.md`–`4854.md`) as of this entry.
 - **#4850 body premise corrected**: original body proposed to "move the minimal concept-complete
   extremal-configuration slice to its generic owner". `dev-issue-manager` (main `496d0b5f`) found
   every declaration `GKSBoundaryCondition.lean` consumes (`plusConfig`,
@@ -26,11 +26,15 @@
 - **#4851 body premise corrected**: original body said `FourfoldSite.lean` imports `GibbsMeasure`
   "for `sum_spin` alone" (implying it consumes `IsingModel.sum_spin`). `dev-issue-manager` found
   `FourfoldSite.lean:35` instead declares its own duplicate `IsingModel.Lebowitz.sum_spin` (the
-  `GibbsMeasure.lean:224` general form is never referenced), and the file uses **zero** Gibbs-layer
-  names (`hamiltonian|boltzmann|partitionFunction|gibbs|correlation` all 0 hits) — its only real
-  needs are in `IsingModel/Basic.lean`. Body rewritten: debt = duplicate declaration + unnecessary
-  `import IsingModel.GibbsMeasure`, target owner = `IsingModel.Basic`, not a "move a consumed
-  declaration" story. Carried over from mirror `4851.md`.
+  `GibbsMeasure.lean:224` general form is never referenced by this file), and the file uses
+  **zero** Gibbs-layer names (`hamiltonian|boltzmann|partitionFunction|gibbs|correlation` all 0
+  hits) — its IsingModel-layer dependency is `Basic` only; the replacement Mathlib import set is
+  unmeasured (`dev-review`'s `lake env lean` swap to `IsingModel.Basic` alone hit missing
+  `AddCommMonoid ℝ` / `CommRing ℝ` instances, and adding `Mathlib.Data.Real.Basic` left 5 further
+  errors, so the current `import IsingModel.GibbsMeasure` is load-bearing as a transitive Mathlib
+  supplier, not simply "unnecessary"). Body rewritten: debt = duplicate declaration; target
+  IsingModel-layer owner = `IsingModel.Basic`, not a "move a consumed declaration" story. Carried
+  over from mirror `4851.md`.
 - Governance corrections only; no Lean/build change, no issue closed, no PR opened by this pass.
 
 ## 2026-07-30 audit checkpoint — #4786 hierarchy and #4803 evidence
