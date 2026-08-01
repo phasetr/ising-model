@@ -52,10 +52,9 @@ jobs:
       - uses: actions/checkout@v5
       # Same order as the audit gate above, for the same reason: `--check` only
       # says whether the current tree passes, which stays true when a rule is
-      # weakened or dropped, so the suite's mutation canaries are what actually
-      # defend R1/R2/R3/R6 (and its `CIWiringTest` defends these two steps).
-      # Both commands are pure Python -- no lake, no network -- and cost about
-      # 20 s and 5 s on a runner.
+      # weakened or dropped, so the 74 tests (mutation canaries included) are
+      # what actually defend R1/R2/R3/R6. Both commands are pure Python -- no
+      # lake, no network -- and cost about 45 s and 15 s respectively.
       - name: Import-DAG contract self-tests (test the checker, not just the tree)
         run: python3 scripts/test_import_dag_contract.py
       - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)
