@@ -135,22 +135,42 @@ stop a forbidden edge being laundered) does not apply.
 
 ## Compatibility umbrellas: pass-through, not exemption
 
-A module that declares nothing is an **aggregator** — a re-export index. The set
-is *computed*, never hand-listed, so new umbrellas need no maintenance; there are
-112 on the delivering commit, including all eight
+A module whose every non-comment line is a lone `import` is an **aggregator** — a
+re-export index. The set is *computed*, never hand-listed, so new umbrellas need
+no maintenance; there are 102 on the delivering commit, including all eight
 `Concrete/LatticeGraphCorrelation/Umbrella/*`, the root `IsingModel.lean` and the
 small root re-export files.
 
-The test is deliberately an **allowlist**, not a list of declaration keywords:
-comments are stripped, and then every remaining line must be `import` or
-namespace/section scaffolding (`namespace`, `end`, `section`, `open`, `universe`,
-`variable`, and none of them carrying the `in` command combinator). A denylist of
-declaration openers fails *open* — one keyword missing from it (`unsafe def`,
-`partial def`, `alias`, `macro_rules`, or a keyword that does not exist yet)
-silently turns a real module into an "umbrella" and therefore removes it as a
-violation source. The allowlist fails closed instead: an unrecognised construct
-leaves the module a real one. Both directions were measured on this tree and
-agree at 112, so the safe one costs nothing here.
+That test involves **no keyword list in either direction**, and the reason is
+Lean's grammar: commands are whitespace-insensitive, so
+
+```lean
+namespace Foo theorem d : True := trivial end Foo
+```
+
+is one physical line holding three commands, and it compiles. A rule phrased as
+"the line opens no declaration" therefore fails open on the first spelling nobody
+listed (`unsafe def`, `partial def`, `alias`, `macro_rules`, a keyword that does
+not exist yet), and a rule phrased as "the line *starts with* something harmless"
+fails open on the line above. Requiring the whole line to be an import avoids
+both, at the price of not recognising the ten umbrellas that carry `namespace` /
+`open` / `variable` scaffolding.
+
+That price is the right way round. Under-recognising an umbrella is safe in
+**both** roles the classification feeds: as a source the module simply stays
+checkable, and as a target the edge into it is checked against its own layer tag
+while its own outgoing edges are checked directly. Over-recognising is the only
+dangerous direction, and this predicate makes it impossible. Measured: the strict
+and the scaffolding-tolerant readings give the same verdict on this tree
+(R1/R2/R3/R6 all 0, 28 `INFO`), so the safe one costs nothing here.
+
+For the same reason the contract **fails** on any physical line carrying more
+than one `import`. The repository's single import scanner
+(`leaf_audit.build_import_graph`, reused here so the two tools cannot disagree
+about the edges) reads one import per line, and Lean accepts
+`import A import B`, so such a line would make an edge invisible to the graph and
+therefore to every rule. The contract refuses to certify a file it cannot read
+rather than reporting it clean. No line in `IsingModel/` has this shape today.
 
 Two rules follow:
 
@@ -172,9 +192,11 @@ are genuine inversions not yet fixed. It is currently **empty**.
 
 * Each entry is one `importer -> imported` pair with a mandatory
   `# owner: <name>  # issue: #<number>` annotation. Both fields are matched
-  **structurally**: a look-alike label (`# notowner:`), an empty value, or a
-  non-numeric issue is a failure, because a substring test would let an edge be
-  silenced with no owner and no tracker at all.
+  **structurally**, because a substring test would let an edge be silenced with
+  no owner and no tracker at all. The owner is a single identifier-shaped token
+  starting with a letter (optionally `@`-prefixed) and running to the end of its
+  field, so a look-alike label (`# notowner:`), an empty value, a bare `@`, and
+  `TODO x` are all rejected; the issue must be `#<n>` with `n ≥ 1`.
 * An entry whose edge no longer exists is itself a **failure**, so the allowlist
   cannot silently outlive its cause.
 * `--baseline` regenerates the *edge set* deterministically; it is never

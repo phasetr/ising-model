@@ -26,24 +26,35 @@ theorem thisIsProseNotCode : True := trivial
 def neitherIsThis : Nat := 0
 -/
 
---- IsingModel/Fixture/AggEmpty.lean
-/-! An umbrella with no imports at all. -/
+--- IsingModel/Fixture/RealNoContent.lean
+/-! A file with no import at all is not a re-export index, so it is not an
+umbrella: nothing here is being re-exported, and the safe answer to "is this an
+index?" is no. -/
 
---- IsingModel/Fixture/AggScaffolding.lean
+--- IsingModel/Fixture/RealScaffolding.lean
 import IsingModel.Fixture.RealPlain
 
-/-! An umbrella carrying namespace/section scaffolding but no declaration. -/
+/-! Namespace/section scaffolding around no declaration.  Lean's grammar is
+whitespace-insensitive at the command level, so a line beginning with `namespace`
+can still carry a declaration; the classifier therefore does not try to tell the
+two apart and treats every non-import line as content.  Under-recognising an
+umbrella is safe -- the module simply stays checkable. -/
 
 namespace IsingModel
-namespace Ambient
 section
 open Finset Real
-open scoped symmDiff
-universe u
 variable {V : Type*} [DecidableEq V]
 end
-end Ambient
 end IsingModel
+
+--- IsingModel/Fixture/RealMultiCommandLine.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Three commands on one physical line, which Lean accepts.  A classifier that
+only inspected the start of the line would call this an umbrella and stop
+checking the module. -/
+
+namespace Fixture theorem realMultiCommandLine : True := trivial end Fixture
 
 --- IsingModel/Fixture/AggLineComment.lean
 import IsingModel.Fixture.RealPlain

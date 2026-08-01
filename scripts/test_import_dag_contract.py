@@ -229,18 +229,29 @@ DECLARATION_FORMS = (
     "set_option maxHeartbeats 400000 in\ntheorem d : True := trivial",
     "initialize d : Nat ← pure 0",
     "example : True := trivial",
+    # Lean's grammar is whitespace-insensitive at the command level: the next
+    # two lines each hold several commands and each compiles.  A classifier that
+    # inspected only the start of a line would call both harmless.
+    "namespace Foo theorem d : True := trivial end Foo",
+    "section open Nat theorem d : True := trivial end",
+    # Scaffolding around nothing.  Not content, but not recognised as an
+    # umbrella either, because the line above cannot be told apart from it
+    # without parsing Lean.  Under-recognition is the safe direction.
+    "namespace Foo\nopen Nat\nvariable {V : Type*}\nend Foo",
 )
 
 
 class DeclarationFormTest(unittest.TestCase):
-    """No declaration form may make a module invisible to the enforced rules.
+    """No non-import content may make a module invisible to the enforced rules.
 
-    This is the regression test for the false negative an independent review
-    found: with a denylist of declaration *keywords*, a module whose only
+    This is the regression test for two false negatives an independent review
+    found.  With a denylist of declaration *keywords*, a module whose only
     content was ``unsafe def`` classified as an umbrella, so its forbidden
-    ``L3_AMBIENT -> L4_LATTICE`` import was not reported at all.  Each case is
-    asserted twice -- the classification *and* the direction verdict it feeds --
-    because the classification alone is not the property that matters.
+    ``L3_AMBIENT -> L4_LATTICE`` import was not reported at all; with an
+    allowlist matched at the *start of a line*, ``namespace Foo theorem d :
+    True := trivial end Foo`` did the same.  Each case is asserted twice -- the
+    classification *and* the direction verdict it feeds -- because the
+    classification alone is not the property that matters.
     """
 
     def setUp(self) -> None:
@@ -275,11 +286,83 @@ class DeclarationFormTest(unittest.TestCase):
 
     def test_a_genuine_umbrella_in_the_same_position_is_not_a_source(self) -> None:
         """Anti-vacuity: the sweep above must not be flagging every module."""
-        root = self.tree_with("namespace IsingModel\nopen Nat\nend IsingModel", len(DECLARATION_FORMS))
+        root = self.tree_with("/-! A pure re-export index. -/", len(DECLARATION_FORMS))
         graph = contract.load_graph(root)
         self.assertIn("IsingModel.AmbientLattice.Ambient", graph.aggregators)
         report = contract.build_report(root=root, baseline_path=root / "none.txt")
         self.assertEqual(report.violations["R3"], [])
+
+
+class ReadableImportTest(unittest.TestCase):
+    """A line the import scanner cannot fully read is a hard failure.
+
+    ``leaf_audit.build_import_graph`` reads one ``import`` per physical line, and
+    Lean accepts more than one.  An independent review showed that
+    ``import IsingModel.Inequalities.Safe import IsingModel.Concrete.Sink`` in an
+    ``L3_AMBIENT`` module therefore hid the second edge from every rule.  The
+    contract now refuses to certify such a file instead of reporting it clean.
+    """
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="import-dag-readable-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+
+    def tree_with(self, header: str, name: str) -> Path:
+        """Return a tree whose ``L3`` module has ``header`` as its import block."""
+        return materialize(
+            {
+                "IsingModel/AmbientLattice/Ambient.lean": header + "\ntheorem a : True := trivial\n",
+                "IsingModel/Inequalities/Safe.lean": "theorem s : True := trivial\n",
+                "IsingModel/Concrete/Sink.lean": "theorem c : True := trivial\n",
+            },
+            Path(self.tmp) / name,
+        )
+
+    def verdict(self, root: Path) -> tuple[bool, str]:
+        """Return ``(passes, printed report)`` for ``root`` with no baseline."""
+        baseline = root / "baseline.txt"
+        baseline.write_text("", encoding="utf-8")
+        report = contract.build_report(root=root, baseline_path=baseline)
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ok = contract.print_report(report, {})
+        return ok, buffer.getvalue()
+
+    def test_two_imports_on_one_line_fail(self) -> None:
+        """The exact shape that hid an ``L3 -> L4`` edge from the graph."""
+        root = self.tree_with(
+            "import IsingModel.Inequalities.Safe import IsingModel.Concrete.Sink", "two"
+        )
+        graph = contract.load_graph(root)
+        self.assertNotIn(
+            "IsingModel.Concrete.Sink", graph.imports["IsingModel.AmbientLattice.Ambient"],
+            "the scanner unexpectedly saw the second import; this test is now vacuous",
+        )
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+        self.assertIn("more than one `import`", text)
+
+    def test_a_non_ising_import_cannot_shadow_an_ising_one(self) -> None:
+        """The scanner's regex anchors on ``import IsingModel``, so this hides too."""
+        root = self.tree_with("import Mathlib.Order.Basic import IsingModel.Concrete.Sink", "mixed")
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+
+    def test_one_import_per_line_passes(self) -> None:
+        """Anti-vacuity: the ordinary shape is not flagged."""
+        root = self.tree_with(
+            "import IsingModel.Inequalities.Safe\nimport IsingModel.Concrete.Sink", "ok"
+        )
+        _ok, text = self.verdict(root)
+        self.assertIn("every `import` sits alone on its physical line", text)
+
+    def test_a_commented_import_is_not_counted(self) -> None:
+        """Comments are blanked before the count, so prose cannot trip the guard."""
+        root = self.tree_with(
+            "import IsingModel.Inequalities.Safe -- import IsingModel.Concrete.Sink", "comment"
+        )
+        _ok, text = self.verdict(root)
+        self.assertIn("every `import` sits alone on its physical line", text)
 
 
 # --------------------------------------------------------------------------
@@ -548,6 +631,10 @@ class BaselineTest(TreeHarness):
             "non-numeric issue": "# owner: someone  # issue: TODO",
             "issue without a number sign": "# owner: someone  # issue: 4833",
             "placeholder owner": "# owner: TODO  # issue: #4833",
+            "placeholder owner plus a word": "# owner: TODO x  # issue: #4833",
+            "punctuation for an owner": "# owner: @  # issue: #4833",
+            "issue zero": "# owner: someone  # issue: #0",
+            "issue with leading zeros": "# owner: someone  # issue: #007",
             "no annotation at all": "",
         }
         for label, annotation in cases.items():
@@ -558,9 +645,11 @@ class BaselineTest(TreeHarness):
                 self.assertFalse(ok, f"{label} was accepted:\n{text}")
 
     def test_a_fully_annotated_entry_still_works(self) -> None:
-        """Anti-vacuity for the case above: a real annotation is accepted."""
-        _entries, errors = contract.parse_baseline(self.ANNOTATED)
-        self.assertEqual(errors, [])
+        """Anti-vacuity for the case above: real annotations are accepted."""
+        for annotation in ("# owner: someone  # issue: #4833", "# owner: @phasetr  # issue: #1"):
+            with self.subTest(annotation=annotation):
+                _entries, errors = contract.parse_baseline(f"{self.R3[2]}  {annotation}\n")
+                self.assertEqual(errors, [])
 
     def test_a_baseline_entry_suppresses_only_its_own_edge(self) -> None:
         """An allowlisted edge does not amnesty the rest of its rule."""
@@ -698,6 +787,10 @@ class RealTreeTest(unittest.TestCase):
         self.assertEqual(self.report.unmatched_baseline, [])
         self.assertEqual(self.report.enforced_count, len(self.baseline))
         self.assertEqual(len(self.baseline), 0)
+
+    def test_every_import_in_the_library_is_readable(self) -> None:
+        """No physical line in ``IsingModel/`` hides a second ``import``."""
+        self.assertEqual(self.report.malformed_imports, [])
 
     def test_the_cli_exits_zero(self) -> None:
         """End to end, through ``main`` and the shipped baseline file."""

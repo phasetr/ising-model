@@ -54,16 +54,16 @@ directory, so the *file* is misfiled while the *edge* is correctly directed.
 
 Aggregators
 -----------
-A module that declares nothing is an **aggregator** (a re-export umbrella): after
-comment stripping, every line is ``import`` or namespace/section scaffolding.
-The test is an allowlist of harmless commands rather than a list of declaration
-keywords, because that direction fails closed -- a construct nobody thought of
-leaves the module a real one.  The set is computed, never hand-listed, so new
-umbrellas need no maintenance.  Aggregators are never violation *sources* --
-they are indices, not generality code -- and as *targets* they are expanded
-transitively to the first non-aggregator modules behind them.  Expansion rather
-than exemption is what keeps a compatibility umbrella a fully supported public
-import without letting it launder a reverse edge.
+A module whose every non-comment line is a lone ``import`` is an **aggregator**
+(a re-export umbrella).  No keyword list is involved: Lean's grammar is
+whitespace-insensitive at the command level, so "the line starts with something
+harmless" is unsound and "the line opens no declaration" fails open on the first
+spelling nobody listed.  The set is computed, never hand-listed, so new umbrellas
+need no maintenance.  Aggregators are never violation *sources* -- they are
+indices, not generality code -- and as *targets* they are expanded transitively
+to the first non-aggregator modules behind them.  Expansion rather than exemption
+is what keeps a compatibility umbrella a fully supported public import without
+letting it launder a reverse edge.
 
 Baseline
 --------
@@ -226,22 +226,28 @@ def layer_of(module: str) -> str:
 _BLOCK_COMMENT_RE = re.compile(r"/-.*?-/", re.DOTALL)
 _LINE_COMMENT_RE = re.compile(r"--.*$", re.MULTILINE)
 
-#: The commands an umbrella may contain besides ``import``: namespace/section
-#: scaffolding that declares nothing.  The test is an **allowlist**, never a
-#: list of declaration keywords, because that direction fails closed: an
-#: unrecognised construct (``unsafe def``, ``partial def``, ``alias``,
-#: ``macro_rules``, a future keyword) leaves the module a real one and therefore
-#: still a violation source.  A denylist of declaration openers fails *open* --
-#: one keyword missing from it silently exempts the module.
-_SCAFFOLDING_RE = re.compile(
-    r"^\s*(?:import|namespace|end|section|open|universe|variable)\b"
-)
+#: A whole line holding exactly one ``import`` command and nothing else.  This
+#: is the *entire* definition of what an umbrella may contain: no keyword list
+#: is involved in either direction.
+#:
+#: Lean's grammar is whitespace-insensitive at the command level, so
+#: ``namespace Foo theorem d : True := trivial end Foo`` is one physical line
+#: holding three commands and it compiles.  Any rule phrased as "the line
+#: *starts with* something harmless" is therefore unsound, and any rule phrased
+#: as a list of declaration keywords fails open the moment a spelling is missing
+#: (``unsafe def``, ``alias``, a keyword that does not exist yet).  Requiring the
+#: whole line to be an import avoids both.
+#:
+#: Under-recognising an umbrella is safe in *both* roles the classification
+#: feeds: as a source the module stays checkable, and as a target the edge into
+#: it is checked against its own layer tag while its own outgoing edges are
+#: checked directly.  Over-recognising is the only dangerous direction, and this
+#: predicate makes it impossible.
+_IMPORT_LINE_RE = re.compile(r"^\s*import\s+\S+\s*$")
 
-#: ``open Foo in <decl>`` and ``set_option x in <decl>`` are command *wrappers*:
-#: the line starts with allowlisted scaffolding but carries a declaration on the
-#: same line.  Any scaffolding line containing the ``in`` combinator is
-#: therefore rejected.
-_IN_COMBINATOR_RE = re.compile(r"(?:^|\s)in(?:\s|$)")
+#: Any ``import`` command token, used to detect a physical line carrying more
+#: than one of them (see :func:`malformed_import_lines`).
+_IMPORT_TOKEN_RE = re.compile(r"(?:^|\s)import\s")
 
 
 def module_source(module: str, root: Path) -> str | None:
@@ -253,12 +259,22 @@ def module_source(module: str, root: Path) -> str | None:
         return None
 
 
+def strip_comments(text: str) -> str:
+    """Blank out Lean comments while preserving the line structure.
+
+    Block comments are replaced by their own newlines rather than deleted, so
+    line numbers stay usable for reporting.
+    """
+    text = _BLOCK_COMMENT_RE.sub(lambda m: "\n" * m.group(0).count("\n"), text)
+    return _LINE_COMMENT_RE.sub("", text)
+
+
 def is_aggregator(module: str, root: Path) -> bool:
     """Return whether ``module`` is a re-export umbrella (declares nothing).
 
-    Comments are stripped first, so a ``/-! ... theorem foo ... -/`` module
-    header cannot make an umbrella look declarative.  Every remaining non-blank
-    line must then be allowlisted scaffolding (:data:`_SCAFFOLDING_RE`).
+    Comments are stripped first -- so a ``/-! ... theorem foo ... -/`` module
+    header cannot make an umbrella look declarative -- and every remaining
+    non-blank line must then be a lone ``import`` (:data:`_IMPORT_LINE_RE`).
 
     A module whose file is missing is not an aggregator: an unresolvable target
     must not silently gain pass-through semantics.
@@ -266,13 +282,30 @@ def is_aggregator(module: str, root: Path) -> bool:
     text = module_source(module, root)
     if text is None:
         return False
-    stripped = _LINE_COMMENT_RE.sub("", _BLOCK_COMMENT_RE.sub("", text))
-    for line in stripped.splitlines():
-        if not line.strip():
+    lines = [line for line in strip_comments(text).splitlines() if line.strip()]
+    return bool(lines) and all(_IMPORT_LINE_RE.match(line) for line in lines)
+
+
+def malformed_import_lines(graph: Graph) -> list[str]:
+    """Return ``module:line`` reports for physical lines with two imports.
+
+    ``leaf_audit.build_import_graph`` -- the repository's single import scanner,
+    reused here so the two tools cannot disagree about the edges -- reads one
+    ``import`` per physical line.  Lean accepts ``import A import B`` on one
+    line, and it accepts a non-``IsingModel`` import in front of an
+    ``IsingModel`` one, both of which would make an edge invisible to the graph
+    and therefore to every rule.  Rather than let that pass quietly, the shape is
+    a hard failure: the contract refuses to certify a file it cannot read.
+    """
+    reports: list[str] = []
+    for module in sorted(graph.modules):
+        text = module_source(module, graph.root)
+        if text is None:
             continue
-        if not _SCAFFOLDING_RE.match(line) or _IN_COMBINATOR_RE.search(line):
-            return False
-    return True
+        for lineno, line in enumerate(strip_comments(text).splitlines(), start=1):
+            if len(_IMPORT_TOKEN_RE.findall(line)) > 1:
+                reports.append(f"{module}:{lineno}: {line.strip()}")
+    return reports
 
 
 # --------------------------------------------------------------------------
@@ -369,6 +402,7 @@ class Report(NamedTuple):
     layer_sizes: dict[str, int]
     unmatched_baseline: list[str]
     baseline_errors: list[str]
+    malformed_imports: list[str]
 
     @property
     def enforced_count(self) -> int:
@@ -422,18 +456,24 @@ def find_info_edges(graph: Graph) -> list[tuple[str, str]]:
 
 
 #: ``# owner: <name>``.  The leading ``#`` is part of the pattern, so a
-#: look-alike such as ``# notowner: x`` does not satisfy it, and the value class
-#: excludes ``#`` so that an empty ``# owner:`` cannot borrow the next field's
-#: marker as its value.
-_OWNER_RE = re.compile(r"#\s*owner:\s*([^\s#][^#]*?)\s*(?=#|$)")
+#: look-alike such as ``# notowner: x`` does not satisfy it.  The value is a
+#: *single* identifier-shaped token that must start with a letter (after an
+#: optional ``@``) and must run to the end of its field, so an empty
+#: ``# owner:`` cannot borrow the next field's marker as its value, a bare
+#: ``@`` is not a name, and ``TODO x`` cannot smuggle a placeholder past the
+#: check below by appending a word to it.
+_OWNER_RE = re.compile(r"#\s*owner:\s*(@?[A-Za-z][A-Za-z0-9._\-]*)\s*(?=#|$)")
 
 #: ``# issue: #<number>``.  A tracker reference has to be a number, so a word
-#: cannot stand in for one.
-_ISSUE_RE = re.compile(r"#\s*issue:\s*#(\d+)(?:\s|$)")
+#: cannot stand in for one -- and it has to be a number that can exist, so ``#0``
+#: and leading zeros are rejected too.
+_ISSUE_RE = re.compile(r"#\s*issue:\s*#([1-9][0-9]*)\s*(?=#|$)")
 
 #: Values that name no owner.  Without this the skeleton emitted by
 #: ``--baseline`` would satisfy :data:`_OWNER_RE` and could be committed as-is.
-_PLACEHOLDER_OWNERS = frozenset({"todo", "tbd", "fixme", "unassigned", "none", "n/a", "-", "?"})
+_PLACEHOLDER_OWNERS = frozenset(
+    {"todo", "tbd", "fixme", "xxx", "unassigned", "unknown", "nobody", "none", "n.a", "na"}
+)
 
 
 def parse_baseline(text: str) -> tuple[dict[str, str], list[str]]:
@@ -528,6 +568,7 @@ def build_report(root: Path = REPO_ROOT, baseline_path: Path = BASELINE_FILE) ->
         layer_sizes=layer_sizes,
         unmatched_baseline=unmatched,
         baseline_errors=baseline_errors,
+        malformed_imports=malformed_import_lines(graph),
     )
 
 
@@ -538,6 +579,16 @@ def print_report(report: Report, baseline: dict[str, str]) -> bool:
     for layer in LAYERS:
         print(f"  {layer}: {report.layer_sizes[layer]}")
     print(f"  aggregators (re-export umbrellas, computed): {len(report.graph.aggregators)}")
+
+    print("== Readable imports ==")
+    if report.malformed_imports:
+        ok = False
+        print(f"  FAIL: {len(report.malformed_imports)} line(s) hold more than one `import`,")
+        print("        so an edge would be invisible to the graph and to every rule:")
+        for entry in report.malformed_imports:
+            print(f"      {entry}")
+    else:
+        print("  PASS: every `import` sits alone on its physical line")
 
     print("== Enforced rules ==")
     for rule in RULES:
