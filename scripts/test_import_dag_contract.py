@@ -1089,89 +1089,152 @@ class RealTreeTest(unittest.TestCase):
 #: Workflow expected to run the contract on every pull request (Issue #4833).
 WORKFLOW_FILE = contract.REPO_ROOT / ".github" / "workflows" / "lean_action_ci.yml"
 
-#: Command prefix of the checker itself, in the spelling CI uses.
-CONTRACT_COMMAND = "python3 scripts/import_dag_contract.py"
+#: Job of that workflow which must do it.  Pinned by name because everything
+#: below is scoped to this job: commands living anywhere else in the file (a
+#: conditional job, a job that is never triggered) must not satisfy the suite.
+WORKFLOW_JOB = "import-dag-contract"
 
-#: Command prefix of this suite, run standalone.
-SUITE_COMMAND = "python3 scripts/test_import_dag_contract.py"
+#: Command word and script of the checker itself, as CI spells them.
+CONTRACT_COMMAND = ("python3", "scripts/import_dag_contract.py")
+
+#: The same, for this suite run standalone.
+SUITE_COMMAND = ("python3", "scripts/test_import_dag_contract.py")
+
+#: Argument tuples under which the checker still fails on an inversion.
+#: ``--baseline`` exits ``0`` by construction, ``--self-test`` runs this suite
+#: and ``--help`` checks nothing, so an enforcing step is only ever the bare
+#: command or ``--check``.  Matching the whole argument list (not a prefix) is
+#: also what rejects a trailing ``|| true``.
+GATE_ARGUMENTS = ((), ("--check",))
+
+#: Argument tuples that run this suite, either spelling.
+SUITE_ARGUMENTS = {CONTRACT_COMMAND: (("--self-test",),), SUITE_COMMAND: ((),)}
+
+#: Keys that turn a green job into a non-event: GitHub reports a skipped job as
+#: successful, and ``continue-on-error`` discards the exit status outright.
+DISABLING_KEYS = ("if:", "continue-on-error:")
 
 
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
-    The wiring is *read out of* the workflow rather than assumed: a plain
-    substring search over the file would be satisfied by a commented-out step,
-    so only the scalar of a ``run:`` key counts here.
+    The wiring is *read out of* the workflow rather than assumed, and every
+    assertion is scoped to the :data:`WORKFLOW_JOB` block: a plain substring
+    search over the file would be satisfied by a commented-out step, by a step
+    in a job that never runs, or by an invocation that cannot fail.
+
+    Both readers below are hand-rolled to keep this suite dependency-free --
+    PyYAML is guaranteed neither on the runner nor on a developer machine, and
+    the checker deliberately shells out to nothing.  They understand exactly the
+    shape this repository writes (one single-line ``run:`` per step, block
+    mapping, two-space indent); a workflow spelled any other way is not
+    understood, and *fails* these assertions rather than passing them.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.commands = cls.run_commands()
+        cls.text = WORKFLOW_FILE.read_text(encoding="utf-8")
+        cls.job_lines = cls.job_block(cls.text)
+        cls.commands = cls.run_commands(cls.job_lines)
 
     @staticmethod
-    def run_commands() -> list[str]:
-        """Every single-line ``run:`` scalar of the workflow, in file order.
+    def job_block(text: str) -> list[str]:
+        """The lines of :data:`WORKFLOW_JOB`, delimited by indentation.
 
-        A hand-rolled reader keeps this suite dependency-free -- PyYAML is
-        guaranteed neither on the runner nor on a developer machine, and the
-        checker deliberately shells out to nothing.  It understands exactly the
-        shape this repository writes (one single-line ``run:`` per step); a step
-        spelled any other way is simply not seen, which *fails* the assertions
-        below rather than passing them.
+        Comment lines are dropped rather than treated as the end of the block,
+        so a commented-out step neither terminates the scan nor contributes a
+        command.  Empty if the job is absent, which fails every assertion.
         """
-        commands: list[str] = []
-        for line in WORKFLOW_FILE.read_text(encoding="utf-8").splitlines():
+        lines = text.splitlines()
+        try:
+            start = lines.index(f"  {WORKFLOW_JOB}:")
+        except ValueError:
+            return []
+        block: list[str] = []
+        for line in lines[start + 1 :]:
             stripped = line.strip()
-            if stripped.startswith("#") or not stripped.startswith("run:"):
+            if not stripped or stripped.startswith("#"):
+                continue
+            if len(line) - len(line.lstrip()) <= 2:
+                break
+            block.append(line)
+        return block
+
+    @staticmethod
+    def run_commands(lines: list[str]) -> list[tuple[str, ...]]:
+        """Every single-line ``run:`` scalar of ``lines``, tokenised, in order."""
+        commands: list[tuple[str, ...]] = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped.startswith("run:"):
                 continue
             command = stripped[len("run:") :].strip()
             if command:
-                commands.append(command)
+                commands.append(tuple(command.split()))
         return commands
 
     def gate_indices(self) -> list[int]:
-        """Indices of the commands that can actually fail the workflow.
-
-        ``--baseline`` prints the current edge set and always exits ``0``, and
-        ``--self-test`` runs this suite; wiring either one alone would look like
-        enforcement while enforcing nothing, so both are excluded here.
-        """
+        """Indices of the steps that can actually fail the workflow."""
         return [
             i
             for i, command in enumerate(self.commands)
-            if command.startswith(CONTRACT_COMMAND)
-            and "--baseline" not in command
-            and "--self-test" not in command
+            if command[:2] == CONTRACT_COMMAND and command[2:] in GATE_ARGUMENTS
         ]
 
     def suite_indices(self) -> list[int]:
-        """Indices of the commands that run this suite, either spelling."""
+        """Indices of the steps that run this suite, either spelling."""
         return [
             i
             for i, command in enumerate(self.commands)
-            if command.startswith(SUITE_COMMAND)
-            or (command.startswith(CONTRACT_COMMAND) and "--self-test" in command)
+            if command[2:] in SUITE_ARGUMENTS.get(command[:2], ())
         ]
+
+    def test_the_workflow_runs_on_every_pull_request(self) -> None:
+        """A gate that no pull request triggers enforces nothing.
+
+        The trigger must be an unfiltered ``pull_request:``; an event, branch or
+        path filter underneath it would silently exempt some pull requests, so
+        adding one has to be a reviewed edit rather than a quiet one.
+        """
+        lines = self.text.splitlines()
+        self.assertIn("  pull_request:", lines, "no unfiltered `pull_request:` trigger")
+        index = lines.index("  pull_request:")
+        following = [line for line in lines[index + 1 :] if line.strip()]
+        self.assertTrue(following, "truncated workflow")
+        self.assertLessEqual(
+            len(following[0]) - len(following[0].lstrip()),
+            2,
+            f"`pull_request:` carries a filter: {following[0]!r}",
+        )
 
     def test_ci_runs_the_contract_as_a_gate(self) -> None:
         """An enforcing invocation exists, so a violation cannot land green."""
         self.assertTrue(
             self.gate_indices(),
-            f"no enforcing `{CONTRACT_COMMAND}` step in {WORKFLOW_FILE.name}: "
-            f"run commands seen = {self.commands}",
+            f"no enforcing `{' '.join(CONTRACT_COMMAND)}` step in job "
+            f"{WORKFLOW_JOB!r}: commands seen = {self.commands}",
         )
 
     def test_ci_runs_the_checkers_own_tests(self) -> None:
         """The tree passing says nothing about whether the rules still fire."""
         self.assertTrue(
             self.suite_indices(),
-            f"no `{SUITE_COMMAND}` step in {WORKFLOW_FILE.name}: "
-            f"run commands seen = {self.commands}",
+            f"no `{' '.join(SUITE_COMMAND)}` step in job {WORKFLOW_JOB!r}: "
+            f"commands seen = {self.commands}",
         )
 
     def test_the_self_tests_run_before_the_gate(self) -> None:
         """Order matters: a weakened checker would report a clean tree first."""
         self.assertLess(min(self.suite_indices()), min(self.gate_indices()))
+
+    def test_the_gate_job_is_unconditional(self) -> None:
+        """`if:` and `continue-on-error:` both make a green job meaningless."""
+        for line in self.job_lines:
+            for key in DISABLING_KEYS:
+                self.assertFalse(
+                    line.strip().startswith(key),
+                    f"job {WORKFLOW_JOB!r} can be neutralised: {line.strip()!r}",
+                )
 
 
 def run_suite() -> int:
