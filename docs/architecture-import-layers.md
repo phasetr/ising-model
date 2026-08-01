@@ -13,8 +13,12 @@ page is the layer map; `scripts/import_dag_contract.py` is its executable form,
 and `scripts/test_import_dag_contract.py` is the proof that the checker can
 fail.
 
-The contract is **report-only** at the time of writing: it is not wired into
-CI. Wiring it in is a separate change with its own tests and independent review.
+The contract runs in CI on every pull request, in its own toolchain-free
+`import-dag-contract` job of `.github/workflows/lean_action_ci.yml`: the checker's
+own tests first, then the gate. A violation therefore turns the pull request red
+by itself, and a red Lean build cannot mask one. It is deliberately **not** a
+required status check yet — making it blocking is a separate governance
+decision — so a failure is visible rather than merge-blocking today.
 
 ## What this contract is not
 
@@ -282,4 +286,11 @@ relocated theorem is byte-identical.
 python3 scripts/import_dag_contract.py             # --check (default); exit 1 on violation
 python3 scripts/import_dag_contract.py --baseline  # emit the current set in baseline format
 python3 scripts/import_dag_contract.py --self-test # run the checker's own test suite
+python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
+
+CI runs the last two lines, in that order (suite, then `--check`), and
+`CIWiringTest` reads the workflow back to pin that it still does: it asserts an
+enforcing invocation exists — `--baseline` and `--self-test` are excluded, since
+neither can fail on an inversion — and that the suite precedes it. Removing the
+job silently turns the suite red rather than merely losing the coverage.
