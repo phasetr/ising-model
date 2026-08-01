@@ -2525,12 +2525,17 @@ class VerdictVocabularyTest(unittest.TestCase):
     """
 
     def test_no_authorising_label_is_emitted(self) -> None:
-        """Neither the verdict vocabulary nor the banner says "safe"."""
+        """Neither the verdict vocabulary nor the banner says "safe".
+
+        The banner is swept for the bare word, not for the retired spelling:
+        an assertion against ``safe-to-delete`` alone passes a banner that says
+        "safe to delete" in prose, which reads the same to a human.
+        """
         self.assertEqual(dcs.NO_CITATION, "no-citation-found")
         for verdict in dcs.VERDICT_ORDER:
             self.assertNotIn("safe", verdict)
             self.assertNotIn("delete", verdict)
-        self.assertNotIn("safe-to-delete", dcs.BANNER)
+        self.assertNotIn("safe", dcs.BANNER.lower())
         self.assertIn("EMITS NO DELETION AUTHORISATION", dcs.BANNER)
         self.assertFalse(hasattr(dcs, "SAFE"))
 
