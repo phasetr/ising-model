@@ -1,3 +1,120 @@
+## 2026-08-01 postmerge — PR #4821 (clusters C/D = P-C/P-D1/P-D2) merged; #4823 stays OPEN
+
+- PR #4821 (branch `refactor/duplication-clusters-cd`, head
+  `56abd0f7928f2a11ea02a380f8f7220784387a05`, base
+  `e5b7675cf4e63190d75874fe83109a84060c00e6`) squash-merged as
+  `4bfe4aebdec575435d7731d613abd0f6df7696fb`; remote branch deleted (the local branch could
+  not be deleted — it is checked out in a scratchpad worktree); `main` tip is now the squash
+  commit.
+- Gates confirmed independently: `gh pr checks 4821` all pass with
+  **`completion-claim/live` = pass** (it re-ran twice: once after the two review-record URLs
+  were filled, once after undraft); Lean Action CI
+  [run 30671736955](https://github.com/phasetr/ising-model/actions/runs/30671736955)
+  `conclusion=success` at `56abd0f7`; source review APPROVE
+  [comment 5148462059](https://github.com/phasetr/ising-model/issues/4823#issuecomment-5148462059)
+  (companion PR review `4832917934`, `commit_id=56abd0f7`; independent codex cross-review also
+  APPROVE); issue-resolution audit PASS
+  [comment 5148412102](https://github.com/phasetr/ising-model/issues/4823#issuecomment-5148412102);
+  `git ls-remote` tip = `56abd0f7`, `mergeable=MERGEABLE`, `base..origin/branch` diff non-empty
+  (26 files, +98/−183); PR taken out of draft before merge.
+- Managed payload filled at this head: both `"url": "PENDING"` entries replaced,
+  `changed_file_count` 26 and `sorted_path_digest` `sha256:4af4ee59…3dec79` re-verified with
+  the repo's own `sorted_path_digest`. Offline `scripts/completion_claim_gate.py` run against
+  the live body: **PASS, zero diagnostics**, for `is_draft` both true and false.
+- Content: **16 declarations deleted, 2 added, net −14**; the rebase onto `e5b7675c` moved no
+  content (270 changed lines byte-identical each side); pinned scanner declaration constant
+  **10562 -> 10548**, both endpoints *measured* with the repo's own fragment resolver, which
+  also demonstrates that #4824's 9 retirements and #4821's 16 are **disjoint**.
+- Carried-forward debt on #4823: the two byte-identical concrete wrapper pairs (relocated,
+  not retired) **and** the pre-existing third private twin `Spin.sign_mul_ℝ` at
+  `.../LatticeMassHighTemperature/JLowerBound.lean:17`.
+- **#4823 remains OPEN** (P-A1/P-A2/P-B2 and the residue/docs criteria are unfinished);
+  P-C/P-D1/P-D2 boxes now checked. **#4793 stays OPEN** with seven criteria; its Item E is
+  dispositioned to #4823 at
+  [comment 5148497775](https://github.com/phasetr/ising-model/issues/4793#issuecomment-5148497775),
+  and the programme's PRs are not to cite #4793.
+- **MERGE HAZARD (rewritten on #4823)**: with #4824 (−9) and #4821 (−14) both landed, `main`
+  is at **10548** in both occurrences and the pinned TeX rows are **3861 / 26804**
+  (`tex/proof-guide.tex` 34872 lines). **PR #4825 (head `598c948e`) is doubly stale at
+  10571 / 26785** and rewrites that test file heavily, so its rebase is a three-way
+  interaction: re-derive **both** values from the rebased tree, carry forward **neither a
+  literal nor a difference**. Leaving the old text risks the next rebaser picking up `10557`.
+- No open-issue manifest needs refreshing — this merge changes no issue's state, and the
+  `scripts/audit/open_issues.txt` manifest PR #4826 once proposed was dropped at that PR's
+  round 4 together with the V5 gate arm it fed (user ruling: track the files, add no check).
+- **Mirrors `.self-local/issues/4823.md` and `4793.md` were updated on disk and were UNTRACKED
+  on `main`** (only `INDEX.md` is tracked there), so they were invisible to review — the same
+  mechanism that caused #4794 to be re-filed. They are **carried into PR #4826 at its round-4
+  head**, together with this ledger entry, rather than left in a working tree; that PR tracks
+  28 files under `.self-local/` and modifies `INDEX.md`.
+
+## 2026-08-01 filed — #4827 (module-cost harness deferred defects), OPEN
+
+- **#4827** OPEN, refs #4794 — mirror `.self-local/issues/4827.md`. Five defects in
+  `scripts/measure_module_cost.py` / `scripts/test_measure_module_cost.py` found in PR
+  #4820's review rounds 4-5 and deliberately deferred under the bound adopted after round 5
+  (**further harness defects are filed, not repaired inside PR #4820**): D1 `run_capture`
+  has no `timeout=` and now runs twice per sample while the artifact is written only after
+  the last sample; D2 the deleted 32-sample cross-check case rests on one verbatim report
+  because only one of its two named substitutes carries the property; D3 nothing asserts
+  `payload["schema"]` or `environment.machine_state_at_start` (reverting the schema tag
+  leaves all 58 tests green); D4 H4's digest-**ordering** half is unpinned; D5 the
+  machine-load guard's post-sample endpoint is not recorded (section 4.3 registers it pre
+  **and** post per replicate).
+- PR #4820 round 6 (head `2c4a877a`) makes only the two corrections its round-5 review
+  required: the `machine_state()` docstring now states the single endpoint it records, and
+  the body's `scripts/*.py` figure and decoy-case description are re-derived at the head.
+  **Round 6 moves the head, so no review record binds to the tip**; a fresh source review,
+  `codex` cross-check and issue-resolution audit are required before merge.
+- No branch other than `build-speed/4794-fixed-cost-protocol` is touched; `main` is untouched.
+
+## 2026-07-31 postmerge — PR #4824 (P-B1, cluster B) merged; #4823 stays OPEN
+
+- PR #4824 (branch `refactor/duplication-cluster-b`, head
+  `dffecf5d01a61b4c83f9683daa71c5343584b8ff`, base
+  `f23fa1e732d6985a59d305c85e018f06d62b2f88`) squash-merged as
+  `e5b7675cf4e63190d75874fe83109a84060c00e6`; remote branch deleted; `main` tip is now the
+  squash commit.
+- Gates confirmed independently: `gh pr checks 4824` all pass with
+  **`completion-claim/live` = pass**; Lean Action CI
+  [run 30647793499](https://github.com/phasetr/ising-model/actions/runs/30647793499)
+  success at `dffecf5d`; source review APPROVE
+  [comment 5145476766](https://github.com/phasetr/ising-model/pull/4824#issuecomment-5145476766);
+  issue-resolution audit PASS
+  [comment 5145373017](https://github.com/phasetr/ising-model/issues/4823#issuecomment-5145373017);
+  `git ls-remote` tip = `dffecf5d`; PR out of draft before merge.
+- Content: **9** duplicate `*Λ*_latticeGraph` declarations retired, 0 call sites, 0 import
+  changes; pinned scanner declaration constant **10571 -> 10562**.
+- **#4823 remains OPEN** (P-A1/P-A2/P-B2/P-D2 and the docs-synchronisation criteria are
+  unfinished). Postmerge record + two Low findings + merge hazard:
+  [comment 5145541152](https://github.com/phasetr/ising-model/issues/4823#issuecomment-5145541152).
+- **MERGE HAZARD**: #4821 and #4825 both edit the pinned constant in
+  `scripts/test_dead_candidate_scan.py`; after #4821 (−14) the correct value is **10548**
+  in both occurrences, and #4825 rewrites that file heavily — re-derive the constant from
+  the tree at the rebased head, do not carry either literal forward.
+
+## 2026-07-31 filed — #4822 (gate defect) and #4823 (duplication programme), both OPEN
+
+- **#4822** OPEN, parent #4796, related #4801 — mirror `.self-local/issues/4822.md`.
+  `scripts/completion_claim_gate.py`'s `_reject_directive_keywords` (line 682) and
+  `_reject_raw_html` (line 690) scan the whole normalized body without exempting fenced
+  code blocks or inline code spans. Reproduced on PR #4820: four keyword spans, including
+  the committed path `.self-local/reports/perf-4724-fixed-cost-reconciliation.md` whose
+  filename contains a boundary-delimited `fixed`, making an accurate body that cites it
+  unpassable; plus `RAW_HTML_FORBIDDEN` from one `<` inside a code span. Proposed remedy
+  is a code-span/fence exemption with the prose surface still fail-closed; the keyword
+  rule itself must stay. **Must be fixed in a standalone PR, not inside the PR whose red
+  check it would turn green.**
+- **#4823** OPEN, parent #4786 — mirror `.self-local/issues/4823.md`. Tracks the
+  duplication-cluster consolidation programme (clusters A-D) that PR #4821 and its
+  planned follow-ups were referencing #4793 for decoratively. Design SOT
+  `.self-local/reports/design-duplication-consolidation-2026-07-31.md`. Carries the
+  relocated cluster-C residue (two byte-identical concrete wrapper pairs) and the TeX
+  detection defect: `\texttt{a\_b}` escaping makes raw `git grep` return 0, and only a
+  normalised (`tr -d '\\'`) sweep found the dangling citations at `tex/proof-guide.tex`
+  lines 686 and 26903.
+- Neither issue changes any branch or `main`; no PR was opened by this entry.
+
 ## 2026-07-31 postmerge handoff — #4818 completed, #4792 remains OPEN
 
 - PR #4819 candidate `9427d0d0b9e21439934fad170085f814bfb9c3ab`
