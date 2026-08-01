@@ -1,3 +1,26 @@
+## 2026-08-01 filed — #4829 (dead-candidate scanner deferred Low findings), OPEN
+
+- **#4829** OPEN, refs #4792 (parent lane; not discharged by it) — mirror
+  `.self-local/issues/4829.md`. Filed 2026-08-01T02:21:53Z by `dev-issue-manager` during
+  the PR #4825 audit, carrying three Low findings deferred from that PR's round-1 and
+  round-2 reviews plus one observation. **G2**: an unrecognised TeX code wrapper yields no
+  span, hence no citation *and* no coverage warning (`_TEX_CODE_CMDS`); measured **0**
+  occurrences of `{\tt` in `tex/proof-guide.tex`, so the gap is latent rather than live,
+  and no canary keeps it that way. **G3**: the repaired `--lean` fatal condition may
+  *always* fire — **2,961 of 10,618** candidates have an empty text-consumer set, so its
+  breadth is unmeasured. **G4**: the F5 `run_witness` repair has no permanent in-suite
+  pin, unlike the round-2 `--help` vocabulary guard, which committed one as `M9b`. The
+  observation records that deleting `ResolvedGlobElisionHeadTest` cost **precision, not
+  soundness**, and names the one real-corpus endpoint that went with it. Line numbers are
+  against PR #4825 head `d487f32e`.
+- The mirror is **tracked by PR #4826** at that PR's current head, so the mirrors that PR
+  adds and the currently open issues correspond exactly in both directions — fifteen each.
+  The mirror's own header still reads "Not tracked by PR #4826"; that records the state at
+  filing time and is superseded by this entry. Amending the mirror's text belongs to
+  `dev-issue-manager`, not to a tracking PR.
+- This entry changes no branch, no issue state and no PR content. **#4792 stays OPEN**
+  independently of #4829.
+
 ## 2026-08-01 postmerge — PR #4821 (clusters C/D = P-C/P-D1/P-D2) merged; #4823 stays OPEN
 
 - PR #4821 (branch `refactor/duplication-clusters-cd`, head
@@ -59,7 +82,7 @@
   of this entry said "only `INDEX.md` is tracked there", which is **false**; that wording came
   from the instruction handed to the merge clerk after PR #4821 landed and was carried in
   unchecked. The two mirrors are **carried into PR #4826 at its current head**, together with
-  this ledger entry, rather than left in a working tree; that PR tracks 28 files under
+  this ledger entry, rather than left in a working tree; that PR adds 29 files under
   `.self-local/` and modifies `INDEX.md`.
 
 ## 2026-08-01 filed — #4827 (module-cost harness deferred defects), OPEN
