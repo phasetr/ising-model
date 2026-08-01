@@ -499,6 +499,12 @@ class ReadableImportTest(unittest.TestCase):
         ("import/- sep -/ IsingModel.Foo", False),
         ("import /-x-/IsingModel.Foo", False),
         ("import /- a -/ /- b -/ IsingModel.Foo", False),
+        # Guillemet-escaped identifiers: legal Lean, and doubly dangerous --
+        # either the scanner captures nothing, or it captures a spelling that
+        # matches no real module and so lands in the default layer.
+        ("import «IsingModel».Concrete.Foo", False),
+        ("import IsingModel.«Concrete».Foo", False),
+        ("import «IsingModel.Concrete.Foo»", False),
     )
 
     def test_readability_is_an_equivalence_with_the_scanner(self) -> None:
@@ -515,6 +521,29 @@ class ReadableImportTest(unittest.TestCase):
                 self.assertEqual(
                     contract.line_is_readable(raw, contract.strip_comments(raw)), readable
                 )
+
+    def test_an_escaped_module_name_fails(self) -> None:
+        """``import «IsingModel».Concrete.Foo`` compiles and hides its edge."""
+        root = self.tree_with("import «IsingModel».Concrete.Sink", "escaped")
+        graph = contract.load_graph(root)
+        self.assertEqual(
+            graph.imports.get("IsingModel.AmbientLattice.Ambient", set()), set(),
+            "the scanner unexpectedly saw the import; this test is now vacuous",
+        )
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+
+    def test_every_real_import_argument_is_canonical(self) -> None:
+        """Anti-vacuity for the canonical-spelling rule on the real library.
+
+        A rule that rejected ordinary module names would show up as a wall of
+        failures rather than as silence, but only if something reads the real
+        tree; this is that something.
+        """
+        graph = contract.load_graph()
+        self.assertGreater(len(graph.modules), REAL_MODULE_FLOOR)
+        for module in graph.modules:
+            self.assertRegex(module, contract._CANONICAL_MODULE_RE)
 
     def test_a_comment_inside_the_import_command_fails(self) -> None:
         """``import /-x-/Foo``: the scanner's capture must start at the module."""

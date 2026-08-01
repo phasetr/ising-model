@@ -203,17 +203,21 @@ For the same reason the contract **fails** on any import line it cannot read.
 here so the two tools cannot disagree about the edges — reads one import per
 physical line anchored at column 0, while Lean also accepts `import A import B`,
 an indented `  import A`, a bare `import` with the module name on the next line,
-`import/- c -/ A`, `import /-x-/A`, and a non-`IsingModel` import in front of an
-`IsingModel` one. Each makes an edge invisible to the graph and therefore to
-every rule.
+`import/- c -/ A`, `import /-x-/A`, `import «IsingModel».Concrete.A`, and a
+non-`IsingModel` import in front of an `IsingModel` one. Each makes an edge
+invisible to the graph and therefore to every rule.
 
-Enumerating those shapes turned out to be a losing game — five review rounds
-produced five more — so the guard is an **equivalence check** instead: what Lean
+Enumerating those shapes turned out to be a losing game — six review rounds
+produced six more — so the guard is an **equivalence check** instead: what Lean
 sees on the comment-stripped line must equal what `leaf_audit`'s own regex
-extracts from the raw one. Which lines are examined is still decided on the
-stripped text, so prose mentioning "import" cannot trip the guard. Erring towards
-a false failure here is deliberate: it is loud and fixable, whereas the
-alternative is an edge nobody sees. No line in `IsingModel/` diverges today.
+extracts from the raw one, over arguments restricted to plain dotted-identifier
+spelling. The spelling restriction closes the guillemet class in one move rather
+than one escape at a time: an escaped name either escapes the scanner entirely or
+is captured in a spelling that matches no real module and so silently lands in
+the default layer. Which lines are examined is still decided on the stripped
+text, so prose mentioning "import" cannot trip the guard. Erring towards a false
+failure here is deliberate: it is loud and fixable, whereas the alternative is an
+edge nobody sees. No line in `IsingModel/` diverges today.
 
 Two rules follow:
 

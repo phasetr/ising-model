@@ -453,6 +453,15 @@ def is_aggregator(module: str, root: Path) -> bool:
     return _HIDDEN_COMMAND_RE.search(stripped) is None
 
 
+#: A module name in plain dotted-identifier form.  Lean also accepts
+#: guillemet-escaped components (``import «IsingModel».Concrete.Foo`` compiles),
+#: and those are doubly dangerous: the scanner may fail to capture the name at
+#: all, or capture a spelling that matches no real module and so lands in the
+#: default layer.  Rather than teach the checker one more escape, any argument
+#: that is not plain is refused -- which closes the whole class.
+_CANONICAL_MODULE_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*$")
+
+
 def _is_ising_module(name: str) -> bool:
     """Return whether ``name`` is the umbrella module or one of its children."""
     return name == "IsingModel" or name.startswith("IsingModel.")
@@ -468,14 +477,18 @@ def line_is_readable(raw: str, stripped: str) -> bool:
     This is an equivalence check rather than a list of bad shapes, which is what
     it takes to be sound here: successive reviews produced
     ``import A import B``, ``  import A``, a bare ``import`` with the name on the
-    next line, ``import/- c -/ A`` and ``import /-x-/A``, each legal Lean and
-    each invisible to the scanner.  Enumerating them is a losing game; requiring
-    the two views to agree covers the ones nobody has thought of.
+    next line, ``import/- c -/ A``, ``import /-x-/A`` and
+    ``import «IsingModel».Concrete.Foo``, each legal Lean and each invisible to
+    the scanner.  Enumerating them is a losing game; requiring the two views to
+    agree, over arguments restricted to canonical spelling, covers the ones
+    nobody has thought of.
     """
     lean = _LEAN_IMPORT_RE.findall(stripped)
     if len(lean) != 1:
         # Zero means the argument is on another line; more than one means the
         # scanner, which reads a single import per line, must miss some.
+        return False
+    if not _CANONICAL_MODULE_RE.match(lean[0]):
         return False
     match = leaf_audit._IMPORT_RE.match(raw)
     scanner = [match.group(1)] if match else []
