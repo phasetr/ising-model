@@ -1,0 +1,68 @@
+# Aggregator-classifier fixtures for scripts/test_import_dag_contract.py.
+#
+# The aggregator set is COMPUTED, never hand-listed, so the classifier is the
+# single point where a real module could be mistaken for a re-export umbrella
+# and thereby stop being a violation source.  Each file below pins one way that
+# could go wrong.  See tree_clean.txt for why fixtures ship as a manifest rather
+# than as tracked `.lean` files.
+#
+# Expected classification is encoded in the file name: `Agg*` must be an
+# aggregator, `Real*` must not.
+
+--- IsingModel/Fixture/AggPlain.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# A plain re-export umbrella: imports, a doc header, nothing else.
+-/
+
+--- IsingModel/Fixture/AggDocMentionsTheorem.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# An umbrella whose doc comment quotes declaration syntax.
+
+theorem thisIsProseNotCode : True := trivial
+def neitherIsThis : Nat := 0
+-/
+
+--- IsingModel/Fixture/AggEmpty.lean
+/-! An umbrella with no imports at all. -/
+
+--- IsingModel/Fixture/RealPlain.lean
+/-! One ordinary theorem. -/
+
+theorem realPlain : True := trivial
+
+--- IsingModel/Fixture/RealAttributeOnOneLine.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# Otherwise all imports: the single declaration carries an attribute inline.
+-/
+
+@[simp] theorem realAttributeOnOneLine : True := trivial
+
+--- IsingModel/Fixture/RealPrivateNoncomputable.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Modifier stack in front of the declaration keyword. -/
+
+private noncomputable def realPrivateNoncomputable : Nat := 0
+
+--- IsingModel/Fixture/RealInstance.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A non-`theorem` declaration keyword. -/
+
+instance realInstance : Inhabited Nat := ⟨0⟩
+
+--- IsingModel/Fixture/RealAfterDocBlock.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# The declaration sits after a block comment that must be stripped first.
+-/
+
+/-- A doc comment, itself a block comment. -/
+theorem realAfterDocBlock : True := trivial

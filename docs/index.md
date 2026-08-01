@@ -9,6 +9,10 @@ Lean 4 + mathlib formalization of Ising model theorems, with particular
 emphasis on Glimm–Jaffe, *Quantum Physics: A Functional Integral Point of
 View* (2nd ed., 1987).
 
+The intended direction of the library's import graph is documented in the
+[import-DAG layer contract](architecture-import-layers.html) (#4833), checked by
+`scripts/import_dag_contract.py`.
+
 The historical build-speed and simplification baseline for the completed #4506 campaign is
 recorded in the [archived refactoring execution plan for #4506](plans/4506-refactoring-replan.html).
 Follow-up decisions and measurements formerly tracked by #4793 and #4794 are no longer live:

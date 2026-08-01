@@ -1,0 +1,142 @@
+# Synthetic source tree for scripts/test_import_dag_contract.py.
+#
+# WHY A MANIFEST AND NOT REAL `.lean` FILES ON DISK:
+# `scripts/test_audit_gate.py::CheckedFilesTest` pins the invariant that every
+# *tracked* `.lean` file lives under `IsingModel/`, `IsingModel.lean`, `test/`
+# or `scripts/audit/`.  Committing fixture `.lean` files under
+# `scripts/testdata/` would turn that gate red on merge, and making them
+# untracked would make the suite depend on a developer's ignore rules.  The
+# fixture therefore ships as text and the test materialises it into a temporary
+# directory, which also keeps the whole tree readable in one place.
+#
+# THE TREE.  One module per layer plus a sink per layer, so that every mutation
+# the test applies points at a sink and therefore introduces no import cycle.
+# Every edge below is an ALLOWED direction, so the unmutated tree must pass with
+# an empty baseline; the single INFO edge is `Inequalities.Capstone ->
+# Concrete.Sink` (L2_THEORY -> L4_LATTICE, unranked).
+#
+# Format: `--- <repo-relative path>` starts a file; everything up to the next
+# `---` header is its content.  Lines before the first header are this comment.
+
+--- IsingModel.lean
+import IsingModel.TransferMatrix.Chain
+import IsingModel.Concrete.Lattice
+import IsingModel.Inequalities.Capstone
+
+/-!
+# Root umbrella (aggregator: imports only, no declaration).
+-/
+
+--- IsingModel/Analysis/Sink.lean
+/-! L0_MATH sink: the target of the R1 canary mutation. -/
+
+theorem analysisSink : True := trivial
+
+--- IsingModel/Analysis/Helper.lean
+import IsingModel.Analysis.Sink
+
+/-! L0_MATH -> L0_MATH, allowed. -/
+
+theorem analysisHelper : True := trivial
+
+--- IsingModel/Combinatorics/Sink.lean
+/-! A second L0_MATH module, so the layer is not a singleton. -/
+
+theorem combinatoricsSink : True := trivial
+
+--- IsingModel/RealTanhAux.lean
+/-! L1_MODEL by the exact-module list, importing nothing. -/
+
+theorem realTanhAux : True := trivial
+
+--- IsingModel/Basic.lean
+import IsingModel.Analysis.Helper
+
+/-! L1_MODEL -> L0_MATH, allowed. -/
+
+theorem basic : True := trivial
+
+--- IsingModel/Hamiltonian.lean
+import IsingModel.Basic
+
+/-! L1_MODEL -> L1_MODEL, allowed.  Source of the R2 canary mutation. -/
+
+theorem hamiltonian : True := trivial
+
+--- IsingModel/Inequalities/Sink.lean
+/-! L2_THEORY sink: the target of the R2 canary mutation. -/
+
+theorem inequalitiesSink : True := trivial
+
+--- IsingModel/Inequalities/Theory.lean
+import IsingModel.Hamiltonian
+import IsingModel.Analysis.Helper
+import IsingModel.Inequalities.Sink
+
+/-! L2_THEORY -> L1_MODEL / L0_MATH / L2_THEORY, all allowed. -/
+
+theorem inequalitiesTheory : True := trivial
+
+--- IsingModel/Inequalities/Umbrella.lean
+import IsingModel.Inequalities.Theory
+
+/-!
+# A compatibility umbrella (aggregator) that re-exports L2_THEORY only.
+Importing it from L3_AMBIENT must stay legal; the pass-through test mutates it
+to re-export an L4_LATTICE module and then the same import must be flagged.
+-/
+
+--- IsingModel/Inequalities/Capstone.lean
+import IsingModel.Concrete.Sink
+
+/-! The single INFO edge: L2_THEORY -> L4_LATTICE, unranked and never a failure. -/
+
+theorem inequalitiesCapstone : True := trivial
+
+--- IsingModel/AmbientLattice/Sink.lean
+/-! L3_AMBIENT sink. -/
+
+theorem ambientLatticeSink : True := trivial
+
+--- IsingModel/AmbientLattice/Ambient.lean
+import IsingModel.Inequalities.Umbrella
+import IsingModel.AmbientLattice.Sink
+
+/-! L3_AMBIENT -> L2_THEORY (through an umbrella) and -> L3_AMBIENT, allowed.
+Source of the R3 canary mutation. -/
+
+theorem ambientLatticeAmbient : True := trivial
+
+--- IsingModel/AmbientLattice.lean
+import IsingModel.AmbientLattice.Ambient
+
+/-!
+# The L3_AMBIENT re-export umbrella (aggregator).
+-/
+
+--- IsingModel/Concrete/Sink.lean
+/-! L4_LATTICE sink: the target of the R1 and R3 canary mutations. -/
+
+theorem concreteSink : True := trivial
+
+--- IsingModel/Concrete/Lattice.lean
+import IsingModel.AmbientLattice
+import IsingModel.Concrete.Sink
+
+/-! L4_LATTICE -> L3_AMBIENT (through an umbrella) and -> L4_LATTICE, allowed.
+Source of the R6 canary mutation. -/
+
+theorem concreteLattice : True := trivial
+
+--- IsingModel/TransferMatrix/Sink.lean
+/-! L5_CHAIN sink: the target of the R6 canary mutation. -/
+
+theorem transferMatrixSink : True := trivial
+
+--- IsingModel/TransferMatrix/Chain.lean
+import IsingModel.Concrete.Lattice
+import IsingModel.TransferMatrix.Sink
+
+/-! L5_CHAIN -> L4_LATTICE and -> L5_CHAIN, allowed. -/
+
+theorem transferMatrixChain : True := trivial
