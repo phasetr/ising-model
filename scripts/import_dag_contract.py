@@ -10,7 +10,7 @@ script makes the intended direction executable.
 What it is not
 --------------
 It is **not** a total order over directories.  A naive strict order over the 25
-top-level directories reports ~40 violations, most of which are tagging
+top-level directories reports dozens of violations, most of which are tagging
 artifacts rather than inversions (``IsingModel/PhaseTransition/`` is entirely
 ``SimpleGraph``-generic despite its concrete-sounding name; ``SumModel.lean``
 sits at the root but consumes ``FreeEnergy/SubgraphBounds.lean``).  The contract
@@ -54,16 +54,31 @@ directory, so the *file* is misfiled while the *edge* is correctly directed.
 
 Aggregators
 -----------
-A module whose every non-comment line is a lone ``import`` is an **aggregator**
-(a re-export umbrella).  No keyword list is involved: Lean's grammar is
-whitespace-insensitive at the command level, so "the line starts with something
-harmless" is unsound and "the line opens no declaration" fails open on the first
-spelling nobody listed.  The set is computed, never hand-listed, so new umbrellas
-need no maintenance.  Aggregators are never violation *sources* -- they are
-indices, not generality code -- and as *targets* they are expanded transitively
-to the first non-aggregator modules behind them.  Expansion rather than exemption
-is what keeps a compatibility umbrella a fully supported public import without
-letting it launder a reverse edge.
+A module that has imports and declares nothing is an **aggregator** (a re-export
+umbrella).  The set is computed, never hand-listed, so new umbrellas need no
+maintenance.  Aggregators are never violation *sources* -- they are indices, not
+generality code -- and as *targets* they are expanded transitively to the first
+non-aggregator modules behind them.  Expansion rather than exemption is what
+keeps a compatibility umbrella a fully supported public import without letting it
+launder a reverse edge.
+
+Neither classification error is safe, which is why this is the fiddliest part of
+the checker.  Calling a real module an umbrella exempts it as a violation source.
+Calling an umbrella a real module hides an inversion the other way:
+``L3_AMBIENT -> U -> L4_LATTICE`` with an unrecognised ``L2_THEORY`` umbrella
+``U`` splits into an allowed ``L3 -> L2`` edge and an unranked ``L2 -> L4`` edge,
+and nothing fires.  So the answer has to be right, not conservative, and three
+sieves with deliberately different shapes stand behind it:
+
+1. :func:`classify_line` -- whole-line, three-valued, ``CONTENT`` by default.
+2. :data:`_HIDDEN_COMMAND_RE` -- a whole-*file* scan for the punctuation-free
+   declaration commands that could ride along on a multi-argument ``open`` or
+   ``universe`` line (``universe u inductive Hidden`` is legal Lean).
+3. ``test_import_dag_contract.py::AggregatorOracleTest`` -- the set re-derived
+   over the real tree by ``dead_candidate_scan``, a separately written
+   declaration parser, with agreement required in both directions.  Its
+   ``test_no_declaration_free_importer_is_left_out`` is what makes
+   under-recognition loud rather than silent.
 
 Baseline
 --------
@@ -231,8 +246,10 @@ _LINE_COMMENT_RE = re.compile(r"--.*$", re.MULTILINE)
 _IMPORT_LINE_RE = re.compile(r"^import\s+\S+\s*$")
 
 #: Any ``import`` command token, used to detect a line the scanner cannot read
-#: (see :func:`malformed_import_lines`).
-_IMPORT_TOKEN_RE = re.compile(r"(?:^|\s)import\s")
+#: (see :func:`malformed_import_lines`).  The trailing boundary is ``\b`` rather
+#: than ``\s`` so that a bare ``import`` ending a line -- Lean accepts the module
+#: name on the *next* line -- is caught too.
+_IMPORT_TOKEN_RE = re.compile(r"(?:^|\s)import\b")
 
 #: One dotted-name argument to a scaffolding command.  Deliberately a *negated*
 #: class: Lean identifiers are Unicode, but a term needs punctuation
@@ -250,7 +267,7 @@ _SCAFFOLD_RES = tuple(
     for pattern in (
         rf"^namespace\s+{_SCAFFOLD_ARG}\s*$",
         rf"^end(?:\s+{_SCAFFOLD_ARG})?\s*$",
-        rf"^(?:noncomputable\s+)?section(?:\s+{_SCAFFOLD_ARG})?\s*$",
+        rf"^section(?:\s+{_SCAFFOLD_ARG})?\s*$",
         rf"^open(?:\s+scoped)?(?:\s+{_SCAFFOLD_ARG})+\s*$",
         rf"^universe(?:\s+{_SCAFFOLD_ARG})+\s*$",
     )
@@ -267,6 +284,26 @@ _BINDER_CLOSE = ")}]⦄⟩"
 IMPORT = "import"
 SCAFFOLD = "scaffold"
 CONTENT = "content"
+
+#: Command and modifier words that can appear in a *declaration written without
+#: any punctuation* -- ``universe u inductive Hidden`` is a legal line declaring
+#: an empty inductive type, and every argument of it satisfies
+#: :data:`_SCAFFOLD_ARG`.  Anything needing ``:``, ``:=`` or a bracket is already
+#: excluded by that class, which is what keeps this list short and closed.
+#:
+#: It is applied to the *whole file* of an umbrella candidate rather than to the
+#: line, so it is a second, coarser sieve with a different shape from the
+#: line-level classification -- and a third, independent one is
+#: ``AggregatorOracleTest``.  Three sieves, three blind spots, deliberately not
+#: the same one.
+_HIDDEN_COMMAND_RE = re.compile(
+    r"(?<![A-Za-z0-9_'])(?:"
+    r"inductive|structure|class|deriving|instance|def|theorem|lemma|abbrev|example|axiom"
+    r"|opaque|alias|attribute|macro|macro_rules|notation|infix|infixl|infixr|prefix|postfix"
+    r"|syntax|elab|elab_rules|declare_syntax_cat|initialize|builtin_initialize|set_option"
+    r"|unsafe|partial|private|protected|noncomputable|nonrec|mutual|where|extends|in"
+    r")(?![A-Za-z0-9_'])"
+)
 
 
 def _is_binder_only(rest: str) -> bool:
@@ -350,8 +387,11 @@ def is_aggregator(module: str, root: Path) -> bool:
     text = module_source(module, root)
     if text is None:
         return False
-    kinds = [classify_line(line) for line in strip_comments(text).splitlines() if line.strip()]
-    return IMPORT in kinds and CONTENT not in kinds
+    stripped = strip_comments(text)
+    kinds = [classify_line(line) for line in stripped.splitlines() if line.strip()]
+    if IMPORT not in kinds or CONTENT in kinds:
+        return False
+    return _HIDDEN_COMMAND_RE.search(stripped) is None
 
 
 def malformed_import_lines(graph: Graph) -> list[str]:

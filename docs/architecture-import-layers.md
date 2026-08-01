@@ -152,9 +152,10 @@ of the checker:
   nothing fires.
 
 So the classification has to be *right*, not merely conservative in some
-direction. Two things make that credible. First, the line test is **whole-line**
-and uses no keyword list in either direction. Lean's grammar is
-whitespace-insensitive at the command level, so
+direction. Three sieves with deliberately different shapes stand behind it.
+
+**Whole-line classification.** Lean's grammar is whitespace-insensitive at the
+command level, so
 
 ```lean
 namespace Foo theorem d : True := trivial end Foo
@@ -170,22 +171,37 @@ of the commands that declare nothing (`namespace`, `end`, `section`, `open`,
 term needs and with the `in` command combinator rejected outright. Anything
 unmatched is content, so the module stays checkable.
 
-Second, the resulting set is **cross-checked against an independent parser**:
-`scripts/test_import_dag_contract.py` re-derives which modules declare nothing
-using `scripts/dead_candidate_scan.py`, a separately written declaration parser
-in this repository, and requires the two to agree on all ~1900 modules in both
-directions.
+**A whole-file scan for punctuation-free declarations.** Whole-line matching is
+still not enough on its own, because a few declarations need no punctuation at
+all and so satisfy the argument class of a multi-argument `open` or `universe`:
+
+```lean
+universe u inductive Hidden
+```
+
+is a legal line declaring an empty inductive type. Anything requiring `:`, `:=`
+or a bracket is already excluded, which leaves a short closed list of command and
+modifier words; an umbrella candidate whose file mentions any of them, anywhere,
+is demoted to a real module.
+
+**An independent parser.** The resulting set is re-derived over the real tree by
+`scripts/dead_candidate_scan.py`, a separately written declaration parser in this
+repository, and the two must agree in both directions. The reverse half of that
+agreement is what makes under-recognition *loud*: a declaration-free module the
+classifier fails to recognise turns the test suite red rather than quietly losing
+its pass-through.
 
 For the same reason the contract **fails** on any line carrying an `import` that
 is not exactly one column-0 import. `leaf_audit.build_import_graph` — the
 repository's single import scanner, reused here so the two tools cannot disagree
 about the edges — reads one import per physical line anchored at column 0, while
-Lean also accepts `import A import B`, an indented `  import A`, and a
-non-`IsingModel` import in front of an `IsingModel` one. Each of those makes an
-edge invisible to the graph and therefore to every rule, so the contract refuses
-to certify a file it cannot read rather than reporting it clean. Erring towards a
-false failure here is deliberate: it is loud and fixable. No line in
-`IsingModel/` has this shape today.
+Lean also accepts `import A import B`, an indented `  import A`, a bare `import`
+with the module name on the next line, and a non-`IsingModel` import in front of
+an `IsingModel` one. Each of those makes an edge invisible to the graph and
+therefore to every rule, so the contract refuses to certify a file it cannot read
+rather than reporting it clean. Erring towards a false failure here is
+deliberate: it is loud and fixable. No line in `IsingModel/` has this shape
+today.
 
 Two rules follow:
 

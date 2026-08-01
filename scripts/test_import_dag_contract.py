@@ -234,6 +234,14 @@ DECLARATION_FORMS = (
     # inspected only the start of a line would call both harmless.
     "namespace Foo theorem d : True := trivial end Foo",
     "section open Nat theorem d : True := trivial end",
+    # Declarations spelled with no punctuation at all, so every one of their
+    # words satisfies the scaffolding argument class.  These are the shapes that
+    # can ride along on a multi-argument `open` or `universe` line.
+    "universe u inductive Hidden",
+    "open Nat structure Hidden",
+    "open Nat class Hidden",
+    "open Nat deriving instance Repr for Nat",
+    "inductive Hidden",
 )
 
 
@@ -286,7 +294,7 @@ class DeclarationFormTest(unittest.TestCase):
     UMBRELLA_FORMS = (
         "/-! A pure re-export index. -/",
         "namespace Foo\nopen Nat\nvariable {V : Type*}\nend Foo",
-        "namespace Foo\nnoncomputable section\nopen scoped Bar\nuniverse u\nend\nend Foo",
+        "namespace Foo\nsection\nopen scoped Bar\nuniverse u\nend\nend Foo",
     )
 
     def test_a_genuine_umbrella_in_the_same_position_is_not_a_source(self) -> None:
@@ -346,6 +354,33 @@ class AggregatorOracleTest(unittest.TestCase):
         self.assertGreater(len(self.graph.aggregators), 50)
         self.assertGreater(len(self.declaring), 1000)
 
+    def test_no_umbrella_mentions_a_declaration_command_anywhere(self) -> None:
+        """The coarse sieve, applied to the real tree rather than to fixtures.
+
+        The oracle above and the line classifier share one weakness -- both read
+        the *leading* command -- so an independent review found
+        ``universe u inductive Hidden`` slipping past both.  This assertion has a
+        different shape again: no umbrella's file may contain a declaration or
+        modifier keyword as a standalone token at all, wherever it sits.
+        """
+        offenders = sorted(
+            module
+            for module in self.graph.aggregators
+            if contract._HIDDEN_COMMAND_RE.search(
+                contract.strip_comments(contract.module_source(module, contract.REPO_ROOT) or "")
+            )
+        )
+        self.assertEqual(offenders, [], "umbrella mentioning a declaration command")
+
+    def test_the_hidden_command_list_is_not_empty(self) -> None:
+        """Emptying the sieve's pattern is the cheapest way to silence it."""
+        for keyword in ("inductive", "structure", "class", "deriving", "theorem", "def"):
+            self.assertTrue(
+                contract._HIDDEN_COMMAND_RE.search(f"universe u {keyword} Hidden"), keyword
+            )
+        self.assertIsNone(contract._HIDDEN_COMMAND_RE.search("open Finset Real"))
+        self.assertIsNone(contract._HIDDEN_COMMAND_RE.search("import IsingModel.ClassicalSpin"))
+
 
 class ReadableImportTest(unittest.TestCase):
     """A line the import scanner cannot fully read is a hard failure.
@@ -399,6 +434,21 @@ class ReadableImportTest(unittest.TestCase):
     def test_a_non_ising_import_cannot_shadow_an_ising_one(self) -> None:
         """The scanner's regex anchors on ``import IsingModel``, so this hides too."""
         root = self.tree_with("import Mathlib.Order.Basic import IsingModel.Concrete.Sink", "mixed")
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+
+    def test_a_multiline_import_fails(self) -> None:
+        """Lean lets the module name sit on the line after ``import``.
+
+        The bare ``import`` line carries a single token with nothing after it, so
+        the guard's trailing boundary has to be ``\\b`` rather than whitespace.
+        """
+        root = self.tree_with("import\n IsingModel.Concrete.Sink", "multiline")
+        graph = contract.load_graph(root)
+        self.assertEqual(
+            graph.imports.get("IsingModel.AmbientLattice.Ambient", set()), set(),
+            "the scanner unexpectedly saw the split import; this test is now vacuous",
+        )
         ok, text = self.verdict(root)
         self.assertFalse(ok, text)
 
