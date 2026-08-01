@@ -7,17 +7,31 @@
   span, hence no citation *and* no coverage warning (`_TEX_CODE_CMDS`); measured **0**
   occurrences of `{\tt` in `tex/proof-guide.tex`, so the gap is latent rather than live,
   and no canary keeps it that way. **G3**: the repaired `--lean` fatal condition may
-  *always* fire — **2,961 of 10,618** candidates have an empty text-consumer set, so its
+  *always* fire — **2,961 of 10,583** candidates have an empty text-consumer set, so its
   breadth is unmeasured. **G4**: the F5 `run_witness` repair has no permanent in-suite
   pin, unlike the round-2 `--help` vocabulary guard, which committed one as `M9b`. The
   observation records that deleting `ResolvedGlobElisionHeadTest` cost **precision, not
-  soundness**, and names the one real-corpus endpoint that went with it. Line numbers are
-  against PR #4825 head `d487f32e`.
-- The mirror is **tracked by PR #4826** at that PR's current head, so the mirrors that PR
-  adds and the currently open issues correspond exactly in both directions — fifteen each.
-  The mirror's own header still reads "Not tracked by PR #4826"; that records the state at
-  filing time and is superseded by this entry. Amending the mirror's text belongs to
-  `dev-issue-manager`, not to a tracking PR.
+  soundness**, and names the one real-corpus endpoint that went with it.
+- **G3's denominator is a correction, not a transcription.** The figure first written both
+  here and in the mirror was **10,618**, which is `len(Tree.finals)` — one entry per parsed
+  declaration — and not the candidate set `classify()` is handed, which is the deduplicated
+  non-anonymous full names, **10,583**. The numerator 2,961 is unaffected. Both denominators
+  were re-derived from `scripts/dead_candidate_scan.py` against the Lean tree before this
+  entry was committed, and reproduce exactly: `len(tree.finals)` 10618, `len(tree.decls)`
+  10633, distinct non-anonymous full names 10583. The retracted 10,618 is recorded here
+  rather than deleted, so that a reader meeting it in an older transcript can place it.
+- Line-number anchors for the three findings live in the mirror, each stated against the
+  head it was read at. PR #4825 is a live branch that is rebased and force-pushed, so those
+  anchors are **not** restated in this ledger; re-measure them against that PR's head at
+  reading time. Re-checked while preparing this entry, both still resolve to the lines the
+  mirror names — `_TEX_CODE_CMDS` and the `--lean` fatal condition — so the mirror's anchors
+  had not decayed as of then.
+- The mirror is **tracked by PR #4826**, and the mirror's own header now says so. The
+  sentence that read "Not tracked by PR #4826 … add on the next tracking PR" was true when
+  written and was falsified as soon as the mirror was tracked; `dev-issue-manager`, whose
+  lane owns the mirror's text, corrected it in place, and the corrected file is the one the
+  PR carries. With it, the mirrors that PR adds and the currently open issues correspond
+  exactly in both directions — fifteen each.
 - This entry changes no branch, no issue state and no PR content. **#4792 stays OPEN**
   independently of #4829.
 
@@ -56,18 +70,21 @@
   dispositioned to #4823 at
   [comment 5148497775](https://github.com/phasetr/ising-model/issues/4793#issuecomment-5148497775),
   and the programme's PRs are not to cite #4793.
-- **MERGE HAZARD — DISCHARGED at `ef6c5175`**: with #4824 (−9) and #4821 (−14) both landed,
-  `main` is at **10548** in both occurrences and the pinned TeX rows are **3861 / 26804**
-  (`tex/proof-guide.tex` 34872 lines). PR #4825 was doubly stale at 10571 / 26785 while its
-  head was `598c948e`, but it has since been rebased onto `4bfe4aeb`: its live head
-  `ef6c5175` (branch `tooling/4792-fail-closed-terminal`, force-pushed 2026-08-01 09:39 JST,
-  69 minutes before this entry was committed) carries **10548** in both occurrences and the
-  TeX rows **3861 / 26804**, with the constant's own comment recording it as measured at
-  `4bfe4aeb`. That branch has since advanced two commits to `dbb1a5d7` (still based on
-  `4bfe4aeb`, a fast-forward rather than another force-push) and carries the same three pins,
-  so the discharge holds at its current head as well. No pin is stale on any live branch. The
-  standing rule for the next rebaser is unchanged: re-derive **both** values from the rebased
-  tree, carry forward **neither a literal nor a difference**.
+- **MERGE HAZARD — DISCHARGED, stated without a head SHA on purpose**: with #4824 (−9) and
+  #4821 (−14) both landed, `main` carries **10548** in both occurrences of the pinned scanner
+  declaration constant and the pinned TeX rows **3861 / 26804** (`tex/proof-guide.tex` 34872
+  lines). PR #4825, branch `tooling/4792-fail-closed-terminal`, is the only live branch that
+  also carries those three pins; it was doubly stale at 10571 / 26785 while its head was
+  `598c948e`, and it has since been rebased onto `main` and re-derived them, its head
+  agreeing with `main` on all three and the constant's own comment in
+  `scripts/test_dead_candidate_scan.py` naming the revision the value was measured at — so
+  the pin discloses its own provenance rather than depending on this ledger. Earlier
+  revisions of this paragraph pinned the verdict to that branch's head SHA, first
+  `ef6c5175` and then `dbb1a5d7`, and each went stale within a day while the substance did
+  not; **no SHA of a live sibling branch is recorded here any more**. The durable part is
+  the standing rule for the next rebaser, unchanged: re-derive **both** values from the
+  rebased tree, carry forward **neither a literal nor a difference**, and check that the
+  constant's comment names the revision it was measured at.
 - No open-issue manifest needs refreshing — this merge changes no issue's state, and the
   `scripts/audit/open_issues.txt` manifest PR #4826 once proposed was dropped at that PR's
   round 4 together with the V5 gate arm it fed (user ruling: track the files, add no check).
