@@ -1,4 +1,5 @@
 import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.PhaseTransition.FieldJRegularity
 
 /-!
 # Lambda-layer regularity split — susceptibility definition and free-energy/magnetization regularity
