@@ -1232,3 +1232,11 @@ Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local
 - #4786/#4788/#4789/#4791/#4792/#4793/#4794/#4795/#4796/#4801 (10 issues) are deleted on GitHub;
   their mirrors are historical. #4822/#4823/#4827/#4828/#4829 (5 issues) are closed `not planned`.
   `docs/plans/4506-refactoring-replan.md` remains an archived baseline.
+- **2026-08-01 update**: #4837 (P0) CLOSED — stage A1 (PR #4839, `6147071c`) + stage A2
+  (PR #4840, `e3a0dc01`) both merged. #4830 sub-issue progress now 1/7 (GitHub
+  `sub_issues_summary` auto-tracked). Remaining open children: #4831/#4832/#4833/#4834/#4835/#4836.
+- **2026-08-01 update**: #4831 CLOSED not planned (no coherent kernel boundary found), #4832
+  CLOSED completed (PR #4843, merge commit `1830d2bb779126e6dc74701c7cf9ae371d35552f`, repointed
+  `Defs/Core.lean` imports at real definer modules). #4830 sub-issue progress now 3/7 per GitHub
+  `sub_issues_summary` (graphql-verified: `{"total":7,"completed":3,"percentCompleted":42}`).
+  Remaining open children: #4833/#4834/#4835/#4836.
