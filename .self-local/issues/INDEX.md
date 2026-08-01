@@ -40,9 +40,11 @@
   `ef6c5175` (branch `tooling/4792-fail-closed-terminal`, force-pushed 2026-08-01 09:39 JST,
   69 minutes before this entry was committed) carries **10548** in both occurrences and the
   TeX rows **3861 / 26804**, with the constant's own comment recording it as measured at
-  `4bfe4aeb`. No pin is stale on any live branch. The standing rule for the next rebaser is
-  unchanged: re-derive **both** values from the rebased tree, carry forward **neither a
-  literal nor a difference**.
+  `4bfe4aeb`. That branch has since advanced two commits to `dbb1a5d7` (still based on
+  `4bfe4aeb`, a fast-forward rather than another force-push) and carries the same three pins,
+  so the discharge holds at its current head as well. No pin is stale on any live branch. The
+  standing rule for the next rebaser is unchanged: re-derive **both** values from the rebased
+  tree, carry forward **neither a literal nor a difference**.
 - No open-issue manifest needs refreshing — this merge changes no issue's state, and the
   `scripts/audit/open_issues.txt` manifest PR #4826 once proposed was dropped at that PR's
   round 4 together with the V5 gate arm it fed (user ruling: track the files, add no check).
@@ -51,12 +53,14 @@
   re-filed. The true statement is the narrow one: **these two files** were untracked, not the
   directory as a whole. `git ls-tree -r --name-only 4bfe4aeb -- .self-local/issues/` returns
   **32** entries — 31 numbered mirrors (`4506.md` … `4746.md`) plus `INDEX.md` — and none of
-  the 31 is of a currently-open issue (the largest is 4746, the smallest open one 4786). An
-  earlier revision of this entry said "only `INDEX.md` is tracked there", which is **false**;
-  that wording came from the instruction handed to the merge clerk after PR #4821 landed and
-  was carried in unchecked. The two mirrors are **carried into PR #4826 at its round-5 head**,
-  together with this ledger entry, rather than left in a working tree; that PR tracks 28 files
-  under `.self-local/` and modifies `INDEX.md`.
+  the 31 is of a currently-open issue (the largest is 4746, the smallest open one 4786). The
+  same command at `167ff124`, the base PR #4826 was rebased onto, returns the same **32**: the
+  intervening merge of PR #4820 added no path under `.self-local/issues/`. An earlier revision
+  of this entry said "only `INDEX.md` is tracked there", which is **false**; that wording came
+  from the instruction handed to the merge clerk after PR #4821 landed and was carried in
+  unchecked. The two mirrors are **carried into PR #4826 at its current head**, together with
+  this ledger entry, rather than left in a working tree; that PR tracks 28 files under
+  `.self-local/` and modifies `INDEX.md`.
 
 ## 2026-08-01 filed — #4827 (module-cost harness deferred defects), OPEN
 
@@ -71,12 +75,23 @@
   leaves all 58 tests green); D4 H4's digest-**ordering** half is unpinned; D5 the
   machine-load guard's post-sample endpoint is not recorded (section 4.3 registers it pre
   **and** post per replicate).
-- PR #4820 round 6 (head `2c4a877a`) makes only the two corrections its round-5 review
-  required: the `machine_state()` docstring now states the single endpoint it records, and
-  the body's `scripts/*.py` figure and decoy-case description are re-derived at the head.
-  **Round 6 moves the head, so no review record binds to the tip**; a fresh source review,
-  `codex` cross-check and issue-resolution audit are required before merge.
-- No branch other than `build-speed/4794-fixed-cost-protocol` is touched; `main` is untouched.
+- **PR #4820 has since MERGED**, superseding this entry's earlier round-6 note: head
+  `1a9081f813e022d569c36ec319069cacb9a0d426` over base `4bfe4aeb`, squash-merged into `main`
+  as `167ff124814bf90e31d96d2e3ed2fd6a2ad63b91` on 2026-08-01, with source review APPROVE
+  [comment 5149156959](https://github.com/phasetr/ising-model/pull/4820#issuecomment-5149156959),
+  an independent `codex` cross-review APPROVE with no findings, and issue-resolution audit PASS
+  [comment 5149148620](https://github.com/phasetr/ising-model/pull/4820#issuecomment-5149148620),
+  all bound to that head; Lean Action CI run 30679115493 and `completion-claim/live` were green
+  at it. `main` is therefore no longer untouched by that lane.
+- **The merge repairs none of D1-D5**, re-checked at `167ff124`: `run_capture`
+  (`scripts/measure_module_cost.py:501`) still takes no `timeout=`, and
+  `scripts/test_measure_module_cost.py` still makes zero assertions naming `payload["schema"]`
+  or `environment.machine_state_at_start`. **#4827 stays OPEN.**
+- **#4794 stays OPEN** as well: no acceptance criterion of it is marked met, the registered
+  Stage 1 was not executed, section 4.3's machine-load guard was breached so the 24 samples are
+  inadmissible under the protocol's own rule, and **no `SpecialCases` module re-merge is
+  authorized**. Disposition:
+  [comment 5149253571](https://github.com/phasetr/ising-model/issues/4794#issuecomment-5149253571).
 
 ## 2026-07-31 postmerge — PR #4824 (P-B1, cluster B) merged; #4823 stays OPEN
 
