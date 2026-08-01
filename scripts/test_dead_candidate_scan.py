@@ -1251,11 +1251,11 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             "IsingModel.truncated2_convergent_subgraph",
         ],
     }
-    ROW_26785_TOKEN = (
+    ROW_26821_TOKEN = (
         "IsingModel.Ambient."
         "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_*"
     )
-    ROW_26785 = [
+    ROW_26821 = [
         "IsingModel.Ambient."
         "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG",
         "IsingModel.Ambient."
@@ -1302,21 +1302,21 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             name
             for names in self.ROW_3861.values()
             for name in names
-        ] + self.ROW_26785
+        ] + self.ROW_26821
 
     def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
         """Brace composition yields 4/1/4/4 matches, then the second site 7."""
         guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
         self.assertIn((self.ROW_3861_TOKEN, 3861), guide.tokens)
-        self.assertIn((self.ROW_26785_TOKEN, 26785), guide.tokens)
+        self.assertIn((self.ROW_26821_TOKEN, 26821), guide.tokens)
         patterns = dcs.expand_citation_token(self.ROW_3861_TOKEN)
         self.assertEqual(patterns, sorted(self.ROW_3861))
 
         cache: dict[str, list[dcs.Decl] | None] = {}
         resolved = [dcs._resolve_fragment(tree(), pattern, cache) for pattern in patterns]
-        resolved.append(dcs._resolve_fragment(tree(), self.ROW_26785_TOKEN, cache))
+        resolved.append(dcs._resolve_fragment(tree(), self.ROW_26821_TOKEN, cache))
         self.assertEqual([len(matches or []) for matches in resolved], [4, 1, 4, 4, 7])
-        expected = [self.ROW_3861[pattern] for pattern in patterns] + [self.ROW_26785]
+        expected = [self.ROW_3861[pattern] for pattern in patterns] + [self.ROW_26821]
         self.assertEqual(
             [[decl.full for decl in matches or []] for matches in resolved],
             expected,
@@ -1327,12 +1327,12 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         verdicts = dcs.classify(
             tree(), self.real_names(), docs(), allow_homonym=False
         )[0]
-        counts = {3861: 0, 26785: 0}
+        counts = {3861: 0, 26821: 0}
         for verdict in verdicts:
             for citation in verdict.doc_citations:
                 for line, token in (
                     (3861, self.ROW_3861_TOKEN),
-                    (26785, self.ROW_26785_TOKEN),
+                    (26821, self.ROW_26821_TOKEN),
                 ):
                     if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
                         self.assertIn(token, citation)
@@ -1342,7 +1342,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                         and token in citation,
                         (verdict.decl.full, citation),
                     )
-        self.assertEqual(counts, {3861: 13, 26785: 7})
+        self.assertEqual(counts, {3861: 13, 26821: 7})
 
     def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
         """A qualified glob selects the root namespace, while bare keeps finals."""
@@ -1428,7 +1428,13 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             self.assertEqual(dcs._citation_tokens(token), [], token)
 
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
-        self.assertEqual(len(broad or []), 10571)
+        # Census pin.  10571 before PR #4839, which is a net -4 on the library:
+        # eight `magnetizationAlongExhaustion` regularity wrappers left
+        # `AmbientLattice/BetaDerivativeMagnetization.lean` (six retired as
+        # duplicates, two re-homed) and four declarations were added (the two
+        # re-homed corollaries plus the two `correlationAlongExhaustion`
+        # family equations in `AmbientLattice/Exhaustion.lean`).
+        self.assertEqual(len(broad or []), 10567)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1440,7 +1446,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10571 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10567 declarations"]},
         )
 
 

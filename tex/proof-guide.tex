@@ -21369,8 +21369,18 @@ $\beta$-direction wrappers in
 $\exists d,\,\mathrm{HasDerivAt}\,f\,d\,x$; subset case lifts to
 finite-volume \texttt{hasDerivAt\_correlation\_*}, non-subset is
 constant zero. The corresponding \texttt{Continuous*} /
-\texttt{Differentiable*} along-ex wrappers already exist in
-\texttt{BetaDerivative.lean} under the \texttt{\_gen} suffix.
+\texttt{Differentiable*} along-ex wrappers live in two different places.
+On the \texttt{correlationAlongExhaustion} side they keep the
+\texttt{\_gen} suffix and stay in \texttt{BetaDerivative.lean}
+($\beta$ direction) and \texttt{BetaDerivativeFieldJ.lean}
+($h$ / $J$ directions). On the \texttt{magnetizationAlongExhaustion}
+side they are the unsuffixed
+\texttt{magnetizationAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}}
+in \path{IsingModel/AmbientLattice/SpecialCases/Magnetization.lean}
+(all at general $h$), the \texttt{\_gen} magnetization duplicates having
+been retired in PR~\#4839; only the two \texttt{HasDerivAt} wrappers
+named above remain in
+\path{IsingModel/AmbientLattice/BetaDerivativeMagnetization.lean}.
 
 \paragraph{\texttt{magnetization} / \texttt{susceptibility}
 HasDerivAt in $h$ + \texttt{magnetization} HasDerivAt in $\beta$
@@ -23818,6 +23828,32 @@ coincides with the lifted correlation for all $n$ sufficiently large.
 Eventually $|\texttt{correlationAlongExhaustion}~G~\Lambda_\bullet~p~A~n|
 \le 1$, inherited from the finite-volume bound.
 \end{theorem}
+
+\paragraph{First-order family equations for
+\texttt{correlationAlongExhaustion}
+(Glimm--Jaffe \S4.6, pp.~67--70; \S5.1, pp.~72--75; PR~\#4839).}
+Glimm--Jaffe read the finite-volume quantities as functions of the
+parameters $(J, h, \beta)$ before letting $\Lambda \uparrow \mathbb{R}^d$
+(\S4.6 ``Analyticity of the Free Energy'', pp.~67--70, including
+Proposition~4.6.1; \S5.1 ``Pure and Mixed Phases'', pp.~72--75).  The
+condition $A \subseteq \Lambda(n)$ that selects the branch in the
+definition above does not mention the parameters, so for every family
+$p : \alpha \to \texttt{IsingParams}~\mathbb{R}$ the case split factors
+out of the family.  Accordingly
+\texttt{correlationAlongExhaustion\_family\_eq\_of\_subset} states, for
+$A \subseteq \Lambda(n)$,
+\[
+  \bigl(t \mapsto \texttt{correlationAlongExhaustion}~G~\Lambda_\bullet~(p~t)~A~n\bigr)
+  = \bigl(t \mapsto \texttt{correlation\LeanLambda}~G~(\Lambda(n))~(p~t)~(\texttt{liftFinset}~A)\bigr),
+\]
+and \texttt{correlationAlongExhaustion\_family\_eq\_zero\_of\_not\_subset}
+states that the same family is the zero function when
+$A \not\subseteq \Lambda(n)$.  Both are ordinary equations between
+functions, hence usable by \texttt{rw}, and the family parameter $p$ is an
+explicit argument, which keeps rewriting first-order (no function-valued
+metavariable is ever solved for).  They replace the hand-expanded
+\texttt{dite} case split in the per-parameter regularity wrappers of
+\path{IsingModel/AmbientLattice/SpecialCases/Magnetization.lean}.
 
 \subsection{Ambient subgraph monotonicity on \texorpdfstring{$\Lambda$}{Lambda}}
 
