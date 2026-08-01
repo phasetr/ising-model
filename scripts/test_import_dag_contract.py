@@ -1118,23 +1118,18 @@ FORBIDDEN_KEYS = (
 
 #: The workflow, pinned in its entirety.
 #:
-#: Five independent review rounds broke every *partial* pin, each time from the
-#: part that was not covered.  Matching command prefixes lost to ``|| true`` and
-#: ``--help``; scoping to the job lost to a ``run`` key nested under ``env:`` and
-#: to ``if : false`` respaced; a structural reader lost to a merge-key alias and
-#: to ``with: ref:`` aiming checkout at another tree; pinning the job verbatim
-#: lost to ``jobs: |``, which keeps the key and turns every job below it into a
-#: string, and to a duplicate job header, since YAML keeps the last of two
-#: identical keys; pinning the frame and auditing coverage lost to a multi-line
-#: quoted scalar *opened in the sibling job* that swallows this one, and to a
-#: widened top-level ``permissions:`` body that lets a sibling cancel the run.
+#: Five review rounds broke every *partial* pin, each time from the part the
+#: pin had argued was irrelevant: command prefixes lost to ``|| true`` and
+#: ``--help``; job scope lost to a ``run`` key under ``env:`` and to
+#: ``if : false`` respaced; a structural reader lost to a merge-key alias and
+#: to ``with: ref:``; the job pinned verbatim lost to ``jobs: |`` and to a
+#: duplicate header; the frame plus a coverage audit lost to a quoted scalar
+#: opened in the *sibling* job, which swallows this one.
 #:
-#: Every one of those lived in a region some argument had declared irrelevant.
-#: The whole file is the one region about which no such argument is needed, so
-#: that is what is pinned: **any** edit to the workflow must be mirrored here,
-#: in a diff a reviewer sees, and the assertions below then re-derive from this
-#: text that the wiring still means what it claims -- so mirroring a *weakened*
-#: workflow into the pin does not buy silence either.
+#: The whole file is the one region needing no relevance argument, so that is
+#: what is pinned.  **What this buys is one thing: every edit to CI shows up as
+#: a diff in this file.**  It is a review tripwire, deliberately not more --
+#: see :class:`CIWiringTest` for what it does not do.
 PINNED_WORKFLOW = """\
 name: Lean Action CI
 
@@ -1257,21 +1252,32 @@ def block_indices(lines: list[str], header: int) -> list[int]:
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
-    The workflow is pinned byte for byte, and the wiring is then re-derived
-    *from the pin*.  Both halves are load-bearing: the first makes any edit to
-    CI a visible diff here, the second makes a mirrored edit that guts the gate
-    fail anyway.
+    The workflow is pinned byte for byte, so removing, disabling or retargeting
+    the CI job cannot happen without editing this file too.  The remaining
+    assertions re-derive the wiring from the pinned copy -- the job is unique,
+    its steps are this suite and then the tree gate in that order, no key
+    changes what they mean, the trigger is an unfiltered ``pull_request:`` --
+    which catches the coarse ways of gutting the gate while updating the pin to
+    match.
 
-    Deliberately brittle.  Touching the workflow at all -- a new step in the
-    Lean build, a checkout version bump, a reworded comment -- turns this red
-    until :data:`PINNED_WORKFLOW` is updated to match.  That cost buys the one
-    property five review rounds could not otherwise deliver: there is no part
-    of the file left over for a bypass to live in.
+    **Two things this deliberately does not claim.**  The derivation is not
+    exhaustive and cannot be: whether a job really enforces anything depends on
+    GitHub's semantics, not on the text, and an editor willing to change the
+    workflow *and* this pin together can still find a dimension it does not
+    model (``runs-on:`` a label no runner answers, dropping the checkout step,
+    renaming the job).  That case is a review question, not a test question.
+    Nor does this suite protect its own execution: it runs from the very job it
+    pins, so it is a tripwire for edits, and only a required-status-check
+    decision -- taken outside this repository -- makes the gate blocking.
+
+    Deliberately brittle: touching the workflow at all turns this red until
+    :data:`PINNED_WORKFLOW` is updated to match, which is the diff a reviewer
+    sees.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.actual = WORKFLOW_FILE.read_text(encoding="utf-8")
+        cls.actual = WORKFLOW_FILE.read_bytes()
         cls.lines = PINNED_WORKFLOW.splitlines()
         headers = [
             i for i in content_lines(cls.lines)
@@ -1282,16 +1288,22 @@ class CIWiringTest(unittest.TestCase):
         cls.job_count = len(headers)
 
     def test_the_workflow_is_pinned_byte_for_byte(self) -> None:
-        """Any edit to CI, anywhere in the file, has to be mirrored here."""
-        self.assertEqual(self.actual, PINNED_WORKFLOW)
+        """Any edit to CI, anywhere in the file, has to be mirrored here.
+
+        Compared as *bytes*: reading as text would normalise CRLF and let a
+        re-encoded file compare equal to this pin while differing on disk.
+        """
+        self.assertEqual(self.actual.decode("utf-8"), PINNED_WORKFLOW)
+        self.assertEqual(self.actual, PINNED_WORKFLOW.encode("utf-8"))
 
     def test_the_pinned_workflow_runs_the_gate_after_its_tests(self) -> None:
-        """Mirroring a gutted workflow into the pin must not buy silence.
+        """Updating the pin to match a gutted job must not be free.
 
-        The job has to exist exactly once -- YAML keeps the last of two
-        identical keys, so a duplicate header would be the one GitHub runs --
-        and its steps have to be this suite followed by the tree gate, with no
-        key that changes what either one means.
+        A smoke test over the coarse moves, not a proof of enforcement (see the
+        class docstring): the job has to exist exactly once -- YAML keeps the
+        last of two identical keys, so a duplicate header would be the one
+        GitHub runs -- and its steps have to be this suite followed by the tree
+        gate, with no key that changes what either one means.
         """
         self.assertEqual(self.job_count, 1, f"job {WORKFLOW_JOB!r} is not unique")
         commands = [

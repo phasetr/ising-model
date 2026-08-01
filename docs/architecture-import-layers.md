@@ -290,16 +290,15 @@ python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
 CI runs the standalone suite and then `--check`, in that order, and
-`CIWiringTest` pins that it still does — by comparing the workflow file
-**byte for byte** against a copy held in `scripts/test_import_dag_contract.py`,
-and then re-deriving from that copy that the job exists exactly once, that its
-two steps are the suite followed by the tree gate, that neither carries a key
-which changes what it means (`if:`, `continue-on-error:`, `shell:`, `with:`,
+`CIWiringTest` pins that it still does — by comparing the workflow file **byte
+for byte** against a copy held in `scripts/test_import_dag_contract.py`, and
+then re-deriving from that copy that the job exists exactly once, that its steps
+are the suite followed by the tree gate in that order, that neither carries a
+key which changes what it means (`if:`, `continue-on-error:`, `shell:`, `with:`,
 `env:`), and that `pull_request:` is triggered unfiltered.
 
-Both halves are load-bearing, and the shape is the outcome of five independent
-review rounds that broke every *partial* pin — each time from the part the pin
-had declared irrelevant:
+Pinning the *whole* file is the outcome of six independent review rounds, each
+of which broke a narrower pin from the part that pin had argued was irrelevant:
 
 | pin | what got past it |
 |---|---|
@@ -307,16 +306,25 @@ had declared irrelevant:
 | scoped to the job | a `run` key under `env:` (an environment variable executes nothing), `if : false` respaced |
 | structural reader | a merge-key alias, `with: ref:` aiming checkout at another tree |
 | the job pinned verbatim | `jobs: \|` (the key survives, every job below it becomes a string), a duplicate job header (YAML keeps the last) |
-| the frame pinned, coverage audited | a multi-line quoted scalar *opened in the sibling job* that swallows this one, a widened top-level `permissions:` letting a sibling cancel the run |
+| the frame pinned, coverage audited | a multi-line quoted scalar *opened in the sibling job* that swallows this one, a widened top-level `permissions:` |
 
-The whole file is the one region about which no relevance argument is needed,
-so that is what is pinned. Re-deriving the semantics from the pinned copy is
-what stops the obvious answer — mirror the weakened workflow into the pin —
-from buying silence: mutations that gut the gate fail the derivation even when
-both sides are edited together, which is verified rather than asserted.
+The file is the one region that needs no relevance argument, and what it buys is
+exactly one thing: **every edit to CI shows up as a diff in the checker's own
+tests.** That is a review tripwire, and the honest limits are worth stating,
+because the review rounds established them too:
+
+* The re-derivation is a smoke test over the coarse ways of gutting the gate
+  (deleting the gate step, `--baseline`, `|| true`, `if:`, a duplicate job, a
+  filtered trigger), *not* a proof of enforcement. Whether a job enforces
+  anything depends on GitHub's semantics rather than on the text, and an editor
+  who updates the workflow **and** the pin together can still reach a dimension
+  it does not model — `runs-on:` a label no runner answers, a dropped checkout
+  step, a renamed job. That is a review question, not a test question.
+* The suite does not protect its own execution: it runs from the very job it
+  pins. Only a required-status-check decision — taken outside this repository —
+  makes the gate blocking.
 
 The pin is deliberately brittle. Touching the workflow at all — a new step in
 the Lean build, a checkout version bump, a reworded comment — turns the suite
-red until the copy is updated to match, and that update is a diff a reviewer
-sees. What no test here can settle is whether the check should *block* merges;
-that is a branch-protection decision taken outside the repository.
+red until the copy is updated to match; the workflow says so at the point of
+edit.
