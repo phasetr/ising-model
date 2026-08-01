@@ -5,21 +5,19 @@ import IsingModel.AmbientLattice.Monotonicity.InducedWeightFactor
 /-!
 # Cubic-box screening conditions for the `+` state (Issue #3565)
 
-The frozen-`+` ingredients that turn the generic Boltzmann-weight factoring
+The frozen-`+` cubic-box geometry that turns the generic Boltzmann-weight factoring
 (`boltzmannWeight_inducedGraph_restrict_factor_const`, #3571) into the
 nearest-neighbour **screening** of the cubic-box `+` state:
 
-* `boltzmannWeightJ_uniform_eq` — the inhomogeneous Boltzmann weight at a uniform
-  coupling equals the ordinary Boltzmann weight, bridging the boundary-condition
-  framework (`boltzmannWeightBC = indicator · boltzmannWeightJ`) to the
-  uniform-coupling factoring lemmas.
 * `cubicBox_extra_edge_endpoints_not_mem_inner` — both endpoints of an extra edge
   (in the induced graph on `cubicBox d (m+1)` but not in the extension graph over
   `cubicBox d m`) lie outside `cubicBox d n`, for `n + 1 ≤ m`.
 
-These feed the `hcompl` / `hextra` hypotheses of
+This feeds the `hextra` hypothesis of
 `boltzmannWeight_inducedGraph_restrict_factor_const` when the configuration is
-`+` outside `cubicBox d n`.
+`+` outside `cubicBox d n`.  The companion `hcompl` bridge
+`boltzmannWeightJ_uniform_eq` is graph-generic and lives with the inhomogeneous
+Boltzmann weight it is about, in `Inequalities/FKGInhomogeneous.lean`.
 
 Reference: Friedli–Velenik, *Statistical Mechanics of Lattice Systems* (2017),
 Lemma 3.22, §6.
@@ -28,22 +26,6 @@ Lemma 3.22, §6.
 namespace IsingModel
 
 open Finset
-
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
-
-omit [DecidableEq ι] in
-/-- **Uniform inhomogeneous weight equals the ordinary Boltzmann weight**: for the
-constant coupling `fun _ => J`, `boltzmannWeightJ G β (fun _ => J) h σ =
-boltzmannWeight G ⟨J, h, β⟩ σ`.  Bridges the boundary-condition framework (built on
-`boltzmannWeightJ`) to the uniform-coupling factoring lemmas. -/
-theorem boltzmannWeightJ_uniform_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
-    (β J h : ℝ) (σ : Config ι) :
-    boltzmannWeightJ G β (fun _ => J) h σ = boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
-  have hI : interactionEnergyJ G (fun _ => J) σ = interactionEnergy G J σ := by
-    unfold interactionEnergyJ interactionEnergy
-    simp [Finset.mul_sum]
-  unfold boltzmannWeightJ boltzmannWeight hamiltonianJ hamiltonian
-  rw [hI]
 
 namespace Ambient
 
