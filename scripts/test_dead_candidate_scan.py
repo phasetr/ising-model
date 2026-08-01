@@ -693,7 +693,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
     ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
     declarations, 160 of which a whole-library sweep called ``safe-to-delete``
     -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
-    cited at ``docs/index.md:1983`` and ``tex/proof-guide.tex:21095``. That is
+    cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
     the fatal error class, so the split is pinned here from both sides: the
     spaced citation must survive whole, and the plain whitespace split must keep
     every token it produced before.
@@ -1038,9 +1038,9 @@ class NarrowGlobCitationTest(unittest.TestCase):
     :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` landed, *every*
     glob/ellipsis token resolving to two or more declarations was filed as a
     family label and attributed to nobody, so a citation that resolves exactly
-    -- ``docs/index.md:1431`` expands to
+    -- ``docs/index.md:1427`` expands to
     ``freeEnergyAlongExhaustion_latticeGraph_ge_log_two*`` (2 declarations),
-    ``docs/index.md:1332`` writes ``freeEnergy_*_tendsto_of_abs_h``
+    ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``
     (4 declarations) -- left every declaration it names printing "no citation in
     the scanned documentation", the sentence that licenses a deletion. Neither
     has a verbatim fallback: the brace/glob spelling means the full name is
@@ -2337,8 +2337,8 @@ class FamilyCalibrationTest(unittest.TestCase):
         ``correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic``
         and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
         deviation_pos_ferromagnetic`` go ``safe-to-delete -> uncertain`` (charged
-        by ``docs/index.md:2197`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
-        5 matches, and by ``docs/index.md:2121`` / ``tex/proof-guide.tex:23284``
+        by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
+        5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
         ``log_*_deviation_pos_ferromagnetic``, 5 matches);
         ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
         ``safe-to-delete -> load-bearing`` and
