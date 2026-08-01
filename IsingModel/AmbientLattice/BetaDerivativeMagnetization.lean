@@ -18,11 +18,12 @@ from the former `BetaDerivative` declarations.
 The `Continuous` / `Differentiable` regularity of
 `magnetizationAlongExhaustion` in the β / h / J directions lives in
 `AmbientLattice/SpecialCases/Magnetization.lean`; the six `_gen`-suffixed
-duplicates that used to sit here were retired in PR #4839 in favour of
-those statements (which are strictly more general: they hold at general
-`h`), together with their `h = 0` corollaries
-`magnetizationAlongExhaustion_{continuous, differentiable}_beta_gen`,
-which moved to the same `SpecialCases` module.
+duplicates that used to sit here were retired in PR #4839 because each
+stated exactly the same proposition as its `SpecialCases` counterpart
+(same binders in the same order, and the β pair was already at general
+`h`). Their `h = 0` corollaries
+`magnetizationAlongExhaustion_{continuous, differentiable}_beta_gen`
+keep their names and moved to the same `SpecialCases` module.
 -/
 
 namespace IsingModel.Ambient
