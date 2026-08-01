@@ -16,7 +16,11 @@ PR #2064. Theorems:
 `correlationAlongExhaustion_differentiable_J_gen`. Each splits on
 `A ⊆ Λ.volume n`; subset case lifts to the finite-volume `correlation_*`
 lemma on the induced graph; non-subset case is the constant zero
-function. The theorem names are unchanged from the former
+function. Both branches are discharged by the first-order family
+equations `correlationAlongExhaustion_family_eq_of_subset` and
+`correlationAlongExhaustion_family_eq_zero_of_not_subset`
+(`AmbientLattice/Exhaustion.lean`) instead of unfolding the `dite` by
+hand. The theorem names are unchanged from the former
 `BetaDerivative` declarations.
 -/
 
@@ -33,18 +37,11 @@ theorem correlationAlongExhaustion_continuousAt_field_gen
     ContinuousAt
       (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) h := by
   by_cases h_sub : A ⊆ Λ.volume n
-  · have heq : (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) =
-               (fun h' => IsingModel.correlation (inducedGraph G (Λ.volume n))
-                  (⟨J, h', β⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
-      funext h'
-      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact IsingModel.correlation_continuousAt_field _ J h β _
-  · have heq : (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) =
-               (fun _ => (0 : ℝ)) := by
-      funext h'
-      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact continuousAt_const
 
 /-- **correlationAlongExhaustion Continuous in h** (Step 205, general G, Λ, whole-ℝ). -/
@@ -65,18 +62,11 @@ theorem correlationAlongExhaustion_differentiableAt_field_gen
     DifferentiableAt ℝ
       (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) h := by
   by_cases h_sub : A ⊆ Λ.volume n
-  · have heq : (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) =
-               (fun h' => IsingModel.correlation (inducedGraph G (Λ.volume n))
-                  (⟨J, h', β⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
-      funext h'
-      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact IsingModel.correlation_differentiableAt_field _ J h β _
-  · have heq : (fun h' => correlationAlongExhaustion G Λ (⟨J, h', β⟩ : IsingParams ℝ) A n) =
-               (fun _ => (0 : ℝ)) := by
-      funext h'
-      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact differentiableAt_const _
 
 /-- **correlationAlongExhaustion Differentiable in h** (Step 205, general G, Λ, whole-ℝ). -/
@@ -97,18 +87,11 @@ theorem correlationAlongExhaustion_continuous_J_gen
     Continuous
       (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) := by
   by_cases h_sub : A ⊆ Λ.volume n
-  · have heq : (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) =
-               (fun J' => IsingModel.correlation (inducedGraph G (Λ.volume n))
-                  (⟨J', h, β⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
-      funext J'
-      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) h_sub]
     exact IsingModel.correlation_continuous_J _ h β _
-  · have heq : (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) =
-               (fun _ => (0 : ℝ)) := by
-      funext J'
-      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) h_sub]
     exact continuous_const
 
 /-- **correlationAlongExhaustion Differentiable in J** (Step 212, general G, Λ).
@@ -120,18 +103,11 @@ theorem correlationAlongExhaustion_differentiable_J_gen
     Differentiable ℝ
       (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) := by
   by_cases h_sub : A ⊆ Λ.volume n
-  · have heq : (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) =
-               (fun J' => IsingModel.correlation (inducedGraph G (Λ.volume n))
-                  (⟨J', h, β⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
-      funext J'
-      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) h_sub]
     exact IsingModel.correlation_differentiable_J _ h β _
-  · have heq : (fun J' => correlationAlongExhaustion G Λ (⟨J', h, β⟩ : IsingParams ℝ) A n) =
-               (fun _ => (0 : ℝ)) := by
-      funext J'
-      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) h_sub]
     exact differentiable_const _
 
 
