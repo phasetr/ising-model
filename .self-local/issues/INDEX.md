@@ -1240,3 +1240,12 @@ Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local
   `Defs/Core.lean` imports at real definer modules). #4830 sub-issue progress now 3/7 per GitHub
   `sub_issues_summary` (graphql-verified: `{"total":7,"completed":3,"percentCompleted":42}`).
   Remaining open children: #4833/#4834/#4835/#4836.
+- **2026-08-01 update**: #4834 CLOSED not planned (KEEP verdict on all three Lee-Yang/Ascoli
+  candidates, no pilot met the helper-extraction criterion; closing comment
+  https://github.com/phasetr/ising-model/issues/4834#issuecomment-5151838852). A separate
+  flagged-but-not-acted-upon finding (23 groups / 59 byte-identical theorem statements in
+  `AmbientComplexAnalyticity/**/Patches/*.lean`) is recorded in `.self-local/issues/4834.md` for
+  a human to decide on a future, separately authorized issue; no new issue opened. #4830
+  sub-issue progress now 4/7 per GitHub `sub_issues_summary`
+  (`{"total":7,"completed":4,"percent_completed":57}`). Remaining open children:
+  #4833/#4835/#4836.
