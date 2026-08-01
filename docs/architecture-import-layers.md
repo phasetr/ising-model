@@ -290,15 +290,27 @@ python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
 CI runs the standalone suite and then `--check`, in that order, and
-`CIWiringTest` reads the workflow back to pin that it still does. Everything it
-asserts is scoped to the `import-dag-contract` job, because a command elsewhere
-in the file proves nothing: an *enforcing* invocation must exist (the argument
-list is matched whole, so `--baseline`, `--self-test`, `--help` and a trailing
-`|| true` are all rejected — none of them can fail on an inversion), the suite
-must precede it, the job must carry no `if:` or `continue-on-error:` (GitHub
-reports a skipped job as successful), and the workflow must keep an unfiltered
-`pull_request:` trigger. Deleting, commenting out, moving, weakening or
-neutralising the wiring therefore turns the suite red rather than quietly
-losing the coverage. A workflow spelling the reader does not understand — a
-block scalar, a flow mapping — also fails these assertions rather than passing
-them.
+`CIWiringTest` reads the workflow back to pin that it still does. It requires,
+all of it scoped to the `import-dag-contract` job — a command elsewhere in the
+file proves nothing — that
+
+* a **tree gate** is present: the argument list is matched whole, so
+  `--baseline` (exits 0 by construction), `--help` (checks nothing), a trailing
+  `|| true` and any other spelling are rejected. `--self-test` is *counted as
+  the suite*, not as the gate, so both roles have to be present;
+* the suite runs **before** it, since a weakened checker reports a clean tree;
+* neither the job nor a step carries `if:` or `continue-on-error:` — GitHub
+  reports a *skipped* job as successful — nor a custom `shell:`, which would
+  decide what the step's exit status even is;
+* the workflow keeps an **unfiltered** `pull_request:` trigger.
+
+The reader is hand-rolled, because PyYAML is guaranteed neither on the runner
+nor on a developer machine and the checker shells out to nothing, but it is
+*structural*: it descends `jobs → <job> → steps → <step>` by indentation and
+reads only a step's own keys, with key spelling normalised. Both properties are
+load-bearing. A `run` nested under `env:` is an environment variable that
+executes nothing, and `if : false` is the same mapping as `if: false` to YAML;
+a flat line scan would have accepted the first as a command and missed the
+second. A workflow spelling the reader does not understand — a block scalar, a
+flow mapping — fails these assertions rather than passing them, and so does a
+job it cannot find at all.

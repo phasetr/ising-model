@@ -1100,78 +1100,148 @@ CONTRACT_COMMAND = ("python3", "scripts/import_dag_contract.py")
 #: The same, for this suite run standalone.
 SUITE_COMMAND = ("python3", "scripts/test_import_dag_contract.py")
 
-#: Argument tuples under which the checker still fails on an inversion.
-#: ``--baseline`` exits ``0`` by construction, ``--self-test`` runs this suite
-#: and ``--help`` checks nothing, so an enforcing step is only ever the bare
-#: command or ``--check``.  Matching the whole argument list (not a prefix) is
-#: also what rejects a trailing ``|| true``.
+#: Argument tuples under which an invocation is the *tree gate*: ``--baseline``
+#: exits ``0`` by construction and ``--help`` checks nothing, so neither can
+#: report an inversion, and ``--self-test`` is the suite rather than the gate
+#: (it is counted as such below).  Matching the whole argument list rather than
+#: a prefix is also what rejects a trailing ``|| true``.
 GATE_ARGUMENTS = ((), ("--check",))
 
 #: Argument tuples that run this suite, either spelling.
 SUITE_ARGUMENTS = {CONTRACT_COMMAND: (("--self-test",),), SUITE_COMMAND: ((),)}
 
-#: Keys that turn a green job into a non-event: GitHub reports a skipped job as
-#: successful, and ``continue-on-error`` discards the exit status outright.
-DISABLING_KEYS = ("if:", "continue-on-error:")
+#: Job keys that turn a green job into a non-event: GitHub reports a *skipped*
+#: job as successful, and ``continue-on-error`` discards the exit status.
+JOB_DISABLING_KEYS = ("if", "continue-on-error")
+
+#: The same at step level, plus ``shell``: a custom shell template decides what
+#: the step's exit status even is, so the pinned steps must not carry one.
+STEP_DISABLING_KEYS = (*JOB_DISABLING_KEYS, "shell")
+
+
+def yaml_indent(line: str) -> int:
+    """Indentation width of ``line``."""
+    return len(line) - len(line.lstrip())
+
+
+def yaml_key(text: str) -> str | None:
+    """Mapping key of already-stripped ``text``, or ``None`` if it has none.
+
+    Normalised rather than matched literally, because ``if : false`` and
+    ``"if": false`` are the same mapping to YAML and would otherwise slip past a
+    ``startswith("if:")`` test.
+    """
+    if not text or text.startswith("#") or ":" not in text:
+        return None
+    key = text.split(":", 1)[0].strip().strip("\"'")
+    return key or None
+
+
+def yaml_value(text: str) -> str:
+    """Inline scalar of already-stripped ``text`` (empty when the key nests)."""
+    return text.split(":", 1)[1].strip() if ":" in text else ""
+
+
+def yaml_block(lines: list[str], start: int, indent: int) -> list[str]:
+    """Lines strictly deeper than ``indent``, starting after ``start``.
+
+    Blank and comment lines are skipped rather than treated as the end of the
+    block, so a commented-out step neither terminates the scan nor contributes
+    anything to it.
+    """
+    block: list[str] = []
+    for line in lines[start + 1 :]:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if yaml_indent(line) <= indent:
+            break
+        block.append(line)
+    return block
 
 
 class CIWiringTest(unittest.TestCase):
     """A gate nobody runs is not a gate.
 
     The wiring is *read out of* the workflow rather than assumed, and every
-    assertion is scoped to the :data:`WORKFLOW_JOB` block: a plain substring
-    search over the file would be satisfied by a commented-out step, by a step
-    in a job that never runs, or by an invocation that cannot fail.
+    assertion is scoped to the :data:`WORKFLOW_JOB` block: a substring search
+    over the file would be satisfied by a commented-out step, by a step in a job
+    that never runs, by an invocation that cannot fail, or by a ``run`` key
+    nested under ``env:`` (where it is an environment variable, not a command).
 
-    Both readers below are hand-rolled to keep this suite dependency-free --
-    PyYAML is guaranteed neither on the runner nor on a developer machine, and
-    the checker deliberately shells out to nothing.  They understand exactly the
-    shape this repository writes (one single-line ``run:`` per step, block
-    mapping, two-space indent); a workflow spelled any other way is not
-    understood, and *fails* these assertions rather than passing them.
+    The reader is hand-rolled to keep this suite dependency-free -- PyYAML is
+    guaranteed neither on the runner nor on a developer machine, and the checker
+    deliberately shells out to nothing -- but it is *structural*: it descends
+    ``jobs -> <job> -> steps -> <step>`` by indentation and only ever reads the
+    direct keys of a step, with key spelling normalised.  It understands the
+    block-mapping, one-line-per-``run`` shape this repository writes; a workflow
+    spelled any other way (block scalar, flow mapping) is not understood, and
+    *fails* these assertions rather than passing them.
     """
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.text = WORKFLOW_FILE.read_text(encoding="utf-8")
-        cls.job_lines = cls.job_block(cls.text)
-        cls.commands = cls.run_commands(cls.job_lines)
+        cls.lines = WORKFLOW_FILE.read_text(encoding="utf-8").splitlines()
+        cls.job_lines = cls.job_block(cls.lines)
+        cls.steps = cls.step_entries(cls.job_lines)
+        cls.commands = [
+            tuple(step["run"].split()) for step in cls.steps if step.get("run")
+        ]
 
     @staticmethod
-    def job_block(text: str) -> list[str]:
-        """The lines of :data:`WORKFLOW_JOB`, delimited by indentation.
+    def job_block(lines: list[str]) -> list[str]:
+        """The body of :data:`WORKFLOW_JOB` under the top-level ``jobs:`` key.
 
-        Comment lines are dropped rather than treated as the end of the block,
-        so a commented-out step neither terminates the scan nor contributes a
-        command.  Empty if the job is absent, which fails every assertion.
+        Empty if the job is absent, which fails every assertion below.
         """
-        lines = text.splitlines()
-        try:
-            start = lines.index(f"  {WORKFLOW_JOB}:")
-        except ValueError:
+        jobs = next(
+            (i for i, line in enumerate(lines)
+             if yaml_indent(line) == 0 and yaml_key(line.strip()) == "jobs"),
+            None,
+        )
+        if jobs is None:
             return []
-        block: list[str] = []
-        for line in lines[start + 1 :]:
-            stripped = line.strip()
-            if not stripped or stripped.startswith("#"):
-                continue
-            if len(line) - len(line.lstrip()) <= 2:
-                break
-            block.append(line)
-        return block
+        body = yaml_block(lines, jobs, 0)
+        header = next(
+            (i for i, line in enumerate(body)
+             if yaml_indent(line) == 2 and yaml_key(line.strip()) == WORKFLOW_JOB),
+            None,
+        )
+        return [] if header is None else yaml_block(body, header, 2)
 
     @staticmethod
-    def run_commands(lines: list[str]) -> list[tuple[str, ...]]:
-        """Every single-line ``run:`` scalar of ``lines``, tokenised, in order."""
-        commands: list[tuple[str, ...]] = []
-        for line in lines:
-            stripped = line.strip()
-            if not stripped.startswith("run:"):
+    def step_entries(job_lines: list[str]) -> list[dict[str, str]]:
+        """Direct ``key -> inline value`` mapping of each step, in order.
+
+        Only keys at the step's own indentation are collected, so a ``run``
+        nested under ``env:`` (an environment variable, which executes nothing)
+        is not mistaken for the step's command.
+        """
+        steps_key = next(
+            (i for i, line in enumerate(job_lines)
+             if yaml_indent(line) == 4 and yaml_key(line.strip()) == "steps"),
+            None,
+        )
+        if steps_key is None:
+            return []
+        steps: list[dict[str, str]] = []
+        item_indent: int | None = None
+        key_indent = 0
+        for line in yaml_block(job_lines, steps_key, 4):
+            indent, stripped = yaml_indent(line), line.strip()
+            if stripped.startswith("- "):
+                if item_indent is None:
+                    item_indent, key_indent = indent, indent + 2
+                if indent != item_indent:
+                    continue
+                steps.append({})
+                stripped = stripped[2:].strip()
+            elif indent != key_indent or not steps:
                 continue
-            command = stripped[len("run:") :].strip()
-            if command:
-                commands.append(tuple(command.split()))
-        return commands
+            key = yaml_key(stripped)
+            if key is not None:
+                steps[-1][key] = yaml_value(stripped)
+        return steps
 
     def gate_indices(self) -> list[int]:
         """Indices of the steps that can actually fail the workflow."""
@@ -1189,6 +1259,11 @@ class CIWiringTest(unittest.TestCase):
             if command[2:] in SUITE_ARGUMENTS.get(command[:2], ())
         ]
 
+    def test_the_reader_found_the_job_and_its_steps(self) -> None:
+        """Vacuity guard: a job the reader cannot see fails, never passes."""
+        self.assertTrue(self.job_lines, f"job {WORKFLOW_JOB!r} not found")
+        self.assertGreaterEqual(len(self.steps), 3, f"steps seen = {self.steps}")
+
     def test_the_workflow_runs_on_every_pull_request(self) -> None:
         """A gate that no pull request triggers enforces nothing.
 
@@ -1196,15 +1271,21 @@ class CIWiringTest(unittest.TestCase):
         path filter underneath it would silently exempt some pull requests, so
         adding one has to be a reviewed edit rather than a quiet one.
         """
-        lines = self.text.splitlines()
-        self.assertIn("  pull_request:", lines, "no unfiltered `pull_request:` trigger")
-        index = lines.index("  pull_request:")
-        following = [line for line in lines[index + 1 :] if line.strip()]
-        self.assertTrue(following, "truncated workflow")
-        self.assertLessEqual(
-            len(following[0]) - len(following[0].lstrip()),
-            2,
-            f"`pull_request:` carries a filter: {following[0]!r}",
+        on = next(
+            (i for i, line in enumerate(self.lines)
+             if yaml_indent(line) == 0 and yaml_key(line.strip()) == "on"),
+            None,
+        )
+        self.assertIsNotNone(on, "no top-level `on:` key")
+        triggers = yaml_block(self.lines, on, 0)
+        index = next(
+            (i for i, line in enumerate(triggers)
+             if yaml_indent(line) == 2 and yaml_key(line.strip()) == "pull_request"),
+            None,
+        )
+        self.assertIsNotNone(index, f"no `pull_request:` trigger in {triggers}")
+        self.assertEqual(
+            yaml_block(triggers, index, 2), [], "`pull_request:` carries a filter"
         )
 
     def test_ci_runs_the_contract_as_a_gate(self) -> None:
@@ -1225,16 +1306,22 @@ class CIWiringTest(unittest.TestCase):
 
     def test_the_self_tests_run_before_the_gate(self) -> None:
         """Order matters: a weakened checker would report a clean tree first."""
-        self.assertLess(min(self.suite_indices()), min(self.gate_indices()))
+        suite, gate = self.suite_indices(), self.gate_indices()
+        self.assertTrue(suite and gate, f"commands seen = {self.commands}")
+        self.assertLess(min(suite), min(gate))
 
     def test_the_gate_job_is_unconditional(self) -> None:
-        """`if:` and `continue-on-error:` both make a green job meaningless."""
-        for line in self.job_lines:
-            for key in DISABLING_KEYS:
-                self.assertFalse(
-                    line.strip().startswith(key),
-                    f"job {WORKFLOW_JOB!r} can be neutralised: {line.strip()!r}",
-                )
+        """A skipped or error-tolerant job is reported as a successful one."""
+        self.assertTrue(self.job_lines, f"job {WORKFLOW_JOB!r} not found")
+        job_keys = {
+            yaml_key(line.strip()) for line in self.job_lines if yaml_indent(line) == 4
+        }
+        for key in JOB_DISABLING_KEYS:
+            self.assertNotIn(key, job_keys, f"job {WORKFLOW_JOB!r} can be neutralised")
+        self.assertTrue(self.steps, "no step parsed")
+        for step in self.steps:
+            for key in STEP_DISABLING_KEYS:
+                self.assertNotIn(key, step, f"step can be neutralised: {step}")
 
 
 def run_suite() -> int:
