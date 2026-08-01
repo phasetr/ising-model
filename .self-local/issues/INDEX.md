@@ -1264,3 +1264,11 @@ Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local
   FAILURE). Progress-summary comment posted on #4830:
   https://github.com/phasetr/ising-model/issues/4830#issuecomment-5151992526. Parent #4830 not
   closed — deferred to holistic review once #4833 resolves.
+- **2026-08-02 update**: #4833 CLOSED completed (PR-2 #4846 CI wiring merged, main
+  `e9b457de`; closing comment
+  https://github.com/phasetr/ising-model/issues/4833#issuecomment-5152045988). #4830
+  sub-issue progress now 7/7 per GitHub `sub_issues_summary`
+  (`{"total":7,"completed":7,"percent_completed":100}`). Final programme summary comment
+  posted on #4830:
+  https://github.com/phasetr/ising-model/issues/4830#issuecomment-5152048318. Parent #4830
+  NOT closed by clerk — left as a checkpoint for the user/main session to review and close.
