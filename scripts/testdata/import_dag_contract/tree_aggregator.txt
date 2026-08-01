@@ -1,0 +1,155 @@
+# Aggregator-classifier fixtures for scripts/test_import_dag_contract.py.
+#
+# The aggregator set is COMPUTED, never hand-listed, so the classifier is the
+# single point where a real module could be mistaken for a re-export umbrella
+# and thereby stop being a violation source.  Each file below pins one way that
+# could go wrong.  See tree_clean.txt for why fixtures ship as a manifest rather
+# than as tracked `.lean` files.
+#
+# Expected classification is encoded in the file name: `Agg*` must be an
+# aggregator, `Real*` must not.
+
+--- IsingModel/Fixture/AggPlain.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# A plain re-export umbrella: imports, a doc header, nothing else.
+-/
+
+--- IsingModel/Fixture/AggDocMentionsTheorem.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# An umbrella whose doc comment quotes declaration syntax.
+
+theorem thisIsProseNotCode : True := trivial
+def neitherIsThis : Nat := 0
+-/
+
+--- IsingModel/Fixture/RealNoContent.lean
+/-! A file with no import at all is not a re-export index, so it is not an
+umbrella: nothing here is being re-exported, and the safe answer to "is this an
+index?" is no. -/
+
+--- IsingModel/Fixture/AggScaffolding.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Namespace/section scaffolding around no declaration.  This has to be
+recognised: an unrecognised `L2_THEORY` umbrella would split an
+`L3 -> umbrella -> L4` inversion into an allowed `L3 -> L2` edge and an unranked
+`L2 -> L4` edge, and nothing would fire.  Every line below is matched whole, so
+none of them can be carrying a second command. -/
+
+namespace IsingModel
+section
+open Finset Real
+variable {V : Type*} [DecidableEq V]
+end
+end IsingModel
+
+--- IsingModel/Fixture/RealMultiCommandLine.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Three commands on one physical line, which Lean accepts.  A classifier that
+only inspected the start of the line would call this an umbrella and stop
+checking the module. -/
+
+namespace Fixture theorem realMultiCommandLine : True := trivial end Fixture
+
+--- IsingModel/Fixture/AggLineComment.lean
+import IsingModel.Fixture.RealPlain
+
+-- theorem thisIsALineComment : True := trivial
+
+--- IsingModel/Fixture/AggNestedComment.lean
+import IsingModel.Fixture.RealPlain
+
+/- Lean block comments nest, so this whole thing is one comment.
+   /- An inner comment. -/
+   A non-greedy regex closes the outer comment at the inner terminator and
+   leaves this text behind as apparent code, which would demote a genuine
+   umbrella to a real module. -/
+
+--- IsingModel/Fixture/AggNestedCommentAroundDeclaration.lean
+import IsingModel.Fixture.RealPlain
+
+/- /- inner -/ theorem thisIsCommentedOut : True := trivial -/
+
+--- IsingModel/Fixture/RealAfterNestedComment.lean
+import IsingModel.Fixture.RealPlain
+
+/- /- inner -/ -/
+theorem realAfterNestedComment : True := trivial
+
+--- IsingModel/Fixture/RealPlain.lean
+/-! One ordinary theorem. -/
+
+theorem realPlain : True := trivial
+
+--- IsingModel/Fixture/RealAttributeOnOneLine.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# Otherwise all imports: the single declaration carries an attribute inline.
+-/
+
+@[simp] theorem realAttributeOnOneLine : True := trivial
+
+--- IsingModel/Fixture/RealPrivateNoncomputable.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Modifier stack in front of the declaration keyword. -/
+
+private noncomputable def realPrivateNoncomputable : Nat := 0
+
+--- IsingModel/Fixture/RealInstance.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A non-`theorem` declaration keyword. -/
+
+instance realInstance : Inhabited Nat := ⟨0⟩
+
+--- IsingModel/Fixture/RealAfterDocBlock.lean
+import IsingModel.Fixture.RealPlain
+
+/-!
+# The declaration sits after a block comment that must be stripped first.
+-/
+
+/-- A doc comment, itself a block comment. -/
+theorem realAfterDocBlock : True := trivial
+
+--- IsingModel/Fixture/RealUnsafe.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A modifier a declaration-keyword denylist would not have listed. -/
+
+unsafe def realUnsafe : Nat := 0
+
+--- IsingModel/Fixture/RealPartial.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Another such modifier. -/
+
+partial def realPartial : Nat := 0
+
+--- IsingModel/Fixture/RealAlias.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A declaration command that is not a `def`/`theorem` keyword at all. -/
+
+alias realAlias := realPlain
+
+--- IsingModel/Fixture/RealOpenIn.lean
+import IsingModel.Fixture.RealPlain
+
+/-! The `in` combinator: allowlisted scaffolding carrying a declaration. -/
+
+open Nat in theorem realOpenIn : True := trivial
+
+--- IsingModel/Fixture/RealAttribute.lean
+import IsingModel.Fixture.RealPlain
+
+/-! An `attribute` command: content, so not a pure re-export index. -/
+
+attribute [simp] realPlain

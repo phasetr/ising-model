@@ -1,0 +1,10 @@
+# Import-DAG contract exception baseline (scripts/import_dag_contract.py).
+#
+# One `importer -> imported` pair per line, each with a mandatory
+# `# owner: <name>  # issue: #<n>` annotation.  An entry whose edge no longer
+# exists FAILS the contract, so the allowlist cannot outlive its cause.
+#
+# A baseline entry means "genuine inversion, scheduled".  A tagging bug is
+# fixed in the tagging rules of the checker, never here.
+#
+# (empty: no enforced-rule violation on the current tree)

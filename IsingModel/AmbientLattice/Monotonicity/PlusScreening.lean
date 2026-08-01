@@ -1,4 +1,5 @@
-import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
+import IsingModel.AmbientLattice.Monotonicity.InducedWeightFactor
+import IsingModel.Inequalities.MonotonicityExtremal
 
 /-!
 # General-ambient `+` boundary screening (Issue #3581 PR 3)

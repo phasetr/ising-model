@@ -377,9 +377,9 @@ class NestedBraceCitationTest(unittest.TestCase):
         self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
 
     def test_real_nested_citation_publishes_the_three_excluded_declarations(self) -> None:
-        """End to end on the exact ``docs/index.md:1408`` citation shape."""
+        """End to end on the exact ``docs/index.md:1412`` citation shape."""
         index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertIn((self.TOKEN, 1408), index.tokens)
+        self.assertIn((self.TOKEN, 1412), index.tokens)
 
         verdicts, _cascade, _labels = dcs.classify(
             tree(), self.TARGETS, docs(), allow_homonym=False
@@ -389,7 +389,7 @@ class NestedBraceCitationTest(unittest.TestCase):
             self.assertEqual(verdict.verdict, dcs.PUBLISHED, verdict.decl.full)
             self.assertTrue(
                 any(
-                    citation.startswith("exact docs/index.md:1408:")
+                    citation.startswith("exact docs/index.md:1412:")
                     and self.TOKEN in citation
                     for citation in verdict.doc_citations
                 ),
@@ -403,7 +403,7 @@ class NestedBraceCitationTest(unittest.TestCase):
 
 
 class SlashAlternationCitationTest(unittest.TestCase):
-    """The two row-1395 numeric shorthands must reach all six declarations.
+    """The two row-1399 numeric shorthands must reach all six declarations.
 
     The pinned base drops both citation bodies during tokenization. Applying
     only brace expansion is insufficient too: every spelling retains ``3/4``
@@ -523,7 +523,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
     ]
 
     def verdicts(self) -> list[dcs.Verdict]:
-        """Classify the six row-1395 declarations against the real docs."""
+        """Classify the six row-1399 declarations against the real docs."""
         return dcs.classify(tree(), self.TARGETS, docs(), allow_homonym=False)[0]
 
     def test_exact_bodies_are_each_one_citation_token(self) -> None:
@@ -550,10 +550,10 @@ class SlashAlternationCitationTest(unittest.TestCase):
         )
 
     def test_real_row_attaches_one_exact_charge_to_each_target(self) -> None:
-        """Every target receives the exact public citation at row 1395."""
+        """Every target receives the exact public citation at row 1399."""
         counts = [
             sum(
-                citation.startswith("exact docs/index.md:1395:")
+                citation.startswith("exact docs/index.md:1399:")
                 and self.TARGET_TOKENS[verdict.decl.full] in citation
                 for citation in verdict.doc_citations
             )
@@ -786,7 +786,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
 
     Markdown code spans are paired positionally, so an unbalanced backtick does
     not lose only its own span: everything after it is read with the parity
-    inverted. ``docs/index.md:1828`` spells ``ContinuousOn`.continuousAt`` with
+    inverted. ``docs/index.md:1832`` spells ``ContinuousOn`.continuousAt`` with
     three backticks where two were meant, and from that column on the line's
     real citations sat outside every span the tokenizer saw -- 218 tokens, none
     of them naming ``magnetizationAlongExhaustion``, which the raw line spells
@@ -884,7 +884,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
     def test_an_unpairable_backtick_is_reported_with_its_line(self) -> None:
         """Both live shapes are caught: a stray backtick and a span across lines."""
         self.assertEqual(dcs.unpaired_backticks(self.FLIPPED), {1: 1})
-        # docs/index.md:1219-1220: a span opened on one line, closed on the next.
+        # docs/index.md:1223-1224: a span opened on one line, closed on the next.
         across = "bound `|edges d r| <=\nO(r)` (`alpha_card_le_beta` + `gamma_le'`),\n"
         self.assertEqual(dcs.unpaired_backticks(across), {1: 1, 2: 1})
 
@@ -917,7 +917,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn("pair into no code span", warning)
 
     def test_the_real_index_raises_its_three_warnings(self) -> None:
-        """Measured on the current index: :1219, :1220 and :1828, nothing else.
+        """Measured on the current index: :1223, :1224 and :1832, nothing else.
 
         The three lines are the same three rows throughout; only their numbers
         move. The #4787 status reconciliation added 25 lines before these
@@ -926,22 +926,22 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         """
         index = next(source for source in docs() if source.label == "docs/index.md")
         self.assertEqual(
-            sorted(dcs.unpaired_backticks(index.text)), [1219, 1220, 1828]
+            sorted(dcs.unpaired_backticks(index.text)), [1223, 1224, 1832]
         )
         self.assertEqual(len(index.malformed), 3)
-        self.assertTrue(any("docs/index.md:1828" in item for item in index.malformed))
+        self.assertTrue(any("docs/index.md:1832" in item for item in index.malformed))
 
-    def test_the_real_index_recovers_the_line_1828_citations(self) -> None:
+    def test_the_real_index_recovers_the_line_1832_citations(self) -> None:
         """The elided suffixes of the Step 213 row are tokens again.
 
         The row reads `` `magnetizationAlongExhaustion_continuous_beta_gen` +
         `_differentiable_beta_gen` + ... ``; before the repair the line
         contributed 218 tokens and not one of them was any of these. The row now
-        sits at :1828, after the #4787 documentation reconciliation and the later
+        sits at :1832, after the #4787 documentation reconciliation and the later
         stale-issue-reference correction.
         """
         index = next(source for source in docs() if source.label == "docs/index.md")
-        tokens = {token for token, line in index.tokens if line == 1828}
+        tokens = {token for token, line in index.tokens if line == 1832}
         for token in (
             "_differentiable_beta_gen",
             "_continuous_field_gen",
@@ -1541,11 +1541,11 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
         expected = [[(dcs.UNCERTAIN, 1, False)] * 3] * 2
         self.assertEqual(observed, expected)
 
-    def test_F6_REAL_1389_resolved_head_protects_the_exact_target_triple(self) -> None:
+    def test_F6_REAL_1393_resolved_head_protects_the_exact_target_triple(self) -> None:
         """The real row adds one suffix shorthand, and no exact claim, to each target."""
         index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertIn((self.ROW_HEAD, 1389), index.tokens)
-        self.assertIn((self.ROW_SUFFIX, 1389), index.tokens)
+        self.assertIn((self.ROW_HEAD, 1393), index.tokens)
+        self.assertIn((self.ROW_SUFFIX, 1393), index.tokens)
         resolved = dcs._resolve_fragment(tree(), self.ROW_HEAD, {})
         self.assertEqual(
             [decl.full for decl in resolved or []],
@@ -1560,7 +1560,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             row_shorthand = [
                 citation
                 for citation in verdict.doc_citations
-                if citation.startswith("shorthand docs/index.md:1389:")
+                if citation.startswith("shorthand docs/index.md:1393:")
                 and f"`{self.ROW_SUFFIX}`" in citation
             ]
             observed.append(

@@ -15,6 +15,10 @@ for **arbitrary** monotone observables.
 * `interactionEnergyJ` / `hamiltonianJ` / `boltzmannWeightJ` — the inhomogeneous
   coupling energy `-∑_e J(e)·s(σ_i)s(σ_j)`, Hamiltonian, and Boltzmann weight
   `exp(-β H)`.
+* `boltzmannWeightJ_uniform_eq` — the specialisation back to the uniform coupling
+  `fun _ => J`, bridging the boundary-condition framework
+  (`boltzmannWeightBC = indicator · boltzmannWeightJ`) to the uniform-coupling
+  lemmas stated in terms of `boltzmannWeight`.
 * `boltzmannWeightJ_log_supermodular` — the FKG lattice condition, valid as soon
   as every coupling `J(e) ≥ 0` (and `β, h ≥ 0`): the per-edge supermodularity is
   summed with the nonnegative weights `J(e)`.
@@ -71,6 +75,20 @@ theorem boltzmannWeightJ_pos (G : SimpleGraph ι) [Fintype G.edgeSet]
     (β : ℝ) (J : Sym2 ι → ℝ) (h : ℝ) (σ : Config ι) :
     0 < boltzmannWeightJ G β J h σ :=
   Real.exp_pos _
+
+omit [DecidableEq ι] in
+/-- **Uniform inhomogeneous weight equals the ordinary Boltzmann weight**: for the
+constant coupling `fun _ => J`, `boltzmannWeightJ G β (fun _ => J) h σ =
+boltzmannWeight G ⟨J, h, β⟩ σ`.  Bridges the boundary-condition framework (built on
+`boltzmannWeightJ`) to the uniform-coupling factoring lemmas. -/
+theorem boltzmannWeightJ_uniform_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
+    (β J h : ℝ) (σ : Config ι) :
+    boltzmannWeightJ G β (fun _ => J) h σ = boltzmannWeight G (⟨J, h, β⟩ : IsingParams ℝ) σ := by
+  have hI : interactionEnergyJ G (fun _ => J) σ = interactionEnergy G J σ := by
+    unfold interactionEnergyJ interactionEnergy
+    simp [Finset.mul_sum]
+  unfold boltzmannWeightJ boltzmannWeight hamiltonianJ hamiltonian
+  rw [hI]
 
 /-! ## Log-supermodularity (the FKG lattice condition) -/
 
