@@ -33,20 +33,30 @@
   dispositioned to #4823 at
   [comment 5148497775](https://github.com/phasetr/ising-model/issues/4793#issuecomment-5148497775),
   and the programme's PRs are not to cite #4793.
-- **MERGE HAZARD (rewritten on #4823)**: with #4824 (−9) and #4821 (−14) both landed, `main`
-  is at **10548** in both occurrences and the pinned TeX rows are **3861 / 26804**
-  (`tex/proof-guide.tex` 34872 lines). **PR #4825 (head `598c948e`) is doubly stale at
-  10571 / 26785** and rewrites that test file heavily, so its rebase is a three-way
-  interaction: re-derive **both** values from the rebased tree, carry forward **neither a
-  literal nor a difference**. Leaving the old text risks the next rebaser picking up `10557`.
+- **MERGE HAZARD — DISCHARGED at `ef6c5175`**: with #4824 (−9) and #4821 (−14) both landed,
+  `main` is at **10548** in both occurrences and the pinned TeX rows are **3861 / 26804**
+  (`tex/proof-guide.tex` 34872 lines). PR #4825 was doubly stale at 10571 / 26785 while its
+  head was `598c948e`, but it has since been rebased onto `4bfe4aeb`: its live head
+  `ef6c5175` (branch `tooling/4792-fail-closed-terminal`, force-pushed 2026-08-01 09:39 JST,
+  69 minutes before this entry was committed) carries **10548** in both occurrences and the
+  TeX rows **3861 / 26804**, with the constant's own comment recording it as measured at
+  `4bfe4aeb`. No pin is stale on any live branch. The standing rule for the next rebaser is
+  unchanged: re-derive **both** values from the rebased tree, carry forward **neither a
+  literal nor a difference**.
 - No open-issue manifest needs refreshing — this merge changes no issue's state, and the
   `scripts/audit/open_issues.txt` manifest PR #4826 once proposed was dropped at that PR's
   round 4 together with the V5 gate arm it fed (user ruling: track the files, add no check).
 - **Mirrors `.self-local/issues/4823.md` and `4793.md` were updated on disk and were UNTRACKED
-  on `main`** (only `INDEX.md` is tracked there), so they were invisible to review — the same
-  mechanism that caused #4794 to be re-filed. They are **carried into PR #4826 at its round-4
-  head**, together with this ledger entry, rather than left in a working tree; that PR tracks
-  28 files under `.self-local/` and modifies `INDEX.md`.
+  on `main`**, so they were invisible to review — the same mechanism that caused #4794 to be
+  re-filed. The true statement is the narrow one: **these two files** were untracked, not the
+  directory as a whole. `git ls-tree -r --name-only 4bfe4aeb -- .self-local/issues/` returns
+  **32** entries — 31 numbered mirrors (`4506.md` … `4746.md`) plus `INDEX.md` — and none of
+  the 31 is of a currently-open issue (the largest is 4746, the smallest open one 4786). An
+  earlier revision of this entry said "only `INDEX.md` is tracked there", which is **false**;
+  that wording came from the instruction handed to the merge clerk after PR #4821 landed and
+  was carried in unchecked. The two mirrors are **carried into PR #4826 at its round-5 head**,
+  together with this ledger entry, rather than left in a working tree; that PR tracks 28 files
+  under `.self-local/` and modifies `INDEX.md`.
 
 ## 2026-08-01 filed — #4827 (module-cost harness deferred defects), OPEN
 
@@ -112,7 +122,8 @@
   relocated cluster-C residue (two byte-identical concrete wrapper pairs) and the TeX
   detection defect: `\texttt{a\_b}` escaping makes raw `git grep` return 0, and only a
   normalised (`tr -d '\\'`) sweep found the dangling citations at `tex/proof-guide.tex`
-  lines 686 and 26903.
+  lines 686 and 26903 (pre-rebase rows; PR #4821 corrected both, and on the rebased tree they
+  are `:686` and `:26922`, as `.self-local/issues/4823.md` records).
 - Neither issue changes any branch or `main`; no PR was opened by this entry.
 
 ## 2026-07-31 postmerge handoff — #4818 completed, #4792 remains OPEN
