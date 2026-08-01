@@ -13,15 +13,21 @@ PR #2064. Theorems:
 `correlationAlongExhaustion_differentiableAt_field_gen`,
 `correlationAlongExhaustion_differentiable_field_gen`,
 `correlationAlongExhaustion_continuous_J_gen`,
-`correlationAlongExhaustion_differentiable_J_gen`. Each splits on
+`correlationAlongExhaustion_differentiable_J_gen`. Four of them
+(`_continuousAt_field_gen`, `_differentiableAt_field_gen`,
+`_continuous_J_gen`, `_differentiable_J_gen`) split on
 `A ⊆ Λ.volume n`; subset case lifts to the finite-volume `correlation_*`
 lemma on the induced graph; non-subset case is the constant zero
-function. Both branches are discharged by the first-order family
-equations `correlationAlongExhaustion_family_eq_of_subset` and
+function. In those four, both branches are discharged by the
+first-order family equations
+`correlationAlongExhaustion_family_eq_of_subset` and
 `correlationAlongExhaustion_family_eq_zero_of_not_subset`
-(`AmbientLattice/Exhaustion.lean`) instead of unfolding the `dite` by
-hand. The theorem names are unchanged from the former
-`BetaDerivative` declarations.
+(`AmbientLattice/Exhaustion.lean`) instead of rebuilding the
+corresponding function equation in-proof with `funext` and the pointwise
+`correlationAlongExhaustion_of_{subset, not_subset}` lemmas. The
+remaining two (`_continuous_field_gen`, `_differentiable_field_gen`) are
+branch-free whole-ℝ wrappers around the `*At` versions. The theorem
+names are unchanged from the former `BetaDerivative` declarations.
 -/
 
 namespace IsingModel.Ambient

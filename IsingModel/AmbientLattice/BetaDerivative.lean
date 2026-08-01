@@ -14,7 +14,9 @@ When `A ⊆ Λ.volume n` the function reduces to the finite-volume correlation
 The four case-splitting proofs below discharge both branches through the
 first-order family equations `correlationAlongExhaustion_family_eq_of_subset`
 and `correlationAlongExhaustion_family_eq_zero_of_not_subset`
-(`AmbientLattice/Exhaustion.lean`) instead of unfolding the `dite` by hand.
+(`AmbientLattice/Exhaustion.lean`) instead of rebuilding the corresponding
+function equation in-proof with `funext` and the pointwise
+`correlationAlongExhaustion_of_{subset, not_subset}` lemmas.
 
 Step 156, GJ §17.5 (first step toward ∞-vol β-derivative). -/
 

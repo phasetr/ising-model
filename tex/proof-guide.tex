@@ -23866,8 +23866,11 @@ and \path{IsingModel/AmbientLattice/BetaDerivativeFieldJ.lean}
 \texttt{correlationAlongExhaustion} regularity theorems, whose $16$
 branches ($8$ subset, $8$ non-subset) each now consist of one
 \texttt{rw} by the relevant family equation followed by the
-finite-volume closer.  All statements are unchanged; the migration is
-proof-only.
+branch-appropriate pre-existing closer (a finite-volume
+\texttt{correlation\_*} lemma in the subset branches, a
+constant-function lemma such as \texttt{hasDerivAt\_const} or
+\texttt{continuousAt\_const} in the non-subset ones).  All statements
+are unchanged; the migration is proof-only.
 
 \subsection{Ambient subgraph monotonicity on \texorpdfstring{$\Lambda$}{Lambda}}
 
