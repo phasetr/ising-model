@@ -289,8 +289,16 @@ python3 scripts/import_dag_contract.py --self-test # run the checker's own test 
 python3 scripts/test_import_dag_contract.py        # the same suite, standalone
 ```
 
-CI runs the last two lines, in that order (suite, then `--check`), and
-`CIWiringTest` reads the workflow back to pin that it still does: it asserts an
-enforcing invocation exists — `--baseline` and `--self-test` are excluded, since
-neither can fail on an inversion — and that the suite precedes it. Removing the
-job silently turns the suite red rather than merely losing the coverage.
+CI runs the standalone suite and then `--check`, in that order, and
+`CIWiringTest` reads the workflow back to pin that it still does. Everything it
+asserts is scoped to the `import-dag-contract` job, because a command elsewhere
+in the file proves nothing: an *enforcing* invocation must exist (the argument
+list is matched whole, so `--baseline`, `--self-test`, `--help` and a trailing
+`|| true` are all rejected — none of them can fail on an inversion), the suite
+must precede it, the job must carry no `if:` or `continue-on-error:` (GitHub
+reports a skipped job as successful), and the workflow must keep an unfiltered
+`pull_request:` trigger. Deleting, commenting out, moving, weakening or
+neutralising the wiring therefore turns the suite red rather than quietly
+losing the coverage. A workflow spelling the reader does not understand — a
+block scalar, a flow mapping — also fails these assertions rather than passing
+them.
