@@ -1220,3 +1220,15 @@ https://github.com/phasetr/ising-model/issues/4704#issuecomment-5080692428, and 
 `4704.md`. **#4704 stays OPEN**; next actionable step remains **PR-1 (fail-closed checker)**.
 GitHub open issues: #4704 / #4709 / #4642 / #4563 / #4559 / #4712 (#4714 now closed, not counted).
 Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local/` mirrors only).
+## 2026-08-01 refactoring plan — #4830 hierarchy
+
+- #4830 is the new canonical refactoring parent. Primary outcomes are coherent abstraction,
+  simpler code, and retired technical debt; build speed is supporting evidence only.
+- Formal GitHub subissues: #4837 P0 exhaustion family equations, #4831 finite Gibbs kernel, #4832 Ambient Defs/Core dependency
+  direction, #4833 import-DAG contract, #4834 Lee--Yang/Ascoli composition, #4835 derivative
+  abstractions/providers, and #4836 concept-coherent file/module cleanup.
+- Every subissue is audit-gated and may close `not planned` with evidence. No source or dependency
+  change is authorized merely by filing this hierarchy.
+- #4786/#4788/#4789/#4791/#4792/#4793/#4794/#4795/#4796/#4801 (10 issues) are deleted on GitHub;
+  their mirrors are historical. #4822/#4823/#4827/#4828/#4829 (5 issues) are closed `not planned`.
+  `docs/plans/4506-refactoring-replan.md` remains an archived baseline.

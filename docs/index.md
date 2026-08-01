@@ -11,7 +11,9 @@ View* (2nd ed., 1987).
 
 The historical build-speed and simplification baseline for the completed #4506 campaign is
 recorded in the [archived refactoring execution plan for #4506](plans/4506-refactoring-replan.html).
-Current follow-up decisions and measurements are tracked separately by #4793 and #4794.
+Follow-up decisions and measurements formerly tracked by #4793 and #4794 are no longer live:
+both issue numbers have been deleted on GitHub, and current tracking is described in the
+current-status ledger near the end of this page.
 
 ## Status taxonomy
 
@@ -2280,13 +2282,16 @@ headlines.  Detailed declarations and hypotheses remain in the progress table ab
 
 - **§17.5, Theorem 17.5.1:** everywhere continuity of the true `latticeMass`; the rigorous current
   capstone proves pseudo-mass continuity, the non-sharp sandwich, and true-mass continuity outside
-  a countable exceptional set (#4788).
-- **§17.6.1, β direction:** extension from the KP window to the full claimed range (#4789).
+  a countable exceptional set. No live owning GitHub issue (formerly #4788, deleted).
+- **§17.6.1, β direction:** extension from the KP window to the full claimed range. No live owning
+  GitHub issue (formerly #4789, deleted).
 - **§17.6.1, real field residuals:** `b = 0`, arbitrary physical-parameter rescaling, the full
   nonperturbative range, and a U3/series derivative identity, sign, or uniform bound remain
-  outside the implemented reduced-field theorem (#4790).
+  outside the implemented reduced-field theorem. No live owning GitHub issue (formerly #4790,
+  closed completed — that issue tracked the finite-volume Option B capstone above, not this
+  residual gap).
 - **§5.1 cluster property in all pure phases:** removal of the polynomial-decay/high-temperature
-  restriction.
+  restriction. No live owning GitHub issue.
 
 ### Deferred / not planned
 
