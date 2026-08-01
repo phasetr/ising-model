@@ -54,20 +54,26 @@ directory, so the *file* is misfiled while the *edge* is correctly directed.
 
 Aggregators
 -----------
-A module with imports but no declarations is an **aggregator** (a re-export
-umbrella).  The set is computed, never hand-listed, so new umbrellas need no
-maintenance.  Aggregators are never violation *sources* -- they are indices, not
-generality code -- and as *targets* they are expanded transitively to the first
-non-aggregator modules behind them.  Expansion rather than exemption is what
-keeps a compatibility umbrella a fully supported public import without letting
-it launder a reverse edge.
+A module that declares nothing is an **aggregator** (a re-export umbrella): after
+comment stripping, every line is ``import`` or namespace/section scaffolding.
+The test is an allowlist of harmless commands rather than a list of declaration
+keywords, because that direction fails closed -- a construct nobody thought of
+leaves the module a real one.  The set is computed, never hand-listed, so new
+umbrellas need no maintenance.  Aggregators are never violation *sources* --
+they are indices, not generality code -- and as *targets* they are expanded
+transitively to the first non-aggregator modules behind them.  Expansion rather
+than exemption is what keeps a compatibility umbrella a fully supported public
+import without letting it launder a reverse edge.
 
 Baseline
 --------
 ``scripts/import_dag_baseline.txt`` is an owner-annotated allowlist of edges
-that are real inversions not yet fixed.  Every entry needs ``# owner:`` and
-``# issue:``, and an entry whose edge no longer exists is itself a failure, so
-the allowlist cannot outlive its cause.  A **tagging bug is fixed in the tagging
+that are real inversions not yet fixed.  Every entry needs a real
+``# owner: <name>`` and ``# issue: #<number>`` -- matched structurally, so a
+look-alike or an empty value is a failure -- and an entry whose edge no longer
+exists is itself a failure, so the allowlist cannot outlive its cause.  The
+skeleton ``--baseline`` prints deliberately does *not* validate: the edges are
+machine-derived but the ownership is a human decision.  A **tagging bug is fixed in the tagging
 rules, never in the baseline**: a baseline entry means "genuine inversion,
 scheduled"; using one to silence a mislabelled endpoint destroys that meaning.
 
@@ -218,17 +224,24 @@ def layer_of(module: str) -> str:
 # --------------------------------------------------------------------------
 
 _BLOCK_COMMENT_RE = re.compile(r"/-.*?-/", re.DOTALL)
+_LINE_COMMENT_RE = re.compile(r"--.*$", re.MULTILINE)
 
-#: A line opens a declaration when, after any attribute/modifier prefixes, it
-#: starts with a declaration keyword.  Block comments are stripped first, so a
-#: ``/-! ... theorem foo ... -/`` module header cannot make an umbrella look
-#: declarative.
-_DECL_OPENER_RE = re.compile(
-    r"^\s*"
-    r"(?:@\[[^\]]*\]\s*|attribute\s+|private\s+|noncomputable\s+|protected\s+)*"
-    r"(?:theorem|lemma|def|abbrev|structure|inductive|instance|class|example"
-    r"|axiom|opaque|macro|notation|syntax|elab|deriving)\b"
+#: The commands an umbrella may contain besides ``import``: namespace/section
+#: scaffolding that declares nothing.  The test is an **allowlist**, never a
+#: list of declaration keywords, because that direction fails closed: an
+#: unrecognised construct (``unsafe def``, ``partial def``, ``alias``,
+#: ``macro_rules``, a future keyword) leaves the module a real one and therefore
+#: still a violation source.  A denylist of declaration openers fails *open* --
+#: one keyword missing from it silently exempts the module.
+_SCAFFOLDING_RE = re.compile(
+    r"^\s*(?:import|namespace|end|section|open|universe|variable)\b"
 )
+
+#: ``open Foo in <decl>`` and ``set_option x in <decl>`` are command *wrappers*:
+#: the line starts with allowlisted scaffolding but carries a declaration on the
+#: same line.  Any scaffolding line containing the ``in`` combinator is
+#: therefore rejected.
+_IN_COMBINATOR_RE = re.compile(r"(?:^|\s)in(?:\s|$)")
 
 
 def module_source(module: str, root: Path) -> str | None:
@@ -241,7 +254,11 @@ def module_source(module: str, root: Path) -> str | None:
 
 
 def is_aggregator(module: str, root: Path) -> bool:
-    """Return whether ``module`` is a re-export umbrella (no declaration).
+    """Return whether ``module`` is a re-export umbrella (declares nothing).
+
+    Comments are stripped first, so a ``/-! ... theorem foo ... -/`` module
+    header cannot make an umbrella look declarative.  Every remaining non-blank
+    line must then be allowlisted scaffolding (:data:`_SCAFFOLDING_RE`).
 
     A module whose file is missing is not an aggregator: an unresolvable target
     must not silently gain pass-through semantics.
@@ -249,8 +266,13 @@ def is_aggregator(module: str, root: Path) -> bool:
     text = module_source(module, root)
     if text is None:
         return False
-    stripped = _BLOCK_COMMENT_RE.sub("", text)
-    return not any(_DECL_OPENER_RE.match(line) for line in stripped.splitlines())
+    stripped = _LINE_COMMENT_RE.sub("", _BLOCK_COMMENT_RE.sub("", text))
+    for line in stripped.splitlines():
+        if not line.strip():
+            continue
+        if not _SCAFFOLDING_RE.match(line) or _IN_COMBINATOR_RE.search(line):
+            return False
+    return True
 
 
 # --------------------------------------------------------------------------
@@ -399,29 +421,53 @@ def find_info_edges(graph: Graph) -> list[tuple[str, str]]:
 # --------------------------------------------------------------------------
 
 
+#: ``# owner: <name>``.  The leading ``#`` is part of the pattern, so a
+#: look-alike such as ``# notowner: x`` does not satisfy it, and the value class
+#: excludes ``#`` so that an empty ``# owner:`` cannot borrow the next field's
+#: marker as its value.
+_OWNER_RE = re.compile(r"#\s*owner:\s*([^\s#][^#]*?)\s*(?=#|$)")
+
+#: ``# issue: #<number>``.  A tracker reference has to be a number, so a word
+#: cannot stand in for one.
+_ISSUE_RE = re.compile(r"#\s*issue:\s*#(\d+)(?:\s|$)")
+
+#: Values that name no owner.  Without this the skeleton emitted by
+#: ``--baseline`` would satisfy :data:`_OWNER_RE` and could be committed as-is.
+_PLACEHOLDER_OWNERS = frozenset({"todo", "tbd", "fixme", "unassigned", "none", "n/a", "-", "?"})
+
+
 def parse_baseline(text: str) -> tuple[dict[str, str], list[str]]:
     """Parse baseline text into ``({key: annotation}, errors)``.
 
-    Every entry must carry both ``# owner:`` and ``# issue:``; a missing
-    annotation is an error, so a baseline line can never be a bare silencer.
+    Every entry must carry a real ``# owner: <name>`` and a real
+    ``# issue: #<number>``.  The fields are matched structurally, not by
+    substring presence: ``# notowner: x`` is not an owner, ``# owner:`` with no
+    value is not an owner, and ``# issue: TODO`` is not a tracker.  Otherwise a
+    baseline line would be a bare silencer wearing an annotation.
     """
     entries: dict[str, str] = {}
     errors: list[str] = []
     for lineno, raw in enumerate(text.splitlines(), start=1):
         if not raw.strip() or raw.lstrip().startswith("#"):
             continue
-        edge, _, annotation = raw.partition("#")
-        edge = " ".join(edge.split())
+        marker = raw.find("#")
+        edge = " ".join((raw if marker < 0 else raw[:marker]).split())
+        annotation = "" if marker < 0 else raw[marker:].strip()
         if " -> " not in edge:
             errors.append(f"line {lineno}: not an `importer -> imported` pair: {raw.strip()!r}")
             continue
-        if "owner:" not in annotation:
-            errors.append(f"line {lineno}: missing `# owner:` annotation for {edge!r}")
-        if "issue:" not in annotation:
-            errors.append(f"line {lineno}: missing `# issue:` annotation for {edge!r}")
+        owner = _OWNER_RE.search(annotation)
+        if owner is None:
+            errors.append(f"line {lineno}: missing `# owner: <name>` annotation for {edge!r}")
+        elif owner.group(1).strip().lower() in _PLACEHOLDER_OWNERS:
+            errors.append(
+                f"line {lineno}: placeholder owner {owner.group(1).strip()!r} for {edge!r}"
+            )
+        if _ISSUE_RE.search(annotation) is None:
+            errors.append(f"line {lineno}: missing `# issue: #<number>` annotation for {edge!r}")
         if edge in entries:
             errors.append(f"line {lineno}: duplicate baseline entry {edge!r}")
-        entries[edge] = annotation.strip()
+        entries[edge] = annotation
     return entries, errors
 
 
@@ -436,8 +482,12 @@ BASELINE_HEADER = """\
 # Import-DAG contract exception baseline (scripts/import_dag_contract.py).
 #
 # One `importer -> imported` pair per line, each with a mandatory
-# `# owner: <name>  # issue: #<n>` annotation.  An entry whose edge no longer
-# exists FAILS the contract, so the allowlist cannot outlive its cause.
+# `# owner: <name>  # issue: #<number>` annotation.  Both fields are matched
+# structurally: a look-alike label, an empty value or a non-numeric issue is a
+# failure, and so is an entry whose edge no longer exists -- the allowlist
+# cannot outlive its cause.  The `TODO` values below are placeholders that the
+# contract rejects on purpose: `--baseline` derives the edges, a human assigns
+# the ownership.
 #
 # A baseline entry means "genuine inversion, scheduled".  A tagging bug is
 # fixed in the tagging rules of the checker, never here.

@@ -135,12 +135,22 @@ stop a forbidden edge being laundered) does not apply.
 
 ## Compatibility umbrellas: pass-through, not exemption
 
-A module with imports but no declarations is an **aggregator** — a re-export
-index. The set is *computed* (block comments are stripped, then no line may open
-a declaration), never hand-listed, so new umbrellas need no maintenance; there
-are 112 on the delivering commit, including all eight
+A module that declares nothing is an **aggregator** — a re-export index. The set
+is *computed*, never hand-listed, so new umbrellas need no maintenance; there are
+112 on the delivering commit, including all eight
 `Concrete/LatticeGraphCorrelation/Umbrella/*`, the root `IsingModel.lean` and the
 small root re-export files.
+
+The test is deliberately an **allowlist**, not a list of declaration keywords:
+comments are stripped, and then every remaining line must be `import` or
+namespace/section scaffolding (`namespace`, `end`, `section`, `open`, `universe`,
+`variable`, and none of them carrying the `in` command combinator). A denylist of
+declaration openers fails *open* — one keyword missing from it (`unsafe def`,
+`partial def`, `alias`, `macro_rules`, or a keyword that does not exist yet)
+silently turns a real module into an "umbrella" and therefore removes it as a
+violation source. The allowlist fails closed instead: an unrecognised construct
+leaves the module a real one. Both directions were measured on this tree and
+agree at 112, so the safe one costs nothing here.
 
 Two rules follow:
 
@@ -160,12 +170,17 @@ costs nothing today and closes the hole pre-emptively.
 `scripts/import_dag_baseline.txt` is an owner-annotated allowlist of edges that
 are genuine inversions not yet fixed. It is currently **empty**.
 
-* Each entry is one `importer -> imported` pair with mandatory `# owner:` and
-  `# issue:` annotations.
+* Each entry is one `importer -> imported` pair with a mandatory
+  `# owner: <name>  # issue: #<number>` annotation. Both fields are matched
+  **structurally**: a look-alike label (`# notowner:`), an empty value, or a
+  non-numeric issue is a failure, because a substring test would let an edge be
+  silenced with no owner and no tracker at all.
 * An entry whose edge no longer exists is itself a **failure**, so the allowlist
   cannot silently outlive its cause.
-* `--baseline` regenerates the file deterministically; it is never hand-edited
-  into silence.
+* `--baseline` regenerates the *edge set* deterministically; it is never
+  hand-edited into silence. The skeleton it prints carries `TODO` placeholders
+  and is rejected by the contract until a human fills them in — the edges are
+  machine-derived, the ownership is not.
 
 **A tagging bug is fixed in the tagging rules, never in the baseline.** A
 baseline entry means "real inversion, scheduled". Using one to paper over a

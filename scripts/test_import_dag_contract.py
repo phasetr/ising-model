@@ -202,6 +202,86 @@ class AggregatorTest(TreeHarness):
         self.assertFalse(contract.is_aggregator("IsingModel.NoSuchModule", self.root))
 
 
+#: Declaration forms whose *only* common feature is that they are content.  The
+#: classifier must keep every one of them checkable; the list exists because a
+#: keyword denylist fails open, and ``unsafe def`` was exactly the form that
+#: escaped one.  A form nobody anticipated must behave like these, not like an
+#: umbrella -- which is what the allowlist buys and what the sweep below pins.
+DECLARATION_FORMS = (
+    "theorem d : True := trivial",
+    "@[simp] theorem d : True := trivial",
+    "private noncomputable def d : Nat := 0",
+    "unsafe def d : Nat := 0",
+    "partial def d : Nat := 0",
+    "nonrec def d : Nat := 0",
+    "protected unsafe partial def d : Nat := 0",
+    "abbrev d : Nat := 0",
+    "instance d : Inhabited Nat := ⟨0⟩",
+    "structure D where\n  field : Nat",
+    "inductive D | a | b",
+    "class D where\n  field : Nat",
+    "alias d := other",
+    "macro_rules | `(x) => `(y)",
+    "notation:max \"d\" => 0",
+    "attribute [simp] other",
+    "deriving instance Repr for Nat",
+    "open Nat in theorem d : True := trivial",
+    "set_option maxHeartbeats 400000 in\ntheorem d : True := trivial",
+    "initialize d : Nat ← pure 0",
+    "example : True := trivial",
+)
+
+
+class DeclarationFormTest(unittest.TestCase):
+    """No declaration form may make a module invisible to the enforced rules.
+
+    This is the regression test for the false negative an independent review
+    found: with a denylist of declaration *keywords*, a module whose only
+    content was ``unsafe def`` classified as an umbrella, so its forbidden
+    ``L3_AMBIENT -> L4_LATTICE`` import was not reported at all.  Each case is
+    asserted twice -- the classification *and* the direction verdict it feeds --
+    because the classification alone is not the property that matters.
+    """
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="import-dag-forms-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+
+    def tree_with(self, body: str, index: int) -> Path:
+        """Return a two-module tree: an ``L3`` module with ``body``, an ``L4`` sink."""
+        root = Path(self.tmp) / f"case{index}"
+        return materialize(
+            {
+                "IsingModel/AmbientLattice/Ambient.lean": (
+                    "import IsingModel.Concrete.Sink\n\n" + body + "\n"
+                ),
+                "IsingModel/Concrete/Sink.lean": "theorem concreteSink : True := trivial\n",
+            },
+            root,
+        )
+
+    def test_every_declaration_form_stays_a_violation_source(self) -> None:
+        """Content in any spelling keeps the module checkable, and R3 fires."""
+        for index, body in enumerate(DECLARATION_FORMS):
+            with self.subTest(form=body.splitlines()[0]):
+                root = self.tree_with(body, index)
+                graph = contract.load_graph(root)
+                self.assertNotIn("IsingModel.AmbientLattice.Ambient", graph.aggregators)
+                report = contract.build_report(root=root, baseline_path=root / "none.txt")
+                self.assertEqual(
+                    [edge.key for edge in report.violations["R3"]],
+                    ["IsingModel.AmbientLattice.Ambient -> IsingModel.Concrete.Sink"],
+                )
+
+    def test_a_genuine_umbrella_in_the_same_position_is_not_a_source(self) -> None:
+        """Anti-vacuity: the sweep above must not be flagging every module."""
+        root = self.tree_with("namespace IsingModel\nopen Nat\nend IsingModel", len(DECLARATION_FORMS))
+        graph = contract.load_graph(root)
+        self.assertIn("IsingModel.AmbientLattice.Ambient", graph.aggregators)
+        report = contract.build_report(root=root, baseline_path=root / "none.txt")
+        self.assertEqual(report.violations["R3"], [])
+
+
 # --------------------------------------------------------------------------
 # The clean fixture, and T1/T1b -- the canaries
 # --------------------------------------------------------------------------
@@ -444,7 +524,7 @@ class BaselineTest(TreeHarness):
             self.tree({self.R3[0]: self.R3[1]}), f"{self.R3[2]}  # issue: #4833\n"
         )
         self.assertFalse(ok, text)
-        self.assertIn("missing `# owner:`", text)
+        self.assertIn("missing `# owner:", text)
 
     def test_a_baseline_entry_without_an_issue_fails(self) -> None:
         """An exception with no tracker is an exception nobody will remove."""
@@ -452,7 +532,35 @@ class BaselineTest(TreeHarness):
             self.tree({self.R3[0]: self.R3[1]}), f"{self.R3[2]}  # owner: someone\n"
         )
         self.assertFalse(ok, text)
-        self.assertIn("missing `# issue:`", text)
+        self.assertIn("missing `# issue:", text)
+
+    def test_annotation_look_alikes_do_not_count(self) -> None:
+        """The fields are matched structurally, not by substring presence.
+
+        An independent review found that ``# notowner: x  # noissue: 1`` and an
+        empty ``# owner:`` both satisfied a substring test, so an edge could be
+        silenced with no owner and no tracker at all.
+        """
+        cases = {
+            "look-alike labels": "# notowner: someone  # noissue: 4833",
+            "empty owner": "# owner:  # issue: #4833",
+            "empty issue": "# owner: someone  # issue:",
+            "non-numeric issue": "# owner: someone  # issue: TODO",
+            "issue without a number sign": "# owner: someone  # issue: 4833",
+            "placeholder owner": "# owner: TODO  # issue: #4833",
+            "no annotation at all": "",
+        }
+        for label, annotation in cases.items():
+            with self.subTest(case=label):
+                ok, text = self.verdict(
+                    self.tree({self.R3[0]: self.R3[1]}), f"{self.R3[2]}  {annotation}\n"
+                )
+                self.assertFalse(ok, f"{label} was accepted:\n{text}")
+
+    def test_a_fully_annotated_entry_still_works(self) -> None:
+        """Anti-vacuity for the case above: a real annotation is accepted."""
+        _entries, errors = contract.parse_baseline(self.ANNOTATED)
+        self.assertEqual(errors, [])
 
     def test_a_baseline_entry_suppresses_only_its_own_edge(self) -> None:
         """An allowlisted edge does not amnesty the rest of its rule."""
@@ -480,13 +588,22 @@ class BaselineTest(TreeHarness):
         _entries, errors = contract.parse_baseline(line + line)
         self.assertTrue(any("duplicate" in message for message in errors), errors)
 
-    def test_the_emitted_baseline_round_trips(self) -> None:
-        """``--baseline`` output must be re-readable, never hand-edited into silence."""
+    def test_the_emitted_baseline_names_the_right_edges(self) -> None:
+        """``--baseline`` derives the edge set deterministically from the tree."""
         report = self.report(self.tree({self.R3[0]: self.R3[1]}))
-        rendered = contract.format_baseline(report.violations)
-        entries, errors = contract.parse_baseline(rendered)
-        self.assertEqual(errors, [])
+        entries, _errors = contract.parse_baseline(contract.format_baseline(report.violations))
         self.assertEqual(sorted(entries), [self.R3[2]])
+
+    def test_the_emitted_baseline_does_not_validate_as_written(self) -> None:
+        """The skeleton carries placeholders, so it cannot be committed as-is.
+
+        ``--baseline`` derives the *edges*; assigning an owner and a tracker is a
+        human decision, and an emitted file that passed unchanged would make the
+        annotation requirement ceremonial.
+        """
+        report = self.report(self.tree({self.R3[0]: self.R3[1]}))
+        _entries, errors = contract.parse_baseline(contract.format_baseline(report.violations))
+        self.assertTrue(errors, "the emitted skeleton validated without being filled in")
 
 
 # --------------------------------------------------------------------------

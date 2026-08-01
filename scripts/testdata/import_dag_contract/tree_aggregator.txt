@@ -29,6 +29,27 @@ def neitherIsThis : Nat := 0
 --- IsingModel/Fixture/AggEmpty.lean
 /-! An umbrella with no imports at all. -/
 
+--- IsingModel/Fixture/AggScaffolding.lean
+import IsingModel.Fixture.RealPlain
+
+/-! An umbrella carrying namespace/section scaffolding but no declaration. -/
+
+namespace IsingModel
+namespace Ambient
+section
+open Finset Real
+open scoped symmDiff
+universe u
+variable {V : Type*} [DecidableEq V]
+end
+end Ambient
+end IsingModel
+
+--- IsingModel/Fixture/AggLineComment.lean
+import IsingModel.Fixture.RealPlain
+
+-- theorem thisIsALineComment : True := trivial
+
 --- IsingModel/Fixture/RealPlain.lean
 /-! One ordinary theorem. -/
 
@@ -66,3 +87,38 @@ import IsingModel.Fixture.RealPlain
 
 /-- A doc comment, itself a block comment. -/
 theorem realAfterDocBlock : True := trivial
+
+--- IsingModel/Fixture/RealUnsafe.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A modifier a declaration-keyword denylist would not have listed. -/
+
+unsafe def realUnsafe : Nat := 0
+
+--- IsingModel/Fixture/RealPartial.lean
+import IsingModel.Fixture.RealPlain
+
+/-! Another such modifier. -/
+
+partial def realPartial : Nat := 0
+
+--- IsingModel/Fixture/RealAlias.lean
+import IsingModel.Fixture.RealPlain
+
+/-! A declaration command that is not a `def`/`theorem` keyword at all. -/
+
+alias realAlias := realPlain
+
+--- IsingModel/Fixture/RealOpenIn.lean
+import IsingModel.Fixture.RealPlain
+
+/-! The `in` combinator: allowlisted scaffolding carrying a declaration. -/
+
+open Nat in theorem realOpenIn : True := trivial
+
+--- IsingModel/Fixture/RealAttribute.lean
+import IsingModel.Fixture.RealPlain
+
+/-! An `attribute` command: content, so not a pure re-export index. -/
+
+attribute [simp] realPlain
