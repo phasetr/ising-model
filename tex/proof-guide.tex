@@ -21368,7 +21368,13 @@ moved to \texttt{BetaDerivativeMagnetization.lean} by PR~\#2063:
 6 new theorems with existence-form derivative
 $\exists d,\,\mathrm{HasDerivAt}\,f\,d\,x$; subset case lifts to
 finite-volume \texttt{hasDerivAt\_correlation\_*}, non-subset is
-constant zero. The corresponding \texttt{Continuous*} /
+constant zero. Since PR~\#4840 both branches of the
+\texttt{correlationAlongExhaustion} case splits are discharged by the
+named first-order family equations
+\texttt{correlationAlongExhaustion\_family\_eq\_of\_subset} /
+\texttt{correlationAlongExhaustion\_family\_eq\_zero\_of\_not\_subset}
+rather than by an in-proof \texttt{funext}.
+The corresponding \texttt{Continuous*} /
 \texttt{Differentiable*} along-ex wrappers live in two different places.
 On the \texttt{correlationAlongExhaustion} side they keep the
 \texttt{\_gen} suffix and stay in \texttt{BetaDerivative.lean}
@@ -23853,7 +23859,18 @@ functions, hence usable by \texttt{rw}, and the family parameter $p$ is an
 explicit argument, which keeps rewriting first-order (no function-valued
 metavariable is ever solved for).  They replace the hand-expanded
 \texttt{dite} case split in the per-parameter regularity wrappers of
-\path{IsingModel/AmbientLattice/SpecialCases/Magnetization.lean}.
+\path{IsingModel/AmbientLattice/SpecialCases/Magnetization.lean}
+(PR~\#4839) and, in \path{IsingModel/AmbientLattice/BetaDerivative.lean}
+and \path{IsingModel/AmbientLattice/BetaDerivativeFieldJ.lean}
+(PR~\#4840), in the $8$ case-splitting
+\texttt{correlationAlongExhaustion} regularity theorems, whose $16$
+branches ($8$ subset, $8$ non-subset) each now consist of one
+\texttt{rw} by the relevant family equation followed by the
+branch-appropriate pre-existing closer (a finite-volume
+\texttt{correlation\_*} lemma in the subset branches, a
+constant-function lemma such as \texttt{hasDerivAt\_const} or
+\texttt{continuousAt\_const} in the non-subset ones).  All statements
+are unchanged; the migration is proof-only.
 
 \subsection{Ambient subgraph monotonicity on \texorpdfstring{$\Lambda$}{Lambda}}
 
