@@ -31,14 +31,14 @@ def neitherIsThis : Nat := 0
 umbrella: nothing here is being re-exported, and the safe answer to "is this an
 index?" is no. -/
 
---- IsingModel/Fixture/RealScaffolding.lean
+--- IsingModel/Fixture/AggScaffolding.lean
 import IsingModel.Fixture.RealPlain
 
-/-! Namespace/section scaffolding around no declaration.  Lean's grammar is
-whitespace-insensitive at the command level, so a line beginning with `namespace`
-can still carry a declaration; the classifier therefore does not try to tell the
-two apart and treats every non-import line as content.  Under-recognising an
-umbrella is safe -- the module simply stays checkable. -/
+/-! Namespace/section scaffolding around no declaration.  This has to be
+recognised: an unrecognised `L2_THEORY` umbrella would split an
+`L3 -> umbrella -> L4` inversion into an allowed `L3 -> L2` edge and an unranked
+`L2 -> L4` edge, and nothing would fire.  Every line below is matched whole, so
+none of them can be carrying a second command. -/
 
 namespace IsingModel
 section

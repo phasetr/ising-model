@@ -135,42 +135,57 @@ stop a forbidden edge being laundered) does not apply.
 
 ## Compatibility umbrellas: pass-through, not exemption
 
-A module whose every non-comment line is a lone `import` is an **aggregator** — a
-re-export index. The set is *computed*, never hand-listed, so new umbrellas need
-no maintenance; there are 102 on the delivering commit, including all eight
+A module that has imports and declares nothing is an **aggregator** — a re-export
+index. The set is *computed*, never hand-listed, so new umbrellas need no
+maintenance; there are 112 on the delivering commit, including all eight
 `Concrete/LatticeGraphCorrelation/Umbrella/*`, the root `IsingModel.lean` and the
 small root re-export files.
 
-That test involves **no keyword list in either direction**, and the reason is
-Lean's grammar: commands are whitespace-insensitive, so
+**Neither classification error is safe**, which is why this is the fiddliest part
+of the checker:
+
+* Calling a real module an umbrella exempts it as a violation source, so its
+  forbidden import is never reported.
+* Calling an umbrella a real module hides an inversion the other way. With an
+  unrecognised `L2_THEORY` umbrella `U`, the chain `L3_AMBIENT → U → L4_LATTICE`
+  splits into an allowed `L3 → L2` edge and an unranked `L2 → L4` edge, and
+  nothing fires.
+
+So the classification has to be *right*, not merely conservative in some
+direction. Two things make that credible. First, the line test is **whole-line**
+and uses no keyword list in either direction. Lean's grammar is
+whitespace-insensitive at the command level, so
 
 ```lean
 namespace Foo theorem d : True := trivial end Foo
 ```
 
-is one physical line holding three commands, and it compiles. A rule phrased as
-"the line opens no declaration" therefore fails open on the first spelling nobody
-listed (`unsafe def`, `partial def`, `alias`, `macro_rules`, a keyword that does
-not exist yet), and a rule phrased as "the line *starts with* something harmless"
-fails open on the line above. Requiring the whole line to be an import avoids
-both, at the price of not recognising the ten umbrellas that carry `namespace` /
-`open` / `variable` scaffolding.
+is one physical line holding three commands and it compiles: a rule phrased as
+"the line *starts with* something harmless" accepts it, and a rule phrased as
+"the line opens no declaration" fails open on the first spelling nobody listed
+(`unsafe def`, `partial def`, `alias`, `macro_rules`, a keyword that does not
+exist yet). Each line is instead matched in full against `import`, or against one
+of the commands that declare nothing (`namespace`, `end`, `section`, `open`,
+`universe`, `variable`), with argument classes that exclude the punctuation a
+term needs and with the `in` command combinator rejected outright. Anything
+unmatched is content, so the module stays checkable.
 
-That price is the right way round. Under-recognising an umbrella is safe in
-**both** roles the classification feeds: as a source the module simply stays
-checkable, and as a target the edge into it is checked against its own layer tag
-while its own outgoing edges are checked directly. Over-recognising is the only
-dangerous direction, and this predicate makes it impossible. Measured: the strict
-and the scaffolding-tolerant readings give the same verdict on this tree
-(R1/R2/R3/R6 all 0, 28 `INFO`), so the safe one costs nothing here.
+Second, the resulting set is **cross-checked against an independent parser**:
+`scripts/test_import_dag_contract.py` re-derives which modules declare nothing
+using `scripts/dead_candidate_scan.py`, a separately written declaration parser
+in this repository, and requires the two to agree on all ~1900 modules in both
+directions.
 
-For the same reason the contract **fails** on any physical line carrying more
-than one `import`. The repository's single import scanner
-(`leaf_audit.build_import_graph`, reused here so the two tools cannot disagree
-about the edges) reads one import per line, and Lean accepts
-`import A import B`, so such a line would make an edge invisible to the graph and
-therefore to every rule. The contract refuses to certify a file it cannot read
-rather than reporting it clean. No line in `IsingModel/` has this shape today.
+For the same reason the contract **fails** on any line carrying an `import` that
+is not exactly one column-0 import. `leaf_audit.build_import_graph` — the
+repository's single import scanner, reused here so the two tools cannot disagree
+about the edges — reads one import per physical line anchored at column 0, while
+Lean also accepts `import A import B`, an indented `  import A`, and a
+non-`IsingModel` import in front of an `IsingModel` one. Each of those makes an
+edge invisible to the graph and therefore to every rule, so the contract refuses
+to certify a file it cannot read rather than reporting it clean. Erring towards a
+false failure here is deliberate: it is loud and fixable. No line in
+`IsingModel/` has this shape today.
 
 Two rules follow:
 

@@ -234,10 +234,6 @@ DECLARATION_FORMS = (
     # inspected only the start of a line would call both harmless.
     "namespace Foo theorem d : True := trivial end Foo",
     "section open Nat theorem d : True := trivial end",
-    # Scaffolding around nothing.  Not content, but not recognised as an
-    # umbrella either, because the line above cannot be told apart from it
-    # without parsing Lean.  Under-recognition is the safe direction.
-    "namespace Foo\nopen Nat\nvariable {V : Type*}\nend Foo",
 )
 
 
@@ -284,13 +280,71 @@ class DeclarationFormTest(unittest.TestCase):
                     ["IsingModel.AmbientLattice.Ambient -> IsingModel.Concrete.Sink"],
                 )
 
+    #: Bodies that declare nothing.  They must be recognised as umbrellas, both
+    #: as anti-vacuity for the sweep above and because an unrecognised umbrella
+    #: hides an inversion of its own (see :class:`AggregatorOracleTest`).
+    UMBRELLA_FORMS = (
+        "/-! A pure re-export index. -/",
+        "namespace Foo\nopen Nat\nvariable {V : Type*}\nend Foo",
+        "namespace Foo\nnoncomputable section\nopen scoped Bar\nuniverse u\nend\nend Foo",
+    )
+
     def test_a_genuine_umbrella_in_the_same_position_is_not_a_source(self) -> None:
         """Anti-vacuity: the sweep above must not be flagging every module."""
-        root = self.tree_with("/-! A pure re-export index. -/", len(DECLARATION_FORMS))
-        graph = contract.load_graph(root)
-        self.assertIn("IsingModel.AmbientLattice.Ambient", graph.aggregators)
-        report = contract.build_report(root=root, baseline_path=root / "none.txt")
-        self.assertEqual(report.violations["R3"], [])
+        for index, body in enumerate(self.UMBRELLA_FORMS):
+            with self.subTest(form=body.splitlines()[0]):
+                root = self.tree_with(body, len(DECLARATION_FORMS) + index)
+                graph = contract.load_graph(root)
+                self.assertIn("IsingModel.AmbientLattice.Ambient", graph.aggregators)
+                report = contract.build_report(root=root, baseline_path=root / "none.txt")
+                self.assertEqual(report.violations["R3"], [])
+
+
+class AggregatorOracleTest(unittest.TestCase):
+    """The umbrella set, re-derived on the real tree by an independent parser.
+
+    The classification has to be right, not merely conservative: calling a real
+    module an umbrella exempts it as a violation source, and calling an umbrella
+    a real module hides an ``L3 -> U -> L4`` inversion behind an allowed
+    ``L3 -> L2`` edge and an unranked ``L2 -> L4`` one.  Two independent reviews
+    broke earlier one-sided arguments, so the property is measured instead of
+    argued: ``dead_candidate_scan`` is a separately written declaration parser in
+    this repository, and the two must agree about which of the ~1900 modules
+    declare nothing.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        import dead_candidate_scan as dcs  # noqa: PLC0415  (slow import, real tree)
+
+        cls.declaring = {
+            contract.REPO_ROOT.joinpath(decl.file).with_suffix("").relative_to(
+                contract.REPO_ROOT
+            ).as_posix().replace("/", ".")
+            for decl in dcs.load_tree().decls
+        }
+        cls.graph = contract.load_graph()
+
+    def test_the_two_parsers_agree_on_which_modules_declare_nothing(self) -> None:
+        """No aggregator declares anything, per the other parser."""
+        declaring_aggregators = sorted(self.graph.aggregators & self.declaring)
+        self.assertEqual(declaring_aggregators, [], "umbrella holding a declaration")
+
+    def test_no_declaration_free_importer_is_left_out(self) -> None:
+        """Conversely, every declaration-free module with imports is an umbrella."""
+        missed = sorted(
+            module
+            for module in self.graph.modules
+            if module not in self.declaring
+            and module not in self.graph.aggregators
+            and self.graph.imports.get(module)
+        )
+        self.assertEqual(missed, [], "declaration-free module not recognised as an umbrella")
+
+    def test_the_oracle_is_not_vacuous(self) -> None:
+        """Both sides have to be populated for the agreement to mean anything."""
+        self.assertGreater(len(self.graph.aggregators), 50)
+        self.assertGreater(len(self.declaring), 1000)
 
 
 class ReadableImportTest(unittest.TestCase):
@@ -347,6 +401,23 @@ class ReadableImportTest(unittest.TestCase):
         root = self.tree_with("import Mathlib.Order.Basic import IsingModel.Concrete.Sink", "mixed")
         ok, text = self.verdict(root)
         self.assertFalse(ok, text)
+
+    def test_an_indented_import_fails(self) -> None:
+        """Lean accepts a leading space; the scanner's ``^import`` anchor does not.
+
+        This case carries only *one* ``import`` token, so a guard that merely
+        counted duplicates would wave it through -- which is what it did until
+        this test was added.
+        """
+        root = self.tree_with("  import IsingModel.Concrete.Sink", "indented")
+        graph = contract.load_graph(root)
+        self.assertEqual(
+            graph.imports.get("IsingModel.AmbientLattice.Ambient", set()), set(),
+            "the scanner unexpectedly saw the indented import; this test is now vacuous",
+        )
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+        self.assertIn("import IsingModel.Concrete.Sink", text)
 
     def test_one_import_per_line_passes(self) -> None:
         """Anti-vacuity: the ordinary shape is not flagged."""

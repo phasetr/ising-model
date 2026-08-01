@@ -226,28 +226,85 @@ def layer_of(module: str) -> str:
 _BLOCK_COMMENT_RE = re.compile(r"/-.*?-/", re.DOTALL)
 _LINE_COMMENT_RE = re.compile(r"--.*$", re.MULTILINE)
 
-#: A whole line holding exactly one ``import`` command and nothing else.  This
-#: is the *entire* definition of what an umbrella may contain: no keyword list
-#: is involved in either direction.
-#:
-#: Lean's grammar is whitespace-insensitive at the command level, so
-#: ``namespace Foo theorem d : True := trivial end Foo`` is one physical line
-#: holding three commands and it compiles.  Any rule phrased as "the line
-#: *starts with* something harmless" is therefore unsound, and any rule phrased
-#: as a list of declaration keywords fails open the moment a spelling is missing
-#: (``unsafe def``, ``alias``, a keyword that does not exist yet).  Requiring the
-#: whole line to be an import avoids both.
-#:
-#: Under-recognising an umbrella is safe in *both* roles the classification
-#: feeds: as a source the module stays checkable, and as a target the edge into
-#: it is checked against its own layer tag while its own outgoing edges are
-#: checked directly.  Over-recognising is the only dangerous direction, and this
-#: predicate makes it impossible.
-_IMPORT_LINE_RE = re.compile(r"^\s*import\s+\S+\s*$")
+#: A whole line holding exactly one ``import`` command, at column 0, and nothing
+#: else -- which is also exactly what ``leaf_audit``'s scanner can read.
+_IMPORT_LINE_RE = re.compile(r"^import\s+\S+\s*$")
 
-#: Any ``import`` command token, used to detect a physical line carrying more
-#: than one of them (see :func:`malformed_import_lines`).
+#: Any ``import`` command token, used to detect a line the scanner cannot read
+#: (see :func:`malformed_import_lines`).
 _IMPORT_TOKEN_RE = re.compile(r"(?:^|\s)import\s")
+
+#: One dotted-name argument to a scaffolding command.  Deliberately a *negated*
+#: class: Lean identifiers are Unicode, but a term needs punctuation
+#: (``:``, ``:=``, brackets, commas) that no scaffolding argument contains, so
+#: excluding that punctuation is what stops a second command hiding on the line.
+_SCAFFOLD_ARG = r"[^\s()\[\]{}⟨⟩⦃⦄:=,;]+"
+
+#: Whole-line patterns for the commands that declare nothing.  Each must consume
+#: the entire line: Lean's grammar is whitespace-insensitive at the command
+#: level, so ``namespace Foo theorem d : True := trivial end Foo`` is one
+#: physical line holding three commands and it compiles.  A rule phrased as "the
+#: line *starts with* something harmless" would accept it.
+_SCAFFOLD_RES = tuple(
+    re.compile(pattern)
+    for pattern in (
+        rf"^namespace\s+{_SCAFFOLD_ARG}\s*$",
+        rf"^end(?:\s+{_SCAFFOLD_ARG})?\s*$",
+        rf"^(?:noncomputable\s+)?section(?:\s+{_SCAFFOLD_ARG})?\s*$",
+        rf"^open(?:\s+scoped)?(?:\s+{_SCAFFOLD_ARG})+\s*$",
+        rf"^universe(?:\s+{_SCAFFOLD_ARG})+\s*$",
+    )
+)
+
+#: ``open Foo in <decl>`` is a command *wrapper*: allowlisted head, declaration
+#: behind it.  ``in`` is identifier-shaped, so it has to be excluded by name.
+_IN_COMBINATOR_RE = re.compile(r"(?:^|\s)in(?:\s|$)")
+
+#: The bracket pairs a ``variable`` binder group may use.
+_BINDER_OPEN = "({[⦃⟨"
+_BINDER_CLOSE = ")}]⦄⟩"
+
+IMPORT = "import"
+SCAFFOLD = "scaffold"
+CONTENT = "content"
+
+
+def _is_binder_only(rest: str) -> bool:
+    """Return whether ``rest`` is a whitespace-separated run of binder groups.
+
+    Used for ``variable``.  A command cannot be nested inside a binder group, so
+    "nothing but balanced brackets at depth 0" is exactly the condition that
+    stops ``variable {V : Type*} theorem d : True := trivial`` passing as
+    scaffolding, while admitting real binders with nested parentheses.
+    """
+    depth = 0
+    for char in rest:
+        if char in _BINDER_OPEN:
+            depth += 1
+        elif char in _BINDER_CLOSE:
+            depth -= 1
+            if depth < 0:
+                return False
+        elif depth == 0 and not char.isspace():
+            return False
+    return depth == 0 and rest.strip() != ""
+
+
+def classify_line(line: str) -> str:
+    """Classify one comment-stripped source line as import/scaffold/content.
+
+    ``CONTENT`` is the default, so a line nobody anticipated makes the module a
+    real one rather than an umbrella.
+    """
+    if _IMPORT_LINE_RE.match(line):
+        return IMPORT
+    if _IN_COMBINATOR_RE.search(line):
+        return CONTENT
+    if any(pattern.match(line) for pattern in _SCAFFOLD_RES):
+        return SCAFFOLD
+    if line.startswith("variable") and _is_binder_only(line[len("variable"):]):
+        return SCAFFOLD
+    return CONTENT
 
 
 def module_source(module: str, root: Path) -> str | None:
@@ -273,8 +330,19 @@ def is_aggregator(module: str, root: Path) -> bool:
     """Return whether ``module`` is a re-export umbrella (declares nothing).
 
     Comments are stripped first -- so a ``/-! ... theorem foo ... -/`` module
-    header cannot make an umbrella look declarative -- and every remaining
-    non-blank line must then be a lone ``import`` (:data:`_IMPORT_LINE_RE`).
+    header cannot make an umbrella look declarative -- and the module is an
+    umbrella when it has at least one import and no ``CONTENT`` line.
+
+    The classification has to be *right*, not merely conservative, because
+    neither error is safe.  Calling a real module an umbrella exempts it as a
+    violation source.  Calling an umbrella a real module hides an inversion the
+    other way: ``L3_AMBIENT -> U -> L4_LATTICE`` with an unrecognised
+    ``L2_THEORY`` umbrella ``U`` splits into an allowed ``L3 -> L2`` edge and an
+    unranked ``L2 -> L4`` edge, and nothing fires.  Hence the whole-line
+    patterns, and hence
+    ``test_import_dag_contract.py::AggregatorOracleTest``, which re-derives the
+    set on the real tree with the *other* declaration parser in this repository
+    (``dead_candidate_scan``) and requires the two to agree.
 
     A module whose file is missing is not an aggregator: an unresolvable target
     must not silently gain pass-through semantics.
@@ -282,20 +350,24 @@ def is_aggregator(module: str, root: Path) -> bool:
     text = module_source(module, root)
     if text is None:
         return False
-    lines = [line for line in strip_comments(text).splitlines() if line.strip()]
-    return bool(lines) and all(_IMPORT_LINE_RE.match(line) for line in lines)
+    kinds = [classify_line(line) for line in strip_comments(text).splitlines() if line.strip()]
+    return IMPORT in kinds and CONTENT not in kinds
 
 
 def malformed_import_lines(graph: Graph) -> list[str]:
-    """Return ``module:line`` reports for physical lines with two imports.
+    """Return ``module:line`` reports for import lines the scanner cannot read.
 
     ``leaf_audit.build_import_graph`` -- the repository's single import scanner,
     reused here so the two tools cannot disagree about the edges -- reads one
-    ``import`` per physical line.  Lean accepts ``import A import B`` on one
-    line, and it accepts a non-``IsingModel`` import in front of an
-    ``IsingModel`` one, both of which would make an edge invisible to the graph
-    and therefore to every rule.  Rather than let that pass quietly, the shape is
-    a hard failure: the contract refuses to certify a file it cannot read.
+    ``import`` per physical line, anchored at column 0.  Lean is looser: it
+    accepts ``import A import B`` on one line, an indented ``  import A``, and a
+    non-``IsingModel`` import in front of an ``IsingModel`` one.  Each of those
+    makes an edge invisible to the graph and therefore to every rule.
+
+    Rather than let that pass quietly, any line carrying an ``import`` token that
+    is not exactly one column-0 import is a hard failure: the contract refuses to
+    certify a file it cannot read.  Erring towards a false failure is deliberate
+    -- it is loud and fixable, whereas the alternative is an unreported edge.
     """
     reports: list[str] = []
     for module in sorted(graph.modules):
@@ -303,7 +375,7 @@ def malformed_import_lines(graph: Graph) -> list[str]:
         if text is None:
             continue
         for lineno, line in enumerate(strip_comments(text).splitlines(), start=1):
-            if len(_IMPORT_TOKEN_RE.findall(line)) > 1:
+            if _IMPORT_TOKEN_RE.search(line) and not _IMPORT_LINE_RE.match(line):
                 reports.append(f"{module}:{lineno}: {line.strip()}")
     return reports
 
@@ -499,7 +571,7 @@ def parse_baseline(text: str) -> tuple[dict[str, str], list[str]]:
         owner = _OWNER_RE.search(annotation)
         if owner is None:
             errors.append(f"line {lineno}: missing `# owner: <name>` annotation for {edge!r}")
-        elif owner.group(1).strip().lower() in _PLACEHOLDER_OWNERS:
+        elif owner.group(1).lstrip("@").lower() in _PLACEHOLDER_OWNERS:
             errors.append(
                 f"line {lineno}: placeholder owner {owner.group(1).strip()!r} for {edge!r}"
             )
