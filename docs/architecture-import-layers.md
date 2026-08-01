@@ -198,21 +198,22 @@ agreement is what makes under-recognition *loud*: a declaration-free module the
 classifier fails to recognise turns the test suite red rather than quietly losing
 its pass-through.
 
-For the same reason the contract **fails** on any line carrying an `import` that
-is not exactly one column-0 import. `leaf_audit.build_import_graph` — the
-repository's single import scanner, reused here so the two tools cannot disagree
-about the edges — reads one import per physical line anchored at column 0, while
-Lean also accepts `import A import B`, an indented `  import A`, a bare `import`
-with the module name on the next line, `import/- c -/ A`, and a non-`IsingModel`
-import in front of an `IsingModel` one. Each of those makes an edge invisible to
-the graph and therefore to every rule, so the contract refuses to certify a file
-it cannot read rather than reporting it clean. Which lines are examined is
-decided on the comment-stripped text, so prose mentioning "import" cannot trip
-the guard, but whether an examined line is *readable* is decided on the **raw**
-line — that is what the scanner reads, and normalising first would accept
-`import/- c -/ A`, whose comment vanishes under normalisation while the scanner
-still sees nothing. Erring towards a false failure here is deliberate: it is loud
-and fixable. No line in `IsingModel/` has this shape today.
+For the same reason the contract **fails** on any import line it cannot read.
+`leaf_audit.build_import_graph` — the repository's single import scanner, reused
+here so the two tools cannot disagree about the edges — reads one import per
+physical line anchored at column 0, while Lean also accepts `import A import B`,
+an indented `  import A`, a bare `import` with the module name on the next line,
+`import/- c -/ A`, `import /-x-/A`, and a non-`IsingModel` import in front of an
+`IsingModel` one. Each makes an edge invisible to the graph and therefore to
+every rule.
+
+Enumerating those shapes turned out to be a losing game — five review rounds
+produced five more — so the guard is an **equivalence check** instead: what Lean
+sees on the comment-stripped line must equal what `leaf_audit`'s own regex
+extracts from the raw one. Which lines are examined is still decided on the
+stripped text, so prose mentioning "import" cannot trip the guard. Erring towards
+a false failure here is deliberate: it is loud and fixable, whereas the
+alternative is an edge nobody sees. No line in `IsingModel/` diverges today.
 
 Two rules follow:
 

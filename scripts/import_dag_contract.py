@@ -126,6 +126,7 @@ BASELINE_FILE = SCRIPT_DIR / "import_dag_baseline.txt"
 
 sys.path.insert(0, str(SCRIPT_DIR))
 
+import leaf_audit  # noqa: E402
 from leaf_audit import build_import_graph  # noqa: E402
 
 # --------------------------------------------------------------------------
@@ -247,11 +248,15 @@ def layer_of(module: str) -> str:
 #: stops at whitespace and so reads such a line correctly.
 _IMPORT_LINE_RE = re.compile(r"^import[ \t]+\S+[ \t]*(?:--[^\n]*)?$")
 
-#: Any ``import`` command token, used to detect a line the scanner cannot read
-#: (see :func:`malformed_import_lines`).  The trailing boundary is ``\b`` rather
-#: than ``\s`` so that a bare ``import`` ending a line -- Lean accepts the module
-#: name on the *next* line -- is caught too.
+#: Any ``import`` command token, used to decide which lines to examine for
+#: readability.  The trailing boundary is ``\b`` rather than ``\s`` so that a
+#: bare ``import`` ending a line -- Lean accepts the module name on the *next*
+#: one -- is examined too.
 _IMPORT_TOKEN_RE = re.compile(r"(?:^|\s)import\b")
+
+#: Every ``import`` command Lean sees on a comment-stripped line, with its
+#: argument.  Compared against what the scanner extracts from the same line.
+_LEAN_IMPORT_RE = re.compile(r"(?:^|\s)import\s+(\S+)")
 
 #: One dotted-name argument to a scaffolding command.  Deliberately a *negated*
 #: class: Lean identifiers are Unicode, but a term needs punctuation
@@ -448,27 +453,50 @@ def is_aggregator(module: str, root: Path) -> bool:
     return _HIDDEN_COMMAND_RE.search(stripped) is None
 
 
+def _is_ising_module(name: str) -> bool:
+    """Return whether ``name`` is the umbrella module or one of its children."""
+    return name == "IsingModel" or name.startswith("IsingModel.")
+
+
+def line_is_readable(raw: str, stripped: str) -> bool:
+    """Return whether the scanner sees on ``raw`` exactly what Lean sees.
+
+    Lean's view is taken from the comment-stripped line; the scanner's view is
+    taken from the raw line with ``leaf_audit``'s *own* regex, so the comparison
+    cannot drift from the tool whose output the whole contract is built on.
+
+    This is an equivalence check rather than a list of bad shapes, which is what
+    it takes to be sound here: successive reviews produced
+    ``import A import B``, ``  import A``, a bare ``import`` with the name on the
+    next line, ``import/- c -/ A`` and ``import /-x-/A``, each legal Lean and
+    each invisible to the scanner.  Enumerating them is a losing game; requiring
+    the two views to agree covers the ones nobody has thought of.
+    """
+    lean = _LEAN_IMPORT_RE.findall(stripped)
+    if len(lean) != 1:
+        # Zero means the argument is on another line; more than one means the
+        # scanner, which reads a single import per line, must miss some.
+        return False
+    match = leaf_audit._IMPORT_RE.match(raw)
+    scanner = [match.group(1)] if match else []
+    return [name for name in lean if _is_ising_module(name)] == scanner
+
+
 def malformed_import_lines(graph: Graph) -> list[str]:
     """Return ``module:line`` reports for import lines the scanner cannot read.
 
     ``leaf_audit.build_import_graph`` -- the repository's single import scanner,
     reused here so the two tools cannot disagree about the edges -- reads one
-    ``import`` per physical line, anchored at column 0.  Lean is looser: it
-    accepts ``import A import B`` on one line, an indented ``  import A``, and a
-    non-``IsingModel`` import in front of an ``IsingModel`` one.  Each of those
-    makes an edge invisible to the graph and therefore to every rule.
-
-    Rather than let that pass quietly, any line carrying an ``import`` token that
-    is not exactly one column-0 import is a hard failure: the contract refuses to
-    certify a file it cannot read.  Erring towards a false failure is deliberate
-    -- it is loud and fixable, whereas the alternative is an unreported edge.
+    ``import`` per physical line, anchored at column 0, and Lean is far looser.
+    Any divergence makes an edge invisible to the graph and therefore to every
+    rule, so it is a hard failure: the contract refuses to certify a file it
+    cannot read.  Erring towards a false failure is deliberate -- it is loud and
+    fixable, whereas the alternative is an unreported edge.
 
     Which lines to *examine* is decided on the comment-stripped text, so prose
     mentioning "import" cannot trip the guard; whether an examined line is
-    readable is then decided on the **raw** line, because that is what the
-    scanner reads.  Validating the normalised line instead would accept
-    ``import/- c -/ Foo``, whose comment vanishes under normalisation while the
-    scanner still sees nothing.
+    readable is decided by :func:`line_is_readable`, which compares the two
+    views of the same line.
     """
     reports: list[str] = []
     for module in sorted(graph.modules):
@@ -480,7 +508,7 @@ def malformed_import_lines(graph: Graph) -> list[str]:
             if not _IMPORT_TOKEN_RE.search(line):
                 continue
             raw = raw_lines[lineno - 1] if lineno <= len(raw_lines) else ""
-            if not _IMPORT_LINE_RE.match(raw):
+            if not line_is_readable(raw, line):
                 reports.append(f"{module}:{lineno}: {raw.strip()}")
     return reports
 

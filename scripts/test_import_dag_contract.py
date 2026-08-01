@@ -482,6 +482,51 @@ class ReadableImportTest(unittest.TestCase):
         ok, text = self.verdict(root)
         self.assertFalse(ok, text)
 
+    #: ``(raw line, readable)``.  The unreadable half is the accumulated list of
+    #: shapes successive reviews produced, each legal Lean and each invisible to
+    #: ``leaf_audit``; the readable half is the anti-vacuity floor.
+    IMPORT_LINE_CASES = (
+        ("import IsingModel.Foo", True),
+        ("import IsingModel", True),
+        ("import Mathlib.Order.Basic", True),
+        ("import IsingModel.Foo -- trailing line comment", True),
+        ("import IsingModel.Foo /- trailing block comment -/", True),
+        ("import", False),
+        ("  import IsingModel.Foo", False),
+        ("\timport IsingModel.Foo", False),
+        ("import IsingModel.A import IsingModel.B", False),
+        ("import Mathlib.Order.Basic import IsingModel.B", False),
+        ("import/- sep -/ IsingModel.Foo", False),
+        ("import /-x-/IsingModel.Foo", False),
+        ("import /- a -/ /- b -/ IsingModel.Foo", False),
+    )
+
+    def test_readability_is_an_equivalence_with_the_scanner(self) -> None:
+        """Each accumulated shape, checked directly against the two views.
+
+        Enumerating bad shapes was a losing game -- five reviews produced five
+        more -- so the guard compares what Lean sees on the stripped line with
+        what ``leaf_audit``'s own regex extracts from the raw one.  These cases
+        pin that comparison; the unreadable ones all compile under
+        ``lake env lean``.
+        """
+        for raw, readable in self.IMPORT_LINE_CASES:
+            with self.subTest(line=raw):
+                self.assertEqual(
+                    contract.line_is_readable(raw, contract.strip_comments(raw)), readable
+                )
+
+    def test_a_comment_inside_the_import_command_fails(self) -> None:
+        """``import /-x-/Foo``: the scanner's capture must start at the module."""
+        root = self.tree_with("import /-x-/IsingModel.Concrete.Sink", "inline")
+        graph = contract.load_graph(root)
+        self.assertEqual(
+            graph.imports.get("IsingModel.AmbientLattice.Ambient", set()), set(),
+            "the scanner unexpectedly saw the import; this test is now vacuous",
+        )
+        ok, text = self.verdict(root)
+        self.assertFalse(ok, text)
+
     def test_a_comment_between_import_and_module_fails(self) -> None:
         """``import/- c -/ Foo`` is legal Lean and unreadable to the scanner.
 
