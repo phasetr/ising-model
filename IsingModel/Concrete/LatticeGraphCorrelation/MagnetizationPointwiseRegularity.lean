@@ -1,6 +1,5 @@
 import IsingModel.Lattice
-import IsingModel.AmbientLattice.BetaDerivative
-import IsingModel.AmbientLattice.BetaDerivativeMagnetization
+import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
 # Concrete pointwise regularity wrappers for lattice magnetization
@@ -28,8 +27,8 @@ theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_beta
     ContinuousAt (fun β' =>
       Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
         (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (Ambient.magnetizationAlongExhaustion_continuous_beta_general_h_gen
-    (IsingModel.latticeGraph d) Λ J h i n).continuousAt
+  Ambient.magnetizationAlongExhaustion_continuousAt_beta
+    (IsingModel.latticeGraph d) Λ J h β i n
 
 /-- **ℤ^d along-ex: `magnetizationAlongExhaustion` DifferentiableAt β** (general h). -/
 theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_beta
@@ -40,8 +39,8 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_beta
     DifferentiableAt ℝ (fun β' =>
       Ambient.magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ
         (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
-  (Ambient.magnetizationAlongExhaustion_differentiable_beta_general_h_gen
-    (IsingModel.latticeGraph d) Λ J h i n).differentiableAt
+  Ambient.magnetizationAlongExhaustion_differentiableAt_beta
+    (IsingModel.latticeGraph d) Λ J h β i n
 
 /-! ## Moved: field/J pointwise wrappers
 

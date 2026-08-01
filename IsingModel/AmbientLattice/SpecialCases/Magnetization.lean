@@ -10,7 +10,7 @@ RegularityAtContinuousAtBeta,RegularityAtDifferentiableAt,
 RegularityAtDifferentiableAtBeta,RegularityContinuousBeta,
 RegularityDifferentiable,RegularityDifferentiableBeta}.lean`) as part of
 the #4563 cycle-10 fixed-cost consolidation. All 15 theorem
-names/statements/proofs are preserved verbatim; see the git history of the
+names/statements are preserved verbatim; see the git history of the
 deleted `Magnetization*.lean` for provenance.
 
 Contents (finite-stage along-exhaustion wrappers, each a thin pass-through
@@ -18,7 +18,15 @@ to the corresponding ambient `magnetizationΛ_*` lemma):
 
 * parameter-direction convergence (β/h/J → ∞);
 * global `Continuous` / `Differentiable` regularity in β/h/J;
+* the `h = 0` corollaries `magnetizationAlongExhaustion_{continuous,
+  differentiable}_beta_gen`, re-homed here from
+  `AmbientLattice/BetaDerivativeMagnetization.lean`;
 * pointwise `ContinuousAt` / `DifferentiableAt` regularity in β/h/J.
+
+The six global regularity proofs case-split on `{i} ⊆ Λ.volume n` through the
+first-order family equations `correlationAlongExhaustion_family_eq_of_subset`
+and `correlationAlongExhaustion_family_eq_zero_of_not_subset`
+(`AmbientLattice/Exhaustion.lean`) instead of unfolding the `dite` by hand.
 -/
 
 namespace IsingModel
@@ -129,11 +137,13 @@ theorem magnetizationAlongExhaustion_differentiable_beta
     Differentiable ℝ (fun β' =>
       magnetizationAlongExhaustion G Λ
         (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun β' => (⟨J, h, β'⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_differentiable_beta G (Λ.volume n) J h _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun β' => (⟨J, h, β'⟩ : IsingParams ℝ)) hi]
     exact differentiable_const _
 
 /-- **Along-ex: magnetization Continuous in `β`** (general h). -/
@@ -144,12 +154,38 @@ theorem magnetizationAlongExhaustion_continuous_beta
     Continuous (fun β' =>
       magnetizationAlongExhaustion G Λ
         (⟨J, h, β'⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun β' => (⟨J, h, β'⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_continuous_beta G (Λ.volume n) J h _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun β' => (⟨J, h, β'⟩ : IsingParams ℝ)) hi]
     exact continuous_const
+
+/-- **Along-ex: magnetization Differentiable in `β` at `h = 0`**
+(Step 213, general `G`, `Λ`). The `h = 0` corollary of
+`magnetizationAlongExhaustion_differentiable_beta`; kept as a named result
+because Glimm–Jaffe §17.5 states the zero-field case separately. -/
+theorem magnetizationAlongExhaustion_differentiable_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (i : V) (n : ℕ) :
+    Differentiable ℝ
+      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i n) :=
+  magnetizationAlongExhaustion_differentiable_beta G Λ J 0 i n
+
+/-- **Along-ex: magnetization Continuous in `β` at `h = 0`**
+(Step 213, general `G`, `Λ`). The `h = 0` corollary of
+`magnetizationAlongExhaustion_continuous_beta`; kept as a named result
+because Glimm–Jaffe §17.5 states the zero-field case separately. -/
+theorem magnetizationAlongExhaustion_continuous_beta_gen
+    (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (J : ℝ) (i : V) (n : ℕ) :
+    Continuous
+      (fun β' => magnetizationAlongExhaustion G Λ (⟨J, 0, β'⟩ : IsingParams ℝ) i n) :=
+  magnetizationAlongExhaustion_continuous_beta G Λ J 0 i n
 
 /-- **Along-ex: magnetization Differentiable in `h`**. -/
 theorem magnetizationAlongExhaustion_differentiable_field
@@ -159,11 +195,13 @@ theorem magnetizationAlongExhaustion_differentiable_field
     Differentiable ℝ (fun h' =>
       magnetizationAlongExhaustion G Λ
         (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_differentiable_field G (Λ.volume n) J β _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) hi]
     exact differentiable_const _
 
 /-- **Along-ex: magnetization Differentiable in `J`**. -/
@@ -174,11 +212,13 @@ theorem magnetizationAlongExhaustion_differentiable_J
     Differentiable ℝ (fun J' =>
       magnetizationAlongExhaustion G Λ
         (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_differentiable_J G (Λ.volume n) h β _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) hi]
     exact differentiable_const _
 
 /-- **Along-ex: magnetization Continuous in `h` for `i ∈
@@ -190,11 +230,13 @@ theorem magnetizationAlongExhaustion_continuous_field
     Continuous (fun h' =>
       magnetizationAlongExhaustion G Λ
         (⟨J, h', β⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_continuous_field G (Λ.volume n) J β _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) hi]
     exact continuous_const
 
 /-- **Along-ex: magnetization Continuous in `J`**. -/
@@ -205,11 +247,13 @@ theorem magnetizationAlongExhaustion_continuous_J
     Continuous (fun J' =>
       magnetizationAlongExhaustion G Λ
         (⟨J', h, β⟩ : IsingParams ℝ) i n) := by
-  unfold magnetizationAlongExhaustion correlationAlongExhaustion
+  unfold magnetizationAlongExhaustion
   by_cases hi : ({i} : Finset V) ⊆ Λ.volume n
-  · simp only [hi, dif_pos]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) hi]
     exact magnetizationΛ_continuous_J G (Λ.volume n) h β _
-  · simp only [hi, dif_neg, not_false_iff]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun J' => (⟨J', h, β⟩ : IsingParams ℝ)) hi]
     exact continuous_const
 
 /-! ### pointwise magnetization regularity

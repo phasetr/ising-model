@@ -322,6 +322,43 @@ theorem correlationAlongExhaustion_of_not_subset
     correlationAlongExhaustion G Λ p A n = 0 := by
   simp only [correlationAlongExhaustion, hA, dite_false]
 
+/-- **Family form of `correlationAlongExhaustion_of_subset`** (GJ §4.6,
+pp. 67-70; §5.1, pp. 72-75): for a family of parameters `p : α → IsingParams ℝ`
+and `A ⊆ Λ.volume n`, the whole function `fun t => correlationAlongExhaustion
+G Λ (p t) A n` equals `fun t => correlationΛ G (Λ.volume n) (p t)
+(liftFinset A hA)`.
+
+The subset hypothesis does not mention the family parameter `t`, so the
+`dite` case split of `correlationAlongExhaustion` factors out of the family.
+This is the first-order companion of the pointwise lemma: it is an ordinary
+equation between functions and is therefore usable by `rw`, which is what the
+per-parameter regularity wrappers (`Continuous` / `Differentiable` in
+`β` / `h` / `J`) need. The family parameter `p` is explicit on purpose, so that
+rewriting never has to solve for a function-valued metavariable. -/
+theorem correlationAlongExhaustion_family_eq_of_subset
+    {α : Type*} (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : α → IsingParams ℝ) {A : Finset V} {n : ℕ} (hA : A ⊆ Λ.volume n) :
+    (fun t => correlationAlongExhaustion G Λ (p t) A n)
+      = fun t => correlationΛ G (Λ.volume n) (p t) (liftFinset A hA) :=
+  funext fun t => correlationAlongExhaustion_of_subset G Λ (p t) hA
+
+/-- **Family form of `correlationAlongExhaustion_of_not_subset`** (GJ §4.6,
+pp. 67-70; §5.1, pp. 72-75): for a family of parameters `p : α → IsingParams ℝ`
+and `A ⊄ Λ.volume n`, the whole function `fun t => correlationAlongExhaustion
+G Λ (p t) A n` is the zero function.
+
+As for the subset case, the non-membership hypothesis is independent of the
+family parameter `t`, so the `dite` case split factors out. First-order
+companion of the pointwise lemma, `rw`-usable, with the family parameter `p`
+explicit. -/
+theorem correlationAlongExhaustion_family_eq_zero_of_not_subset
+    {α : Type*} (G : SimpleGraph V) (Λ : Exhaustion V)
+    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
+    (p : α → IsingParams ℝ) {A : Finset V} {n : ℕ} (hA : ¬ A ⊆ Λ.volume n) :
+    (fun t => correlationAlongExhaustion G Λ (p t) A n) = fun _ : α => (0 : ℝ) :=
+  funext fun t => correlationAlongExhaustion_of_not_subset G Λ (p t) hA
+
 /-- For any finite `A`, the correlation along an exhaustion is
 eventually equal to the lifted correlation. -/
 theorem correlationAlongExhaustion_eventually
