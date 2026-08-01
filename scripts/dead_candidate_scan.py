@@ -2143,7 +2143,7 @@ def _apply_doc_channel(
       what is gone is its power to be "attributed to nobody". That exoneration
       was the live leak of #4792: measured on this corpus, 1,061 multi-match
       expansions under the previous revision, and charging them all takes the
-      documentation channel to 10,588 of the 10,618 declarations (99.7 %).
+      documentation channel to 10,553 of the 10,583 declarations (99.7 %).
     * ``unresolved`` -- the name cannot be read (unbalanced brace, unsupported
       slash form, bare wildcard, ``IsingModel.``-qualified but not fully
       qualified, or simply not a name at all), so it is charged to **every**
