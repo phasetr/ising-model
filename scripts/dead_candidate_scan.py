@@ -1816,8 +1816,8 @@ def resolve_candidate(
         if not allow_homonym:
             notes.append(f"homonymous final component: {listing}")
         else:
-            # The flag is documented as *permitting* a safe verdict, so it must
-            # not leave behind a note that forces uncertain regardless.
+            # The flag is documented as *permitting* the weakest verdict, so it
+            # must not leave behind a note that forces uncertain regardless.
             info.append(f"homonym allowed by --allow-homonym: {listing}")
     return matches[0], notes, info
 
@@ -2875,9 +2875,18 @@ def collect_names(args: argparse.Namespace, tree: Tree) -> list[str]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Return the command-line parser."""
+    """Return the command-line parser.
+
+    The help text is part of the emitted vocabulary. It said "safety scanner"
+    for one round after the verdict had been renamed, which is why
+    ``VerdictVocabularyTest`` now reads this surface too.
+    """
     parser = argparse.ArgumentParser(
-        description="Deletion-candidate safety scanner for the IsingModel library."
+        description=(
+            "Documentation-citation evidence lister for the IsingModel library. "
+            "Emits no deletion authorisation: the weakest verdict is "
+            "no-citation-found, a fact about this scan rather than a permission."
+        )
     )
     parser.add_argument("names_file", nargs="?", help="file with one declaration name per line")
     parser.add_argument("--name", action="append", help="add a single candidate name")
@@ -2891,7 +2900,9 @@ def build_parser() -> argparse.ArgumentParser:
         "--lean", action="store_true", help="cross-check the elaborated graph (needs a green build)"
     )
     parser.add_argument(
-        "--allow-homonym", action="store_true", help="permit safe for a colliding final component"
+        "--allow-homonym",
+        action="store_true",
+        help="permit no-citation-found for a colliding final component",
     )
     parser.add_argument("--explain", action="store_true", help="print the full limitation table")
     parser.add_argument("--self-test", action="store_true", help="run the built-in test suite")

@@ -34,7 +34,9 @@ that must abort the run rather than lower a count.
 only in a fixtures comment. :class:`ProseMentionTest` guards the opposite
 direction: a docstring mention is reported but must never rescue a lemma.
 :class:`VerdictVocabularyTest` guards the rename: the tool must emit no word a
-reader can take for a deletion authorisation.
+reader can take for a deletion authorisation, in the verdict column, in the
+banner and in the text ``--help`` prints (the surface the first round missed,
+and the surface the first version of this guard could not see).
 
 Fast unit tests use synthetic strings. The tree-dependent tests (canary,
 fixtures, exit codes, determinism, performance) parse the real repository once
@@ -724,7 +726,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
         }
         self.assertEqual(labels, {"docs/index.md", "tex/proof-guide.tex"})
 
-    def test_the_measured_example_is_not_safe_to_delete(self) -> None:
+    def test_the_measured_example_is_not_reported_uncited(self) -> None:
         """The verdict the defect inverted, replayed against the real tree."""
         verdicts, _cascade, _labels = dcs.classify(
             tree(),
@@ -2514,6 +2516,12 @@ class VerdictVocabularyTest(unittest.TestCase):
     citation channel and still prints ``safe-to-delete`` is the worst
     intermediate state, because the word -- not the verdict semantics -- is what
     a human or an agent reads as authorisation.
+
+    "Emit" includes the text ``--help`` prints. The first round of this repair
+    left the argparse surface advertising a "safety scanner" and a flag that
+    "permits safe", and this class could not see it: it read the verdict column
+    and the banner only. A guard structurally incapable of firing on the case it
+    covers is the defect shape repaired as F6, so it is not left standing here.
     """
 
     def test_no_authorising_label_is_emitted(self) -> None:
@@ -2525,6 +2533,25 @@ class VerdictVocabularyTest(unittest.TestCase):
         self.assertNotIn("safe-to-delete", dcs.BANNER)
         self.assertIn("EMITS NO DELETION AUTHORISATION", dcs.BANNER)
         self.assertFalse(hasattr(dcs, "SAFE"))
+
+    def test_no_authorising_word_reaches_the_command_line_surface(self) -> None:
+        """``--help`` carries the new vocabulary and none of the old one.
+
+        Both the raw strings and the rendering are checked. The raw strings
+        carry the *presence* assertion because ``textwrap`` breaks on hyphens,
+        so ``no-citation-found`` can reach the rendering split across two lines;
+        the rendering carries an *absence* sweep, because it is the whole
+        surface -- description, every flag's help, and anything argparse adds
+        later -- and hyphen-splitting cannot hide the substring "safe".
+        """
+        parser = dcs.build_parser()
+        # ``_actions`` is the only route to the unrendered strings.
+        raw = [parser.description or ""] + [action.help or "" for action in parser._actions]
+        for text in raw:
+            self.assertNotIn("safe", text.lower(), f"retired vocabulary in --help: {text!r}")
+        self.assertIn("no-citation-found", " ".join(raw))
+        rendered = parser.format_help()
+        self.assertNotIn("safe", rendered.lower(), rendered)
 
     def test_the_removed_selectors_are_gone_rather_than_narrowed(self) -> None:
         """The exoneration machinery must not survive under a new calibration."""
@@ -2665,6 +2692,24 @@ class MutationMetaTest(unittest.TestCase):
             dcs.NO_CITATION = "safe-to-delete"
             return original
 
+        def restore_the_authorising_cli_text() -> object:
+            """M9b: ``--help`` advertises a "safety scanner" again."""
+            original = dcs.build_parser
+
+            def legacy():
+                """Return the parser with the retired vocabulary put back."""
+                parser = original()
+                parser.description = (
+                    "Deletion-candidate safety scanner for the IsingModel library."
+                )
+                for action in parser._actions:
+                    if action.dest == "allow_homonym":
+                        action.help = "permit safe for a colliding final component"
+                return parser
+
+            dcs.build_parser = legacy
+            return original
+
         cases = (
             ("M1/M2", skip_unresolved, "_apply_doc_channel",
              "FailClosedChargingTest."
@@ -2683,6 +2728,9 @@ class MutationMetaTest(unittest.TestCase):
              "test_M8_unrelated_is_a_fact_about_the_declaration_table"),
             ("M9", restore_the_authorising_label, "NO_CITATION",
              "VerdictVocabularyTest.test_no_authorising_label_is_emitted"),
+            ("M9b", restore_the_authorising_cli_text, "build_parser",
+             "VerdictVocabularyTest."
+             "test_no_authorising_word_reaches_the_command_line_surface"),
             ("M11", drop_emptied_shards, "_citation_tokens",
              "FailClosedChargingTest."
              "test_M11_an_elision_written_in_a_document_reaches_a_disposition"),
