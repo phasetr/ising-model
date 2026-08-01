@@ -1249,3 +1249,18 @@ Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local
   sub-issue progress now 4/7 per GitHub `sub_issues_summary`
   (`{"total":7,"completed":4,"percent_completed":57}`). Remaining open children:
   #4833/#4835/#4836.
+- **2026-08-01 update**: #4835 CLOSED not planned (both audit gates failed: parameter-slice
+  regularity wrappers 7.3% feasible with net-zero savings; derivative-abstraction modules all
+  load-bearing or cited capstones; closing comment
+  https://github.com/phasetr/ising-model/issues/4835#issuecomment-5151917151). #4830 sub-issue
+  progress now 5/7 per GitHub `sub_issues_summary`
+  (`{"total":7,"completed":5,"percent_completed":71}`). Remaining open children: #4833/#4836.
+- **2026-08-02 update**: #4836 CLOSED not planned (all-keep audit, no split/merge pilot cleared
+  the concept-coherent consumer bar; closing comment
+  https://github.com/phasetr/ising-model/issues/4836#issuecomment-5151990600). #4830 sub-issue
+  progress now 6/7 per GitHub `sub_issues_summary`
+  (`{"total":7,"completed":6,"percent_completed":85}`). Only remaining open child: #4833
+  (PR-1 #4841 merged, PR-2 #4846 CI wiring still open as of 2026-08-02, `evaluate` check
+  FAILURE). Progress-summary comment posted on #4830:
+  https://github.com/phasetr/ising-model/issues/4830#issuecomment-5151992526. Parent #4830 not
+  closed — deferred to holistic review once #4833 resolves.
