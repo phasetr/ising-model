@@ -12,7 +12,7 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# REGENERATED for the #4792 fail-closed terminal change (base 4bfe4aeb). What
+# REGENERATED for the #4792 fail-closed terminal change (base 167ff124). What
 # moved and why:
 #
 # * The verdict `safe-to-delete` no longer exists. It asserted an authorisation
@@ -34,7 +34,7 @@
 #   docs/index.md are now charged to it instead of being attributed to nobody.
 #
 # Family-level calibration, `--pattern '_ferromagnetic$'`, re-measured at
-# 4bfe4aeb with this revision:
+# 167ff124 with this revision:
 #   223 candidates -> 0 no-citation-found, 101 uncertain, 87 load-bearing,
 #   35 published-result; 112 of the 223 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
@@ -71,7 +71,7 @@ freeEnergyΛ_nonneg_of_ferromagnetic	keep	3 consumers; the U+039B in the name mu
 correlationΛ_high_temp_h_zero_nonneg	keep	3 consumers; same
 
 # --- A declaration with no consumer and no citation naming it in full ---
-# Main-relative (measured at 4bfe4aeb: no Lean consumer in the text scan, none
+# Main-relative (measured at 167ff124: no Lean consumer in the text scan, none
 # in the elaborated graph either, and no citation spelling its name). It reads
 # `uncertain` because the wide labels of docs/index.md name it among hundreds of
 # others and are charged in full; before #4792 those labels were attributed to

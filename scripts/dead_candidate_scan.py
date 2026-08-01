@@ -2552,8 +2552,8 @@ L11 no citation channel exonerates any more (INV-CHARGE), and the cost is that
    rather than a citation. There is no parser-side rule that separates those from
    the real elision `magnetizationAlongExhaustion_{neg_h, nonneg}`, because the
    difference is in the prose, and every attempt to read the prose is the
-   exoneration this tool removed. Measured on this corpus (main 4bfe4aeb): the
-   exact, resolved-match and literal channels together charge 10588 of the 10618
+   exoneration this tool removed. Measured on this corpus (main 167ff124): the
+   exact, resolved-match and literal channels together charge 10553 of the 10583
    declarations, leaving 30 uncharged of which 28 are in `test/`; the two library
    survivors are SimpleGraph.edgeSet_sum_finite and SimpleGraph.fintypeEdgeSetSum.
    Charging every unresolvable citation as well -- 32233 sites, mostly prose inside

@@ -1138,7 +1138,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # assertion below. Re-derive it, never carry it forward and never adjust
         # it by arithmetic, by running this line's own resolver over the tree:
         #   dead_candidate_scan._resolve_fragment(load_tree(), "IsingModel.*", {})
-        # and reading its length. Measured at ``4bfe4aeb``: 10548.
+        # and reading its length. Measured at ``167ff124``: 10548.
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
         self.assertEqual(len(broad or []), 10548)
         selected = [
@@ -1745,7 +1745,7 @@ class FamilyCalibrationTest(unittest.TestCase):
         """223 candidates -> 0 uncited / 101 uncertain / 87 load-bearing / 35 published.
 
         Re-measured, not carried over, at the #4792 fail-closed terminal change
-        (base ``4bfe4aeb``). Every previous line of this docstring recorded one
+        (base ``167ff124``). Every previous line of this docstring recorded one
         more exoneration being narrowed -- the elided-prefix rule, the glob
         threshold, the resolved-glob head -- and each recalibration moved a
         handful of candidates. Removing the exonerations outright moves the last
