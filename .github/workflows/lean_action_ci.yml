@@ -37,6 +37,29 @@ jobs:
       - name: Audit gate (V1-V4 axiom/sorry/capstone/no-Japanese checks)
         run: python3 scripts/audit_gate.py --full
 
+  # Architecture gate for Issue #4833: the import-DAG layer contract. It is a
+  # separate job rather than another step of `build` because it needs no Lean
+  # toolchain, so it reports an inversion in about a minute instead of behind
+  # the Lean build -- and, more importantly, a red or cancelled Lean build can
+  # then never mask an architecture violation. It is not (yet) a required
+  # check; making it blocking is a separate governance decision.
+  import-dag-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      # Same order as the audit gate above, for the same reason: `--check` only
+      # says whether the current tree passes, which stays true when a rule is
+      # weakened or dropped, so the 74 tests (mutation canaries included) are
+      # what actually defend R1/R2/R3/R6. Both commands are pure Python -- no
+      # lake, no network -- and cost about 45 s and 15 s respectively.
+      - name: Import-DAG contract self-tests (test the checker, not just the tree)
+        run: python3 scripts/test_import_dag_contract.py
+      - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)
+        run: python3 scripts/import_dag_contract.py --check
+
   # NOTE: docs generation via `leanprover-community/docgen-action` has been
   # temporarily disabled because every main-push run takes ~1 hour and
   # CI queues backed up. Re-enable once the docgen step is accelerated

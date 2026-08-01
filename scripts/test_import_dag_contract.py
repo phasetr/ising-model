@@ -9,9 +9,10 @@ exist for every rule in :data:`import_dag_contract.RULES`, so a rule that is
 silently dropped from -- or quietly added to -- the table cannot stay green.
 
 Every structural fixture is synthetic (``scripts/testdata/import_dag_contract/``),
-so no test can be repaired by editing ``IsingModel/``.  The two assertions that
-do read the real tree are :class:`RealTreeTest`, which pins the delivered
-verdict, and the anti-scope checks that read this checker's own source.
+so no test can be repaired by editing ``IsingModel/``.  The assertions that do
+read the real repository are :class:`RealTreeTest`, which pins the delivered
+verdict, the anti-scope checks that read this checker's own source, and
+:class:`CIWiringTest`, which pins the fact that CI actually runs the contract.
 """
 
 from __future__ import annotations
@@ -1079,6 +1080,98 @@ class RealTreeTest(unittest.TestCase):
         """
         home = contract.REPO_ROOT / "IsingModel" / "Inequalities" / "FKGInhomogeneous.lean"
         self.assertIn("theorem boltzmannWeightJ_uniform_eq", home.read_text(encoding="utf-8"))
+
+
+# --------------------------------------------------------------------------
+# T8 -- CI wiring
+# --------------------------------------------------------------------------
+
+#: Workflow expected to run the contract on every pull request (Issue #4833).
+WORKFLOW_FILE = contract.REPO_ROOT / ".github" / "workflows" / "lean_action_ci.yml"
+
+#: Command prefix of the checker itself, in the spelling CI uses.
+CONTRACT_COMMAND = "python3 scripts/import_dag_contract.py"
+
+#: Command prefix of this suite, run standalone.
+SUITE_COMMAND = "python3 scripts/test_import_dag_contract.py"
+
+
+class CIWiringTest(unittest.TestCase):
+    """A gate nobody runs is not a gate.
+
+    The wiring is *read out of* the workflow rather than assumed: a plain
+    substring search over the file would be satisfied by a commented-out step,
+    so only the scalar of a ``run:`` key counts here.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.commands = cls.run_commands()
+
+    @staticmethod
+    def run_commands() -> list[str]:
+        """Every single-line ``run:`` scalar of the workflow, in file order.
+
+        A hand-rolled reader keeps this suite dependency-free -- PyYAML is
+        guaranteed neither on the runner nor on a developer machine, and the
+        checker deliberately shells out to nothing.  It understands exactly the
+        shape this repository writes (one single-line ``run:`` per step); a step
+        spelled any other way is simply not seen, which *fails* the assertions
+        below rather than passing them.
+        """
+        commands: list[str] = []
+        for line in WORKFLOW_FILE.read_text(encoding="utf-8").splitlines():
+            stripped = line.strip()
+            if stripped.startswith("#") or not stripped.startswith("run:"):
+                continue
+            command = stripped[len("run:") :].strip()
+            if command:
+                commands.append(command)
+        return commands
+
+    def gate_indices(self) -> list[int]:
+        """Indices of the commands that can actually fail the workflow.
+
+        ``--baseline`` prints the current edge set and always exits ``0``, and
+        ``--self-test`` runs this suite; wiring either one alone would look like
+        enforcement while enforcing nothing, so both are excluded here.
+        """
+        return [
+            i
+            for i, command in enumerate(self.commands)
+            if command.startswith(CONTRACT_COMMAND)
+            and "--baseline" not in command
+            and "--self-test" not in command
+        ]
+
+    def suite_indices(self) -> list[int]:
+        """Indices of the commands that run this suite, either spelling."""
+        return [
+            i
+            for i, command in enumerate(self.commands)
+            if command.startswith(SUITE_COMMAND)
+            or (command.startswith(CONTRACT_COMMAND) and "--self-test" in command)
+        ]
+
+    def test_ci_runs_the_contract_as_a_gate(self) -> None:
+        """An enforcing invocation exists, so a violation cannot land green."""
+        self.assertTrue(
+            self.gate_indices(),
+            f"no enforcing `{CONTRACT_COMMAND}` step in {WORKFLOW_FILE.name}: "
+            f"run commands seen = {self.commands}",
+        )
+
+    def test_ci_runs_the_checkers_own_tests(self) -> None:
+        """The tree passing says nothing about whether the rules still fire."""
+        self.assertTrue(
+            self.suite_indices(),
+            f"no `{SUITE_COMMAND}` step in {WORKFLOW_FILE.name}: "
+            f"run commands seen = {self.commands}",
+        )
+
+    def test_the_self_tests_run_before_the_gate(self) -> None:
+        """Order matters: a weakened checker would report a clean tree first."""
+        self.assertLess(min(self.suite_indices()), min(self.gate_indices()))
 
 
 def run_suite() -> int:
