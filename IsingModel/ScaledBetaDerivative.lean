@@ -435,9 +435,9 @@ theorem scaledCovariance_zero_edgeSpin_eq_bondDeleted_ursell (G : SimpleGraph ι
   have hfk : (fun σ => spinProduct A σ * edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
       = spinProduct (symmDiff A {u, v}) := by
     funext σ
-    rw [edgeSpin_quot_eq_spinProduct' huv, spinProduct_mul]
+    rw [edgeSpin_quot_eq_spinProduct huv, spinProduct_mul]
   have hk : (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) = spinProduct {u, v} := by
-    funext σ; rw [edgeSpin_quot_eq_spinProduct' huv]
+    funext σ; rw [edgeSpin_quot_eq_spinProduct huv]
   rw [hfk, hk]
   rfl
 
@@ -528,7 +528,7 @@ Phase C). For a non-degenerate edge `s(u,v)` (`u ≠ v`), the scaled covariance 
 `σ^A` with the edge spin `σ_uσ_v` is the truncated two-point function in scaled
 correlations:
 `Cov_s(σ^A, σ_uσ_v) = ⟨σ^{A△{u,v}}⟩_s − ⟨σ^A⟩_s·⟨σ_uσ_v⟩_s`.
-Uses `edgeSpin = spinProduct {u,v}` (`edgeSpin_quot_eq_spinProduct'`) and the spin
+Uses `edgeSpin = spinProduct {u,v}` (`edgeSpin_quot_eq_spinProduct`) and the spin
 product fusion `spinProduct_mul` (`σ^A·σ^{u,v} = σ^{A△{u,v}}`). This expresses every
 per-edge summand of the coupling-difference sum
 (`scaledCovariance_coupling_difference_eq_neg_J_edge_sum`) purely in terms of scaled
@@ -545,9 +545,9 @@ theorem scaledCovariance_spinProduct_edgeSpin_eq_scaledCorrelation (G : SimpleGr
   have hfk : (fun σ => spinProduct A σ * edgeSpin (K := ℝ) σ (Quot.mk _ (u, v)))
       = spinProduct (symmDiff A {u, v}) := by
     funext σ
-    rw [edgeSpin_quot_eq_spinProduct' huv, spinProduct_mul]
+    rw [edgeSpin_quot_eq_spinProduct huv, spinProduct_mul]
   have hk : (fun σ => edgeSpin (K := ℝ) σ (Quot.mk _ (u, v))) = spinProduct {u, v} := by
-    funext σ; rw [edgeSpin_quot_eq_spinProduct' huv]
+    funext σ; rw [edgeSpin_quot_eq_spinProduct huv]
   rw [hfk, hk]
 
 /-- **Per-edge coupling-difference summand in scaled correlations** (Issue #2965,

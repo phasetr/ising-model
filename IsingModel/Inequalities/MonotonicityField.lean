@@ -38,14 +38,6 @@ open Finset
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Per-edge spin supermodularity** (local copy for this file): `s(a)s(b) +
-s(c)s(d) ≤ s(a⊔c)s(b⊔d) + s(a⊓c)s(b⊓d)`, by exhausting the 16 cases. -/
-private theorem spin_edge_supermodular_F (a b c d : Spin) :
-    Spin.sign ℝ a * Spin.sign ℝ b + Spin.sign ℝ c * Spin.sign ℝ d ≤
-    Spin.sign ℝ (a ⊔ c) * Spin.sign ℝ (b ⊔ d) +
-    Spin.sign ℝ (a ⊓ c) * Spin.sign ℝ (b ⊓ d) := by
-  cases a <;> cases b <;> cases c <;> cases d <;> norm_num [Spin.sign, Spin.toSign]
-
 /-- **Per-site field monotonicity**: for `h ≤ h'`,
 `h·s(a) + h'·s(b) ≤ h·s(a⊓b) + h'·s(a⊔b)`.  Verified case by case on the two
 spins; the only nontrivial case is `s(a) ≥ s(b)`, giving
@@ -83,7 +75,7 @@ theorem boltzmannWeight_field_cross_supermodular (G : SimpleGraph ι) [Fintype G
     refine Finset.sum_le_sum fun e _ => ?_
     refine Sym2.ind (fun i j => ?_) e
     simp only [edgeSpin, Sym2.lift_mk, Pi.inf_apply, Pi.sup_apply, Spin.sign]
-    have := spin_edge_supermodular_F (a i) (a j) (b i) (b j)
+    have := spin_edge_supermodular (a i) (a j) (b i) (b j)
     -- s(a_i)s(a_j) + s(b_i)s(b_j) ≤ s(a_i⊔b_i)s(a_j⊔b_j) + s(a_i⊓b_i)s(a_j⊓b_j)
     simp only [Spin.sign] at this
     linarith [this]

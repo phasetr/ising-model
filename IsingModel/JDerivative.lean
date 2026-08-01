@@ -179,15 +179,6 @@ private theorem hasDerivAt_gibbsExpectation_J
   field_simp [hZne']
   ring
 
-/-! ## Helper: edgeSpin and spinProduct -/
-
-omit [Fintype ι] in
-/-- `edgeSpin σ ⟦(i,j)⟧ = spinProduct {i,j} σ` for distinct `i ≠ j`. -/
-private lemma edgeSpin_quot_eq_spinProduct_J
-    {i j : ι} (hij : i ≠ j) (σ : Config ι) :
-    edgeSpin (K := ℝ) σ (Quot.mk _ (i, j) : Sym2 ι) = spinProduct {i, j} σ := by
-  simp [edgeSpin, spinProduct, Finset.prod_pair hij, Spin.sign]
-
 /-! ## Main derivative formula -/
 
 /-- **Derivative formula for Ising correlations in J** (Step 214):
@@ -249,7 +240,7 @@ theorem hasDerivAt_correlation_J
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro σ _
-      rw [edgeSpin_quot_eq_spinProduct_J huv, ← spinProduct_mul]
+      rw [edgeSpin_quot_eq_spinProduct huv, ← spinProduct_mul]
       ring
     rw [hinner]
     rw [← mul_assoc, mul_comm (partitionFunction G p)⁻¹ β, mul_assoc, Finset.mul_sum]
@@ -284,7 +275,7 @@ theorem hasDerivAt_correlation_J
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro σ _
-      rw [edgeSpin_quot_eq_spinProduct_J huv]
+      rw [edgeSpin_quot_eq_spinProduct huv]
       ring
     rw [hinner, ← mul_assoc, mul_comm (partitionFunction G p)⁻¹ β, mul_assoc, Finset.mul_sum]
     congr 1

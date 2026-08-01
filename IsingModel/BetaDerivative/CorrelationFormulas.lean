@@ -165,8 +165,13 @@ private theorem hasDerivAt_gibbsExpectation_beta
 /-! ## Helper: edgeSpin and spinProduct -/
 
 omit [Fintype ι] in
-/-- `edgeSpin σ ⟦(i,j)⟧ = spinProduct {i,j} σ` for distinct `i ≠ j`. -/
-private lemma edgeSpin_quot_eq_spinProduct
+/-- `edgeSpin σ ⟦(i,j)⟧ = spinProduct {i,j} σ` for distinct `i ≠ j`.
+
+Shared by the `β`-derivative formula below, by the `J`-derivative formula in
+`IsingModel/JDerivative.lean`, and by the scaled-coupling derivative formulas in
+`IsingModel/CouplingDerivative.lean` and `IsingModel/ScaledBetaDerivative.lean`,
+all of which reduce the per-edge factor the same way. -/
+lemma edgeSpin_quot_eq_spinProduct
     {i j : ι} (hij : i ≠ j) (σ : Config ι) :
     edgeSpin (K := ℝ) σ (Quot.mk _ (i, j) : Sym2 ι) = spinProduct {i, j} σ := by
   simp [edgeSpin, spinProduct, Finset.prod_pair hij, Spin.sign]

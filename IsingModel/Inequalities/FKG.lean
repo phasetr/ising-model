@@ -29,10 +29,18 @@ example : DistribLattice (Config ι) := inferInstance
 
 /-! ## Log-supermodularity of the Boltzmann weight -/
 
-/-- The key lattice inequality for ±1 spins:
-`σ_i σ_j + σ'_i σ'_j ≤ (σ_i ⊔ σ'_i)(σ_j ⊔ σ'_j) + (σ_i ⊓ σ'_i)(σ_j ⊓ σ'_j)`.
+/-- **Per-edge spin supermodularity**, the key lattice inequality for ±1 spins:
+`s(a)s(b) + s(c)s(d) ≤ s(a ⊔ c)s(b ⊔ d) + s(a ⊓ c)s(b ⊓ d)`.
+
+This is the edge half of the lattice condition behind every FKG/Holley argument on
+`Config ι`: the uniform-coupling `boltzmannWeight_log_supermodular` below, the
+inhomogeneous-coupling `boltzmannWeightJ_log_supermodular`
+(`Inequalities/FKGInhomogeneous.lean`), and the Holley domination condition
+`boltzmannWeight_field_cross_supermodular` (`Inequalities/MonotonicityField.lean`)
+all consume it, so it is stated once here instead of being recopied per file.
+Verified by exhausting the 16 cases.
 Reference: Friedli–Velenik, p. 129. -/
-private theorem spin_edge_supermodular (a b c d : Spin) :
+theorem spin_edge_supermodular (a b c d : Spin) :
     Spin.sign ℝ a * Spin.sign ℝ b + Spin.sign ℝ c * Spin.sign ℝ d ≤
     Spin.sign ℝ (a ⊔ c) * Spin.sign ℝ (b ⊔ d) +
     Spin.sign ℝ (a ⊓ c) * Spin.sign ℝ (b ⊓ d) := by

@@ -168,16 +168,6 @@ theorem partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain
       leeYangDomain {z : ℂ | z ≠ 0} := fun _ hh =>
   partitionFunctionComplex_ne_zero_on_leeYangDomain G hβ hJ hh
 
-/-- `leeYangFugacity` (uniform fugacity) maps the Lee-Yang domain
-into the open unit disk (already proved for the scalar case;
-restatement as `Set.MapsTo`). -/
-theorem leeYangFugacity_mapsTo_leeYangDomain {β : ℝ} (hβ : 0 < β) :
-    Set.MapsTo (leeYangFugacity (β : ℂ)) leeYangDomain
-      (Metric.ball (0 : ℂ) 1) := by
-  intro h hh
-  rw [Metric.mem_ball, dist_zero_right]
-  exact norm_leeYangFugacity_lt_one hβ hh
-
 /-- Intersection of `leeYangDomain` and `leeYangSubdomain` is just
 `leeYangSubdomain` (which is a subset of the former). -/
 theorem inter_leeYangDomain_leeYangSubdomain (β : ℝ) (N : ℕ) :

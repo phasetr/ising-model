@@ -429,7 +429,7 @@ theorem evenSubsetsThrough_pair {i j : ι} (hij : i ≠ j) :
   rw [evenSubsetsThrough, Finset.mem_filter, Finset.mem_powerset, Finset.mem_singleton]
   constructor
   · rintro ⟨hsub, hi, heven⟩
-    rcases finset_subset_pair_of_even_card hij hsub heven with h | h
+    rcases subset_pair_of_even_card hij hsub heven with h | h
     · rw [h] at hi; exact absurd hi (Finset.notMem_empty i)
     · exact h
   · rintro rfl

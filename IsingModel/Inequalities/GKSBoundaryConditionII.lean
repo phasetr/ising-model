@@ -49,19 +49,6 @@ noncomputable def bcModExp (G : SimpleGraph ι) [Fintype G.edgeSet]
       edgeSpin (K := ℝ) ω e)) *
   (∏ i : ι, Real.exp (p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i)))
 
-omit [Fintype ι] [DecidableEq ι] in
-/-- Helper: `edgeSpin (φ_t ω) e = edgeSpin ω e * edgeSpin t e`. -/
-private lemma bc_edgeSpin_spinMul (ω t : Config ι) (e : Sym2 ι) :
-    edgeSpin (K := ℝ) (fun i => Spin.mul (ω i) (t i)) e =
-    edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e := by
-  refine Sym2.ind (fun i j => ?_) e
-  simp [edgeSpin, Sym2.lift_mk, Spin.sign, Spin.toSign_mul]; ring
-
-/-- Helper: `Spin.sign (Spin.mul a b) = Spin.sign a * Spin.sign b`. -/
-private lemma bc_sign_spinMul (a b : Spin) :
-    Spin.sign ℝ (Spin.mul a b) = Spin.sign ℝ a * Spin.sign ℝ b := by
-  simp [Spin.sign, Spin.toSign_mul]
-
 omit [DecidableEq ι] in
 /-- Product form of the plain Boltzmann weight. -/
 private lemma boltzmannWeight_product_form (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -85,7 +72,7 @@ theorem boltzmannWeight_duplicate_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
       bcModExp G p t ω := by
   rw [boltzmannWeight_product_form G p ω,
       boltzmannWeight_product_form G p (fun i => Spin.mul (ω i) (t i))]
-  simp_rw [bc_edgeSpin_spinMul ω t, bc_sign_spinMul]
+  simp_rw [edgeSpin_spinMul ω t, Spin.sign_mul]
   simp only [bcModExp]
   rw [mul_mul_mul_comm, ← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
   congr 1

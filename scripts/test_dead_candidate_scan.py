@@ -1425,8 +1425,15 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         ):
             self.assertEqual(dcs._citation_tokens(token), [], token)
 
+        # Main-relative inventory size: it moves whenever the library gains or
+        # loses a declaration name, so it is refreshed together with the label
+        # assertion below. 10562 -> 10548 by the cluster C/D duplicate removal:
+        # 16 declarations were deleted and 2 added, and one of the deleted names
+        # (`IsingModel.edgeSpin_spinMul`) was re-added in another module. So 15
+        # unique full names leave the tree and 1 (`IsingModel.Spin.sign_mul`)
+        # enters it, a net -14.
         broad = dcs._resolve_fragment(tree(), "IsingModel.*", {})
-        self.assertEqual(len(broad or []), 10562)
+        self.assertEqual(len(broad or []), 10548)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1438,7 +1445,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10562 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10548 declarations"]},
         )
 
 

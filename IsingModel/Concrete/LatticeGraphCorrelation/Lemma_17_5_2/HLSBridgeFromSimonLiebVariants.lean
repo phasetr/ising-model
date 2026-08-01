@@ -289,7 +289,7 @@ theorem tsum_correlationInfinite_pair_product_zero_v_le_const_of_simonLieb
 
 For distinct `(x, z)`, the bound `M · d(x, z) ≤ pseudoMass · r` rewrites
 as `M · d(0, z - x) ≤ pseudoMass · r` using
-`latticeDistance_pair_eq_displacement`. -/
+`latticeDistance_translate_eq`. -/
 theorem bound_shape_displacement_eq
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r) (d : ℕ)
     {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -302,7 +302,7 @@ theorem bound_shape_displacement_eq
         (⟨J, 0, β⟩ : IsingParams ℝ) x z * r := by
   have h_dist : (latticeDistance d x z : ℝ) =
       (latticeDistance d 0 (z - x) : ℝ) := by
-    exact_mod_cast latticeDistance_pair_eq_displacement d x z
+    exact_mod_cast latticeDistance_translate_eq d x z
   have h_pseudo := pseudoMassFromParamsAtPair_eq_displacement hα hr d hJ hβ x z
   rw [h_dist, h_pseudo]
   exact hbound

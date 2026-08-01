@@ -61,8 +61,13 @@ noncomputable def sourceGenerating (G : SimpleGraph ι) [Fintype G.edgeSet]
   ∑ X ∈ G.edgeFinset.powerset, t ^ X.card * ∏ v ∈ oddBoundary X, y v
 
 omit [Fintype ι] in
-/-- A subset of a pair `{i, j}` with `i ≠ j` and even cardinality is `∅` or `{i, j}`. -/
-private theorem subset_pair_of_even_card {i j : ι} (hij : i ≠ j)
+/-- A subset of a pair `{i, j}` with `i ≠ j` and even cardinality is `∅` or `{i, j}`.
+
+The handshake-parity step shared by every two-point source/boundary factorisation:
+`sourceGenerating_twoPoint_weight` below and the component-boundary lemmas in
+`ClusterExpansion/TwoPointNumeratorFactorization.lean` and
+`ClusterExpansion/AnchoredPeel.lean` all reduce to it. -/
+theorem subset_pair_of_even_card {i j : ι} (hij : i ≠ j)
     {B : Finset ι} (hsub : B ⊆ ({i, j} : Finset ι)) (heven : Even B.card) :
     B = ∅ ∨ B = ({i, j} : Finset ι) := by
   classical

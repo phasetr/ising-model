@@ -25,6 +25,21 @@ theorem edgeSpin_flip {ι K : Type*} [Field K] (σ : Config ι) (e : Sym2 ι) :
   simp only [edgeSpin, Sym2.lift_mk, Config.flip, Spin.sign_flip]
   ring
 
+/-- The per-edge spin product is multiplicative under the pointwise spin
+multiplication `φ_t σ = fun i => Spin.mul (σ i) (t i)`:
+`edgeSpin (φ_t σ) e = edgeSpin σ e * edgeSpin t e`.
+
+This is the edge-level form of `Spin.sign_mul`, and it is what makes the
+`ω ↦ φ_t ω` change of variables factor the Boltzmann weight in the doubled-system
+GKS arguments (`Inequalities/GKSBoundaryConditionII.lean`,
+`BallBoundarySimonLieb/ScaledGKS.lean`). -/
+theorem edgeSpin_spinMul {ι K : Type*} [Field K] (σ t : Config ι) (e : Sym2 ι) :
+    edgeSpin (K := K) (fun i => Spin.mul (σ i) (t i)) e =
+      edgeSpin (K := K) σ e * edgeSpin (K := K) t e := by
+  refine Sym2.ind (fun i j => ?_) e
+  simp only [edgeSpin, Sym2.lift_mk, Spin.sign_mul]
+  ring
+
 /-! ## External field energy -/
 
 /-- The external field energy: `-h * ∑_i s(σ_i)`. -/

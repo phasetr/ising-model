@@ -132,20 +132,6 @@ private noncomputable def scaledModifiedWeight (G : SimpleGraph ι) [Fintype G.e
                 (1 + edgeSpin (K := ℝ) t e) * edgeSpin (K := ℝ) ω e)) *
   (∏ i : ι, Real.exp (p.β * p.h * (1 + Spin.sign ℝ (t i)) * Spin.sign ℝ (ω i)))
 
-omit [Fintype ι] [DecidableEq ι] in
-/-- Helper: `edgeSpin (φ_t ω) e = edgeSpin ω e * edgeSpin t e`
-where `φ_t ω = fun i => Spin.mul (ω i) (t i)`. -/
-private lemma edgeSpin_spinMul (ω t : Config ι) (e : Sym2 ι) :
-    edgeSpin (K := ℝ) (fun i => Spin.mul (ω i) (t i)) e =
-    edgeSpin (K := ℝ) ω e * edgeSpin (K := ℝ) t e := by
-  refine Sym2.ind (fun i j => ?_) e
-  simp [edgeSpin, Sym2.lift_mk, Spin.sign, Spin.toSign_mul]; ring
-
-/-- Helper: `Spin.sign (Spin.mul ω_i t_i) = Spin.sign ω_i * Spin.sign t_i`. -/
-private lemma sign_spinMul (a b : Spin) :
-    Spin.sign ℝ (Spin.mul a b) = Spin.sign ℝ a * Spin.sign ℝ b := by
-  simp [Spin.sign, Spin.toSign_mul]
-
 /-- The change of variables formula: `w_s(ω) · w_s(φ_t ω) = scaledModifiedWeight t ω`.
 Requires `E₀ ⊆ G.edgeFinset` to merge the edge sums. -/
 private theorem scaledBoltzmannWeight_duplicate_eq (G : SimpleGraph ι) [Fintype G.edgeSet]
@@ -156,7 +142,7 @@ private theorem scaledBoltzmannWeight_duplicate_eq (G : SimpleGraph ι) [Fintype
     scaledModifiedWeight G E₀ p s t ω := by
   rw [scaledBoltzmannWeight_product_form G E₀ hE₀_sub p s ω,
       scaledBoltzmannWeight_product_form G E₀ hE₀_sub p s (fun i => Spin.mul (ω i) (t i))]
-  simp_rw [edgeSpin_spinMul ω t, sign_spinMul]
+  simp_rw [edgeSpin_spinMul ω t, Spin.sign_mul]
   simp only [scaledModifiedWeight]
   -- Both sides are products of exps of sums; convert all to exp(Σ + Σ) form
   conv_lhs =>

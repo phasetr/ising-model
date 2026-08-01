@@ -281,16 +281,6 @@ private theorem hasDerivAt_scaledGibbsExpectation (G : SimpleGraph ι) [Fintype 
     Finset.sum_congr rfl fun x _ => by ring
   linear_combination Z * hS
 
-/-! ## Helper lemmas -/
-
-omit [Fintype ι] in
-/-- **Edge spin as a pair spin product**: for distinct endpoints `i ≠ j`, the edge
-spin `edgeSpin σ s(i,j)` equals the spin product `spinProduct {i,j} σ = σ_i·σ_j`. -/
-lemma edgeSpin_quot_eq_spinProduct'
-    {i j : ι} (hij : i ≠ j) (σ : Config ι) :
-    edgeSpin (K := ℝ) σ (Quot.mk _ (i, j) : Sym2 ι) = spinProduct {i, j} σ := by
-  simp [edgeSpin, spinProduct, Finset.prod_pair hij, Spin.sign]
-
 /-! ## Main derivative formula -/
 
 /-- **Derivative formula for scaled Ising correlations** (GJ §17.8):
@@ -337,7 +327,7 @@ theorem hasDerivAt_scaledCorrelation (G : SimpleGraph ι) [Fintype G.edgeSet]
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro σ _
-      rw [edgeSpin_quot_eq_spinProduct' huv, ← spinProduct_mul]
+      rw [edgeSpin_quot_eq_spinProduct huv, ← spinProduct_mul]
       ring
     rw [hinner]
     rw [← mul_assoc, mul_comm (scaledPartitionFunction G E₀ p s)⁻¹ (p.β * p.J),
@@ -373,7 +363,7 @@ theorem hasDerivAt_scaledCorrelation (G : SimpleGraph ι) [Fintype G.edgeSet]
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro σ _
-      rw [edgeSpin_quot_eq_spinProduct' huv]
+      rw [edgeSpin_quot_eq_spinProduct huv]
       ring
     rw [hinner]
     rw [← mul_assoc, mul_comm (scaledPartitionFunction G E₀ p s)⁻¹ (p.β * p.J),

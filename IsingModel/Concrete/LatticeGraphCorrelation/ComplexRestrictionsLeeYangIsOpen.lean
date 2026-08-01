@@ -16,8 +16,8 @@ slitPlane-locus openness wrappers extracted from
 Each is a thin pass-through of the corresponding ambient
 `IsingModel.{leeYangSubdomain_subset_slitPlane_locus,
 mem_slitPlane_locus_of_mem_leeYangSubdomain,
-isOpen_logZ_slitPlane_locus, isOpen_slitPlane_locus_h_beta}` lemma at
-`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem
+isOpen_freeEnergy_analyticity_locus, isOpen_slitPlane_locus_h_beta}` lemma
+at `Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem
 names are unchanged from the former `ComplexRestrictions` declarations.
 -/
 
@@ -53,7 +53,7 @@ theorem isOpen_logZ_slitPlane_locus_latticeGraph
     IsOpen {h : ℂ | IsingModel.partitionFunctionComplex
       (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
         ∈ Complex.slitPlane} :=
-  IsingModel.isOpen_logZ_slitPlane_locus
+  IsingModel.isOpen_freeEnergy_analyticity_locus
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
 
 /-- **ℤ^d slitPlane-locus open in `(h, β)`** (Λ-induced). -/

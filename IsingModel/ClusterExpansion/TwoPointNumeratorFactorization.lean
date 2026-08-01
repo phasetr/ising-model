@@ -138,22 +138,6 @@ theorem polymerDecomposition_subset_edgeFinset (G : SimpleGraph ι) [Fintype G.e
   obtain ⟨e, _he, rfl⟩ := hC
   exact edgeComponent_subset_edgeFinset G hX e
 
-omit [Fintype ι] in
-/-- **A two-point-bounded set of even cardinality is `∅` or the pair**. -/
-theorem finset_subset_pair_of_even_card {i j : ι} (hij : i ≠ j)
-    {B : Finset ι} (hsub : B ⊆ ({i, j} : Finset ι)) (heven : Even B.card) :
-    B = ∅ ∨ B = ({i, j} : Finset ι) := by
-  classical
-  have hle : B.card ≤ 2 := le_trans (Finset.card_le_card hsub) (by simp [Finset.card_pair hij])
-  have hc : B.card = 0 ∨ B.card = 2 := by
-    rcases heven with ⟨m, hm⟩
-    omega
-  rcases hc with h | h
-  · exact Or.inl (Finset.card_eq_zero.mp h)
-  · refine Or.inr (Finset.eq_of_subset_of_card_le hsub ?_)
-    rw [Finset.card_pair hij]
-    omega
-
 /-- **A component meeting the pair carries the whole pair boundary**: if `∂C ⊆ {i,j}` and `∂C` is
 nonempty, then `∂C = {i,j}` (handshake parity rules out a singleton boundary). -/
 theorem oddBoundary_eq_pair_of_subset_pair_of_mem
@@ -162,7 +146,7 @@ theorem oddBoundary_eq_pair_of_subset_pair_of_mem
     (hC : C ∈ G.edgeFinset.powerset) (hij : i ≠ j)
     (hsub : oddBoundary C ⊆ ({i, j} : Finset ι)) (hv : v ∈ oddBoundary C) :
     oddBoundary C = ({i, j} : Finset ι) := by
-  rcases finset_subset_pair_of_even_card hij hsub (oddBoundary_card_even G hC) with h0 | hpair
+  rcases subset_pair_of_even_card hij hsub (oddBoundary_card_even G hC) with h0 | hpair
   · rw [h0] at hv
     simp at hv
   · exact hpair

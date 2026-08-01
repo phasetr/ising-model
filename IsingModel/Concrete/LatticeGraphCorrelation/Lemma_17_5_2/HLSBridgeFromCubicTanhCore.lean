@@ -8,10 +8,11 @@ import IsingModel.PolyDecay
 
 Core (Step 119 plan Step 5.7) building blocks for the conditional
 `PseudoMassLatticeDistanceBridge` constructor: the translation reductions of the
-pair correlation, `pseudoMassFromParamsAtPair`, and lattice distance, the
-zero-anchored bound lift, the `cubicTanhProfileBound`-family active-range lift,
-the family-based bridge constructor, and the `pseudoMassG`-shaped atomic
-reductions.
+pair correlation and of `pseudoMassFromParamsAtPair`, the zero-anchored bound
+lift, the `cubicTanhProfileBound`-family active-range lift, the family-based
+bridge constructor, and the `pseudoMassG`-shaped atomic reductions. The
+lattice-distance translation step carries no wrapper here; the proofs use
+`latticeDistance_translate_eq` from `PolyDecay.lean` directly.
 
 This is a structural child of `HLSBridgeFromCubicTanh.lean`; see that umbrella
 module for the full overview.
@@ -82,15 +83,6 @@ theorem correlationInfinite_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound_displ
   exact correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound
     hr hJ hβ hlt hzx_ne hprofile_tanh
 
-/-- **Lattice-distance translation form** (Step 119 plan Step 5.7).
-
-`latticeDistance d x z = latticeDistance d 0 (z - x)`. Direct application of
-`latticeDistance_translate_eq` (which lives in `PolyDecay.lean`). -/
-theorem latticeDistance_pair_eq_displacement
-    (d : ℕ) (x z : Fin d → ℤ) :
-    latticeDistance d x z = latticeDistance d 0 (z - x) :=
-  latticeDistance_translate_eq d x z
-
 /-- **Bound lift from the zero-anchored uniform pseudo-mass lower bound**
 (Step 119 plan Step 5.7).
 
@@ -98,7 +90,7 @@ If for every nonzero displacement `w` the zero-anchored pseudo-mass dominates
 `M_inf · d(0, w)`, then for every distinct pair `(x, z)` the pair pseudo-mass
 dominates `M_inf · d(x, z)`. Direct consequence of the translation reductions
 `pseudoMassFromParamsAtPair_eq_displacement` and
-`latticeDistance_pair_eq_displacement` at `w = z - x`. -/
+`latticeDistance_translate_eq` at `w = z - x`. -/
 theorem pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
     {α : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (d : ℕ) {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) {M_inf : ℝ}
@@ -113,7 +105,7 @@ theorem pseudoMassFromParamsAtPair_lower_bound_of_zero_anchored
   intro x z hxz
   have hzx_ne : z - x ≠ 0 := sub_ne_zero.mpr (Ne.symm hxz)
   have h_dist : (latticeDistance d x z : ℝ) = (latticeDistance d 0 (z - x) : ℝ) := by
-    exact_mod_cast latticeDistance_pair_eq_displacement d x z
+    exact_mod_cast latticeDistance_translate_eq d x z
   have h_pseudo := pseudoMassFromParamsAtPair_eq_displacement hα hr d hJ hβ x z
   rw [h_dist, h_pseudo]
   exact hbase (z - x) hzx_ne
