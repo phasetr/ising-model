@@ -31,11 +31,6 @@ namespace Lebowitz
 Ising spin. -/
 abbrev SiteQuad : Type := Spin × Spin × Spin × Spin
 
-/-- Sum over the two spins, explicitly. -/
-theorem sum_spin (f : Spin → ℝ) : ∑ s : Spin, f s = f Spin.up + f Spin.down := by
-  rw [show (Finset.univ : Finset Spin) = {Spin.up, Spin.down} from by decide]
-  rw [Finset.sum_insert (by decide), Finset.sum_singleton]
-
 /-- The spin sign of the first copy. -/
 noncomputable def s₁ (v : SiteQuad) : ℝ := Spin.sign ℝ v.1
 /-- The spin sign of the second copy. -/
