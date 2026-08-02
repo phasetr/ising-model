@@ -791,12 +791,18 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         CommonMark's blank line holds spaces and tabs only, so a no-break,
         thin, ideographic, or zero-width space keeps the negating prose above
         in the same paragraph as the trailer below.
+
+        The separators are built with ``chr`` instead of written as
+        literal glyphs.  They are invisible in source, and the
+        ideographic space U+3000 lies in the CJK block that this
+        repository's English-only gate (``audit_gate.py`` V4) scans for,
+        so a literal one fails that gate from inside this file.
         """
         for name, separator in {
-            "no-break space": " ",
-            "thin space": " ",
-            "ideographic space": "　",
-            "zero-width space": "​",
+            "no-break space": chr(0x00A0),
+            "thin space": chr(0x2009),
+            "ideographic space": chr(0x3000),
+            "zero-width space": chr(0x200B),
         }.items():
             with self.subTest(separator=name):
                 self.assert_code(
@@ -1025,7 +1031,7 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             "<.a@example.test>",
             "&lt;details>",
             fullwidth_less_than + "template>",
-            "<​style>",
+            "<" + chr(0x200B) + "style>",
         ]
         for variant in forbidden:
             with self.subTest(variant=variant):
