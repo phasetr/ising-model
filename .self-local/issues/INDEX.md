@@ -1,3 +1,42 @@
+## 2026-08-02 dev-pr-clerk governance corrections — #4830 checklist sync, second-wave INDEX entry, #4850/#4851 premise fixes
+
+- **#4830 (master tracker) body corrected**: the first-wave checklist (`#4831`/`#4832`/`#4833`/
+  `#4834`/`#4835`/`#4836`/`#4837`) was self-contradictory — all 7 items showed unchecked `[ ]`
+  boxes while the prose said "the initial seven-child programme is resolved". `gh issue view`
+  confirms all 7 are CLOSED: **completed** = #4832, #4833, #4837; **declined (not planned)** =
+  #4831, #4834, #4835, #4836. Body now checks each box and appends an explicit verdict word per
+  line (not `[x]` alone, to avoid a declined item reading as completed).
+- **Second-wave issues #4850–#4854 filed 2026-08-01/02, OPEN, no INDEX record until now**:
+  - #4850 (P0) — restore the generic-to-Concrete ownership boundary around extremal
+    configurations (`GKSBoundaryCondition.lean`).
+  - #4851 (P0) — re-home `sum_spin` at its Spin-level owner (`FourfoldSite.lean` duplicate).
+  - #4852 (P1) — audit a forbidden-edge core shared by edge- and vertex-avoidance proofs.
+  - #4853 (P1) — audit/extract the shared numeric core of spectral-gap certificates.
+  - #4854 (P2) — canonicalize one identical-statement Patches group with compatibility aliases.
+  All five are children of #4830's "Second-wave plan (2026-08-02)" section; mirrors exist for
+  all five (`4850.md`–`4854.md`) as of this entry.
+- **#4850 body premise corrected**: original body proposed to "move the minimal concept-complete
+  extremal-configuration slice to its generic owner". `dev-issue-manager` (main `496d0b5f`) found
+  every declaration `GKSBoundaryCondition.lean` consumes (`plusConfig`,
+  `partitionFunctionBC_pos`, `boltzmannWeightJ_uniform_eq`, etc.) already has a non-`Concrete`
+  owner on current main; the real bounded pilot is a **single import-line repoint**
+  (`GKSBoundaryCondition.lean:3` → `import IsingModel.Inequalities.MonotonicityExtremal`), not a
+  declaration move. Body rewritten to state this; ownership table + closure measurement (182 vs
+  12 modules) carried over from mirror `4850.md`.
+- **#4851 body premise corrected**: original body said `FourfoldSite.lean` imports `GibbsMeasure`
+  "for `sum_spin` alone" (implying it consumes `IsingModel.sum_spin`). `dev-issue-manager` found
+  `FourfoldSite.lean:35` instead declares its own duplicate `IsingModel.Lebowitz.sum_spin` (the
+  `GibbsMeasure.lean:224` general form is never referenced by this file), and the file uses
+  **zero** Gibbs-layer names (`hamiltonian|boltzmann|partitionFunction|gibbs|correlation` all 0
+  hits) — its IsingModel-layer dependency is `Basic` only; the replacement Mathlib import set is
+  unmeasured (`dev-review`'s `lake env lean` swap to `IsingModel.Basic` alone hit missing
+  `AddCommMonoid ℝ` / `CommRing ℝ` instances, and adding `Mathlib.Data.Real.Basic` left 5 further
+  errors, so the current `import IsingModel.GibbsMeasure` is load-bearing as a transitive Mathlib
+  supplier, not simply "unnecessary"). Body rewritten: debt = duplicate declaration; target
+  IsingModel-layer owner = `IsingModel.Basic`, not a "move a consumed declaration" story. Carried
+  over from mirror `4851.md`.
+- Governance corrections only; no Lean/build change, no issue closed, no PR opened by this pass.
+
 ## 2026-07-30 audit checkpoint — #4786 hierarchy and #4803 evidence
 
 - PR #4806 candidate `f425143c96c865d40efb401c24b49d0ffdd970ef` was
