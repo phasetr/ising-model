@@ -1,3 +1,23 @@
+## 2026-08-02 #4850 AC2 audit-gate inventory + new issue #4857 (dev-pr-clerk)
+
+`dev-research` completed the AC2 audit-gate inventory for #4850 (branch
+`refactor/4850-gksboundary-import-repoint` HEAD `d3482788`): 27 `L2_THEORY → L4_LATTICE/L5_CHAIN`
+INFO edges, 21 targeting `Concrete.*` classified as 15 intentional concrete specialization / 1
+ownership violation / 1 compatibility facade, plus 4 "apparently unused import" findings (a 4th
+finding outside the requested 3 buckets, needs `lake exe shake` confirmation before action). Full
+detail: `.self-local/reports/research-4850-audit-gate-l2-l4-edges.md`. GitHub comment posted:
+https://github.com/phasetr/ising-model/issues/4850#issuecomment-5154127838. Mirror
+`.self-local/issues/4850.md` updated with the summary (AC2 satisfied).
+
+The one ownership-violation edge (`Inequalities/MonotonicityBetaBoundaryCondition.lean:3` →
+`Concrete/LatticeGraphCorrelation/MagnetizationFieldMonotone.lean`'s
+`gibbsExpectationBC_field_mono`, fully `SimpleGraph`-generic, misplaced in a Concrete file) was out
+of #4850's bounded-pilot scope, so **new issue #4857** was filed and linked as a **native
+sub-issue of #4830** (`sub_issues` REST API; `sub_issues_summary.total` 12→13). Mirror created:
+`.self-local/issues/4857.md`. `.self-local/issues/4830.md` Second-wave plan section updated with
+#4857 and a note recording the 4 unclassified edges as a future P2 candidate (needs `lake exe
+shake` verification, deliberately not issue-filed).
+
 ## 2026-07-30 audit checkpoint — #4786 hierarchy and #4803 evidence
 
 - PR #4806 candidate `f425143c96c865d40efb401c24b49d0ffdd970ef` was
