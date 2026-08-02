@@ -1433,8 +1433,11 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # `AmbientLattice/BetaDerivativeMagnetization.lean` (six retired as
         # duplicates, two re-homed) and four declarations were added (the two
         # re-homed corollaries plus the two `correlationAlongExhaustion`
-        # family equations in `AmbientLattice/Exhaustion.lean`).
-        self.assertEqual(len(broad or []), 10567)
+        # family equations in `AmbientLattice/Exhaustion.lean`).  PR #4859 is a
+        # further net -1 (10567 -> 10566): `Inequalities/Lebowitz/FourfoldSite.lean`
+        # declared a duplicate `Lebowitz.sum_spin`, an alpha-equivalent special
+        # case of the imported general `IsingModel.sum_spin`, and it is retired.
+        self.assertEqual(len(broad or []), 10566)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1446,7 +1449,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10567 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10566 declarations"]},
         )
 
 
