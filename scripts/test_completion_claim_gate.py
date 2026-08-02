@@ -900,6 +900,66 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         )
         self.assertEqual(anchored, (("Refs", 4801),))
 
+    def test_an_outdented_content_line_ends_the_container_as_a_closer_does(
+        self,
+    ) -> None:
+        """The line that ends a container need not be the fence's closer.
+
+        The tail rule first read only the closer's column, which left the same
+        container boundary open through any other line: a content line too
+        shallow to continue the list item ends the item and force-closes its
+        fence just as a closer-shaped line does, and the delimiter below then
+        opens a *new* block instead of closing the old one.  GitHub's
+        `/markdown` renders the first body as an empty code block, a `lake build`
+        paragraph, and a second, unclosed block holding the blank line and the
+        trailer, so nothing here may anchor.
+
+        The witnesses are the shapes an enumeration of container, opener,
+        content, and closer indentation found the closer-only rule still
+        anchoring against GitHub.  They vary the list marker, the closer's depth
+        relative to the opener, and whether the outdented content line reaches
+        column 0 at all.
+        """
+        for name, body in {
+            "content at column zero, closer level with the opener": (
+                "- Verified with:\n  ```\nlake build\n  ```\n\nRefs #4801\n"
+            ),
+            "closer deeper than the opener": (
+                "- item\n  ```\ncode\n   ```\n\nRefs #4801\n"
+            ),
+            "ordered marker": "1. run\n   ```\ncode\n   ```\n\nRefs #4801\n",
+            "content shallower without reaching column zero": (
+                "1. run\n   ```\n  code\n   ```\n\nRefs #4801\n"
+            ),
+        }.items():
+            with self.subTest(refused=name):
+                masked = gate.masked_code_containers(body)
+                self.assertNotIn("Refs", masked)
+                with self.assertRaises(gate.GateInputError) as raised:
+                    gate.parse_body_references(body)
+                self.assertEqual(raised.exception.code, "MISSING_ISSUE_REFERENCE")
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_FAIL, report)
+        # Neither a blank line nor a tab is shallow: a blank line ends no list
+        # item, and a tab advances to the fourth column rather than the first.
+        # GitHub's `/markdown` resolves the reference in each of these, so the
+        # rule must leave them alone.
+        for name, body in {
+            "blank line inside the fence": (
+                "- item\n  ```\n\n  x\n  ```\n\nRefs #4801\n"
+            ),
+            "blank line of one space": "- item\n  ```\n \n  x\n  ```\n\nRefs #4801\n",
+            "tab-indented content": "- item\n  ```\n\tx\n  ```\n\nRefs #4801\n",
+            "content deeper than the opener": (
+                "- item\n  ```\n     x\n  ```\n\nRefs #4801\n"
+            ),
+        }.items():
+            with self.subTest(accepted=name):
+                anchored, _ = gate.parse_body_references(body)
+                self.assertEqual(anchored, (("Refs", 4801),))
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
     def test_an_outdented_closer_masks_the_tail_under_either_reading(self) -> None:
         """Unknowable fence parity must mask the tail, not pick a reading.
 
@@ -948,7 +1008,7 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         alphabet = [
             "```", " ```", "  ```", "   ```", "```lean", "  ```lean",
             "~~~", "  ~~~", "````", "  ````", "- item", "1. item", "",
-            "Refs #4801", "  x", "```\r```", "x\r  ```",
+            "Refs #4801", "  x", "x", "\tx", "```\r```", "x\r  ```",
         ]
 
         def narrow_spans(text: str) -> list[tuple[int, int]]:
@@ -1960,16 +2020,16 @@ class MutationTest(GateHarness, unittest.TestCase):
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertEqual(mutant.parse_body_references(body)[0], (("Refs", 4801),))
 
-    def test_outdented_closer_tail_masking_mutant_is_killed(self) -> None:
+    def test_outdented_line_tail_masking_mutant_is_killed(self) -> None:
         """Without the tail rule, an authored blank line anchors code again.
 
-        The mutant makes an outdented closer an ordinary closer, which is one of
-        the two readings and not the one GitHub takes here.  The trailer below
-        the author's own blank line then sits outside every masked span and
-        anchors, though GitHub renders it inside the second code block.
+        The mutant makes every outdented line an ordinary line of the fence,
+        which is one of the two readings and not the one GitHub takes here.  The
+        trailer below the author's own blank line then sits outside every masked
+        span and anchors, though GitHub renders it inside the second code block.
         """
         mutant = self.mutant(
-            "        if closer is not None and closer[2] < indent:",
+            "        if _outdented(line, indent):",
             "        if False:",
         )
         for body, reference in {
@@ -1977,12 +2037,79 @@ class MutationTest(GateHarness, unittest.TestCase):
                 ("Refs", 4801),
             ),
             "1. run\n   ```\n   x\n```\n\nCloses #4802\n": (("Closes", 4802),),
+            "- Verified with:\n  ```\nlake build\n  ```\n\nRefs #4801\n": (
+                ("Refs", 4801),
+            ),
         }.items():
             with self.subTest(body=body[:12]):
                 self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
                 code, report = self.run_gate(body=body, module=mutant)
                 self.assertEqual(code, gate.EXIT_PASS, report)
                 self.assertEqual(mutant.parse_body_references(body)[0], reference)
+
+    def test_delimiter_only_outdent_mutant_is_killed(self) -> None:
+        """Reading the column of delimiter lines alone reopens the container gap.
+
+        This mutant is the rule as it was first written: it asks whether a line
+        is shallower than the opener only where the line is delimiter-shaped, so
+        a container that ends at an ordinary content line goes unnoticed and the
+        delimiter below it is read as the closer GitHub does not read it as.
+        The blank-line half of the rule is left intact, so what the witness kills
+        is the generalization from the closer to every line.
+        """
+        mutant = self.mutant(
+            '    return bool(line.strip(" \\t")) and _indent_columns(line) < indent',
+            '    return _fence(line) is not None and _indent_columns(line) < indent',
+        )
+        body = "- Verified with:\n  ```\nlake build\n  ```\n\nRefs #4801\n"
+        self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertEqual(
+            mutant.parse_body_references(body)[0], (("Refs", 4801),)
+        )
+
+    def test_blank_line_outdent_exemption_mutant_is_killed(self) -> None:
+        """A blank line is not an outdented line, and treating it as one costs.
+
+        A blank line ends no list item -- it only makes the list loose -- so a
+        fence that holds one is still open below it.  The mutant drops that
+        exemption and gives up on the parity of every fence with a blank line
+        inside, which withdraws references GitHub resolves; the shape is an
+        ordinary one for this repository's bodies.
+        """
+        mutant = self.mutant(
+            '    return bool(line.strip(" \\t")) and _indent_columns(line) < indent',
+            "    return _indent_columns(line) < indent",
+        )
+        body = "- item\n  ```\n\n  x\n  ```\n\nRefs #4801\n"
+        anchored, _ = gate.parse_body_references(body)
+        self.assertEqual(anchored, (("Refs", 4801),))
+        with self.assertRaises(mutant.GateInputError) as raised:
+            mutant.parse_body_references(body)
+        self.assertEqual(raised.exception.code, "MISSING_ISSUE_REFERENCE")
+
+    def test_tab_indent_column_mutant_is_killed(self) -> None:
+        """Counting a tab as one column withdraws a reference GitHub resolves.
+
+        A tab advances to the next multiple of four, so a tab-indented line
+        inside a fence opened at column two continues its list item.  Counting
+        the tab as a single character makes the line look shallower than its
+        opener, and the tail masking then swallows a trailer GitHub renders as a
+        paragraph.  The mutation fails closed rather than open, which is why it
+        is checked the other way round: the real gate anchors, the mutant does
+        not.
+        """
+        mutant = self.mutant(
+            "            column += 4 - column % 4",
+            "            column += 1",
+        )
+        body = "- item\n  ```\n\tx\n  ```\n\nRefs #4801\n"
+        anchored, _ = gate.parse_body_references(body)
+        self.assertEqual(anchored, (("Refs", 4801),))
+        with self.assertRaises(mutant.GateInputError) as raised:
+            mutant.parse_body_references(body)
+        self.assertEqual(raised.exception.code, "MISSING_ISSUE_REFERENCE")
 
     def test_blank_container_filler_mutant_is_killed(self) -> None:
         """A blank filler for any container hands back the fake paragraph break.

@@ -431,38 +431,75 @@ def _fence_closes(line: str, marker: str, minimum: int) -> bool:
     return match is not None and len(match.group(1)) >= minimum
 
 
+def _indent_columns(line: str) -> int:
+    """Return the column one line's first non-blank character stands in.
+
+    CommonMark measures a container's continuation in columns rather than in
+    characters, so a tab advances to the next multiple of four.  Counting it as
+    one character would make a tab-indented line look shallower than it is and
+    give up on fences that never lost their parity.
+    """
+    column = 0
+    for char in line:
+        if char == " ":
+            column += 1
+        elif char == "\t":
+            column += 4 - column % 4
+        else:
+            break
+    return column
+
+
+def _outdented(line: str, indent: int) -> bool:
+    """Return whether one line inside a fence stands shallower than its opener.
+
+    A blank line never does, however wide it is.  It has no first character to
+    place in a column, and it ends no list item either -- it only makes the list
+    loose -- so it cannot end the container a fence lives in.
+    """
+    return bool(line.strip(" \t")) and _indent_columns(line) < indent
+
+
 def _fenced_spans(text: str) -> list[tuple[int, int]]:
     """Return the character spans of fenced code blocks, delimiters included.
 
     An unclosed fence runs to the end of the document, as CommonMark specifies.
 
-    A candidate closer indented *less* than its opener leaves fence parity
-    unknowable, and the rest of the document is masked from the fence onwards.
+    Fence parity stops being knowable at the first line inside a fence that
+    stands *shallower* than its opener, and the rest of the document is masked
+    from the fence onwards.
 
     Two readings fit such a line and this scan cannot tell them apart.  Either
-    the fence closed here -- CommonMark lets a closer sit at any column up to
-    three, whatever its opener did -- or the container the fence lived in ended
-    here, because a line too shallow to continue a list item closes that item and
-    every block inside it, fence included, with no delimiter of its own; the line
-    is then offered to the block starts again at the outer level, where a bare
-    delimiter run opens a *new* fence.  GitHub's ``/markdown`` gives one reading
-    for each of these three bodies, so neither may be assumed::
+    the line belongs to the fence -- its content stands at whatever column it
+    likes, and CommonMark lets a closer sit at any column up to three whatever
+    its opener did -- or the container the fence lived in ended here, because a
+    line too shallow to continue a list item closes that item and every block
+    inside it, fence included, with no delimiter of its own; the line is then
+    offered to the block starts again at the outer level, where a bare delimiter
+    run opens a *new* fence.
 
-        (a) container ended    (b) fence closed    (c) parity decides
-        - x                     ```                 ```
-          ```                    y                 ```
-          y                     ```                 ```
-        ```                                        Refs #1
-                                Refs #1
-        Refs #1
+    Whichever line is too shallow ends the container, closer-shaped or not.  The
+    two bodies below differ in nothing but which line that is -- (a) the fence's
+    own closer, (b) an ordinary content line -- and GitHub's ``/markdown``
+    renders each with the trailer inside a code block no reference may be
+    anchored from.  It renders (c)'s trailer inside one too, and there the
+    delimiters mean what they say, so no one reading serves all three::
+
+        (a) closer too shallow    (b) content too shallow   (c) parity decides
+        - x                       - x                        ```
+          ```                       ```                     ```
+          lake build              lake build                ```
+        ```                         ```                     Refs #1
+
+        Refs #1                   Refs #1
 
     The readings disagree on the parity of every delimiter below, so each one's
     code is the other's prose and their union is the whole tail.  Masking that
     tail is therefore not a blunt over-approximation but exactly the union, and
     it is the only choice that cannot read code as prose.  Committing to "the
-    fence closed" anchors (a)'s trailer, which GitHub puts inside the second code
-    block; committing to "the container ended" anchors (c)'s, because it would
-    read (c)'s second delimiter as a closer rather than an opener.
+    fence closed" anchors the trailers of (a) and (b), which GitHub puts inside a
+    second code block; committing to "the container ended" anchors (c)'s, because
+    it would read (c)'s second delimiter as a closer rather than an opener.
 
     :func:`extract_managed_document` keeps the plain delimiter matching instead,
     so the two no longer agree on every body.  That parser is reached only in
@@ -479,14 +516,11 @@ def _fenced_spans(text: str) -> list[tuple[int, int]]:
                 opening = (marker, minimum, indent, start)
             continue
         marker, minimum, indent, fence_start = opening
-        if not _fence_closes(line, marker, minimum):
-            continue
-        # A closer carries a delimiter run and nothing but whitespace, so it is
-        # always a well-formed opener too and this is never None.
-        closer = _fence(line)
-        if closer is not None and closer[2] < indent:
+        if _outdented(line, indent):
             spans.append((fence_start, len(text)))
             return spans
+        if not _fence_closes(line, marker, minimum):
+            continue
         spans.append((fence_start, offset))
         opening = None
     if opening is not None:

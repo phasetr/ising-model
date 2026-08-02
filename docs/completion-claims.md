@@ -812,29 +812,43 @@ not remove the disagreement, because a blank line the *author* wrote survives
 masking. A body shaped "bullet, indented opener, column-0 closer, blank line,
 `Refs #N`" therefore still isolated a trailer that GitHub renders as code text.
 
-The fence scan now handles that shape at its source. A closer indented less than
-its opener admits two readings and this scan cannot choose between them. Either
-the fence closed there, since CommonMark lets a closer sit at any column up to
-three whatever its opener did, or the container holding the fence ended there,
-in which case CommonMark force-closes the fence with no delimiter of its own and
-offers the same line to the block starts again at the outer level, where a bare
-delimiter run opens a new fence. GitHub's `/markdown` gives one reading for each
-of these, which is why neither may be assumed:
+The fence scan now handles that shape at its source. Any line inside a fence
+that stands shallower than the opener admits two readings and this scan cannot
+choose between them. Either the line belongs to the fence — its content stands
+at whatever column it likes, and CommonMark lets a closer sit at any column up
+to three whatever its opener did — or the container holding the fence ended
+there, in which case CommonMark force-closes the fence with no delimiter of its
+own and offers the same line to the block starts again at the outer level, where
+a bare delimiter run opens a new fence.
+
+Whichever line is too shallow ends the container, closer-shaped or not. That is
+the whole rule, and it took two rounds to reach: reading the closer's column
+alone left the same boundary open through every other line, so a body whose
+*content* line reached column 0 still anchored a trailer GitHub renders as code.
+GitHub's `/markdown` gives one reading for each of these three, which is why
+none of them may be assumed:
 
 ````text
-(a) the container ended     (b) the fence closed      (c) parity decides it
-- Verified with:             ```                       ```
-  ```                         code                    ```
-  lake build                 ```                       ```
-```                                                    Refs #4801
-                             Refs #4801
-Refs #4801
+(a) a closer too shallow  (b) content too shallow       (c) parity decides it
+- Verified with:          - Verified with:               ```
+  ```                       ```                         ```
+  lake build              lake build                    ```
+```                         ```                         Refs #4801
+
+Refs #4801                Refs #4801
 ````
 
-GitHub renders (a) as two code blocks with the trailer inside the second, and
-(b) — whose one-column indent was decorative — as a code block followed by a
-paragraph holding the trailer. In (c) the first delimiter opens, the second
-closes, and the third opens an unclosed block that swallows the trailer.
+GitHub renders (a) as two code blocks with the trailer inside the second. It
+renders (b) as an empty code block, a `lake build` paragraph, and a second,
+unclosed code block holding the blank line and the trailer — the item's fence
+was force-closed by a line that carries no delimiter at all. In (c) the first
+delimiter opens, the second closes, and the third opens an unclosed block that
+swallows the trailer.
+
+A blank line is not a shallow line, however wide it is: it ends no list item —
+it only makes the list loose — so a fence that holds one is still open below it.
+A tab is not a shallow line either, because CommonMark measures a container's
+continuation in columns and a tab advances to the next multiple of four.
 
 The two readings disagree about the parity of every delimiter below, so each
 one's code is the other's prose and their union is the whole tail. The scan
@@ -851,9 +865,34 @@ anchored, it is reported as an unverified mention, and a body whose only
 reference is withdrawn is rejected. One consequence is worth stating plainly: a
 disallowed non-closing reference inside an over-masked tail stops raising
 `UNMANAGED_ISSUE_REF` and is downgraded to an unverified mention, so the
-allowlist is enforced on fewer references for such a body. No real pull-request
-body in the last forty merged carries an outdented fence closer at all, and
-none of their masked views or verdicts changes.
+allowlist is enforced on fewer references for such a body.
+
+That cost is real and it is measured. Enumerating a fence inside every container
+shape with every combination of opener, content, and closer indentation gives
+1,494 bodies the generalized rule withdraws that the closer-only rule anchored;
+a sample of 250 of them, rendered by `/markdown`, splits 39 references GitHub
+resolves nothing of — the fail-open the rule exists to close — against 211
+GitHub does resolve. The synthetic ratio is not the operational one: of the 300
+most recently merged pull-request bodies in this repository, three carry an
+indented fence opener at all, none carries a line inside a fence shallower than
+its opener, and no verdict and no masked view changes for any of the 300.
+
+Two rounds closed this family, and what makes it closed is not the count of
+shapes tested but where an anchored trailer can stand. A trailer line matches
+only at column 0: the grammar admits no indentation, no blockquote marker, and
+no other prefix, so every reference this checker can anchor lies on a line that
+begins at column 0. Of CommonMark's blocks only three render their text
+literally — an indented code block, which needs four columns and so contains no
+column-0 line; an HTML block, which the raw-HTML guard rejects outright; and a
+fenced code block. A fence holding a column-0 line cannot live in a container
+that indents its content, because that line would end the container and force
+the fence closed, so its opener stands at column three or less and the opener
+pattern sees it. What is left is parity — whether a delimiter this scan matched
+is the delimiter GitHub matched — and parity is exactly what the tail rule gives
+up on wherever a container may have intervened. It gives up on more than
+CommonMark needs, never less: a line shallower than the opener is shallower than
+the container's own content column, since the opener itself stands in that
+container.
 
 The paragraph rule is that a trailer line counts only inside a paragraph — the
 maximal run of non-blank lines containing it — that holds trailer lines and
