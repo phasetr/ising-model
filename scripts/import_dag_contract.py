@@ -47,7 +47,7 @@ R3 is the invariant the issue is about: *generality must not depend on
 specialization*.  The identifiers ``R4`` / ``R5`` are deliberately absent -- they
 name the two ``L2_THEORY -> L4_LATTICE`` / ``L2_THEORY -> L5_CHAIN`` directions
 that are reported as ``INFO`` and never enforced.  Enforcing them would
-manufacture a 27-entry baseline and would implicitly demand a file-relocation
+manufacture a 26-entry baseline and would implicitly demand a file-relocation
 campaign, which is exactly the mechanical rewrite the issue forbids: many of
 those edges are honest concrete capstones that merely live under a topic
 directory, so the *file* is misfiled while the *edge* is correctly directed.
