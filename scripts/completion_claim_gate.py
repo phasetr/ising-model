@@ -49,7 +49,12 @@ DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}\Z")
 NON_CLOSING_RE = re.compile(r"(Refs|Part of) #([1-9][0-9]*)\Z")
 CANONICAL_CLOSING_RE = re.compile(r"(?:Closes|Fixes|Resolves) #([1-9][0-9]*)")
 BARE_REF_RE = re.compile(r"#([1-9][0-9]*)")
+GH_REF_RE = re.compile(r"\bGH-([1-9][0-9]*)", re.IGNORECASE)
 RAW_HTML_RE = re.compile(r"<[A-Za-z!/?]")
+# CommonMark email autolinks whose local part starts with a digit or symbol are
+# not tag-shaped, so the delimiter scan above cannot see them.  The local part
+# stops at the first "@" so the scan stays backtracking-free.
+EMAIL_AUTOLINK_RE = re.compile(r"<[^\s<>@]*@[^\s<>]*>")
 OFFICIAL_CLOSE_KEYWORDS = (
     "close",
     "closes",
@@ -507,16 +512,34 @@ def _closing_trailer_numbers(body: str) -> list[int]:
     return numbers
 
 
+def _non_closing_kind(keyword: str) -> str:
+    """Return the canonical spelling of a scanned non-closing directive keyword."""
+    return "Refs" if keyword == "refs" else "Part of"
+
+
+def _non_closing_trailers(body: str) -> list[tuple[str, int]]:
+    """Return ``(kind, number)`` from raw standalone ``Refs``/``Part of`` lines."""
+    references: list[tuple[str, int]] = []
+    for line in body.split("\n"):
+        match = NON_CLOSING_RE.fullmatch(line.removesuffix("\r"))
+        if match is not None:
+            references.append((match.group(1), int(match.group(2))))
+    return references
+
+
 def parse_body_references(
     body: str,
 ) -> tuple[tuple[tuple[str, int], ...], tuple[int, ...]]:
     """Return prose-mode ``(anchored, mentions)`` references, failing closed.
 
     ``anchored`` holds ``(kind, number)`` for every ``Refs``/``Part of``/``Closes``
-    directive; ``mentions`` holds the remaining bare ``#N`` numbers, which carry
-    no authority.  A closing keyword that GitHub would act on must appear as a
-    standalone canonical trailer line, so a negated or decorated sentence such as
-    "This does not Closes #4801." is rejected rather than silently honoured.
+    directive; ``mentions`` holds the remaining bare ``#N`` and ``GH-N`` numbers,
+    which carry no authority.  Every anchored reference must appear as a standalone
+    canonical trailer line, so a negated or decorated sentence such as "This does
+    not Closes #4801." is rejected rather than silently honoured.  The rule covers
+    the non-closing directives too: their numbers widen issue authority here (they
+    seed the live hierarchy walk), so a quoted, fenced, wrapped, or line-split
+    ``Refs #4801`` must not pass for the reference it only looks like.
     """
     normalized = _normalized_body_text(body)
     closing = _directive_references(normalized, CLOSE_KEYWORDS)
@@ -532,16 +555,25 @@ def parse_body_references(
         )
     anchored: list[tuple[str, int]] = [("Closes", number) for number in trailers]
     anchored_starts = {start for _, start, _ in closing}
-    for keyword, start, reference in _directive_references(
-        normalized, NON_CLOSING_DIRECTIVES
-    ):
+    scanned = _directive_references(normalized, NON_CLOSING_DIRECTIVES)
+    for _, _, reference in scanned:
         if BARE_REF_RE.fullmatch(reference) is None:
             raise GateInputError(
                 "UNSUPPORTED_ISSUE_REF_FORM",
                 f"only bare same-repository references are supported: {reference}",
             )
-        anchored.append(("Refs" if keyword == "refs" else "Part of", int(reference[1:])))
-        anchored_starts.add(start)
+    non_closing = _non_closing_trailers(body)
+    scanned_pairs = sorted(
+        (_non_closing_kind(keyword), int(reference[1:]))
+        for keyword, _, reference in scanned
+    )
+    if scanned_pairs != sorted(non_closing):
+        raise GateInputError(
+            "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+            "non-closing keywords must appear only as standalone canonical trailers",
+        )
+    anchored.extend(non_closing)
+    anchored_starts.update(start for _, start, _ in scanned)
     if len(anchored) > MAX_ANCHORED_REFERENCES:
         raise GateInputError(
             "TOO_MANY_ISSUE_REFERENCES", "body has too many anchored issue references"
@@ -556,13 +588,15 @@ def parse_body_references(
             "MISSING_ISSUE_REFERENCE",
             "body needs at least one Refs, Part of, or Closes reference",
         )
-    mentions = sorted(
-        {
-            int(match.group(1))
-            for match in BARE_REF_RE.finditer(normalized)
-            if match.start() not in anchored_starts
-        }
-    )
+    numbered = {
+        int(match.group(1))
+        for match in BARE_REF_RE.finditer(normalized)
+        if match.start() not in anchored_starts
+    }
+    # GitHub also resolves the "GH-N" shorthand.  It is never anchored here, but
+    # reporting it keeps it visible instead of dropping it from the body silently.
+    numbered.update(int(match.group(1)) for match in GH_REF_RE.finditer(normalized))
+    mentions = sorted(numbered)
     if len(mentions) > MAX_BARE_MENTIONS:
         raise GateInputError(
             "TOO_MANY_ISSUE_REFERENCES", "body has too many bare issue mentions"
@@ -796,7 +830,13 @@ def _reject_directive_keywords(normalized: str) -> None:
 
 
 def _reject_raw_html(normalized: str, *, strict: bool = True) -> None:
-    """Reject HTML; ``strict`` bans every less-than, otherwise only tag openers."""
+    """Reject HTML; ``strict`` bans every less-than, otherwise markup shapes.
+
+    The relaxed scan keeps a comparison such as ``value < bound`` legal, so it
+    matches tag openers by shape.  An email autolink whose local part starts with
+    a digit or a symbol is angle-delimited without being tag-shaped, hence the
+    second scan; both report ``RAW_HTML_FORBIDDEN``.
+    """
     if strict:
         if "<" in normalized:
             raise GateInputError(
@@ -807,6 +847,11 @@ def _reject_raw_html(normalized: str, *, strict: bool = True) -> None:
         raise GateInputError(
             "RAW_HTML_FORBIDDEN",
             "body contains a forbidden markup delimiter",
+        )
+    elif EMAIL_AUTOLINK_RE.search(normalized) is not None:
+        raise GateInputError(
+            "RAW_HTML_FORBIDDEN",
+            "body contains a forbidden autolink delimiter",
         )
 
 

@@ -186,7 +186,9 @@ The prose contract is what an ordinary pull-request body must satisfy:
 
 1. Size and Unicode limits are the same in both modes.
 2. Raw HTML is rejected by tag shape rather than by every less-than character
-   (see the body-syntax section below), so comparison prose is allowed.
+   (see the body-syntax section below), so comparison prose is allowed. An
+   angle-delimited run that contains `@` and no whitespace is rejected as an
+   email autolink even when it is not tag-shaped.
 3. A closing keyword that GitHub would act on must appear as a standalone
    canonical trailer line, exactly `Closes #N`, `Fixes #N`, or `Resolves #N`
    with nothing else on the line. Every closing reference the keyword scanner
@@ -196,10 +198,17 @@ The prose contract is what an ordinary pull-request body must satisfy:
    emphasis-wrapped, lower-case, and trailing-text variants.
 4. Close vocabulary that carries no `#N` reference is ordinary prose and is
    allowed, because GitHub does nothing with it.
-5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`.
-   Only a bare same-repository `#N` is supported; an `owner/repo#N` or URL form
-   is `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space
-   cannot be verified here.
+5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`,
+   under the same standalone-trailer rule: every pairing the keyword scanner
+   finds must also be a line that is exactly `Refs #N` or `Part of #N`, and the
+   two are compared as multisets of kind and number; otherwise the body is
+   `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. These numbers widen issue authority —
+   they seed the live hierarchy walk — so a negated, quoted, fenced,
+   emphasized, line-split, trailing-text, or link-labelled `Refs #N` is refused
+   rather than honoured for a reference the body does not really carry. Only a
+   bare same-repository `#N` is supported; an `owner/repo#N` or URL form is
+   `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space cannot
+   be verified here.
 6. At least one anchored reference (`Refs`, `Part of`, or `Closes`) is
    required, otherwise `MISSING_ISSUE_REFERENCE`. At most 16 anchored
    references, 8 closing trailers, and 64 distinct bare mentions are accepted;
@@ -209,7 +218,9 @@ The prose contract is what an ordinary pull-request body must satisfy:
    otherwise `UNMANAGED_ISSUE_REF`.
 8. A bare `#N` with no directive in front of it is an informational mention.
    It is neither verified nor allowed to widen issue authority; it is recorded
-   as an `unverified_issue_mention` human-review entry.
+   as an `unverified_issue_mention` human-review entry. GitHub's `GH-N`
+   shorthand is recorded the same way, so it stays visible rather than being
+   dropped from the report; it is never an anchored form.
 9. The four claim families a prose body cannot express — candidate diff
    self-report, review records, semantic claims, and history claims — are not
    machine-checked in this mode. Each one is recorded as an
@@ -654,14 +665,19 @@ of unrestricted historical prose remains human-reviewed.
 After HTML-entity decoding, Unicode NFKC normalization, and format-control
 removal, the body is scanned for markup delimiters. A managed body must contain
 no less-than character (`<`) at all. A prose body must contain no `<`
-immediately followed by a letter, `!`, `/`, or `?`; a comparison such as
-`value < bound` is therefore accepted in prose mode and rejected in managed
-mode. Both checks run before managed-block extraction and report
-`RAW_HTML_FORBIDDEN`. The checker does not parse HTML and has no tag-length
-cutoff: comments, block containers, tags, closing or self-closing tags, quoted
-or multiline attributes, angle autolinks, entity-encoded delimiters, and
-fullwidth delimiters all normalize to a tag-shaped delimiter and are rejected
-in both modes. Links must use ordinary Markdown link syntax.
+immediately followed by a letter, `!`, `/`, or `?`, and no angle-delimited run
+that contains `@` and no whitespace; a comparison such as `value < bound` is
+therefore accepted in prose mode and rejected in managed mode, while
+`a < b@c > d` stays accepted because whitespace breaks that run. All these
+checks run before managed-block extraction and report `RAW_HTML_FORBIDDEN`. The
+checker does not parse HTML and has no tag-length cutoff: comments, block
+containers, tags, closing or self-closing tags, quoted or multiline attributes,
+URI autolinks, entity-encoded delimiters, and fullwidth delimiters all
+normalize to a tag-shaped delimiter. An email autolink is the one angle form
+that need not be tag-shaped, because its local part may start with a digit or a
+symbol (`<1@example.test>`), so the autolink shape catches it instead. Every
+form above is rejected in both modes, and links must use ordinary Markdown link
+syntax.
 
 ### Issue references
 
@@ -691,6 +707,16 @@ and their numbers must be in `allowed_issue_refs`. That allowlist is applied to
 raw `Refs` or `Part of` directives everywhere in the body, so copied evidence
 cannot hide a wrong issue number outside the managed block. Cross-repository
 `owner/repo#N` and issue-URL forms are not accepted as references.
+
+A prose body holds the non-closing directives to the standalone-trailer rule as
+well, and by the same multiset comparison. The asymmetry with the closing forms
+would otherwise be a fail-open in the other direction: a closing keyword is
+dangerous because GitHub acts on it, while a non-closing keyword is dangerous
+because this gate acts on it — `Refs` seeds the live issue hierarchy, so an
+unanchored one could satisfy both `MISSING_ISSUE_REFERENCE` and
+`MISSING_OPEN_ISSUE_REFERENCE` with a number the body never really cited. The
+`GH-N` shorthand is not an anchored form in either mode; it is reported as an
+unverified mention so that it cannot pass unseen.
 
 ## Draft and ready behavior
 
@@ -732,11 +758,17 @@ delimiters, comparison prose, and weakened raw-HTML guards are also pinned.
 A separate prose-mode class pins the default contract: a realistic prose body
 passes and reports its four `unverified_claim_family` entries, a missing
 anchored reference fails, negated and decorated closing forms fail while a
-standalone trailer and bare close vocabulary pass, every raw-HTML variant still
-fails while `value < bound` passes, a malformed managed marker never falls
+standalone trailer and bare close vocabulary pass, the same disguises of
+`Refs`/`Part of` (negated, inline-code, fenced, blockquoted, line-split,
+link-labelled, trailing-text, lower-case, emphasized, entity-obscured) fail
+while standalone non-closing trailers pass, a `GH-N` shorthand surfaces as an
+unverified mention, every raw-HTML variant still fails — including
+digit-leading, underscore-leading, and dot-leading email autolinks — while
+`value < bound` and `a < b@c > d` pass, a malformed managed marker never falls
 through to prose, cross-repository and URL reference forms fail, and the
-reference and mention caps hold. Weakened anchored-reference and
-closing-trailer guards are killed as mutants.
+reference and mention caps hold. Weakened anchored-reference, closing-trailer,
+non-closing-trailer, and autolink guards are killed as mutants, and the
+autolink scan is timed past one MiB.
 Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
 suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
@@ -752,6 +784,7 @@ size errors, and workflow security mutations. Prose bodies are covered end to
 end: identical authority from prose and managed bodies, preserved offline
 diagnostic codes, cross-repository and pull-request-parent rejection, a passing
 closed non-seed reference, all-closed seeds, a missing issue, an unreachable
-`Part of`, closing versus referencing a pull request, exact-head success, and
+`Part of`, closing versus referencing a pull request, exact-head success, a
+disguised `Refs` that fails shut without ever fetching the issue it names, and
 mutants for the open-seed guard and for a prose fallback that would bypass a
 managed block.

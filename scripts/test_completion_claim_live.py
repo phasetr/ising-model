@@ -942,6 +942,7 @@ class ProseReferenceTest(unittest.TestCase):
         cases = {
             "MISSING_ISSUE_REFERENCE": "A summary with no anchored reference.\n",
             "AMBIGUOUS_CLOSING_DIRECTIVE": "Refs #4801\nThis does not Closes #4796.\n",
+            "AMBIGUOUS_NON_CLOSING_DIRECTIVE": "Part of #4796\n> Refs #4801\n",
             "UNSUPPORTED_ISSUE_REF_FORM": "Refs phasetr/other#12\n",
             "DUPLICATE_ISSUE_REF": "Refs #4801\nPart of #4801\n",
         }
@@ -1051,6 +1052,38 @@ class ProseReferenceTest(unittest.TestCase):
             "MISSING_ISSUE_REFERENCE",
             str(transport.posts[-1][1]["description"]),
         )
+
+    def test_a_disguised_reference_never_seeds_the_hierarchy_end_to_end(self) -> None:
+        """`Refs` is a seed kind, so a shape that only looks anchored must fail shut.
+
+        Each body cites nothing GitHub would resolve, yet a keyword-only scan reads
+        an anchored `Refs #4801` in it.  Accepting one would make an invented number
+        both the issue-reference evidence and an open-issue seed.
+        """
+        variants = [
+            "This does not Refs #4801.",
+            "See the example `Refs #4801`",
+            "```text\n... Refs #4801 ...\n```",
+            "> Refs #4801",
+            "Refs\n#4801",
+            "[Refs #4801](https://example.test)",
+        ]
+        for variant in variants:
+            with self.subTest(variant=variant[:20]):
+                body = f"## Summary\n\n{variant}\n"
+                transport = self.transport(body, count=2)
+                self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805), 1)
+                self.assertEqual(
+                    [payload["state"] for _, payload in transport.posts],
+                    ["pending", "failure"],
+                )
+                self.assertIn(
+                    "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                    str(transport.posts[-1][1]["description"]),
+                )
+                self.assertFalse(
+                    any("/issues/4801" in path for path in transport.gets)
+                )
 
 
 class EvaluationTest(unittest.TestCase):

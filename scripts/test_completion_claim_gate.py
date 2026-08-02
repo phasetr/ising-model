@@ -506,6 +506,21 @@ class GateTest(GateHarness, unittest.TestCase):
                 self.assertEqual(len(normalized), len(source))
                 self.assertLess(elapsed, 5.0)
 
+    def test_autolink_scan_is_linearish_past_one_mibibyte(self) -> None:
+        """The autolink shape must not backtrack; none of these ever closes."""
+        cases = [
+            "<1@b" * 300_000,
+            "<" + ("1" * 1_000 + "@") * 1_100,
+            "<" * 500_000 + "1@" + "b" * 600_000,
+        ]
+        for source in cases:
+            with self.subTest(prefix=source[:10]):
+                started = time.monotonic()
+                gate._reject_raw_html(source, strict=False)
+                elapsed = time.monotonic() - started
+                self.assertGreater(len(source), 1024 * 1024)
+                self.assertLess(elapsed, 5.0)
+
 
 PROSE_BODY = """## Summary
 
@@ -579,6 +594,79 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                     body=f"Refs #4796\n{variant}\n",
                 )
 
+    def test_disguised_non_closing_directives_are_ambiguous(self) -> None:
+        """A `Refs` shape that is not a standalone trailer must not widen authority.
+
+        Each variant reads like an anchored reference to a keyword scanner while
+        GitHub renders it as prose, code, a quote, or a link label.  Anchoring
+        them would seed the live issue-hierarchy walk with a number the body does
+        not really cite, so they fail closed exactly as the closing forms do.
+        """
+        variants = {
+            "negated": "This does not Refs #4801.",
+            "inline code": "See the example `Refs #4801`",
+            "fenced": "```text\n... Refs #4801 ...\n```",
+            "blockquote": "> Refs #4801",
+            "split line": "Refs\n#4801",
+            "link label": "[Refs #4801](https://example.test)",
+            "trailing text": "Refs #4801 (context)",
+            "lower case": "refs #4801",
+            "emphasized": "_Refs_ #4801",
+            "entity": "Ref&#115; #4801",
+            "part of": "This is not Part of #4801.",
+        }
+        for name, variant in variants.items():
+            with self.subTest(variant=name):
+                self.assert_code(
+                    "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                    body=f"Part of #4796\n{variant}\n",
+                )
+
+    def test_a_disguised_non_closing_directive_is_the_only_reference(self) -> None:
+        """The disguised forms must not satisfy the at-least-one-reference rule."""
+        for variant in [
+            "This does not Refs #4801.",
+            "See the example `Refs #4801`",
+            "```text\n... Refs #4801 ...\n```",
+            "> Refs #4801",
+            "Refs\n#4801",
+            "[Refs #4801](https://example.test)",
+        ]:
+            with self.subTest(variant=variant[:20]):
+                code, report = self.run_gate(body=f"{variant}\n")
+                self.assertEqual(code, gate.EXIT_FAIL, report)
+                with self.assertRaises(gate.GateInputError):
+                    gate.parse_body_references(f"{variant}\n")
+
+    def test_standalone_non_closing_trailers_pass(self) -> None:
+        bodies = ["Refs #4801\n", "Part of #4796\n", "Refs #4801\r\nPart of #4796\r\n"]
+        for body in bodies:
+            with self.subTest(body=body):
+                code, report = self.run_gate(body=f"Ordinary summary.\n\n{body}")
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_gh_shorthand_mentions_stay_visible(self) -> None:
+        """`GH-N` is reported, never anchored, and never silently dropped.
+
+        Whether GitHub's closing parser acts on the shorthand is not settled by
+        its documentation, so the number is surfaced for the human reviewer
+        instead of being read as evidence or trusted as an authority.
+        """
+        body = "Fixes GH-4805 in passing.\n\nRefs #4801\n"
+        anchored, mentions = gate.parse_body_references(body)
+        self.assertEqual(anchored, (("Refs", 4801),))
+        self.assertEqual(mentions, (4805,))
+        code, report = self.run_gate(body=body)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertIn(
+            {
+                "kind": "unverified_issue_mention",
+                "id": "#4805",
+                "status": gate.HUMAN_REVIEW_REQUIRED,
+            },
+            report["human_reviews"],
+        )
+
     def test_missing_issue_reference_fails(self) -> None:
         for body in [
             "A summary with no anchored reference at all.\n",
@@ -597,6 +685,11 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             "<br />",
             "<https://example.test/evidence>",
             "<reviewer@example.test>",
+            # Autolinks whose local part starts with a digit or a symbol are not
+            # tag-shaped, so the relaxed prose scan needs its own autolink shape.
+            "<1@example.test>",
+            "<_reviewer@example.test>",
+            "<.a@example.test>",
             "&lt;details>",
             fullwidth_less_than + "template>",
             "<​style>",
@@ -604,8 +697,14 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         for variant in forbidden:
             with self.subTest(variant=variant):
                 self.assert_code("RAW_HTML_FORBIDDEN", body=f"{variant}\n\nRefs #4801\n")
-        code, report = self.run_gate(body="Measured value < bound.\n\nRefs #4801\n")
-        self.assertEqual(code, gate.EXIT_PASS, report)
+        allowed = [
+            "Measured value < bound.",
+            "Ordered as a < b@c > d in the table.",
+        ]
+        for variant in allowed:
+            with self.subTest(variant=variant):
+                code, report = self.run_gate(body=f"{variant}\n\nRefs #4801\n")
+                self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_malformed_managed_block_never_falls_through_to_prose(self) -> None:
         block = managed_body(self.payload)
@@ -646,7 +745,9 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         self.assert_code("UNMANAGED_ISSUE_REF", body="Refs #4801\nPart of #4709\n")
 
     def test_bare_mentions_are_informational_only(self) -> None:
-        anchored, mentions = gate.parse_body_references("Refs #4801 #4805 #4806\n")
+        anchored, mentions = gate.parse_body_references(
+            "Supersedes #4805 and #4806.\n\nRefs #4801\n"
+        )
         self.assertEqual(anchored, (("Refs", 4801),))
         self.assertEqual(mentions, (4805, 4806))
         code, report = self.run_gate(body="Follows PR #4805.\n\nRefs #4801\n")
@@ -1149,6 +1250,27 @@ class MutationTest(GateHarness, unittest.TestCase):
         )
         body = "Refs #4796\nThis does not Closes #4801.\n"
         self.assert_code("AMBIGUOUS_CLOSING_DIRECTIVE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_prose_non_closing_trailer_mutant_is_killed(self) -> None:
+        """Dropping the guard demotes a disguised `Refs` instead of refusing it."""
+        mutant = self.mutant(
+            "    if scanned_pairs != sorted(non_closing):",
+            "    if False:",
+        )
+        body = "Part of #4796\nThis does not Refs #4801.\n"
+        self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_autolink_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "elif EMAIL_AUTOLINK_RE.search(normalized) is not None:",
+            "elif False:",
+        )
+        body = "<1@example.test>\n\nRefs #4801\n"
+        self.assert_code("RAW_HTML_FORBIDDEN", body=body)
         code, report = self.run_gate(body=body, module=mutant)
         self.assertEqual(code, gate.EXIT_PASS, report)
 
