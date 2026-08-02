@@ -1435,8 +1435,9 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # re-homed corollaries plus the two `correlationAlongExhaustion`
         # family equations in `AmbientLattice/Exhaustion.lean`).  PR #4859 is a
         # further net -1 (10567 -> 10566): `Inequalities/Lebowitz/FourfoldSite.lean`
-        # declared a duplicate `Lebowitz.sum_spin`, an alpha-equivalent special
-        # case of the imported general `IsingModel.sum_spin`, and it is retired.
+        # declared a duplicate `Lebowitz.sum_spin`, a specialization
+        # (`α := ℝ`) of the imported general `IsingModel.sum_spin`, and it is
+        # retired.
         self.assertEqual(len(broad or []), 10566)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
