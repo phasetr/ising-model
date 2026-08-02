@@ -1224,11 +1224,11 @@ class NarrowGlobCitationTest(unittest.TestCase):
 class QualifiedGlobCitationTest(unittest.TestCase):
     """Fully-qualified ``IsingModel.`` globs resolve against full names only."""
 
-    ROW_3861_TOKEN = (
+    ROW_3867_TOKEN = (
         "IsingModel.{magnetization,truncated2,susceptibility,"
         "magnetization_total}_convergent_*"
     )
-    ROW_3861 = {
+    ROW_3867 = {
         "IsingModel.magnetization_convergent_*": [
             "IsingModel.magnetization_convergent_subgraph",
             "IsingModel.magnetization_convergent_J",
@@ -1251,11 +1251,11 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             "IsingModel.truncated2_convergent_subgraph",
         ],
     }
-    ROW_26838_TOKEN = (
+    ROW_26844_TOKEN = (
         "IsingModel.Ambient."
         "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_*"
     )
-    ROW_26838 = [
+    ROW_26844 = [
         "IsingModel.Ambient."
         "pseudoMassFromParamsAtPair_M_dist_zero_le_of_corr_le_pseudoMassG",
         "IsingModel.Ambient."
@@ -1300,23 +1300,23 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         """Return the exact 20 declarations named at the two real sites."""
         return [
             name
-            for names in self.ROW_3861.values()
+            for names in self.ROW_3867.values()
             for name in names
-        ] + self.ROW_26838
+        ] + self.ROW_26844
 
     def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
         """Brace composition yields 4/1/4/4 matches, then the second site 7."""
         guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
-        self.assertIn((self.ROW_3861_TOKEN, 3861), guide.tokens)
-        self.assertIn((self.ROW_26838_TOKEN, 26838), guide.tokens)
-        patterns = dcs.expand_citation_token(self.ROW_3861_TOKEN)
-        self.assertEqual(patterns, sorted(self.ROW_3861))
+        self.assertIn((self.ROW_3867_TOKEN, 3867), guide.tokens)
+        self.assertIn((self.ROW_26844_TOKEN, 26844), guide.tokens)
+        patterns = dcs.expand_citation_token(self.ROW_3867_TOKEN)
+        self.assertEqual(patterns, sorted(self.ROW_3867))
 
         cache: dict[str, list[dcs.Decl] | None] = {}
         resolved = [dcs._resolve_fragment(tree(), pattern, cache) for pattern in patterns]
-        resolved.append(dcs._resolve_fragment(tree(), self.ROW_26838_TOKEN, cache))
+        resolved.append(dcs._resolve_fragment(tree(), self.ROW_26844_TOKEN, cache))
         self.assertEqual([len(matches or []) for matches in resolved], [4, 1, 4, 4, 7])
-        expected = [self.ROW_3861[pattern] for pattern in patterns] + [self.ROW_26838]
+        expected = [self.ROW_3867[pattern] for pattern in patterns] + [self.ROW_26844]
         self.assertEqual(
             [[decl.full for decl in matches or []] for matches in resolved],
             expected,
@@ -1327,12 +1327,12 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         verdicts = dcs.classify(
             tree(), self.real_names(), docs(), allow_homonym=False
         )[0]
-        counts = {3861: 0, 26838: 0}
+        counts = {3867: 0, 26844: 0}
         for verdict in verdicts:
             for citation in verdict.doc_citations:
                 for line, token in (
-                    (3861, self.ROW_3861_TOKEN),
-                    (26838, self.ROW_26838_TOKEN),
+                    (3867, self.ROW_3867_TOKEN),
+                    (26844, self.ROW_26844_TOKEN),
                 ):
                     if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
                         self.assertIn(token, citation)
@@ -1342,7 +1342,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                         and token in citation,
                         (verdict.decl.full, citation),
                     )
-        self.assertEqual(counts, {3861: 13, 26838: 7})
+        self.assertEqual(counts, {3867: 13, 26844: 7})
 
     def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
         """A qualified glob selects the root namespace, while bare keeps finals."""
