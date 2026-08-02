@@ -1,3 +1,27 @@
+## 2026-08-02 dev-pr-clerk INDEX sync — #4857 filing recorded as an independent entry, second-wave denominator corrected 2/6, sub_issues_summary 9/13
+
+- **#4857 filed 2026-08-02 as a native sub-issue of #4830 (P0/P1)**: "restore generic ownership of
+  `gibbsExpectationBC_field_mono`" — `IsingModel/Inequalities/MonotonicityBetaBoundaryCondition.lean:3`
+  imports `Concrete.LatticeGraphCorrelation.MagnetizationFieldMonotone` only to obtain
+  `gibbsExpectationBC_field_mono` (`MagnetizationFieldMonotone.lean:120-141`), which is fully
+  generic over `(G : SimpleGraph ι) [Fintype G.edgeSet]` with no ℤ^d/`cubicBox` dependency in its
+  statement or proof — the same ownership-violation shape as the previously fixed
+  `boltzmannWeightJ_uniform_eq` relocation (#4833). Spun off from #4850's own AC2 ownership audit
+  (`.self-local/reports/research-4850-audit-gate-l2-l4-edges.md` row 21), out of #4850's bounded
+  pilot scope. Proposed fix: relocate the declaration to a non-`Concrete` generic owner module,
+  preserving the public statement, with a compatibility alias if needed. OPEN, not started.
+  Mirror: `.self-local/issues/4857.md`. (Previously this filing was recorded only in prose inside
+  the prior #4850-entry below; this is its own INDEX entry.)
+- **Second-wave denominator corrected 2/5 → 2/6, and combined-wave figure added**: #4857's filing
+  makes the second-wave programme six children (#4850, #4851, #4852, #4853, #4854, #4857), not
+  five. Second-wave progress is **2/6 completed** (#4850, #4851). Combined with the seven-child
+  first wave, GitHub's native `sub_issues_summary` = **9/13 completed (69%)** across both waves.
+  These corrections are already reflected on GitHub #4830's body (checklist lists `#4857` under
+  "Second-wave plan (2026-08-02)", states "2/6 completed", "GitHub `sub_issues_summary` = 9/13
+  across both waves") and in `.self-local/issues/4830.md` (`sub_issues_summary` = 9 completed /
+  13 total, 69%; "Second-wave progress: 2/6 completed") — both corrected ahead of this INDEX
+  entry; this entry brings the INDEX up to the same state.
+
 ## 2026-08-02 dev-pr-clerk merge sync — #4851 completed (reduced scope), #4830 checklist updated 2/5
 
 - **#4851 CLOSED (completed, reduced scope)**: merged via PR #4859
@@ -17,7 +41,8 @@
   candidate pending explicit user authorization; not reopened by this closure.
 - **#4830 (master tracker) body updated**: second-wave checklist line for `#4851` flipped
   `[ ] → [x]` with `— completed (reduced scope)` and the parked-P2 note; second-wave progress
-  now recorded as **2/5** (#4850, #4851).
+  recorded at the time as **2/5** (#4850, #4851) — this predates #4857's filing later the same
+  day; see the corrected **2/6** entry above.
 
 ## 2026-08-02 dev-pr-clerk merge sync — #4850 completed, #4830 checklist updated
 
