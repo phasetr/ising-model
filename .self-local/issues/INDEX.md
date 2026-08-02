@@ -1,3 +1,32 @@
+## 2026-08-02 dev-pr-clerk merge sync — #4857 completed, second-wave 3/6, sub_issues_summary 10/13
+
+- **PR #4862 squash-merged** to `main` as commit `c3bfdc4072cb93ec48b6253b5fa5b640e2111246`
+  (title: "refactor: move gibbsExpectationBC_field_mono generic block to MonotonicityField
+  (#4857)"). `gibbsExpectationBC_field_mono` and its supporting block relocated verbatim from
+  `Concrete/LatticeGraphCorrelation/MagnetizationFieldMonotone.lean` into
+  `Inequalities/MonotonicityField.lean`; `MonotonicityBetaBoundaryCondition.lean` retargeted;
+  import-DAG contract INFO edge count 27 -> 26. Branch head required a GitHub-side update
+  (`PUT .../pulls/4862/update-branch`) to merge `main` (which had advanced with #4863's
+  completion-claim gate relaxation) before merge, per branch protection's "up to date" requirement;
+  all checks (build, import-dag-contract, discover, completion-claim/live, evaluate) passed green
+  on the updated tip before squash-merge.
+- **#4857 closed completed** (`gh issue close 4857 --reason completed`), all five acceptance
+  criteria checked off in `.self-local/issues/4857.md`. This issue's full scope was covered by the
+  single PR; nothing carries forward under its number.
+- **#4830 (master tracker) body updated**: second-wave checklist line for `#4857` flipped to `[x]`
+  with the completed verdict and merge commit; progress line corrected 2/6 -> 3/6, combined-wave
+  figure 9/13 -> 10/13 (cross-checked against GitHub's native `sub_issues_summary` =
+  `{"completed":10,"percent_completed":76,"total":13}`).
+- **Mirrors synced**: `.self-local/issues/4857.md` (status flipped to CLOSED completed, resolution
+  section + checked acceptance criteria added), `.self-local/issues/4830.md` (second-wave table row
+  for #4857 flipped to CLOSED completed, progress corrected 2/6 -> 3/6).
+- `docs/index.md` was already synced by the PR itself (both the §4.1 `MonotonicityField.lean` row
+  and the §3.6/#3599 `MagnetizationFieldMonotone.lean` row correctly attribute the relocation to
+  #4857) — no additional edit needed post-merge.
+- Local branch cleanup: no local checkout of the feature branch existed at merge time (working
+  directory was already on `main`); remote branch deleted via `gh pr merge --delete-branch`;
+  confirmed absent both locally (`git branch --list`) and on origin (`git ls-remote`).
+
 ## 2026-08-02 dev-pr-clerk INDEX sync — #4857 filing recorded as an independent entry, second-wave denominator corrected 2/6, sub_issues_summary 9/13
 
 - **#4857 filed 2026-08-02 as a native sub-issue of #4830 (P0/P1)**: "restore generic ownership of
