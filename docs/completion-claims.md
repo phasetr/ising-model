@@ -14,11 +14,13 @@ semantic claim level is reported as `HUMAN_REVIEW_REQUIRED`.
 Phase 2 wraps the offline calculation in
 `scripts/completion_claim_live.py`. The live adapter publishes the
 commit-status context `completion-claim/live` on the exact pull-request head.
-Under active ruleset `14892885` and immutable enforcement-history version
-`44903447`, `build` and `completion-claim/live` from integration ID `15368`
-are mechanically required for a pull request targeting `main`, with strict
-latest-base policy and no bypass actors. Integration binding does not
-authenticate a particular workflow file, trigger, or matrix producer. Only
+Under active ruleset `14892885`, the only mechanically required status for a
+pull request targeting `main` is `build` from integration ID `15368`, with
+strict latest-base policy and no bypass actors. `completion-claim/live` is
+published and observable on the exact head but is not currently a required
+check, so its result does not by itself block or authorize a merge. Integration
+binding does not authenticate a particular workflow file, trigger, or matrix
+producer. Only
 offline exit 0 with a well-formed `PASS` report can publish `success`.
 Draft-incomplete, deterministic rejection, unexpected checker output, API or
 timeout errors, bounded-input violations, snapshot races, and status-write
@@ -94,15 +96,22 @@ push backfill to 100 pull requests, diagnostics to 8,192 bytes, and HTTP
 attempts to one request plus two bounded retries. Oversize and truncation
 never produce partial acceptance.
 
-Issue authority begins only with `Refs` entries in the managed JSON. Each seed
-issue and every formal parent must be an open, same-repository issue rather
-than a pull request. The chain is read through structural issue-parent
-endpoints; unrestricted prose cannot widen the allowlist. At most 16 total
-structured references are accepted. Every exact reference string and every
-issue number must be unique, and at least one `Refs` child seed is required.
-These checks run before changed-file, issue, or history endpoint reads. Issue
-objects and parent results are memoized across shared chains, bounding the
-issue graph to at most 16 seed issue reads plus 64 parent reads.
+Issue authority begins only with the anchored references the body declares: the
+managed JSON's `Refs` entries, or, for a prose body, its `Refs`, `Part of`, and
+`Closes` directives. `Refs` and `Closes` seed the walk; a `Part of` target must
+prove itself a true ancestor of a seed. Each fetched issue must be a
+same-repository issue, and every formal parent must be an issue rather than a
+pull request; a `Refs` target may be a pull request, in which case its chain is
+not walked. A missing issue is `ISSUE_NOT_FOUND`. Individual references may be
+closed, but at least one seed must resolve to an open issue, otherwise
+`MISSING_OPEN_ISSUE_REFERENCE`. The chain is read through structural
+issue-parent endpoints; unanchored prose mentions cannot widen the allowlist.
+At most 16 total references are accepted. Every exact reference string and
+every issue number must be unique, and the managed form additionally requires
+at least one `Refs` child seed. These checks run before changed-file, issue, or
+history endpoint reads. Issue objects and parent results are memoized across
+shared chains, bounding the issue graph to at most 16 seed issue reads plus 64
+parent reads.
 
 Structured history is derived from bounded commit-file pages, the requested
 commit, its sole parent, ancestry comparison, and exact repository blob
@@ -163,6 +172,57 @@ The context has this exact schema:
 The caller is responsible for constructing that trusted snapshot. Phase 1 has
 no live workflow, API client, ruleset integration, authentication, or mirror
 gate.
+
+### Prose contract (default)
+
+The body mode is decided by the normalized `completion-claims-v1` marker count.
+Zero markers select the prose contract below; one or more select the managed
+contract in the next section. A body that carries a marker but no single valid
+canonical block still fails as `AMBIGUOUS_MANAGED_BLOCK` or
+`MALFORMED_MANAGED_BLOCK`: a broken managed block is never an easier way to
+pass than a correct one. The report records the selected mode as `body_mode`.
+
+The prose contract is what an ordinary pull-request body must satisfy:
+
+1. Size and Unicode limits are the same in both modes.
+2. Raw HTML is rejected by tag shape rather than by every less-than character
+   (see the body-syntax section below), so comparison prose is allowed.
+3. A closing keyword that GitHub would act on must appear as a standalone
+   canonical trailer line, exactly `Closes #N`, `Fixes #N`, or `Resolves #N`
+   with nothing else on the line. Every closing reference the keyword scanner
+   finds must correspond to such a line; otherwise the body is
+   `AMBIGUOUS_CLOSING_DIRECTIVE`. This keeps the #4725 shape
+   ("This does not Closes #4801.") rejected, together with entity-obscured,
+   emphasis-wrapped, lower-case, and trailing-text variants.
+4. Close vocabulary that carries no `#N` reference is ordinary prose and is
+   allowed, because GitHub does nothing with it.
+5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`.
+   Only a bare same-repository `#N` is supported; an `owner/repo#N` or URL form
+   is `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space
+   cannot be verified here.
+6. At least one anchored reference (`Refs`, `Part of`, or `Closes`) is
+   required, otherwise `MISSING_ISSUE_REFERENCE`. At most 16 anchored
+   references, 8 closing trailers, and 64 distinct bare mentions are accepted;
+   exceeding any of those is `TOO_MANY_ISSUE_REFERENCES`. Repeating one issue
+   number across anchored references is `DUPLICATE_ISSUE_REF`.
+7. Every non-closing anchored number must be in `allowed_issue_refs`,
+   otherwise `UNMANAGED_ISSUE_REF`.
+8. A bare `#N` with no directive in front of it is an informational mention.
+   It is neither verified nor allowed to widen issue authority; it is recorded
+   as an `unverified_issue_mention` human-review entry.
+9. The four claim families a prose body cannot express — candidate diff
+   self-report, review records, semantic claims, and history claims — are not
+   machine-checked in this mode. Each one is recorded as an
+   `unverified_claim_family` human review so the reduction stays visible in the
+   report rather than silent. Draft state is recorded the same way; prose mode
+   has no `PENDING` placeholder mechanism and therefore never returns
+   `DRAFT_INCOMPLETE`.
+10. This is an honest reduction in strength. Everything in point 9 is
+    recoverable by opting back into the managed block, which is unchanged.
+
+Snapshot consistency (body digest, base and head SHA, path digest, changed-file
+count) and every API-boundary bound are format-independent and apply in both
+modes.
 
 ## Managed block
 
@@ -519,8 +579,10 @@ The [independent #4802 audit][review-4802-enforcement] and
 [final #4802 closure audit][audit-4802-final] record the active enforcement:
 ruleset `14892885`, history version `44903447`, an empty bypass list, strict
 latest-base policy, and the integration-bound contexts `build` and
-`completion-claim/live`. Those contexts are mechanically required for a pull
-request targeting `main`; their integration IDs do not authenticate a
+`completion-claim/live`. Those contexts were mechanically required for a pull
+request targeting `main` at that time; the ruleset's current required-check
+list contains only `build`, so that audit's `completion-claim/live` requirement
+is no longer active. Their integration IDs do not authenticate a
 particular workflow file, trigger, or matrix producer. A successful live
 status remains semantically non-authoritative and does not replace exact-head
 source review or issue-resolution audit. Fork-head and replay/backfill
@@ -590,19 +652,22 @@ of unrestricted historical prose remains human-reviewed.
 ### Body syntax restriction
 
 After HTML-entity decoding, Unicode NFKC normalization, and format-control
-removal, the body must contain no less-than character (`<`). This check runs
-before managed-block extraction and reports `RAW_HTML_FORBIDDEN`. The checker
-does not parse HTML and has no tag-length cutoff: comments, block containers,
-tags, closing or self-closing tags, quoted or multiline attributes, angle
-autolinks, entity-encoded delimiters, and fullwidth delimiters are all rejected
-by the same character test. Comparisons must be written in words, and links
-must use ordinary Markdown link syntax.
+removal, the body is scanned for markup delimiters. A managed body must contain
+no less-than character (`<`) at all. A prose body must contain no `<`
+immediately followed by a letter, `!`, `/`, or `?`; a comparison such as
+`value < bound` is therefore accepted in prose mode and rejected in managed
+mode. Both checks run before managed-block extraction and report
+`RAW_HTML_FORBIDDEN`. The checker does not parse HTML and has no tag-length
+cutoff: comments, block containers, tags, closing or self-closing tags, quoted
+or multiline attributes, angle autolinks, entity-encoded delimiters, and
+fullwidth delimiters all normalize to a tag-shaped delimiter and are rejected
+in both modes. Links must use ordinary Markdown link syntax.
 
 ### Issue references
 
-`references.closing` is mandatory and must be empty. The body is also rejected
-if it contains any standalone, case-insensitive official GitHub closing
-directive token
+In a managed body, `references.closing` is mandatory and must be empty, and the
+body is rejected if it contains any standalone, case-insensitive official
+GitHub closing directive token
 (`close`, `closes`, `closed`, `fix`, `fixes`, `fixed`, `resolve`, `resolves`,
 or `resolved`) anywhere in the pull-request body. No issue reference is needed
 for rejection. The conservative policy intentionally does not interpret
@@ -610,13 +675,22 @@ Markdown: prose, emphasis, inline and reference-style links, link
 destinations, code, HTML, and comments are treated alike. HTML entities and
 Unicode NFKC forms are normalized first, and format controls cannot split a
 token. The bounded one-direction token scanner is linear in the body size.
-Authors must avoid these nine words until the post-merge issue action.
+Managed-body authors must avoid these nine words until the post-merge issue
+action.
 
-The only structured non-closing forms are `Refs #NUMBER` and
-`Part of #NUMBER`, and their numbers must be in `allowed_issue_refs`. The same
-allowlist is applied to raw `Refs` or `Part of` directives elsewhere in the
-body, so copied evidence cannot hide a wrong issue number outside the managed
-block.
+A prose body uses the same scanner but a narrower rule: a closing keyword only
+matters when an issue reference follows it, and every such pairing must also be
+a standalone canonical `Closes #N`, `Fixes #N`, or `Resolves #N` trailer line.
+The two sets are compared as multisets of issue numbers, so an obscured,
+emphasized, lower-case, negated, or comment-suffixed pairing is
+`AMBIGUOUS_CLOSING_DIRECTIVE`, while close vocabulary with no attached
+reference is ordinary prose.
+
+The only anchored non-closing forms are `Refs #NUMBER` and `Part of #NUMBER`,
+and their numbers must be in `allowed_issue_refs`. That allowlist is applied to
+raw `Refs` or `Part of` directives everywhere in the body, so copied evidence
+cannot hide a wrong issue number outside the managed block. Cross-repository
+`owner/repo#N` and issue-URL forms are not accepted as references.
 
 ## Draft and ready behavior
 
@@ -655,6 +729,13 @@ cross-container variants. Entity, NFKC, and format-control marker disguises,
 mixed duplicate disguises, and normalized marker-count mutants are pinned.
 Hidden HTML block containers, tags, comments, autolinks, normalized less-than
 delimiters, comparison prose, and weakened raw-HTML guards are also pinned.
+A separate prose-mode class pins the default contract: a realistic prose body
+passes and reports its four `unverified_claim_family` entries, a missing
+anchored reference fails, negated and decorated closing forms fail while a
+standalone trailer and bare close vocabulary pass, every raw-HTML variant still
+fails while `value < bound` passes, a malformed managed marker never falls
+through to prose, cross-repository and URL reference forms fail, the reference
+and mention caps hold, and a weakened "no anchored reference" guard is killed.
 Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
 suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
@@ -666,4 +747,10 @@ injected transport covers pull-request actions, draft and ready transitions,
 dispatch and backfill, same-repository, fork, and Dependabot-shaped metadata,
 fixed-page boundaries through 3,000 paths, structural issue ancestry, primary
 history actions, P1/P2 races, checker exit mapping, status payloads, API and
-size errors, and workflow security mutations.
+size errors, and workflow security mutations. Prose bodies are covered end to
+end: identical authority from prose and managed bodies, preserved offline
+diagnostic codes, cross-repository and pull-request-parent rejection, a passing
+closed non-seed reference, all-closed seeds, a missing issue, an unreachable
+`Part of`, closing versus referencing a pull request, exact-head success, and
+mutants for the open-seed guard and for a prose fallback that would bypass a
+managed block.
