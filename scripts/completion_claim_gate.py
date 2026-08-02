@@ -40,10 +40,16 @@ MAX_REVIEW_RECORDS = 16
 MAX_SEMANTIC_CLAIMS = 1_000
 MAX_HISTORY_FACTS = 10_000
 MAX_TEXT_BYTES = 16_384
+MAX_ANCHORED_REFERENCES = 16
+MAX_CLOSING_TRAILERS = 8
+MAX_BARE_MENTIONS = 64
 
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}\Z")
 NON_CLOSING_RE = re.compile(r"(Refs|Part of) #([1-9][0-9]*)\Z")
+CANONICAL_CLOSING_RE = re.compile(r"(?:Closes|Fixes|Resolves) #([1-9][0-9]*)")
+BARE_REF_RE = re.compile(r"#([1-9][0-9]*)")
+RAW_HTML_RE = re.compile(r"<[A-Za-z!/?]")
 OFFICIAL_CLOSE_KEYWORDS = (
     "close",
     "closes",
@@ -80,6 +86,17 @@ FUTURE_PLAN_RE = re.compile(
 )
 FENCE_OPEN_RE = re.compile(r"^( {0,3})(`{3,}|~{3,})([^\r\n]*)$")
 HISTORY_ACTIONS = frozenset({"added", "modified", "deleted"})
+MANAGED_MODE = "managed"
+PROSE_MODE = "prose"
+UNKNOWN_MODE = "unknown"
+# Claim families a managed block can state and prose cannot; prose mode reports
+# them as unverified instead of silently dropping them.
+UNVERIFIED_CLAIM_FAMILIES = (
+    "candidate_diff",
+    "review_records",
+    "semantic_claims",
+    "history_claims",
+)
 
 CLAIM_LEVELS = frozenset(
     {
@@ -413,6 +430,11 @@ def _normalized_marker_count(body: str) -> int:
     return _normalized_body_text(body).count(BLOCK_INFO)
 
 
+def managed_marker_count(body: str) -> int:
+    """Return the normalized managed-marker count that selects the body mode."""
+    return _normalized_marker_count(body)
+
+
 def _issue_number(reference: str) -> int:
     normalized = unicodedata.normalize("NFKC", reference)
     match = re.search(r"(?:#|/(?:issues|pull)/)([1-9][0-9]*)\Z", normalized)
@@ -450,16 +472,102 @@ def _keyword_spans(projected: str, keywords: tuple[str, ...]) -> list[tuple[int,
     return spans
 
 
-def _references_after(projected: str, keywords: tuple[str, ...]) -> list[str]:
-    references: list[str] = []
-    for _, keyword_end in _keyword_spans(projected, keywords):
+def _directive_references(
+    projected: str, keywords: tuple[str, ...]
+) -> list[tuple[str, int, str]]:
+    """Return ``(keyword, reference offset, reference)`` for anchored mentions."""
+    references: list[tuple[str, int, str]] = []
+    for keyword_start, keyword_end in _keyword_spans(projected, keywords):
         cursor = keyword_end
         while cursor < len(projected) and _is_markdown_separator(projected[cursor]):
             cursor += 1
         reference = ISSUE_REFERENCE_AT_RE.match(projected, cursor)
         if reference is not None:
-            references.append(reference.group(0))
+            references.append(
+                (
+                    projected[keyword_start:keyword_end].lower(),
+                    reference.start(),
+                    reference.group(0),
+                )
+            )
     return references
+
+
+def _references_after(projected: str, keywords: tuple[str, ...]) -> list[str]:
+    return [reference for _, _, reference in _directive_references(projected, keywords)]
+
+
+def _closing_trailer_numbers(body: str) -> list[int]:
+    """Return issue numbers from raw standalone ``Closes #N`` trailer lines."""
+    numbers: list[int] = []
+    for line in body.split("\n"):
+        match = CANONICAL_CLOSING_RE.fullmatch(line.removesuffix("\r"))
+        if match is not None:
+            numbers.append(int(match.group(1)))
+    return numbers
+
+
+def parse_body_references(
+    body: str,
+) -> tuple[tuple[tuple[str, int], ...], tuple[int, ...]]:
+    """Return prose-mode ``(anchored, mentions)`` references, failing closed.
+
+    ``anchored`` holds ``(kind, number)`` for every ``Refs``/``Part of``/``Closes``
+    directive; ``mentions`` holds the remaining bare ``#N`` numbers, which carry
+    no authority.  A closing keyword that GitHub would act on must appear as a
+    standalone canonical trailer line, so a negated or decorated sentence such as
+    "This does not Closes #4801." is rejected rather than silently honoured.
+    """
+    normalized = _normalized_body_text(body)
+    closing = _directive_references(normalized, CLOSE_KEYWORDS)
+    trailers = _closing_trailer_numbers(body)
+    if sorted(_issue_number(reference) for _, _, reference in closing) != sorted(trailers):
+        raise GateInputError(
+            "AMBIGUOUS_CLOSING_DIRECTIVE",
+            "closing keywords must appear only as standalone canonical trailers",
+        )
+    if len(trailers) > MAX_CLOSING_TRAILERS:
+        raise GateInputError(
+            "TOO_MANY_ISSUE_REFERENCES", "body has too many closing trailers"
+        )
+    anchored: list[tuple[str, int]] = [("Closes", number) for number in trailers]
+    anchored_starts = {start for _, start, _ in closing}
+    for keyword, start, reference in _directive_references(
+        normalized, NON_CLOSING_DIRECTIVES
+    ):
+        if BARE_REF_RE.fullmatch(reference) is None:
+            raise GateInputError(
+                "UNSUPPORTED_ISSUE_REF_FORM",
+                f"only bare same-repository references are supported: {reference}",
+            )
+        anchored.append(("Refs" if keyword == "refs" else "Part of", int(reference[1:])))
+        anchored_starts.add(start)
+    if len(anchored) > MAX_ANCHORED_REFERENCES:
+        raise GateInputError(
+            "TOO_MANY_ISSUE_REFERENCES", "body has too many anchored issue references"
+        )
+    numbers = [number for _, number in anchored]
+    if len(set(numbers)) != len(numbers):
+        raise GateInputError(
+            "DUPLICATE_ISSUE_REF", "anchored issue references contain duplicates"
+        )
+    if not anchored:
+        raise GateInputError(
+            "MISSING_ISSUE_REFERENCE",
+            "body needs at least one Refs, Part of, or Closes reference",
+        )
+    mentions = sorted(
+        {
+            int(match.group(1))
+            for match in BARE_REF_RE.finditer(normalized)
+            if match.start() not in anchored_starts
+        }
+    )
+    if len(mentions) > MAX_BARE_MENTIONS:
+        raise GateInputError(
+            "TOO_MANY_ISSUE_REFERENCES", "body has too many bare issue mentions"
+        )
+    return tuple(anchored), tuple(mentions)
 
 
 def _diagnostic(code: str, message: str) -> dict[str, str]:
@@ -687,11 +795,18 @@ def _reject_directive_keywords(normalized: str) -> None:
         )
 
 
-def _reject_raw_html(normalized: str) -> None:
-    if "<" in normalized:
+def _reject_raw_html(normalized: str, *, strict: bool = True) -> None:
+    """Reject HTML; ``strict`` bans every less-than, otherwise only tag openers."""
+    if strict:
+        if "<" in normalized:
+            raise GateInputError(
+                "RAW_HTML_FORBIDDEN",
+                "body contains a forbidden less-than delimiter",
+            )
+    elif RAW_HTML_RE.search(normalized) is not None:
         raise GateInputError(
             "RAW_HTML_FORBIDDEN",
-            "body contains a forbidden less-than delimiter",
+            "body contains a forbidden markup delimiter",
         )
 
 
@@ -721,6 +836,20 @@ def _check_references(
             raise GateInputError(
                 "UNMANAGED_ISSUE_REF",
                 f"body has a disallowed non-closing reference: {reference}",
+            )
+
+
+def _check_prose_references(
+    anchored: tuple[tuple[str, int], ...],
+    context: dict[str, Any],
+) -> None:
+    """Bind every non-closing prose reference to the trusted issue allowlist."""
+    allowed = set(context["allowed_issue_refs"])
+    for kind, number in anchored:
+        if kind != "Closes" and number not in allowed:
+            raise GateInputError(
+                "UNMANAGED_ISSUE_REF",
+                f"body has a disallowed non-closing reference: #{number}",
             )
 
 
@@ -785,73 +914,110 @@ def _check_semantic_claims(
         human_reviews.append(_human_review(kind, identifier))
 
 
+def _report(
+    status: str,
+    diagnostics: list[dict[str, str]],
+    human_reviews: list[dict[str, str]],
+    mode: str,
+) -> dict[str, Any]:
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "machine_status": status,
+        "diagnostics": diagnostics,
+        "human_reviews": human_reviews,
+        "body_mode": mode,
+    }
+
+
+def _evaluate_managed(
+    context_raw: Any, body: str, normalized_body: str
+) -> tuple[int, dict[str, Any]]:
+    """Evaluate a body that carries a managed evidence block."""
+    _reject_raw_html(normalized_body)
+    _reject_directive_keywords(normalized_body)
+    _validate_json_unicode(context_raw, "context")
+    context = _validate_context(context_raw)
+    managed, unmanaged = extract_managed_document(body)
+    payload = _object(_parse_json(managed, "managed block"), "payload")
+    _exact_keys(payload, PAYLOAD_KEYS, "payload")
+    _schema_version(payload["schema_version"], "payload.schema_version")
+
+    errors: list[dict[str, str]] = []
+    incomplete: list[dict[str, str]] = []
+    human_reviews: list[dict[str, str]] = []
+    _check_candidate(payload["candidate"], context, errors, incomplete)
+    _check_claim_levels(payload["claim_levels"], human_reviews)
+    _check_review_records(
+        payload["review_records"],
+        context,
+        errors,
+        incomplete,
+        human_reviews,
+    )
+    _check_history_claims(payload["history_claims"], context, errors)
+    _check_references(payload["references"], context, normalized_body)
+    _check_semantic_claims(
+        payload["semantic_claims"],
+        context,
+        errors,
+        incomplete,
+        human_reviews,
+    )
+    _charge_unmanaged_prose(unmanaged, human_reviews)
+    if errors:
+        status = FAIL
+        code = EXIT_FAIL
+        diagnostics = errors
+    elif incomplete:
+        status = DRAFT_INCOMPLETE
+        code = EXIT_DRAFT_INCOMPLETE
+        diagnostics = incomplete
+    else:
+        status = PASS
+        code = EXIT_PASS
+        diagnostics = []
+    return code, _report(status, diagnostics, human_reviews, MANAGED_MODE)
+
+
+def _evaluate_prose(
+    context_raw: Any, body: str, normalized_body: str
+) -> tuple[int, dict[str, Any]]:
+    """Evaluate a plain-prose body: references are verified, claims are not."""
+    _reject_raw_html(normalized_body, strict=False)
+    _validate_json_unicode(context_raw, "context")
+    context = _validate_context(context_raw)
+    anchored, mentions = parse_body_references(body)
+    _check_prose_references(anchored, context)
+    human_reviews = [
+        _human_review("unverified_claim_family", family)
+        for family in UNVERIFIED_CLAIM_FAMILIES
+    ]
+    if context["is_draft"]:
+        human_reviews.append(_human_review("draft_state", "body-draft-state"))
+    human_reviews.extend(
+        _human_review("unverified_issue_mention", f"#{number}") for number in mentions
+    )
+    _charge_unmanaged_prose(body, human_reviews)
+    return EXIT_PASS, _report(PASS, [], human_reviews, PROSE_MODE)
+
+
 def evaluate(context_raw: Any, body: str) -> tuple[int, dict[str, Any]]:
     """Evaluate parsed context and Markdown; return ``(exit_code, report)``."""
+    mode = UNKNOWN_MODE
     try:
         if not isinstance(body, str):
             raise GateInputError("INVALID_TYPE", "body must be a string")
         if len(_validate_unicode_text(body, "body")) > MAX_BODY_BYTES:
             raise GateInputError("INPUT_TOO_LARGE", "body exceeds the size limit")
         normalized_body = _normalized_body_text(body)
-        _reject_raw_html(normalized_body)
-        _reject_directive_keywords(normalized_body)
-        _validate_json_unicode(context_raw, "context")
-        context = _validate_context(context_raw)
-        managed, unmanaged = extract_managed_document(body)
-        payload = _object(_parse_json(managed, "managed block"), "payload")
-        _exact_keys(payload, PAYLOAD_KEYS, "payload")
-        _schema_version(payload["schema_version"], "payload.schema_version")
-
-        errors: list[dict[str, str]] = []
-        incomplete: list[dict[str, str]] = []
-        human_reviews: list[dict[str, str]] = []
-        _check_candidate(payload["candidate"], context, errors, incomplete)
-        _check_claim_levels(payload["claim_levels"], human_reviews)
-        _check_review_records(
-            payload["review_records"],
-            context,
-            errors,
-            incomplete,
-            human_reviews,
-        )
-        _check_history_claims(payload["history_claims"], context, errors)
-        _check_references(payload["references"], context, normalized_body)
-        _check_semantic_claims(
-            payload["semantic_claims"],
-            context,
-            errors,
-            incomplete,
-            human_reviews,
-        )
-        _charge_unmanaged_prose(unmanaged, human_reviews)
-        if errors:
-            status = FAIL
-            code = EXIT_FAIL
-            diagnostics = errors
-        elif incomplete:
-            status = DRAFT_INCOMPLETE
-            code = EXIT_DRAFT_INCOMPLETE
-            diagnostics = incomplete
-        else:
-            status = PASS
-            code = EXIT_PASS
-            diagnostics = []
-        report = {
-            "schema_version": SCHEMA_VERSION,
-            "machine_status": status,
-            "diagnostics": diagnostics,
-            "human_reviews": human_reviews,
-        }
-        return code, report
+        mode = MANAGED_MODE if managed_marker_count(body) else PROSE_MODE
+        if mode == MANAGED_MODE:
+            return _evaluate_managed(context_raw, body, normalized_body)
+        return _evaluate_prose(context_raw, body, normalized_body)
     except GateInputError as error:
         return (
             EXIT_FAIL,
-            {
-                "schema_version": SCHEMA_VERSION,
-                "machine_status": FAIL,
-                "diagnostics": [_diagnostic(error.code, error.message)],
-                "human_reviews": [],
-            },
+            _report(FAIL, [_diagnostic(error.code, error.message)], [], mode),
         )
 
 
@@ -864,12 +1030,7 @@ def run(context_path: Path, body_path: Path) -> tuple[int, dict[str, Any]]:
     except GateInputError as error:
         return (
             EXIT_FAIL,
-            {
-                "schema_version": SCHEMA_VERSION,
-                "machine_status": FAIL,
-                "diagnostics": [_diagnostic(error.code, error.message)],
-                "human_reviews": [],
-            },
+            _report(FAIL, [_diagnostic(error.code, error.message)], [], UNKNOWN_MODE),
         )
     return evaluate(context, body)
 

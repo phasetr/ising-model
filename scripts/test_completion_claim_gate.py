@@ -507,6 +507,194 @@ class GateTest(GateHarness, unittest.TestCase):
                 self.assertLess(elapsed, 5.0)
 
 
+PROSE_BODY = """## Summary
+
+Relaxes the live gate so an ordinary prose body is a first-class input. The
+previous contract required a managed JSON block that this repository's
+pull-request convention never wrote, so every real pull request failed closed.
+
+The old raw-HTML rule is fixed here: a comparison such as value < bound is no
+longer rejected, while every tag-shaped delimiter still is.
+
+## Test plan
+
+- [x] `python3 scripts/test_completion_claim_gate.py`
+- [x] `python3 scripts/test_completion_claim_live.py`
+
+Refs #4801
+Part of #4796
+"""
+
+
+class ProseModeTest(GateHarness, unittest.TestCase):
+    def prose(
+        self,
+        body: str,
+        *,
+        context: dict[str, Any] | None = None,
+    ) -> tuple[int, dict[str, Any]]:
+        return self.run_gate(context=context, body=body)
+
+    def assert_prose_code(self, expected: str, body: str) -> dict[str, Any]:
+        return self.assert_code(expected, body=body)
+
+    def test_realistic_prose_body_passes_and_records_unverified_families(self) -> None:
+        code, report = self.prose(PROSE_BODY)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertEqual(report["machine_status"], gate.PASS)
+        self.assertEqual(report["body_mode"], "prose")
+        families = [
+            entry["id"]
+            for entry in report["human_reviews"]
+            if entry["kind"] == "unverified_claim_family"
+        ]
+        self.assertEqual(families, list(gate.UNVERIFIED_CLAIM_FAMILIES))
+        self.assertEqual(len(families), 4)
+        self.assertNotIn(gate.PASS, {entry["status"] for entry in report["human_reviews"]})
+
+    def test_prose_is_the_default_mode_and_managed_mode_is_opt_in(self) -> None:
+        self.assertEqual(gate.managed_marker_count(PROSE_BODY), 0)
+        self.assertEqual(gate.managed_marker_count(managed_body(self.payload)), 1)
+        _, managed_report = self.run_gate()
+        self.assertEqual(managed_report["body_mode"], "managed")
+
+    def test_bare_close_vocabulary_without_a_reference_passes(self) -> None:
+        for word in gate.OFFICIAL_CLOSE_KEYWORDS:
+            body = f"The stale docstring was {word} in this pull request.\n\nRefs #4801\n"
+            with self.subTest(word=word):
+                code, report = self.prose(body)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_standalone_closing_trailer_passes(self) -> None:
+        for trailer in ["Closes #4801", "Fixes #4801", "Resolves #4801"]:
+            with self.subTest(trailer=trailer):
+                code, report = self.prose(f"Ordinary summary.\n\n{trailer}\n")
+                self.assertEqual(code, gate.EXIT_PASS, report)
+                anchored, _ = gate.parse_body_references(f"{trailer}\n")
+                self.assertEqual(anchored, (("Closes", 4801),))
+
+    def test_negated_decorated_and_trailing_text_closing_forms_are_ambiguous(self) -> None:
+        variants = [
+            "This does not Closes #4801.",
+            "Fi&#120;es #4801",
+            "_Fixes_ #4801",
+            "Closes #4801 (done)",
+            "closes #4801",
+            "Closes #4801 Closes #4801",
+            "Closes phasetr/other#12",
+        ]
+        for variant in variants:
+            with self.subTest(variant=variant):
+                self.assert_prose_code(
+                    "AMBIGUOUS_CLOSING_DIRECTIVE",
+                    f"Refs #4796\n{variant}\n",
+                )
+
+    def test_missing_issue_reference_fails(self) -> None:
+        for body in [
+            "A summary with no anchored reference at all.\n",
+            "See #4801 and #4796 for context.\n",
+            "",
+        ]:
+            with self.subTest(body=body[:20]):
+                self.assert_prose_code("MISSING_ISSUE_REFERENCE", body)
+
+    def test_raw_html_forms_still_fail_but_comparisons_pass(self) -> None:
+        fullwidth_less_than = chr(ord("<") + 0xFEE0)
+        forbidden = [
+            "<!-- hidden block -->",
+            "<details>",
+            "</div>",
+            "<br />",
+            "<https://example.test/evidence>",
+            "<reviewer@example.test>",
+            "&lt;details>",
+            fullwidth_less_than + "template>",
+            "<​style>",
+        ]
+        for variant in forbidden:
+            with self.subTest(variant=variant):
+                self.assert_prose_code("RAW_HTML_FORBIDDEN", f"{variant}\n\nRefs #4801\n")
+        code, report = self.prose("Measured value < bound.\n\nRefs #4801\n")
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_malformed_managed_block_never_falls_through_to_prose(self) -> None:
+        block = managed_body(self.payload)
+        bodies = {
+            "duplicate": block + block,
+            "disguised": "Prose marker: completion&#45;claims-v1\n\nRefs #4801\n",
+            "quoted": "> ```completion-claims-v1\n> {}\n> ```\n\nRefs #4801\n",
+        }
+        for name, body in bodies.items():
+            with self.subTest(name=name):
+                report = self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+                self.assertEqual(report["body_mode"], "managed")
+
+    def test_cross_repository_and_url_reference_forms_are_unsupported(self) -> None:
+        for reference in [
+            "Refs phasetr/other#12",
+            "Refs https://github.com/phasetr/other/issues/3",
+            "Part of phasetr/other#12",
+        ]:
+            with self.subTest(reference=reference):
+                self.assert_prose_code("UNSUPPORTED_ISSUE_REF_FORM", f"{reference}\n")
+
+    def test_reference_counts_are_bounded(self) -> None:
+        many = "\n".join(
+            f"Refs #{5000 + index}" for index in range(gate.MAX_ANCHORED_REFERENCES + 1)
+        )
+        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", many + "\n")
+        trailers = "\n".join(
+            f"Closes #{6000 + index}" for index in range(gate.MAX_CLOSING_TRAILERS + 1)
+        )
+        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", trailers + "\n")
+        mentions = " ".join(f"#{7000 + index}" for index in range(gate.MAX_BARE_MENTIONS + 1))
+        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", f"Refs #4801\n{mentions}\n")
+
+    def test_duplicate_and_unmanaged_anchored_references_fail(self) -> None:
+        self.assert_prose_code("DUPLICATE_ISSUE_REF", "Refs #4801\nPart of #4801\n")
+        self.assert_prose_code("UNMANAGED_ISSUE_REF", "Refs #4709\n")
+        self.assert_prose_code("UNMANAGED_ISSUE_REF", "Refs #4801\nPart of #4709\n")
+
+    def test_bare_mentions_are_informational_only(self) -> None:
+        anchored, mentions = gate.parse_body_references("Refs #4801 #4805 #4806\n")
+        self.assertEqual(anchored, (("Refs", 4801),))
+        self.assertEqual(mentions, (4805, 4806))
+        code, report = self.prose("Follows PR #4805.\n\nRefs #4801\n")
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertIn(
+            {
+                "kind": "unverified_issue_mention",
+                "id": "#4805",
+                "status": gate.HUMAN_REVIEW_REQUIRED,
+            },
+            report["human_reviews"],
+        )
+
+    def test_draft_state_is_recorded_without_gating(self) -> None:
+        context = copy.deepcopy(self.context)
+        context["is_draft"] = True
+        code, report = self.prose(PROSE_BODY, context=context)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertIn(
+            "draft_state", {entry["kind"] for entry in report["human_reviews"]}
+        )
+
+    def test_empty_anchored_set_cannot_pass_when_the_guard_is_weakened(self) -> None:
+        mutant = MutationTest.mutant(
+            "    if not anchored:\n"
+            "        raise GateInputError(\n"
+            '            "MISSING_ISSUE_REFERENCE",',
+            "    if False:\n"
+            "        raise GateInputError(\n"
+            '            "MISSING_ISSUE_REFERENCE",',
+        )
+        body = "A summary with no anchored reference at all.\n"
+        self.assert_prose_code("MISSING_ISSUE_REFERENCE", body)
+        code, _ = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS)
+
+
 class DigestTest(unittest.TestCase):
     def test_utf8_byte_order_and_length_framing_are_pinned(self) -> None:
         paths = ["z", "a/b", "\u03b1.lean"]
