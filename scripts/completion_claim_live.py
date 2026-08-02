@@ -55,6 +55,9 @@ SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 REPOSITORY_RE = re.compile(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+\Z")
 PR_NUMBER_RE = re.compile(r"[1-9][0-9]*\Z")
 STRUCTURED_REF_RE = re.compile(r"(Refs|Part of) #([1-9][0-9]*)\Z")
+# Only these kinds seed the hierarchy walk; `Part of` must prove itself an
+# ancestor of a seed instead of granting itself authority.
+SEED_KINDS = frozenset({"Refs", "Closes"})
 
 
 class LiveGateError(Exception):
@@ -124,6 +127,15 @@ class BasicSnapshot:
     repository: str
     head_repository: str
     head_actor: str
+
+
+@dataclass(frozen=True)
+class IssueFacts:
+    """Validated same-repository facts about one referenced issue."""
+
+    number: int
+    is_open: bool
+    is_pull_request: bool
 
 
 @dataclass(frozen=True)
@@ -197,6 +209,13 @@ def structured_payload(body: str) -> dict[str, object]:
     return _object(value, "INVALID_MANAGED_PAYLOAD")
 
 
+def optional_structured_payload(body: str) -> dict[str, object] | None:
+    """Parse the managed JSON only when the body opts into the managed contract."""
+    if offline.managed_marker_count(body) == 0:
+        return None
+    return structured_payload(body)
+
+
 def structured_references(payload: dict[str, object]) -> list[tuple[str, int]]:
     """Return exact non-closing references from the managed payload."""
     references = _object(payload.get("references"), "INVALID_STRUCTURED_REFERENCES")
@@ -222,6 +241,25 @@ def structured_references(payload: dict[str, object]) -> list[tuple[str, int]]:
     if not result or not any(kind == "Refs" for kind, _ in result):
         raise LiveGateError("MISSING_STRUCTURED_REFERENCE")
     return result
+
+
+def prose_references(body: str) -> list[tuple[str, int]]:
+    """Return anchored prose references, keeping the offline diagnostic code."""
+    try:
+        anchored, _ = offline.parse_body_references(body)
+    except offline.GateInputError as exc:
+        raise LiveGateError(exc.code) from exc
+    return list(anchored)
+
+
+def body_references(
+    body: str,
+) -> tuple[dict[str, object] | None, list[tuple[str, int]]]:
+    """Return the managed payload, if any, plus the references to verify live."""
+    payload = optional_structured_payload(body)
+    if payload is None:
+        return None, prose_references(body)
+    return payload, structured_references(payload)
 
 
 def structured_history(payload: dict[str, object]) -> list[dict[str, object]]:
@@ -304,22 +342,56 @@ def _validated_issue(
     repository: str,
     expected_number: int | None,
     code: str,
-) -> int:
-    """Validate one same-repository open issue, excluding pull requests."""
+    *,
+    allow_pull_request: bool = False,
+) -> IssueFacts:
+    """Validate one same-repository issue; open state is judged in aggregate."""
     issue = _object(value, code)
-    if "pull_request" in issue:
+    is_pull_request = "pull_request" in issue
+    if is_pull_request and not allow_pull_request:
         raise LiveGateError("ISSUE_IS_PULL_REQUEST")
     number = _integer(issue.get("number"), code)
     if number < 1:
         raise LiveGateError(code)
     if expected_number is not None and number != expected_number:
         raise LiveGateError("ISSUE_NUMBER_MISMATCH")
-    if issue.get("state") != "open":
-        raise LiveGateError("ISSUE_NOT_OPEN")
+    state = issue.get("state")
+    if state not in {"open", "closed"}:
+        raise LiveGateError("INVALID_ISSUE_STATE")
     expected_repository_url = f"{API_BASE}/repos/{repository}"
     if issue.get("repository_url") != expected_repository_url:
         raise LiveGateError("ISSUE_REPOSITORY_MISMATCH")
-    return number
+    return IssueFacts(
+        number=number,
+        is_open=state == "open",
+        is_pull_request=is_pull_request,
+    )
+
+
+def _read_issue(
+    transport: Transport,
+    repository: str,
+    number: int,
+    cache: dict[int, IssueFacts],
+    *,
+    allow_pull_request: bool,
+) -> IssueFacts:
+    """Read one memoized issue, mapping absence to a stable diagnostic."""
+    if number not in cache:
+        raw_issue = transport.get(
+            f"/repos/{repository}/issues/{number}",
+            allow_not_found=True,
+        )
+        if raw_issue is None:
+            raise LiveGateError("ISSUE_NOT_FOUND")
+        cache[number] = _validated_issue(
+            raw_issue,
+            repository,
+            number,
+            "INVALID_ISSUE_RESPONSE",
+            allow_pull_request=allow_pull_request,
+        )
+    return cache[number]
 
 
 def _derive_allowed_issue_refs(
@@ -329,11 +401,12 @@ def _derive_allowed_issue_refs(
 ) -> list[int]:
     """Derive declared issue authority through structural parent chains."""
     declared = {number for _, number in references}
-    seeds = [number for kind, number in references if kind == "Refs"]
+    seeds = [(kind, number) for kind, number in references if kind in SEED_KINDS]
     allowed: set[int] = set()
-    issue_cache: dict[int, object] = {}
+    issue_cache: dict[int, IssueFacts] = {}
     parent_cache: dict[int, int | None] = {}
-    for seed in seeds:
+    open_seed = False
+    for kind, seed in seeds:
         current: int | None = seed
         chain_seen: set[int] = set()
         depth = 0
@@ -346,16 +419,17 @@ def _derive_allowed_issue_refs(
                 raise LiveGateError("ISSUE_LIMIT_EXCEEDED")
             chain_seen.add(current)
             allowed.add(current)
-            if current not in issue_cache:
-                issue_endpoint = f"/repos/{repository}/issues/{current}"
-                raw_issue = transport.get(issue_endpoint)
-                _validated_issue(
-                    raw_issue,
-                    repository,
-                    current,
-                    "INVALID_ISSUE_RESPONSE",
-                )
-                issue_cache[current] = raw_issue
+            facts = _read_issue(
+                transport,
+                repository,
+                current,
+                issue_cache,
+                allow_pull_request=kind == "Refs" and current == seed,
+            )
+            if current == seed and facts.is_open and not facts.is_pull_request:
+                open_seed = True
+            if facts.is_pull_request:
+                break
             if current not in parent_cache:
                 parent_endpoint = (
                     f"/repos/{repository}/issues/{current}/parent"
@@ -367,18 +441,20 @@ def _derive_allowed_issue_refs(
                 if raw_parent is None:
                     parent_cache[current] = None
                 else:
-                    parent_number = _validated_issue(
+                    parent_facts = _validated_issue(
                         raw_parent,
                         repository,
                         None,
                         "INVALID_ISSUE_PARENT",
                     )
-                    parent_cache[current] = parent_number
-                    issue_cache.setdefault(parent_number, raw_parent)
+                    parent_cache[current] = parent_facts.number
+                    issue_cache.setdefault(parent_facts.number, parent_facts)
             current = parent_cache[current]
             depth += 1
     if not declared.issubset(allowed):
         raise LiveGateError("ISSUE_OUTSIDE_HIERARCHY")
+    if not open_seed:
+        raise LiveGateError("MISSING_OPEN_ISSUE_REFERENCE")
     return sorted(allowed)
 
 
@@ -388,8 +464,7 @@ def derive_allowed_issue_refs(
     body: str,
 ) -> list[int]:
     """Parse references first, then derive their bounded structural graph."""
-    references = structured_references(structured_payload(body))
-    return _derive_allowed_issue_refs(transport, repository, references)
+    return _derive_allowed_issue_refs(transport, repository, body_references(body)[1])
 
 
 def _content_blob_sha(
@@ -829,8 +904,7 @@ def evaluate_pr(
         )
         pending_written = True
         p1_basic = validate_basic_snapshot(p1_identity)
-        payload = structured_payload(p1_basic.body)
-        references = structured_references(payload)
+        payload, references = body_references(p1_basic.body)
         p1 = snapshot_pr(
             transport,
             repository,
@@ -842,7 +916,7 @@ def evaluate_pr(
             repository,
             references,
         )
-        claims = structured_history(payload)
+        claims = [] if payload is None else structured_history(payload)
         history_facts = derive_history_facts(
             transport,
             repository,
@@ -858,7 +932,7 @@ def evaluate_pr(
                 read_pr_metadata(transport, repository, pr_number),
             )
         )
-        structured_references(structured_payload(p2_basic.body))
+        body_references(p2_basic.body)
         p2 = snapshot_pr(
             transport,
             repository,
