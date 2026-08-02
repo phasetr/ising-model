@@ -996,6 +996,40 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                 anchored, _ = gate.parse_body_references(body)
                 self.assertEqual(anchored, (("Refs", 4801),))
 
+    def test_an_over_masked_tail_withdraws_the_allowlist_check_too(self) -> None:
+        """Masking a tail hides the authority violations standing in it.
+
+        The tail masking withdraws every reference below the line whose parity
+        stopped being knowable, and an allowlist violation is withdrawn with the
+        reference that carries it: a `Refs #N` whose number is not in
+        `allowed_issue_refs` stops raising `UNMANAGED_ISSUE_REF` and is reported
+        as an unverified mention instead.  This is the documented cost of
+        masking the union of the two readings -- the alternative anchors a
+        reference GitHub may render as code -- and it is the intended behavior,
+        but nothing pinned it, so a masking change could have flipped it in
+        either direction with this suite still green.
+        """
+        body = "Refs #4801\n\n- Verified with:\n  ```\n lake build\n\nRefs #999999\n"
+        anchored, mentions = gate.parse_body_references(body)
+        self.assertEqual(anchored, (("Refs", 4801),))
+        self.assertEqual(mentions, (999999,))
+        code, report = self.run_gate(body=body)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertNotIn(
+            "UNMANAGED_ISSUE_REF", [entry["code"] for entry in report["diagnostics"]]
+        )
+        self.assertIn(
+            {
+                "kind": "unverified_issue_mention",
+                "id": "#999999",
+                "status": gate.HUMAN_REVIEW_REQUIRED,
+            },
+            report["human_reviews"],
+        )
+        # The same reference outside the tail is anchored and charged, so the
+        # downgrade is the masking's doing and not a missing check.
+        self.assert_code("UNMANAGED_ISSUE_REF", body="Refs #4801\nRefs #999999\n")
+
     def test_masking_a_tail_never_uncovers_what_a_narrower_scan_masked(self) -> None:
         """The tail rule must be monotone: it may add masking, never remove it.
 
@@ -1349,6 +1383,62 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                     "AMBIGUOUS_CLOSING_DIRECTIVE",
                     context=self.allowing(4805),
                     body=f"Refs #4796\n{variant}\n",
+                )
+
+    def test_the_two_scans_are_compared_as_multisets_and_not_by_position(self) -> None:
+        """The comparison counts kinds and numbers; it binds no line to a line.
+
+        The line scan reads the raw body and the keyword scan reads the
+        normalized one, where NFKC folding, entity unescaping, and removed
+        format controls all move offsets, so no position survives from one view
+        into the other.  This body makes the two disagree about which line
+        matched and pass anyway: raw, the first line is a two-backtick run, a
+        zero-width space, and a third backtick, which opens no fence, so the
+        genuine trailer on the third line is standalone; normalized, the format
+        control is gone, that line is a fence opener, the genuine trailer is
+        masked as code, and the keyword scan pairs the disguised `Refs #4801`
+        at the foot instead.  One equals one, so the counts agree.
+
+        No authority moves, which is the invariant this pins.  What is anchored
+        is built from the raw trailer lines alone, so the anchored pair is the
+        one a standalone line really carries, and a disguised directive of any
+        other kind or number breaks the count and the body is refused.  The
+        zero-width space is spelled as a codepoint because it is invisible in
+        source.
+        """
+        zero_width = chr(0x200B)
+        disguised = "Re" + zero_width + "fs #4801"
+        body = f"``{zero_width}`\n\nRefs #4801\n\n```\n\n{disguised}\n"
+        raw_lines = gate._lines(gate.masked_code_containers(body))
+        self.assertEqual(
+            gate._trailer_lines(gate.masked_code_containers(body)), ["Refs #4801"]
+        )
+        self.assertEqual(raw_lines.index("Refs #4801"), 2)
+        normalized = gate._normalized_body_text(body)
+        scanned = gate._directive_references(
+            gate.masked_code_containers(normalized),
+            gate.NON_CLOSING_DIRECTIVES,
+            multi=True,
+            limit=gate.MAX_ANCHORED_REFERENCES,
+        )
+        # The scan's one pairing stands on the last line, not on the line the
+        # trailer grammar matched, and the multiset comparison cannot see that.
+        self.assertEqual(
+            [len(gate._lines(normalized[:offset])) - 1 for _, offset, _ in scanned], [6]
+        )
+        anchored, mentions = gate.parse_body_references(body)
+        self.assertEqual(anchored, (("Refs", 4801),))
+        self.assertEqual(mentions, (4801,))
+        code, report = self.run_gate(body=body)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        for name, variant in {
+            "another number": "Re" + zero_width + "fs #4796",
+            "another kind": "Part o" + zero_width + "f #4801",
+        }.items():
+            with self.subTest(disguise=name):
+                self.assert_code(
+                    "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                    body=f"``{zero_width}`\n\nRefs #4801\n\n```\n\n{variant}\n",
                 )
 
     def test_gh_shorthand_mentions_stay_visible(self) -> None:

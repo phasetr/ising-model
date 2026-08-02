@@ -192,8 +192,8 @@ The prose contract is what an ordinary pull-request body must satisfy:
 3. A closing keyword that GitHub would act on must appear as a standalone
    canonical trailer line, exactly `Closes #N`, `Fixes #N`, or `Resolves #N`
    with nothing else on the line, inside a paragraph that holds nothing but
-   trailer lines. Every closing reference the keyword scanner finds must
-   correspond to such a line; otherwise the body is
+   trailer lines. The numbers the keyword scanner finds and the numbers those
+   lines carry are compared as multisets, not line by line; any difference is
    `AMBIGUOUS_CLOSING_DIRECTIVE`. This keeps the #4725 shape
    ("This does not Closes #4801.") rejected, together with entity-obscured,
    emphasis-wrapped, lower-case, and trailing-text variants, and the same
@@ -213,12 +213,13 @@ The prose contract is what an ordinary pull-request body must satisfy:
 4. Close vocabulary that carries no `#N` reference is ordinary prose and is
    allowed, because GitHub does nothing with it.
 5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`,
-   under the same standalone-trailer rule: every pairing the keyword scanner
-   finds must also be a line that is exactly `Refs #N` or `Part of #N`, and the
-   two are compared as multisets of kind and number; otherwise the body is
-   `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. One such line may list several references
-   after the keyword, separated by single spaces (`Refs #4850 #4851 #4830`, a
-   shape this repository already writes), and each number counts on its own.
+   under the same standalone-trailer rule: the pairings the keyword scanner
+   finds and the lines that are exactly `Refs #N` or `Part of #N` are compared
+   as multisets of kind and number, not position by position; otherwise the
+   body is `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. One such line may list several
+   references after the keyword, separated by single spaces (`Refs #4850 #4851
+   #4830`, a shape this repository already writes), and each number counts on
+   its own.
    The closing keywords keep the one-per-line rule instead: several numbers on
    a line GitHub acts on is a real auto-close ambiguity, while a non-closing
    line closes nothing. Any wider separator — a comma, a second space, a
@@ -890,9 +891,17 @@ the fence closed, so its opener stands at column three or less and the opener
 pattern sees it. What is left is parity — whether a delimiter this scan matched
 is the delimiter GitHub matched — and parity is exactly what the tail rule gives
 up on wherever a container may have intervened. It gives up on more than
-CommonMark needs, never less: a line shallower than the opener is shallower than
-the container's own content column, since the opener itself stands in that
-container.
+CommonMark needs, never less, and the implication runs in this direction: a line
+that ends the fence's container stands shallower than that container's content
+column; the opener stands inside the same container, so the opener's column is
+at least that content column; the line is therefore shallower than the opener as
+well. Every line that could end the container is an outdented line. The converse
+is false — under `- item`, an opener at column three and a following line at
+column two, that line still continues the item, and the scan gives up on parity
+there anyway — so "outdented relative to the opener" is a strict
+over-approximation of "could end the container" rather than the same set. That
+over-approximation is what makes the rule sound: masking a superset of the lines
+that can cost parity only withdraws references, it never uncovers one.
 
 The paragraph rule is that a trailer line counts only inside a paragraph — the
 maximal run of non-blank lines containing it — that holds trailer lines and
@@ -903,6 +912,30 @@ continuation (`> Quoted evidence:` then an unquoted `Refs #4801`) and a
 negation split over two lines. Several trailer lines may share one paragraph,
 and a trailer that ends the body needs nothing after it, which is the shape this
 repository writes.
+
+The two scans are compared as multisets of kind and number, and that is the
+whole guarantee: no pairing is bound to the line the trailer grammar matched.
+The line scan reads the raw body while the keyword scan reads the normalized
+one, where NFKC folding, entity unescaping, and removed format controls all move
+offsets, so no position survives from one view into the other. A body can
+therefore make the counts agree by accident. A first line of three backticks
+with a zero-width space between the second and the third opens no fence in the
+raw view and one fence in the normalized view, so the line scan reads a genuine
+`Refs #N` line below it as standalone while the keyword scan, whose view masks
+that line, pairs a `Refs #N` disguised the same way at the foot of the body; one
+equals one and the body passes.
+
+Nothing is anchored that the body does not carry, even so. What is anchored is
+built from the raw trailer lines alone, so an anchored kind and number is always
+one that a standalone trailer line really carries, and a disguised directive of
+any other kind or number changes the counts and the body is refused. The keyword
+scan's offsets feed one thing only — the list of bare mentions, which drops the
+occurrences the scan paired — and the multiset equality makes every dropped
+number an anchored one, already checked against the allowlist and already
+reported. Binding the two scans positionally would need an offset map through
+unescaping and normalization and would, since `&#10;` unescapes to a line
+ending, refuse bodies that merely quote an entity in prose; the multiset
+comparison is what is claimed here and what the suite pins.
 
 Masking and the paragraph rule are deliberately coarser than a Markdown parser,
 so they refuse in both directions rather than resolve ambiguity. A reference in
