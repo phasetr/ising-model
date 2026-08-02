@@ -782,13 +782,53 @@ disagreement mask the wrong characters instead of inventing a paragraph
 boundary. The cost is that a trailer directly below a fence now needs the
 blank line every other trailer needs.
 
-This bounds the damage a fence disagreement can do; it does not remove the
-disagreement. A known gap remains: where this scan reads prose that GitHub
-renders as code, an ordinary author-written blank line still isolates a trailer
-line inside that region, so a body of the shape "bullet, indented opener,
-column-0 closer, blank line, `Refs #N`" anchors a reference GitHub renders as
-code text. Closing that gap needs fence bookkeeping that agrees with
-CommonMark about containers, not another filler rule.
+Removing the filler bounds the damage a fence disagreement can do, but it does
+not remove the disagreement, because a blank line the *author* wrote survives
+masking. A body shaped "bullet, indented opener, column-0 closer, blank line,
+`Refs #N`" therefore still isolated a trailer that GitHub renders as code text.
+
+The fence scan now handles that shape at its source. A closer indented less than
+its opener admits two readings and this scan cannot choose between them. Either
+the fence closed there, since CommonMark lets a closer sit at any column up to
+three whatever its opener did, or the container holding the fence ended there,
+in which case CommonMark force-closes the fence with no delimiter of its own and
+offers the same line to the block starts again at the outer level, where a bare
+delimiter run opens a new fence. GitHub's `/markdown` gives one reading for each
+of these, which is why neither may be assumed:
+
+````text
+(a) the container ended     (b) the fence closed      (c) parity decides it
+- Verified with:             ```                       ```
+  ```                         code                    ```
+  lake build                 ```                       ```
+```                                                    Refs #4801
+                             Refs #4801
+Refs #4801
+````
+
+GitHub renders (a) as two code blocks with the trailer inside the second, and
+(b) — whose one-column indent was decorative — as a code block followed by a
+paragraph holding the trailer. In (c) the first delimiter opens, the second
+closes, and the third opens an unclosed block that swallows the trailer.
+
+The two readings disagree about the parity of every delimiter below, so each
+one's code is the other's prose and their union is the whole tail. The scan
+masks that tail. This is not a blunt over-approximation but exactly the union,
+and it is the only sound choice: committing to "the fence closed" is the
+original bug, and committing to "the container ended" is wrong in the other
+direction — in the third body above it would read the second delimiter as a
+closer and leave a trailer GitHub renders inside an unclosed block in the open.
+
+The cost is over-masking, and it is charged in one direction only. Where the
+indentation was decorative rather than a container, the tail masking is wider
+than GitHub's code, so a reference GitHub would resolve is withdrawn: it is not
+anchored, it is reported as an unverified mention, and a body whose only
+reference is withdrawn is rejected. One consequence is worth stating plainly: a
+disallowed non-closing reference inside an over-masked tail stops raising
+`UNMANAGED_ISSUE_REF` and is downgraded to an unverified mention, so the
+allowlist is enforced on fewer references for such a body. No real pull-request
+body in the last forty merged carries an outdented fence closer at all, and
+none of their masked views or verdicts changes.
 
 The paragraph rule is that a trailer line counts only inside a paragraph — the
 maximal run of non-blank lines containing it — that holds trailer lines and

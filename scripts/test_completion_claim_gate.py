@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import ast
 import copy
+import itertools
 import json
 import sys
 import time
@@ -823,16 +824,16 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         self.assertEqual(anchored, (("Refs", 4801),))
 
     def test_a_fence_inside_a_container_cannot_anchor_a_reference(self) -> None:
-        """A desynchronized fence must not turn code-block text into a trailer.
+        """A container boundary under a fence must not turn code into a trailer.
 
-        CommonMark measures a fence's indentation against its enclosing
-        container and closes that container's fences when the container ends;
-        this scanner matches columns against the document alone.  A fence opened
-        inside a list item and closed at column 0 therefore splits the two
-        readings, and GitHub renders every body below as one code block holding
-        no reference at all.  None of them may anchor one here: the masked
-        region is inert filler, so the trailer scan finds no isolated trailer
-        and the mismatch with the keyword scan fails the body closed.
+        CommonMark closes a container's fences when the container ends, and a
+        line too shallow to continue a list item is exactly that ending.  Every
+        body below opens a fence inside a list item and writes the closer at
+        column 0, so GitHub force-closes the item's fence and reads that same
+        line as a fresh top-level opener; the trailer lands inside the second
+        code block.  None of them may anchor a reference here: the masked region
+        is inert filler, so the trailer scan finds no isolated trailer and the
+        keyword scan agrees there is nothing to anchor.
         """
         for name, body in {
             "dash bullet": "- Verified with:\n  ```\n  lake build\n```\nRefs #4801\n",
@@ -856,6 +857,131 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                 )
                 code, report = self.run_gate(body=body)
                 self.assertEqual(code, gate.EXIT_FAIL, report)
+
+    def test_an_authored_blank_line_cannot_isolate_a_trailer_below_a_fence(self) -> None:
+        """The blank line below an outdented closer is inside the second block.
+
+        The non-blank filler alone did not close this shape.  It only denies a
+        break that masking manufactures, and here the author writes the blank
+        line themselves, so it survives masking and isolates a trailer under a
+        fence the scanner had already, wrongly, closed.  GitHub's `/markdown`
+        renders both bodies as two `<pre><code>` blocks -- the list item's fence
+        force-closed at the outdented line, and a new one opened by that same
+        line -- with the blank line and the trailer inside the second.  Neither
+        may anchor here, so `_fenced_spans` stops trusting fence parity at the
+        outdented closer and masks the tail along with it.
+
+        The pair covers both trailer kinds, because they take different routes:
+        the non-closing keyword and the closing keyword are compared against the
+        trailer scan by separate multiset checks.
+        """
+        for name, body in {
+            "list item fence, then a blank line, then Refs": (
+                "- Verified with:\n  ```\n  lake build\n```\n\nRefs #4801\n"
+            ),
+            "ordered item fence, then a blank line, then Closes": (
+                "1. run\n   ```\n   x\n```\n\nCloses #4802\n"
+            ),
+        }.items():
+            with self.subTest(shape=name):
+                masked = gate.masked_code_containers(body)
+                # The whole tail, blank line included, is code on GitHub.
+                self.assertNotIn("Refs", masked)
+                self.assertNotIn("Closes", masked)
+                with self.assertRaises(gate.GateInputError) as raised:
+                    gate.parse_body_references(body)
+                self.assertEqual(raised.exception.code, "MISSING_ISSUE_REFERENCE")
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_FAIL, report)
+        # A fence the container never force-closed still ends where it says it
+        # does, and the trailer below the authored blank line still anchors.
+        anchored, _ = gate.parse_body_references(
+            "- item\n  ```\n  x\n  ```\n\nRefs #4801\n"
+        )
+        self.assertEqual(anchored, (("Refs", 4801),))
+
+    def test_an_outdented_closer_masks_the_tail_under_either_reading(self) -> None:
+        """Unknowable fence parity must mask the tail, not pick a reading.
+
+        An outdented closer fits two readings: the fence closed there, or the
+        container holding it ended there and that line opened a new fence.  They
+        disagree about the parity of every delimiter below, so committing to
+        either one reads the other's code as prose.  Choosing "container ended"
+        looked safe and is not: it makes the next delimiter below a closer where
+        GitHub makes it an opener, which leaves a trailer GitHub renders inside
+        an unclosed block sitting in the open.  Masking the tail is the union of
+        the two readings, so it is the only choice that cannot under-mask.
+        """
+        # GitHub renders this as an empty block then an unclosed one holding the
+        # trailer; the "container ended" reading would leave the trailer bare.
+        parity_flip = " ```\n```\n```\nRefs #4801\n"
+        self.assertEqual(gate._fenced_spans(parity_flip), [(0, len(parity_flip))])
+        self.assert_code("MISSING_ISSUE_REFERENCE", body=parity_flip)
+        # GitHub renders this one's trailer as a paragraph, so the tail masking
+        # is wider than GitHub's code.  That direction only withdraws a
+        # reference; the number stays visible as an unverified mention.
+        over_masked = " ```\n code\n```\n\nRefs #4801\n"
+        self.assertEqual(gate._fenced_spans(over_masked), [(0, len(over_masked))])
+        self.assert_code("MISSING_ISSUE_REFERENCE", body=over_masked)
+        # No body without an outdented closer is touched, so the shapes this
+        # repository really writes keep anchoring exactly what they did.
+        for body in [
+            "Ordinary summary.\n\nRefs #4801\n",
+            "- item\n  ```\n  x\n  ```\n\nRefs #4801\n",
+            "```\nx\n```\n\nRefs #4801\n",
+            "   ```\n   x\n   ```\n\nRefs #4801\n",
+            "  ```\n  x\n   ```\n\nRefs #4801\n",
+        ]:
+            with self.subTest(body=body[:16]):
+                anchored, _ = gate.parse_body_references(body)
+                self.assertEqual(anchored, (("Refs", 4801),))
+
+    def test_masking_a_tail_never_uncovers_what_a_narrower_scan_masked(self) -> None:
+        """The tail rule must be monotone: it may add masking, never remove it.
+
+        This is the property the whole scan rests on, so it is checked by
+        construction rather than by example.  Every body built from the
+        fence-shaped line alphabet must mask at least the characters the
+        delimiter-matching scan alone would mask; a rule that traded one masked
+        region for another could uncover a reference that used to be code.
+        """
+        alphabet = [
+            "```", " ```", "  ```", "   ```", "```lean", "  ```lean",
+            "~~~", "  ~~~", "````", "  ````", "- item", "1. item", "",
+            "Refs #4801", "  x",
+        ]
+
+        def narrow_spans(text: str) -> list[tuple[int, int]]:
+            """Match delimiters without the tail rule -- the older reading."""
+            spans: list[tuple[int, int]] = []
+            offset = 0
+            opening: tuple[str, int, int] | None = None
+            for line in text.split("\n"):
+                start = offset
+                offset = min(offset + len(line) + 1, len(text))
+                if opening is None:
+                    fence = gate._fence(line)
+                    if fence is not None:
+                        opening = (fence[0], fence[1], start)
+                    continue
+                marker, minimum, fence_start = opening
+                if gate._fence_closes(line, marker, minimum):
+                    spans.append((fence_start, offset))
+                    opening = None
+            if opening is not None:
+                spans.append((opening[2], len(text)))
+            return spans
+
+        def covered(spans: list[tuple[int, int]]) -> set[int]:
+            return {index for start, end in spans for index in range(start, end)}
+
+        for combination in itertools.product(alphabet, repeat=3):
+            body = "\n".join(combination) + "\nRefs #4801\n"
+            self.assertLessEqual(
+                covered(narrow_spans(body)),
+                covered(gate._fenced_spans(body)),
+                body,
+            )
 
     def test_only_a_commonmark_blank_line_separates_a_trailer(self) -> None:
         """A line of exotic whitespace separates no paragraph GitHub renders.
@@ -1713,13 +1839,44 @@ class MutationTest(GateHarness, unittest.TestCase):
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertEqual(mutant.parse_body_references(body)[0], (("Refs", 4801),))
 
+    def test_outdented_closer_tail_masking_mutant_is_killed(self) -> None:
+        """Without the tail rule, an authored blank line anchors code again.
+
+        The mutant makes an outdented closer an ordinary closer, which is one of
+        the two readings and not the one GitHub takes here.  The trailer below
+        the author's own blank line then sits outside every masked span and
+        anchors, though GitHub renders it inside the second code block.
+        """
+        mutant = self.mutant(
+            "        if closer is not None and closer[2] < indent:",
+            "        if False:",
+        )
+        for body, reference in {
+            "- Verified with:\n  ```\n  lake build\n```\n\nRefs #4801\n": (
+                ("Refs", 4801),
+            ),
+            "1. run\n   ```\n   x\n```\n\nCloses #4802\n": (("Closes", 4802),),
+        }.items():
+            with self.subTest(body=body[:12]):
+                self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
+                code, report = self.run_gate(body=body, module=mutant)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+                self.assertEqual(mutant.parse_body_references(body)[0], reference)
+
     def test_blank_container_filler_mutant_is_killed(self) -> None:
         """A blank filler for any container hands back the fake paragraph break.
 
         The mutant restores the split this fix removed -- whitespace where a
         container was -- and both halves of the class come back with it: a code
-        span crossing a line ending, and a fence this scanner places where
-        CommonMark does not.
+        span crossing a line ending, and a fence whose block boundary the trailer
+        scan is not allowed to inherit.
+
+        The witness for the fence half is a plain top-level fence, not the
+        list-item fence this test first used.  That shape stopped discriminating
+        once :func:`_fenced_spans` learned to reopen at an outdented closer: it
+        now masks the trailer under either filler, so the mutant fails it for a
+        reason that is not the mutation.  A fence at column zero keeps the
+        filler itself load-bearing.
         """
         mutant = self.mutant(
             "        parts.append(NON_NEWLINE_RE.sub(MASK_FILLER, text[start:end]))",
@@ -1727,7 +1884,7 @@ class MutationTest(GateHarness, unittest.TestCase):
         )
         for name, body in {
             "span across a line ending": "This PR does not `x\n`\nRefs #4801\n",
-            "fence inside a list item": "- run:\n  ```\n  x\n```\nRefs #4801\n",
+            "fence above the trailer": "Prose above.\n```\nx\n```\nRefs #4801\n",
         }.items():
             with self.subTest(container=name):
                 self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=body)

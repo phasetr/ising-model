@@ -370,7 +370,12 @@ def sorted_path_digest(paths: list[str]) -> str:
     return f"sha256:{digest.hexdigest()}"
 
 
-def _fence(line: str) -> tuple[str, int, str] | None:
+def _fence(line: str) -> tuple[str, int, int] | None:
+    """Return ``(marker, run length, indentation)`` for a fence opener line.
+
+    The indentation is the opener's own column, which the span scan below needs
+    to tell a fence that really closed from a container that ended underneath it.
+    """
     match = FENCE_OPEN_RE.fullmatch(line.removesuffix("\r"))
     if match is None:
         return None
@@ -378,7 +383,7 @@ def _fence(line: str) -> tuple[str, int, str] | None:
     info = match.group(3).strip()
     if marker[0] == "`" and "`" in info:
         return None
-    return marker[0], len(marker), info
+    return marker[0], len(marker), len(match.group(1))
 
 
 def _fence_closes(line: str, marker: str, minimum: int) -> bool:
@@ -392,28 +397,66 @@ def _fence_closes(line: str, marker: str, minimum: int) -> bool:
 def _fenced_spans(text: str) -> list[tuple[int, int]]:
     """Return the character spans of fenced code blocks, delimiters included.
 
-    The fence bookkeeping is the one :func:`extract_managed_document` uses, so a
-    reference scan and the managed-block parser agree on what a fence is.  An
-    unclosed fence runs to the end of the document, as CommonMark specifies.
+    An unclosed fence runs to the end of the document, as CommonMark specifies.
+
+    A candidate closer indented *less* than its opener leaves fence parity
+    unknowable, and the rest of the document is masked from the fence onwards.
+
+    Two readings fit such a line and this scan cannot tell them apart.  Either
+    the fence closed here -- CommonMark lets a closer sit at any column up to
+    three, whatever its opener did -- or the container the fence lived in ended
+    here, because a line too shallow to continue a list item closes that item and
+    every block inside it, fence included, with no delimiter of its own; the line
+    is then offered to the block starts again at the outer level, where a bare
+    delimiter run opens a *new* fence.  GitHub's ``/markdown`` gives one reading
+    for each of these three bodies, so neither may be assumed::
+
+        (a) container ended    (b) fence closed    (c) parity decides
+        - x                     ```                 ```
+          ```                    y                 ```
+          y                     ```                 ```
+        ```                                        Refs #1
+                                Refs #1
+        Refs #1
+
+    The readings disagree on the parity of every delimiter below, so each one's
+    code is the other's prose and their union is the whole tail.  Masking that
+    tail is therefore not a blunt over-approximation but exactly the union, and
+    it is the only choice that cannot read code as prose.  Committing to "the
+    fence closed" anchors (a)'s trailer, which GitHub puts inside the second code
+    block; committing to "the container ended" anchors (c)'s, because it would
+    read (c)'s second delimiter as a closer rather than an opener.
+
+    :func:`extract_managed_document` keeps the plain delimiter matching instead,
+    so the two no longer agree on every body.  That parser is reached only in
+    managed mode and cross-checks its own opener count against the normalized
+    marker count, so a disagreement there is reported rather than resolved.
     """
     spans: list[tuple[int, int]] = []
     offset = 0
-    opening: tuple[str, int, int] | None = None
+    opening: tuple[str, int, int, int] | None = None
     for line in text.split("\n"):
         start = offset
         offset = min(offset + len(line) + 1, len(text))
         if opening is None:
             fence = _fence(line)
             if fence is not None:
-                marker, minimum, _ = fence
-                opening = (marker, minimum, start)
+                marker, minimum, indent = fence
+                opening = (marker, minimum, indent, start)
             continue
-        marker, minimum, fence_start = opening
-        if _fence_closes(line, marker, minimum):
-            spans.append((fence_start, offset))
-            opening = None
+        marker, minimum, indent, fence_start = opening
+        if not _fence_closes(line, marker, minimum):
+            continue
+        # A closer carries a delimiter run and nothing but whitespace, so it is
+        # always a well-formed opener too and this is never None.
+        closer = _fence(line)
+        if closer is not None and closer[2] < indent:
+            spans.append((fence_start, len(text)))
+            return spans
+        spans.append((fence_start, offset))
+        opening = None
     if opening is not None:
-        spans.append((opening[2], len(text)))
+        spans.append((opening[3], len(text)))
     return spans
 
 
@@ -472,13 +515,12 @@ def masked_code_containers(text: str) -> str:
     trailer standalone.
 
     That last property is what makes an imprecise fence harmless rather than
-    exploitable.  :func:`_fenced_spans` matches fence indentation against the
-    document, while CommonMark measures it against the enclosing container and
-    closes a container's fences when the container ends, so a fence opened
-    inside a list item and closed at column 0 desynchronizes the two.  With no
-    blank-line-shaped filler anywhere, such a disagreement can only mask the
-    wrong characters; it can never manufacture the paragraph boundary that
-    would let code-block text pass for an isolated trailer.
+    exploitable.  :func:`_fenced_spans` masks a superset of what GitHub renders
+    as code -- it gives up on the whole tail where fence parity stops being
+    knowable -- so it can mask past where GitHub stops.  With no
+    blank-line-shaped filler anywhere, an over-wide span can only mask the wrong
+    characters; it cannot manufacture the paragraph boundary that would let
+    code-block text pass for an isolated trailer.
     """
     fenced = _fenced_spans(text)
     inline: list[tuple[int, int]] = []
