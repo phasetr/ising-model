@@ -1,6 +1,6 @@
 import IsingModel.Inequalities.MonotonicityJBoundaryCondition
 import IsingModel.Inequalities.GKSBoundaryCondition
-import IsingModel.Concrete.LatticeGraphCorrelation.MagnetizationFieldMonotone
+import IsingModel.Inequalities.MonotonicityField
 
 /-!
 # β-monotonicity of the `+` boundary single-spin correlation (FV §3.6, Issue #3605)

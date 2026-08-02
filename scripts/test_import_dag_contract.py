@@ -32,12 +32,14 @@ sys.path.insert(0, str(SCRIPT_DIR))
 import import_dag_contract as contract  # noqa: E402
 
 #: Ceiling on the unranked ``L2_THEORY -> L4_LATTICE/L5_CHAIN`` edge count of the
-#: real tree, measured at 27 on the delivering commit.  A ceiling rather than an
-#: equality: unrelated module additions must not turn the suite red, but growing
-#: the unranked set has to be a deliberate, reviewed edit.  It is NOT a quota --
-#: nothing in the checker reads it and the contract's exit status ignores INFO
-#: entirely (:meth:`AntiScopeTest.test_info_edges_cannot_change_the_verdict`).
-INFO_CEILING = 27
+#: real tree, measured at 26 (27 on the delivering commit; lowered by the #4857
+#: relocation of ``gibbsExpectationBC_field_mono`` out of ``Concrete``).  A
+#: ceiling rather than an equality: unrelated module additions must not turn the
+#: suite red, but growing the unranked set has to be a deliberate, reviewed edit.
+#: It is NOT a quota -- nothing in the checker reads it and the contract's exit
+#: status ignores INFO entirely
+#: (:meth:`AntiScopeTest.test_info_edges_cannot_change_the_verdict`).
+INFO_CEILING = 26
 
 #: Floor on the number of modules the real scan sees, so a collapse of the graph
 #: builder cannot make every assertion below vacuously true.
@@ -1060,7 +1062,7 @@ class RealTreeTest(unittest.TestCase):
     def test_the_unranked_edge_count_stays_under_its_ceiling(self) -> None:
         """A ratchet, not a quota: INFO never affects the exit status.
 
-        Measured at :data:`INFO_CEILING` on the delivering commit.  Raising the
+        Measured at :data:`INFO_CEILING` on the current tree.  Raising the
         number must be a reviewed edit, but unrelated module additions must not
         turn the suite red, hence a ceiling rather than an equality.
         """
