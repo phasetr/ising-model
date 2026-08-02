@@ -200,15 +200,16 @@ The prose contract is what an ordinary pull-request body must satisfy:
    shape split over two lines.
    "Standalone" is a claim about the rendered document, so both halves of that
    comparison read a masked view of the body in which fenced code blocks and
-   inline code spans are blanked out, and both require the trailer line's
+   inline code spans are masked out, and both require the trailer line's
    paragraph — the maximal run of non-blank lines around it — to contain only
    trailer lines. A line-by-line scan cannot see either fact on its own: it
    reads a bare `Refs #4801` inside a fence, inside a code span that crosses a
    line ending, or in the middle of a negating paragraph as if it were the
    line GitHub renders as a citation. The masked view is the coarser one, so
    nothing it hides can be anchored, and a blank line is CommonMark's — spaces
-   and tabs only, never a no-break or zero-width space. Details, including the
-   two fillers masking uses, are in the body-syntax section below.
+   and tabs only, never a no-break or zero-width space. A masked container is
+   never blank-line shaped either, so no masking can invent the paragraph break
+   a standalone trailer needs. Details are in the body-syntax section below.
 4. Close vocabulary that carries no `#N` reference is ordinary prose and is
    allowed, because GitHub does nothing with it.
 5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`,
@@ -751,27 +752,50 @@ normalized keyword scan — read a masked view of the body, and both apply a
 paragraph rule. Neither scan can otherwise tell a rendered citation from text
 that merely looks like one on its own line.
 
-Masking blanks out every fenced code block, including its delimiters and an
+Masking replaces every fenced code block, including its delimiters and an
 unclosed fence's run to the end of the body, and every inline code span, where
 a run of N backticks is closed by the next run of exactly N backticks within
 the same paragraph. Fences are masked first, so a backtick inside a fence
 cannot open a span. Masked characters keep their position and every line ending
 survives, so the two scans still describe the same body and can be compared.
-The two fillers differ on purpose. A fence masks to spaces for the line scan,
-because a fenced block really is a block boundary and a trailer directly under
-one is standalone. An inline span masks to a filler that is neither
-alphanumeric nor a separator, for two reasons: a blank filler would let a
-directive scan step across the removed words onto a later reference and read a
-pairing the body does not contain, and a span that crosses a line ending would
-leave an apparently empty line, faking the paragraph break that makes a trailer
-standalone. The keyword scan uses that same filler for fences too, since no
-directive reaches across a code block either.
+
+One filler serves every container, and it is neither alphanumeric, nor a
+Markdown separator, nor whitespace. It is not a separator because a blank
+filler would let a directive scan step across the removed words onto a later
+reference and read a pairing the body does not contain. It is not whitespace
+because a masked region that crosses a line ending would otherwise leave an
+apparently empty line, faking the paragraph break that makes a trailer
+standalone.
+
+Fences once masked to spaces for the line scan, on the argument that a fenced
+block really is a block boundary and a trailer directly under one is
+standalone. That reading made this checker's fence bookkeeping load-bearing,
+and the bookkeeping is not CommonMark's: CommonMark measures a fence's
+indentation against its enclosing container and closes that container's fences
+when the container ends, while this scan matches columns against the document
+alone. A fence opened inside a list item and closed at column 0 split the two
+readings, and the space filler then turned that disagreement into a
+manufactured paragraph break, so a `Refs #N` line GitHub renders inside a code
+block was anchored as a trailer. A container-complete fence tracker is not the
+fix here; removing the blank-line-shaped filler is, because it makes any such
+disagreement mask the wrong characters instead of inventing a paragraph
+boundary. The cost is that a trailer directly below a fence now needs the
+blank line every other trailer needs.
+
+This bounds the damage a fence disagreement can do; it does not remove the
+disagreement. A known gap remains: where this scan reads prose that GitHub
+renders as code, an ordinary author-written blank line still isolates a trailer
+line inside that region, so a body of the shape "bullet, indented opener,
+column-0 closer, blank line, `Refs #N`" anchors a reference GitHub renders as
+code text. Closing that gap needs fence bookkeeping that agrees with
+CommonMark about containers, not another filler rule.
 
 The paragraph rule is that a trailer line counts only inside a paragraph — the
 maximal run of non-blank lines containing it — that holds trailer lines and
-nothing else. A blank line is CommonMark's: spaces and tabs only. This is what
-rejects prose bleeding in from the line above or below, including a blockquote's
-lazy continuation (`> Quoted evidence:` then an unquoted `Refs #4801`) and a
+nothing else. A blank line is CommonMark's: spaces and tabs only, and only one
+the author wrote, since masking produces none. This is what rejects prose
+bleeding in from the line above or below, including a blockquote's lazy
+continuation (`> Quoted evidence:` then an unquoted `Refs #4801`) and a
 negation split over two lines. Several trailer lines may share one paragraph,
 and a trailer that ends the body needs nothing after it, which is the shape this
 repository writes.
@@ -840,13 +864,18 @@ marker never falls through to prose, cross-repository and URL reference forms
 fail, and the reference and mention caps hold. The container rules have their
 own cases: a bare, padded, multi-number, tilde-fenced, or `Closes` trailer
 inside a fence and a multi-line or single-line code span anchor nothing and
-surface as unverified mentions, a code span crossing a line ending cannot fake
-the blank line that isolates a trailer, only a spaces-and-tabs blank line
-separates paragraphs, and the accepted trailer shapes (blank-separated, last
-line with no newline, several trailer lines together, directly below a fence)
-are pinned beside the rejected glued ones. Weakened anchored-reference,
-closing-trailer, non-closing-trailer, container-masking, trailer-isolation,
-mask-filler, inline-filler, and autolink guards are killed as mutants, the
+surface as unverified mentions, neither a code span crossing a line ending nor
+a fence can fake the blank line that isolates a trailer, every masked container
+keeps its lines non-blank, seven shapes of a fence opened inside a bullet,
+ordered-list, or blockquote container and closed at column 0 anchor nothing
+with the trailer glued below them, only a spaces-and-tabs blank line
+separates paragraphs, and the
+accepted trailer shapes (blank-separated, last line with no newline, several
+trailer lines together, a blank line below a fence) are pinned beside the
+rejected glued ones, which now include a trailer directly below a fence.
+Weakened anchored-reference, closing-trailer, non-closing-trailer,
+container-masking, trailer-isolation, mask-filler, blank-container-filler, and
+autolink guards are killed as mutants, the
 autolink scan is timed past one MiB, container masking is timed on fence and
 backtick storms, and a reference run far past every cap is pinned to fail in
 seconds and under 8 MiB instead of being parsed in full first.

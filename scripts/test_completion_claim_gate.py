@@ -575,9 +575,37 @@ class GateTest(GateHarness, unittest.TestCase):
                 # unmasked text and excludes the anchored offsets found here.
                 self.assertEqual(len(masked), len(source))
                 self.assertEqual(masked.count("\n"), source.count("\n"))
-                sentinel = gate.masked_code_containers(source, gate.MASK_FILLER)
-                self.assertEqual(len(sentinel), len(source))
                 self.assertLess(elapsed, 5.0)
+
+    def test_every_masked_container_uses_the_one_non_blank_filler(self) -> None:
+        """No masked region may be blank-line shaped, whichever container it is.
+
+        The trailer scan reads a masked body and treats a blank line as a
+        paragraph break, so a whitespace filler would let a masked region invent
+        an isolation the author never wrote.  Fences once masked to spaces for
+        exactly that purpose; a fence this scanner mis-places (CommonMark
+        measures fence indentation against the enclosing list item, this scan
+        against the document) then manufactured the break instead.  One
+        non-blank filler for both containers removes the amplifier.
+        """
+        for name, source in {
+            "fence": "```\nRefs #4801\n```\n",
+            "fence in a list item": "- item\n  ```\n  x\n```\nRefs #4801\n",
+            "inline span across a line": "text `x\ny` more\n",
+            "unclosed fence": "```\nRefs #4801\n",
+        }.items():
+            with self.subTest(container=name):
+                masked = gate.masked_code_containers(source)
+                self.assertEqual(len(masked), len(source))
+                self.assertEqual(
+                    set(masked) - set(source) - {gate.MASK_FILLER}, set()
+                )
+                original_lines = source.split("\n")
+                masked_lines = masked.split("\n")
+                self.assertEqual(len(masked_lines), len(original_lines))
+                for original, rendered in zip(original_lines, masked_lines):
+                    if original.strip(" \t"):
+                        self.assertTrue(rendered.strip(" \t"), original)
 
     def test_autolink_scan_is_linearish_past_one_mibibyte(self) -> None:
         """The autolink shape must not backtrack; none of these ever closes."""
@@ -764,26 +792,70 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         code, report = self.run_gate(body=closing)
         self.assertEqual(code, gate.EXIT_PASS, report)
 
-    def test_a_code_span_cannot_fake_the_paragraph_break_around_a_trailer(self) -> None:
+    def test_no_masked_container_fakes_a_trailer_paragraph_break(self) -> None:
         """Removing a container must not manufacture the isolation it needs.
 
         A code span may cross a line ending, and GitHub renders the whole run as
         one paragraph.  Masking such a span to spaces would leave an apparently
         empty line, so the negated prose above it would stop counting and the
-        trailer below would read as standalone.  The span masks to a non-blank
-        filler instead, and the paragraph stays one paragraph.
+        trailer below would read as standalone.  Every container masks to a
+        non-blank filler instead, and the paragraph stays one paragraph.
+
+        A fence is treated the same way, though it really is a block boundary.
+        Masking it to spaces made this scanner's fence bookkeeping load-bearing,
+        and that bookkeeping is not CommonMark's: a mis-placed fence then handed
+        back the very break this rule exists to deny.  A trailer below a fence
+        now needs the blank line every other trailer needs.
         """
         variants = {
             "span eats the break above": "This PR does not `x\n`\nRefs #4801",
             "span eats the break below": "Refs #4801\n`x\n` and this is prose.",
             "span on both sides": "does not `a\n`\nRefs #4801\n`b\n` end",
+            "fence eats the break above": "Prose above.\n```\nx\n```\nRefs #4801",
         }
         for name, variant in variants.items():
             with self.subTest(variant=name):
                 self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=f"{variant}\n")
-        # A fence is a real block boundary, so it does separate paragraphs.
-        anchored, _ = gate.parse_body_references("Prose above.\n```\nx\n```\nRefs #4801\n")
+        # The blank line the author writes still separates the paragraphs.
+        anchored, _ = gate.parse_body_references(
+            "Prose above.\n```\nx\n```\n\nRefs #4801\n"
+        )
         self.assertEqual(anchored, (("Refs", 4801),))
+
+    def test_a_fence_inside_a_container_cannot_anchor_a_reference(self) -> None:
+        """A desynchronized fence must not turn code-block text into a trailer.
+
+        CommonMark measures a fence's indentation against its enclosing
+        container and closes that container's fences when the container ends;
+        this scanner matches columns against the document alone.  A fence opened
+        inside a list item and closed at column 0 therefore splits the two
+        readings, and GitHub renders every body below as one code block holding
+        no reference at all.  None of them may anchor one here: the masked
+        region is inert filler, so the trailer scan finds no isolated trailer
+        and the mismatch with the keyword scan fails the body closed.
+        """
+        for name, body in {
+            "dash bullet": "- Verified with:\n  ```\n  lake build\n```\nRefs #4801\n",
+            "star bullet closing": "* list item\n  ```\n```\nCloses #4802\n",
+            "plus bullet": "+ item\n  ```\n  x\n```\nPart of #4796\n",
+            "ordered one": "1. ordered\n   ```\n   x\n```\nRefs #4804\n",
+            "ordered ten": "10. ordered\n   ```\n```\nRefs #4805\n",
+            "tilde fence": "* bullet\n  ~~~\n~~~\nRefs #4803\n",
+            "nested quote": "> - quoted\n>   ```\n```\nRefs #4806\n",
+        }.items():
+            with self.subTest(shape=name):
+                with self.assertRaises(gate.GateInputError) as raised:
+                    gate.parse_body_references(body)
+                self.assertIn(
+                    raised.exception.code,
+                    {
+                        "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                        "AMBIGUOUS_CLOSING_DIRECTIVE",
+                        "MISSING_ISSUE_REFERENCE",
+                    },
+                )
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_FAIL, report)
 
     def test_only_a_commonmark_blank_line_separates_a_trailer(self) -> None:
         """A line of exotic whitespace separates no paragraph GitHub renders.
@@ -846,6 +918,15 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         PR #4860 ends with a blank-separated `Refs` line, and a body whose last
         line is the trailer has nothing after it to separate.  Both are valid; a
         paragraph that mixes prose with a trailer line is not.
+
+        A trailer directly below a closing fence used to be accepted here: a
+        fence masked to spaces, so it read as a blank line and separated the
+        paragraphs by itself.  It is rejected now, because that reading rested
+        on this scanner's fence bookkeeping agreeing with CommonMark's, and it
+        does not for a fence inside a list item -- a disagreement that let
+        code-block text pass for an isolated trailer.  Fences mask to the same
+        non-blank filler as every other container, so this shape needs the
+        explicit blank line, which is the conservative direction.
         """
         accepted = {
             "trailing blank line": ("Ordinary summary.\n\nRefs #4801\n", (("Refs", 4801),)),
@@ -862,8 +943,8 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                 "Summary.\n\nCloses #4801\nPart of #4796\n",
                 (("Closes", 4801), ("Part of", 4796)),
             ),
-            "directly below a fence": (
-                "```\ncode\n```\nRefs #4801\n",
+            "a blank line below a fence": (
+                "```\ncode\n```\n\nRefs #4801\n",
                 (("Refs", 4801),),
             ),
             "indented blank separator": (
@@ -879,6 +960,7 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             "prose above": "Ordinary summary.\nRefs #4801\n",
             "prose below": "Refs #4801\nOrdinary summary.\n",
             "list item above": "- item\nRefs #4801\n",
+            "directly below a fence": "```\ncode\n```\nRefs #4801\n",
         }.items():
             with self.subTest(rejected=name):
                 with self.assertRaises(gate.GateInputError) as raised:
@@ -1631,17 +1713,29 @@ class MutationTest(GateHarness, unittest.TestCase):
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertEqual(mutant.parse_body_references(body)[0], (("Refs", 4801),))
 
-    def test_inline_span_filler_mutant_is_killed(self) -> None:
-        """A blank inline filler hands back the fake paragraph break."""
+    def test_blank_container_filler_mutant_is_killed(self) -> None:
+        """A blank filler for any container hands back the fake paragraph break.
+
+        The mutant restores the split this fix removed -- whitespace where a
+        container was -- and both halves of the class come back with it: a code
+        span crossing a line ending, and a fence this scanner places where
+        CommonMark does not.
+        """
         mutant = self.mutant(
-            "    fillers.update({span: MASK_FILLER for span in inline})",
-            '    fillers.update({span: " " for span in inline})',
+            "        parts.append(NON_NEWLINE_RE.sub(MASK_FILLER, text[start:end]))",
+            '        parts.append(NON_NEWLINE_RE.sub(" ", text[start:end]))',
         )
-        body = "This PR does not `x\n`\nRefs #4801\n"
-        self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=body)
-        code, report = self.run_gate(body=body, module=mutant)
-        self.assertEqual(code, gate.EXIT_PASS, report)
-        self.assertEqual(mutant.parse_body_references(body)[0], (("Refs", 4801),))
+        for name, body in {
+            "span across a line ending": "This PR does not `x\n`\nRefs #4801\n",
+            "fence inside a list item": "- run:\n  ```\n  x\n```\nRefs #4801\n",
+        }.items():
+            with self.subTest(container=name):
+                self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=body)
+                code, report = self.run_gate(body=body, module=mutant)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+                self.assertEqual(
+                    mutant.parse_body_references(body)[0], (("Refs", 4801),)
+                )
 
     def test_mask_filler_mutant_is_killed(self) -> None:
         """A separator filler would invent a pairing across the removed text.

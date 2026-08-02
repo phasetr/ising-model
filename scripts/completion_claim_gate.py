@@ -452,27 +452,33 @@ def _code_span_spans(text: str, base: int) -> list[tuple[int, int]]:
     return spans
 
 
-def masked_code_containers(text: str, fenced_filler: str = " ") -> str:
+def masked_code_containers(text: str) -> str:
     """Return ``text`` with code containers masked out, offsets preserved.
 
     GitHub resolves no issue reference inside a fenced block or an inline code
-    span, so neither may anchor one here.  Every masked character becomes a
-    filler and every newline survives, which keeps character offsets and line
-    numbering identical to the input: the raw trailer scan and the normalized
-    keyword scan can therefore both read this view and still be compared.
-    Fences are masked first, so a stray backtick inside a fence cannot open a
-    code span and a code span cannot swallow a fence.
+    span, so neither may anchor one here.  Every masked character becomes
+    :data:`MASK_FILLER` and every newline survives, which keeps character
+    offsets and line numbering identical to the input: the raw trailer scan and
+    the normalized keyword scan can therefore both read this view and still be
+    compared.  Fences are masked first, so a stray backtick inside a fence
+    cannot open a code span and a code span cannot swallow a fence.
 
-    The two fillers are not interchangeable.  An inline span always masks to
-    :data:`MASK_FILLER`, which is neither alphanumeric nor a Markdown
-    separator, for two reasons: a separator would let a keyword reach across
-    the removed words onto a later reference (``closed `note` (#4822)``) and
-    invent a pairing the body does not have, and a span that spans a line break
-    would leave a line that looks empty, faking the paragraph break that makes
-    a trailer standalone.  A fence is a real block boundary, so the line scan
-    masks it to spaces and reads the blank lines it leaves; the keyword scan
-    passes :data:`MASK_FILLER` for fences too, since no directive may reach
-    across a code block either.
+    One filler serves both containers, and it is deliberately neither
+    alphanumeric, nor a Markdown separator, nor blank-line shaped.  A separator
+    would let a keyword reach across the removed words onto a later reference
+    (``closed `note` (#4822)``) and invent a pairing the body does not have.
+    Whitespace would be worse: a masked region spanning a line ending would
+    leave lines that look empty and fake the paragraph break that makes a
+    trailer standalone.
+
+    That last property is what makes an imprecise fence harmless rather than
+    exploitable.  :func:`_fenced_spans` matches fence indentation against the
+    document, while CommonMark measures it against the enclosing container and
+    closes a container's fences when the container ends, so a fence opened
+    inside a list item and closed at column 0 desynchronizes the two.  With no
+    blank-line-shaped filler anywhere, such a disagreement can only mask the
+    wrong characters; it can never manufacture the paragraph boundary that
+    would let code-block text pass for an isolated trailer.
     """
     fenced = _fenced_spans(text)
     inline: list[tuple[int, int]] = []
@@ -483,13 +489,13 @@ def masked_code_containers(text: str, fenced_filler: str = " ") -> str:
     inline.extend(_code_span_spans(text[cursor:], cursor))
     if not fenced and not inline:
         return text
-    fillers = {span: fenced_filler for span in fenced}
-    fillers.update({span: MASK_FILLER for span in inline})
     parts: list[str] = []
     cursor = 0
-    for start, end in sorted(fillers):
+    # Fenced and inline spans are disjoint by construction: the code spans are
+    # read from the gaps between fences, so one sorted merge walks them all.
+    for start, end in sorted(fenced + inline):
         parts.append(text[cursor:start])
-        parts.append(NON_NEWLINE_RE.sub(fillers[(start, end)], text[start:end]))
+        parts.append(NON_NEWLINE_RE.sub(MASK_FILLER, text[start:end]))
         cursor = end
     parts.append(text[cursor:])
     return "".join(parts)
@@ -691,9 +697,10 @@ def _trailer_lines(masked_body: str) -> list[str]:
     line, which is how ``This PR does not\\nRefs #4801\\n.`` and a blockquote's
     lazy continuation (``> Quoted evidence:\\nRefs #4801``) both look like
     standalone trailers to a per-line scan while GitHub renders them as one
-    paragraph.  A masked fence reads as blank here, so a trailer directly below
-    a closing fence is still its own paragraph, while a masked inline span does
-    not, so a span crossing a line ending cannot fake that separation.
+    paragraph.  No masked container reads as blank here, so neither a fence nor
+    an inline span crossing a line ending can fake that separation: a trailer
+    directly below a closing fence needs the blank line every other paragraph
+    needs, and a fence this scanner places wrongly cannot invent one.
     """
     lines: list[str] = []
     paragraph: list[str] = []
@@ -777,7 +784,7 @@ def parse_body_references(
     ``Refs #4801`` must not pass for the reference it only looks like.
 
     Both halves of that comparison read one masked view of the body, in which
-    fenced blocks and inline code spans are blanked out, and both accept a trailer
+    fenced blocks and inline code spans are masked out, and both accept a trailer
     line only inside a paragraph of trailers.  A per-line scan is otherwise blind
     to Markdown containers: it would anchor a reference from inside a code fence,
     from a multi-line code span or link label, or from a line the surrounding
@@ -789,7 +796,7 @@ def parse_body_references(
     closing trailer may not, because GitHub acts on the numbers it carries.
     """
     normalized = _normalized_body_text(body)
-    masked = masked_code_containers(normalized, MASK_FILLER)
+    masked = masked_code_containers(normalized)
     trailer_lines = _trailer_lines(masked_code_containers(body))
     closing = _directive_references(masked, CLOSE_KEYWORDS, limit=MAX_CLOSING_TRAILERS)
     trailers = _closing_trailer_numbers(trailer_lines)
