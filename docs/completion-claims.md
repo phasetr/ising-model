@@ -752,6 +752,31 @@ normalized keyword scan — read a masked view of the body, and both apply a
 paragraph rule. Neither scan can otherwise tell a rendered citation from text
 that merely looks like one on its own line.
 
+Every one of them takes its lines from a single splitter, and that splitter uses
+CommonMark's line-ending grammar: a line ends at a carriage return, at a line
+feed, or at a carriage return followed by a line feed, and the pair is one
+ending rather than two. Nothing else ends a line. `str.splitlines` would also
+break at a form feed, at `U+2028`, and at other separators, and a scan that
+broke there would read lines GitHub does not.
+
+Both halves of that rule are load-bearing. The scans once split on line feeds
+and stripped a trailing carriage return, so a lone carriage return was an
+ordinary character here and a line break on GitHub: a body whose first line is a
+triple backtick, a lone carriage return, and one word, followed by a blank line
+and a `Refs #N` line, opened a code block this checker never saw. GitHub's
+`/markdown` renders that trailer inside the block; the checker anchored it.
+Counting the pair twice would fail in the opposite direction, inventing an empty
+line inside every CRLF body and isolating a trailer its own paragraph negates.
+
+CRLF bodies — the spelling GitHub's own web editor delivers — were mishandled in
+the other direction as well. The blank line that bounds an inline code span was
+matched as a line feed, optional spaces, and a second line feed, which a CRLF
+body never contains, so a span could run past the paragraph GitHub ends it in
+and mask a reference GitHub resolves. That was a withdrawal rather than a
+fail-open, and it is fixed by the same splitter. The last forty merged
+pull-request bodies contain no lone carriage return and no CRLF at all; neither
+their verdicts nor their masked views change.
+
 Masking replaces every fenced code block, including its delimiters and an
 unclosed fence's run to the end of the body, and every inline code span, where
 a run of N backticks is closed by the next run of exactly N backticks within
@@ -913,8 +938,16 @@ separates paragraphs, and the
 accepted trailer shapes (blank-separated, last line with no newline, several
 trailer lines together, a blank line below a fence) are pinned beside the
 rejected glued ones, which now include a trailer directly below a fence.
+The line-ending grammar has its own cases: a fence opener, a fence info string,
+and an outdented closer each hidden behind a lone carriage return are refused,
+a carriage return closing a fence, a pair of them separating a paragraph, and a
+blank line spelled either with carriage returns or with CRLF ending a code span
+are honoured, a CRLF pair stays one ending inside a negated paragraph, the
+managed block reads the same in all three spellings, and the splitter is pinned
+to break at those three endings and at no other separator.
 Weakened anchored-reference, closing-trailer, non-closing-trailer,
-container-masking, trailer-isolation, mask-filler, blank-container-filler, and
+container-masking, trailer-isolation, mask-filler, blank-container-filler,
+line-feed-only splitting, carriage-return-splitting, and
 autolink guards are killed as mutants, the
 autolink scan is timed past one MiB, container masking is timed on fence and
 backtick storms, and a reference run far past every cap is pinned to fail in

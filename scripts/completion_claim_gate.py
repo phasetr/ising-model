@@ -16,6 +16,7 @@ import json
 import re
 import sys
 import unicodedata
+from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import urlsplit
@@ -112,11 +113,14 @@ FENCE_CLOSE_RE = {
     "~": re.compile(r" {0,3}(~{3,})[ \t]*"),
 }
 # CommonMark code-span delimiters: a run of N backticks is closed by the next run
-# of exactly N backticks.  The blank-line shape below bounds that search to one
-# paragraph, because inline parsing never crosses a block boundary.
+# of exactly N backticks.  A blank line bounds that search to one paragraph,
+# because inline parsing never crosses a block boundary.
 BACKTICK_RUN_RE = re.compile(r"`+")
-BLANK_LINE_RE = re.compile(r"\n[ \t]*(?=\n)")
-NON_NEWLINE_RE = re.compile(r"[^\n]")
+# CommonMark ends a line at a carriage return, a line feed, or a carriage return
+# followed by a line feed, and the pair is one ending rather than two.  The
+# alternation is ordered so the pair matches before the lone carriage return.
+LINE_BREAK_RE = re.compile(r"\r\n|[\r\n]")
+NON_LINE_BREAK_RE = re.compile(r"[^\r\n]")
 # Masked code stands in as a character that is neither alphanumeric nor a
 # Markdown separator, so a directive scan stops at it instead of stepping over
 # the removed text onto a reference that never followed the keyword.
@@ -370,13 +374,45 @@ def sorted_path_digest(paths: list[str]) -> str:
     return f"sha256:{digest.hexdigest()}"
 
 
+def _line_spans(text: str) -> Iterator[tuple[str, int, int]]:
+    """Yield ``(line, start offset, offset past the line's ending)`` for each line.
+
+    Every line-oriented scan in this module reads its lines here, so all of them
+    break a line where CommonMark and GitHub break one: at ``CR``, at ``LF``, or
+    at ``CRLF``, which is a single ending and never two.  A scan that split on
+    ``LF`` alone could not see a line a lone ``CR`` starts, and a fence opener
+    hidden behind one then escaped detection while GitHub opened the block.
+
+    Nothing else counts.  ``str.splitlines`` would also break at a form feed, at
+    ``U+2028``, and at other separators CommonMark does not end lines at; the
+    control characters among those are refused as invalid text before they reach
+    here, and the remaining separators are ordinary characters to GitHub too.
+
+    As :meth:`str.split` does, a text ending with a line ending yields one final
+    empty line; the trailer scan needs it to close the paragraph above.
+    """
+    start = 0
+    for match in LINE_BREAK_RE.finditer(text):
+        yield text[start : match.start()], start, match.end()
+        start = match.end()
+    yield text[start:], start, len(text)
+
+
+def _lines(text: str) -> list[str]:
+    """Return the content of every line, its ending removed."""
+    return LINE_BREAK_RE.split(text)
+
+
 def _fence(line: str) -> tuple[str, int, int] | None:
     """Return ``(marker, run length, indentation)`` for a fence opener line.
 
     The indentation is the opener's own column, which the span scan below needs
     to tell a fence that really closed from a container that ended underneath it.
+
+    ``line`` is one line's content, so it carries no ending of its own: the
+    caller has already split the body with :func:`_line_spans`.
     """
-    match = FENCE_OPEN_RE.fullmatch(line.removesuffix("\r"))
+    match = FENCE_OPEN_RE.fullmatch(line)
     if match is None:
         return None
     marker = match.group(2)
@@ -387,10 +423,11 @@ def _fence(line: str) -> tuple[str, int, int] | None:
 
 
 def _fence_closes(line: str, marker: str, minimum: int) -> bool:
+    """Return whether one line's content closes a fence of ``marker``."""
     pattern = FENCE_CLOSE_RE.get(marker)
     if pattern is None:
         return False
-    match = pattern.fullmatch(line.removesuffix("\r"))
+    match = pattern.fullmatch(line)
     return match is not None and len(match.group(1)) >= minimum
 
 
@@ -433,11 +470,8 @@ def _fenced_spans(text: str) -> list[tuple[int, int]]:
     marker count, so a disagreement there is reported rather than resolved.
     """
     spans: list[tuple[int, int]] = []
-    offset = 0
     opening: tuple[str, int, int, int] | None = None
-    for line in text.split("\n"):
-        start = offset
-        offset = min(offset + len(line) + 1, len(text))
+    for line, start, offset in _line_spans(text):
         if opening is None:
             fence = _fence(line)
             if fence is not None:
@@ -460,6 +494,27 @@ def _fenced_spans(text: str) -> list[tuple[int, int]]:
     return spans
 
 
+def _blank_line_breaks(text: str) -> list[tuple[int, int]]:
+    """Return the span of every blank line, both of its endings included.
+
+    CommonMark's blank line holds spaces and tabs only.  The span starts where
+    the line above ends, so it covers the ending that opens the break as well as
+    the blank line's own, and :func:`_blank_line_between` can then ask whether a
+    whole break fits between two positions.  The last line of a text that does
+    not end with a line ending closes no break, since nothing follows it.
+
+    The spans come out sorted, which is what the bisect below assumes.
+    """
+    breaks: list[tuple[int, int]] = []
+    above: int | None = None
+    for line, start, end in _line_spans(text):
+        content_end = start + len(line)
+        if above is not None and end > content_end and not line.strip(" \t"):
+            breaks.append((above, end))
+        above = content_end
+    return breaks
+
+
 def _blank_line_between(breaks: list[tuple[int, int]], start: int, end: int) -> bool:
     index = bisect.bisect_left(breaks, (start, start))
     return index < len(breaks) and breaks[index][1] <= end
@@ -473,9 +528,7 @@ def _code_span_spans(text: str, base: int) -> list[tuple[int, int]]:
     belongs to another block and therefore closes nothing.
     """
     runs = [match.span() for match in BACKTICK_RUN_RE.finditer(text)]
-    breaks = [
-        (match.start(), match.end() + 1) for match in BLANK_LINE_RE.finditer(text)
-    ]
+    breaks = _blank_line_breaks(text)
     by_length: dict[int, list[int]] = {}
     for index, (start, end) in enumerate(runs):
         by_length.setdefault(end - start, []).append(index)
@@ -500,11 +553,12 @@ def masked_code_containers(text: str) -> str:
 
     GitHub resolves no issue reference inside a fenced block or an inline code
     span, so neither may anchor one here.  Every masked character becomes
-    :data:`MASK_FILLER` and every newline survives, which keeps character
-    offsets and line numbering identical to the input: the raw trailer scan and
-    the normalized keyword scan can therefore both read this view and still be
-    compared.  Fences are masked first, so a stray backtick inside a fence
-    cannot open a code span and a code span cannot swallow a fence.
+    :data:`MASK_FILLER` and every line ending survives whichever way it is
+    spelled, which keeps character offsets and line numbering identical to the
+    input: the raw trailer scan and the normalized keyword scan can therefore
+    both read this view and still be compared.  Fences are masked first, so a
+    stray backtick inside a fence cannot open a code span and a code span cannot
+    swallow a fence.
 
     One filler serves both containers, and it is deliberately neither
     alphanumeric, nor a Markdown separator, nor blank-line shaped.  A separator
@@ -537,7 +591,7 @@ def masked_code_containers(text: str) -> str:
     # read from the gaps between fences, so one sorted merge walks them all.
     for start, end in sorted(fenced + inline):
         parts.append(text[cursor:start])
-        parts.append(NON_NEWLINE_RE.sub(MASK_FILLER, text[start:end]))
+        parts.append(NON_LINE_BREAK_RE.sub(MASK_FILLER, text[start:end]))
         cursor = end
     parts.append(text[cursor:])
     return "".join(parts)
@@ -545,14 +599,14 @@ def masked_code_containers(text: str) -> str:
 
 def extract_managed_document(body: str) -> tuple[str, str]:
     """Return the sole canonical top-level JSON block and all other text."""
-    lines = body.split("\n")
+    lines = _lines(body)
     ordinary_fence: tuple[str, int] | None = None
     managed_opening: int | None = None
     canonical_openings: list[int] = []
     blocks: list[tuple[int, int, str]] = []
     for index, line in enumerate(lines):
         if managed_opening is not None:
-            if line.removesuffix("\r") == "```":
+            if line == "```":
                 blocks.append(
                     (
                         managed_opening,
@@ -567,7 +621,7 @@ def extract_managed_document(body: str) -> tuple[str, str]:
             if _fence_closes(line, marker, minimum):
                 ordinary_fence = None
             continue
-        if line.removesuffix("\r") == BLOCK_FENCE:
+        if line == BLOCK_FENCE:
             canonical_openings.append(index)
             managed_opening = index
             continue
@@ -747,8 +801,7 @@ def _trailer_lines(masked_body: str) -> list[str]:
     lines: list[str] = []
     paragraph: list[str] = []
     isolated = True
-    for raw in masked_body.split("\n"):
-        line = raw.removesuffix("\r")
+    for line in _lines(masked_body):
         # CommonMark's blank line is spaces and tabs only.  Python's `strip`
         # would also swallow a no-break or ideographic space, and a line of
         # those separates no paragraph GitHub renders.

@@ -948,17 +948,19 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         alphabet = [
             "```", " ```", "  ```", "   ```", "```lean", "  ```lean",
             "~~~", "  ~~~", "````", "  ````", "- item", "1. item", "",
-            "Refs #4801", "  x",
+            "Refs #4801", "  x", "```\r```", "x\r  ```",
         ]
 
         def narrow_spans(text: str) -> list[tuple[int, int]]:
-            """Match delimiters without the tail rule -- the older reading."""
+            """Match delimiters without the tail rule -- the older reading.
+
+            Only the tail rule is dropped.  The lines come from the same
+            splitter, so the comparison isolates that rule instead of also
+            measuring the line grammar.
+            """
             spans: list[tuple[int, int]] = []
-            offset = 0
             opening: tuple[str, int, int] | None = None
-            for line in text.split("\n"):
-                start = offset
-                offset = min(offset + len(line) + 1, len(text))
+            for line, start, offset in gate._line_spans(text):
                 if opening is None:
                     fence = gate._fence(line)
                     if fence is not None:
@@ -982,6 +984,103 @@ class ProseModeTest(GateHarness, unittest.TestCase):
                 covered(gate._fenced_spans(body)),
                 body,
             )
+
+    def test_a_lone_carriage_return_ends_a_line_as_github_ends_one(self) -> None:
+        """A line ending GitHub honours must not be invisible to these scans.
+
+        CommonMark ends a line at `CR`, at `LF`, or at `CRLF`.  Every scan here
+        used to split on `LF` alone and strip a trailing `CR`, so a lone `CR` was
+        an ordinary character to them and a line break to GitHub.  A fence
+        delimiter hidden behind one therefore opened a block on GitHub that this
+        checker never saw, and the code inside it was anchored as a trailer.
+
+        Each refused body below is one GitHub's `/markdown` renders with the
+        trailer inside a `pre code` element, so no reference of theirs may be
+        anchored; each accepted body is one where `/markdown` resolves the
+        reference as a real citation link.
+        """
+        for name, body in {
+            "the opener hides behind a lone CR": "```\rx\n\nRefs #4801\n",
+            "the info string hides behind one": "```\rtext\n\nRefs #4801\n",
+            "an outdented closer hides behind one": (
+                "- item\n  ```\r```\n\nRefs #4801\n"
+            ),
+        }.items():
+            with self.subTest(refused=name):
+                masked = gate.masked_code_containers(body)
+                self.assertNotIn("Refs", masked)
+                with self.assertRaises(gate.GateInputError) as raised:
+                    gate.parse_body_references(body)
+                self.assertEqual(raised.exception.code, "MISSING_ISSUE_REFERENCE")
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_FAIL, report)
+        for name, body in {
+            "a lone CR closes the fence": "```\ncode\r```\n\nRefs #4801\n",
+            "two lone CRs are a blank line": "Summary.\r\rRefs #4801\r",
+            "a lone CR blank line ends a code span": "`x\r\rRefs #4801\r\ry`\r",
+            "CRLF separates the trailer": "Summary.\r\n\r\nRefs #4801\r\n",
+            # The old blank-line shape was a line feed, spaces, and a second
+            # line feed, which no CRLF body contains, so this span ran past the
+            # paragraph GitHub ends it in and masked a real reference away.
+            "a CRLF blank line ends a code span": (
+                "`x\r\n\r\nRefs #4801\r\n\r\ny`\r\n"
+            ),
+        }.items():
+            with self.subTest(accepted=name):
+                anchored, _ = gate.parse_body_references(body)
+                self.assertEqual(anchored, (("Refs", 4801),))
+                code, report = self.run_gate(body=body)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_a_carriage_return_line_feed_pair_is_one_line_ending(self) -> None:
+        """Counting the pair twice would fake the blank line a trailer needs.
+
+        GitHub renders this body as one paragraph and the trailer inside it is a
+        negated sentence, not a citation.  A scan that ended a line at each of
+        the two characters would read an empty line between them, isolate the
+        middle line, and anchor a reference the body denies.
+        """
+        for body in [
+            "This PR does not\r\nRefs #4801\r\n.\r\n",
+            "This PR does not\r\nCloses #4801\r\n.\r\n",
+        ]:
+            with self.subTest(body=body[:20]):
+                with self.assertRaises(gate.GateInputError) as raised:
+                    gate.parse_body_references(body)
+                self.assertIn(
+                    raised.exception.code,
+                    {
+                        "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                        "AMBIGUOUS_CLOSING_DIRECTIVE",
+                    },
+                )
+
+    def test_the_line_grammar_is_exactly_commonmark_s(self) -> None:
+        """Three endings split a line; every other separator is ordinary text.
+
+        `str.splitlines` would also break at a form feed, at `U+2028`, and at
+        other separators, and a scan that broke there would read a line GitHub
+        does not, which is the same disagreement in the opposite direction.
+        """
+        text = "a\r\nb\rc\nd"
+        self.assertEqual(gate._lines(text), ["a", "b", "c", "d"])
+        spans = list(gate._line_spans(text))
+        self.assertEqual([line for line, _, _ in spans], ["a", "b", "c", "d"])
+        # The spans tile the text: each line starts where the one above ended.
+        self.assertEqual([start for _, start, _ in spans], [0, 3, 5, 7])
+        self.assertEqual([end for _, _, end in spans], [3, 5, 7, 8])
+        self.assertEqual(gate._lines("a\n"), ["a", ""])
+        for separator in [chr(0x000C), chr(0x001C), chr(0x0085), chr(0x2028), chr(0x2029)]:
+            with self.subTest(codepoint=hex(ord(separator))):
+                self.assertEqual(gate._lines(f"a{separator}b"), [f"a{separator}b"])
+        # GitHub reads this body's first line, separator included, as one
+        # fenced opener, so the trailer below it is code and is refused
+        # rather than anchored.  The separator is spelled as a codepoint
+        # because it is invisible in source.
+        self.assert_code(
+            "MISSING_ISSUE_REFERENCE",
+            body="```" + chr(0x2028) + "x\n\nRefs #4801\n",
+        )
 
     def test_only_a_commonmark_blank_line_separates_a_trailer(self) -> None:
         """A line of exotic whitespace separates no paragraph GitHub renders.
@@ -1361,6 +1460,28 @@ class ManagedFenceTest(GateHarness, unittest.TestCase):
             with self.subTest(opening=opening):
                 body = managed_body(self.payload, opening=opening)
                 self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
+
+    def test_the_managed_block_reads_the_same_in_every_line_ending(self) -> None:
+        """One block is one block however its lines end.
+
+        The managed parser splits lines with the same grammar as the prose
+        scans, so the block GitHub renders is the block that is parsed.  A
+        carriage-return-only body used to report `AMBIGUOUS_MANAGED_BLOCK`
+        because its canonical opener was invisible to a line-feed split, while
+        the marker sweep still counted the label.  Nothing here is weakened by
+        accepting it: every field of the block is still compared against the
+        trusted context.
+        """
+        body = managed_body(self.payload)
+        for name, spelling in {
+            "line feed": body,
+            "carriage return and line feed": body.replace("\n", "\r\n"),
+            "carriage return": body.replace("\n", "\r"),
+        }.items():
+            with self.subTest(endings=name):
+                code, report = self.run_gate(body=spelling)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+                self.assertEqual(report["body_mode"], "managed")
 
     def test_canonical_spelling_nested_in_other_fence_is_ambiguous(self) -> None:
         body = "````text\n" + managed_body(self.payload) + "````\n"
@@ -1879,8 +2000,8 @@ class MutationTest(GateHarness, unittest.TestCase):
         filler itself load-bearing.
         """
         mutant = self.mutant(
-            "        parts.append(NON_NEWLINE_RE.sub(MASK_FILLER, text[start:end]))",
-            '        parts.append(NON_NEWLINE_RE.sub(" ", text[start:end]))',
+            "        parts.append(NON_LINE_BREAK_RE.sub(MASK_FILLER, text[start:end]))",
+            '        parts.append(NON_LINE_BREAK_RE.sub(" ", text[start:end]))',
         )
         for name, body in {
             "span across a line ending": "This PR does not `x\n`\nRefs #4801\n",
@@ -1912,6 +2033,42 @@ class MutationTest(GateHarness, unittest.TestCase):
             "AMBIGUOUS_CLOSING_DIRECTIVE", body=body, module=mutant
         )
 
+    def test_line_feed_only_splitting_mutant_is_killed(self) -> None:
+        """Splitting on line feeds alone hands a fence back its disguise.
+
+        The mutant is the grammar this module used before: a lone carriage
+        return is an ordinary character, so the fence opener behind one is
+        invisible, nothing is masked, and the code GitHub renders inside the
+        block is anchored as a trailer.
+        """
+        mutant = self.mutant(
+            'LINE_BREAK_RE = re.compile(r"\\r\\n|[\\r\\n]")',
+            'LINE_BREAK_RE = re.compile(r"\\n")',
+        )
+        for body in [
+            "```\rx\n\nRefs #4801\n",
+            "- item\n  ```\r```\n\nRefs #4801\n",
+        ]:
+            with self.subTest(body=body[:12]):
+                self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
+                code, report = self.run_gate(body=body, module=mutant)
+                self.assertEqual(code, gate.EXIT_PASS, report)
+                self.assertEqual(
+                    mutant.parse_body_references(body)[0], (("Refs", 4801),)
+                )
+
+    def test_split_carriage_return_line_feed_mutant_is_killed(self) -> None:
+        """Ending a line at each character of the pair invents a blank line."""
+        mutant = self.mutant(
+            'LINE_BREAK_RE = re.compile(r"\\r\\n|[\\r\\n]")',
+            'LINE_BREAK_RE = re.compile(r"[\\r\\n]")',
+        )
+        body = "This PR does not\r\nRefs #4801\r\n.\r\n"
+        self.assert_code("AMBIGUOUS_NON_CLOSING_DIRECTIVE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+        self.assertEqual(mutant.parse_body_references(body)[0], (("Refs", 4801),))
+
     def test_autolink_guard_mutant_is_killed(self) -> None:
         mutant = self.mutant(
             "elif EMAIL_AUTOLINK_RE.search(normalized) is not None:",
@@ -1924,8 +2081,8 @@ class MutationTest(GateHarness, unittest.TestCase):
 
     def test_canonical_opener_mutant_is_killed(self) -> None:
         mutant = self.mutant(
-            'if line.removesuffix("\\r") == BLOCK_FENCE:',
-            'if line.removesuffix("\\r").lstrip() == BLOCK_FENCE:',
+            "if line == BLOCK_FENCE:",
+            "if line.lstrip() == BLOCK_FENCE:",
         )
         body = managed_body(self.payload, opening="   " + gate.BLOCK_FENCE)
         self.assert_code("AMBIGUOUS_MANAGED_BLOCK", body=body)
