@@ -117,9 +117,9 @@ The identifiers `R4` and `R5` are deliberately absent: they name the two
 `L2_THEORY → L4_LATTICE` and `L2_THEORY → L5_CHAIN` directions, which are
 reported but never enforced.
 
-### Why `L2_THEORY` is unranked, and what the 28 `INFO` edges are not
+### Why `L2_THEORY` is unranked, and what the 27 `INFO` edges are not
 
-There are **28** `L2_THEORY → L4_LATTICE`/`L5_CHAIN` import edges on the
+There are **27** `L2_THEORY → L4_LATTICE`/`L5_CHAIN` import edges on the
 delivering commit. They are reported as `INFO`; they are **not violations**,
 they **never affect the exit status**, and they are **not a work list**.
 
@@ -127,7 +127,7 @@ Many of them are honest concrete capstones that merely live under a topic
 directory — `Conditioning.CubicBoxComponentSize →
 Concrete.…CubicBoxScreeningDecomp`, for instance, is correctly directed; the
 *file* is arguably misfiled but the *edge* is fine. Enforcing this direction
-would manufacture a 28-entry baseline and would implicitly demand a
+would manufacture a 27-entry baseline and would implicitly demand a
 file-relocation campaign, which is exactly the mechanical rewrite the issue
 rules out. Anything arising from these edges needs its own evidence-first issue
 and is not authorized by this page.
