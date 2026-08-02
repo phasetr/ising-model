@@ -1,3 +1,44 @@
+## 2026-08-02 dev-pr-clerk merge sync — #4851 completed (reduced scope), #4830 checklist updated 2/5
+
+- **#4851 CLOSED (completed, reduced scope)**: merged via PR #4859
+  (`refactor/4851-fourfoldsite-dedupe`), squash-merge commit
+  `261322222e853b25f9cd480452f263aacaf3e50a` on `main`. Retired the duplicate
+  `IsingModel.Lebowitz.sum_spin` declaration (`FourfoldSite.lean:34-37`), a specialization
+  (`α := ℝ`) of the general `IsingModel.sum_spin {α} [AddCommMonoid α]`
+  (`IsingModel/GibbsMeasure.lean:224`); no call-site/import/proof-text changes. `docs/index.md`
+  and the `scripts/test_dead_candidate_scan.py` declaration-census pins (`10567 → 10566`) synced
+  in the same PR. CI green (`build`/`import-dag-contract` pass; `completion-claim/live`/
+  `evaluate` fail per the known structural gh-auth-user=PR-author cause, consistent with recently
+  merged #4848/#4856); `dev-verify` independent build re-verify (2x), `dev-review` (Claude +
+  codex) verdict MERGE (no High/Med findings), `dev-audit-tier1` findings addressed,
+  `dev-issue-manager` resolution verification = resolved. Mirror `.self-local/issues/4851.md`
+  updated OPEN → CLOSED (completed, reduced scope) with resolution summary. **Scope note**: the
+  original AC's full `GibbsMeasure`-independence move remains parked as a #4830 Non-goals P2
+  candidate pending explicit user authorization; not reopened by this closure.
+- **#4830 (master tracker) body updated**: second-wave checklist line for `#4851` flipped
+  `[ ] → [x]` with `— completed (reduced scope)` and the parked-P2 note; second-wave progress
+  now recorded as **2/5** (#4850, #4851).
+
+## 2026-08-02 dev-pr-clerk merge sync — #4850 completed, #4830 checklist updated
+
+- **#4850 CLOSED (completed)**: merged via PR #4856 (`refactor/4850-gksboundary-import-repoint`),
+  squash-merge commit `ac942a458f27d3a12b723b9fad943bdfe610ede8` on `main`. Import-line repoint
+  (`GKSBoundaryCondition.lean:3` `Concrete.LatticeGraphCorrelation.CubicBoxScreening` +
+  `FKGBoundaryCondition` → single `IsingModel.Inequalities.MonotonicityExtremal`) confirmed as the
+  full pilot; no declaration added/removed/renamed/moved. Measured: `IsingModel`-level static
+  import closure **182 → 13** modules; `import_dag_contract.py`'s unranked
+  `L2_THEORY → L4_LATTICE/L5_CHAIN` `INFO_CEILING` ratchet **28 → 27**.
+  `docs/architecture-import-layers.md` / `scripts/test_import_dag_contract.py` docstring synced in
+  the same PR. AC2 (audit every non-`Concrete` → `Concrete.*` edge, record ownership verdict)
+  satisfied per `dev-research` inventory (`.self-local/reports/research-4850-audit-gate-l2-l4-edges.md`);
+  the one genuine ownership-violation edge found outside this bounded pilot's scope
+  (`MonotonicityBetaBoundaryCondition.lean` → `MagnetizationFieldMonotone.lean`'s
+  `gibbsExpectationBC_field_mono`) filed separately as #4857. Mirror `.self-local/issues/4850.md`
+  updated OPEN → CLOSED (completed) with resolution summary.
+- **#4830 (master tracker) body updated**: second-wave checklist line for `#4850` flipped
+  `[ ] → [x]` with `— completed (PR #4856, merge commit `ac942a45`; AC2 ownership-violation edge
+  tracked separately as #4857)`.
+
 ## 2026-08-02 dev-pr-clerk governance corrections — #4830 checklist sync, second-wave INDEX entry, #4850/#4851 premise fixes
 
 - **#4830 (master tracker) body corrected**: the first-wave checklist (`#4831`/`#4832`/`#4833`/
