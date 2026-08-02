@@ -191,11 +191,24 @@ The prose contract is what an ordinary pull-request body must satisfy:
    email autolink even when it is not tag-shaped.
 3. A closing keyword that GitHub would act on must appear as a standalone
    canonical trailer line, exactly `Closes #N`, `Fixes #N`, or `Resolves #N`
-   with nothing else on the line. Every closing reference the keyword scanner
-   finds must correspond to such a line; otherwise the body is
+   with nothing else on the line, inside a paragraph that holds nothing but
+   trailer lines. Every closing reference the keyword scanner finds must
+   correspond to such a line; otherwise the body is
    `AMBIGUOUS_CLOSING_DIRECTIVE`. This keeps the #4725 shape
    ("This does not Closes #4801.") rejected, together with entity-obscured,
-   emphasis-wrapped, lower-case, and trailing-text variants.
+   emphasis-wrapped, lower-case, and trailing-text variants, and the same
+   shape split over two lines.
+   "Standalone" is a claim about the rendered document, so both halves of that
+   comparison read a masked view of the body in which fenced code blocks and
+   inline code spans are blanked out, and both require the trailer line's
+   paragraph — the maximal run of non-blank lines around it — to contain only
+   trailer lines. A line-by-line scan cannot see either fact on its own: it
+   reads a bare `Refs #4801` inside a fence, inside a code span that crosses a
+   line ending, or in the middle of a negating paragraph as if it were the
+   line GitHub renders as a citation. The masked view is the coarser one, so
+   nothing it hides can be anchored, and a blank line is CommonMark's — spaces
+   and tabs only, never a no-break or zero-width space. Details, including the
+   two fillers masking uses, are in the body-syntax section below.
 4. Close vocabulary that carries no `#N` reference is ordinary prose and is
    allowed, because GitHub does nothing with it.
 5. Non-closing references are the anchored forms `Refs #N` and `Part of #N`,
@@ -209,18 +222,21 @@ The prose contract is what an ordinary pull-request body must satisfy:
    a line GitHub acts on is a real auto-close ambiguity, while a non-closing
    line closes nothing. Any wider separator — a comma, a second space, a
    no-break space, or trailing text — is not a run, so the scan and the trailer
-   grammar disagree and the body is refused. These numbers widen issue
-   authority — they seed the live hierarchy walk — so a negated, quoted,
-   fenced, emphasized, line-split, trailing-text, or link-labelled `Refs #N` is
-   refused rather than honoured for a reference the body does not really carry.
-   Only a bare same-repository `#N` is supported; an `owner/repo#N` or URL form
-   is `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space
-   cannot be verified here.
+   grammar disagree and the body is refused, and a line too long to be any
+   trailer is not one either. These numbers widen issue authority — they seed
+   the live hierarchy walk — so a negated, quoted, fenced, code-spanned,
+   emphasized, line-split, trailing-text, or link-labelled `Refs #N` is refused
+   or ignored rather than honoured for a reference the body does not really
+   carry. Only a bare same-repository `#N` is supported; an `owner/repo#N` or
+   URL form is `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number
+   space cannot be verified here.
 6. At least one anchored reference (`Refs`, `Part of`, or `Closes`) is
    required, otherwise `MISSING_ISSUE_REFERENCE`. At most 16 anchored
    references, 8 closing trailers, and 64 distinct bare mentions are accepted;
-   exceeding any of those is `TOO_MANY_ISSUE_REFERENCES`. Repeating one issue
-   number across anchored references is `DUPLICATE_ISSUE_REF`.
+   exceeding any of those is `TOO_MANY_ISSUE_REFERENCES`. Each cap is applied
+   while the references are read, so a body that lists far more than the cap
+   allows is refused without being parsed in full. Repeating one issue number
+   across anchored references is `DUPLICATE_ISSUE_REF`.
 7. Every non-closing anchored number must be in `allowed_issue_refs`,
    otherwise `UNMANAGED_ISSUE_REF`.
 8. A bare `#N` with no directive in front of it is an informational mention.
@@ -728,6 +744,47 @@ unanchored one could satisfy both `MISSING_ISSUE_REFERENCE` and
 `GH-N` shorthand is not an anchored form in either mode; it is reported as an
 unverified mention so that it cannot pass unseen.
 
+### What "standalone trailer line" means exactly
+
+Both scans a prose body's anchoring rests on — the raw line scan and the
+normalized keyword scan — read a masked view of the body, and both apply a
+paragraph rule. Neither scan can otherwise tell a rendered citation from text
+that merely looks like one on its own line.
+
+Masking blanks out every fenced code block, including its delimiters and an
+unclosed fence's run to the end of the body, and every inline code span, where
+a run of N backticks is closed by the next run of exactly N backticks within
+the same paragraph. Fences are masked first, so a backtick inside a fence
+cannot open a span. Masked characters keep their position and every line ending
+survives, so the two scans still describe the same body and can be compared.
+The two fillers differ on purpose. A fence masks to spaces for the line scan,
+because a fenced block really is a block boundary and a trailer directly under
+one is standalone. An inline span masks to a filler that is neither
+alphanumeric nor a separator, for two reasons: a blank filler would let a
+directive scan step across the removed words onto a later reference and read a
+pairing the body does not contain, and a span that crosses a line ending would
+leave an apparently empty line, faking the paragraph break that makes a trailer
+standalone. The keyword scan uses that same filler for fences too, since no
+directive reaches across a code block either.
+
+The paragraph rule is that a trailer line counts only inside a paragraph — the
+maximal run of non-blank lines containing it — that holds trailer lines and
+nothing else. A blank line is CommonMark's: spaces and tabs only. This is what
+rejects prose bleeding in from the line above or below, including a blockquote's
+lazy continuation (`> Quoted evidence:` then an unquoted `Refs #4801`) and a
+negation split over two lines. Several trailer lines may share one paragraph,
+and a trailer that ends the body needs nothing after it, which is the shape this
+repository writes.
+
+Masking and the paragraph rule are deliberately coarser than a Markdown parser,
+so they refuse in both directions rather than resolve ambiguity. A reference in
+a container is not anchored and is reported as an unverified mention; a trailer
+line glued to a heading, a list item, a table row, a link reference definition,
+or any other block reports `AMBIGUOUS_CLOSING_DIRECTIVE` or
+`AMBIGUOUS_NON_CLOSING_DIRECTIVE` even where GitHub would render it as its own
+paragraph. Regex-based container detection cannot be complete; the contract is
+that an unrecognized container costs a rejection, never an anchored reference.
+
 ## Draft and ready behavior
 
 Draft bodies may use the literal string `PENDING` for candidate fields, review
@@ -769,9 +826,10 @@ A separate prose-mode class pins the default contract: a realistic prose body
 passes and reports its four `unverified_claim_family` entries, a missing
 anchored reference fails, negated and decorated closing forms fail while a
 standalone trailer and bare close vocabulary pass, the same disguises of
-`Refs`/`Part of` (negated, inline-code, fenced, blockquoted, line-split,
-link-labelled, trailing-text, lower-case, emphasized, entity-obscured) fail
-while standalone non-closing trailers pass, a single trailer line listing
+`Refs`/`Part of` (negated, padded, blockquoted, line-split, link-labelled,
+multi-line link-labelled, lazily continued from a blockquote, negated across
+two lines, trailing-text, lower-case, emphasized, entity-obscured) fail while
+standalone non-closing trailers pass, a single trailer line listing
 several references anchors each of them while its malformed spellings
 (comma-separated, double-spaced, no-break-spaced, hash-less, glued, quoted,
 URL-suffixed) fail and a multi-number closing trailer stays ambiguous, a `GH-N`
@@ -779,9 +837,19 @@ shorthand surfaces as an unverified mention, every raw-HTML variant still
 fails — including digit-leading, underscore-leading, and dot-leading email
 autolinks — while `value < bound` and `a < b@c > d` pass, a malformed managed
 marker never falls through to prose, cross-repository and URL reference forms
-fail, and the reference and mention caps hold. Weakened anchored-reference,
-closing-trailer, non-closing-trailer, and autolink guards are killed as mutants,
-and the autolink scan is timed past one MiB.
+fail, and the reference and mention caps hold. The container rules have their
+own cases: a bare, padded, multi-number, tilde-fenced, or `Closes` trailer
+inside a fence and a multi-line or single-line code span anchor nothing and
+surface as unverified mentions, a code span crossing a line ending cannot fake
+the blank line that isolates a trailer, only a spaces-and-tabs blank line
+separates paragraphs, and the accepted trailer shapes (blank-separated, last
+line with no newline, several trailer lines together, directly below a fence)
+are pinned beside the rejected glued ones. Weakened anchored-reference,
+closing-trailer, non-closing-trailer, container-masking, trailer-isolation,
+mask-filler, inline-filler, and autolink guards are killed as mutants, the
+autolink scan is timed past one MiB, container masking is timed on fence and
+backtick storms, and a reference run far past every cap is pinned to fail in
+seconds and under 8 MiB instead of being parsed in full first.
 Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
 suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
@@ -798,6 +866,8 @@ end: identical authority from prose and managed bodies, preserved offline
 diagnostic codes, cross-repository and pull-request-parent rejection, a passing
 closed non-seed reference, all-closed seeds, a missing issue, an unreachable
 `Part of`, closing versus referencing a pull request, exact-head success, a
-one-line `Refs` run whose every number seeds the walk, a disguised `Refs` that
-fails shut without ever fetching the issue it names, and mutants for the
-open-seed guard and for a prose fallback that would bypass a managed block.
+one-line `Refs` run whose every number seeds the walk, thirteen disguised
+`Refs` shapes that fail shut without ever fetching the issue they name, a
+fenced-only reference that reaches neither the issue endpoint nor its parent,
+and mutants for the open-seed guard and for a prose fallback that would bypass
+a managed block.

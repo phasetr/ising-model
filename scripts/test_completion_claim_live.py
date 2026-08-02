@@ -1075,15 +1075,27 @@ class ProseReferenceTest(unittest.TestCase):
         an anchored `Refs #4801` in it.  Accepting one would make an invented number
         both the issue-reference evidence and an open-issue seed.
         """
+        ambiguous = "AMBIGUOUS_NON_CLOSING_DIRECTIVE"
+        missing = "MISSING_ISSUE_REFERENCE"
         variants = [
-            "This does not Refs #4801.",
-            "See the example `Refs #4801`",
-            "```text\n... Refs #4801 ...\n```",
-            "> Refs #4801",
-            "Refs\n#4801",
-            "[Refs #4801](https://example.test)",
+            ("This does not Refs #4801.", ambiguous),
+            ("See the example `Refs #4801`", missing),
+            ("```text\n... Refs #4801 ...\n```", missing),
+            ("> Refs #4801", ambiguous),
+            ("Refs\n#4801", ambiguous),
+            ("[Refs #4801](https://example.test)", ambiguous),
+            # A bare trailer line inside a container is the shape a per-line
+            # scan used to accept: masked out, it cites nothing at all.
+            ("```\nRefs #4801\n```", missing),
+            ("~~~\nRefs #4801\n~~~", missing),
+            ("```\nCloses #4801\n```", missing),
+            ("`x\nRefs #4801\ny`", missing),
+            # Prose bleeding in from the neighbouring line is refused instead.
+            ("[x\nRefs #4801\ny](https://example.test)", ambiguous),
+            ("> Quoted evidence:\nRefs #4801", ambiguous),
+            ("This PR does not\nRefs #4801\n.", ambiguous),
         ]
-        for variant in variants:
+        for variant, expected in variants:
             with self.subTest(variant=variant[:20]):
                 body = f"## Summary\n\n{variant}\n"
                 transport = self.transport(body, count=2)
@@ -1093,12 +1105,31 @@ class ProseReferenceTest(unittest.TestCase):
                     ["pending", "failure"],
                 )
                 self.assertIn(
-                    "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
-                    str(transport.posts[-1][1]["description"]),
+                    expected, str(transport.posts[-1][1]["description"])
                 )
                 self.assertFalse(
                     any("/issues/4801" in path for path in transport.gets)
                 )
+
+    def test_a_fenced_reference_is_never_fetched_or_walked(self) -> None:
+        """The end-to-end proof for the container case: no issue call at all.
+
+        A body whose only reference sits in a fenced block used to reach a
+        `success` status and make the live adapter fetch that issue and its
+        parent, so a number nobody cited seeded the hierarchy walk.
+        """
+        body = "## Summary\n\nEvidence quoted from another body:\n\n```\nRefs #4801\n```\n"
+        transport = self.transport(body, count=2)
+        self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805), 1)
+        self.assertEqual(
+            [payload["state"] for _, payload in transport.posts],
+            ["pending", "failure"],
+        )
+        self.assertIn(
+            "MISSING_ISSUE_REFERENCE", str(transport.posts[-1][1]["description"])
+        )
+        self.assertFalse(any("/issues/" in path for path in transport.gets))
+        self.assertFalse(any("/parent" in path for path in transport.gets))
 
 
 class EvaluationTest(unittest.TestCase):

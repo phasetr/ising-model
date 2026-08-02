@@ -9,6 +9,7 @@ process execution, network access, or credential handling.
 from __future__ import annotations
 
 import argparse
+import bisect
 import hashlib
 import html
 import json
@@ -43,6 +44,15 @@ MAX_TEXT_BYTES = 16_384
 MAX_ANCHORED_REFERENCES = 16
 MAX_CLOSING_TRAILERS = 8
 MAX_BARE_MENTIONS = 64
+MAX_DIRECTIVE_SCAN_REFERENCES = 1_000
+# No trailer paragraph can carry more anchored references than both caps allow,
+# so a longer run of trailer-shaped lines is refused before it is buffered.
+MAX_TRAILER_PARAGRAPH_LINES = MAX_ANCHORED_REFERENCES + MAX_CLOSING_TRAILERS
+# One trailer line carries at most MAX_ANCHORED_REFERENCES numbers after one
+# keyword.  Thirty-two characters per number is far beyond any real issue
+# number, so a longer line cannot be a trailer and is never handed to the
+# multi-number grammar, whose match state grows with the run it accepts.
+MAX_TRAILER_LINE_CHARS = 32 * (MAX_ANCHORED_REFERENCES + 1)
 
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}\Z")
@@ -95,6 +105,22 @@ FUTURE_PLAN_RE = re.compile(
     re.IGNORECASE,
 )
 FENCE_OPEN_RE = re.compile(r"^( {0,3})(`{3,}|~{3,})([^\r\n]*)$")
+# The two closers are precompiled per marker: the fence scan runs once per body
+# line, and rebuilding one pattern string per line is pure overhead.
+FENCE_CLOSE_RE = {
+    "`": re.compile(r" {0,3}(`{3,})[ \t]*"),
+    "~": re.compile(r" {0,3}(~{3,})[ \t]*"),
+}
+# CommonMark code-span delimiters: a run of N backticks is closed by the next run
+# of exactly N backticks.  The blank-line shape below bounds that search to one
+# paragraph, because inline parsing never crosses a block boundary.
+BACKTICK_RUN_RE = re.compile(r"`+")
+BLANK_LINE_RE = re.compile(r"\n[ \t]*(?=\n)")
+NON_NEWLINE_RE = re.compile(r"[^\n]")
+# Masked code stands in as a character that is neither alphanumeric nor a
+# Markdown separator, so a directive scan stops at it instead of stepping over
+# the removed text onto a reference that never followed the keyword.
+MASK_FILLER = "\ufffd"
 HISTORY_ACTIONS = frozenset({"added", "modified", "deleted"})
 MANAGED_MODE = "managed"
 PROSE_MODE = "prose"
@@ -356,9 +382,117 @@ def _fence(line: str) -> tuple[str, int, str] | None:
 
 
 def _fence_closes(line: str, marker: str, minimum: int) -> bool:
-    stripped = line.removesuffix("\r")
-    match = re.fullmatch(r" {0,3}(" + re.escape(marker) + r"{3,})[ \t]*", stripped)
+    pattern = FENCE_CLOSE_RE.get(marker)
+    if pattern is None:
+        return False
+    match = pattern.fullmatch(line.removesuffix("\r"))
     return match is not None and len(match.group(1)) >= minimum
+
+
+def _fenced_spans(text: str) -> list[tuple[int, int]]:
+    """Return the character spans of fenced code blocks, delimiters included.
+
+    The fence bookkeeping is the one :func:`extract_managed_document` uses, so a
+    reference scan and the managed-block parser agree on what a fence is.  An
+    unclosed fence runs to the end of the document, as CommonMark specifies.
+    """
+    spans: list[tuple[int, int]] = []
+    offset = 0
+    opening: tuple[str, int, int] | None = None
+    for line in text.split("\n"):
+        start = offset
+        offset = min(offset + len(line) + 1, len(text))
+        if opening is None:
+            fence = _fence(line)
+            if fence is not None:
+                marker, minimum, _ = fence
+                opening = (marker, minimum, start)
+            continue
+        marker, minimum, fence_start = opening
+        if _fence_closes(line, marker, minimum):
+            spans.append((fence_start, offset))
+            opening = None
+    if opening is not None:
+        spans.append((opening[2], len(text)))
+    return spans
+
+
+def _blank_line_between(breaks: list[tuple[int, int]], start: int, end: int) -> bool:
+    index = bisect.bisect_left(breaks, (start, start))
+    return index < len(breaks) and breaks[index][1] <= end
+
+
+def _code_span_spans(text: str, base: int) -> list[tuple[int, int]]:
+    """Return the code-span character spans of one fence-free region.
+
+    Openers are matched left to right against the next backtick run of the same
+    length, which is CommonMark's rule; a candidate closer beyond a blank line
+    belongs to another block and therefore closes nothing.
+    """
+    runs = [match.span() for match in BACKTICK_RUN_RE.finditer(text)]
+    breaks = [
+        (match.start(), match.end() + 1) for match in BLANK_LINE_RE.finditer(text)
+    ]
+    by_length: dict[int, list[int]] = {}
+    for index, (start, end) in enumerate(runs):
+        by_length.setdefault(end - start, []).append(index)
+    spans: list[tuple[int, int]] = []
+    index = 0
+    while index < len(runs):
+        start, end = runs[index]
+        candidates = by_length[end - start]
+        position = bisect.bisect_right(candidates, index)
+        if position < len(candidates):
+            closing_start, closing_end = runs[candidates[position]]
+            if not _blank_line_between(breaks, end, closing_start):
+                spans.append((base + start, base + closing_end))
+                index = candidates[position] + 1
+                continue
+        index += 1
+    return spans
+
+
+def masked_code_containers(text: str, fenced_filler: str = " ") -> str:
+    """Return ``text`` with code containers masked out, offsets preserved.
+
+    GitHub resolves no issue reference inside a fenced block or an inline code
+    span, so neither may anchor one here.  Every masked character becomes a
+    filler and every newline survives, which keeps character offsets and line
+    numbering identical to the input: the raw trailer scan and the normalized
+    keyword scan can therefore both read this view and still be compared.
+    Fences are masked first, so a stray backtick inside a fence cannot open a
+    code span and a code span cannot swallow a fence.
+
+    The two fillers are not interchangeable.  An inline span always masks to
+    :data:`MASK_FILLER`, which is neither alphanumeric nor a Markdown
+    separator, for two reasons: a separator would let a keyword reach across
+    the removed words onto a later reference (``closed `note` (#4822)``) and
+    invent a pairing the body does not have, and a span that spans a line break
+    would leave a line that looks empty, faking the paragraph break that makes
+    a trailer standalone.  A fence is a real block boundary, so the line scan
+    masks it to spaces and reads the blank lines it leaves; the keyword scan
+    passes :data:`MASK_FILLER` for fences too, since no directive may reach
+    across a code block either.
+    """
+    fenced = _fenced_spans(text)
+    inline: list[tuple[int, int]] = []
+    cursor = 0
+    for start, end in fenced:
+        inline.extend(_code_span_spans(text[cursor:start], cursor))
+        cursor = end
+    inline.extend(_code_span_spans(text[cursor:], cursor))
+    if not fenced and not inline:
+        return text
+    fillers = {span: fenced_filler for span in fenced}
+    fillers.update({span: MASK_FILLER for span in inline})
+    parts: list[str] = []
+    cursor = 0
+    for start, end in sorted(fillers):
+        parts.append(text[cursor:start])
+        parts.append(NON_NEWLINE_RE.sub(fillers[(start, end)], text[start:end]))
+        cursor = end
+    parts.append(text[cursor:])
+    return "".join(parts)
 
 
 def extract_managed_document(body: str) -> tuple[str, str]:
@@ -482,8 +616,12 @@ def _keyword_spans(projected: str, keywords: tuple[str, ...]) -> list[tuple[int,
     return spans
 
 
+def _too_many_references(message: str) -> GateInputError:
+    return GateInputError("TOO_MANY_ISSUE_REFERENCES", message)
+
+
 def _directive_references(
-    projected: str, keywords: tuple[str, ...], *, multi: bool = False
+    projected: str, keywords: tuple[str, ...], *, multi: bool = False, limit: int
 ) -> list[tuple[str, int, str]]:
     """Return ``(keyword, reference offset, reference)`` for anchored mentions.
 
@@ -493,6 +631,10 @@ def _directive_references(
     multiset comparison in :func:`parse_body_references` would reject the very
     ``Refs #1 #2`` line it is meant to allow.  Any wider separator stops the run,
     so a decorated or wrapped list still fails that comparison.
+
+    ``limit`` is enforced while the run is being followed rather than after it is
+    materialized: a body may hold a reference run far longer than any cap, and
+    parsing all of it before rejecting it is a needless memory and time cost.
     """
     references: list[tuple[str, int, str]] = []
     for keyword_start, keyword_end in _keyword_spans(projected, keywords):
@@ -504,12 +646,16 @@ def _directive_references(
             continue
         keyword = projected[keyword_start:keyword_end].lower()
         references.append((keyword, reference.start(), reference.group(0)))
+        if len(references) > limit:
+            raise _too_many_references("body has too many issue directives")
         cursor = reference.end()
         while multi and projected.startswith(" #", cursor):
             follower = BARE_REF_RE.match(projected, cursor + 1)
             if follower is None:
                 break
             references.append((keyword, follower.start(), follower.group(0)))
+            if len(references) > limit:
+                raise _too_many_references("body has too many issue directives")
             cursor = follower.end()
     return references
 
@@ -517,17 +663,76 @@ def _directive_references(
 def _references_after(projected: str, keywords: tuple[str, ...]) -> list[str]:
     return [
         reference
-        for _, _, reference in _directive_references(projected, keywords, multi=True)
+        for _, _, reference in _directive_references(
+            projected, keywords, multi=True, limit=MAX_DIRECTIVE_SCAN_REFERENCES
+        )
     ]
 
 
-def _closing_trailer_numbers(body: str) -> list[int]:
+def _is_trailer_line(line: str) -> bool:
+    """Return whether one line is shaped like a canonical trailer of either kind.
+
+    The length guard runs first: a line no trailer can be that long is refused
+    before the multi-number grammar walks it, which keeps a pathological run of
+    references cheap to reject instead of expensive to parse.
+    """
+    return len(line) <= MAX_TRAILER_LINE_CHARS and (
+        CANONICAL_CLOSING_RE.fullmatch(line) is not None
+        or NON_CLOSING_TRAILER_RE.fullmatch(line) is not None
+    )
+
+
+def _trailer_lines(masked_body: str) -> list[str]:
+    """Return the lines of every paragraph that contains nothing but trailers.
+
+    A canonical trailer stands alone, so its paragraph — the maximal run of
+    non-blank lines around it — may hold trailer lines and nothing else.  Reading
+    a line on its own cannot see the prose bleeding into it from the neighbouring
+    line, which is how ``This PR does not\\nRefs #4801\\n.`` and a blockquote's
+    lazy continuation (``> Quoted evidence:\\nRefs #4801``) both look like
+    standalone trailers to a per-line scan while GitHub renders them as one
+    paragraph.  A masked fence reads as blank here, so a trailer directly below
+    a closing fence is still its own paragraph, while a masked inline span does
+    not, so a span crossing a line ending cannot fake that separation.
+    """
+    lines: list[str] = []
+    paragraph: list[str] = []
+    isolated = True
+    for raw in masked_body.split("\n"):
+        line = raw.removesuffix("\r")
+        # CommonMark's blank line is spaces and tabs only.  Python's `strip`
+        # would also swallow a no-break or ideographic space, and a line of
+        # those separates no paragraph GitHub renders.
+        if not line.strip(" \t"):
+            if isolated:
+                lines.extend(paragraph)
+            paragraph = []
+            isolated = True
+            continue
+        if not isolated:
+            continue
+        if not _is_trailer_line(line):
+            paragraph = []
+            isolated = False
+            continue
+        paragraph.append(line)
+        if len(paragraph) > MAX_TRAILER_PARAGRAPH_LINES:
+            raise _too_many_references("body has too many anchored issue references")
+    if isolated:
+        lines.extend(paragraph)
+    return lines
+
+
+def _closing_trailer_numbers(trailer_lines: list[str]) -> list[int]:
     """Return issue numbers from raw standalone ``Closes #N`` trailer lines."""
     numbers: list[int] = []
-    for line in body.split("\n"):
-        match = CANONICAL_CLOSING_RE.fullmatch(line.removesuffix("\r"))
-        if match is not None:
-            numbers.append(int(match.group(1)))
+    for line in trailer_lines:
+        match = CANONICAL_CLOSING_RE.fullmatch(line)
+        if match is None:
+            continue
+        numbers.append(int(match.group(1)))
+        if len(numbers) > MAX_CLOSING_TRAILERS:
+            raise _too_many_references("body has too many closing trailers")
     return numbers
 
 
@@ -536,20 +741,24 @@ def _non_closing_kind(keyword: str) -> str:
     return "Refs" if keyword == "refs" else "Part of"
 
 
-def _non_closing_trailers(body: str) -> list[tuple[str, int]]:
+def _non_closing_trailers(trailer_lines: list[str]) -> list[tuple[str, int]]:
     """Return ``(kind, number)`` from raw standalone ``Refs``/``Part of`` lines.
 
     A line may list several references after one keyword; each number is returned
-    separately, so the caller compares numbers rather than lines.
+    separately, so the caller compares numbers rather than lines.  The cap is
+    applied per number, so an unbounded run is refused before it is built.
     """
     references: list[tuple[str, int]] = []
-    for line in body.split("\n"):
-        match = NON_CLOSING_TRAILER_RE.fullmatch(line.removesuffix("\r"))
+    for line in trailer_lines:
+        match = NON_CLOSING_TRAILER_RE.fullmatch(line)
         if match is None:
             continue
-        references.extend(
-            (match.group(1), int(number)) for number in BARE_REF_RE.findall(match.group(2))
-        )
+        for number in BARE_REF_RE.finditer(match.group(2)):
+            references.append((match.group(1), int(number.group(1))))
+            if len(references) > MAX_ANCHORED_REFERENCES:
+                raise _too_many_references(
+                    "body has too many anchored issue references"
+                )
     return references
 
 
@@ -567,31 +776,40 @@ def parse_body_references(
     seed the live hierarchy walk), so a quoted, fenced, wrapped, or line-split
     ``Refs #4801`` must not pass for the reference it only looks like.
 
+    Both halves of that comparison read one masked view of the body, in which
+    fenced blocks and inline code spans are blanked out, and both accept a trailer
+    line only inside a paragraph of trailers.  A per-line scan is otherwise blind
+    to Markdown containers: it would anchor a reference from inside a code fence,
+    from a multi-line code span or link label, or from a line the surrounding
+    paragraph negates.  Masking both halves at once keeps them consistent, so a
+    fenced reference is simply not a candidate rather than a spurious mismatch;
+    it stays visible as an unverified mention.
+
     A non-closing trailer may list several references (``Refs #4850 #4851``); a
     closing trailer may not, because GitHub acts on the numbers it carries.
     """
     normalized = _normalized_body_text(body)
-    closing = _directive_references(normalized, CLOSE_KEYWORDS)
-    trailers = _closing_trailer_numbers(body)
+    masked = masked_code_containers(normalized, MASK_FILLER)
+    trailer_lines = _trailer_lines(masked_code_containers(body))
+    closing = _directive_references(masked, CLOSE_KEYWORDS, limit=MAX_CLOSING_TRAILERS)
+    trailers = _closing_trailer_numbers(trailer_lines)
     if sorted(_issue_number(reference) for _, _, reference in closing) != sorted(trailers):
         raise GateInputError(
             "AMBIGUOUS_CLOSING_DIRECTIVE",
             "closing keywords must appear only as standalone canonical trailers",
         )
-    if len(trailers) > MAX_CLOSING_TRAILERS:
-        raise GateInputError(
-            "TOO_MANY_ISSUE_REFERENCES", "body has too many closing trailers"
-        )
     anchored: list[tuple[str, int]] = [("Closes", number) for number in trailers]
     anchored_starts = {start for _, start, _ in closing}
-    scanned = _directive_references(normalized, NON_CLOSING_DIRECTIVES, multi=True)
+    scanned = _directive_references(
+        masked, NON_CLOSING_DIRECTIVES, multi=True, limit=MAX_ANCHORED_REFERENCES
+    )
     for _, _, reference in scanned:
         if BARE_REF_RE.fullmatch(reference) is None:
             raise GateInputError(
                 "UNSUPPORTED_ISSUE_REF_FORM",
                 f"only bare same-repository references are supported: {reference}",
             )
-    non_closing = _non_closing_trailers(body)
+    non_closing = _non_closing_trailers(trailer_lines)
     scanned_pairs = sorted(
         (_non_closing_kind(keyword), int(reference[1:]))
         for keyword, _, reference in scanned
