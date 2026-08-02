@@ -527,19 +527,8 @@ Part of #4796
 
 
 class ProseModeTest(GateHarness, unittest.TestCase):
-    def prose(
-        self,
-        body: str,
-        *,
-        context: dict[str, Any] | None = None,
-    ) -> tuple[int, dict[str, Any]]:
-        return self.run_gate(context=context, body=body)
-
-    def assert_prose_code(self, expected: str, body: str) -> dict[str, Any]:
-        return self.assert_code(expected, body=body)
-
     def test_realistic_prose_body_passes_and_records_unverified_families(self) -> None:
-        code, report = self.prose(PROSE_BODY)
+        code, report = self.run_gate(body=PROSE_BODY)
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertEqual(report["machine_status"], gate.PASS)
         self.assertEqual(report["body_mode"], "prose")
@@ -562,13 +551,13 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         for word in gate.OFFICIAL_CLOSE_KEYWORDS:
             body = f"The stale docstring was {word} in this pull request.\n\nRefs #4801\n"
             with self.subTest(word=word):
-                code, report = self.prose(body)
+                code, report = self.run_gate(body=body)
                 self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_standalone_closing_trailer_passes(self) -> None:
         for trailer in ["Closes #4801", "Fixes #4801", "Resolves #4801"]:
             with self.subTest(trailer=trailer):
-                code, report = self.prose(f"Ordinary summary.\n\n{trailer}\n")
+                code, report = self.run_gate(body=f"Ordinary summary.\n\n{trailer}\n")
                 self.assertEqual(code, gate.EXIT_PASS, report)
                 anchored, _ = gate.parse_body_references(f"{trailer}\n")
                 self.assertEqual(anchored, (("Closes", 4801),))
@@ -585,9 +574,9 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         ]
         for variant in variants:
             with self.subTest(variant=variant):
-                self.assert_prose_code(
+                self.assert_code(
                     "AMBIGUOUS_CLOSING_DIRECTIVE",
-                    f"Refs #4796\n{variant}\n",
+                    body=f"Refs #4796\n{variant}\n",
                 )
 
     def test_missing_issue_reference_fails(self) -> None:
@@ -597,7 +586,7 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             "",
         ]:
             with self.subTest(body=body[:20]):
-                self.assert_prose_code("MISSING_ISSUE_REFERENCE", body)
+                self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
 
     def test_raw_html_forms_still_fail_but_comparisons_pass(self) -> None:
         fullwidth_less_than = chr(ord("<") + 0xFEE0)
@@ -614,8 +603,8 @@ class ProseModeTest(GateHarness, unittest.TestCase):
         ]
         for variant in forbidden:
             with self.subTest(variant=variant):
-                self.assert_prose_code("RAW_HTML_FORBIDDEN", f"{variant}\n\nRefs #4801\n")
-        code, report = self.prose("Measured value < bound.\n\nRefs #4801\n")
+                self.assert_code("RAW_HTML_FORBIDDEN", body=f"{variant}\n\nRefs #4801\n")
+        code, report = self.run_gate(body="Measured value < bound.\n\nRefs #4801\n")
         self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_malformed_managed_block_never_falls_through_to_prose(self) -> None:
@@ -637,30 +626,30 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             "Part of phasetr/other#12",
         ]:
             with self.subTest(reference=reference):
-                self.assert_prose_code("UNSUPPORTED_ISSUE_REF_FORM", f"{reference}\n")
+                self.assert_code("UNSUPPORTED_ISSUE_REF_FORM", body=f"{reference}\n")
 
     def test_reference_counts_are_bounded(self) -> None:
         many = "\n".join(
             f"Refs #{5000 + index}" for index in range(gate.MAX_ANCHORED_REFERENCES + 1)
         )
-        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", many + "\n")
+        self.assert_code("TOO_MANY_ISSUE_REFERENCES", body=many + "\n")
         trailers = "\n".join(
             f"Closes #{6000 + index}" for index in range(gate.MAX_CLOSING_TRAILERS + 1)
         )
-        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", trailers + "\n")
+        self.assert_code("TOO_MANY_ISSUE_REFERENCES", body=trailers + "\n")
         mentions = " ".join(f"#{7000 + index}" for index in range(gate.MAX_BARE_MENTIONS + 1))
-        self.assert_prose_code("TOO_MANY_ISSUE_REFERENCES", f"Refs #4801\n{mentions}\n")
+        self.assert_code("TOO_MANY_ISSUE_REFERENCES", body=f"Refs #4801\n{mentions}\n")
 
     def test_duplicate_and_unmanaged_anchored_references_fail(self) -> None:
-        self.assert_prose_code("DUPLICATE_ISSUE_REF", "Refs #4801\nPart of #4801\n")
-        self.assert_prose_code("UNMANAGED_ISSUE_REF", "Refs #4709\n")
-        self.assert_prose_code("UNMANAGED_ISSUE_REF", "Refs #4801\nPart of #4709\n")
+        self.assert_code("DUPLICATE_ISSUE_REF", body="Refs #4801\nPart of #4801\n")
+        self.assert_code("UNMANAGED_ISSUE_REF", body="Refs #4709\n")
+        self.assert_code("UNMANAGED_ISSUE_REF", body="Refs #4801\nPart of #4709\n")
 
     def test_bare_mentions_are_informational_only(self) -> None:
         anchored, mentions = gate.parse_body_references("Refs #4801 #4805 #4806\n")
         self.assertEqual(anchored, (("Refs", 4801),))
         self.assertEqual(mentions, (4805, 4806))
-        code, report = self.prose("Follows PR #4805.\n\nRefs #4801\n")
+        code, report = self.run_gate(body="Follows PR #4805.\n\nRefs #4801\n")
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertIn(
             {
@@ -674,25 +663,11 @@ class ProseModeTest(GateHarness, unittest.TestCase):
     def test_draft_state_is_recorded_without_gating(self) -> None:
         context = copy.deepcopy(self.context)
         context["is_draft"] = True
-        code, report = self.prose(PROSE_BODY, context=context)
+        code, report = self.run_gate(context=context, body=PROSE_BODY)
         self.assertEqual(code, gate.EXIT_PASS, report)
         self.assertIn(
             "draft_state", {entry["kind"] for entry in report["human_reviews"]}
         )
-
-    def test_empty_anchored_set_cannot_pass_when_the_guard_is_weakened(self) -> None:
-        mutant = MutationTest.mutant(
-            "    if not anchored:\n"
-            "        raise GateInputError(\n"
-            '            "MISSING_ISSUE_REFERENCE",',
-            "    if False:\n"
-            "        raise GateInputError(\n"
-            '            "MISSING_ISSUE_REFERENCE",',
-        )
-        body = "A summary with no anchored reference at all.\n"
-        self.assert_prose_code("MISSING_ISSUE_REFERENCE", body)
-        code, _ = self.run_gate(body=body, module=mutant)
-        self.assertEqual(code, gate.EXIT_PASS)
 
 
 class DigestTest(unittest.TestCase):
@@ -1151,6 +1126,31 @@ class MutationTest(GateHarness, unittest.TestCase):
             "unmanaged_prose",
             {item["kind"] for item in weakened["human_reviews"]},
         )
+
+    def test_prose_reference_requirement_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "    if not anchored:\n"
+            "        raise GateInputError(\n"
+            '            "MISSING_ISSUE_REFERENCE",',
+            "    if False:\n"
+            "        raise GateInputError(\n"
+            '            "MISSING_ISSUE_REFERENCE",',
+        )
+        body = "A summary with no anchored reference at all.\n"
+        self.assert_code("MISSING_ISSUE_REFERENCE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_prose_closing_trailer_mutant_is_killed(self) -> None:
+        mutant = self.mutant(
+            "    if sorted(_issue_number(reference) for _, _, reference in closing)"
+            " != sorted(trailers):",
+            "    if False:",
+        )
+        body = "Refs #4796\nThis does not Closes #4801.\n"
+        self.assert_code("AMBIGUOUS_CLOSING_DIRECTIVE", body=body)
+        code, report = self.run_gate(body=body, module=mutant)
+        self.assertEqual(code, gate.EXIT_PASS, report)
 
     def test_canonical_opener_mutant_is_killed(self) -> None:
         mutant = self.mutant(

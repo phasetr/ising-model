@@ -734,8 +734,9 @@ passes and reports its four `unverified_claim_family` entries, a missing
 anchored reference fails, negated and decorated closing forms fail while a
 standalone trailer and bare close vocabulary pass, every raw-HTML variant still
 fails while `value < bound` passes, a malformed managed marker never falls
-through to prose, cross-repository and URL reference forms fail, the reference
-and mention caps hold, and a weakened "no anchored reference" guard is killed.
+through to prose, cross-repository and URL reference forms fail, and the
+reference and mention caps hold. Weakened anchored-reference and
+closing-trailer guards are killed as mutants.
 Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
 suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
