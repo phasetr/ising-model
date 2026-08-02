@@ -1,6 +1,5 @@
 import IsingModel.Inequalities.GKS
-import IsingModel.Inequalities.FKGBoundaryCondition
-import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
+import IsingModel.Inequalities.MonotonicityExtremal
 
 /-!
 # GKS-I for the `+` boundary-condition state (FV §3.6 / Theorem 3.49, Issue #3605)
