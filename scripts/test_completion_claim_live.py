@@ -88,6 +88,22 @@ def managed_body(
     return f"```completion-claims-v1\n{encoded}\n```\n\nRefs #4801\nPart of #4796\n"
 
 
+def prose_body(references: str = "Refs #4801\nPart of #4796") -> str:
+    """Return one plain-prose body shaped like this repository's real PRs."""
+    return (
+        "## Summary\n"
+        "\n"
+        "The adapter accepts an ordinary prose body: no managed block, no raw\n"
+        "HTML, and a trailing anchored reference block.\n"
+        "\n"
+        "## Test plan\n"
+        "\n"
+        "- [x] `python3 scripts/test_completion_claim_live.py`\n"
+        "\n"
+        f"{references}\n"
+    )
+
+
 def pr_data(
     paths: list[str],
     *,
@@ -173,6 +189,8 @@ class FakeTransport:
         if issue_match:
             number = int(issue_match.group(1))
             if number not in self.parents:
+                if allow_not_found:
+                    return None
                 raise live.LiveGateError("ISSUE_NOT_FOUND")
             return copy.deepcopy(
                 self.issue_overrides.get(
@@ -873,6 +891,168 @@ class ContextDerivationTest(unittest.TestCase):
             live.derive_history_facts(transport, REPOSITORY, HEAD_SHA, claims)
 
 
+class ProseReferenceTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.paths = ["scripts/example.py"]
+
+    def transport(
+        self,
+        body: str,
+        *,
+        parents: dict[int, int | None] | None = None,
+        count: int = 1,
+    ) -> FakeTransport:
+        pr = pr_data(self.paths, body=body)
+        return FakeTransport([pr] * count, self.paths, parents=parents)
+
+    def pull_request_issue(self, number: int, *, state: str = "open") -> dict[str, object]:
+        return {
+            "number": number,
+            "state": state,
+            "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+            "pull_request": {"url": "https://example.test/pull"},
+        }
+
+    def test_prose_and_managed_bodies_derive_the_same_authority(self) -> None:
+        body = prose_body()
+        self.assertIsNone(live.optional_structured_payload(body))
+        self.assertEqual(
+            live.body_references(body)[1],
+            [("Refs", 4801), ("Part of", 4796)],
+        )
+        self.assertEqual(
+            live.derive_allowed_issue_refs(self.transport(body), REPOSITORY, body),
+            [4796, 4801],
+        )
+        managed = managed_body(self.paths)
+        self.assertIsNotNone(live.optional_structured_payload(managed))
+        self.assertEqual(
+            live.derive_allowed_issue_refs(
+                self.transport(managed), REPOSITORY, managed
+            ),
+            [4796, 4801],
+        )
+
+    def test_malformed_managed_markers_never_degrade_to_prose(self) -> None:
+        body = managed_body(self.paths) + managed_body(self.paths) + "Refs #4801\n"
+        with self.assertRaisesRegex(live.LiveGateError, "INVALID_MANAGED_PAYLOAD"):
+            live.body_references(body)
+
+    def test_prose_reference_errors_keep_the_offline_diagnostic_code(self) -> None:
+        cases = {
+            "MISSING_ISSUE_REFERENCE": "A summary with no anchored reference.\n",
+            "AMBIGUOUS_CLOSING_DIRECTIVE": "Refs #4801\nThis does not Closes #4796.\n",
+            "UNSUPPORTED_ISSUE_REF_FORM": "Refs phasetr/other#12\n",
+            "DUPLICATE_ISSUE_REF": "Refs #4801\nPart of #4801\n",
+        }
+        for code, body in cases.items():
+            with self.subTest(code=code):
+                with self.assertRaisesRegex(live.LiveGateError, code):
+                    live.prose_references(body)
+
+    def test_cross_repository_and_pull_request_parents_are_still_rejected(self) -> None:
+        body = prose_body()
+        transport = self.transport(body)
+        transport.issue_overrides[4801] = {
+            "number": 4801,
+            "state": "open",
+            "repository_url": f"{live.API_BASE}/repos/other/project",
+        }
+        with self.assertRaisesRegex(live.LiveGateError, "ISSUE_REPOSITORY_MISMATCH"):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+        transport = self.transport(body)
+        transport.parent_overrides[4801] = self.pull_request_issue(4796)
+        with self.assertRaisesRegex(live.LiveGateError, "ISSUE_IS_PULL_REQUEST"):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+
+    def test_closed_non_seed_reference_passes(self) -> None:
+        """A closed ancestor is normal: series and backfill PRs cite finished parents.
+
+        Openness is now judged over the `Refs`/`Closes` seeds instead of every
+        reference, so `Part of #closed-parent` no longer fails the whole gate.
+        """
+        body = prose_body()
+        transport = self.transport(body)
+        transport.parent_overrides[4801] = {
+            "number": 4796,
+            "state": "closed",
+            "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+        }
+        self.assertEqual(
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body),
+            [4796, 4801],
+        )
+
+    def test_all_closed_seeds_fail_shut(self) -> None:
+        body = prose_body()
+        transport = self.transport(body)
+        transport.issue_overrides[4801] = {
+            "number": 4801,
+            "state": "closed",
+            "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+        }
+        with self.assertRaisesRegex(
+            live.LiveGateError, "MISSING_OPEN_ISSUE_REFERENCE"
+        ):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+
+    def test_missing_issue_and_unreachable_part_of_fail_shut(self) -> None:
+        body = prose_body("Refs #9999")
+        with self.assertRaisesRegex(live.LiveGateError, "ISSUE_NOT_FOUND"):
+            live.derive_allowed_issue_refs(self.transport(body), REPOSITORY, body)
+        body = prose_body("Refs #4801\nPart of #4802")
+        transport = self.transport(
+            body, parents={4801: 4796, 4796: None, 4802: None}
+        )
+        with self.assertRaisesRegex(live.LiveGateError, "ISSUE_OUTSIDE_HIERARCHY"):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+
+    def test_closing_a_pull_request_fails_but_referencing_one_passes(self) -> None:
+        body = prose_body("Closes #4801")
+        transport = self.transport(body)
+        transport.issue_overrides[4801] = self.pull_request_issue(4801)
+        with self.assertRaisesRegex(live.LiveGateError, "ISSUE_IS_PULL_REQUEST"):
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body)
+        body = prose_body("Refs #4801\nRefs #4802")
+        transport = self.transport(body, parents={4801: 4796, 4796: None, 4802: None})
+        transport.issue_overrides[4802] = self.pull_request_issue(4802)
+        self.assertEqual(
+            live.derive_allowed_issue_refs(transport, REPOSITORY, body),
+            [4796, 4801, 4802],
+        )
+        self.assertNotIn(
+            f"/repos/{REPOSITORY}/issues/4802/parent",
+            transport.gets,
+        )
+
+    def test_prose_body_reaches_exact_head_success_end_to_end(self) -> None:
+        body = prose_body()
+        transport = self.transport(body, count=2)
+        self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805), 0)
+        endpoint = f"/repos/{REPOSITORY}/statuses/{HEAD_SHA}"
+        self.assertEqual(
+            transport.posts,
+            [
+                (endpoint, live.status_payload("pending", "PENDING")),
+                (endpoint, live.status_payload("success", "PASS")),
+            ],
+        )
+        self.assertFalse(any("/commits/" in path for path in transport.gets))
+
+    def test_prose_body_without_a_reference_fails_shut_end_to_end(self) -> None:
+        body = "## Summary\n\nNo anchored issue reference at all.\n"
+        transport = self.transport(body, count=2)
+        self.assertEqual(live.evaluate_pr(transport, REPOSITORY, 4805), 1)
+        self.assertEqual(
+            [payload["state"] for _, payload in transport.posts],
+            ["pending", "failure"],
+        )
+        self.assertIn(
+            "MISSING_ISSUE_REFERENCE",
+            str(transport.posts[-1][1]["description"]),
+        )
+
+
 class EvaluationTest(unittest.TestCase):
     def setUp(self) -> None:
         self.paths = ["scripts/example.py"]
@@ -1234,6 +1414,41 @@ class MutationTest(unittest.TestCase):
         ):
             live.structured_references(payload)
         self.assertEqual(len(mutant.structured_references(payload)), 17)
+
+    def test_open_seed_guard_mutant_is_killed(self) -> None:
+        mutant = self.mutant("if not open_seed:", "if False:")
+        paths = ["scripts/example.py"]
+        body = prose_body()
+        closed = {
+            "number": 4801,
+            "state": "closed",
+            "repository_url": f"{live.API_BASE}/repos/{REPOSITORY}",
+        }
+        real_transport = FakeTransport([pr_data(paths, body=body)], paths)
+        real_transport.issue_overrides[4801] = closed
+        mutant_transport = FakeTransport([pr_data(paths, body=body)], paths)
+        mutant_transport.issue_overrides[4801] = closed
+        with self.assertRaisesRegex(
+            live.LiveGateError, "MISSING_OPEN_ISSUE_REFERENCE"
+        ):
+            live.derive_allowed_issue_refs(real_transport, REPOSITORY, body)
+        self.assertEqual(
+            mutant.derive_allowed_issue_refs(mutant_transport, REPOSITORY, body),
+            [4796, 4801],
+        )
+
+    def test_prose_fallback_mutant_cannot_bypass_a_managed_block(self) -> None:
+        mutant = self.mutant(
+            "if offline.managed_marker_count(body) == 0:",
+            "if True:",
+        )
+        body = "```completion-claims-v1\n{not json}\n```\n\nRefs #4801\n"
+        with self.assertRaisesRegex(live.LiveGateError, "INVALID_MANAGED_PAYLOAD"):
+            live.body_references(body)
+        self.assertEqual(
+            mutant.body_references(body),
+            (None, [("Refs", 4801)]),
+        )
 
     def test_workflow_digest_guard_mutant_is_killed(self) -> None:
         mutant = self.mutant(
