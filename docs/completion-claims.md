@@ -202,13 +202,20 @@ The prose contract is what an ordinary pull-request body must satisfy:
    under the same standalone-trailer rule: every pairing the keyword scanner
    finds must also be a line that is exactly `Refs #N` or `Part of #N`, and the
    two are compared as multisets of kind and number; otherwise the body is
-   `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. These numbers widen issue authority —
-   they seed the live hierarchy walk — so a negated, quoted, fenced,
-   emphasized, line-split, trailing-text, or link-labelled `Refs #N` is refused
-   rather than honoured for a reference the body does not really carry. Only a
-   bare same-repository `#N` is supported; an `owner/repo#N` or URL form is
-   `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space cannot
-   be verified here.
+   `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. One such line may list several references
+   after the keyword, separated by single spaces (`Refs #4850 #4851 #4830`, a
+   shape this repository already writes), and each number counts on its own.
+   The closing keywords keep the one-per-line rule instead: several numbers on
+   a line GitHub acts on is a real auto-close ambiguity, while a non-closing
+   line closes nothing. Any wider separator — a comma, a second space, a
+   no-break space, or trailing text — is not a run, so the scan and the trailer
+   grammar disagree and the body is refused. These numbers widen issue
+   authority — they seed the live hierarchy walk — so a negated, quoted,
+   fenced, emphasized, line-split, trailing-text, or link-labelled `Refs #N` is
+   refused rather than honoured for a reference the body does not really carry.
+   Only a bare same-repository `#N` is supported; an `owner/repo#N` or URL form
+   is `UNSUPPORTED_ISSUE_REF_FORM`, since another repository's number space
+   cannot be verified here.
 6. At least one anchored reference (`Refs`, `Part of`, or `Closes`) is
    required, otherwise `MISSING_ISSUE_REFERENCE`. At most 16 anchored
    references, 8 closing trailers, and 64 distinct bare mentions are accepted;
@@ -703,9 +710,12 @@ emphasized, lower-case, negated, or comment-suffixed pairing is
 reference is ordinary prose.
 
 The only anchored non-closing forms are `Refs #NUMBER` and `Part of #NUMBER`,
-and their numbers must be in `allowed_issue_refs`. That allowlist is applied to
-raw `Refs` or `Part of` directives everywhere in the body, so copied evidence
-cannot hide a wrong issue number outside the managed block. Cross-repository
+and their numbers must be in `allowed_issue_refs`. One line may carry a
+single-space-separated run of them (`Refs #4850 #4851`), and the allowlist is
+applied to every number in the run. That allowlist is applied to raw `Refs` or
+`Part of` directives everywhere in the body, so copied evidence cannot hide a
+wrong issue number outside the managed block. The managed block's own
+`references.non_closing` entries stay one number per string. Cross-repository
 `owner/repo#N` and issue-URL forms are not accepted as references.
 
 A prose body holds the non-closing directives to the standalone-trailer rule as
@@ -761,14 +771,17 @@ anchored reference fails, negated and decorated closing forms fail while a
 standalone trailer and bare close vocabulary pass, the same disguises of
 `Refs`/`Part of` (negated, inline-code, fenced, blockquoted, line-split,
 link-labelled, trailing-text, lower-case, emphasized, entity-obscured) fail
-while standalone non-closing trailers pass, a `GH-N` shorthand surfaces as an
-unverified mention, every raw-HTML variant still fails — including
-digit-leading, underscore-leading, and dot-leading email autolinks — while
-`value < bound` and `a < b@c > d` pass, a malformed managed marker never falls
-through to prose, cross-repository and URL reference forms fail, and the
-reference and mention caps hold. Weakened anchored-reference, closing-trailer,
-non-closing-trailer, and autolink guards are killed as mutants, and the
-autolink scan is timed past one MiB.
+while standalone non-closing trailers pass, a single trailer line listing
+several references anchors each of them while its malformed spellings
+(comma-separated, double-spaced, no-break-spaced, hash-less, glued, quoted,
+URL-suffixed) fail and a multi-number closing trailer stays ambiguous, a `GH-N`
+shorthand surfaces as an unverified mention, every raw-HTML variant still
+fails — including digit-leading, underscore-leading, and dot-leading email
+autolinks — while `value < bound` and `a < b@c > d` pass, a malformed managed
+marker never falls through to prose, cross-repository and URL reference forms
+fail, and the reference and mention caps hold. Weakened anchored-reference,
+closing-trailer, non-closing-trailer, and autolink guards are killed as mutants,
+and the autolink scan is timed past one MiB.
 Directive, marker, and body-syntax scans beyond one MiB remain bounded. The
 suite also covers malformed URLs, lone surrogates, invalid controls,
 boolean-as-integer inputs, and unmanaged prose; kills representative weakened
@@ -785,6 +798,6 @@ end: identical authority from prose and managed bodies, preserved offline
 diagnostic codes, cross-repository and pull-request-parent rejection, a passing
 closed non-seed reference, all-closed seeds, a missing issue, an unreachable
 `Part of`, closing versus referencing a pull request, exact-head success, a
-disguised `Refs` that fails shut without ever fetching the issue it names, and
-mutants for the open-seed guard and for a prose fallback that would bypass a
-managed block.
+one-line `Refs` run whose every number seeds the walk, a disguised `Refs` that
+fails shut without ever fetching the issue it names, and mutants for the
+open-seed guard and for a prose fallback that would bypass a managed block.

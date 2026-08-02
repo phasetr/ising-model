@@ -933,6 +933,21 @@ class ProseReferenceTest(unittest.TestCase):
             [4796, 4801],
         )
 
+    def test_one_refs_line_seeds_every_number_it_lists(self) -> None:
+        """PR #4860's `Refs #A #B` shape seeds the walk with each number.
+
+        The offline grammar anchors all of them, so none may be silently demoted
+        to an unverified mention that would skip the live hierarchy check.
+        """
+        body = prose_body("Refs #4801 #4796")
+        self.assertEqual(
+            live.body_references(body)[1], [("Refs", 4801), ("Refs", 4796)]
+        )
+        self.assertEqual(
+            live.derive_allowed_issue_refs(self.transport(body), REPOSITORY, body),
+            [4796, 4801],
+        )
+
     def test_malformed_managed_markers_never_degrade_to_prose(self) -> None:
         body = managed_body(self.paths) + managed_body(self.paths) + "Refs #4801\n"
         with self.assertRaisesRegex(live.LiveGateError, "INVALID_MANAGED_PAYLOAD"):

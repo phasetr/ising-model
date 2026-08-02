@@ -101,6 +101,14 @@ class GateHarness:
         set_field(payload, field, value)
         return payload
 
+    def allowing(self, *numbers: int) -> dict[str, Any]:
+        """Return the control context widened by the supplied issue numbers."""
+        context = copy.deepcopy(self.context)
+        context["allowed_issue_refs"] = sorted(
+            set(context["allowed_issue_refs"]) | set(numbers)
+        )
+        return context
+
 
 class GateTest(GateHarness, unittest.TestCase):
     def test_ready_control_passes_nonvacuously(self) -> None:
@@ -644,6 +652,96 @@ class ProseModeTest(GateHarness, unittest.TestCase):
             with self.subTest(body=body):
                 code, report = self.run_gate(body=f"Ordinary summary.\n\n{body}")
                 self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_one_non_closing_trailer_may_carry_several_references(self) -> None:
+        """PR #4860's real shape: one `Refs` line listing three issue numbers.
+
+        Nothing here closes an issue, so several numbers on one line carry no
+        auto-close ambiguity; each is anchored individually and none degrades to
+        an unverified mention.
+        """
+        body = "Ordinary summary.\n\nRefs #4850 #4851 #4830\n"
+        anchored, mentions = gate.parse_body_references(body)
+        self.assertEqual(
+            anchored, (("Refs", 4850), ("Refs", 4851), ("Refs", 4830))
+        )
+        self.assertEqual(mentions, ())
+        code, report = self.run_gate(
+            context=self.allowing(4830, 4850, 4851), body=body
+        )
+        self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_mixed_non_closing_kinds_keep_their_own_numbers(self) -> None:
+        bodies = {
+            "refs run then part of": "Refs #4801 #4805\nPart of #4796\n",
+            "part of run then refs": "Part of #4796 #4805\nRefs #4801\n",
+            "two runs": "Refs #4801 #4805\nPart of #4796 #4830\n",
+        }
+        expected = {
+            "refs run then part of": (
+                ("Refs", 4801),
+                ("Refs", 4805),
+                ("Part of", 4796),
+            ),
+            "part of run then refs": (
+                ("Part of", 4796),
+                ("Part of", 4805),
+                ("Refs", 4801),
+            ),
+            "two runs": (
+                ("Refs", 4801),
+                ("Refs", 4805),
+                ("Part of", 4796),
+                ("Part of", 4830),
+            ),
+        }
+        for name, body in bodies.items():
+            with self.subTest(body=name):
+                anchored, mentions = gate.parse_body_references(body)
+                self.assertEqual(anchored, expected[name])
+                self.assertEqual(mentions, ())
+                code, report = self.run_gate(
+                    context=self.allowing(4805, 4830), body=body
+                )
+                self.assertEqual(code, gate.EXIT_PASS, report)
+
+    def test_malformed_multi_reference_trailers_fail_closed(self) -> None:
+        """Only single-space-separated bare references make up a trailer run.
+
+        Each variant reads like a list of references but is not the canonical
+        shape, so the raw grammar and the keyword scan disagree and the body is
+        refused instead of anchoring the numbers it appears to carry.
+        """
+        variants = {
+            "missing hash": "Refs #4850 4851",
+            "comma separated": "Refs #4850, #4851",
+            "double space": "Refs #4850  #4851",
+            "trailing text": "Refs #4850 #4851 (context)",
+            "leading text": "See Refs #4850 #4851",
+            "no-break space": "Refs #4850\u00a0#4851",
+            "digits glued": "Refs #4850 #4851abc",
+            "blockquoted run": "> Refs #4850 #4851",
+            "url follower": (
+                "Refs #4850 https://github.com/phasetr/ising-model/issues/12"
+            ),
+        }
+        for name, variant in variants.items():
+            with self.subTest(variant=name):
+                self.assert_code(
+                    "AMBIGUOUS_NON_CLOSING_DIRECTIVE",
+                    context=self.allowing(4830, 4850, 4851),
+                    body=f"Part of #4796\n{variant}\n",
+                )
+
+    def test_a_closing_trailer_still_carries_exactly_one_number(self) -> None:
+        """The multi-number allowance stops at the keywords GitHub acts on."""
+        for variant in ["Closes #4801 #4796", "Fixes #4801 #4796 #4805"]:
+            with self.subTest(variant=variant):
+                self.assert_code(
+                    "AMBIGUOUS_CLOSING_DIRECTIVE",
+                    context=self.allowing(4805),
+                    body=f"Refs #4796\n{variant}\n",
+                )
 
     def test_gh_shorthand_mentions_stay_visible(self) -> None:
         """`GH-N` is reported, never anchored, and never silently dropped.

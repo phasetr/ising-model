@@ -47,6 +47,11 @@ MAX_BARE_MENTIONS = 64
 SHA_RE = re.compile(r"[0-9a-f]{40}\Z")
 DIGEST_RE = re.compile(r"sha256:[0-9a-f]{64}\Z")
 NON_CLOSING_RE = re.compile(r"(Refs|Part of) #([1-9][0-9]*)\Z")
+# One raw trailer line may carry several space-separated non-closing references
+# (`Refs #4850 #4851 #4830`), the shape this repository already writes.  The
+# closing keywords keep the one-per-line rule: several numbers on a line GitHub
+# acts on would be a real ambiguity, while these numbers close nothing.
+NON_CLOSING_TRAILER_RE = re.compile(r"(Refs|Part of)((?: #[1-9][0-9]*)+)\Z")
 CANONICAL_CLOSING_RE = re.compile(r"(?:Closes|Fixes|Resolves) #([1-9][0-9]*)")
 BARE_REF_RE = re.compile(r"#([1-9][0-9]*)")
 GH_REF_RE = re.compile(r"\bGH-([1-9][0-9]*)", re.IGNORECASE)
@@ -478,28 +483,42 @@ def _keyword_spans(projected: str, keywords: tuple[str, ...]) -> list[tuple[int,
 
 
 def _directive_references(
-    projected: str, keywords: tuple[str, ...]
+    projected: str, keywords: tuple[str, ...], *, multi: bool = False
 ) -> list[tuple[str, int, str]]:
-    """Return ``(keyword, reference offset, reference)`` for anchored mentions."""
+    """Return ``(keyword, reference offset, reference)`` for anchored mentions.
+
+    With ``multi`` the scan keeps following a run of single-space-separated bare
+    references after one keyword, exactly the shape :data:`NON_CLOSING_TRAILER_RE`
+    accepts.  The scan must count every number the trailer grammar counts, or the
+    multiset comparison in :func:`parse_body_references` would reject the very
+    ``Refs #1 #2`` line it is meant to allow.  Any wider separator stops the run,
+    so a decorated or wrapped list still fails that comparison.
+    """
     references: list[tuple[str, int, str]] = []
     for keyword_start, keyword_end in _keyword_spans(projected, keywords):
         cursor = keyword_end
         while cursor < len(projected) and _is_markdown_separator(projected[cursor]):
             cursor += 1
         reference = ISSUE_REFERENCE_AT_RE.match(projected, cursor)
-        if reference is not None:
-            references.append(
-                (
-                    projected[keyword_start:keyword_end].lower(),
-                    reference.start(),
-                    reference.group(0),
-                )
-            )
+        if reference is None:
+            continue
+        keyword = projected[keyword_start:keyword_end].lower()
+        references.append((keyword, reference.start(), reference.group(0)))
+        cursor = reference.end()
+        while multi and projected.startswith(" #", cursor):
+            follower = BARE_REF_RE.match(projected, cursor + 1)
+            if follower is None:
+                break
+            references.append((keyword, follower.start(), follower.group(0)))
+            cursor = follower.end()
     return references
 
 
 def _references_after(projected: str, keywords: tuple[str, ...]) -> list[str]:
-    return [reference for _, _, reference in _directive_references(projected, keywords)]
+    return [
+        reference
+        for _, _, reference in _directive_references(projected, keywords, multi=True)
+    ]
 
 
 def _closing_trailer_numbers(body: str) -> list[int]:
@@ -518,12 +537,19 @@ def _non_closing_kind(keyword: str) -> str:
 
 
 def _non_closing_trailers(body: str) -> list[tuple[str, int]]:
-    """Return ``(kind, number)`` from raw standalone ``Refs``/``Part of`` lines."""
+    """Return ``(kind, number)`` from raw standalone ``Refs``/``Part of`` lines.
+
+    A line may list several references after one keyword; each number is returned
+    separately, so the caller compares numbers rather than lines.
+    """
     references: list[tuple[str, int]] = []
     for line in body.split("\n"):
-        match = NON_CLOSING_RE.fullmatch(line.removesuffix("\r"))
-        if match is not None:
-            references.append((match.group(1), int(match.group(2))))
+        match = NON_CLOSING_TRAILER_RE.fullmatch(line.removesuffix("\r"))
+        if match is None:
+            continue
+        references.extend(
+            (match.group(1), int(number)) for number in BARE_REF_RE.findall(match.group(2))
+        )
     return references
 
 
@@ -540,6 +566,9 @@ def parse_body_references(
     the non-closing directives too: their numbers widen issue authority here (they
     seed the live hierarchy walk), so a quoted, fenced, wrapped, or line-split
     ``Refs #4801`` must not pass for the reference it only looks like.
+
+    A non-closing trailer may list several references (``Refs #4850 #4851``); a
+    closing trailer may not, because GitHub acts on the numbers it carries.
     """
     normalized = _normalized_body_text(body)
     closing = _directive_references(normalized, CLOSE_KEYWORDS)
@@ -555,7 +584,7 @@ def parse_body_references(
         )
     anchored: list[tuple[str, int]] = [("Closes", number) for number in trailers]
     anchored_starts = {start for _, start, _ in closing}
-    scanned = _directive_references(normalized, NON_CLOSING_DIRECTIVES)
+    scanned = _directive_references(normalized, NON_CLOSING_DIRECTIVES, multi=True)
     for _, _, reference in scanned:
         if BARE_REF_RE.fullmatch(reference) is None:
             raise GateInputError(
