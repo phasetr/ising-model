@@ -1,3 +1,30 @@
+## 2026-08-03 PR #4878 merged, #4874 CLOSED completed, backlog #4879 filed (107 remaining)
+
+- **PR #4878 squash-merged** (`docs/4874-pr-b1-dangling-declaration-citations` -> `main`, commit
+  `de301fdb4b052eb96e3adb2ed1c9abb2d57fe9e3`), all checks green (`build`, `discover`,
+  `evaluate (4878)`, `import-dag-contract`, `completion-claim/live`). Fixed all 8 in-scope
+  paragraphs (5 in `tex/proof-guide.tex` + parallel `docs/index.md` rows): 2 relocated onto live
+  reconstruction lemmas (Perron-Frobenius finite-volume spin two-point decay rows 1621/1622), 6
+  converted to honest historical/no-live-equivalent framing after a confirmed exhaustive search
+  (`topDeflat*`/`allOnesMatrix*`/`vectorAbsRatioSup` etc. all 0 occurrences in `IsingModel/`).
+  Independently verified (`dev-verify`: all pass, Overfull/Underfull box list byte-identical to
+  main's 1657-entry ordered list) and reviewed (`dev-review` + codex: no High/Med, one Low
+  namespace-membership overclaim affecting 3 of 7 declarations fixed in follow-up commit
+  `6f9e95da` and re-verified before merge). Remote tip confirmed matching reviewed head, CI green,
+  `git diff main..origin/branch` non-empty before merge; local and remote branch deleted.
+- **Issue #4874 closed as completed**:
+  https://github.com/phasetr/ising-model/issues/4874#issuecomment-5165083442 — citation_audit
+  ratchet clean (31 cleared, 0 new).
+- **New backlog issue #4879 filed** (same filed-not-authorized pattern as #4866/#4869/#4874,
+  larger-scope continuation): a repo-wide scan of all 231 PR-B1-removed declaration names against
+  `tex/proof-guide.tex` + `docs/index.md` found **164 dangling names before PR #4878, 107
+  remaining after it** — substantially larger than #4874's original ~10-paragraph estimate,
+  concentrated in paragraphs *not* covered by #4874's scope: `tex/proof-guide.tex` ~lines
+  6503/6527/6544/6562/6582 and `docs/index.md` rows ~1662/1663/1682-1705. Body states the exact
+  counts and locations and explicitly does not prescribe or attempt investigation/fix; requires
+  the same per-paragraph rigor #4874 received before any edit.
+- Mirrors updated: `.self-local/issues/4874.md` (new, CLOSED completed).
+
 ## 2026-08-03 PR #4876 merged, #4869 CLOSED completed
 
 - **PR #4876 squash-merged** (`refactor/4869-retire-viaLocal-direct-duplicate` -> `main`, commit
