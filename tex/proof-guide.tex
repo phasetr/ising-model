@@ -21434,7 +21434,9 @@ New files
 \texttt{correlationAlongExhaustion\_hasDerivAt\_\{J, field\}},
 \texttt{magnetizationAlongExhaustion\_hasDerivAt\_\{J, field\}}.
 $\beta$-direction wrappers added in \texttt{BetaDerivative.lean},
-moved to \texttt{BetaDerivativeMagnetization.lean} by PR~\#2063:
+moved to
+\path{IsingModel/AmbientLattice/BetaDerivativeMagnetization.lean}
+by PR~\#2063:
 \texttt{magnetizationAlongExhaustion\_hasDerivAt\_beta} (at $h = 0$),
 \texttt{magnetizationAlongExhaustion\_hasDerivAt\_beta\_general\_h\_gen}.
 6 new theorems with existence-form derivative
@@ -21450,7 +21452,8 @@ The corresponding \texttt{Continuous*} /
 \texttt{Differentiable*} along-ex wrappers live in two different places.
 On the \texttt{correlationAlongExhaustion} side they keep the
 \texttt{\_gen} suffix and stay in \texttt{BetaDerivative.lean}
-($\beta$ direction) and \texttt{BetaDerivativeFieldJ.lean}
+($\beta$ direction) and
+\path{IsingModel/AmbientLattice/BetaDerivativeFieldJ.lean}
 ($h$ / $J$ directions). On the \texttt{magnetizationAlongExhaustion}
 side they are the unsuffixed
 \texttt{magnetizationAlongExhaustion\_\{continuous, differentiable\}\_\{beta, field, J\}}
