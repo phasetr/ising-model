@@ -14275,6 +14275,11 @@ Thus the principal free-energy boundedness input is no longer separate once
 closed-ball branch radii are available.  The remaining analytic inputs are the
 branch-deviation bound, closedness, equicontinuity, and coherent overlap
 equality.
+
+The abstract endpoint above shares its statement with the three endpoints
+canonicalized by PR \#4868 (Issue \#4854), but it was deliberately kept outside
+that pilot and retains its own proof through the \texttt{toDeviationData}
+route; see the PR \#2752 direct patch bridge below.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -14453,6 +14458,26 @@ closed-ball triangle-inequality conversion, after which the direct closed-ball
 branch-local range conversion supplies relatively compact range data.
 Closedness, equicontinuity, restriction identities, and ordinary coherent
 overlap equality remain explicit inputs.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first of the two
+ambient patch endpoints above (the abstract one, without
+\texttt{\_of\_isCompact}) is a documented compatibility alias whose proof
+forwards to
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
+\end{Verbatim}
+which owns the proof for the three declarations in the pilot's scope and
+carries a machine-checked identical statement.  (The pilot covers three of the
+four declarations that share that statement; the fourth is recorded in the
+PR \#2752 direct patch bridge below.)  The via-local name therefore records the
+branch-local intermediate, not an independent proof: the data-layer conversion
+\texttt{toRangeRelCompactData\_viaLocal\_direct} cited above is itself a
+verbatim forward to \texttt{toRangeRelCompactData\_closedBallLocal\_direct},
+and it is left in place with no remaining in-repo consumer because removing or
+re-pointing it was outside the pilot's minimal scope, not because reference-0
+declarations are exempt from removal in this repository.  The
+\texttt{\_of\_isCompact} endpoint keeps its own geometry-extraction proof and
+delegates to the alias.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -14504,6 +14529,26 @@ freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_direct_patch_isCompa
 in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first endpoint listed
+above is the documented owner of this statement for the three declarations in
+the pilot's scope.  The two other pilot endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
+\end{Verbatim}
+have identical statements and are compatibility aliases forwarding to it; the
+\texttt{\_of\_isCompact} endpoints keep their own geometry-extraction proofs.
+
+The pilot deliberately covers three of the four declarations that share this
+statement.  The PR \#2745 endpoint
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch
+\end{Verbatim}
+carries the identical statement as well, but it keeps its own proof: it reaches
+the conclusion through the independent \texttt{toDeviationData} route into the
+generic branch-deviation relatively compact patch, and it still has its own
+in-repo consumers.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -14516,9 +14561,14 @@ Ambient.freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_directRange_
 \end{Verbatim}
 expose the PR \#2751 direct range conversion at the compact patch boundary
 under the same direct-range naming used by the generic branch-deviation bridge.
-Given closed-ball branch-deviation Ascoli data, the endpoint first constructs
-the relatively compact range data through the PR \#2757 direct-route data
-alias, then applies the all-stage relatively compact range patch theorem.
+Given closed-ball branch-deviation Ascoli data, the endpoint constructs the
+relatively compact range data through the direct closed-ball branch-local
+route, then applies the all-stage relatively compact range patch theorem.
+Since PR \#4868 that construction is reached through the owning theorem, which
+calls \texttt{toRangeRelCompactData\_closedBallLocal\_direct}; no endpoint
+listed above now calls the PR \#2757 data alias
+\texttt{toRangeRelCompactData\_direct} itself, which remains in use by the
+other closed-ball conversions.
 
 The concrete \(\mathbb Z^d\) wrappers are
 \begin{Verbatim}[fontsize=\scriptsize]
@@ -14537,6 +14587,22 @@ Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first endpoint listed
+above (the abstract direct-range one, without \texttt{\_of\_isCompact}) is a
+documented compatibility alias whose proof forwards to
+\begin{Verbatim}[fontsize=\scriptsize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
+\end{Verbatim}
+which owns the proof for the three declarations in the pilot's scope and
+carries a machine-checked identical statement.  (The pilot covers three of the
+four declarations that share that statement; the fourth is recorded in the
+PR \#2752 direct patch bridge above.)  The directRange name records the
+PR \#2757 data-layer alias \texttt{toRangeRelCompactData\_direct}, itself a
+verbatim forward to \texttt{toRangeRelCompactData\_closedBallLocal\_direct},
+rather than a separate proof.  The two \texttt{\_of\_isCompact} endpoints keep
+their own geometry-extraction and positive-real construction proofs, and reach
+the owner through the theorem-level alias \texttt{\_closedBallBranchDeviationRelCompact\_directRange\_patch} listed above, not through the data alias.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
