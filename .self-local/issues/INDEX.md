@@ -1,3 +1,27 @@
+## 2026-08-03 PR #4873 merged, #4866 CLOSED completed, backlog #4874 filed
+
+- **PR #4873 squash-merged** (`docs/4866-relocate-removed-layercylinder-spectral-decay-citations`
+  -> `main`, commit `a1681abbf1a11a02f0c34f3ee4140521466e6053`), all checks green (`build`,
+  `discover`, `evaluate`, `import-dag-contract`, `completion-claim/live`). Local and remote branch
+  deleted.
+- **Pre-merge body fix**: the PR body was stale w.r.t. HEAD `86b3bd47` (claimed `docs/index.md`
+  untouched and repin "26912 -> 26926 / +14 lines" when the follow-up commit had already fixed
+  `docs/index.md:1642` for the same six names and the real repin was 26912 -> 26931 / +19 lines).
+  `dev-pr-clerk` corrected the body via `gh pr edit --body-file` before merge; CI's `discover`
+  job re-fired on the edit and re-passed before the merge gate check.
+- **Issue #4866 closed as completed**:
+  https://github.com/phasetr/ising-model/issues/4866#issuecomment-5163662831 — both
+  `tex/proof-guide.tex` and `docs/index.md:1642` fixed for the same six dangling declaration
+  names (module `TransferMatrix/LayerCylinderSpectralDecay.lean` deleted by `109690bd`, #4298
+  PR-B1); citation-audit ratchet OK, `QualifiedGlobCitationTest` repin 26912 -> 26931 confirmed.
+- **New backlog issue #4874 filed** (same filed-not-authorized pattern as #4866/#4869): tracks
+  ~10 further PR-B1-era paragraphs (tex lines ~7014/7036/7058/7328/8335/8378/8405/8437/8557/33174)
+  with at least 16 further declaration names charged at zero occurrences in `IsingModel/`, several
+  confirmed deleted by `109690bd`. Root cause noted: `citation_audit.py` audits `.lean` **paths**
+  only, never declaration names, so this defect class is invisible to every existing gate.
+- Mirrors updated: `.self-local/issues/4866.md` (CLOSED completed, pre-merge defect section marked
+  corrected, follow-up section cross-referenced to filed #4874).
+
 ## 2026-08-03 PR #4871 merged, #4830 AC4 re-verified PASS, tracker CLOSED completed
 
 - **PR #4871 squash-merged** (`docs/4830-qualify-bare-lean-citations` -> `main`, commit
