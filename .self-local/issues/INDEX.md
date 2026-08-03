@@ -1,3 +1,26 @@
+## 2026-08-03 PR #4876 merged, #4869 CLOSED completed
+
+- **PR #4876 squash-merged** (`refactor/4869-retire-viaLocal-direct-duplicate` -> `main`, commit
+  `a3887fd358cf658720bfa3cee863864855b2a322`), all checks green (`build`, `discover`, `evaluate`,
+  `import-dag-contract`, `completion-claim/live`) and independently reviewed (dev-review + codex,
+  no High/Med findings, one Low non-blocking note already tracked under #4874). Local and remote
+  branch deleted; the implementer's `.self-local/worktrees/4869` git worktree also removed.
+- **Merge mechanics note**: `gh pr merge --squash` initially failed with `mergeStateStatus:
+  BEHIND` despite `mergeable: MERGEABLE` (the 1-commit gap to `main` was docs-only mirror sync,
+  unrelated files). Resolved by merging `origin/main` into the feature branch (no conflicts),
+  pushing (`bfdcb2b5` -> `37e277de`), waiting for CI to re-pass, confirming `mergeStateStatus:
+  CLEAN`, then squash-merging.
+- **Issue #4869 closed as completed**:
+  https://github.com/phasetr/ising-model/issues/4869#issuecomment-5164059844 — retired the
+  byte-identical duplicate `toRangeRelCompactData_viaLocal_direct` (zero in-repo consumers);
+  doc comments in `ViaLocal.lean`/`RelCompact.lean` and citations in `docs/index.md`/
+  `tex/proof-guide.tex` updated in the same commit; two independent verify/review passes
+  confirmed no regression (citation_audit ratchet clean, Overfull/Underfull box count
+  regression-checked, census/citation-row pins re-measured correctly).
+- **Main confirmed green post-merge**: both `Lean Action CI` and `Completion Claim Live` on
+  `a3887fd3`.
+- Mirrors updated: `.self-local/issues/4869.md` (new, CLOSED completed).
+
 ## 2026-08-03 PR #4873 merged, #4866 CLOSED completed, backlog #4874 filed
 
 - **PR #4873 squash-merged** (`docs/4866-relocate-removed-layercylinder-spectral-decay-citations`
