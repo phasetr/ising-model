@@ -61,30 +61,6 @@ noncomputable def toRangeRelCompactData_direct
   toRangeRelCompactData_closedBallLocal_direct
     G Λ p hBED hβ hJ K closedData geom closedBallDeviation
 
-set_option linter.style.longLine false in
-/-- Named via-local direct-route alias for the closed-ball branch-deviation
-Ascoli data to relatively compact range data conversion.  This restates the
-existing closed-ball branch-local route with the intermediate route exposed.
--/
-noncomputable def toRangeRelCompactData_viaLocal_direct
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    [∀ n, Nonempty (↑(Λ.volume n) : Type _)]
-    (p : IsingParams ℝ) (hBED : BoundedEdgeDensity G Λ)
-    (hβ : 0 < p.β) (hJ : 0 < p.J) (K : Set ℂ)
-    (closedData :
-      LeeYangClosedBallPointwiseNormalisedAllStageBranchData
-        G Λ (p.J : ℂ) (p.β : ℂ))
-    (geom : LeeYangPointwiseNormAllStageCompactRealFinGeometry
-      G Λ p K closedData.data)
-    (closedBallDeviation :
-      LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
-        G Λ p K closedData geom) :
-    LeeYangPointwiseNormAllStageCompactRealRangeRelCompactCOpenData
-      G Λ p K closedData.data geom :=
-  toRangeRelCompactData_closedBallLocal_direct
-    G Λ p hBED hβ hJ K closedData geom closedBallDeviation
-
 end LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData
 
 set_option linter.style.longLine false in

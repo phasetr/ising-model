@@ -21,8 +21,9 @@ The statement is identical to
 which owns the proof (Issue #4854); this name is a documented compatibility
 alias and forwards to it.  The via-local naming records the branch-local
 intermediate, not a distinct proof: the data-layer conversion
-`toRangeRelCompactData_viaLocal_direct` used previously here is a verbatim
-forward to the `toRangeRelCompactData_closedBallLocal_direct` used by the owner.
+`toRangeRelCompactData_viaLocal_direct` used previously here was a verbatim
+forward to the `toRangeRelCompactData_closedBallLocal_direct` used by the owner,
+and it was retired in Issue #4869 once this alias stopped consuming it.
 The name is kept because the via-local route is cited by `docs/index.md`,
 `tex/proof-guide.tex`, and the ℤ^d wrappers in
 `PerStageComplex/EventualClosedBallPatches/ClosedBallDeviation.lean`. -/

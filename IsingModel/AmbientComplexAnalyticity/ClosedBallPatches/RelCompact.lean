@@ -154,11 +154,13 @@ documented compatibility aliases that forward here:
 `freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch`
 (`ClosedBallPatches/Direct.lean`) and
 `freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch`
-(`ClosedBallPatches/ViaLocal.lean`).  Their data-layer conversions
-`toRangeRelCompactData_direct` and `toRangeRelCompactData_viaLocal_direct` are
-verbatim forwards to the `toRangeRelCompactData_closedBallLocal_direct` used
-below, so these three names always denoted the same proof route under
-different published names, never independent proofs.
+(`ClosedBallPatches/ViaLocal.lean`).  Before that pilot they went through the
+data-layer conversions `toRangeRelCompactData_direct` and
+`toRangeRelCompactData_viaLocal_direct`, both verbatim forwards to the
+`toRangeRelCompactData_closedBallLocal_direct` used below, so these three names
+always denoted the same proof route under different published names, never
+independent proofs.  The second conversion was a byte-identical twin of the
+first and, left with no consumer by the pilot, was retired in Issue #4869.
 
 The pilot covers three of the four declarations that share this statement:
 `freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch`
