@@ -14429,23 +14429,19 @@ Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
 \begin{theorem}[Closed-ball branch-deviation named via-local direct range route; PR \#2768]
-The conversion
+The ambient patch endpoints
 \begin{Verbatim}[fontsize=\footnotesize]
-Ambient.LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_viaLocal_direct
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
 \end{Verbatim}
-names the ordinary closed-ball route that first turns closed-ball
+name the ordinary closed-ball route that first turns closed-ball
 branch-deviation Ascoli data into closed-ball branch-local bounded Ascoli data,
 then feeds the direct closed-ball branch-local relatively compact conversion.
 This is a named restatement of the PR \#2751/PR \#2757 closed-ball
 branch-deviation range conversion, with the branch-local intermediate exposed
 under the same via-local naming used by the eventual-overlap closed-ball route.
 
-The ambient patch endpoints are
-\begin{Verbatim}[fontsize=\footnotesize]
-Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
-Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_of_isCompact
-\end{Verbatim}
-and the concrete \(\mathbb Z^d\) wrappers are
+The concrete \(\mathbb Z^d\) wrappers are
 \begin{Verbatim}[fontsize=\footnotesize]
 freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_latticeGraph
 freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch_isCompact_latticeGraph
@@ -14470,14 +14466,16 @@ which owns the proof for the three declarations in the pilot's scope and
 carries a machine-checked identical statement.  (The pilot covers three of the
 four declarations that share that statement; the fourth is recorded in the
 PR \#2752 direct patch bridge below.)  The via-local name therefore records the
-branch-local intermediate, not an independent proof: the data-layer conversion
-\texttt{toRangeRelCompactData\_viaLocal\_direct} cited above is itself a
-verbatim forward to \texttt{toRangeRelCompactData\_closedBallLocal\_direct},
-and it is left in place with no remaining in-repo consumer because removing or
-re-pointing it was outside the pilot's minimal scope, not because reference-0
-declarations are exempt from removal in this repository.  The
-\texttt{\_of\_isCompact} endpoint keeps its own geometry-extraction proof and
-delegates to the alias.
+branch-local intermediate, not an independent proof.  The data-layer conversion
+\texttt{toRangeRelCompactData\_viaLocal\_direct}, which this entry cited before
+Issue \#4869, was a byte-identical twin of
+\texttt{toRangeRelCompactData\_direct} -- both were verbatim forwards to
+\texttt{toRangeRelCompactData\_closedBallLocal\_direct} -- and the \#4854 pilot
+left it with no in-repo consumer at all.  It has since been retired outright
+(Issue \#4869), so the declaration no longer exists; its surviving twin
+\texttt{toRangeRelCompactData\_direct} keeps two in-repo consumers of its own.
+The \texttt{\_of\_isCompact} endpoint keeps its own geometry-extraction proof
+and delegates to the alias.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
