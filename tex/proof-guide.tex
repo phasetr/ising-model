@@ -14453,6 +14453,22 @@ closed-ball triangle-inequality conversion, after which the direct closed-ball
 branch-local range conversion supplies relatively compact range data.
 Closedness, equicontinuity, restriction identities, and ordinary coherent
 overlap equality remain explicit inputs.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first of the two
+ambient patch endpoints above (the abstract one, without
+\texttt{\_of\_isCompact}) is a documented compatibility alias whose proof
+forwards to
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
+\end{Verbatim}
+which owns the proof and carries a machine-checked identical statement.  The
+via-local name therefore records the branch-local intermediate, not an
+independent proof: the data-layer conversion
+\texttt{toRangeRelCompactData\_viaLocal\_direct} cited above is itself a
+verbatim forward to \texttt{toRangeRelCompactData\_closedBallLocal\_direct},
+and it is retained as a documented data-layer route with no remaining in-repo
+consumer.  The \texttt{\_of\_isCompact} endpoint keeps its own
+geometry-extraction proof and delegates to the alias.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -14504,6 +14520,16 @@ freeEnergyComplexAlongExhaustion_posRealClosedBallDeviation_direct_patch_isCompa
 in \texttt{Concrete/LatticeGraphCorrelation/PerStageComplex.lean}.  This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first endpoint listed
+above is the documented owner of this statement.  The two further published
+endpoints
+\begin{Verbatim}[fontsize=\footnotesize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
+\end{Verbatim}
+have identical statements and are compatibility aliases forwarding to it; the
+\texttt{\_of\_isCompact} endpoints keep their own geometry-extraction proofs.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 
@@ -14537,6 +14563,20 @@ Concrete/LatticeGraphCorrelation/PerStageComplex.lean
 This is a
 composition bridge; branch-deviation bounds, closedness, equicontinuity, and
 coherent overlap inputs remain explicit.
+
+Since PR \#4868 (Issue \#4854, canonicalization pilot) the first endpoint listed
+above (the abstract direct-range one, without \texttt{\_of\_isCompact}) is a
+documented compatibility alias whose proof forwards to
+\begin{Verbatim}[fontsize=\scriptsize]
+Ambient.freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
+\end{Verbatim}
+which owns the proof and carries a machine-checked identical statement.  The
+directRange name records the PR \#2757 data-layer alias
+\texttt{toRangeRelCompactData\_direct}, itself a verbatim forward to
+\texttt{toRangeRelCompactData\_closedBallLocal\_direct}, rather than a separate
+proof.  The two \texttt{\_of\_isCompact} endpoints keep their own
+geometry-extraction and positive-real construction proofs, and reach the owner
+through this alias.
 Reference: Glimm--Jaffe \cite{glimm-jaffe}, \S 4.6, pp.~67--70.
 \end{theorem}
 

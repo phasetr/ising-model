@@ -138,7 +138,19 @@ open LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData 
 /-- **Closed-ball branch-deviation to direct relatively compact patch**:
 closed-ball branch-deviation data is first converted to relatively compact
 range data through the direct closed-ball branch-local route, then fed to the
-all-stage relatively compact range patch endpoint. -/
+all-stage relatively compact range patch endpoint.
+
+This theorem owns the proof of the closed-ball branch-deviation patch statement
+(Issue #4854).  Two further published names carry the same statement and are
+documented compatibility aliases that forward here:
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch`
+(`ClosedBallPatches/Direct.lean`) and
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch`
+(`ClosedBallPatches/ViaLocal.lean`).  Their data-layer conversions
+`toRangeRelCompactData_direct` and `toRangeRelCompactData_viaLocal_direct` are
+verbatim forwards to the `toRangeRelCompactData_closedBallLocal_direct` used
+below, so the three names always denoted the same proof route under different
+published names, never independent proofs. -/
 theorem freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
