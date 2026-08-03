@@ -6498,18 +6498,27 @@ envelope $\max|\mathrm{diag}|+\mathrm{offMass}$ of the balanced transfer matrix
 $M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$: that envelope is an \emph{upper} bound on the spectral
 radius $=\lambda_\ast$, so requiring it to be $\le\theta\lambda_\ast$ forces $\theta\ge1$
 (circular). The non-circular route deflates the maximal eigenpair first. The top-deflated matrix
-$M-\lambda_\ast\,w\,w^{\mathsf T}$ (with $w$ the Perron column) has the maximal eigenvalue removed,
-so its Gershgorin envelope can be strictly below $\lambda_\ast$. The file
-(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}) records the symmetry
-$M^{\mathsf T}=M$ (\texttt{layerSymmetricTransferMatrix\_transpose\_self}), the explicit deflated
-entries $M_{ij}-\lambda_\ast w_i w_j$
-(\texttt{layerSymmetricTransfer\_topDeflation\_apply}/\texttt{\_diag}/\texttt{\_offDiagAbsRowSum}),
-and the route wrappers
-\texttt{finiteTransverseHermitianExplicitRatio\_le\_of\_topDeflatedGershgorin} and its cubic
-specialization, reducing the explicit subdominant ratio to a top-deflated Gershgorin envelope
-$\le\theta\lambda_\ast$ via
-\texttt{subdominantAbsRatio\_maxEigenIndex\_le\_of\_topDeflatedGershgorin\_le}. The remaining
-\S17.1 core math is the high-temperature, transverse-volume-uniform bound discharging
+$M-\lambda_\ast\,w\,w^{\mathsf T}$ (with $w$ the Perron column) had the maximal eigenvalue removed,
+so its Gershgorin envelope could be strictly below $\lambda_\ast$. The file
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}) carried that
+route, and this paragraph is history only: all six of its declarations went with it, and the whole
+top-deflation layer -- the deflated matrix, its explicit entries and its diagonal and off-diagonal
+row-sum envelopes -- is absent from \texttt{IsingModel/} under any name, so none of its names is
+cited here; the proofs survive only in the archived tag. Two of its inputs do survive. The symmetry
+$M^{\mathsf T}=M$ for symmetric $k$ was a duplicate of the still-live
+\[
+  \texttt{layerSymmetricTransferMatrix\_transpose}
+\]
+of \texttt{TransferMatrix/LayerSpectral/BalancedMatrix.lean}, with the same statement, and the
+quantity the route bounded, the explicit ratio
+\[
+  \texttt{finiteTransverseHermitianExplicitRatio}
+\]
+of \texttt{TransferMatrix/LayerOpenExplicitSubdominantRatio.lean}, is still a definition of the
+tree together with its cubic specialization. What is gone is the reduction between them: the
+explicit deflated entries $M_{ij}-\lambda_\ast w_i w_j$ and the route wrappers taking the explicit
+subdominant ratio down to a top-deflated Gershgorin envelope $\le\theta\lambda_\ast$. The remaining
+\S17.1 core math was the high-temperature, transverse-volume-uniform bound discharging
 this hypothesis with an explicit $\theta(\beta J)<1$ independent of the transverse box radius.
 
 \paragraph{Rayleigh lower bound on $\lambda_\ast$ (\S17.1, Issue~\#3511, P5).}
@@ -6517,57 +6526,93 @@ The denominator $\lambda_\ast$ of the deflated-Gershgorin hypothesis
 $\mathrm{maxAbsDiag}(M_{\mathrm{def}})+\mathrm{offMass}(M_{\mathrm{def}})\le\theta\lambda_\ast$
 needs a \emph{lower} bound. Reversing the Rayleigh upper bound
 $\langle v,Mv\rangle\le\lambda_\ast\|v\|^2$ gives, for any nonzero $v$,
-$\lambda_\ast\ge\langle v,Mv\rangle/\|v\|^2$
-(\texttt{matrixQuadraticForm\_div\_vectorSqNorm\_le\_maxEigenIndex}, using
-$\|v\|^2=\sum_i v_i^2>0$ for $v\ne0$, \texttt{vectorSqNorm\_pos\_of\_ne\_zero}). At the constant-one
-vector this is $\lambda_\ast\ge\bigl(\sum_{a,b}M_{ab}\bigr)/|\Omega|$
-(\texttt{sum\_entries\_div\_card\_le\_maxEigenIndex}), a positive lower bound for the entrywise
-positive balanced layer transfer matrix
-(\texttt{finiteTransverseHermitian\_sum\_entries\_div\_card\_le\_maxEigenIndex}, file
-(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). The matching upper bound on the deflated-Gershgorin
-quantity, via the Perron column, is the remaining core step.
+$\lambda_\ast\ge\langle v,Mv\rangle/\|v\|^2$. The file
+(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}) recorded that
+reversal, its constant-vector specialization and the layer form of the latter; all four of its
+declarations went with it, so none of their names is a declaration of the current tree. The
+reversal itself is one division away from a lemma that survives: the Rayleigh upper bound
+\[
+  \texttt{matrixQuadraticForm\_le\_maxEigenIndex}
+\]
+of \texttt{TransferMatrix/LayerPerronExistence/OrthogonalSpectralData.lean} is exactly the removed
+statement cleared of the denominator $\|v\|^2=\sum_i v_i^2$, which is positive for $v\ne0$ by an
+elementary finite-sum argument. At the constant-one vector the reversal reads
+$\lambda_\ast\ge\bigl(\sum_{a,b}M_{ab}\bigr)/|\Omega|$, a positive lower bound for the entrywise
+positive balanced layer transfer matrix; its layer form was that inequality at the spectral datum
+\[
+  \texttt{finiteTransverseHermitianData}
+\]
+of \texttt{TransferMatrix/LayerOpenFiniteTransverseHermitian.lean}, which survives, but the
+inequality itself does not. The matching upper bound on the deflated-Gershgorin
+quantity, via the Perron column, was the remaining core step.
 
 \paragraph{Top-deflation row cancellation identity (\S17.1, Issue~\#3511, P5).}
-The cancellation that makes the top-deflated Gershgorin envelope drop below $\lambda_\ast$ is encoded
-by the eigen-equation, not by any triangle inequality. Since $M_{\mathrm{def}}\,w=0$ for the Perron
-column $w=\texttt{changeOfBasis}\cdot\texttt{top}$
-(\texttt{matrixTopDeflation\_mulVec\_column\_eq\_zero}), splitting row $i$ into diagonal and
+File (removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}). History
+only: the file's three declarations went with it, they belong to the same top-deflation family as
+the Gershgorin paragraph above, and that family has no occurrence left in \texttt{IsingModel/}
+under any name, so none of its names is cited here; the proofs survive only in the archived tag. The
+cancellation that made the top-deflated Gershgorin envelope drop below $\lambda_\ast$ is encoded by
+the eigen-equation, not by any triangle inequality. Since $M_{\mathrm{def}}\,w=0$ for the Perron
+column $w=\texttt{changeOfBasis}\cdot\texttt{top}$, splitting row $i$ into diagonal and
 off-diagonal parts gives
 \[
   (M_{\mathrm{def}})_{ii} = -\sum_{j\ne i}(M_{\mathrm{def}})_{ij}\,\frac{w_j}{w_i}
 \]
-(\texttt{matrixTopDeflation\_diag\_eq\_neg\_weighted\_offDiag}, needing $w_i\ne0$), hence
-$|(M_{\mathrm{def}})_{ii}|\le\sum_{j\ne i}|(M_{\mathrm{def}})_{ij}|\,|w_j/w_i|$
-(\texttt{abs\_matrixTopDeflation\_diag\_le\_weighted\_offDiag}). The hypothesis $w_i\ne0$ is
-discharged for an entrywise positive matrix by the signed-positive Perron column
-(\texttt{changeOfBasis\_maxEigenIndex\_ne\_zero\_of\_entrywisePositive}, file
-(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This reduces the deflated diagonal to the off-diagonal
+(needing $w_i\ne0$), hence
+$|(M_{\mathrm{def}})_{ii}|\le\sum_{j\ne i}|(M_{\mathrm{def}})_{ij}|\,|w_j/w_i|$. The hypothesis
+$w_i\ne0$ was discharged for an entrywise positive matrix by the signed-positive Perron column,
+which does survive as
+\[
+  \texttt{signedPositiveColumn\_maxEigenIndex}
+\]
+of \texttt{TransferMatrix/LayerPerronExistence/OrthogonalSpectralData.lean}; only the nonvanishing
+corollary drawn from it went with the file. This reduced the deflated diagonal to the off-diagonal
 mass weighted by Perron ratios (packaged generically in the flatness-envelope paragraph below as
-$\texttt{subdominantAbsRatio}\le(1+\rho)\,\eta$). The remaining input is the Perron flatness ratio
-$\rho=\sup_{i,j}|w_j/w_i|$ together with the deflated off-diagonal mass; for the interacting layer
-$\rho$ is \emph{not} transverse-volume-uniform (it scales like $\exp(\Theta(\beta J\,|S|))$), so this
-is the genuinely analytic high-temperature core, not a one-step finite estimate.
+$\texttt{subdominantAbsRatio\_maxEigenIndex}\le(1+\rho)\,\eta$). The remaining input was the Perron
+flatness ratio $\rho=\sup_{i,j}|w_j/w_i|$ together with the deflated off-diagonal mass; for the
+interacting layer $\rho$ is \emph{not} transverse-volume-uniform (it scales like
+$\exp(\Theta(\beta J\,|S|))$), so this is the genuinely analytic high-temperature core, not a
+one-step finite estimate.
 
 \paragraph{Perron eigenvector flatness from an entry-ratio bound (\S17.1, Issue~\#3511, P5).}
-The flatness mechanism: for a strictly positive eigenvector $v$ of $M$ with $Mv=\lambda v$,
+File (removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}). History
+only: the file's three declarations went with it, and no lemma of the current tree derives
+eigenvector flatness from an entry-ratio bound under any name, so none of its names is cited here;
+the proofs survive only in the archived tag. The flatness mechanism was: for a strictly positive
+eigenvector $v$ of $M$ with $Mv=\lambda v$,
 $\lambda>0$, a uniform row entry-ratio bound $M_{ik}\le\rho\,M_{jk}$ forces $v_i\le\rho\,v_j$, since
 \[
   \lambda v_i = \sum_k M_{ik}v_k \le \rho\sum_k M_{jk}v_k = \rho\lambda v_j .
 \]
-(\texttt{eigenvector\_ratio\_le\_of\_entry\_ratio}.) Applied to the signed-positive maximal spectral
-column $v=\mathrm{sign}\cdot(\texttt{changeOfBasis}\cdot\texttt{maxEigenIndex})$ -- an eigenvector by
-\texttt{mulVec\_signedColumn} with $\lambda_\ast>0$ by \texttt{eigenvalue\_pos\_maxEigenIndex} -- this
-gives Perron-column flatness (\texttt{signedColumn\_ratio\_le\_of\_entry\_ratio}), with the layer
-specialization \texttt{finiteTransverseHermitian\_signedColumn\_ratio\_le\_of\_entry\_ratio} for
-$M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ (file (removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This mechanism is
+It was applied to the signed-positive maximal spectral column
+$v=\mathrm{sign}\cdot(\texttt{changeOfBasis}\cdot\texttt{maxEigenIndex})$. The three facts that made
+that column admissible all survive, in the Perron-existence spectral-data file
+\[
+  \texttt{TransferMatrix/LayerPerronExistence/OrthogonalSpectralData.lean},
+\]
+namely that the column is signed positive
+(\texttt{signedPositiveColumn\_maxEigenIndex}), that it is an eigenvector
+(\texttt{mulVec\_signedColumn}), and that $\lambda_\ast>0$
+(\texttt{eigenvalue\_pos\_maxEigenIndex}). Only the flatness conclusion and its layer
+specialization for $M_{ab}=\sqrt{u_a}\,k_{ab}\,\sqrt{u_b}$ are gone. The mechanism was
 correct and reusable, but the entry-ratio route is \emph{not} transverse-volume-uniform: the layer
 entry ratio $M_{ik}/M_{jk}=\sqrt{u_i}/\sqrt{u_j}$ scales like $\exp(\Theta(\beta J\,|S|))$, so it does
 not by itself produce a volume-uniform $\rho(\beta J)$. The uniform flatness input is the documented
 analytic obstruction (single-step methods are insufficient).
 
 \paragraph{Column-oscillation reduction of the Doeblin mass (\S17.1, Issue~\#3511, P5).}
-The cleaner Doob route already gives $\texttt{cubicLayerHermitianExplicitRatio}<1$ per box (via
-$\delta(\mathrm{Doob})<1$); the transverse-volume-\emph{uniform} $\theta(\beta J)$ reduces to a
+File (removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding}). History
+only: the file's declarations went with it, and the matrix-level layer they rest on -- the Doob
+transform of a positive matrix, its Doeblin mass and its Dobrushin coefficient -- has no occurrence
+left in the library under any name, so none of its names is cited here; the live single-site
+Dobrushin uniqueness work of the paragraphs below is a different object, and these proofs survive
+only in the archived tag. The per-box strict bound $\theta<1$ does survive, as
+\[
+  \texttt{cubicLayerHermitianExplicitRatio\_lt\_one}
+\]
+of \texttt{TransferMatrix/LayerOpenExplicitSubdominantRatio.lean}, but along the Perron route, not
+along the Doob route recorded here, whose per-box conclusion $\delta(\mathrm{Doob})<1$ is gone with
+the rest. That route reduced the transverse-volume-\emph{uniform} $\theta(\beta J)$ to a
 uniform lower bound on the Doeblin mass $\sum_j\min_i P_{ij}$ of the Doob transform $P$. A crude
 per-entry floor $|\Omega|\cdot\min P_{ij}$ is useless ($P_{ij}\sim e^{-O(|S|)}$); the uniform handle
 is \emph{row similarity}. For a row-stochastic $P$ and any row $i$,
@@ -6575,13 +6620,9 @@ is \emph{row similarity}. For a row-stochastic $P$ and any row $i$,
   \mathrm{DoeblinMass}(P)=1-\sum_j\bigl(P_{ij}-\min_{i'}P_{i'j}\bigr)
   \ge 1-\sum_j\bigl(\max_{i'}P_{i'j}-\min_{i'}P_{i'j}\bigr),
 \]
-so $\delta(P)\le\sum_j(\max_i P_{ij}-\min_i P_{ij})$
-(\texttt{matrixDoeblinMass\_eq\_one\_sub\_row\_excess},
-\texttt{matrixDoeblinMass\_ge\_one\_sub\_sum\_colOsc},
-\texttt{matrixDobrushinCoefficient\_le\_sum\_colOsc}, file
-(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})). This honestly reduces the uniform Dobrushin /
+so $\delta(P)\le\sum_j(\max_i P_{ij}-\min_i P_{ij})$. This honestly reduced the uniform Dobrushin /
 subdominant-ratio bound to a per-column row-variation sum on the Doob transform; the remaining core
-is the layer-specific estimate that those columns vary little at high temperature, uniformly in the
+was the layer-specific estimate that those columns vary little at high temperature, uniformly in the
 transverse box radius.
 
 \paragraph{The single-site Ising influence bound (\S17.1, Dobrushin uniqueness, Issue~\#3511).}
