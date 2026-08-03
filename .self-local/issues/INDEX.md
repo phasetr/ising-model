@@ -1,3 +1,81 @@
+## 2026-08-03 PR #4871 merged, #4830 AC4 re-verified PASS, tracker CLOSED completed
+
+- **PR #4871 squash-merged** (`docs/4830-qualify-bare-lean-citations` -> `main`, commit
+  `b32a45bceaf0359093106a51ede05b2f2792c927`), all checks green (`build`, `import-dag-contract`,
+  `discover`, `evaluate`, `completion-claim/live`) and independently reviewed (dev-review + codex,
+  one Med finding — a new Overfull hbox in the public PDF — fixed in follow-up commit `bac772cd`
+  with measured before/after proof). It qualified the four bare `.lean` basename citations that
+  PRs #4839/#4840 had introduced and repinned the downstream `QualifiedGlobCitationTest` line
+  numbers. Local branch deleted (`--delete-branch`).
+- **AC4 re-verified on post-merge `main`**: `python3 scripts/citation_audit.py` now reports
+  `ratchet: OK -- 31 finding(s) cleared, 0 new` / `citation audit: PASS`. This was the sole unmet
+  item of #4830's 8-item "Common acceptance criteria" checklist per the prior
+  `dev-issue-manager` pass (below); all 8 (AC1-AC8) are now SATISFIED.
+- **#4830 closed as completed**: https://github.com/phasetr/ising-model/issues/4830#issuecomment-5162934494
+  Summary: real implementation work #4850 (PR #4856), #4851 (PR #4859, reduced scope), #4857
+  (PR #4862), #4854 (PR #4868, single-group pilot with an explicit "STOP -- no rollout to the
+  other 22 groups" checkpoint); declined not-planned #4852/#4853 (audit gate failed on its own
+  stated threshold); first-wave children #4831/#4832/#4833/#4834/#4835/#4836/#4837 per their own
+  closure records; #4869 referenced as an out-of-scope-for-this-tracker follow-up (duplicate
+  data-layer declaration found during #4854's review), not a 14th sub-issue. AC4's citation-audit
+  regression (from #4839/#4840) was caught and fixed by PR #4871 before closing this tracker.
+- Mirrors updated: `.self-local/issues/4830.md` (CLOSED completed, AC4 section marked superseded),
+  `.self-local/issues/4854.md` (cross-reference to parent's closure).
+
+## 2026-08-03 dev-issue-manager holistic acceptance-criteria verification of tracker #4830 — 7/8 SATISFIED, AC4 UNMET, tracker NOT closed despite 13/13 sub-issues
+
+- **Verdict: DO NOT CLOSE #4830.** All 13 native sub-issues are resolved
+  (`sub_issues_summary` = 13/13, 100%: first wave #4837/#4832/#4833 completed and
+  #4831/#4834/#4835/#4836 declined not planned; second wave #4850/#4851/#4857/#4854 completed and
+  #4852/#4853 declined not planned), but the parent body's **"Common acceptance criteria" are 8
+  items, of which AC8 ("every child completed or explicitly declined") is only one**. Verified
+  holistically against `main` `a7c1dfad93b5b35c3767c90c6aba10c0ea2df149` (clean tree):
+  **AC1/AC2/AC3/AC5/AC6/AC7/AC8 SATISFIED, AC4 UNMET.**
+- **AC4 failure (the blocker)**: the criterion requires "documentation/citation checks pass".
+  `python3 scripts/citation_audit.py` reports `ratchet: FAIL -- 4 finding(s) above the baseline`,
+  and its own `RealTreePinTest` self-tests fail on the same tree, so this is a genuine tree
+  regression rather than a tool defect. The four findings are
+  `NEW BASENAME_ONLY docs/index.md BetaDerivativeFieldJ.lean (0 -> 2)`,
+  `docs/index.md MagnetizationPointwiseRegularityFieldJ.lean (0 -> 1)`,
+  `tex/proof-guide.tex BetaDerivativeFieldJ.lean (0 -> 1)` and
+  `tex/proof-guide.tex BetaDerivativeMagnetization.lean (0 -> 1)`. `git blame` attributes every
+  offending line to this tracker's **own** children — `6147071c` (PR #4839, #4837 stage A1;
+  `tex:21437,21453`, `docs/index.md:1999`) and `e3a0dc01` (PR #4840, #4837 stage A2; `tex:23936`,
+  `docs/index.md:1832,1992`) — and `scripts/audit/citation_baseline.tsv` has not moved since the
+  pre-wave commit `ee981926`, so the ratchet is measuring the wave, not baseline drift.
+  **Why it escaped**: `citation_audit.py` and `test_citation_audit.py` are not wired into
+  `.github/workflows/lean_action_ci.yml` (which runs `audit_gate.py`, `dead_candidate_scan.py`,
+  `import_dag_contract.py` and the completion-claim gates), so both PRs merged green.
+- **Everything else re-verified positively, on the current tree rather than from merge-time
+  claims**: `lake build` 4944 jobs exit 0 with zero warnings (`lakefile.toml` has
+  `warningAsError = true`, so a green build is itself the zero-warning proof); `lake exe GKSTest`
+  exit 0; `audit_gate.py --full` exit 0; `import_dag_contract.py --check` PASS; `#print axioms` on
+  11 representative wave-touched declarations all `[propext, Classical.choice, Quot.sound]`;
+  the #4854 compatibility aliases and #4857's relocated declarations exist under their original
+  public names. Deletion sweep (AC5): the wave truly removed 6 declaration names plus the duplicate
+  `Lebowitz.sum_spin`, and an independent normalised sweep (backslash/brace/whitespace/underscore
+  insensitive, so `\_` escapes and line-split `\texttt{}` spellings cannot hide) over `tex/`,
+  `docs/**`, `README.md` finds **0** dangling references. Import closure (AC6/AC7), measured over
+  all 1874 modules from baseline `f23fa1e7` to `a7c1dfad`: **579 decreased, 1294 unchanged, 1
+  increased** — `Inequalities.MonotonicityField` 6 -> 8, exactly the increase PR #4862 disclosed in
+  advance with net-new-modules 0. #4837's missing numeric closure figure was supplied
+  retrospectively (120 -> 106, 120 -> 106, 118 -> 105, all decreases). Caveat recorded: cold-build
+  wall-clock and RSS were never measured by any child, so those two AC7 thresholds were unexercised
+  rather than violated.
+- **Remediation before #4830 can close** (docs/TeX only, no Lean change): qualify the 4 bare
+  basenames with their directory paths (e.g. `IsingModel/AmbientLattice/BetaDerivativeFieldJ.lean`)
+  at `docs/index.md:1832,1992,1999` and `tex/proof-guide.tex:21437,21453,23936`, re-run
+  `citation_audit.py` and `--self-test` to green, and repin `scripts/test_dead_candidate_scan.py`
+  in the same PR because the TeX edits shift line numbers (same pattern as `4e3288cf`). Separate
+  governance decision worth taking: wire `citation_audit.py` into CI.
+- **Scope rulings restated**: **#4869** (byte-identical `toRangeRelCompactData_direct` /
+  `_viaLocal_direct` in `AscoliData/ClosedBallConversions/DeviationDirect.lean`) stays an
+  independent backlog issue, **not a 14th sub-issue**, to be referenced from #4830's eventual close
+  comment. **#4866** is not this wave's debt either: its dangling citations come from `109690bd`
+  (2026-06-26, #4298), a verified ancestor of the wave baseline `f23fa1e7`.
+- `.self-local/issues/4830.md` updated with the same per-criterion verdict; the tracker's GitHub
+  body was **not** edited and the issue was **not** closed.
+
 ## 2026-08-03 dev-pr-clerk process-gap remediation — PR #4868 body/evidence fixed, #4869 filed (duplicate data-layer twin backlog), #4830/#4866 mirrors fixed
 
 - **PR #4868 body rewritten** (`.self-local/tmp/pr4868-body.md`): removed the stale
