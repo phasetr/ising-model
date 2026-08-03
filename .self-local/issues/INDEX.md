@@ -1,3 +1,29 @@
+## 2026-08-03 PR #4881 merged, #4879 CLOSED completed, zero open issues remain
+
+- **PR #4881 squash-merged** (`docs/4879-pr-b1-dangling-citations-remaining` -> `main`, commit
+  `5197b4842b19d178d0a1af83688c681346a8c315`), all checks green (`build`, `discover`,
+  `evaluate (4881)`, `import-dag-contract`, `completion-claim/live`). Fixed all 107 remaining
+  dangling PR-B1 (#4298, `109690bd`) declaration-name citations across 5 `tex/proof-guide.tex`
+  paragraphs and 20 `docs/index.md` rows (1662, 1663, 1682-1694, 1701-1705). Independently
+  verified (`dev-verify`: all pass, exhaustive re-scan of all 196 declarations from the 30
+  removed PR-B1 modules found 129 -> 0 occurrences across both documents, `citation_audit`
+  ratchet clean, box regression re-derived 1657 -> 1653 = 4 removed/0 added/0 moved) and reviewed
+  (`dev-review` + codex: one Med declaration-count off-by-one in prose found and fixed in
+  follow-up commit `9567c3c7`, one optional Low disclosure added, two informational/pre-existing
+  notes not blockers). Remote tip confirmed matching reviewed head, CI green, `git diff
+  main..origin/branch` non-empty before merge; local and remote branch deleted.
+- **Issue #4879 closed as completed**:
+  https://github.com/phasetr/ising-model/issues/4879#issuecomment-5166198120 — all 107 dangling
+  names confirmed fixed, preserved live citations (docs rows 1662-1663/1695-1700, tex line 6587+)
+  confirmed byte-identical/unmodified.
+- **This closes the last known tracked backlog item from the #4866 -> #4869 -> #4874 -> #4879
+  citation-cleanup campaign chain**: `gh issue list --state open` returns **zero** open issues
+  immediately after this close. Flagging for main's final governance check on whether this
+  campaign, or any other tracked work, is genuinely fully closed out.
+- Mirror note: `.self-local/issues/4879.md` is untracked and gitignored (confirmed via
+  `git ls-files` / `git check-ignore -v`) and does not exist on disk; no per-issue mirror file
+  edit was made for #4879, consistent with the repo's existing pattern for this file.
+
 ## 2026-08-03 PR #4878 merged, #4874 CLOSED completed, backlog #4879 filed (107 remaining)
 
 - **PR #4878 squash-merged** (`docs/4874-pr-b1-dangling-declaration-citations` -> `main`, commit
