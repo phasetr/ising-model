@@ -11,11 +11,21 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-set_option linter.style.longLine false in
 /-- **Closed-ball branch-deviation data through the named branch-local
-direct-range patch route**: closed-ball branch-deviation data is converted to
-relatively compact range data through the named via-local route, then fed to
-the all-stage relatively compact range patch endpoint. -/
+direct-range patch route** (compatibility alias): closed-ball branch-deviation
+data is converted to relatively compact range data through the named via-local
+route, then fed to the all-stage relatively compact range patch endpoint.
+
+The statement is identical to
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch`,
+which owns the proof (Issue #4854); this name is a documented compatibility
+alias and forwards to it.  The via-local naming records the branch-local
+intermediate, not a distinct proof: the data-layer conversion
+`toRangeRelCompactData_viaLocal_direct` used previously here is a verbatim
+forward to the `toRangeRelCompactData_closedBallLocal_direct` used by the owner.
+The name is kept because the via-local route is cited by `docs/index.md`,
+`tex/proof-guide.tex`, and the ℤ^d wrappers in
+`PerStageComplex/EventualClosedBallPatches/ClosedBallDeviation.lean`. -/
 theorem
     freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -44,10 +54,8 @@ theorem
             (closedData.data.branchData.radius (geom.center i)))) ∧
         DifferentiableOn ℂ g K ∧
         g (p.h : ℂ) = ((freeEnergyInfinite G Λ p : ℝ) : ℂ) :=
-  freeEnergyComplexAlongExhaustion_allStageRangeRelCompactCOpenData_patch
-    G Λ p hBED hd closedData.data geom
-    (LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData.toRangeRelCompactData_viaLocal_direct
-      G Λ p hBED hβ hJ K closedData geom closedBallDeviation)
+  freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
+    G Λ p hBED hd hβ hJ closedData geom closedBallDeviation
 
 set_option linter.style.longLine false in
 /-- **Compact target to named via-local closed-ball branch-deviation patch

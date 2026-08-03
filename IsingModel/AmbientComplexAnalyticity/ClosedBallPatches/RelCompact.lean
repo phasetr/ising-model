@@ -15,7 +15,15 @@ variable {V : Type*} [DecidableEq V]
 closed-ball all-stage branch data supplies the Lee-Yang local compactness
 needed to bound the principal finite-volume free energies on each selected
 ball.  The only remaining local-boundedness input is the uniform deviation of
-the selected branch from that principal value. -/
+the selected branch from that principal value.
+
+This statement is identical to the one owned by
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch`
+below, but this theorem is deliberately outside the Issue #4854
+canonicalization pilot and keeps its own proof: it reaches the conclusion by
+the independent `toDeviationData` route into
+`freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch`, and it has
+its own in-repo consumers. -/
 theorem freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -138,7 +146,26 @@ open LeeYangPointwiseNormAllStageCompactRealClosedBallBranchDeviationAscoliData 
 /-- **Closed-ball branch-deviation to direct relatively compact patch**:
 closed-ball branch-deviation data is first converted to relatively compact
 range data through the direct closed-ball branch-local route, then fed to the
-all-stage relatively compact range patch endpoint. -/
+all-stage relatively compact range patch endpoint.
+
+This theorem owns the proof for the three declarations in the scope of the
+Issue #4854 canonicalization pilot.  The two other pilot declarations are
+documented compatibility aliases that forward here:
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch`
+(`ClosedBallPatches/Direct.lean`) and
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationViaLocalRelCompact_directRange_patch`
+(`ClosedBallPatches/ViaLocal.lean`).  Their data-layer conversions
+`toRangeRelCompactData_direct` and `toRangeRelCompactData_viaLocal_direct` are
+verbatim forwards to the `toRangeRelCompactData_closedBallLocal_direct` used
+below, so these three names always denoted the same proof route under
+different published names, never independent proofs.
+
+The pilot covers three of the four declarations that share this statement:
+`freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_patch`
+above in this file has the identical statement as well, but is deliberately
+excluded because it proves it by an independent route (`toDeviationData` into
+`freeEnergyComplexAlongExhaustion_branchDeviationRelCompact_patch`) and has
+its own in-repo consumers. -/
 theorem freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_direct_patch
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
