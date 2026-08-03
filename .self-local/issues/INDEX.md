@@ -1,3 +1,25 @@
+## 2026-08-03 8 new issues filed (#4883-#4890), 3 closed as rollback-duplicates, #4884 premise corrected
+
+- **Correction: the "zero open issues remain" claim below (2026-08-03 entry) is stale.** 8 new
+  issues were filed the same day: #4883-#4890, none previously mirrored here.
+- **#4885, #4886, #4887 closed as duplicates of rolled-back work.** All three re-proposed
+  content from PR #4821/#4824 (finite-volume lattice wrapper cluster B, `Spin.sign_mul`
+  canonicalization, complex lattice wrapper clusters C/D), which were merged and then
+  **explicitly reverted at the user's own instruction** on 2026-08-01 (see close comments on
+  #4823 and #4826, both timestamped 2026-08-01T04:35Z). Closed with cross-references to #4884
+  and #4823.
+- **#4884's premise corrected.** Original framing ("how did the ledger acquire a merged claim
+  inconsistent with current main") mischaracterized this as a ledger-integrity bug. Corrected:
+  #4820/#4821/#4824 genuinely merged (`167ff124`/`4bfe4aeb`/`e5b7675c`) and were then
+  deliberately rolled back at the user's instruction — current main correctly lacking those
+  declarations is the intended end state, not a defect. Noted that `docs/index.md` and this
+  INDEX had zero prior record of the episode (only in uncommitted auto-memory), which is why
+  #4885/#4886/#4887 were re-filed. Scope narrowed to: (a) add a durable repo-tracked record of
+  the episode, (b) confirm main HEAD has zero residual traces of the rolled-back declarations.
+- **Open after this pass**: #4883 (parent tracker), #4884 (narrowed), #4888, #4889, #4890.
+  **Closed**: #4885, #4886, #4887 (rollback-duplicates, this pass).
+- Mirrors created: `.self-local/issues/4883.md` through `4890.md` (all 8, new).
+
 ## 2026-08-03 PR #4881 merged, #4879 CLOSED completed, zero open issues remain
 
 - **PR #4881 squash-merged** (`docs/4879-pr-b1-dangling-citations-remaining` -> `main`, commit
