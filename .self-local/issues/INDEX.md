@@ -1,3 +1,48 @@
+## 2026-08-03 dev-pr-clerk process-gap remediation — PR #4868 body/evidence fixed, #4869 filed (duplicate data-layer twin backlog), #4830/#4866 mirrors fixed
+
+- **PR #4868 body rewritten** (`.self-local/tmp/pr4868-body.md`): removed the stale
+  `## Status: Implementation to follow on this branch.` placeholder (implementation was already
+  pushed at `0a52f59c`/`ca402258`); corrected the "Disclosed cost" section's false blanket claim
+  ("this repo does not run reference-0 deletion campaigns") to the narrower, corrected framing
+  from `ca402258`'s commit message (scope, not policy — citing counter-examples #4641/#4749/
+  #4751/#4764/#4839/#4851); rewrote `Refs #4854 (do not close it yet …)` into a standalone
+  `Refs #4854` trailer line (fixes `completion-claim/live`'s `AMBIGUOUS_NON_CLOSING_DIRECTIVE`
+  per `docs/completion-claims.md`'s standalone-trailer rule), moving the "don't close yet"
+  explanation into a separate `## Notes` prose paragraph.
+- **Evidence posted as a tracked PR comment**
+  (https://github.com/phasetr/ising-model/pull/4868#issuecomment-5161896717), synthesized from
+  the gitignored `.self-local/reports/review-4854-closedball-alias-pilot.md`: statement-
+  preservation confirmation (byte-identical signatures + elaborated-type `rfl` checks), the
+  4-declaration consumer citation table for the identical-statement group (3 in pilot scope + the
+  1 deliberately-excluded 4th sibling with its own consumers), confirmation the TeX sweep covered
+  both `\_` and `_` citation forms, argument-mapping and build/axiom health evidence. Also
+  recorded #4830's secondary measurements: import closure for the 3 touched files is unchanged
+  (zero `import`-line diff, `git diff main..ca402258`), and `lake build` CI wall-clock shows no
+  meaningful change (main recent green run 3m58s vs this PR's head 5m29s-to-an-unrelated-failure,
+  consistent with a proof-body-only change).
+- **New backlog issue filed**: **#4869** — `AscoliData/ClosedBallConversions/DeviationDirect.lean`
+  `toRangeRelCompactData_direct` (L45-62) and `toRangeRelCompactData_viaLocal_direct` (L69-86) are
+  byte-identical in signature and body (same duplicate-twin pattern as #4852/#4853, one layer
+  deeper), found during #4868's independent review. Filed as an **independent** issue per
+  `dev-issue-manager`'s explicit ruling — NOT a #4830 sub-issue, to be referenced from #4830's
+  eventual close comment rather than counted in its 12/13 (soon 13/13). Not authorized for
+  immediate work.
+- **`.self-local/issues/4830.md` internal contradiction fixed**: the "Sub-issue progress" heading
+  said "current authoritative figure is 10/13, 76%" while the body's live re-query further down
+  said 12/13, 92% (re-verified live via `gh api`/GraphQL this session: 12 CLOSED + #4854 OPEN =
+  12/13, 92%, unchanged since the prior INDEX entry). Heading corrected to point at the 12/13
+  figure and clarify that the per-item percentages inside the first-wave list are individually
+  superseded incremental snapshots, not the current total.
+- **`.self-local/issues/4866.md` mirror created** (previously missing despite #4866 being OPEN
+  since 2026-08-03 per the INDEX entry below) — dangling-TeX-citation tracked backlog, not
+  started, template matches `4852.md`.
+- **Not done (explicitly out of clerk scope this pass, per instructions)**: PR #4868 not merged
+  (CI `build` is currently FAILING on an unrelated pinned self-test —
+  `test_dead_candidate_scan.py::QualifiedGlobCitationTest`, a `tex/proof-guide.tex` line-number
+  fixture that appears to have drifted from this pilot's own doc edits; `completion-claim/live`
+  also fails `AMBIGUOUS_NON_CLOSING_DIRECTIVE` pre-fix, not yet re-checked post body-edit); #4854
+  not closed; #4830 not closed.
+
 ## 2026-08-03 dev-pr-clerk close sync — #4853 declined not planned, #4866 filed (new dangling-TeX-citation finding), second-wave 5/6, sub_issues_summary 12/13
 
 - **#4853 closed `not planned`** (`gh issue close 4853 --reason "not planned"`, closing comment
