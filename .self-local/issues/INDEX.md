@@ -1,3 +1,41 @@
+## 2026-08-03 dev-pr-clerk close sync — #4853 declined not planned, #4866 filed (new dangling-TeX-citation finding), second-wave 5/6, sub_issues_summary 12/13
+
+- **#4853 closed `not planned`** (`gh issue close 4853 --reason "not planned"`, closing comment
+  https://github.com/phasetr/ising-model/issues/4853#issuecomment-5161471010). An independent
+  design pass verified the issue's own audit gate directly against the current tree and found
+  FAIL on the first criterion: both current capstone consumers of the shared ratio algebra are
+  on the open path
+  (`correlation_layerOpenSlabGraph_same_transverse_abs_le_of_openMinSpectralGapCertificate`,
+  `LayerOpenSlabGraph.lean:538`;
+  `correlation_layerOpenSlabGraph_two_transverse_abs_le_of_boundarySpectralDenominator`,
+  `LayerOpenTwoMarkedSpectralDecay/Certificate.lean:253`). The cyclic/balanced decay theorems
+  have zero external consumers and their former capstone was deleted in `109690bd` (#4298
+  PR-B1), so the issue's own "one cyclic/balanced + one open" ≥2-consumer gate is not
+  constructible today; sharing beyond the four scalars and five sign conditions needs
+  higher-order numerator/denominator plumbing (the explicit non-goal). A fifth structure sharing
+  the same fields/proof tail that the issue's file list omitted, `LayerOpenMinSpectralGapCertificate`
+  (`LayerOpenSlab.lean:123`, 14 external consumers), was recorded for completeness — doesn't
+  change the verdict. No core extraction authorized.
+- **New unrelated finding from the same audit, filed as tracked backlog (not fixed)**: issue
+  **#4866** — `tex/proof-guide.tex` lines 7561/7573/7580 dangling-cite three declarations from
+  the `TransferMatrix/LayerCylinderSpectralDecay.lean` cluster, deleted by the same `109690bd`
+  (#4298 PR-B1) commit. Checked against #4714/#4704 (a prior dangling-TeX-citation PR/tracker):
+  #4704 is CLOSED `NOT_PLANNED` and neither its history nor #4714's mentions this
+  `LayerCylinderSpectralDecay` cluster, so this is a genuine new recurrence, not something
+  already covered — filed as a new, precisely-scoped issue rather than reopening #4704's broader
+  (and declined) sweep scope. Not authorized for work this session (goal-scope discipline).
+- **#4830 (master tracker) body updated**: second-wave checklist line for `#4853` flipped to
+  `[x]` with verdict `declined (not planned)`, the closing-comment link, and a pointer to #4866;
+  second-wave progress text updated to "5/6 resolved"; `sub_issues_summary` line updated to
+  12/13, 92% (`gh api repos/phasetr/ising-model/issues/4830 --jq '.sub_issues_summary'` ->
+  `{"completed":12,"percent_completed":92,"total":13}`).
+- Mirrors updated: `.self-local/issues/4853.md` (status flipped to CLOSED not planned, Resolution
+  section with the evidence + #4866 pointer appended), `.self-local/issues/4830.md` (subissue
+  summary line, second-wave table row for #4853, second-wave progress line all updated to
+  12/13, 92%).
+- Remaining OPEN second-wave child: #4854 (P2, Patches canonicalization). New standalone tracked
+  issue: #4866 (P-unset, dangling TeX citations, not a sub-issue of #4830).
+
 ## 2026-08-03 dev-pr-clerk close sync — #4852 declined not planned, second-wave 4/6, sub_issues_summary 11/13
 
 - **#4852 closed `not planned`** (`gh issue close 4852 --reason "not planned"`, closing comment
