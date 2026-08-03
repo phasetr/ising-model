@@ -7546,46 +7546,65 @@ The module
 \[
   \texttt{(removed PR-B1; archived \texttt{archive/transfermatrix-spectral-gap-scaffolding})}
 \]
-turns the existing balanced min-gap certificates into project-level
-correlation inequalities on finite periodic layer cylinders.  The physical
-one-layer and transition weights are strictly positive because they are
-exponentials:
+turned the existing balanced min-gap certificates into project-level
+correlation inequalities on finite periodic layer cylinders.  All six of its
+declarations went with it, so no name it introduced is a declaration of the
+current tree, and three of the six were composed from others of the six, so
+that internal chain went with them as well.  Every lemma the module composed
+from outside itself does survive, however, and each of the six was a one-line
+composition, so the route is recorded here through those external names.  The
+physical one-layer and transition weights are strictly positive because they
+are exponentials, so the removed abstract positivity pair was
+\texttt{Real.exp\_pos} verbatim; surviving callers discharge that hypothesis
+inline the same way, and the named concrete instances are
 \[
-  \texttt{layerInternalWeight\_pos},
+  \texttt{cubicLayerInternalWeight\_pos},
   \qquad
-  \texttt{layerTransitionWeight\_pos}.
+  \texttt{cubicLayerTransitionWeight\_pos}
 \]
-The one-layer positivity lemma discharges the input needed to transport
-balanced spectral estimates to ordinary layer traces.  The main abstract consumer is
+of \texttt{TransferMatrix/CubicLayerCardinalitySmallRatio.lean}.  One-layer
+positivity is the only input needed to transport balanced spectral estimates
+to ordinary layer traces, so the abstract consumer is the reindexing
 \[
-  \texttt{layerCylinderSpinTwoPoint\_abs\_le\_min\_of\_balancedMinSpectralGapCertificate},
+  \texttt{layerCylinderSpinTwoPoint\_eq\_layerSpinTwoPoint}
 \]
-which gives
+of \texttt{TransferMatrix/LayerCylinder.lean} followed by
+\[
+  \texttt{layerSpinTwoPoint\_abs\_le\_min\_of\_balancedMinSpectralGapCertificate}
+\]
+of \texttt{TransferMatrix/LayerSpectral/BalancedSpectralGap.lean}, which gives
 \[
   |G_{a,b}|
     \le
     \frac{\texttt{prefactor}}{\texttt{partitionPrefactor}}\,
       \theta^{\min(a,b)}
 \]
-for the concrete cyclic layer-cylinder spin two-point function.  Composing
-with the explicit graph-to-layer bridge gives
+for the concrete cyclic layer-cylinder spin two-point function.  Rewriting
+that bound along the graph-to-layer equality
 \[
-  \texttt{correlation\_layerCylinderGraph\_same\_transverse\_abs\_le\_min\_of\_balancedMinSpectralGapCertificate}.
+  \texttt{correlation\_layerCylinderGraph\_same\_transverse\_eq\_layerCylinderSpinTwoPoint}
 \]
-Thus a finite balanced certificate now appears as an inequality for the
-project-level Gibbs correlation on the finite cylinder graph itself.  The file
-also records the cubic specialization
+of \texttt{TransferMatrix/LayerCylinderGraph.lean} gives the same bound for
+the project-level Gibbs correlation on the finite cylinder graph itself.  The
+cubic specialization needs only the definitional identification of
+\texttt{cubicLayerCylinderGraph} with \texttt{layerCylinderGraph}, the step
+already taken by the surviving
 \[
-  \texttt{correlation\_cubicLayerCylinderGraph\_same\_transverse\_abs\_le\_min\_of\_cert}
+  \texttt{correlation\_cubicLayerCylinderGraph\_same\_transverse\_eq\_trace\_ratio}
 \]
-and the direct free-layer Walsh consumer
+of \texttt{TransferMatrix/CubicLayerCylinder.lean}.  The direct free-layer
+Walsh instance is that same composition fed by the surviving certificate
 \[
-  \texttt{correlation\_freeLayerCylinderGraph\_same\_transverse\_abs\_le\_tanh},
+  \texttt{freeLayerBalancedMinGapCertificate\_tanh},
 \]
 whose decay rate is \(\tanh(p.\beta p.J)\) under the finite Walsh smallness
-condition.  This is still a finite periodic-cylinder result.  It does not
-prove an interacting cubic-layer spectral window, open-slab or free-boundary
-geometry, thermodynamic limits, or the final hyperplane decay estimate.
+condition; that certificate is declared in
+\[
+  \texttt{TransferMatrix/FreeLayerWalshSpectralWindow/FlipParityMinGapCertificates.lean}.
+\]
+This is still a finite periodic-cylinder result.  It does not prove an
+interacting cubic-layer spectral window, open-slab or free-boundary geometry,
+thermodynamic limits, or the final hyperplane decay estimate.
 Reference: Glimm--Jaffe, 2nd ed., \S17.1, pp.~304--306 and \S17.5,
 pp.~311--312.
 
