@@ -1,3 +1,30 @@
+## 2026-08-03 dev-pr-clerk close sync — #4852 declined not planned, second-wave 4/6, sub_issues_summary 11/13
+
+- **#4852 closed `not planned`** (`gh issue close 4852 --reason "not planned"`, closing comment
+  https://github.com/phasetr/ising-model/issues/4852#issuecomment-5161386998). `dev-research`
+  measured the issue's own audit gate ("at least two current consumers of every extracted core
+  theorem: the edge-avoidance route and the vertex-avoidance route") against the live tree and
+  found FAIL: `FieldAvoidingRatio.lean`'s edge-route `Gavoid` (616 lines, 14 theorems) and
+  `FieldVertexAvoidingRatio.lean`'s vertex-route `GavoidVertex` (714 lines, 23 declarations) are
+  near-line-for-line duplicates and `GavoidVertex` already generalizes `Gavoid` definitionally
+  (`Gavoid_eq_GavoidVertex_polymerSupport`, `FieldVertexAvoidingRatio.lean:79`, `rfl`), but the
+  vertex route has real consumers (`FieldSourceWeightBound.lean:19`,
+  `FieldCorrelationUniformBound.lean:57,99,136`, `FieldSourcePeel.lean`) while the edge route's
+  own capstone `fieldPolymerZℂ_Gavoid_div_norm_le_exp` (`FieldAvoidingRatio.lean:551`) and every
+  other declaration in that file have zero code-level consumers anywhere in the live tree
+  (grep-verified). Same pattern as #4831/#4834/#4835/#4836's audit-gate failures. No core
+  extraction authorized; `Gavoid`/`GavoidVertex` unchanged.
+- **#4830 (master tracker) body updated**: second-wave checklist line for `#4852` flipped to
+  `[x]` with verdict `declined (not planned)` and the closing-comment link; second-wave progress
+  text updated to "4/6 resolved"; `sub_issues_summary` line updated to 11/13, 84%
+  (`gh api repos/phasetr/ising-model/issues/4830 --jq '.sub_issues_summary'` ->
+  `{"completed":11,"percent_completed":84,"total":13}`).
+- Mirrors updated: `.self-local/issues/4852.md` (status flipped to CLOSED not planned, Resolution
+  section with the evidence matrix appended), `.self-local/issues/4830.md` (subissue summary line,
+  second-wave table row for #4852, second-wave progress line all updated to 11/13, 84%).
+- Remaining OPEN second-wave children: #4853 (P1, spectral-gap numeric core audit), #4854 (P2,
+  Patches canonicalization).
+
 ## 2026-08-02 dev-pr-clerk merge sync — #4857 completed, second-wave 3/6, sub_issues_summary 10/13
 
 - **PR #4862 squash-merged** to `main` as commit `c3bfdc4072cb93ec48b6253b5fa5b640e2111246`
