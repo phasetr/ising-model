@@ -1,6 +1,7 @@
 import IsingModel.Peierls.DartDualCutCard
 import IsingModel.Peierls.DartOrbit
 import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # The dual-cut support box and its subtype lift (FV §3.7.2)

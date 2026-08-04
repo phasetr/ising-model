@@ -1,6 +1,7 @@
 import IsingModel.Conditioning.EdgeSetHandshake
 import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Core
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import Mathlib.Combinatorics.SimpleGraph.Maps
 
 /-!
