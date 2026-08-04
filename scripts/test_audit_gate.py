@@ -1733,12 +1733,18 @@ class ScopeCoverageTest(unittest.TestCase):
         invariant above self-fulfilling: drop ``"docs"`` from ``V4_PATHS``, add
         ``"docs/"`` here, and every tracked file is still "scanned or
         excluded" while the public documentation quietly stops being checked.
-        Growing the list must mean editing this assertion.
+        Growing the list must mean editing this assertion. Empty today:
+        ``.self-local/`` is untracked (global ``.gitignore``), so nothing
+        tracked needs excluding.
         """
-        self.assertEqual(ag.V4_UNSCANNED_PREFIXES, (".self-local/",))
+        self.assertEqual(ag.V4_UNSCANNED_PREFIXES, ())
 
     def test_the_excluded_prefixes_are_non_empty(self) -> None:
-        """A stale exclusion would quietly widen the gate's blind spot."""
+        """Every listed exclusion prefix must correspond to a tracked path.
+
+        Vacuously true while the list is empty; guards against a future
+        exclusion entry that names a path nothing tracks.
+        """
         for prefix in ag.V4_UNSCANNED_PREFIXES:
             self.assertTrue(self.tracked(prefix.rstrip("/")), prefix)
 
@@ -1764,9 +1770,8 @@ class ScopeCoverageTest(unittest.TestCase):
             self.assertIn(name, scanned)
 
     def test_the_scope_is_not_the_whole_repository(self) -> None:
-        """``V4_PATHS`` must never become ``"."``: internal notes are Japanese."""
+        """``V4_PATHS`` must never become ``"."``."""
         self.assertNotIn(".", ag.V4_PATHS)
-        self.assertTrue(self.tracked(".self-local"))
 
 
 # ---------------------------------------------------------------------------
@@ -2506,15 +2511,15 @@ class MutationTest(unittest.TestCase):
         mutant = load_mutated(
             ('    "docs",\n', ""),
             (
-                'V4_UNSCANNED_PREFIXES = (".self-local/",)',
-                'V4_UNSCANNED_PREFIXES = (".self-local/", "docs/")',
+                'V4_UNSCANNED_PREFIXES: tuple[str, ...] = ()',
+                'V4_UNSCANNED_PREFIXES: tuple[str, ...] = ("docs/",)',
             ),
         )
         weakened = {ag.rel(path) for path in mutant.iter_v4_files()[0]}
         self.assertNotIn("docs/index.md", weakened)
         self.assertIn("docs/index.md", {ag.rel(path) for path in ag.iter_v4_files()[0]})
         # The mutant satisfies the coverage invariant but fails the pinned list.
-        self.assertNotEqual(mutant.V4_UNSCANNED_PREFIXES, (".self-local/",))
+        self.assertNotEqual(mutant.V4_UNSCANNED_PREFIXES, ())
 
     def test_v4_with_a_filtered_file_list_stops_scanning_a_file_type(self) -> None:
         """A filter inside ``iter_v4_files`` shrinks the scan below ``V4_PATHS``.

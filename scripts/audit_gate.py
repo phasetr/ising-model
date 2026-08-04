@@ -31,12 +31,10 @@ V4  No Japanese text (kana, CJK ideographs and radicals, CJK punctuation,
     forms, ideographic variation selectors) in git-tracked files under the
     paths listed in ``V4_PATHS``. Committed sources, docs and TeX are
     English-only.
-    The scope is delimited *by the ``V4_PATHS`` enumeration*, not by
-    ``.gitignore``: internal working material such as ``.self-local/issues/``
-    and ``.self-local/reports/`` **is** tracked and **does** contain Japanese
-    on purpose, and is excluded only because ``V4_PATHS`` does not list it.
-    Consequently ``V4_PATHS`` must never be widened to ``"."`` -- that would
-    pull in ``.self-local/`` and fail immediately.
+    The scope is delimited *by the ``V4_PATHS`` enumeration*. Internal working
+    material under ``.self-local/`` is untracked (the user's global
+    ``.gitignore`` excludes it project-wide) and therefore never appears in
+    ``git ls-files`` at all; it needs no special-casing here.
 
 Usage
 -----
@@ -106,8 +104,7 @@ CAPSTONE_MIN_COUNT = 13
 # Pathspecs scanned by V4 (English-only committed sources and public docs).
 # ``IsingModel.lean`` (library umbrella), ``test``, ``.github`` and
 # ``lakefile.toml`` are listed explicitly: they are tracked, English-only, and
-# would otherwise be unscanned. Do NOT replace this list by ``"."`` -- see the
-# module docstring (``.self-local/`` is tracked and intentionally Japanese).
+# would otherwise be unscanned.
 #
 # The last four entries are machine-managed (``.gitignore``, editor settings,
 # the Lake manifest, the toolchain pin). They were added once measurement showed
@@ -115,9 +112,9 @@ CAPSTONE_MIN_COUNT = 13
 # generated is not a reason to leave a tracked file unscanned -- a generated file
 # is committed like any other, and an unscanned tracked file is exactly the
 # fail-open hole V4 exists to close. With them the scope is stated positively:
-# **every tracked file except ``.self-local/`` is scanned**, an invariant the
-# test suite pins (``ScopeCoverageTest``), so a new top-level tracked path forces
-# an explicit include/exclude decision instead of silently escaping the gate.
+# **every tracked file is scanned**, an invariant the test suite pins
+# (``ScopeCoverageTest``), so a new top-level tracked path forces an explicit
+# include/exclude decision instead of silently escaping the gate.
 V4_PATHS = (
     "docs",
     "README.md",
@@ -134,10 +131,12 @@ V4_PATHS = (
     "lean-toolchain",
 )
 
-# Tracked paths deliberately outside the V4 scope: internal working material
-# that is Japanese on purpose. Used by the scope-coverage test, which requires
-# every tracked file to be either scanned by V4 or listed here.
-V4_UNSCANNED_PREFIXES = (".self-local/",)
+# Tracked paths deliberately outside the V4 scope. Empty today: internal
+# working material lives under ``.self-local/``, which is untracked (global
+# ``.gitignore``), so nothing tracked needs excluding. Used by the
+# scope-coverage test, which requires every tracked file to be either scanned
+# by V4 or listed here.
+V4_UNSCANNED_PREFIXES: tuple[str, ...] = ()
 
 # Full CJK/Japanese class. The narrow "kana + U+4E00-U+9FAF" class used by the
 # manual ``rg`` spot check misses exactly the residue a Japanese-to-English
