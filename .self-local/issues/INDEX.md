@@ -1,3 +1,23 @@
+## 2026-08-04 PR #4899 merged (#4888 family-lemma pilot, 4 declarations converted)
+
+- **PR #4899 squash-merged** (`refactor/4888-family-lemma-pilot` -> `main`, commit `d44fbea9`),
+  all checks green (`build`, `discover`, `evaluate (4899)`, `import-dag-contract`,
+  `completion-claim/live`). `completion-claim/live` initially FAILed `AMBIGUOUS_CLOSING_DIRECTIVE`
+  (twice, same as PRs #4892/#4898) — traced to the prose phrase "It does not resolve #4888": the
+  gate's `_directive_references` scan treats any close-keyword (`resolve`/`fix`/`close`/etc.)
+  immediately followed by an issue number as an ambiguous closing directive unless it is a
+  standalone canonical trailer line. Reworded to "It is intentionally partial and leaves issue
+  #4888 open", keeping `Refs #4888` as the sole trailer; gate passed after the edit.
+- Converted 4 declarations / 3 modules / 5 call sites from hand-rolled `funext`+`rw`
+  family-equation reasoning to the existing `correlationAlongExhaustion_family_eq_of_subset` /
+  `_family_eq_zero_of_not_subset` lemmas; ~36 proof lines removed. Comparison-data comment posted
+  on #4888 (still OPEN — issue explicitly frames further families as a separate decision).
+  Deferred: Category B (KEEP, confirmed), Category C (new follow-up issue candidate),
+  `Lemma_17_5_2` remaining 2 sites (follow-up PR), joint (β,J,h) wrapper 4 modules (second-wave
+  candidate, would increase line count).
+- Mirror updated: `.self-local/issues/4888.md` (pilot outcome + deferred-categories section
+  added, still OPEN).
+
 ## 2026-08-04 #4884 CLOSED (completed, resolution verified); #4883 stale baseline (26->24) corrected
 
 - **Issue #4884 CLOSED as completed** (`gh issue close 4884`), citing `dev-issue-manager`
