@@ -1,3 +1,26 @@
+## 2026-08-04 PR #4894 merged (import-hygiene PR-B, edge 3 of #4889 REPOINT); #4889 CLOSED (completed, all 4 edges terminal)
+
+- **PR #4894 squash-merged** (`refactor/4889-import-hygiene-pr-b` -> `main`, commit
+  `4d62b8c47f7031874c9778d336a1ec0b72122f2c`), all checks green (`build`, `discover`,
+  `evaluate (4894)`, `import-dag-contract`, `completion-claim/live`). Repointed edge 3
+  (`PlusHighTempRepresentation -> CubicBoxScreening` to `Inequalities.MonotonicityExtremal`)
+  with compiler-backed evidence (`dev-review` APPROVE after two record fixes: commit message
+  "four `instead` lines" corrected to "three" via `git commit --amend`, PR body replaced from
+  stale scaffold text with the implementer's summary). Remote tip confirmed matching reviewed
+  head (`2af164704a9cab8015490632709d161f2fecd7ff`) before merge; local and remote branch
+  deleted. Repointing cut the sole supply route of the anonymous
+  `Ambient.inducedGraph (latticeGraph d) Λ` `Fintype`/`DecidableRel` instances for 64 downstream
+  modules, requiring three remediation imports (exactly shake's own `instead` list); this
+  created one new `L2 -> L4` INFO edge
+  (`Conditioning.InduceDistanceTransfer -> Concrete.LatticeGraphBED.LatticeBoundaryBED`)
+  replacing the old one, so the INFO edge count stayed at 24 before/after.
+- **Issue #4889 CLOSED as completed** (all 4 edges now terminal: 1/2 REMOVE + 4 KEEP via
+  PR #4892, 3 REPOINT via PR #4894); close comment posted citing both PRs, the INFO=24
+  explanation, and a follow-up note (not actioned) that the anonymous-instance-fragility
+  pattern found in `Peierls/*` may recur elsewhere and is a candidate for a future
+  `dev-audit-tier2` finding.
+- Mirror updated: `.self-local/issues/4889.md` (OPEN -> CLOSED completed).
+
 ## 2026-08-04 PR #4892 merged (import-hygiene PR-A, edges 1/2 of #4889 REMOVE), edge 4 KEEP, edge 3 open (PR-B)
 
 - **PR #4892 squash-merged** (`refactor/4889-import-hygiene-pr-a` -> `main`, commit
