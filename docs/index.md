@@ -2247,6 +2247,10 @@ deletion work. The independent documentation decisions in the named §18.3 **Clu
 analyticity** and §18.5 **Kotecký–Preiss/Mayer** inventory rows require scoped investigation and tracking;
 this handoff grants no implementation authorization.
 
+The tracked [refactoring rollback ledger](refactoring-rollback-ledger.md) is the authoritative
+history and immutable authorization firewall for deliberately rolled-back refactoring lanes and
+rejected duplicate re-proposals.
+
 ## Infinite-volume status ledger
 
 This summary keeps implemented results separate from limited contracts and unresolved book
