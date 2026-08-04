@@ -1,3 +1,23 @@
+## 2026-08-04 Campaign closed: Issue #4890 (closure audit) and #4883 (parent tracker) both CLOSED completed
+
+- **Issue #4890 CLOSED completed**: independent campaign-level closure audit (`dev-verify`, clean
+  worktree) confirmed `lake build` PASS zero warnings, `lake exe GKSTest` PASS, `audit_gate.py`
+  V1-V4 PASS, `import_dag_contract.py --check` PASS (24 INFO edges), `#print axioms` = `[propext,
+  Classical.choice, Quot.sound]` on all 4 touched capstones, zero declaration names removed
+  campaign-wide, zero stale tex/doc references (plain + escaped-underscore search). One regression
+  found and fixed: citation_audit ratchet regressed after PR #4899, fixed via PR #4904. Follow-up
+  `dev-docs-sync` pass confirmed `docs/architecture-import-layers.md`, `docs/index.md`,
+  `.self-local/issues/INDEX.md`, `README.md` all consistent.
+  https://github.com/phasetr/ising-model/issues/4890#issuecomment-5177237505
+- **Issue #4883 (parent tracker) CLOSED completed** immediately after, now that all subissues
+  (#4884/#4885/#4886/#4887/#4888/#4889/#4890) reached terminal state.
+  https://github.com/phasetr/ising-model/issues/4883#issuecomment-5177237912
+- **#4897 and #4902 remain OPEN** as independent follow-up threads, not part of this campaign's
+  closure and not blocking it (P2 anonymous-instance-fragility survey; P2
+  `latticeMassAlongExhaustion` family-lemma candidate).
+- Mirrors updated: `.self-local/issues/4890.md`, `.self-local/issues/4883.md` (both OPEN -> CLOSED
+  completed, resolution sections added).
+
 ## 2026-08-04 Issue #4888 closed completed; Category C spun off as #4902; #4883/#4890 Next-step sync
 
 - **#4888 CLOSED completed** (all four candidate categories resolved: (A) pilot done PR #4899
