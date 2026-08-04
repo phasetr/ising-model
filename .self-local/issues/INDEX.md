@@ -1,3 +1,42 @@
+## 2026-08-04 #4884 CLOSED (completed, resolution verified); #4883 stale baseline (26->24) corrected
+
+- **Issue #4884 CLOSED as completed** (`gh issue close 4884`), citing `dev-issue-manager`
+  resolution verification of both narrowed-scope conditions: (a) durable repo-tracked record
+  (`.self-local/issues/INDEX.md` + mirrors `4883.md`-`4890.md`, git-tracked, committed `fd02d431`
+  / PR #4891); (b) zero residual traces (grep-confirmed 9 restored #4824-cluster-B declarations,
+  absent generic `Spin.sign_mul` / present private `Spin.sign_mul_ℝ` at `JLowerBound.lean:17`,
+  4 restored #4887 complex-wrapper declarations, merge commits `167ff124`/`4bfe4aeb`/`e5b7675c`
+  confirmed not ancestors of main, zero #4820/#4821/#4823/#4824/#4826 mentions in `tex/`/`docs/`/
+  `README.md`). Supersedes the original "ledger integrity bug" framing.
+- **Issue #4883 body corrected** (`gh issue edit 4883`): stale baseline "26 informational
+  `L2 -> L4/L5` edges" updated to the current measured 24 (verified via
+  `python3 scripts/import_dag_contract.py --check`), citing PR #4892/#4894/#4896 as the cause of
+  the shift. Non-goals section's "all 26 informational layer edges" reference also updated to 24
+  for internal consistency. Pure number correction, no scope change.
+- Mirrors updated: `.self-local/issues/4884.md` (OPEN -> CLOSED completed), `.self-local/issues/4883.md`
+  (baseline figure 26 -> 24).
+
+## 2026-08-04 PR #4896 merged (docs fix: stale INFO edge count 26->24); Issue #4897 filed (dev-audit-tier1 follow-up)
+
+- **PR #4896 squash-merged** (`docs/fix-info-edge-count-4892` -> `main`, commit
+  `dbd4bfa92cbbf97463469a35664e5a452d92de7d`), all checks green (`build`, `discover`,
+  `evaluate (4896)`, `import-dag-contract`, `completion-claim/live`). Corrected 3 remaining
+  stale "26" INFO-edge-count citations in `docs/architecture-import-layers.md` (lines
+  120/122/132) left over after PR #4892 (edges 1/2 REMOVE) and PR #4894 (edge 3 REPOINT, net
+  edge count unchanged at 24) already dropped the count from 26 to 24. `completion-claim/live`
+  initially FAILed `MISSING_ISSUE_REFERENCE` (PR body had no issue-reference trailer); added
+  `Refs #4883` (open umbrella refactor-campaign tracker) since this docs-only fix does not close
+  a specific issue, matching the precedent used earlier this session for mirror-sync-only PRs.
+- **Issue #4897 filed** ([P2 hygiene], not actioned): `dev-audit-tier1`, auditing merged PR #4894
+  (commit `4d62b8c47f7031874c9778d336a1ec0b72122f2c`), found the anonymous-instance-fragility
+  pattern PR #4894 fixed for 3 modules recurs in 28 further modules across `Peierls/` and
+  `Conditioning/` (implicit dependence on the two anonymous `DecidableRel`/`Fintype` instances at
+  `IsingModel/Concrete/LatticeGraphBED/LatticeBoundaryBED.lean:95,107` via a fragile transitive
+  import chain). Filed as a `dev-audit-tier2` candidate per PR #4894's implementer + `dev-review`
+  (needs a dedicated module-by-module survey first, not silent scope creep); explicitly does
+  **not** pre-authorize deleting/repointing the 28 imports.
+- Mirror added: `.self-local/issues/4897.md`.
+
 ## 2026-08-04 PR #4894 merged (import-hygiene PR-B, edge 3 of #4889 REPOINT); #4889 CLOSED (completed, all 4 edges terminal)
 
 - **PR #4894 squash-merged** (`refactor/4889-import-hygiene-pr-b` -> `main`, commit
