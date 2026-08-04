@@ -93,18 +93,17 @@ Provided explicitly because the generic `instDecidableRel_induce_adj`
 does not fire through the `noncomputable def Ambient.inducedGraph`
 wrapper automatically.
 
-**Import-hygiene warning**: this is an *anonymous* instance, so name-based
-grep scans cannot see which modules depend on it. ~330 modules repo-wide
-call `Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`-shaped terms
-without a direct import of this module, reaching this instance only via a
-transitive import chain (survey: `.self-local/reports/design-4897-remediation-scope.md`,
-main `3fe81b47`). Any future import-hygiene change touching this module's
-import chain — especially anything under `Concrete/`, `Peierls/`,
-`Conditioning/`, or `ClusterExpansion/` — MUST run a full `lake build` (0
-warnings) before merging (see PR #4894 for the discipline this requires).
-The eventual structural fix (relocating this instance to `inducedGraph`'s
-own definition site so no direct import is needed) is tracked in
-issue #4906 and is not yet implemented. -/
+Issue #4906's completed KEEP decision intentionally keeps this
+lattice-specific provider here. On pinned main `c66c6d1b`, the proposed
+generic proof body failed to synthesize
+`DecidableRel (Ambient.inducedGraph G Λ).Adj`.
+
+**Import-hygiene warning**: this is an *anonymous* instance. Historical
+and current source-text occurrence counts are grep proxies, not an actual
+consumer population. Changes to its ownership or import reachability
+require compiler evidence for affected consumers. No relocation is tracked
+or authorized; any future relocation requires a separate issue and new
+explicit user authorization. -/
 instance (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     DecidableRel (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).Adj :=
   fun ⟨a, _⟩ ⟨b, _⟩ => by
@@ -118,10 +117,18 @@ Provided explicitly to thread through `Ambient.inducedGraph` — the
 generic `SimpleGraph.fintypeEdgeSet` would fire directly on
 `SimpleGraph.induce` but the `noncomputable def` wrapper masks this.
 
-**Import-hygiene warning**: same as the `DecidableRel` instance above —
-this is an anonymous instance reached by ~330 modules repo-wide via a
-transitive import chain rather than a direct import (see the warning on
-that instance and issue #4906 for the tracked structural fix). -/
+Issue #4906's completed KEEP decision also intentionally keeps this
+lattice-specific provider here. The proposed generic provider overlapped
+the selected provider, and their explicit `rfl` comparison failed
+definitional equality. Placing the generic provider in
+`AmbientLattice.Defs.Core` would expose it to a wider source import closure;
+this is not a timing claim.
+
+**Import-hygiene warning**: as above, source-text counts are grep proxies,
+not an actual consumer population, and ownership or import-reachability
+changes require compiler evidence. No relocation is tracked or authorized;
+any future relocation requires a separate issue and new explicit user
+authorization. -/
 noncomputable instance (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet := by
   haveI : Fintype (↑Λ : Type _) := inferInstance
