@@ -1,3 +1,20 @@
+## 2026-08-04 PR #4892 merged (import-hygiene PR-A, edges 1/2 of #4889 REMOVE), edge 4 KEEP, edge 3 open (PR-B)
+
+- **PR #4892 squash-merged** (`refactor/4889-import-hygiene-pr-a` -> `main`, commit
+  `5f935ba54e9c06dde1c4ea68f42b168fcf41504a`), all checks green (`build`, `discover`,
+  `evaluate (4892)`, `import-dag-contract`, `completion-claim/live`). Removed edge 1
+  (`CubicMayerClusterFreeEnergyComplex -> LatticeBoundaryBED`) and edge 2
+  (`LatticeFreeEnergyInfiniteKPBound -> NeighborDegree`) with compiler-backed evidence
+  (`dev-review` APPROVE-equivalent after record fixes, `dev-audit-tier1` PASS,
+  `dev-issue-manager` resolution-verification PASS). Remote tip confirmed matching reviewed head
+  before merge; local and remote branch deleted.
+- **Issue #4889 kept OPEN** (edge 3 not yet resolved); body updated to record edge-by-edge
+  status: edges 1/2 REMOVE (PR #4892), edge 4 KEEP (compiler evidence: prototype removal fails
+  with 8x Unknown identifier errors for `latticeGraph`/`cubicExhaustion`), edge 3 not yet
+  started (PR-B, Shake proposes REPOINT `PlusHighTempRepresentation -> CubicBoxScreening` to
+  `Inequalities.MonotonicityExtremal`).
+- Mirror updated: `.self-local/issues/4889.md`.
+
 ## 2026-08-03 8 new issues filed (#4883-#4890), 3 closed as rollback-duplicates, #4884 premise corrected
 
 - **Correction: the "zero open issues remain" claim below (2026-08-03 entry) is stale.** 8 new
