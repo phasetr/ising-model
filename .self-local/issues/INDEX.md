@@ -1,3 +1,25 @@
+## 2026-08-04 Issue #4888 closed completed; Category C spun off as #4902; #4883/#4890 Next-step sync
+
+- **#4888 CLOSED completed** (all four candidate categories resolved: (A) pilot done PR #4899
+  `d44fbea9`; (B) `MagnetizationAlongExhaustion.lean` GKS-type consumers KEEP not-planned,
+  independently re-verified by `dev-design` and `dev-review`; (C) `latticeMassAlongExhaustion`
+  family spun off to #4902; (D) `Lemma_17_5_2` remaining 2 sites + joint (β,J,h) wrapper wave KEEP
+  not-planned, `dev-issue-manager` assessment). Closing comment:
+  https://github.com/phasetr/ising-model/issues/4888#issuecomment-5176357446. Mirror
+  `.self-local/issues/4888.md` updated with the full disposition table.
+- **New issue #4902** `[P2 refactor] latticeMassAlongExhaustion family-equation candidate
+  (Category C, deferred by #4888)` filed — survey/design candidate only, NOT pre-authorization to
+  implement; a fresh `dev-research`/`dev-design` pass is required first. ~21 sites / 7 modules
+  under `IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassHighTemp*` (verified via
+  `git grep -c "by_cases h.*⊆"`). P2 (largest remaining duplicate-pattern source by site count, but
+  not build-blocking, and requires authoring a brand-new family lemma rather than reusing an
+  existing one, unlike #4888's P1 pilot). Mirror `.self-local/issues/4902.md` created.
+- **Staleness fix**: mirror `.self-local/issues/4883.md` Next step updated — all #4883
+  implementation subissues (#4884/#4885/#4886/#4887/#4888/#4889) are now terminal; #4883 itself
+  stays OPEN per its own required subissue order (step 3 = #4890 campaign-closure audit still
+  pending; do not close #4883 before #4890 completes). Mirror `.self-local/issues/4890.md` Next
+  step updated to record it is now unblocked and ready to run.
+
 ## 2026-08-04 Issue #4883 accidentally auto-closed by PR #4898, reopened (recurrence of #4725 pattern)
 
 - **Issue #4883 was accidentally auto-closed by GitHub** on merge of PR #4898. That PR's
