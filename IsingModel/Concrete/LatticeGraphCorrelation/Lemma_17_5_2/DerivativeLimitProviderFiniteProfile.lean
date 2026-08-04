@@ -44,19 +44,10 @@ theorem lemma_17_5_2_finite_derivative_profile_eq_beta_edge_sum
   intro β
   let G := inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)
   let A : Finset (↑(Λ.volume n) : Type _) := liftFinset ({x, z} : Finset _) hsub
-  have hfun :
-      (fun β' =>
-        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
-        fun β' => IsingModel.correlation G
-          (⟨J, 0, β'⟩ : IsingParams ℝ) A := by
-    funext β'
-    rw [correlationAlongExhaustion_of_subset (IsingModel.latticeGraph d) Λ _ hsub,
-      correlationΛ_apply]
   have hd := (IsingModel.hasDerivAt_correlation_beta G J β A).deriv
-  rw [hfun]
-  simpa [G, A]
-    using hd
+  rw [correlationAlongExhaustion_family_eq_of_subset (IsingModel.latticeGraph d) Λ
+    (fun β' => (⟨J, 0, β'⟩ : IsingParams ℝ)) hsub]
+  simpa [G, A] using hd
 
 /-- **GJ §17.5 Lemma 17.5.2 finite derivative-profile zero formula**: before
 the exhaustion stage contains the target pair `{x,z}`, the finite-exhaustion
@@ -70,15 +61,8 @@ theorem lemma_17_5_2_finite_derivative_profile_eq_zero_of_not_subset
         Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
           (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) β = 0 := by
   intro β
-  have hfun :
-      (fun β' =>
-        Ambient.correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-          (⟨J, 0, β'⟩ : IsingParams ℝ) {x, z} n) =
-        fun _ => 0 := by
-    funext β'
-    exact correlationAlongExhaustion_of_not_subset
-      (IsingModel.latticeGraph d) Λ _ hsub
-  rw [hfun]
+  rw [correlationAlongExhaustion_family_eq_zero_of_not_subset
+    (IsingModel.latticeGraph d) Λ (fun β' => (⟨J, 0, β'⟩ : IsingParams ℝ)) hsub]
   simp
 
 /-- **GJ §17.5 Lemma 17.5.2 all-stage finite derivative-profile bound**:
