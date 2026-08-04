@@ -1,6 +1,5 @@
 import IsingModel.ClusterExpansion.MayerCore.LatticeFreeEnergyKPBound
 import IsingModel.Concrete.CubicFreeEnergy
-import IsingModel.Concrete.LatticeGraphBED.NeighborDegree
 
 /-!
 # Infinite-volume real-axis KP bound on the lattice free energy (GJ §18.6)
