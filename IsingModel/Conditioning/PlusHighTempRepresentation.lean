@@ -1,5 +1,5 @@
 import IsingModel.Conditioning.HighTempClosed.ClosedForm
-import IsingModel.Concrete.LatticeGraphCorrelation.CubicBoxScreening
+import IsingModel.Inequalities.MonotonicityExtremal
 
 /-!
 # `+`-boundary high-temperature representation (FV §3.7.3, eqs. 3.41–3.45)

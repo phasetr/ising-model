@@ -3,6 +3,7 @@ import IsingModel.Peierls.SameOrbit
 import IsingModel.Peierls.DartCutChar
 import IsingModel.Peierls.LiftBoxCut
 import IsingModel.AmbientLattice.Exhaustion
+import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
 # Box bridge for the mod-2 separation engine (FV §3.7.2)
