@@ -14,6 +14,12 @@ have a derivative at h.
 Subset / membership case: lift to the finite-volume `hasDerivAt_correlation_field`.
 Non-subset / non-member case: constant zero.
 
+The `correlationAlongExhaustion` case split is discharged through the
+first-order family equations `correlationAlongExhaustion_family_eq_of_subset`
+and `correlationAlongExhaustion_family_eq_zero_of_not_subset`
+(`AmbientLattice/Exhaustion.lean`) rather than by rebuilding the corresponding
+function equation in-proof with `funext`, matching `BetaDerivative.lean`.
+
 Companion to `IsingModel.AmbientLattice.BetaDerivative` (β-direction)
 and `IsingModel.AmbientLattice.JDerivative` (J-direction).
 The corresponding `Continuous*` / `Differentiable*` wrappers already
@@ -29,10 +35,10 @@ variable {V : Type*} [DecidableEq V]
 The function `fun h' => correlationAlongExhaustion G Λ ⟨J, h', β⟩ A n`
 has a derivative at `h`.
 
-Proof: split on `A ⊆ Λ.volume n`. In the subset case, unfold to the
-finite-volume correlation on the induced graph and apply
-`hasDerivAt_correlation_field`. In the non-subset case, the function
-is constant zero, with derivative 0. -/
+Proof: split on `A ⊆ Λ.volume n`. In the subset case, rewrite by the
+first-order family equation to the finite-volume correlation on the induced
+graph and apply `hasDerivAt_correlation_field`. In the non-subset case, the
+function is constant zero, with derivative 0. -/
 theorem correlationAlongExhaustion_hasDerivAt_field
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -41,21 +47,11 @@ theorem correlationAlongExhaustion_hasDerivAt_field
       (fun h' => correlationAlongExhaustion G Λ
           (⟨J, h', β⟩ : IsingParams ℝ) A n) d h := by
   by_cases h_sub : A ⊆ Λ.volume n
-  · have heq :
-        (fun h' => correlationAlongExhaustion G Λ
-              (⟨J, h', β⟩ : IsingParams ℝ) A n) =
-        (fun h' => IsingModel.correlation (inducedGraph G (Λ.volume n))
-              (⟨J, h', β⟩ : IsingParams ℝ) (liftFinset A h_sub)) := by
-      funext h'
-      rw [correlationAlongExhaustion_of_subset G Λ _ h_sub, correlationΛ_apply]
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_of_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact ⟨_, IsingModel.hasDerivAt_correlation_field _ J h β _⟩
-  · have heq :
-        (fun h' => correlationAlongExhaustion G Λ
-              (⟨J, h', β⟩ : IsingParams ℝ) A n) = fun _ => 0 := by
-      funext h'
-      exact correlationAlongExhaustion_of_not_subset G Λ _ h_sub
-    rw [heq]
+  · rw [correlationAlongExhaustion_family_eq_zero_of_not_subset G Λ
+      (fun h' => (⟨J, h', β⟩ : IsingParams ℝ)) h_sub]
     exact ⟨0, hasDerivAt_const h 0⟩
 
 /-- **h-derivative of `magnetizationAlongExhaustion`** (GJ §17.6):
