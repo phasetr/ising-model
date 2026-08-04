@@ -1,3 +1,25 @@
+## 2026-08-04 Issue #4883 accidentally auto-closed by PR #4898, reopened (recurrence of #4725 pattern)
+
+- **Issue #4883 was accidentally auto-closed by GitHub** on merge of PR #4898. That PR's
+  squash-commit title was "docs: close #4884 (resolution verified), fix #4883 stale baseline
+  26->24" — the phrase "fix #4883" triggered GitHub's closing-keyword magic-word detection, even
+  though the PR only corrected a stale numeric baseline referenced in #4883's body text (26->24),
+  not the parent tracker issue itself. **This is a recurrence of the same root-cause pattern as
+  #4725** (a prose/negation phrase adjacent to an issue number misfiring as a closing directive).
+- **Reopened via `gh issue reopen 4883`** with an explanatory comment (cause + #4725 precedent +
+  confirmation of continued open status). #4883 is genuinely unresolved: it is the parent tracker
+  for #4888 (pilot done, but deferred categories still open — joint (β,J,h) wrapper wave, category
+  C, `Lemma_17_5_2` remaining 2 sites), #4890 (campaign-level closure audit, not yet done), and
+  #4897, none of which have reached terminal state.
+- Local mirror `.self-local/issues/4883.md` was already correctly recording `Status: OPEN`
+  (verified, no drift to fix — the mirror never picked up the accidental GitHub-side close).
+- **Process-hygiene note for future commit messages**: when a squash-commit title needs to mention
+  a stale-number/body-text correction near an issue number without intending to close it, prefer
+  wording like "correct the stale baseline number in issue #NNNN's body" over "fix #NNNN", to avoid
+  the bare keyword-adjacent-to-number pattern that GitHub's magic-word detection (and this repo's
+  own `completion-claim` gate scanner, see PR #4899 above) both treat as an ambiguous/actual
+  closing directive.
+
 ## 2026-08-04 PR #4899 merged (#4888 family-lemma pilot, 4 declarations converted)
 
 - **PR #4899 squash-merged** (`refactor/4888-family-lemma-pilot` -> `main`, commit `d44fbea9`),
