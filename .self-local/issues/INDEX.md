@@ -1879,3 +1879,11 @@ Synced via short-lived PR **#4727** (`docs/4704-pr4714-close-sync`, `.self-local
   posted on #4830:
   https://github.com/phasetr/ising-model/issues/4830#issuecomment-5152048318. Parent #4830
   NOT closed by clerk — left as a checkpoint for the user/main session to review and close.
+- **2026-08-04 update**: #4897 CLOSED not planned (superseded) — independent `dev-design`
+  analysis found the 28-module Peierls/Conditioning scope too narrow (true fragile-consumer
+  population is 330 repo-wide loose / 33 strict, concentrated in `Concrete/`); closing comment
+  https://github.com/phasetr/ising-model/issues/4897#issuecomment-5177670908. Structural fix
+  filed as #4906 (relocate anonymous `inducedGraph` instances to
+  `AmbientLattice/Defs/Core.lean:38`; NOT pre-authorized for implementation). Zero-risk docs
+  mitigation opened as PR #4907 (doc-comment warning at `LatticeBoundaryBED.lean:95,107`,
+  `lake build` green).
