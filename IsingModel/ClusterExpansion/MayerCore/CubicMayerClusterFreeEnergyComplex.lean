@@ -1,5 +1,4 @@
 import IsingModel.ClusterExpansion.MayerCore.TermsComplexPerSiteBound
-import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.Concrete.CubicFreeEnergy
 
 /-!
