@@ -1307,8 +1307,8 @@ class QualifiedGlobCitationTest(unittest.TestCase):
     def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
         """Brace composition yields 4/1/4/4 matches, then the second site 7."""
         guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
-        self.assertIn((self.ROW_3867_TOKEN, 3867), guide.tokens)
-        self.assertIn((self.ROW_27030_TOKEN, 27030), guide.tokens)
+        self.assertIn((self.ROW_3867_TOKEN, 3869), guide.tokens)
+        self.assertIn((self.ROW_27030_TOKEN, 27034), guide.tokens)
         patterns = dcs.expand_citation_token(self.ROW_3867_TOKEN)
         self.assertEqual(patterns, sorted(self.ROW_3867))
 
@@ -1327,12 +1327,12 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         verdicts = dcs.classify(
             tree(), self.real_names(), docs(), allow_homonym=False
         )[0]
-        counts = {3867: 0, 27030: 0}
+        counts = {3869: 0, 27034: 0}
         for verdict in verdicts:
             for citation in verdict.doc_citations:
                 for line, token in (
-                    (3867, self.ROW_3867_TOKEN),
-                    (27030, self.ROW_27030_TOKEN),
+                    (3869, self.ROW_3867_TOKEN),
+                    (27034, self.ROW_27030_TOKEN),
                 ):
                     if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
                         self.assertIn(token, citation)
@@ -1342,7 +1342,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                         and token in citation,
                         (verdict.decl.full, citation),
                     )
-        self.assertEqual(counts, {3867: 13, 27030: 7})
+        self.assertEqual(counts, {3869: 13, 27034: 7})
 
     def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
         """A qualified glob selects the root namespace, while bare keeps finals."""
