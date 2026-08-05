@@ -12,9 +12,10 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# Family-level calibration, candidate scanner blob 9b927c68, `--pattern '_ferromagnetic$'`:
-#   223 candidates -> 19 safe-to-delete, 88 uncertain, 81 load-bearing,
-#   35 published-result; 112 of the 223 have zero Lean consumers.
+# Family-level calibration on the #4926 current head c26859a2,
+# `--pattern '_ferromagnetic$'`:
+#   221 candidates -> 15 safe-to-delete, 89 uncertain, 82 load-bearing,
+#   35 published-result; 111 of the 221 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
@@ -38,12 +39,12 @@
 # fourth from uncertain to load-bearing. Whole-library: safe-to-delete
 # 1091 -> 976, uncertain 691 -> 761, load-bearing 2081 -> 2126, published-result
 # unchanged at 7009, with no verdict moving toward safe-to-delete.
-# The row below that expects safe-to-delete is what caps the threshold at the 10
-# now in force: it is charged at 11 matches by the over-broad
-# `correlationAlongExhaustion_..._ferromagnetic` elision of docs/index.md:2193,
-# so at N >= 11 this file goes red. The family integers above are the same at
-# N = 8, 9 and 10; only the whole-library safe-to-delete count separates them
-# (980 at 8, 976 at 9 and 10), which is why the ceiling is the value chosen.
+# The concrete pair row below is uncertain because the current nine-member
+# shorthand charges all 9 of 9 declarations; it no longer pins the threshold.
+# The synthetic `test_qualified_globs_keep_the_1_2_10_11_threshold` pins the
+# chargeable 10 / unchargeable 11 boundary directly. The real-tree exit-zero
+# path is pinned separately by `test_isolated_candidate_exits_zero` using a
+# current safe zero-consumer candidate.
 # Before that: PR #4754 (safe-to-delete batch 4) took the family from 47/77 to
 # 46/78, and the elided-prefix rule (a suffix citation whose elided prefix is
 # spelled out on the same documentation line is a shorthand for the siblings
@@ -81,11 +82,10 @@ freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	not-safe	3 consumers; Concrete
 freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the name must not split the key
 correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
 
-# --- A genuinely isolated declaration: the exit-0 path must stay reachable ---
-# Main-relative (measured at 0922a812: no Lean consumer in the text scan, none in
-# the elaborated graph either, no docs/tex citation). Refresh -- and justify the
-# refresh -- if it ever acquires a consumer.
-Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	safe-to-delete	zero consumers by text and by `lake env lean scripts/audit/DumpDeps.lean`; no doc citation
+# --- A zero-consumer declaration conservatively retained by shorthand evidence ---
+# Issue #4926 leaves no Lean consumer, but the current 9-of-9 shorthand family
+# charges this declaration, so the fail-closed verdict is uncertain.
+Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	uncertain	zero Lean consumers; docs/index.md shorthand charges all 9 of 9 declarations in the current family
 
 # --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
 log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}

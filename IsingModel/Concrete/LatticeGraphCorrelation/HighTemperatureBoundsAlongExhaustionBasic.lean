@@ -101,10 +101,9 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich
 
 /-! ## Moved: ℤ^d HT AlongExhaustion correlation bound wrappers
 
-The 8 ℤ^d along-exhaustion correlation bound wrappers
+The 7 ℤ^d along-exhaustion correlation bound wrappers
 (`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`_at_pair_nonneg`, `_at_singleton_ferromagnetic`,
-`_at_pair_ferromagnetic`, `_at_singleton_eq_zero_le_one`,
+`_at_pair_nonneg`, `_at_pair_ferromagnetic`, `_at_singleton_eq_zero_le_one`,
 `_at_pair_le_one`, `_at_pair_sandwich`, `_at_pair_singleton_bundle`)
 now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExBasicCorrelation`.

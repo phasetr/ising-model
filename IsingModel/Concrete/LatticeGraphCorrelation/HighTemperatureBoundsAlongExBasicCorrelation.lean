@@ -8,7 +8,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 
 Narrow child module for the ℤ^d along-exhaustion correlation
 bound wrappers (`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`_at_pair_nonneg`, `_at_singleton_ferromagnetic`, `_at_pair_ferromagnetic`,
+`_at_pair_nonneg`, `_at_pair_ferromagnetic`,
 `_at_singleton_eq_zero_le_one`, `_at_pair_le_one`, `_at_pair_sandwich`)
 extracted from
 `HighTemperatureBoundsAlongExhaustionBasic.lean` in PR #2077. Each is
@@ -23,10 +23,9 @@ namespace Ambient
 
 /-! ## Moved: along-ex correlation simple bound wrappers
 
-The three wrappers
+The two wrappers
 `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic`
+`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg`
 now live in
 `HighTemperatureBoundsAlongExBasicCorrelationBounds.lean`. -/
 
