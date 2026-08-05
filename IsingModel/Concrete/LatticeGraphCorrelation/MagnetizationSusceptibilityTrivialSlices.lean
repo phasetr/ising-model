@@ -1,4 +1,4 @@
-import IsingModel.PhaseTransition
+import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
