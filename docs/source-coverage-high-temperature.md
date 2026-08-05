@@ -82,12 +82,6 @@ The FV rows were checked against `.self-local/refs/Friedli.Velenik.txt`, lines 8
 corresponding local PDF pages 116--119. GJ Theorem 17.6.1 was checked against
 `.self-local/refs/Glimm.Jaffe.Quantum_Physics.txt`, lines 15209--15247, and PDF page 324 because the
 displayed derivative formula is absent from the extracted text. The Chapter 18 rows were checked
-against the same extracted text, lines 15556--16118, and the corresponding PDF pages. Current Lean
-owners were checked under `IsingModel/Conditioning`, `IsingModel/AmbientLattice`, and
-`IsingModel/ClusterExpansion`. In particular, the surviving declarations cited in the matrices
-were checked in `IsingModel/Inequalities/NonnegCorrelations.lean`,
-`IsingModel/Conditioning/PlusHighTempRepresentation.lean`,
-`IsingModel/Conditioning/PlusOnePointRepresentation.lean`,
-`IsingModel/ClusterExpansion/TwoPointCorrelationInfiniteBetaDeriv.lean`, and
-`IsingModel/ClusterExpansion/TwoPointCorrelationInfiniteAnalytic.lean`. No issue, pull-request
-history, or project progress document was used as mathematical authority.
+against the same extracted text, lines 15556--16118, and the corresponding PDF pages. The
+surviving owners named in the matrices were checked against their current declaration statements.
+No issue, pull-request history, or project progress document was used as mathematical authority.
