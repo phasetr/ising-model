@@ -138,10 +138,9 @@ theorem
   correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (IsingModel.latticeGraph d) Λ J β hβJ n i j hij he
 
-/-! ## Moved: AlongExhaustion pair-positivity tail wrappers
+/-! ## Moved: AlongExhaustion pair-positivity wrappers
 
-The three `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`,
-`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`,
+The two `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`,
 `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`
 wrappers now live in `HighTemperatureBoundsAlongExhaustionBasicPairPositive.lean`. -/
 

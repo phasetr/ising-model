@@ -70,11 +70,10 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_rate_dist_ferromagnet
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
 
-/-! ## Moved: 3 edge-pair correlation capstones
+/-! ## Moved: 2 edge-pair correlation capstones
 
-The three §18.3 / §18.7 edge-pair correlation capstone wrappers
+The two §18.3 / §18.7 edge-pair correlation capstone wrappers
 (`correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge`,
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`,
 `correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`)
 now live in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge`.
