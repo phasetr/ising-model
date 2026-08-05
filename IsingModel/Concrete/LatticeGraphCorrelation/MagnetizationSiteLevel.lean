@@ -11,7 +11,7 @@ monotone wrappers
 now live in `MagnetizationSiteLevelTrivialAndMonotone.lean`. The
 theorem names are unchanged from the former `Magnetization` declarations.
 -/
-import IsingModel.PhaseTransition
+import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
@@ -22,7 +22,7 @@ namespace Ambient
 /-! ### Site-level magnetization wrappers (GJ §5.3, pp. 77–80)
 
 Direct ℤ^d forwarders for `magnetization G p i = correlation G p {i}`
-in `PhaseTransition.lean`. All pass through the abstract
+in `PhaseTransition/MagnetizationSusceptibility.lean`. All pass through the abstract
 `IsingModel.magnetization_*` theorems on
 `Ambient.inducedGraph (latticeGraph d) Λ`. -/
 
