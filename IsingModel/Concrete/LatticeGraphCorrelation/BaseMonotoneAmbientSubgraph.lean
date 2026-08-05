@@ -7,7 +7,6 @@ pass-through to the abstract `*_monotone_ambient_subgraph` lemma at
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
 -/
-import IsingModel.PhaseTransition
 import IsingModel.AmbientLattice.SpontaneousMono
 
 open scoped symmDiff

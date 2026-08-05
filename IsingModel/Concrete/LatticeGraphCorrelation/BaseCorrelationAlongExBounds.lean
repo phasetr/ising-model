@@ -9,7 +9,6 @@ abstract `correlationAlongExhaustion_*` lemma at `latticeGraph d`.
 The theorem names are unchanged from the former `Base`
 declarations.
 -/
-import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
