@@ -456,9 +456,10 @@ This project Ising route upgrades the volume-uniform ratio bound `generalRatio_n
 the Vitali--Porter pipeline for an arbitrary `A` (not just a pair `{i, j}`). Its volume-uniform
 complex-analysis architecture is analogous to the method in GJ Chapter 18. -/
 
-/-- **Degree-uniform general-boundary norm bound on a connected `cosh≠0` / activity-radius domain.**
-On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
-the general-boundary correlation is bounded by `generalRatioBoundFun Δ A.card`, uniformly over `U`.
+/-- **Degree-uniform general-observable norm bound on a connected `cosh≠0` /
+activity-radius domain.** On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and
+`‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`, the general-observable correlation is bounded by
+`generalRatioBoundFun Δ A.card`, uniformly over `U`.
 The `ball 0` version is the corollary `…_of_high_temp_uniform_radius`. This is the general-`A`
 analogue of
 `correlationComplex_two_point_norm_le_on_connected`, obtained from the already-general ratio
