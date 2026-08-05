@@ -33052,13 +33052,13 @@ cubic exhaustion ($\Delta = 2d$ uniform) and feeds
 $\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (the \#4235 Vitali
 consumer).  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
 
-\subsection{Infinite-volume high-temperature analyticity of the two-point function (Route~B final
-capstone, Issue \#4230 item~D)}
+\subsection{Infinite-volume high-temperature analyticity of the two-point function (Route~B derived
+specialization, Issue \#4230 item~D)}
 
-The route-B programme closes with
+The public route-B endpoint is
 $\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ in
 \texttt{ClusterExpansion/TwoPointCorrelationInfiniteAnalytic.lean}.  For the cubic lattice
-$\texttt{latticeGraph}\,d$, any exhaustion $\Lambda$ of $\mathbb{Z}^d$, $J \ge 0$, and $i \ne j$, there
+$\texttt{latticeGraph}\,d$, any exhaustion $\Lambda$ of $\mathbb{Z}^d$, $J \ge 0$, and sites $i,j$, there
 is a radius $r > 0$ such that for every small real $\beta \in (0, r)$ the along-exhaustion complex
 two-point correlations
 $n \mapsto \texttt{correlationComplexAlongExhaustion}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\{i,j\}\,(J)\,0\,z\,n$
@@ -33079,12 +33079,17 @@ ratio by $\texttt{twoPointHTBoundValue}\,(2d)$ (the PR~21 finite-graph bound) yi
 $\texttt{correlationComplexAlongExhaustion\_two\_point\_norm\_le\_uniform}$: a single disc on which
 \emph{all} exhaustion stages are bounded by the same $\Delta$-uniform value, since
 $\texttt{induced\_latticeGraph\_maxDegree\_le}$ caps every induced stage degree by $2d$ (uncovered stages
-are identically $0$).  \emph{Layer~2} feeds this $\texttt{hbdd}$ together with the volume-uniform
-partition non-vanishing $\texttt{hZ}$ (\#4238) into
-$\texttt{correlationComplexAlongExhaustion\_analytic\_of\_volume\_uniform\_bound}$ (\#4235), whose
-conclusion uses the proved function-theory theorem
-$\texttt{FunctionTheory.vitaliPorter\_tendstoLocallyUniformlyOn}$ and is the headline. This completes
-Issue~\#4230 item~D.  References: Glimm--Jaffe, 2nd ed., \S18.6--18.7; Friedli--Velenik, \S3.7.3.
+are identically $0$).  This sharper pair bound remains quantitative infrastructure.  \emph{Layer~2}
+is owned by the K4 general-observable theorem below: it feeds the general bound and volume-uniform
+partition non-vanishing into the Vitali--Porter bridge, after which the public pair endpoint is the
+thin specialization $A=\{i,j\}$.
+
+The proved scope is project-specific zero-field lattice-Ising analyticity in complexified $\beta$
+on a small high-temperature/KP window.  Friedli--Velenik \S3.7.3, pp.~116--119 supplies the lattice
+expansion context, \S5.4, Theorem~5.4, p.~224 the KP criterion, and Conway VII.\S2--3 the
+Montel/Vitali architecture.  Glimm--Jaffe Chapter~18, in particular Corollary~18.1.4, p.~324, is an
+architectural analogy only; neither it nor Theorem~17.6.1, p.~313 is the literal source of this
+lattice theorem.  This completes Issue~\#4230 item~D.
 
 \subsection{Anchored one-component peel identity for the HT-expansion numerator (K1, general-$A$
 boundary; Issue \#4404 PR~1)}
@@ -33206,8 +33211,8 @@ capstone).  References: Glimm--Jaffe, 2nd ed., Theorem~17.6.1 (p.313), \S18.4--1
 (K4; Issue \#4404)}
 
 Brick K4, in \texttt{ClusterExpansion/TwoPointCorrelationInfiniteAnalytic.lean}, upgrades K3's
-volume-uniform ratio bound $\texttt{generalRatio\_norm\_le}$ into the general-boundary analogue of the
-route-B pair capstone above (proven, axiom-free).
+volume-uniform ratio bound $\texttt{generalRatio\_norm\_le}$ into the canonical general-observable
+analyticity owner (proven, axiom-free).
 
 $\texttt{correlationComplex\_general\_norm\_le\_on\_connected}$ transports K3's ratio bound through the
 (already-general) ratio identity: on any open preconnected $U \ni 0$ with $\cosh(\beta J) \ne 0$ and
@@ -33234,15 +33239,18 @@ $n \mapsto \texttt{correlationComplexAlongExhaustion}\,(\texttt{latticeGraph}\,d
 converge locally uniformly on $\texttt{ball}\,0\,r$ to a function $f$ that is
 $\texttt{DifferentiableOn}\,\mathbb{C}$ there and satisfies
 $f(\beta) = \texttt{correlationInfinite}\,(\texttt{latticeGraph}\,d)\,\Lambda\,\langle J,0,\beta\rangle\,A$
-at that real $\beta$ --- the general-$A$ analogue of
-$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ above.
+at that real $\beta$.  The public
+$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ endpoint above is its
+derived $A=\{i,j\}$ specialization.
 
-K4 is brick K4 of the general-observable $\infty$-vol $\beta$-differentiability chain toward GJ
-Theorem~17.6.1 (\#4404); brick K5 below extracts the real $\beta$-\texttt{HasDerivAt}
-from this complex analyticity, completing the chain.  It is \emph{unconditional} on the KP window;
-scoped to the high-temperature Kotecký--Preiss window only (not the full $\sigma < \sigma_c$ range of
-Issue~\#4386); \emph{not} $\partial/\partial h$.  References: Glimm--Jaffe, 2nd ed.,
-Theorem~17.6.1 (p.313), \S18.4--18.7; Friedli--Velenik, \S3.7.3.
+K4 proves project-specific zero-field lattice-Ising analyticity in complexified $\beta$ on a small
+high-temperature/KP window; brick K5 below extracts its real $\beta$-\texttt{HasDerivAt} consequence.
+Friedli--Velenik \S3.7.3, pp.~116--119 supplies the lattice expansion context, \S5.4,
+Theorem~5.4, p.~224 the KP criterion, and Conway VII.\S2--3 the Montel/Vitali architecture.
+Glimm--Jaffe Chapter~18, particularly Corollary~18.1.4, p.~324, is an architectural analogy only;
+neither it nor Theorem~17.6.1, p.~313 is the literal source of this lattice theorem.  The result is
+scoped to the high-temperature window, not the full $\sigma < \sigma_c$ range, and is not
+$\partial/\partial h$.
 
 \subsection{Infinite-volume general-observable real \texorpdfstring{$\beta$}{beta}-derivative at
 high temperature (K5, the final brick; Issue \#4404)}
@@ -33348,7 +33356,9 @@ $f$ on the real axis with $\uparrow(\texttt{correlationInfinite}\,G\,\Lambda\,p\
 ($\texttt{tendsto\_nhds\_unique}$ of the locally-uniform pointwise limit and the real-axis limit).
 The combined statement is $\texttt{\_vitali\_identified\_at\_real}$.  Historical stage note: PR 1
 still took locally uniform convergence from a volume-uniform cluster-expansion (Montel) bound as an
-input; the later Issue~\#4230 rows discharge it and culminate in
+input; the later Issue~\#4230 rows discharge it and culminate in the canonical general theorem
+$\texttt{correlationInfinite\_latticeGraph\_general\_analytic\_high\_temp}$ and its public
+$A=\{i,j\}$ specialization
 $\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
 Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
@@ -33373,7 +33383,9 @@ $\texttt{correlationComplexAlongExhaustion\_vitali\_identified\_at\_real\_of\_ne
 holomorphicity-and-real-identification conclusion from only the partition non-vanishing and the
 locally uniform convergence $\texttt{hconv}$.  Historical stage note: PR 2 still accepted
 $\texttt{hconv}$ and partition non-vanishing as inputs; the later Issue~\#4230 rows discharge both
-and culminate in
+and culminate in the canonical general theorem
+$\texttt{correlationInfinite\_latticeGraph\_general\_analytic\_high\_temp}$ and its public
+$A=\{i,j\}$ specialization
 $\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$.
 Reference: Glimm--Jaffe, 2nd ed., \S18.6--18.7.
 
@@ -33501,8 +33513,10 @@ $\texttt{tendsto\_of\_subseq\_tendsto}$ in the compact-convergence space $C(\wid
 every subsequence has a further Montel subsequence whose limit again agrees with $g$ on $S$, hence
 equals $f$ by $\texttt{vitali\_uniqueness}$, so all subsequential limits coincide.  The axiom is
 removed from $\texttt{FunctionTheoryAxioms.lean}$ (now a re-export of the proved theorem).
-$\texttt{\#print axioms}$ on the item-D capstone
-$\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ is now
+$\texttt{\#print axioms}$ on the canonical owner
+$\texttt{correlationInfinite\_latticeGraph\_general\_analytic\_high\_temp}$ and its two-point
+specialization $\texttt{correlationInfinite\_latticeGraph\_two\_point\_analytic\_high\_temp}$ is
+in each case
 $[\texttt{propext},\texttt{Classical.choice},\texttt{Quot.sound}]$.  The project's only remaining
 declared axiom is the \S17.5 $\texttt{lemma\_17\_5\_2\_derivativeLimitProvider\_latticeGraph}$.
 Reference: Conway, \emph{Functions of One Complex Variable I}, VII.\S2--3 (Montel/Vitali);

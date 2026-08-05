@@ -1,19 +1,19 @@
-import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
 import IsingModel.ClusterExpansion.GeneralRatioBound
 import IsingModel.AmbientComplexAnalyticity.VolumeUniformZNonvanishing
 import IsingModel.AmbientComplexAnalyticity.Vitali.CorrelationRealAxisVitali
 
 /-!
-# Infinite-volume high-temperature analyticity of the two-point function
+# Infinite-volume high-temperature analyticity of general observables
 
-This file is the final Route B capstone for the high-temperature two-point correlation
-analyticity argument.
+This file provides the canonical high-temperature analyticity theorem for arbitrary finite
+observables and its derived two-point specialization.
 
-Layer 1 proves a finite-graph two-point correlation bound on a beta-disc whose radius depends
+The finite-graph pair bounds remain the quantitative layer on a beta-disc whose radius depends
 only on the degree cap `Delta` and the real coupling `J`, not on the finite graph.
 
-Layer 2 applies the degree-uniform finite-graph bound to every induced lattice-exhaustion stage
-and feeds the resulting volume-uniform local boundedness into the existing Vitali--Porter bridge.
+The canonical arbitrary-observable theorem applies the general volume-uniform bound to every
+induced lattice-exhaustion stage and feeds that local boundedness into the Vitali--Porter bridge;
+the public two-point endpoint specializes it at `A = {i, j}`.
 -/
 
 namespace IsingModel
@@ -505,7 +505,7 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-! ## Lattice-exhaustion uniform bound and final Vitali capstone -/
+/-! ## Lattice-exhaustion uniform bounds and canonical Vitali capstone -/
 
 /-- The per-stage two-point complex correlations along a lattice exhaustion are uniformly bounded
 on the degree-uniform high-temperature beta ball. -/
@@ -541,106 +541,6 @@ theorem correlationComplexAlongExhaustion_two_point_norm_le_uniform
   · rw [dif_neg hsub, norm_zero]
     exact le_of_lt (twoPointHTBoundValue_pos (2 * d))
 
-/-- **Infinite-volume lattice two-point correlation analyticity at high temperature.** -/
-theorem correlationInfinite_latticeGraph_two_point_analytic_high_temp
-    (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
-    (J : ℝ) (hJ : 0 ≤ J) {i j : Fin d → ℤ} (hij : i ≠ j) :
-    ∃ r > 0, ∀ β : ℝ, 0 < β → β < r →
-      ∃ f : ℂ → ℂ, DifferentiableOn ℂ f (Metric.ball (0 : ℂ) r) ∧
-        TendstoLocallyUniformlyOn
-          (fun n z => correlationComplexAlongExhaustion (latticeGraph d) Λ
-            ({i, j} : Finset (Fin d → ℤ)) (J : ℂ) 0 z n)
-          f Filter.atTop (Metric.ball (0 : ℂ) r) ∧
-        f (β : ℂ) =
-          ((correlationInfinite (latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
-              ({i, j} : Finset (Fin d → ℤ)) : ℝ) : ℂ) := by
-  classical
-  obtain ⟨rZ, hrZpos, hZraw⟩ :=
-    partitionFunctionComplexAlongExhaustion_ne_zero_on_ball_uniform_latticeGraph d Λ J
-  set rHT : ℝ := twoPointHTUniformRadius (2 * d) J with hrHT
-  set r : ℝ := min rHT rZ with hr
-  have hrHTpos : 0 < rHT := by simpa [hrHT] using twoPointHTUniformRadius_pos (2 * d) J
-  have hrpos : 0 < r := by
-    rw [hr]
-    exact lt_min hrHTpos hrZpos
-  refine ⟨r, hrpos, ?_⟩
-  intro β hβpos hβlt
-  set U : Set ℂ := Metric.ball (0 : ℂ) r with hU
-  have hUopen : IsOpen U := Metric.isOpen_ball
-  have hUpre : IsPreconnected U := (convex_ball (0 : ℂ) r).isPreconnected
-  have hβU : (β : ℂ) ∈ U := by
-    rw [hU, Metric.mem_ball, dist_zero_right, Complex.norm_real, Real.norm_eq_abs,
-      abs_of_pos hβpos]
-    exact hβlt
-  have hf : Ferromagnetic (⟨J, 0, β⟩ : IsingParams ℝ) :=
-    ⟨hJ, le_rfl, hβpos⟩
-  have hZ : ∀ n, ∀ z ∈ U,
-      partitionFunctionComplexAlongExhaustion (latticeGraph d) Λ
-        ((⟨J, 0, β⟩ : IsingParams ℝ).J : ℂ)
-        ((⟨J, 0, β⟩ : IsingParams ℝ).h : ℂ) z n ≠ 0 := by
-    intro n z hz
-    have hzdist : dist z 0 < r := by
-      simpa [hU] using Metric.mem_ball.mp hz
-    have hzZ : z ∈ Metric.ball (0 : ℂ) rZ := by
-      refine Metric.mem_ball.mpr (lt_of_lt_of_le hzdist ?_)
-      rw [hr]
-      exact min_le_right _ _
-    simpa using hZraw n z hzZ
-  have hbdd : ∀ z ∈ U, ∃ ρ M : ℝ, 0 < ρ ∧ Metric.ball z ρ ⊆ U ∧
-      ∀ n, ∀ w ∈ Metric.ball z ρ,
-        ‖correlationComplexAlongExhaustion (latticeGraph d) Λ
-            ({i, j} : Finset (Fin d → ℤ)) ((⟨J, 0, β⟩ : IsingParams ℝ).J : ℂ)
-            ((⟨J, 0, β⟩ : IsingParams ℝ).h : ℂ) w n‖ ≤
-          M := by
-    intro z hz
-    have hz_norm : ‖z‖ < r := by
-      have hzdist : dist z 0 < r := by simpa [hU] using Metric.mem_ball.mp hz
-      simpa [dist_zero_right] using hzdist
-    refine ⟨(r - ‖z‖) / 2, twoPointHTBoundValue (2 * d), by linarith, ?_, ?_⟩
-    · intro w hw
-      have hwz : dist w z < (r - ‖z‖) / 2 := Metric.mem_ball.mp hw
-      have hw_norm : ‖w‖ < r := by
-        calc
-          ‖w‖ = dist w 0 := by simp [dist_zero_right]
-          _ ≤ dist w z + dist z 0 := dist_triangle w z 0
-          _ = dist w z + ‖z‖ := by rw [dist_zero_right]
-          _ < (r - ‖z‖) / 2 + ‖z‖ := by linarith
-          _ < r := by linarith
-      rw [hU, Metric.mem_ball, dist_zero_right]
-      exact hw_norm
-    · intro n w hw
-      have hwU : w ∈ U := by
-        exact (show Metric.ball z ((r - ‖z‖) / 2) ⊆ U from by
-          intro y hy
-          have hyz : dist y z < (r - ‖z‖) / 2 := Metric.mem_ball.mp hy
-          have hy_norm : ‖y‖ < r := by
-            calc
-              ‖y‖ = dist y 0 := by simp [dist_zero_right]
-              _ ≤ dist y z + dist z 0 := dist_triangle y z 0
-              _ = dist y z + ‖z‖ := by rw [dist_zero_right]
-              _ < (r - ‖z‖) / 2 + ‖z‖ := by linarith
-              _ < r := by linarith
-          rw [hU, Metric.mem_ball, dist_zero_right]
-          exact hy_norm) hw
-      have hwHT : w ∈ Metric.ball (0 : ℂ) (twoPointHTUniformRadius (2 * d) J) := by
-        have hwdist : dist w 0 < r := by simpa [hU] using Metric.mem_ball.mp hwU
-        refine Metric.mem_ball.mpr (lt_of_lt_of_le hwdist ?_)
-        rw [hr, hrHT]
-        exact min_le_left _ _
-      simpa using
-        correlationComplexAlongExhaustion_two_point_norm_le_uniform
-          d Λ J hij n w hwHT
-  obtain ⟨f, hfdiff, hconv, hident⟩ :=
-    correlationComplexAlongExhaustion_analytic_of_volume_uniform_bound
-      (G := latticeGraph d) (Λ := Λ)
-      (p := (⟨J, 0, β⟩ : IsingParams ℝ)) hf
-      ({i, j} : Finset (Fin d → ℤ))
-      hUopen hUpre hβU hZ hbdd
-  refine ⟨f, ?_, ?_, ?_⟩
-  · simpa [hU] using hfdiff
-  · simpa [hU] using hconv
-  · simpa using hident
-
 /-- The per-stage general-observable complex Ising correlations along a lattice exhaustion are
 uniformly bounded on the degree-uniform high-temperature beta ball. This transports the general-`A`
 bound along the exhaustion, with the degree cap instantiated at `2 * d` via
@@ -669,9 +569,11 @@ theorem correlationComplexAlongExhaustion_general_norm_le_uniform
     exact generalRatioBoundFun_nonneg (2 * d) A.card
 
 /-- **Infinite-volume lattice Ising general-observable analyticity at high temperature.**
-This general-`A` analogue of `correlationInfinite_latticeGraph_two_point_analytic_high_temp`
-uses a Montel/Vitali architecture analogous to GJ Chapter 18. The Montel local-boundedness
-hypothesis is supplied by the volume-uniform general bound
+This is the canonical project-specific zero-field lattice-Ising `beta`-window owner. Its
+Montel/Vitali architecture is analogous to Glimm--Jaffe Chapter 18, but it is not literal coverage
+of Glimm--Jaffe Theorem 17.6.1 or Corollary 18.1.4. The lattice and KP ingredients follow
+Friedli--Velenik §3.7.3, pp. 116--119, and §5.4, Theorem 5.4, p. 224; the Montel/Vitali
+architecture follows Conway VII.§§2--3. Local boundedness is supplied by
 `correlationComplexAlongExhaustion_general_norm_le_uniform` with constant
 `generalRatioBoundFun (2 * d) A.card`, independent of the exhaustion stage and of the point. -/
 theorem correlationInfinite_latticeGraph_general_analytic_high_temp
@@ -772,6 +674,27 @@ theorem correlationInfinite_latticeGraph_general_analytic_high_temp
   · simpa [hU] using hfdiff
   · simpa [hU] using hconv
   · simpa using hident
+
+/-- **Infinite-volume lattice two-point correlation analyticity at high temperature.**
+This public endpoint is the `A = {i, j}` specialization of the canonical project-specific
+zero-field lattice-Ising `beta`-window theorem above. Its source scope is therefore the same:
+Friedli--Velenik §3.7.3, pp. 116--119, and §5.4, Theorem 5.4, p. 224 provide the lattice and KP
+ingredients; Conway VII.§§2--3 provides the Montel/Vitali architecture;
+Glimm--Jaffe Chapter 18 is an architectural analogy, not literal coverage of Theorem 17.6.1 or
+Corollary 18.1.4. -/
+theorem correlationInfinite_latticeGraph_two_point_analytic_high_temp
+    (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
+    (J : ℝ) (hJ : 0 ≤ J) {i j : Fin d → ℤ} :
+    ∃ r > 0, ∀ β : ℝ, 0 < β → β < r →
+      ∃ f : ℂ → ℂ, DifferentiableOn ℂ f (Metric.ball (0 : ℂ) r) ∧
+        TendstoLocallyUniformlyOn
+          (fun n z => correlationComplexAlongExhaustion (latticeGraph d) Λ
+            ({i, j} : Finset (Fin d → ℤ)) (J : ℂ) 0 z n)
+          f Filter.atTop (Metric.ball (0 : ℂ) r) ∧
+        f (β : ℂ) =
+          ((correlationInfinite (latticeGraph d) Λ (⟨J, 0, β⟩ : IsingParams ℝ)
+              ({i, j} : Finset (Fin d → ℤ)) : ℝ) : ℂ) :=
+  correlationInfinite_latticeGraph_general_analytic_high_temp d Λ J hJ {i, j}
 
 end Ambient
 
