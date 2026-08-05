@@ -81,11 +81,10 @@ freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	not-safe	3 consumers; Concrete
 freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the name must not split the key
 correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
 
-# --- A genuinely isolated declaration: the exit-0 path must stay reachable ---
-# Main-relative (measured at 0922a812: no Lean consumer in the text scan, none in
-# the elaborated graph either, no docs/tex citation). Refresh -- and justify the
-# refresh -- if it ever acquires a consumer.
-Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	safe-to-delete	zero consumers by text and by `lake env lean scripts/audit/DumpDeps.lean`; no doc citation
+# --- A zero-consumer declaration conservatively retained by shorthand evidence ---
+# Issue #4926 leaves no Lean consumer, but the current 9-of-9 shorthand family
+# charges this declaration, so the fail-closed verdict is uncertain.
+Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	uncertain	zero Lean consumers; docs/index.md shorthand charges all 9 of 9 declarations in the current family
 
 # --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
 log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}

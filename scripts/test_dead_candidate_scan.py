@@ -1442,7 +1442,9 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # `toRangeRelCompactData_viaLocal_direct` as a byte-identical twin of
         # `toRangeRelCompactData_direct` in the same namespace, and the #4854
         # pilot left it with no consumer, so it is retired.
-        self.assertEqual(len(broad or []), 10565)
+        # Issue #4926 removes two redundant singleton wrappers, so the current
+        # broad declaration population is 10565 - 2 = 10563.
+        self.assertEqual(len(broad or []), 10563)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1454,7 +1456,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10565 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10563 declarations"]},
         )
 
 
@@ -2318,7 +2320,12 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """223 candidates -> 19 safe / 88 uncertain / 81 load-bearing / 35 published.
+        """221 candidates -> 15 safe / 89 uncertain / 82 load-bearing / 35 published.
+
+        Issue #4926 removes two safe singleton wrappers. The remaining nine-member
+        shorthand charges the concrete pair candidate, moving it to uncertain, and
+        makes the ambient pair owner load-bearing. The zero-consumer census becomes
+        111. No survivor moves toward safe-to-delete.
 
         Recalibrated by the resolved-glob elision-head repair
         (:class:`ResolvedGlobElisionHeadTest`). On the same documentation line,
@@ -2399,20 +2406,20 @@ class FamilyCalibrationTest(unittest.TestCase):
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 223)
-        self.assertEqual(counts.get(dcs.SAFE), 19)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
+        self.assertEqual(len(verdicts), 221)
+        self.assertEqual(counts.get(dcs.SAFE), 15)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 89)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 82)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """112 of the 223 have no Lean consumer at all.
+        """111 of the 221 have no Lean consumer at all.
 
         Was 114 of 226 before PR #4690 dropped the three safe-to-delete
         RatioLogFe ``_ferromagnetic`` alongExhaustion bundle wrappers; two of the
         three were zero-consumer, so the count drops by two.
         """
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 112)
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 111)
 
 
 # Anti-vacuity floor for the Unicode canary population.  The Unicode guarantee
@@ -2620,8 +2627,7 @@ class ExitCodeTest(unittest.TestCase):
         code, out = self.run_main(
             [
                 "--name",
-                "Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair"
-                "_ge_tanh_div_two_pow_edges_ferromagnetic",
+                "IsingModel.freeEnergy_eq_tsum_mayer_of_pairwise_disjoint_ferromagnetic",
             ]
         )
         self.assertEqual(code, dcs.EXIT_OK, out)
