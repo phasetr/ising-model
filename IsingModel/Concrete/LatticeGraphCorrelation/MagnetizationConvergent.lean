@@ -1,11 +1,11 @@
 /- MagnetizationConvergent.lean
-Narrow child module for the 9 ℤ^d `magnetization_convergent_*`,
-`truncated2_convergent_*`, `susceptibility_convergent_subgraph`, and
-`magnetization_total_convergent_subgraph` wrappers extracted from
-`Magnetization.lean` in PR #2030. The theorem names are unchanged
-from the former `Magnetization` declarations.
+Narrow child module for the three ℤ^d `magnetization_convergent_*`
+wrappers extracted from `Magnetization.lean` in PR #2030. The theorem
+names are unchanged from the former `Magnetization` declarations.
 -/
-import IsingModel.PhaseTransition
+import IsingModel.PhaseTransition.MagnetizationSusceptibility
+import IsingModel.PhaseTransition.CriticalGrowth
+import IsingModel.PhaseTransition.BetaRegularity
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
@@ -13,12 +13,14 @@ open scoped symmDiff
 namespace IsingModel
 namespace Ambient
 
-/-! ### Magnetization / truncated-2 / susceptibility convergence wrappers
+/-! ### Magnetization convergence wrappers
 
-Direct ℤ^d forwarders for `magnetization_convergent_{J,h,beta}`,
-`truncated2_convergent_{J,h,beta,subgraph}`, and
-`susceptibility_convergent_subgraph` /
-`magnetization_total_convergent_subgraph` (`IsingModel/PhaseTransition.lean`). -/
+Direct ℤ^d forwarders for `magnetization_convergent_{J,h,beta}`.
+The abstract J-convergence owner is
+`IsingModel/PhaseTransition/BetaRegularity.lean`; the h- and
+beta-convergence owner is `IsingModel/PhaseTransition/CriticalGrowth.lean`.
+`IsingModel/PhaseTransition/MagnetizationSusceptibility.lean` owns
+`magnetization`. -/
 
 /-- **ℤ^d magnetization_convergent_J direct** (Λ-induced, ferromagnetic):
 `n ↦ M_i(J = n, h, β)` converges for `h ≥ 0`, `β > 0`. Thin pass-through

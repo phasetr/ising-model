@@ -3858,6 +3858,8 @@ monotone-bounded extension in $\beta \to \infty$ (not in GJ).
 
 Parallel $\mathbb{Z}^d$ wrappers for the derived \S5 quantities
 (\texttt{Concrete/LatticeGraphCorrelation/MagnetizationConvergent.lean},
+\texttt{Concrete/LatticeGraphCorrelation/MagnetizationConvergentTruncated2.lean}, and
+\texttt{Concrete/LatticeGraphCorrelation/MagnetizationConvergentSubgraph.lean},
 narrowed out of \texttt{Magnetization.lean} in PR~\#2030):
 \texttt{magnetization\_convergent\_\{J,h,beta\}\_latticeGraph},
 \texttt{truncated2\_convergent\_\{J,h,beta,subgraph\}\_latticeGraph},
@@ -3865,7 +3867,9 @@ narrowed out of \texttt{Magnetization.lean} in PR~\#2030):
 \texttt{magnetization\_total\_convergent\_subgraph\_latticeGraph}
 pass through the abstract
 \texttt{IsingModel.\{magnetization,truncated2,susceptibility,magnetization\_total\}\_convergent\_*}
-(\texttt{IsingModel/PhaseTransition.lean}). The $J,h,\beta$ wrappers
+whose convergence theorems are owned by
+\texttt{IsingModel/PhaseTransition/BetaRegularity.lean} and
+\texttt{IsingModel/PhaseTransition/CriticalGrowth.lean}. The $J,h,\beta$ wrappers
 fix the graph to \texttt{Ambient.inducedGraph (latticeGraph d)\,$\Lambda$};
 the \texttt{\_subgraph} wrappers only fix $\iota = \operatorname{\uparrow}\Lambda$
 (the subgraph parameter $G_n$ on the $\Lambda$-induced type remains

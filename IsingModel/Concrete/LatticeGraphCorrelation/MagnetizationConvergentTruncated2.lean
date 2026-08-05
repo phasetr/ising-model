@@ -1,4 +1,5 @@
-import IsingModel.PhaseTransition
+import IsingModel.PhaseTransition.BetaRegularity
+import IsingModel.Inequalities.GHS.TruncatedDefs
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
