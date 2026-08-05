@@ -65,7 +65,7 @@ theorem freeEnergy_high_temp_h_zero_complete_summary
      simpa [mul_zero, Real.cosh_zero] using this,
    freeEnergy_beta_zero G J 0 hne⟩
 
-/-- **Single-edge subset is in the FV (3.46) numerator filter at `A = {i, j}`**:
+/-- **Single-edge subset is in the project free-boundary numerator filter at `A = {i, j}`**:
 for `i ≠ j` and an edge `e = s(i, j) ∈ G.edgeSet`, the singleton
 `{e} ⊆ G.edgeFinset` satisfies the parity predicate: at `v = i, j`,
 `1_{v ∈ A} + 1 = 2` is even; at any other `v`, `0 + 0 = 0` is even.
