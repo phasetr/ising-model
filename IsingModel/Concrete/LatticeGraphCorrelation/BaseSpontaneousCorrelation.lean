@@ -10,7 +10,6 @@ pass-through to the abstract `abs_spontaneousCorrelation_le_one` /
 `latticeGraph d`. The theorem names are unchanged from the former
 `Base` declarations.
 -/
-import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
