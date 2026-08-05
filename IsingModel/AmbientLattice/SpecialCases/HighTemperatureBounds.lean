@@ -165,12 +165,11 @@ via the umbrella.
 -/
 
 
-/-! ## Moved: 2 umbrella-residue correlation wrappers
+/-! ## Moved: umbrella-residue correlation wrapper
 
-The two umbrella-residue correlation wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`,
-`correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic`)
-now live in
+The umbrella-residue correlation wrapper
+`correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`
+now lives in
 `IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation`.
 The earlier import path is preserved by re-exporting the new child
 from this parent module and from the umbrella `SpecialCases.lean`.

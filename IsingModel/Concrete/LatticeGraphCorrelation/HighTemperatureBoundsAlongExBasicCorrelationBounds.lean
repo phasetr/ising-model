@@ -1,19 +1,17 @@
-import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairBase
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
 
 /-!
 # ℤ^d along-ex correlation simple bound wrappers
 
-Narrow child module for three ℤ^d along-ex
+Narrow child module for two ℤ^d along-ex
 `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_*`
 simple bound wrappers extracted from
 `HighTemperatureBoundsAlongExBasicCorrelation.lean`:
 
 * `_at_empty_A`,
-* `_at_pair_nonneg`,
-* `_at_singleton_ferromagnetic`.
+* `_at_pair_nonneg`.
 -/
 
 namespace IsingModel
@@ -40,15 +38,6 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset (Fin d → ℤ)) n :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg
     (IsingModel.latticeGraph d) Λ J β hβJ i j n
-
-/-- **ℤ^d along-ex singleton ferromagnetic vanish**. -/
-theorem correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
-    (hJ : 0 ≤ J) (hβ : 0 < β) (i : Fin d → ℤ) (n : ℕ) :
-    correlationAlongExhaustion (IsingModel.latticeGraph d) Λ
-        (⟨J, 0, β⟩ : IsingParams ℝ) ({i} : Finset (Fin d → ℤ)) n = 0 :=
-  correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic
-    (IsingModel.latticeGraph d) Λ J β hJ hβ i n
 
 end Ambient
 end IsingModel
