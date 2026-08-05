@@ -1,4 +1,4 @@
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
+import IsingModel.AmbientLattice.Exhaustion
 
 /-!
 # Ambient alongExhaustion correlation wrappers at h = 0 (umbrella residue)
