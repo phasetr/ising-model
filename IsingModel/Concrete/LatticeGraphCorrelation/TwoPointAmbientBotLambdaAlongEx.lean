@@ -1,4 +1,5 @@
-import IsingModel.PhaseTransition
+import IsingModel.AmbientLattice.Monotonicity.AmbientSubgraph
+import IsingModel.AmbientLattice.CorrelationInfinite.AmbientSubgraph
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
