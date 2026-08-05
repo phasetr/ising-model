@@ -120,9 +120,8 @@ wrappers (`bundle_ferromagnetic`, `complete_summary`,
 
 
 
-/-- **ℤ^d along-ex pair correlation single-edge tanh lower bound at stage `n`
-(GJ §18.3 / FV (3.46))**:
-applies the Λ-level single-edge lower bound at the stage-`n` subtype.
+/-- **ℤ^d transport of the project-derived pair lower bound at stage `n`.**
+Applies the Λ-level single-edge lower bound at the stage-`n` subtype.
 ℤ^d wrapper of
 `correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
 theorem

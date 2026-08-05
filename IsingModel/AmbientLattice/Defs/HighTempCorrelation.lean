@@ -346,7 +346,7 @@ theorem correlationΛ_high_temp_h_zero_at_singleton_eq_zero_le_one
   ⟨correlationΛ_high_temp_h_zero_at_singleton G Λ J β i,
    (correlationΛ_high_temp_h_zero_at_singleton G Λ J β i).symm ▸ zero_le_one⟩
 
-/-- **Λ pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Λ transport of the project-derived pair single-edge tanh lower bound.**
 under `0 ≤ β·J` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|` where `i, j : ↑Λ`. Λ-layer wrapper
 of `correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
@@ -362,7 +362,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
   exact correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (inducedGraph G Λ) J β hβJ i j hij he
 
-/-- **Λ pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Λ transport of project-derived pair strict positivity under an edge.**
 under `0 < β·J` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_pos_of_edge`. -/
@@ -377,7 +377,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
   exact correlation_high_temp_h_zero_at_pair_pos_of_edge
     (inducedGraph G Λ) J β hβJ i j hij he
 
-/-- **Λ ferromagnetic pair single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Λ ferromagnetic specialization of the project-derived pair lower bound.**
 under `0 ≤ J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`. -/
@@ -392,7 +392,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferroma
   correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     G Λ J β (mul_nonneg hβ.le hJ) i j hij he
 
-/-- **Λ ferromagnetic pair strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Λ ferromagnetic specialization of project-derived pair strict positivity.**
 under `0 < J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`. -/

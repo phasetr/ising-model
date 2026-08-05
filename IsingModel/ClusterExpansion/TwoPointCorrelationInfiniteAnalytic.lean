@@ -449,21 +449,20 @@ theorem correlationComplex_two_point_norm_le_of_high_temp_uniform_radius
     (fun z hz => twoPointHTUniformRadius_cosh_ne Δ J z hz)
     (fun z hz => twoPointHTUniformRadius_tanh_lt Δ J z hz)
 
-/-! ## General-boundary (K4) degree-uniform bound and Montel capstone
+/-! ## General-observable degree-uniform bound and Montel capstone
 
-Brick K4 of GJ Theorem 17.6.1 (p.313; §18): the general-boundary analogue of the pair route
-above.  It upgrades K3's volume-uniform ratio bound `generalRatio_norm_le`
-(`GeneralRatioBound.lean`) into the boundary-general Montel local-boundedness input consumed by the
-Vitali--Porter pipeline, for an arbitrary boundary `A` (not just a pair `{i, j}`).  K5 (the
-infinite-volume `β`-derivative assembly) remains. -/
+This project Ising route upgrades the volume-uniform ratio bound `generalRatio_norm_le`
+(`GeneralRatioBound.lean`) into the general-observable Montel local-boundedness input consumed by
+the Vitali--Porter pipeline for an arbitrary `A` (not just a pair `{i, j}`). Its volume-uniform
+complex-analysis architecture is analogous to the method in GJ Chapter 18. -/
 
 /-- **Degree-uniform general-boundary norm bound on a connected `cosh≠0` / activity-radius domain.**
 On an open preconnected `U ∋ 0` where `cosh(βJ) ≠ 0` and `‖tanh(βJ)‖ < twoPointHTActivityRadius Δ`,
 the general-boundary correlation is bounded by `generalRatioBoundFun Δ A.card`, uniformly over `U`.
-The `ball 0` version is the corollary `…_of_high_temp_uniform_radius`.  Brick K4 of GJ Theorem
-17.6.1 (p.313; §18); the general-`A` analogue of
+The `ball 0` version is the corollary `…_of_high_temp_uniform_radius`. This is the general-`A`
+analogue of
 `correlationComplex_two_point_norm_le_on_connected`, obtained from the already-general ratio
-identity plus K3 `generalRatio_norm_le`. -/
+identity and `generalRatio_norm_le`. -/
 theorem correlationComplex_general_norm_le_on_connected
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
     (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ)
@@ -487,8 +486,8 @@ theorem correlationComplex_general_norm_le_on_connected
             htSubgraphSum G A t / htSubgraphSum G (∅ : Finset ι) t from hExp hβ]
     _ ≤ generalRatioBoundFun Δ A.card := generalRatio_norm_le Δ htz G hΔ A
 
-/-- The `ball 0`-instance of the general-boundary norm bound (corollary of the connected-domain
-version), on the degree-uniform high-temperature disc.  Brick K4 of GJ Theorem 17.6.1 (p.313). -/
+/-- The `ball 0`-instance of the project Ising general-observable norm bound, as a corollary of the
+connected-domain version on the degree-uniform high-temperature disc. -/
 theorem correlationComplex_general_norm_le_of_high_temp_uniform_radius
     (G : SimpleGraph ι) [DecidableRel G.Adj] [Fintype G.edgeSet]
     (A : Finset ι) (J : ℝ) (Δ : ℕ) (hΔ : G.maxDegree ≤ Δ) :
@@ -641,10 +640,10 @@ theorem correlationInfinite_latticeGraph_two_point_analytic_high_temp
   · simpa [hU] using hconv
   · simpa using hident
 
-/-- The per-stage general-boundary complex correlations along a lattice exhaustion are uniformly
-bounded on the degree-uniform high-temperature beta ball.  Brick K4 of GJ Theorem 17.6.1 (p.313;
-§18); the general-`A` analogue of `correlationComplexAlongExhaustion_two_point_norm_le_uniform`,
-with the degree cap instantiated at `2 * d` via `induced_latticeGraph_maxDegree_le`. -/
+/-- The per-stage general-observable complex Ising correlations along a lattice exhaustion are
+uniformly bounded on the degree-uniform high-temperature beta ball. This transports the general-`A`
+bound along the exhaustion, with the degree cap instantiated at `2 * d` via
+`induced_latticeGraph_maxDegree_le`. -/
 theorem correlationComplexAlongExhaustion_general_norm_le_uniform
     (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     (J : ℝ) (A : Finset (Fin d → ℤ)) :
@@ -668,13 +667,12 @@ theorem correlationComplexAlongExhaustion_general_norm_le_uniform
   · rw [dif_neg hsub, norm_zero]
     exact generalRatioBoundFun_nonneg (2 * d) A.card
 
-/-- **Infinite-volume lattice general-boundary correlation analyticity at high temperature.**
-Brick K4 of GJ Theorem 17.6.1 (p.313; §18): the general-`A` analogue of
-`correlationInfinite_latticeGraph_two_point_analytic_high_temp`.  The Montel local-boundedness
+/-- **Infinite-volume lattice Ising general-observable analyticity at high temperature.**
+This general-`A` analogue of `correlationInfinite_latticeGraph_two_point_analytic_high_temp`
+uses a Montel/Vitali architecture analogous to GJ Chapter 18. The Montel local-boundedness
 hypothesis is supplied by the volume-uniform general bound
 `correlationComplexAlongExhaustion_general_norm_le_uniform` with constant
-`generalRatioBoundFun (2 * d) A.card`, independent of the exhaustion stage and of the point.  K5
-(the infinite-volume `β`-derivative assembly) remains. -/
+`generalRatioBoundFun (2 * d) A.card`, independent of the exhaustion stage and of the point. -/
 theorem correlationInfinite_latticeGraph_general_analytic_high_temp
     (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ : 0 ≤ J) (A : Finset (Fin d → ℤ)) :

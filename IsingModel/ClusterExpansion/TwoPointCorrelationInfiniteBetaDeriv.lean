@@ -2,34 +2,34 @@ import IsingModel.ClusterExpansion.TwoPointCorrelationInfiniteAnalytic
 import Mathlib.Analysis.Complex.RealDeriv
 
 /-!
-# Infinite-volume general-observable β-derivative at high temperature (GJ Thm 17.6.1, brick K5)
+# Infinite-volume general-observable Ising β-derivative at high temperature
 
-This module is brick **K5**, the FINAL brick, of the high-temperature-window portion of
-Glimm–Jaffe Theorem 17.6.1 (p.~313; §18) for a **general observable** `A`.  It upgrades the
-complex analyticity established in K4
-(`correlationInfinite_latticeGraph_general_analytic_high_temp`) to a genuine **real** `β`-derivative
+This module upgrades the complex analyticity established by
+`correlationInfinite_latticeGraph_general_analytic_high_temp` to a genuine **real** `β`-derivative
 of the infinite-volume correlation `correlationInfinite (latticeGraph d) Λ ⟨J, 0, ·⟩ A` on the
 Kotecký–Preiss high-temperature window `(0, r)`.
 
-The proof restricts the already-holomorphic Vitali limit `f` (from K4) to the real axis:
+The proof restricts the already-holomorphic Vitali limit `f` to the real axis:
 at an interior real point `↑β` of the ball `ball 0 r`, `f` is complex-differentiable, hence
-`β' ↦ (f ↑β').re` has a real `HasDerivAt`; and on the window `(f ↑β').re = correlationInfinite(β')`
+`β' ↦ (f ↑β').re` has a real `HasDerivAt`; and on the window
+`(f ↑β').re = correlationInfinite(β')`
 (the window identity, from `correlationComplexAlongExhaustion_tendsto_at_real` + uniqueness of
-limits).  No new analytic machinery is introduced — it is a mathlib composition of K4.
+limits). No new analytic machinery is introduced; the argument composes existing mathlib results.
 
 ## Main results
 * `correlationInfinite_latticeGraph_general_hasDerivAt_beta_high_temp` — the named real
-  `HasDerivAt` form (derivative value `(deriv f ↑β).re` for the K4 witness `f`).
+  `HasDerivAt` form (derivative value `(deriv f ↑β).re` for the holomorphic witness `f`).
 * `correlationInfinite_latticeGraph_general_differentiableAt_beta_high_temp` — the primary
   `DifferentiableAt ℝ` conclusion.
 
 ## Honest scope
-K5 delivers the **β-direction, KP high-temperature-window, general-observable** differentiability
-only.  It is **unconditional / axiom-free** on the window `(0, r)` (with `r` inherited from K4).
-It is **NOT**: (1) the full GJ Theorem 17.6.1 analyticity throughout `σ < σ_c` (issue #4386, which
-needs uniform Ornstein–Zernike control and is out of scope); (2) the `h`-direction `∂/∂h`.
+The result delivers **β-direction, KP high-temperature-window, general-observable**
+differentiability only. It is unconditional and axiom-free on the window `(0, r)`. It is not GJ
+Theorem 17.6.1: that theorem concerns a continuum model, differentiation with respect to `σ`, and
+derivative existence for `σ_c < σ`. It is also not the `h`-direction `∂/∂h`.
 
-References: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), Theorem 17.6.1, p.~313; §18.
+Comparison: Glimm–Jaffe, *Quantum Physics* (2nd ed., Springer, 1987), Theorem 17.6.1,
+p.~313; §18.
 -/
 
 namespace IsingModel
@@ -38,11 +38,13 @@ namespace Ambient
 
 open Filter Topology
 
-/-- **GJ Theorem 17.6.1 brick K5 (named-derivative form).**  On the KP high-temperature window
+/-- **Named derivative for the general-observable Ising beta route.**
+On the KP high-temperature window
 `(0, r)` the infinite-volume general-observable correlation
-`β' ↦ correlationInfinite (latticeGraph d) Λ ⟨J, 0, β'⟩ A` has a real derivative at every interior
-point `β`.  The derivative equals `(deriv f ↑β).re`, where `f` is the K4 Vitali witness; the value
-is packaged existentially so the `β`-dependent witness is not exposed in the statement. -/
+`β' ↦ correlationInfinite (latticeGraph d) Λ ⟨J, 0, β'⟩ A` has a real derivative at every
+interior point `β`. The derivative equals `(deriv f ↑β).re`, where `f` is the Vitali witness; the
+value is packaged existentially so the `β`-dependent witness is not exposed in the statement.
+This Ising beta-direction result is not GJ Theorem 17.6.1. -/
 theorem correlationInfinite_latticeGraph_general_hasDerivAt_beta_high_temp
     (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ : 0 ≤ J) (A : Finset (Fin d → ℤ)) :
@@ -102,11 +104,12 @@ theorem correlationInfinite_latticeGraph_general_hasDerivAt_beta_high_temp
     rw [hwindow β' hβ'.1 hβ'.2, Complex.ofReal_re]
   exact ⟨(deriv f (β : ℂ)).re, hre.congr_of_eventuallyEq heq⟩
 
-/-- **GJ Theorem 17.6.1 brick K5 (primary form).**  On the KP high-temperature window `(0, r)` the
+/-- **Differentiability for the general-observable Ising beta route.** On the KP high-temperature
+window `(0, r)` the
 infinite-volume general-observable correlation
-`β' ↦ correlationInfinite (latticeGraph d) Λ ⟨J, 0, β'⟩ A` is real-differentiable at every interior
-point `β`.  This is the FINAL brick completing the β-direction high-temperature-window portion of
-GJ Theorem 17.6.1 for general observables; it is unconditional / axiom-free on the window. -/
+`β' ↦ correlationInfinite (latticeGraph d) Λ ⟨J, 0, β'⟩ A` is real-differentiable at every
+interior point `β`. This project result is unconditional and axiom-free on that window; it is an
+Ising beta-direction statement rather than GJ Theorem 17.6.1. -/
 theorem correlationInfinite_latticeGraph_general_differentiableAt_beta_high_temp
     (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     (J : ℝ) (hJ : 0 ≤ J) (A : Finset (Fin d → ℤ)) :

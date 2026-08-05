@@ -1,7 +1,7 @@
 import IsingModel.Conditioning.HighTempClosed
 
 /-!
-# Correlation closed form split — high-temperature h=0 closed form (FV eq. 3.46)
+# Correlation closed form split — free-boundary high-temperature h=0 closed form
 
 Part of the split `IsingModel.Conditioning.CorrelationClosed` development.
 -/
@@ -12,7 +12,7 @@ open Finset Real
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ### Correlation closed form (FV §3.7.3 eq. (3.46)) -/
+/-! ### Free-boundary correlation closed form -/
 
 /-- **`spinProduct` as vertex-power**: for any `A : Finset ι`,
 `∏_{a ∈ A} (σ a).toSign = ∏_v (σ v).toSign^(if v ∈ A then 1 else 0)`. -/
@@ -31,7 +31,8 @@ private theorem spinProduct_eq_prod_pow_indicator
 /-- **σ-sum of `spinProduct A · edgeSpin product`**: for `X ⊆ G.edgeFinset`,
 `∑_σ spinProduct A σ · ∏_{e ∈ X} edgeSpin σ e = 2^|ι|` if the parity
 of every vertex `v` matches `(v ∈ A)` (i.e. `deg_X v + 1_A v` is even),
-else `0`. The σ_A-weighted parity step underlying FV (3.46). -/
+else `0`. This is the free-boundary parity step analogous to the pinned-boundary
+calculation behind FV (3.46). -/
 private theorem sum_spinProduct_mul_prod_edgeSpin_eq_pow_card_or_zero
     (G : SimpleGraph ι) [Fintype G.edgeSet] (X : Finset (Sym2 ι))
     (hX : X ⊆ G.edgeFinset) (A : Finset ι) :
@@ -180,7 +181,9 @@ private theorem sum_spinProduct_boltzmannWeight_h_zero_closed
   rw [← Finset.sum_filter, ← Finset.mul_sum]
   ring
 
-/-- **Correlation closed form at h = 0 — Friedli–Velenik §3.7.3 eq. (3.46)**:
+/-- **Free-boundary correlation closed form at h = 0.**
+This arbitrary-observable formula is a free-boundary generalization of the parity expansion behind
+Friedli--Velenik §3.7.3, equation (3.46); that equation itself is a plus-boundary singleton ratio:
 \[
 \langle \sigma_A \rangle_{\beta, 0} =
   \frac{\sum_{X \subseteq E,\, \partial X = A} \tanh(\beta J)^{|X|}}
@@ -195,7 +198,7 @@ numerator and denominator. Combines
 `partitionFunction_high_temp_expansion_h_zero_closed` (Step 283) with
 `sum_spinProduct_boltzmannWeight_h_zero_closed`.
 
-References: GJ §18.3; FV §3.7.3 eq. (3.46), p. 117 (2017 ed.). -/
+Reference for the analogous parity expansion: FV §3.7.3, equation (3.46), p. 117 (2017 ed.). -/
 theorem correlation_high_temp_expansion_h_zero_closed
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (A : Finset ι) :

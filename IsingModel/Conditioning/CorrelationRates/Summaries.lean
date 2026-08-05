@@ -104,15 +104,16 @@ theorem singleton_edge_mem_high_temp_pair_filter
         exact (Sym2.mem_iff.mp hv_in)
       rw [this, Finset.card_empty]; exact ⟨0, rfl⟩
 
-/-- **Pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Pair correlation single-edge tanh lower bound from the free-boundary parity formula.**
 under `0 ≤ β·J` and an edge `s(i, j) ∈ G.edgeSet`,
 `⟨σ_iσ_j⟩^{⟨J,0,β⟩} ≥ tanh(β·J) / 2^|E|`.
 
-The single edge `e = s(i, j)` contributes `tanh(β·J)` to the FV (3.46)
+The single edge `e = s(i, j)` contributes `tanh(β·J)` to the project-derived
 numerator; the denominator is bounded above by `2^|E|`
 (Step 319). Provides a quantitative non-trivial lower bound: at high
 temperature, the pair correlation between adjacent sites does not
-vanish faster than `tanh(βJ) / 2^|E|`. -/
+vanish faster than `tanh(βJ) / 2^|E|`. Compare the two-point representations and bounds in
+FV Exercises 3.23--3.25; this coarse adjacent-edge bound is not stated there. -/
 theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (J β : ℝ) (hβJ : 0 ≤ β * J)
@@ -160,7 +161,7 @@ theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     div_le_div_of_nonneg_right h_tanh_le_N h_D_pos.le
   exact h_step1.trans h_step2
 
-/-- **Pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Pair correlation strict positivity from the project-derived adjacent-edge bound.**
 under `0 < β·J` and an edge `s(i, j) ∈ G.edgeSet`,
 `0 < ⟨σ_iσ_j⟩^{⟨J,0,β⟩}`.
 
@@ -183,7 +184,7 @@ theorem correlation_high_temp_h_zero_at_pair_pos_of_edge
     (correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
       G J β hβJ.le i j hij he)
 
-/-- **Ferromagnetic pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Ferromagnetic specialization of the project-derived single-edge tanh lower bound.**
 under `0 ≤ J, 0 < β` and an edge `s(i, j) ∈ G.edgeSet`,
 `⟨σ_iσ_j⟩^{⟨J,0,β⟩} ≥ tanh(β·J) / 2^|E|`. Bridges the
 `Ferromagnetic`-style hypotheses with
@@ -198,7 +199,7 @@ theorem correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagn
   correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     G J β (mul_nonneg hβ.le hJ) i j hij he
 
-/-- **Ferromagnetic pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Ferromagnetic specialization of project-derived adjacent-edge strict positivity.**
 under `0 < J, 0 < β` and an edge `s(i, j) ∈ G.edgeSet`,
 `0 < ⟨σ_iσ_j⟩^{⟨J,0,β⟩}`. Bridges strict-ferromagnetic hypotheses with
 `correlation_high_temp_h_zero_at_pair_pos_of_edge` via `mul_pos hβ hJ`. -/
