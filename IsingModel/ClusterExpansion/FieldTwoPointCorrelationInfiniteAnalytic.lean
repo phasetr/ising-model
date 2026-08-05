@@ -12,8 +12,8 @@ hypotheses of the complex-field Vitali/Montel consumer (brick F6a,
 `fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound`), yielding
 local uniform convergence of the finite-stage complex-field correlations to a holomorphic
 function of `b = β·h`, **in the small-coupling (high-temperature) regime**.  It is the
-field analogue of the `β`-route high-temperature capstone
-`correlationInfinite_latticeGraph_two_point_analytic_high_temp`
+field analogue of the `β`-route high-temperature owner
+`correlationInfinite_latticeGraph_general_analytic_high_temp`
 (`TwoPointCorrelationInfiniteAnalytic.lean`).  The `β` Vitali/analyticity stack and the
 already-merged field bricks are **not** modified — this is a pure addition.
 
@@ -273,7 +273,7 @@ Proof (assembly of the merged bricks):
 * the F6a Vitali/Montel consumer `fieldCorrelationℂAlongExhaustion_analytic_of_volume_uniform_bound`
   then returns the holomorphic limit.
 
-The field analogue of `correlationInfinite_latticeGraph_two_point_analytic_high_temp`. -/
+The field analogue of `correlationInfinite_latticeGraph_general_analytic_high_temp`. -/
 theorem fieldCorrelationInfinite_latticeGraph_analytic_high_temp
     (d : ℕ) (Λ : Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (inducedGraph (latticeGraph d) (Λ.volume n)).edgeSet]

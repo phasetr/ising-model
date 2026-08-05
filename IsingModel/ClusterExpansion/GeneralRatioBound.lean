@@ -3,10 +3,12 @@ import IsingModel.ClusterExpansion.AvoidingRatioExp
 import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
 
 /-!
-# General-boundary volume-uniform correlation-ratio bound (GJ Theorem 17.6.1, §18)
+# Project-specific lattice-Ising general-boundary volume-uniform correlation-ratio bound
 
-This file is **brick K3** — the crux — of the general-source (`Q_A`) ratio-bound chain (issue
-#4404) toward Glimm–Jaffe Theorem 17.6.1 (p.313).  It upgrades the two-point (pair) capstone
+This file is **brick K3** — the crux — of the project-specific lattice-Ising general-source
+(`Q_A`) ratio-bound chain (issue #4404), architecturally analogous to the cluster-expansion method
+of Glimm–Jaffe Chapter 18 but not literal coverage of Glimm–Jaffe Theorem 17.6.1.
+It upgrades the two-point (pair) capstone
 `correlationComplex_two_point_norm_le_of_high_temp` (`TwoPointCorrelationHTBound.lean`) to a
 volume-uniform norm bound on the *general-boundary* correlation ratio `Q_A / Q_∅` for an arbitrary
 boundary set `A`, on the convergent high-temperature Kotecký–Preiss (KP) activity window.
