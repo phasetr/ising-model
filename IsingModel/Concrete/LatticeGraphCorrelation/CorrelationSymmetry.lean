@@ -1,4 +1,5 @@
-import IsingModel.PhaseTransition
+import IsingModel.Inequalities.GHS.SpinFlip
+import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.AmbientLattice.MagnetizationInfinite
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
