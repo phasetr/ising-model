@@ -58,22 +58,23 @@ In particular, the current Ising beta result is not literally GJ Theorem 17.6.1.
 analyticity and real differentiability only on a small Ising high-temperature interval and in a
 different parameter direction.
 
-## Weakest-owner refactoring invariants
+## Surviving canonical-owner invariants
 
-The following owner relationships preserve the current mathematical content while permitting the
-later cleanup. They record preservation facts only and do not perform or promise a deletion.
+The source coverage is preserved by the following weakest canonical owners:
 
-| Stronger or duplicate surface | Weakest current owner | Preservation classification |
+| Mathematical content | Surviving canonical owner | Coverage role |
 |---|---|---|
-| `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic` | `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`, using `mul_nonneg hBeta.le hJ` | The stronger sign hypotheses add no source coverage. |
-| `Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic` | The preceding ambient owner specialized to `latticeGraph d`, or `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges` | The concrete wrapper adds no source coverage. |
-| `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_singleton_ferromagnetic` | `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_singleton` | The `J` and `beta` sign hypotheses are unnecessary. |
-| `Ambient.correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic` | The preceding ambient owner specialized to `latticeGraph d`, or `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton` | The concrete wrapper adds no source coverage. |
-| `Ambient.correlationInfinite_latticeGraph_two_point_analytic_high_temp` | `Ambient.correlationInfinite_latticeGraph_general_analytic_high_temp` specialized to `A = {i, j}` | The general-observable theorem provides the same Ising conclusion without the irrelevant `i != j` hypothesis. |
+| Plus-boundary arbitrary-observable parity ratio | `gibbsExpectationBC_plus_spinProduct_h_zero_ratio` | General boundary-conditioned owner for the algebra behind FV (3.46). |
+| Plus-boundary singleton ratio | `gibbsExpectationBC_plus_singleSpin_h_zero_ratio` | Exact specialization of FV (3.46). |
+| Free-boundary singleton cancellation along an exhaustion | `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_singleton` | Preserves the project consequence without unnecessary sign assumptions. |
+| Free-boundary adjacent-edge lower bound along an exhaustion | `Ambient.correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges` | Preserves the project-derived bound under the weakest product hypothesis. |
+| Concrete lattice adjacent-edge lower bound | `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges` | Surviving lattice specialization of the project-derived pair result. |
+| Infinite-volume lattice Ising beta analyticity | `Ambient.correlationInfinite_latticeGraph_general_analytic_high_temp` | General-observable owner for the Ising result and its finite-observable specializations. |
 
-The exact FV plus-boundary singleton row remains owned by the boundary-conditioned declarations
-listed above. The wrapper and analyticity owner relationships therefore neither remove literal FV
-coverage nor create literal GJ coverage.
+Stronger-hypothesis wrappers and duplicate proof surfaces add no source coverage. The exact FV
+plus-boundary singleton row remains owned by the boundary-conditioned declarations above, while
+the general-observable analyticity owner remains an analogy to the GJ Chapter 18 method rather than
+literal GJ coverage.
 
 ## Audit provenance
 
