@@ -17,10 +17,11 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Λ-level FV (3.46) numerator vanishes for odd-cardinality A** at `h = 0`:
-for `A : Finset ↑Λ` of odd cardinality,
+/-- **Λ-level free-boundary numerator vanishes for odd-cardinality `A` at `h = 0`.**
+For `A : Finset ↑Λ` of odd cardinality,
 `∑_{X ⊆ E_Λ : ∂X = A} tanh(β J)^|X| = 0`.
-Direct lift of `IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero`
+This transports the project free-boundary parity result
+`IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero`
 (Step 291) through the induced subgraph on `Λ`. -/
 theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
     (G : SimpleGraph V) (Λ : Finset V)
@@ -34,8 +35,8 @@ theorem sum_high_temp_numerator_h_zero_odd_card_eq_zero_Λ
   IsingModel.sum_high_temp_numerator_h_zero_odd_card_eq_zero
     (inducedGraph G Λ) J β A hA_odd
 
-/-- **Λ-level correlation nonnegativity from FV (3.46)** at `h = 0`:
-under `0 ≤ β * J`, `0 ≤ correlationΛ G Λ ⟨J, 0, β⟩ A`.
+/-- **Λ-level correlation nonnegativity from the project free-boundary parity ratio at `h = 0`.**
+Under `0 ≤ β * J`, `0 ≤ correlationΛ G Λ ⟨J, 0, β⟩ A`.
 Direct lift of `IsingModel.correlation_high_temp_h_zero_nonneg`
 (Step 293) through `correlationΛ_apply`. -/
 theorem correlationΛ_high_temp_h_zero_nonneg
@@ -213,9 +214,9 @@ theorem one_le_sum_pow_tanh_even_subgraph_Λ
         Real.tanh (β * J) ^ X.card :=
   IsingModel.one_le_sum_pow_tanh_even_subgraph (inducedGraph G Λ) J β hβJ
 
-/-- **Λ-level FV (3.46) numerator filter is empty for odd-cardinality A**:
-the filtered powerset over which the FV (3.46) numerator sums is
-*literally empty* whenever `|A|` is odd.
+/-- **Λ-level free-boundary numerator filter is empty for odd-cardinality `A`.**
+The filtered powerset in the project free-boundary parity numerator is literally empty whenever
+`|A|` is odd.
 Direct lift of `IsingModel.high_temp_numerator_filter_eq_empty_of_odd_card`
 (Step 297). -/
 theorem high_temp_numerator_filter_eq_empty_of_odd_card_Λ
@@ -229,8 +230,8 @@ theorem high_temp_numerator_filter_eq_empty_of_odd_card_Λ
   IsingModel.high_temp_numerator_filter_eq_empty_of_odd_card
     (inducedGraph G Λ) A hA_odd
 
-/-- **Λ-level Z₂ symmetry of correlation at h = 0 from FV (3.46) + handshake**:
-for `A : Finset ↑Λ` of odd cardinality,
+/-- **Λ-level Z₂ symmetry from the project free-boundary parity ratio and handshake lemma.**
+For `A : Finset ↑Λ` of odd cardinality,
 `correlationΛ G Λ ⟨J, 0, β⟩ A = 0`.
 Direct lift of `IsingModel.correlation_high_temp_h_zero_odd_card_eq_zero`
 (Step 298). -/
@@ -346,7 +347,7 @@ theorem correlationΛ_high_temp_h_zero_at_singleton_eq_zero_le_one
   ⟨correlationΛ_high_temp_h_zero_at_singleton G Λ J β i,
    (correlationΛ_high_temp_h_zero_at_singleton G Λ J β i).symm ▸ zero_le_one⟩
 
-/-- **Λ pair correlation single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Λ transport of the project-derived pair single-edge tanh lower bound.**
 under `0 ≤ β·J` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|` where `i, j : ↑Λ`. Λ-layer wrapper
 of `correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
@@ -362,7 +363,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
   exact correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (inducedGraph G Λ) J β hβJ i j hij he
 
-/-- **Λ pair correlation strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Λ transport of project-derived pair strict positivity under an edge.**
 under `0 < β·J` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_pos_of_edge`. -/
@@ -377,7 +378,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
   exact correlation_high_temp_h_zero_at_pair_pos_of_edge
     (inducedGraph G Λ) J β hβJ i j hij he
 
-/-- **Λ ferromagnetic pair single-edge tanh lower bound (GJ §18.3 / FV (3.46))**:
+/-- **Λ ferromagnetic specialization of the project-derived pair lower bound.**
 under `0 ≤ J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `⟨σ_iσ_j⟩^Λ ≥ tanh(β·J) / 2^|E_Λ|`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`. -/
@@ -392,7 +393,7 @@ theorem correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferroma
   correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     G Λ J β (mul_nonneg hβ.le hJ) i j hij he
 
-/-- **Λ ferromagnetic pair strict positivity under edge (GJ §18.3 / FV (3.46))**:
+/-- **Λ ferromagnetic specialization of project-derived pair strict positivity.**
 under `0 < J, 0 < β` and an edge `s(i, j) ∈ (inducedGraph G Λ).edgeSet`,
 `0 < ⟨σ_iσ_j⟩^Λ`. Λ-layer wrapper of
 `correlation_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`. -/

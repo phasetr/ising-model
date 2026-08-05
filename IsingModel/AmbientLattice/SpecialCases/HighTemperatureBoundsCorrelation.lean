@@ -28,8 +28,8 @@ open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex pair correlation single-edge tanh lower bound at stage `n` (GJ §18.3 / FV (3.46))**:
-applies the Λ-level single-edge lower bound at the stage-`n`
+/-- **Along-exhaustion transport of the project-derived pair lower bound at stage `n`.**
+Applies the Λ-level single-edge lower bound at the stage-`n`
 subtype `↑(Λ.volume n)`. Along-exhaustion wrapper for
 `correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
 theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges

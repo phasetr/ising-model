@@ -24,9 +24,9 @@ namespace Ambient
 
 open scoped symmDiff
 
-/-- **ℤ^d along-exhaustion correlation high-temperature closed form (FV §3.7.3 eq. (3.46))**:
-at every stage `n` with `A ⊆ Λ.volume n`, FV (3.46) closed form holds
-on the lifted Finset. When `A ⊄`, equals `0`.
+/-- **ℤ^d transport of the project free-boundary high-temperature correlation closed form.**
+At every stage `n` with `A ⊆ Λ.volume n`, the arbitrary-observable parity ratio holds on the
+lifted Finset. When `A ⊄`, the correlation equals `0`.
 ℤ^d wrapper of `correlationAlongExhaustion_high_temp_expansion_h_zero_closed`. -/
 theorem correlationAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ)) (J β : ℝ)
@@ -45,9 +45,9 @@ theorem correlationAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_close
   correlationAlongExhaustion_high_temp_expansion_h_zero_closed
     (IsingModel.latticeGraph d) Λ J β A n hAn
 
-/-- **ℤ^d along-exhaustion FV (3.46) numerator filter empty for odd `|A|`**:
-at every stage `n`, the FV (3.46) numerator filter is empty for any
-`A : Finset ↑(Λ.volume n)` of odd cardinality. ℤ^d wrapper of
+/-- **ℤ^d transport of the free-boundary odd-cardinality numerator cancellation.**
+At every stage `n`, the project parity numerator filter is empty for any
+`A : Finset ↑(Λ.volume n)` of odd cardinality. This is the ℤ^d wrapper of
 `high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion`. -/
 theorem high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion_latticeGraph
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -120,9 +120,8 @@ wrappers (`bundle_ferromagnetic`, `complete_summary`,
 
 
 
-/-- **ℤ^d along-ex pair correlation single-edge tanh lower bound at stage `n`
-(GJ §18.3 / FV (3.46))**:
-applies the Λ-level single-edge lower bound at the stage-`n` subtype.
+/-- **ℤ^d transport of the project-derived pair lower bound at stage `n`.**
+Applies the Λ-level single-edge lower bound at the stage-`n` subtype.
 ℤ^d wrapper of
 `correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`. -/
 theorem
