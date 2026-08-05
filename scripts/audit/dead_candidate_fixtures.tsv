@@ -12,10 +12,10 @@
 # 10 PR #4641 keepers are the primary acceptance test and split 7/3: reading
 # only Lean rescues the first seven, reading only docs rescues the last three.
 #
-# Family-level calibration on the #4926 current head c26859a2,
+# Family-level calibration on the #4927 post-deletion tree based on e7d3c5f2,
 # `--pattern '_ferromagnetic$'`:
-#   221 candidates -> 15 safe-to-delete, 89 uncertain, 82 load-bearing,
-#   35 published-result; 111 of the 221 have zero Lean consumers.
+#   219 candidates -> 15 safe-to-delete, 88 uncertain, 81 load-bearing,
+#   35 published-result; 110 of the 219 have zero Lean consumers.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
@@ -39,8 +39,8 @@
 # fourth from uncertain to load-bearing. Whole-library: safe-to-delete
 # 1091 -> 976, uncertain 691 -> 761, load-bearing 2081 -> 2126, published-result
 # unchanged at 7009, with no verdict moving toward safe-to-delete.
-# The concrete pair row below is uncertain because the current nine-member
-# shorthand charges all 9 of 9 declarations; it no longer pins the threshold.
+# The concrete positive-pair row below is uncertain because the current shorthands
+# charge all 7 of 7 ferromagnetic declarations and all 5 of 5 pair-positive declarations.
 # The synthetic `test_qualified_globs_keep_the_1_2_10_11_threshold` pins the
 # chargeable 10 / unchargeable 11 boundary directly. The real-tree exit-zero
 # path is pinned separately by `test_isolated_candidate_exits_zero` using a
@@ -83,9 +83,9 @@ freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the nam
 correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
 
 # --- A zero-consumer declaration conservatively retained by shorthand evidence ---
-# Issue #4926 leaves no Lean consumer, but the current 9-of-9 shorthand family
-# charges this declaration, so the fail-closed verdict is uncertain.
-Ambient.correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic	uncertain	zero Lean consumers; docs/index.md shorthand charges all 9 of 9 declarations in the current family
+# Issue #4927 leaves this retained sibling with no Lean consumer, but the current
+# 7-of-7 ferromagnetic and 5-of-5 pair-positive shorthands charge it.
+Ambient.correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic	uncertain	zero Lean consumers; synchronized shorthands charge all 7 of 7 ferromagnetic and all 5 of 5 pair-positive declarations
 
 # --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
 log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}

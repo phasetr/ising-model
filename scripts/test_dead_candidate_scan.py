@@ -1442,9 +1442,9 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # `toRangeRelCompactData_viaLocal_direct` as a byte-identical twin of
         # `toRangeRelCompactData_direct` in the same namespace, and the #4854
         # pilot left it with no consumer, so it is retired.
-        # Issue #4926 removes two redundant singleton wrappers, so the current
-        # broad declaration population is 10565 - 2 = 10563.
-        self.assertEqual(len(broad or []), 10563)
+        # Issue #4927 removes two redundant pair-bound wrappers after #4926, so
+        # the current broad declaration population is 10563 - 2 = 10561.
+        self.assertEqual(len(broad or []), 10561)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1456,7 +1456,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10563 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10561 declarations"]},
         )
 
 
@@ -2320,12 +2320,11 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """221 candidates -> 15 safe / 89 uncertain / 82 load-bearing / 35 published.
+        """219 candidates -> 15 safe / 88 uncertain / 81 load-bearing / 35 published.
 
-        Issue #4926 removes two safe singleton wrappers. The remaining nine-member
-        shorthand charges the concrete pair candidate, moving it to uncertain, and
-        makes the ambient pair owner load-bearing. The zero-consumer census becomes
-        111. No survivor moves toward safe-to-delete.
+        Issue #4927 removes the uncertain concrete pair target and its load-bearing
+        ambient owner. The concrete target accounts for the zero-consumer decrement
+        to 110. No survivor moves toward safe-to-delete.
 
         Recalibrated by the resolved-glob elision-head repair
         (:class:`ResolvedGlobElisionHeadTest`). On the same documentation line,
@@ -2406,20 +2405,19 @@ class FamilyCalibrationTest(unittest.TestCase):
         counts: dict[str, int] = {}
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
-        self.assertEqual(len(verdicts), 221)
+        self.assertEqual(len(verdicts), 219)
         self.assertEqual(counts.get(dcs.SAFE), 15)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 89)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 82)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
     def test_zero_consumer_count(self) -> None:
-        """111 of the 221 have no Lean consumer at all.
+        """110 of the 219 have no Lean consumer at all.
 
-        Was 114 of 226 before PR #4690 dropped the three safe-to-delete
-        RatioLogFe ``_ferromagnetic`` alongExhaustion bundle wrappers; two of the
-        three were zero-consumer, so the count drops by two.
+        Issue #4927 removes the concrete pair target, which was the one
+        zero-consumer member of the two-declaration deletion set.
         """
-        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 111)
+        self.assertEqual(sum(1 for v in family_verdicts() if not v.consumers), 110)
 
 
 # Anti-vacuity floor for the Unicode canary population.  The Unicode guarantee
