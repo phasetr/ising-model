@@ -3,7 +3,7 @@ import IsingModel.ClusterExpansion.AvoidingRatioExp
 import IsingModel.ClusterExpansion.TwoPointCorrelationHTBound
 
 /-!
-# General-boundary volume-uniform correlation-ratio bound (GJ Theorem 17.6.1, §18)
+# Project-specific lattice-Ising general-boundary volume-uniform correlation-ratio bound
 
 This file is **brick K3** — the crux — of the project-specific lattice-Ising general-source
 (`Q_A`) ratio-bound chain (issue #4404), architecturally analogous to the cluster-expansion method
