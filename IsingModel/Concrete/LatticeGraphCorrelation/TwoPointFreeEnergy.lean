@@ -1,4 +1,5 @@
-import IsingModel.PhaseTransition
+import IsingModel.AmbientLatticeSum.InfiniteHighTemp
+import IsingModel.AmbientLatticeSum.InfiniteBounds
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
@@ -104,7 +105,8 @@ The 5 ℤ^d `freeEnergyInfinite_latticeGraph_*` h-symmetry / |h|-monotonicity
 wrappers (`cubicExhaustion_monotone_abs_h`, `cubicExhaustion_neg_h`,
 `cubicExhaustion_eq_abs_h`, `neg_h`, `eq_abs_h`) now live in
 `IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergyInfHSymmetry`.
-The earlier import path is preserved by re-importing the new child.
+The shared `IsingModel.Concrete.LatticeGraphCorrelation.Umbrella.TwoPointUniform`
+imports this module and the new child explicitly.
 -/
 
 

@@ -1,4 +1,4 @@
-import IsingModel.PhaseTransition
+import IsingModel.AmbientLatticeSumFInfHSymMono
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
