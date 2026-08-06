@@ -5,7 +5,6 @@ wrappers (`_le_one`, `_nonneg`, `_indep_exhaustion`,
 extracted from `TwoPoint.lean` in PR #2025. The theorem names are
 unchanged from the former `TwoPoint` declarations.
 -/
-import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
