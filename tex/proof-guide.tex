@@ -22465,12 +22465,15 @@ PR~\#2092 separately owns the seven $\Lambda$/along-exhaustion
 PR~\#2094 separately owns the five magnetization/spontaneous
 \texttt{*\_bot\_le\_latticeGraph} bottom-graph comparison wrappers. The 7
 $\mathbb{Z}^d$ $\mathrm{correlationInfinite\_latticeGraph\_*}$
-wrappers (\texttt{\_le\_one}, \texttt{\_nonneg},
-\texttt{\_indep\_exhaustion},
-\texttt{\_cubicExhaustion\_monotone\_h}, \texttt{\_beta}, \texttt{\_J},
-\texttt{\_gks\_second}) now live in
-\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfinite.lean}
-(narrowed out of \path{TwoPoint.lean} in PR~\#2025). The 5
+wrappers were narrowed out of \path{TwoPoint.lean} in PR~\#2025 into
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfinite.lean},
+which retains four of them (\texttt{\_le\_one}, \texttt{\_nonneg},
+\texttt{\_indep\_exhaustion}, \texttt{\_cubicExhaustion\_gks\_second});
+the three \texttt{\_cubicExhaustion\_monotone\_h},
+\texttt{\_cubicExhaustion\_monotone\_beta} and
+\texttt{\_cubicExhaustion\_monotone\_J} wrappers were split out again in
+PR~\#2354 and now live in
+\path{IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean}. The 5
 $\mathbb{Z}^d$ magnetization monotonicity wrappers
 (\texttt{spontaneousMagnetization\_latticeGraph\_cubicExhaustion\_monotone\_\{J,beta\}},
 \texttt{magnetizationInfinite\_latticeGraph\_cubicExhaustion\_monotone\_\{J,h,beta\}})

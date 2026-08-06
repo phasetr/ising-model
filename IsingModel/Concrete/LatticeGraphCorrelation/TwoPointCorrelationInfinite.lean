@@ -1,11 +1,13 @@
 /- TwoPointCorrelationInfinite.lean
-Narrow child module for the 7 ℤ^d `correlationInfinite_latticeGraph_*`
-wrappers (`_le_one`, `_nonneg`, `_indep_exhaustion`,
-`_cubicExhaustion_monotone_h`, `_beta`, `_J`, `_gks_second`)
-extracted from `TwoPoint.lean` in PR #2025. The theorem names are
-unchanged from the former `TwoPoint` declarations.
+Narrow child module for the ℤ^d `correlationInfinite_latticeGraph_*`
+wrappers extracted from `TwoPoint.lean` in PR #2025. Four of the
+original seven live here (`_le_one`, `_nonneg`, `_indep_exhaustion`,
+`_cubicExhaustion_gks_second`); the three
+`_cubicExhaustion_monotone_{h,beta,J}` wrappers were split out again in
+PR #2354 and now live in
+`IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean`.
+The theorem names are unchanged from the former `TwoPoint` declarations.
 -/
-import IsingModel.PhaseTransition
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 open scoped symmDiff
