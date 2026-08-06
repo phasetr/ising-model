@@ -1,4 +1,3 @@
-import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
