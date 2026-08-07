@@ -63,25 +63,38 @@ jobs:
   # Documentation gate for Issue #4980: the inventory-claim ratchet. A separate
   # job for the same reasons as the contract above -- no Lean toolchain, so a red
   # or cancelled Lean build can never mask a newly written stale-by-construction
-  # count claim. It is a blocking gate by design: the whole point is that a new
-  # claim cannot land. (Making it a *required* check is a branch-protection
-  # setting, not a workflow one, and is a separate administrative step.)
+  # count claim. It runs on every pull request and reports red when a new claim
+  # is written, but it is NOT a required check: making a job merge-blocking is a
+  # branch-protection setting on `main`, an admin action outside this file, and
+  # it has not been made. Until it is, a red run here is visible, not binding.
   header-inventory-claim-ratchet:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: read
     steps:
+      # fetch-depth: 0 is load-bearing, not a convenience. The drift step below
+      # reads the baseline out of `origin/main`, and with the default shallow
+      # fetch that ref does not exist -- the step would fail closed on every
+      # run, which is honest but useless.
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       # Same order and the same reason as every other gate here: `--check` only
       # says whether the current tree passes, which stays true when the anchor
       # regex is weakened or the conservation assert is dropped, so the mutation
-      # canaries are what actually defend the ratchet. Both commands are pure
-      # Python -- no lake, no network -- and cost a few seconds each.
+      # canaries are what actually defend the ratchet. All three commands are
+      # pure Python -- no lake, no network -- and cost a few seconds each.
       - name: Inventory-claim ratchet self-tests (test the ratchet, not just the tree)
         run: python3 scripts/test_header_inventory_claim_ratchet.py
       - name: Inventory-claim ratchet (recognized claim syntax may not grow)
         run: python3 scripts/header_inventory_claim_ratchet.py --check
+      # `--check` compares the tree against the baseline in the SAME checkout,
+      # so re-pinning makes it agree with itself: repair one claim, write
+      # another, regenerate, pass. This step is what compares the pin against
+      # the base branch's pin and requires the diff to explain every movement.
+      - name: Inventory-claim baseline drift (the pin moves only by real repair)
+        run: python3 scripts/header_inventory_claim_ratchet.py --check-baseline-drift --base-ref origin/main
 
   # NOTE: docs generation via `leanprover-community/docgen-action` has been
   # temporarily disabled because every main-push run takes ~1 hour and

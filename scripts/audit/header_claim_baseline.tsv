@@ -19,7 +19,18 @@
 #
 # Pinned deliberately BEFORE any repair, so every later repair PR is measured
 # against a commitment that already exists on main rather than against a number
-# it computed for itself.
+# it computed for itself.  That is enforced, not merely intended:
+# `--check-baseline-drift` compares this file against the copy on the base
+# branch and requires the diff to explain every movement -- no key may grow (B1),
+# a key may only shrink where the diff edits the source it names (B2), and the
+# pin must be tight against the tree (B3).  Regenerating this file therefore no
+# longer launders a claim: `--check` would pass, the drift check would not.
+#
+# The single escape hatch is a comment line beginning DETECTOR-MIGRATION:, added
+# by the same diff that changes the detector.  It waives B1/B2 for a recount
+# under a corrected detector -- the 713 -> 740 shape above -- and nothing else;
+# it is not a standing permission, because a line already on the base branch is
+# not one the diff adds.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 

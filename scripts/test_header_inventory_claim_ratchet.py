@@ -10,11 +10,19 @@ verdict.  Every mutation is anti-vacuous -- :func:`load_mutant` raises when its
 target text is absent, so a rename cannot quietly turn a canary into a no-op.
 
 The structural fixtures are synthetic strings, so no test can be repaired by
-editing ``IsingModel/``.  Two suites do read the repository: :class:`RealTreeTest`,
-which pins the delivered verdict and the ceiling on the baseline, and
-:class:`ScratchRepoTest`, which builds a throwaway ``git`` repository so the
-tracked-set discipline (``git ls-files``, never a filesystem walk) is exercised
-end to end rather than assumed.
+editing ``IsingModel/``.  Three suites build a throwaway ``git`` repository
+rather than reading this one -- :class:`ScratchRepoTest` for the tracked-set
+discipline (``git ls-files``, never a filesystem walk) and :class:`DriftTest`
+for the comparison against the base branch -- so they state properties of the
+checker instead of properties of today's working tree.
+
+:class:`RealTreeTest` is the one suite that reads the repository, and what it
+asserts of the live tree is deliberately shape and not size.  A floor under the
+live violation count reads like anti-vacuity but is a floor under the defect the
+ratchet exists to remove: it would turn the suite red exactly when the campaign
+succeeded, and the cheapest repair would be to loosen it inside the PR doing the
+repairing.  Anti-vacuity lives on :data:`FIXTURES` instead, which keep proving
+the detector is alive after the last real claim is gone.
 """
 
 from __future__ import annotations
@@ -50,6 +58,13 @@ TARGET_FLOOR = 1500
 #: equality: the campaign this ratchet exists to serve drives the number down,
 #: and re-pinning after a repair must not need a test edit -- but *raising* it
 #: has to, which is why this correction had to be made here in the open.
+#:
+#: Closing the quantity grammar (cardinals past ``fifty``, the ``~N``/``about
+#: N``/``N,NNN``/``N+`` idioms, the fail-closed digit-initial rule) left this
+#: number at 740 with a byte-identical findings report: the corpus writes small
+#: numerals, so the hole that was open was a *future* bypass rather than a live
+#: undercount.  A detector widened with no delta is the only kind that needs no
+#: re-pin at all.
 BASELINE_CEILING = 740
 
 #: A minimal declaration, so a fixture module is never accidentally an umbrella.
@@ -58,6 +73,13 @@ TRIVIAL = "theorem f : True := trivial\n"
 #: The command lines CI must run, in this order.
 SUITE_COMMAND = "python3 scripts/test_header_inventory_claim_ratchet.py"
 GATE_COMMAND = "python3 scripts/header_inventory_claim_ratchet.py --check"
+DRIFT_COMMAND = (
+    "python3 scripts/header_inventory_claim_ratchet.py --check-baseline-drift "
+    "--base-ref origin/main"
+)
+
+#: The workflow job the three commands above belong to.
+CI_JOB = "header-inventory-claim-ratchet"
 
 
 def source_text() -> str:
@@ -135,6 +157,55 @@ class ShapeTest(unittest.TestCase):
         """`twenty-four` normalizes to the same token a numeral would produce."""
         source = lean_source("M", header("Narrow child module for twenty-four foo wrappers."))
         self.assertEqual(tokens(source, "NARROW_CHILD"), ["24"])
+
+    def test_the_cardinal_vocabulary_does_not_stop_at_fifty(self) -> None:
+        """The bypass this class was shipped with: `sixty` was silently free.
+
+        `for twelve foo wrappers` was charged and `for sixty foo wrappers` was
+        *accounted* -- no charge, no failure, no mention in the totals -- because
+        the lexicon happened to stop where the corpus did.  English cardinals are
+        a closed class, so the fix is to close it rather than to keep extending
+        it one corpus at a time.
+        """
+        for word, expected in (
+            ("sixty", "60"), ("seventy", "70"), ("eighty", "80"), ("ninety", "90"),
+            ("hundred", "100"), ("ninety-nine", "99"), ("eighty-five", "85"),
+        ):
+            source = lean_source("M", header(f"Narrow child module for {word} foo wrappers."))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], word)
+
+    def test_a_multi_word_cardinal_multiplies_rather_than_adds(self) -> None:
+        """`two hundred` is 200; a sum over the words -- the old shape -- says 102."""
+        source = lean_source("M", header("Narrow child module for two hundred foo wrappers."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["200"])
+        source = lean_source("M", header("Narrow child module for one thousand foo wrappers."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["1000"])
+
+    def test_two_adjacent_cardinals_are_not_one_number(self) -> None:
+        """`the two three-part lemmas` is two, not five: the grammar is not a sum."""
+        source = lean_source("M", header("Narrow child module for the two three-part lemmas."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["2"])
+
+    def test_hedged_and_grouped_numerals_are_charged(self) -> None:
+        """`~12`, `about 12`, `1,024`, `12+` are counts and go stale like counts."""
+        for phrase, expected in (
+            ("~12", "~12"), ("about 12", "~12"), ("approximately 12", "~12"),
+            ("at least 12", "~12"), ("1,024", "1024"), ("12+", "12+"),
+            ("about twelve", "~12"),
+        ):
+            source = lean_source("M", header(f"Narrow child module for {phrase} foo wrappers."))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], phrase)
+
+    def test_an_unnormalizable_numeric_head_is_charged_not_accounted(self) -> None:
+        """Fail closed: a head word starting with a digit is a count either way.
+
+        This is the residual the closed vocabulary cannot reach -- ``12-ish``,
+        ``12k``, any future spelling -- and the rule for it is the same one the
+        structural classes use: unparseable is charged, never skipped.
+        """
+        source = lean_source("M", header("Narrow child module for 12-ish foo wrappers."))
+        claims = [c for c in ratchet.scan_source(source).claims if c.kind == "NARROW_CHILD"]
+        self.assertEqual([(c.token, c.charged) for c in claims], [("?12-ish", True)])
 
     def test_narrow_child_claim_wrapped_across_lines(self) -> None:
         """Claims wrap; matching on unflattened text would see none of them."""
@@ -454,6 +525,24 @@ class RatchetTest(unittest.TestCase):
         self.assertIn("A pass never means the headers are clean.", output)
         self.assertIn("says nothing about unrecognized prose", output)
 
+    def test_the_report_says_a_falling_count_is_not_evidence_of_repair(self) -> None:
+        """The governance consequence of a finite grammar, printed on every run.
+
+        A claim reworded into an unrecognized shape lowers these totals exactly
+        as a repair does, so the number is a prompt to read the findings diff and
+        never a substitute for reading it.
+        """
+        source = lean_source("M", header("Provides the ambient monotonicity API."))
+        report = ratchet.Report(
+            sources=(source,), claims=ratchet.scan_source(source).claims, conservation=()
+        )
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ratchet.print_report(report, Counter(), [])
+        output = buffer.getvalue()
+        self.assertIn("a FALL in them is not by itself evidence that prose", output)
+        self.assertIn("--findings diff", output)
+
 
 # --------------------------------------------------------------------------
 # Mutation canaries
@@ -517,16 +606,155 @@ class MutationCanaryTest(unittest.TestCase):
         self.assertEqual(len(scanned.claims), 0)
         self.assertEqual(len(ratchet.scan_source(lean_source("M", text)).claims), 1)
 
-    def test_a_non_nesting_comment_scanner_misplaces_a_claim(self) -> None:
-        """K2's reason to exist: nesting decides which side of the mask a claim is on."""
+    #: Claims whose count is a cardinal the shipped lexicon did not know, one
+    #: per recognized class.  ``NARROW_CHILD`` reached its extractor and was told
+    #: "not a quantity", so it was *accounted* -- zero charge, no mention in the
+    #: totals; the other four never matched their anchor at all and produced no
+    #: record whatsoever.
+    VOCABULARY_FORMS = (
+        ("NARROW_CHILD", "Narrow child module for sixty foo wrappers.", "60"),
+        ("NARROW_CHILD", "Narrow child module for seventy-two foo wrappers.", "72"),
+        ("PAREN_COUNT", "Basic wrappers (sixty theorems):", "60:theorems"),
+        ("PREDICATE_COUNT", "Its package contains eighty wrappers.", "80:wrappers"),
+        ("POSSESSIVE_COUNT", "Defines `x` and its ninety properties.", "90:properties"),
+        ("RELOCATION", "The sixty foo wrappers now live in `X`.", "60->X"),
+    )
+
+    #: The same hole reached through a numeric idiom rather than a missing word.
+    IDIOM_FORMS = (
+        ("NARROW_CHILD", "Narrow child module for ~12 foo wrappers.", "~12"),
+        ("NARROW_CHILD", "Narrow child module for about 12 foo wrappers.", "~12"),
+        ("NARROW_CHILD", "Narrow child module for 1,024 foo wrappers.", "1024"),
+        ("NARROW_CHILD", "Narrow child module for 12+ foo wrappers.", "12+"),
+        ("NARROW_CHILD", "Narrow child module for 12-ish foo wrappers.", "?12-ish"),
+        ("PAREN_COUNT", "Basic wrappers (about 13 theorems):", "~13:theorems"),
+        ("PAREN_COUNT", "Basic wrappers (1,024 theorems):", "1024:theorems"),
+        ("PAREN_COUNT", "Basic wrappers (12+ theorems):", "12+:theorems"),
+        ("RELOCATION", "The ~12 foo wrappers now live in `X`.", "~12->X"),
+    )
+
+    def assert_form_charged_but_not_by(self, forms, mutant) -> None:
+        """Require each form to be charged here and to charge nothing in ``mutant``."""
+        for kind, body, expected in forms:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, kind), [expected], body)
+            self.assertEqual(
+                tokens(lean_source("M", header(body), mutant), kind, mutant), [], body
+            )
+
+    def test_a_lexicon_that_stops_at_fifty_lets_every_larger_count_through(self) -> None:
+        """The bypass as shipped: cardinals above fifty charged nothing.
+
+        Without this canary the extension is untested in the only direction that
+        matters.  Every positive fixture in the suite uses a small number,
+        because every claim in the corpus does, so narrowing the lexicon again
+        would leave the whole suite green.
+        """
         mutant = load_mutant(
-            ("            if token == \"/-\":\n                depth += 1\n",
-             "            if token == \"/-\":\n                pass\n"),
+            ('    "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,\n'
+             '    "seventy": 70, "eighty": 80, "ninety": 90,\n',
+             '    "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,\n'),
         )
+        self.assert_form_charged_but_not_by(self.VOCABULARY_FORMS, mutant)
+
+    def test_the_pre_fix_quantity_grammar_lets_every_numeric_idiom_through(self) -> None:
+        """The same hole one step further out: a hedge, a comma or a `+` was free.
+
+        The mutation restores the shipped grammar exactly -- a bare ``\\d+`` or
+        cardinal, a head captured as one whitespace-delimited word, and a
+        resolver with no fail-closed branch -- so the canary measures the
+        published behaviour rather than a guess at it.
+        """
+        mutant = load_mutant(
+            ('QUANTITY = rf"(?:{_HEDGE})?{_QUANTITY_CORE}\\+?"',
+             'QUANTITY = rf"(?:\\d+|{_CARDINAL})"'),
+            ('_HEAD_QUANTITY = re.compile(rf"\\s*for\\s+(?:the\\s+)?'
+             '({QUANTITY}(?![\\w-])|\\S+)", re.IGNORECASE)',
+             '_HEAD_QUANTITY = re.compile(r"\\s*for\\s+(?:the\\s+)?(\\S+)")'),
+            (
+                '    parts = _QUANTITY_PARTS.match(word)\n'
+                '    if parts is not None:\n'
+                '        core = parts.group("core")\n'
+                '        value = core.replace(",", "") if core[0].isdigit() '
+                'else _cardinal_token(core)\n'
+                '        if value is not None:\n'
+                '            if parts.group("hedge"):\n'
+                '                value = f"~{value}"\n'
+                '            if parts.group("more"):\n'
+                '                value = f"{value}+"\n'
+                '            return value, True\n'
+                '    if _NUMERIC_IDIOM.match(word):\n'
+                '        return f"?{word}", True\n'
+                '    return word, False\n',
+                '    if word.isdigit():\n'
+                '        return word, True\n'
+                '    if word in WORD_NUMBERS:\n'
+                '        return str(WORD_NUMBERS[word]), True\n'
+                '    return word, False\n',
+            ),
+        )
+        self.assert_form_charged_but_not_by(self.IDIOM_FORMS, mutant)
+
+    NESTING_MUTATION = (
+        "            if token == \"/-\":\n                depth += 1\n",
+        "            if token == \"/-\":\n                pass\n",
+    )
+
+    def test_a_non_nesting_comment_scanner_misplaces_a_claim(self) -> None:
+        """Nesting decides which side of the mask a claim is on.
+
+        The mutant closes the outer comment at the inner ``-/``, so the claim
+        moves out of prose and is charged as ``NON_PROSE`` -- a different key, so
+        the gate still fails.  Note what does **not** happen: ``K2`` stays green,
+        because both of its sides come from the same (wrong) region set.  ``K3``
+        is the law that contradicts this mutation; see the canary below.
+        """
+        mutant = load_mutant(self.NESTING_MUTATION)
         text = "/-!\n# F\n-/\n/- outer /- inner -/ Narrow child module for the 5 foo wrappers. -/\n"
         self.assertEqual(tokens(lean_source("M", text), "NARROW_CHILD"), ["5"])
-        mutated = [claim.kind for claim in charged(lean_source("M", text, mutant), mutant)]
-        self.assertIn(mutant.NON_PROSE, mutated)
+        scanned = mutant.scan_source(lean_source("M", text, mutant))
+        self.assertIn(mutant.NON_PROSE, [claim.kind for claim in scanned.claims if claim.charged])
+        self.assertFalse(
+            [failure for failure in scanned.conservation if failure.startswith("K2")],
+            "K2 cannot see a decomposition error; claiming it can would be false assurance",
+        )
+
+    def test_the_independent_oracle_contradicts_a_nesting_bug(self) -> None:
+        """K3's reason to exist: it is the only law that shares no code with the scanner."""
+        mutant = load_mutant(self.NESTING_MUTATION)
+        text = "/-!\n# F\n-/\n/- outer /- inner -/ Narrow child module for the 5 foo wrappers. -/\n"
+        self.assertEqual(ratchet.scan_source(lean_source("M", text)).conservation, ())
+        failures = mutant.scan_source(lean_source("M", text, mutant)).conservation
+        self.assertTrue(any(failure.startswith("K3") for failure in failures), failures)
+
+    def test_dropping_the_oracle_hides_the_nesting_bug(self) -> None:
+        """Proves K3 is load-bearing: without it the same mutant reports a sound run."""
+        mutant = load_mutant(
+            self.NESTING_MUTATION,
+            ("    if source.is_lean and decomposition.regions != reference_regions(text):",
+             "    if False:"),
+        )
+        text = "/-!\n# F\n-/\n/- outer /- inner -/ Narrow child module for the 5 foo wrappers. -/\n"
+        self.assertEqual(mutant.scan_source(lean_source("M", text, mutant)).conservation, ())
+
+    def test_a_substring_module_doc_marker_would_exonerate_the_module(self) -> None:
+        """The `/-!` charge must come from syntax position, not from a substring.
+
+        ``def marker : String := "/-!"`` and ``-- /-!`` both contain the three
+        characters and neither is a module docstring, so a substring test lets a
+        module delete its header and keep the exemption -- in the one class that
+        exists to stop exactly that evasion.
+        """
+        mutant = load_mutant(
+            ("    if source.is_lean and not decomposition.module_doc:",
+             "    if source.is_lean and _MODULE_DOC not in text:"),
+        )
+        for body in ('def marker : String := "/-!"\n', "-- /-!\n"):
+            text = f"import IsingModel.Basic\n\n{body}{TRIVIAL}"
+            self.assertEqual(
+                [c.kind for c in charged(lean_source("M", text))], [ratchet.MISSING_DOC], body
+            )
+            self.assertEqual(charged(lean_source("M", text, mutant), mutant), [], body)
 
     def test_a_scalar_ratchet_lets_one_fix_pay_for_one_regression(self) -> None:
         """The offsetting the multiset key forbids, demonstrated on a mutant."""
@@ -546,7 +774,7 @@ class MutationCanaryTest(unittest.TestCase):
     def test_dropping_the_missing_header_charge_hides_an_uninspectable_module(self) -> None:
         """"Charged, not skipped" is a rule, so removing it has to be visible."""
         mutant = load_mutant(
-            ("    if source.is_lean and _MODULE_DOC not in text:", "    if False:"),
+            ("    if source.is_lean and not decomposition.module_doc:", "    if False:"),
         )
         text = "import IsingModel.Basic\n\ntheorem f : True := trivial\n"
         self.assertEqual(len(charged(lean_source("M", text))), 1)
@@ -661,6 +889,202 @@ class ScratchRepoTest(unittest.TestCase):
 
 
 # --------------------------------------------------------------------------
+# Anti-vacuity, on fixtures rather than on the tree
+# --------------------------------------------------------------------------
+
+#: One fixture per charge class, charged.  These are what prove the detector is
+#: alive, and they keep proving it after the last real claim is repaired -- which
+#: is why the anti-vacuity assertions live here and not on ``IsingModel/``.
+FIXTURES: tuple[tuple[str, str], ...] = (
+    ("NARROW_CHILD", header("Narrow child module for the 12 foo wrappers.")),
+    ("PAREN_COUNT", header("Basic wrappers (13 theorems):")),
+    ("POSSESSIVE_COUNT", header("Defines `x` and its 4 properties.")),
+    ("PREDICATE_COUNT", header("Its entry-point package contains ten wrappers.")),
+    ("RELOCATION", header("The 13 bridge wrappers now live in `IsingModel.Other`.")),
+    (ratchet.MISSING_DOC, f"import IsingModel.Basic\n\n{TRIVIAL}"),
+    (ratchet.UNTERMINATED, "/-! # F\n\nNarrow child module for the 3 foo wrappers.\n"),
+    (
+        ratchet.NON_PROSE,
+        '/-!\n# F\n-/\n\ndef s : String := "Narrow child module for the 3 foo wrappers"\n',
+    ),
+)
+
+
+class DetectorAliveTest(unittest.TestCase):
+    """Every charge class fires on a fixture, whatever the live tree looks like."""
+
+    def test_every_charge_class_is_exercised(self) -> None:
+        for kind, text in FIXTURES:
+            self.assertIn(
+                kind, [claim.kind for claim in charged(lean_source("M", text))], kind
+            )
+
+    def test_the_fixture_set_covers_every_class_the_checker_defines(self) -> None:
+        """So that adding a class without a fixture cannot pass unnoticed."""
+        self.assertEqual(
+            {kind for kind, _text in FIXTURES},
+            {claim_class.name for claim_class in ratchet.CLAIM_CLASSES}
+            | {ratchet.MISSING_DOC, ratchet.UNTERMINATED, ratchet.NON_PROSE},
+        )
+
+    def test_an_unterminated_string_literal_is_charged(self) -> None:
+        """The scan cannot know the file's structure after an unclosed quote."""
+        text = '/-!\n# F\n-/\n\ndef s : String := "never closed\n'
+        self.assertIn(
+            ratchet.UNTERMINATED, [claim.kind for claim in charged(lean_source("M", text))]
+        )
+
+
+# --------------------------------------------------------------------------
+# Baseline drift against the base branch
+# --------------------------------------------------------------------------
+
+
+class DriftTest(unittest.TestCase):
+    """B1/B2/B3, on a throwaway repository with a real base commit.
+
+    Hermetic by construction: the scratch repository has its own ``main``, so the
+    test states a property of the comparison rather than of today's fork point.
+    """
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-drift-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        (self.root / "IsingModel").mkdir()
+        (self.root / "scripts" / "audit").mkdir(parents=True)
+        self.write("IsingModel/One.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.write("IsingModel/Two.lean", header("Narrow child module for the 7 bar wrappers."))
+        self.write(ratchet.DETECTOR_REPO_PATH, "# a stand-in for the detector\n")
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        # Tracked first: the pin is computed from `git ls-files`, so a scratch
+        # repository pinned before its first `add` records an empty population
+        # and every assertion below would be vacuous.
+        self.git("add", "-A")
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+
+    def git(self, *args: str) -> None:
+        """Run ``git`` in the scratch repository."""
+        subprocess.run(["git", "-C", self.tmp, *args], check=True, capture_output=True)
+
+    def write(self, relative: str, text: str) -> None:
+        """Write ``text`` at ``relative`` inside the scratch repository."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+    def repin(self) -> None:
+        """Regenerate the scratch repository's baseline from its own tree."""
+        report = ratchet.build_report(root=self.root)
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(report.charged))
+
+    def drift(self) -> ratchet.Drift | None:
+        """Return the drift verdict of the scratch repository against its own main."""
+        return ratchet.check_drift(root=self.root, base_ref="main")
+
+    def test_an_untouched_checkout_has_no_drift(self) -> None:
+        """The control arm."""
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertTrue(drift.had_baseline)
+
+    def test_a_real_repair_that_is_re_pinned_passes(self) -> None:
+        """The direction the campaign moves in: prose edited, pin regenerated."""
+        self.write("IsingModel/One.lean", header("Provides the foo API."))
+        self.repin()
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+
+    def test_a_net_zero_swap_fails(self) -> None:
+        """B1, and the whole reason this check exists.
+
+        Repair one claim, write another, regenerate the pin: the total is
+        unchanged, the live tree agrees with its own baseline, and every
+        same-checkout check passes.  Only the base branch's file knows.
+        """
+        self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.repin()
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.added],
+                         [("NARROW_CHILD", "IsingModel.One", "99")])
+
+    def drop_a_baseline_row(self) -> tuple[str, str, str]:
+        """Delete one row from the pin without repairing the claim it records."""
+        key = ("NARROW_CHILD", "IsingModel.Two", "7")
+        baseline, _errors = ratchet.read_baseline(self.root / ratchet.BASELINE_REPO_PATH)
+        del baseline[key]
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(baseline))
+        return key
+
+    def test_deleting_a_baseline_row_without_touching_its_source_fails(self) -> None:
+        """B2: the pin is not a text file that may be edited downward for free."""
+        key = self.drop_a_baseline_row()
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([k for k, _now, _was in drift.unexplained], [key])
+
+    def test_touching_the_file_does_not_buy_a_deleted_baseline_row(self) -> None:
+        """B2 attributes per file, and B3 is why that is enough.
+
+        Adding a blank line to the module would satisfy the "this diff edits the
+        source" test on its own.  It does not help: the claim is still written,
+        so the pin is no longer an exact function of the tree and B3 rejects it.
+        """
+        key = self.drop_a_baseline_row()
+        self.write(
+            "IsingModel/Two.lean",
+            header("Narrow child module for the 7 bar wrappers.") + "\n-- unrelated\n",
+        )
+        drift = self.drift()
+        self.assertEqual(drift.unexplained, (), "the file edit does satisfy B2")
+        self.assertEqual(drift.untight, (key,))
+        self.assertFalse(drift.ok, drift)
+
+    def test_slack_in_the_pin_fails(self) -> None:
+        """B3: an un-pinned repair leaves room for a later claim to be written into."""
+        self.write("IsingModel/One.lean", header("Provides the foo API."))
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel.One", "12"),))
+
+    def test_a_declared_detector_migration_waives_b1_and_b2(self) -> None:
+        """The one legitimate way the pin moves without a prose edit.
+
+        It costs a line in the diff of the pinned file *and* a change to the
+        detector, so it is visible to a reviewer and cannot be a standing
+        permission: a marker already on the base branch is not new, so it waives
+        nothing.
+        """
+        self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.repin()
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            f"{ratchet.MIGRATION_MARKER} anchor widened, recounted\n"
+            + path.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        self.assertFalse(self.drift().ok, "no detector change: not a migration")
+        self.write(ratchet.DETECTOR_REPO_PATH, "# a stand-in for the detector, edited\n")
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertEqual(drift.waiver, ("# DETECTOR-MIGRATION: anchor widened, recounted",))
+
+    def test_an_unresolvable_base_ref_fails_closed(self) -> None:
+        """A drift check that cannot find its base must never report a pass."""
+        self.assertIsNone(ratchet.check_drift(root=self.root, base_ref="origin/nope"))
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ok = ratchet.print_drift(None, "origin/nope")
+        self.assertFalse(ok)
+        self.assertIn("does not resolve", buffer.getvalue())
+
+
+# --------------------------------------------------------------------------
 # The real tree
 # --------------------------------------------------------------------------
 
@@ -687,7 +1111,7 @@ class RealTreeTest(unittest.TestCase):
         )
 
     def test_the_real_run_is_sound(self) -> None:
-        """K0/K1/K2 hold on the tree as delivered."""
+        """K0/K1/K2/K3 hold on the tree as delivered."""
         report = real_report()
         self.assertTrue(report.sound, "\n".join(report.conservation))
 
@@ -705,13 +1129,29 @@ class RealTreeTest(unittest.TestCase):
         baseline, _errors = ratchet.read_baseline()
         self.assertLessEqual(sum(baseline.values()), BASELINE_CEILING)
 
-    def test_the_population_is_not_degenerate(self) -> None:
-        """A collapsed extractor would make every assertion above vacuously true."""
-        live = real_report().charged
-        kinds = {key[0] for key in live}
-        self.assertGreater(sum(live.values()), 100)
-        for name in ("NARROW_CHILD", "PAREN_COUNT", "RELOCATION"):
-            self.assertIn(name, kinds)
+    def test_the_live_population_is_well_formed(self) -> None:
+        """Shape, never size: this assertion has to survive the campaign succeeding.
+
+        It used to require more than a hundred live charges and three named
+        classes still present on the tree.  That reads as anti-vacuity but is a
+        floor under the defect count: driving it down is the entire point of the
+        ratchet, so the suite would have turned red exactly when the campaign
+        worked, and the cheapest repair would have been to loosen the test inside
+        the PR that did the repairing -- the self-certification shape this design
+        exists to refuse.  Anti-vacuity belongs on fixtures
+        (:class:`DetectorAliveTest`), which stay true at zero live claims; what
+        the live tree owes is only that every key it produces is well formed.
+        """
+        report = real_report()
+        known = {claim_class.name for claim_class in ratchet.CLAIM_CLASSES} | {
+            ratchet.NON_PROSE, ratchet.MISSING_DOC, ratchet.UNTERMINATED
+        }
+        targets = {source.target for source in report.sources}
+        for (kind, target, token), count in report.charged.items():
+            self.assertIn(kind, known)
+            self.assertIn(target, targets)
+            self.assertTrue(token)
+            self.assertGreater(count, 0)
 
     def test_the_scan_is_deterministic(self) -> None:
         """Same tree, same population: no set iteration leaking into the output."""
@@ -744,15 +1184,36 @@ class CIWiringTest(unittest.TestCase):
                 commands.append(command)
         return commands
 
+    @staticmethod
+    def job_block() -> str:
+        """The workflow text of the ratchet job, up to the next top-level job."""
+        text = WORKFLOW_FILE.read_text(encoding="utf-8")
+        start = text.index(f"\n  {CI_JOB}:\n") + 1
+        rest = text[start + 1:]
+        offsets = [
+            match for match in (rest.find(f"\n  {name}") for name in ("build:", "import-dag"))
+            if match >= 0
+        ]
+        end = min(offsets) if offsets else len(rest)
+        return rest[:end]
+
     def test_ci_runs_the_gate(self) -> None:
         self.assertIn(GATE_COMMAND, self.commands, f"run commands seen = {self.commands}")
 
     def test_ci_runs_the_checkers_own_tests(self) -> None:
         self.assertIn(SUITE_COMMAND, self.commands, f"run commands seen = {self.commands}")
 
+    def test_ci_runs_the_baseline_drift_check(self) -> None:
+        """Without it the pin is only ever compared against itself."""
+        self.assertIn(DRIFT_COMMAND, self.commands, f"run commands seen = {self.commands}")
+
     def test_the_self_tests_run_before_the_gate(self) -> None:
         """`--check` stays green when a rule is weakened; the suite is what fails."""
         self.assertLess(self.commands.index(SUITE_COMMAND), self.commands.index(GATE_COMMAND))
+
+    def test_the_drift_job_checks_out_enough_history(self) -> None:
+        """`fetch-depth: 0`, or `origin/main` is absent and the drift step fails closed."""
+        self.assertIn("fetch-depth: 0", self.job_block())
 
 
 def run_suite() -> int:

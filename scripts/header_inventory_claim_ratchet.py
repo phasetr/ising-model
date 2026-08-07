@@ -55,14 +55,39 @@ therefore cannot pay for introducing another: there is no scalar to offset.  A
 key whose live count is *below* the baseline is reported as slack to be re-pinned
 with ``--baseline``, and never fails.
 
+That comparison is against the baseline **in the same checkout**, which is
+exactly as strong as the baseline file is honest -- regenerating the pin makes
+the tree agree with itself by construction.  ``--check-baseline-drift`` is the
+other half: it compares this checkout's pin against the one on the base branch
+and requires every movement to be explained by the diff (:func:`check_drift`,
+rules ``B1``/``B2``/``B3``).  Without it, "repair one claim, write another,
+re-pin" is a clean pass.
+
 At baseline zero the rule becomes an absolute lexical ban on the recognized
 shapes and the checker stays wired in permanently.  Baseline *maintenance* ends
 there; the defect does not become impossible, so the checker is frozen, not
-retired.
+retired.  Nothing here asserts that the live population is non-zero: the tests
+prove the detector still works on fixtures, so the suite does not turn red as
+the campaign succeeds.
+
+Reading the number (the caveat that outranks the number)
+--------------------------------------------------------
+**A fall in the charge count is not evidence that prose was repaired.**  The
+grammar is finite by design, so a claim reworded into a shape it does not
+recognize leaves the tree exactly as stale and the count exactly as much lower.
+The count moving down is a prompt to read the ``--findings`` diff, never a
+substitute for reading it, and no repair PR may be reviewed on its totals.  The
+vocabulary has already been the bypass once: the cardinal list stopped at
+``fifty``, so ``for sixty foo wrappers`` was *accounted* -- silently free --
+while ``for twelve foo wrappers`` was charged.  What closed that hole was
+extending a closed class (English cardinals, the ``~N``/``about N``/``N,NNN``/
+``N+`` idioms) and, behind it, the fail-closed rule in
+:func:`resolve_quantity`: a quantity fragment that starts with a digit or with a
+hedge is charged even when the normalizer cannot resolve it.
 
 Conservation (the reason a silent skip cannot hide here)
 --------------------------------------------------------
-Every run asserts three identities, and a failure of any of them **suppresses
+Every run asserts four identities, and a failure of any of them **suppresses
 the findings report in every output format** -- a run that cannot account for
 its own inputs reports nothing rather than something reassuring:
 
@@ -82,16 +107,28 @@ its own inputs reports nothing rather than something reassuring:
 
 ``K2``
     the anchor matches found on the prose-masked text equal the raw anchor
-    matches whose span lies inside a single prose region.  This is the mask's
-    own cross-check: a nesting bug in the comment scanner moves sites between
-    the two sides and fails here.
+    matches whose span maps back inside a single prose region.  This checks the
+    mask/flatten/offset arithmetic -- that a match found on the masked text and
+    a match projected through the offset map land in the same place -- and
+    **nothing more**.  In particular it does *not* detect a decomposition or
+    nesting bug: both of its sides are computed from the same
+    ``decomposition.regions``, so a wrong region set moves them together and
+    ``K2`` stays green.  That is what ``K3`` is for.
+
+``K3``
+    the comment decomposition agrees, region for region, with
+    :func:`reference_regions` -- a second decomposition written as a plain
+    character-by-character state machine.  This is the check that can actually
+    contradict a nesting bug, because it shares no code with the scanner it
+    audits.  Lean sources only; a document has no comment structure to get
+    wrong.
 
 Unparseable and missing inputs are **charged**, not skipped: a module with no
-``/-!`` block (:data:`MISSING_DOC`), a file whose comment structure does not
-terminate (:data:`UNTERMINATED`), and an anchor that does not sit inside prose
-(:data:`NON_PROSE`) are all findings.  Global totals are deliberately *not*
-pinned -- they move legitimately as modules are added -- so the conservation
-laws are per-run, not frozen scalars.
+``/-!`` block in syntax position (:data:`MISSING_DOC`), a file whose comment
+structure or string literal does not terminate (:data:`UNTERMINATED`), and an
+anchor that does not sit inside prose (:data:`NON_PROSE`) are all findings.
+Global totals are deliberately *not* pinned -- they move legitimately as modules
+are added -- so the conservation laws are per-run, not frozen scalars.
 
 Scope
 -----
@@ -104,6 +141,7 @@ Usage
     python3 scripts/header_inventory_claim_ratchet.py             # --check (default)
     python3 scripts/header_inventory_claim_ratchet.py --baseline  # re-pin (stdout)
     python3 scripts/header_inventory_claim_ratchet.py --findings  # every finding, TSV
+    python3 scripts/header_inventory_claim_ratchet.py --check-baseline-drift
     python3 scripts/header_inventory_claim_ratchet.py --self-test # run the test suite
 
 Exit code 0 iff the conservation laws hold and no key is new or grown; 1
@@ -123,7 +161,13 @@ from typing import Callable, Iterable, NamedTuple
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent
-BASELINE_FILE = SCRIPT_DIR / "audit" / "header_claim_baseline.tsv"
+
+#: Repo-relative paths, because the drift check reads both of them out of a
+#: *commit* (``git show <ref>:<path>``) as well as out of the working tree.
+BASELINE_REPO_PATH = "scripts/audit/header_claim_baseline.tsv"
+DETECTOR_REPO_PATH = "scripts/header_inventory_claim_ratchet.py"
+
+BASELINE_FILE = REPO_ROOT / BASELINE_REPO_PATH
 
 #: The Lean source root whose module docstrings are canonical prose.
 LEAN_ROOT = "IsingModel"
@@ -148,12 +192,16 @@ class Decomposition(NamedTuple):
 
     ``regions`` are half-open ``(start, end)`` spans of *comment bodies* in the
     original text, delimiters excluded, in increasing order and non-overlapping.
-    ``terminated`` is ``False`` when the scan ended inside a block comment or a
-    string literal, which is charged rather than ignored.
+    ``terminated`` is ``False`` when the scan ended inside a block comment or
+    inside a string literal, either of which is charged rather than ignored.
+    ``module_doc`` records whether a ``/-!`` block was opened in *syntax
+    position* -- at comment depth zero, as a real comment opener -- which is
+    what :data:`MISSING_DOC` is charged from.
     """
 
     regions: tuple[tuple[int, int], ...]
     terminated: bool
+    module_doc: bool
 
 
 #: The only three-character sequences that can change the scanner's state, plus
@@ -163,6 +211,13 @@ _SCAN_TOKEN = re.compile(r"--|/-|-/|\"")
 
 #: A string literal body after the opening quote, honouring backslash escapes.
 _STRING_BODY = re.compile(r'(?:[^"\\]|\\.)*"')
+
+#: The module docstring opener whose absence is charged as :data:`MISSING_DOC`.
+#: It counts only where :func:`decompose` finds it in syntax position: a plain
+#: substring search -- which is what this started as -- is satisfied by
+#: ``def marker : String := "/-!"`` or by ``-- /-!``, so writing the three
+#: characters anywhere in the file exonerated the module.
+_MODULE_DOC = "/-!"
 
 
 def decompose(text: str) -> Decomposition:
@@ -183,6 +238,8 @@ def decompose(text: str) -> Decomposition:
     index = 0
     depth = 0
     start = 0
+    module_doc = False
+    lexical_error = False
     length = len(text)
     while index < length:
         match = _SCAN_TOKEN.search(text, index)
@@ -201,6 +258,10 @@ def decompose(text: str) -> Decomposition:
         if token == "/-":
             depth = 1
             start = match.end()
+            # Only an opener at depth 0 can be *the* module docstring; a `/-!`
+            # inside a string literal, a line comment or an enclosing block
+            # comment never reaches this branch, which is the whole point.
+            module_doc = module_doc or text.startswith(_MODULE_DOC, match.start())
             index = match.end()
             continue
         if token == "--":
@@ -211,11 +272,77 @@ def decompose(text: str) -> Decomposition:
             continue
         if token == '"':
             body = _STRING_BODY.match(text, match.end())
-            index = length if body is None else body.end()
+            if body is None:
+                # The quote never closes.  Everything after it was scanned as if
+                # it were code, so the file's structure is not known: record the
+                # lexical error instead of reporting a clean parse.
+                lexical_error = True
+                index = length
+                continue
+            index = body.end()
             continue
         # A stray ``-/`` at depth 0 is not a comment boundary; step past it.
         index = match.end()
-    return Decomposition(regions=tuple(regions), terminated=depth == 0)
+    return Decomposition(
+        regions=tuple(regions),
+        terminated=depth == 0 and not lexical_error,
+        module_doc=module_doc,
+    )
+
+
+def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
+    """Return the comment-body regions of ``text`` by an independent algorithm.
+
+    ``K3``'s oracle, and the reason it exists: ``K2`` compares two views that are
+    both derived from :func:`decompose`'s output, so a nesting bug moves both of
+    them together and ``K2`` stays green.  Only a second, structurally different
+    decomposition can contradict the first.  This one is a plain
+    character-by-character state machine -- slower and duller than the
+    ``re.search``-driven scan, and deliberately so, because a shared idea is a
+    shared blind spot.  It costs about two seconds over the whole tracked tree.
+    """
+    regions: list[tuple[int, int]] = []
+    index = 0
+    depth = 0
+    start = 0
+    length = len(text)
+    while index < length:
+        if depth > 0:
+            if text.startswith("/-", index):
+                depth += 1
+                index += 2
+            elif text.startswith("-/", index):
+                depth -= 1
+                if depth == 0:
+                    regions.append((start, index))
+                index += 2
+            else:
+                index += 1
+            continue
+        if text.startswith("--", index):
+            end = text.find("\n", index + 2)
+            end = length if end < 0 else end
+            regions.append((index + 2, end))
+            index = end
+            continue
+        if text.startswith("/-", index):
+            depth = 1
+            index += 2
+            start = index
+            continue
+        if text[index] == '"':
+            index += 1
+            while index < length:
+                if text[index] == "\\":
+                    index += 2
+                    continue
+                if text[index] == '"':
+                    index += 1
+                    break
+                index += 1
+            continue
+        index += 1
+    return tuple(regions)
 
 
 def decompose_document(text: str) -> Decomposition:
@@ -224,9 +351,10 @@ def decompose_document(text: str) -> Decomposition:
     ``docs/index.md`` and ``tex/proof-guide.tex`` are prose end to end; there is
     no code/comment distinction to get wrong, so the decomposition is total and
     ``K2`` degenerates to "every anchor is in prose" for them -- which is the
-    honest statement, not a weakening.
+    honest statement, not a weakening.  ``module_doc`` is irrelevant for them:
+    :data:`MISSING_DOC` is charged for Lean modules only.
     """
-    return Decomposition(regions=((0, len(text)),), terminated=True)
+    return Decomposition(regions=((0, len(text)),), terminated=True, module_doc=True)
 
 
 def apply_mask(text: str, regions: Iterable[tuple[int, int]]) -> str:
@@ -308,15 +436,32 @@ def line_of(starts: tuple[int, ...], offset: int) -> int:
 # Quantities
 # --------------------------------------------------------------------------
 
-#: Written-out cardinals.  Unit 4's own scan of this corpus lost 40 % of its
-#: recall to a single missing article, and the word forms outnumber the numerals
-#: here almost three to one, so both spellings are first-class.
-WORD_NUMBERS: dict[str, int] = {
+#: The English cardinals below one hundred, as single words.  The word forms
+#: outnumber the numerals in this corpus almost three to one, so both spellings
+#: are first-class.
+_UNIT_WORDS: dict[str, int] = {
     "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
     "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
     "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
-    "nineteen": 19, "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
+    "nineteen": 19,
 }
+
+#: The tens.  The list stopped at ``fifty`` when this checker was introduced,
+#: which made every count from sixty upwards silently *accounted* instead of
+#: charged -- an unadvertised bypass in the largest claim class, not a recall
+#: nicety.  English cardinals are a closed class, so the vocabulary is now
+#: complete rather than "as far as the corpus happened to reach".
+_TEN_WORDS: dict[str, int] = {
+    "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50, "sixty": 60,
+    "seventy": 70, "eighty": 80, "ninety": 90,
+}
+
+#: The multiplicative scales.  They compose (``two hundred``) rather than add,
+#: which is why the compound resolver below is a small parser and not a sum.
+_SCALE_WORDS: dict[str, int] = {"hundred": 100, "thousand": 1000}
+
+#: Every recognized cardinal word.
+WORD_NUMBERS: dict[str, int] = {**_UNIT_WORDS, **_TEN_WORDS, **_SCALE_WORDS}
 
 #: Quantifiers that assert a population without naming its size.  They fail the
 #: split-stability test exactly as a numeral does ("the remaining wrappers"
@@ -326,11 +471,66 @@ VAGUE_QUANTIFIERS = frozenset(
     {"several", "many", "various", "numerous", "multiple", "both", "remaining", "few"}
 )
 
-_WORD_ALTERNATION = "|".join(sorted(WORD_NUMBERS, key=len, reverse=True))
 
-#: A quantity as it appears in prose: a numeral, a cardinal word, or a
-#: hyphenated compound (``twenty-four``).
-QUANTITY = rf"(?:\d+|(?:{_WORD_ALTERNATION})(?:-(?:{_WORD_ALTERNATION}))?)"
+def _alternation(words: Iterable[str]) -> str:
+    """Return a regex alternation of ``words``, longest first.
+
+    Longest-first matters: Python alternation is leftmost-*first*, so ``six``
+    listed before ``sixteen`` would match the prefix of ``sixteen`` and leave a
+    stray ``teen`` behind.
+    """
+    return "|".join(sorted(words, key=len, reverse=True))
+
+
+_UNITS_ALT = _alternation(_UNIT_WORDS)
+_TENS_ALT = _alternation(_TEN_WORDS)
+_SCALES_ALT = _alternation(_SCALE_WORDS)
+
+#: A cardinal below one hundred: a ten, optionally hyphenated with a unit, or a
+#: bare unit.
+_SMALL_CARDINAL = rf"(?:(?:{_TENS_ALT})(?:-(?:{_UNITS_ALT}))?|(?:{_UNITS_ALT}))"
+
+#: A cardinal phrase.  A grammar rather than a free repetition of cardinal
+#: words: ``three four`` is not a number and must not be read as seven.
+_CARDINAL = (
+    rf"(?:(?:{_SMALL_CARDINAL}\s+)?(?:{_SCALES_ALT})(?:\s+(?:and\s+)?{_SMALL_CARDINAL})?"
+    rf"|{_SMALL_CARDINAL})"
+)
+
+#: A numeral, with or without thousands separators.  ``1,024`` is a count; a
+#: grammar that only knew ``\d+`` read it as ``1`` at best and matched nothing
+#: at worst, so the comma-grouped form is recognized explicitly.
+_NUMERAL = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
+
+#: Hedges that make a count approximate without making it any less of a claim
+#: about module extension.  ``about twelve wrappers`` goes stale on exactly the
+#: same split that ``twelve wrappers`` does, so a hedge must never buy silence.
+_HEDGE = (
+    r"(?:[~≈]\s*|(?:about|approximately|roughly|around|nearly|at\s+least|at\s+most"
+    r"|more\s+than|fewer\s+than|up\s+to)\s+)"
+)
+
+#: The number itself, hedges and suffixes excluded.
+_QUANTITY_CORE = rf"(?:{_NUMERAL}|{_CARDINAL})"
+
+#: A quantity as it appears in prose: an optional hedge, a numeral or cardinal
+#: phrase, and an optional ``+`` ("12+ wrappers").
+QUANTITY = rf"(?:{_HEDGE})?{_QUANTITY_CORE}\+?"
+
+#: The same shape, anchored, with the parts kept apart so a token can record
+#: *how* the count was hedged.
+_QUANTITY_PARTS = re.compile(
+    rf"\A(?P<hedge>{_HEDGE})?(?P<core>{_QUANTITY_CORE})(?P<more>\+)?\Z", re.IGNORECASE
+)
+
+#: What makes a head word unmistakably a quantity even when it cannot be
+#: normalized: it starts with a digit or with a hedge.  This is the fail-closed
+#: half of :func:`resolve_quantity` -- ``12-ish`` and ``about 12ish`` are claims
+#: whatever the grammar makes of them.  It deliberately does *not* fire on a
+#: digit appearing later in the word, because the corpus's non-claim head words
+#: are section references (``§18.3-§18.4``, 52 sites) and charging those would
+#: be a pure false positive.
+_NUMERIC_IDIOM = re.compile(rf"\A(?:{_HEDGE}|\d)", re.IGNORECASE)
 
 #: The repository-artifact nouns a count can quantify.  Deliberately closed and
 #: deliberately *not* including mathematical objects (``parts``, ``ingredients``,
@@ -351,28 +551,72 @@ INVENTORY_NOUN = (
 _WINDOW = rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,70}}?"
 
 
+def cardinal_value(phrase: str) -> int | None:
+    """Return the value of a cardinal ``phrase``, or ``None`` if it is not one.
+
+    Scales multiply and everything else adds, so ``two hundred`` is 200 while
+    ``twenty-four`` is 24.  A plain sum over the words -- the shape this started
+    as -- reads ``two hundred`` as 102.
+    """
+    total = 0
+    current = 0
+    seen = False
+    for word in re.split(r"[-\s]+", phrase.strip().lower()):
+        if not word or word == "and":
+            continue
+        if word in _SCALE_WORDS:
+            scale = _SCALE_WORDS[word]
+            current = (current or 1) * scale
+            if scale >= _SCALE_WORDS["thousand"]:
+                total += current
+                current = 0
+        elif word in WORD_NUMBERS:
+            current += WORD_NUMBERS[word]
+        else:
+            return None
+        seen = True
+    return total + current if seen else None
+
+
 def resolve_quantity(raw: str) -> tuple[str, bool]:
-    """Return ``(token, is_quantity)`` for the head word ``raw``.
+    """Return ``(token, is_quantity)`` for the quantity fragment ``raw``.
 
     ``token`` is the normalized claim token: a decimal string for a numeral or
-    cardinal word, the lower-cased word for a vague quantifier.  ``is_quantity``
-    is ``False`` for anything else, which is *accounted but not charged* -- a
-    header reading ``Narrow child module for concrete latticeGraph
-    specializations`` states no count, and inventing a charge for it would make
-    the tool's population meaningless.
+    cardinal phrase, ``~N``/``N+`` for a hedged or open-ended one, the
+    lower-cased word for a vague quantifier, and ``?<raw>`` for a fragment that
+    is unmistakably numeric but that the grammar cannot normalize.
+
+    ``is_quantity`` is ``False`` only for a fragment with no numeric content at
+    all, which is *accounted but not charged* -- a header reading ``Narrow child
+    module for concrete latticeGraph specializations`` states no count, and
+    inventing a charge for it would make the tool's population meaningless.
+    Everything that does carry numeric content is charged, including forms the
+    normalizer does not understand: an unresolvable count is a claim, and this
+    is the one place where the "unparseable is charged, never skipped" rule has
+    to hold for a *quantity* rather than for a file.
     """
     word = raw.strip().strip(",.;:!?)(`*").lower()
-    if word.isdigit():
-        return word, True
     if word in VAGUE_QUANTIFIERS:
         return word, True
-    if word in WORD_NUMBERS:
-        return str(WORD_NUMBERS[word]), True
-    if "-" in word:
-        parts = word.split("-")
-        if len(parts) == 2 and all(part in WORD_NUMBERS for part in parts):
-            return str(WORD_NUMBERS[parts[0]] + WORD_NUMBERS[parts[1]]), True
+    parts = _QUANTITY_PARTS.match(word)
+    if parts is not None:
+        core = parts.group("core")
+        value = core.replace(",", "") if core[0].isdigit() else _cardinal_token(core)
+        if value is not None:
+            if parts.group("hedge"):
+                value = f"~{value}"
+            if parts.group("more"):
+                value = f"{value}+"
+            return value, True
+    if _NUMERIC_IDIOM.match(word):
+        return f"?{word}", True
     return word, False
+
+
+def _cardinal_token(core: str) -> str | None:
+    """Return the decimal spelling of cardinal phrase ``core``, or ``None``."""
+    value = cardinal_value(core)
+    return None if value is None else str(value)
 
 
 # --------------------------------------------------------------------------
@@ -439,11 +683,17 @@ class ClaimClass(NamedTuple):
 #: bypassable by a one-character edit.
 _NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
 
-#: ``for [the] <head word>`` immediately after the anchor.  No ``\A``: the
-#: pattern is applied with a ``pos`` argument, which ``\A`` ignores (it means
-#: "start of string", not "start of the search"), and getting that wrong silently
-#: turns every head quantity into an unresolved token.
-_HEAD_QUANTITY = re.compile(r"\s*for\s+(?:the\s+)?(\S+)")
+#: ``for [the] <head quantity>`` immediately after the anchor.  The quantity
+#: alternative comes first so that a multi-word count (``about 12``, ``two
+#: hundred``) is captured whole; ``\S+`` is the fallback that keeps the
+#: extractor total, so a non-quantity head word still produces a record.
+#:
+#: No ``\A``: the pattern is applied with a ``pos`` argument, which ``\A``
+#: ignores (it means "start of string", not "start of the search"), and getting
+#: that wrong silently turns every head quantity into an unresolved token.
+#: ``re.IGNORECASE`` for the same reason the anchors carry it -- ``For The 12``
+#: is the same claim, and this was the last case-sensitive link in the chain.
+_HEAD_QUANTITY = re.compile(rf"\s*for\s+(?:the\s+)?({QUANTITY}(?![\w-])|\S+)", re.IGNORECASE)
 
 
 def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
@@ -616,10 +866,6 @@ CLAIM_CLASSES: tuple[ClaimClass, ...] = (
     ),
 )
 
-#: The module docstring opener whose absence is charged as :data:`MISSING_DOC`.
-_MODULE_DOC = "/-!"
-
-
 # --------------------------------------------------------------------------
 # Scanning one source
 # --------------------------------------------------------------------------
@@ -655,7 +901,8 @@ def scan_source(source: Source) -> SourceReport:
        extractor.
 
     ``K1`` requires (3) to produce exactly as many records as (1); ``K2``
-    requires (2) to equal the subset of (1) that sits inside prose.
+    requires (2) to equal the subset of (1) that sits inside prose; ``K3``
+    requires the decomposition itself to agree with an independent oracle.
     """
     text = source.text
     decomposition = decompose(text) if source.is_lean else decompose_document(text)
@@ -665,11 +912,16 @@ def scan_source(source: Source) -> SourceReport:
     claims: list[Claim] = []
     failures: list[str] = []
 
+    if source.is_lean and decomposition.regions != reference_regions(text):
+        failures.append(
+            f"K3 {source.target}: the comment decomposition disagrees with the "
+            "independent oracle"
+        )
     if not decomposition.terminated:
         claims.append(
             Claim(UNTERMINATED, source.target, "-", 1, True, "comment or string never closed")
         )
-    if source.is_lean and _MODULE_DOC not in text:
+    if source.is_lean and not decomposition.module_doc:
         claims.append(
             Claim(MISSING_DOC, source.target, "-", 1, True, "no `/-!` module docstring to inspect")
         )
@@ -806,7 +1058,18 @@ BASELINE_HEADER = """\
 #
 # Pinned deliberately BEFORE any repair, so every later repair PR is measured
 # against a commitment that already exists on main rather than against a number
-# it computed for itself.
+# it computed for itself.  That is enforced, not merely intended:
+# `--check-baseline-drift` compares this file against the copy on the base
+# branch and requires the diff to explain every movement -- no key may grow (B1),
+# a key may only shrink where the diff edits the source it names (B2), and the
+# pin must be tight against the tree (B3).  Regenerating this file therefore no
+# longer launders a claim: `--check` would pass, the drift check would not.
+#
+# The single escape hatch is a comment line beginning DETECTOR-MIGRATION:, added
+# by the same diff that changes the detector.  It waives B1/B2 for a recount
+# under a corrected detector -- the 713 -> 740 shape above -- and nothing else;
+# it is not a standing permission, because a line already on the base branch is
+# not one the diff adds.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 """
@@ -856,6 +1119,206 @@ def read_baseline(path: Path = BASELINE_FILE) -> tuple[Counter[tuple[str, str, s
 
 
 # --------------------------------------------------------------------------
+# Baseline drift against the base branch
+# --------------------------------------------------------------------------
+
+#: The one line that may authorize the pin to move in a direction no prose edit
+#: explains.  It has to be *added by the diff under review* -- a marker already
+#: present on the base branch is not a waiver -- and it only counts when the
+#: detector itself changed in the same diff, because a detector migration that
+#: does not touch the detector is not one.
+MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
+
+
+def _git(root: Path, *args: str) -> tuple[int, str]:
+    """Run ``git`` in ``root``; return ``(returncode, stdout)``."""
+    result = subprocess.run(
+        ["git", "-C", str(root), *args], capture_output=True, text=True, check=False
+    )
+    return result.returncode, result.stdout
+
+
+def base_commit(root: Path, base_ref: str) -> str | None:
+    """Return the merge base of ``base_ref`` and ``HEAD``, or ``None``.
+
+    The merge base rather than the tip: a branch that has not rebased must be
+    measured against the commitment that was on the base branch when it forked,
+    not against one made after it.  ``None`` means the ref does not resolve at
+    all, which is a failure and never a skip -- an unfetched ``origin/main`` is
+    exactly how this check would quietly stop running in CI.
+    """
+    code, out = _git(root, "merge-base", base_ref, "HEAD")
+    if code == 0 and out.strip():
+        return out.strip()
+    code, out = _git(root, "rev-parse", "--verify", f"{base_ref}^{{commit}}")
+    return out.strip() if code == 0 and out.strip() else None
+
+
+def baseline_at(root: Path, commit: str) -> tuple[Counter[tuple[str, str, str]] | None, list[str]]:
+    """Return the baseline recorded at ``commit``, or ``None`` if it has none."""
+    code, out = _git(root, "show", f"{commit}:{BASELINE_REPO_PATH}")
+    if code != 0:
+        return None, []
+    return parse_baseline(out)
+
+
+def changed_paths(root: Path, commit: str) -> frozenset[str]:
+    """Return the repo-relative paths that differ between ``commit`` and the tree."""
+    code, out = _git(root, "diff", "--name-only", commit, "--")
+    if code != 0:
+        return frozenset()
+    return frozenset(line.strip() for line in out.splitlines() if line.strip())
+
+
+def migration_waiver(root: Path, commit: str) -> tuple[str, ...]:
+    """Return the migration reasons this diff adds to the baseline file.
+
+    Empty unless the diff both adds a :data:`MIGRATION_MARKER` line *and*
+    changes the detector.  The waiver is therefore never a standing permission:
+    it lives in the diff, is one grep away for a reviewer, and expires the
+    moment the line stops being new.
+    """
+    if DETECTOR_REPO_PATH not in changed_paths(root, commit):
+        return ()
+    code, out = _git(root, "diff", "-U0", commit, "--", BASELINE_REPO_PATH)
+    if code != 0:
+        return ()
+    reasons = [
+        line[1:].strip()
+        for line in out.splitlines()
+        if line.startswith("+") and line[1:].lstrip().startswith(MIGRATION_MARKER)
+    ]
+    return tuple(reasons)
+
+
+def target_path(target: str) -> str:
+    """Return the repo-relative source path a ratchet target names."""
+    return target if target in DOC_TARGETS else target.replace(".", "/") + ".lean"
+
+
+class Drift(NamedTuple):
+    """The verdict of comparing this checkout's pin against the base branch's."""
+
+    base: str
+    had_baseline: bool
+    added: tuple[tuple[tuple[str, str, str], int, int], ...]
+    unexplained: tuple[tuple[tuple[str, str, str], int, int], ...]
+    untight: tuple[tuple[str, str, str], ...]
+    waiver: tuple[str, ...]
+
+    @property
+    def ok(self) -> bool:
+        """Whether the pin moved only in ways a real repair explains."""
+        if self.untight:
+            return False
+        return bool(self.waiver) or not (self.added or self.unexplained)
+
+
+def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift | None:
+    """Compare this checkout's baseline against the one on ``base_ref``.
+
+    Three rules, and between them they are what makes "the population only ever
+    falls, and only by repair" load-bearing rather than aspirational.  The
+    live-versus-baseline gate cannot see any of this: regenerating the pin makes
+    the tree agree with itself by construction, so a PR that repairs one claim,
+    writes another and re-pins passes it cleanly.
+
+    ``B1``
+        no key may be new or larger than the base branch's pin.  This is the
+        net-zero swap: the repaired key disappears, the written key appears, the
+        total is unchanged, and only a comparison against the *other branch's*
+        file can tell the difference.
+
+    ``B2``
+        a key that shrank or vanished must have a corresponding source edit in
+        this diff.  Deleting rows from the pin is otherwise a text edit like any
+        other, and this file is the only place the campaign's own progress is
+        recorded.
+
+    ``B3``
+        the pin must be tight against the live tree.  Slack is capacity: a
+        repair left un-pinned leaves room on exactly the repaired key for a new
+        claim to be written into later, silently, with no diff to review.
+
+    ``B2`` attributes at file granularity, not at line granularity: it asks
+    whether the source the key names appears in the diff, not whether the exact
+    line did.  ``B3`` is what makes that enough.  With the pin required to be an
+    exact function of the tree, a baseline row cannot be deleted while its claim
+    is still written -- the row would be missing and the claim live, which ``B3``
+    rejects -- so the only way down is for the prose to have actually gone.  What
+    ``B2`` adds on top is that the disappearance has to be visible in the diff of
+    the file that owned it.
+
+    Returns ``None`` when ``base_ref`` does not resolve -- fail closed, never a
+    silent pass.
+    """
+    base = base_commit(root, base_ref)
+    if base is None:
+        return None
+    baseline, _errors = baseline_at(root, base)
+    head, _head_errors = read_baseline(root / BASELINE_REPO_PATH)
+    live = build_report(root).charged
+    untight = tuple(sorted(key for key in set(head) | set(live) if head.get(key) != live.get(key)))
+    if baseline is None:
+        return Drift(base, False, (), (), untight, ())
+    edited = changed_paths(root, base)
+    added = tuple(
+        sorted(
+            (key, count, baseline.get(key, 0))
+            for key, count in head.items()
+            if count > baseline.get(key, 0)
+        )
+    )
+    unexplained = tuple(
+        sorted(
+            (key, head.get(key, 0), count)
+            for key, count in baseline.items()
+            if head.get(key, 0) < count and target_path(key[1]) not in edited
+        )
+    )
+    return Drift(base, True, added, unexplained, untight, migration_waiver(root, base))
+
+
+def print_drift(drift: Drift | None, base_ref: str) -> bool:
+    """Print the drift verdict; return whether it passes."""
+    print("== Baseline drift (this checkout's pin vs the base branch's) ==")
+    if drift is None:
+        print(f"  FAIL: base ref {base_ref!r} does not resolve in this checkout")
+        print("        (CI needs `fetch-depth: 0`, so that origin/main is present)")
+        print("FAIL: the pin could not be compared against the base branch")
+        return False
+    print(f"  base commit {drift.base[:12]} via {base_ref}")
+    ok = True
+    for key in drift.untight:
+        print(f"  FAIL: B3 pin not tight -- re-pin with --baseline: {key[0]} {key[1]} {key[2]}")
+        ok = False
+    if not drift.had_baseline:
+        print("  INFO: the base commit carries no baseline file; this is its first landing, "
+              "so B1/B2 have nothing to compare against")
+        print("PASS: baseline drift" if ok else "FAIL: baseline drift")
+        return ok
+    for key, count, was in drift.added:
+        print(f"  FAIL: B1 pin rose {was} -> {count}: {key[0]} {key[1]} {key[2]}")
+        ok = False
+    for key, count, was in drift.unexplained:
+        print(f"  FAIL: B2 pin fell {was} -> {count} with no edit to {target_path(key[1])}: "
+              f"{key[0]} {key[1]} {key[2]}")
+        ok = False
+    if drift.waiver and not ok and not drift.untight:
+        print("  WAIVED: B1/B2 by a detector migration declared in this diff:")
+        for reason in drift.waiver:
+            print(f"      {reason}")
+        ok = True
+    elif drift.waiver:
+        print("  INFO: a detector migration is declared in this diff:")
+        for reason in drift.waiver:
+            print(f"      {reason}")
+    print("PASS: the pin moved only where this diff explains it"
+          if ok else "FAIL: the pin moved in a way this diff does not explain")
+    return ok
+
+
+# --------------------------------------------------------------------------
 # The run
 # --------------------------------------------------------------------------
 
@@ -879,7 +1342,7 @@ class Report(NamedTuple):
 
     @property
     def sound(self) -> bool:
-        """Whether ``K0``/``K1``/``K2`` all held on this run."""
+        """Whether ``K0``/``K1``/``K2``/``K3`` all held on this run."""
         return not self.conservation
 
 
@@ -940,6 +1403,10 @@ CONTRACT_LINES = (
     "population non-increasing.  It does NOT recompute any count, does NOT determine",
     "whether a header is semantically current, and asserts NOTHING about prose it does",
     "not recognize.  A pass never means the headers are clean.",
+    "Caveat on the numbers below: a FALL in them is not by itself evidence that prose",
+    "was repaired.  Rewriting a claim into a shape this grammar does not recognize",
+    "lowers them just as a real repair does.  Review a repair on the --findings diff,",
+    "never on the totals.",
 )
 
 
@@ -953,10 +1420,10 @@ def print_report(report: Report, baseline: Counter[tuple[str, str, str]],
     print(f"  {len(report.sources)} tracked target(s): {lean} Lean module(s) + "
           f"{len(report.sources) - lean} document(s)")
 
-    print("== Conservation (K0 inputs / K1 records / K2 mask) ==")
+    print("== Conservation (K0 inputs / K1 records / K2 mask / K3 decomposition oracle) ==")
     if report.sound:
         print("  PASS: every tracked target accounted for; "
-              "raw anchors == records == masked anchors")
+              "raw anchors == records == masked anchors; regions == oracle")
     else:
         print(f"  FAIL: {len(report.conservation)} conservation failure(s); "
               "the findings report is suppressed for this run")
@@ -1033,14 +1500,23 @@ def main(argv: list[str] | None = None) -> int:
                        help="Print the live charged population in baseline-file format.")
     group.add_argument("--findings", action="store_true",
                        help="Print every finding, charged and accounted, as TSV.")
+    group.add_argument("--check-baseline-drift", action="store_true",
+                       help="Compare this checkout's baseline against the base branch's.")
     group.add_argument("--self-test", action="store_true",
                        help="Run the ratchet's own test suite.")
+    parser.add_argument("--base-ref", default="origin/main",
+                        help="The base branch for --check-baseline-drift (default origin/main).")
     args = parser.parse_args(argv)
 
     if args.self_test:
         from test_header_inventory_claim_ratchet import run_suite  # noqa: PLC0415
 
         return run_suite()
+
+    if args.check_baseline_drift:
+        for line in CONTRACT_LINES:
+            print(line)
+        return 0 if print_drift(check_drift(base_ref=args.base_ref), args.base_ref) else 1
 
     report = build_report()
     if args.baseline or args.findings:
