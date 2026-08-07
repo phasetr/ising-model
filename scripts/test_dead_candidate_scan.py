@@ -76,6 +76,20 @@ def docs() -> list[dcs.DocSource]:
     return _DOCS
 
 
+def no_evidence(verdict: dcs.Verdict) -> bool:
+    """Return whether the classifier reached its terminal no-evidence state.
+
+    Phase 3 attaches :data:`dead_candidate_scan.NO_EVIDENCE_REASON` in exactly
+    one branch -- no reference outside the delete set and no documentation
+    citation -- and attaches nothing else there, so the reason is a precise
+    discriminator of that branch. The assertions below name that mechanism
+    instead of the verdict label the branch used to carry: the label is folded
+    into ``uncertain``, and a charged candidate and an uncharged one would then
+    share a verdict, which would turn every such assertion into a tautology.
+    """
+    return dcs.NO_EVIDENCE_REASON in verdict.reasons
+
+
 class CharClassTest(unittest.TestCase):
     """The identifier class must mirror Lean's, in both directions."""
 
@@ -769,7 +783,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
         }
         self.assertEqual(labels, {"docs/index.md", "tex/proof-guide.tex"})
 
-    def test_the_measured_example_is_not_safe_to_delete(self) -> None:
+    def test_the_measured_example_is_a_published_result(self) -> None:
         """The verdict the defect inverted, replayed against the real tree."""
         verdicts, _cascade, _labels = dcs.classify(
             tree(),
@@ -958,13 +972,13 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         ):
             self.assertIn(token, tokens)
 
-    def test_the_hidden_declaration_is_no_longer_safe_to_delete(self) -> None:
+    def test_the_hidden_declaration_now_carries_citation_evidence(self) -> None:
         """End to end, on the declaration the defect offered up for deletion."""
         name = "Ambient.magnetizationAlongExhaustion_differentiable_beta_gen"
         verdicts, _cascade, _labels = dcs.classify(
             tree(), [name], docs(), allow_homonym=False
         )
-        self.assertNotEqual(verdicts[0].verdict, dcs.SAFE, verdicts[0].reasons)
+        self.assertFalse(no_evidence(verdicts[0]), verdicts[0].reasons)
 
 
 class ElidedFragmentTest(unittest.TestCase):
@@ -1014,14 +1028,17 @@ class ElidedFragmentTest(unittest.TestCase):
         text = "`alpha_xyzzy_continuous_gen` + `_differentiable_gen`\n"
         tokens = [("alpha_xyzzy_continuous_gen", 1), ("_differentiable_gen", 1)]
         by_name = {v.decl.final: v for v in self.verdicts(text, tokens)}
-        self.assertEqual(by_name["alpha_xyzzy_differentiable_gen"].verdict, dcs.UNCERTAIN)
-        self.assertEqual(by_name["gamma_xyzzy_differentiable_gen"].verdict, dcs.SAFE)
+        charged = by_name["alpha_xyzzy_differentiable_gen"]
+        uncharged = by_name["gamma_xyzzy_differentiable_gen"]
+        self.assertEqual(charged.verdict, dcs.UNCERTAIN)
+        self.assertFalse(no_evidence(charged), charged.reasons)
+        self.assertTrue(no_evidence(uncharged), uncharged.reasons)
 
     def test_a_bare_family_label_still_rescues_nobody(self) -> None:
-        """Without a cited prefix the fragment stays a label, and the exit-0 path stays open."""
+        """Without a cited prefix the fragment stays a label and charges neither."""
         text = "the `_differentiable_gen` lemmas\n"
         verdicts = self.verdicts(text, [("_differentiable_gen", 1)])
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
+        self.assertEqual([no_evidence(v) for v in verdicts], [True, True])
 
     def test_the_helper_reads_the_prefix_and_not_the_suffix(self) -> None:
         """``elided_prefix_matches`` is exact about where the elision starts."""
@@ -1121,6 +1138,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
         names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(4)]
         verdicts, labels = self.classify(self.wide_tree(4), names, "synth_wide_*_tendsto")
         self.assertEqual([v.verdict for v in verdicts], [dcs.UNCERTAIN] * 4)
+        self.assertEqual([no_evidence(v) for v in verdicts], [False] * 4)
         self.assertEqual(labels, {})
 
     def test_a_glob_above_the_threshold_charges_nobody_and_is_reported(self) -> None:
@@ -1135,7 +1153,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
         count = dcs.MAX_CHARGED_GLOB_MATCHES + 1
         names = [f"IsingModel.synth_wide_{index}_tendsto" for index in range(count)]
         verdicts, labels = self.classify(self.wide_tree(count), names, "synth_wide_*_tendsto")
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE] * count)
+        self.assertEqual([no_evidence(v) for v in verdicts], [True] * count)
         self.assertEqual(list(labels), ["docs/index.md:1 `synth_wide_*_tendsto`"])
         self.assertEqual(labels["docs/index.md:1 `synth_wide_*_tendsto`"], [f"{count} declarations"])
 
@@ -1155,7 +1173,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
             )
         finally:
             dcs.MAX_CHARGED_GLOB_MATCHES = original
-        self.assertEqual([v.verdict for v in verdicts], [dcs.SAFE, dcs.SAFE])
+        self.assertEqual([no_evidence(v) for v in verdicts], [True, True])
         self.assertEqual(list(labels), ["docs/index.md:1 `synth_glob_ge_log_two*`"])
 
     def test_a_charged_glob_never_publishes(self) -> None:
@@ -1208,7 +1226,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
         for matched in (pair, quad):
             self.assertLessEqual(len(matched), dcs.MAX_CHARGED_GLOB_MATCHES)
 
-    def test_the_six_declarations_are_no_longer_safe_to_delete(self) -> None:
+    def test_the_six_declarations_now_carry_shorthand_evidence(self) -> None:
         """The named regression, on the real tree and the real documentation."""
         names = [
             "Ambient.freeEnergyAlongExhaustion_latticeGraph_ge_log_two",
@@ -1220,7 +1238,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
         ]
         verdicts, _cascade, _labels = dcs.classify(tree(), names, docs(), allow_homonym=False)
         for verdict in verdicts:
-            self.assertNotEqual(verdict.verdict, dcs.SAFE, verdict.name)
+            self.assertFalse(no_evidence(verdict), verdict.name)
             self.assertTrue(
                 any(
                     cit.startswith("shorthand ") and "*" in cit
@@ -1414,7 +1432,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
                 self.assertTrue(verdict.doc_citations[0].startswith("shorthand "))
                 self.assertIn(token, verdict.doc_citations[0])
         for name in names_by_count[11]:
-            self.assertEqual(by_name[name].verdict, dcs.SAFE, name)
+            self.assertTrue(no_evidence(by_name[name]), name)
             self.assertEqual(by_name[name].doc_citations, [], name)
         key = "docs/index.md:4 `IsingModel.qglob_eleven_*`"
         self.assertEqual(labels, {key: ["11 declarations"]})
@@ -1615,10 +1633,12 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             [self.doc("docs/f6-ten.md", [(token, 1), ("_monotone_J", 1)])],
             allow_homonym=False,
         )
+        # ``(terminal no-evidence?, seeded by the head?)``: the sibling the head
+        # licenses is charged, the decoy is not and is left with no evidence.
         self.assertEqual(
             [
                 (
-                    verdict.verdict,
+                    no_evidence(verdict),
                     any(
                         citation.startswith("shorthand docs/f6-ten.md:1:")
                         and "`_monotone_J`" in citation
@@ -1627,7 +1647,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
                 )
                 for verdict in verdicts
             ],
-            [(dcs.UNCERTAIN, True), (dcs.SAFE, False)],
+            [(False, True), (True, False)],
         )
 
     def test_F6_PREFIX_BOUNDARY_blocks_divergent_and_colliding_heads(self) -> None:
@@ -1662,8 +1682,8 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
                 [target],
                 [self.doc("docs/f6-boundary.md", [(head, 1), (suffix, 1)])],
             )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
-        self.assertEqual(observed, [(dcs.SAFE, [])] * len(cases))
+            observed.append((no_evidence(verdicts[0]), verdicts[0].doc_citations))
+        self.assertEqual(observed, [(True, [])] * len(cases))
 
     def test_F6_PREFIX_BOUNDARY_blocks_adjacent_lines_and_other_sources(self) -> None:
         """A head seed cannot cross a physical line or a documentation source."""
@@ -1689,8 +1709,8 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             verdicts, _labels = self.classify(
                 finals, ["alpha_xyzzy_monotone_J"], docs_list
             )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
-        self.assertEqual(observed, [(dcs.SAFE, []), (dcs.SAFE, [])])
+            observed.append((no_evidence(verdicts[0]), verdicts[0].doc_citations))
+        self.assertEqual(observed, [(True, []), (True, [])])
 
     def test_F6_CONSERVATIVE_bad_or_broad_heads_do_not_license_suffixes(self) -> None:
         """Unresolved, malformed, zero, relative, and eleven-match heads stay inert."""
@@ -1717,7 +1737,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
                     )
                 ],
             )
-            observed.append((verdicts[0].verdict, verdicts[0].doc_citations))
+            observed.append((no_evidence(verdicts[0]), verdicts[0].doc_citations))
 
         broad_heads = ["limit_seed_bounds"] + [
             f"limit_extra_{index}_bounds"
@@ -1742,10 +1762,10 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             allow_homonym=False,
         )
         observed.append(
-            (broad_verdicts[0].verdict, broad_verdicts[0].doc_citations)
+            (no_evidence(broad_verdicts[0]), broad_verdicts[0].doc_citations)
         )
 
-        self.assertEqual(observed, [(dcs.SAFE, [])] * (len(bad_heads) + 1))
+        self.assertEqual(observed, [(True, [])] * (len(bad_heads) + 1))
         self.assertEqual(
             labels["docs/f6-eleven.md:1 `limit_..._bounds`"],
             ["11 declarations"],
@@ -1826,7 +1846,9 @@ class MissingDocumentationTest(unittest.TestCase):
             dcs.TEX_GUIDE = original
         self.assertEqual(code, dcs.EXIT_INCONSISTENT, out.getvalue())
         self.assertIn("no-such-guide.tex", err.getvalue())
-        self.assertNotIn("safe-to-delete", out.getvalue())
+        # No report at all: an aborted run must not print a classification whose
+        # documentation channel was never read.
+        self.assertNotIn("== dead-candidate scan ==", out.getvalue())
 
 
 def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
@@ -1871,42 +1893,44 @@ class DeleteClosureTest(unittest.TestCase):
             }
         )
 
-    def classify(self, docs_list: list[dcs.DocSource]) -> dict[str, str]:
+    def classify(self, docs_list: list[dcs.DocSource]) -> dict[str, dcs.Verdict]:
         """Classify both synthetic candidates against ``docs_list``."""
         verdicts, _cascade, _labels = dcs.classify(
             self.build(), [self.BASE, self.USER], docs_list, allow_homonym=False
         )
-        return {verdict.decl.full: verdict.verdict for verdict in verdicts}
+        return {verdict.decl.full: verdict for verdict in verdicts}
 
-    def test_both_deleted_together_is_still_safe(self) -> None:
+    def test_both_deleted_together_leaves_neither_with_evidence(self) -> None:
         """The closure must keep working: nothing retains either candidate here."""
         result = self.classify([])
-        self.assertEqual(result[self.BASE], dcs.SAFE)
-        self.assertEqual(result[self.USER], dcs.SAFE)
+        self.assertTrue(no_evidence(result[self.BASE]), result[self.BASE].reasons)
+        self.assertTrue(no_evidence(result[self.USER]), result[self.USER].reasons)
 
-    def test_candidate_consumed_by_a_retained_candidate_is_not_safe(self) -> None:
+    def test_candidate_consumed_by_a_retained_candidate_is_load_bearing(self) -> None:
         """A module citation retains the consumer, so the consumed lemma stays."""
         # The citation names the *consumer's* module only, which is what makes
         # the consumer uncertain while leaving the base candidate untouched.
         result = self.classify([synthetic_doc("see SynthClosureB.lean for the proof")])
-        self.assertEqual(result[self.USER], dcs.UNCERTAIN)
-        self.assertNotEqual(result[self.BASE], dcs.SAFE)
-        self.assertEqual(result[self.BASE], dcs.LOAD_BEARING)
+        self.assertEqual(result[self.USER].verdict, dcs.UNCERTAIN)
+        self.assertFalse(no_evidence(result[self.USER]), result[self.USER].reasons)
+        self.assertFalse(no_evidence(result[self.BASE]), result[self.BASE].reasons)
+        self.assertEqual(result[self.BASE].verdict, dcs.LOAD_BEARING)
 
-    def test_no_safe_candidate_is_consumed_by_a_retained_one_on_the_real_family(self) -> None:
-        """The same invariant, over the 245-candidate ``_ferromagnetic`` family."""
+    def test_the_delete_closure_is_a_fixpoint_on_the_real_family(self) -> None:
+        """The same invariant, over the whole ``_ferromagnetic`` family."""
         verdicts = family_verdicts()
-        safe_keys = {v.decl.key for v in verdicts if v.verdict == dcs.SAFE}
+        deletable_keys = {v.decl.key for v in verdicts if no_evidence(v)}
         for verdict in verdicts:
-            if verdict.verdict != dcs.SAFE:
+            if not no_evidence(verdict):
                 continue
             for occ in verdict.consumers:
                 self.assertIsNotNone(occ.owner, f"{verdict.name}: file-level consumer")
                 self.assertIn(
                     occ.owner.key,
-                    safe_keys,
-                    f"{verdict.name} is safe-to-delete but consumed by the retained "
-                    f"{occ.owner.full} ({occ.file}:{occ.line})",
+                    deletable_keys,
+                    f"{verdict.name} carries the terminal no-evidence reason but is "
+                    f"consumed by the retained {occ.owner.full} "
+                    f"({occ.file}:{occ.line})",
                 )
 
 
@@ -2218,7 +2242,7 @@ class TexChannelLimitTest(unittest.TestCase):
         self.assertIn("L7c", dcs.LIMITATIONS)
         self.assertIn("run_tex_canary", dcs.LIMITATIONS)
 
-    def test_unreadable_citation_blocks_safe_to_delete(self) -> None:
+    def test_unreadable_citation_forces_uncertain(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
         tree_ = synthetic_tree(
             {
@@ -2231,7 +2255,7 @@ class TexChannelLimitTest(unittest.TestCase):
         )
         name = "IsingModel.synthetic_unreadableβ_xyzzy"
         blind = synthetic_doc("nothing here")
-        self.assertEqual(dcs.classify(tree_, [name], [blind], False)[0][0].verdict, dcs.SAFE)
+        self.assertTrue(no_evidence(dcs.classify(tree_, [name], [blind], False)[0][0]))
         blind.unreadable.append(
             dcs.UnreadableSpan("tex", 7, dcs.MACRO_RESIDUE, r"synthetic_unreadable\beta\_xyzzy")
         )
@@ -2269,7 +2293,7 @@ class ProseMentionTest(unittest.TestCase):
     def test_docstring_mention_is_reported_but_does_not_rescue(self) -> None:
         """Prose is not a reference: the verdict stays safe, with a warning."""
         verdict = self.verdict()
-        self.assertEqual(verdict.verdict, dcs.SAFE)
+        self.assertTrue(no_evidence(verdict), verdict.reasons)
         self.assertTrue(any("module docstring" in item for item in verdict.info))
         self.assertTrue(any("leaves that text stale" in item for item in verdict.info))
 
@@ -2415,7 +2439,7 @@ class FamilyCalibrationTest(unittest.TestCase):
         for verdict in verdicts:
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 219)
-        self.assertEqual(counts.get(dcs.SAFE), 15)
+        self.assertEqual(sum(1 for v in verdicts if no_evidence(v)), 15)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
@@ -2606,7 +2630,7 @@ class FixtureTest(unittest.TestCase):
         ]
         self.assertEqual(len(keepers), 10)
         verdicts, _cascade, _labels = dcs.classify(tree(), keepers, docs(), allow_homonym=False)
-        self.assertTrue(all(v.verdict != dcs.SAFE for v in verdicts))
+        self.assertTrue(all(not no_evidence(v) for v in verdicts))
         with_lean_consumers = [v for v in verdicts if v.consumers]
         self.assertEqual(len(with_lean_consumers), 7)
         docs_only = [v for v in verdicts if not v.consumers]
@@ -2638,7 +2662,7 @@ class ExitCodeTest(unittest.TestCase):
             ]
         )
         self.assertEqual(code, dcs.EXIT_OK, out)
-        self.assertIn("safe-to-delete: 1", out)
+        self.assertIn(dcs.NO_EVIDENCE_REASON, out)
 
     def test_report_only_exits_zero_with_the_non_evidential_banner(self) -> None:
         """Exploration mode is allowed, but must announce that it is not evidence."""

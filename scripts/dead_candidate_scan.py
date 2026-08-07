@@ -144,6 +144,17 @@ UNCERTAIN = "uncertain"
 SAFE = "safe-to-delete"
 VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN, SAFE)
 
+# The terminal state of the classification: the scan found no reference outside
+# the delete set and no citation in the scanned documentation. It records what
+# was *not* observed, so it is a reason attached to a verdict and never a verdict
+# of its own -- absence of evidence is not evidence of absence. Phase 3 attaches
+# it in exactly one branch, and attaches nothing else there, which makes it the
+# precise discriminator of that branch.
+NO_EVIDENCE_REASON = (
+    "no reference outside the delete set, no citation in the scanned "
+    "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
+)
+
 EXIT_OK = 0
 EXIT_NOT_SAFE = 1
 EXIT_INCONSISTENT = 2
@@ -1939,10 +1950,7 @@ def classify(
             continue
 
         verdict.verdict = SAFE
-        verdict.reasons.append(
-            "no reference outside the delete set, no citation in the scanned "
-            "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
-        )
+        verdict.reasons.append(NO_EVIDENCE_REASON)
 
     cascade = _cascade(tree, deletable, reverse, graph, key_to_decl)
     return verdicts, cascade, family_labels

@@ -61,14 +61,14 @@
 # as a keeper. The closure is sound only over the candidates that actually go
 # away, so the retained ones are now removed before the fixpoint runs.
 
-# --- PR #4641 keepers, internally load-bearing (Lean channel) ---
-two_div_one_add_pow_le_two_div_pow	not-safe	#4641 keeper; consumed by two_div_one_add_pow_mul_..._le_two_div_pow_mul_two_div_pow
-one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow	not-safe	#4641 keeper; consumed by one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
-one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow	not-safe	#4641 keeper; same consumer
-pseudoMassG_analyticAt	not-safe	#4641 keeper; consumed by pseudoMassG_analyticWithinAt_Ici_zero (sibling _of_even differs only by suffix)
-pseudoMassG_analyticWithinAt_Ici_zero	not-safe	#4641 keeper; consumed by pseudoMassG_continuousWithinAt_Ici_zero
-one_div_one_add_pow_le_one_div_pow	not-safe	#4641 keeper; consumed by one_div_one_add_pow_mul_..._le_one_div_pow_mul_one_div_pow
-one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	not-safe	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
+# --- PR #4641 keepers with Lean consumers (the class is whichever channel wins) ---
+two_div_one_add_pow_le_two_div_pow	published-result	#4641 keeper; consumed by two_div_one_add_pow_mul_..._le_two_div_pow_mul_two_div_pow
+one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow	published-result	#4641 keeper; consumed by one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow	published-result	#4641 keeper; same consumer
+pseudoMassG_analyticAt	load-bearing	#4641 keeper; consumed by pseudoMassG_analyticWithinAt_Ici_zero (sibling _of_even differs only by suffix)
+pseudoMassG_analyticWithinAt_Ici_zero	load-bearing	#4641 keeper; consumed by pseudoMassG_continuousWithinAt_Ici_zero
+one_div_one_add_pow_le_one_div_pow	published-result	#4641 keeper; consumed by one_div_one_add_pow_mul_..._le_one_div_pow_mul_one_div_pow
+one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	published-result	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
 
 # --- PR #4641 keepers with ZERO Lean consumers, saved only by docs/index.md ---
 one_div_mul_pow_mul_one_div_mul_pow_eq	published-result	docs/index.md:2052 (GJ Thm 17.5.1 M-factor factorization, Done row)
@@ -76,11 +76,11 @@ one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow	publi
 pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md:1945 (Sec 17.5 Step 132b, Done row)
 
 # --- The _ferromagnetic case: candidate -> consumer -> GJ Prop 4.6.1 ---
-freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	not-safe	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
+freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
 
 # --- Unicode identifiers must behave exactly like ASCII ones ---
-freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the name must not split the key
-correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
+freeEnergyΛ_nonneg_of_ferromagnetic	published-result	3 consumers; the U+039B in the name must not split the key
+correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; same
 
 # --- A zero-consumer declaration conservatively retained by shorthand evidence ---
 # Issue #4927 leaves this retained sibling with no Lean consumer, but the current
