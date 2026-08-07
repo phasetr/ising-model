@@ -333,9 +333,11 @@ class ShapeTest(unittest.TestCase):
     #: charge.  The section references are 52 live sites, so this is a measured
     #: cost and not a hypothetical one; the hyphenated cardinals are adjectives
     #: (`two-sided`, `three-part`, `four-point`) that the corpus is full of.
+    #: ``Step 241 interior`` is *not* here: it does state a number, the guard only
+    #: knows it is not a count, and that is :data:`REFUSED_COUNT_HEADS`' case.
     NON_QUANTITY_HEADS = (
         "§17.5", "§18.3-§18.4", "concrete `latticeGraph` specializations",
-        "ℤ^d", "along-exhaustion", "two-sided", "Step 241 interior", "a", "an",
+        "ℤ^d", "along-exhaustion", "two-sided", "a", "an",
     )
 
     def test_a_citation_or_an_adjective_is_not_a_quantity(self) -> None:
@@ -402,21 +404,17 @@ class ShapeTest(unittest.TestCase):
         source = lean_source("M", header("Narrow child module for all 12 foo wrappers."))
         self.assertEqual(tokens(source, "NARROW_CHILD"), ["12"])
 
-    #: What must stay free, and every one of them is live in this corpus.  A
-    #: number behind a citation word, in a code span, or in a relation is not an
-    #: inventory count, and charging it would buy recall with false charges --
-    #: which is what the head-position rule was defending against.
+    #: What must stay free: the clause carries no quantity a scan can even open
+    #: on, so there is nothing to charge and nothing to refuse.  A number behind
+    #: ``§`` or ``#``, inside a code span, or glued into one token (``h=0``) is
+    #: not a candidate at all, which is a different thing from a candidate the
+    #: citation guard turns down (:data:`REFUSED_COUNT_HEADS`).
     UNCOUNTED_HEADS = (
-        "Narrow child module for Step 241 interior wrappers.",
-        "Narrow child module for PR 1861 interior wrappers.",
-        "Narrow child module for Issue 4501 interior wrappers.",
         "Narrow child module for the §18.3 interior wrappers.",
         "Narrow child module for the #4501 interior wrappers.",
-        "Narrow child module for lemma 17.5.2 wrappers.",
         "Narrow child module for the wrappers of section 3 and 4.",
         "Narrow child module for the `mayerPartialSum 0 ≤ f` comparison wrappers.",
         "Narrow child module for the `vdPolymerFamilies_sum - 1` tendsto-zero wrapper.",
-        "Narrow child module for the susceptibilityInfinite J = 0 closed form wrappers.",
         "Narrow child module for the Λ-level odd-vanish at h=0 wrappers.",
         "Narrow child module for the two-sided foo wrappers.",
         "Narrow child module for the `zero`-boundary foo wrappers.",
@@ -429,6 +427,51 @@ class ShapeTest(unittest.TestCase):
             self.assertEqual(tokens(source, "NARROW_CHILD"), [], body)
             self.assertEqual([claim.token for claim in telemetry(source)], ["-"], body)
 
+    #: A governed count the citation/operator guard refuses.  Every one of these
+    #: was reported as *stating no size*, which is the silent-exemption shape
+    #: ``R3.1`` forbids: the guard measures the extractor's confidence, so its
+    #: verdict may coarsen the key and may never decide there is no key.
+    REFUSED_COUNT_HEADS = (
+        ("Narrow child module for Step 241 interior wrappers.", "?241"),
+        ("Narrow child module for PR 1861 interior wrappers.", "?1861"),
+        ("Narrow child module for Issue 4501 interior wrappers.", "?4501"),
+        ("Narrow child module for lemma 17.5.2 wrappers.", "?17.5.2"),
+        ("Narrow child module for the auxiliary lemmas 12 wrappers.", "?12"),
+        ("Narrow child module for the listed lemmas: 17 wrappers.", "?17"),
+        ("Narrow child module for the susceptibilityInfinite J = 0 closed form wrappers.", "?0"),
+        ("Narrow child module for the bound f(x)= 12 wrappers.", "?12"),
+    )
+
+    def test_a_refused_count_is_charged_rather_than_filed_as_telemetry(self) -> None:
+        """R3.1 for the guard: ``lemmas 12 wrappers`` is not "no quantity".
+
+        :data:`CITATION_WORDS` holds words that are *also* inventory vocabulary
+        -- ``lemmas``, ``theorems``, ``parts``, ``items``, ``notes`` -- so the
+        guard fires on clauses that plainly state a size, and its refusal used to
+        drop the candidate entirely and leave the record in telemetry, which is
+        never pinned and never compared.  The charge is coarse (``?``) because
+        the extractor really does not know whether the number counts anything;
+        it is a charge because whether the *sentence* states a size is not the
+        guard's question.
+        """
+        for body, expected in self.REFUSED_COUNT_HEADS:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], body)
+            self.assertEqual(telemetry(source), [], body)
+
+    def test_a_clause_with_no_quantity_signal_at_all_is_still_telemetry(self) -> None:
+        """Anti-vacuity for the rule above: telemetry still has an inhabitant.
+
+        A guard fix that charged every unquantified header would make
+        :attr:`Report.telemetry` unreachable and the ``NARROW_CHILD`` class
+        total, which is a recall claim this grammar cannot back.
+        """
+        source = lean_source(
+            "M", header("Narrow child module for concrete `latticeGraph` specializations.")
+        )
+        self.assertEqual(charged(source), [])
+        self.assertEqual([claim.token for claim in telemetry(source)], ["-"])
+
     def test_two_counts_in_one_clause_are_charged_unresolved(self) -> None:
         """Ambiguity is charged, never dropped: R3.1 applies to *which* count too."""
         source = lean_source(
@@ -438,9 +481,22 @@ class ShapeTest(unittest.TestCase):
 
     def test_a_quantity_phrase_is_read_once(self) -> None:
         """``twelve hundred`` opens at both its words; it is one count, not two."""
-        self.assertEqual(ratchet.clause_quantities("assorted twelve hundred wrappers"), ("1200",))
+        self.assertEqual(ratchet.clause_quantities("assorted twelve hundred wrappers"),
+                         ratchet.ClauseCounts(("1200",), ()))
         self.assertEqual(ratchet.clause_quantities("assorted about 1.5k wrappers"),
-                         ("?about 1.5k",))
+                         ratchet.ClauseCounts(("?about 1.5k",), ()))
+
+    def test_a_refused_phrase_leaves_the_positions_inside_it_open(self) -> None:
+        """The guard sorts the candidates; it does not consume them.
+
+        ``consumed`` may only move for a phrase that was actually read, or a
+        refusal would swallow the positions after it and silence a count that
+        follows one.
+        """
+        self.assertEqual(
+            ratchet.clause_quantities("lemma 17.5.2 wrappers and 3 concrete wrappers"),
+            ratchet.ClauseCounts(("3",), ("?17.5.2",)),
+        )
 
     def test_a_vague_quantifier_is_charged(self) -> None:
         """`the remaining wrappers` fails the split-stability test as a number does."""
@@ -515,8 +571,45 @@ class ShapeTest(unittest.TestCase):
         self.assertEqual(
             tokens(source, "RELOCATION"),
             ["3->IsingModel.AmbientLattice.SpecialCases."
-             "SusceptibilityPointwiseRegularityAtDifferentiableAt"],
+             f"{ratchet.WRAP_JOIN}SusceptibilityPointwiseRegularityAtDifferentiableAt"],
         )
+
+    def test_the_wrapped_join_is_injective(self) -> None:
+        """Where the boundary between the halves falls is part of the key.
+
+        Concatenation is not injective, and the review checked it: ``A`` + ``BC``,
+        ``AB`` + ``C`` and the unwrapped ``ABC`` all produced one token, so a
+        rewrite that moves the line break moves the boundary and nothing in the
+        pin records that it moved.  The separator cannot appear inside a
+        reference (:data:`_REFERENCE` excludes it), so the joined token maps back
+        to exactly the spans it was read from.
+        """
+        forms = (
+            "The three foo wrappers now live in\n`IsingModel.A`\n`BC`.",
+            "The three foo wrappers now live in\n`IsingModel.AB`\n`C`.",
+            "The three foo wrappers now live in `IsingModel.ABC`.",
+        )
+        produced = [tokens(lean_source("M", header(body)), "RELOCATION")[0] for body in forms]
+        self.assertEqual(len(set(produced)), len(produced), produced)
+
+    def test_a_wrapped_destination_is_not_joined_across_a_paragraph(self) -> None:
+        """A blank line ends the name: only a line wrap continues one.
+
+        The join is unconditional, so the one thing keeping it from inventing a
+        module out of two unrelated references is that :data:`PARAGRAPH` is not
+        whitespace.  A reference may not span one either, which is what kept the
+        sentinel out of the pinned TSV.
+        """
+        source = lean_source(
+            "M",
+            header("The three foo wrappers now live in\n`IsingModel.A`\n\n`IsingModel.B` "
+                   "is unchanged."),
+        )
+        self.assertEqual(tokens(source, "RELOCATION"), ["3->IsingModel.A"])
+        spanning = lean_source(
+            "M", header("The three foo wrappers now live in `IsingModel.A\n\nB`.")
+        )
+        self.assertEqual(tokens(spanning, "RELOCATION"), ["3->?"])
 
     def test_a_second_reference_that_is_not_a_wrap_is_not_joined(self) -> None:
         """Only whitespace joins: a listed name, or a new sentence, is separate."""
@@ -1342,8 +1435,8 @@ class MutationCanaryTest(unittest.TestCase):
     #: did.  The mutation removes the whole second question, so the canary is
     #: about the rule and not about one of its guards.
     HEAD_POSITION_ONLY = (
-        "    governed = clause_quantities(head)\n",
-        "    governed = ()\n",
+        "    counts = clause_quantities(head)\n",
+        "    counts = ClauseCounts((), ())\n",
     )
 
     def test_a_head_position_only_rule_frees_every_modified_count(self) -> None:
@@ -1355,6 +1448,30 @@ class MutationCanaryTest(unittest.TestCase):
         """
         mutant = load_mutant(self.HEAD_POSITION_ONLY)
         for body, expected in ShapeTest.MODIFIED_HEADS:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], body)
+            mutated = lean_source("M", header(body), mutant)
+            self.assertEqual(tokens(mutated, "NARROW_CHILD", mutant), [], body)
+            self.assertEqual(
+                [claim.token for claim in telemetry(mutated, mutant)], ["-"], body
+            )
+
+    #: Drop a refused count instead of charging it, as the round-5 guard did.
+    REFUSAL_IS_TELEMETRY = (
+        "    if counts.cited:\n",
+        "    if False:\n",
+    )
+
+    def test_dropping_a_refused_count_files_a_stated_size_as_telemetry(self) -> None:
+        """The R3.1 violation the citation guard grew, as a canary.
+
+        Telemetry is never pinned and never compared, so a header that states a
+        size and is filed as stating none is a silent exemption -- and the guard
+        fires on ``lemmas``, ``theorems``, ``parts`` and ``items``, which are
+        inventory vocabulary as much as they are citation vocabulary.
+        """
+        mutant = load_mutant(self.REFUSAL_IS_TELEMETRY)
+        for body, expected in ShapeTest.REFUSED_COUNT_HEADS:
             source = lean_source("M", header(body))
             self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], body)
             mutated = lean_source("M", header(body), mutant)
@@ -1700,6 +1817,71 @@ class KeyIdentityTest(unittest.TestCase):
         )
         self.assertEqual(ratchet.key_failures([lean_source("IsingModel.A", "")]), [])
 
+    def test_one_path_scanned_twice_is_a_k4_failure(self) -> None:
+        """The property the first two silently assumed: the *inputs* are distinct.
+
+        ``target_path`` is the identity and ``load_sources`` sets ``target =
+        path``, so "the key inverts" and "no two files share a key" answer
+        themselves whenever the path list already has no repeats -- and the file
+        listing is what decides that.
+        """
+        repeated = lean_source("IsingModel.A", header(self.CLAIM))
+        failures = ratchet.key_failures([repeated, repeated])
+        self.assertEqual(len(failures), 1, failures)
+        self.assertIn("named it more than once", failures[0])
+        self.assertEqual(ratchet.key_failures([repeated]), [])
+
+    def test_a_conflicted_working_tree_multiplies_the_population_and_k4_says_so(self) -> None:
+        """``git ls-files`` really does list an unmerged path once per stage.
+
+        The scan then reads the file three times and charges everything in it
+        three times.  ``K0``'s arithmetic balances (the repeats are in the wanted
+        set too), so nothing else in the conservation set notices; ``--check``
+        fails against the pin, which is fail-closed, but ``--baseline``
+        regenerated in that state bakes the tripled capacity in.
+        """
+        tmp = tempfile.mkdtemp(prefix="claim-ratchet-conflict-")
+        self.addCleanup(shutil.rmtree, tmp, True)
+        root = Path(tmp)
+        (root / "IsingModel").mkdir()
+
+        def git(*args: str, expect: bool = True) -> int:
+            result = subprocess.run(
+                ["git", "-C", tmp, *args], capture_output=True, check=False
+            )
+            if expect and result.returncode != 0:
+                raise AssertionError(f"git {args} failed: {result.stderr!r}")
+            return result.returncode
+
+        def write(body: str) -> None:
+            (root / "IsingModel/M.lean").write_text(header(body), encoding="utf-8")
+
+        git("init", "-q", "-b", "main")
+        git("config", "user.email", "t@example.com")
+        git("config", "user.name", "t")
+        write("Narrow child module for the 5 foo wrappers.")
+        git("add", "-A")
+        git("commit", "-q", "-m", "base")
+        git("checkout", "-q", "-b", "other")
+        write("Narrow child module for the 6 foo wrappers.")
+        git("commit", "-qam", "other")
+        git("checkout", "-q", "main")
+        write("Narrow child module for the 7 foo wrappers.")
+        git("commit", "-qam", "main")
+        self.assertNotEqual(git("merge", "other", expect=False), 0, "the merge must conflict")
+
+        listed = ratchet.tracked_paths(root)
+        self.assertEqual(listed.count("IsingModel/M.lean"), 3, listed)
+        report = ratchet.build_report(root=root)
+        self.assertFalse(report.sound, "a tripled population is not a sound run")
+        self.assertTrue(any("named it more than once" in failure
+                            for failure in report.conservation), report.conservation)
+
+        blind = load_mutant(("        if source.path in scanned:\n", "        if False:\n"))
+        unguarded = blind.build_report(root=root)
+        self.assertTrue(unguarded.sound, "anti-vacuity: nothing else in K0-K4 sees it")
+        self.assertEqual(sum(unguarded.charged.values()) % 3, 0, unguarded.charged)
+
     def test_the_display_name_is_still_available_beside_the_key(self) -> None:
         """A dotted name a Lean reader can read, as a column and never as an identity."""
         self.assertEqual(
@@ -2018,6 +2200,51 @@ class DriftTest(unittest.TestCase):
             ok = ratchet.print_drift(None, "origin/nope")
         self.assertFalse(ok)
         self.assertIn("does not resolve", buffer.getvalue())
+
+    def test_a_base_that_resolves_but_shares_no_history_fails_closed(self) -> None:
+        """The tip is not a substitute for the merge base.
+
+        A shallow clone can hold both tips and not their common ancestor, which is
+        exactly what ``fetch-depth: 0`` is in the workflow to prevent.  The
+        fallback to ``rev-parse <ref>^{commit}`` made that case *pass*: every path
+        differs from an unrelated commit, so every key is explained by an edit and
+        ``B2`` is satisfied wholesale, under the ordinary ``base commit ... via
+        origin/main`` line.
+        """
+        self.git("checkout", "-q", "--orphan", "unrelated")
+        self.git("commit", "-q", "--allow-empty", "-m", "unrelated root")
+        self.assertEqual(
+            ratchet._git(self.root, "rev-parse", "--verify", "main^{commit}")[0], 0,
+            "anti-vacuity: the ref resolves, so only the merge base is missing",
+        )
+        self.assertIsNone(ratchet.base_commit(self.root, "main"))
+        self.assertIsNone(ratchet.check_drift(root=self.root, base_ref="main"))
+
+    def test_a_failed_git_diff_is_an_unsound_run_and_not_an_empty_one(self) -> None:
+        """An empty edited set is a *fact*, and a failed command does not state one.
+
+        Fail-closed for ``B2`` and fail-open for the budgets, which zero
+        themselves on edited files: with nothing marked edited, a declared
+        migration keeps its whole allowance and its whole relief.
+        """
+        with self.assertRaises(ratchet.UnsoundRun):
+            ratchet.changed_paths(self.root, "0000000000000000000000000000000000000000")
+        original = ratchet.changed_paths
+        ratchet.changed_paths = lambda *a, **k: (_ for _ in ()).throw(
+            ratchet.UnsoundRun("synthetic")
+        )
+        try:
+            drift = self.drift()
+        finally:
+            ratchet.changed_paths = original
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(drift.unsound, ("synthetic",))
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ok = ratchet.print_drift(drift, "main")
+        self.assertFalse(ok)
+        self.assertIn("suppressed", buffer.getvalue())
+        self.assertNotIn("PASS", buffer.getvalue())
 
 
 class MigrationHatchTest(unittest.TestCase):
@@ -2402,6 +2629,56 @@ class MigrationDeltaTest(unittest.TestCase):
         self.assertEqual(allowance, Counter({self.REKEYED: 1}))
         self.assertEqual(relief, Counter(), "1 gain may not relieve 2 losses in one group")
 
+    def test_a_duplicated_gain_may_not_relieve_two_removals(self) -> None:
+        """Round 5's count inflation: one sentence written twice paid for two claims.
+
+        The aggregate rule saw 2 lost and 2 gained and relieved both.  What
+        actually happened is that one gained *key* stood in for two distinct real
+        claims, which are still in the tree and no longer charged.
+        """
+        second = ("RELOCATION", "IsingModel/One.lean", "7->IsingModel.Other")
+        allowance, relief = self.delta(
+            {self.KEY: 1, self.OTHER: 1}, {second: 2}
+        )
+        self.assertEqual(allowance, Counter({second: 2}))
+        self.assertEqual(relief, Counter(), "one gained key may not relieve two removals")
+
+    def test_a_many_to_one_coarsening_earns_no_relief(self) -> None:
+        """The mirror image: two ownership claims collapsed into one blunter key.
+
+        ``2->A`` and ``2->B`` becoming ``2->?`` twice conserves the count exactly,
+        and afterwards either destination can be rewritten with no key to move.
+        """
+        coarse = ("RELOCATION", "IsingModel/One.lean", "2->?")
+        _allowance, relief = self.delta({self.KEY: 1, self.OTHER: 1}, {coarse: 2})
+        self.assertEqual(relief, Counter())
+
+    def test_a_one_to_many_sharpening_is_still_relieved(self) -> None:
+        """Anti-vacuity: the guard must not reject the direction it exists for.
+
+        One coarse key resolving into several precise ones is the recall fix this
+        budget was built for, and it is the shape a widened grammar produces on a
+        file whose relocations point at one destination with different counts.
+        """
+        sharp = ("RELOCATION", "IsingModel/One.lean", "7->IsingModel.Other")
+        _allowance, relief = self.delta({self.KEY: 2}, {self.REKEYED: 1, sharp: 1})
+        self.assertEqual(relief, Counter({self.KEY: 2}))
+
+    def test_a_same_size_swap_is_relieved_and_that_is_the_residual(self) -> None:
+        """The acknowledged limit, pinned so that it is a fact and not a promise.
+
+        One key lost, one distinct key gained, counts equal: arithmetic cannot
+        tell "the detector re-keyed this sentence" from "the detector was blinded
+        to this sentence and taught another one".  Separating them needs
+        occurrence identity, which the ledger does not carry.  Recorded here so
+        that ``migration_delta``'s docstring and its behaviour say the same
+        thing.
+        """
+        swapped = ("NARROW_CHILD", "IsingModel/One.lean", "7")
+        _allowance, relief = self.delta({("NARROW_CHILD", "IsingModel/One.lean", "5"): 1},
+                                        {swapped: 1})
+        self.assertEqual(relief, Counter({("NARROW_CHILD", "IsingModel/One.lean", "5"): 1}))
+
     def test_a_gain_in_another_group_does_not_pay_for_a_loss(self) -> None:
         """Groups are ``(class, target)``: another file's gain is not this file's."""
         elsewhere = ("RELOCATION", "IsingModel/Two.lean", "4->IsingModel.Other")
@@ -2538,6 +2815,228 @@ class RecallMigrationTest(unittest.TestCase):
             [key for key, _now, _was in drift.unexplained],
             [("NARROW_CHILD", "IsingModel/Three.lean", "5")],
         )
+
+
+#: Re-point the ``NARROW_CHILD`` anchor at a different spelling: one claim class
+#: stops being recognized and another starts, in one logic change, with no prose
+#: edited.  It is the cheapest shape a *narrowing* can wear while still looking
+#: like a re-keying, which is what the relief has to be measured against.
+SWAPPED_ANCHOR = (
+    '_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)',
+    '_NARROW_CHILD_ANCHOR = re.compile(r"Slim child module", re.IGNORECASE)',
+)
+
+
+def swapped_anchor_detector() -> str:
+    """Return the checker's source with the ``NARROW_CHILD`` anchor re-pointed."""
+    text = source_text()
+    if SWAPPED_ANCHOR[0] not in text:
+        raise AssertionError("mutation target absent, the laundering fixture would be vacuous")
+    return text.replace(*SWAPPED_ANCHOR, 1)
+
+
+#: Stop reading destinations, so every ``RELOCATION`` key coarsens to ``N->?``.
+#: A grammar that got blunter is the direction the relief must never pay for,
+#: and it is the only one that produces a genuine many-to-one collapse.
+BLUNT_DESTINATION = (
+    "    head = _DESTINATION.match(flat, position)\n",
+    "    head = None\n",
+)
+
+
+def blunt_destination_detector() -> str:
+    """Return the checker's source with :func:`ratchet.destination` blinded."""
+    text = source_text()
+    if BLUNT_DESTINATION[0] not in text:
+        raise AssertionError("mutation target absent, the coarsening fixture would be vacuous")
+    return text.replace(*BLUNT_DESTINATION, 1)
+
+
+class ScratchRepo(unittest.TestCase):
+    """A throwaway repository carrying a real detector and a real base commit."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-scratch-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        (self.root / "IsingModel").mkdir()
+        (self.root / "scripts" / "audit").mkdir(parents=True)
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text())
+
+    def git(self, *args: str) -> None:
+        """Run ``git`` in the scratch repository."""
+        subprocess.run(["git", "-C", self.tmp, *args], check=True, capture_output=True)
+
+    def write(self, relative: str, text: str) -> None:
+        """Write ``text`` at ``relative`` inside the scratch repository."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+    def start(self) -> Counter:
+        """Commit the base: the shipped detector and its own pin of this tree."""
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        self.git("add", "-A")
+        pin = ratchet.build_report(root=self.root).charged
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(pin))
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+        return pin
+
+    def repin(self, module=ratchet) -> Counter:
+        """Regenerate the head checkout's pin from its own tree."""
+        pin = module.build_report(root=self.root).charged
+        self.write(ratchet.BASELINE_REPO_PATH, module.format_baseline(pin))
+        return pin
+
+    def land(self, text: str, reason: str) -> tuple[ratchet.Drift, Counter]:
+        """Land detector ``text``, re-pin under it, declare the migration, measure."""
+        detector = load_source(text)
+        self.write(ratchet.DETECTOR_REPO_PATH, text)
+        pin = detector.build_report(root=self.root).charged
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            f"{ratchet.MIGRATION_MARKER} {reason}\n" + detector.format_baseline(pin),
+            encoding="utf-8",
+        )
+        return detector.check_drift(root=self.root, base_ref="main"), pin
+
+
+class ReliefLaunderingTest(ScratchRepo):
+    """Round 5's attacks on the ``B2`` relief, end to end.
+
+    Each arm lands a real detector-logic change, declares it, edits no prose and
+    re-pins -- everything the hatch asks for.  What separates them is whether the
+    group's removals correspond one for one to its additions, which is the
+    question the aggregate guard was not asking.
+    """
+
+    def test_a_duplicated_sentence_may_not_pay_for_two_removals(self) -> None:
+        """The exploit: two real claims leave the pin, paid for by one sentence twice.
+
+        ``Narrow child module for the 5 bar wrappers`` and its ``6`` sibling are
+        still in the tree afterwards, uncharged, and the pin recorded the removal
+        as explained.  The gained key carries two charges because one sentence is
+        written twice, and counting charges made that look like two re-keyings.
+        """
+        self.write("IsingModel/One.lean", header(
+            "Narrow child module for the 5 bar wrappers.\n\n"
+            "Narrow child module for the 6 bar wrappers.\n\n"
+            "Slim child module for the 7 baz wrappers.\n\n"
+            "Slim child module for the 7 baz wrappers."))
+        base = self.start()
+        self.assertEqual(base[("NARROW_CHILD", "IsingModel/One.lean", "5")], 1)
+        self.assertEqual(base[("NARROW_CHILD", "IsingModel/One.lean", "6")], 1)
+        drift, pin = self.land(swapped_anchor_detector(), "anchor spelling migrated")
+        self.assertEqual(pin[("NARROW_CHILD", "IsingModel/One.lean", "7")], 2)
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(
+            [key for key, _now, _was in drift.unexplained],
+            [("NARROW_CHILD", "IsingModel/One.lean", "5"),
+             ("NARROW_CHILD", "IsingModel/One.lean", "6")],
+        )
+
+    def test_a_coarsening_that_conserves_the_count_earns_no_relief(self) -> None:
+        """The mirror image codex found: two ownership claims collapsed onto one key.
+
+        A grammar that got *blunter* removes ``2->A`` and ``2->B`` and adds
+        ``2->?`` twice, which conserves the charge count exactly.  Afterwards
+        either destination can be rewritten with no key left to move, so the fact
+        the class exists to pin has quietly stopped being pinned.
+        """
+        self.write("IsingModel/One.lean", header(
+            "The 2 alpha wrappers now live in `IsingModel.A`.\n\n"
+            "The 2 beta wrappers now live in `IsingModel.B`."))
+        base = self.start()
+        self.assertEqual(base[("RELOCATION", "IsingModel/One.lean", "2->IsingModel.A")], 1)
+        drift, pin = self.land(blunt_destination_detector(), "destinations no longer read")
+        self.assertEqual(pin[("RELOCATION", "IsingModel/One.lean", "2->?")], 2)
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(
+            [key for key, _now, _was in drift.unexplained],
+            [("RELOCATION", "IsingModel/One.lean", "2->IsingModel.A"),
+             ("RELOCATION", "IsingModel/One.lean", "2->IsingModel.B")],
+        )
+
+    def test_a_same_size_swap_is_the_acknowledged_residual(self) -> None:
+        """The attack the arithmetic cannot see, pinned rather than denied.
+
+        One removal, one distinct addition, counts equal.  ``Narrow child module
+        for the 5 bar wrappers`` is still in the tree and no longer charged, and
+        every gate is green.  Nothing short of occurrence identity separates this
+        from the legitimate re-keying it is shaped exactly like, so the
+        docstrings say so and this test holds them to it: if a later change makes
+        this fail, the docstrings are the thing that has gone stale.
+        """
+        self.write("IsingModel/One.lean", header(
+            "Narrow child module for the 5 bar wrappers.\n\n"
+            "Slim child module for the 7 baz wrappers."))
+        self.start()
+        drift, _pin = self.land(swapped_anchor_detector(), "anchor spelling migrated")
+        self.assertTrue(drift.ok, drift)
+        self.assertIn(
+            "Narrow child module for the 5 bar wrappers",
+            (self.root / "IsingModel/One.lean").read_text(encoding="utf-8"),
+            "anti-vacuity: the laundered claim really is still in the tree",
+        )
+
+
+class OccurrenceIdentityTest(ScratchRepo):
+    """The residual the ledger key itself carries: two sentences, one key.
+
+    ``(class, target, token)`` records *what* is claimed and *where*, never
+    *which occurrence*.  Two sentences of one class in one file that normalize to
+    the same token are therefore interchangeable, so a repair and a newly written
+    claim cancel -- with no detector change, no migration and no declaration.
+
+    This is the one accounting the module docstring used to say was impossible.
+    Closing it means keying on a span or a fingerprint, which makes every reflow
+    of a header a ``B1`` failure; that trade has not been made, so the limit is
+    recorded here instead of denied there.
+    """
+
+    REPAIRED = "Narrow child module for the alpha wrappers: `a1`, `a2`."
+    INVENTED = "Narrow child module for the 12 freshly invented beta wrappers: `b1`, `b2`."
+
+    def test_a_repair_pays_for_a_new_claim_under_the_same_key(self) -> None:
+        """The residual: same key in, same key out, every gate green."""
+        self.write("IsingModel/One.lean",
+                   header("Narrow child module for the 12 alpha wrappers: `a1`, `a2`."))
+        base = self.start()
+        self.assertEqual(base, Counter({("NARROW_CHILD", "IsingModel/One.lean", "12"): 1}))
+        self.write("IsingModel/One.lean", header(f"{self.REPAIRED}\n\n{self.INVENTED}"))
+        live = ratchet.build_report(root=self.root).charged
+        self.assertEqual(live, base, "the two sentences produce the one key the repair vacated")
+        self.assertFalse(ratchet.compare(live, base).regressed, "--check cannot see it")
+        self.repin()
+        drift = ratchet.check_drift(root=self.root, base_ref="main")
+        self.assertTrue(drift.ok, drift)
+        self.assertIn(
+            "freshly invented",
+            (self.root / "IsingModel/One.lean").read_text(encoding="utf-8"),
+            "anti-vacuity: a claim that was never on main really is in the tree",
+        )
+
+    def test_a_new_claim_under_any_other_key_still_fails(self) -> None:
+        """The bound on the residual, so it is not read as "the ratchet is off".
+
+        Change one character of the smuggled count and the key is different, and
+        different keys are exactly what the multiset refuses to net out.
+        """
+        self.write("IsingModel/One.lean",
+                   header("Narrow child module for the 12 alpha wrappers: `a1`, `a2`."))
+        base = self.start()
+        self.write("IsingModel/One.lean",
+                   header(f"{self.REPAIRED}\n\n{self.INVENTED.replace('12', '13')}"))
+        live = ratchet.build_report(root=self.root).charged
+        self.assertTrue(ratchet.compare(live, base).regressed)
+        self.repin()
+        drift = ratchet.check_drift(root=self.root, base_ref="main")
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.added],
+                         [("NARROW_CHILD", "IsingModel/One.lean", "13")])
 
 
 # --------------------------------------------------------------------------

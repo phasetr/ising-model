@@ -71,9 +71,21 @@ Ratchet
 The population is a **multiset keyed** ``(class, target, token)``
 (:data:`BASELINE_FILE`).  A key absent from the baseline, or present with a
 larger count than the baseline records, fails the run.  Fixing one claim
-therefore cannot pay for introducing another: there is no scalar to offset.  A
-key whose live count is *below* the baseline is reported as slack to be re-pinned
-with ``--baseline``, and never fails.
+therefore cannot pay for introducing another **under a different key**: there is
+no scalar to offset.  A key whose live count is *below* the baseline is reported
+as slack to be re-pinned with ``--baseline``, and never fails.
+
+Under the *same* key it can, and that is the exact limit of the sentence above.
+The key carries no **occurrence identity**: two sentences of one class in one
+file that normalize to one token are interchangeable, so repairing ``for the 12
+alpha wrappers`` while writing ``for the 12 freshly invented beta wrappers`` into
+the same file leaves the pin byte-identical and ``--check``, ``B1``, ``B2`` and
+``B3`` all green.  Closing it means keying on an occurrence -- a span, or a
+fingerprint of the sentence -- which makes every reflow of a header a ``B1``
+failure; that trade has not been made.  The residual is therefore recorded, not
+denied: the suite reproduces it and asserts today's behaviour
+(``OccurrenceIdentityTest``), so the limit is a pinned fact rather than a
+docstring nobody re-derived.
 
 That comparison is against the baseline **in the same checkout**, which is
 exactly as strong as the baseline file is honest -- regenerating the pin makes
@@ -1210,6 +1222,14 @@ def head_quantity(head: str) -> str:
 #: (:func:`_cites_rather_than_counts` refuses the relation symbols, and
 #: :func:`quantity_fragment` never opens on a token carrying ``§`` or ``#``, so
 #: ``J = 0 wrappers`` is an expression rather than a count).
+#:
+#: What "refuses" buys is a **coarser key, never an exemption**.  These words are
+#: also inventory vocabulary -- ``lemmas``, ``theorems``, ``parts``, ``items`` --
+#: so ``for the auxiliary lemmas 12 wrappers`` trips the guard while stating a
+#: size, and the refused count is charged under a ``?`` token
+#: (:class:`ClauseCounts`).  Dropping it instead made this list an allowlist of
+#: spellings, i.e. the finite-grammar bypass this file has already been bitten
+#: by twice.
 CITATION_WORDS = frozenset(
     {
         "step", "steps", "pr", "prs", "issue", "issues", "section", "sections",
@@ -1275,16 +1295,37 @@ def _cites_rather_than_counts(clause: str, start: int) -> bool:
     return previous.strip("(`*,;:[]").lower() in CITATION_WORDS
 
 
-def clause_quantities(clause: str) -> tuple[str, ...]:
+class ClauseCounts(NamedTuple):
+    """The sizes a clause states, split by whether the citation guard refused them.
+
+    ``counted``
+        quantities that govern an inventory noun and are *not* preceded by a
+        citation word or a relation symbol.
+    ``cited``
+        quantities that govern an inventory noun and **are**.
+
+    Two fields rather than one filtered result, because the guard decides how
+    much the extractor knows and never whether the sentence states a size.
+    ``Narrow child module for the auxiliary lemmas 12 wrappers`` states one;
+    reporting it as "no quantity" made the guard a silent exemption -- the
+    review's own input, and the defect class ``R3.1`` exists to forbid.  Both
+    fields are deduplicated and in the order they are written.
+    """
+
+    counted: tuple[str, ...]
+    cited: tuple[str, ...]
+
+
+def clause_quantities(clause: str) -> ClauseCounts:
     """Return the resolved tokens of every count in ``clause`` that governs a noun.
 
-    Deduplicated and in the order they are written.  This is what closes round
-    4's H1: the head extractor's three stages all read position 0, so a single
-    adjective moved the number out of reach and ``Narrow child module for the
-    following 17 wrappers`` produced no key at all -- not a coarse one, none --
-    while ``for all 17 wrappers`` was charged.  Widening the *determiner* list
-    (twice) never touched that, because the rule was positional and English puts
-    whatever it likes between a determiner and a number.
+    This is what closes round 4's H1: the head extractor's three stages all read
+    position 0, so a single adjective moved the number out of reach and
+    ``Narrow child module for the following 17 wrappers`` produced no key at all
+    -- not a coarse one, none -- while ``for all 17 wrappers`` was charged.
+    Widening the *determiner* list (twice) never touched that, because the rule
+    was positional and English puts whatever it likes between a determiner and a
+    number.
 
     R3.1 is the standard it has to meet: a count-like extraction failure is
     charged, never filed as telemetry.  So the question here is deliberately the
@@ -1292,6 +1333,15 @@ def clause_quantities(clause: str) -> tuple[str, ...]:
     charged under a ``?`` token, because a count that is not in head position is
     a size the sentence states without the extractor knowing which noun it
     counts.
+
+    The citation guard (:func:`_cites_rather_than_counts`) is applied by
+    *sorting* rather than by dropping, and that is the round-5 correction.  It
+    reads one token backwards, so ``for the auxiliary lemmas 12 wrappers`` and
+    ``for the bound f(x)= 12 wrappers`` looked to it exactly like ``for Step 241
+    wrappers``; every one of them fell out of the result entirely and the
+    ``NARROW_CHILD`` extractor then reported "no quantity".  A refused count is a
+    count the extractor cannot place, which is the definition of the ``?``
+    charge, so it is returned in ``cited`` and charged there.
 
     It reads the clause with the *same* two functions the head extractor uses
     -- :func:`quantity_fragment` for what a quantity phrase is and
@@ -1304,34 +1354,58 @@ def clause_quantities(clause: str) -> tuple[str, ...]:
     a noun to count is prose.
     """
     text = blank_code(clause)
-    found: list[str] = []
+    counted: list[str] = []
+    cited: list[str] = []
     consumed = 0
     for start in (match.start() for match in _TOKEN_START.finditer(text)):
         # A phrase is read once: ``twelve hundred`` opens at both of its words
         # and ``about 1.5k`` at both of its, so without this the clause reports
         # 1200 *and* 100 and calls itself ambiguous.
-        if start < consumed or _cites_rather_than_counts(text, start):
+        if start < consumed:
             continue
         fragment = quantity_fragment(text[start:])
         if not fragment:
             continue
         token, is_quantity = resolve_quantity(fragment)
-        if is_quantity and _GOVERNED_NOUN.match(text[start + len(fragment):]) is not None:
-            found.append(token)
-            consumed = start + len(fragment)
-    return tuple(dict.fromkeys(found))
+        if not (is_quantity and _GOVERNED_NOUN.match(text[start + len(fragment):]) is not None):
+            continue
+        if _cites_rather_than_counts(text, start):
+            # ``consumed`` deliberately does not move: a refused phrase must
+            # leave the positions inside it open, exactly as it did when the
+            # guard skipped the position outright.
+            cited.append(token)
+            continue
+        counted.append(token)
+        consumed = start + len(fragment)
+    return ClauseCounts(tuple(dict.fromkeys(counted)), tuple(dict.fromkeys(cited)))
+
+
+def _unresolved_token(quantities: tuple[str, ...]) -> str:
+    """Return the ``?``-marked ledger token for counts the extractor cannot place.
+
+    One ``?`` however many the parts already carry: :func:`resolve_quantity`
+    marks an unnormalizable fragment with one of its own, and ``??1.5k`` would
+    be a second key for the same sentence.
+    """
+    marked = "/".join(quantities)
+    return marked if marked.startswith("?") else f"?{marked}"
 
 
 def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
     """Extract the size of ``Narrow child module for [the] N ...``.
 
-    Two questions, in order, and the second one exists because the first is
+    Three questions, in order, and the later ones exist because the first is
     positional.  A count at the **front** of the head clause names the module's
     own size and is charged as itself (``12``).  Failing that, a count anywhere
     in the clause that governs an inventory noun is charged under a ``?`` token
     (``?17``): the sentence states a size, and the extractor is not claiming to
-    know which noun it belongs to.  The ``?`` keeps the two apart in the ledger
-    while keeping the key sharp -- editing the number is still a new key.
+    know which noun it belongs to.  Failing *that*, a count the citation guard
+    refused (``for the auxiliary lemmas 12 wrappers``) is charged under the same
+    ``?`` token: the guard is a statement about the extractor's confidence, and
+    letting it decide instead whether the prose states a size at all is how it
+    became a silent exemption.  The ``?`` keeps all of these apart from a head
+    count in the ledger while keeping the key sharp -- editing the number is
+    still a new key.
 
     The earlier rule was "head position only", on the argument that a later
     numeral belongs to a section number or a cited identifier and that the
@@ -1350,8 +1424,9 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     `latticeGraph` specializations``).  That record is **telemetry**, not a
     verdict: it is reported apart from :attr:`Report.claims` and never pinned,
     so no quantity that fails to parse can land in it -- an unresolvable count
-    is charged (``?<fragment>``), a missing ``for`` clause is charged, and only
-    the absence of numeric content at all is telemetry.
+    is charged (``?<fragment>``), a refused count is charged, a missing ``for``
+    clause is charged, and only the absence of numeric content at all is
+    telemetry.
     """
     clause = _HEAD_CLAUSE.match(flat, match.end())
     if clause is None:
@@ -1360,14 +1435,16 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     token, is_quantity = resolve_quantity(head_quantity(head))
     if is_quantity:
         return token, True, ""
-    governed = clause_quantities(head)
-    if governed:
-        # ``?`` once, whatever the parts already carry: ``resolve_quantity``
-        # marks an unnormalizable fragment with one of its own.
-        marked = "/".join(governed)
-        note = ("count behind a modifier, not in head position" if len(governed) == 1
-                else f"{len(governed)} counts in one clause")
-        return (marked if marked.startswith("?") else f"?{marked}"), True, note
+    counts = clause_quantities(head)
+    if counts.counted:
+        note = ("count behind a modifier, not in head position" if len(counts.counted) == 1
+                else f"{len(counts.counted)} counts in one clause")
+        return _unresolved_token(counts.counted), True, note
+    if counts.cited:
+        note = ("count refused as a citation or an operand, charged rather than exempted"
+                if len(counts.cited) == 1
+                else f"{len(counts.cited)} refused counts in one clause")
+        return _unresolved_token(counts.cited), True, note
     return "-", False, f"no quantity (head {token!r})"
 
 
@@ -1424,7 +1501,18 @@ _RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in", re.IGNORECASE)
 #: ``\texttt{...}`` / ``\path{...}`` one in the TeX guide.  ``\path`` is how the
 #: guide writes most of its file names, and without it 53 of its relocations
 #: shared the one ``->?`` key.
-_REFERENCE = r"(?:`([^`]+)`|\\(?:texttt|path)\{([^}]*)\})"
+#:
+#: Neither spelling may hold a backtick or a :data:`SENTINELS` character.  The
+#: backtick is excluded so that :data:`WRAP_JOIN` cannot occur inside a part and
+#: the join stays injective; the sentinels are excluded because a reference
+#: spanning a paragraph break used to carry the ``\x01`` straight into the pinned
+#: TSV, contradicting :data:`PARAGRAPH`'s own contract that nothing spans it.
+#: Measured on this tree: no reference holds either, so both exclusions cost
+#: nothing today and are here to keep a token from meaning two things.
+_REFERENCE = (
+    rf"(?:`([^`{MASK}{PARAGRAPH}]+)`"
+    rf"|\\(?:texttt|path)\{{([^}}`{MASK}{PARAGRAPH}]*)\}})"
+)
 
 #: The destination as written just after ``now live in``.  No ``\A`` -- see
 #: :data:`_HEAD_CLAUSE` for why that would silently erase every destination.
@@ -1451,7 +1539,21 @@ _DESTINATION = re.compile(rf"[\s(]*{_REFERENCE}")
 #: that changes when either half changes.  Measured on this tree: exactly four
 #: relocations are followed by an adjacent second span, and all four are these
 #: wraps.
+#:
+#: Only ``\s+`` separates the halves, and :data:`PARAGRAPH` is not whitespace, so
+#: a join can cross a **line wrap** and never a blank line.  That matters because
+#: the join is unconditional: two unrelated references either side of a paragraph
+#: break are two destinations, and reading them as one name would invent a module
+#: nobody wrote.
 _WRAPPED_TAIL = re.compile(rf"\s+{_REFERENCE}")
+
+#: What :func:`destination` writes between the halves of a wrapped reference.
+#: A backtick, which :data:`_REFERENCE` excludes from a reference body, so the
+#: join is **injective**: without it ``` `A` `BC` ```, ``` `AB` `C` ``` and
+#: ``` `ABC` ``` all produced the one token ``ABC``, i.e. the boundary between
+#: the halves could be moved without moving the key.  A separator no part can
+#: contain makes the joined token reconstructible into the parts it came from.
+WRAP_JOIN = "`"
 
 
 def destination(flat: str, position: int) -> str:
@@ -1464,7 +1566,7 @@ def destination(flat: str, position: int) -> str:
     while (tail := _WRAPPED_TAIL.match(flat, end)) is not None:
         parts.append((tail.group(1) or tail.group(2) or "").strip())
         end = tail.end()
-    return "".join(parts) or "?"
+    return WRAP_JOIN.join(part for part in parts if part) or "?"
 
 #: The *subject* of a relocation claim: a :data:`DETERMINERS` word + a quantity
 #: + an inventory noun, optionally followed by a connective clause, running right
@@ -1821,19 +1923,34 @@ def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
 def key_failures(sources: Iterable[Source]) -> list[str]:
     """Return the ``K4`` failures of a loaded source set: a key must name one file.
 
-    Two properties, both of which the dotted-name keying lacked and neither of
-    which any test could have caught by looking at today's corpus:
+    Three properties, none of which any test could have caught by looking at
+    today's corpus:
 
     * every target **inverts** to the path it was read from
       (:func:`target_path`), so a ledger row can be attributed to a file;
     * no two scanned files produce the **same** target, so a claim removed from
-      one cannot be paid for by a claim written into the other.
+      one cannot be paid for by a claim written into the other;
+    * the scanned set names no path **twice**.
 
-    Fail closed: a collision suppresses the findings report exactly as ``K0``
-    does, because a ledger whose keys are ambiguous is worse than no ledger.
+    The third is the one the first two silently assumed.  :func:`target_path` is
+    the identity and :func:`load_sources` sets ``target = path``, so the first
+    two questions are about the *keying* and answer themselves on any input in
+    which the paths are already distinct -- and ``git ls-files`` does not
+    guarantee that.  An unmerged index lists a conflicted path once per stage, so
+    the same file is read and scanned three times: ``K0``'s arithmetic balanced
+    (the repeat is in the wanted set too), the key-collision check saw one path
+    equal to itself, and the population of that file tripled with nothing in the
+    conservation set objecting.  ``--check`` failed against the pin, which is
+    fail-closed, but ``--baseline`` regenerated in that state baked the tripled
+    capacity in.
+
+    Fail closed: any of the three suppresses the findings report exactly as
+    ``K0`` does, because a ledger whose keys are ambiguous is worse than no
+    ledger.
     """
     failures: list[str] = []
     seen: dict[str, str] = {}
+    scanned: set[str] = set()
     for source in sources:
         if target_path(source.target) != source.path:
             failures.append(
@@ -1845,6 +1962,12 @@ def key_failures(sources: Iterable[Source]) -> list[str]:
                 f"K4 {source.target}: two tracked files share one ledger key "
                 f"({first}, {source.path})"
             )
+        if source.path in scanned:
+            failures.append(
+                f"K4 {source.path}: the tracked-file listing named it more than once, so "
+                "every claim in it is counted more than once"
+            )
+        scanned.add(source.path)
     return failures
 
 
@@ -2018,6 +2141,17 @@ MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
 _MIGRATION_LINE = re.compile(rf"\A{re.escape(MIGRATION_MARKER)} (?P<reason>\S.*)\Z")
 
 
+class UnsoundRun(RuntimeError):
+    """A ``git`` query the drift comparison depends on failed.
+
+    Raised rather than absorbed into an answer.  Every one of these queries has a
+    plausible-looking empty result, and every empty result reads as a *fact*
+    about the repository somewhere downstream: "no path was edited" is what
+    :func:`migration_delta` needs to hear before it hands out a full allowance
+    and a full relief.  A failed command is not a fact, so it stops the run.
+    """
+
+
 def _git(root: Path, *args: str) -> tuple[int, str]:
     """Run ``git`` in ``root``; return ``(returncode, stdout)``."""
     result = subprocess.run(
@@ -2031,15 +2165,25 @@ def base_commit(root: Path, base_ref: str) -> str | None:
 
     The merge base rather than the tip: a branch that has not rebased must be
     measured against the commitment that was on the base branch when it forked,
-    not against one made after it.  ``None`` means the ref does not resolve at
-    all, which is a failure and never a skip -- an unfetched ``origin/main`` is
-    exactly how this check would quietly stop running in CI.
+    not against one made after it.  ``None`` means there is no merge base to
+    measure against -- an unfetched ``origin/main``, or a shallow clone holding
+    both tips but not their common ancestor -- and it fails the run.
+
+    There used to be a fallback from ``merge-base`` to
+    ``rev-parse <ref>^{commit}``, i.e. to the **tip**.  The review measured what
+    that bought on two histories with no common ancestor: every path differs from
+    the "base", so every key is explained by an edit, ``B2`` is satisfied for all
+    of them at once, and :func:`print_drift` prints the ordinary
+    ``base commit <sha> via origin/main`` line with no sign that the comparison
+    degraded.  That is the shape this file exists to refuse -- a check that turns
+    itself off and reports a pass -- and the fallback was reachable in exactly
+    the shallow-clone case the ``fetch-depth: 0`` comment claims to defend
+    against.
     """
     code, out = _git(root, "merge-base", base_ref, "HEAD")
-    if code == 0 and out.strip():
-        return out.strip()
-    code, out = _git(root, "rev-parse", "--verify", f"{base_ref}^{{commit}}")
-    return out.strip() if code == 0 and out.strip() else None
+    if code != 0 or not out.strip():
+        return None
+    return out.strip()
 
 
 def baseline_at(root: Path, commit: str) -> tuple[Counter[tuple[str, str, str]] | None, list[str]]:
@@ -2061,10 +2205,18 @@ def changed_paths(root: Path, commit: str) -> frozenset[str]:
     with no edit to the file that owned it, i.e. a legitimate repair was rejected
     and the only way past it was the migration hatch.  Renames are therefore
     reported as delete + add, which is what ``B2`` needs to attribute a row.
+
+    A non-zero exit raises :class:`UnsoundRun` rather than returning the empty
+    set.  "No path was edited" is fail-closed for ``B2`` and fail-**open** for
+    the migration budgets, which zero themselves on edited files: with nothing
+    marked edited, a failed ``git diff`` hands a declared migration its full
+    allowance and its full relief.
     """
     code, out = _git(root, "diff", "--no-renames", "--name-only", commit, "--")
     if code != 0:
-        return frozenset()
+        raise UnsoundRun(
+            f"`git diff {commit[:12]}` failed, so which sources this diff edits is unknown"
+        )
     return frozenset(line.strip() for line in out.splitlines() if line.strip())
 
 
@@ -2208,7 +2360,13 @@ def target_path(target: str) -> str:
 
 
 class Drift(NamedTuple):
-    """The verdict of comparing this checkout's pin against the base branch's."""
+    """The verdict of comparing this checkout's pin against the base branch's.
+
+    ``unsound`` carries whatever made this run untrustworthy rather than
+    unfavourable: a conservation failure of the scan, or a ``git`` query that
+    failed (:class:`UnsoundRun`).  Either suppresses the comparison, because a
+    comparison that cannot see its own inputs is not evidence of anything.
+    """
 
     base: str
     had_baseline: bool
@@ -2286,12 +2444,13 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     relocation sentence, which is what the campaign is for.
 
     All three run only on a **sound** run of a **parseable** pair of pins.  A
-    conservation failure or a malformed baseline suppresses the comparison here
-    exactly as it suppresses the findings report in every other output format --
-    this mode used to report ``PASS`` on a tree whose ``--check`` was failing.
+    conservation failure, a malformed baseline or a failed ``git`` query
+    (:class:`UnsoundRun`) suppresses the comparison here exactly as it suppresses
+    the findings report in every other output format -- this mode used to report
+    ``PASS`` on a tree whose ``--check`` was failing.
 
-    Returns ``None`` when ``base_ref`` does not resolve -- fail closed, never a
-    silent pass.
+    Returns ``None`` when ``base_ref`` has no merge base with ``HEAD`` -- fail
+    closed, never a silent pass.
     """
     base = base_commit(root, base_ref)
     if base is None:
@@ -2309,8 +2468,11 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     untight = tuple(sorted(key for key in set(head) | set(live) if head.get(key) != live.get(key)))
     if baseline is None:
         return Drift(base, False, (), (), untight, (), (), ())
-    edited = changed_paths(root, base)
-    migration = migration_budgets(root, base, live)
+    try:
+        edited = changed_paths(root, base)
+        migration = migration_budgets(root, base, live)
+    except UnsoundRun as failure:
+        return Drift(base, True, (), (), untight, (str(failure),), (), ())
     added = tuple(
         sorted(
             (key, count, baseline.get(key, 0))
@@ -2343,7 +2505,8 @@ class Migration(NamedTuple):
     ``relief``
         keys the base detector charged there that this one no longer does.  It
         relaxes ``B2``, and only within a ``(class, target)`` group the change
-        does not shrink (see :func:`migration_delta`).
+        re-keys count for count *and* key for key -- neither shrinking it nor
+        collapsing several of its keys into one (see :func:`migration_delta`).
 
     ``narrative``
         what to print, including the arithmetic both budgets came from.
@@ -2382,15 +2545,38 @@ def migration_delta(
     freezes its own token grammar.
 
     What the relief must **not** become is a channel for narrowing the detector
-    to launder rows off the pin.  The guard is per ``(class, target)`` group: a
-    removal is relieved only where the same group gains at least as much as it
-    loses, i.e. where the change re-keys rather than reduces.  Equivalently --
-    the two statements are the same arithmetic -- the relief a group may draw can
-    never exceed what that group's additions cost, so the population per file and
-    class is non-decreasing across a migration.  A change that genuinely stops
-    recognizing something still fails ``B2`` and still needs a reviewed decision.
+    to launder rows off the pin.  The guard is per ``(class, target)`` group and
+    has **two** halves, because each of them alone is defeated by writing one
+    sentence twice -- the count rule by duplicating the *gained* sentence, the
+    key rule by duplicating the *lost* one:
 
-    The limit of that guard, stated rather than left to be discovered: it bounds
+    * *count for count* -- the group may draw no more relief than its additions
+      cost, so the population per file and class is non-decreasing across a
+      migration;
+    * *key for key* -- every relieved key needs a **distinct** gained key in the
+      group, so one gained key may not relieve two removals however many times
+      the sentence behind it is written.
+
+    The second half is what closes round 5's two working exploits.  Under the
+    aggregate rule alone, ``{'5': 1, '6': 1} -> {'7': 2}`` was relieved in full:
+    one duplicated sentence paid for two distinct claims that are still sitting
+    in the tree uncharged.  Its mirror image is a coarsening -- ``2->A`` and
+    ``2->B`` collapsing into ``2->?`` twice -- after which either destination can
+    be rewritten for free.  Both are rejected now: a group that loses two keys
+    and gains one earns nothing.  A one-to-many *sharpening* is still relieved
+    (one coarse key replaced by several precise ones), which is the direction the
+    relief exists for.
+
+    A change that stops recognizing something **and gains nothing in the same
+    group** still fails ``B2`` and still needs a reviewed decision.  What the
+    guard cannot separate is a *same-size swap*: one key lost and one distinct
+    key gained in one group is relieved whether the change re-keyed the same
+    sentence or blinded the detector to one sentence while teaching it another.
+    Telling those apart needs the occurrence identity this ledger does not have
+    (module docstring, ``Ratchet``), so it is stated here and reproduced by
+    ``ReliefLaunderingTest`` rather than asserted away.
+
+    The other limit, stated rather than left to be discovered: it bounds
     the *population*, not the *sharpness* of the tokens.  A declared migration
     that re-keys ``11->X`` to ``->X`` -- a grammar that got blunter while staying
     the same size -- is arithmetically indistinguishable from one that re-keys
@@ -2412,10 +2598,14 @@ def migration_delta(
     )
     gained_by_group: Counter[tuple[str, str]] = Counter()
     lost_by_group: Counter[tuple[str, str]] = Counter()
+    gained_keys_by_group: Counter[tuple[str, str]] = Counter()
+    lost_keys_by_group: Counter[tuple[str, str]] = Counter()
     for key, count in gained.items():
         gained_by_group[key[:2]] += count
+        gained_keys_by_group[key[:2]] += 1
     for key, count in lost.items():
         lost_by_group[key[:2]] += count
+        lost_keys_by_group[key[:2]] += 1
     allowance = Counter(
         {key: count for key, count in gained.items() if target_path(key[1]) not in edited}
     )
@@ -2424,6 +2614,7 @@ def migration_delta(
             key: count for key, count in lost.items()
             if target_path(key[1]) not in edited
             and lost_by_group[key[:2]] <= gained_by_group[key[:2]]
+            and lost_keys_by_group[key[:2]] <= gained_keys_by_group[key[:2]]
         }
     )
     return allowance, relief
@@ -2500,7 +2691,8 @@ def migration_budgets(
         f"(this tree charges {sum(live.values())})",
         f"relief: {sum(relief.values())} charge(s) over {len(relief)} key(s) that the base "
         f"detector charged there and this one no longer does, in groups the change re-keys "
-        f"rather than shrinks; those rows may leave the pin without a prose edit",
+        f"count for count and key for key rather than shrinking or coarsening; those rows "
+        f"may leave the pin without a prose edit",
     ))
 
 
@@ -2514,13 +2706,14 @@ def print_drift(drift: Drift | None, base_ref: str) -> bool:
     """
     print("== Baseline drift (this checkout's pin vs the base branch's) ==")
     if drift is None:
-        print(f"  FAIL: base ref {base_ref!r} does not resolve in this checkout")
-        print("        (CI needs `fetch-depth: 0`, so that origin/main is present)")
+        print(f"  FAIL: base ref {base_ref!r} does not resolve to a merge base with HEAD")
+        print("        (CI needs `fetch-depth: 0`, so that origin/main *and* the common")
+        print("         ancestor are both present; the tip is not a substitute for it)")
         print("FAIL: the pin could not be compared against the base branch")
         return False
     print(f"  base commit {drift.base[:12]} via {base_ref}")
     for failure in drift.unsound:
-        print(f"  FAIL: conservation broken: {failure}")
+        print(f"  FAIL: unsound run: {failure}")
     for message in drift.baseline_errors:
         print(f"  FAIL: malformed baseline: {message}")
     if drift.unsound or drift.baseline_errors:
@@ -2615,8 +2808,14 @@ def compare(
     """Compare a live population against the baseline, per key.
 
     Per key, never in aggregate: a scalar comparison would let one repaired
-    header pay for one newly written claim, which is precisely the accounting
-    the multiset key exists to forbid.
+    header pay for one newly written claim **under any other key**, which is the
+    accounting the multiset key exists to forbid.
+
+    Within one key it does not forbid it.  The key has no occurrence identity,
+    so a repair and a newly written claim that normalize to the same
+    ``(class, target, token)`` cancel here exactly as they would under a scalar.
+    That residual is stated in the module docstring's ``Ratchet`` section and
+    pinned by ``OccurrenceIdentityTest`` rather than asserted away.
     """
     new = tuple(sorted((key, count) for key, count in live.items() if key not in baseline))
     grown = tuple(
