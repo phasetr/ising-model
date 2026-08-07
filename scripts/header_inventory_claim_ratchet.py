@@ -46,6 +46,26 @@ allowlist -- an entry says "this claim existed on the pinned commit", never
 what makes it categorically unlike the retired ``safe-to-delete`` scanner: it
 certifies no meaning and authorizes no operation.
 
+There *was* a third bucket, and it was the largest thing in the report: a
+recognized anchor whose quantity would not parse was filed as "accounted", which
+read as coverage and behaved as an exemption.  647 of the tree's 767
+``now live in X`` sentences sat in it, most of them visibly quantified, because
+the count was written after a long backticked list of names and the extractor's
+window stopped short.  Two rules replace it:
+
+* a **relocation is charged on its anchor alone**.  ``... now live in `X` `` is
+  itself the ownership claim this tool ratchets, so whether an adjacent count
+  parses may sharpen the key (``12->X`` rather than ``->X``) but may never
+  decide whether there is one.
+* a **quantity that fails to parse is charged**, as ``?<fragment>``, in every
+  class.  The extractor's success is never a fact about the prose.
+
+What remains is :attr:`Report.telemetry`: a recognized anchor that states no size
+at all, as in ``Narrow child module for concrete latticeGraph specializations``.
+It is reported apart from :attr:`Report.claims`, is never pinned and is never
+compared -- a coverage note, structurally incapable of being a silent exemption
+because it is not in the ledger.
+
 Ratchet
 -------
 The population is a **multiset keyed** ``(class, target, token)``
@@ -144,6 +164,23 @@ The tracked set only (``git ls-files``), never a filesystem walk: the source of
 truth for "which files exist" is the VCS index, and this repository has been
 bitten by scanners that read untracked or ignored content.
 
+Which tracked files, stated positively and negatively both, because a scan
+boundary that is merely implied by a glob is a place claims live untouched:
+
+**in** (:data:`SCAN_ROOTS`, filtered to :data:`SCAN_SUFFIXES`)
+    ``IsingModel.lean``, ``IsingModel/**.lean``, ``README.md``, ``docs/**.md``,
+    ``tex/**.tex``.
+
+**out** (:data:`EXCLUDED_ROOTS`)
+    ``test/`` (Lean fixtures, not canonical prose), ``.github/`` (CI wiring) and
+    ``scripts/`` (the checkers, this file's own pin, and the fixture corpora --
+    scanning them would let the tool charge its own test data).
+
+The boundary was previously ``IsingModel/`` plus two documents named by hand,
+which left the top-level umbrella and four other ``docs/`` pages unscanned; one
+of them, ``docs/architecture-import-layers.md``, was already carrying a claim of
+a charged class.
+
 Usage
 -----
     python3 scripts/header_inventory_claim_ratchet.py             # --check (default)
@@ -161,11 +198,15 @@ from __future__ import annotations
 import argparse
 import ast
 import bisect
+import contextlib
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 import types
 from collections import Counter
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Callable, Iterable, NamedTuple
 
@@ -179,13 +220,37 @@ DETECTOR_REPO_PATH = "scripts/header_inventory_claim_ratchet.py"
 
 BASELINE_FILE = REPO_ROOT / BASELINE_REPO_PATH
 
-#: The Lean source root whose module docstrings are canonical prose.
-LEAN_ROOT = "IsingModel"
+#: Where canonical prose lives, as ``git ls-files`` pathspecs.  Stated
+#: positively and exhaustively, because the boundary of a scan is a decision and
+#: not a side effect of whichever glob somebody first wrote: the previous list
+#: named two documents by hand and silently left ``IsingModel.lean`` (the
+#: top-level umbrella) and every other ``docs/`` page outside the scan, one of
+#: which -- ``docs/architecture-import-layers.md`` -- was already carrying a
+#: charged claim nothing measured.
+SCAN_ROOTS: tuple[str, ...] = ("IsingModel.lean", "IsingModel", "README.md", "docs", "tex")
 
-#: The hand-maintained canonical documents.  ``docs/index.md`` is the single
-#: source of truth for progress and ``tex/proof-guide.tex`` is the published
-#: proof guide; both carry the same claim shapes as the Lean headers.
-DOC_TARGETS: tuple[str, ...] = ("docs/index.md", "tex/proof-guide.tex")
+#: The suffixes scanned under :data:`SCAN_ROOTS`.  ``docs/`` also holds
+#: ``_config.yml`` and a ``Gemfile``, which are configuration and not prose.
+SCAN_SUFFIXES: tuple[str, ...] = (".lean", ".md", ".tex")
+
+#: A non-Lean target is keyed by its path (there is no module name to key it
+#: by), which is what :func:`target_path` inverts.
+DOCUMENT_SUFFIXES: tuple[str, ...] = (".md", ".tex")
+
+#: Deliberately **out** of scope, recorded here rather than left to be inferred
+#: from the roots above:
+#:
+#: ``test/``
+#:     Lean test fixtures.  Their headers are not canonical prose and the suite
+#:     rewrites them freely.
+#: ``.github/``
+#:     workflow YAML: no Lean structure, and its prose is CI wiring.
+#: ``scripts/``
+#:     the checkers themselves, this file's own baseline, and the fixture
+#:     corpora.  Scanning them would let the tool charge its own test data --
+#:     every fixture string in ``test_header_inventory_claim_ratchet.py`` is a
+#:     deliberate claim -- so the pin would grow with each new canary.
+EXCLUDED_ROOTS: tuple[str, ...] = ("test/", ".github/", "scripts/")
 
 #: The sentinel a masked-out (non-prose) character becomes.  It appears in no
 #: source file and in no anchor, so a regex cannot match across it.
@@ -225,7 +290,20 @@ class Decomposition(NamedTuple):
 #: A lexer that does not know these two forms reads them as a module docstring
 #: and stops charging :data:`MISSING_DOC` -- the one class whose whole purpose is
 #: to stop "delete the header instead of repairing it".
-_SCAN_TOKEN = re.compile(r"--|/-|-/|«|(?<![\w.'!?])r#*\"|\"")
+#:
+#: The character literal is here for the mirror-image reason, and it fails the
+#: other way: ``def c : Char := '"'`` and ``def g : Char := '«'`` are valid Lean
+#: whose body is *not* the opener it looks like, so a lexer without them reads
+#: the rest of the file as one unterminated string and charges the module
+#: :data:`UNTERMINATED` **and** :data:`MISSING_DOC`.  Fail-closed, but a live
+#: false-positive landmine: one legitimate ``Char`` literal anywhere under the
+#: Lean root would turn the gate red on two keys no pin can hold.
+#:
+#: The lookbehind is what keeps ``h'`` and ``h''`` out: a prime is an identifier
+#: character in Lean, and this corpus is full of them.
+_CHAR_LITERAL = r"(?<![\w.'!?])'(?:\\.|[^\\'\n])'"
+
+_SCAN_TOKEN = re.compile(rf"--|/-|-/|{_CHAR_LITERAL}|«|(?<![\w.'!?])r#*\"|\"")
 
 #: A string literal body after the opening quote, honouring backslash escapes.
 _STRING_BODY = re.compile(r'(?:[^"\\]|\\.)*"')
@@ -254,9 +332,9 @@ def decompose(text: str) -> Decomposition:
     nesting is tracked explicitly.
 
     ``--`` inside a block comment, and ``/-`` inside a line comment, a string
-    literal, a raw string or a guillemet-quoted identifier, are inert.  Markdown
-    and TeX have no such structure, so their whole text is one region (see
-    :func:`decompose_document`).
+    literal, a raw string, a guillemet-quoted identifier or a character literal,
+    are inert.  Markdown and TeX have no such structure, so their whole text is
+    one region (see :func:`decompose_document`).
     """
     regions: list[tuple[int, int]] = []
     index = 0
@@ -293,6 +371,11 @@ def decompose(text: str) -> Decomposition:
             end = length if end < 0 else end
             regions.append((match.end(), end))
             index = end
+            continue
+        if token.startswith("'"):
+            # A character literal is one opaque token, matched whole: its body
+            # may be `"` or `«`, neither of which opens anything here.
+            index = match.end()
             continue
         if token == "«" or token.endswith('"'):
             end = _opaque_end(text, token, match.end())
@@ -344,12 +427,13 @@ def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
     shared blind spot.  It costs about two seconds over the whole tracked tree.
 
     Independent in *implementation*, not in *lexicon*: it recognizes the same
-    Lean tokens :func:`decompose` does -- comments, string literals, raw strings
-    and guillemet-quoted identifiers -- because agreeing on which constructs
-    exist is the specification both sides are held to.  A construct missing from
-    both is a blind spot no amount of algorithmic independence would catch, which
-    is why the guillemet and raw-string forms were added here and there in the
-    same edit, and why ``LexiconTest`` mutates one side alone.
+    Lean tokens :func:`decompose` does -- comments, string literals, raw strings,
+    guillemet-quoted identifiers and character literals -- because agreeing on
+    which constructs exist is the specification both sides are held to.  A
+    construct missing from both is a blind spot no amount of algorithmic
+    independence would catch, which is why the guillemet, raw-string and
+    character-literal forms were each added here and there in the same edit, and
+    why ``LexiconTest`` mutates one side alone.
     """
     regions: list[tuple[int, int]] = []
     index = 0
@@ -388,6 +472,40 @@ def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
     return tuple(regions)
 
 
+def _reference_identifier_char(text: str, index: int) -> bool:
+    """Whether ``text[index]`` continues a Lean identifier (the oracle's half).
+
+    The character-by-character reading of the lookbehind :data:`_CHAR_LITERAL`
+    and :func:`_raw_string_opener` share: a prime or a raw-string ``r`` that
+    follows one of these opens nothing, because it is part of the name in front
+    of it.  ``index < 0`` means "start of file", where nothing precedes.
+    """
+    return index >= 0 and (text[index].isalnum() or text[index] in "_.'!?")
+
+
+def _reference_char_literal_end(text: str, index: int) -> int | None:
+    """Return the end of the character literal at ``index``, or ``None``.
+
+    ``'a'``, ``'\\n'``, ``'"'``, ``'«'``: one escaped or one plain character
+    between primes.  Walked by hand rather than by :data:`_CHAR_LITERAL`, which
+    is the whole point of the oracle.
+    """
+    if text[index] != "'" or _reference_identifier_char(text, index - 1):
+        return None
+    body = index + 1
+    if body >= len(text) or text[body] == "\n":
+        return None
+    if text[body] == "\\":
+        body += 2
+    elif text[body] == "'":
+        return None
+    else:
+        body += 1
+    if body < len(text) and text[body] == "'":
+        return body + 1
+    return None
+
+
 def _reference_opaque_end(text: str, index: int) -> int | None:
     """Return the end of the opaque span starting at ``index``, or ``None`` if none does.
 
@@ -397,6 +515,9 @@ def _reference_opaque_end(text: str, index: int) -> int | None:
     are all this function reports.
     """
     length = len(text)
+    literal = _reference_char_literal_end(text, index)
+    if literal is not None:
+        return literal
     if text[index] == "«":
         close = text.find(_GUILLEMET_CLOSE, index + 1)
         return length if close < 0 else close + 1
@@ -425,7 +546,7 @@ def _raw_string_opener(text: str, index: int) -> tuple[int, str] | None:
     ``"``.  ``r`` preceded by an identifier character is part of that identifier
     and opens nothing.
     """
-    if text[index] != "r" or (index and (text[index - 1].isalnum() or text[index - 1] in "_.'!?")):
+    if text[index] != "r" or _reference_identifier_char(text, index - 1):
         return None
     hashes = 0
     while index + 1 + hashes < len(text) and text[index + 1 + hashes] == "#":
@@ -574,7 +695,8 @@ WORD_NUMBERS: dict[str, int] = {**_UNIT_WORDS, **_TEN_WORDS, **_SCALE_WORDS}
 #: changes meaning the moment a sibling module is carved out), so they are
 #: charged, with the word itself as the token.
 VAGUE_QUANTIFIERS = frozenset(
-    {"several", "many", "various", "numerous", "multiple", "both", "remaining", "few"}
+    {"several", "many", "various", "numerous", "multiple", "both", "remaining", "few",
+     "couple", "handful"}
 )
 
 
@@ -631,12 +753,46 @@ _NUMERAL = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
 #: silently *accounted* while ``for 12`` was charged, because the head-quantity
 #: pattern falls back to a single token and an unlisted hedge is what that token
 #: turns out to be.
-_HEDGE = (
-    r"(?:[~≈]\s*|(?:about|approximately|roughly|around|nearly|circa|some|over|under"
-    r"|at\s+least|at\s+most|no\s+fewer\s+than|no\s+more\s+than|no\s+less\s+than"
-    r"|more\s+than|fewer\s+than|less\s+than|up\s+to|a\s+total\s+of|close\s+to"
-    r"|upwards\s+of|exactly|precisely|just|only)\s+)"
+#:
+#: Every hedge here normalizes its count to ``~N``, so the list may only hold
+#: words for which that is *true*: ``half a dozen`` would be charged ``~12``, a
+#: number the prose does not state, which is why ``half`` is a
+#: :data:`RANGE_MARKERS` word instead.
+HEDGE_PHRASES: tuple[str, ...] = (
+    "about", "approximately", "roughly", "around", "nearly", "circa", "some",
+    "over", "under", "at least", "at most", "no fewer than", "no more than",
+    "no less than", "more than", "fewer than", "less than", "up to",
+    "a total of", "close to", "upwards of", "exactly", "precisely", "just", "only",
 )
+
+#: Words that mark a numeric claim the normalizer must **not** fold into one
+#: integer: a range, a sign or a fraction.  They are numeric evidence -- ``for
+#: between 10 and 12 wrappers`` is as much an inventory claim as ``for 12
+#: wrappers`` -- so they reach the fail-closed ``?<phrase>`` token, and they are
+#: kept out of :data:`HEDGE_PHRASES` precisely so that they cannot be normalized
+#: to a specific number nobody wrote.
+RANGE_MARKERS: tuple[str, ...] = ("between", "minus", "plus", "negative", "half")
+
+
+def _phrase_alternation(phrases: Iterable[str]) -> str:
+    """Return a longest-first regex alternation of ``phrases``, spaces relaxed.
+
+    The corpus is matched on whitespace-flattened text, but a phrase written
+    with a plain space here still has to survive :func:`flatten`'s single-space
+    normalization *and* stay readable in the tables above, so the substitution
+    happens once, here.
+    """
+    relaxed = (re.escape(phrase).replace("\\ ", r"\s+") for phrase in phrases)
+    return "|".join(sorted(relaxed, key=len, reverse=True))
+
+
+_HEDGE = rf"(?:[~≈]\s*|(?:{_phrase_alternation(HEDGE_PHRASES)})\s+)"
+
+#: The same vocabulary as a word set, derived from the same tuple rather than
+#: written out again.  Two spellings of one closed class is how the head
+#: extractor and :func:`resolve_quantity` came to disagree about what a hedge is
+#: in the first place.
+HEDGE_WORDS = frozenset(word for phrase in HEDGE_PHRASES for word in phrase.split())
 
 #: The number itself, hedges and suffixes excluded.
 _QUANTITY_CORE = rf"(?:{_NUMERAL}|{_CARDINAL})"
@@ -651,16 +807,57 @@ _QUANTITY_PARTS = re.compile(
     rf"\A(?P<hedge>{_HEDGE})?(?P<core>{_QUANTITY_CORE})(?P<more>\+)?\Z", re.IGNORECASE
 )
 
-#: What makes a head word unmistakably a quantity even when it cannot be
-#: normalized: it starts with a digit or with a hedge.  This is the fail-closed
-#: half of :func:`resolve_quantity` -- ``12-ish`` and ``about 12ish`` are claims
-#: whatever the grammar makes of them.  It deliberately does *not* fire on a
-#: digit appearing later in the word, because the corpus's non-claim head words
-#: are section references (``§18.3-§18.4``, 52 sites) and charging those would
-#: be a pure false positive.  A leading sign counts as part of the digit
-#: (``-12``): the ``§`` references never carry one, so it costs no false
-#: positive and closes the range/negative spellings.
-_NUMERIC_IDIOM = re.compile(rf"\A(?:{_HEDGE}|[-+]?\d)", re.IGNORECASE)
+#: What makes a quantity fragment unmistakably a claim even when it cannot be
+#: normalized: it *starts* with a digit, a hedge, a range marker or a vague
+#: quantifier.  This is the fail-closed half of :func:`resolve_quantity` --
+#: ``12-ish``, ``about 12ish``, ``between 10 and 12`` and ``half a dozen`` are
+#: claims whatever the grammar makes of them.
+#:
+#: Two deliberate non-members, both measured on this corpus rather than guessed:
+#:
+#: * a digit appearing *later* in the fragment.  The corpus's non-claim head
+#:   words are section references (``§18.3-§18.4``, 52 sites), so "contains a
+#:   digit anywhere" is a pure false positive.  :func:`quantity_fragment` is what
+#:   makes the leading-position rule reachable: it hands over the whole quantity
+#:   phrase rather than its first whitespace-delimited token, and it stops at a
+#:   citation token, so a ``§`` reference never enters a fragment at all.
+#: * a cardinal *word* followed by a hyphen.  ``two-sided``, ``three-part`` and
+#:   ``four-point`` are adjectives in this corpus, not counts, so ``twelve-odd``
+#:   stays uncharged as the price of not charging them.
+_NUMERIC_IDIOM = re.compile(
+    rf"\A(?:{_HEDGE}"
+    rf"|(?:{_phrase_alternation(RANGE_MARKERS)}|{_alternation(VAGUE_QUANTIFIERS)})(?:\s|\Z)"
+    rf"|[-+]?\d)",
+    re.IGNORECASE,
+)
+
+#: A token that cites a location rather than counting anything.  ``§18.3``,
+#: ``#4501`` and ``PR#12`` carry digits and are not quantities, and this repo's
+#: prose is full of them.
+_CITATION_TOKEN = re.compile(r"[§#]")
+
+#: A token that opens a quantity: a signed digit anywhere at its front.
+_DIGIT_INITIAL = re.compile(r"\A[-+]?\d")
+
+#: Words that may appear *inside* a quantity phrase without being quantities
+#: themselves (``no fewer than 12``, ``between 10 and 12``, ``a total of 12``).
+#: A phrase may never *end* on one, so they cannot extend a fragment into the
+#: prose that follows it.
+_QUANTITY_CONNECTIVES = frozenset({"and", "or", "to", "of", "the", "than"})
+
+#: The determiners a quantity may hide behind, shared by the head extractor and
+#: by the relocation subject.  They were two different lists: ``RELOCATION``
+#: accepted ``the|these|its|all`` while ``NARROW_CHILD`` accepted only ``the``,
+#: so ``All 13 foo wrappers now live in `X` `` was charged and ``Narrow child
+#: module for all 13 foo wrappers`` was not -- the same lexical class, two
+#: verdicts, in one file.
+DETERMINERS: tuple[str, ...] = (
+    "each of the", "the", "these", "those", "this", "that", "its", "their", "our",
+    "all", "same",
+)
+
+#: Zero or more determiners in front of the quantity (``the same 12``).
+_DETERMINER_PREFIX = rf"(?:(?:{_phrase_alternation(DETERMINERS)})\s+)*"
 
 #: The repository-artifact nouns a count can quantify.  Deliberately closed and
 #: deliberately *not* including mathematical objects (``parts``, ``ingredients``,
@@ -673,12 +870,32 @@ INVENTORY_NOUN = (
     r"|modules?|files?|variants?)"
 )
 
-#: Characters and words that end a claim: the window between a quantity and its
-#: noun may not cross a sentence break, a table-cell boundary, a comment
-#: delimiter or a masked region.  Without this the window happily reaches from
-#: ``its two arguments.`` in one doc comment into the word ``lemma`` of the
-#: declaration underneath it, which is a pure false positive.
-_WINDOW = rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,70}}?"
+#: How far a claim may reach between its quantity and its noun, in characters.
+#:
+#: A measured number, not a guess, and it was 70 -- which cost recall the review
+#: quantified: this repository's house style puts a backticked list of names
+#: between the count and the noun it counts (``The 10 Λ-level h-symmetry,
+#: odd-vanish at h=0, J_zero, and tanh-power lower-bound wrappers``), so the
+#: shortest real claims fitted and the typical ones did not.  At 200, on the
+#: tracked tree, ``RELOCATION`` resolves 210 more subjects and every other class
+#: is unchanged; a 22-site sample of the 210 was read one by one and every one
+#: was a real claim of exactly the pinned shape.
+_CLAUSE_SPAN = 200
+
+
+def _window(limit: int = _CLAUSE_SPAN) -> str:
+    """Return a lazy run of at most ``limit`` characters inside one clause.
+
+    Characters and words that end a claim: the window between a quantity and its
+    noun may not cross a sentence break, a table-cell boundary, a comment
+    delimiter or a masked region.  Without this the window happily reaches from
+    ``its two arguments.`` in one doc comment into the word ``lemma`` of the
+    declaration underneath it, which is a pure false positive.
+    """
+    return rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,{limit}}}?"
+
+
+_WINDOW = _window()
 
 
 def cardinal_value(phrase: str) -> int | None:
@@ -713,6 +930,53 @@ def cardinal_value(phrase: str) -> int | None:
     return total + current if seen else None
 
 
+def _quantity_word(token: str) -> bool:
+    """Whether ``token`` can be part of a quantity phrase.
+
+    A signed numeral, a cardinal word, an article (``a dozen``), a hedge word, a
+    range marker or a vague quantifier -- but never a citation, because
+    ``§18.3-§18.4`` and ``#4501`` carry digits and count nothing.
+    """
+    word = token.strip(",.;:!?)(`*").lower()
+    if not word or _CITATION_TOKEN.search(word):
+        return False
+    if _DIGIT_INITIAL.match(word):
+        return True
+    return (
+        word in HEDGE_WORDS
+        or word in RANGE_MARKERS
+        or word in WORD_NUMBERS
+        or word in _ARTICLE_WORDS
+        or word in VAGUE_QUANTIFIERS
+    )
+
+
+def quantity_fragment(rest: str) -> str:
+    """Return the leading quantity phrase of ``rest``, or ``''`` if it has none.
+
+    The head extractor's second stage, and the reason the fail-closed rule in
+    :func:`resolve_quantity` is reachable at all.  Its predecessor captured a
+    single whitespace-delimited token, so ``about 12ish`` arrived as ``about``
+    -- resolved to "not a quantity", *accounted*, free -- and the module
+    docstring's own worked example of a fail-closed charge was itself uncharged.
+    ``about 1.5k``, ``between 10 and 12``, ``minus twelve`` and ``half a dozen``
+    were free for the same reason.
+
+    Maximal munch over :func:`_quantity_word`, with connectives allowed only
+    *between* quantity words: the phrase can neither start nor end on one, so it
+    cannot reach past the count into the noun phrase that follows it.
+    """
+    taken: list[str] = []
+    for token in rest.split():
+        connective = bool(taken) and token.strip(",.;:!?)(`*").lower() in _QUANTITY_CONNECTIVES
+        if not (_quantity_word(token) or connective):
+            break
+        taken.append(token)
+    while taken and not _quantity_word(taken[-1]):
+        taken.pop()
+    return " ".join(taken)
+
+
 def resolve_quantity(raw: str) -> tuple[str, bool]:
     """Return ``(token, is_quantity)`` for the quantity fragment ``raw``.
 
@@ -733,6 +997,15 @@ def resolve_quantity(raw: str) -> tuple[str, bool]:
     word = raw.strip().strip(",.;:!?)(`*").lower()
     if word in VAGUE_QUANTIFIERS:
         return word, True
+    words = word.split()
+    vague = [part for part in words if part in VAGUE_QUANTIFIERS]
+    if vague and all(
+        part in VAGUE_QUANTIFIERS or part in _ARTICLE_WORDS or part in _QUANTITY_CONNECTIVES
+        for part in words
+    ):
+        # ``a few``, ``a couple of``: an article and a connective around a vague
+        # quantifier state exactly what the bare word does.
+        return vague[0], True
     parts = _QUANTITY_PARTS.match(word)
     if parts is not None:
         core = parts.group("core")
@@ -778,13 +1051,19 @@ NON_PROSE = "NON_PROSE_ANCHOR"
 
 
 class Claim(NamedTuple):
-    """One extracted claim: the ratchet key plus where it was found."""
+    """One extracted record: the ratchet key plus where it was found.
+
+    Which *ledger* it lands in is not a field of it.  Every record in
+    :attr:`Report.claims` is charged, and the handful that are not are
+    :attr:`Report.telemetry` -- a separate, explicitly non-authoritative list.
+    A ``charged`` flag on the record itself is what let the largest population in
+    the corpus sit inside the authoritative ledger marked "recognized, free".
+    """
 
     kind: str
     target: str
     token: str
     line: int
-    charged: bool
     note: str
 
     @property
@@ -800,6 +1079,11 @@ class ClaimClass(NamedTuple):
     ``(token, charged, note)``.  It is **total**: every anchor match yields
     exactly one record, so a token it cannot resolve becomes a charge with a
     note rather than a dropped row.  ``K1`` is what enforces that contract.
+
+    ``charged`` is ``False`` only where the shape carries no inventory size at
+    all, which is a fact about the *prose* and never about the extractor's
+    success.  Two of the five classes can return it (see
+    :func:`_extract_narrow_child`); a quantity that fails to parse never does.
     """
 
     name: str
@@ -818,10 +1102,10 @@ class ClaimClass(NamedTuple):
 #: bypassable by a one-character edit.
 _NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
 
-#: ``for [the] <head quantity>`` immediately after the anchor.  The quantity
-#: alternative comes first so that a multi-word count (``about 12``, ``two
-#: hundred``) is captured whole; ``\S+`` is the fallback that keeps the
-#: extractor total, so a non-quantity head word still produces a record.
+#: ``for <determiners> <head>`` immediately after the anchor.  The determiners
+#: are :data:`DETERMINERS` -- the same list the relocation subject uses, because
+#: they are the same lexical class and two lists meant ``for all 12 wrappers``
+#: was free while ``All 12 wrappers now live in `X` `` was charged.
 #:
 #: No ``\A``: the pattern is applied with a ``pos`` argument, which ``\A``
 #: ignores (it means "start of string", not "start of the search"), and getting
@@ -829,12 +1113,39 @@ _NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
 #: ``re.IGNORECASE`` for the same reason the anchors carry it -- ``For The 12``
 #: is the same claim, and this was the last case-sensitive link in the chain.
 #:
-#: The trailing lookahead excludes ``.`` and ``,`` as well as word characters
-#: and ``-``: without them ``1.5k`` matched the ``1`` and was charged under the
-#: token ``1``, a wrong number rather than an unresolved one.  Excluded, the
-#: whole fragment falls to the ``\S+`` branch and the fail-closed rule in
+#: ``head`` runs to the end of the clause rather than to the end of the first
+#: word; :func:`quantity_fragment` is what decides how much of it is the count.
+#: It stops at a sentence break, a table-cell boundary or a masked region, so it
+#: cannot reach out of the sentence it belongs to.
+_HEAD_CLAUSE = re.compile(
+    rf"\s*for\s+{_DETERMINER_PREFIX}(?P<head>(?:(?!\.\s|;|\|)[^{MASK}\n]){{0,120}})",
+    re.IGNORECASE,
+)
+
+#: A clean count at the very front of the head clause.  The trailing lookahead
+#: excludes ``.`` and ``,`` as well as word characters and ``-``: without them
+#: ``1.5k`` matched the ``1`` and was charged under the token ``1``, a wrong
+#: number rather than an unresolved one.  Excluded, the whole fragment falls to
+#: :func:`quantity_fragment` and the fail-closed rule in
 #: :func:`resolve_quantity` charges it as ``?1.5k``.
-_HEAD_QUANTITY = re.compile(rf"\s*for\s+(?:the\s+)?({QUANTITY}(?![\w.,-])|\S+)", re.IGNORECASE)
+_HEAD_QUANTITY = re.compile(rf"({QUANTITY})(?![\w.,-])", re.IGNORECASE)
+
+
+def head_quantity(head: str) -> str:
+    """Return the fragment of head clause ``head`` that states its count.
+
+    Three stages, narrowest first: a clean quantity at the front, else the
+    maximal quantity phrase, else the first word -- which is what keeps the
+    extractor total, so a purely descriptive head still produces a record.
+    """
+    clean = _HEAD_QUANTITY.match(head)
+    if clean is not None:
+        return clean.group(1)
+    fragment = quantity_fragment(head)
+    if fragment:
+        return fragment
+    words = head.split()
+    return words[0] if words else ""
 
 
 def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
@@ -845,14 +1156,22 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     cited identifier, so reaching for it would buy recall with false charges;
     the parenthetical and predicate classes below pick up the counts that are
     stated elsewhere in the sentence.
+
+    This is the one class that can decline to charge, and what it declines on is
+    a header that states no size at all (``Narrow child module for concrete
+    `latticeGraph` specializations``).  That record is **telemetry**, not a
+    verdict: it is reported apart from :attr:`Report.claims` and never pinned,
+    so no quantity that fails to parse can land in it -- an unresolvable count
+    is charged (``?<fragment>``), a missing ``for`` clause is charged, and only
+    the absence of numeric content at all is telemetry.
     """
-    head = _HEAD_QUANTITY.match(flat, match.end())
-    if head is None:
+    clause = _HEAD_CLAUSE.match(flat, match.end())
+    if clause is None:
         return "-", True, "no `for` clause after the anchor"
-    token, is_quantity = resolve_quantity(head.group(1))
+    token, is_quantity = resolve_quantity(head_quantity(clause.group("head")))
     if is_quantity:
         return token, True, ""
-    return "-", False, f"no quantity (head word {token!r})"
+    return "-", False, f"no quantity (head {token!r})"
 
 
 _PAREN_ANCHOR = re.compile(rf"\(\s*({QUANTITY})\s+({INVENTORY_NOUN})\s*\)", re.IGNORECASE)
@@ -883,7 +1202,7 @@ def _extract_possessive(flat: str, match: re.Match[str]) -> tuple[str, bool, str
 
 _PREDICATE_ANCHOR = re.compile(
     rf"\b(?:cover(?:s|ing)?|contains?|holds?|collects?|groups?|bundles?|comprises?)"
-    rf"\s+(?:the\s+)?({QUANTITY})\s+{_WINDOW}({INVENTORY_NOUN})\b",
+    rf"\s+{_DETERMINER_PREFIX}({QUANTITY})\s+{_WINDOW}({INVENTORY_NOUN})\b",
     re.IGNORECASE,
 )
 
@@ -905,36 +1224,54 @@ def _extract_predicate(flat: str, match: re.Match[str]) -> tuple[str, bool, str]
 _RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in", re.IGNORECASE)
 
 #: The destination as written just after ``now live in``: a backticked module or
-#: file name, or a ``\texttt{...}`` one in the TeX guide.  No ``\A`` -- see
-#: :data:`_HEAD_QUANTITY` for why that would silently erase every destination.
-_DESTINATION = re.compile(r"[\s(]*(?:`([^`]+)`|\\texttt\{([^}]*)\})")
+#: file name, or a ``\texttt{...}`` / ``\path{...}`` one in the TeX guide.  No
+#: ``\A`` -- see :data:`_HEAD_CLAUSE` for why that would silently erase every
+#: destination.  ``\path`` is how the guide writes most of its file names, and
+#: without it 53 of its relocations shared the one ``->?`` key.
+_DESTINATION = re.compile(r"[\s(]*(?:`([^`]+)`|\\(?:texttt|path)\{([^}]*)\})")
 
-#: The *subject* of a relocation claim: ``the|these|its|all`` + a quantity + an
-#: inventory noun, optionally followed by a connective clause, running right up
-#: to ``now live in``.
+#: The *subject* of a relocation claim: a :data:`DETERMINERS` word + a quantity
+#: + an inventory noun, optionally followed by a connective clause, running right
+#: up to ``now live in``.
 #:
-#: Every part of that shape is load-bearing, and each was added to kill a
-#: measured false positive rather than on suspicion.  A free backwards search for
-#: "some quantity earlier in the paragraph" charged 468 of this tree's 767
-#: relocation sentences, mostly by borrowing a number from an adjacent bullet of
-#: the same ``## Moved:`` block.  Requiring the inventory noun removes
-#: ``(under `0 ≤ β`, `0 ≤ J`) now live in``.  Requiring the determiner removes
-#: ``Step 241 interior `ContinuousAt` wrappers) now live in`` and the ``PR
-#: #1861`` / ``Issue #4501`` references, without an ever-growing list of number
-#: prefixes to exclude.  The connective tail is what keeps the archetype
+#: What this decides is only how *sharp* the key is -- the anchor is charged
+#: either way (see :func:`_extract_relocation`) -- so its false positives cost a
+#: wrong number in a token and its false negatives cost a coarse one.  Each part
+#: was still added against a measured false positive rather than on suspicion.
+#: A free backwards search for "some quantity earlier in the paragraph" bound 468
+#: of this tree's 767 relocation sentences to a number, mostly borrowed from an
+#: adjacent bullet of the same ``## Moved:`` block.  Requiring the inventory noun
+#: removes ``(under `0 ≤ β`, `0 ≤ J`) now live in``.  Requiring the determiner
+#: removes ``Step 241 interior `ContinuousAt` wrappers) now live in`` and the
+#: ``PR #1861`` / ``Issue #4501`` references, without an ever-growing list of
+#: number prefixes to exclude.  The connective tail is what keeps the archetype
 #: ``the three ... wrappers were split out again in PR #2354 and now live in X``
-#: (docs/index.md:1393, the F4 site) inside the population.
+#: (docs/index.md:1393, the F4 site) resolved.
 #:
 #: Split into head and tail so the *nearest* subject wins: ``re.search`` is
 #: leftmost-first, which would bind ``now live in`` to the first determiner in
 #: the window rather than to the noun phrase actually in front of it.
+#:
+#: The head carries the same trailing lookahead :data:`_HEAD_QUANTITY` does, for the same
+#: reason: with a bare ``\b``, ``The zero-boundary linear bounds ... now live in
+#: X`` bound the subject to the cardinal ``zero`` and pinned the claim under the
+#: token ``0`` -- a number the sentence does not state.  A cardinal glued to a
+#: following word is an adjective in this corpus (``zero-boundary``,
+#: ``two-sided``, ``three-part``), never a count.
 _SUBJECT_HEAD = re.compile(
-    rf"(?:^|(?<=[^\w`]))(?:the|these|its|all)\s+({QUANTITY})\b", re.IGNORECASE
-)
-_SUBJECT_TAIL = re.compile(
-    rf"\s*{_WINDOW}{INVENTORY_NOUN}\b(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,80}}?\Z",
+    rf"(?:^|(?<=[^\w`]))(?:(?:{_phrase_alternation(DETERMINERS)})\s+)+({QUANTITY})(?![\w.,-])",
     re.IGNORECASE,
 )
+_SUBJECT_TAIL = re.compile(
+    rf"\s*{_WINDOW}{INVENTORY_NOUN}\b{_window()}\Z",
+    re.IGNORECASE,
+)
+
+
+#: How far back a relocation's subject may start.  It has to hold a determiner,
+#: a count, a ``_CLAUSE_SPAN`` run to the inventory noun and a second one to the
+#: anchor, so it is twice the clause span plus room for the noun phrase itself.
+_SUBJECT_LOOKBACK = 2 * _CLAUSE_SPAN + 64
 
 
 def relocation_subject(window: str) -> re.Match[str] | None:
@@ -947,22 +1284,29 @@ def relocation_subject(window: str) -> re.Match[str] | None:
 
 
 def _extract_relocation(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
-    """Extract ``The 13 ... wrappers now live in `X` `` -- a count of *another* module.
+    """Extract ``The 13 ... wrappers now live in `X` `` -- a claim about *another* module.
 
-    Only the quantified form is charged.  The unquantified
-    ``... wrappers now live in `X` `` is an ownership claim that the convention
-    also bans, but it states no inventory size, so charging it would drag ~740
-    compatibility-umbrella sentences into a population this tool is not the
-    right instrument for.  They are accounted, reported as out-of-charge-scope,
-    and explicitly *not* exonerated.
+    **Every anchor is charged**, quantified or not, and the token records the
+    destination whether or not a count resolves.  ``... now live in `X` `` *is*
+    the ownership assertion this tool ratchets: it goes stale on exactly the
+    split that a counted version does, and where it points is the fact being
+    claimed.  Making the charge conditional on parsing an adjacent quantity made
+    the quantity extractor the thing that decided exemption, which is how 647 of
+    this tree's 767 relocation sentences -- the single largest recognized
+    population in the corpus, most of them visibly quantified -- sat in a bucket
+    that was reported as "recognized" and cost nothing.
+
+    Resolution now only sharpens the key: ``12->X`` is a tighter pin than
+    ``->X``, because editing the 12 is then a new key, but ``->X`` is already a
+    pin on the sentence's existence.
     """
     destination = "?"
     tail = _DESTINATION.match(flat, match.end())
     if tail is not None:
         destination = (tail.group(1) or tail.group(2) or "?").strip()
-    subject = relocation_subject(flat[max(0, match.start() - 200):match.start()])
+    subject = relocation_subject(flat[max(0, match.start() - _SUBJECT_LOOKBACK):match.start()])
     if subject is None:
-        return "-", False, f"no quantified subject (-> {destination})"
+        return f"->{destination}", True, "ownership claim, no quantified subject"
     token, is_quantity = resolve_quantity(subject.group(1))
     if not is_quantity:
         return f"?->{destination}", True, "unresolved quantity"
@@ -1022,10 +1366,17 @@ class Source(NamedTuple):
 
 
 class SourceReport(NamedTuple):
-    """The findings and conservation ledger of one source."""
+    """The findings and conservation ledger of one source.
+
+    ``claims`` is the authoritative ledger and every row in it is charged;
+    ``telemetry`` is the coverage report and no row in it is ever pinned.  They
+    are two fields rather than one flagged list because a single list with a
+    ``charged`` column is a place for a charge to be quietly filed as free.
+    """
 
     source: Source
     claims: tuple[Claim, ...]
+    telemetry: tuple[Claim, ...]
     conservation: tuple[str, ...]
 
 
@@ -1044,6 +1395,10 @@ def scan_source(source: Source) -> SourceReport:
     ``K1`` requires (3) to produce exactly as many records as (1); ``K2``
     requires (2) to equal the subset of (1) that sits inside prose; ``K3``
     requires the decomposition itself to agree with an independent oracle.
+
+    ``K1`` counts records across **both** ledgers, so routing a row to
+    ``telemetry`` is not a way to lose it: the law is that every anchor produces
+    exactly one record somewhere, and where it goes is a separate question.
     """
     text = source.text
     decomposition = decompose(text) if source.is_lean else decompose_document(text)
@@ -1051,6 +1406,7 @@ def scan_source(source: Source) -> SourceReport:
     prose = flatten(apply_mask(text, decomposition.regions))
     starts = line_starts(text)
     claims: list[Claim] = []
+    telemetry: list[Claim] = []
     failures: list[str] = []
 
     if source.is_lean and decomposition.regions != reference_regions(text):
@@ -1060,17 +1416,17 @@ def scan_source(source: Source) -> SourceReport:
         )
     if not decomposition.terminated:
         claims.append(
-            Claim(UNTERMINATED, source.target, "-", 1, True, "comment or string never closed")
+            Claim(UNTERMINATED, source.target, "-", 1, "comment or string never closed")
         )
     if source.is_lean and not decomposition.module_doc:
         claims.append(
-            Claim(MISSING_DOC, source.target, "-", 1, True, "no `/-!` module docstring to inspect")
+            Claim(MISSING_DOC, source.target, "-", 1, "no `/-!` module docstring to inspect")
         )
 
     for claim_class in CLAIM_CLASSES:
         raw_matches = list(claim_class.anchor.finditer(raw.text))
         prose_matches = list(claim_class.anchor.finditer(prose.text))
-        before = len(claims)
+        before = len(claims) + len(telemetry)
         inside = 0
         for match in raw_matches:
             begin = raw.origin(match.start())
@@ -1080,9 +1436,8 @@ def scan_source(source: Source) -> SourceReport:
             if in_prose:
                 inside += 1
                 token, charged, note = claim_class.extract(raw.text, match)
-                claims.append(
-                    Claim(claim_class.name, source.target, token, line, charged, note)
-                )
+                record = Claim(claim_class.name, source.target, token, line, note)
+                (claims if charged else telemetry).append(record)
             else:
                 claims.append(
                     Claim(
@@ -1090,7 +1445,6 @@ def scan_source(source: Source) -> SourceReport:
                         source.target,
                         claim_class.name,
                         line,
-                        True,
                         "anchor outside any comment body",
                     )
                 )
@@ -1098,7 +1452,7 @@ def scan_source(source: Source) -> SourceReport:
         # loop's own bookkeeping: an early `continue` -- the shape a "skip the
         # tokens I cannot resolve" edit takes -- has to be what this number
         # misses, otherwise K1 would only ever confirm its own arithmetic.
-        produced = len(claims) - before
+        produced = len(claims) + len(telemetry) - before
         if produced != len(raw_matches):
             failures.append(
                 f"K1 {source.target} [{claim_class.name}]: "
@@ -1109,7 +1463,12 @@ def scan_source(source: Source) -> SourceReport:
                 f"K2 {source.target} [{claim_class.name}]: "
                 f"{len(prose_matches)} masked anchor(s) but {inside} raw anchor(s) inside prose"
             )
-    return SourceReport(source=source, claims=tuple(claims), conservation=tuple(failures))
+    return SourceReport(
+        source=source,
+        claims=tuple(claims),
+        telemetry=tuple(telemetry),
+        conservation=tuple(failures),
+    )
 
 
 # --------------------------------------------------------------------------
@@ -1124,15 +1483,27 @@ def tracked_paths(root: Path = REPO_ROOT) -> tuple[str, ...]:
     files exist: a scanner that walks the tree reads build artefacts, editor
     backups and ignored scratch copies, and this repository has been bitten by
     exactly that.
+
+    :data:`SCAN_ROOTS` filtered to :data:`SCAN_SUFFIXES`, minus
+    :data:`EXCLUDED_ROOTS`.  The exclusion is redundant against those roots and
+    is applied anyway: it is the statement that ``test/``, ``.github/`` and
+    ``scripts/`` are out of scope *on purpose*, so widening the roots later
+    cannot drag the tool's own fixtures into the population by accident.
     """
     result = subprocess.run(
-        ["git", "-C", str(root), "ls-files", "-z", "--", LEAN_ROOT, *DOC_TARGETS],
+        ["git", "-C", str(root), "ls-files", "-z", "--", *SCAN_ROOTS],
         capture_output=True,
         text=True,
         check=True,
     )
     paths = [entry for entry in result.stdout.split("\0") if entry]
-    return tuple(sorted(path for path in paths if path.endswith(".lean") or path in DOC_TARGETS))
+    return tuple(
+        sorted(
+            path
+            for path in paths
+            if path.endswith(SCAN_SUFFIXES) and not path.startswith(EXCLUDED_ROOTS)
+        )
+    )
 
 
 def module_name(path: str) -> str:
@@ -1145,7 +1516,12 @@ def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
 ]:
     """Read every target, returning ``(sources, K0 failures)``.
 
-    A path that cannot be read is a ``K0`` failure, never a skip.
+    A path that cannot be read is a ``K0`` failure, never a skip -- and
+    "unreadable" includes *undecodable*.  A tracked file holding a byte that is
+    not UTF-8 used to raise ``UnicodeDecodeError`` out of here: the run still
+    failed closed, by traceback, but ``K0``'s contract is that a read error
+    arrives through the finding channel rather than as a stack trace, and a
+    crash reports nothing about the other 1900 targets.
     """
     wanted = tuple(paths) if paths is not None else tracked_paths(root)
     sources: list[Source] = []
@@ -1153,7 +1529,7 @@ def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
     for path in wanted:
         try:
             text = (root / path).read_text(encoding="utf-8")
-        except OSError as error:
+        except (OSError, UnicodeDecodeError) as error:
             failures.append(f"K0 {path}: tracked but unreadable ({error})")
             continue
         is_lean = path.endswith(".lean")
@@ -1185,13 +1561,22 @@ BASELINE_HEADER = """\
 # There is no exemption channel and no way to mark a finding fine: the only
 # legal edit is downward, produced by `--baseline` after real prose was fixed.
 #
-# One upward correction is on the record, and it is the only kind that can ever
-# be legitimate: the pin moved 713 -> 740 when `NARROW_CHILD`'s anchor gained the
-# `re.IGNORECASE` flag every other anchor already carried.  No prose changed and
-# no repair had been made; 27 lowercase occurrences that had always been there
-# simply became visible to a detector that had been blind to them.  A repair
-# campaign must never raise this file, and any future increase needs a public
-# reason of exactly this shape.
+# Two upward corrections are on the record, and they are the only kind that can
+# ever be legitimate -- the detector was undercounting the tree, so the pin was
+# an undercount of a population that was always there.  No prose was written and
+# no repair was made in either.  A repair campaign must never raise this file,
+# and any future increase needs a public reason of exactly this shape.
+#
+#   713 -> 740   `NARROW_CHILD`'s anchor gained the `re.IGNORECASE` flag every
+#                other anchor already carried; 27 lowercase occurrences became
+#                visible to a detector that had been blind to them.
+#   740 -> 1391  the `accounted` bucket was retired.  `RELOCATION` charges on its
+#                anchor now, because "now lives in X" is itself the ownership
+#                claim (+648, of which 647 were recognized and free); the scan
+#                took in `IsingModel.lean`, `README.md` and the rest of `docs/`
+#                (+2); and the clause window went from 70 to 200 characters (+1),
+#                which also resolved 274 relocation subjects that had been pinned
+#                only by their destination.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
@@ -1210,11 +1595,13 @@ BASELINE_HEADER = """\
 # one movement no prose edit explains that can still be legitimate.  Declaring it
 # takes a whole line of this file, added by the same diff, reading exactly
 # `# DETECTOR-MIGRATION: <reason>`.  The declaration is a precondition and not an
-# authorization: what it buys is computed, not granted.  The base commit's
-# detector is re-run on THIS tree, and B1 is relaxed per key by the excess of
-# what this detector charges over what that one does -- so a claim somebody wrote
-# is seen by both, cancels, and still fails.  A detector edit that changes no
-# logic (comments, docstrings) buys nothing, and B2/B3 are never waived.
+# authorization: what it buys is computed, not granted.  BOTH detectors are run
+# on a checkout of the BASE COMMIT, and B1 is relaxed per key by the excess of
+# this detector over that one THERE -- on prose that already existed.  Prose the
+# diff writes is not in that tree, so widening the grammar and writing a claim in
+# the newly recognized shape cannot pay for itself; and a key whose file this
+# diff edits earns nothing at all.  A detector edit that changes no logic
+# (comments, docstrings) buys nothing, and B2/B3 are never waived.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 """
@@ -1269,24 +1656,28 @@ def read_baseline(path: Path = BASELINE_FILE) -> tuple[Counter[tuple[str, str, s
 
 #: The trailer that *declares* a detector migration.  Declaring is a
 #: precondition, never an authorization: what a declaration can buy is computed
-#: by :func:`detector_recount`, key by key, from the two detectors' output on the
-#: same tree.  Three things must hold together (:func:`check_drift`), and the
-#: first two exist because the hatch as first written was satisfied by neither:
+#: by :func:`migration_allowance`, key by key.  Four things must hold together
+#: (:func:`check_drift`), and each exists because the hatch as previously
+#: written was satisfied without it:
 #:
 #: 1. the trailer is *added by this diff* to the pinned file, as a whole line
 #:    (:data:`_MIGRATION_LINE`) -- not a marker already on the base branch, and
 #:    not a marker buried in a longer comment;
 #: 2. the detector's **logic** changed (:func:`detector_logic_changed`) -- an AST
 #:    comparison, so appending ``# cosmetic`` to the detector buys nothing;
-#: 3. the rise on the key is one the base detector does not see on this same
-#:    tree.  A brand-new prose claim is visible to both detectors, so it cancels
-#:    and stays a ``B1`` failure however it is declared.
+#: 3. the rise is one the two detectors disagree about **on the base commit's own
+#:    tree**.  Prose this diff writes is not in that tree, so no claim the diff
+#:    adds can be paid for by widening the grammar that recognizes it;
+#: 4. the key's source file is not one this diff edits at all.
 #:
-#: The measured exploit this replaces: two new inventory claims + ``--baseline``
-#: + one comment line in the pinned file + one comment line in the detector made
-#: ``--check-baseline-drift`` print ``PASS``, because the waiver was granted on
-#: the *path* of the detector and then applied to every ``B1``/``B2`` failure in
-#: the run rather than to the keys a migration explains.
+#: Two measured exploits this replaces.  Two new inventory claims +
+#: ``--baseline`` + one comment line in the pinned file + one comment line in the
+#: detector made ``--check-baseline-drift`` print ``PASS``, because the waiver
+#: was granted on the *path* of the detector and applied to every ``B1``/``B2``
+#: failure in the run.  Then, with the waiver replaced by a recount taken on the
+#: *head* tree: add ``aggregates`` to the predicate anchor, write ``This module
+#: aggregates seventeen lemmas`` in the same diff, declare -- and the claim paid
+#: for itself, because the base detector could not see the new prose either.
 MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
 
 #: The declaration's whole grammar: the marker, one space, a non-empty reason,
@@ -1414,18 +1805,32 @@ def detector_logic_changed(root: Path, commit: str) -> bool:
     return base_fingerprint != head_fingerprint
 
 
-def detector_recount(root: Path, commit: str) -> Counter[tuple[str, str, str]] | None:
-    """Return what the detector *at* ``commit`` charges on **this** tree.
+@contextlib.contextmanager
+def base_worktree(root: Path, commit: str) -> Iterator[Path | None]:
+    """Yield a checkout of ``commit``, or ``None`` if one cannot be made.
 
-    This is what bounds a declared migration.  Both counts are taken on the same
-    working tree, so their difference is the effect of the detector change and
-    nothing else: prose written by this diff is visible to both detectors and
-    cancels, while a shape the new detector newly recognizes shows up only on the
-    head side.  A declaration can therefore never buy room for a claim somebody
-    wrote -- only for one the old detector was blind to.
+    A linked ``git worktree``, not an archive: the scan's target set comes from
+    ``git ls-files``, so the base tree has to *be* a repository rather than a
+    directory of files.  Removed on the way out, including after an exception,
+    so a failed run leaves no registration behind.
+    """
+    parent = tempfile.mkdtemp(prefix="claim-ratchet-base-")
+    tree = Path(parent) / "tree"
+    code, _out = _git(root, "worktree", "add", "--detach", "--quiet", str(tree), commit)
+    try:
+        yield tree if code == 0 else None
+    finally:
+        if code == 0:
+            _git(root, "worktree", "remove", "--force", str(tree))
+        shutil.rmtree(parent, ignore_errors=True)
+        _git(root, "worktree", "prune")
 
-    ``None`` -- no allowance at all -- when the base detector cannot be obtained,
-    executed, or trusted (an unsound run of it says nothing about this tree).
+
+def detector_charges(root: Path, commit: str, tree: Path) -> Counter[tuple[str, str, str]] | None:
+    """Return what the detector *at* ``commit`` charges on ``tree``.
+
+    ``None`` -- which means no allowance at all -- when the base detector cannot
+    be obtained, executed, or trusted (an unsound run of it says nothing).
 
     It really does execute the base commit's copy of this file, and only when a
     migration is declared.  That code is this repository's own, already reviewed
@@ -1439,7 +1844,7 @@ def detector_recount(root: Path, commit: str) -> Counter[tuple[str, str, str]] |
     module.__dict__["__file__"] = str(root / DETECTOR_REPO_PATH)
     try:
         exec(compile(text, f"<{commit[:12]}:{DETECTOR_REPO_PATH}>", "exec"), module.__dict__)  # noqa: S102
-        report = module.build_report(root)
+        report = module.build_report(tree)
         if not report.sound:
             return None
         return Counter(report.charged)
@@ -1447,9 +1852,22 @@ def detector_recount(root: Path, commit: str) -> Counter[tuple[str, str, str]] |
         return None
 
 
+def own_charges(tree: Path) -> Counter[tuple[str, str, str]] | None:
+    """Return what *this* detector charges on ``tree``, or ``None`` if unsound."""
+    try:
+        report = build_report(tree)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return Counter(report.charged) if report.sound else None
+
+
 def target_path(target: str) -> str:
-    """Return the repo-relative source path a ratchet target names."""
-    return target if target in DOC_TARGETS else target.replace(".", "/") + ".lean"
+    """Return the repo-relative source path a ratchet target names.
+
+    The inverse of :func:`module_name`: a document is keyed by its path and a
+    Lean module by its dotted name, so the suffix is what tells them apart.
+    """
+    return target if target.endswith(DOCUMENT_SUFFIXES) else target.replace(".", "/") + ".lean"
 
 
 class Drift(NamedTuple):
@@ -1564,13 +1982,50 @@ def migration_allowance(
 ) -> tuple[Counter[tuple[str, str, str]], tuple[str, ...]]:
     """Return ``(per-key allowance, narrative)`` for a declared detector migration.
 
-    The allowance is the per-key excess of what *this* detector charges on this
-    tree over what the base commit's detector charges on the *same* tree.  It is
-    empty unless a declaration was added by this diff and the detector's logic
-    really changed, and it is empty if the base detector cannot be re-run.  It
-    relaxes ``B1`` alone: ``B2`` (a row that vanished with no edit to the source
-    it names) and ``B3`` (the pin must be tight) are never waived, so a detector
-    edit cannot buy a quiet deletion from the pin either.
+    The allowance is a pure function of *the detector delta applied to prose that
+    already existed*: both detectors are run on a checkout of the **base
+    commit**, and the allowance is the per-key excess of this one over that one
+    there.  Prose the diff writes is not in that tree at all, so it can never
+    earn allowance -- which is the property the previous version lacked.
+
+    That version ran both detectors on the **head** tree, and reasoned that a
+    new claim is "visible to both detectors, so it cancels".  It does not cancel
+    when the diff widens the grammar and writes prose in the newly recognized
+    shape at the same time: adding ``aggregates`` to the predicate anchor *and*
+    writing ``This module aggregates seventeen lemmas`` gave base 740, head 741,
+    allowance 1 -- the new claim paid for itself.  That is the whole shape a
+    migration hatch has to refuse, because a genuine grammar-widening PR that
+    also edits headers is this repository's own normal workflow.
+
+    Two rules, and the distinction they draw is the point:
+
+    * the detector got smarter about **existing** prose -- the same characters
+      were in the base tree and only the new detector sees them -- which is a
+      legitimate recount and is what the allowance covers;
+    * the diff added **new** prose that the new logic covers, which is a claim
+      somebody wrote and is charged like any other.
+
+    On top of that, no key whose source file this diff touches earns anything
+    (``target_path(key[1]) in changed_paths``).  Belt and braces: the base-tree
+    measurement already excludes new prose, and this excludes edited prose too,
+    so a migration must be declared in a diff that leaves the scanned corpus
+    alone.  That is a real constraint on how a migration is landed, and it is
+    the constraint the ``713 -> 740`` migration already met.
+
+    Empty unless a declaration was added by this diff *and* the detector's logic
+    really changed *and* the base tree can be materialized and both detectors
+    run soundly on it.  It relaxes ``B1`` alone: ``B2`` (a row that vanished with
+    no edit to the source it names) and ``B3`` (the pin must be tight) are never
+    waived, so a detector edit cannot buy a quiet deletion from the pin either.
+
+    A consequence worth stating rather than discovering: a migration that
+    *re-keys* an existing claim -- one that makes the same sentence charge
+    ``2:prerequisites`` where it charged ``2:wrapper`` -- adds a row and removes
+    one, and the removal is a ``B2`` failure with no source edit to explain it.
+    Only a purely **additive** widening (the ``713 -> 740`` shape: prose that was
+    charged nothing becoming charged something) passes as declared.  A re-keying
+    one needs a reviewed change here, which is the right place for that decision
+    to be made and is why the constraint is written down instead of waived.
     """
     reasons = migration_declarations(root, commit)
     if not reasons:
@@ -1581,22 +2036,33 @@ def migration_allowance(
             "no allowance: the detector's logic is unchanged since the base commit "
             "(a comment- or docstring-only edit is not a migration)",
         )
-    before = detector_recount(root, commit)
-    if before is None:
+    with base_worktree(root, commit) as tree:
+        if tree is None:
+            return Counter(), declared + (
+                "no allowance: the base commit's tree could not be checked out, so the "
+                "detector delta cannot be measured on prose that predates this diff",
+            )
+        before = detector_charges(root, commit, tree)
+        after = own_charges(tree)
+    if before is None or after is None:
         return Counter(), declared + (
-            "no allowance: the base commit's detector could not be re-run on this tree",
+            "no allowance: one of the two detectors did not produce a sound run on the "
+            "base commit's tree",
         )
+    edited = changed_paths(root, commit)
     allowance = Counter(
         {
-            key: live[key] - before.get(key, 0)
-            for key in live
-            if live[key] > before.get(key, 0)
+            key: after[key] - before.get(key, 0)
+            for key in after
+            if after[key] > before.get(key, 0) and target_path(key[1]) not in edited
         }
     )
     return allowance, declared + (
-        f"allowance: the base detector charges {sum(before.values())} on this tree and this one "
-        f"charges {sum(live.values())}; {sum(allowance.values())} charge(s) over "
-        f"{len(allowance)} key(s) are attributable to the detector change, and only those",
+        f"allowance: on the base commit's own tree the base detector charges "
+        f"{sum(before.values())} and this one charges {sum(after.values())}; "
+        f"{sum(allowance.values())} charge(s) over {len(allowance)} key(s) in files this diff "
+        f"does not touch are attributable to the detector change, and only those "
+        f"(this tree charges {sum(live.values())})",
     )
 
 
@@ -1647,21 +2113,25 @@ def print_drift(drift: Drift | None, base_ref: str) -> bool:
 
 
 class Report(NamedTuple):
-    """The verdict of one ratchet run."""
+    """The verdict of one ratchet run.
+
+    ``claims`` is the ledger the ratchet is computed from and every row in it is
+    charged.  ``telemetry`` is a coverage report -- recognized anchors that state
+    no inventory size -- and it is deliberately **not** part of the population:
+    it is never pinned, never compared, and never a reason to pass or fail.  It
+    used to live inside ``claims`` behind a ``charged=False`` flag, which is how
+    647 relocation claims came to be reported as recognized and cost nothing.
+    """
 
     sources: tuple[Source, ...]
     claims: tuple[Claim, ...]
+    telemetry: tuple[Claim, ...]
     conservation: tuple[str, ...]
 
     @property
     def charged(self) -> Counter[tuple[str, str, str]]:
         """The charged-claim multiset, i.e. the ratchet population."""
-        return Counter(claim.key for claim in self.claims if claim.charged)
-
-    @property
-    def accounted(self) -> tuple[Claim, ...]:
-        """Anchor sites that were classified but state no inventory size."""
-        return tuple(claim for claim in self.claims if not claim.charged)
+        return Counter(claim.key for claim in self.claims)
 
     @property
     def sound(self) -> bool:
@@ -1673,12 +2143,19 @@ def build_report(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
     """Scan every tracked target and return the run's verdict."""
     sources, failures = load_sources(root, paths)
     claims: list[Claim] = []
+    telemetry: list[Claim] = []
     conservation = list(failures)
     for source in sources:
         scanned = scan_source(source)
         claims.extend(scanned.claims)
+        telemetry.extend(scanned.telemetry)
         conservation.extend(scanned.conservation)
-    return Report(sources=sources, claims=tuple(claims), conservation=tuple(conservation))
+    return Report(
+        sources=sources,
+        claims=tuple(claims),
+        telemetry=tuple(telemetry),
+        conservation=tuple(conservation),
+    )
 
 
 class Comparison(NamedTuple):
@@ -1760,9 +2237,9 @@ def print_report(report: Report, baseline: Counter[tuple[str, str, str]],
     print("== Recognized claim classes ==")
     for claim_class in CLAIM_CLASSES:
         charged = sum(count for (kind, _t, _k), count in live.items() if kind == claim_class.name)
-        accounted = sum(1 for claim in report.accounted if claim.kind == claim_class.name)
-        print(f"  {claim_class.name} [{claim_class.referent}]: {charged} charged, "
-              f"{accounted} accounted-but-unquantified -- {claim_class.summary}")
+        tracked = sum(1 for claim in report.telemetry if claim.kind == claim_class.name)
+        print(f"  {claim_class.name} [{claim_class.referent}]: {charged} charged"
+              f"{f' (+{tracked} telemetry)' if tracked else ''} -- {claim_class.summary}")
     for kind in (NON_PROSE, MISSING_DOC, UNTERMINATED):
         charged = sum(count for (name, _t, _k), count in live.items() if name == kind)
         print(f"  {kind}: {charged} charged (unparseable/uninspectable input, charged not skipped)")
@@ -1794,14 +2271,38 @@ def print_report(report: Report, baseline: Counter[tuple[str, str, str]],
     return ok
 
 
+TELEMETRY_LINES = (
+    "TELEMETRY (NON-AUTHORITATIVE): the rows below are recognized anchors that state",
+    "no inventory size -- a purpose-only `Narrow child module for ...` header.  They",
+    "are NOT part of the population, are never pinned, and no verdict is computed from",
+    "them.  They are printed so that the detector's coverage stays visible, and they",
+    "are kept out of the ledger above because a `charged=False` row inside a ledger is",
+    "somewhere for a real charge to be filed as free.",
+)
+
+
 def format_findings(report: Report) -> str:
-    """Render every finding as TSV (suppressed unless the run is sound)."""
+    """Render every finding as TSV (suppressed unless the run is sound).
+
+    Two tables, not one column: the ledger first, then the telemetry under its
+    own banner and its own header row.
+    """
+    def order(claim: Claim) -> tuple[str, int, str, str]:
+        """Sort key: by target, then by where in it the record was found."""
+        return (claim.target, claim.line, claim.kind, claim.token)
+
     lines = ["# " + line for line in CONTRACT_LINES]
-    lines.append("class\ttarget\ttoken\tline\tcharged\tnote")
-    for claim in sorted(report.claims, key=lambda c: (c.target, c.line, c.kind, c.token)):
+    lines.append("class\ttarget\ttoken\tline\tnote")
+    for claim in sorted(report.claims, key=order):
         lines.append(
-            f"{claim.kind}\t{claim.target}\t{claim.token}\t{claim.line}\t"
-            f"{'charged' if claim.charged else 'accounted'}\t{claim.note}"
+            f"{claim.kind}\t{claim.target}\t{claim.token}\t{claim.line}\t{claim.note}"
+        )
+    lines.append("")
+    lines.extend("# " + line for line in TELEMETRY_LINES)
+    lines.append("telemetry-class\ttarget\ttoken\tline\tnote")
+    for claim in sorted(report.telemetry, key=order):
+        lines.append(
+            f"{claim.kind}\t{claim.target}\t{claim.token}\t{claim.line}\t{claim.note}"
         )
     return "\n".join(lines) + "\n"
 
