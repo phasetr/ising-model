@@ -196,6 +196,53 @@ class ShapeTest(unittest.TestCase):
             source = lean_source("M", header(f"Narrow child module for {phrase} foo wrappers."))
             self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], phrase)
 
+    def test_every_hedge_form_is_charged(self) -> None:
+        """The hedges that were still free: an unlisted one is a silent bypass.
+
+        Each of these reached the extractor, was told "not a quantity" and was
+        *accounted* -- no charge, no mention in the totals -- because the
+        head-quantity pattern falls back to a single token and an unlisted hedge
+        is what that token turns out to be.
+        """
+        for phrase, expected in (
+            ("a total of 12", "~12"), ("some 12", "~12"), ("circa 12", "~12"),
+            ("no fewer than 12", "~12"), ("no more than 12", "~12"),
+            ("over 12", "~12"), ("under 12", "~12"), ("exactly 12", "~12"),
+            ("just 12", "~12"), ("only 12", "~12"), ("upwards of 12", "~12"),
+            ("close to 12", "~12"), ("less than 12", "~12"),
+        ):
+            source = lean_source("M", header(f"Narrow child module for {phrase} foo wrappers."))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], phrase)
+
+    def test_zero_and_dozens_are_counts(self) -> None:
+        """`zero` and `a dozen` state a size exactly as `12` does."""
+        for phrase, expected in (
+            ("zero", "0"), ("a dozen", "12"), ("one dozen", "12"), ("two dozen", "24"),
+            ("about a dozen", "~12"), ("a hundred", "100"),
+        ):
+            source = lean_source("M", header(f"Narrow child module for {phrase} foo wrappers."))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], phrase)
+
+    def test_a_compound_cardinal_carries_place_value(self) -> None:
+        """A truncated parse is worse than none: it charges a *different* number.
+
+        The single-group grammar stopped after the first small tail, so `one
+        thousand two hundred` was normalized to 1002 and `one hundred thousand`
+        to 100 -- charged, fail-closed on the decision, and wrong on the key.
+        """
+        for phrase, expected in (
+            ("one thousand two hundred", "1200"), ("one hundred thousand", "100000"),
+            ("two hundred fifty", "250"), ("one hundred and five", "105"),
+            ("twelve hundred", "1200"), ("three thousand", "3000"),
+        ):
+            source = lean_source("M", header(f"Narrow child module for {phrase} foo wrappers."))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], phrase)
+
+    def test_a_decimal_head_is_unresolved_rather_than_truncated(self) -> None:
+        """`1.5k` used to match the leading `1` and be charged as the number one."""
+        source = lean_source("M", header("Narrow child module for 1.5k foo wrappers."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["?1.5k"])
+
     def test_an_unnormalizable_numeric_head_is_charged_not_accounted(self) -> None:
         """Fail closed: a head word starting with a digit is a count either way.
 
@@ -399,6 +446,102 @@ class ChargedNotSkippedTest(unittest.TestCase):
         report = ratchet.build_report(root=REPO_ROOT, paths=["IsingModel/DoesNotExist.lean"])
         self.assertFalse(report.sound)
         self.assertTrue(any(failure.startswith("K0") for failure in report.conservation))
+
+
+# --------------------------------------------------------------------------
+# The shared Lean lexicon
+# --------------------------------------------------------------------------
+
+#: Lean forms in which the three characters ``/-!`` appear *outside* any comment.
+#: Both were checked against this repository's pinned toolchain: guillemet
+#: identifiers accept every character but ``»``, and a raw string accepts every
+#: character up to its closing delimiter.  A lexer that does not know them reads
+#: the module as having a docstring, which silently retires the one charge class
+#: that exists to stop "delete the header instead of repairing it".
+FAKE_MODULE_DOC_FORMS = (
+    'def «/-! fake -/» : Nat := 1\n',
+    'def s : String := r"/-! fake -/"\n',
+    'def s : String := r#"/-! fake -/ "quoted" "#\n',
+)
+
+#: Inputs on which a reduced Lean lexer can plausibly disagree with itself.
+LEXICALLY_HARD = (
+    'def «/-! fake -/» : Nat := 1\n',
+    'def «a » b» : Nat := 1\n',
+    'def s := r"a /- b"\ndef t := 2\n',
+    'def s := r#"a "-/" b"#\ndef t := 2\n',
+    '/- outer /- inner -/ still -/\ndef x := 1\n',
+    'def s := "escaped \\" quote /- not a comment"\n',
+    '-- line /- comment\ndef x := 1\n',
+    'def «/-» : Nat := 1\n',
+)
+
+
+class LexiconTest(unittest.TestCase):
+    """The two decomposers must agree, and must agree on the *right* lexicon."""
+
+    def test_a_fake_opener_outside_a_comment_does_not_exonerate_the_module(self) -> None:
+        """The evasion `MISSING_MODULE_DOC` exists to stop, one lexical layer down."""
+        for body in FAKE_MODULE_DOC_FORMS:
+            text = f"import IsingModel.Basic\n\n{body}{TRIVIAL}"
+            source = lean_source("M", text)
+            self.assertEqual([c.kind for c in charged(source)], [ratchet.MISSING_DOC], body)
+            self.assertEqual(ratchet.scan_source(source).conservation, (), body)
+
+    def test_a_real_module_docstring_still_counts(self) -> None:
+        """Anti-vacuity: the new lexical classes must not swallow the real opener."""
+        source = lean_source("M", header("Provides the foo API.") + 'def «x» := 1\n')
+        self.assertEqual(charged(source), [])
+
+    def test_a_claim_inside_a_quoted_identifier_is_not_prose(self) -> None:
+        """It is attributable to no header, so it is charged as `NON_PROSE_ANCHOR`."""
+        text = '/-!\n# F\n-/\n\ndef «Narrow child module for the 3 foo wrappers» : Nat := 1\n'
+        self.assertEqual([c.kind for c in charged(lean_source("M", text))], [ratchet.NON_PROSE])
+
+    def test_an_unterminated_quoted_identifier_is_charged(self) -> None:
+        """The file's structure is unknown after it, so it is not a clean parse."""
+        text = '/-!\n# F\n-/\n\ndef «never closed : Nat := 1\n'
+        self.assertIn(
+            ratchet.UNTERMINATED, [claim.kind for claim in charged(lean_source("M", text))]
+        )
+
+    def test_the_two_decomposers_agree_on_lexically_hard_input(self) -> None:
+        """K3 in fixture form, on the inputs a reduced lexer gets wrong."""
+        for text in LEXICALLY_HARD:
+            self.assertEqual(ratchet.decompose(text).regions, ratchet.reference_regions(text), text)
+
+    def test_a_scanner_blind_to_quoted_identifiers_exonerates_the_module(self) -> None:
+        """The bug as measured, and the proof that K3 now contradicts it.
+
+        With the guillemet class removed from the scanner alone, ``/-!`` inside
+        an identifier opens a comment: the module is exonerated from
+        :data:`MISSING_DOC` -- and, because the oracle still knows the class, the
+        decomposition disagrees and ``K3`` fires.  Removed from *both*, as it was,
+        nothing fires at all.
+        """
+        mutant = load_mutant(("-/|«|", "-/|"))
+        text = f'import IsingModel.Basic\n\ndef «/-! fake -/» : Nat := 1\n{TRIVIAL}'
+        self.assertEqual(
+            [c.kind for c in charged(lean_source("M", text))], [ratchet.MISSING_DOC]
+        )
+        scanned = mutant.scan_source(lean_source("M", text, mutant))
+        self.assertNotIn(mutant.MISSING_DOC, [claim.kind for claim in scanned.claims])
+        self.assertTrue(any(f.startswith("K3") for f in scanned.conservation), scanned.conservation)
+
+    def test_the_oracle_is_what_would_catch_a_lexicon_split(self) -> None:
+        """K3 is independent in code, not in lexicon -- so mutate one side alone.
+
+        Nothing asserted that the two decomposers *could* disagree on a hard
+        input, which is exactly how the guillemet blind spot survived: it was
+        present in both, so K3 stayed green while both were wrong.
+        """
+        mutant = load_mutant(
+            ('    if text[index] == "«":\n', "    if False:\n"),
+        )
+        text = '/-!\n# F\n-/\ndef «/- fake -/» : Nat := 1\n'
+        self.assertEqual(ratchet.scan_source(lean_source("M", text)).conservation, ())
+        failures = mutant.scan_source(lean_source("M", text, mutant)).conservation
+        self.assertTrue(any(failure.startswith("K3") for failure in failures), failures)
 
 
 # --------------------------------------------------------------------------
@@ -669,7 +812,7 @@ class MutationCanaryTest(unittest.TestCase):
             ('QUANTITY = rf"(?:{_HEDGE})?{_QUANTITY_CORE}\\+?"',
              'QUANTITY = rf"(?:\\d+|{_CARDINAL})"'),
             ('_HEAD_QUANTITY = re.compile(rf"\\s*for\\s+(?:the\\s+)?'
-             '({QUANTITY}(?![\\w-])|\\S+)", re.IGNORECASE)',
+             '({QUANTITY}(?![\\w.,-])|\\S+)", re.IGNORECASE)',
              '_HEAD_QUANTITY = re.compile(r"\\s*for\\s+(?:the\\s+)?(\\S+)")'),
             (
                 '    parts = _QUANTITY_PARTS.match(word)\n'
@@ -940,11 +1083,42 @@ class DetectorAliveTest(unittest.TestCase):
 # --------------------------------------------------------------------------
 
 
+#: The detector as it was before ``NARROW_CHILD``'s anchor gained
+#: ``re.IGNORECASE`` -- the one real detector migration on this project's record,
+#: and the shape the escape hatch exists for.  A scratch repository whose base
+#: commit carries *this* detector and whose head carries the shipped one
+#: reproduces that migration end to end, so the hatch is tested against a real
+#: recount rather than against a stand-in file that was edited.
+NARROWED_ANCHOR = (
+    '_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)',
+    '_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module")',
+)
+
+
+def narrowed_detector() -> str:
+    """Return the checker's source with the case-insensitive anchor removed."""
+    text = source_text()
+    if NARROWED_ANCHOR[0] not in text:
+        raise AssertionError("mutation target absent, the migration fixture would be vacuous")
+    return text.replace(*NARROWED_ANCHOR, 1)
+
+
+def load_source(text: str) -> types.ModuleType:
+    """Return ``text`` executed as a module (used for the base-commit detector)."""
+    module = types.ModuleType("header_inventory_claim_ratchet_fixture")
+    module.__file__ = str(SCRIPT_FILE)
+    exec(compile(text, str(SCRIPT_FILE), "exec"), module.__dict__)  # noqa: S102
+    return module
+
+
 class DriftTest(unittest.TestCase):
     """B1/B2/B3, on a throwaway repository with a real base commit.
 
     Hermetic by construction: the scratch repository has its own ``main``, so the
     test states a property of the comparison rather than of today's fork point.
+    It carries a real copy of the detector rather than a stand-in file, because
+    the migration hatch now asks what the detector's *logic* does and re-runs the
+    base commit's copy of it.
     """
 
     def setUp(self) -> None:
@@ -955,7 +1129,7 @@ class DriftTest(unittest.TestCase):
         (self.root / "scripts" / "audit").mkdir(parents=True)
         self.write("IsingModel/One.lean", header("Narrow child module for the 12 foo wrappers."))
         self.write("IsingModel/Two.lean", header("Narrow child module for the 7 bar wrappers."))
-        self.write(ratchet.DETECTOR_REPO_PATH, "# a stand-in for the detector\n")
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text())
         self.git("init", "-q", "-b", "main")
         self.git("config", "user.email", "t@example.com")
         self.git("config", "user.name", "t")
@@ -977,10 +1151,18 @@ class DriftTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
 
-    def repin(self) -> None:
+    def repin(self, module=ratchet) -> None:
         """Regenerate the scratch repository's baseline from its own tree."""
-        report = ratchet.build_report(root=self.root)
-        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(report.charged))
+        report = module.build_report(root=self.root)
+        self.write(ratchet.BASELINE_REPO_PATH, module.format_baseline(report.charged))
+
+    def declare_migration(self, reason: str = "anchor widened, recounted") -> None:
+        """Add the migration trailer to the head checkout's pin."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            f"{ratchet.MIGRATION_MARKER} {reason}\n" + path.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
 
     def drift(self) -> ratchet.Drift | None:
         """Return the drift verdict of the scratch repository against its own main."""
@@ -1052,27 +1234,96 @@ class DriftTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel.One", "12"),))
 
-    def test_a_declared_detector_migration_waives_b1_and_b2(self) -> None:
-        """The one legitimate way the pin moves without a prose edit.
+    def test_a_declaration_plus_a_comment_only_detector_edit_buys_nothing(self) -> None:
+        """The measured exploit, as a permanent arm.
 
-        It costs a line in the diff of the pinned file *and* a change to the
-        detector, so it is visible to a reviewer and cannot be a standing
-        permission: a marker already on the base branch is not new, so it waives
-        nothing.
+        Write two new claims, re-pin, append one comment line to the detector,
+        add the marker: the hatch as first written waived every ``B1``/``B2``
+        failure in the run and printed ``PASS``.  A comment is not logic, so
+        there is no allowance and the two new keys are still rises.
         """
         self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.write("IsingModel/Two.lean", header("Narrow child module for the 42 bar wrappers."))
         self.repin()
-        path = self.root / ratchet.BASELINE_REPO_PATH
-        path.write_text(
-            f"{ratchet.MIGRATION_MARKER} anchor widened, recounted\n"
-            + path.read_text(encoding="utf-8"),
-            encoding="utf-8",
-        )
-        self.assertFalse(self.drift().ok, "no detector change: not a migration")
-        self.write(ratchet.DETECTOR_REPO_PATH, "# a stand-in for the detector, edited\n")
+        self.declare_migration("recount under the corrected detector")
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text() + "\n# cosmetic\n")
         drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(
+            [key for key, _now, _was in drift.added],
+            [("NARROW_CHILD", "IsingModel.One", "99"), ("NARROW_CHILD", "IsingModel.Two", "42")],
+        )
+        self.assertTrue(
+            any("logic is unchanged" in note for note in drift.migration), drift.migration
+        )
+
+    def test_a_declaration_alone_buys_nothing(self) -> None:
+        """No detector edit at all: the marker is a sentence, not a permission."""
+        self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.repin()
+        self.declare_migration()
+        self.assertFalse(self.drift().ok)
+
+    def test_a_repair_that_renames_its_module_is_not_rejected(self) -> None:
+        """B2 must see the old path of a ``git mv``, or it rejects real repairs.
+
+        ``git diff --name-only`` prints a rename as its destination alone, so the
+        deleted claim looked like a baseline row dropped with no edit to the file
+        that owned it -- in a repository whose dominant workflow is exactly module
+        splits and renames.
+        """
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.write("IsingModel/OneCore.lean", header("Provides the foo API."))
+        self.repin()
+        drift = self.drift()
+        self.assertEqual(drift.unexplained, (), drift)
         self.assertTrue(drift.ok, drift)
-        self.assertEqual(drift.waiver, ("# DETECTOR-MIGRATION: anchor widened, recounted",))
+
+    def test_a_rename_that_carries_its_claim_still_fails(self) -> None:
+        """The other half of the rename story, and it is not a defect.
+
+        A count keyed to a module name is a claim about *that* module, so moving
+        it to a new name is writing it there.  The repair is to drop the count
+        while moving the file, which is what the campaign is for.
+        """
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.added],
+                         [("NARROW_CHILD", "IsingModel.OneCore", "12")])
+
+    def test_a_broken_run_suppresses_the_comparison(self) -> None:
+        """The drift mode used to report ``PASS`` on a tree ``--check`` was failing.
+
+        Its conservation laws are the same laws, and a mode that ignores them is
+        a fail-open path guarded only by the order of the CI steps.
+        """
+        original = ratchet.build_report
+        ratchet.build_report = lambda *a, **k: ratchet.Report(
+            sources=(), claims=(), conservation=("K3 IsingModel.One: synthetic",)
+        )
+        try:
+            drift = self.drift()
+        finally:
+            ratchet.build_report = original
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(drift.unsound, ("K3 IsingModel.One: synthetic",))
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ok = ratchet.print_drift(drift, "main")
+        self.assertFalse(ok)
+        self.assertIn("suppressed", buffer.getvalue())
+        self.assertNotIn("PASS", buffer.getvalue())
+
+    def test_a_malformed_pin_suppresses_the_comparison(self) -> None:
+        """A pin that cannot be parsed is not a pin the comparison may believe."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(path.read_text(encoding="utf-8") + "NARROW_CHILD\tIsingModel.One\n",
+                        encoding="utf-8")
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(drift.baseline_errors, drift)
 
     def test_an_unresolvable_base_ref_fails_closed(self) -> None:
         """A drift check that cannot find its base must never report a pass."""
@@ -1082,6 +1333,150 @@ class DriftTest(unittest.TestCase):
             ok = ratchet.print_drift(None, "origin/nope")
         self.assertFalse(ok)
         self.assertIn("does not resolve", buffer.getvalue())
+
+
+class MigrationHatchTest(unittest.TestCase):
+    """The one legitimate movement no prose edit explains, and its exact bounds.
+
+    The scratch repository's base commit carries the detector as it was *before*
+    ``NARROW_CHILD``'s anchor gained ``re.IGNORECASE``, and its tree carries a
+    lowercase claim that only the widened detector can see -- this project's one
+    real migration (713 -> 740), reproduced end to end.  What the hatch grants is
+    then measured against a recount rather than against the declaration.
+    """
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-migration-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        (self.root / "IsingModel").mkdir()
+        (self.root / "scripts" / "audit").mkdir(parents=True)
+        self.write("IsingModel/One.lean", header("Narrow child module for the 12 foo wrappers."))
+        # Lowercase: invisible to the base commit's detector, visible to this one.
+        self.write("IsingModel/Two.lean", header("narrow child module for the 5 bar wrappers."))
+        self.write(ratchet.DETECTOR_REPO_PATH, narrowed_detector())
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        self.git("add", "-A")
+        narrowed = load_source(narrowed_detector())
+        pin = narrowed.build_report(root=self.root).charged
+        self.assertEqual(sum(pin.values()), 1, "the narrowed detector must miss the lowercase one")
+        self.write(ratchet.BASELINE_REPO_PATH, narrowed.format_baseline(pin))
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+
+    def git(self, *args: str) -> None:
+        """Run ``git`` in the scratch repository."""
+        subprocess.run(["git", "-C", self.tmp, *args], check=True, capture_output=True)
+
+    def write(self, relative: str, text: str) -> None:
+        """Write ``text`` at ``relative`` inside the scratch repository."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+    def migrate(self) -> None:
+        """Land the widened detector and re-pin under it."""
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text())
+        report = ratchet.build_report(root=self.root)
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(report.charged))
+
+    def declare(self, line: str) -> None:
+        """Prepend ``line`` to the head checkout's pin."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(line + "\n" + path.read_text(encoding="utf-8"), encoding="utf-8")
+
+    def drift(self) -> ratchet.Drift | None:
+        """Return the drift verdict of the scratch repository against its own main."""
+        return ratchet.check_drift(root=self.root, base_ref="main")
+
+    def test_a_recount_the_detector_change_explains_is_allowed(self) -> None:
+        """The 713 -> 740 shape: prose untouched, the pin rises, and that is honest."""
+        self.migrate()
+        self.assertFalse(self.drift().ok, "a recount still has to be declared")
+        self.declare(f"{ratchet.MIGRATION_MARKER} anchor widened to ignore case, recounted")
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertTrue(any("allowance" in note for note in drift.migration), drift.migration)
+
+    def test_a_new_claim_written_alongside_a_real_migration_still_fails(self) -> None:
+        """The allowance is per key and is what the *old* detector cannot see.
+
+        A claim this diff writes is visible to both detectors, cancels in the
+        recount, and is a ``B1`` failure however loudly the migration is
+        declared -- which is the property the total waiver did not have.
+        """
+        self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.migrate()
+        self.declare(f"{ratchet.MIGRATION_MARKER} anchor widened to ignore case, recounted")
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.added],
+                         [("NARROW_CHILD", "IsingModel.One", "99")])
+        self.assertTrue(any("allowance" in note for note in drift.migration), drift.migration)
+
+    def test_the_declaration_must_be_a_whole_line_of_its_own(self) -> None:
+        """Near misses, one of which -- the embedded marker -- used to be enough."""
+        self.migrate()
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        pinned = path.read_text(encoding="utf-8")
+        for line in (
+            f"  {ratchet.MIGRATION_MARKER} indented, so not a trailer of its own",
+            f"# see {ratchet.MIGRATION_MARKER} elsewhere for why",
+            ratchet.MIGRATION_MARKER,
+            f"{ratchet.MIGRATION_MARKER} ",
+            f"{ratchet.MIGRATION_MARKER}no space, no reason",
+        ):
+            self.declare(line)
+            self.assertEqual(ratchet.migration_declarations(self.root, "main"), (), line)
+            self.assertFalse(self.drift().ok, line)
+            path.write_text(pinned, encoding="utf-8")
+        self.declare(f"{ratchet.MIGRATION_MARKER} anchor widened to ignore case, recounted")
+        self.assertEqual(
+            ratchet.migration_declarations(self.root, "main"),
+            ("anchor widened to ignore case, recounted",),
+            "anti-vacuity: the well-formed trailer is recognized",
+        )
+
+    def test_a_marker_already_on_the_base_branch_is_not_a_declaration(self) -> None:
+        """The hatch lives in the diff, so it can never become a standing permission."""
+        declaration = f"{ratchet.MIGRATION_MARKER} anchor widened to ignore case, recounted"
+        self.declare(declaration)
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "declare on the base branch")
+        self.migrate()
+        self.declare(declaration)
+        self.assertEqual(ratchet.migration_declarations(self.root, "main"), ())
+        self.assertFalse(self.drift().ok)
+
+    def test_a_migration_never_waives_b2_or_b3(self) -> None:
+        """Only B1 is relaxed: a detector edit may not delete a row or leave slack."""
+        self.migrate()
+        self.declare(f"{ratchet.MIGRATION_MARKER} anchor widened to ignore case, recounted")
+        pin = self.root / ratchet.BASELINE_REPO_PATH
+        tight = pin.read_text(encoding="utf-8")
+        pin.write_text(
+            "\n".join(
+                line for line in tight.splitlines()
+                if not line.startswith("NARROW_CHILD\tIsingModel.One")
+            ) + "\n",
+            encoding="utf-8",
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.unexplained],
+                         [("NARROW_CHILD", "IsingModel.One", "12")])
+        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel.One", "12"),))
+
+    def test_the_recount_is_the_base_commit_s_detector_on_this_tree(self) -> None:
+        """Anti-vacuity for the allowance: the two detectors really do disagree here."""
+        self.migrate()
+        before = ratchet.detector_recount(self.root, "main")
+        after = ratchet.build_report(root=self.root).charged
+        self.assertEqual(sum(before.values()), 1)
+        self.assertEqual(sum(after.values()), 2)
+        self.assertTrue(ratchet.detector_logic_changed(self.root, "main"))
 
 
 # --------------------------------------------------------------------------

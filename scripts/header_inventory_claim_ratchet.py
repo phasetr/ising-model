@@ -88,8 +88,10 @@ hedge is charged even when the normalizer cannot resolve it.
 Conservation (the reason a silent skip cannot hide here)
 --------------------------------------------------------
 Every run asserts four identities, and a failure of any of them **suppresses
-the findings report in every output format** -- a run that cannot account for
-its own inputs reports nothing rather than something reassuring:
+the findings report in every output format** -- ``--check``, ``--baseline``,
+``--findings`` and ``--check-baseline-drift`` alike, the last of which used to
+print ``PASS`` on a tree whose ``--check`` was failing.  A run that cannot
+account for its own inputs reports nothing rather than something reassuring:
 
 ``K0``
     every target the tracked-file query returned was opened and accounted for.
@@ -121,7 +123,13 @@ its own inputs reports nothing rather than something reassuring:
     character-by-character state machine.  This is the check that can actually
     contradict a nesting bug, because it shares no code with the scanner it
     audits.  Lean sources only; a document has no comment structure to get
-    wrong.
+    wrong.  It shares the *lexicon* with the scanner by design -- which Lean
+    constructs exist is the specification, not an implementation detail -- so a
+    construct missing from both sides is a blind spot ``K3`` cannot see.  That
+    happened once: neither side knew guillemet-quoted identifiers, so
+    ``def «/-! fake -/» : Nat := 1`` read as a module docstring and bought the
+    module an exemption from :data:`MISSING_DOC`.  The lexicon is now stated in
+    one place (:data:`_SCAN_TOKEN`) and mutated one side at a time by the tests.
 
 Unparseable and missing inputs are **charged**, not skipped: a module with no
 ``/-!`` block in syntax position (:data:`MISSING_DOC`), a file whose comment
@@ -151,10 +159,12 @@ otherwise.
 from __future__ import annotations
 
 import argparse
+import ast
 import bisect
 import re
 import subprocess
 import sys
+import types
 from collections import Counter
 from pathlib import Path
 from typing import Callable, Iterable, NamedTuple
@@ -204,13 +214,26 @@ class Decomposition(NamedTuple):
     module_doc: bool
 
 
-#: The only three-character sequences that can change the scanner's state, plus
-#: the string delimiter.  Driving the scan off ``re.search`` rather than a
-#: per-character loop keeps a 1900-file pass well under a second.
-_SCAN_TOKEN = re.compile(r"--|/-|-/|\"")
+#: The sequences that can change the scanner's state.  Driving the scan off
+#: ``re.search`` rather than a per-character loop keeps a 1900-file pass well
+#: under a second.
+#:
+#: ``«`` and the raw-string opener are here because Lean lets both of them carry
+#: a *literal* ``/-!`` that is not a comment opener: ``def «/-! fake -/» : Nat``
+#: and ``def s := r"/-! fake -/"`` are valid Lean (checked against this repo's
+#: pinned toolchain) in which the three characters appear outside any comment.
+#: A lexer that does not know these two forms reads them as a module docstring
+#: and stops charging :data:`MISSING_DOC` -- the one class whose whole purpose is
+#: to stop "delete the header instead of repairing it".
+_SCAN_TOKEN = re.compile(r"--|/-|-/|«|(?<![\w.'!?])r#*\"|\"")
 
 #: A string literal body after the opening quote, honouring backslash escapes.
 _STRING_BODY = re.compile(r'(?:[^"\\]|\\.)*"')
+
+#: The closing delimiter of a Lean guillemet-quoted identifier.  Its contents are
+#: opaque: Lean accepts every character except ``»`` there, comment delimiters
+#: included, so nothing inside may be scanned for structure.
+_GUILLEMET_CLOSE = "»"
 
 #: The module docstring opener whose absence is charged as :data:`MISSING_DOC`.
 #: It counts only where :func:`decompose` finds it in syntax position: a plain
@@ -230,9 +253,10 @@ def decompose(text: str) -> Decomposition:
     would move from the prose side to the non-prose side of ``K2`` -- so the
     nesting is tracked explicitly.
 
-    ``--`` inside a block comment, and ``/-`` inside a line comment or a string
-    literal, are inert.  Markdown and TeX have no such structure, so their whole
-    text is one region (see :func:`decompose_document`).
+    ``--`` inside a block comment, and ``/-`` inside a line comment, a string
+    literal, a raw string or a guillemet-quoted identifier, are inert.  Markdown
+    and TeX have no such structure, so their whole text is one region (see
+    :func:`decompose_document`).
     """
     regions: list[tuple[int, int]] = []
     index = 0
@@ -270,16 +294,16 @@ def decompose(text: str) -> Decomposition:
             regions.append((match.end(), end))
             index = end
             continue
-        if token == '"':
-            body = _STRING_BODY.match(text, match.end())
-            if body is None:
-                # The quote never closes.  Everything after it was scanned as if
+        if token == "«" or token.endswith('"'):
+            end = _opaque_end(text, token, match.end())
+            if end is None:
+                # The span never closes.  Everything after it was scanned as if
                 # it were code, so the file's structure is not known: record the
                 # lexical error instead of reporting a clean parse.
                 lexical_error = True
                 index = length
                 continue
-            index = body.end()
+            index = end
             continue
         # A stray ``-/`` at depth 0 is not a comment boundary; step past it.
         index = match.end()
@@ -288,6 +312,24 @@ def decompose(text: str) -> Decomposition:
         terminated=depth == 0 and not lexical_error,
         module_doc=module_doc,
     )
+
+
+def _opaque_end(text: str, token: str, position: int) -> int | None:
+    """Return the index just past the span ``token`` opened, or ``None`` if it never closes.
+
+    The three spans whose contents are not Lean structure: a string literal
+    (escapes honoured), a guillemet-quoted identifier (anything but ``»``) and a
+    raw string (anything up to a closing quote carrying the opener's hash count).
+    """
+    if token == '"':
+        body = _STRING_BODY.match(text, position)
+        return None if body is None else body.end()
+    if token == "«":
+        close = text.find(_GUILLEMET_CLOSE, position)
+        return None if close < 0 else close + len(_GUILLEMET_CLOSE)
+    closer = '"' + "#" * (len(token) - 2)  # ``r"`` / ``r#"`` / ``r##"`` ...
+    close = text.find(closer, position)
+    return None if close < 0 else close + len(closer)
 
 
 def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
@@ -300,6 +342,14 @@ def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
     character-by-character state machine -- slower and duller than the
     ``re.search``-driven scan, and deliberately so, because a shared idea is a
     shared blind spot.  It costs about two seconds over the whole tracked tree.
+
+    Independent in *implementation*, not in *lexicon*: it recognizes the same
+    Lean tokens :func:`decompose` does -- comments, string literals, raw strings
+    and guillemet-quoted identifiers -- because agreeing on which constructs
+    exist is the specification both sides are held to.  A construct missing from
+    both is a blind spot no amount of algorithmic independence would catch, which
+    is why the guillemet and raw-string forms were added here and there in the
+    same edit, and why ``LexiconTest`` mutates one side alone.
     """
     regions: list[tuple[int, int]] = []
     index = 0
@@ -330,19 +380,60 @@ def reference_regions(text: str) -> tuple[tuple[int, int], ...]:
             index += 2
             start = index
             continue
-        if text[index] == '"':
-            index += 1
-            while index < length:
-                if text[index] == "\\":
-                    index += 2
-                    continue
-                if text[index] == '"':
-                    index += 1
-                    break
-                index += 1
+        skip = _reference_opaque_end(text, index)
+        if skip is not None:
+            index = skip
             continue
         index += 1
     return tuple(regions)
+
+
+def _reference_opaque_end(text: str, index: int) -> int | None:
+    """Return the end of the opaque span starting at ``index``, or ``None`` if none does.
+
+    The oracle's half of :func:`_opaque_end`, written character by character and
+    sharing no code with it.  A span that never closes ends at the end of the
+    text; only :func:`decompose` records that as a lexical error, because regions
+    are all this function reports.
+    """
+    length = len(text)
+    if text[index] == "«":
+        close = text.find(_GUILLEMET_CLOSE, index + 1)
+        return length if close < 0 else close + 1
+    raw = _raw_string_opener(text, index)
+    if raw is not None:
+        close = text.find(raw[1], raw[0])
+        return length if close < 0 else close + len(raw[1])
+    if text[index] != '"':
+        return None
+    position = index + 1
+    while position < length:
+        if text[position] == "\\":
+            position += 2
+            continue
+        if text[position] == '"':
+            return position + 1
+        position += 1
+    return length
+
+
+def _raw_string_opener(text: str, index: int) -> tuple[int, str] | None:
+    """Return ``(body start, closing delimiter)`` if a raw string opens at ``index``.
+
+    ``r"..."``, ``r#"..."#``, ``r##"..."##``: the hash count of the closer has to
+    match the opener's, which is the whole reason a raw string can hold a bare
+    ``"``.  ``r`` preceded by an identifier character is part of that identifier
+    and opens nothing.
+    """
+    if text[index] != "r" or (index and (text[index - 1].isalnum() or text[index - 1] in "_.'!?")):
+        return None
+    hashes = 0
+    while index + 1 + hashes < len(text) and text[index + 1 + hashes] == "#":
+        hashes += 1
+    position = index + 1 + hashes
+    if position >= len(text) or text[position] != '"':
+        return None
+    return position + 1, '"' + "#" * hashes
 
 
 def decompose_document(text: str) -> Decomposition:
@@ -440,10 +531,10 @@ def line_of(starts: tuple[int, ...], offset: int) -> int:
 #: outnumber the numerals in this corpus almost three to one, so both spellings
 #: are first-class.
 _UNIT_WORDS: dict[str, int] = {
-    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
-    "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12, "thirteen": 13,
-    "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
-    "nineteen": 19,
+    "zero": 0, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+    "seven": 7, "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12,
+    "thirteen": 13, "fourteen": 14, "fifteen": 15, "sixteen": 16, "seventeen": 17,
+    "eighteen": 18, "nineteen": 19,
 }
 
 #: The tens.  The list stopped at ``fifty`` when this checker was introduced,
@@ -456,9 +547,24 @@ _TEN_WORDS: dict[str, int] = {
     "seventy": 70, "eighty": 80, "ninety": 90,
 }
 
+#: Multipliers that scale the value in front of them without closing a group:
+#: ``two hundred`` is 200 and ``twelve hundred`` is 1200.  ``dozen`` is one of
+#: them rather than a word for twelve, because ``two dozen`` is 24.
+_MULTIPLIER_WORDS: dict[str, int] = {"hundred": 100, "dozen": 12}
+
+#: Scales that *close* a place-value group: everything accumulated so far is
+#: multiplied by them and banked, so ``one hundred thousand`` is 100000 and the
+#: next group starts empty (``one thousand two hundred`` is 1200).
+_GROUP_WORDS: dict[str, int] = {"thousand": 1000, "million": 1000000, "billion": 10 ** 9}
+
 #: The multiplicative scales.  They compose (``two hundred``) rather than add,
 #: which is why the compound resolver below is a small parser and not a sum.
-_SCALE_WORDS: dict[str, int] = {"hundred": 100, "thousand": 1000}
+_SCALE_WORDS: dict[str, int] = {**_MULTIPLIER_WORDS, **_GROUP_WORDS}
+
+#: The indefinite article, which is a cardinal in front of a scale: ``a dozen``
+#: and ``a hundred`` are counts, and reading them as prose was one of the
+#: measured bypasses.
+_ARTICLE_WORDS = frozenset({"a", "an"})
 
 #: Every recognized cardinal word.
 WORD_NUMBERS: dict[str, int] = {**_UNIT_WORDS, **_TEN_WORDS, **_SCALE_WORDS}
@@ -490,10 +596,22 @@ _SCALES_ALT = _alternation(_SCALE_WORDS)
 #: bare unit.
 _SMALL_CARDINAL = rf"(?:(?:{_TENS_ALT})(?:-(?:{_UNITS_ALT}))?|(?:{_UNITS_ALT}))"
 
+#: One place-value group: an optional multiplicand (a small cardinal, or the
+#: article of ``a dozen``) and the scale it multiplies.
+_SCALE_GROUP = rf"(?:(?:{_SMALL_CARDINAL}|an?)\s+)?(?:{_SCALES_ALT})"
+
 #: A cardinal phrase.  A grammar rather than a free repetition of cardinal
 #: words: ``three four`` is not a number and must not be read as seven.
+#:
+#: Scale groups repeat, because English place value does: ``one thousand two
+#: hundred`` is two groups and ``one hundred thousand`` is one group closed by a
+#: second scale.  A grammar that admitted only one group stopped after the first
+#: small tail, and the *prefix* it had matched was then normalized -- ``one
+#: thousand two hundred`` read as 1002 and ``one hundred thousand`` as 100.  A
+#: truncated parse is worse than no parse: the claim is charged under a token
+#: that names a different number.
 _CARDINAL = (
-    rf"(?:(?:{_SMALL_CARDINAL}\s+)?(?:{_SCALES_ALT})(?:\s+(?:and\s+)?{_SMALL_CARDINAL})?"
+    rf"(?:{_SCALE_GROUP}(?:\s+(?:and\s+)?(?:{_SCALE_GROUP}|{_SMALL_CARDINAL}))*"
     rf"|{_SMALL_CARDINAL})"
 )
 
@@ -505,9 +623,19 @@ _NUMERAL = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
 #: Hedges that make a count approximate without making it any less of a claim
 #: about module extension.  ``about twelve wrappers`` goes stale on exactly the
 #: same split that ``twelve wrappers`` does, so a hedge must never buy silence.
+#:
+#: The list is closed by the same argument the cardinals are: these are the
+#: English ways of putting a number at arm's length, and leaving any of them out
+#: is an unadvertised bypass rather than a recall nicety.  ``for a total of 12``,
+#: ``for some 12``, ``for circa 12`` and ``for no fewer than 12`` were all
+#: silently *accounted* while ``for 12`` was charged, because the head-quantity
+#: pattern falls back to a single token and an unlisted hedge is what that token
+#: turns out to be.
 _HEDGE = (
-    r"(?:[~≈]\s*|(?:about|approximately|roughly|around|nearly|at\s+least|at\s+most"
-    r"|more\s+than|fewer\s+than|up\s+to)\s+)"
+    r"(?:[~≈]\s*|(?:about|approximately|roughly|around|nearly|circa|some|over|under"
+    r"|at\s+least|at\s+most|no\s+fewer\s+than|no\s+more\s+than|no\s+less\s+than"
+    r"|more\s+than|fewer\s+than|less\s+than|up\s+to|a\s+total\s+of|close\s+to"
+    r"|upwards\s+of|exactly|precisely|just|only)\s+)"
 )
 
 #: The number itself, hedges and suffixes excluded.
@@ -529,8 +657,10 @@ _QUANTITY_PARTS = re.compile(
 #: whatever the grammar makes of them.  It deliberately does *not* fire on a
 #: digit appearing later in the word, because the corpus's non-claim head words
 #: are section references (``§18.3-§18.4``, 52 sites) and charging those would
-#: be a pure false positive.
-_NUMERIC_IDIOM = re.compile(rf"\A(?:{_HEDGE}|\d)", re.IGNORECASE)
+#: be a pure false positive.  A leading sign counts as part of the digit
+#: (``-12``): the ``§`` references never carry one, so it costs no false
+#: positive and closes the range/negative spellings.
+_NUMERIC_IDIOM = re.compile(rf"\A(?:{_HEDGE}|[-+]?\d)", re.IGNORECASE)
 
 #: The repository-artifact nouns a count can quantify.  Deliberately closed and
 #: deliberately *not* including mathematical objects (``parts``, ``ingredients``,
@@ -554,9 +684,13 @@ _WINDOW = rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,70}}?"
 def cardinal_value(phrase: str) -> int | None:
     """Return the value of a cardinal ``phrase``, or ``None`` if it is not one.
 
-    Scales multiply and everything else adds, so ``two hundred`` is 200 while
-    ``twenty-four`` is 24.  A plain sum over the words -- the shape this started
-    as -- reads ``two hundred`` as 102.
+    Place value, not a sum: a multiplier scales what stands in front of it
+    (``two hundred`` is 200, ``twelve hundred`` is 1200, ``two dozen`` is 24) and
+    a group word banks it (``one hundred thousand`` is 100000) so that the next
+    group starts from zero (``one thousand two hundred`` is 1200).  A plain sum
+    over the words -- the shape this started as -- reads ``two hundred`` as 102;
+    a version that banked on every scale read ``one thousand two hundred`` as
+    1002 and ``one hundred thousand`` as 100.
     """
     total = 0
     current = 0
@@ -564,12 +698,13 @@ def cardinal_value(phrase: str) -> int | None:
     for word in re.split(r"[-\s]+", phrase.strip().lower()):
         if not word or word == "and":
             continue
-        if word in _SCALE_WORDS:
-            scale = _SCALE_WORDS[word]
-            current = (current or 1) * scale
-            if scale >= _SCALE_WORDS["thousand"]:
-                total += current
-                current = 0
+        if word in _ARTICLE_WORDS:
+            current += 1
+        elif word in _MULTIPLIER_WORDS:
+            current = (current or 1) * _MULTIPLIER_WORDS[word]
+        elif word in _GROUP_WORDS:
+            total += (current or 1) * _GROUP_WORDS[word]
+            current = 0
         elif word in WORD_NUMBERS:
             current += WORD_NUMBERS[word]
         else:
@@ -693,7 +828,13 @@ _NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
 #: that wrong silently turns every head quantity into an unresolved token.
 #: ``re.IGNORECASE`` for the same reason the anchors carry it -- ``For The 12``
 #: is the same claim, and this was the last case-sensitive link in the chain.
-_HEAD_QUANTITY = re.compile(rf"\s*for\s+(?:the\s+)?({QUANTITY}(?![\w-])|\S+)", re.IGNORECASE)
+#:
+#: The trailing lookahead excludes ``.`` and ``,`` as well as word characters
+#: and ``-``: without them ``1.5k`` matched the ``1`` and was charged under the
+#: token ``1``, a wrong number rather than an unresolved one.  Excluded, the
+#: whole fragment falls to the ``\S+`` branch and the fail-closed rule in
+#: :func:`resolve_quantity` charges it as ``?1.5k``.
+_HEAD_QUANTITY = re.compile(rf"\s*for\s+(?:the\s+)?({QUANTITY}(?![\w.,-])|\S+)", re.IGNORECASE)
 
 
 def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
@@ -1065,11 +1206,15 @@ BASELINE_HEADER = """\
 # pin must be tight against the tree (B3).  Regenerating this file therefore no
 # longer launders a claim: `--check` would pass, the drift check would not.
 #
-# The single escape hatch is a comment line beginning DETECTOR-MIGRATION:, added
-# by the same diff that changes the detector.  It waives B1/B2 for a recount
-# under a corrected detector -- the 713 -> 740 shape above -- and nothing else;
-# it is not a standing permission, because a line already on the base branch is
-# not one the diff adds.
+# A recount under a corrected detector -- the 713 -> 740 shape above -- is the
+# one movement no prose edit explains that can still be legitimate.  Declaring it
+# takes a whole line of this file, added by the same diff, reading exactly
+# `# DETECTOR-MIGRATION: <reason>`.  The declaration is a precondition and not an
+# authorization: what it buys is computed, not granted.  The base commit's
+# detector is re-run on THIS tree, and B1 is relaxed per key by the excess of
+# what this detector charges over what that one does -- so a claim somebody wrote
+# is seen by both, cancels, and still fails.  A detector edit that changes no
+# logic (comments, docstrings) buys nothing, and B2/B3 are never waived.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 """
@@ -1122,12 +1267,31 @@ def read_baseline(path: Path = BASELINE_FILE) -> tuple[Counter[tuple[str, str, s
 # Baseline drift against the base branch
 # --------------------------------------------------------------------------
 
-#: The one line that may authorize the pin to move in a direction no prose edit
-#: explains.  It has to be *added by the diff under review* -- a marker already
-#: present on the base branch is not a waiver -- and it only counts when the
-#: detector itself changed in the same diff, because a detector migration that
-#: does not touch the detector is not one.
+#: The trailer that *declares* a detector migration.  Declaring is a
+#: precondition, never an authorization: what a declaration can buy is computed
+#: by :func:`detector_recount`, key by key, from the two detectors' output on the
+#: same tree.  Three things must hold together (:func:`check_drift`), and the
+#: first two exist because the hatch as first written was satisfied by neither:
+#:
+#: 1. the trailer is *added by this diff* to the pinned file, as a whole line
+#:    (:data:`_MIGRATION_LINE`) -- not a marker already on the base branch, and
+#:    not a marker buried in a longer comment;
+#: 2. the detector's **logic** changed (:func:`detector_logic_changed`) -- an AST
+#:    comparison, so appending ``# cosmetic`` to the detector buys nothing;
+#: 3. the rise on the key is one the base detector does not see on this same
+#:    tree.  A brand-new prose claim is visible to both detectors, so it cancels
+#:    and stays a ``B1`` failure however it is declared.
+#:
+#: The measured exploit this replaces: two new inventory claims + ``--baseline``
+#: + one comment line in the pinned file + one comment line in the detector made
+#: ``--check-baseline-drift`` print ``PASS``, because the waiver was granted on
+#: the *path* of the detector and then applied to every ``B1``/``B2`` failure in
+#: the run rather than to the keys a migration explains.
 MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
+
+#: The declaration's whole grammar: the marker, one space, a non-empty reason,
+#: and nothing else on the line.
+_MIGRATION_LINE = re.compile(rf"\A{re.escape(MIGRATION_MARKER)} (?P<reason>\S.*)\Z")
 
 
 def _git(root: Path, *args: str) -> tuple[int, str]:
@@ -1163,32 +1327,124 @@ def baseline_at(root: Path, commit: str) -> tuple[Counter[tuple[str, str, str]] 
 
 
 def changed_paths(root: Path, commit: str) -> frozenset[str]:
-    """Return the repo-relative paths that differ between ``commit`` and the tree."""
-    code, out = _git(root, "diff", "--name-only", commit, "--")
+    """Return the repo-relative paths that differ between ``commit`` and the tree.
+
+    ``--no-renames`` is load-bearing.  With rename detection on, ``git diff
+    --name-only`` prints a rename as its *destination* only, so the old path is
+    invisible -- and this repository's dominant workflow is exactly module splits
+    and ``git mv``.  A claim deleted from ``A.lean`` in the same commit that
+    renames it to ``B.lean`` then looked to ``B2`` like a baseline row deleted
+    with no edit to the file that owned it, i.e. a legitimate repair was rejected
+    and the only way past it was the migration hatch.  Renames are therefore
+    reported as delete + add, which is what ``B2`` needs to attribute a row.
+    """
+    code, out = _git(root, "diff", "--no-renames", "--name-only", commit, "--")
     if code != 0:
         return frozenset()
     return frozenset(line.strip() for line in out.splitlines() if line.strip())
 
 
-def migration_waiver(root: Path, commit: str) -> tuple[str, ...]:
-    """Return the migration reasons this diff adds to the baseline file.
+def migration_declarations(root: Path, commit: str) -> tuple[str, ...]:
+    """Return the migration reasons this diff *adds* to the baseline file.
 
-    Empty unless the diff both adds a :data:`MIGRATION_MARKER` line *and*
-    changes the detector.  The waiver is therefore never a standing permission:
-    it lives in the diff, is one grep away for a reviewer, and expires the
-    moment the line stops being new.
+    The line has to be the whole line -- :data:`_MIGRATION_LINE`, marker, one
+    space, a non-empty reason -- and it has to be added by this diff, so a marker
+    already on the base branch is not a standing permission.  Declaring is
+    necessary and nowhere near sufficient: what a declaration buys is bounded by
+    :func:`detector_recount`, which measures the effect of the detector change
+    instead of believing the sentence.
     """
-    if DETECTOR_REPO_PATH not in changed_paths(root, commit):
-        return ()
-    code, out = _git(root, "diff", "-U0", commit, "--", BASELINE_REPO_PATH)
+    code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
     if code != 0:
         return ()
-    reasons = [
-        line[1:].strip()
-        for line in out.splitlines()
-        if line.startswith("+") and line[1:].lstrip().startswith(MIGRATION_MARKER)
-    ]
+    reasons = []
+    for line in out.splitlines():
+        if not line.startswith("+") or line.startswith("+++"):
+            continue
+        declaration = _MIGRATION_LINE.match(line[1:])
+        if declaration is not None:
+            reasons.append(declaration.group("reason").strip())
     return tuple(reasons)
+
+
+def _logic_fingerprint(text: str) -> str | None:
+    """Return a normalized fingerprint of Python ``text``, or ``None`` if unparseable.
+
+    The abstract syntax tree with docstrings removed and positions discarded:
+    comments never reach it, reflowing a line does not change it, and rewriting a
+    docstring does not either.  What does change it is an edit to the code that
+    decides what gets charged -- a pattern, a table, a branch -- which is the only
+    kind of edit that can make a recount legitimate.
+    """
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return None
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        first = node.body[0] if node.body else None
+        if (
+            isinstance(first, ast.Expr)
+            and isinstance(first.value, ast.Constant)
+            and isinstance(first.value.value, str)
+        ):
+            node.body = node.body[1:] or [ast.Pass()]
+    return ast.dump(tree)
+
+
+def detector_logic_changed(root: Path, commit: str) -> bool:
+    """Whether the detector's *logic* differs between ``commit`` and this tree.
+
+    Comment-only and docstring-only edits do not count, which is the point: the
+    hatch as first written asked only whether the detector *file* appeared in the
+    diff, so appending ``# cosmetic`` to it bought a waiver.
+    """
+    code, before = _git(root, "show", f"{commit}:{DETECTOR_REPO_PATH}")
+    if code != 0:
+        return False
+    try:
+        after = (root / DETECTOR_REPO_PATH).read_text(encoding="utf-8")
+    except OSError:
+        return False
+    base_fingerprint = _logic_fingerprint(before)
+    head_fingerprint = _logic_fingerprint(after)
+    if base_fingerprint is None or head_fingerprint is None:
+        return False
+    return base_fingerprint != head_fingerprint
+
+
+def detector_recount(root: Path, commit: str) -> Counter[tuple[str, str, str]] | None:
+    """Return what the detector *at* ``commit`` charges on **this** tree.
+
+    This is what bounds a declared migration.  Both counts are taken on the same
+    working tree, so their difference is the effect of the detector change and
+    nothing else: prose written by this diff is visible to both detectors and
+    cancels, while a shape the new detector newly recognizes shows up only on the
+    head side.  A declaration can therefore never buy room for a claim somebody
+    wrote -- only for one the old detector was blind to.
+
+    ``None`` -- no allowance at all -- when the base detector cannot be obtained,
+    executed, or trusted (an unsound run of it says nothing about this tree).
+
+    It really does execute the base commit's copy of this file, and only when a
+    migration is declared.  That code is this repository's own, already reviewed
+    and already what CI runs on ``main``; the alternative -- believing the
+    declaration -- is what the total waiver did.
+    """
+    code, text = _git(root, "show", f"{commit}:{DETECTOR_REPO_PATH}")
+    if code != 0:
+        return None
+    module = types.ModuleType("header_inventory_claim_ratchet_base")
+    module.__dict__["__file__"] = str(root / DETECTOR_REPO_PATH)
+    try:
+        exec(compile(text, f"<{commit[:12]}:{DETECTOR_REPO_PATH}>", "exec"), module.__dict__)  # noqa: S102
+        report = module.build_report(root)
+        if not report.sound:
+            return None
+        return Counter(report.charged)
+    except Exception:  # noqa: BLE001 -- any failure of a foreign build is "no allowance"
+        return None
 
 
 def target_path(target: str) -> str:
@@ -1204,14 +1460,23 @@ class Drift(NamedTuple):
     added: tuple[tuple[tuple[str, str, str], int, int], ...]
     unexplained: tuple[tuple[tuple[str, str, str], int, int], ...]
     untight: tuple[tuple[str, str, str], ...]
-    waiver: tuple[str, ...]
+    unsound: tuple[str, ...]
+    baseline_errors: tuple[str, ...]
+    migration: tuple[str, ...]
 
     @property
     def ok(self) -> bool:
-        """Whether the pin moved only in ways a real repair explains."""
-        if self.untight:
-            return False
-        return bool(self.waiver) or not (self.added or self.unexplained)
+        """Whether the pin moved only in ways this diff explains.
+
+        One policy, evaluated once: a declared migration is already accounted for
+        in :attr:`added` (it *narrows* what counts as a rise, key by key), so
+        there is no second, permissive rule here for :func:`print_drift` to
+        duplicate and drift away from.
+        """
+        return not (
+            self.unsound or self.baseline_errors or self.untight
+            or self.added or self.unexplained
+        )
 
 
 def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift | None:
@@ -1247,7 +1512,14 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     is still written -- the row would be missing and the claim live, which ``B3``
     rejects -- so the only way down is for the prose to have actually gone.  What
     ``B2`` adds on top is that the disappearance has to be visible in the diff of
-    the file that owned it.
+    the file that owned it.  A key carried into a *renamed* module is a new key
+    by the ratchet's own definition and fails ``B1``: the repair is to drop the
+    count while moving the file, which is what the campaign is for.
+
+    All three run only on a **sound** run of a **parseable** pair of pins.  A
+    conservation failure or a malformed baseline suppresses the comparison here
+    exactly as it suppresses the findings report in every other output format --
+    this mode used to report ``PASS`` on a tree whose ``--check`` was failing.
 
     Returns ``None`` when ``base_ref`` does not resolve -- fail closed, never a
     silent pass.
@@ -1255,18 +1527,26 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     base = base_commit(root, base_ref)
     if base is None:
         return None
-    baseline, _errors = baseline_at(root, base)
-    head, _head_errors = read_baseline(root / BASELINE_REPO_PATH)
-    live = build_report(root).charged
+    baseline, base_errors = baseline_at(root, base)
+    head, head_errors = read_baseline(root / BASELINE_REPO_PATH)
+    report = build_report(root)
+    errors = tuple(
+        [f"the base branch's pin: {message}" for message in base_errors]
+        + [f"this checkout's pin: {message}" for message in head_errors]
+    )
+    if not report.sound or errors:
+        return Drift(base, baseline is not None, (), (), (), report.conservation, errors, ())
+    live = report.charged
     untight = tuple(sorted(key for key in set(head) | set(live) if head.get(key) != live.get(key)))
     if baseline is None:
-        return Drift(base, False, (), (), untight, ())
+        return Drift(base, False, (), (), untight, (), (), ())
     edited = changed_paths(root, base)
+    allowance, migration = migration_allowance(root, base, live)
     added = tuple(
         sorted(
             (key, count, baseline.get(key, 0))
             for key, count in head.items()
-            if count > baseline.get(key, 0)
+            if count > baseline.get(key, 0) + allowance.get(key, 0)
         )
     )
     unexplained = tuple(
@@ -1276,11 +1556,58 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
             if head.get(key, 0) < count and target_path(key[1]) not in edited
         )
     )
-    return Drift(base, True, added, unexplained, untight, migration_waiver(root, base))
+    return Drift(base, True, added, unexplained, untight, (), (), migration)
+
+
+def migration_allowance(
+    root: Path, commit: str, live: Counter[tuple[str, str, str]]
+) -> tuple[Counter[tuple[str, str, str]], tuple[str, ...]]:
+    """Return ``(per-key allowance, narrative)`` for a declared detector migration.
+
+    The allowance is the per-key excess of what *this* detector charges on this
+    tree over what the base commit's detector charges on the *same* tree.  It is
+    empty unless a declaration was added by this diff and the detector's logic
+    really changed, and it is empty if the base detector cannot be re-run.  It
+    relaxes ``B1`` alone: ``B2`` (a row that vanished with no edit to the source
+    it names) and ``B3`` (the pin must be tight) are never waived, so a detector
+    edit cannot buy a quiet deletion from the pin either.
+    """
+    reasons = migration_declarations(root, commit)
+    if not reasons:
+        return Counter(), ()
+    declared = tuple(f"declared: {reason}" for reason in reasons)
+    if not detector_logic_changed(root, commit):
+        return Counter(), declared + (
+            "no allowance: the detector's logic is unchanged since the base commit "
+            "(a comment- or docstring-only edit is not a migration)",
+        )
+    before = detector_recount(root, commit)
+    if before is None:
+        return Counter(), declared + (
+            "no allowance: the base commit's detector could not be re-run on this tree",
+        )
+    allowance = Counter(
+        {
+            key: live[key] - before.get(key, 0)
+            for key in live
+            if live[key] > before.get(key, 0)
+        }
+    )
+    return allowance, declared + (
+        f"allowance: the base detector charges {sum(before.values())} on this tree and this one "
+        f"charges {sum(live.values())}; {sum(allowance.values())} charge(s) over "
+        f"{len(allowance)} key(s) are attributable to the detector change, and only those",
+    )
 
 
 def print_drift(drift: Drift | None, base_ref: str) -> bool:
-    """Print the drift verdict; return whether it passes."""
+    """Print the drift verdict; return :attr:`Drift.ok`.
+
+    Reporting only: the verdict is :attr:`Drift.ok` and is not recomputed here.
+    It used to be, with a permissive branch of its own, so the property the tests
+    asserted and the policy production applied were two implementations of one
+    rule that nothing checked for agreement.
+    """
     print("== Baseline drift (this checkout's pin vs the base branch's) ==")
     if drift is None:
         print(f"  FAIL: base ref {base_ref!r} does not resolve in this checkout")
@@ -1288,34 +1615,30 @@ def print_drift(drift: Drift | None, base_ref: str) -> bool:
         print("FAIL: the pin could not be compared against the base branch")
         return False
     print(f"  base commit {drift.base[:12]} via {base_ref}")
-    ok = True
+    for failure in drift.unsound:
+        print(f"  FAIL: conservation broken: {failure}")
+    for message in drift.baseline_errors:
+        print(f"  FAIL: malformed baseline: {message}")
+    if drift.unsound or drift.baseline_errors:
+        print("  (the drift comparison is suppressed: a run that cannot account for its own "
+              "inputs reports nothing rather than something reassuring)")
+        print("FAIL: the pin could not be compared against the base branch")
+        return False
     for key in drift.untight:
         print(f"  FAIL: B3 pin not tight -- re-pin with --baseline: {key[0]} {key[1]} {key[2]}")
-        ok = False
-    if not drift.had_baseline:
-        print("  INFO: the base commit carries no baseline file; this is its first landing, "
-              "so B1/B2 have nothing to compare against")
-        print("PASS: baseline drift" if ok else "FAIL: baseline drift")
-        return ok
     for key, count, was in drift.added:
         print(f"  FAIL: B1 pin rose {was} -> {count}: {key[0]} {key[1]} {key[2]}")
-        ok = False
     for key, count, was in drift.unexplained:
         print(f"  FAIL: B2 pin fell {was} -> {count} with no edit to {target_path(key[1])}: "
               f"{key[0]} {key[1]} {key[2]}")
-        ok = False
-    if drift.waiver and not ok and not drift.untight:
-        print("  WAIVED: B1/B2 by a detector migration declared in this diff:")
-        for reason in drift.waiver:
-            print(f"      {reason}")
-        ok = True
-    elif drift.waiver:
-        print("  INFO: a detector migration is declared in this diff:")
-        for reason in drift.waiver:
-            print(f"      {reason}")
+    for note in drift.migration:
+        print(f"  INFO: detector migration -- {note}")
+    if not drift.had_baseline:
+        print("  INFO: the base commit carries no baseline file; this is its first landing, "
+              "so B1/B2 have nothing to compare against")
     print("PASS: the pin moved only where this diff explains it"
-          if ok else "FAIL: the pin moved in a way this diff does not explain")
-    return ok
+          if drift.ok else "FAIL: the pin moved in a way this diff does not explain")
+    return drift.ok
 
 
 # --------------------------------------------------------------------------
