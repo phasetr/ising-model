@@ -60,6 +60,29 @@ jobs:
       - name: Import-DAG layer contract (R1/R2/R3/R6 direction rules)
         run: python3 scripts/import_dag_contract.py --check
 
+  # Documentation gate for Issue #4980: the inventory-claim ratchet. A separate
+  # job for the same reasons as the contract above -- no Lean toolchain, so a red
+  # or cancelled Lean build can never mask a newly written stale-by-construction
+  # count claim. It is a blocking gate by design: the whole point is that a new
+  # claim cannot land. (Making it a *required* check is a branch-protection
+  # setting, not a workflow one, and is a separate administrative step.)
+  header-inventory-claim-ratchet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      # Same order and the same reason as every other gate here: `--check` only
+      # says whether the current tree passes, which stays true when the anchor
+      # regex is weakened or the conservation assert is dropped, so the mutation
+      # canaries are what actually defend the ratchet. Both commands are pure
+      # Python -- no lake, no network -- and cost a few seconds each.
+      - name: Inventory-claim ratchet self-tests (test the ratchet, not just the tree)
+        run: python3 scripts/test_header_inventory_claim_ratchet.py
+      - name: Inventory-claim ratchet (recognized claim syntax may not grow)
+        run: python3 scripts/header_inventory_claim_ratchet.py --check
+
   # NOTE: docs generation via `leanprover-community/docgen-action` has been
   # temporarily disabled because every main-push run takes ~1 hour and
   # CI queues backed up. Re-enable once the docgen step is accelerated
