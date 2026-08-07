@@ -2786,7 +2786,21 @@ def read_fixtures(path: Path) -> list[tuple[str, str, str]]:
 
 
 def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
-    """Run the fixture regression suite. Return the process exit code."""
+    """Run the fixture regression suite. Return the process exit code.
+
+    Compares ``verdict.verdict`` only. Since #4976 folded the retired class
+    into ``uncertain``, this can no longer distinguish a row that lost its
+    citation evidence (``uncertain`` with :data:`NO_EVIDENCE_REASON`) from
+    one that was already charged-but-unresolved ``uncertain`` -- both read
+    identically here. The finer-grained discrimination lives in the unit
+    tests (which assert on ``verdict.reasons`` directly) and, for the
+    ``_ferromagnetic`` family specifically, in
+    ``FamilyCalibrationTest.test_ferromagnetic_family_counts``'s
+    no-evidence count. Neither is a structural substitute for this fixture
+    format: closing the gap here would mean teaching it an expected
+    sub-class, which was left as a follow-up design decision (issue #4976
+    PR review).
+    """
     rows = read_fixtures(path)
     verdicts, _cascade, family_labels = classify(
         tree, [row[0] for row in rows], docs, allow_homonym=False
