@@ -72,7 +72,14 @@ TARGET_FLOOR = 1500
 #:   +1 predicate), and the clause window went from 70 to 200 characters (+1
 #:   predicate).  No prose was written and nothing regressed: this is the first
 #:   measurement of a population that was always there.
-BASELINE_CEILING = 1391
+#: * **1390**, when a clause window stopped crossing blank lines: three spans
+#:   were borrowing a count from the paragraph above and all three were wrong.
+#: * **1402**, when a ``NARROW_CHILD`` count stopped having to sit at position 0
+#:   of its head clause.  12 headers that were reported as stating no size do
+#:   state one, and a single adjective was enough to hide any of them --
+#:   ``for the following 17 wrappers`` produced no key at all.  Raised here in
+#:   the open, as this constant exists to force.
+BASELINE_CEILING = 1402
 
 #: A minimal declaration, so a fixture module is never accidentally an umbrella.
 TRIVIAL = "theorem f : True := trivial\n"
@@ -357,6 +364,82 @@ class ShapeTest(unittest.TestCase):
             "M", header("The 13 bridge wrappers\nNow live in `IsingModel.Other.TanhPowDist`.")
         )
         self.assertEqual(tokens(source, "RELOCATION"), ["13->IsingModel.Other.TanhPowDist"])
+
+    #: The review's own table, verbatim.  Every one of these was FREE -- no key
+    #: at all, so not even a coarse row a reviewer could see -- because the head
+    #: extractor's three stages all read position 0 and one ordinary adjective
+    #: is enough to move the number off it.  Widening the *determiner* list
+    #: twice never touched this, because English puts whatever it likes between
+    #: a determiner and a number.
+    MODIFIED_HEADS = (
+        ("Narrow child module for the following 12 foo wrappers.", "?12"),
+        ("Narrow child module for concrete 12 foo wrappers.", "?12"),
+        ("Narrow child module for Λ-level 12 foo wrappers.", "?12"),
+        ("Narrow child module for a family of 12 foo wrappers.", "?12"),
+        ("Narrow child module for the set of 12 foo wrappers.", "?12"),
+        ("Narrow child module for a batch of twelve foo wrappers.", "?12"),
+        ("Narrow child module for the following 17 along-exhaustion helper wrappers.", "?17"),
+        ("Narrow child module for the concrete narrow Λ-level 12 foo wrappers.", "?12"),
+        ("Narrow child module for the assorted twelve hundred foo wrappers.", "?1200"),
+        ("Narrow child module for the concrete about 1.5k foo wrappers.", "?about 1.5k"),
+        ("Narrow child module for the assorted several foo wrappers.", "?several"),
+    )
+
+    def test_a_count_behind_a_modifier_is_charged(self) -> None:
+        """H1: a size the clause states is charged wherever in the clause it sits.
+
+        Under a ``?`` token, because the extractor is not claiming to know which
+        noun it counts -- and still sharp, so editing the number is a new key.
+        """
+        for body, expected in self.MODIFIED_HEADS:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], body)
+            self.assertEqual(telemetry(source), [], body)
+
+    def test_a_head_position_count_is_still_charged_as_itself(self) -> None:
+        """The sharper reading wins where it applies: no ``?`` on a head count."""
+        source = lean_source("M", header("Narrow child module for all 12 foo wrappers."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["12"])
+
+    #: What must stay free, and every one of them is live in this corpus.  A
+    #: number behind a citation word, in a code span, or in a relation is not an
+    #: inventory count, and charging it would buy recall with false charges --
+    #: which is what the head-position rule was defending against.
+    UNCOUNTED_HEADS = (
+        "Narrow child module for Step 241 interior wrappers.",
+        "Narrow child module for PR 1861 interior wrappers.",
+        "Narrow child module for Issue 4501 interior wrappers.",
+        "Narrow child module for the §18.3 interior wrappers.",
+        "Narrow child module for the #4501 interior wrappers.",
+        "Narrow child module for lemma 17.5.2 wrappers.",
+        "Narrow child module for the wrappers of section 3 and 4.",
+        "Narrow child module for the `mayerPartialSum 0 ≤ f` comparison wrappers.",
+        "Narrow child module for the `vdPolymerFamilies_sum - 1` tendsto-zero wrapper.",
+        "Narrow child module for the susceptibilityInfinite J = 0 closed form wrappers.",
+        "Narrow child module for the Λ-level odd-vanish at h=0 wrappers.",
+        "Narrow child module for the two-sided foo wrappers.",
+        "Narrow child module for the `zero`-boundary foo wrappers.",
+    )
+
+    def test_a_number_that_counts_nothing_stays_uncharged(self) -> None:
+        """The other arm of H1, and the reason the fix is lexical and not positional."""
+        for body in self.UNCOUNTED_HEADS:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [], body)
+            self.assertEqual([claim.token for claim in telemetry(source)], ["-"], body)
+
+    def test_two_counts_in_one_clause_are_charged_unresolved(self) -> None:
+        """Ambiguity is charged, never dropped: R3.1 applies to *which* count too."""
+        source = lean_source(
+            "M", header("Narrow child module for concrete 3 foo and 4 bar wrappers.")
+        )
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["?3/4"])
+
+    def test_a_quantity_phrase_is_read_once(self) -> None:
+        """``twelve hundred`` opens at both its words; it is one count, not two."""
+        self.assertEqual(ratchet.clause_quantities("assorted twelve hundred wrappers"), ("1200",))
+        self.assertEqual(ratchet.clause_quantities("assorted about 1.5k wrappers"),
+                         ("?about 1.5k",))
 
     def test_a_vague_quantifier_is_charged(self) -> None:
         """`the remaining wrappers` fails the split-stability test as a number does."""
@@ -1189,6 +1272,58 @@ class MutationCanaryTest(unittest.TestCase):
             ("RELOCATION", "One wrapper now lives in `X`.", "->X"),
         )
         self.assert_form_charged_but_not_by(forms, mutant)
+
+    #: Read the head clause at position 0 only, as every version before this one
+    #: did.  The mutation removes the whole second question, so the canary is
+    #: about the rule and not about one of its guards.
+    HEAD_POSITION_ONLY = (
+        "    governed = clause_quantities(head)\n",
+        "    governed = ()\n",
+    )
+
+    def test_a_head_position_only_rule_frees_every_modified_count(self) -> None:
+        """The R3.1 violation, as a canary: not a coarse key, no key at all.
+
+        With the second question removed, ``for the following 17 wrappers`` is
+        telemetry -- reported apart from the ledger, never pinned, never
+        compared -- so a reviewer has nothing to look at either.
+        """
+        mutant = load_mutant(self.HEAD_POSITION_ONLY)
+        for body, expected in ShapeTest.MODIFIED_HEADS:
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [expected], body)
+            mutated = lean_source("M", header(body), mutant)
+            self.assertEqual(tokens(mutated, "NARROW_CHILD", mutant), [], body)
+            self.assertEqual(
+                [claim.token for claim in telemetry(mutated, mutant)], ["-"], body
+            )
+
+    #: Read a code span as prose, as a whole-clause scan without `blank_code`
+    #: would.  Measured on this tree it charges four Lean expressions as counts.
+    CODE_IS_PROSE = (
+        "    text = blank_code(clause)\n",
+        "    text = clause\n",
+    )
+
+    def test_without_blanking_code_a_lean_expression_reads_as_a_count(self) -> None:
+        """Anti-vacuity for `blank_code`: the false charges it keeps out are real.
+
+        Both bodies are live headers: `MayerTrivialCases.lean` and
+        `MayerRecurrenceHasSum.lean`, in the ambient and the concrete copy each.
+        """
+        mutant = load_mutant(self.CODE_IS_PROSE)
+        for body, expected in (
+            ("Narrow child module for the `mayerPartialSum 0 ≤ f` comparison wrappers.", "?0"),
+            ("Narrow child module for the `vdPolymerFamilies_sum - 1` tendsto-zero wrapper.",
+             "?1"),
+        ):
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "NARROW_CHILD"), [], body)
+            self.assertEqual(
+                tokens(lean_source("M", header(body), mutant), "NARROW_CHILD", mutant),
+                [expected],
+                body,
+            )
 
     #: Flatten a blank line to a space, as every version before this one did.
     PARAGRAPH_BLIND = (

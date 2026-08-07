@@ -1130,8 +1130,9 @@ class ClaimClass(NamedTuple):
 
     ``charged`` is ``False`` only where the shape carries no inventory size at
     all, which is a fact about the *prose* and never about the extractor's
-    success.  Two of the five classes can return it (see
-    :func:`_extract_narrow_child`); a quantity that fails to parse never does.
+    success.  Exactly one of the five classes can return it
+    (:func:`_extract_narrow_child`, the only ``return`` in this file with a
+    ``False`` in that position); a quantity that fails to parse never does.
     """
 
     name: str
@@ -1186,6 +1187,11 @@ def head_quantity(head: str) -> str:
     Three stages, narrowest first: a clean quantity at the front, else the
     maximal quantity phrase, else the first word -- which is what keeps the
     extractor total, so a purely descriptive head still produces a record.
+
+    All three read the **front** of the clause.  A count that sits behind a
+    modifier is :func:`clause_quantities`' job, and it is a separate function
+    because it answers a weaker question: *this clause states a size somewhere*,
+    rather than *this clause opens with a count of its noun*.
     """
     clean = _HEAD_QUANTITY.match(head)
     if clean is not None:
@@ -1197,14 +1203,146 @@ def head_quantity(head: str) -> str:
     return words[0] if words else ""
 
 
-def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
-    """Extract the head quantity of ``Narrow child module for [the] N ...``.
+#: The words after which a number cites a location instead of counting anything.
+#: ``Step 241 interior wrappers`` and ``PR 1861 wrappers`` state no inventory
+#: size, and this repository's prose is full of both.  A closed list of citation
+#: nouns is the cheap half of the guard; the other half is lexical
+#: (:data:`_GOVERNED_QUANTITY`'s left context, which refuses ``§``, ``#`` and the
+#: relation symbols, so ``J = 0 wrappers`` is an expression rather than a count).
+CITATION_WORDS = frozenset(
+    {
+        "step", "steps", "pr", "prs", "issue", "issues", "section", "sections",
+        "chapter", "chapters", "part", "parts", "phase", "phases", "lemma", "lemmas",
+        "theorem", "theorems", "proposition", "propositions", "corollary", "corollaries",
+        "remark", "remarks", "equation", "equations", "figure", "figures", "table",
+        "tables", "page", "pages", "item", "items", "note", "notes", "exercise",
+        "exercises", "version", "versions",
+    }
+)
 
-    The quantity is taken from the head position only.  A later numeral in the
-    same sentence usually belongs to a section number (``§18.3-§18.4``) or to a
-    cited identifier, so reaching for it would buy recall with false charges;
-    the parenthetical and predicate classes below pick up the counts that are
-    stated elsewhere in the sentence.
+#: An inline code span: backticks in Lean and Markdown prose, ``\texttt``/``\path``
+#: in the TeX guide.
+_CODE_SPAN = re.compile(r"`[^`]*`|\\(?:texttt|path)\{[^}]*\}")
+
+
+def blank_code(text: str) -> str:
+    """Return ``text`` with the *inside* of every inline code span blanked out.
+
+    Length-preserving, and the delimiters stay, so the result is still the same
+    clause with the same offsets -- only the identifiers and expressions inside
+    it are gone.
+
+    A number inside backticks belongs to Lean, not to English: measured on this
+    tree, a whole-clause quantity scan without this charges four more headers,
+    and all four are expressions -- ``mayerPartialSum 0 ≤ polymerFreeEnergy`` as
+    the count 0, ``vdPolymerFamilies_sum - 1`` as the count 1.  That is the exact
+    "recall bought with false charges" the head-position rule was defending
+    against, which is why the replacement for it has to be lexical.
+    """
+    return _CODE_SPAN.sub(
+        lambda span: span.group(0)[0] + " " * (len(span.group(0)) - 2) + span.group(0)[-1],
+        text,
+    )
+
+
+#: Where a token begins: the start of the clause, or the first character after a
+#: whitespace run.  :func:`quantity_fragment` reads whitespace-delimited tokens,
+#: so these are the only positions a quantity phrase can start at.
+_TOKEN_START = re.compile(r"(?:\A|(?<=\s))\S")
+
+#: An inventory noun the quantity just read governs: it has to follow within the
+#: same clause window, exactly as the possessive and predicate classes require.
+_GOVERNED_NOUN = re.compile(rf"\A\s+{_WINDOW}{INVENTORY_NOUN}\b", re.IGNORECASE)
+
+
+#: Token endings after which a number is an operand rather than a count.
+#: ``regularity-at-J=0`` is one token and :func:`quantity_fragment` never opens
+#: on it, but ``J = 0`` is the same expression with spaces in it -- and this
+#: corpus writes both (``Narrow child module for the susceptibilityInfinite
+#: J = 0 closed form ... wrappers``).
+_OPERATOR_ENDINGS: tuple[str, ...] = ("=", "<", ">", "≤", "≥", "≠", "+", "*", "/", "^", "·", "×")
+
+
+def _cites_rather_than_counts(clause: str, start: int) -> bool:
+    """Whether the token in front of ``start`` makes the number after it not a count."""
+    before = clause[:start].rstrip()
+    if not before or not before.split():
+        return False
+    previous = before.rsplit(maxsplit=1)[-1]
+    if previous.endswith(_OPERATOR_ENDINGS):
+        return True
+    return previous.strip("(`*,;:[]").lower() in CITATION_WORDS
+
+
+def clause_quantities(clause: str) -> tuple[str, ...]:
+    """Return the resolved tokens of every count in ``clause`` that governs a noun.
+
+    Deduplicated and in the order they are written.  This is what closes round
+    4's H1: the head extractor's three stages all read position 0, so a single
+    adjective moved the number out of reach and ``Narrow child module for the
+    following 17 wrappers`` produced no key at all -- not a coarse one, none --
+    while ``for all 17 wrappers`` was charged.  Widening the *determiner* list
+    (twice) never touched that, because the rule was positional and English puts
+    whatever it likes between a determiner and a number.
+
+    R3.1 is the standard it has to meet: a count-like extraction failure is
+    charged, never filed as telemetry.  So the question here is deliberately the
+    weak one -- does this clause state a size at all? -- and the answer is
+    charged under a ``?`` token, because a count that is not in head position is
+    a size the sentence states without the extractor knowing which noun it
+    counts.
+
+    It reads the clause with the *same* two functions the head extractor uses
+    -- :func:`quantity_fragment` for what a quantity phrase is and
+    :func:`resolve_quantity` for whether it is one -- at every token position
+    instead of only the first.  Two notions of "quantity", one per position,
+    is how ``for about 1.5k wrappers`` came to be charged and ``for the concrete
+    about 1.5k wrappers`` free.  What is *not* shared is the requirement that
+    the phrase govern an inventory noun (:data:`_GOVERNED_NOUN`): in head
+    position the ``for`` clause supplies that, and away from it a number without
+    a noun to count is prose.
+    """
+    text = blank_code(clause)
+    found: list[str] = []
+    consumed = 0
+    for start in (match.start() for match in _TOKEN_START.finditer(text)):
+        # A phrase is read once: ``twelve hundred`` opens at both of its words
+        # and ``about 1.5k`` at both of its, so without this the clause reports
+        # 1200 *and* 100 and calls itself ambiguous.
+        if start < consumed or _cites_rather_than_counts(text, start):
+            continue
+        fragment = quantity_fragment(text[start:])
+        if not fragment:
+            continue
+        token, is_quantity = resolve_quantity(fragment)
+        if is_quantity and _GOVERNED_NOUN.match(text[start + len(fragment):]) is not None:
+            found.append(token)
+            consumed = start + len(fragment)
+    return tuple(dict.fromkeys(found))
+
+
+def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, str]:
+    """Extract the size of ``Narrow child module for [the] N ...``.
+
+    Two questions, in order, and the second one exists because the first is
+    positional.  A count at the **front** of the head clause names the module's
+    own size and is charged as itself (``12``).  Failing that, a count anywhere
+    in the clause that governs an inventory noun is charged under a ``?`` token
+    (``?17``): the sentence states a size, and the extractor is not claiming to
+    know which noun it belongs to.  The ``?`` keeps the two apart in the ledger
+    while keeping the key sharp -- editing the number is still a new key.
+
+    The earlier rule was "head position only", on the argument that a later
+    numeral belongs to a section number or a cited identifier and that the
+    parenthetical and predicate classes pick up counts stated elsewhere.  Both
+    halves were measured false.  ``for the following 17 wrappers`` is not a
+    citation and produced *no key at all*; and where another class does also
+    charge the number (``... wrappers (9 theorems)``), filing this record as
+    telemetry still states something false about this prose -- telemetry means
+    "states no size", and that header states one.  What keeps the false charges
+    out is lexical instead of positional: code spans are blanked
+    (:func:`blank_code`), and citation words and relation symbols are refused
+    (:data:`CITATION_WORDS`, :data:`_GOVERNED_QUANTITY`).
 
     This is the one class that can decline to charge, and what it declines on is
     a header that states no size at all (``Narrow child module for concrete
@@ -1217,9 +1355,18 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     clause = _HEAD_CLAUSE.match(flat, match.end())
     if clause is None:
         return "-", True, "no `for` clause after the anchor"
-    token, is_quantity = resolve_quantity(head_quantity(clause.group("head")))
+    head = clause.group("head")
+    token, is_quantity = resolve_quantity(head_quantity(head))
     if is_quantity:
         return token, True, ""
+    governed = clause_quantities(head)
+    if governed:
+        # ``?`` once, whatever the parts already carry: ``resolve_quantity``
+        # marks an unnormalizable fragment with one of its own.
+        marked = "/".join(governed)
+        note = ("count behind a modifier, not in head position" if len(governed) == 1
+                else f"{len(governed)} counts in one clause")
+        return (marked if marked.startswith("?") else f"?{marked}"), True, note
     return "-", False, f"no quantity (head {token!r})"
 
 
@@ -1699,6 +1846,12 @@ BASELINE_HEADER = """\
 #                (`2->X` -> `->X`, merging into the coarse key already there) and
 #                one PREDICATE_COUNT anchor -- a heading ending in the word
 #                "bundles", counted from the next paragraph -- stops matching.
+#  1390 -> 1402  a `NARROW_CHILD` count is read anywhere in its head clause and
+#                not only at position 0, so one adjective no longer hides it
+#                (`for the following 17 wrappers` produced no key at all).  12
+#                headers that were reported as stating no size do state one; they
+#                are charged `?N`, the `?` recording that the extractor does not
+#                claim to know which noun the number counts.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix

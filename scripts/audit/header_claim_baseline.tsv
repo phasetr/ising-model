@@ -28,6 +28,12 @@
 #                (`2->X` -> `->X`, merging into the coarse key already there) and
 #                one PREDICATE_COUNT anchor -- a heading ending in the word
 #                "bundles", counted from the next paragraph -- stops matching.
+#  1390 -> 1402  a `NARROW_CHILD` count is read anywhere in its head clause and
+#                not only at position 0, so one adjective no longer hides it
+#                (`for the following 17 wrappers` produced no key at all).  12
+#                headers that were reported as stating no size do state one; they
+#                are charged `?N`, the `?` recording that the extractor does not
+#                claim to know which noun the number counts.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
@@ -134,6 +140,13 @@ NARROW_CHILD	IsingModel/AmbientLattice/AnalyticityLambdaVdPolymer.lean	14	1
 NARROW_CHILD	IsingModel/AmbientLattice/BetaDerivativeFieldJ.lean	6	1
 NARROW_CHILD	IsingModel/AmbientLattice/BetaDerivativeMagnetization.lean	2	1
 NARROW_CHILD	IsingModel/AmbientLattice/BetaDerivativePartitionSusc.lean	4	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteEmptyTrivial.lean	?9	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteExhaustionHSymmetry.lean	?9	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteHZeroJZero.lean	?8	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteLambdaHSymmetry.lean	?10	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteMagTrivial.lean	?7	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteSusceptibility.lean	?4	1
+NARROW_CHILD	IsingModel/AmbientLattice/MagnetizationInfiniteSusceptibilityRegularity.lean	?7	1
 NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/FreeEnergyHSymmetry.lean	2	1
 NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/FreeEnergyHighTempExp.lean	2	1
 NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/FreeEnergyTrivialSlices.lean	6	1
@@ -235,6 +248,7 @@ NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity
 NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLogTanh.lean	2	1
 NARROW_CHILD	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityTanh.lean	2	1
 NARROW_CHILD	IsingModel/AmbientLatticeSumFInfHSymMono.lean	6	1
+NARROW_CHILD	IsingModel/AmbientLatticeSumFreeEnergy.lean	?13	1
 NARROW_CHILD	IsingModel/AmbientLatticeSumGeFerromagnetic.lean	12	1
 NARROW_CHILD	IsingModel/AmbientLatticeSumLogZ.lean	14	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/BaseApply.lean	5	1
@@ -391,12 +405,16 @@ NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassHighTempZero
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassHighTempZeroIncl.lean	2	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassLebowitzDerivativeHighTemp.lean	3	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassLebowitzDerivativeSuscSq.lean	2	1
+NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferBasic.lean	?7	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferBasicMass.lean	4	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferCubicPseudoMassCorr.lean	3	1
+NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferExhaustion.lean	?6	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferExhaustionPos.lean	2	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferExpDecayMass.lean	2	1
+NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferReference.lean	?6	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferReferencePos.lean	2	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferSummabilityCharacterization.lean	3	1
+NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferTanhPowDist.lean	?13	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferTanhPowDistCubicPair.lean	4	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransferTanhPowDistPseudoMassCluster.lean	4	1
 NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/LatticeMassTruncated2HighTempBetaLipschitz.lean	4	1
