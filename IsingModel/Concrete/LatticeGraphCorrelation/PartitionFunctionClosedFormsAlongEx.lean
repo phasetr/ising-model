@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # ℤ^d partitionFunctionAlongExhaustion closed-form wrappers
 
 Instantiates the closed forms of the along-exhaustion partition function and its logarithm on
-the degenerate parameter slices at `IsingModel.latticeGraph d`, where the model decouples
-and the sum is evaluated outright.
+the degenerate `β = 0` slice at `IsingModel.latticeGraph d`, where the model decouples and
+the sum is evaluated outright.
 -/
 
 namespace IsingModel

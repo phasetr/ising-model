@@ -4,9 +4,10 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d translation-shift invariance wrappers
 
-Instantiates translation invariance of the free energy and the correlation at
-`IsingModel.latticeGraph d`, in the Λ-level, along-exhaustion and infinite-volume forms.
-Each is a pass-through of the corresponding abstract translation-invariance lemma.
+Instantiates translation invariance at `IsingModel.latticeGraph d`: the free energy along an
+exhaustion and in infinite volume, and the along-exhaustion correlation of a translated
+observation set. Each is a pass-through of the corresponding abstract translation-invariance
+lemma.
 -/
 
 open scoped symmDiff

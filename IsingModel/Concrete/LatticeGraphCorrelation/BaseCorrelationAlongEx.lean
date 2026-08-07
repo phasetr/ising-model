@@ -1,12 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlation `J = 0` and empty-set wrappers along an exhaustion
+# ℤ^d correlation `J = 0` and empty-set wrappers
 
 Instantiates the ambient correlation degeneracies at the ℤ^d lattice graph
-`IsingModel.latticeGraph d`: the decoupled `J = 0` values and the empty-subset
-normalization, in Λ-level and along-exhaustion form. Each is a pass-through of the
-corresponding abstract lemma.
+`IsingModel.latticeGraph d`: the decoupled `J = 0` values along an exhaustion, and the
+empty-subset normalization in Λ-level and along-exhaustion form. Each is a pass-through of
+the corresponding abstract lemma.
 -/
 
 open scoped symmDiff

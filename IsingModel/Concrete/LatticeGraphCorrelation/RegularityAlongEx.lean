@@ -19,11 +19,8 @@ namespace Ambient
 
 /-! ### ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
 
-Direct instantiations at `G := IsingModel.latticeGraph d` of the
-along-exhaustion `hasDerivAt` family from
-`AmbientLattice/BetaDerivative.lean`,
-`AmbientLattice/JDerivative.lean` and
-`AmbientLattice/FieldDerivative.lean`. -/
+Direct instantiations at `G := IsingModel.latticeGraph d` of the ambient along-exhaustion
+`correlationAlongExhaustion_hasDerivAt_*` family. -/
 
 /-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in β at h = 0**. -/
 theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_beta

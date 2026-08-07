@@ -4,8 +4,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete partition-function cubicExhaustion-alongEx closed-form wrappers
 
-Instantiates the along-exhaustion partition-function closed forms on the degenerate parameter
-slices at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`, the exhaustion the
+Instantiates the along-exhaustion partition-function closed forms on the degenerate `β = 0`
+slice at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`, the exhaustion the
 ℤ^d infinite-volume statements are phrased on.
 -/
 

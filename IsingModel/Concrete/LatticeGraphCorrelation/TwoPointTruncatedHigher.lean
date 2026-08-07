@@ -3,9 +3,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d `truncated3Infinite` trivial-slice wrappers
 
-Evaluates the third truncated infinite-volume correlation on the degenerate parameter slices
-and on the zero-field slice at `IsingModel.latticeGraph d`, including the coincident-site
-cases where the truncation degenerates.
+Evaluates the third truncated infinite-volume correlation on the degenerate `β = 0` slice and
+on the zero-field slice at `IsingModel.latticeGraph d`, including the coincident-site cases
+where the truncation degenerates.
 -/
 
 namespace IsingModel
