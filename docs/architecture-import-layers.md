@@ -127,8 +127,8 @@ They are reported as `INFO`; they are **not violations**,
 they **never affect the exit status**, and they are **not a work list**.
 
 Many of them are honest concrete capstones that merely live under a topic
-directory — `Conditioning.CubicBoxComponentSize →
-Concrete.…CubicBoxScreeningDecomp`, for instance, is correctly directed; the
+directory — `Conditioning.CubicBoxComponentSize → Concrete.…CubicBoxScreeningDecomp`,
+for instance, is correctly directed; the
 *file* is arguably misfiled but the *edge* is fine. Enforcing this direction
 would manufacture a 24-entry baseline and would implicitly demand a
 file-relocation campaign, which is exactly the mechanical rewrite the issue
