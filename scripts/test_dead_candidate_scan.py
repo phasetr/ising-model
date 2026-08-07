@@ -78,6 +78,29 @@ def docs() -> list[dcs.DocSource]:
     return _DOCS
 
 
+def index_source() -> dcs.DocSource:
+    """Return the loaded ``docs/index.md`` source."""
+    return next(source for source in docs() if source.label == "docs/index.md")
+
+
+def index_row(anchor: str) -> int:
+    """Return the 1-based ``docs/index.md`` line number holding ``anchor``.
+
+    Fixtures that quote a real progress row used to pin its literal line number,
+    which asserted nothing about the row and cost an edit for every insertion
+    above it (#4974/#4976 retired two such pins; this helper retires the rest).
+    The tuple unpacking is the assertion: the anchor must name exactly one line,
+    so a fixture cannot silently start measuring a different row, and it fails
+    loudly if the row is deleted or duplicated rather than passing vacuously.
+    """
+    (lineno,) = [
+        number
+        for number, line in enumerate(index_source().text.split("\n"), 1)
+        if anchor in line
+    ]
+    return lineno
+
+
 def no_evidence(verdict: dcs.Verdict) -> bool:
     """Return whether the classifier reached its terminal no-evidence state.
 
@@ -393,9 +416,15 @@ class NestedBraceCitationTest(unittest.TestCase):
         self.assertTrue(all("{" not in name and "}" not in name for name in expanded))
 
     def test_real_nested_citation_publishes_the_three_excluded_declarations(self) -> None:
-        """End to end on the exact ``docs/index.md:1412`` citation shape."""
-        index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertIn((self.TOKEN, 1412), index.tokens)
+        """End to end on the real nested-group citation shape in ``docs/index.md``.
+
+        The row is located by the citation token itself rather than by a literal
+        line number, so inserting or deleting lines above it cannot move this
+        fixture off its subject.
+        """
+        index = index_source()
+        lineno = index_row(self.TOKEN)
+        self.assertIn((self.TOKEN, lineno), index.tokens)
 
         verdicts, _cascade, _labels = dcs.classify(
             tree(), self.TARGETS, docs(), allow_homonym=False
@@ -405,7 +434,7 @@ class NestedBraceCitationTest(unittest.TestCase):
             self.assertEqual(verdict.verdict, dcs.PUBLISHED, verdict.decl.full)
             self.assertTrue(
                 any(
-                    citation.startswith("exact docs/index.md:1412:")
+                    citation.startswith(f"exact docs/index.md:{lineno}:")
                     and self.TOKEN in citation
                     for citation in verdict.doc_citations
                 ),
@@ -419,11 +448,14 @@ class NestedBraceCitationTest(unittest.TestCase):
 
 
 class SlashAlternationCitationTest(unittest.TestCase):
-    """The two row-1399 numeric shorthands must reach all six declarations.
+    """The two numeric-alternation shorthands must reach all six declarations.
 
     The pinned base drops both citation bodies during tokenization. Applying
     only brace expansion is insufficient too: every spelling retains ``3/4``
     and therefore names no declaration.
+
+    The ``docs/index.md`` row that carries them is located by
+    :func:`index_row` on the citation text, never by a literal line number.
     """
 
     BETA_TOKEN = (
@@ -539,7 +571,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
     ]
 
     def verdicts(self) -> list[dcs.Verdict]:
-        """Classify the six row-1399 declarations against the real docs."""
+        """Classify the six declarations of that row against the real docs."""
         return dcs.classify(tree(), self.TARGETS, docs(), allow_homonym=False)[0]
 
     def test_exact_bodies_are_each_one_citation_token(self) -> None:
@@ -566,10 +598,18 @@ class SlashAlternationCitationTest(unittest.TestCase):
         )
 
     def test_real_row_attaches_one_exact_charge_to_each_target(self) -> None:
-        """Every target receives the exact public citation at row 1399."""
+        """Every target receives the exact public citation from that one row.
+
+        Both shorthands sit on the same row, and :func:`index_row` asserts that
+        by unpacking a single match for each; the charge is then read off that
+        measured line number instead of a literal.
+        """
+        beta_row = index_row(self.BETA_TOKEN)
+        nonpos_row = index_row(self.NONPOS_TOKEN)
+        self.assertEqual(beta_row, nonpos_row)
         counts = [
             sum(
-                citation.startswith("exact docs/index.md:1399:")
+                citation.startswith(f"exact docs/index.md:{beta_row}:")
                 and self.TARGET_TOKENS[verdict.decl.full] in citation
                 for citation in verdict.doc_citations
             )
@@ -1581,11 +1621,17 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
         expected = [[(dcs.UNCERTAIN, 1, False)] * 3] * 2
         self.assertEqual(observed, expected)
 
-    def test_F6_REAL_1393_resolved_head_protects_the_exact_target_triple(self) -> None:
-        """The real row adds one suffix shorthand, and no exact claim, to each target."""
-        index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertIn((self.ROW_HEAD, 1393), index.tokens)
-        self.assertIn((self.ROW_SUFFIX, 1393), index.tokens)
+    def test_F6_REAL_resolved_head_protects_the_exact_target_triple(self) -> None:
+        """The real row adds one suffix shorthand, and no exact claim, to each target.
+
+        The row is located by its head fragment, which occurs once in
+        ``docs/index.md``; ``ROW_SUFFIX`` is deliberately *not* used as the
+        anchor, because that suffix is spelled on a dozen other rows.
+        """
+        index = index_source()
+        lineno = index_row(self.ROW_HEAD)
+        self.assertIn((self.ROW_HEAD, lineno), index.tokens)
+        self.assertIn((self.ROW_SUFFIX, lineno), index.tokens)
         resolved = dcs._resolve_fragment(tree(), self.ROW_HEAD, {})
         self.assertEqual(
             [decl.full for decl in resolved or []],
@@ -1600,7 +1646,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             row_shorthand = [
                 citation
                 for citation in verdict.doc_citations
-                if citation.startswith("shorthand docs/index.md:1393:")
+                if citation.startswith(f"shorthand docs/index.md:{lineno}:")
                 and f"`{self.ROW_SUFFIX}`" in citation
             ]
             observed.append(
