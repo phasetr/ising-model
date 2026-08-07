@@ -107,7 +107,7 @@ hedge is charged even when the normalizer cannot resolve it.
 
 Conservation (the reason a silent skip cannot hide here)
 --------------------------------------------------------
-Every run asserts four identities, and a failure of any of them **suppresses
+Every run asserts five identities, and a failure of any of them **suppresses
 the findings report in every output format** -- ``--check``, ``--baseline``,
 ``--findings`` and ``--check-baseline-drift`` alike, the last of which used to
 print ``PASS`` on a tree whose ``--check`` was failing.  A run that cannot
@@ -115,7 +115,8 @@ account for its own inputs reports nothing rather than something reassuring:
 
 ``K0``
     every target the tracked-file query returned was opened and accounted for.
-    A read error is a failure, never a skip.
+    A read error is a failure, never a skip, and so is a file holding one of the
+    scanner's own :data:`SENTINELS`.
 
 ``K1``
     for every target and every claim class, the number of *records* the pipeline
@@ -150,6 +151,16 @@ account for its own inputs reports nothing rather than something reassuring:
     ``def «/-! fake -/» : Nat := 1`` read as a module docstring and bought the
     module an exemption from :data:`MISSING_DOC`.  The lexicon is now stated in
     one place (:data:`_SCAN_TOKEN`) and mutated one side at a time by the tests.
+
+``K4``
+    the ledger key identifies exactly one file: it inverts to the path it was
+    read from, and no two scanned files share it.  ``K0``-``K3`` prove that a
+    *record exists* for every input; none of them proves that its *key is
+    unique*, and the difference was a working exploit.  The targets used to be
+    dotted module names, and ``A/B.lean`` and ``A.B.lean`` are two tracked files
+    with one dotted name: rewording the claim in one while writing the same
+    sentence into the other left the pin byte-identical, with every gate green.
+    The key is the path now and this law says so out loud.
 
 Unparseable and missing inputs are **charged**, not skipped: a module with no
 ``/-!`` block in syntax position (:data:`MISSING_DOC`), a file whose comment
@@ -233,10 +244,6 @@ SCAN_ROOTS: tuple[str, ...] = ("IsingModel.lean", "IsingModel", "README.md", "do
 #: ``_config.yml`` and a ``Gemfile``, which are configuration and not prose.
 SCAN_SUFFIXES: tuple[str, ...] = (".lean", ".md", ".tex")
 
-#: A non-Lean target is keyed by its path (there is no module name to key it
-#: by), which is what :func:`target_path` inverts.
-DOCUMENT_SUFFIXES: tuple[str, ...] = (".md", ".tex")
-
 #: Deliberately **out** of scope, recorded here rather than left to be inferred
 #: from the roots above:
 #:
@@ -252,9 +259,16 @@ DOCUMENT_SUFFIXES: tuple[str, ...] = (".md", ".tex")
 #:     deliberate claim -- so the pin would grow with each new canary.
 EXCLUDED_ROOTS: tuple[str, ...] = ("test/", ".github/", "scripts/")
 
-#: The sentinel a masked-out (non-prose) character becomes.  It appears in no
-#: source file and in no anchor, so a regex cannot match across it.
+#: The sentinel a masked-out (non-prose) character becomes.  No anchor contains
+#: it, so a regex cannot match across it.
 MASK = "\x00"
+
+#: Every control character the scanner writes into the text it then matches on.
+#: That they appear in no tracked file was a docstring for three rounds and is a
+#: ``K0`` check now (:func:`load_sources`): a literal ``NUL`` between ``for`` and
+#: a count made the count free, which is absurd as an attack and is exactly the
+#: "asserted, never checked" shape three of the last six findings had.
+SENTINELS: tuple[str, ...] = (MASK,)
 
 
 # --------------------------------------------------------------------------
@@ -1357,7 +1371,16 @@ CLAIM_CLASSES: tuple[ClaimClass, ...] = (
 
 
 class Source(NamedTuple):
-    """One scanned input: its ratchet target name, its text and its kind."""
+    """One scanned input: its ledger key, its path, its text and its kind.
+
+    ``target`` **is** ``path``.  They are two fields rather than one so that the
+    ledger's identity has a name of its own, and so that ``K4``
+    (:func:`key_failures`) has something to assert rather than a tautology
+    spread across the call sites: the moment somebody derives ``target`` from
+    ``path`` again -- which is how a dotted module name became a key that two
+    files could share -- the law fires on the constructed inputs the suite
+    feeds it.
+    """
 
     target: str
     path: str
@@ -1506,9 +1529,26 @@ def tracked_paths(root: Path = REPO_ROOT) -> tuple[str, ...]:
     )
 
 
-def module_name(path: str) -> str:
-    """Return the dotted Lean module name of ``path``."""
-    return path[: -len(".lean")].replace("/", ".")
+def display_name(path: str) -> str:
+    """Return the dotted Lean module name of ``path``, **for display only**.
+
+    Never an identity.  ``path.replace("/", ".")`` is not injective:
+    ``IsingModel/AmbientLattice/Analyticity.lean`` and
+    ``IsingModel/AmbientLattice.Analyticity.lean`` are two distinct tracked files
+    with one dotted name, and a ledger keyed on it cannot tell them apart.  The
+    review built that into a working laundering channel: reword the pinned claim
+    in the first file into a shape the grammar does not recognize, write the same
+    sentence into the second, and the pin is byte-identical -- one file's vacated
+    capacity paid for the other's new claim, with ``--check`` and the drift check
+    both green.  The same collision broke ``B2``, whose "is this key's file in
+    the diff?" question resolved to the wrong file.
+
+    The ledger is keyed by :attr:`Source.path` now, and ``K4`` asserts that.
+    This function survives because a dotted name is what a Lean reader wants to
+    see next to a finding, and a display string that is never a key cannot
+    collide with anything.
+    """
+    return path[: -len(".lean")].replace("/", ".") if path.endswith(".lean") else path
 
 
 def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> tuple[
@@ -1522,6 +1562,15 @@ def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
     failed closed, by traceback, but ``K0``'s contract is that a read error
     arrives through the finding channel rather than as a stack trace, and a
     crash reports nothing about the other 1900 targets.
+
+    A file holding one of the :data:`SENTINELS` is a ``K0`` failure too.  Those
+    characters are what a masked-out region and a paragraph break *become*, and
+    the claim that they appear in no source was a docstring nobody checked: a
+    literal ``NUL`` written between ``for`` and a count made the count free.
+
+    ``K4`` -- the ledger key really identifies a file -- is asserted here rather
+    than believed, because the property it states is exactly the one the previous
+    keying silently lacked (see :func:`display_name`).
     """
     wanted = tuple(paths) if paths is not None else tracked_paths(root)
     sources: list[Source] = []
@@ -1532,21 +1581,52 @@ def load_sources(root: Path = REPO_ROOT, paths: Iterable[str] | None = None) -> 
         except (OSError, UnicodeDecodeError) as error:
             failures.append(f"K0 {path}: tracked but unreadable ({error})")
             continue
-        is_lean = path.endswith(".lean")
-        sources.append(
-            Source(
-                target=module_name(path) if is_lean else path,
-                path=path,
-                text=text,
-                is_lean=is_lean,
+        if any(sentinel in text for sentinel in SENTINELS):
+            failures.append(
+                f"K0 {path}: holds a scanner sentinel control character, so the mask and "
+                "the flattener cannot be trusted on it"
             )
+            continue
+        sources.append(
+            Source(target=path, path=path, text=text, is_lean=path.endswith(".lean"))
         )
     if len(sources) + len(failures) != len(wanted):
         failures.append(
             f"K0: {len(wanted)} tracked target(s) but {len(sources)} read "
             f"and {len(failures)} failed"
         )
+    failures.extend(key_failures(sources))
     return tuple(sources), tuple(failures)
+
+
+def key_failures(sources: Iterable[Source]) -> list[str]:
+    """Return the ``K4`` failures of a loaded source set: a key must name one file.
+
+    Two properties, both of which the dotted-name keying lacked and neither of
+    which any test could have caught by looking at today's corpus:
+
+    * every target **inverts** to the path it was read from
+      (:func:`target_path`), so a ledger row can be attributed to a file;
+    * no two scanned files produce the **same** target, so a claim removed from
+      one cannot be paid for by a claim written into the other.
+
+    Fail closed: a collision suppresses the findings report exactly as ``K0``
+    does, because a ledger whose keys are ambiguous is worse than no ledger.
+    """
+    failures: list[str] = []
+    seen: dict[str, str] = {}
+    for source in sources:
+        if target_path(source.target) != source.path:
+            failures.append(
+                f"K4 {source.path}: its ledger key {source.target!r} does not invert to it"
+            )
+        first = seen.setdefault(source.target, source.path)
+        if first != source.path:
+            failures.append(
+                f"K4 {source.target}: two tracked files share one ledger key "
+                f"({first}, {source.path})"
+            )
+    return failures
 
 
 # --------------------------------------------------------------------------
@@ -1581,6 +1661,13 @@ BASELINE_HEADER = """\
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
 # therefore cannot pay for one regression -- there is no scalar to offset.
+#
+# `target` is a repo-relative PATH and not the dotted module name it used to be.
+# The dotted spelling is not injective -- `A/B.lean` and `A.B.lean` are two
+# tracked files with one dotted name -- so a row could not be attributed to a
+# file: rewording the claim in one of them while writing the same sentence into
+# the other left this file byte-identical, with every gate green.  The re-key
+# moved no charge (1391 before and after); it moved every row's second field.
 #
 # Pinned deliberately BEFORE any repair, so every later repair PR is measured
 # against a commitment that already exists on main rather than against a number
@@ -1878,10 +1965,14 @@ def own_charges(tree: Path) -> Counter[tuple[str, str, str]] | None:
 def target_path(target: str) -> str:
     """Return the repo-relative source path a ratchet target names.
 
-    The inverse of :func:`module_name`: a document is keyed by its path and a
-    Lean module by its dotted name, so the suffix is what tells them apart.
+    The identity, and deliberately so: the ledger is keyed by the path itself,
+    because every derived name this could invert is a place two files collapse
+    into one key.  It stays a named function because ``B2`` and the migration
+    budgets ask "which file does this key name?" of rows read out of a *file*
+    rather than out of a scan, and because ``K4`` asserts the round trip rather
+    than assuming it.
     """
-    return target if target.endswith(DOCUMENT_SUFFIXES) else target.replace(".", "/") + ".lean"
+    return target
 
 
 class Drift(NamedTuple):
@@ -2324,10 +2415,11 @@ def print_report(report: Report, baseline: Counter[tuple[str, str, str]],
     print(f"  {len(report.sources)} tracked target(s): {lean} Lean module(s) + "
           f"{len(report.sources) - lean} document(s)")
 
-    print("== Conservation (K0 inputs / K1 records / K2 mask / K3 decomposition oracle) ==")
+    print("== Conservation (K0 inputs / K1 records / K2 mask / K3 oracle / K4 key identity) ==")
     if report.sound:
         print("  PASS: every tracked target accounted for; "
-              "raw anchors == records == masked anchors; regions == oracle")
+              "raw anchors == records == masked anchors; regions == oracle; "
+              "one key names one file")
     else:
         print(f"  FAIL: {len(report.conservation)} conservation failure(s); "
               "the findings report is suppressed for this run")
@@ -2390,24 +2482,30 @@ def format_findings(report: Report) -> str:
 
     Two tables, not one column: the ledger first, then the telemetry under its
     own banner and its own header row.
+
+    ``module`` is :func:`display_name` -- the dotted spelling a Lean reader
+    wants, carried as a column of its own and never as the key.  A lossy display
+    string that doubles as an identity is what let two files share one ledger
+    row, so it is emitted beside ``target`` rather than instead of it.
     """
     def order(claim: Claim) -> tuple[str, int, str, str]:
         """Sort key: by target, then by where in it the record was found."""
         return (claim.target, claim.line, claim.kind, claim.token)
 
-    lines = ["# " + line for line in CONTRACT_LINES]
-    lines.append("class\ttarget\ttoken\tline\tnote")
-    for claim in sorted(report.claims, key=order):
-        lines.append(
-            f"{claim.kind}\t{claim.target}\t{claim.token}\t{claim.line}\t{claim.note}"
+    def row(claim: Claim) -> str:
+        """Render one record: key first, display name second."""
+        return (
+            f"{claim.kind}\t{claim.target}\t{display_name(claim.target)}\t"
+            f"{claim.token}\t{claim.line}\t{claim.note}"
         )
+
+    lines = ["# " + line for line in CONTRACT_LINES]
+    lines.append("class\ttarget\tmodule\ttoken\tline\tnote")
+    lines.extend(row(claim) for claim in sorted(report.claims, key=order))
     lines.append("")
     lines.extend("# " + line for line in TELEMETRY_LINES)
-    lines.append("telemetry-class\ttarget\ttoken\tline\tnote")
-    for claim in sorted(report.telemetry, key=order):
-        lines.append(
-            f"{claim.kind}\t{claim.target}\t{claim.token}\t{claim.line}\t{claim.note}"
-        )
+    lines.append("telemetry-class\ttarget\tmodule\ttoken\tline\tnote")
+    lines.extend(row(claim) for claim in sorted(report.telemetry, key=order))
     return "\n".join(lines) + "\n"
 
 

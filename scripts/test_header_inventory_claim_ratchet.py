@@ -112,14 +112,20 @@ def load_mutant(*replacements: tuple[str, str]) -> types.ModuleType:
     return module
 
 
-def lean_source(target: str, text: str, module=ratchet):
-    """Return a synthetic Lean :class:`Source` named ``target``."""
-    return module.Source(target=target, path=f"{target}.lean", text=text, is_lean=True)
+def lean_source(name: str, text: str, module=ratchet):
+    """Return a synthetic Lean :class:`Source` for module ``name``.
+
+    Keyed by its path, like every real source: ``target`` and ``path`` are the
+    same string, so a fixture cannot demonstrate a property the production
+    keying does not have.
+    """
+    path = name if name.endswith(".lean") else f"{name.replace('.', '/')}.lean"
+    return module.Source(target=path, path=path, text=text, is_lean=True)
 
 
-def doc_source(target: str, text: str, module=ratchet):
-    """Return a synthetic document :class:`Source` named ``target``."""
-    return module.Source(target=target, path=target, text=text, is_lean=False)
+def doc_source(path: str, text: str, module=ratchet):
+    """Return a synthetic document :class:`Source` at ``path``."""
+    return module.Source(target=path, path=path, text=text, is_lean=False)
 
 
 def charged(source, module=ratchet) -> list:
@@ -597,6 +603,45 @@ class ChargedNotSkippedTest(unittest.TestCase):
             report.conservation,
         )
 
+    #: The check that makes the sentinel docstring an assertion.
+    NO_SENTINEL_CHECK = (
+        "        if any(sentinel in text for sentinel in SENTINELS):\n",
+        "        if False:\n",
+    )
+
+    def sentinel_report(self, module=ratchet):
+        """Scan a tracked file that carries a scanner sentinel in its prose."""
+        with tempfile.TemporaryDirectory(prefix="claim-ratchet-sentinel-") as tmp:
+            root = Path(tmp)
+            (root / "IsingModel").mkdir()
+            (root / "IsingModel" / "Nul.lean").write_text(
+                header(f"Narrow child module for {ratchet.MASK}the 12 foo wrappers."),
+                encoding="utf-8",
+            )
+            return module.build_report(root=root, paths=["IsingModel/Nul.lean"])
+
+    def test_a_source_holding_a_scanner_sentinel_is_a_conservation_failure(self) -> None:
+        """K0: the mask sentinel is asserted absent, not assumed absent."""
+        report = self.sentinel_report()
+        self.assertFalse(report.sound)
+        self.assertTrue(
+            any(failure.startswith("K0") for failure in report.conservation),
+            report.conservation,
+        )
+
+    def test_without_that_check_a_sentinel_makes_a_claim_free(self) -> None:
+        """Anti-vacuity: absurd as an attack, and it really does buy silence.
+
+        ``Narrow child module for <NUL>the 12 foo wrappers`` reads as a header
+        that states no size, because the head clause may not cross a mask -- so
+        the record lands in telemetry and the count costs nothing.
+        """
+        mutant = load_mutant(self.NO_SENTINEL_CHECK)
+        report = self.sentinel_report(mutant)
+        self.assertTrue(report.sound)
+        self.assertEqual([claim.token for claim in report.telemetry], ["-"])
+        self.assertEqual(report.charged, Counter())
+
 
 # --------------------------------------------------------------------------
 # The shared Lean lexicon
@@ -811,8 +856,8 @@ def population(*pairs: tuple[tuple[str, str, str], int]) -> Counter:
     return Counter(dict(pairs))
 
 
-KEY_A = ("NARROW_CHILD", "IsingModel.A", "12")
-KEY_B = ("NARROW_CHILD", "IsingModel.B", "4")
+KEY_A = ("NARROW_CHILD", "IsingModel/A.lean", "12")
+KEY_B = ("NARROW_CHILD", "IsingModel/B.lean", "4")
 
 
 class RatchetTest(unittest.TestCase):
@@ -848,9 +893,9 @@ class RatchetTest(unittest.TestCase):
 
     def test_a_malformed_baseline_line_is_an_error_not_a_dropped_row(self) -> None:
         """A silently dropped baseline row would ratchet the population *up*."""
-        _counts, errors = ratchet.parse_baseline("NARROW_CHILD\tIsingModel.A\n")
+        _counts, errors = ratchet.parse_baseline("NARROW_CHILD\tIsingModel/A.lean\n")
         self.assertTrue(errors)
-        _counts, errors = ratchet.parse_baseline("NARROW_CHILD\tIsingModel.A\t12\tmany\n")
+        _counts, errors = ratchet.parse_baseline("NARROW_CHILD\tIsingModel/A.lean\t12\tmany\n")
         self.assertTrue(errors)
 
     def test_the_baseline_round_trips(self) -> None:
@@ -1289,7 +1334,7 @@ class ScratchRepoTest(unittest.TestCase):
         self.write("IsingModel/Two.lean", header("Narrow child module for the 7 bar wrappers."))
         ok, output = self.verdict(baseline)
         self.assertFalse(ok, output)
-        self.assertIn("NARROW_CHILD IsingModel.Two 7", output)
+        self.assertIn("NARROW_CHILD IsingModel/Two.lean 7", output)
 
     def test_an_injected_duplicate_of_a_baselined_claim_is_named(self) -> None:
         """Growth of an existing key fails too, so a key cannot absorb a second claim."""
@@ -1318,6 +1363,97 @@ class ScratchRepoTest(unittest.TestCase):
         ok, output = self.verdict(baseline)
         self.assertFalse(ok, output)
         self.assertIn(ratchet.MISSING_DOC, output)
+
+
+# --------------------------------------------------------------------------
+# K4: the ledger key identifies exactly one file
+# --------------------------------------------------------------------------
+
+#: The keying as it was before ``K4``: a dotted module name derived from the
+#: path.  Written as a mutation of the shipped detector, so the collision below
+#: is demonstrated on the real code rather than on a stand-in.
+DOTTED_TARGET = (
+    "            Source(target=path, path=path, text=text, is_lean=path.endswith(\".lean\"))\n",
+    "            Source(target=display_name(path), path=path, text=text,\n"
+    "                   is_lean=path.endswith(\".lean\"))\n",
+)
+
+#: The review's collision, verbatim: two distinct tracked paths whose dotted
+#: module names are the same string.  Lean accepts both -- a file name may carry
+#: a dot -- so this is a property of the *keying*, not of today's corpus, and no
+#: assertion over ``IsingModel/`` could ever have caught it.
+COLLIDING: tuple[str, ...] = (
+    "IsingModel/AmbientLattice/Analyticity.lean",
+    "IsingModel/AmbientLattice.Analyticity.lean",
+)
+
+
+class KeyIdentityTest(unittest.TestCase):
+    """``K4``, on inputs constructed for it rather than on the live tree.
+
+    ``K0``-``K3`` prove that a record exists for every input.  None of them
+    proves that its *key* is unique, and the difference was a working laundering
+    channel: reword the pinned claim in one of the two files above into a shape
+    the grammar does not recognize, write the same sentence into the other, and
+    the pin comes out byte-identical with ``--check`` and the drift check both
+    green.  One file's vacated capacity paid for the other's new claim.
+    """
+
+    CLAIM = "The 4 boundary wrappers now live in `IsingModel.Other`."
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-key-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        for path in COLLIDING:
+            full = self.root / path
+            full.parent.mkdir(parents=True, exist_ok=True)
+            full.write_text(header(self.CLAIM), encoding="utf-8")
+
+    def population(self, module=ratchet) -> tuple[Counter, tuple[str, ...]]:
+        """Return ``(charged population, K-failures)`` for the colliding pair."""
+        report = module.build_report(root=self.root, paths=COLLIDING)
+        return report.charged, report.conservation
+
+    def test_two_files_that_share_a_dotted_name_are_two_ledger_rows(self) -> None:
+        """The fix: the key is the path, so the two claims cost two charges."""
+        charged, failures = self.population()
+        self.assertEqual(failures, ())
+        self.assertEqual(sorted(key[1] for key in charged), sorted(COLLIDING))
+        self.assertEqual(sum(charged.values()), 2)
+
+    def test_the_dotted_keying_collapses_them_and_k4_says_so(self) -> None:
+        """Anti-vacuity: with the old keying the exploit is back, and ``K4`` fires."""
+        mutant = load_mutant(DOTTED_TARGET)
+        charged, failures = self.population(mutant)
+        self.assertEqual(len(charged), 1, "the pin cannot tell the two files apart")
+        self.assertEqual(sum(charged.values()), 2, "two claims, one key")
+        self.assertTrue(any(failure.startswith("K4") for failure in failures), failures)
+        self.assertTrue(any("share one ledger key" in failure for failure in failures), failures)
+        self.assertTrue(any("does not invert" in failure for failure in failures), failures)
+
+    def test_a_key_that_does_not_name_its_file_is_a_k4_failure(self) -> None:
+        """The other half of the law, stated on one constructed source."""
+        lossy = ratchet.Source(
+            target="IsingModel.A", path="IsingModel/A.lean", text="", is_lean=True
+        )
+        self.assertTrue(
+            any("does not invert" in failure for failure in ratchet.key_failures([lossy]))
+        )
+        self.assertEqual(ratchet.key_failures([lean_source("IsingModel.A", "")]), [])
+
+    def test_the_display_name_is_still_available_beside_the_key(self) -> None:
+        """A dotted name a Lean reader can read, as a column and never as an identity."""
+        self.assertEqual(
+            ratchet.display_name("IsingModel/AmbientLattice/Analyticity.lean"),
+            "IsingModel.AmbientLattice.Analyticity",
+        )
+        self.assertEqual(ratchet.display_name("docs/index.md"), "docs/index.md")
+        report = ratchet.build_report(root=self.root, paths=COLLIDING)
+        findings = ratchet.format_findings(report)
+        self.assertIn("class\ttarget\tmodule\ttoken\tline\tnote", findings)
+        for path in COLLIDING:
+            self.assertIn(f"{path}\tIsingModel.AmbientLattice.Analyticity\t", findings)
 
 
 # --------------------------------------------------------------------------
@@ -1482,11 +1618,11 @@ class DriftTest(unittest.TestCase):
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.added],
-                         [("NARROW_CHILD", "IsingModel.One", "99")])
+                         [("NARROW_CHILD", "IsingModel/One.lean", "99")])
 
     def drop_a_baseline_row(self) -> tuple[str, str, str]:
         """Delete one row from the pin without repairing the claim it records."""
-        key = ("NARROW_CHILD", "IsingModel.Two", "7")
+        key = ("NARROW_CHILD", "IsingModel/Two.lean", "7")
         baseline, _errors = ratchet.read_baseline(self.root / ratchet.BASELINE_REPO_PATH)
         del baseline[key]
         self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(baseline))
@@ -1521,7 +1657,7 @@ class DriftTest(unittest.TestCase):
         self.write("IsingModel/One.lean", header("Provides the foo API."))
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
-        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel.One", "12"),))
+        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel/One.lean", "12"),))
 
     def test_a_declaration_plus_a_comment_only_detector_edit_buys_nothing(self) -> None:
         """The measured exploit, as a permanent arm.
@@ -1540,7 +1676,7 @@ class DriftTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.added],
-            [("NARROW_CHILD", "IsingModel.One", "99"), ("NARROW_CHILD", "IsingModel.Two", "42")],
+            [("NARROW_CHILD", "IsingModel/One.lean", "99"), ("NARROW_CHILD", "IsingModel/Two.lean", "42")],
         )
         self.assertTrue(
             any("logic is unchanged" in note for note in drift.migration), drift.migration
@@ -1580,7 +1716,7 @@ class DriftTest(unittest.TestCase):
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.added],
-                         [("NARROW_CHILD", "IsingModel.OneCore", "12")])
+                         [("NARROW_CHILD", "IsingModel/OneCore.lean", "12")])
 
     def test_a_broken_run_suppresses_the_comparison(self) -> None:
         """The drift mode used to report ``PASS`` on a tree ``--check`` was failing.
@@ -1609,7 +1745,7 @@ class DriftTest(unittest.TestCase):
     def test_a_malformed_pin_suppresses_the_comparison(self) -> None:
         """A pin that cannot be parsed is not a pin the comparison may believe."""
         path = self.root / ratchet.BASELINE_REPO_PATH
-        path.write_text(path.read_text(encoding="utf-8") + "NARROW_CHILD\tIsingModel.One\n",
+        path.write_text(path.read_text(encoding="utf-8") + "NARROW_CHILD\tIsingModel/One.lean\n",
                         encoding="utf-8")
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
@@ -1703,7 +1839,7 @@ class MigrationHatchTest(unittest.TestCase):
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.added],
-                         [("NARROW_CHILD", "IsingModel.One", "99")])
+                         [("NARROW_CHILD", "IsingModel/One.lean", "99")])
         self.assertTrue(any("allowance" in note for note in drift.migration), drift.migration)
 
     def test_the_declaration_must_be_a_whole_line_of_its_own(self) -> None:
@@ -1749,15 +1885,15 @@ class MigrationHatchTest(unittest.TestCase):
         pin.write_text(
             "\n".join(
                 line for line in tight.splitlines()
-                if not line.startswith("NARROW_CHILD\tIsingModel.One")
+                if not line.startswith("NARROW_CHILD\tIsingModel/One.lean")
             ) + "\n",
             encoding="utf-8",
         )
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.unexplained],
-                         [("NARROW_CHILD", "IsingModel.One", "12")])
-        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel.One", "12"),))
+                         [("NARROW_CHILD", "IsingModel/One.lean", "12")])
+        self.assertEqual(drift.untight, (("NARROW_CHILD", "IsingModel/One.lean", "12"),))
 
     def test_the_recount_is_both_detectors_on_the_base_commit_s_tree(self) -> None:
         """Anti-vacuity for the allowance: the two detectors really do disagree here."""
@@ -1898,7 +2034,7 @@ class SmuggledGrammarTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.added],
-            [("PREDICATE_COUNT", "IsingModel.Two", "17:lemmas")],
+            [("PREDICATE_COUNT", "IsingModel/Two.lean", "17:lemmas")],
         )
 
     def test_prose_that_predates_the_diff_is_paid_for_by_the_widening(self) -> None:
@@ -1928,7 +2064,7 @@ class SmuggledGrammarTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.added],
-            [("PREDICATE_COUNT", "IsingModel.Two", "17:lemmas")],
+            [("PREDICATE_COUNT", "IsingModel/Two.lean", "17:lemmas")],
         )
 
     def test_either_half_of_the_fix_closes_the_exploit_alone(self) -> None:
@@ -1979,9 +2115,9 @@ def noun_widened_detector() -> str:
 class MigrationDeltaTest(unittest.TestCase):
     """The arithmetic of the two budgets, without a repository around it."""
 
-    KEY = ("RELOCATION", "IsingModel.One", "->IsingModel.Other")
-    REKEYED = ("RELOCATION", "IsingModel.One", "11->IsingModel.Other")
-    OTHER = ("RELOCATION", "IsingModel.One", "->IsingModel.Third")
+    KEY = ("RELOCATION", "IsingModel/One.lean", "->IsingModel.Other")
+    REKEYED = ("RELOCATION", "IsingModel/One.lean", "11->IsingModel.Other")
+    OTHER = ("RELOCATION", "IsingModel/One.lean", "->IsingModel.Third")
 
     def delta(self, before: dict, after: dict, edited=frozenset()):
         """Return ``(allowance, relief)`` for one measured detector delta."""
@@ -2009,7 +2145,7 @@ class MigrationDeltaTest(unittest.TestCase):
 
     def test_a_gain_in_another_group_does_not_pay_for_a_loss(self) -> None:
         """Groups are ``(class, target)``: another file's gain is not this file's."""
-        elsewhere = ("RELOCATION", "IsingModel.Two", "4->IsingModel.Other")
+        elsewhere = ("RELOCATION", "IsingModel/Two.lean", "4->IsingModel.Other")
         allowance, relief = self.delta({self.KEY: 1}, {elsewhere: 1})
         self.assertEqual(allowance, Counter({elsewhere: 1}))
         self.assertEqual(relief, Counter())
@@ -2036,8 +2172,8 @@ class RecallMigrationTest(unittest.TestCase):
     """
 
     CLAIM = "The 11 along-exhaustion capstones now live in `IsingModel.Other`."
-    OLD_KEY = ("RELOCATION", "IsingModel.One", "->IsingModel.Other")
-    NEW_KEY = ("RELOCATION", "IsingModel.One", "11->IsingModel.Other")
+    OLD_KEY = ("RELOCATION", "IsingModel/One.lean", "->IsingModel.Other")
+    NEW_KEY = ("RELOCATION", "IsingModel/One.lean", "11->IsingModel.Other")
 
     def setUp(self) -> None:
         self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-recall-")
@@ -2106,7 +2242,7 @@ class RecallMigrationTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.added],
-            [("RELOCATION", "IsingModel.Two", "7->IsingModel.Elsewhere")],
+            [("RELOCATION", "IsingModel/Two.lean", "7->IsingModel.Elsewhere")],
         )
 
     def test_a_narrowing_that_only_drops_rows_is_still_a_b2_failure(self) -> None:
@@ -2118,11 +2254,11 @@ class RecallMigrationTest(unittest.TestCase):
         """
         self.start()
         drift, pin = self.land(narrowed_detector(), "anchor narrowed")
-        self.assertEqual(pin[("NARROW_CHILD", "IsingModel.Three", "5")], 0)
+        self.assertEqual(pin[("NARROW_CHILD", "IsingModel/Three.lean", "5")], 0)
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.unexplained],
-            [("NARROW_CHILD", "IsingModel.Three", "5")],
+            [("NARROW_CHILD", "IsingModel/Three.lean", "5")],
         )
 
 
@@ -2169,12 +2305,17 @@ class RealTreeTest(unittest.TestCase):
         self.assertTrue((REPO_ROOT / "scripts" / "audit").is_dir(), "anti-vacuity")
 
     def test_every_target_name_inverts_to_its_path(self) -> None:
-        """`target_path` is `module_name`'s inverse for documents as well as modules."""
+        """`target_path` inverts on the delivered tree.
+
+        A property of the corpus, kept as a smoke check only.  The property of
+        the *keying* -- which is what H0 broke -- is
+        :class:`KeyIdentityTest`, on constructed inputs.
+        """
         for source in real_report().sources:
             self.assertEqual(ratchet.target_path(source.target), source.path)
 
     def test_the_real_run_is_sound(self) -> None:
-        """K0/K1/K2/K3 hold on the tree as delivered."""
+        """K0/K1/K2/K3/K4 hold on the tree as delivered."""
         report = real_report()
         self.assertTrue(report.sound, "\n".join(report.conservation))
 
