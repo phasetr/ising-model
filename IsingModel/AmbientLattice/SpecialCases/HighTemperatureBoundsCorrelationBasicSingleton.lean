@@ -4,19 +4,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 /-!
 # Ambient alongExhaustion correlation singleton wrappers at h = 0
 
-Narrow child module for four §18.3-§18.4 ambient alongExhaustion
-correlation singleton wrappers extracted from
-`HighTemperatureBoundsCorrelationBasicSingletonBundle.lean`:
-
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero`,
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero`,
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton`,
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton_eq_zero_le_one`.
-
-Internal dependency `_eq_zero_le_one` → `_at_singleton` stays inside
-the child. External dependencies on `_odd_card_eq_zero` and
-`correlationΛ_*_at_singleton_beta_zero` come via the parent's
-import chain.
+Records the single-site zero-field correlation values along an exhaustion (GJ §18.3–§18.4),
+used wherever a one-point function has to be eliminated from a stagewise estimate.
 -/
 
 namespace IsingModel
@@ -25,17 +14,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 2 trivial-slice singleton vanishing wrappers
-
-The two trivial-parameter-slice singleton vanishing wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero`,
-`correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonTrivial`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 /-- **Along-exhaustion magnetization vanishes at h = 0**: at every stage `n`,
 `correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i} n = 0` for any

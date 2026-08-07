@@ -3,21 +3,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 /-!
 # Ambient alongExhaustion correlation pair sandwich wrappers at h = 0
 
-Narrow child module for the four §18.3-§18.4 ambient alongExhaustion
-correlation pair sandwich/bound wrappers extracted from
-`HighTemperatureBoundsCorrelationBasic.lean`:
-
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_sandwich`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_ferromagnetic`
-
-Internal dependencies (`_sandwich` → `_nonneg` + `_le_one`,
-`_ferromagnetic` → `_sandwich`) stay inside this module. External
-dependencies on `correlationAlongExhaustion_high_temp_h_zero_nonneg`
-and `correlationΛ_le_one` are provided by the inherited imports.
-Theorem names are unchanged from the former
-`HighTemperatureBoundsCorrelationBasic` declarations.
+Supplies the GJ §18.3–§18.4 two-site zero-field correlation bounds in along-exhaustion form,
+which is the shape the exponential-decay capstones consume. The sandwich is assembled from
+the stagewise nonnegativity and the Λ-level bound `correlationΛ_le_one`.
 -/
 
 namespace IsingModel
@@ -26,17 +14,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 2 base pair wrappers
-
-The two base pair wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one`,
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairBase`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 /-- **Along-ex pair sandwich at h = 0**: under `0 ≤ β·J`,
 `0 ≤ correlationAlongExhaustion G Λ ⟨J, 0, β⟩ {i, j} n ≤ 1`. -/
@@ -63,17 +40,6 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_ferromagnetic
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset V) n ≤ 1 :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_sandwich
     G Λ J β (mul_nonneg hβ.le hJ) i j n
-
-/-! ## Moved: 2 trivial-slice pair vanishing wrappers
-
-The two trivial-parameter-slice vanishing identities
-(`correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero`,
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairTrivial`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

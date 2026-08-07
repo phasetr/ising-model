@@ -3,17 +3,10 @@ import IsingModel.AmbientLattice.Exhaustion
 /-!
 # Ambient alongExhaustion §18.7 alpha-rate distance-bound capstones at h = 0
 
-Narrow child module for the three §18.7 alpha-rate
-pair-correlation distance-bound capstones extracted from
-`HighTemperatureBoundsDecayCapstonesDist.lean`:
-
-* `..._le_two_pow_edges_mul_exp_alpha_dist`,
-* `..._le_exp_alpha_dist_of_le_highTempExpRate`,
-* `..._le_two_pow_edges_mul_exp_alpha_dist_ferro`.
-
-The first two are thin pass-throughs to the corresponding
-`correlationΛ_*` ambient lemmas. The third (ferro) calls the
-first one (kept inside this child).
+Expresses the GJ §18.7 pair-correlation decay with the rate written as a free parameter `α`
+rather than as the named high-temperature rate, which is the form the ℤ^d layer and the
+monotone-rate comparisons need. Each bound passes through to the matching `correlationΛ_*`
+ambient lemma.
 -/
 
 namespace IsingModel
@@ -56,18 +49,6 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_alpha_dist_of_le_high
         Real.exp (-α * ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
     G (Λ.volume n) J β α hβJ hα i j
-
-/-! ## Moved: 1 ferromagnetic §18.7 alpha-rate capstone
-
-The ferromagnetic alpha-rate
-`_..._exp_alpha_dist_ferro` capstone now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlphaFerro`,
-which depends on this parent module. Downstream consumers reach
-the ferro wrapper through the umbrella `SpecialCases.lean` (which
-imports both children), or by importing the ferro child directly.
-This parent module does **not** re-import the ferro child, to avoid
-an import cycle.
--/
 
 end Ambient
 

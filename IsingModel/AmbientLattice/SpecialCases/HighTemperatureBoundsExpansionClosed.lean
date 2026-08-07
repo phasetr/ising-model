@@ -6,20 +6,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClos
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedSlices
 
 /-!
-# Ambient alongExhaustion partitionFunction closed-form wrappers at h = 0
+# Ambient alongExhaustion partitionFunction closed form at h = 0
 
-Narrow child module for the three §18.3-§18.4 ambient alongExhaustion
-partition function closed-form wrappers extracted from
-`HighTemperatureBoundsExpansionClosedForms.lean`:
-
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_J_zero`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_beta_zero`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed`
-
-Each wrapper is a thin pass-through to the corresponding
-`partitionFunctionΛ_*` ambient lemma. Theorem names are unchanged
-from the former `HighTemperatureBoundsExpansionClosedForms`
-declarations.
+Gives the closed even-subgraph form of the zero-field partition function along an exhaustion
+(GJ §18.3–§18.4), the identity the cluster-expansion capstones rewrite with. It passes
+through to the `partitionFunctionΛ_*` ambient lemma at the stage volume.
 -/
 
 namespace IsingModel
@@ -29,15 +20,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 2 trivial-slice closed-form consistency wrappers
-
-The two §18.3-§18.4 trivial-slice closed-form consistency wrappers
-(`_closed_at_J_zero`, `_closed_at_beta_zero`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedSlices`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-exhaustion partition function high-temperature closed form (FV §3.7.3 eq. (3.45))**:
 at every stage `n`,
@@ -61,17 +43,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed
   change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) = _
   exact partitionFunctionΛ_high_temp_expansion_h_zero_closed
     G (Λ.volume n) J β
-
-/-! ## Moved: 2 correlation closed-form / nonnegativity wrappers
-
-The two ambient alongExhaustion correlation wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_nonneg`,
-`correlationAlongExhaustion_high_temp_expansion_h_zero_closed`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedCorrelation`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

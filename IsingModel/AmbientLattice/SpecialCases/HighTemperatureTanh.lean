@@ -5,18 +5,10 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro
 /-!
 # High-temperature tanh sandwich / `HasSum` wrappers along an exhaustion
 
-Narrow child module for the four §18.5 along-exhaustion
-high-temperature `tanh` wrappers extracted from
-`HighTemperature.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_tanh_high_temp_sandwich`
-* `polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two`
-* `polymerFreeEnergyAlongExhaustion_tanh_high_temp_sandwich_ferromagnetic`
-* `polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic`
-
-Each wrapper is a thin pass-through to the corresponding
-`polymerFreeEnergy_Λ_tanh_*` ambient lemma. Theorem names are
-unchanged from the former `HighTemperature` declarations.
+Carries the GJ §18.5 cluster-expansion convergence statements for the polymer free energy in
+the `tanh` parametrization to the along-exhaustion layer, where the infinite-volume limit is
+taken. Each is a stagewise pass-through of the corresponding `polymerFreeEnergy_Λ_tanh_*`
+ambient lemma.
 -/
 
 namespace IsingModel
@@ -70,17 +62,6 @@ polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two
         (Real.tanh (β * J))) :=
   polymerFreeEnergy_Λ_tanh_hasSum_via_log_of_pow_lt_two
     G (Λ.volume n) hβJ h_pow
-
-/-! ## Moved: 2 ferromagnetic tanh sandwich / `HasSum` wrappers
-
-The two §18.5 along-ex ferromagnetic tanh wrappers
-(`polymerFreeEnergyAlongExhaustion_tanh_high_temp_sandwich_ferromagnetic`,
-`polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

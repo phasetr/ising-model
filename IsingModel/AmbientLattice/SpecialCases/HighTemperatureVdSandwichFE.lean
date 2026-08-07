@@ -6,13 +6,10 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro
 /-!
 # §18.5 cluster-expansion convergence sandwich wrappers along an exhaustion
 
-Narrow child module for the four §18.5 ambient alongExhaustion
-`vdPolymerFamilies_sumAlongExhaustion_sandwich*` cluster-expansion
-convergence sandwich wrappers (general, sharp, ferromagnetic, sharp
-ferromagnetic). Each wrapper is a thin pass-through to the
-corresponding `vdPolymerFamilies_sum_Λ_sandwich*` ambient lemma.
-Theorem names are unchanged from the former `HighTemperature`
-declarations.
+Provides the GJ §18.5 two-sided bound on the van-den-Berg polymer-family sum along an
+exhaustion, in plain and sharpened form — the convergence input for the stagewise
+cluster-expansion estimates. Each passes through to its `vdPolymerFamilies_sum_Λ_sandwich*`
+ambient counterpart.
 -/
 
 namespace IsingModel
@@ -50,28 +47,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp
       ≤ (1 + Real.tanh (β * J)) ^
         (inducedGraph G (Λ.volume n)).edgeFinset.card :=
   vdPolymerFamilies_sum_Λ_sandwich_sharp G (Λ.volume n) hβJ
-
-/-! ## Moved: 2 ferromagnetic VD polymer-family sum sandwich wrappers
-
-The two ferromagnetic VD polymer-family sum sandwich wrappers
-(`vdPolymerFamilies_sumAlongExhaustion_sandwich_ferromagnetic`,
-`vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
-
-/-! ## Moved: 2 strict `freeEnergyAlongExhaustion` cluster-expansion bounds
-
-The two strict free-energy upper bound wrappers
-(`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction`,
-`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

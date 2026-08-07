@@ -3,19 +3,11 @@ import IsingModel.AmbientLattice.Exhaustion
 /-!
 # Ambient alongExhaustion correlation closed-form / nonnegativity wrappers at h = 0
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-correlation wrappers extracted from
-`HighTemperatureBoundsExpansionClosed.lean`:
-
-* `correlationAlongExhaustion_high_temp_h_zero_nonneg`
-* `correlationAlongExhaustion_high_temp_expansion_h_zero_closed`
-
-Each wrapper unfolds `correlationAlongExhaustion` and dispatches on
-`A ⊆ Λ.volume n`, falling back to the trivial `0` case when the
-finset lies outside the exhaustion. The non-trivial case lifts via
-`liftFinset` and applies the corresponding `correlationΛ_*` ambient
-lemma. Theorem names are unchanged from the former
-`HighTemperatureBoundsExpansionClosedForms` declarations.
+Carries the GJ §18.3–§18.4 correlation facts that accompany the partition-function closed
+form to the along-exhaustion layer: zero-field nonnegativity, the zero-field closed form, and
+the general-field subset form. Each unfolds `correlationAlongExhaustion` and dispatches on
+`A ⊆ Λ.volume n`, falling back to the trivial value outside the exhaustion and lifting via
+`liftFinset` otherwise.
 -/
 
 namespace IsingModel

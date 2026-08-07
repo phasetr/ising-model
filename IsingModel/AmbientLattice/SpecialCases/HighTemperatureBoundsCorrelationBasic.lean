@@ -1,17 +1,12 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion correlation basic + bundle wrappers at h = 0
+# Ambient alongExhaustion correlation degenerate-case wrappers at h = 0
 
-Narrow child module for 16 ambient alongExhaustion §18.3-§18.4
-correlation basic / bundle wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_*`): odd_card_eq_zero;
-at_empty_A; pair (`le_one`, `nonneg`, `sandwich`, `ferromagnetic`,
-`J_zero`, `beta_zero`); singleton (`J_zero`, `beta_zero`,
-`_at_singleton`, `eq_zero_le_one`); and bundle / complete_summary /
-trivial_slices_bundle / pair_singleton_bundle_ferromagnetic. Theorem
-names are unchanged from the former
-`AmbientLattice/SpecialCases/HighTemperatureBounds` declarations.
+Puts the GJ §18.3 zero-field correlation degeneracies — Z₂ vanishing on odd subsets and the
+normalization at the empty subset — into along-exhaustion form, so downstream stagewise
+estimates can quote them directly. Each is lifted from its `correlationΛ_high_temp_h_zero_*`
+counterpart through `liftFinset` at the stage volume.
 -/
 
 namespace IsingModel
@@ -62,30 +57,6 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_empty_A
     ext v; simp [liftFinset]
   rw [h_lift]
   exact correlationΛ_high_temp_h_zero_at_empty_A G (Λ.volume n) J β hβJ
-
-/-! ## Moved: correlation pair wrappers
-
-The six `correlationAlongExhaustion_high_temp_h_zero_at_pair_*`
-wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPair`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: correlation singleton + pair-singleton bundle wrappers
-
-The eight `correlationAlongExhaustion_high_temp_h_zero_*` wrappers
-covering the singleton family (`_at_singleton_J_zero`,
-`_at_singleton_beta_zero`, `_at_singleton`,
-`_at_singleton_eq_zero_le_one`) and the four pair-singleton bundle
-variants (`_at_pair_singleton_bundle`,
-`_at_pair_singleton_complete_summary`,
-`_at_pair_singleton_trivial_slices_bundle`,
-`_at_pair_singleton_bundle_ferromagnetic`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `HighTemperatureBounds.lean`.
--/
 
 end Ambient
 

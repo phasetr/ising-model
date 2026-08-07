@@ -8,13 +8,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClos
 /-!
 # Ambient alongExhaustion sharper-exp complete-summary wrappers at h = 0
 
-Narrow child module for 6 §18.3-§18.4 ambient alongExhaustion
-`complete_summary_exp` wrappers covering
-`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`, and
-`log_partitionFunctionAlongExhaustion` complete-summary-exp bundles
-under `0 ≤ β·J` / `0 < |Λ_n|` with ferromagnetic variants under
-`0 ≤ J`, `0 < β`. Theorem names are unchanged from the former
-`HighTemperatureBoundsExpSharper` declarations.
+Bundles the GJ §18.3–§18.4 sharper exponential bounds on the zero-field partition function
+and its logarithm along an exhaustion into single complete-summary statements, so a caller
+obtains the whole two-sided estimate in one application.
 -/
 
 namespace IsingModel
@@ -24,16 +20,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 freeEnergy complete-summary exp wrapper
-
-The
-`freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFE`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex sharper Z complete-summary exp bundle at stage `n`**:
 under `0 ≤ β·J`, single statement bundling sharper sandwich +
@@ -88,16 +74,6 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete
         ∧ Real.log (partitionFunctionΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ)) = _
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
     G (Λ.volume n) J β hβJ
-
-/-! ## Moved: ferromagnetic complete-summary exp wrappers
-
-The three ferromagnetic `complete_summary_exp_ferromagnetic`
-wrappers (for `partitionFunction`, `log_partitionFunction`,
-`freeEnergy`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerro`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `HighTemperatureBounds.lean`.
--/
 
 end Ambient
 

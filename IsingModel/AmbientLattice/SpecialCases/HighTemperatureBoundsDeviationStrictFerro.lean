@@ -3,12 +3,10 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStri
 /-!
 # Ambient alongExhaustion ferromagnetic strict-deviation wrappers at h = 0
 
-Narrow child module for the four §18.3-§18.4 ambient alongExhaustion
-ferromagnetic strict-deviation wrappers
-(`_relative_sandwich_ferromagnetic`, `_deviation_pos_ferromagnetic`,
-`_pow_two_lt_ferromagnetic`, `log_*_deviation_pos_ferromagnetic`).
-Theorem names are unchanged from the former
-`HighTemperatureBoundsDeviationStrict` declarations.
+Specializes the along-exhaustion strict-deviation statements of GJ §18.3–§18.4 to the
+ferromagnetic hypotheses `0 ≤ J`, `0 < β`, so that ferromagnetic consumers need not carry
+the general `0 ≤ β·J` side condition. Each passes through to the corresponding
+general-parameter statement.
 -/
 
 namespace IsingModel
@@ -43,27 +41,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_ferromagnetic
     0 < freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     G Λ J β (mul_pos hβ hJ) n hne hEpos
-
-/-! ## Moved: strict-deviation bundle wrapper
-
-The `Z + log Z + f` strict-deviation bundle wrapper
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle`)
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 ferromagnetic Z / log Z strict-deviation wrappers
-
-The two ferromagnetic Z / log Z strict-deviation wrappers
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic`,
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 
