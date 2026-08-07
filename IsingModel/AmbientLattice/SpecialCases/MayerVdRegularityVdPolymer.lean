@@ -6,11 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerHasDeriv
 /-!
 # `vdPolymerFamilies_sum` regularity wrappers along an exhaustion
 
-Narrow child module for the seven §18.5 `vdPolymerFamilies_sum`
-along-exhaustion regularity and tanh wrappers (`Continuous`,
-`Differentiable`, `HasDerivAt`, and the four tanh-composed
-continuity / differentiability wrappers in `β` and `J`). Theorem
-names are unchanged from the former `MayerVdRegularity` declarations.
+Records continuity and differentiability of the along-exhaustion van-den-Berg polymer-family
+sum (GJ §18.5), which is what lets the cluster expansion be differentiated in the model
+parameters stage by stage.
 -/
 
 namespace IsingModel
@@ -40,25 +38,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_differentiable
             (inducedGraph G (Λ.volume n)),
           ∏ P ∈ Γ, t ^ P.card) :=
   vdPolymerFamilies_sum_Λ_differentiable G (Λ.volume n)
-
-/-! ## Moved: 1 vdPolymerFamilies_sum HasDerivAt wrapper
-
-The `vdPolymerFamilies_sumAlongExhaustion_hasDerivAt` wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerHasDerivAt`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: vdPolymerFamilies_sum tanh β/J along-ex wraps
-
-The four `vdPolymerFamilies_sumAlongExhaustion_tanh_*` wrappers
-(`_continuous_beta`, `_continuous_J`, `_differentiable_beta`,
-`_differentiable_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

@@ -5,24 +5,10 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 /-!
 # Ambient freeEnergyAlongExhaustion pointwise wrappers
 
-Narrow child module for 8 ambient `freeEnergyAlongExhaustion_*`
-ContinuousAt / DifferentiableAt pointwise wrappers extracted from
-`PartitionFreeEnergyPointwiseRegularity.lean`:
-
-* `freeEnergyAlongExhaustion_continuousAt_beta`,
-* `freeEnergyAlongExhaustion_differentiableAt_beta`,
-* `freeEnergyAlongExhaustion_continuousAt_field`,
-* `freeEnergyAlongExhaustion_differentiableAt_field`,
-* `freeEnergyAlongExhaustion_continuousAt_J`,
-* `freeEnergyAlongExhaustion_differentiableAt_J`,
-* `freeEnergyAlongExhaustion_continuousAt_joint`,
-* `freeEnergyAlongExhaustion_differentiableAt_joint`.
-
-Each result is a thin pass-through lifting the corresponding Λ-level
-`freeEnergyΛ_{continuous,differentiable}_*` lemma to AlongExhaustion
-via `.continuousAt` / `.differentiableAt`. The theorem names are
-unchanged from the former `PartitionFreeEnergyPointwiseRegularity`
-declarations.
+Provides the joint pointwise regularity of the along-exhaustion free energy, obtained from
+the Λ-level `freeEnergyΛ_{continuous,differentiable}_*` lemmas through the `.continuousAt` /
+`.differentiableAt` projections. This is the layer the §17.5–§17.6 derivative arguments
+quote.
 -/
 
 namespace IsingModel
@@ -32,15 +18,6 @@ variable {V : Type*} [DecidableEq V]
 
 
 /-! ### Along-exhaustion free-energy pointwise wrappers -/
-
-/-! ## Moved: non-joint ContinuousAt / DifferentiableAt wrappers
-
-The six `freeEnergyAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}`
-non-joint pointwise wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJoint`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **freeEnergyAlongExhaustion jointly ContinuousAt**. -/
 theorem freeEnergyAlongExhaustion_continuousAt_joint

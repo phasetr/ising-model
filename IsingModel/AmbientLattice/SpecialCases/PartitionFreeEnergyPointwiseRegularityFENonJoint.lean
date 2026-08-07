@@ -6,15 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 /-!
 # Ambient `freeEnergyAlongExhaustion` non-joint pointwise `ContinuousAt` wrappers
 
-Narrow child module for the three ambient
-`freeEnergyAlongExhaustion_continuousAt_{beta,field,J}` non-joint
-pointwise wrappers extracted from
-`PartitionFreeEnergyPointwiseRegularityFE.lean`. Each wrapper is a
-thin pass-through to the corresponding `freeEnergyΛ_continuous_*`
-ambient lemma via the `.continuousAt` projection. Theorem names
-are unchanged from the former
-`PartitionFreeEnergyPointwiseRegularity` /
-`PartitionFreeEnergyPointwiseRegularityFE` declarations.
+Gives per-parameter (rather than joint) pointwise continuity of the along-exhaustion free
+energy, so a caller varying a single parameter does not have to carry the joint hypothesis.
+Each passes through to a `freeEnergyΛ_continuous_*` ambient lemma via `.continuousAt`.
 -/
 
 namespace IsingModel
@@ -23,27 +17,6 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 /-! ### Along-exhaustion free-energy pointwise wrappers -/
-
-/-! ## Moved: 1 ContinuousAt β wrapper
-
-The `freeEnergyAlongExhaustion_continuousAt_beta` β-direction
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointBeta`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 3 freeEnergyAlongExhaustion_differentiableAt_* wrappers
-
-The three `DifferentiableAt ℝ` non-joint pointwise wrappers
-(`freeEnergyAlongExhaustion_differentiableAt_beta`,
-`freeEnergyAlongExhaustion_differentiableAt_field`,
-`freeEnergyAlongExhaustion_differentiableAt_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.`
-`PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **freeEnergyAlongExhaustion ContinuousAt h**. -/
 theorem freeEnergyAlongExhaustion_continuousAt_field

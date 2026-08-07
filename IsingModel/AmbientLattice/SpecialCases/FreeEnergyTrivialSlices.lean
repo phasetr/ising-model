@@ -4,14 +4,10 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesJZero
 /-!
 # Free-energy trivial-parameter-slice closed forms along an exhaustion
 
-Narrow child module for the six along-exhaustion / infinite-volume
-free-energy closed-form identities at trivial parameter slices
-(`β = 0`, `J = h = 0`, `J = 0`). Each wrapper is a thin pass-through
-to the corresponding `IsingModel.freeEnergy_*` ambient lemma, or
-(for the two `freeEnergyInfinite_*` variants) a `limsup`
-specialization of a constant sequence built from the
-along-exhaustion sibling. Theorem names are unchanged from the
-former `FreeEnergy` declarations.
+Evaluates `freeEnergyAlongExhaustion` on the degenerate parameter slices where the model
+decouples, so a stagewise argument can discharge those cases by rewriting instead of
+re-running the ambient computation. Each identity specializes an `IsingModel.freeEnergy_*`
+lemma through `freeEnergyΛ` at the induced subgraph.
 -/
 
 namespace IsingModel
@@ -55,25 +51,6 @@ theorem freeEnergyAlongExhaustion_zero_params
   change IsingModel.freeEnergy (inducedGraph G (Λ.volume n))
       (⟨0, 0, β⟩ : IsingParams ℝ) = Real.log 2
   exact IsingModel.freeEnergy_zero_params _ β (Finset.Nonempty.fintype_card_coe_pos hne)
-
-/-! ## Moved: `freeEnergyInfinite_*` trivial-slice wrappers
-
-The two `freeEnergyInfinite_*` trivial-slice closed-form
-wrappers (`_beta_zero`, `_zero_params`) now live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 `_J_zero` wrappers
-
-The two J = 0 wrappers
-(`freeEnergyAlongExhaustion_eq_bot_at_J_zero`,
-`freeEnergyAlongExhaustion_J_zero`) now live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesJZero`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

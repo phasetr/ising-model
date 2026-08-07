@@ -5,12 +5,10 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
 /-!
 # `mayerExpansionTerm` tanh regularity wrappers along an exhaustion
 
-Narrow child module for the four §18.5 along-exhaustion
-`mayerExpansionTerm` tanh-composed continuity / differentiability
-wrappers in `β` and `J`. Each wrapper is a thin pass-through to
-the corresponding `mayerExpansionTerm_Λ_tanh_*` ambient lemma.
-Theorem names are unchanged from the former `MayerVdRegularityTanh`
-declarations.
+Records regularity of the individual along-exhaustion Mayer expansion terms in the
+`tanh`-composed parameters `β` and `J` (GJ §18.5), so termwise differentiation of the
+expansion is available stagewise. Each passes through to its `mayerExpansionTerm_Λ_tanh_*`
+ambient counterpart.
 -/
 
 namespace IsingModel
@@ -41,16 +39,6 @@ theorem mayerExpansionTermAlongExhaustion_tanh_continuous_J
           (inducedGraph G (Λ.volume n)) k
           (Real.tanh (β * J'))) :=
   mayerExpansionTerm_Λ_tanh_continuous_J G (Λ.volume n) k β
-
-/-! ## Moved: 2 mayerExpansionTerm tanh Differentiable wrappers
-
-The two `mayerExpansionTermAlongExhaustion_tanh_differentiable_*`
-wrappers (`_tanh_differentiable_beta`, `_tanh_differentiable_J`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTermDifferentiable`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

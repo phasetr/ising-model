@@ -3,33 +3,15 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityD
 /-!
 # Susceptibility `DifferentiableAt` along-ex wrappers
 
-Narrow child module for the three pointwise `DifferentiableAt`
-susceptibility wrappers along an exhaustion extracted from
-`SusceptibilityPointwiseRegularityAt.lean`:
-
-* `susceptibilityAlongExhaustion_differentiableAt_beta_gen`
-* `susceptibilityAlongExhaustion_differentiableAt_field_gen`
-* `susceptibilityAlongExhaustion_differentiableAt_J_gen`
-
-Each wrapper is a thin pass-through to the corresponding
-`susceptibilityAlongExhaustion_differentiable_*_gen` parent lemma
-via the `.differentiableAt` projection. Theorem names are unchanged
-from the former `SusceptibilityPointwiseRegularity` declarations.
+Turns the parametrized differentiability of the along-exhaustion susceptibility into
+pointwise `DifferentiableAt` form via the `.differentiableAt` projection, which is what the
+GJ §17.6 derivative computations consume.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 DifferentiableAt β wrapper
-
-The `susceptibilityAlongExhaustion_differentiableAt_beta_gen`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAtBeta`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: susceptibility DifferentiableAt h** (general G). -/
 theorem susceptibilityAlongExhaustion_differentiableAt_field_gen

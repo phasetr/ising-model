@@ -5,12 +5,9 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularityAtContinuousSuscept
 /-!
 # Joint `ContinuousAt` along-ex wrappers
 
-Narrow child module for the three pointwise joint `ContinuousAt`
-wrappers along an exhaustion (correlation, magnetization,
-susceptibility), obtained from the corresponding
-`_continuous_joint*` wrappers in the parent `JointRegularity`
-module via the `.continuousAt` projection. Theorem names are
-unchanged from the former `JointRegularity` declarations.
+Turns the joint (all-parameter) continuity of the along-exhaustion observables into pointwise
+`ContinuousAt` form via the `.continuousAt` projection, which is what the differentiability
+and analyticity arguments of GJ §17.5–§17.6 take as input.
 -/
 
 namespace IsingModel
@@ -27,18 +24,6 @@ theorem correlationAlongExhaustion_continuousAt_joint_gen
       correlationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ A n) p :=
   (correlationAlongExhaustion_continuous_joint_gen G Λ A n).continuousAt
 
-/-! ## Moved: 3 joint DifferentiableAt wrappers
-
-The three `DifferentiableAt ℝ` joint wrappers
-(`correlationAlongExhaustion_differentiableAt_joint_gen`,
-`magnetizationAlongExhaustion_differentiableAt_joint`,
-`susceptibilityAlongExhaustion_differentiableAt_joint_gen`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAt`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
 /-- **Along-ex: magnetization jointly ContinuousAt** (general G). -/
 theorem magnetizationAlongExhaustion_continuousAt_joint
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -47,15 +32,6 @@ theorem magnetizationAlongExhaustion_continuousAt_joint
     ContinuousAt (fun q : ℝ × ℝ × ℝ =>
       magnetizationAlongExhaustion G Λ ⟨q.2.1, q.2.2, q.1⟩ i n) p :=
   (magnetizationAlongExhaustion_continuous_joint G Λ i n).continuousAt
-
-/-! ## Moved: 1 susceptibility joint ContinuousAt wrapper
-
-The `susceptibilityAlongExhaustion_continuousAt_joint_gen` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.JointRegularityAtContinuousSusceptibility`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel
