@@ -1071,9 +1071,9 @@ class NarrowGlobCitationTest(unittest.TestCase):
     ``freeEnergyAlongExhaustion_latticeGraph_ge_log_two*`` (2 declarations),
     ``docs/index.md:1328`` writes ``freeEnergy_*_tendsto_of_abs_h``
     (4 declarations) -- left every declaration it names printing "no citation in
-    the scanned documentation", the sentence that licenses a deletion. Neither
-    has a verbatim fallback: the brace/glob spelling means the full name is
-    nowhere in the file.
+    the scanned documentation", the sentence a deletion write-up cites as its
+    evidence. Neither has a verbatim fallback: the brace/glob spelling means the
+    full name is nowhere in the file.
 
     The threshold is a cost knob, so it is pinned from both sides: at or below
     it every match is charged, above it nothing is and the label is *reported*.
@@ -1988,7 +1988,7 @@ class SameLineAttributeTest(unittest.TestCase):
         self.assertEqual(source.owner_of(4).final, "synthetic_attr_user_xyzzy")
 
     def test_the_reference_is_counted_as_a_consumer(self) -> None:
-        """End to end: the base lemma must not be reported as deletable."""
+        """End to end: the base lemma must not be reported as carrying no evidence."""
         tree_obj = synthetic_tree({"IsingModel/SynthAttr.lean": self.SOURCE})
         verdicts, _cascade, _labels = dcs.classify(
             tree_obj, ["IsingModel.synthetic_attr_base_xyzzy"], [], allow_homonym=False
@@ -2706,7 +2706,7 @@ class ExitCodeTest(unittest.TestCase):
         self.assertIn("NON-EVIDENTIAL", out)
 
     def test_unknown_name_is_a_hard_failure(self) -> None:
-        """A stale candidate list must never be reported as deletable."""
+        """A stale candidate list must never be silently reported as carrying no evidence."""
         code, _out = self.run_main(["--name", "no_such_declaration_anywhere_xyzzy"])
         self.assertEqual(code, dcs.EXIT_INCONSISTENT)
 

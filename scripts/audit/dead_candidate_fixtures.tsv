@@ -63,8 +63,8 @@
 # the test asserted 223/92/112, and then 47/77 while the test asserted 46/78.
 #
 # The gap between "no consumer" and "no evidence" is the *delete*
-# closure: a lemma consumed only by another candidate is deletable with it, but
-# only if that other candidate is itself deleted. An earlier revision seeded the
+# closure: a lemma consumed only by another candidate loses that reference with it,
+# but only if that other candidate is itself deleted. An earlier revision seeded the
 # closure with every candidate and then let the classifier retain some of them,
 # which left 15 lemmas reporting no evidence whose only consumer the same run reported
 # as a keeper. The closure is sound only over the candidates that actually go
