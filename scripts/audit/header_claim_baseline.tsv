@@ -5,11 +5,11 @@
 # There is no exemption channel and no way to mark a finding fine: the only
 # legal edit is downward, produced by `--baseline` after real prose was fixed.
 #
-# Two upward corrections are on the record, and they are the only kind that can
-# ever be legitimate -- the detector was undercounting the tree, so the pin was
-# an undercount of a population that was always there.  No prose was written and
-# no repair was made in either.  A repair campaign must never raise this file,
-# and any future increase needs a public reason of exactly this shape.
+# Every movement of this file that NO PROSE EDIT explains is on the record here,
+# with its arithmetic.  All of them are detector corrections -- the tool was
+# miscounting a population that was always there -- and in none of them was prose
+# written or a claim repaired.  A repair campaign must never raise this file, and
+# any future movement of this kind needs a public entry of exactly this shape.
 #
 #   713 -> 740   `NARROW_CHILD`'s anchor gained the `re.IGNORECASE` flag every
 #                other anchor already carried; 27 lowercase occurrences became
@@ -21,6 +21,13 @@
 #                (+2); and the clause window went from 70 to 200 characters (+1),
 #                which also resolved 274 relocation subjects that had been pinned
 #                only by their destination.
+#  1391 -> 1390  a clause window may no longer cross a blank line.  At 200
+#                characters three spans on this tree reached into the paragraph
+#                above to borrow a count, and all three were wrong: two
+#                RELOCATION subjects lose a number their sentence never stated
+#                (`2->X` -> `->X`, merging into the coarse key already there) and
+#                one PREDICATE_COUNT anchor -- a heading ending in the word
+#                "bundles", counted from the next paragraph -- stops matching.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
@@ -628,7 +635,6 @@ POSSESSIVE_COUNT	docs/index.md	4:lemmas	1
 PREDICATE_COUNT	IsingModel/AmbientComplexAnalyticity/ClosedBallPatches/RelCompact.lean	3:declarations	1
 PREDICATE_COUNT	IsingModel/ClusterExpansion/AlternatingCompleteGraph/SignedSums.lean	2:definitions	1
 PREDICATE_COUNT	IsingModel/ClusterExpansion/TwoPointCapstonePrereqs.lean	2:wrapper	1
-PREDICATE_COUNT	IsingModel/Concrete/LatticeGraphCorrelation/CubicPseudoMassNamedRateCorr.lean	5:wrappers	1
 PREDICATE_COUNT	docs/architecture-import-layers.md	3:file	1
 PREDICATE_COUNT	docs/index.md	3:declarations	2
 PREDICATE_COUNT	tex/proof-guide.tex	10:wrappers	1
@@ -751,8 +757,7 @@ RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularity.lean	6->IsingM
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityAt.lean	->IsingModel.AmbientLattice.SpecialCases.JointRegularityAtContinuousSusceptibility	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityAt.lean	3->IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAt	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityAtDifferentiableAt.lean	->IsingModel.AmbientLattice.SpecialCases.JointRegularityAtDifferentiableAtSusceptibility	2
-RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityDifferentiable.lean	->IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility	1
-RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityDifferentiable.lean	2->IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility	1
+RELOCATION	IsingModel/AmbientLattice/SpecialCases/JointRegularityDifferentiable.lean	->IsingModel.AmbientLattice.SpecialCases.JointRegularityDifferentiableSusceptibility	2
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean	->IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureAllPolymers	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean	3->IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/MayerEpsilonInfrastructureVdSum.lean	->IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSumEventually	2
@@ -818,8 +823,7 @@ RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegular
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityAt.lean	->IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityAt.lean	3->IsingModel.AmbientLattice.SpecialCases.	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityAtDifferentiableAt.lean	->IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtDifferentiableAtBeta	1
-RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityDifferentiable.lean	->IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta	1
-RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityDifferentiable.lean	2->IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta	1
+RELOCATION	IsingModel/AmbientLattice/SpecialCases/SusceptibilityPointwiseRegularityDifferentiable.lean	->IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta	2
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean	2->IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticity.lean	4->VdPolymerFamiliesAnalyticityLog.lean	1
 RELOCATION	IsingModel/AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean	2->IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLogTanh	1

@@ -422,6 +422,43 @@ class ShapeTest(unittest.TestCase):
             )
             self.assertEqual(tokens(source, "RELOCATION"), ["3->Foo/Bar.lean"], markup)
 
+    #: The live misattribution, verbatim from
+    #: `AmbientLattice/SpecialCases/JointRegularityDifferentiable.lean`: a count
+    #: in one paragraph and, after a bulleted list, a relocation of *one* wrapper
+    #: in the next.  The noun-to-anchor gap is under 200 characters, so the
+    #: widened window resolved the subject -- across a paragraph break -- and
+    #: pinned the sentence `2->X`, a number it does not state.
+    PARAGRAPH_CROSSING = (
+        "Narrow child module for the two along-exhaustion joint\n"
+        "`Differentiable` wrappers in the correlation / magnetization\n"
+        "observables:\n\n"
+        "* `correlationAlongExhaustion_differentiable_joint_gen`\n"
+        "* `magnetizationAlongExhaustion_differentiable_joint`\n\n"
+        "The corresponding susceptibility wrapper now lives in\n"
+        "`IsingModel.Other.Susceptibility`."
+    )
+
+    def test_a_count_may_not_be_borrowed_across_a_paragraph_break(self) -> None:
+        """M1: a clause window may cross a line wrap; it may never cross a blank line."""
+        source = lean_source("M", header(self.PARAGRAPH_CROSSING))
+        self.assertEqual(tokens(source, "RELOCATION"), ["->IsingModel.Other.Susceptibility"])
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["2"], "the real count still charges")
+
+    def test_a_subject_still_reaches_across_a_line_wrap(self) -> None:
+        """Anti-vacuity for the rule above: an ordinary wrapped sentence resolves.
+
+        Line wraps are how this repository writes every long claim, so a rule
+        that refused them would be a recall collapse rather than a fix.
+        """
+        source = lean_source(
+            "M",
+            header(
+                "The three `alpha`, `beta` and\n`gamma` wrappers\nnow live in\n"
+                "`IsingModel.Other`."
+            ),
+        )
+        self.assertEqual(tokens(source, "RELOCATION"), ["3->IsingModel.Other"])
+
     def test_relocation_survives_an_intervening_clause(self) -> None:
         """The docs/index.md:1393 archetype, with a PR reference in the middle."""
         source = doc_source(
@@ -1122,8 +1159,7 @@ class MutationCanaryTest(unittest.TestCase):
                 "",
             ),
             (
-                '    rf"\\s*for\\s+{_DETERMINER_PREFIX}(?P<head>(?:(?!\\.\\s|;|\\|)'
-                '[^{MASK}\\n]){{0,120}})",\n',
+                '    rf"\\s*for\\s+{_DETERMINER_PREFIX}(?P<head>{_window(lazy=False)})",\n',
                 '    rf"\\s*for\\s+(?:the\\s+)?(?P<head>\\S*)",\n',
             ),
         )
@@ -1153,6 +1189,28 @@ class MutationCanaryTest(unittest.TestCase):
             ("RELOCATION", "One wrapper now lives in `X`.", "->X"),
         )
         self.assert_form_charged_but_not_by(forms, mutant)
+
+    #: Flatten a blank line to a space, as every version before this one did.
+    PARAGRAPH_BLIND = (
+        '            chars.append(PARAGRAPH if run.group(0).count("\\n") > 1 else " ")\n',
+        '            chars.append(" ")\n',
+    )
+
+    def test_a_flattener_blind_to_paragraphs_borrows_a_count(self) -> None:
+        """The two live misattributions, as a canary.
+
+        With a blank line indistinguishable from a line wrap, the relocation of
+        *one* wrapper is keyed by the count of the paragraph above it -- a number
+        the sentence does not state, baked into the pin, on two real modules.
+        """
+        mutant = load_mutant(self.PARAGRAPH_BLIND)
+        source = lean_source("M", header(ShapeTest.PARAGRAPH_CROSSING))
+        self.assertEqual(tokens(source, "RELOCATION"), ["->IsingModel.Other.Susceptibility"])
+        self.assertEqual(
+            tokens(lean_source("M", header(ShapeTest.PARAGRAPH_CROSSING), mutant),
+                   "RELOCATION", mutant),
+            ["2->IsingModel.Other.Susceptibility"],
+        )
 
     NESTING_MUTATION = (
         "            if token == \"/-\":\n                depth += 1\n",

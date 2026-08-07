@@ -263,12 +263,20 @@ EXCLUDED_ROOTS: tuple[str, ...] = ("test/", ".github/", "scripts/")
 #: it, so a regex cannot match across it.
 MASK = "\x00"
 
+#: The sentinel a **paragraph break** becomes when whitespace is flattened.
+#: :func:`flatten` collapses every whitespace run to one space, so a blank line
+#: -- the one boundary this corpus's prose really does respect -- was
+#: indistinguishable from a line wrap, and a clause window happily reached out of
+#: its own paragraph into the next one to borrow a count (see :data:`_CLAUSE_SPAN`).
+#: It is not whitespace, so ``\s`` cannot match it and no anchor spans it either.
+PARAGRAPH = "\x01"
+
 #: Every control character the scanner writes into the text it then matches on.
 #: That they appear in no tracked file was a docstring for three rounds and is a
 #: ``K0`` check now (:func:`load_sources`): a literal ``NUL`` between ``for`` and
 #: a count made the count free, which is absurd as an attack and is exactly the
 #: "asserted, never checked" shape three of the last six findings had.
-SENTINELS: tuple[str, ...] = (MASK,)
+SENTINELS: tuple[str, ...] = (MASK, PARAGRAPH)
 
 
 # --------------------------------------------------------------------------
@@ -630,12 +638,21 @@ def flatten(text: str) -> Flat:
     turns a flattened match back into a line number.  :data:`MASK` is not
     whitespace, so masked regions survive flattening as solid runs that no
     anchor can match across.
+
+    A run holding a **blank line** becomes :data:`PARAGRAPH` rather than a space.
+    A line wrap and a paragraph break were the same character after flattening,
+    so a clause window could not tell "the rest of this sentence" from "the next
+    paragraph", and two live keys were pinned with a count borrowed across the
+    gap: ``The corresponding susceptibility wrapper now lives in `X` `` -- one
+    wrapper -- was keyed ``2->X`` from the *previous* paragraph's ``for the two
+    ... wrappers``.  Like :data:`MASK`, it is not whitespace, so an anchor cannot
+    span it either; measured on this tree, no anchor did.
     """
     chars: list[str] = []
     offsets: list[int] = []
     for run in _RUN.finditer(text):
         if text[run.start()].isspace():
-            chars.append(" ")
+            chars.append(PARAGRAPH if run.group(0).count("\n") > 1 else " ")
             offsets.append(run.start())
         else:
             chars.append(run.group(0))
@@ -891,22 +908,39 @@ INVENTORY_NOUN = (
 #: between the count and the noun it counts (``The 10 Λ-level h-symmetry,
 #: odd-vanish at h=0, J_zero, and tanh-power lower-bound wrappers``), so the
 #: shortest real claims fitted and the typical ones did not.  At 200, on the
-#: tracked tree, ``RELOCATION`` resolves 210 more subjects and every other class
-#: is unchanged; a 22-site sample of the 210 was read one by one and every one
-#: was a real claim of exactly the pinned shape.
+#: tracked tree, ``RELOCATION`` resolves 273 more subjects and every other class
+#: is unchanged; a 25-site sample of them was read one by one and every one was a
+#: real claim of exactly the pinned shape.
+#:
+#: The cost of the widening was also measured, and it is why :data:`PARAGRAPH`
+#: exists: 3 of the 408 resolved spans reached across a **blank line** into the
+#: paragraph above to borrow a count, and all three were wrong.  A length cap
+#: cannot express "one paragraph"; the boundary has to be a character the window
+#: may not cross.
 _CLAUSE_SPAN = 200
 
 
-def _window(limit: int = _CLAUSE_SPAN) -> str:
-    """Return a lazy run of at most ``limit`` characters inside one clause.
+#: One character a claim clause may contain.  What ends a clause: a sentence
+#: break, a table-cell boundary, a comment delimiter, a masked region and -- since
+#: the paragraph sentinel exists -- a blank line.  Without the first four the
+#: window reaches from ``its two arguments.`` in one doc comment into the word
+#: ``lemma`` of the declaration underneath it; without the last it reaches into
+#: the next paragraph and borrows its count.  ``\n`` is redundant on flattened
+#: text and kept so the class is safe against a caller that has not flattened.
+_CLAUSE_CHAR = rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}{PARAGRAPH}\n])"
 
-    Characters and words that end a claim: the window between a quantity and its
-    noun may not cross a sentence break, a table-cell boundary, a comment
-    delimiter or a masked region.  Without this the window happily reaches from
-    ``its two arguments.`` in one doc comment into the word ``lemma`` of the
-    declaration underneath it, which is a pure false positive.
+
+def _window(limit: int = _CLAUSE_SPAN, *, lazy: bool = True) -> str:
+    """Return a run of at most ``limit`` characters inside one clause.
+
+    ``lazy`` is what tells a *gap* (a quantity reaching for its noun, which must
+    stop at the first candidate) from a *span* (a head clause, which runs to the
+    end of the clause and is then parsed).  Both obey :data:`_CLAUSE_CHAR` and
+    both are bounded by the same measured :data:`_CLAUSE_SPAN`: the head clause
+    used to carry a bare ``{0,120}`` of its own, a number nothing measured, next
+    to a docstring arguing at length that such caps must be.
     """
-    return rf"(?:(?!\.\s|;|\||-/|/-)[^{MASK}\n]){{0,{limit}}}?"
+    return rf"{_CLAUSE_CHAR}{{0,{limit}}}" + ("?" if lazy else "")
 
 
 _WINDOW = _window()
@@ -1128,11 +1162,12 @@ _NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
 #: is the same claim, and this was the last case-sensitive link in the chain.
 #:
 #: ``head`` runs to the end of the clause rather than to the end of the first
-#: word; :func:`quantity_fragment` is what decides how much of it is the count.
-#: It stops at a sentence break, a table-cell boundary or a masked region, so it
-#: cannot reach out of the sentence it belongs to.
+#: word; :func:`head_quantity` is what decides how much of it is the count.  It
+#: is :func:`_window` like every other clause run, so it stops at a sentence
+#: break, a table-cell boundary, a comment delimiter, a masked region or a
+#: paragraph break, and it cannot reach out of the sentence it belongs to.
 _HEAD_CLAUSE = re.compile(
-    rf"\s*for\s+{_DETERMINER_PREFIX}(?P<head>(?:(?!\.\s|;|\|)[^{MASK}\n]){{0,120}})",
+    rf"\s*for\s+{_DETERMINER_PREFIX}(?P<head>{_window(lazy=False)})",
     re.IGNORECASE,
 )
 
@@ -1641,11 +1676,11 @@ BASELINE_HEADER = """\
 # There is no exemption channel and no way to mark a finding fine: the only
 # legal edit is downward, produced by `--baseline` after real prose was fixed.
 #
-# Two upward corrections are on the record, and they are the only kind that can
-# ever be legitimate -- the detector was undercounting the tree, so the pin was
-# an undercount of a population that was always there.  No prose was written and
-# no repair was made in either.  A repair campaign must never raise this file,
-# and any future increase needs a public reason of exactly this shape.
+# Every movement of this file that NO PROSE EDIT explains is on the record here,
+# with its arithmetic.  All of them are detector corrections -- the tool was
+# miscounting a population that was always there -- and in none of them was prose
+# written or a claim repaired.  A repair campaign must never raise this file, and
+# any future movement of this kind needs a public entry of exactly this shape.
 #
 #   713 -> 740   `NARROW_CHILD`'s anchor gained the `re.IGNORECASE` flag every
 #                other anchor already carried; 27 lowercase occurrences became
@@ -1657,6 +1692,13 @@ BASELINE_HEADER = """\
 #                (+2); and the clause window went from 70 to 200 characters (+1),
 #                which also resolved 274 relocation subjects that had been pinned
 #                only by their destination.
+#  1391 -> 1390  a clause window may no longer cross a blank line.  At 200
+#                characters three spans on this tree reached into the paragraph
+#                above to borrow a count, and all three were wrong: two
+#                RELOCATION subjects lose a number their sentence never stated
+#                (`2->X` -> `->X`, merging into the coarse key already there) and
+#                one PREDICATE_COUNT anchor -- a heading ending in the word
+#                "bundles", counted from the next paragraph -- stops matching.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
