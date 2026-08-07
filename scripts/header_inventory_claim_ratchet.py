@@ -1455,11 +1455,12 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     halves were measured false.  ``for the following 17 wrappers`` is not a
     citation and produced *no key at all*; and where another class does also
     charge the number (``... wrappers (9 theorems)``), filing this record as
-    telemetry still states something false about this prose -- telemetry means
-    "states no size", and that header states one.  What keeps the false charges
-    out is lexical instead of positional: code spans are blanked
-    (:func:`blank_code`), and citation words and relation symbols are refused
-    (:data:`CITATION_WORDS`, :func:`_cites_rather_than_counts`).
+    telemetry files a size this class can read into the table for the ones it
+    cannot -- telemetry is a fact about the extractor's reach and NOT a finding
+    that the prose states no size, so it cannot stand in for the charge.  What
+    keeps the false charges out is lexical instead of positional: code spans are
+    blanked (:func:`blank_code`), and citation words and relation symbols are
+    refused (:data:`CITATION_WORDS`, :func:`_cites_rather_than_counts`).
 
     This is the one class that can decline to charge, and what it declines on is
     a head clause it found no *placeable* quantity in (``Narrow child module for
@@ -2868,7 +2869,7 @@ class Report(NamedTuple):
 
     @property
     def sound(self) -> bool:
-        """Whether ``K0``/``K1``/``K2``/``K3`` all held on this run."""
+        """Whether ``K0``/``K1``/``K2``/``K3``/``K4`` all held on this run."""
         return not self.conservation
 
 
