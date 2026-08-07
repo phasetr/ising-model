@@ -1,7 +1,6 @@
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationSiteIndep
 import IsingModel.TranslationInvariance
-import IsingModel.PhaseTransition
 
 /-!
 # Site-independent magnetization and two-point bounds at ℤ^d
