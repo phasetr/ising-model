@@ -2,7 +2,6 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationSiteIndep
 import IsingModel.TranslationInvariance
-import IsingModel.PhaseTransition
 
 /-!
 # ℤ^d `uniformSpontaneousMagnetization` wrappers

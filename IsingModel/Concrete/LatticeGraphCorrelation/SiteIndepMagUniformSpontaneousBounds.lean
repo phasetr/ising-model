@@ -1,6 +1,5 @@
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
-import IsingModel.PhaseTransition
 
 /-!
 # ℤ^d uniformSpontaneousMagnetization bound wrappers
