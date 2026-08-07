@@ -1,12 +1,30 @@
 #!/usr/bin/env python3
-"""Deletion-candidate safety scanner for the IsingModel Lean library.
+"""Deletion-candidate evidence scanner for the IsingModel Lean library.
 
-Answers one question, mechanically and reproducibly: *is it safe to delete
-these declarations?* It is a pre-flight for a destructive operation, not a
-health gate, so it lives outside ``audit_gate.py`` (whose V1-V4 run on every
-push and must stay sub-second) while **importing** that module's validated
-primitives -- ``strip_noncode``, ``read_capstones``, ``REPO_ROOT``, ``LIB_DIR``,
-``rel`` -- so the repository keeps a single comment/string stripper.
+Answers one question, mechanically and reproducibly: *what evidence is there
+for keeping these declarations?* It is a pre-flight for a destructive
+operation, not a health gate, so it lives outside ``audit_gate.py`` (whose V1-V4
+run on every push and must stay sub-second) while **importing** that module's
+validated primitives -- ``strip_noncode``, ``read_capstones``, ``REPO_ROOT``,
+``LIB_DIR``, ``rel`` -- so the repository keeps a single comment/string stripper.
+
+What it does not do
+-------------------
+**It authorises nothing.** Until issue #4976 the terminal state of the
+classification -- no reference outside the delete set and no citation in the
+scanned documentation -- was reported as a fourth verdict whose name asserted
+that deleting was safe, and a run whose every candidate reached it exited ``0``.
+That is absence of evidence read as evidence of absence: the state says only
+that this textual scan found nothing arguing for keeping the declaration, which
+is what ``uncertain`` already denotes, and the limitation table below is a list
+of the ways it can find nothing while a consumer exists. The class was retired
+on the user's explicit instruction (issue #4976 records the decision). What
+survives is :data:`NO_EVIDENCE_REASON`, an explanatory reason attached to an
+``uncertain`` verdict; a completed scan now always exits ``0``, so neither a
+label nor an exit code can be quoted in a PR body as permission to delete.
+
+The passages below that describe past defects keep their claims and speak of a
+**false no-evidence verdict** where they used to name the retired class.
 
 Why the tool exists
 -------------------
@@ -39,9 +57,9 @@ A third rule follows from the first two and is just as load-bearing:
    candidate really goes away. Candidates the run itself retains -- published,
    uncertain, attribute- or kind-driven -- are therefore removed from the delete
    set *before* the fixpoint, never after. Seeding the fixpoint with every
-   candidate reports a lemma as safe because its only consumer is a lemma the
-   same report tells you to keep: a false ``safe-to-delete``, which for a tool
-   that authorises deletions is the only fatal error class.
+   candidate reports a lemma as unreferenced because its only consumer is a
+   lemma the same report tells you to keep: a false no-evidence verdict, which
+   for a tool read as licensing deletions was the only fatal error class.
 
 4. **A documentation citation that cannot be read charges every candidate.** The
    LaTeX macro table is incomplete by construction, so the normaliser meets
@@ -49,7 +67,7 @@ A third rule follows from the first two and is just as load-bearing:
    warning that changes no verdict and no exit code leaves the tool fail-open
    exactly where it claims to be fail-closed. Each unreadable span is therefore
    charged to **every** candidate name, and those candidates come out
-   ``uncertain``, never ``safe-to-delete``.
+   ``uncertain`` with the charge recorded, never with :data:`NO_EVIDENCE_REASON`.
 
 5. **The Markdown channel has the same failure mode, through backtick parity.**
    Code spans are paired positionally, so a single unbalanced backtick inverts
@@ -74,7 +92,7 @@ A third rule follows from the first two and is just as load-bearing:
    not explained (a macro argument, a second word, the argument of an unbraced
    accent) was read as literal name evidence and refuted the very name the macro
    spelled, so the citation was charged to nobody and the name it hid fell out
-   as ``safe-to-delete``. Refutation from partially read TeX is not robustly
+   carrying no evidence at all. Refutation from partially read TeX is not robustly
    implementable, so :attr:`UnreadableSpan.refutes` is now ``False``
    unconditionally and the rule set it gated is gone. Over-charging costs
    ``uncertain`` verdicts and nothing else; on the real guide it costs nothing,
@@ -88,7 +106,7 @@ characters while ``lambda``/``Pi``/``Sigma`` are not -- Lean reserves those).
 The error directions are asymmetric and the invariant is therefore one-sided:
 
 * class too **wide**  -> real matches rejected -> references under-counted ->
-  **false safe-to-delete**. Catastrophic.
+  **a false absence of references**. Catastrophic.
 * class too **narrow** -> longer identifiers split -> references over-counted ->
   false load-bearing. Merely annoying.
 
@@ -103,11 +121,12 @@ Usage
     python3 scripts/dead_candidate_scan.py --expect scripts/audit/dead_candidate_fixtures.tsv
     python3 scripts/dead_candidate_scan.py --self-test
 
-Exit codes: ``0`` every candidate is ``safe-to-delete`` (or ``--report-only`` /
-``--expect`` satisfied); ``1`` at least one candidate is not safe; ``2``
-internal inconsistency (canary failure, escaped identifier, candidate/index
-disagreement, unknown candidate name, unreadable file). **``2`` must never be
-swallowed by a PR script.**
+Exit codes: ``0`` the scan completed (the verdicts are in the report, and no
+combination of them means "go ahead"); ``1`` **only** from ``--expect``, where a
+fixture row classified differently than recorded; ``2`` internal inconsistency
+(canary failure, escaped identifier, candidate/index disagreement, unknown
+candidate name, unreadable file). **``2`` must never be swallowed by a PR
+script.** A plain scan cannot fail, because a plain scan cannot pass.
 """
 
 from __future__ import annotations
@@ -141,11 +160,25 @@ TEX_GUIDE = REPO_ROOT / "tex" / "proof-guide.tex"
 PUBLISHED = "published-result"
 LOAD_BEARING = "load-bearing"
 UNCERTAIN = "uncertain"
-SAFE = "safe-to-delete"
-VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN, SAFE)
+VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN)
+
+# The terminal state of the classification: the scan found no reference outside
+# the delete set and no citation in the scanned documentation. It records what
+# was *not* observed, so it is a reason attached to a verdict and never a verdict
+# of its own -- absence of evidence is not evidence of absence. Phase 3 attaches
+# it in exactly one branch, and attaches nothing else there, which makes it the
+# precise discriminator of that branch. It replaces the fourth verdict class
+# retired by issue #4976: the observation survives, the permission its name was
+# read as does not.
+NO_EVIDENCE_REASON = (
+    "no reference outside the delete set, no citation in the scanned "
+    "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
+)
 
 EXIT_OK = 0
-EXIT_NOT_SAFE = 1
+# Reachable from :func:`run_expect` alone: a fixture row classified differently
+# than recorded. A plain scan never returns it -- it has no pass/fail to report.
+EXIT_FIXTURE_FAIL = 1
 EXIT_INCONSISTENT = 2
 
 
@@ -316,7 +349,7 @@ DECL_KINDS = (
     "example",
 )
 # Kinds whose deletion changes the surface API rather than only a proof: forced
-# out of ``safe-to-delete`` because this tool is aimed at dead *lemmas*.
+# to ``load-bearing`` because this tool is aimed at dead *lemmas*.
 SURFACE_KINDS = frozenset({"structure", "class", "inductive", "abbrev", "def", "instance"})
 
 # Attributes that make a declaration reachable by *tactics* rather than by name.
@@ -841,10 +874,11 @@ def scan_name(tree: Tree, name: str) -> list[Occurrence]:
 def scan_prose(tree: Tree, name: str) -> list[str]:
     """Return the comment / docstring sites that mention ``name``.
 
-    Never a verdict input: prose is not a reference, and a lemma cited only by a
-    sibling module's ``/-! ... -/`` header is still dead code. It is reported
-    because the deletion PR has to update those headers -- a deletion that
-    builds green can still leave the documentation lying.
+    Never a verdict input: prose is not a reference, so a lemma cited only by a
+    sibling module's ``/-! ... -/`` header is not rescued by that mention -- nor
+    is it thereby shown to be dead, which only a human can settle. It is
+    reported because a deletion PR has to update those headers -- a deletion
+    that builds green can still leave the documentation lying.
     """
     needle = name.rsplit(".", 1)[-1]
     out: list[str] = []
@@ -1080,7 +1114,7 @@ class UnreadableSpan:
     (:meth:`could_cite`), and every one of them is forced to ``uncertain``.
     Counting the span without that step left the tool fail-closed at the level
     of the *warning* and fail-open at the level of the *verdict*, which is the
-    only level that authorises a deletion.
+    level a deletion decision is read off.
     """
 
     label: str
@@ -1097,7 +1131,7 @@ class UnreadableSpan:
         one opened a new fail-open face through the same move: material the
         normaliser had not explained was read as literal name evidence and
         refuted the name it actually spelled, so the citation was charged to
-        nobody and the name it hid could come out `safe-to-delete`.
+        nobody and the name it hid could come out with no evidence at all.
 
         The last of them is why the rules were dropped rather than extended
         again. Macro arguments were swallowed with their macro so that
@@ -1109,8 +1143,8 @@ class UnreadableSpan:
         rules but in the premise that partially read TeX can support a
         refutation at all.
 
-        Charging every candidate can only produce `uncertain` verdicts, never a
-        false `safe-to-delete`. On the real guide it costs nothing at all: the
+        Charging every candidate can only produce charged `uncertain` verdicts,
+        never a false absence. On the real guide it costs nothing at all: the
         coverage warnings are zero, so no candidate is charged this way today.
         """
         return False
@@ -1389,7 +1423,7 @@ def _brace_grouped_pieces(body: str) -> list[str]:
     uncited. Measured on the scanned documentation at ``2380eb36``: 133 such
     name-shaped tokens (102 in ``docs/index.md``, 31 in ``tex/proof-guide.tex``),
     108 of which expand onto 307 real declarations, 160 of those declarations
-    reading ``safe-to-delete`` in a whole-library sweep with this citation as
+    reporting no evidence at all in a whole-library sweep with this citation as
     their only one -- the fatal error class.
 
     Whitespace *inside* a brace group is layout, so it is dropped rather than
@@ -1478,9 +1512,9 @@ def markdown_sources() -> list[Path]:
     that cites results: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and ``docs/plans/`` cites
     modules and lemmas of a refactoring plan. Reading only the index made
-    "no documentation citation" -- the sentence a ``safe-to-delete`` verdict
-    prints -- a claim about one file while sounding like a claim about the
-    documentation, so the whole set is read.
+    "no citation in the scanned documentation" -- the sentence
+    :data:`NO_EVIDENCE_REASON` prints -- a claim about one file while sounding
+    like a claim about the documentation, so the whole set is read.
     """
     paths = sorted(DOCS_DIR.rglob("*.md")) if DOCS_DIR.exists() else []
     if README.exists():
@@ -1495,10 +1529,11 @@ def require_documentation() -> None:
     ``README.md``, no ``docs/index.md`` or no guide, the corresponding channel
     contributes no token and no literal text, every citation living in it
     disappears, and the run still prints "no citation in the scanned
-    documentation" -- the sentence that licenses a deletion -- with a clean bill
-    of health. The three files are tracked, so their absence is never a normal
-    state; it is a moved path, a truncated checkout or a bad rename, and each
-    must stop the scan instead of quietly shrinking its evidence base.
+    documentation" -- the sentence a deletion write-up cites as its evidence --
+    with a clean bill of health. The three files are tracked, so their absence
+    is never a normal state; it is a moved path, a truncated checkout or a bad
+    rename, and each must stop the scan instead of quietly shrinking its
+    evidence base.
     """
     required = (README, DOCS_DIR / "index.md", TEX_GUIDE)
     missing = [rel(path) for path in required if not path.is_file()]
@@ -1727,7 +1762,10 @@ class Verdict:
 
     name: str
     decl: Decl
-    verdict: str = SAFE
+    #: The conservative class. A default is only ever read by a caller that
+    #: builds a verdict without classifying it, so it must be the class that
+    #: claims least; the class retired by #4976 sat here and claimed most.
+    verdict: str = UNCERTAIN
     reasons: list[str] = field(default_factory=list)
     same_file: list[Occurrence] = field(default_factory=list)
     cross_file: list[Occurrence] = field(default_factory=list)
@@ -1750,7 +1788,7 @@ def resolve_candidate(
 
     A *note* forces ``uncertain``; *info* is reported but does not classify. An
     unknown name is a hard failure (exit code 2): a stale candidate list must
-    never be silently reported as deletable.
+    never be silently reported as carrying no evidence.
     """
     notes: list[str] = []
     info: list[str] = []
@@ -1764,8 +1802,9 @@ def resolve_candidate(
         if not allow_homonym:
             notes.append(f"homonymous final component: {listing}")
         else:
-            # The flag is documented as *permitting* a safe verdict, so it must
-            # not leave behind a note that forces uncertain regardless.
+            # The flag is documented as *not* forcing ``uncertain`` on the
+            # collision, so it must not leave behind a note that forces it
+            # regardless.
             info.append(f"homonym allowed by --allow-homonym: {listing}")
     return matches[0], notes, info
 
@@ -1886,9 +1925,10 @@ def classify(
     # that is closed under consumers. The closure is only sound over the
     # candidates that are actually going to be deleted, so the ones phase 1
     # already retained are removed *before* the fixpoint runs. Seeding it with
-    # every candidate (as an earlier revision did) declared a candidate safe
-    # because its only consumer was another candidate that the very same run
-    # reported as a keeper -- a false safe-to-delete, the one fatal error class.
+    # every candidate (as an earlier revision did) reported a candidate as
+    # unreferenced because its only consumer was another candidate that the very
+    # same run reported as a keeper -- a false no-evidence verdict, the one fatal
+    # error class.
     deletable = {
         key
         for key in keyed
@@ -1930,6 +1970,10 @@ def classify(
             verdict.witness = _witness_path(verdict, reverse, key_to_decl, capstone_keys)
             continue
 
+        # The two ``uncertain`` branches are deliberately not merged: the first
+        # records evidence the scan *did* meet and could not weigh, the second
+        # records that it met none. Only the reason tells them apart, so it is
+        # the discriminator every test is written against.
         if key in uncertain_keys:
             verdict.verdict = UNCERTAIN
             verdict.reasons.extend(verdict.notes)
@@ -1938,11 +1982,8 @@ def classify(
             )
             continue
 
-        verdict.verdict = SAFE
-        verdict.reasons.append(
-            "no reference outside the delete set, no citation in the scanned "
-            "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
-        )
+        verdict.verdict = UNCERTAIN
+        verdict.reasons.append(NO_EVIDENCE_REASON)
 
     cascade = _cascade(tree, deletable, reverse, graph, key_to_decl)
     return verdicts, cascade, family_labels
@@ -2112,16 +2153,16 @@ def elided_prefix_matches(
     Those suffixes are **not** family labels, but ``_differentiable_beta_gen``
     matches three declarations (correlation / magnetization / susceptibility),
     so the family-label rule attributed the citation to nobody and
-    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete`` while a progress row of docs/index.md cited it -- a false
-    ``safe-to-delete``, the one fatal error class.
+    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out reporting
+    no evidence at all while a progress row of docs/index.md cited it -- a false
+    no-evidence verdict, the one fatal error class.
 
     Charging *every* match instead was measured before it was rejected: 531 of
     the 759 distinct fragment-shaped tokens that resolve at all match two
     declarations or more, and charging all of them touches 5895 of the library's
-    11000 declarations, including all 92 currently-safe ``_ferromagnetic``
-    candidates. Swept over the whole library it collapses ``safe-to-delete``
-    from 1458 verdicts to 232 (an 84% reduction) and turns the fixtures red
+    11000 declarations, including all 92 ``_ferromagnetic`` candidates then
+    reporting no evidence. Swept over the whole library it collapses that
+    population from 1458 verdicts to 232 (an 84% reduction) and turns the fixtures red
     (``--expect``: FAIL, 1 of 18). It is therefore rejected not as
     unimplementable but as useless: the 232 survivors are what is left after the
     rule has stopped tracking which citation names which result, so they are not
@@ -2130,11 +2171,11 @@ def elided_prefix_matches(
     The rule kept is the one the notation actually states: a match is charged
     when the prefix the fragment elides is *itself* cited on the same line
     (2206 charges over 1077 distinct declarations, measured on the scanned
-    documentation). It only ever adds citations, so it can only turn
-    ``safe-to-delete`` into ``uncertain``, never the reverse. It is *not* inert
+    documentation). It only ever adds citations, so it can only turn a
+    no-evidence verdict into a charged one, never the reverse. It is *not* inert
     on genuine family labels, and the calibration this module ships is what that
     costs: on the 223 ``_ferromagnetic`` candidates, switching the rule off
-    leaves 92 ``safe-to-delete`` and switching it on leaves 47. The label
+    leaves 92 with no evidence and switching it on leaves 47. The label
     ``_ferromagnetic`` is itself charged 155 times (``_pos`` 9 times), because
     the documentation does spell a sibling out in full on those lines; charging
     that one label accounts for 13 of the 45 that move, and other elided
@@ -2188,7 +2229,7 @@ def _cited_declaration_names(
 # A glob/ellipsis citation that resolves to at most this many declarations is
 # charged to *all* of them; above it the citation is filed as a family label and
 # charged to nobody. The knob exists because the same "attributed to nobody"
-# exoneration that produced the false ``safe-to-delete`` repaired by
+# exoneration that produced the false no-evidence verdict repaired by
 # :func:`elided_prefix_matches` on the *suffix* channel was still live on the
 # *glob* channel: ``docs/index.md:1427`` writes
 # ``freeEnergyAlongExhaustion_latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,
@@ -2210,16 +2251,22 @@ def _cited_declaration_names(
 # two classes: ``docs/index.md:2193`` writes
 # ``correlationAlongExhaustion_..._ferromagnetic`` as a genuine elision whose
 # unbounded ``...`` also swallows an unrelated lower bound, giving a precise
-# citation with n = 11, and that over-match is what caps the threshold at 10 (at
-# N >= 11 the ground-truth ``safe-to-delete`` fixture row turns ``uncertain`` and
-# ``--expect`` goes red).
+# citation with n = 11, and that over-match is what caps the threshold at 10: at
+# N >= 11 the fixture row that then recorded the terminal no-evidence state
+# acquired a charge and ``--expect`` went red. That particular guard was
+# label-based and did not survive #4976, the terminal state and a charged one
+# both reading ``uncertain`` now; what replaces it is the no-evidence *count*
+# over the whole ``_ferromagnetic`` family in ``FamilyCalibrationTest``, which
+# every fixture row expecting ``uncertain`` currently belongs to (measured, not
+# structural: a future ``uncertain`` row outside that family would not be
+# covered).
 #
 # The value below is that ceiling, because the knob is one-sided: raising it can
-# only *remove* declarations from ``safe-to-delete``, never add one, so the
-# largest value the fixtures still admit is also the safest. Measured on the
-# whole library (main 171ddd4f, 10872 declarations): N = 8 covers 185 of the 254
-# occurrences (73%) and reports 980 ``safe-to-delete``; N = 9 and N = 10 both
-# cover 194 (76%) and report 976. The four names N = 8 would still hand to a
+# only *remove* declarations from the no-evidence population, never add one, so
+# the largest value the fixtures still admit is also the most conservative.
+# Measured on the whole library (main 171ddd4f, 10872 declarations): N = 8 covers
+# 185 of the 254 occurrences (73%) and leaves 980 with no evidence; N = 9 and
+# N = 10 both cover 194 (76%) and leave 976. The four names N = 8 would still hand to a
 # deletion PR -- named by the nine 9-match occurrences of the bin list above --
 # are ``correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg``,
 # ``correlationAlongExhaustion_latticeGraph_nonneg`` and
@@ -2227,13 +2274,14 @@ def _cited_declaration_names(
 # ``_ferromagnetic`` calibration family (43/79/66/35 of 223) and its 112
 # zero-consumer count are identical at 8, 9 and 10, so the stricter number costs
 # no test churn at all. The price of sitting on the ceiling is that a future
-# ``docs/index.md`` elision widening the 11-match citation turns ``--expect``
-# red; that is the fail-closed direction and is meant to be read as a signal,
-# not silenced by lowering the knob.
+# ``docs/index.md`` elision pushing a charged citation past the threshold drops
+# its charges and turns the family calibration red; that is the fail-closed
+# direction and is meant to be read as a signal, not silenced by lowering the
+# knob.
 #
 # **Globs above the threshold remain a known fail-open residue**: they still
 # charge nobody, so a declaration cited only by such a label can still be
-# reported ``safe-to-delete``. They are printed by :func:`report` under
+# reported as carrying no evidence. They are printed by :func:`report` under
 # "documentation family labels", and closing them is the human keep-check's job
 # -- candidate enumeration is not permission.
 MAX_CHARGED_GLOB_MATCHES = 10
@@ -2261,13 +2309,13 @@ def _apply_doc_channel(
       multi-match glob (as this function did until the threshold landed) is the
       same "attributed to nobody" fail-open the suffix channel was repaired for:
       ``docs/index.md:1427`` cites ``..._ge_log_two*`` (as a brace alternative)
-      and both declarations it names came out ``safe-to-delete`` reading "no
-      citation in the scanned documentation".
+      and both declarations it names came out reading "no citation in the
+      scanned documentation".
 
     A citation the normaliser could not read is attached too, to **every**
     candidate (:meth:`UnreadableSpan.could_cite`; the channel is charge-only).
     That is what turns the coverage warnings into a verdict: without it a name
-    invisible to the TeX channel could still come out ``safe-to-delete``.
+    invisible to the TeX channel could still come out with no evidence at all.
     """
     by_name: dict[str, list[Verdict]] = defaultdict(list)
     for verdict in verdicts:
@@ -2487,7 +2535,8 @@ references, open/export-shortened names, or metaprogrammed names. It does not ch
 autoImplicit binder drift (a `#check @` dump is a separate gate). Doc rows that depend
 on a lemma without naming it are invisible. Run with --lean on a green build to
 cross-check the elaborated dependency graph; run --explain for the full table.
-A "safe-to-delete" verdict is a necessary, not a sufficient, condition for deletion."""
+This tool authorises nothing: it reports the evidence there is for *keeping* a
+declaration, and absence of evidence is not permission to delete."""
 
 # Raw: the text quotes LaTeX (``\texttt``, ``\verb``, ``\beta``), and a cooked
 # literal turned those backslashes into control characters -- ``--explain``
@@ -2570,8 +2619,9 @@ L7d the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
-   such a lemma really is dead code -- it is the surrounding *documentation* the
-   deletion PR must update, or the tree keeps building green while its headers lie.
+   the mention rescues nothing and such a lemma may be dead code, pending human
+   verification -- and it is the surrounding *documentation* a deletion PR must
+   update, or the tree keeps building green while its headers lie.
    The prose is recovered from the comment mask, down to a single blanked
    character, so a one-character name on its own line inside a block comment is
    seen too; what the mask cannot distinguish is prose from an equally long run
@@ -2601,11 +2651,12 @@ L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic
    `_pos` 9 times, so the rule keeps real family labels alive wherever the row also
    spells a sibling out. Charging every match of every family label regardless was
    measured and rejected: it touches 5895 of 11000 declarations, collapses
-   `safe-to-delete` from 1458 to 232 (an 84% reduction) and turns `--expect` red,
+   the no-evidence population from 1458 to 232 (an 84% reduction) and turned `--expect` red,
    which is not a stricter tool but one whose verdicts no longer track which
    citation names which result. So a family label on a line that elides nothing
-   still rescues nobody, and a lemma named only by one is dead code whose
-   *documentation* the deletion PR must update.
+   still rescues nobody, and a lemma named only by one carries no evidence from
+   this channel -- it may be dead code, pending human verification -- while its
+   *documentation* is still what a deletion PR must update.
 L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
    declarations is charged to nobody -- the live fail-open residue of this tool.
    At or below the threshold every match is charged, which repairs the leak that
@@ -2630,7 +2681,6 @@ def report(
     canary: tuple[int, dict[str, int]],
     tex_citations: int,
     elapsed: float,
-    report_only: bool,
 ) -> None:
     """Print the human-readable report (deterministic: every list is sorted)."""
     count, per_char = canary
@@ -2713,11 +2763,10 @@ def report(
     print()
     print(f"elapsed: {elapsed:.1f}s")
     print()
-    if report_only:
-        print(
-            "NON-EVIDENTIAL: --report-only always exits 0. "
-            "Its output must not be pasted as deletion evidence in a PR."
-        )
+    print(
+        "NON-EVIDENTIAL: every completed scan exits 0 and authorises nothing. "
+        "Its output must not be pasted as deletion evidence in a PR."
+    )
     print(BANNER)
 
 
@@ -2741,7 +2790,21 @@ def read_fixtures(path: Path) -> list[tuple[str, str, str]]:
 
 
 def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
-    """Run the fixture regression suite. Return the process exit code."""
+    """Run the fixture regression suite. Return the process exit code.
+
+    Compares ``verdict.verdict`` only. Since #4976 folded the retired class
+    into ``uncertain``, this can no longer distinguish a row that lost its
+    citation evidence (``uncertain`` with :data:`NO_EVIDENCE_REASON`) from
+    one that was already charged-but-unresolved ``uncertain`` -- both read
+    identically here. The finer-grained discrimination lives in the unit
+    tests (which assert on ``verdict.reasons`` directly) and, for the
+    ``_ferromagnetic`` family specifically, in
+    ``FamilyCalibrationTest.test_ferromagnetic_family_counts``'s
+    no-evidence count. Neither is a structural substitute for this fixture
+    format: closing the gap here would mean teaching it an expected
+    sub-class, which was left as a follow-up design decision (issue #4976
+    PR review).
+    """
     rows = read_fixtures(path)
     verdicts, _cascade, family_labels = classify(
         tree, [row[0] for row in rows], docs, allow_homonym=False
@@ -2750,10 +2813,7 @@ def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
     failures: list[str] = []
     for name, expected, provenance in rows:
         actual = by_name[name].verdict
-        if expected == "not-safe":
-            ok = actual != SAFE
-        else:
-            ok = actual == expected
+        ok = actual == expected
         status = "ok  " if ok else "FAIL"
         print(f"{status} {name}: expected {expected}, got {actual}   ({provenance})")
         if not ok:
@@ -2761,7 +2821,7 @@ def run_expect(tree: Tree, docs: list[DocSource], path: Path) -> int:
     print()
     if failures:
         print(f"fixtures: FAIL ({len(failures)} of {len(rows)})")
-        return EXIT_NOT_SAFE
+        return EXIT_FIXTURE_FAIL
     print(f"fixtures: PASS ({len(rows)} rows)")
     print(f"family labels observed: {len(family_labels)}")
     return EXIT_OK
@@ -2828,11 +2888,12 @@ def lean_cross_check(
 ) -> tuple[list[str], list[str]]:
     """Return ``(hard failures, advisory findings)`` from the elaborated graph.
 
-    Every candidate is compared, not only the ``safe-to-delete`` ones: an unseen
-    consumer is a defect of the text scanner wherever it appears. It is fatal on
-    a ``safe-to-delete`` verdict (the tool would authorise a bad deletion) and
-    advisory elsewhere (the verdict is already "keep", so the risk is a wrong
-    *reason*, not a wrong action).
+    Every candidate is compared, not only the ones the text scan found nothing
+    for: an unseen consumer is a defect of the text scanner wherever it appears.
+    It is fatal where the scan recorded :data:`NO_EVIDENCE_REASON` -- there the
+    report would state an absence Lean can refute -- and advisory elsewhere,
+    where the recorded evidence already argues for keeping and the risk is a
+    wrong *reason* rather than a wrong statement.
     """
     reverse: dict[str, set[str]] = defaultdict(set)
     for source, targets in edges.items():
@@ -2857,7 +2918,7 @@ def lean_cross_check(
         if not unseen:
             continue
         message = f"{full}: Lean sees consumers {unseen[:5]} that the text scan does not"
-        if verdict.verdict == SAFE:
+        if NO_EVIDENCE_REASON in verdict.reasons:
             problems.append(message)
         else:
             advisories.append(f"[{verdict.verdict}] {message}")
@@ -2906,21 +2967,20 @@ def collect_names(args: argparse.Namespace, tree: Tree) -> list[str]:
 def build_parser() -> argparse.ArgumentParser:
     """Return the command-line parser."""
     parser = argparse.ArgumentParser(
-        description="Deletion-candidate safety scanner for the IsingModel library."
+        description="Deletion-candidate evidence scanner for the IsingModel library."
     )
     parser.add_argument("names_file", nargs="?", help="file with one declaration name per line")
     parser.add_argument("--name", action="append", help="add a single candidate name")
     parser.add_argument("--pattern", help="add every declaration whose name matches this regex")
     parser.add_argument("--json", dest="json_path", help="write machine-readable verdicts here")
-    parser.add_argument(
-        "--report-only", action="store_true", help="always exit 0 (output is non-evidential)"
-    )
     parser.add_argument("--expect", help="regression mode against a fixtures TSV")
     parser.add_argument(
         "--lean", action="store_true", help="cross-check the elaborated graph (needs a green build)"
     )
     parser.add_argument(
-        "--allow-homonym", action="store_true", help="permit safe for a colliding final component"
+        "--allow-homonym",
+        action="store_true",
+        help="do not force `uncertain` on a colliding final component",
     )
     parser.add_argument("--explain", action="store_true", help="print the full limitation table")
     parser.add_argument("--self-test", action="store_true", help="run the built-in test suite")
@@ -2999,8 +3059,8 @@ def main(argv: list[str] | None = None) -> int:
                 )
             print(
                 f"--lean cross-check: {len(verdicts)} candidate(s) compared against the "
-                "elaborated graph; no consumer seen by Lean was missed on a "
-                "safe-to-delete verdict"
+                "elaborated graph; no consumer seen by Lean was missed where the text "
+                "scan recorded no evidence"
             )
         if args.json_path:
             write_json(Path(args.json_path), verdicts, cascade)
@@ -3013,11 +3073,10 @@ def main(argv: list[str] | None = None) -> int:
             canary,
             tex_citations,
             time.time() - started,
-            args.report_only,
         )
-        if args.report_only:
-            return EXIT_OK
-        return EXIT_OK if all(v.verdict == SAFE for v in verdicts) else EXIT_NOT_SAFE
+        # A completed scan reports; it does not adjudicate. There is no verdict
+        # combination that means "go ahead", so there is no exit code for one.
+        return EXIT_OK
     except Inconsistency as exc:
         print(f"INCONSISTENT: {exc}", file=sys.stderr)
         return EXIT_INCONSISTENT

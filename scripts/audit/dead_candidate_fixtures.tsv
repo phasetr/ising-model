@@ -2,9 +2,16 @@
 #
 #   name <TAB> expected-class <TAB> provenance
 #
-# expected-class is one of: published-result, load-bearing, uncertain,
-# safe-to-delete, or the weaker `not-safe` (anything but safe-to-delete), which
-# is what a keeper actually has to satisfy.
+# expected-class is one of: published-result, load-bearing, uncertain. Issue
+# #4976 retired the fourth class and with it the weak `not-safe` expectation,
+# which was defined by reference to it ("anything but that class") and would
+# have gone vacuously true. Every row now names an exact class: the 10 rows that
+# carried `not-safe` were replaced by the class each one actually classifies as,
+# measured by `--expect` at implementation HEAD 95d37da0 -- 7 published-result
+# (the documentation channel wins over their Lean consumers) and 3 load-bearing
+# (pseudoMassG_analyticAt, pseudoMassG_analyticWithinAt_Ici_zero,
+# freeEnergyAlongExhaustion_nonneg_of_ferromagnetic). That is a strict
+# tightening; no row expected the retired class, so nothing was dropped.
 #
 # Run with:  python3 scripts/dead_candidate_scan.py --expect scripts/audit/dead_candidate_fixtures.tsv
 #
@@ -14,61 +21,63 @@
 #
 # Family-level calibration on the #4927 post-deletion tree based on e7d3c5f2,
 # `--pattern '_ferromagnetic$'`:
-#   219 candidates -> 15 safe-to-delete, 88 uncertain, 81 load-bearing,
-#   35 published-result; 110 of the 219 have zero Lean consumers.
+#   219 candidates -> 103 uncertain (15 of them carrying no evidence at all,
+#   88 charged), 81 load-bearing, 35 published-result; 110 of the 219 have zero
+#   Lean consumers. The 103 was re-measured after #4976 folded the retired class
+#   into uncertain (88 + 15); every other integer is unchanged.
 # These integers are asserted by FamilyCalibrationTest in
 # scripts/test_dead_candidate_scan.py; they are main-relative and must be
 # refreshed there and here together, with a justification, when they move.
 # The resolved-glob elision-head repair was measured against exact base
 # 370f7033 over all 10606 unique declaration names. It adds 205 unique shorthand
 # evidence strings and removes no evidence; exact/module/unreadable evidence is
-# unchanged. Verdicts move only away from deletion eligibility: 49 safe-to-delete
-# -> uncertain, 11 safe-to-delete -> load-bearing, and 12 uncertain ->
+# unchanged. Verdicts move only away from deletion eligibility: 49 no-evidence
+# -> charged, 11 no-evidence -> load-bearing, and 12 charged ->
 # load-bearing. Family labels move 387 -> 381 by removing six labels that now
 # have concrete immediate-sibling targets; no label is added. All 18 fixture
 # verdict rows below remain unchanged.
 # The fully-qualified IsingModel-glob repair was measured against fixed base
 # a09267ce over all 10606 declarations: the 18 fixture verdicts stay unchanged,
 # citation evidence removes 0 and adds exactly 20 shorthand / 0 exact charges,
-# verdict changes and unsafe movements are both 0, and family labels move
+# verdict changes and movements toward deletion are both 0, and family labels move
 # 378 -> 387 by adding exactly the nine wide qualified-token sites.
 # Last move: the narrow-glob repair (a glob/ellipsis citation naming at most
 # MAX_CHARGED_GLOB_MATCHES = 10 declarations is charged to all of them instead of
-# being attributed to nobody) took 3 candidates out of safe-to-delete, 2 into
-# uncertain and 1 into load-bearing through the delete-closure, and moved a
-# fourth from uncertain to load-bearing. Whole-library: safe-to-delete
-# 1091 -> 976, uncertain 691 -> 761, load-bearing 2081 -> 2126, published-result
-# unchanged at 7009, with no verdict moving toward safe-to-delete.
+# being attributed to nobody) took 3 candidates out of the no-evidence state, 2
+# into charged-uncertain and 1 into load-bearing through the delete-closure, and
+# moved a fourth from charged to load-bearing. Whole-library: no-evidence
+# 1091 -> 976, charged 691 -> 761, load-bearing 2081 -> 2126, published-result
+# unchanged at 7009, with no verdict moving toward no-evidence.
 # The concrete positive-pair row below is uncertain because the current shorthands
 # charge all 7 of 7 ferromagnetic declarations and all 5 of 5 pair-positive declarations.
 # The synthetic `test_qualified_globs_keep_the_1_2_10_11_threshold` pins the
-# chargeable 10 / unchargeable 11 boundary directly. The real-tree exit-zero
-# path is pinned separately by `test_isolated_candidate_exits_zero` using a
-# current safe zero-consumer candidate.
-# Before that: PR #4754 (safe-to-delete batch 4) took the family from 47/77 to
+# chargeable 10 / unchargeable 11 boundary directly. The no-evidence report is
+# pinned separately by `test_isolated_candidate_exits_zero` using a current
+# zero-consumer, zero-citation candidate.
+# Before that: PR #4754 (deletion batch 4) took the family from 47/77 to
 # 46/78, and the elided-prefix rule (a suffix citation whose elided prefix is
 # spelled out on the same documentation line is a shorthand for the siblings
-# that share it, not a family label) took 45 candidates out of safe-to-delete,
-# 33 into uncertain and 12 into load-bearing through the delete-closure. This
+# that share it, not a family label) took 45 candidates out of the no-evidence
+# state, 33 into charged and 12 into load-bearing through the delete-closure. This
 # header had also drifted twice: it carried 263/132/143 from main 0922a812 while
 # the test asserted 223/92/112, and then 47/77 while the test asserted 46/78.
 #
-# The gap between "no consumer" and "safe" is the *delete*
-# closure: a lemma consumed only by another candidate is deletable with it, but
-# only if that other candidate is itself deleted. An earlier revision seeded the
+# The gap between "no consumer" and "no evidence" is the *delete*
+# closure: a lemma consumed only by another candidate loses that reference with it,
+# but only if that other candidate is itself deleted. An earlier revision seeded the
 # closure with every candidate and then let the classifier retain some of them,
-# which made 15 lemmas safe-to-delete whose only consumer the same run reported
+# which left 15 lemmas reporting no evidence whose only consumer the same run reported
 # as a keeper. The closure is sound only over the candidates that actually go
 # away, so the retained ones are now removed before the fixpoint runs.
 
-# --- PR #4641 keepers, internally load-bearing (Lean channel) ---
-two_div_one_add_pow_le_two_div_pow	not-safe	#4641 keeper; consumed by two_div_one_add_pow_mul_..._le_two_div_pow_mul_two_div_pow
-one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow	not-safe	#4641 keeper; consumed by one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
-one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow	not-safe	#4641 keeper; same consumer
-pseudoMassG_analyticAt	not-safe	#4641 keeper; consumed by pseudoMassG_analyticWithinAt_Ici_zero (sibling _of_even differs only by suffix)
-pseudoMassG_analyticWithinAt_Ici_zero	not-safe	#4641 keeper; consumed by pseudoMassG_continuousWithinAt_Ici_zero
-one_div_one_add_pow_le_one_div_pow	not-safe	#4641 keeper; consumed by one_div_one_add_pow_mul_..._le_one_div_pow_mul_one_div_pow
-one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	not-safe	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
+# --- PR #4641 keepers with Lean consumers (the class is whichever channel wins) ---
+two_div_one_add_pow_le_two_div_pow	published-result	#4641 keeper; consumed by two_div_one_add_pow_mul_..._le_two_div_pow_mul_two_div_pow
+one_div_one_add_M_t_pow_le_max_mul_one_div_one_add_t_pow	published-result	#4641 keeper; consumed by one_div_one_add_M_t_pow_le_const_mul_one_div_one_add_pow_pow
+one_div_one_add_t_pow_le_two_pow_mul_one_div_one_add_pow_pow	published-result	#4641 keeper; same consumer
+pseudoMassG_analyticAt	load-bearing	#4641 keeper; consumed by pseudoMassG_analyticWithinAt_Ici_zero (sibling _of_even differs only by suffix)
+pseudoMassG_analyticWithinAt_Ici_zero	load-bearing	#4641 keeper; consumed by pseudoMassG_continuousWithinAt_Ici_zero
+one_div_one_add_pow_le_one_div_pow	published-result	#4641 keeper; consumed by one_div_one_add_pow_mul_..._le_one_div_pow_mul_one_div_pow
+one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	published-result	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
 
 # --- PR #4641 keepers with ZERO Lean consumers, saved only by docs/index.md ---
 one_div_mul_pow_mul_one_div_mul_pow_eq	published-result	docs/index.md:2052 (GJ Thm 17.5.1 M-factor factorization, Done row)
@@ -76,11 +85,11 @@ one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow	publi
 pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md:1945 (Sec 17.5 Step 132b, Done row)
 
 # --- The _ferromagnetic case: candidate -> consumer -> GJ Prop 4.6.1 ---
-freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	not-safe	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
+freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
 
 # --- Unicode identifiers must behave exactly like ASCII ones ---
-freeEnergyΛ_nonneg_of_ferromagnetic	not-safe	3 consumers; the U+039B in the name must not split the key
-correlationΛ_high_temp_h_zero_nonneg	not-safe	3 consumers; same
+freeEnergyΛ_nonneg_of_ferromagnetic	published-result	3 consumers; the U+039B in the name must not split the key
+correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; same
 
 # --- A zero-consumer declaration conservatively retained by shorthand evidence ---
 # Issue #4927 leaves this retained sibling with no Lean consumer, but the current
@@ -95,7 +104,7 @@ freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	tex/proof-guide.tex spe
 # 16 section-18 names are spelled \texttt{...\ensuremath{\mathbb{C}}...}; before
 # the unwrap all 16 were invisible to the TeX channel, while the run printed the
 # 20 warnings that said so and exited 0 anyway. Both rows *also* pass on
-# docs/index.md alone -- which is why they were never false safe -- so the row
+# docs/index.md alone -- which is why they never reported a false absence -- so the row
 # that pins the unwrap itself is EnsureMathTest in
 # scripts/test_dead_candidate_scan.py, asserting the names are findable in the
 # normalised TeX. These two rows record the case; the unit test guards it.
