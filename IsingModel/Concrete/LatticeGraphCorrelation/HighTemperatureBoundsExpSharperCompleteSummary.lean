@@ -4,14 +4,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete HT Λ-layer complete_summary_exp wrappers
 
-Narrow child module for the 6 ℤ^d Λ-layer `*_complete_summary_exp`
-HT wrappers (3 base: `partitionFunctionΛ_*`, `freeEnergyΛ_*`,
-`log_partitionFunctionΛ_*`; plus their 3 `_ferromagnetic` variants)
-extracted from `HighTemperatureBoundsExpSharper.lean` in PR #2081.
-Each is a thin pass-through to the corresponding ambient
-`*_complete_summary_exp` lemma at `IsingModel.latticeGraph d`. The
-theorem names are unchanged from the former
-`HighTemperatureBoundsExpSharper` declarations.
+Instantiates the Λ-level complete-summary exponential bounds of GJ §18.3–§18.4 at
+`IsingModel.latticeGraph d`, so a ℤ^d caller obtains the whole two-sided estimate in one
+application.
 -/
 
 namespace IsingModel
@@ -78,14 +73,6 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete
         (⟨J, 0, 0⟩ : IsingParams ℝ)) = (Λ.card : ℝ) * Real.log 2 :=
   log_partitionFunctionΛ_high_temp_expansion_h_zero_complete_summary_exp
     (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-! ## Moved: Λ-direct ferromagnetic complete_summary_exp wrappers
-
-The three Λ-direct `complete_summary_exp_ferromagnetic` wrappers
-(`partitionFunctionΛ`, `log_partitionFunctionΛ`, `freeEnergyΛ`) now
-live in `HighTemperatureBoundsExpSharperCompleteSummaryFerro.lean`. -/
-
-
 
 end Ambient
 

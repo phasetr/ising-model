@@ -4,11 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 /-!
 # Concrete AlongExhaustion Mayer strict positivity wrappers
 
-Narrow child module for ten ℤ^d AlongExhaustion strict-positivity /
-strict-monotonicity wrappers under `allPolymers` nonempty hypotheses.
-Each wrapper is a thin pass-through to the corresponding ambient
-`*_AlongExhaustion_*_of_polymers_nonempty` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates the along-exhaustion strict positivity and strict monotonicity of the
+van-den-Berg polymer-family sum under a nonempty polymer set at
+`IsingModel.latticeGraph d`, the strict half of the GJ §18.5 bounds.
 -/
 
 namespace IsingModel
@@ -49,12 +47,6 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_strictMonoOn_of_polymers_nonem
   Ambient.vdPolymerFamilies_sumAlongExhaustion_strictMonoOn_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ n h_poly
 
-/-! ## Moved: polymerFreeEnergyAlongExhaustion_pos_of_t_pos wrapper
-
-`polymerFreeEnergyAlongExhaustion_latticeGraph_pos_of_t_pos_of_polymers_nonempty`
-now lives in `MayerStrictPositivityAlongExPFE.lean`. -/
-
-
 /-- **ℤ^d along-ex: 1 < vdSum under `0 < t` and polymers exist**. -/
 theorem
 vdPolymerFamilies_sumAlongExhaustion_latticeGraph_gt_one_of_t_pos_of_polymers_nonempty
@@ -87,23 +79,6 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pos_of_t_pos_of_poly
             ∏ P ∈ Γ, t ^ P.card) :=
   Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_pos_of_t_pos_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_t_pos n h_poly
-
-/-! ## Moved: polymerFreeEnergyAlongExhaustion_tanh_pos wrapper
-
-`polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty`
-now lives in `MayerStrictPositivityAlongExPFE.lean`. -/
-
-
-/-! ## Moved: AlongExhaustion tanh / strictMono mayer wrappers
-
-The four AlongExhaustion tanh / strictMono mayer wrappers
-(`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
-`_minus_one_tanh_pos_polymers_nonempty`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`,
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`)
-now live in `MayerStrictPositivityAlongExTanhAndStrictMono.lean`. -/
-
-
 
 end Ambient
 end IsingModel

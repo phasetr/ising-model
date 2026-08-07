@@ -6,15 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCom
 /-!
 # Concrete HT AlongExhaustion complete_summary_exp wrappers
 
-Narrow child module for the 6 ℤ^d along-exhaustion
-`*_complete_summary_exp` HT wrappers (3 base: `freeEnergyAlongExhaustion_*`,
-`partitionFunctionAlongExhaustion_*`, `log_partitionFunctionAlongExhaustion_*`;
-plus 3 `_ferromagnetic` variants) extracted from
-`HighTemperatureBoundsAlongExhaustionExpSharper.lean` in PR #2083.
-Each is a thin pass-through to the corresponding ambient
-`*_complete_summary_exp` lemma at `IsingModel.latticeGraph d`. The
-theorem names are unchanged from the former
-`HighTemperatureBoundsAlongExhaustionExpSharper` declarations.
+Instantiates the along-exhaustion complete-summary exponential bounds of GJ §18.3–§18.4 at
+`IsingModel.latticeGraph d`, for the free energy, the partition function and its logarithm.
+Each is a pass-through of the corresponding ambient statement.
 -/
 
 namespace IsingModel
@@ -85,15 +79,6 @@ log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_com
         (⟨J, 0, 0⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n
-
-/-! ## Moved: ferromagnetic complete_summary_exp wrappers
-
-The three along-ex `complete_summary_exp_ferromagnetic` wrappers
-(`partitionFunctionAlongExhaustion`, `log_partitionFunctionAlongExhaustion`,
-`freeEnergyAlongExhaustion`) now live in
-`HighTemperatureBoundsAlongExExpSharperCompleteSummaryFerro.lean`. -/
-
-
 
 end Ambient
 

@@ -4,15 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructure
 /-!
 # ℤ^d AlongExhaustion mayer-epsilon infrastructure wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion mayer-epsilon
-infrastructure wrappers extracted from `MayerEpsilonInfrastructure.lean`:
-
-* `mayerExpansionTermAlongExhaustion_latticeGraph_one_nonneg_of_nonneg`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_two_nonpos_of_nonneg`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_at_zero`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_continuous`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_lt_one_eventually`,
-* `allPolymersAlongExhaustion_latticeGraph_eq_empty_of_edgeFinset_empty`.
+Instantiates the along-exhaustion sign and degeneracy facts about the low-order Mayer
+expansion terms and the polymer set at `IsingModel.latticeGraph d`, the bookkeeping the
+ℤ^d cluster-expansion estimates rest on.
 -/
 
 namespace IsingModel
@@ -42,14 +36,6 @@ mayerExpansionTermAlongExhaustion_latticeGraph_two_nonpos_of_nonneg
       ≤ 0 :=
   Ambient.mayerExpansionTermAlongExhaustion_two_nonpos_of_nonneg
     (IsingModel.latticeGraph d) Λ ht n
-
-/-! ## Moved: along-ex ε(t) infrastructure wrappers
-
-The three `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_*`
-wrappers (`_at_zero`, `_continuous`, `_lt_one_eventually`) now live in
-`MayerEpsilonInfrastructureAlongExVdSum.lean`. -/
-
-
 
 /-- **ℤ^d along-ex: allPolymers = ∅ on edgeless induced graphs**. -/
 theorem

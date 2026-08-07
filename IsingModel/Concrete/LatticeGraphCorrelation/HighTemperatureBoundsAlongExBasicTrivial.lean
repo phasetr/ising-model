@@ -3,29 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton
 
 /-!
-# Concrete HT AlongExhaustion correlation trivial-slice / symmetry wrappers
+# Concrete HT AlongExhaustion correlation singleton / odd-vanishing wrappers
 
-Narrow child module for the 6 ℤ^d along-exhaustion correlation
-trivial-slice / symmetry wrappers
-(`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero`,
-`_at_pair_beta_zero`, `_at_singleton_J_zero`, `_at_singleton_beta_zero`,
-`_at_singleton`, `_odd_card_eq_zero`) extracted from
-`HighTemperatureBoundsAlongExhaustionBasic.lean` in PR #2076. Each is
-a thin pass-through to the corresponding ambient
-`correlationAlongExhaustion_high_temp_h_zero_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBoundsAlongExhaustionBasic` declarations.
+Instantiates the ambient zero-field correlation degeneracies along an exhaustion at
+`IsingModel.latticeGraph d`: the single-site value and the Z₂ vanishing on odd subsets.
+Each is a pass-through of the matching `correlationAlongExhaustion_high_temp_h_zero_*`
+ambient lemma.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: trivial-slice wrappers (J = 0, β = 0)
-
-The four `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_*_{J,beta}_zero`
-trivial-slice wrappers (singleton/pair at J = 0 and β = 0) now live in
-`HighTemperatureBoundsAlongExBasicTrivialSlices.lean`. -/
-
 
 /-- **ℤ^d along-exhaustion magnetization vanishes at h = 0**: at every
 stage `n`,

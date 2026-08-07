@@ -2,18 +2,11 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
 
 /-!
-# ℤ^d §18.5 AlongExhaustion polymerFreeEnergy tanh-bound / ferro / hasDerivAt wrappers
+# ℤ^d §18.5 AlongExhaustion polymerFreeEnergy tanh-bound / `hasDerivAt` wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` wrappers extracted from
-`PolymerFreeEnergyTanhBounds.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_card_mul`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_card_mul_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_sandwich_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_card_log_two_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_eq_log_one_add_eps`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_hasDerivAt`.
+Instantiates the along-exhaustion polymer free-energy `tanh`-form upper bound, its closed
+form `log (1 + ε)`, and its derivative at `IsingModel.latticeGraph d`, the ℤ^d shape of the
+GJ §18.5 estimates.
 -/
 
 namespace IsingModel
@@ -32,15 +25,6 @@ theorem polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_card_mul
         (Λ.volume n)).edgeFinset.card * Real.tanh (β * J) :=
   Ambient.polymerFreeEnergyAlongExhaustion_tanh_le_card_mul
     (IsingModel.latticeGraph d) Λ hβJ n
-
-/-! ## Moved: along-ex ferromagnetic tanh-bound wrappers
-
-The three along-ex ferromagnetic
-`polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*_ferro` wrappers
-(`_le_card_mul_ferro`, `_sandwich_ferro`, `_le_card_log_two_ferro`)
-now live in `PolymerFreeEnergyTanhBoundsAlongExFerro.lean`. -/
-
-
 
 /-- **ℤ^d along-ex: polymerFreeEnergy = log(1 + ε(t))**. -/
 theorem polymerFreeEnergyAlongExhaustion_latticeGraph_eq_log_one_add_eps

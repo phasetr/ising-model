@@ -4,12 +4,9 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 /-!
 # Concrete `mayer_identity_*_polymer_free_energy_*` edge cases
 
-Narrow child module for six ℤ^d
-`mayer_identity_*_polymer_free_energy_*_latticeGraph` wrappers covering
-Λ + along-exhaustion forms at `J = 0`, `β = 0`, and either-zero edge
-cases. Each wrapper is a thin pass-through to the corresponding
-ambient `mayer_identity_*_polymer_free_energy_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates the GJ §18.5 Mayer identity for the polymer free energy at
+`IsingModel.latticeGraph d` on the degenerate parameter slices, where the expansion
+collapses and the identity is checked directly.
 -/
 
 namespace IsingModel
@@ -63,17 +60,6 @@ mayer_identity_at_either_zero_polymer_free_energy_Λ_latticeGraph
         (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
   Ambient.mayer_identity_at_either_zero_polymer_free_energy_Λ
     (IsingModel.latticeGraph d) Λ N
-
-/-! ## Moved: along-ex Mayer-identity polymer_free_energy wrappers
-
-The three along-ex
-`mayer_identity_at_*_zero_polymer_free_energy_AlongExhaustion_latticeGraph`
-wrappers (`J_zero`, `beta_zero`, `either_zero`) now live in
-`MayerEdgeCasesPolymerFreeEnergyAlongEx.lean`. -/
-
-
-
-
 
 end Ambient
 end IsingModel

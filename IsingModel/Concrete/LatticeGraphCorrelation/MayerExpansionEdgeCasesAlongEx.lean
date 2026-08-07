@@ -5,15 +5,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe
 /-!
 # ℤ^d AlongExhaustion mayer-expansion edge-case wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion mayer-expansion
-edge-case wrappers extracted from `MayerExpansionEdgeCases.lean`:
-
-* `mayerExpansionTermAlongExhaustion_latticeGraph_two`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_two_filter`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_two`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_eq_zero_of_no_polymers`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_eq_zero_of_edgeFinset_empty`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_abs_le`.
+Instantiates the along-exhaustion evaluations and absolute bound for the second-order Mayer
+expansion term at `IsingModel.latticeGraph d`, which is where the GJ §18.5 remainder
+estimate is anchored.
 -/
 
 namespace IsingModel
@@ -56,15 +50,6 @@ theorem mayerExpansionTermAlongExhaustion_latticeGraph_two_filter
           (t ^ pq.1.card * t ^ pq.2.card) :=
   Ambient.mayerExpansionTermAlongExhaustion_two_filter
     (IsingModel.latticeGraph d) Λ t n
-
-/-! ## Moved: along-ex mayerPartialSumAlongExhaustion wrappers
-
-The three along-ex `mayerPartialSumAlongExhaustion_latticeGraph_*`
-wrappers (`_two`, `_eq_zero_of_no_polymers`,
-`_eq_zero_of_edgeFinset_empty`) now live in
-`MayerExpansionEdgeCasesAlongExPartialSum.lean`. -/
-
-
 
 /-- **ℤ^d along-ex: mayerExpansionTerm absolute bound**. -/
 theorem mayerExpansionTermAlongExhaustion_latticeGraph_abs_le
