@@ -2247,6 +2247,144 @@ class DriftTest(unittest.TestCase):
         self.assertNotIn("PASS", buffer.getvalue())
 
 
+#: The fix under test, undone: a recorded pin that will not open is filed as a
+#: base commit that never pinned anything.  Written as a mutation rather than as
+#: a hand-rolled stub so that :func:`load_mutant` fails loudly if the branch it
+#: names is ever renamed away.
+BASELINE_FAIL_OPEN = (
+    '        raise UnsoundRun(\n'
+    '            f"{commit[:12]} records {BASELINE_REPO_PATH} but it could not be read, "\n'
+    '            "so the base branch\'s pin is unknown rather than absent"\n'
+    '        )\n',
+    "        return None, []\n",
+)
+
+
+class BaselinePresenceTest(unittest.TestCase):
+    """"The base carries no pin" is a fact; "the pin could not be read" is not.
+
+    ``had_baseline=False`` switches ``B1`` and ``B2`` off and prints a ``PASS``,
+    so it may only be reached from an *answer*.  While it was read off ``git
+    show``'s exit status it was also the answer for a corrupt object, a blob a
+    partial clone never fetched and a commit that does not exist: a check that
+    turns itself off and reports a pass, which is the shape
+    :func:`ratchet.base_commit` refuses one function above it.
+    """
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-presence-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        (self.root / "IsingModel").mkdir()
+        (self.root / "scripts" / "audit").mkdir(parents=True)
+        self.write("IsingModel/One.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text())
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        self.git("add", "-A")
+
+    def git(self, *args: str) -> None:
+        """Run ``git`` in the scratch repository."""
+        subprocess.run(["git", "-C", self.tmp, *args], check=True, capture_output=True)
+
+    def write(self, relative: str, text: str) -> None:
+        """Write ``text`` at ``relative`` inside the scratch repository."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+    def repin(self) -> None:
+        """Regenerate the scratch repository's pin from its own tree."""
+        report = ratchet.build_report(root=self.root)
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(report.charged))
+
+    def commit_base(self, *, with_pin: bool) -> None:
+        """Commit the base, carrying the pin or genuinely lacking it."""
+        if with_pin:
+            self.repin()
+            self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+
+    def drift_output(self, drift: ratchet.Drift) -> tuple[bool, str]:
+        """Return what :func:`ratchet.print_drift` returned and printed."""
+        buffer = io.StringIO()
+        with contextlib.redirect_stdout(buffer):
+            ok = ratchet.print_drift(drift, "main")
+        return ok, buffer.getvalue()
+
+    def test_a_base_that_never_pinned_is_a_first_landing(self) -> None:
+        """The state the ``None`` answer is *for*, and the one this PR is in."""
+        self.commit_base(with_pin=False)
+        self.assertEqual(ratchet.baseline_at(self.root, "main"), (None, []))
+        self.repin()
+        drift = ratchet.check_drift(root=self.root, base_ref="main")
+        self.assertTrue(drift.ok, drift)
+        self.assertFalse(drift.had_baseline)
+        ok, printed = self.drift_output(drift)
+        self.assertTrue(ok)
+        self.assertIn("first landing", printed)
+
+    def test_a_pin_the_base_records_but_git_cannot_read_is_unsound(self) -> None:
+        """The defect: a recorded pin whose blob is gone used to read as "no pin".
+
+        Removing the loose object leaves the base commit's *tree* naming the pin
+        and its content unreadable, which is what a corrupt object store and a
+        partial clone both look like.
+        """
+        self.commit_base(with_pin=True)
+        blob = subprocess.run(
+            ["git", "-C", self.tmp, "rev-parse", f"main:{ratchet.BASELINE_REPO_PATH}"],
+            check=True, capture_output=True, text=True,
+        ).stdout.strip()
+        loose = self.root / ".git" / "objects" / blob[:2] / blob[2:]
+        self.assertTrue(loose.exists(), "anti-vacuity: the fixture needs a loose object to remove")
+        loose.unlink()
+        listing = ratchet._git(
+            self.root, "ls-tree", "--name-only", "main", "--", ratchet.BASELINE_REPO_PATH
+        )
+        self.assertEqual(listing[1].strip(), ratchet.BASELINE_REPO_PATH,
+                         "the base commit's tree still records the pin")
+        self.assertNotEqual(
+            ratchet._git(self.root, "show", f"main:{ratchet.BASELINE_REPO_PATH}")[0], 0,
+            "anti-vacuity: `git show` really does fail, which is what used to mean 'no pin'",
+        )
+        with self.assertRaises(ratchet.UnsoundRun):
+            ratchet.baseline_at(self.root, "main")
+        drift = ratchet.check_drift(root=self.root, base_ref="main")
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(drift.unsound, drift)
+        ok, printed = self.drift_output(drift)
+        self.assertFalse(ok)
+        self.assertIn("suppressed", printed)
+        self.assertNotIn("first landing", printed)
+        self.assertNotIn("PASS", printed)
+
+    def test_a_commit_that_cannot_be_read_is_unsound(self) -> None:
+        """A mistyped or unfetched commit answers nothing about the base's pin."""
+        self.commit_base(with_pin=True)
+        with self.assertRaises(ratchet.UnsoundRun):
+            ratchet.baseline_at(self.root, "0" * 40)
+
+    def test_collapsing_the_read_failure_back_into_absence_reports_a_pass(self) -> None:
+        """The canary: restore the fail-open branch and the same tree passes.
+
+        Anti-vacuity for the arm above -- with the unreadable pin filed as "the
+        base never pinned", ``B1``/``B2`` are switched off and the run prints the
+        first-landing ``PASS`` over an object store it could not read.
+        """
+        mutant = load_mutant(BASELINE_FAIL_OPEN)
+        self.commit_base(with_pin=True)
+        blob = subprocess.run(
+            ["git", "-C", self.tmp, "rev-parse", f"main:{ratchet.BASELINE_REPO_PATH}"],
+            check=True, capture_output=True, text=True,
+        ).stdout.strip()
+        (self.root / ".git" / "objects" / blob[:2] / blob[2:]).unlink()
+        drift = mutant.check_drift(root=self.root, base_ref="main")
+        self.assertTrue(drift.ok, drift)
+        self.assertFalse(drift.had_baseline)
+
+
 class MigrationHatchTest(unittest.TestCase):
     """The one legitimate movement no prose edit explains, and its exact bounds.
 
@@ -3037,6 +3175,84 @@ class OccurrenceIdentityTest(ScratchRepo):
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.added],
                          [("NARROW_CHILD", "IsingModel/One.lean", "13")])
+
+
+class TrailingQuantityTest(ScratchRepo):
+    """The residual telemetry carries: a size written *after* the noun it counts.
+
+    A count reaches the ledger by governing an inventory noun to its right
+    (``_GOVERNED_NOUN``), so the same claim re-ordered -- ``for the alpha
+    wrappers, of which there are 12`` -- is read by nothing and files as
+    telemetry.  Rewriting a header that way therefore looks exactly like
+    repairing it: the pin falls by one and ``--check``, ``B1``, ``B2`` and ``B3``
+    are all green, with the tree still stating the size.
+
+    Three docstrings and the printed telemetry banner used to assert this could
+    not happen ("telemetry ... states no inventory size"; "only the absence of
+    numeric content at all is telemetry").  They no longer do, and this suite is
+    what holds them to it: reading backwards as well was measured -- three more
+    headers charged on the live tree, none of them an inventory claim -- so the
+    gap is pinned here rather than closed by growing the grammar.  If these
+    assertions ever fail, the retraction at ``_GOVERNED_NOUN`` is the thing that
+    has gone stale.
+    """
+
+    HEAD_COUNT = "Narrow child module for the 12 alpha wrappers."
+    TRAILING = "Narrow child module for the alpha wrappers, of which there are 12."
+    NEXT_SENTENCE = "Narrow child module for the alpha wrappers. There are 12."
+
+    def test_a_count_after_its_noun_leaves_the_ledger_with_every_gate_green(self) -> None:
+        """The residual, end to end: one re-ordered sentence, pin 1 -> 0, all green."""
+        self.write("IsingModel/One.lean", header(self.HEAD_COUNT))
+        base = self.start()
+        self.assertEqual(base, Counter({("NARROW_CHILD", "IsingModel/One.lean", "12"): 1}))
+        self.write("IsingModel/One.lean", header(self.TRAILING))
+        live = ratchet.build_report(root=self.root).charged
+        self.assertEqual(live, Counter(), "the size is still stated and nothing is charged")
+        self.assertFalse(ratchet.compare(live, base).regressed, "--check cannot see it")
+        self.repin()
+        drift = ratchet.check_drift(root=self.root, base_ref="main")
+        self.assertTrue(drift.ok, drift)
+        self.assertIn(
+            "of which there are 12",
+            (self.root / "IsingModel/One.lean").read_text(encoding="utf-8"),
+            "anti-vacuity: the size really is still written in the tree",
+        )
+
+    def test_the_row_is_filed_under_a_banner_that_does_not_deny_the_size(self) -> None:
+        """``--findings`` is mandatory reading for a repair, so it may not overstate.
+
+        The row is telemetry either way; what changed is that the banner printed
+        over it now describes the extractor's reach instead of asserting a
+        property of the prose that this very row falsifies.
+        """
+        self.write("IsingModel/One.lean", header(self.TRAILING))
+        self.start()
+        report = ratchet.build_report(root=self.root)
+        self.assertEqual(report.charged, Counter())
+        self.assertEqual([claim.kind for claim in report.telemetry], ["NARROW_CHILD"])
+        self.assertEqual([claim.note for claim in report.telemetry],
+                         ["no quantity read here (head 'alpha')"],
+                         "the row's own note reports the extractor, not the sentence")
+        # Space-joined: the tuple is one wrapped paragraph, and a reader meets it
+        # as one, so an assertion on it may not depend on where the lines break.
+        banner = " ".join(ratchet.TELEMETRY_LINES)
+        self.assertNotIn("anchors that state", banner)
+        self.assertIn("NOT a finding that the prose states no size", banner)
+        self.assertIn("of which there are 12", banner)
+        self.assertIn(ratchet.TELEMETRY_LINES[0], ratchet.format_findings(report))
+
+    def test_a_count_past_the_end_of_the_clause_is_the_same_residual(self) -> None:
+        """The second spelling, and the bound that keeps the pair from reading as "off"."""
+        self.write("IsingModel/One.lean", header(self.NEXT_SENTENCE))
+        self.start()
+        self.assertEqual(ratchet.build_report(root=self.root).charged, Counter())
+        self.write("IsingModel/One.lean", header(self.HEAD_COUNT))
+        self.assertEqual(
+            ratchet.build_report(root=self.root).charged,
+            Counter({("NARROW_CHILD", "IsingModel/One.lean", "12"): 1}),
+            "anti-vacuity: the same size in head position is charged",
+        )
 
 
 # --------------------------------------------------------------------------

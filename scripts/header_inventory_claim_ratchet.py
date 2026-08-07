@@ -60,11 +60,24 @@ window stopped short.  Two rules replace it:
 * a **quantity that fails to parse is charged**, as ``?<fragment>``, in every
   class.  The extractor's success is never a fact about the prose.
 
-What remains is :attr:`Report.telemetry`: a recognized anchor that states no size
-at all, as in ``Narrow child module for concrete latticeGraph specializations``.
-It is reported apart from :attr:`Report.claims`, is never pinned and is never
-compared -- a coverage note, structurally incapable of being a silent exemption
-because it is not in the ledger.
+What remains is :attr:`Report.telemetry`: a recognized anchor the extractor read
+no inventory size out of, as in ``Narrow child module for concrete latticeGraph
+specializations``.  It is reported apart from :attr:`Report.claims`, is never
+pinned and is never compared.
+
+That is a fact about the **extractor's reach**, and an earlier revision of this
+paragraph called it a fact about the prose -- "structurally incapable of being a
+silent exemption".  It is not.  A count reaches the ledger by governing an
+inventory noun to its right (:data:`_GOVERNED_NOUN`), so the same size written
+*after* its noun (``for the alpha wrappers, of which there are 12``) or past the
+end of the clause (``for the alpha wrappers.  There are 12``) is read by nothing
+here: re-ordering the sentence moves it off the ledger into this table and the
+pin falls by one with every gate green.  What telemetry cannot do is *pay* for a
+charge -- nothing moves between the two tables as a credit, and the ratchet is
+computed from the ledger alone.  What it cannot be read as is evidence that the
+header states no size.  That is the caveat under "Reading the number" in one
+row, it is measured rather than argued (:data:`_GOVERNED_NOUN`), and
+``TrailingQuantityTest`` reproduces it.
 
 Ratchet
 -------
@@ -1140,11 +1153,17 @@ class ClaimClass(NamedTuple):
     exactly one record, so a token it cannot resolve becomes a charge with a
     note rather than a dropped row.  ``K1`` is what enforces that contract.
 
-    ``charged`` is ``False`` only where the shape carries no inventory size at
-    all, which is a fact about the *prose* and never about the extractor's
-    success.  Exactly one of the five classes can return it
+    ``charged`` is ``False`` only where the extractor read no inventory size out
+    of the shape: not a count it could not normalize (charged ``?<fragment>``),
+    not a count the citation guard refused (charged too), only a clause it found
+    no placeable quantity in.  Exactly one of the five classes can return it
     (:func:`_extract_narrow_child`, the only ``return`` in this file with a
-    ``False`` in that position); a quantity that fails to parse never does.
+    ``False`` in that position).
+
+    "No placeable quantity" is narrower than "no size", and the difference is a
+    measured residual rather than a definition: a count is placed by the noun it
+    governs *to its right* (:data:`_GOVERNED_NOUN`), so a size written after its
+    noun is real and unread.
     """
 
     name: str
@@ -1217,7 +1236,12 @@ def head_quantity(head: str) -> str:
 
 #: The words after which a number cites a location instead of counting anything.
 #: ``Step 241 interior wrappers`` and ``PR 1861 wrappers`` state no inventory
-#: size, and this repository's prose is full of both.  A closed list of citation
+#: size, and this repository's prose is full of both.  That is a statement about
+#: English and not about the ledger: since the guard sorts rather than drops,
+#: both of those headers are charged today, as ``?241`` and ``?1861``.  Refusing
+#: a count coarsens its key and never exempts it, so the price of this list is
+#: paid in key sharpness -- measured at zero charges on this tree, because the
+#: house style is ``§18.3`` rather than ``Section 18.3``.  A closed list of citation
 #: nouns is the cheap half of the guard; the other half is lexical
 #: (:func:`_cites_rather_than_counts` refuses the relation symbols, and
 #: :func:`quantity_fragment` never opens on a token carrying ``§`` or ``#``, so
@@ -1273,6 +1297,24 @@ _TOKEN_START = re.compile(r"(?:\A|(?<=\s))\S")
 
 #: An inventory noun the quantity just read governs: it has to follow within the
 #: same clause window, exactly as the possessive and predicate classes require.
+#:
+#: **Forwards only, and that is a measured trade rather than an oversight.**  A
+#: count written after its noun -- ``for the alpha wrappers, of which there are
+#: 12`` -- governs nothing to its right, so it reaches neither ledger and the
+#: header is filed as telemetry while stating a size.  Reading backwards as well
+#: closes those spellings, and it was measured on this tree before being refused:
+#: it charges three more headers and not one of them is an inventory claim.  Two
+#: are the word ``plus`` used as a conjunction (``bundle variants plus
+#: ferromagnetic counterparts``), which :data:`RANGE_MARKERS` makes numeric
+#: evidence; the third is ``the two `freeEnergyAlongExhaustion = ...`
+#: decompositions``, a count of a mathematical object this design excludes by
+#: construction (:data:`INVENTORY_NOUN`).  Real claims recovered: zero.
+#:
+#: Buying constructed recall with measured false charges is the grammar-growth
+#: lane this file has already retired twice, so the residual is recorded where
+#: the reader meets it (:func:`_extract_narrow_child`, :data:`TELEMETRY_LINES`,
+#: the module docstring) and pinned by ``TrailingQuantityTest``, rather than
+#: closed by widening this pattern.
 _GOVERNED_NOUN = re.compile(rf"\A\s+{_WINDOW}{INVENTORY_NOUN}\b", re.IGNORECASE)
 
 
@@ -1420,13 +1462,19 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     (:data:`CITATION_WORDS`, :func:`_cites_rather_than_counts`).
 
     This is the one class that can decline to charge, and what it declines on is
-    a header that states no size at all (``Narrow child module for concrete
-    `latticeGraph` specializations``).  That record is **telemetry**, not a
-    verdict: it is reported apart from :attr:`Report.claims` and never pinned,
-    so no quantity that fails to parse can land in it -- an unresolvable count
-    is charged (``?<fragment>``), a refused count is charged, a missing ``for``
-    clause is charged, and only the absence of numeric content at all is
-    telemetry.
+    a head clause it found no *placeable* quantity in (``Narrow child module for
+    concrete `latticeGraph` specializations``).  That record is **telemetry**,
+    not a verdict: it is reported apart from :attr:`Report.claims` and never
+    pinned.  No extraction *failure* can land there -- an unresolvable count is
+    charged (``?<fragment>``), a refused count is charged, a missing ``for``
+    clause is charged.
+
+    It is not the same thing as "the header states no size", and this docstring
+    used to say it was.  All three questions ask what a count governs to its
+    right, so ``for the alpha wrappers, of which there are 12`` states a size
+    that reaches none of them and is filed here.  The trade that would close it
+    is measured at :data:`_GOVERNED_NOUN` and was refused; the gap is pinned by
+    ``TrailingQuantityTest`` instead of denied.
     """
     clause = _HEAD_CLAUSE.match(flat, match.end())
     if clause is None:
@@ -1445,7 +1493,10 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
                 if len(counts.cited) == 1
                 else f"{len(counts.cited)} refused counts in one clause")
         return _unresolved_token(counts.cited), True, note
-    return "-", False, f"no quantity (head {token!r})"
+    # The note says what this function did, not what the sentence says: the row
+    # is printed under a banner a reviewer reads as a verdict, and "no quantity"
+    # is one this extractor cannot reach far enough to deliver.
+    return "-", False, f"no quantity read here (head {token!r})"
 
 
 _PAREN_ANCHOR = re.compile(rf"\(\s*({QUANTITY})\s+({INVENTORY_NOUN})\s*\)", re.IGNORECASE)
@@ -2187,10 +2238,41 @@ def base_commit(root: Path, base_ref: str) -> str | None:
 
 
 def baseline_at(root: Path, commit: str) -> tuple[Counter[tuple[str, str, str]] | None, list[str]]:
-    """Return the baseline recorded at ``commit``, or ``None`` if it has none."""
+    """Return the baseline recorded at ``commit``, or ``None`` if it has none.
+
+    ``None`` is a **fact about the base commit's tree**: it carries no pin, so
+    this is the pin's first landing and there is nothing for ``B1``/``B2`` to
+    compare against.  :func:`check_drift` turns that into a ``PASS``, which is
+    why it may not also be the answer to a failed read.  Collapsing the two --
+    ``git show`` exits non-zero, return "no pin" -- switched ``B1`` and ``B2``
+    off for a corrupt object, an unreadable blob or a mistyped commit and printed
+    the first-landing pass over the top of it, the same "a check that turns
+    itself off and reports a pass" shape :func:`base_commit` refuses.
+
+    Existence is therefore asked separately, of ``git ls-tree``, which answers
+    "the path is not in this tree" with a zero exit and no output and reserves a
+    non-zero exit for a failure to look.  Only that empty answer means "no pin";
+    a pin the tree records but ``git show`` will not hand over raises
+    :class:`UnsoundRun`, exactly as :func:`changed_paths` does.
+
+    A path that names a *directory* still reaches :func:`parse_baseline`, whose
+    rejection of ``tree <sha>:<path>`` is a malformed-baseline failure -- also
+    fail-closed, and deliberately not special-cased here.
+    """
+    code, listing = _git(root, "ls-tree", "--name-only", commit, "--", BASELINE_REPO_PATH)
+    if code != 0:
+        raise UnsoundRun(
+            f"`git ls-tree {commit[:12]}` failed, so whether the base branch "
+            f"pinned {BASELINE_REPO_PATH} at all is unknown"
+        )
+    if not listing.strip():
+        return None, []
     code, out = _git(root, "show", f"{commit}:{BASELINE_REPO_PATH}")
     if code != 0:
-        return None, []
+        raise UnsoundRun(
+            f"{commit[:12]} records {BASELINE_REPO_PATH} but it could not be read, "
+            "so the base branch's pin is unknown rather than absent"
+        )
     return parse_baseline(out)
 
 
@@ -2366,6 +2448,11 @@ class Drift(NamedTuple):
     unfavourable: a conservation failure of the scan, or a ``git`` query that
     failed (:class:`UnsoundRun`).  Either suppresses the comparison, because a
     comparison that cannot see its own inputs is not evidence of anything.
+
+    ``had_baseline`` is ``False`` both when the base commit carries no pin and
+    when the run stopped before it could tell.  ``unsound`` is what separates
+    them, and :func:`print_drift` reads it first: the first-landing ``INFO`` is
+    printed only on a run that got an answer.
     """
 
     base: str
@@ -2455,7 +2542,13 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     base = base_commit(root, base_ref)
     if base is None:
         return None
-    baseline, base_errors = baseline_at(root, base)
+    try:
+        baseline, base_errors = baseline_at(root, base)
+    except UnsoundRun as failure:
+        # Before anything is computed, because "did the base carry a pin?" is
+        # the question the whole comparison is a function of: unknown is not
+        # ``no``, and ``no`` is the branch that passes.
+        return Drift(base, False, (), (), (), (str(failure),), (), ())
     head, head_errors = read_baseline(root / BASELINE_REPO_PATH)
     report = build_report(root)
     errors = tuple(
@@ -2569,12 +2662,19 @@ def migration_delta(
 
     A change that stops recognizing something **and gains nothing in the same
     group** still fails ``B2`` and still needs a reviewed decision.  What the
-    guard cannot separate is a *same-size swap*: one key lost and one distinct
-    key gained in one group is relieved whether the change re-keyed the same
-    sentence or blinded the detector to one sentence while teaching it another.
-    Telling those apart needs the occurrence identity this ledger does not have
-    (module docstring, ``Ratchet``), so it is stated here and reproduced by
+    guard cannot separate is a swap both halves admit: a group that loses ``n``
+    keys and gains ``m``, with ``n <= m`` and no more charges lost than gained,
+    is relieved whether the change re-keyed those sentences or blinded the
+    detector to some while teaching it others.  Telling those apart needs the
+    occurrence identity this ledger does not have (module docstring,
+    ``Ratchet``), so it is stated here and reproduced by
     ``ReliefLaunderingTest`` rather than asserted away.
+
+    The 1:1 case is the one worth naming -- it is also the legitimate re-keying
+    this relief exists for, which is why the two are indistinguishable -- but the
+    implemented rule is the general one and this paragraph used to describe only
+    the special case: ``{'5': 1, '6': 1} -> {'7': 1, '8': 5}`` is relieved in
+    full, both lost keys.
 
     The other limit, stated rather than left to be discovered: it bounds
     the *population*, not the *sharpness* of the tokens.  A declared migration
@@ -2747,11 +2847,13 @@ class Report(NamedTuple):
     """The verdict of one ratchet run.
 
     ``claims`` is the ledger the ratchet is computed from and every row in it is
-    charged.  ``telemetry`` is a coverage report -- recognized anchors that state
-    no inventory size -- and it is deliberately **not** part of the population:
-    it is never pinned, never compared, and never a reason to pass or fail.  It
-    used to live inside ``claims`` behind a ``charged=False`` flag, which is how
-    647 relocation claims came to be reported as recognized and cost nothing.
+    charged.  ``telemetry`` is a coverage report -- recognized anchors the
+    extractor read no inventory size out of, which is not the same as anchors
+    that state none (:data:`_GOVERNED_NOUN`) -- and it is deliberately **not**
+    part of the population: it is never pinned, never compared, and never a
+    reason to pass or fail.  It used to live inside ``claims`` behind a
+    ``charged=False`` flag, which is how 647 relocation claims came to be
+    reported as recognized and cost nothing.
     """
 
     sources: tuple[Source, ...]
@@ -2910,12 +3012,16 @@ def print_report(report: Report, baseline: Counter[tuple[str, str, str]],
 
 
 TELEMETRY_LINES = (
-    "TELEMETRY (NON-AUTHORITATIVE): the rows below are recognized anchors that state",
-    "no inventory size -- a purpose-only `Narrow child module for ...` header.  They",
-    "are NOT part of the population, are never pinned, and no verdict is computed from",
-    "them.  They are printed so that the detector's coverage stays visible, and they",
-    "are kept out of the ledger above because a `charged=False` row inside a ledger is",
-    "somewhere for a real charge to be filed as free.",
+    "TELEMETRY (NON-AUTHORITATIVE): the rows below are recognized anchors this",
+    "extractor read no inventory size out of -- typically a purpose-only `Narrow",
+    "child module for ...` header.  That is a fact about its reach and NOT a finding",
+    "that the prose states no size: a count is read by the noun it governs to its",
+    "right, so `... for the alpha wrappers, of which there are 12` states one and is",
+    "listed here (see `_GOVERNED_NOUN` for the measurement behind that trade).  These",
+    "rows are NOT part of the population, are never pinned, and no verdict is computed",
+    "from them.  They are printed so that the detector's coverage stays visible, and",
+    "they are kept out of the ledger above because a `charged=False` row inside a",
+    "ledger is somewhere for a real charge to be filed as free.",
 )
 
 
