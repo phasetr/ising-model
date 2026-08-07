@@ -5,7 +5,7 @@ Run directly (``python3 scripts/test_audit_gate.py``) or through the gate's own
 ``--self-test`` flag. V1-V4 are the repository's correctness gate -- they decide
 whether a push is honest -- and until this suite existed nothing checked *them*.
 That is the same hole the dead-candidate scanner had when it passed three false
-``safe-to-delete`` verdicts.
+deletion-safety verdicts.
 
 What makes a gate test worth having
 -----------------------------------
@@ -820,7 +820,7 @@ class V2TokenTest(unittest.TestCase):
 # directory fail.
 #
 # Until 2026-07-29 they were calibrated a few dozen files below the measured
-# count, so every deletion batch of the #4746 safe-to-delete lane had to move
+# count, so every batch of the #4746 deletion lane had to move
 # them (2003 / 1996 at PR #4749, 1993 / 1986 at #4751, 1984 / 1977 at #4754),
 # which is the ratchet describing the deletions instead of constraining them.
 # The standing decision recorded here was that the first batch which would

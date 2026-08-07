@@ -7,8 +7,10 @@ trusting: the failures it pins down -- a Unicode-splitting tokenizer, a LaTeX
 channel that silently matches nothing, a line-anchored declaration parser --
 are the three defects that produced three bad deletion sweeps.
 
-Every route to a **false ``safe-to-delete``** has a test aimed at it, because
-that is the only verdict of this tool that can destroy work:
+Every route to a **false no-evidence verdict** has a test aimed at it, because
+that is the only report of this tool that can destroy work -- it is the sentence
+a deletion PR quotes, and issue #4976 removed the verdict label that used to
+dress it up as permission, not the danger of stating it falsely:
 :class:`DeleteClosureTest` (a candidate consumed only by a candidate the same run
 retains), :class:`SameLineAttributeTest` (``@[simp] theorem foo`` vanishing from
 the declaration table, which turns its consumers into self-references),
@@ -576,7 +578,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
         self.assertEqual(counts, [1, 1, 1, 1, 1, 1])
 
     def test_real_row_publishes_all_six_targets(self) -> None:
-        """The four base-safe targets must no longer remain safe to delete."""
+        """The four targets that had no evidence must now be published."""
         self.assertEqual(
             [verdict.verdict for verdict in self.verdicts()],
             [dcs.PUBLISHED] * 6,
@@ -705,8 +707,8 @@ class SpacedBraceCitationTest(unittest.TestCase):
 
     Measured at ``2380eb36``: 133 name-shaped tokens of this shape (102 in
     ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
-    declarations, 160 of which a whole-library sweep called ``safe-to-delete``
-    -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
+    declarations, 160 of which a whole-library sweep reported as carrying no
+    evidence -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
     cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
     the fatal error class, so the split is pinned here from both sides: the
     spaced citation must survive whole, and the plain whitespace split must keep
@@ -806,8 +808,8 @@ class MarkdownBacktickParityTest(unittest.TestCase):
     the tokenizer saw -- 218 tokens, none of them naming
     ``magnetizationAlongExhaustion``, which the raw line spelled six times.
     Nothing warned, and
-    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete``. That row has since been repaired, so the shapes below
+    ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out with no
+    evidence at all. That row has since been repaired, so the shapes below
     are scratch miniatures: they keep the check exercised now that no document
     in the repository carries the defect.
 
@@ -987,10 +989,11 @@ class ElidedFragmentTest(unittest.TestCase):
     ``docs/index.md`` abbreviates a run of siblings by spelling the first in full
     and eliding the shared prefix of the rest. ``_differentiable_beta_gen``
     matches three declarations, so the family-label rule attributed it to nobody
-    and the magnetization member came out ``safe-to-delete`` although the line
+    and the magnetization member came out with no evidence although the line
     cited it. Charging every match of every family label instead was measured
-    (it touches 5895 of 11000 declarations and collapses ``safe-to-delete`` from
-    1458 verdicts to 232, an 84% collapse, with ``--expect`` red) and rejected;
+    (it touches 5895 of 11000 declarations and collapses the no-evidence
+    population from 1458 verdicts to 232, an 84% collapse, with ``--expect``
+    red at the time) and rejected;
     the rule kept is the one the notation states.
     """
 
@@ -1121,7 +1124,7 @@ class NarrowGlobCitationTest(unittest.TestCase):
         ]
 
     def test_a_glob_naming_two_declarations_charges_both(self) -> None:
-        """The ``ge_log_two*`` shape: both matches are cited, so neither is safe."""
+        """The ``ge_log_two*`` shape: both matches are cited, so both are charged."""
         verdicts, labels = self.classify(
             self.NARROW_TREE, self.pair_names(), "synth_glob_ge_log_two*"
         )
@@ -1775,7 +1778,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
 class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
-    A ``safe-to-delete`` verdict prints "no citation in the scanned
+    :data:`dcs.NO_EVIDENCE_REASON` prints "no citation in the scanned
     documentation". While only ``docs/index.md`` and the guide were read, that
     sentence was a claim about two files: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
@@ -1805,7 +1808,7 @@ class MissingDocumentationTest(unittest.TestCase):
     -- moved, renamed, checked out partially -- the channel contributes no token
     and no literal text, so every name cited *only* there becomes uncited, and
     the run still prints "no citation in the scanned documentation": a
-    ``safe-to-delete`` verdict resting on evidence that was never read. So the
+    no-evidence verdict resting on evidence that was never read. So the
     absence is a hard failure (exit 2), like the canaries.
     """
 
@@ -1869,7 +1872,8 @@ class DeleteClosureTest(unittest.TestCase):
     The failure this pins down: a candidate retained by the very same run
     (published, uncertain, attribute- or kind-driven) was still counted as
     deleted by the closure, so a lemma consumed *only* by that keeper came out
-    ``safe-to-delete``. False safe is the one fatal verdict of this tool.
+    with no evidence at all. A false absence is the one fatal report of this
+    tool.
     """
 
     BASE = "IsingModel.synthetic_closure_base_xyzzy"
@@ -1940,7 +1944,7 @@ class SameLineAttributeTest(unittest.TestCase):
     Dropping the rest of that line deletes ``foo`` from the declaration table,
     which silently re-attributes its body to the *previous* declaration; every
     reference in that body then looks like a self-reference and is discarded --
-    the second route to a false ``safe-to-delete``.
+    the second route to a false no-evidence verdict.
     """
 
     SOURCE = (
@@ -2125,8 +2129,8 @@ class UnreadableCitationTest(unittest.TestCase):
         LaTeX-standard unbraced spelling carries no braces to swallow: the
         argument ``e`` survived as a readable fragment, the span refuted the
         name it spelled, no literal search could find that name either, and the
-        declaration came out ``safe-to-delete``. It is charged now because no
-        span refutes anything.
+        declaration came out with no evidence at all. It is charged now because
+        no span refutes anything.
         """
         _normalized, warnings = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
         self.assertEqual(len(warnings), 1)
@@ -2139,8 +2143,8 @@ class UnreadableCitationTest(unittest.TestCase):
         Every shape that used to decide refutation one way or the other -- a
         clean parse, an unparsable body, a brace no macro swallowed -- now
         charges, and charges names that have nothing to do with the citation.
-        Over-charging can only produce ``uncertain``, never a false
-        ``safe-to-delete``.
+        Over-charging can only produce a charged ``uncertain``, never a false
+        absence.
         """
         shapes = (
             (dcs.MACRO_RESIDUE, r"foo\unknownmacro bar"),
@@ -2181,7 +2185,7 @@ class TexChannelLimitTest(unittest.TestCase):
     Charging fixes every leak that produced an :class:`dcs.UnreadableSpan`, but
     a citation that leaves **nothing to charge and no literal hit** never reaches
     the charging step at all: it leaves the TeX channel silently, and the name it
-    cites can still come out ``safe-to-delete``. There are three, not two, and
+    cites can still come out with no evidence at all. There are three, not two, and
     they escape differently: a ``%`` comment inside a citation (``L7a``) and a
     bare line break inside one (``L7c``) parse into a clean span, so there is no
     residue to charge, while an unrecognised wrapper (``L7b``) yields no span at
@@ -2291,7 +2295,7 @@ class ProseMentionTest(unittest.TestCase):
         )[0][0]
 
     def test_docstring_mention_is_reported_but_does_not_rescue(self) -> None:
-        """Prose is not a reference: the verdict stays safe, with a warning."""
+        """Prose is not a reference: no evidence is recorded, only a warning."""
         verdict = self.verdict()
         self.assertTrue(no_evidence(verdict), verdict.reasons)
         self.assertTrue(any("module docstring" in item for item in verdict.info))
@@ -2349,30 +2353,41 @@ class FamilyCalibrationTest(unittest.TestCase):
     """The calibration integers recorded in the fixtures header, asserted.
 
     They were prose in a comment, so nothing noticed when the delete-closure
-    defect moved 15 candidates into ``safe-to-delete``.
+    defect moved 15 candidates into the terminal no-evidence state.
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """219 candidates -> 15 safe / 88 uncertain / 81 load-bearing / 35 published.
+        """219 candidates -> 103 uncertain (15 of them no-evidence) / 81 / 35.
+
+        Issue #4976 folded the retired fourth class into ``uncertain``, so the
+        bucket that read 88 now reads 88 + 15 = 103 (re-measured, not
+        arithmetic'd) and the 15 are pinned separately through
+        :func:`no_evidence`. Keeping both numbers is the point: after the fold a
+        charged candidate and one with no evidence at all share a verdict, and
+        only the reason tells them apart, so a bucket count alone would no
+        longer notice evidence draining away. The historical paragraphs below
+        name that state rather than the retired label; every integer is
+        unchanged.
 
         Issue #4927 removes the uncertain concrete pair target and its load-bearing
         ambient owner. The concrete target accounts for the zero-consumer decrement
-        to 110. No survivor moves toward safe-to-delete.
+        to 110. No survivor moves toward the no-evidence state.
 
         Recalibrated by the resolved-glob elision-head repair
         (:class:`ResolvedGlobElisionHeadTest`). On the same documentation line,
         a supported glob head resolving to at most ten declarations can now
         establish the immediate-sibling prefix of a suffix citation. Exactly
-        24 formerly-safe family members leave ``safe-to-delete``: 15 receive
+        24 members leave the no-evidence state: 15 receive
         shorthand evidence directly and nine become load-bearing because their
         newly retained latticeGraph consumers receive it. Six previously
-        uncertain members become load-bearing through the same closure. Thus
+        charged members become load-bearing through the same closure. Thus
         the pre-closure distribution 19/103/66/35 becomes the final
-        19/88/81/35; the 223 total, 35 published results, and
+        19/88/81/35 (no-evidence / charged-uncertain / load-bearing /
+        published); the 223 total, 35 published results, and
         :meth:`test_zero_consumer_count` (112) are unchanged. Whole-library
-        evidence is additive (+205 shorthand, zero removals), the safe set only
-        shrinks (49 safe-to-delete -> uncertain, 11 safe-to-delete ->
-        load-bearing, 12 uncertain -> load-bearing), and family labels move
+        evidence is additive (+205 shorthand, zero removals), the no-evidence set
+        only shrinks (49 no-evidence -> charged, 11 no-evidence ->
+        load-bearing, 12 charged -> load-bearing), and family labels move
         387 -> 381 as six formerly-unattributed suffixes acquire concrete
         targets.
 
@@ -2380,59 +2395,59 @@ class FamilyCalibrationTest(unittest.TestCase):
         (:class:`NarrowGlobCitationTest`): a glob citation naming at most
         :data:`dead_candidate_scan.MAX_CHARGED_GLOB_MATCHES` declarations is
         charged to all of them instead of being attributed to nobody. Exactly
-        four candidates move and not one moves toward ``safe-to-delete``:
+        four candidates move and not one moves toward the no-evidence state:
         ``correlationΛ_latticeGraph_high_temp_h_zero_at_singleton_ferromagnetic``
         and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
-        deviation_pos_ferromagnetic`` go ``safe-to-delete -> uncertain`` (charged
+        deviation_pos_ferromagnetic`` go ``no-evidence -> charged`` (charged
         by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
         5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
         ``log_*_deviation_pos_ferromagnetic``, 5 matches);
         ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
-        ``safe-to-delete -> load-bearing`` and
+        ``no-evidence -> load-bearing`` and
         ``log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos_
-        ferromagnetic`` ``uncertain -> load-bearing``, both because the
-        delete-closure no longer excuses their only consumer. ``SAFE`` 46 -> 43,
-        ``UNCERTAIN`` 78 -> 79, ``LOAD_BEARING`` 64 -> 66; ``PUBLISHED`` (35),
+        ferromagnetic`` ``charged -> load-bearing``, both because the
+        delete-closure no longer excuses their only consumer. No-evidence 46 -> 43,
+        charged-``UNCERTAIN`` 78 -> 79, ``LOAD_BEARING`` 64 -> 66; ``PUBLISHED`` (35),
         the 223 total and :meth:`test_zero_consumer_count` (112) are unchanged.
         Measured across the whole library the same way: 1091 -> 976
-        ``safe-to-delete``, 691 -> 761 ``uncertain``, 2081 -> 2126
+        no-evidence, 691 -> 761 charged-``uncertain``, 2081 -> 2126
         ``load-bearing``, ``published-result`` unchanged at 7009, and the
-        ``safe-to-delete`` key set only shrinks (139 movers -- 94
-        ``safe-to-delete -> uncertain``, 21 ``safe-to-delete -> load-bearing``,
-        24 ``uncertain -> load-bearing`` -- none toward ``safe-to-delete``).
+        no-evidence key set only shrinks (139 movers -- 94
+        ``no-evidence -> charged``, 21 ``no-evidence -> load-bearing``,
+        24 ``charged -> load-bearing`` -- none toward no-evidence).
         The four integers asserted below are threshold-insensitive across
         ``MAX_CHARGED_GLOB_MATCHES`` 8, 9 and 10; only the whole-library
-        ``safe-to-delete`` count moves (980 at 8, 976 at 9 and 10), which is why
+        no-evidence count moves (980 at 8, 976 at 9 and 10), which is why
         raising the knob to its fixture ceiling of 10 needed no recalibration
         here.
 
-        Previously recalibrated by PR #4754 (safe-to-delete batch 4), which moved
+        Previously recalibrated by PR #4754 (deletion batch 4), which moved
         exactly one
-        candidate and moved it *away* from ``safe-to-delete``:
+        candidate and moved it *away* from the no-evidence state:
         ``freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic``
-        ``safe-to-delete -> uncertain``. Batch 4 deleted the zero-consumer
+        ``no-evidence -> charged``. Batch 4 deleted the zero-consumer
         ``freeEnergyAlongExhaustion_latticeGraph_nonneg``, which was the other
         member of the ``nonneg*`` component of the ``freeEnergyAlongExhaustion_
         latticeGraph_{eq_inv_*,eq_log_div_card,nonneg*,ge_log_two*}`` family label
         in ``docs/index.md``; with the sibling gone the component's shorthand
-        citation now charges to the ferromagnetic wrapper alone. ``SAFE`` 47 -> 46
-        and ``UNCERTAIN`` 77 -> 78; ``LOAD_BEARING`` (64), ``PUBLISHED`` (35), the
+        citation now charges to the ferromagnetic wrapper alone. No-evidence 47 -> 46
+        and charged 77 -> 78; ``LOAD_BEARING`` (64), ``PUBLISHED`` (35), the
         223 total and :meth:`test_zero_consumer_count` (112) are unchanged. This is
         the healthy direction -- a deletion may only add protection to survivors.
 
         Previously recalibrated when the elided-prefix rule landed
         (:class:`ElidedFragmentTest`): a suffix citation whose elided prefix is
         spelled out on the same documentation line is charged to the siblings
-        that share it. Exactly 45 candidates move, all of them out of
-        ``safe-to-delete``: 33 to ``uncertain`` (charged directly) and 12 to
-        ``load-bearing`` (their only consumer is now retained, so the
+        that share it. Exactly 45 candidates move, all of them out of the
+        no-evidence state: 33 to charged-``uncertain`` (charged directly) and 12
+        to ``load-bearing`` (their only consumer is now retained, so the
         delete-closure no longer excuses it), with ``published-result``
         unchanged at 35. That is the healthy signature -- the fix can add
         citations, never remove one. Measured across the whole library the same
-        way: 235 of 11000 verdicts move, none of them toward ``safe-to-delete``.
-        (Was 223 -> 92 safe / 44 uncertain / 52 load-bearing / 35 published, after
-        PR #4690 dropped three safe-to-delete RatioLogFe ``_ferromagnetic``
-        alongExhaustion bundle wrappers; 226 -> 95 safe before PR #4688.)
+        way: 235 of 11000 verdicts move, none of them toward no-evidence.
+        (Was 223 -> 92 no-evidence / 44 charged / 52 load-bearing / 35 published,
+        after PR #4690 dropped three no-evidence RatioLogFe ``_ferromagnetic``
+        alongExhaustion bundle wrappers; 226 -> 95 no-evidence before PR #4688.)
         """
         verdicts = family_verdicts()
         counts: dict[str, int] = {}
@@ -2440,7 +2455,7 @@ class FamilyCalibrationTest(unittest.TestCase):
             counts[verdict.verdict] = counts.get(verdict.verdict, 0) + 1
         self.assertEqual(len(verdicts), 219)
         self.assertEqual(sum(1 for v in verdicts if no_evidence(v)), 15)
-        self.assertEqual(counts.get(dcs.UNCERTAIN), 88)
+        self.assertEqual(counts.get(dcs.UNCERTAIN), 103)
         self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
         self.assertEqual(counts.get(dcs.PUBLISHED), 35)
 
@@ -2598,7 +2613,7 @@ class CanaryTest(unittest.TestCase):
 
         Each was cited only in a citation the guide split across a line, so the
         TeX channel saw nothing while reporting zero coverage warnings; only an
-        unrelated ``docs/`` citation kept them off ``safe-to-delete``.
+        unrelated ``docs/`` citation kept evidence attached to them.
         """
         guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
         for name in (
@@ -2639,7 +2654,15 @@ class FixtureTest(unittest.TestCase):
 
 
 class ExitCodeTest(unittest.TestCase):
-    """The contract a PR script depends on."""
+    """The contract a PR script depends on.
+
+    Since #4976 a completed scan reports and does not adjudicate, so the
+    contract is deliberately one-sided: ``0`` means the scan ran, never that
+    anything may be deleted. ``1`` is reachable from :func:`run_expect` alone and
+    ``2`` from an inconsistency. The tests below pin both halves -- that no
+    candidate set produces a non-zero "verdict" exit, and that the inconsistency
+    exits survive.
+    """
 
     def run_main(self, argv: list[str]) -> tuple[int, str]:
         """Run the CLI, returning ``(exit code, stdout)``."""
@@ -2648,13 +2671,17 @@ class ExitCodeTest(unittest.TestCase):
             code = dcs.main(argv)
         return code, buffer.getvalue()
 
-    def test_keeper_exits_one(self) -> None:
-        """A candidate that is not safe fails the run."""
-        code, _out = self.run_main(["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"])
-        self.assertEqual(code, dcs.EXIT_NOT_SAFE)
+    def test_a_completed_scan_exits_zero_and_authorises_nothing(self) -> None:
+        """A keeper used to exit 1; a scan has no pass/fail left to report."""
+        code, out = self.run_main(
+            ["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"]
+        )
+        self.assertEqual(code, dcs.EXIT_OK, out)
+        self.assertIn("authorises nothing", out)
+        self.assertNotIn(dcs.NO_EVIDENCE_REASON, out)
 
     def test_isolated_candidate_exits_zero(self) -> None:
-        """The exit-0 path must stay reachable, or the tool blocks everything."""
+        """The candidate with no evidence at all is reported, not licensed."""
         code, out = self.run_main(
             [
                 "--name",
@@ -2662,12 +2689,13 @@ class ExitCodeTest(unittest.TestCase):
             ]
         )
         self.assertEqual(code, dcs.EXIT_OK, out)
+        self.assertIn("-- uncertain: 1 --", out)
         self.assertIn(dcs.NO_EVIDENCE_REASON, out)
 
-    def test_report_only_exits_zero_with_the_non_evidential_banner(self) -> None:
-        """Exploration mode is allowed, but must announce that it is not evidence."""
+    def test_every_run_prints_the_non_evidential_notice(self) -> None:
+        """The notice used to be switched on by --report-only; every run is that now."""
         code, out = self.run_main(
-            ["--report-only", "--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"]
+            ["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"]
         )
         self.assertEqual(code, dcs.EXIT_OK)
         self.assertIn("NON-EVIDENTIAL", out)
