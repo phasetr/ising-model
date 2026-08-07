@@ -786,13 +786,16 @@ class MarkdownBacktickParityTest(unittest.TestCase):
 
     Markdown code spans are paired positionally, so an unbalanced backtick does
     not lose only its own span: everything after it is read with the parity
-    inverted. ``docs/index.md:1832`` spells ``ContinuousOn`.continuousAt`` with
-    three backticks where two were meant, and from that column on the line's
-    real citations sat outside every span the tokenizer saw -- 218 tokens, none
-    of them naming ``magnetizationAlongExhaustion``, which the raw line spells
-    six times. Nothing warned, and
+    inverted. A progress row of ``docs/index.md`` spelled
+    ``ContinuousOn`.continuousAt`` with three backticks where two were meant,
+    and from that column on the line's real citations sat outside every span
+    the tokenizer saw -- 218 tokens, none of them naming
+    ``magnetizationAlongExhaustion``, which the raw line spelled six times.
+    Nothing warned, and
     ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete``.
+    ``safe-to-delete``. That row has since been repaired, so the shapes below
+    are scratch miniatures: they keep the check exercised now that no document
+    in the repository carries the defect.
 
     Skipping such a line is the fail-open repair: what it drops is exactly the
     citations with no verbatim fallback (brace alternations, globs, elided
@@ -882,9 +885,10 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn("odd number of fenced-block delimiters", warning)
 
     def test_an_unpairable_backtick_is_reported_with_its_line(self) -> None:
-        """Both live shapes are caught: a stray backtick and a span across lines."""
+        """Both real shapes are caught: a stray backtick and a span across lines."""
         self.assertEqual(dcs.unpaired_backticks(self.FLIPPED), {1: 1})
-        # docs/index.md:1223-1224: a span opened on one line, closed on the next.
+        # The second shape ``docs/index.md`` carried, since repaired: a code
+        # span opened on one line and closed on the next.
         across = "bound `|edges d r| <=\nO(r)` (`alpha_card_le_beta` + `gamma_le'`),\n"
         self.assertEqual(dcs.unpaired_backticks(across), {1: 1, 2: 1})
 
@@ -916,32 +920,37 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn(":1:", warning)
         self.assertIn("pair into no code span", warning)
 
-    def test_the_real_index_raises_its_three_warnings(self) -> None:
-        """Measured on the current index: :1223, :1224 and :1832, nothing else.
+    def test_the_real_index_raises_no_warning(self) -> None:
+        """Measured on the current index: not one unpairable backtick left.
 
-        The three lines are the same three rows throughout; only their numbers
-        move. The #4787 status reconciliation added 25 lines before these
-        anchors and the stale-issue-reference correction added 2 more; this
-        fixture follows their resulting positions.
+        This used to pin the three known defects as the literal line numbers
+        they happened to sit on, which cost a fixture edit for every insertion
+        above them and asserted nothing at all about the rest of the file. The
+        empty measurement is the true post-repair state and is strictly
+        stronger: a *newly* introduced delimiter defect anywhere in
+        ``docs/index.md`` now fails here, wherever it lands.
         """
         index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertEqual(
-            sorted(dcs.unpaired_backticks(index.text)), [1223, 1224, 1832]
-        )
-        self.assertEqual(len(index.malformed), 3)
-        self.assertTrue(any("docs/index.md:1832" in item for item in index.malformed))
+        self.assertEqual(dcs.unpaired_backticks(index.text), {})
+        self.assertEqual(index.malformed, [])
 
-    def test_the_real_index_recovers_the_line_1832_citations(self) -> None:
+    def test_the_real_index_reads_the_step_213_citations(self) -> None:
         """The elided suffixes of the Step 213 row are tokens again.
 
         The row reads `` `magnetizationAlongExhaustion_continuous_beta_gen` +
-        `_differentiable_beta_gen` + ... ``; before the repair the line
-        contributed 218 tokens and not one of them was any of these. The row now
-        sits at :1832, after the #4787 documentation reconciliation and the later
-        stale-issue-reference correction.
+        `_differentiable_beta_gen` + ... ``; while the stray backtick stood the
+        line contributed 218 tokens and not one of them was any of these. The
+        row is found by its own text rather than by a line number, so the
+        fixture no longer moves when lines are inserted above it; the tuple
+        unpacking asserts that the anchor names exactly one line.
         """
         index = next(source for source in docs() if source.label == "docs/index.md")
-        tokens = {token for token, line in index.tokens if line == 1832}
+        (lineno,) = [
+            number
+            for number, line in enumerate(index.text.split("\n"), 1)
+            if "magnetizationAlongExhaustion_continuous_beta_gen" in line
+        ]
+        tokens = {token for token, line in index.tokens if line == lineno}
         for token in (
             "_differentiable_beta_gen",
             "_continuous_field_gen",
