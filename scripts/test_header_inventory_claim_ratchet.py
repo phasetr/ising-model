@@ -496,6 +496,40 @@ class ShapeTest(unittest.TestCase):
                 tokens(source, "RELOCATION"), ["13->IsingModel.Other"], determiner
             )
 
+    #: A destination wrapped across a line break, verbatim from
+    #: `SusceptibilityPointwiseRegularityAt.lean`.  This repository breaks a long
+    #: module name at a dot and closes the backticks on each half, so a
+    #: single-span destination read `IsingModel.AmbientLattice.SpecialCases.` --
+    #: a namespace, not a module -- and four pinned rows were in that state.
+    WRAPPED_DESTINATION = (
+        "The three pointwise `SusceptibilityAt` regularity wrappers now live in\n"
+        "`IsingModel.AmbientLattice.SpecialCases.`\n"
+        "`SusceptibilityPointwiseRegularityAtDifferentiableAt`\n"
+        "and are re-imported through this parent module."
+    )
+
+    def test_a_destination_wrapped_across_a_line_is_read_whole(self) -> None:
+        """M2: the fact this class exists to pin has to be in the key."""
+        source = lean_source("M", header(self.WRAPPED_DESTINATION))
+        self.assertEqual(
+            tokens(source, "RELOCATION"),
+            ["3->IsingModel.AmbientLattice.SpecialCases."
+             "SusceptibilityPointwiseRegularityAtDifferentiableAt"],
+        )
+
+    def test_a_second_reference_that_is_not_a_wrap_is_not_joined(self) -> None:
+        """Only whitespace joins: a listed name, or a new sentence, is separate."""
+        for body, expected in (
+            ("The three foo wrappers now live in `IsingModel.A`, `IsingModel.B`.",
+             "3->IsingModel.A"),
+            ("The three foo wrappers now live in `IsingModel.A`. `IsingModel.B` is unchanged.",
+             "3->IsingModel.A"),
+            ("The three foo wrappers now live in `IsingModel.A` and `IsingModel.B`.",
+             "3->IsingModel.A"),
+        ):
+            source = lean_source("M", header(body))
+            self.assertEqual(tokens(source, "RELOCATION"), [expected], body)
+
     def test_a_texttt_or_path_destination_is_read(self) -> None:
         """The TeX guide writes most of its file names with `\\path`."""
         for markup in (r"\texttt{Foo/Bar.lean}", r"\path{Foo/Bar.lean}"):
@@ -1262,7 +1296,7 @@ class MutationCanaryTest(unittest.TestCase):
         """
         mutant = load_mutant(
             (
-                '        return f"->{destination}", True, "ownership claim, no quantified subject"',
+                '        return f"->{target}", True, "ownership claim, no quantified subject"',
                 '        return "-", False, "no quantified subject"',
             )
         )
@@ -1272,6 +1306,36 @@ class MutationCanaryTest(unittest.TestCase):
             ("RELOCATION", "One wrapper now lives in `X`.", "->X"),
         )
         self.assert_form_charged_but_not_by(forms, mutant)
+
+    #: Read one span and stop, as the destination pattern did.
+    SINGLE_SPAN_DESTINATION = (
+        "    while (tail := _WRAPPED_TAIL.match(flat, end)) is not None:\n",
+        "    while False:\n",
+    )
+
+    def test_a_single_span_destination_truncates_a_wrapped_name(self) -> None:
+        """The M2 defect, as a canary: the key names a namespace, not a module.
+
+        And the laundering it permits, which the review reproduced: with the
+        second half unpinned, rewriting it to name a completely different module
+        leaves the pin byte-identical and every gate green.
+        """
+        mutant = load_mutant(self.SINGLE_SPAN_DESTINATION)
+        rewritten = ShapeTest.WRAPPED_DESTINATION.replace(
+            "`SusceptibilityPointwiseRegularityAtDifferentiableAt`",
+            "`SomewhereCompletelyDifferentEntirely`",
+        )
+        truncated = "3->IsingModel.AmbientLattice.SpecialCases."
+        for body in (ShapeTest.WRAPPED_DESTINATION, rewritten):
+            self.assertEqual(
+                tokens(lean_source("M", header(body), mutant), "RELOCATION", mutant),
+                [truncated],
+                "the mutant cannot tell the two destinations apart",
+            )
+        self.assertNotEqual(
+            tokens(lean_source("M", header(ShapeTest.WRAPPED_DESTINATION)), "RELOCATION"),
+            tokens(lean_source("M", header(rewritten)), "RELOCATION"),
+        )
 
     #: Read the head clause at position 0 only, as every version before this one
     #: did.  The mutation removes the whole second question, so the canary is

@@ -1419,12 +1419,51 @@ def _extract_predicate(flat: str, match: re.Match[str]) -> tuple[str, bool, str]
 #: case-sensitive anchor was the one asymmetric link in the chain.
 _RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in", re.IGNORECASE)
 
-#: The destination as written just after ``now live in``: a backticked module or
-#: file name, or a ``\texttt{...}`` / ``\path{...}`` one in the TeX guide.  No
-#: ``\A`` -- see :data:`_HEAD_CLAUSE` for why that would silently erase every
-#: destination.  ``\path`` is how the guide writes most of its file names, and
-#: without it 53 of its relocations shared the one ``->?`` key.
-_DESTINATION = re.compile(r"[\s(]*(?:`([^`]+)`|\\(?:texttt|path)\{([^}]*)\})")
+#: One written reference: a backticked module or file name, or a
+#: ``\texttt{...}`` / ``\path{...}`` one in the TeX guide.  ``\path`` is how the
+#: guide writes most of its file names, and without it 53 of its relocations
+#: shared the one ``->?`` key.
+_REFERENCE = r"(?:`([^`]+)`|\\(?:texttt|path)\{([^}]*)\})"
+
+#: The destination as written just after ``now live in``.  No ``\A`` -- see
+#: :data:`_HEAD_CLAUSE` for why that would silently erase every destination.
+_DESTINATION = re.compile(rf"[\s(]*{_REFERENCE}")
+
+#: The rest of a destination that was **wrapped**: a second reference separated
+#: from the first by whitespace and nothing else.  This repository's headers
+#: break a long module name across two spans at a dot::
+#:
+#:     ... now live in
+#:     `IsingModel.AmbientLattice.SpecialCases.`
+#:     `SusceptibilityPointwiseRegularityAtDifferentiableAt`.
+#:
+#: and a single-span destination read that as
+#: ``IsingModel.AmbientLattice.SpecialCases.`` -- a namespace, not a module.  Four
+#: pinned rows were in that state, and the review verified the consequence:
+#: rewriting the *second* half to name a completely different module left the pin
+#: byte-identical and both gates green, so for those four sentences the fact the
+#: class exists to pin was not pinned at all.
+#:
+#: Joining is the fail-closed direction and that is why it is unconditional
+#: rather than restricted to a first span ending in a dot.  A truncated
+#: destination silently pins less than the claim says; a joined one pins a key
+#: that changes when either half changes.  Measured on this tree: exactly four
+#: relocations are followed by an adjacent second span, and all four are these
+#: wraps.
+_WRAPPED_TAIL = re.compile(rf"\s+{_REFERENCE}")
+
+
+def destination(flat: str, position: int) -> str:
+    """Return the destination written at ``position``, wrapped name and all."""
+    head = _DESTINATION.match(flat, position)
+    if head is None:
+        return "?"
+    parts = [(head.group(1) or head.group(2) or "").strip()]
+    end = head.end()
+    while (tail := _WRAPPED_TAIL.match(flat, end)) is not None:
+        parts.append((tail.group(1) or tail.group(2) or "").strip())
+        end = tail.end()
+    return "".join(parts) or "?"
 
 #: The *subject* of a relocation claim: a :data:`DETERMINERS` word + a quantity
 #: + an inventory noun, optionally followed by a connective clause, running right
@@ -1496,17 +1535,14 @@ def _extract_relocation(flat: str, match: re.Match[str]) -> tuple[str, bool, str
     ``->X``, because editing the 12 is then a new key, but ``->X`` is already a
     pin on the sentence's existence.
     """
-    destination = "?"
-    tail = _DESTINATION.match(flat, match.end())
-    if tail is not None:
-        destination = (tail.group(1) or tail.group(2) or "?").strip()
+    target = destination(flat, match.end())
     subject = relocation_subject(flat[max(0, match.start() - _SUBJECT_LOOKBACK):match.start()])
     if subject is None:
-        return f"->{destination}", True, "ownership claim, no quantified subject"
+        return f"->{target}", True, "ownership claim, no quantified subject"
     token, is_quantity = resolve_quantity(subject.group(1))
     if not is_quantity:
-        return f"?->{destination}", True, "unresolved quantity"
-    return f"{token}->{destination}", True, ""
+        return f"?->{target}", True, "unresolved quantity"
+    return f"{token}->{target}", True, ""
 
 
 CLAIM_CLASSES: tuple[ClaimClass, ...] = (
