@@ -1,15 +1,13 @@
-/- BaseCorrelationAlongEx.lean
-Narrow child module for the 7 ℤ^d
-`correlation{Λ,AlongExhaustion}_latticeGraph_*` wrappers extracted
-from `Base.lean` in PR #2035. Theorems:
-`correlationAlongExhaustion_latticeGraph_{J_zero_of_subset,J_zero_eventually_eq}`,
-`correlationΛ_latticeGraph_empty`,
-`correlationAlongExhaustion_latticeGraph_{empty,of_subset,of_not_subset,cubicExhaustion_monotone}`.
-Each is a thin pass-through to the corresponding abstract lemma at
-`latticeGraph d`. The theorem names are unchanged from the former
-`Base` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d correlation `J = 0` and empty-set wrappers along an exhaustion
+
+Instantiates the ambient correlation degeneracies at the ℤ^d lattice graph
+`IsingModel.latticeGraph d`: the decoupled `J = 0` values and the empty-subset
+normalization, in Λ-level and along-exhaustion form. Each is a pass-through of the
+corresponding abstract lemma.
+-/
 
 open scoped symmDiff
 
@@ -54,15 +52,6 @@ theorem correlationAlongExhaustion_latticeGraph_empty
       (Ambient.cubicExhaustion d) p ∅ n = 1 :=
   correlationAlongExhaustion_empty (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p n
-
-/-! ## Moved: subset / monotone wrappers
-
-The three wrappers
-`correlationAlongExhaustion_latticeGraph_of_subset`,
-`correlationAlongExhaustion_latticeGraph_of_not_subset`,
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone` now
-live in `BaseCorrelationAlongExSubsetMono.lean`. -/
-
 
 end Ambient
 

@@ -2,26 +2,15 @@ import IsingModel.AmbientLattice.Monotonicity.AmbientSubgraph
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ + alongExhaustion `*_bot_le_latticeGraph` wrappers
+# ℤ^d Λ-level `*_bot_le_latticeGraph` wrappers
 
-Narrow child module for seven ℤ^d `*_bot_le_latticeGraph` ambient
-subgraph monotonicity wrappers (Λ + along-exhaustion forms) for
-`{free,partition}Energy`, `correlation`, and `log_partitionFunction`.
-Each wrapper is a thin pass-through to the corresponding ambient
-`*_monotone_ambient_subgraph` lemma at `IsingModel.latticeGraph d`.
+Specializes ambient-subgraph monotonicity to the comparison of the empty ambient graph `⊥`
+with `IsingModel.latticeGraph d` at the Λ level, for the partition function, the free
+energy, the correlation and the log partition function.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: AlongExhaustion `*_bot_le_latticeGraph` wrappers
-
-The three wrappers
-`freeEnergyAlongExhaustion_bot_le_latticeGraph`,
-`partitionFunctionAlongExhaustion_bot_le_latticeGraph`,
-`correlationAlongExhaustion_bot_le_latticeGraph` now live in
-`TwoPointAmbientBotLambdaAlongEx.lean`. -/
-
 
 /-- **ℤ^d partitionFunctionΛ ambient-subgraph monotonicity** from ⊥. -/
 theorem partitionFunctionΛ_bot_le_latticeGraph

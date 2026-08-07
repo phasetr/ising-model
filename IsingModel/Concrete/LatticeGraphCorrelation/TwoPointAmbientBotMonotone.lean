@@ -3,11 +3,9 @@ import IsingModel.AmbientLattice.Monotonicity.AmbientSubgraph
 /-!
 # ℤ^d Λ + alongExhaustion `*_monotone_ambient_subgraph` wrappers
 
-Narrow child module for seven ℤ^d `*_latticeGraph_monotone_ambient_subgraph`
-wrappers (Λ + along-exhaustion + correlationInfinite forms) for
-`{free,partition}Energy` and `correlation` ambient subgraph monotonicity.
-Each wrapper is a thin pass-through to the corresponding ambient
-`*_monotone_ambient_subgraph` lemma.
+Records monotonicity under enlarging the ambient graph at the Λ and along-exhaustion levels
+for the free energy and the partition function on `IsingModel.latticeGraph d`. Each is a
+pass-through of the corresponding ambient `*_monotone_ambient_subgraph` lemma.
 -/
 
 namespace IsingModel
@@ -55,15 +53,6 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_ambient_subgraph
     partitionFunctionAlongExhaustion G₁ Λ p n
       ≤ partitionFunctionAlongExhaustion G₂ Λ p n :=
   partitionFunctionAlongExhaustion_monotone_ambient_subgraph hG Λ p hf n
-
-/-! ## Moved: correlation `*_monotone_ambient_subgraph` wrappers
-
-The three wrappers
-`correlationΛ_latticeGraph_monotone_ambient_subgraph`,
-`correlationAlongExhaustion_latticeGraph_monotone_ambient_subgraph`,
-`correlationInfinite_latticeGraph_monotone_ambient_subgraph` now live
-in `TwoPointAmbientBotMonotoneCorr.lean`. -/
-
 
 end Ambient
 end IsingModel

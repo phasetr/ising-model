@@ -4,10 +4,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 /-!
 # Cubic named-rate wrappers (`_of_le_high_temp_rate` family)
 
-Narrow child module for six ℤ^d cubic pseudo-mass named-rate wrappers
-under the hypothesis that the anchored cubic pseudo-mass is bounded
-above by the transferred high-temperature rate. Each wrapper is a thin
-pass-through to the corresponding ambient lemma.
+Bridges the origin-anchored cubic pseudo-mass to exponential decay and to `latticeMass`
+under the hypothesis that the pseudo-mass is bounded above by the transferred
+high-temperature rate. Each result passes through to the corresponding ambient lemma.
 -/
 
 namespace IsingModel
@@ -73,17 +72,6 @@ theorem cubicNamedRate_ofReal_mem_Icc_latticeMass_of_le_high_temp_rate
   ⟨zero_le _,
     latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
       hα hr Λ hJ hβ hlt hle⟩
-
-/-! ## Moved: cubic named-rate le-high-temp positivity wrappers
-
-The three positivity wrappers
-(`latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate`,
-`cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_pos_le_high_temp_rate`,
-`latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate`)
-now live in `CubicPseudoMassNamedRateLeHighTempRatePos.lean`. -/
-
-
-
 
 end Ambient
 end IsingModel

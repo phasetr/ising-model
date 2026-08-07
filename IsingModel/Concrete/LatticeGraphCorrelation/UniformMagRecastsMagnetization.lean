@@ -1,28 +1,15 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetization apply / bound wrappers
+# ℤ^d magnetization and free-energy `apply` wrappers
 
-Narrow child module for nine ℤ^d `magnetizationΛ_latticeGraph_*`,
-`magnetizationAlongExhaustion_latticeGraph_*`,
-`magnetizationInfinite_latticeGraph_apply`, and
-`freeEnergyInfinite_latticeGraph_apply` apply / bound / unfolding
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `*_latticeGraph_*` lemma.
+Unfolds the along-exhaustion and infinite-volume magnetization, and the infinite-volume free
+energy, at `IsingModel.latticeGraph d` into the expressions they are defined by, including
+the stagewise case split on membership in the exhaustion volume.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: magnetizationΛ apply / bound wrappers
-
-The four wrappers
-`magnetizationΛ_latticeGraph_apply`,
-`magnetizationΛ_latticeGraph_le_one`,
-`abs_magnetizationΛ_latticeGraph_le_one`,
-`magnetizationΛ_latticeGraph_nonneg` now live in
-`UniformMagRecastsMagnetizationLambdaBounds.lean`. -/
-
 
 /-- **ℤ^d magnetizationAlongExhaustion unfolding**:
 `magnetizationAlongExhaustion G Λ p i n = correlationAlongExhaustion G Λ p {i} n`. -/

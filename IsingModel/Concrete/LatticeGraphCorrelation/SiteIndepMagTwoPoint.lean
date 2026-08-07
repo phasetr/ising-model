@@ -6,27 +6,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 
 /-!
-# ℤ^d two-point function bounds + symmetry wrappers
+# ℤ^d two-point function bounds and trivial-slice wrappers
 
-Narrow child module for 17 ℤ^d two-point / `truncated2TwoPoint` /
-`truncated3TwoPoint` / `truncated4TwoPoint` bounds, trivial slices,
-monotonicity, and symmetry wrappers. Theorem names are unchanged
-from the former `SiteIndepMag` declarations.
+Records the uniform bounds on the ℤ^d two-point function and its truncated companion,
+together with their values on the zero-field slice. These are the elementary estimates the
+ℤ^d susceptibility and clustering arguments start from.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 /-! ## Basic bounds on the ℤ^d two-point functions -/
-
-/-! ## Moved: twoPointFunction basic bound wrappers
-
-The three wrappers
-`twoPointFunction_nonneg`,
-`twoPointFunction_le_one`,
-`neg_one_le_twoPointFunction` now live in
-`SiteIndepMagTwoPointBounds.lean`. -/
-
 
 /-- **ℤ^d `twoPointFunction ≥ tanh(β·h)²` for `r ≠ 0`** (ferromagnetic):
 specialization of `correlationInfinite_ge_tanh_pow_card` at `A = {0, r}`
@@ -74,24 +64,6 @@ theorem truncated2TwoPoint_h_zero_at_zero (d : ℕ) (J β : ℝ) :
   rw [truncated2TwoPoint_zero,
       magnetizationInfinite_zero_at_h_zero]
   ring
-
-/-! ## Moved: twoPointFunction monotone wrappers
-
-The three wrappers `twoPointFunction_monotone_{J,h,beta}` now live in
-`SiteIndepMagTwoPointMonotone.lean`. -/
-
-/-! ## Moved: truncated2/3 TwoPoint nonneg / ge mag² / symm wrappers
-
-The three wrappers `truncated2TwoPoint_nonneg`,
-`twoPointFunction_ge_magnetization_sq`, `truncated3TwoPoint_symm_rs`
-now live in `SiteIndepMagTwoPointNonnegAndGe.lean`. -/
-
-
-
-/-! ## Moved: truncated4TwoPoint symmetry wrappers
-
-The three wrappers `truncated4TwoPoint_symm_{rs,su,ru}` now live in
-`SiteIndepMagTwoPointTruncated4Symm.lean`. -/
 
 end Ambient
 
