@@ -5,6 +5,14 @@
 # There is no exemption channel and no way to mark a finding fine: the only
 # legal edit is downward, produced by `--baseline` after real prose was fixed.
 #
+# One upward correction is on the record, and it is the only kind that can ever
+# be legitimate: the pin moved 713 -> 740 when `NARROW_CHILD`'s anchor gained the
+# `re.IGNORECASE` flag every other anchor already carried.  No prose changed and
+# no repair had been made; 27 lowercase occurrences that had always been there
+# simply became visible to a detector that had been blind to them.  A repair
+# campaign must never raise this file, and any future increase needs a public
+# reason of exactly this shape.
+#
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
 # therefore cannot pay for one regression -- there is no scalar to offset.
@@ -52,6 +60,7 @@ MISSING_MODULE_DOC	IsingModel.RandomCurrent.Switching.SwitchingIdentities	-	1
 MISSING_MODULE_DOC	IsingModel.TranslationInvariance.ConfigEquiv	-	1
 MISSING_MODULE_DOC	IsingModel.TranslationInvariance.FiniteVolume	-	1
 MISSING_MODULE_DOC	IsingModel.TranslationInvariance.InfiniteCorrelation	-	1
+NARROW_CHILD	IsingModel.AmbientLattice.Analyticity	-	1
 NARROW_CHILD	IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities	17	1
 NARROW_CHILD	IsingModel.AmbientLattice.AnalyticityLambdaCapstones	11	1
 NARROW_CHILD	IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff	16	1
@@ -536,6 +545,8 @@ NARROW_CHILD	IsingModel.Concrete.LatticeGraphCorrelation.UniformMagSusceptibilit
 NARROW_CHILD	IsingModel.Concrete.LatticeGraphCorrelation.UniformMagSusceptibilityInfiniteRegJZero	4	1
 NARROW_CHILD	IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticityLogAlongEx	4	1
 NARROW_CHILD	IsingModel.Concrete.LatticeGraphCorrelation.VdPolymerFamiliesAnalyticityTanh	4	1
+NARROW_CHILD	docs/index.md	-	25
+NARROW_CHILD	tex/proof-guide.tex	-	1
 PAREN_COUNT	IsingModel.AmbientLattice.MagnetizationInfiniteEmptyTrivial	9:theorems	1
 PAREN_COUNT	IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry	9:theorems	1
 PAREN_COUNT	IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero	8:theorems	1

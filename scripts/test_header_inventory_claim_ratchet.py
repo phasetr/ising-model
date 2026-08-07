@@ -42,11 +42,15 @@ import header_inventory_claim_ratchet as ratchet  # noqa: E402
 #: real-tree assertion below vacuously true.
 TARGET_FLOOR = 1500
 
-#: Ceiling on the pinned baseline, measured at 713 charges on the commit that
-#: introduced it (main ``fd1cdd8a``).  A ceiling, not an equality: the campaign
-#: this ratchet exists to serve drives the number down, and re-pinning after a
-#: repair must not need a test edit -- but *raising* it has to.
-BASELINE_CEILING = 713
+#: Ceiling on the pinned baseline, first measured at 713 charges on the commit
+#: that introduced it (main ``fd1cdd8a``) and corrected to 740 when
+#: ``NARROW_CHILD``'s anchor gained ``re.IGNORECASE``: 27 lowercase occurrences
+#: that had always been in the tree became visible to the detector, so the 713
+#: was an undercount of the tree, not a smaller population.  A ceiling, not an
+#: equality: the campaign this ratchet exists to serve drives the number down,
+#: and re-pinning after a repair must not need a test edit -- but *raising* it
+#: has to, which is why this correction had to be made here in the open.
+BASELINE_CEILING = 740
 
 #: A minimal declaration, so a fixture module is never accidentally an umbrella.
 TRIVIAL = "theorem f : True := trivial\n"
@@ -136,6 +140,23 @@ class ShapeTest(unittest.TestCase):
         """Claims wrap; matching on unflattened text would see none of them."""
         source = lean_source("M", header("Narrow child module for\nthe 12 foo\nwrappers."))
         self.assertEqual(tokens(source, "NARROW_CHILD"), ["12"])
+
+    def test_narrow_child_anchor_ignores_case(self) -> None:
+        """A lowercase `n` must not buy silence: prose is not case-normalized.
+
+        The anchor was case-sensitive when this class was introduced, which made
+        the largest claim class -- 68 % of the pinned population -- bypassable by
+        a one-character edit no reviewer would look at twice.
+        """
+        source = lean_source("M", header("narrow child module for the 12 foo wrappers."))
+        self.assertEqual(tokens(source, "NARROW_CHILD"), ["12"])
+
+    def test_relocation_anchor_ignores_case(self) -> None:
+        """Sentence-initial `Now live in` is the same claim as `now live in`."""
+        source = lean_source(
+            "M", header("The 13 bridge wrappers\nNow live in `IsingModel.Other.TanhPowDist`.")
+        )
+        self.assertEqual(tokens(source, "RELOCATION"), ["13->IsingModel.Other.TanhPowDist"])
 
     def test_a_vague_quantifier_is_charged(self) -> None:
         """`the remaining wrappers` fails the split-stability test as a number does."""
@@ -455,8 +476,10 @@ class MutationCanaryTest(unittest.TestCase):
 
     def test_weakening_the_anchor_loses_claims(self) -> None:
         """Requiring the article -- Unit 4's exact bug -- must be visible."""
-        mutant = load_mutant(('anchor=re.compile(r"Narrow child module")',
-                              'anchor=re.compile(r"Narrow child module for the")'))
+        mutant = load_mutant(
+            ('_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)',
+             '_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module for the", re.IGNORECASE)')
+        )
         real = self.charged_count(ratchet)
         self.assertEqual(real, 2)
         self.assertLess(self.charged_count(mutant), real)

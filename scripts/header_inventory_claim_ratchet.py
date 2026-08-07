@@ -430,6 +430,15 @@ class ClaimClass(NamedTuple):
     summary: str
 
 
+#: The ``Narrow child module`` opener.  ``re.IGNORECASE``, like every other
+#: anchor here, and that flag is load-bearing rather than cosmetic: prose is not
+#: case-normalized, so the same sentence appears sentence-initially and
+#: paragraph-medially (``... moved to a narrow child module ...``), and an anchor
+#: keyed to the capitalized spelling silently sees none of the lowercase ones.
+#: Missing it here made the largest class -- 68 % of the pinned population --
+#: bypassable by a one-character edit.
+_NARROW_CHILD_ANCHOR = re.compile(r"Narrow child module", re.IGNORECASE)
+
 #: ``for [the] <head word>`` immediately after the anchor.  No ``\A``: the
 #: pattern is applied with a ``pos`` argument, which ``\A`` ignores (it means
 #: "start of string", not "start of the search"), and getting that wrong silently
@@ -497,7 +506,12 @@ def _extract_predicate(flat: str, match: re.Match[str]) -> tuple[str, bool, str]
     return f"{token}:{noun}", True, ""
 
 
-_RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in")
+#: ``now live[s|d] in``.  ``re.IGNORECASE`` for the same reason as
+#: :data:`_NARROW_CHILD_ANCHOR`: a sentence-initial ``Now live in `X` `` is the
+#: identical claim, and the subject patterns this anchor is paired with
+#: (:data:`_SUBJECT_HEAD`, :data:`_SUBJECT_TAIL`) already ignore case, so a
+#: case-sensitive anchor was the one asymmetric link in the chain.
+_RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in", re.IGNORECASE)
 
 #: The destination as written just after ``now live in``: a backticked module or
 #: file name, or a ``\texttt{...}`` one in the TeX guide.  No ``\A`` -- see
@@ -568,7 +582,7 @@ CLAIM_CLASSES: tuple[ClaimClass, ...] = (
     ClaimClass(
         name="NARROW_CHILD",
         referent=THIS_MODULE,
-        anchor=re.compile(r"Narrow child module"),
+        anchor=_NARROW_CHILD_ANCHOR,
         extract=_extract_narrow_child,
         summary="`Narrow child module for [the] N ...` -- the size of this module",
     ),
@@ -777,6 +791,14 @@ BASELINE_HEADER = """\
 # on the commit this file was pinned at; it never says the claim is acceptable.
 # There is no exemption channel and no way to mark a finding fine: the only
 # legal edit is downward, produced by `--baseline` after real prose was fixed.
+#
+# One upward correction is on the record, and it is the only kind that can ever
+# be legitimate: the pin moved 713 -> 740 when `NARROW_CHILD`'s anchor gained the
+# `re.IGNORECASE` flag every other anchor already carried.  No prose changed and
+# no repair had been made; 27 lowercase occurrences that had always been there
+# simply became visible to a detector that had been blind to them.  A repair
+# campaign must never raise this file, and any future increase needs a public
+# reason of exactly this shape.
 #
 # Multiset keyed (class, target, token): a key that is absent here, or present
 # with a smaller count than the tree now holds, fails the gate.  One fix
