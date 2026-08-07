@@ -1885,8 +1885,9 @@ class SmuggledGrammarTest(unittest.TestCase):
 
     #: Grant an allowance even for a key whose file this diff edits.
     NO_EDITED_FILTER = (
-        "            if after[key] > before.get(key, 0) and target_path(key[1]) not in edited\n",
-        "            if after[key] > before.get(key, 0)\n",
+        "        {key: count for key, count in gained.items() "
+        "if target_path(key[1]) not in edited}\n",
+        "        dict(gained)\n",
     )
 
     def test_prose_the_diff_writes_is_not_paid_for_by_the_widening(self) -> None:
@@ -1952,6 +1953,177 @@ class SmuggledGrammarTest(unittest.TestCase):
         drift = self.widen_and_declare(self.HEAD_TREE_RECOUNT, self.NO_EDITED_FILTER)
         self.assertTrue(drift.ok, drift)
         self.assertTrue(any("allowance" in note for note in drift.migration), drift.migration)
+
+
+#: A pure recall improvement: two more inventory nouns, recognizing prose that
+#: was always there.  It is the *other* kind of detector change from
+#: :data:`WIDENED_PREDICATE`, and the kind this design nearly made impossible:
+#: ``RELOCATION``'s token carries the count as well as the destination, so a
+#: subject the grammar newly understands does not add a row -- it *replaces*
+#: ``->X`` with ``11->X``.  Round 4 measured both stagings of that and both
+#: failed, which would have frozen the token grammar the moment the pin landed.
+WIDENED_NOUN = (
+    r'r"|modules?|files?|variants?)"',
+    r'r"|modules?|files?|variants?|capstones?|bundles?)"',
+)
+
+
+def noun_widened_detector() -> str:
+    """Return the checker's source with two nouns added to :data:`INVENTORY_NOUN`."""
+    text = source_text()
+    if WIDENED_NOUN[0] not in text:
+        raise AssertionError("mutation target absent, the recall fixture would be vacuous")
+    return text.replace(*WIDENED_NOUN, 1)
+
+
+class MigrationDeltaTest(unittest.TestCase):
+    """The arithmetic of the two budgets, without a repository around it."""
+
+    KEY = ("RELOCATION", "IsingModel.One", "->IsingModel.Other")
+    REKEYED = ("RELOCATION", "IsingModel.One", "11->IsingModel.Other")
+    OTHER = ("RELOCATION", "IsingModel.One", "->IsingModel.Third")
+
+    def delta(self, before: dict, after: dict, edited=frozenset()):
+        """Return ``(allowance, relief)`` for one measured detector delta."""
+        return ratchet.migration_delta(Counter(before), Counter(after), edited)
+
+    def test_a_rekeying_is_both_allowed_and_relieved(self) -> None:
+        """The modal recall fix: one row replaces another, nobody edited prose."""
+        allowance, relief = self.delta({self.KEY: 1}, {self.REKEYED: 1})
+        self.assertEqual(allowance, Counter({self.REKEYED: 1}))
+        self.assertEqual(relief, Counter({self.KEY: 1}))
+
+    def test_a_net_reduction_earns_no_relief(self) -> None:
+        """The laundering direction: narrow the detector, drop rows, declare."""
+        allowance, relief = self.delta({self.KEY: 1, self.OTHER: 1}, {})
+        self.assertEqual(allowance, Counter())
+        self.assertEqual(relief, Counter())
+
+    def test_one_rekeying_does_not_pay_for_a_second_removal(self) -> None:
+        """The guard is per group and in aggregate, so a re-key cannot cover a drop."""
+        allowance, relief = self.delta(
+            {self.KEY: 1, self.OTHER: 1}, {self.REKEYED: 1}
+        )
+        self.assertEqual(allowance, Counter({self.REKEYED: 1}))
+        self.assertEqual(relief, Counter(), "1 gain may not relieve 2 losses in one group")
+
+    def test_a_gain_in_another_group_does_not_pay_for_a_loss(self) -> None:
+        """Groups are ``(class, target)``: another file's gain is not this file's."""
+        elsewhere = ("RELOCATION", "IsingModel.Two", "4->IsingModel.Other")
+        allowance, relief = self.delta({self.KEY: 1}, {elsewhere: 1})
+        self.assertEqual(allowance, Counter({elsewhere: 1}))
+        self.assertEqual(relief, Counter())
+
+    def test_an_edited_file_earns_neither_budget(self) -> None:
+        """The same rule guards both directions: a touched file is paid for by nobody."""
+        allowance, relief = self.delta(
+            {self.KEY: 1}, {self.REKEYED: 1}, frozenset({"IsingModel/One.lean"})
+        )
+        self.assertEqual(allowance, Counter())
+        self.assertEqual(relief, Counter())
+
+
+class RecallMigrationTest(unittest.TestCase):
+    """A recall improvement that re-keys existing prose must be landable.
+
+    Round 4's H2: adding an inventory noun made six pinned ``RELOCATION`` rows
+    become sharper keys, which is one addition and one removal per sentence, on
+    prose the diff does not touch.  ``B1`` covered the additions only while the
+    files stayed untouched and ``B2`` demanded those very files be touched, so
+    the two rules were mutually exclusive and the improvement had no staging at
+    all.  Both arms below land the *same* widening; what differs is whether the
+    prose it recognizes predates the diff.
+    """
+
+    CLAIM = "The 11 along-exhaustion capstones now live in `IsingModel.Other`."
+    OLD_KEY = ("RELOCATION", "IsingModel.One", "->IsingModel.Other")
+    NEW_KEY = ("RELOCATION", "IsingModel.One", "11->IsingModel.Other")
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp(prefix="claim-ratchet-recall-")
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.root = Path(self.tmp)
+        (self.root / "IsingModel").mkdir()
+        (self.root / "scripts" / "audit").mkdir(parents=True)
+        self.write("IsingModel/One.lean", header(self.CLAIM))
+        self.write("IsingModel/Two.lean", header("Provides the bar API."))
+        # Lowercase, so the narrowing arm below has a row to lose.
+        self.write("IsingModel/Three.lean", header("narrow child module for the 5 bar wrappers."))
+        self.write(ratchet.DETECTOR_REPO_PATH, source_text())
+
+    def start(self) -> None:
+        """Commit the base: the shipped detector, and its own pin of this tree."""
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.com")
+        self.git("config", "user.name", "t")
+        self.git("add", "-A")
+        pin = ratchet.build_report(root=self.root).charged
+        self.assertEqual(pin[self.OLD_KEY], 1, "the base detector must miss the count")
+        self.write(ratchet.BASELINE_REPO_PATH, ratchet.format_baseline(pin))
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base")
+
+    def git(self, *args: str) -> None:
+        """Run ``git`` in the scratch repository."""
+        subprocess.run(["git", "-C", self.tmp, *args], check=True, capture_output=True)
+
+    def write(self, relative: str, text: str) -> None:
+        """Write ``text`` at ``relative`` inside the scratch repository."""
+        path = self.root / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+
+    def land(self, text: str, reason: str) -> tuple[ratchet.Drift, Counter]:
+        """Land detector ``text``, re-pin under it, declare, and measure."""
+        detector = load_source(text)
+        self.write(ratchet.DETECTOR_REPO_PATH, text)
+        pin = detector.build_report(root=self.root).charged
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            f"{ratchet.MIGRATION_MARKER} {reason}\n" + detector.format_baseline(pin),
+            encoding="utf-8",
+        )
+        return detector.check_drift(root=self.root, base_ref="main"), pin
+
+    def test_a_pure_recall_improvement_lands(self) -> None:
+        """The positive case round 4 proved impossible, with no prose edited."""
+        self.start()
+        drift, pin = self.land(noun_widened_detector(), "INVENTORY_NOUN gained `capstones`")
+        self.assertEqual(pin[self.NEW_KEY], 1, "the widened detector resolves the count")
+        self.assertEqual(pin[self.OLD_KEY], 0, "and the coarse key is gone")
+        self.assertTrue(drift.ok, drift)
+        self.assertTrue(any("relief: 1 charge" in note for note in drift.migration),
+                        drift.migration)
+
+    def test_the_recall_improvement_may_not_carry_new_prose(self) -> None:
+        """H1's exploit, in the recall staging: a claim the diff writes still fails."""
+        self.start()
+        self.write(
+            "IsingModel/Two.lean",
+            header("The 7 smuggled capstones now live in `IsingModel.Elsewhere`."),
+        )
+        drift, _pin = self.land(noun_widened_detector(), "INVENTORY_NOUN gained `capstones`")
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(
+            [key for key, _now, _was in drift.added],
+            [("RELOCATION", "IsingModel.Two", "7->IsingModel.Elsewhere")],
+        )
+
+    def test_a_narrowing_that_only_drops_rows_is_still_a_b2_failure(self) -> None:
+        """The guard: relief may never become "blind the detector, drop the row".
+
+        The narrowed detector stops seeing the lowercase ``NARROW_CHILD`` claim
+        entirely -- a group that loses without gaining -- so the row it removes
+        from the pin is unexplained however loudly the migration is declared.
+        """
+        self.start()
+        drift, pin = self.land(narrowed_detector(), "anchor narrowed")
+        self.assertEqual(pin[("NARROW_CHILD", "IsingModel.Three", "5")], 0)
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(
+            [key for key, _now, _was in drift.unexplained],
+            [("NARROW_CHILD", "IsingModel.Three", "5")],
+        )
 
 
 # --------------------------------------------------------------------------

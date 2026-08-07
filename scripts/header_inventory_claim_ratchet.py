@@ -1596,12 +1596,23 @@ BASELINE_HEADER = """\
 # takes a whole line of this file, added by the same diff, reading exactly
 # `# DETECTOR-MIGRATION: <reason>`.  The declaration is a precondition and not an
 # authorization: what it buys is computed, not granted.  BOTH detectors are run
-# on a checkout of the BASE COMMIT, and B1 is relaxed per key by the excess of
-# this detector over that one THERE -- on prose that already existed.  Prose the
-# diff writes is not in that tree, so widening the grammar and writing a claim in
-# the newly recognized shape cannot pay for itself; and a key whose file this
-# diff edits earns nothing at all.  A detector edit that changes no logic
-# (comments, docstrings) buys nothing, and B2/B3 are never waived.
+# on a checkout of the BASE COMMIT and compared THERE, on prose that already
+# existed.  Prose the diff writes is not in that tree, so widening the grammar
+# and writing a claim in the newly recognized shape cannot pay for itself; and a
+# key whose file this diff edits earns nothing at all.  A detector edit that
+# changes no logic (comments, docstrings) buys nothing.
+#
+# The comparison relaxes B1 and B2 both, because a recall fix moves the pin in
+# both directions at once: this token records a count as well as a destination,
+# so teaching the grammar one more noun turns `->X` into `11->X` -- one row added
+# and one removed for a sentence nobody edited.  Requiring a prose edit for that
+# removal demanded an edit with nothing to write, and making it (to satisfy B2)
+# forfeited the allowance that covered the addition; there was no third staging,
+# so the grammar this file pins could not be corrected once pinned.  A row the
+# new detector stops charging on the base tree is therefore explained -- but only
+# inside a (class, target) group that gains at least as much as it loses, so
+# "narrow the detector, drop rows, declare" remains a B2 failure.  B3 (the pin
+# must be tight against the tree) is never waived by any of it.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 """
@@ -1656,7 +1667,7 @@ def read_baseline(path: Path = BASELINE_FILE) -> tuple[Counter[tuple[str, str, s
 
 #: The trailer that *declares* a detector migration.  Declaring is a
 #: precondition, never an authorization: what a declaration can buy is computed
-#: by :func:`migration_allowance`, key by key.  Four things must hold together
+#: by :func:`migration_budgets`, key by key.  Four things must hold together
 #: (:func:`check_drift`), and each exists because the hatch as previously
 #: written was satisfied without it:
 #:
@@ -1665,9 +1676,12 @@ def read_baseline(path: Path = BASELINE_FILE) -> tuple[Counter[tuple[str, str, s
 #:    not a marker buried in a longer comment;
 #: 2. the detector's **logic** changed (:func:`detector_logic_changed`) -- an AST
 #:    comparison, so appending ``# cosmetic`` to the detector buys nothing;
-#: 3. the rise is one the two detectors disagree about **on the base commit's own
-#:    tree**.  Prose this diff writes is not in that tree, so no claim the diff
-#:    adds can be paid for by widening the grammar that recognizes it;
+#: 3. the movement is one the two detectors disagree about **on the base
+#:    commit's own tree**.  Prose this diff writes is not in that tree, so no
+#:    claim the diff adds can be paid for by widening the grammar that
+#:    recognizes it.  A key the new detector gains there relaxes ``B1``; a key
+#:    it loses there relaxes ``B2``, and only inside a ``(class, target)`` group
+#:    that does not shrink (:func:`migration_delta`);
 #: 4. the key's source file is not one this diff edits at all.
 #:
 #: Two measured exploits this replaces.  Two new inventory claims +
@@ -1887,9 +1901,10 @@ class Drift(NamedTuple):
         """Whether the pin moved only in ways this diff explains.
 
         One policy, evaluated once: a declared migration is already accounted for
-        in :attr:`added` (it *narrows* what counts as a rise, key by key), so
-        there is no second, permissive rule here for :func:`print_drift` to
-        duplicate and drift away from.
+        in :attr:`added` and :attr:`unexplained` (it *narrows* what counts as a
+        rise and what counts as an unexplained fall, key by key), so there is no
+        second, permissive rule here for :func:`print_drift` to duplicate and
+        drift away from.
         """
         return not (
             self.unsound or self.baseline_errors or self.untight
@@ -1930,9 +1945,22 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     is still written -- the row would be missing and the claim live, which ``B3``
     rejects -- so the only way down is for the prose to have actually gone.  What
     ``B2`` adds on top is that the disappearance has to be visible in the diff of
-    the file that owned it.  A key carried into a *renamed* module is a new key
-    by the ratchet's own definition and fails ``B1``: the repair is to drop the
-    count while moving the file, which is what the campaign is for.
+    the file that owned it, *or* in a measured recount
+    (:func:`migration_budgets`): a row that vanishes because the **detector**
+    stopped producing that key on the base commit's own tree was not repaired by
+    anybody, so demanding a prose edit for it is demanding an edit that has
+    nothing to write.
+
+    A key carried into a *renamed* module is a new key by the ratchet's own
+    definition and fails ``B1``.  What repairs it depends on the class, and the
+    difference is worth stating because the obvious move only works for one of
+    them: a ``NARROW_CHILD`` count can be dropped in place (``for the 12 foo
+    wrappers`` -> ``for the foo wrappers`` states no size, so it produces no key
+    at all), while a ``RELOCATION`` cannot -- ``The three wrappers now live in
+    `X` `` -> ``The wrappers now live in `X` `` re-keys ``3->X`` to ``->X``,
+    which is a new key and a ``B1`` failure, because the ownership claim is
+    exactly what that class charges.  The repair there is to delete the
+    relocation sentence, which is what the campaign is for.
 
     All three run only on a **sound** run of a **parseable** pair of pins.  A
     conservation failure or a malformed baseline suppresses the comparison here
@@ -1959,34 +1987,124 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     if baseline is None:
         return Drift(base, False, (), (), untight, (), (), ())
     edited = changed_paths(root, base)
-    allowance, migration = migration_allowance(root, base, live)
+    migration = migration_budgets(root, base, live)
     added = tuple(
         sorted(
             (key, count, baseline.get(key, 0))
             for key, count in head.items()
-            if count > baseline.get(key, 0) + allowance.get(key, 0)
+            if count > baseline.get(key, 0) + migration.allowance.get(key, 0)
         )
     )
     unexplained = tuple(
         sorted(
             (key, head.get(key, 0), count)
             for key, count in baseline.items()
-            if head.get(key, 0) < count and target_path(key[1]) not in edited
+            if head.get(key, 0) < count
+            and target_path(key[1]) not in edited
+            and count - head.get(key, 0) > migration.relief.get(key, 0)
         )
     )
-    return Drift(base, True, added, unexplained, untight, (), (), migration)
+    return Drift(base, True, added, unexplained, untight, (), (), migration.narrative)
 
 
-def migration_allowance(
+class Migration(NamedTuple):
+    """What a declared detector migration buys -- computed, never granted.
+
+    Two per-key budgets rather than one, because a detector change moves the pin
+    in two directions at once and only one of them used to be payable:
+
+    ``allowance``
+        keys this detector charges on the base commit's tree that the base
+        detector did not.  It relaxes ``B1``.
+
+    ``relief``
+        keys the base detector charged there that this one no longer does.  It
+        relaxes ``B2``, and only within a ``(class, target)`` group the change
+        does not shrink (see :func:`migration_delta`).
+
+    ``narrative``
+        what to print, including the arithmetic both budgets came from.
+    """
+
+    allowance: Counter[tuple[str, str, str]]
+    relief: Counter[tuple[str, str, str]]
+    narrative: tuple[str, ...]
+
+
+def migration_delta(
+    before: Counter[tuple[str, str, str]],
+    after: Counter[tuple[str, str, str]],
+    edited: frozenset[str],
+) -> tuple[Counter[tuple[str, str, str]], Counter[tuple[str, str, str]]]:
+    """Split a base-tree detector delta into a ``B1`` allowance and a ``B2`` relief.
+
+    Both arguments are measured on the **same** tree -- the base commit's -- so
+    every difference between them is a fact about the detector and never about
+    the prose.  ``edited`` zeroes both budgets for any key whose source this diff
+    touches, so a migration must be landed in a diff that leaves the scanned
+    corpus alone.
+
+    The relief exists because ``B1`` and ``B2`` were otherwise **mutually
+    exclusive** for the modal detector improvement in this design.  A recall fix
+    -- the detector recognizes prose that was always there -- does not only add
+    rows: where the newly recognized part is a *sharpener* of an existing key it
+    also removes one, because ``RELOCATION``'s token is ``<count>-><destination>``
+    with the count optional.  Teaching the grammar one more inventory noun turns
+    ``->X`` into ``11->X``: an addition ``B1`` covers and a removal ``B2`` did
+    not, and the only apparent escape -- also touching the files ``B2`` names --
+    zeroes the allowance and turns the additions back into ``B1`` failures.  Both
+    stagings failed; there was no third.  Since 303 of the 692 pinned
+    ``RELOCATION`` keys are still the unresolved ``->X`` shape, that was not a
+    corner case but the next change, and a pin nobody can correct is a pin that
+    freezes its own token grammar.
+
+    What the relief must **not** become is a channel for narrowing the detector
+    to launder rows off the pin.  The guard is per ``(class, target)`` group: a
+    removal is relieved only where the same group gains at least as much as it
+    loses, i.e. where the change re-keys rather than reduces.  Equivalently --
+    the two statements are the same arithmetic -- the relief a group may draw can
+    never exceed what that group's additions cost, so the population per file and
+    class is non-decreasing across a migration.  A change that genuinely stops
+    recognizing something still fails ``B2`` and still needs a reviewed decision.
+    """
+    keys = set(before) | set(after)
+    gained = Counter(
+        {key: after[key] - before.get(key, 0) for key in keys if after.get(key, 0)
+         > before.get(key, 0)}
+    )
+    lost = Counter(
+        {key: before[key] - after.get(key, 0) for key in keys if before.get(key, 0)
+         > after.get(key, 0)}
+    )
+    gained_by_group: Counter[tuple[str, str]] = Counter()
+    lost_by_group: Counter[tuple[str, str]] = Counter()
+    for key, count in gained.items():
+        gained_by_group[key[:2]] += count
+    for key, count in lost.items():
+        lost_by_group[key[:2]] += count
+    allowance = Counter(
+        {key: count for key, count in gained.items() if target_path(key[1]) not in edited}
+    )
+    relief = Counter(
+        {
+            key: count for key, count in lost.items()
+            if target_path(key[1]) not in edited
+            and lost_by_group[key[:2]] <= gained_by_group[key[:2]]
+        }
+    )
+    return allowance, relief
+
+
+def migration_budgets(
     root: Path, commit: str, live: Counter[tuple[str, str, str]]
-) -> tuple[Counter[tuple[str, str, str]], tuple[str, ...]]:
-    """Return ``(per-key allowance, narrative)`` for a declared detector migration.
+) -> Migration:
+    """Return the :class:`Migration` budgets for a declared detector migration.
 
-    The allowance is a pure function of *the detector delta applied to prose that
+    Both budgets are pure functions of *the detector delta applied to prose that
     already existed*: both detectors are run on a checkout of the **base
-    commit**, and the allowance is the per-key excess of this one over that one
-    there.  Prose the diff writes is not in that tree at all, so it can never
-    earn allowance -- which is the property the previous version lacked.
+    commit**, and the delta is taken there.  Prose the diff writes is not in that
+    tree at all, so it can never earn anything -- which is the property the
+    version before this one lacked.
 
     That version ran both detectors on the **head** tree, and reasoned that a
     new claim is "visible to both detectors, so it cancels".  It does not cancel
@@ -2001,7 +2119,7 @@ def migration_allowance(
 
     * the detector got smarter about **existing** prose -- the same characters
       were in the base tree and only the new detector sees them -- which is a
-      legitimate recount and is what the allowance covers;
+      legitimate recount and is what these budgets cover;
     * the diff added **new** prose that the new logic covers, which is a claim
       somebody wrote and is charged like any other.
 
@@ -2014,56 +2132,42 @@ def migration_allowance(
 
     Empty unless a declaration was added by this diff *and* the detector's logic
     really changed *and* the base tree can be materialized and both detectors
-    run soundly on it.  It relaxes ``B1`` alone: ``B2`` (a row that vanished with
-    no edit to the source it names) and ``B3`` (the pin must be tight) are never
-    waived, so a detector edit cannot buy a quiet deletion from the pin either.
-
-    A consequence worth stating rather than discovering: a migration that
-    *re-keys* an existing claim -- one that makes the same sentence charge
-    ``2:prerequisites`` where it charged ``2:wrapper`` -- adds a row and removes
-    one, and the removal is a ``B2`` failure with no source edit to explain it.
-    Only a purely **additive** widening (the ``713 -> 740`` shape: prose that was
-    charged nothing becoming charged something) passes as declared.  A re-keying
-    one needs a reviewed change here, which is the right place for that decision
-    to be made and is why the constraint is written down instead of waived.
+    run soundly on it.  ``B3`` (the pin must be tight against the live tree) is
+    never waived by any of this, so no detector edit can buy slack in the pin.
     """
     reasons = migration_declarations(root, commit)
     if not reasons:
-        return Counter(), ()
+        return Migration(Counter(), Counter(), ())
     declared = tuple(f"declared: {reason}" for reason in reasons)
     if not detector_logic_changed(root, commit):
-        return Counter(), declared + (
+        return Migration(Counter(), Counter(), declared + (
             "no allowance: the detector's logic is unchanged since the base commit "
             "(a comment- or docstring-only edit is not a migration)",
-        )
+        ))
     with base_worktree(root, commit) as tree:
         if tree is None:
-            return Counter(), declared + (
+            return Migration(Counter(), Counter(), declared + (
                 "no allowance: the base commit's tree could not be checked out, so the "
                 "detector delta cannot be measured on prose that predates this diff",
-            )
+            ))
         before = detector_charges(root, commit, tree)
         after = own_charges(tree)
     if before is None or after is None:
-        return Counter(), declared + (
+        return Migration(Counter(), Counter(), declared + (
             "no allowance: one of the two detectors did not produce a sound run on the "
             "base commit's tree",
-        )
-    edited = changed_paths(root, commit)
-    allowance = Counter(
-        {
-            key: after[key] - before.get(key, 0)
-            for key in after
-            if after[key] > before.get(key, 0) and target_path(key[1]) not in edited
-        }
-    )
-    return allowance, declared + (
+        ))
+    allowance, relief = migration_delta(before, after, changed_paths(root, commit))
+    return Migration(allowance, relief, declared + (
         f"allowance: on the base commit's own tree the base detector charges "
         f"{sum(before.values())} and this one charges {sum(after.values())}; "
         f"{sum(allowance.values())} charge(s) over {len(allowance)} key(s) in files this diff "
         f"does not touch are attributable to the detector change, and only those "
         f"(this tree charges {sum(live.values())})",
-    )
+        f"relief: {sum(relief.values())} charge(s) over {len(relief)} key(s) that the base "
+        f"detector charged there and this one no longer does, in groups the change re-keys "
+        f"rather than shrinks; those rows may leave the pin without a prose edit",
+    ))
 
 
 def print_drift(drift: Drift | None, base_ref: str) -> bool:
@@ -2095,8 +2199,8 @@ def print_drift(drift: Drift | None, base_ref: str) -> bool:
     for key, count, was in drift.added:
         print(f"  FAIL: B1 pin rose {was} -> {count}: {key[0]} {key[1]} {key[2]}")
     for key, count, was in drift.unexplained:
-        print(f"  FAIL: B2 pin fell {was} -> {count} with no edit to {target_path(key[1])}: "
-              f"{key[0]} {key[1]} {key[2]}")
+        print(f"  FAIL: B2 pin fell {was} -> {count} with no edit to {target_path(key[1])} "
+              f"and no recount to explain it: {key[0]} {key[1]} {key[2]}")
     for note in drift.migration:
         print(f"  INFO: detector migration -- {note}")
     if not drift.had_baseline:

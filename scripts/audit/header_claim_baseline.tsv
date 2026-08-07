@@ -40,12 +40,23 @@
 # takes a whole line of this file, added by the same diff, reading exactly
 # `# DETECTOR-MIGRATION: <reason>`.  The declaration is a precondition and not an
 # authorization: what it buys is computed, not granted.  BOTH detectors are run
-# on a checkout of the BASE COMMIT, and B1 is relaxed per key by the excess of
-# this detector over that one THERE -- on prose that already existed.  Prose the
-# diff writes is not in that tree, so widening the grammar and writing a claim in
-# the newly recognized shape cannot pay for itself; and a key whose file this
-# diff edits earns nothing at all.  A detector edit that changes no logic
-# (comments, docstrings) buys nothing, and B2/B3 are never waived.
+# on a checkout of the BASE COMMIT and compared THERE, on prose that already
+# existed.  Prose the diff writes is not in that tree, so widening the grammar
+# and writing a claim in the newly recognized shape cannot pay for itself; and a
+# key whose file this diff edits earns nothing at all.  A detector edit that
+# changes no logic (comments, docstrings) buys nothing.
+#
+# The comparison relaxes B1 and B2 both, because a recall fix moves the pin in
+# both directions at once: this token records a count as well as a destination,
+# so teaching the grammar one more noun turns `->X` into `11->X` -- one row added
+# and one removed for a sentence nobody edited.  Requiring a prose edit for that
+# removal demanded an edit with nothing to write, and making it (to satisfy B2)
+# forfeited the allowance that covered the addition; there was no third staging,
+# so the grammar this file pins could not be corrected once pinned.  A row the
+# new detector stops charging on the base tree is therefore explained -- but only
+# inside a (class, target) group that gains at least as much as it loses, so
+# "narrow the detector, drop rows, declare" remains a B2 failure.  B3 (the pin
+# must be tight against the tree) is never waived by any of it.
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 
