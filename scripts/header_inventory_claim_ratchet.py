@@ -1207,8 +1207,9 @@ def head_quantity(head: str) -> str:
 #: ``Step 241 interior wrappers`` and ``PR 1861 wrappers`` state no inventory
 #: size, and this repository's prose is full of both.  A closed list of citation
 #: nouns is the cheap half of the guard; the other half is lexical
-#: (:data:`_GOVERNED_QUANTITY`'s left context, which refuses ``§``, ``#`` and the
-#: relation symbols, so ``J = 0 wrappers`` is an expression rather than a count).
+#: (:func:`_cites_rather_than_counts` refuses the relation symbols, and
+#: :func:`quantity_fragment` never opens on a token carrying ``§`` or ``#``, so
+#: ``J = 0 wrappers`` is an expression rather than a count).
 CITATION_WORDS = frozenset(
     {
         "step", "steps", "pr", "prs", "issue", "issues", "section", "sections",
@@ -1342,7 +1343,7 @@ def _extract_narrow_child(flat: str, match: re.Match[str]) -> tuple[str, bool, s
     "states no size", and that header states one.  What keeps the false charges
     out is lexical instead of positional: code spans are blanked
     (:func:`blank_code`), and citation words and relation symbols are refused
-    (:data:`CITATION_WORDS`, :data:`_GOVERNED_QUANTITY`).
+    (:data:`CITATION_WORDS`, :func:`_cites_rather_than_counts`).
 
     This is the one class that can decline to charge, and what it declines on is
     a header that states no size at all (``Narrow child module for concrete
@@ -2074,7 +2075,7 @@ def migration_declarations(root: Path, commit: str) -> tuple[str, ...]:
     space, a non-empty reason -- and it has to be added by this diff, so a marker
     already on the base branch is not a standing permission.  Declaring is
     necessary and nowhere near sufficient: what a declaration buys is bounded by
-    :func:`detector_recount`, which measures the effect of the detector change
+    :func:`migration_budgets`, which measures the effect of the detector change
     instead of believing the sentence.
     """
     code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
@@ -2388,6 +2389,17 @@ def migration_delta(
     never exceed what that group's additions cost, so the population per file and
     class is non-decreasing across a migration.  A change that genuinely stops
     recognizing something still fails ``B2`` and still needs a reviewed decision.
+
+    The limit of that guard, stated rather than left to be discovered: it bounds
+    the *population*, not the *sharpness* of the tokens.  A declared migration
+    that re-keys ``11->X`` to ``->X`` -- a grammar that got blunter while staying
+    the same size -- is arithmetically indistinguishable from one that re-keys
+    ``->X`` to ``11->X``, and nothing here can tell them apart without knowing
+    what a token means.  What is left is not silence: the movement needs a
+    declaration, a real logic change in reviewed code, and it shows up row by row
+    in the diff of the pin, which is the artefact a reviewer reads.  The
+    checker's standing caveat is the same one -- a number that moves is a prompt
+    to read the diff, never a substitute for reading it.
     """
     keys = set(before) | set(after)
     gained = Counter(

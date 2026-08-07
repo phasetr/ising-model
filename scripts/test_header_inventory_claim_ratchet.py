@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import re
 import shutil
 import subprocess
 import sys
@@ -1933,7 +1934,8 @@ class DriftTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual(
             [key for key, _now, _was in drift.added],
-            [("NARROW_CHILD", "IsingModel/One.lean", "99"), ("NARROW_CHILD", "IsingModel/Two.lean", "42")],
+            [("NARROW_CHILD", "IsingModel/One.lean", "99"),
+             ("NARROW_CHILD", "IsingModel/Two.lean", "42")],
         )
         self.assertTrue(
             any("logic is unchanged" in note for note in drift.migration), drift.migration
@@ -2575,6 +2577,36 @@ class RealTreeTest(unittest.TestCase):
         """K0/K1/K2/K3/K4 hold on the tree as delivered."""
         report = real_report()
         self.assertTrue(report.sound, "\n".join(report.conservation))
+
+    def test_every_documented_reference_names_something_real(self) -> None:
+        """A docstring that names a symbol which does not exist is this PR's own bug.
+
+        Four review rounds have turned on a docstring stating a property the code
+        does not have; the cheapest half of that class is a docstring naming a
+        function the code does not have, and a rename is all it takes.  Two live
+        ones were found this way (`_GOVERNED_QUANTITY` after a rename here,
+        `detector_recount` which has never existed).  Attributes resolve against
+        the module's own classes, since a class docstring names its fields
+        without qualifying them.
+        """
+        text = SCRIPT_FILE.read_text(encoding="utf-8")
+        scopes = [ratchet] + [
+            value for value in vars(ratchet).values()
+            if isinstance(value, type) and value.__module__ == ratchet.__name__
+        ]
+        dangling = []
+        for role, name in re.findall(r":(data|func|class|attr|meth):`([^`]+)`", text):
+            head, *rest = name.split(".")
+            found = False
+            for scope in scopes:
+                target = getattr(scope, head, None)
+                for part in rest:
+                    target = getattr(target, part, None)
+                found = found or target is not None
+            if not found:
+                dangling.append(f":{role}:`{name}`")
+        self.assertEqual(sorted(set(dangling)), [], "anti-vacuity: the roles are found")
+        self.assertGreater(len(re.findall(r":func:`", text)), 20, "anti-vacuity")
 
     def test_the_tree_is_not_regressed_against_the_committed_baseline(self) -> None:
         baseline, errors = ratchet.read_baseline()
