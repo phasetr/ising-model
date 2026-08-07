@@ -874,10 +874,11 @@ def scan_name(tree: Tree, name: str) -> list[Occurrence]:
 def scan_prose(tree: Tree, name: str) -> list[str]:
     """Return the comment / docstring sites that mention ``name``.
 
-    Never a verdict input: prose is not a reference, and a lemma cited only by a
-    sibling module's ``/-! ... -/`` header is still dead code. It is reported
-    because the deletion PR has to update those headers -- a deletion that
-    builds green can still leave the documentation lying.
+    Never a verdict input: prose is not a reference, so a lemma cited only by a
+    sibling module's ``/-! ... -/`` header is not rescued by that mention -- nor
+    is it thereby shown to be dead, which only a human can settle. It is
+    reported because a deletion PR has to update those headers -- a deletion
+    that builds green can still leave the documentation lying.
     """
     needle = name.rsplit(".", 1)[-1]
     out: list[str] = []
@@ -1113,7 +1114,7 @@ class UnreadableSpan:
     (:meth:`could_cite`), and every one of them is forced to ``uncertain``.
     Counting the span without that step left the tool fail-closed at the level
     of the *warning* and fail-open at the level of the *verdict*, which is the
-    only level that authorises a deletion.
+    level a deletion decision is read off.
     """
 
     label: str
@@ -1528,10 +1529,11 @@ def require_documentation() -> None:
     ``README.md``, no ``docs/index.md`` or no guide, the corresponding channel
     contributes no token and no literal text, every citation living in it
     disappears, and the run still prints "no citation in the scanned
-    documentation" -- the sentence that licenses a deletion -- with a clean bill
-    of health. The three files are tracked, so their absence is never a normal
-    state; it is a moved path, a truncated checkout or a bad rename, and each
-    must stop the scan instead of quietly shrinking its evidence base.
+    documentation" -- the sentence a deletion write-up cites as its evidence --
+    with a clean bill of health. The three files are tracked, so their absence
+    is never a normal state; it is a moved path, a truncated checkout or a bad
+    rename, and each must stop the scan instead of quietly shrinking its
+    evidence base.
     """
     required = (README, DOCS_DIR / "index.md", TEX_GUIDE)
     missing = [rel(path) for path in required if not path.is_file()]
@@ -1786,7 +1788,7 @@ def resolve_candidate(
 
     A *note* forces ``uncertain``; *info* is reported but does not classify. An
     unknown name is a hard failure (exit code 2): a stale candidate list must
-    never be silently reported as deletable.
+    never be silently reported as carrying no evidence.
     """
     notes: list[str] = []
     info: list[str] = []
@@ -2617,8 +2619,9 @@ L7d the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
-   such a lemma really is dead code -- it is the surrounding *documentation* the
-   deletion PR must update, or the tree keeps building green while its headers lie.
+   the mention rescues nothing and such a lemma may be dead code, pending human
+   verification -- and it is the surrounding *documentation* a deletion PR must
+   update, or the tree keeps building green while its headers lie.
    The prose is recovered from the comment mask, down to a single blanked
    character, so a one-character name on its own line inside a block comment is
    seen too; what the mask cannot distinguish is prose from an equally long run
@@ -2651,8 +2654,9 @@ L11 a suffix citation matching two or more declarations (`_pos`, `_ferromagnetic
    the no-evidence population from 1458 to 232 (an 84% reduction) and turned `--expect` red,
    which is not a stricter tool but one whose verdicts no longer track which
    citation names which result. So a family label on a line that elides nothing
-   still rescues nobody, and a lemma named only by one is dead code whose
-   *documentation* the deletion PR must update.
+   still rescues nobody, and a lemma named only by one carries no evidence from
+   this channel -- it may be dead code, pending human verification -- while its
+   *documentation* is still what a deletion PR must update.
 L12 a glob/ellipsis citation naming more than MAX_CHARGED_GLOB_MATCHES (10)
    declarations is charged to nobody -- the live fail-open residue of this tool.
    At or below the threshold every match is charged, which repairs the leak that
@@ -2760,7 +2764,7 @@ def report(
     print(f"elapsed: {elapsed:.1f}s")
     print()
     print(
-        "NON-EVIDENTIAL: every run exits 0 and authorises nothing. "
+        "NON-EVIDENTIAL: every completed scan exits 0 and authorises nothing. "
         "Its output must not be pasted as deletion evidence in a PR."
     )
     print(BANNER)

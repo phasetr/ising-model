@@ -1636,11 +1636,16 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             [self.doc("docs/f6-ten.md", [(token, 1), ("_monotone_J", 1)])],
             allow_homonym=False,
         )
-        # ``(terminal no-evidence?, seeded by the head?)``: the sibling the head
-        # licenses is charged, the decoy is not and is left with no evidence.
+        # ``(class, terminal no-evidence?, seeded by the head?)``: the sibling
+        # the head licenses is charged, the decoy is not and is left with no
+        # evidence. The class is pinned alongside the reason because
+        # :func:`no_evidence` is ``False`` for *any* of the other three phase-3
+        # branches too, so on its own it would no longer separate a charged
+        # ``uncertain`` from ``published-result`` or ``load-bearing``.
         self.assertEqual(
             [
                 (
+                    verdict.verdict,
                     no_evidence(verdict),
                     any(
                         citation.startswith("shorthand docs/f6-ten.md:1:")
@@ -1650,7 +1655,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
                 )
                 for verdict in verdicts
             ],
-            [(False, True), (True, False)],
+            [(dcs.UNCERTAIN, False, True), (dcs.UNCERTAIN, True, False)],
         )
 
     def test_F6_PREFIX_BOUNDARY_blocks_divergent_and_colliding_heads(self) -> None:
