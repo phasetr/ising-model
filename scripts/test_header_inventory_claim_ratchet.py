@@ -2504,6 +2504,25 @@ class RecallMigrationTest(unittest.TestCase):
             [("RELOCATION", "IsingModel/Two.lean", "7->IsingModel.Elsewhere")],
         )
 
+    def test_editing_the_recalled_file_forfeits_both_budgets(self) -> None:
+        """The relief is zeroed by the same rule the allowance is.
+
+        Widening the grammar *and* editing the file it newly understands is the
+        shape "widen while rewriting the headers" takes.  Both budgets go to
+        zero, so the re-keyed row is a plain ``B1`` rise; the removal it replaces
+        is explained by the edit itself, which is ``B2``'s ordinary rule and not
+        the relief.
+        """
+        self.start()
+        self.write("IsingModel/One.lean", header(self.CLAIM) + "\n-- an unrelated edit\n")
+        drift, _pin = self.land(noun_widened_detector(), "INVENTORY_NOUN gained `capstones`")
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual([key for key, _now, _was in drift.added], [self.NEW_KEY])
+        self.assertTrue(any("relief: 0 charge(s) over 0 key(s)" in note
+                            for note in drift.migration), drift.migration)
+        self.assertTrue(any("0 charge(s) over 0 key(s) in files this diff does not touch" in note
+                            for note in drift.migration), drift.migration)
+
     def test_a_narrowing_that_only_drops_rows_is_still_a_b2_failure(self) -> None:
         """The guard: relief may never become "blind the detector, drop the row".
 
