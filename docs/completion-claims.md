@@ -217,9 +217,9 @@ The prose contract is what an ordinary pull-request body must satisfy:
    finds and the lines that are exactly `Refs #N` or `Part of #N` are compared
    as multisets of kind and number, not position by position; otherwise the
    body is `AMBIGUOUS_NON_CLOSING_DIRECTIVE`. One such line may list several
-   references after the keyword, separated by single spaces (`Refs #4850 #4851
-   #4830`, a shape this repository already writes), and each number counts on
-   its own.
+   references after the keyword, separated by single spaces
+   (`Refs #4850 #4851 #4830`, a shape this repository already writes), and each
+   number counts on its own.
    The closing keywords keep the one-per-line rule instead: several numbers on
    a line GitHub acts on is a real auto-close ambiguity, while a non-closing
    line closes nothing. Any wider separator — a comma, a second space, a
