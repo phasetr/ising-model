@@ -4,10 +4,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d partitionFunctionAlongExhaustion closed-form wrappers
 
-Narrow child module for six ℤ^d
-`{partitionFunction,log_partitionFunction}AlongExhaustion_latticeGraph_*`
-trivial-slice wrappers (`beta_zero`, `zero_params`, `J_zero`) extracted from
-`PartitionFunctionClosedForms.lean`.
+Instantiates the closed forms of the along-exhaustion partition function and its logarithm on
+the degenerate parameter slices at `IsingModel.latticeGraph d`, where the model decouples
+and the sum is evaluated outright.
 -/
 
 namespace IsingModel
@@ -32,16 +31,6 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_beta_zero
       = ((Λ.volume n).card : ℝ) * Real.log 2 :=
   log_partitionFunctionAlongExhaustion_beta_zero
     (IsingModel.latticeGraph d) Λ J h n
-
-/-! ## Moved: alongEx zero_params + J_zero closed-form wrappers
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_zero_params`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_zero_params`,
-`partitionFunctionAlongExhaustion_latticeGraph_J_zero`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_J_zero` now live
-in `PartitionFunctionClosedFormsAlongExZeroPJ.lean`. -/
-
 
 end Ambient
 end IsingModel

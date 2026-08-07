@@ -6,15 +6,10 @@ import IsingModel.AmbientLattice.FieldDerivative
 /-!
 # Concrete ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
 
-Narrow child module for the 15 ℤ^d along-exhaustion `hasDerivAt`
-wrappers (`correlationAlongExhaustion`, `magnetizationAlongExhaustion`,
-`freeEnergyAlongExhaustion`, `susceptibilityAlongExhaustion` — in
-β/β_general_h/J/field directions) extracted from `Regularity.lean` in
-PR #2042. Each is a thin pass-through to the corresponding ambient
-along-exhaustion `hasDerivAt` lemma at `IsingModel.latticeGraph d`.
-All wrappers are stated in existence form `∃ d : ℝ, HasDerivAt _ d _`.
-The theorem names are unchanged from the former `Regularity`
-declarations.
+Instantiates the along-exhaustion parameter derivatives of the correlation at
+`IsingModel.latticeGraph d`, in the `β`, general-field `β`, `J` and field directions. Each
+is stated in existence form `∃ d : ℝ, HasDerivAt _ d _`, which is what the GJ §17.5–§17.6
+arguments consume.
 -/
 
 open scoped symmDiff
@@ -25,10 +20,10 @@ namespace Ambient
 /-! ### ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
 
 Direct instantiations at `G := IsingModel.latticeGraph d` of the
-along-exhaustion `hasDerivAt` family
-(`AmbientLattice/BetaDerivative.lean`,
-`AmbientLattice/JDerivative.lean`,
-`AmbientLattice/FieldDerivative.lean`; PR #1628 + earlier). -/
+along-exhaustion `hasDerivAt` family from
+`AmbientLattice/BetaDerivative.lean`,
+`AmbientLattice/JDerivative.lean` and
+`AmbientLattice/FieldDerivative.lean`. -/
 
 /-- **ℤ^d along-ex: `correlationAlongExhaustion` HasDerivAt in β at h = 0**. -/
 theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_beta
@@ -77,33 +72,6 @@ theorem correlationAlongExhaustion_latticeGraph_hasDerivAt_field
           (⟨J, h', β⟩ : IsingParams ℝ) A n) c h :=
   Ambient.correlationAlongExhaustion_hasDerivAt_field
     (IsingModel.latticeGraph d) Λ J h β A n
-
-/-! ## Moved: magnetizationAlongEx hasDerivAt wrappers
-
-The four wrappers
-`magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta`,
-`magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h`,
-`magnetizationAlongExhaustion_latticeGraph_hasDerivAt_J`,
-`magnetizationAlongExhaustion_latticeGraph_hasDerivAt_field` now live
-in `RegularityAlongExMag.lean`. -/
-
-
-/-! ## Moved: freeEnergy along-ex hasDerivAt wrappers
-
-The three wrappers
-`freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_{beta_general_h,J,field}`
-now live in `RegularityAlongExPartitionFreeEnergyFE.lean`. The three
-`partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_{beta,J,field}`
-wrappers were deleted; no consumer of them was found in this
-repository. -/
-
-
-
-/-! ## Moved: susceptibility along-ex hasDerivAt wrappers
-
-The four `susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_*`
-wrappers now live in `RegularityAlongExSusceptibility.lean`. -/
-
 
 end Ambient
 

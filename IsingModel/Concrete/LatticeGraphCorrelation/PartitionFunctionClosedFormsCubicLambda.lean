@@ -3,11 +3,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete partition-function cubicExhaustion-Λ closed-form wrappers
 
-Narrow child module for six ℤ^d cubicExhaustion-Λ closed-form wrappers
-(Z and log Z, at `J = 0`, `β = 0`, and `zero_params` trivial slices).
-Each wrapper is a thin pass-through to the corresponding ambient
-`partitionFunctionΛ_{J_zero,beta_zero,zero_params}` lemma at the
-`cubicExhaustion` volume.
+Instantiates the Λ-level partition-function closed forms on the degenerate parameter slices
+at `IsingModel.latticeGraph d` over the `cubicExhaustion` volumes, so a ℤ^d caller can
+evaluate a cubic box directly.
 -/
 
 namespace IsingModel
@@ -46,15 +44,6 @@ theorem partitionFunctionΛ_latticeGraph_cubicExhaustion_zero_params
       = (2 : ℝ) ^ ((Ambient.cubicExhaustion d).volume n).card :=
   partitionFunctionΛ_zero_params (IsingModel.latticeGraph d)
     ((Ambient.cubicExhaustion d).volume n) β
-
-/-! ## Moved: log_partitionFunctionΛ cubicEx closed-form wrappers
-
-The three wrappers
-`log_partitionFunctionΛ_latticeGraph_cubicExhaustion_J_zero`,
-`log_partitionFunctionΛ_latticeGraph_cubicExhaustion_beta_zero`,
-`log_partitionFunctionΛ_latticeGraph_cubicExhaustion_zero_params` now
-live in `PartitionFunctionClosedFormsCubicLambdaLog.lean`. -/
-
 
 end Ambient
 end IsingModel

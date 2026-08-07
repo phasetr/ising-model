@@ -3,18 +3,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete ℤ^d AlongExhaustion partition / log-partition bounds
 
-Narrow child module for the 8 ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_*` and
-`log_partitionFunctionAlongExhaustion_latticeGraph_*` ferromagnetic
-bound wrappers (`ge_one`, `ge_one_general`, `ge_two_pow_card`,
-`ge_two_cosh_pow_card`, `nonneg_general`, `nonneg`,
-`ge_card_mul_log_two`, `ge_card_mul_log_two_cosh`) extracted from
-`PartitionFreeEnergyBounds.lean` in PR #2056. Each is a thin
-pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_*` /
-`log_partitionFunctionAlongExhaustion_*` bound lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `PartitionFreeEnergyBounds` declarations.
+Instantiates the uniform lower bounds on the along-exhaustion partition function and its
+logarithm at `IsingModel.latticeGraph d`, the positivity input the ℤ^d free-energy limit
+arguments need at every stage.
 -/
 
 namespace IsingModel
@@ -53,16 +44,6 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_nonneg
       (Ambient.cubicExhaustion d) p n) :=
   log_partitionFunctionAlongExhaustion_nonneg_of_ferromagnetic
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) p hf n
-
-/-! ## Moved: partitionFunctionAlongEx 2^|Λ_n| / (2 cosh)^|Λ_n|
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_ge_two_pow_card`,
-`partitionFunctionAlongExhaustion_latticeGraph_ge_two_cosh_pow_card`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two_cosh`
-now live in `PartitionFreeEnergyBoundsAlongExCosh.lean`. -/
-
 
 end Ambient
 

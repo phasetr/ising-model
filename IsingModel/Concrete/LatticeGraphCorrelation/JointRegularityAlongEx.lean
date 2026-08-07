@@ -4,12 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 /-!
 # Concrete along-exhaustion joint regularity wrappers
 
-Narrow child module for six ℤ^d along-exhaustion joint regularity
-wrappers (`*_continuous_joint` / `*_differentiable_joint` for
-`correlation`, `magnetization`, and `susceptibility`). Each wrapper is
-a thin pass-through to the corresponding ambient
-`*AlongExhaustion_{continuous,differentiable}_joint*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates the joint (all-parameter) continuity and differentiability of the
+along-exhaustion correlation at `IsingModel.latticeGraph d`, the ℤ^d entry point for the
+GJ §17.5–§17.6 derivative arguments.
 -/
 
 namespace IsingModel
@@ -38,16 +35,6 @@ theorem correlationAlongExhaustion_latticeGraph_differentiable_joint
         ⟨p.2.1, p.2.2, p.1⟩ A n) :=
   Ambient.correlationAlongExhaustion_differentiable_joint_gen
     (IsingModel.latticeGraph d) Λ A n
-
-/-! ## Moved: AlongEx joint mag + susc wrappers
-
-The four wrappers
-`magnetizationAlongExhaustion_latticeGraph_continuous_joint`,
-`magnetizationAlongExhaustion_latticeGraph_differentiable_joint`,
-`susceptibilityAlongExhaustion_latticeGraph_continuous_joint`,
-`susceptibilityAlongExhaustion_latticeGraph_differentiable_joint` now
-live in `JointRegularityAlongExMagSusc.lean`. -/
-
 
 end Ambient
 end IsingModel

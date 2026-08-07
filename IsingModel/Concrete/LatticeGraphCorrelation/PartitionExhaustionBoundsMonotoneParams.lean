@@ -3,23 +3,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete partitionFunctionAlongExhaustion parameter monotonicity wrappers
 
-Narrow child module for six ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_(_cubicExhaustion)?_monotone_{J,h,beta}`
-wrappers, each a thin pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_monotone_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates monotonicity of the along-exhaustion partition function in `J`, in the external
+field and in `β` at `IsingModel.latticeGraph d`. Each is a pass-through of the ambient
+`partitionFunctionAlongExhaustion_monotone_*` lemma.
 -/
 
 namespace IsingModel
 namespace Ambient
-/-! ## Moved: cubicEx partitionFunctionAlongEx monotone wrappers
-
-The three wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_J`,
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta`
-now live in `PartitionExhaustionBoundsMonotoneParamsCubic.lean`. -/
-
 
 /-- **ℤ^d per-stage J-monotonicity of partitionFunctionAlongExhaustion** (any Exhaustion). -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_monotone_J

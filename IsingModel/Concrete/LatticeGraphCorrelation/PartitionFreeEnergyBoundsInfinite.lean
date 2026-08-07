@@ -1,33 +1,18 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete ℤ^d freeEnergyInfinite bridge / BED upper-bound wrappers
+# Concrete ℤ^d freeEnergyInfinite BED upper-bound wrappers
 
-Narrow child module for the 6 ℤ^d `freeEnergyInfinite_latticeGraph_*`
-bridge wrappers (`eq_of_tendsto`, `of_eventually_const`,
-`cubicExhaustion_eq_of_tendsto`, `cubicExhaustion_of_eventually_const`,
-`le_uniform_upper_bound`, `cubicExhaustion_le_uniform_upper_bound`)
-extracted from `PartitionFreeEnergyBounds.lean` in PR #2057. Each is a
-thin pass-through to the corresponding `freeEnergyInfinite_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `PartitionFreeEnergyBounds` declarations.
+Instantiates the bounded-energy-density upper bound on the infinite-volume free energy at
+`IsingModel.latticeGraph d`, for a general exhaustion and for `cubicExhaustion`. Each is a
+pass-through of the corresponding `freeEnergyInfinite_*` ambient lemma.
 -/
 
 namespace IsingModel
 
 namespace Ambient
 
-/-! ## Infinite-volume free-energy bridges and BED bounds -/
-
-/-! ## Moved: freeEnergyInfinite bridge wrappers
-
-The four wrappers
-`freeEnergyInfinite_latticeGraph_eq_of_tendsto`,
-`freeEnergyInfinite_latticeGraph_of_eventually_const`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_of_tendsto`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_of_eventually_const`
-now live in `PartitionFreeEnergyBoundsInfiniteBridge.lean`. -/
-
+/-! ## Infinite-volume free-energy BED bounds -/
 
 /-- **ℤ^d freeEnergyInfinite uniform upper bound via caller-supplied BED**
 (any-Exhaustion): `freeEnergyInfinite ≤ log 2 + |β|·(|J|·c + |h|)`. -/

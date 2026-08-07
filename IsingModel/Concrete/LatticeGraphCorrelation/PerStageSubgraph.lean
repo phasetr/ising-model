@@ -1,21 +1,11 @@
 import IsingModel.FreeEnergy.SubgraphBounds
 
 /-!
-# Concrete ℤ^d Λ-induced subgraph monotone/convergent wrappers
+# Concrete ℤ^d Λ-induced subgraph monotonicity wrappers
 
-Narrow child module for the 8 ℤ^d Λ-induced subgraph wrappers
-(`partitionFunction_monotone_subgraph_latticeGraph`,
-`correlation_monotone_subgraph_latticeGraph`,
-`log_partitionFunction_monotone_subgraph_latticeGraph`,
-`freeEnergy_monotone_subgraph_latticeGraph`,
-`correlation_convergent_subgraph_latticeGraph`,
-`magnetization_convergent_subgraph_latticeGraph`,
-`twoPoint_convergent_subgraph_latticeGraph`,
-`freeEnergy_convergent_subgraph_latticeGraph`) extracted from
-`PerStage.lean` in PR #2049. Each is a thin pass-through to the
-corresponding abstract `IsingModel.*_{monotone,convergent}_subgraph`
-lemma. The theorem names are unchanged from the former `PerStage`
-declarations.
+Instantiates the abstract subgraph-monotonicity statements at `IsingModel.latticeGraph d` for
+the partition function, the correlation, the log partition function and the free energy —
+the per-stage comparison that drives the ℤ^d exhaustion limits.
 -/
 
 namespace IsingModel
@@ -60,15 +50,6 @@ theorem freeEnergy_monotone_subgraph_latticeGraph
     (h₁₂ : G₁ ≤ G₂) (p : IsingParams ℝ) (hf : Ferromagnetic p) :
     IsingModel.freeEnergy G₁ p ≤ IsingModel.freeEnergy G₂ p :=
   IsingModel.freeEnergy_monotone_subgraph h₁₂ p hf
-
-/-! ## Moved: *_convergent_subgraph_latticeGraph wrappers
-
-The four wrappers
-`correlation_convergent_subgraph_latticeGraph`,
-`magnetization_convergent_subgraph_latticeGraph`,
-`twoPoint_convergent_subgraph_latticeGraph`,
-`freeEnergy_convergent_subgraph_latticeGraph` now live in
-`PerStageSubgraphConvergent.lean`. -/
 
 end Ambient
 
