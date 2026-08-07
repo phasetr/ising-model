@@ -55,9 +55,10 @@ A third rule follows from the first two and is just as load-bearing:
    Code spans are paired positionally, so a single unbalanced backtick inverts
    the parity of the rest of its line: prose is read as a citation and the
    citations are read as prose, with nothing to warn about.
-   ``docs/index.md:1809`` does exactly that (three backticks where two were
-   meant), and none of its 218 tokens mentioned ``magnetizationAlongExhaustion``
-   though the raw line names it six times. The repair is not to skip the line --
+   A progress row of ``docs/index.md`` did exactly that (three backticks where
+   two were meant), and none of its 218 tokens mentioned
+   ``magnetizationAlongExhaustion`` though the raw line named it six times; the
+   row has since been repaired. The repair is not to skip the line --
    that drops precisely the citations with no verbatim fallback -- but to re-read
    it without pairing (:func:`pairing_independent_tokens`), which is a superset
    of every pairing, and to report the defect
@@ -1258,13 +1259,15 @@ def unpaired_backticks(text: str) -> dict[int, int]:
     parity of everything that follows it, so real citations are read as prose
     and prose is read as citations, with no error anywhere.
 
-    That is not hypothetical. ``docs/index.md:1809`` (one 52-186-character
-    progress row) spells ``ContinuousOn`.continuousAt`` with three backticks
-    where two were meant; from that column on, all six occurrences of
-    ``magnetizationAlongExhaustion`` on the line sit *outside* every span the
-    grammar sees, and the line's 218 tokens contain none of them. Lines 1200 and
-    1201 hold the sibling shape, a code span opened on one line and closed on
-    the next, which ``[^`\\n]+`` cannot match at all.
+    That was not hypothetical. A 52-186-character progress row of
+    ``docs/index.md`` spelled ``ContinuousOn`.continuousAt`` with three
+    backticks where two were meant; from that column on, all six occurrences of
+    ``magnetizationAlongExhaustion`` on the line sat *outside* every span the
+    grammar sees, and the line's 218 tokens contained none of them. A paragraph
+    of the same file held the sibling shape, a code span opened on one line and
+    closed on the next, which ``[^`\\n]+`` cannot match at all. Both were
+    repaired once this check reported them; the check stays because the next
+    such edit is silent again without it.
 
     A backtick left over after the scan is the signature of both. What counts as
     "left over" is deliberately narrow on the *exonerating* side. A well-formed
@@ -2110,7 +2113,7 @@ def elided_prefix_matches(
     matches three declarations (correlation / magnetization / susceptibility),
     so the family-label rule attributed the citation to nobody and
     ``magnetizationAlongExhaustion_differentiable_beta_gen`` came out
-    ``safe-to-delete`` while docs/index.md:1809 cited it -- a false
+    ``safe-to-delete`` while a progress row of docs/index.md cited it -- a false
     ``safe-to-delete``, the one fatal error class.
 
     Charging *every* match instead was measured before it was rejected: 531 of
