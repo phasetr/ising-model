@@ -1,14 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetizationAlongEx basic per-stage bound wrappers
+# ℤ^d per-stage bounds on `magnetizationAlongExhaustion`
 
-Narrow child module for three ℤ^d basic per-stage
-`magnetizationAlongExhaustion_latticeGraph_*` bound wrappers:
-
-* `magnetizationAlongExhaustion_latticeGraph_le_one`,
-* `magnetizationAlongExhaustion_latticeGraph_nonneg`,
-* `magnetizationAlongExhaustion_latticeGraph_le_magnetizationInfinite`.
+Bounds the ℤ^d single-site magnetization at each stage of an exhaustion: it
+never exceeds `1`, it is nonnegative for `Ferromagnetic` parameters, and it
+never exceeds the infinite-volume magnetization, which is by definition the `⨆`
+over stages of that same sequence.
 -/
 
 namespace IsingModel
@@ -28,8 +26,8 @@ theorem magnetizationAlongExhaustion_latticeGraph_nonneg
     0 ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
   magnetizationAlongExhaustion_nonneg (IsingModel.latticeGraph d) Λ p hf i n
 
-/-- **ℤ^d `magnetizationAlongExhaustion ≤ magnetizationInfinite`** per stage
-(ferromagnetic): stage-wise upper bound by the limsup value. -/
+/-- **ℤ^d `magnetizationAlongExhaustion ≤ magnetizationInfinite`** per stage:
+stage-wise upper bound by the `⨆` over stages. -/
 theorem magnetizationAlongExhaustion_latticeGraph_le_magnetizationInfinite
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :

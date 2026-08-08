@@ -1,16 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlation h_zero (Z₂ symmetry) wrappers
+# ℤ^d spin-flip symmetry at zero external field
 
-Narrow child module for five ℤ^d Z₂ symmetry / `correlation*_latticeGraph_*_h_zero`
-wrappers (`correlationΛ_odd_vanish_h_zero`,
-`correlationAlongExhaustion_h_zero`,
-`correlationInfinite_cubicExhaustion_h_zero`,
-`correlationInfinite_h_zero`,
-`correlationAlongExhaustion_any_h_zero`). Each wrapper is a thin
-pass-through to the corresponding ambient `correlation*_*_h_zero`
-lemma at `IsingModel.latticeGraph d`.
+Records that every odd-cardinality ℤ^d spin product vanishes at zero external field, where
+the Boltzmann weight is invariant under a global spin flip while the spin product changes
+sign: at a fixed finite volume, at each stage of an exhaustion, and in the infinite-volume
+state, the latter two both for `Ambient.cubicExhaustion d` and for an arbitrary exhaustion.
+No sign condition is imposed on the coupling or on the inverse temperature.
 -/
 
 namespace IsingModel

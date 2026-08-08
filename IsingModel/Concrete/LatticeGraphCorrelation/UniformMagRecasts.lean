@@ -10,21 +10,15 @@ import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 
 /-!
-# ℤ^d uniformMagnetization recasts + truncated zero_params + magnetization basic wrappers
+# ℤ^d two-point observables recast through `uniformMagnetization`
 
-Narrow parent module covering the residual ℤ^d wrappers:
-
-- `uniformMagnetization` recasts: `twoPointFunction_zero_eq_*`,
-  `truncated2TwoPoint_eq_twoPointFunction_sub_*_sq`,
-  `twoPointFunction_ge_*_sq`.
-- truncated zero_params: `truncated2/3/4TwoPoint_zero_params`,
-  `truncated2TwoPoint_beta_zero`.
-
-The `magnetizationΛ_/AlongExhaustion_/Infinite_latticeGraph_*` and
-`freeEnergyInfinite_latticeGraph_apply` apply/bound/unfolding wrappers
-were further carved out into `UniformMagRecastsMagnetization.lean` in
-PR #2142. Theorem names are unchanged from the former `UniformMag`
-declarations.
+Rewrites the ℤ^d infinite-volume two-point observables in terms of the scalar
+`uniformMagnetization`, the value of `magnetizationInfinite` at the origin for
+`Ambient.cubicExhaustion d`: `twoPointFunction` at separation `0` is that scalar, and, under
+`Ferromagnetic` parameters, `truncated2TwoPoint` is `twoPointFunction` minus the square of
+`uniformMagnetization`, so `twoPointFunction` dominates that square. Also records that
+`truncated2TwoPoint` vanishes at zero inverse temperature, with no condition on the coupling
+or on the field.
 -/
 
 namespace IsingModel
@@ -54,14 +48,7 @@ theorem twoPointFunction_ge_uniformMagnetization_sq
     (uniformMagnetization d p)^2 ≤ twoPointFunction d p r :=
   twoPointFunction_ge_magnetization_sq d p hf r
 
-/-! ## Moved: truncatedN_zero_params wrappers
-
-The three wrappers
-`truncated2TwoPoint_zero_params`,
-`truncated3TwoPoint_zero_params`,
-`truncated4TwoPoint_zero_params` now live in
-`UniformMagRecastsTruncatedZeroParams.lean`. -/
-
+/-! ## `truncated2TwoPoint` at infinite temperature -/
 
 /-- **`truncated2TwoPoint` at `β = 0` vanishes**:
 `truncated2TwoPoint d ⟨J, h, 0⟩ r = 0`.
@@ -88,25 +75,6 @@ theorem truncated2TwoPoint_beta_zero
       {r} = 0 from
     correlationInfinite_beta_zero_vanish _ _ J h _ (by simp)]
   ring
-/-! ## Moved: truncated2TwoPoint bounds + correlation/magnetizationInfinite monotonicity
-
-The 23 ℤ^d `truncated2TwoPoint_*` bounds + trivial slices,
-`spontaneousMagnetization_latticeGraph_indep_exhaustion`,
-`correlationInfinite_latticeGraph_*` trivial-slice + J/h/β monotone,
-`magnetizationInfinite_latticeGraph_*` bound + J/h/β monotone,
-and `correlationAlongExhaustion_latticeGraph_*` J/h/β monotone
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.UniformMagBoundsMonotonicity`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: magnetization apply / bound wrappers
-
-The nine `magnetizationΛ_latticeGraph_{apply,le_one,abs_le_one,nonneg}`,
-`magnetizationAlongExhaustion_latticeGraph_{apply,of_mem,of_not_mem}`,
-`magnetizationInfinite_latticeGraph_apply`, and
-`freeEnergyInfinite_latticeGraph_apply` wrappers now live in
-`UniformMagRecastsMagnetization.lean`. -/
 
 end Ambient
 

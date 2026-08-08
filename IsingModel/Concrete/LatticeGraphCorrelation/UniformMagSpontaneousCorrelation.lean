@@ -1,20 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `spontaneousCorrelation_latticeGraph_*` wrappers
+# ℤ^d `spontaneousCorrelation` on degenerate slices
 
-Narrow child module for three ℤ^d
-`spontaneousCorrelation_latticeGraph_*` trivial-slice wrappers
-extracted from `UniformMag.lean`:
-
-* `spontaneousCorrelation_latticeGraph_J_zero` (Step 272),
-* `spontaneousCorrelation_latticeGraph_beta_zero` (Step 272),
-* `spontaneousCorrelation_latticeGraph_empty` (Step 274).
-
-Each result is a thin pass-through of the ambient
-`Ambient.spontaneousCorrelation_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `UniformMag` declarations.
+Evaluates the ℤ^d spontaneous correlation — the infimum of `correlationInfinite` over
+the positive external fields — where its value is forced: it vanishes on every nonempty
+finite set of sites at zero coupling under `0 < β`, and again at zero inverse
+temperature with no condition on the coupling, while on the empty site set it is `1` for
+every coupling and inverse temperature.
 -/
 
 open scoped symmDiff

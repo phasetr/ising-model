@@ -7,21 +7,13 @@ import IsingModel.AmbientFKG
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 
 /-!
-# ℤ^d `truncatedN_zero_params` wrappers
+# ℤ^d truncated correlations at zero coupling and zero field
 
-Narrow child module for three ℤ^d
-`truncated{2,3,4}TwoPoint_zero_params` vanishing wrappers extracted
-from `UniformMagRecasts.lean`:
-
-* `truncated2TwoPoint_zero_params`,
-* `truncated3TwoPoint_zero_params`,
-* `truncated4TwoPoint_zero_params`.
-
-Each result evaluates the corresponding truncated Ursell / Lebowitz
-expansion using
-`correlationInfinite_zero_params_vanish` for every term that appears
-in the expansion. The theorem names are unchanged from the former
-`UniformMagRecasts` declarations.
+Records that the ℤ^d truncated two-, three- and four-point functions all vanish
+when the coupling and the external field are both zero, at any inverse temperature.
+Each of them is a fixed polynomial in `correlationInfinite` evaluated on nonempty
+subsets of the sites involved, so `correlationInfinite_zero_params_vanish` rewrites
+every term of that polynomial to `0`.
 -/
 
 namespace IsingModel

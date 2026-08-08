@@ -1,13 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlationAlongExhaustion monotonicity wrappers
+# ℤ^d parameter monotonicity of `correlationAlongExhaustion`
 
-Narrow child module for three ℤ^d
-`correlationAlongExhaustion_latticeGraph_monotone_{J,h,beta}` wrappers,
-each a thin pass-through to the corresponding ambient
-`correlationAlongExhaustion_monotone_*` lemma at
-`IsingModel.latticeGraph d`.
+Records that at each stage of an exhaustion the ℤ^d correlation is nondecreasing in the
+coupling, in the external field and in the inverse temperature. Each statement holds the
+two other parameters fixed under the sign conditions `0 ≤ J`, `0 ≤ h`, `0 < β` as
+applicable, and raises the remaining one from a nonnegative value — from a positive
+value in the inverse-temperature case.
 -/
 
 namespace IsingModel

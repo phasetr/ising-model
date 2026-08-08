@@ -1,13 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlationAlongExhaustion bound/monotone/convergent wrappers
+# ℤ^d stagewise correlation: boundedness, monotonicity and convergence
 
-Narrow child module for four ℤ^d
-`correlationAlongExhaustion_latticeGraph_{bddBelow,bddAbove,monotone,convergent}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `correlationAlongExhaustion_*` lemma at
-`IsingModel.latticeGraph d`.
+Records that the range of the ℤ^d correlation sequence along an exhaustion is bounded below
+and above for arbitrary parameters, and that for `Ferromagnetic` parameters the sequence is
+monotone in the stage index and hence converges to some real limit.
 -/
 
 namespace IsingModel

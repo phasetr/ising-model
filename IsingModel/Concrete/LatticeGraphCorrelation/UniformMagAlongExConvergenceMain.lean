@@ -1,17 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `magnetizationAlongExhaustion` tendsto / convergent / monotone wrappers
+# ℤ^d convergence of `magnetizationAlongExhaustion` to `magnetizationInfinite`
 
-Narrow child module for three ℤ^d
-`magnetizationAlongExhaustion_latticeGraph_*` wrappers:
-
-* `tendsto_magnetizationAlongExhaustion_magnetizationInfinite_latticeGraph`,
-* `magnetizationAlongExhaustion_latticeGraph_convergent`,
-* `magnetizationAlongExhaustion_latticeGraph_monotone`.
-
-Each result is a thin pass-through of the corresponding ambient
-lemma at `G := IsingModel.latticeGraph d`.
+Records, for `Ferromagnetic` parameters throughout, that the ℤ^d stagewise single-site
+magnetization is monotone in the stage index, that it converges, and that its limit is
+the infinite-volume magnetization.
 -/
 
 namespace IsingModel

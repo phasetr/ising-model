@@ -1,15 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d ciSup / pointwise-le wrappers (magnetization / correlation)
+# ℤ^d infinite-volume observables as stagewise suprema
 
-Narrow child module for four ℤ^d wrappers
-(`magnetizationInfinite_latticeGraph_eq_ciSup`,
-`correlationInfinite_latticeGraph_eq_ciSup`,
-`correlationAlongExhaustion_le_correlationInfinite_latticeGraph`,
-`magnetizationAlongExhaustion_le_magnetizationInfinite_latticeGraph`).
-Each wrapper is a thin pass-through to the corresponding ambient lemma at
-`IsingModel.latticeGraph d`.
+Identifies the ℤ^d infinite-volume correlation and single-site magnetization with the `⨆`
+over the stages of an exhaustion, and records the pointwise bound of each stage by that
+infinite-volume value. None of these statements constrains the parameters.
 -/
 
 namespace IsingModel

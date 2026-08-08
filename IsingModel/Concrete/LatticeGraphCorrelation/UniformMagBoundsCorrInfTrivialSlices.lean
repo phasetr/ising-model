@@ -1,20 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `correlationInfinite_latticeGraph_*` trivial-slice wrappers
+# ℤ^d `correlationInfinite` on degenerate parameter slices
 
-Narrow child module for three ℤ^d
-`correlationInfinite_latticeGraph_*` trivial-slice wrappers extracted
-from `UniformMagBoundsMonotonicity.lean`:
-
-* `correlationInfinite_latticeGraph_J_zero`,
-* `correlationInfinite_latticeGraph_beta_zero_vanish`,
-* `correlationInfinite_latticeGraph_zero_params_vanish`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.correlationInfinite_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `UniformMagBoundsMonotonicity` declarations.
+Evaluates the ℤ^d infinite-volume correlation where the sites decouple. At zero coupling it
+is `Real.tanh (β * h) ^ A.card` on every finite set of sites `A`, under `Ferromagnetic`
+parameters. At zero inverse temperature, and again when the coupling and the field both
+vanish, it is `0` on every nonempty `A`, with no sign condition on the parameters left free.
 -/
 
 namespace IsingModel

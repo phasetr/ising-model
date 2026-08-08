@@ -1,15 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetizationΛ apply / bound wrappers
+# ℤ^d finite-volume `magnetizationΛ`: unfolding and elementary bounds
 
-Narrow child module for four ℤ^d magnetizationΛ apply / bound
-wrappers extracted from `UniformMagRecastsMagnetization.lean`:
-
-* `magnetizationΛ_latticeGraph_apply`,
-* `magnetizationΛ_latticeGraph_le_one`,
-* `abs_magnetizationΛ_latticeGraph_le_one`,
-* `magnetizationΛ_latticeGraph_nonneg`.
+Unfolds the ℤ^d finite-volume single-site magnetization as the singleton correlation
+`correlationΛ ... {i}` at a site `i` of the volume `Λ`, and bounds it: at most `1`, at most
+`1` in absolute value, and nonnegative for `Ferromagnetic` parameters.
 -/
 
 namespace IsingModel

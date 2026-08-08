@@ -1,21 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `susceptibilityInfinite_latticeGraph_*_J_zero` regularity wrappers
+# ℤ^d `susceptibilityInfinite` regularity on the zero-coupling slice
 
-Narrow child module for four ℤ^d
-`susceptibilityInfinite_latticeGraph_*_J_zero` regularity wrappers
-extracted from `UniformMagSusceptibilityInfinite.lean`:
-
-* `susceptibilityInfinite_latticeGraph_continuousOn_field_J_zero`,
-* `susceptibilityInfinite_latticeGraph_continuousOn_beta_J_zero`,
-* `susceptibilityInfinite_latticeGraph_differentiableOn_field_J_zero`,
-* `susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.susceptibilityInfinite_*_J_zero` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `UniformMagSusceptibilityInfinite` declarations.
+Records the parameter regularity of the ℤ^d infinite-volume susceptibility at zero
+coupling: `ContinuousOn` in the external field over `Set.Ici 0` and in the inverse
+temperature over `Set.Ioi 0`, and `DifferentiableOn ℝ` in each of those variables
+over `Set.Ioi 0`. Varying the field fixes `0 < β`; varying the inverse temperature
+fixes `0 ≤ h`.
 -/
 
 namespace IsingModel
