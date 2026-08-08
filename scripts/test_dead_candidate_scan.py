@@ -2128,6 +2128,101 @@ class TexChannelWiringTest(unittest.TestCase):
             source = self.cited_tokens(dcs.load_docs(), dcs.rel(part))
             self.assertIn(self.CITED, [token for token, _line in source.tokens])
 
+    QUOTED = (
+        ("verbatim environment", "\\begin{verbatim}\n\\input{quoted}\n\\end{verbatim}\n"),
+        ("starred environment", "\\begin{verbatim*}\n\\input{quoted}\n\\end{verbatim*}\n"),
+        ("listing environment", "\\begin{lstlisting}\n\\subfile{quoted}\n\\end{lstlisting}\n"),
+        ("delimited verb", "Write \\verb|\\input{quoted}| to splice a part.\n"),
+        ("braced verb", "Write \\verb{\\include{quoted}} to splice a part.\n"),
+        ("optional argument", "Write \\lstinline[language=TeX]!\\input{quoted}! here.\n"),
+        ("language argument", "Write \\mintinline{latex}{\\input{quoted}} here.\n"),
+    )
+
+    def test_a_quoted_include_splices_nothing_and_is_not_reported(self) -> None:
+        """An ``\\input`` inside a verbatim span is example text, not an inclusion.
+
+        LaTeX typesets its characters and reads no file, so the citations of the
+        named file are not unread -- there is no named file. Aborting on one
+        would refuse to run over a document this scan reads correctly, which is a
+        gate on how documentation may be written rather than on what can be read.
+        """
+        for label, body in self.QUOTED:
+            with self.subTest(shape=label), scratch_repository() as root:
+                (root / "docs" / "guide.tex").write_text(body, encoding="utf-8")
+                self.assertEqual(dcs.unread_documentation().includes, [])
+                dcs.require_documentation()
+
+    def test_masking_a_quoted_include_never_hides_a_real_one(self) -> None:
+        """The mask is bounded on both spellings, or it would silence the guard.
+
+        A mask that runs past its span is the fail-open direction: the include it
+        swallows is spliced for real and read by nobody. So an unclosed
+        environment masks nothing, an unterminated ``\\verb`` stops at its line,
+        and a genuine include standing beside a quoted one is still reported.
+        """
+        cases = (
+            ("unclosed environment", "\\begin{verbatim}\n\\input{quoted}\n\\input{missing}\n"),
+            (
+                "unterminated verb",
+                "Write \\verb|\\input{quoted}\n\\input{missing} and a | further down\n",
+            ),
+            (
+                "quoted beside real",
+                "\\begin{verbatim}\n\\input{quoted}\n\\end{verbatim}\n\\input{missing}\n",
+            ),
+        )
+        for label, body in cases:
+            with self.subTest(shape=label), scratch_repository() as root:
+                guide = root / "docs" / "guide.tex"
+                guide.write_text(body, encoding="utf-8")
+                self.assertIn(
+                    f"{dcs.rel(guide)}: \\input{{missing}}",
+                    dcs.unread_documentation().includes,
+                )
+                with self.assertRaises(dcs.Inconsistency):
+                    dcs.require_documentation()
+
+    def test_a_symlink_hiding_no_document_is_not_reported(self) -> None:
+        """A link is a blind spot only when something is behind it.
+
+        The link is entered -- the one place anything does -- so a link to a tree
+        with no LaTeX in it is what it looks like: an ordinary directory reached
+        through a link, with no citation of any declaration unread behind it.
+        """
+        for label, contents in (("empty", {}), ("no LaTeX", {"notes.md": "x", "data.txt": "y"})):
+            with (
+                self.subTest(target=label),
+                scratch_repository() as root,
+                tempfile.TemporaryDirectory() as elsewhere,
+            ):
+                for name, text in contents.items():
+                    (Path(elsewhere) / name).write_text(text, encoding="utf-8")
+                link = root / "docs" / "linked"
+                link.symlink_to(elsewhere)
+                self.assertEqual(dcs.unread_documentation().links, [])
+                dcs.require_documentation()
+
+    def test_a_symlink_is_followed_far_enough_to_see_the_document(self) -> None:
+        """A document two links deep is exactly as unread as one directly behind.
+
+        Following them means a cycle has to terminate, so the walk records the
+        resolved directories it has already entered.
+        """
+        with scratch_repository() as root, tempfile.TemporaryDirectory() as elsewhere:
+            outer = Path(elsewhere) / "outer"
+            inner = Path(elsewhere) / "inner"
+            outer.mkdir()
+            inner.mkdir()
+            (inner / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            (outer / "nested").symlink_to(inner)
+            (outer / "cycle").symlink_to(outer)
+            link = root / "docs" / "linked"
+            link.symlink_to(outer)
+            self.assertEqual(dcs.unread_documentation().links, [link])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("docs/linked", str(caught.exception))
+
     def test_a_citation_broken_across_a_line_refuses_the_document(self) -> None:
         """The one unreadable shape that leaves no trace must reject its document.
 
@@ -2144,18 +2239,30 @@ class TexChannelWiringTest(unittest.TestCase):
         self.assertIn("broken across a line", str(caught.exception))
 
     def test_neither_scratch_drafts_nor_the_reader_fixture_are_documentation(self) -> None:
-        """Two exclusions, and both must be exclusions from *reading*, not blind spots.
+        """Three exclusions, and each must be an exclusion from *reading*, not a blind spot.
 
-        A dot-directory holds build output and this project's working
-        ``math-before-code`` TeX; the fixture corpus is the reader's own test
-        input, describing a document the repository retired. Reading either as
-        evidence would keep declarations alive on the strength of a file nobody
-        publishes -- so they are skipped, and skipped silently, which is only
-        sound because neither is a claim about the library.
+        A dot-directory at the root holds build output and this project's
+        working ``math-before-code`` TeX (``.self-local/tex``); the fixture
+        corpus is the reader's own test input, describing a document the
+        repository retired. Reading either as evidence would keep declarations
+        alive on the strength of a file nobody publishes.
+
+        A dot-directory *inside* ``docs/`` is the same rule and needs its own
+        assertion, because it is the one that is not obviously right and because
+        it is the one this branch has answered both ways: ``rglob`` descends
+        dot-directories, so the intermediate reader read one. It is settled
+        here, in the direction ``.gitignore``-style conventions settle it -- a
+        dot-directory is not source and not published -- so a ``.tex`` under one
+        is neither read nor reported, and the choice is pinned rather than left
+        to whichever walker a later edit happens to use.
         """
         with scratch_repository() as root:
             (root / ".self-local" / "tex").mkdir(parents=True)
             (root / ".self-local" / "tex" / "draft.tex").write_text(
+                self.DOCUMENT, encoding="utf-8"
+            )
+            (root / "docs" / ".published").mkdir()
+            (root / "docs" / ".published" / "hidden.tex").write_text(
                 self.DOCUMENT, encoding="utf-8"
             )
             dcs.FIXTURE_TEX_DIR.mkdir(parents=True)

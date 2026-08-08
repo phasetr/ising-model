@@ -1576,11 +1576,23 @@ def _walk_latex(root: Path) -> tuple[list[Path], list[Path]]:
     refuse it instead of inheriting a blind spot.
 
     Directories whose name begins with ``.`` are excluded everywhere, both from
-    what is read and from what is reported: a hidden path is not published
-    documentation, and this project writes its working ``math-before-code`` TeX
-    into ``.self-local``, so reading one would keep declarations alive on the
-    strength of a draft. :data:`FIXTURE_TEX_DIR`, the frozen corpus the reader's
-    own tests run against, is excluded for the same reason.
+    what is read and from what is reported, and the exclusion is deliberate in
+    both walks this function serves -- for one reason at the repository root and
+    a different one inside the documentation roots, which is why it is spelled
+    out rather than asserted once.
+
+    At the root it is concrete: this project writes its working
+    ``math-before-code`` TeX into ``.self-local`` and its build output into other
+    dot-directories, so reading one would keep declarations alive on the strength
+    of a draft. Inside ``docs/`` or ``tex/`` there is no such directory today,
+    and the rule is a convention rather than an observation: a dot-directory is
+    not source and not published -- the same reading ``.gitignore`` files and
+    most source tools give it -- so a document under one is not documentation
+    this repository publishes. It is the fail-open half of the pair (a citation
+    written there is one this scan will not count), it is the one boundary here
+    that is a decision rather than a limit of the reader, and ``L7d`` states it
+    as such. :data:`FIXTURE_TEX_DIR`, the frozen corpus the reader's own tests
+    run against, is excluded because it describes a retired document.
     """
     latex: list[Path] = []
     links: list[Path] = []
@@ -1637,15 +1649,62 @@ _TEX_INCLUDE_RE = re.compile(
     r"\\(?:input|include|subfile)(?![A-Za-z])\s*(?:\{([^{}]*)\}|([^\s{}\\%]+))"
 )
 
+# A verbatim span typesets its characters and splices nothing, so an ``\input``
+# written inside one includes no file: it is example text, exactly like a
+# commented-out include, and reporting it would abort a run over a document that
+# is read correctly. Both spellings are masked -- the environments below and the
+# inline commands -- and the environment match requires its own ``\end``, so an
+# unclosed one masks nothing and its includes stay reported.
+_TEX_VERBATIM_ENVS = ("verbatim", "Verbatim", "lstlisting", "minted", "alltt")
+_TEX_VERBATIM_ENV_RE = re.compile(
+    r"\\begin\{(" + "|".join(_TEX_VERBATIM_ENVS) + r")\*?\}.*?\\end\{\1\*?\}", re.DOTALL
+)
+# ``\verb`` takes the first non-letter after it as its delimiter and its body may
+# not cross a line, so the body ends at the delimiter or the newline, whichever
+# comes first -- the bound is what keeps a stray ``|`` from masking the rest of a
+# document. The braced alternative is listed first so ``\verb{...}`` is read as
+# this repository's own code-span spelling (:data:`_TEX_CODE_CMDS`) rather than
+# as a body delimited by ``{``.
+_TEX_VERBATIM_INLINE_RE = re.compile(
+    r"\\mintinline[ \t]*\{[^{}]*\}[ \t]*\{(?:[^{}]|\{[^{}]*\})*\}"
+    r"|\\(?:verb|lstinline)\*?(?:\[[^\]\n]*\])?[ \t]*(?:"
+    r"\{(?:[^{}]|\{[^{}]*\})*\}"
+    r"|(?P<delim>[^A-Za-z*\s])(?:(?!(?P=delim))[^\n])*(?P=delim)"
+    r")"
+)
+
+
+def _mask_tex_verbatim(text: str) -> str:
+    """Return ``text`` with every verbatim span replaced by its own line breaks.
+
+    The line breaks are kept so that masking can never join two source lines and
+    manufacture an include that is written in neither.
+    """
+
+    def blank(match: re.Match[str]) -> str:
+        return "\n" * match.group(0).count("\n")
+
+    return _TEX_VERBATIM_INLINE_RE.sub(blank, _TEX_VERBATIM_ENV_RE.sub(blank, text))
+
 
 def _tex_include_targets(path: Path) -> list[str]:
     """Return the ``\\input``/``\\include`` targets written in ``path``, as written.
 
-    Comments are stripped first: a commented-out include names nothing, and
-    reporting it would be a false alarm about a document that is read correctly.
+    Comments are stripped first and verbatim spans masked second: a
+    commented-out include names nothing and a quoted one includes nothing, so
+    reporting either would be a false alarm about a document that is read
+    correctly. The order is the fail-closed one. A ``%`` inside a verbatim body
+    is literal to LaTeX, so stripping comments first can only destroy that body's
+    closing ``\\end`` -- and an unclosed environment masks nothing, leaving the
+    include reported. Masking first would let a commented-out
+    ``\\begin{verbatim}`` swallow a real include instead.
+
+    A target that expands from a macro (``\\input{\\jobname-part}``) stays
+    reported. It is not a false alarm: this scan cannot know which file such a
+    target names, so the spliced citations really are unread.
     """
     try:
-        raw = _TEX_COMMENT_RE.sub("", path.read_text(encoding="utf-8"))
+        raw = _mask_tex_verbatim(_TEX_COMMENT_RE.sub("", path.read_text(encoding="utf-8")))
     except (OSError, UnicodeDecodeError):  # pragma: no cover - reported by _read_doc
         return []
     out: list[str] = []
@@ -1674,6 +1733,32 @@ def _resolve_tex_include(document: Path, target: str) -> Path | None:
     return None
 
 
+def _links_to_latex(link: Path, seen: set[Path] | None = None) -> bool:
+    """Return whether a LaTeX document lives under the directory ``link`` points at.
+
+    A directory symlink is only a blind spot when something is hiding behind it.
+    The link is *entered* here -- which is the one place anything does -- so a
+    link to a tree with no LaTeX in it is what it looks like, an ordinary
+    directory that happens to be reached through a link, and is not reported.
+    Nested links are followed too, since a document two links deep is exactly as
+    unread as one; ``seen`` holds the resolved directories already visited, so a
+    cycle terminates instead of spinning.
+
+    Unresolvable is treated as hiding a document, because that is the direction
+    that cannot cost a deletion.
+    """
+    seen = set() if seen is None else seen
+    try:
+        resolved = link.resolve()
+    except OSError:  # pragma: no cover - a link this broken is not a normal state
+        return True
+    if resolved in seen:
+        return False
+    seen.add(resolved)
+    latex, nested = _walk_latex(resolved)
+    return bool(latex) or any(_links_to_latex(child, seen) for child in nested)
+
+
 @dataclass
 class UnreadDocumentation:
     """Documentation that exists and that no channel reads, measured not assumed.
@@ -1684,7 +1769,7 @@ class UnreadDocumentation:
 
     #: LaTeX documents outside the roots :func:`tex_sources` walks.
     outside: list[Path]
-    #: Directory symlinks no walk enters, so their contents are unseen either way.
+    #: Directory symlinks that hold a LaTeX document no walk enters.
     links: list[Path]
     #: ``document: \input{target}`` pairs whose target is not itself scanned.
     includes: list[str]
@@ -1703,6 +1788,12 @@ def unread_documentation() -> UnreadDocumentation:
     that is unread while sitting *inside* the roots: LaTeX supplies the missing
     ``.tex``, so ``\\input{result}`` reading ``docs/result`` splices a whole file
     of citations into a document this scan reads and reads none of them.
+
+    Each of the three is measured on the *content* rather than on the shape: a
+    directory symlink is reported when a document is behind it
+    (:func:`_links_to_latex`) and an include when its target is really unread,
+    so the guard states a fact about this tree instead of refusing a
+    construction.
     """
     sources = tex_sources()
     scanned = {path.resolve() for path in sources}
@@ -1715,7 +1806,7 @@ def unread_documentation() -> UnreadDocumentation:
                 includes.append(f"{rel(document)}: \\input{{{target}}}")
     return UnreadDocumentation(
         outside=[path for path in latex if path.resolve() not in scanned],
-        links=links,
+        links=[link for link in links if _links_to_latex(link)],
         includes=includes,
     )
 
@@ -1735,12 +1826,17 @@ def require_documentation() -> None:
 
     An **unread** file is the same failure with the file present, so the second
     half checks the direction the first cannot see (:func:`unread_documentation`):
-    a LaTeX document outside the roots :func:`tex_sources` walks, a directory
-    symlink no walk enters, and a file spliced into a scanned document by
-    ``\\input`` without being scanned itself. Both halves exist because this
+    a LaTeX document outside the roots :func:`tex_sources` walks, one behind a
+    directory symlink no walk enters, and a file spliced into a scanned document
+    by ``\\input`` without being scanned itself. Both halves exist because this
     channel has already narrowed once -- retiring the proof guide left ``.tex``
     documentation reachable by no reader at all -- and neither the build nor any
     other gate looks at what this scan reads.
+
+    Every one of the three names a document that exists. Aborting on a shape
+    that hides none -- a link to a tree with no LaTeX in it, an ``\\input``
+    quoted inside a verbatim span -- would be a gate on how a repository is
+    arranged rather than on what this scan can read, so neither does.
     """
     required = (README, DOCS_DIR / "index.md")
     missing = [rel(path) for path in required if not path.is_file()]
@@ -1760,8 +1856,8 @@ def require_documentation() -> None:
         )
     if unread.links:
         raise Inconsistency(
-            "directory symlink(s) in the working tree, which no walk enters, so a "
-            "LaTeX document under one is read by nobody while the run still reports "
+            "directory symlink(s) holding LaTeX document(s), which no walk enters, so "
+            "every citation under one is read by nobody while the run still reports "
             "citations absent: "
             + ", ".join(rel(path) for path in unread.links)
             + ". Replace each with a real directory holding the documents."
@@ -2855,16 +2951,20 @@ L7d the doc channel reads README.md, every docs/**/*.md, and every .tex or .ltx
    walk enters, under a directory the process cannot list, or spliced into a
    scanned document by `\input` without being scanned itself (LaTeX supplies the
    `.tex` the target omits, so `\input{result}` reads a file that looks like no
-   document at all). The suffix test is case-folded, since the filesystem this is
-   developed on is: `guide.TEX` opens and typesets. Two boundaries are accepted
-   rather than closed, and both are silent by design. A hidden directory is not
-   published documentation anywhere in the tree, so a .tex under one is neither
-   read nor reported. And the guard is LaTeX-only: a *Markdown* file outside
-   docs/ (`notes/theorems.md`) is unread and unflagged, because the Markdown
-   channel is keyed to README.md plus docs/ and widening it is a decision about
-   what this repository publishes, not a defect of the reader. Mitigation: keep
-   published results cited from the scanned set; the module-cited metadata
-   catches file-level mentions.
+   document at all). Each of those four is decided on the content, not on the
+   shape: the symlink is entered to see whether a document is behind it
+   (`_links_to_latex`), and an `\input` written inside a verbatim span or a
+   comment splices nothing and is not one (`_mask_tex_verbatim`), so neither
+   costs a run that has nothing hidden from it. The suffix test is case-folded,
+   since the filesystem this is developed on is: `guide.TEX` opens and typesets.
+   Two boundaries are accepted rather than closed, and both are silent by
+   design. A hidden directory is not published documentation anywhere in the
+   tree, so a .tex under one is neither read nor reported. And the guard is
+   LaTeX-only: a *Markdown* file outside docs/ (`notes/theorems.md`) is unread
+   and unflagged, because the Markdown channel is keyed to README.md plus docs/
+   and widening it is a decision about what this repository publishes, not a
+   defect of the reader. Mitigation: keep published results cited from the
+   scanned set; the module-cited metadata catches file-level mentions.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so
