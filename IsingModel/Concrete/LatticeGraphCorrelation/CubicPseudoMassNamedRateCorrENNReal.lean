@@ -8,7 +8,10 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 Records that membership of the anchored cubic pair correlation in `(0,2)` — the range on
 which the pseudo-mass profile `pseudoMassG` is inverted — makes the origin-anchored cubic
 pseudo-mass nonzero as a real number, and strictly positive, hence nonzero, after
-`ENNReal.ofReal`. No condition on the coupling or on the inverse temperature is imposed.
+`ENNReal.ofReal`. The sign and high-temperature assumptions `0 ≤ J`, `0 < β` and
+`βJ·2d < 1` are not imposed here: beyond the `1 ≤ α` and `0 < r` that the pseudo-mass
+abbreviation itself carries, that active-range membership is the only further hypothesis,
+and it is itself a condition on the coupling and the inverse temperature.
 -/
 
 namespace IsingModel
