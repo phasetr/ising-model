@@ -1,19 +1,18 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassClusterSummability
 
 /-!
-# Cubic-named-rate truncated-2 product summability wrappers
+# Summability of the cubic truncated two-point product
 
-Narrow child module for five ℤ^d
-`summable_truncated2Infinite_prod_of_cubic*` wrappers extracted from
-`CubicPseudoMassClusterSummability.lean`:
+Records that `w ↦ U₂(x, w) · U₂(y, w)`, the product of infinite-volume Ursell two-point
+functions on the cubic exhaustion at zero external field, is summable over ℤ^d at arbitrary
+basepoints `x` and `y`, whenever the origin-anchored cubic pseudo-mass is strictly positive
+and bounded above by the high-temperature rate `-log(βJ·2d)`. Every statement assumes
+`0 ≤ J`, `0 < β` and `βJ·2d < 1`. Positivity is either hypothesised outright or read off the
+anchored cubic pair correlation lying in `(0,2)`; the comparison is either hypothesised,
+packaged in the irreducible `cubicOriginNamedRateLeHighTemp`, or obtained from a
+`pseudoMassG` lower bound on that same correlation.
 
-* `summable_truncated2Infinite_prod_of_cubicNamedRate_pos_le_high_temp_rate`,
-* `summable_truncated2Infinite_prod_of_cubicNamedRate_cubic_pseudoMassG_le_corr`,
-* `summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp_rate`,
-* `summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos`,
-* `summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem`.
-
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312.
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
 -/
 
 namespace IsingModel

@@ -1,15 +1,13 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 
 /-!
-# Anchored cubic pseudo-mass strict `_iff` transport wrappers
+# Strict and non-equality transport for the origin-anchored cubic pseudo-mass
 
-Narrow child module for 3 ℤ^d strict-comparison
-`cubicOriginPseudoMassFromParamsAtPair_*_iff` transport wrappers
-extracted from `CubicPseudoMassBasicIff.lean`. Each rewrites the named
-anchored cubic pseudo-mass against the underlying concrete
-`pseudoMassFromParamsAtPair` expression under a strict comparison.
-
-* `_lt_iff`, `_gt_iff`, `_ne_iff`.
+Rewrites `<`, `>` and `≠` comparisons of the origin-anchored cubic pseudo-mass against a
+real threshold into the same comparisons of the underlying `pseudoMassFromParamsAtPair`
+expression, so an order fact proved on either side transports to the other without unfolding
+the abbreviation. The equivalences hold at arbitrary coupling, inverse temperature,
+displacement and threshold.
 -/
 
 namespace IsingModel

@@ -3,12 +3,15 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 
 /-!
-# Cubic anchored pseudo-mass ENNReal positivity wrappers
+# Non-vanishing of the origin-anchored cubic pseudo-mass on the active range
 
-Narrow child module for three ℤ^d
-`cubicOriginPseudoMassFromParamsAtPair_*_corr_mem` ENNReal positivity /
-nonzero wrappers (active-range membership rules out zero). Each
-wrapper is a thin pass-through to the corresponding ambient lemma.
+Records that membership of the anchored cubic pair correlation in `(0,2)` — the range on
+which the pseudo-mass profile `pseudoMassG` is inverted — makes the origin-anchored cubic
+pseudo-mass nonzero as a real number, and strictly positive, hence nonzero, after
+`ENNReal.ofReal`. The sign and high-temperature assumptions `0 ≤ J`, `0 < β` and
+`βJ·2d < 1` are not imposed here: beyond the `1 ≤ α` and `0 < r` that the pseudo-mass
+abbreviation itself carries, that active-range membership is the only further hypothesis,
+and it is itself a condition on the coupling and the inverse temperature.
 -/
 
 namespace IsingModel

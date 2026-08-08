@@ -2,16 +2,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDistCubicPair
 
 /-!
-# ℤ^d correlationInfinite_cubic_pair_*_of_cubicTanhProfileBound
+# The anchored cubic pair correlation under the named tanh-power profile condition
 
-Narrow child module for four ℤ^d
-`correlationInfinite_cubic_pair_*_of_cubicTanhProfileBound`
-wrappers extracted from `CubicPseudoMassTanhProfile.lean`:
-
-* `correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound`,
-* `correlationInfinite_cubic_pair_ne_zero_of_cubicTanhProfileBound`,
-* `correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_cubicTanhProfileBound`,
-* `correlationInfinite_cubic_pair_lt_two_of_cubicTanhProfileBound`.
+Locates the ℤ^d infinite-volume pair correlation at `(0, z)` on the cubic exhaustion at zero
+external field, once `cubicTanhProfileBound` holds: it is strictly positive, hence nonzero,
+and it lies in `(0,1]` and in `(0,2)`. The lower endpoint is what the profile condition
+buys, through the tanh-power lower bound on that correlation; the upper endpoints come from
+the unconditional bound `correlationInfinite ≤ 1`, so the correlation lies below `2` even
+without the profile condition. The isolated `< 2` statement nevertheless keeps that
+condition, and proves its bound by projecting the profile-conditioned active-range
+membership rather than by applying the unconditional bound directly. Every statement assumes
+`0 < r`, `0 ≤ J`, `0 < β`, `βJ·2d < 1` and a nonzero displacement.
 -/
 
 namespace IsingModel

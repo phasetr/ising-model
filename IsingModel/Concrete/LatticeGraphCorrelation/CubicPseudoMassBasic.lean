@@ -2,12 +2,21 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
-# Basic anchored cubic pseudo-mass names
+# Names for the origin-anchored cubic pseudo-mass
 
-This module contains the lightweight anchored cubic pseudo-mass abbreviations,
-named profile predicates, and comparison transport lemmas used by the larger
-`CubicPseudoMass` capstone module. It is split out so downstream code that only
-needs the names can avoid importing the full capstone stack.
+Introduces the abbreviations that the ℤ^d pseudo-mass development is phrased in: the
+pseudo-mass of the infinite-volume pair correlation at `(0, z)` for the cubic exhaustion at
+zero external field, the pointwise product `w ↦ U₂(x, w) · U₂(y, w)` of infinite-volume
+Ursell two-point functions on that exhaustion, an `irreducible` named proposition for the
+comparison of that pseudo-mass with the high-temperature rate `-log(βJ·2d)`, and a named
+proposition for the tanh-power profile condition
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0, z)`.
+Naming these keeps the high-arity concrete expressions out of downstream statements, where
+they elaborate too slowly. The pseudo-mass and the tanh-power condition each come with an
+unfolding lemma; the profile one is proved by `Iff.rfl`, so that condition stays at the
+default transparency rather than being made `irreducible` as well. The pseudo-mass is
+nonnegative at arbitrary coupling, inverse temperature and displacement, under the `1 ≤ α`
+and `0 < r` that the abbreviation itself carries.
 -/
 
 namespace IsingModel
@@ -98,18 +107,6 @@ theorem cubicTanhProfileBound_iff (α d : ℕ) (r β J : ℝ) (z : Fin d → ℤ
       pseudoMassG α r (-Real.log (β * J * ↑(2 * d))) ≤
         Real.tanh (β * J) ^ IsingModel.latticeDistance d 0 z :=
   Iff.rfl
-
-/-! ## Moved: anchored cubic pseudo-mass `_iff` transport wrappers
-
-The six wrappers
-`cubicOriginPseudoMassFromParamsAtPair_le_iff`,
-`cubicOriginPseudoMassFromParamsAtPair_lt_iff`,
-`cubicOriginPseudoMassFromParamsAtPair_eq_iff`,
-`cubicOriginPseudoMassFromParamsAtPair_ge_iff`,
-`cubicOriginPseudoMassFromParamsAtPair_gt_iff`,
-`cubicOriginPseudoMassFromParamsAtPair_ne_iff` now live in
-`CubicPseudoMassBasicIff.lean`. -/
-
 
 end Ambient
 end IsingModel

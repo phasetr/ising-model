@@ -4,19 +4,18 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr
 
 /-!
-# Concrete cubic named-rate corr-mem positivity wrappers
+# Lattice-mass consequences of the active range and a profile lower bound
 
-Narrow child module for 3 ℤ^d cubic named-rate corr-mem
-positivity wrappers extracted from `CubicPseudoMassNamedRateCorr.lean`:
+Turns the anchored cubic pair correlation lying in `(0,2)`, together with a `pseudoMassG`
+lower bound on that correlation at the high-temperature rate `-log(βJ·2d)`, into strict
+positivity of the lattice mass at an arbitrary target exhaustion, into non-vanishing of that
+lattice mass, and into membership of the `ENNReal.ofReal` origin-anchored cubic pseudo-mass
+in `(0, latticeMass]`. Throughout, `0 ≤ J`, `0 < β` and `βJ·2d < 1`. The profile lower bound
+stands in for an explicit rate comparison: on `(0,2)` the pseudo-mass obeys
+`pseudoMass c ≤ t ↔ pseudoMassG α r t ≤ c` at every `0 ≤ t`, and `βJ·2d < 1` is what makes
+the rate nonnegative.
 
-* `latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr`,
-* `cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubic_pseudoMassG_le_corr`,
-* `latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr`.
-
-Each result is a thin composition wrapper around the existing
-`latticeMass_*_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate`
-lemma + cubic-corr positivity bridge. The theorem names are unchanged
-from the former `CubicPseudoMassNamedRateCorr` declarations.
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
 -/
 
 namespace IsingModel

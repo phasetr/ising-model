@@ -1,16 +1,15 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 
 /-!
-# ℤ^d cubic named-rate latticeMass-bound wrappers
+# Closed lattice-mass bounds from the named rate comparison
 
-Narrow child module for two ℤ^d cubic named-rate latticeMass-bound
-wrappers extracted from `CubicPseudoMassNamedRate.lean`:
+Bounds the `ENNReal.ofReal` image of the origin-anchored cubic pseudo-mass above by the
+lattice mass of an arbitrary target exhaustion, and places that image in `[0, latticeMass]`,
+taking the irreducible `cubicOriginNamedRateLeHighTemp` as the only comparison input. Each
+statement assumes `0 ≤ J`, `0 < β` and `βJ·2d < 1`; strict positivity of the pseudo-mass is
+not assumed, which is why the interval here is the closed one.
 
-* `latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp`,
-* `cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubicOriginNamedRateLeHighTemp`.
-
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2,
-pp. 311--312.
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
 -/
 
 namespace IsingModel

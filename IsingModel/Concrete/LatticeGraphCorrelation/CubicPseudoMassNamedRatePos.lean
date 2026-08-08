@@ -4,19 +4,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRate
 
 /-!
-# Cubic named-rate _pos family wrappers
+# Lattice-mass and decay consequences of a positive pseudo-mass and the named rate
 
-Narrow child module for four ℤ^d wrappers extracted from
-`CubicPseudoMassNamedRate.lean`:
-
-* `latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_pos`,
-* `cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp_pos`,
-* `latticeMass_ne_zero_of_cubicOriginNamedRateLeHighTemp_pos`,
-* `cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp_pos`.
-
-Each pairs strict positivity of the cubic-origin pseudo-mass with the
-named `cubicOriginNamedRateLeHighTemp` proposition to upgrade
-`Icc`-style bundles to the `(0, latticeMass]` regime.
+Combines strict positivity of the origin-anchored cubic pseudo-mass with the irreducible
+`cubicOriginNamedRateLeHighTemp` to obtain, at an arbitrary target exhaustion, strict
+positivity of the lattice mass, its non-vanishing, membership of the `ENNReal.ofReal`
+pseudo-mass in `(0, latticeMass]`, and the bundle pairing that membership with a validating
+exponential-decay rate. Every statement assumes `0 ≤ J`, `0 < β` and `βJ·2d < 1`. Positivity
+is hypothesised directly here rather than read off the anchored cubic pair correlation.
 -/
 
 namespace IsingModel
