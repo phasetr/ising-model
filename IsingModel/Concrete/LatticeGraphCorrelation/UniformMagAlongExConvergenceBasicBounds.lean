@@ -26,8 +26,8 @@ theorem magnetizationAlongExhaustion_latticeGraph_nonneg
     0 ≤ magnetizationAlongExhaustion (IsingModel.latticeGraph d) Λ p i n :=
   magnetizationAlongExhaustion_nonneg (IsingModel.latticeGraph d) Λ p hf i n
 
-/-- **ℤ^d `magnetizationAlongExhaustion ≤ magnetizationInfinite`** per stage
-(ferromagnetic): stage-wise upper bound by the limsup value. -/
+/-- **ℤ^d `magnetizationAlongExhaustion ≤ magnetizationInfinite`** per stage:
+stage-wise upper bound by the `⨆` over stages. -/
 theorem magnetizationAlongExhaustion_latticeGraph_le_magnetizationInfinite
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (i : Fin d → ℤ) (n : ℕ) :

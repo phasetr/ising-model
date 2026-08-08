@@ -15,9 +15,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices
 
 Compares the ℤ^d truncated two-point function with the untruncated one through the identity
 `truncated2TwoPoint = twoPointFunction − uniformMagnetization ^ 2`: it never exceeds
-`twoPointFunction`; at zero external field, where the magnetization vanishes, the two agree;
-and at zero coupling it vanishes at every nonzero separation. Each of the three statements
-binds `Ferromagnetic` at the parameters it uses.
+`twoPointFunction`; at zero external field, where the magnetization vanishes, it equals
+`twoPointFunction`; and at zero coupling it vanishes at every nonzero separation. Each
+comparison binds `Ferromagnetic` at the parameters it uses.
 -/
 
 namespace IsingModel

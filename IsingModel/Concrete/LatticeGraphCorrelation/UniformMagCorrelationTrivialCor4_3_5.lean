@@ -7,8 +7,8 @@ Instantiates at `IsingModel.latticeGraph d` the intermediate inductive `(n+2)`-p
 proved en route to Glimm–Jaffe §4.3 Corollary 4.3.5 (p. 63), in the infinite-volume state at
 zero external field: for `Ferromagnetic` parameters and two distinct sites `j`, `k` outside
 a finite set `S`, the correlation on `insert j (insert k S)` is at most `⟨σ^S⟩ * ⟨σ^{j,k}⟩`
-plus the sum over `T ∈ S.powerset` of `⟨σ^(insert j T)⟩ * ⟨σ^(insert k (S \ T))⟩`. Stated
-once for an arbitrary exhaustion and once for `Ambient.cubicExhaustion d`.
+plus the sum over `T ∈ S.powerset` of `⟨σ^(insert j T)⟩ * ⟨σ^(insert k (S \ T))⟩`. The bound
+is available both for an arbitrary exhaustion and for `Ambient.cubicExhaustion d`.
 -/
 
 namespace IsingModel

@@ -5,9 +5,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Records the parameter regularity of the ℤ^d infinite-volume susceptibility at zero
 coupling: `ContinuousOn` in the external field over `Set.Ici 0` and in the inverse
-temperature over `Set.Ioi 0`, and `DifferentiableOn ℝ` in each of those two variables
-over `Set.Ioi 0`. The two statements varying the field fix `0 < β`; the two varying
-the inverse temperature fix `0 ≤ h`.
+temperature over `Set.Ioi 0`, and `DifferentiableOn ℝ` in each of those variables
+over `Set.Ioi 0`. Varying the field fixes `0 < β`; varying the inverse temperature
+fixes `0 ≤ h`.
 -/
 
 namespace IsingModel
