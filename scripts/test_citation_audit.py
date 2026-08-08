@@ -3574,11 +3574,11 @@ def budget_ordering_violations(module: types.ModuleType) -> List[str]:
     that is the magnitude comparison ``budget < cap``, over the censuses R12
     admits. It is *not* the claim that a full-budget run leaves the document
     inside the cap -- it does not, and bounding the position after a run is
-    R12's job rather than R11's: at the binding low end (census 1,134 for the
-    tex) a full budget lands at 1,078, i.e. 255 below ``MEASURED_CITATIONS``
-    and past the cap of 199, and R12 is what refuses that run. The comparison
+    R12's job rather than R11's: at the binding low end (census 2,294) a full
+    budget lands at 2,180, i.e. 518 below ``MEASURED_CITATIONS`` and past the
+    cap of 404, and R12 is what refuses that run. The comparison
     is also true only over the admitted range: far above it the per-run share
-    overtakes the fixed cap (first at census 8,080 for the markdown), which is
+    overtakes the fixed cap (first at census 8,080), which is
     why the growth samples below are fed to the floor sub-claim alone.
 
     The floors are backstops, so no run R11 waves through may land on one. That

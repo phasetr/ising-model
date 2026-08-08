@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Fail-closed audit of ``.lean`` path citations in ``tex/`` and ``docs/``.
+"""Fail-closed audit of ``.lean`` path citations in the audited documents.
 
-The public proof guide and ``docs/index.md`` name Lean source files by path.
-Refactors move and delete those files, so the documents accumulate citations
+``docs/index.md`` names Lean source files by path, and it is the one target
+today; the tool takes a set of them so a second document can be added without
+touching the rules. Refactors move and delete those files, so a document
+accumulates citations
 that no longer point anywhere. Four successive attempts to clean that up (the
 history behind PR #4714) failed the same way: a scan produced an *exoneration*
 ("only these N are left"), the exoneration was wrong because the scan had not

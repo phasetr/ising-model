@@ -2128,15 +2128,39 @@ class EnsureMathTest(unittest.TestCase):
         self.assertEqual(warnings, [])
 
     def test_the_scanned_documentation_charges_nothing(self) -> None:
-        """No scanned source leaves an unreadable span, so nothing is charged.
+        """No scanned source leaves an unreadable span, and the check can fail.
 
-        Only the TeX reader raises such a span and no ``.tex`` document is
-        tracked, so this is the measured state rather than a tolerance. A
-        failure here means a source acquired spans the normaliser cannot read,
-        and every candidate would go out as ``uncertain``.
+        The live half alone cannot fail and must not be read as if it could:
+        only the TeX reader raises such a span, ``load_docs`` returns Markdown
+        alone, and the Markdown reader hard-codes an empty span list, so an
+        empty result there is a property of the reader rather than a
+        measurement of the tree. Two things are therefore asserted around it.
+        The premise -- every scanned source is Markdown -- is checked, so the
+        day a ``.tex`` document returns to the scanned set the live half stops
+        being trivial and this test says so. And the *same expression* is run
+        against a source that does carry such a span, so a reader that stopped
+        reporting them, which is the failure the live half is meant to catch,
+        fails here instead of passing silently.
         """
-        spans = [span for doc in docs() for span in doc.unreadable]
-        self.assertEqual([span.message for span in spans], [])
+
+        def unreadable_messages(sources: list[dcs.DocSource]) -> list[str]:
+            return [span.message for source in sources for span in source.unreadable]
+
+        sources = docs()
+        self.assertTrue(sources)
+        self.assertEqual([s.label for s in sources if not s.label.endswith(".md")], [])
+        self.assertEqual(unreadable_messages(sources), [])
+
+        _normalized, spans = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
+        charged = dcs.DocSource(
+            label="synthetic.tex",
+            text="",
+            starts=[0],
+            tokens=[],
+            unreadable=spans,
+        )
+        self.assertNotEqual(unreadable_messages([charged]), [])
+        self.assertTrue(charged.unreadable[0].could_cite("café_lemma"))
 
     def test_the_complex_family_is_read_through_the_unwrap(self) -> None:
         """The ``...ℂ...`` names were invisible before the two-stage unwrap."""

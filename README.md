@@ -60,8 +60,11 @@ chapter-by-chapter progress table, see the
 > reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
 > and open `.lake/build/doc/index.html`.
 
-Mathematical documentation for the formalized proofs is `docs/index.md`,
-which tracks every result against its source in the literature.
+Mathematical documentation for the formalized proofs is `docs/index.md`.
+It records the formalized results against their sources in the literature
+and states the regime each one holds in. It is a curated account of the
+programme, not an index of the library: many declarations, in particular
+internal steps of a proof, are not named there.
 
 ## Related projects and references
 
