@@ -5,16 +5,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 /-!
 # Cubic anchored pseudo-mass named-rate bridges via cubic-correlation lower bounds
 
-Narrow child module for 17 named-rate / latticeMass / Icc / Ioc
-wrappers driven by cubic-correlation comparisons. Includes the
-`*_of_cubic_pseudoMassG_le_corr`,
-`*_of_cubic_corr_mem_le_high_temp_rate`,
-`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr`,
-`cubicNamedRate_decay_mem_*_of_le_high_temp_rate`,
-`cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate`, and
-`cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate` families.
-Theorem names are unchanged from the former
-`CubicPseudoMassNamedRate` declarations.
+Bridges the origin-anchored cubic pseudo-mass to the named decay rate and to `latticeMass`
+under hypotheses phrased as cubic-correlation comparisons, which is the form the
+Simon–Lieb walk-sum estimates produce.
 -/
 
 namespace IsingModel
@@ -98,44 +91,6 @@ theorem cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubic_pseudoMassG_le_corr
   ⟨zero_le _,
     latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr
       hα hr Λ hJ hβ hlt hcorr_cubic hprofile_cubic⟩
-
-/-! ## Moved: cubic named-rate corr positivity wrappers
-
-The three positivity wrappers
-(`latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr`,
-`cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubic_pseudoMassG_le_corr`,
-`latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr`)
-now live in `CubicPseudoMassNamedRateCorrPos.lean`. -/
-
-
-
-/-! ## Moved: cubic ENNReal positivity / nonzero wrappers
-
-The three wrappers
-`cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem`,
-`ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem`, and
-`ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem`
-now live in `CubicPseudoMassNamedRateCorrENNReal.lean`. -/
-
-/-! ## Moved: cubic named-rate corr-mem + high-temp-rate wrappers
-
-The three wrappers
-`latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_corr_mem_le_high_temp_rate`,
-`cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_corr_mem_le_high_temp_rate`,
-`latticeMass_ne_zero_of_cubic_corr_mem_le_high_temp_rate` now live in
-`CubicPseudoMassNamedRateCorrMem.lean`. -/
-
-
-/-! ## Moved: cubic named-rate decay-plus-interval bundles
-
-The five `cubicNamedRate_decay_mem_*` bundle wrappers
-(`Icc_of_le_high_temp_rate`, `Ioc_of_pos_le_high_temp_rate`,
-`Icc_of_cubic_pseudoMassG_le_corr`, `Ioc_of_cubic_pseudoMassG_le_corr`,
-`Ioc_of_corr_mem_le_high_temp_rate`) now live in
-`CubicPseudoMassNamedRateCorrDecay.lean`. -/
-
-
-
 
 end Ambient
 

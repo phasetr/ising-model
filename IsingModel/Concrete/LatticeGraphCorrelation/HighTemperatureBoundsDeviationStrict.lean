@@ -4,19 +4,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete HT Λ-layer strict-deviation wrappers
 
-Narrow child module for the 6 ℤ^d Λ-layer strict-deviation HT
-wrappers (`freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos`,
-`_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt`,
-`_ferromagnetic`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos`,
-`_ferromagnetic`) extracted from
-`HighTemperatureBoundsDeviation.lean` in PR #2078. Each is a thin
-pass-through to the corresponding ambient
-`freeEnergyΛ_*` / `partitionFunctionΛ_*` / `log_partitionFunctionΛ_*`
-strict-deviation lemma at `IsingModel.latticeGraph d`. The theorem
-names are unchanged from the former `HighTemperatureBoundsDeviation`
-declarations.
+Instantiates the Λ-level strict-deviation statements of GJ §18.3–§18.4 at
+`IsingModel.latticeGraph d` for the free energy, the partition function and its logarithm,
+so ℤ^d arguments can separate the high-temperature expansion from its trivial slice.
 -/
 
 namespace IsingModel
@@ -66,14 +56,6 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviatio
         (⟨J, 0, β⟩ : IsingParams ℝ)) - (Λ.card : ℝ) * Real.log 2 :=
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_pos
     (IsingModel.latticeGraph d) Λ J β hβJ hEpos
-
-/-! ## Moved: HT Λ-layer ferromagnetic strict-deviation Z/logZ wrappers
-
-The two ferromagnetic Λ-layer strict-deviation wrappers
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos_ferromagnetic`
-now live in `HighTemperatureBoundsDeviationStrictFerro.lean`. -/
-
 
 end Ambient
 

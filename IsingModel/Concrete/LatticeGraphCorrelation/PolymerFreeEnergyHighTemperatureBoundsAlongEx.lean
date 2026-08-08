@@ -2,18 +2,11 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBounds
 
 /-!
-# ℤ^d §18.5 AlongExhaustion polymer free-energy high-temperature bounds
+# ℤ^d §18.5 AlongExhaustion `vdPolymerFamilies_sum` high-temperature bounds
 
-Narrow child module for six ℤ^d AlongExhaustion polymer free-energy
-high-temperature bound wrappers extracted from
-`PolymerFreeEnergyHighTemperatureBounds.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_sandwich_of_nonneg`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_monotoneOn_Ici_zero`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_le_of_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_eps_of_betaJ_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_pow_sub_one_betaJ`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_log_two_of_pow_lt_two`.
+Instantiates the along-exhaustion high-temperature bounds and monotonicity of the
+van-den-Berg polymer-family sum at `IsingModel.latticeGraph d`, the convergence input for
+the ℤ^d cluster expansion.
 -/
 
 namespace IsingModel
@@ -69,14 +62,6 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_le_of_nonneg
           (Λ.volume n)).edgeFinset.card - 1 :=
   Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_le_of_nonneg
     (IsingModel.latticeGraph d) Λ ht n
-
-/-! ## Moved: along-ex polymerFreeEnergyAlongExhaustion tanh bound wrappers
-
-The three along-ex `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*`
-bound wrappers (`_le_eps`, `_le_pow_sub_one`, `_lt_log_two_of_pow_lt_two`)
-now live in `PolymerFreeEnergyHighTemperatureBoundsAlongExPFE.lean`. -/
-
-
 
 end Ambient
 end IsingModel

@@ -5,18 +5,10 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLogTan
 /-!
 # Ambient log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
 
-Narrow child module for 4 ambient
-`log_vdPolymerFamilies_sumAlongExhaustion_*` analyticity wrappers
-extracted from `VdPolymerFamiliesAnalyticity.lean`:
-
-* `log_vdPolymerFamilies_sumAlongExhaustion_analyticAt`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_analyticOnNhd_Ici_zero`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J`.
-
-Each result is a thin pass-through of the corresponding Λ-level
-`log_vdPolymerFamilies_sum_Λ_*` lemma. The theorem names are unchanged
-from the former `VdPolymerFamiliesAnalyticity` declarations.
+Carries analyticity of the logarithm of the van-den-Berg polymer-family sum to the
+along-exhaustion layer (GJ §18.5), where it feeds the analyticity of the infinite-volume
+free energy. Each result passes through the corresponding Λ-level
+`log_vdPolymerFamilies_sum_Λ_*` lemma.
 -/
 
 namespace IsingModel
@@ -48,15 +40,6 @@ theorem log_vdPolymerFamilies_sumAlongExhaustion_analyticOnNhd_Ici_zero
           ∏ P ∈ Γ, s ^ P.card)) (Set.Ici 0) :=
   log_vdPolymerFamilies_sum_Λ_analyticOnNhd_Ici_zero
     G (Λ.volume n)
-
-/-! ## Moved: 2 log_vdPolymerFamilies_sum tanh wrappers
-
-The two `log_vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_*`
-wrappers (`_tanh_analyticAt_beta`, `_tanh_analyticAt_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLogTanh`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

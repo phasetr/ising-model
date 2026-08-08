@@ -4,12 +4,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete §18.7 high-temperature exp_alpha_dist capstone wrappers
 
-Narrow child module for six ℤ^d
-`correlation*_latticeGraph_*_exp_alpha_dist*` decay-rate capstone
-wrappers (Λ + AlongExhaustion, including general/ferromagnetic and the
-`of_le_highTempExpRate` family). Each wrapper is a thin pass-through to
-the corresponding ambient §18.7 capstone lemma at
-`IsingModel.latticeGraph d`.
+Instantiates the GJ §18.7 pair-correlation decay bounds with a free rate `α` at
+`IsingModel.latticeGraph d`, which is the form in which ℤ^d exponential clustering is
+stated. Each is a pass-through of the corresponding ambient §18.7 capstone.
 -/
 
 namespace IsingModel
@@ -45,12 +42,6 @@ theorem correlationΛ_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha
   correlationΛ_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist
     d Λ J β α (mul_nonneg hβ.le hJ) hα i j
 
-/-! ## Moved: along-ex `_le_two_pow_edges_mul_exp_alpha_dist` wrapper
-
-`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist`
-now lives in `HighTemperatureBoundsDecayAlphaDistAlongEx.lean`. -/
-
-
 /-- **ℤ^d Λ §18.7 named monotone-rate capstone**: any
 `α ≤ highTempExpRate β J` gives the finite-volume pair-correlation
 distance bound on `latticeGraph d` with rate `α`. -/
@@ -65,18 +56,6 @@ theorem correlationΛ_latticeGraph_h_zero_at_pair_le_exp_alpha_dist_of_le_highTe
         Real.exp (-α * ((inducedGraph (IsingModel.latticeGraph d) Λ).dist i j : ℝ)) :=
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist_of_le_highTempExpRate
     (IsingModel.latticeGraph d) Λ J β α hβJ hα i j
-
-/-! ## Moved: along-ex `_of_le_highTempExpRate` wrapper
-
-`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate`
-now lives in `HighTemperatureBoundsDecayAlphaDistAlongEx.lean`. -/
-
-
-/-! ## Moved: along-ex `_ferro` wrapper
-
-`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_exp_alpha_dist_ferro`
-now lives in `HighTemperatureBoundsDecayAlphaDistAlongEx.lean`. -/
-
 
 end Ambient
 end IsingModel

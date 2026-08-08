@@ -4,16 +4,9 @@ import IsingModel.Lattice
 /-!
 # Concrete ℤ^d polymerFreeEnergy regularity wrappers (§18.5)
 
-Narrow child module for the 8 ℤ^d `polymerFreeEnergy_Λ_latticeGraph_*`
-and `polymerFreeEnergyAlongExhaustion_latticeGraph_*` regularity
-wrappers (`continuousAt`, `differentiableAt`, `continuousOn_Ici_zero`,
-`differentiableOn_Ici_zero` in both Λ and AlongExhaustion forms)
-extracted from `PolymerFreeEnergyBounds.lean` in PR #2059. Each is a
-thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_*` / `polymerFreeEnergyAlongExhaustion_*`
-regularity lemma at `IsingModel.latticeGraph d`. The theorem names
-are unchanged from the former `PolymerFreeEnergyBounds`
-declarations.
+Instantiates the Λ-level regularity of the polymer free energy at
+`IsingModel.latticeGraph d`, pointwise and on `Ici 0`, the ℤ^d input for differentiating the
+GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel
@@ -60,17 +53,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_differentiableOn_Ici_zero
       (Set.Ici 0) :=
   Ambient.polymerFreeEnergy_Λ_differentiableOn_Ici_zero
     (IsingModel.latticeGraph d) Λ
-
-/-! ## Moved: AlongExhaustion polymerFreeEnergy regularity wrappers
-
-The four wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_continuousAt`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableAt`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_continuousOn_Ici_zero`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableOn_Ici_zero`
-now live in `PolymerFreeEnergyBoundsRegularityAlongEx.lean`. -/
-
-
 
 end Ambient
 

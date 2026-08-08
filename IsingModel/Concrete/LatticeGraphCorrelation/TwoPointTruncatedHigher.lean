@@ -1,14 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated3/4Infinite_latticeGraph trivial-slice wrappers
+# ℤ^d `truncated3Infinite` trivial-slice wrappers
 
-Narrow child module for 15 ℤ^d `truncated3Infinite_latticeGraph_*`
-and `truncated4Infinite_latticeGraph_*` trivial-slice + nonpos +
-exhaustion-independence wrappers (β = 0, J = 0 with various
-coincidence patterns, h = 0, nonpos, `_indep_exhaustion`).
-Theorem names are unchanged from the former `TwoPoint`
-declarations.
+Evaluates the third truncated infinite-volume correlation on the degenerate `β = 0`
+slice and on the zero-field slice at `IsingModel.latticeGraph d`, including the
+coincident-site cases where the truncation degenerates.
 -/
 
 namespace IsingModel
@@ -22,21 +19,6 @@ theorem truncated3Infinite_latticeGraph_beta_zero
     truncated3Infinite (IsingModel.latticeGraph d) Λ
         (⟨J, h, 0⟩ : IsingParams ℝ) i j k = 0 :=
   truncated3Infinite_beta_zero (IsingModel.latticeGraph d) Λ J h i j k
-
-/-! ## Moved: truncated3Infinite J=0 trivial-slice wrappers
-
-The three wrappers
-`truncated3Infinite_latticeGraph_J_zero_of_pairwise_distinct`,
-`truncated3Infinite_latticeGraph_J_zero_of_pair_coincidence`,
-`truncated3Infinite_latticeGraph_J_zero_all_coincident` now live in
-`TwoPointTruncatedHigherJZero.lean`. -/
-
-
-/-! ## Moved: truncated4Infinite trivial-slice wrappers
-
-The three `truncated4Infinite_latticeGraph_*` trivial-slice wrappers
-(β = 0, and J = 0 at pairwise-distinct or one-pair-coincident sites)
-now live in `TwoPointTruncatedHigherTruncated4.lean`. -/
 
 /-- **ℤ^d truncated3Infinite h=0 pair coincidence** (#750):
 `truncated3Infinite ⟨J,0,β⟩ i i k = correlationInfinite ⟨J,0,β⟩ {i,k}`
@@ -59,23 +41,6 @@ theorem truncated3Infinite_latticeGraph_h_zero_all_coincident
         (⟨J, 0, β⟩ : IsingParams ℝ) i i i = 0 :=
   truncated3Infinite_h_zero_all_coincident
     (IsingModel.latticeGraph d) Λ J β i
-
-/-! ## Moved: truncated3/4Infinite nonpos + h_zero_of_distinct wrappers
-
-The three wrappers
-`truncated3Infinite_latticeGraph_nonpos`,
-`truncated4Infinite_latticeGraph_nonpos_h_zero`,
-`truncated3Infinite_latticeGraph_h_zero_of_distinct` now live in
-`TwoPointTruncatedHigherNonpos.lean`. -/
-
-
-/-! ## Moved: truncated{2,3,4}Infinite exhaustion-independence wrappers
-
-The three wrappers
-`truncated{2,3,4}Infinite_latticeGraph_indep_exhaustion`
-now live in `TwoPointTruncatedHigherIndepExhaustion.lean`. -/
-
-
 
 end Ambient
 

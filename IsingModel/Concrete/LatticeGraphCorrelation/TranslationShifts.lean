@@ -1,20 +1,14 @@
-/- TranslationShifts.lean
-Narrow child module for the 8 ℤ^d shift / vaddFinset_eq wrappers
-(`freeEnergyAlongExhaustion_latticeGraph_shift_eq`,
-`freeEnergyInfinite_latticeGraph_shift_eq`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_shift`,
-`correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq`,
-`correlationΛ_latticeGraph_vaddFinset_eq`,
-`partitionFunctionΛ_latticeGraph_vaddFinset_eq`,
-`freeEnergyΛ_latticeGraph_vaddFinset_eq`,
-`log_partitionFunctionΛ_latticeGraph_vaddFinset_eq`) extracted from
-`Translation.lean` in PR #2062. Each is a thin pass-through to the
-corresponding abstract translation-invariance lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `Translation` declarations.
--/
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d translation-shift invariance wrappers
+
+Instantiates translation invariance at `IsingModel.latticeGraph d`: the free energy along an
+exhaustion and in infinite volume, and the along-exhaustion correlation of a translated
+observation set. Each is a pass-through of the corresponding abstract
+translation-invariance lemma.
+-/
 
 open scoped symmDiff
 
@@ -73,17 +67,6 @@ theorem correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq
       = correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n :=
   correlationAlongExhaustion_shift_vaddFinset_eq
     (IsingModel.latticeGraph d) Λ t p A n
-
-/-! ## Moved: Λ-direct vaddFinset_eq translation wrappers
-
-The four wrappers
-`correlationΛ_latticeGraph_vaddFinset_eq`,
-`partitionFunctionΛ_latticeGraph_vaddFinset_eq`,
-`freeEnergyΛ_latticeGraph_vaddFinset_eq`,
-`log_partitionFunctionΛ_latticeGraph_vaddFinset_eq` now live in
-`TranslationShiftsVaddFinset.lean`. -/
-
-
 
 end Ambient
 

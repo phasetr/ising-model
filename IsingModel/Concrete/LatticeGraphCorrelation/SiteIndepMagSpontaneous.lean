@@ -1,17 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `spontaneousCorrelation`/`spontaneousMagnetization_latticeGraph` wrappers
+# ℤ^d `spontaneousCorrelation` / `spontaneousMagnetization` wrappers
 
-Narrow child module for the 8 ℤ^d
-`spontaneousCorrelation_latticeGraph_apply` and
-`spontaneousMagnetization_latticeGraph_*` wrappers
-(`_apply`, `neg_one_le_*`, `abs_*_le_one`, `_nonneg`, `_le_one`,
-`_monotone_J`, `_monotone_beta`) extracted from `SiteIndepMag.lean`
-in PR #2048. Each is a thin pass-through to the corresponding ambient
-`spontaneousCorrelation_*` / `spontaneousMagnetization_*` lemma at
-`latticeGraph d`. The theorem names are unchanged from the former
-`SiteIndepMag` declarations.
+Instantiates the defining evaluations of the spontaneous correlation and spontaneous
+magnetization at `IsingModel.latticeGraph d`, together with their monotonicity in `J` and in
+`β` — the ℤ^d entry point for the spontaneous-magnetization arguments.
 -/
 
 open scoped symmDiff
@@ -38,16 +32,6 @@ theorem spontaneousMagnetization_latticeGraph_apply
       = ⨅ h : ↥(Set.Ioi (0 : ℝ)),
           magnetizationInfinite (IsingModel.latticeGraph d) Λ ⟨J, h.val, β⟩ i :=
   spontaneousCorrelation_apply (IsingModel.latticeGraph d) Λ J β {i}
-
-/-! ## Moved: sign/bound wrappers
-
-The four wrappers
-`neg_one_le_spontaneousMagnetization_latticeGraph`,
-`abs_spontaneousMagnetization_latticeGraph_le_one`,
-`spontaneousMagnetization_latticeGraph_nonneg`,
-`spontaneousMagnetization_latticeGraph_le_one` now live in
-`SiteIndepMagSpontaneousBounds.lean`. -/
-
 
 /-- **ℤ^d J-direction monotonicity of `spontaneousMagnetization`**
 (ferromagnetic). -/

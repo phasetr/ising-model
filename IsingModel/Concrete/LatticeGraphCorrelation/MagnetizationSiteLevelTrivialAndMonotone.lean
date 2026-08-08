@@ -3,29 +3,15 @@ import IsingModel.PhaseTransition.CriticalGrowth
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-induced magnetization trivial-slice / monotone wrappers
+# ℤ^d Λ-induced magnetization monotonicity wrappers
 
-Narrow child module for five ℤ^d Λ-induced `magnetization_*_latticeGraph`
-wrappers extracted from `MagnetizationSiteLevel.lean`:
-
-* `magnetization_zero_at_h_zero_latticeGraph`,
-* `magnetization_beta_zero_latticeGraph`,
-* `magnetization_J_zero_latticeGraph`,
-* `magnetization_monotone_h_latticeGraph`,
-* `magnetization_monotone_beta_latticeGraph`.
+Instantiates monotonicity of the Λ-induced magnetization in the external field and in the
+inverse temperature at `IsingModel.latticeGraph d`, the ℤ^d form of the GKS-II consequences
+used by the phase-transition arguments.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: magnetization Λ-induced trivial-slice wrappers
-
-The three wrappers
-`magnetization_zero_at_h_zero_latticeGraph`,
-`magnetization_beta_zero_latticeGraph`,
-`magnetization_J_zero_latticeGraph` now live in
-`MagnetizationSiteLevelTrivialSlice.lean`. -/
-
 
 /-- **ℤ^d magnetization_monotone_h direct** (Λ-induced, ferromagnetic):
 `h ↦ M_i(J, h, β)` is `MonotoneOn (Set.Ici 0)` for `J ≥ 0`, `β > 0`. -/

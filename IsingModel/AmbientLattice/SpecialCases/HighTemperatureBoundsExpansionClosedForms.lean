@@ -5,21 +5,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClos
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
 
 /-!
-# Ambient alongExhaustion closed-form / sandwich / complete-summary wrappers at h = 0
+# Ambient alongExhaustion sandwich / complete-summary wrappers at h = 0
 
-Narrow child module for 8 ambient alongExhaustion §18.3-§18.4
-closed-form / sandwich / complete-summary wrappers covering:
-
-- `partitionFunctionAlongExhaustion_*_closed_at_J_zero`,
-  `_closed_at_beta_zero`, and the redundant `_closed`;
-- `correlationAlongExhaustion_*_nonneg`,
-  `correlationAlongExhaustion_*_closed`;
-- `partitionFunctionAlongExhaustion_*_sandwich`,
-  `partitionFunctionAlongExhaustion_*_complete_summary`;
-- `freeEnergyAlongExhaustion_*_complete_summary`.
-
-Theorem names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+Packages the GJ §18.3–§18.4 high-temperature expansion into two-sided sandwich and
+complete-summary statements for the zero-field partition function and free energy along an
+exhaustion, which is the form the §18.7 decay argument consumes.
 -/
 
 namespace IsingModel
@@ -29,16 +19,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: closed-form / correlation wrappers
-
-The five `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed*`
-and `correlationAlongExhaustion_high_temp_*_h_zero_{nonneg,closed}`
-wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosed`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-exhaustion Z high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J`, at every stage `n`,

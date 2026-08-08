@@ -4,23 +4,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # Concrete correlationAlongExhaustion bound + eventually wrappers
 
-Narrow child module for six ℤ^d
-`correlationAlongExhaustion_latticeGraph_*` bound + eventually +
-cubicExhaustion `_le_one` / `_nonneg` wrappers. Each wrapper is a thin
-pass-through to the corresponding ambient
-`correlationAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
+Records the eventual agreement of `correlationAlongExhaustion` with the lifted Λ-level
+correlation on ℤ^d, together with the eventual uniform bound `|·| ≤ 1` — what a limit
+argument along an arbitrary exhaustion needs before passing to the infinite volume.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: cubicExhaustion bddAbove + eventually_le_one wrappers
-
-The two cubicExhaustion-specific wrappers
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_bddAbove` and
-`abs_correlationAlongExhaustion_latticeGraph_eventually_le_one` now
-live in `CorrelationExhaustionLimitsBoundsCubic.lean`. -/
-
 
 /-- **ℤ^d `correlationAlongExhaustion` eventually equals the lifted `correlationΛ`**
 (any-Exhaustion): for any finite `A`, eventually `A ⊆ Λ.volume n` and
@@ -42,13 +32,6 @@ theorem abs_correlationAlongExhaustion_latticeGraph_eventually_le_one_general
       |correlationAlongExhaustion (IsingModel.latticeGraph d) Λ p A n| ≤ 1 :=
   abs_correlationAlongExhaustion_eventually_le_one
     (IsingModel.latticeGraph d) Λ p A
-
-/-! ## Moved: cubicExhaustion per-stage le_one + nonneg wrappers
-
-The two cubicExhaustion-specific per-stage wrappers
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one` and
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg` now
-live in `CorrelationExhaustionLimitsBoundsCubic.lean`. -/
 
 end Ambient
 end IsingModel

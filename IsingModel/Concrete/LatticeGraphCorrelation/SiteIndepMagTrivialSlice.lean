@@ -3,12 +3,14 @@ import IsingModel.TranslationInvariance
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
-# Concrete uniformMagnetization trivial-slice + monotonicity wrappers
+# Concrete `uniformMagnetization` trivial-slice wrappers
 
-Narrow child module for seven ℤ^d `uniformMagnetization_*` wrappers at
-trivial parameter slices and monotonicity directions. Each wrapper is a
-thin pass-through to the corresponding ambient `magnetizationInfinite_*`
-lemma at `IsingModel.latticeGraph d` and `Ambient.cubicExhaustion d`.
+Evaluates the ℤ^d uniform magnetization on the degenerate parameter slices, where the model
+decouples or the field vanishes by symmetry. The `β = 0`, `J = 0` and `h = 0` slices pass
+through the matching ambient `magnetizationInfinite_*` lemma at
+`IsingModel.latticeGraph d` and `Ambient.cubicExhaustion d`; the `J = h = 0` slice instead
+unfolds to `correlationInfinite` at the singleton `{0}` and quotes
+`correlationInfinite_zero_params_vanish`.
 -/
 
 open scoped symmDiff
@@ -27,15 +29,6 @@ theorem uniformMagnetization_beta_zero
     uniformMagnetization d (⟨J, h, 0⟩ : IsingParams ℝ) = 0 :=
   magnetizationInfinite_beta_zero
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) J h 0
-
-/-! ## Moved: uniformMagnetization monotone wrappers
-
-The three wrappers
-`uniformMagnetization_monotone_J`,
-`uniformMagnetization_monotone_h`,
-`uniformMagnetization_monotone_beta` now live in
-`SiteIndepMagTrivialSliceMonotone.lean`. -/
-
 
 /-- **`uniformMagnetization` at `J = 0`**:
 `uniformMagnetization d ⟨0, h, β⟩ = tanh(β · h)` (ferromagnetic).

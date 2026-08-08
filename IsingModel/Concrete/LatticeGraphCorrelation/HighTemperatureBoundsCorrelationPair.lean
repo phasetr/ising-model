@@ -2,20 +2,11 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete HT correlation pair / singleton wrappers
+# Concrete HT correlation pair wrappers
 
-Narrow child module for the 8 ℤ^d Λ-level correlation pair/singleton
-wrappers (`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`,
-`_ferromagnetic`,
-`_at_pair_ge_tanh_div_two_pow_edges`,
-`_at_pair_ge_tanh_div_two_pow_edges_ferromagnetic`,
-`_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj`,
-`_at_pair_pos_of_latticeAdj`, `_at_singleton`, `_odd_card_eq_zero`)
-extracted from `HighTemperatureBounds.lean` in PR #2070. Each is a
-thin pass-through (or `induce_adj`-bridged corollary) to the
-corresponding ambient `correlationΛ_high_temp_h_zero_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBounds` declarations.
+Instantiates the Λ-level zero-field two-site correlation estimates of GJ §18.3 at
+`IsingModel.latticeGraph d`: strict positivity across an edge and the `tanh`-power lower
+bound, in general and ferromagnetic form.
 -/
 
 namespace IsingModel
@@ -76,16 +67,6 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromag
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) :=
   correlationΛ_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ i j hij he
-
-/-! ## Moved: ℤ^d HT pair latticeAdj corollaries + trivial slices
-
-The four wrappers
-`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj`,
-`correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj`,
-`correlationΛ_latticeGraph_high_temp_h_zero_at_singleton`, and
-`correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero`
-now live in `HighTemperatureBoundsCorrelationPairCorollaries.lean`. -/
-
 
 end Ambient
 

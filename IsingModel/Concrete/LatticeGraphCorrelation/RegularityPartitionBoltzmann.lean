@@ -2,17 +2,11 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Regularity.HasDerivBasic
 
 /-!
-# Concrete ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers
+# Concrete ℤ^d Λ-layer `partitionFunctionΛ` `hasDerivAt` wrappers
 
-Narrow child module for the 6 ℤ^d Λ-layer
-`hasDerivAt_partitionFunctionΛ_latticeGraph_{beta,J,field}` and
-`hasDerivAt_boltzmannWeightΛ_latticeGraph_{beta,J,field}` wrappers
-extracted from `Regularity.lean` in PR #2044. Each is a thin
-pass-through to the corresponding ambient `hasDerivAt_partitionFunctionΛ_*`
-or `hasDerivAt_boltzmannWeightΛ_*` lemma at `IsingModel.latticeGraph d`.
-All wrappers are stated in existence form `∃ c : ℝ, HasDerivAt _ c _`.
-The theorem names are unchanged from the former `Regularity`
-declarations.
+Instantiates the Λ-level parameter derivatives of the partition function at
+`IsingModel.latticeGraph d`, in the `β`, `J` and field directions, stated in existence form
+`∃ c : ℝ, HasDerivAt _ c _`.
 -/
 
 open scoped symmDiff
@@ -52,14 +46,6 @@ theorem hasDerivAt_partitionFunctionΛ_latticeGraph_field
           (⟨J, h', β⟩ : IsingParams ℝ)) c h :=
   ⟨_, Ambient.hasDerivAt_partitionFunctionΛ_field
     (IsingModel.latticeGraph d) Λ J h β⟩
-
-/-! ## Moved: boltzmannWeightΛ HasDerivAt wrappers
-
-The three wrappers
-`hasDerivAt_boltzmannWeightΛ_latticeGraph_beta`,
-`hasDerivAt_boltzmannWeightΛ_latticeGraph_J`,
-`hasDerivAt_boltzmannWeightΛ_latticeGraph_field` now live in
-`RegularityPartitionBoltzmannBoltzmann.lean`. -/
 
 end Ambient
 

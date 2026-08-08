@@ -5,39 +5,15 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 /-!
 # Susceptibility `ContinuousAt` along-ex wrappers
 
-Narrow child module for the three pointwise `ContinuousAt`
-susceptibility wrappers along an exhaustion, obtained from the
-corresponding `_continuous_*_gen` wrappers in the parent
-`SusceptibilityPointwiseRegularity` module via the `.continuousAt`
-projection. Theorem names are unchanged from the former
-`SusceptibilityPointwiseRegularity` declarations.
+Turns the parametrized continuity of the along-exhaustion susceptibility into pointwise
+`ContinuousAt` form via the `.continuousAt` projection, the shape used by the
+GJ §17.6 derivative arguments.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 ContinuousAt β wrapper
-
-The `susceptibilityAlongExhaustion_continuousAt_beta_gen` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 3 susceptibilityAlongExhaustion_differentiableAt_*_gen wrappers
-
-The three `DifferentiableAt ℝ` pointwise wrappers
-(`susceptibilityAlongExhaustion_differentiableAt_beta_gen`,
-`susceptibilityAlongExhaustion_differentiableAt_field_gen`,
-`susceptibilityAlongExhaustion_differentiableAt_J_gen`) now live in
-`IsingModel.AmbientLattice.SpecialCases.`
-`SusceptibilityPointwiseRegularityAtDifferentiableAt`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: susceptibility ContinuousAt h** (general G). -/
 theorem susceptibilityAlongExhaustion_continuousAt_field_gen

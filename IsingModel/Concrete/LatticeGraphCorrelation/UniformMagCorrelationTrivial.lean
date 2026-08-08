@@ -1,40 +1,17 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlation trivial / GKS-II / FKG / h_zero / cor 4.3.5 wrappers
+# ℤ^d infinite-volume correlation GKS-II / FKG and trivial-case wrappers
 
-Narrow child module for 14 ℤ^d wrappers covering:
-
-- `magnetizationInfinite_latticeGraph_*` trivial slices
-  (`zero_at_h_zero`, `beta_zero`, `J_zero`, `indep_exhaustion`);
-- `correlationInfinite_latticeGraph_cubicExhaustion_empty`;
-- `correlationInfinite_latticeGraph_gks_second` /
-  `_fkg_spinProduct`;
-- `correlationΛ_latticeGraph_odd_vanish_h_zero`;
-- `correlationAlongExhaustion_latticeGraph_h_zero` /
-  `_any_h_zero`;
-- `correlationInfinite_latticeGraph_cubicExhaustion_h_zero` /
-  `_h_zero`;
-- `correlationInfinite_latticeGraph_cor_4_3_5_h0` /
-  `_cubicExhaustion_cor_4_3_5_h0`.
-
-Theorem names are unchanged from the former `UniformMag`
-declarations.
+Instantiates the GKS-II and FKG correlation inequalities for the ℤ^d infinite-volume state,
+together with the degenerate empty-subset value and the independence of the infinite-volume
+magnetization from the chosen exhaustion.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: magnetizationInfinite trivial-slice wrappers
-
-The three wrappers
-`magnetizationInfinite_latticeGraph_zero_at_h_zero`,
-`magnetizationInfinite_latticeGraph_beta_zero`,
-`magnetizationInfinite_latticeGraph_J_zero` now live in
-`UniformMagCorrelationTrivialTrivialSlices.lean`. -/
-
 
 /-- **ℤ^d magnetizationInfinite exhaustion-independence**:
 any two exhaustions of `Fin d → ℤ` yield the same ∞-vol magnetization. -/
@@ -76,35 +53,6 @@ theorem correlationInfinite_latticeGraph_fkg_spinProduct
       * correlationInfinite (IsingModel.latticeGraph d) Λ p B
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p (A ∆ B) :=
   correlationInfinite_fkg_spinProduct (IsingModel.latticeGraph d) Λ p hf A B
-
-/-! ## Moved: correlation h_zero (Z₂ symmetry) wrappers
-
-The five wrappers `correlationΛ_latticeGraph_odd_vanish_h_zero`,
-`correlationAlongExhaustion_latticeGraph_h_zero`,
-`correlationInfinite_latticeGraph_cubicExhaustion_h_zero`,
-`correlationInfinite_latticeGraph_h_zero`, and
-`correlationAlongExhaustion_latticeGraph_any_h_zero` now live in
-`UniformMagCorrelationTrivialHZero.lean`. -/
-
-/-! ## Moved: Cor 4.3.5 ∞-volume correlation wrappers
-
-The two `correlationInfinite_latticeGraph_*_cor_4_3_5_h0` wrappers
-now live in `UniformMagCorrelationTrivialCor4_3_5.lean`. -/
-
-
-
-/-! ## Moved: susceptibilityInfinite trivial-slice + J_zero regularity wrappers
-
-The 7 ℤ^d `susceptibilityInfinite_latticeGraph_*` J_zero / β_zero /
-zero_params trivial-slice + continuousOn / differentiableOn
-regularity wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.UniformMagSusceptibilityInfinite`.
-The four `magnetizationInfinite_latticeGraph_{continuousOn,
-differentiableOn}_{field,beta}_J_zero` wrappers that were moved
-alongside them were deleted; no consumer of them was found in this
-repository.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

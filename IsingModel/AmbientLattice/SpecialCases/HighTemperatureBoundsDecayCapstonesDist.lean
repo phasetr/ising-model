@@ -12,13 +12,9 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstone
 /-!
 # Ambient alongExhaustion §18.7 distance-bound capstone wrappers at h = 0
 
-Narrow child module for six §18.7 alongExhaustion pair-correlation
-distance-bound capstone wrappers: `tanh_pow_dist`, `exp_rate_dist`,
-`exp_highTempExpRate_dist`, `exp_alpha_dist`, monotone-rate
-`alpha_dist_of_le_highTempExpRate`, and ferromagnetic `alpha_dist_ferro`.
-Each wrapper is a thin pass-through to the corresponding
-`correlationΛ_*` ambient lemma. Theorem names are unchanged from
-the former `HighTemperatureBoundsDecayCapstones` declarations.
+States the GJ §18.7 decay of the zero-field pair correlation in the graph distance between
+the two sites, along an exhaustion. Each bound is a stagewise pass-through of the
+corresponding `correlationΛ_*` ambient lemma.
 -/
 
 namespace IsingModel
@@ -62,25 +58,6 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rat
           ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
   correlationΛ_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G (Λ.volume n) J β hβJ i j
-
-/-! ## Moved: 1 named-rate distance-bound capstone
-
-The named-rate
-`_exp_highTempExpRate_dist` capstone now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDistNamedRate`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: alpha-rate distance-bound capstones
-
-The three alpha-rate capstones (`_exp_alpha_dist`,
-`_exp_alpha_dist_of_le_highTempExpRate`, `_exp_alpha_dist_ferro`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

@@ -3,16 +3,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBo
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundFerro
 
 /-!
-# Ambient alongExhaustion Z ratio_bound (non-bundle and bundle) wrappers at h = 0
+# Ambient alongExhaustion Z `ratio_bound` bundle at h = 0
 
-Narrow child module for the six §18.3-§18.4 ambient alongExhaustion
-`partitionFunctionAlongExhaustion` `ratio_bound` wrappers at `h = 0`:
-the four non-bundle slice variants (`J = 0` / `β = 0` plus their
-ferromagnetic counterparts) and the two `ratio_bound_bundle` wrappers
-(general and ferromagnetic). Each wrapper is a thin pass-through to
-the underlying `_ratio_sandwich*` (or non-bundle `_ratio_bound*`)
-lemma. The theorem names are unchanged from the former
-`HighTemperatureBoundsRatioBounds` declarations.
+Bundles the GJ §18.3–§18.4 zero-field partition-function ratio estimate along an exhaustion
+into a single statement, so a caller gets the ratio bound without re-deriving it from the
+underlying `_ratio_sandwich*` lemma.
 -/
 
 namespace IsingModel
@@ -22,16 +17,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: Z ratio_bound non-bundle wrappers
-
-The four `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound*`
-non-bundle wrappers (`J = 0`, `β = 0`, plus their ferromagnetic
-counterparts) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnly`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex Z ratio upper bound bundle at stage `n`**. -/
 theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle
@@ -48,16 +33,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_
       G Λ J β hβJ n,
    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero
       G Λ J β hβJ n⟩
-
-/-! ## Moved: 1 ferromagnetic Z ratio_bound_bundle wrapper
-
-The ferromagnetic
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle_ferromagnetic`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

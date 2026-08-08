@@ -4,14 +4,9 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d freeEnergyInfinite monotonicity wrappers
 
-Narrow child module for the 7 ℤ^d
-`freeEnergyInfinite_latticeGraph_*monotone_*` wrappers
-(`monotone_J`, `monotone_h`, `monotone_beta`, `monotone_abs_h`, plus
-3 `cubicExhaustion_monotone_{J,h,beta}` variants) extracted from
-`TwoPointFreeEnergy.lean` in PR #2054. Each is a thin pass-through
-to the corresponding ambient `freeEnergyInfinite_monotone_*` lemma
-at `IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `TwoPointFreeEnergy` declarations.
+Instantiates monotonicity of the infinite-volume free energy in `J`, in the external field,
+in `β` and in `|h|` at `IsingModel.latticeGraph d`. Each is a pass-through of the ambient
+`freeEnergyInfinite_monotone_*` lemma.
 -/
 
 namespace IsingModel
@@ -81,16 +76,6 @@ theorem freeEnergyInfinite_latticeGraph_monotone_abs_h
       ≤ freeEnergyInfinite (IsingModel.latticeGraph d) Λ
           (⟨J, h₂, β⟩ : IsingParams ℝ) :=
   freeEnergyInfinite_monotone_abs_h (IsingModel.latticeGraph d) Λ hJ hβ hc hh
-
-/-! ## Moved: cubicExhaustion monotone wrappers
-
-The three wrappers
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_J`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_h`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_beta` now
-live in `TwoPointFreeEnergyInfMonotoneCubicEx.lean`. -/
-
-
 
 end Ambient
 

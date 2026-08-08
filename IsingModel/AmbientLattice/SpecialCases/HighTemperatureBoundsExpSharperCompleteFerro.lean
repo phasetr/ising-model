@@ -4,14 +4,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCom
 /-!
 # Ambient alongExhaustion sharper-exp complete-summary ferromagnetic wrappers at h = 0
 
-Narrow child module for the three §18.3-§18.4 ambient
-alongExhaustion `complete_summary_exp_ferromagnetic` wrappers
-covering `partitionFunctionAlongExhaustion`,
-`log_partitionFunctionAlongExhaustion`, and
-`freeEnergyAlongExhaustion`. Each wrapper is a thin pass-through to
-its non-ferromagnetic sibling in the parent under
-`mul_nonneg hβ.le hJ`. Theorem names are unchanged from the former
-`HighTemperatureBoundsExpSharperComplete` declarations.
+Restates the along-exhaustion complete-summary exponential bounds under the ferromagnetic
+hypotheses `0 ≤ J`, `0 < β`, discharging the general `0 ≤ β·J` side condition by `mul_nonneg`.
 -/
 
 namespace IsingModel
@@ -62,16 +56,6 @@ log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary
         (⟨J, 0, 0⟩ : IsingParams ℝ) n) = ((Λ.volume n).card : ℝ) * Real.log 2 :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_complete_summary_exp
     G Λ J β (mul_nonneg hβ.le hJ) n
-
-/-! ## Moved: 1 ferromagnetic f complete-summary exp wrapper
-
-The
-`freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp_ferromagnetic`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCompleteFerroFE`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

@@ -4,14 +4,12 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffLtEps
 
 /-!
-# Polymer free-energy tanh sharpening iff / eps_pos wrappers along an exhaustion
+# Polymer free-energy tanh sharpening `iff` wrappers along an exhaustion
 
-Narrow child module for the five §18.5 along-exhaustion
-`polymerFreeEnergyAlongExhaustion_tanh_*` iff / `_of_eps_pos`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-`polymerFreeEnergy_Λ_tanh_*` ambient lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyTanhSharpening`
-declarations.
+Characterizes vanishing and strict positivity of the along-exhaustion polymer free energy by
+the corresponding property of the cluster-expansion remainder `ε` (GJ §18.5), so a sign
+argument can be transported between them. Each passes through to a
+`polymerFreeEnergy_Λ_tanh_*` ambient lemma.
 -/
 
 namespace IsingModel
@@ -20,15 +18,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 lt_eps_iff_eps_pos wrapper
-
-The `polymerFreeEnergyAlongExhaustion_tanh_lt_eps_iff_eps_pos`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffLtEps`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: pFE(tanh) = 0 ↔ ε(tanh) = 0** under `0 ≤ β·J`. -/
 theorem polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff_eps_eq_zero
@@ -53,16 +42,6 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_pos_iff_eps_pos
                 (inducedGraph G (Λ.volume n))).erase ∅,
             ∏ P ∈ Γ, (Real.tanh (β * J)) ^ P.card :=
   polymerFreeEnergy_Λ_tanh_pos_iff_eps_pos G (Λ.volume n) hβJ
-
-/-! ## Moved: 2 `_of_eps_pos` tanh sharpening wrappers
-
-The two along-ex `polymerFreeEnergyAlongExhaustion_tanh_*_of_eps_pos`
-wrappers (`_lt_eps_of_eps_pos`, `_lt_pow_sub_one_of_eps_pos`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIffEpsPos`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

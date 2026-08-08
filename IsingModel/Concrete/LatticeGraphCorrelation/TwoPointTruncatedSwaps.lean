@@ -1,10 +1,12 @@
-/- TwoPointTruncatedSwaps.lean
-Narrow child module for the 6 ℤ^d `truncated3Infinite_latticeGraph_swap_{ij,jk,ik}`
-and `truncated4Infinite_latticeGraph_swap_{ij,jk,kl}` symmetry wrappers,
-extracted from `TwoPoint.lean` in PR #2027. The theorem names are
-unchanged from the former `TwoPoint` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d `truncated3Infinite` swap-symmetry wrappers
+
+Records permutation symmetry of the third truncated infinite-volume correlation at
+`IsingModel.latticeGraph d`, so a ℤ^d argument may reorder its site arguments freely. Each
+is a pass-through of the corresponding abstract swap lemma.
+-/
 
 open scoped symmDiff
 
@@ -32,15 +34,6 @@ theorem truncated3Infinite_latticeGraph_swap_ik
     truncated3Infinite (IsingModel.latticeGraph d) Λ p i j k
       = truncated3Infinite (IsingModel.latticeGraph d) Λ p k j i :=
   truncated3Infinite_swap_ik (IsingModel.latticeGraph d) Λ p i j k
-
-/-! ## Moved: `truncated4Infinite_latticeGraph_swap_*` wrappers
-
-The three wrappers
-`truncated4Infinite_latticeGraph_swap_ij`,
-`truncated4Infinite_latticeGraph_swap_jk`,
-`truncated4Infinite_latticeGraph_swap_kl` now live in
-`TwoPointTruncatedSwapsTrunc4.lean`. -/
-
 
 end Ambient
 

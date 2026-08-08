@@ -1,18 +1,13 @@
-/- TranslationVadd.lean
-Narrow child module for the 11 ℤ^d translation invariance wrappers
-(`correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset`,
-4 `*_latticeGraph_cubicExhaustion_translation` for `magnetizationInfinite`
-and `truncated{2,3,4}Infinite`,
-`correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant`,
-and 5 `*_latticeGraph_translation` for `spontaneousCorrelation`,
-`spontaneousMagnetization`, and `truncated{2,3,4}Infinite`) extracted
-from `Translation.lean` in PR #2061. Each is a thin pass-through to
-the corresponding abstract translation-invariance lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `Translation` declarations.
--/
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d infinite-volume translation-invariance wrappers
+
+Instantiates translation invariance of the infinite-volume observables at
+`IsingModel.latticeGraph d` — the correlation under a shifted finset, the magnetization, and
+the spontaneous quantities — which is what makes the ℤ^d limit state translation invariant.
+-/
 
 open scoped symmDiff
 
@@ -60,15 +55,6 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_translation
         (vaddFinset_singleton t i).symm]
   exact correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset d t p hf {i}
 
-/-! ## Moved: truncated{2,3,4}Infinite cubicExhaustion translation wrappers
-
-The three wrappers
-`truncated2Infinite_latticeGraph_cubicExhaustion_translation`,
-`truncated3Infinite_latticeGraph_cubicExhaustion_translation`,
-`truncated4Infinite_latticeGraph_cubicExhaustion_translation` now live
-in `TranslationVaddTruncatedTranslation.lean`. -/
-
-
 /-- **ℤ^d correlationInfinite translation invariance** (any-Exhaustion):
 `correlationInfinite p (vaddFinset t A) = correlationInfinite p A`. -/
 theorem correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant
@@ -109,15 +95,6 @@ theorem spontaneousMagnetization_latticeGraph_translation
   classical
   exact spontaneousMagnetization_translation
     (IsingModel.latticeGraph d) Λ t hJ hβ i
-
-/-! ## Moved: truncated{2,3,4}Infinite translation wrappers
-
-The three `truncated{2,3,4}Infinite_latticeGraph_translation`
-(any-Exhaustion) wrappers now live in
-`TranslationVaddTruncatedAnyEx.lean`. -/
-
-
-
 
 end Ambient
 

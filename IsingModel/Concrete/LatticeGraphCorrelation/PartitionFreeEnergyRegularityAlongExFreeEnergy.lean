@@ -4,10 +4,9 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
 /-!
 # Concrete along-ex freeEnergyAlongExhaustion regularity wrappers
 
-Narrow child module for eight ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*`
-`Continuous` / `Differentiable` regularity wrappers (joint, β, field h,
-J). Each wrapper is a thin pass-through to the corresponding ambient
-`freeEnergyAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
+Instantiates continuity and differentiability of the along-exhaustion free energy at
+`IsingModel.latticeGraph d`, jointly and in the `β` direction, the ℤ^d input for the
+GJ §17.5–§17.6 derivative arguments.
 -/
 
 namespace IsingModel
@@ -60,17 +59,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_differentiable_beta
         Λ (⟨J, h, β'⟩ : IsingParams ℝ) n) :=
   Ambient.freeEnergyAlongExhaustion_differentiable_beta
     (IsingModel.latticeGraph d) Λ J h n
-
-/-! ## Moved: field/J regularity wrappers
-
-The four wrappers
-`freeEnergyAlongExhaustion_latticeGraph_continuous_field`,
-`freeEnergyAlongExhaustion_latticeGraph_differentiable_field`,
-`freeEnergyAlongExhaustion_latticeGraph_continuous_J`,
-`freeEnergyAlongExhaustion_latticeGraph_differentiable_J` now live in
-`PartitionFreeEnergyRegularityAlongExFreeEnergyFieldJ.lean`. -/
-
-
 
 end Ambient
 end IsingModel

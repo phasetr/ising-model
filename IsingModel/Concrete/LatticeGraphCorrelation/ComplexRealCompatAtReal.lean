@@ -4,10 +4,9 @@ import IsingModel.ComplexAnalyticity.Locus
 /-!
 # Concrete real-axis evaluation of complex partition function / free energy
 
-Narrow child module for ten ℤ^d `*_at_real_latticeGraph` real-axis
-evaluation wrappers of the complex partition function and free energy.
-Each wrapper is a thin pass-through to the corresponding ambient
-`IsingModel.*_at_real` lemma at the induced graph.
+Instantiates the real-axis evaluation identities of the complexified partition function and
+free energy at `IsingModel.latticeGraph d`. These are the pointwise real-axis values the
+Vitali–Porter convergence argument compares against the real model.
 -/
 
 namespace IsingModel
@@ -59,17 +58,6 @@ theorem freeEnergyComplex_ofReal_eq_freeEnergy_latticeGraph
             (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p : ℝ) : ℂ) :=
   IsingModel.freeEnergyComplex_ofReal_eq_freeEnergy
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
-
-/-! ## Moved: at-real im-zero / re-equalities wrappers
-
-The five wrappers
-`partitionFunctionComplex_re_pos_at_real_latticeGraph`,
-`partitionFunctionComplex_im_zero_at_real_latticeGraph`,
-`log_partitionFunctionComplex_im_zero_at_real_latticeGraph`,
-`freeEnergyComplex_im_zero_at_real_latticeGraph`,
-`freeEnergyComplex_re_eq_freeEnergy_at_real_latticeGraph` now live in
-`ComplexRealCompatAtRealImZero.lean`. -/
-
 
 /-- **ℤ^d `‖Z_ℂ‖ = Z` at real parameters** (Λ-induced). -/
 theorem norm_partitionFunctionComplex_at_real_latticeGraph

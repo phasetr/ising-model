@@ -9,14 +9,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
 
 /-!
-# Ambient alongExhaustion §18.7 high-temperature exponential-decay capstone wrappers
+# Ambient alongExhaustion §18.7 high-temperature exponential-decay capstones
 
-Narrow child module for 11 §18.7 alongExhaustion exponential-decay
-capstone wrappers (pair correlation `tanh_pow_dist` / `exp_rate_dist`
-/ `exp_highTempExpRate_dist` / `exp_alpha_dist` / `pos_of_edge` /
-`ge_tanh_div_two_pow_edges`, with ferromagnetic variants). Theorem
-names are unchanged from the former
-`AmbientLattice/SpecialCases/HighTemperatureBounds` declarations.
+Assembles the GJ §18.7 exponential-decay statement for the zero-field pair correlation along
+an exhaustion under the ferromagnetic hypotheses `0 ≤ J`, `0 < β`, by specializing the
+corresponding general-parameter distance bounds.
 -/
 
 namespace IsingModel
@@ -25,20 +22,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: distance-bound capstones
-
-The six distance-bound capstones
-(`_tanh_pow_dist`, `_exp_rate_dist`, `_exp_highTempExpRate_dist`,
-`_exp_alpha_dist`, `_exp_alpha_dist_of_le_highTempExpRate`,
-`_exp_alpha_dist_ferro`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist`.
-This parent re-imports the new child below so the remaining
-ferromagnetic wrappers (`_tanh_pow_dist_ferromagnetic`,
-`_exp_rate_dist_ferromagnetic`) continue to see them, and
-downstream consumers see all symbols via the parent and
-the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex §18.7 ferromagnetic capstone**: under `0 ≤ J, 0 < β`,
 the same exponential-decay bound at stage `n`. -/
@@ -69,17 +52,6 @@ correlationAlongExhaustion_high_temp_h_zero_at_pair_le_exp_rate_dist_ferromagnet
           ((inducedGraph G (Λ.volume n)).dist i j : ℝ)) :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist
     G Λ J β (mul_nonneg hβ.le hJ) n i j
-
-/-! ## Moved: 2 edge-pair correlation capstones
-
-The two §18.3 / §18.7 edge-pair correlation capstone wrappers
-(`correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge`,
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

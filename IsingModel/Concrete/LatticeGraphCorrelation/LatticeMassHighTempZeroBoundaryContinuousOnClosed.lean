@@ -4,12 +4,11 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 /-!
 # correlationInfinite ContinuousOn on closed [0, b]
 
-Narrow child module for two ℤ^d
-`correlationInfinite_continuousOn_{beta,J}_of_high_temp_zero_closed`
-wrappers extracted from `LatticeMassHighTempZeroBoundary.lean`:
-
-* `correlationInfinite_continuousOn_beta_of_high_temp_zero_closed` (Step 177),
-* `correlationInfinite_continuousOn_J_of_high_temp_zero_closed` (Step 231).
+Extends continuity of the infinite-volume correlation in `β` and in `J` from the open
+high-temperature interval up to the closed interval including the zero boundary, which is
+what the GJ §17.5 mass-gap argument needs there. The `J = 0` boundary value is
+`correlationInfinite_eq_zero_at_J_zero`, proved here; the `β = 0` one is the imported
+`correlationInfinite_eq_zero_at_beta_zero`.
 -/
 
 open scoped symmDiff

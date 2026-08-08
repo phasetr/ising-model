@@ -9,20 +9,11 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdgeFerro
 
 /-!
-# Ambient alongExhaustion §18.3 / §18.7 edge-pair correlation capstones
+# Ambient alongExhaustion §18.3 / §18.7 edge-pair correlation capstone
 
-Narrow child module for the two §18.3 / §18.7 ambient
-alongExhaustion edge-pair correlation capstone wrappers extracted
-from `HighTemperatureBoundsDecayCapstones.lean`:
-
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`
-
-Each wrapper is a thin pass-through to the corresponding
-`correlationΛ_*` ambient lemma stating pair-correlation
-strict positivity under an edge. Theorem names are unchanged from the
-former
-`AmbientLattice/SpecialCases/HighTemperatureBounds` declarations.
+Records strict positivity of the zero-field pair correlation across an edge, along an
+exhaustion — the base case from which the §18.7 distance bounds are propagated. It passes
+through to the `correlationΛ_*` ambient lemma at the stage volume.
 -/
 
 namespace IsingModel
@@ -46,14 +37,6 @@ theorem correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge
         ({i, j} : Finset ↑(Λ.volume n)) :=
   correlationΛ_high_temp_h_zero_at_pair_pos_of_edge
     G (Λ.volume n) J β hβJ i j hij he
-
-/-! ## Moved: ferromagnetic edge-pair capstone
-
-The ferromagnetic capstone `_at_pair_pos_of_edge_ferromagnetic` now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdgeFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

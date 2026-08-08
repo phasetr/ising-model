@@ -6,14 +6,10 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVari
 /-!
 # Ambient alongExhaustion high-temp expansion variant wrappers at h = 0
 
-Narrow child module for 4 ambient alongExhaustion §18.3-§18.4
-high-temperature expansion variant wrappers covering
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero`,
-`partitionFunctionAlongExhaustion_high_temp_expansion`,
-`partitionFunctionAlongExhaustion_high_temp_expansion_subset_form`,
-and the `one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper.
-Theorem names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+States the GJ §18.3 high-temperature expansion
+`Z_n = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j)` stagewise, together with the
+even-subgraph sum lower bound it is paired with, each a per-stage application of
+the corresponding Λ-level lemma.
 -/
 
 namespace IsingModel
@@ -42,16 +38,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero
           (1 + Real.tanh (β * J) * edgeSpin σ e) := by
   change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) = _
   exact partitionFunctionΛ_high_temp_expansion_h_zero G (Λ.volume n) J β
-
-/-! ## Moved: 2 general-h expansion wrappers
-
-The two general-h `partitionFunctionAlongExhaustion_high_temp_expansion*`
-wrappers (`_high_temp_expansion`, `_high_temp_expansion_subset_form`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariantsGeneralH`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 /-- **Along-exhaustion high-temperature even-subgraph sum is `≥ 1`**:
 under `0 ≤ β * J`, at every stage `n`,

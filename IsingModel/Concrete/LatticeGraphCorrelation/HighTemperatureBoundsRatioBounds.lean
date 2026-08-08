@@ -2,18 +2,11 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete Λ-level Z ratio sandwich and ratio bound wrappers at h = 0
+# Concrete Λ-level Z ratio-sandwich wrappers at h = 0
 
-Narrow child module for the 10 §18.3-§18.4 concrete Λ-level
-`partitionFunctionΛ_latticeGraph` `ratio_sandwich` / `ratio_bound`
-wrappers on `latticeGraph d` at `h = 0` (with `J = 0` / `β = 0` /
-`bundle` variants plus ferromagnetic counterparts). The 4
-`triple_ratio_sandwich_bundle` wrappers now live in
-`HighTemperatureBoundsTripleRatio.lean` (narrowed in PR #1998); the
-12 `log_partitionFunctionΛ_latticeGraph` / `freeEnergyΛ_latticeGraph`
-ratio wrappers now live in `HighTemperatureBoundsRatioLogFe.lean`
-(narrowed in PR #1999). Theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Instantiates the GJ §18.3–§18.4 zero-field partition-function ratio sandwich at
+`IsingModel.latticeGraph d`, including the trivial `β = 0` slice, the bundled conjunction
+and its ferromagnetic form.
 -/
 
 namespace IsingModel
@@ -118,33 +111,6 @@ partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundl
             (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card)) :=
   partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-! ## Moved: ℤ^d Λ-direct Z ratio-bound wrappers
-
-The four wrappers
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic`
-now live in `HighTemperatureBoundsRatioBoundsBound.lean`. -/
-
-/-! ## Moved: ℤ^d Λ-direct log Z + freeEnergy ratio wrappers
-
-The 12 ℤ^d Λ-direct `log_partitionFunction` and `freeEnergy`
-ratio_sandwich / ratio_bound wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsRatioLogFe`.
-The umbrella `HighTemperatureBounds.lean` re-imports
-the new child so the import paths and theorem names remain
-unchanged.
--/
-
-/-! ## Moved: ℤ^d Λ-direct triple-ratio wrappers
-
-The 4 ℤ^d Λ-direct `triple_ratio_sandwich_bundle` wrappers (J = 0 /
-β = 0 trivial slices, ferromagnetic variants) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsTripleRatio`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

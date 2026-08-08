@@ -2,18 +2,11 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpening
 
 /-!
-# ℤ^d AlongExhaustion polymer free-energy epsilon-sharpening wrappers
+# ℤ^d AlongExhaustion cluster-expansion ε(t) sharpening wrappers
 
-Narrow child module for six ℤ^d AlongExhaustion polymer free-energy
-epsilon-sharpening wrappers extracted from
-`PolymerFreeEnergyEpsilonSharpening.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_nonneg_of_nonneg`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pow_at_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_eq_zero_iff_eps_eq_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_pos_iff_eps_pos`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_lt_eps_iff_eps_pos`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_lt_pow_sub_one_of_eps_pos`.
+Instantiates the sign and vanishing facts about the along-exhaustion cluster-expansion
+remainder `ε(t) = vdPolymerFamilies_sum − 1` at `IsingModel.latticeGraph d`, which is what
+sharpens the GJ §18.5 polymer free-energy bounds.
 -/
 
 namespace IsingModel
@@ -46,16 +39,6 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pow_at_zero
           ∏ P ∈ Γ, (0 : ℝ) ^ P.card) ^ k = 0 :=
   Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_pow_at_zero
     (IsingModel.latticeGraph d) Λ hk n
-
-/-! ## Moved: along-ex polymerFreeEnergyAlongExhaustion ε(t) wrappers
-
-The four along-ex `polymerFreeEnergyAlongExhaustion_latticeGraph_*`
-ε(t)-sharpening wrappers (`_eq_zero_iff`, `_pos_iff`, `_lt_eps_iff`,
-`_lt_pow_sub_one`) now live in
-`PolymerFreeEnergyEpsilonSharpeningAlongExPFE.lean`. -/
-
-
-
 
 end Ambient
 end IsingModel

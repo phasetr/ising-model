@@ -1,14 +1,11 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete partitionFunctionΛ + log_partitionFunctionΛ monotonicity wrappers
+# Concrete partitionFunctionΛ monotonicity wrappers
 
-Narrow child module for six ℤ^d Λ-layer monotonicity wrappers:
-`partitionFunctionΛ_latticeGraph_monotone_{J,h,beta}` and
-`log_partitionFunctionΛ_latticeGraph_monotone_{J,h,beta}`. Each wrapper
-is a thin pass-through to the corresponding ambient
-`{partitionFunctionΛ,log_partitionFunctionΛ}_monotone_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates monotonicity of the Λ-level partition function in `J`, in the external field and
+in `β` at `IsingModel.latticeGraph d`. Each is a pass-through of the ambient
+`partitionFunctionΛ_monotone_*` lemma.
 -/
 
 namespace IsingModel
@@ -49,15 +46,6 @@ theorem partitionFunctionΛ_latticeGraph_monotone_beta
       ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
           (⟨J, h, β₂⟩ : IsingParams ℝ) :=
   partitionFunctionΛ_monotone_beta (IsingModel.latticeGraph d) Λ J h hJ hh hβ₁ hβ
-
-/-! ## Moved: log_partitionFunctionΛ monotone wrappers
-
-The three wrappers
-`log_partitionFunctionΛ_latticeGraph_monotone_J`,
-`log_partitionFunctionΛ_latticeGraph_monotone_h`,
-`log_partitionFunctionΛ_latticeGraph_monotone_beta` now live in
-`PartitionFreeEnergyMonotonicityLambdaLog.lean`. -/
-
 
 end Ambient
 end IsingModel

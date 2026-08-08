@@ -1,14 +1,10 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d susceptibilityInfinite trivial-slice + J_zero regularity wrappers
+# ℤ^d `susceptibilityInfinite` trivial-slice wrappers
 
-Narrow child module for seven ℤ^d
-`susceptibilityInfinite_latticeGraph_*` wrappers covering trivial
-slices `J_zero` / `β_zero` / `zero_params` and the
-`continuousOn` / `differentiableOn` regularity in field /
-β-direction at `J = 0`.
-Theorem names are unchanged from the former `UniformMag` declarations.
+Evaluates the ℤ^d infinite-volume susceptibility on the degenerate parameter slices, where
+the model decouples and the susceptibility collapses to its free value.
 -/
 
 namespace IsingModel
@@ -36,19 +32,6 @@ theorem susceptibilityInfinite_latticeGraph_zero_params
     (i : Fin d → ℤ) :
     susceptibilityInfinite (IsingModel.latticeGraph d) Λ ⟨0, 0, β⟩ i = 0 :=
   susceptibilityInfinite_zero_params (IsingModel.latticeGraph d) Λ β hβ i
-
-/-! ## Moved: susceptibilityInfinite J_zero regularity wrappers
-
-The four wrappers
-`susceptibilityInfinite_latticeGraph_continuousOn_field_J_zero`,
-`susceptibilityInfinite_latticeGraph_continuousOn_beta_J_zero`,
-`susceptibilityInfinite_latticeGraph_differentiableOn_field_J_zero`,
-`susceptibilityInfinite_latticeGraph_differentiableOn_beta_J_zero`
-now live in `UniformMagSusceptibilityInfiniteRegJZero.lean`. -/
-
-
-
-
 
 end Ambient
 

@@ -5,21 +5,9 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularityO
 /-!
 # Ambient polymerFreeEnergyAlongExhaustion regularity wrappers
 
-Narrow child module for 4 ambient `polymerFreeEnergyAlongExhaustion_*`
-regularity wrappers (`ContinuousAt`, `DifferentiableAt`,
-`ContinuousOn`, `DifferentiableOn`) extracted from
-`PolymerFreeEnergyBounds.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_continuousAt`,
-* `polymerFreeEnergyAlongExhaustion_differentiableAt`,
-* `polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero`,
-* `polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero`.
-
-Each result is a thin pass-through of the corresponding Λ-level
-`polymerFreeEnergy_Λ_{continuousAt,differentiableAt,
-continuousOn_Ici_zero,differentiableOn_Ici_zero}` lemma. The theorem
-names are unchanged from the former `PolymerFreeEnergyBounds`
-declarations.
+Provides pointwise regularity of the along-exhaustion polymer free energy (GJ §18.5), the
+input for differentiating the cluster expansion in the activity parameter. Each result
+passes through the corresponding Λ-level `polymerFreeEnergy_Λ_*` lemma.
 -/
 
 namespace IsingModel
@@ -49,17 +37,6 @@ theorem polymerFreeEnergyAlongExhaustion_differentiableAt
         IsingModel.polymerFreeEnergy
           (inducedGraph G (Λ.volume n)) s) t :=
   polymerFreeEnergy_Λ_differentiableAt G (Λ.volume n) ht
-
-/-! ## Moved: 2 `_On_Ici_zero` regularity wrappers
-
-The two `_On_Ici_zero` regularity wrappers
-(`polymerFreeEnergyAlongExhaustion_continuousOn_Ici_zero`,
-`polymerFreeEnergyAlongExhaustion_differentiableOn_Ici_zero`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularityOn`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

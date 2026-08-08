@@ -12,13 +12,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts
 /-!
 # ℤ^d truncated2TwoPoint bound wrappers
 
-Narrow child module for seven ℤ^d `truncated2TwoPoint` bound wrappers
-(`le_one`, `neg_one_le`, `abs_le_one`, `sq_le_one`,
-`le_twoPointFunction`, `h_zero_eq`, `J_zero_of_ne_zero`). Each result
-is proved via the
-`truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq`
-identity and direct inequalities on `twoPointFunction` and
-`uniformMagnetization`.
+Bounds the ℤ^d truncated two-point function above and below, via the identity expressing it
+as `twoPointFunction` minus the square of `uniformMagnetization` together with the
+elementary bounds on each of them.
 -/
 
 namespace IsingModel
@@ -62,16 +58,6 @@ theorem truncated2TwoPoint_sq_le_one
   have : |truncated2TwoPoint d p r| ^ 2 ≤ 1 ^ 2 :=
     pow_le_pow_left₀ (abs_nonneg _) h 2
   simpa [sq_abs] using this
-
-/-! ## Moved: relational / trivial-slice wrappers
-
-The three wrappers
-`truncated2TwoPoint_le_twoPointFunction`,
-`truncated2TwoPoint_h_zero_eq`,
-`truncated2TwoPoint_J_zero_of_ne_zero` now live in
-`UniformMagBoundsTruncated2TwoPointMisc.lean`. -/
-
-
 
 end Ambient
 end IsingModel

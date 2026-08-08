@@ -3,14 +3,11 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
-# ℤ^d alongExhaustion log Z + freeEnergy ratio sandwich / bound wrappers at h = 0
+# ℤ^d alongExhaustion log Z + freeEnergy ratio-sandwich bundles at h = 0
 
-Narrow child module for 12 §18.3-§18.4 concrete (`latticeGraph d`)
-alongExhaustion `log_partitionFunction` and `freeEnergy`
-ratio_sandwich / ratio_bound (+ deviation_pos / pow_two_lt)
-wrappers at h = 0 (with J = 0 / β = 0 trivial slices and
-ferromagnetic variants). Theorem names are unchanged from the former
-`HighTemperatureBoundsAlongExhaustionRatioBounds` declarations.
+Instantiates the GJ §18.3–§18.4 two-sided zero-field estimates for the along-exhaustion free
+energy and log partition function at `IsingModel.latticeGraph d`, in general and
+ferromagnetic form, as single bundled conjunctions.
 -/
 
 namespace IsingModel
@@ -149,33 +146,6 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_
               (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card) :=
   log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle
     d Λ J β (mul_nonneg hβ.le hJ) n
-
-/-! ## Removed: ratio_bound_bundle wrappers
-
-The four `ratio_bound_bundle` wrappers
-(`log_partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
-and `freeEnergyAlongExhaustion_latticeGraph_*_ratio_bound_bundle`,
-each with `_ferromagnetic` variants) were removed as unused
-pass-through conjunction bundles. -/
-
-
-
-/-! ## Moved: freeEnergyAlongExhaustion deviation bound wrappers
-
-The two
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_*`
-wrappers (`bound_exp_of_nonempty`, `pos_of_nonempty`) now live in
-`HighTemperatureBoundsAlongExhaustionRatioLogFeDeviation.lean`. -/
-
-
-
-/-! ## Moved: freeEnergyAlongEx ratio_bound wrappers
-
-The four
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound`
-wrappers (`{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`)
-now live in `HighTemperatureBoundsAlongExRatioLogFeBound.lean`. -/
-
 
 end Ambient
 

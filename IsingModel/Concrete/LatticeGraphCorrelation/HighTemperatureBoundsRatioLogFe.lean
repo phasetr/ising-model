@@ -2,13 +2,11 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-direct log Z + freeEnergy ratio sandwich / bound wrappers at h = 0
+# ℤ^d Λ-direct log Z + freeEnergy ratio-sandwich bundles at h = 0
 
-Narrow child module for 12 §18.3-§18.4 concrete (`latticeGraph d`)
-Λ-direct `log_partitionFunction` and `freeEnergy` ratio_sandwich /
-ratio_bound wrappers at h = 0 (with J = 0 / β = 0 trivial slices and
-ferromagnetic variants). Theorem names are unchanged from the former
-`HighTemperatureBoundsRatioBounds` declarations.
+Instantiates the GJ §18.3–§18.4 two-sided zero-field estimates for the Λ-level free energy
+and log partition function at `IsingModel.latticeGraph d`, in general and ferromagnetic
+form, as single bundled conjunctions.
 -/
 
 namespace IsingModel
@@ -138,31 +136,6 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_b
               (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card) :=
   log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-! ## Removed: Λ-direct ratio_bound_bundle wrappers
-
-The Λ-direct `log_partitionFunctionΛ_latticeGraph_*_ratio_bound_bundle`
-conjunction wrappers (and their `_ferromagnetic` variants) were removed as
-unused bundles. The two Λ-level scalar lemmas they delegated to,
-`log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound` and
-`log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_bound_beta_zero`
-(formerly in `AmbientLattice/Defs/HighTempPartition/Ratios.lean`), were
-themselves also removed as unused; the ambient abstract base
-`log_partitionFunction_high_temp_expansion_h_zero_ratio_bound` and
-`log_partitionFunction_high_temp_expansion_h_zero_ratio_bound_beta_zero`
-(in `Conditioning/HighTempClosed/PartitionRatios.lean`) remain, retaining
-live consumers. The companion `freeEnergyΛ_latticeGraph_*_ratio_bound_bundle`
-wrappers had already been dropped. -/
-
-
-
-/-! ## Moved: freeEnergyΛ ratio-bound wrappers
-
-The four `freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound*`
-wrappers (`bound`, `bound_beta_zero`, `bound_ferromagnetic`,
-`bound_beta_zero_ferromagnetic`) now live in
-`HighTemperatureBoundsRatioLogFeBound.lean`. -/
-
 
 end Ambient
 end IsingModel

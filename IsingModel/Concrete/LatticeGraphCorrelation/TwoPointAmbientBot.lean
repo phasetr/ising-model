@@ -4,24 +4,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBotLambdaAlong
 /-!
 # ℤ^d ambient-subgraph monotonicity + `⊥ ≤ latticeGraph` wrappers
 
-Narrow child module for 24 ℤ^d wrappers covering ambient-subgraph
-monotonicity from `⊥` to `latticeGraph d`, including:
-
-- `inducedGraph_latticeGraph_bot` identity;
-- `*_bot_le_latticeGraph` lower bounds for the
-  `Infinite` / `magnetization{Λ,AlongExhaustion,Infinite}` /
-  `spontaneous{Correlation,Magnetization}` /
-  `log_partitionFunctionAlongExhaustion` / `correlationInfinite`
-  families (the Λ + along-exhaustion subset for
-  `{free,partition}Energy`, `correlation`, and `log_partitionFunctionΛ`
-  was carved out into `TwoPointAmbientBotLambda.lean` in PR #2092);
-- `freeEnergyInfinite_latticeGraph_monotone_ambient_subgraph` (the
-  remaining seven Λ + along-exhaustion + correlationInfinite
-  `*_monotone_ambient_subgraph` wrappers were carved out into
-  `TwoPointAmbientBotMonotone.lean` in PR #2093).
-
-Theorem names are unchanged from the former `TwoPoint`
-declarations.
+Compares observables on the empty ambient graph `⊥` with those on `IsingModel.latticeGraph d`
+and records monotonicity of the infinite-volume free energy under enlarging the ambient
+graph. The `inducedGraph` identity at `⊥` proved here is the base case for that comparison.
 -/
 
 namespace IsingModel
@@ -69,32 +54,6 @@ theorem inducedGraph_latticeGraph_bot (d : ℕ) (Λ : Finset (Fin d → ℤ)) :
     Ambient.inducedGraph (⊥ : SimpleGraph (Fin d → ℤ)) Λ = ⊥ :=
   Ambient.inducedGraph_bot Λ
 
-/-! ## Moved: ℤ^d Λ + along-ex `*_bot_le_latticeGraph` wrappers
-
-The seven wrappers
-`freeEnergyAlongExhaustion_bot_le_latticeGraph`,
-`partitionFunctionAlongExhaustion_bot_le_latticeGraph`,
-`correlationAlongExhaustion_bot_le_latticeGraph`,
-`partitionFunctionΛ_bot_le_latticeGraph`,
-`freeEnergyΛ_bot_le_latticeGraph`,
-`correlationΛ_bot_le_latticeGraph`, and
-`log_partitionFunctionΛ_bot_le_latticeGraph`
-now live in `TwoPointAmbientBotLambda.lean`. -/
-
-
-/-! ## Moved: ℤ^d Λ + along-ex `*_monotone_ambient_subgraph` wrappers
-
-The seven wrappers
-`freeEnergyΛ_latticeGraph_monotone_ambient_subgraph`,
-`freeEnergyAlongExhaustion_latticeGraph_monotone_ambient_subgraph`,
-`partitionFunctionΛ_latticeGraph_monotone_ambient_subgraph`,
-`partitionFunctionAlongExhaustion_latticeGraph_monotone_ambient_subgraph`,
-`correlationΛ_latticeGraph_monotone_ambient_subgraph`,
-`correlationAlongExhaustion_latticeGraph_monotone_ambient_subgraph`, and
-`correlationInfinite_latticeGraph_monotone_ambient_subgraph`
-now live in `TwoPointAmbientBotMonotone.lean`. -/
-
-
 /-- **ℤ^d `log Z_{Λ_n}` ambient-subgraph `⊥ ≤ latticeGraph d`** per stage
 (ferromagnetic, `cubicExhaustion`). -/
 theorem log_partitionFunctionAlongExhaustion_bot_le_latticeGraph
@@ -122,17 +81,6 @@ theorem correlationInfinite_bot_le_latticeGraph
     correlationInfinite (⊥ : SimpleGraph (Fin d → ℤ)) Λ p A
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p A :=
   correlationInfinite_monotone_ambient_subgraph bot_le Λ p hf A
-
-/-! ## Moved: ℤ^d magnetization / spontaneous `*_bot_le_latticeGraph` wrappers
-
-The five wrappers
-`magnetizationΛ_bot_le_latticeGraph`,
-`magnetizationAlongExhaustion_bot_le_latticeGraph`,
-`magnetizationInfinite_bot_le_latticeGraph`,
-`spontaneousCorrelation_bot_le_latticeGraph`, and
-`spontaneousMagnetization_bot_le_latticeGraph`
-now live in `TwoPointAmbientBotMagnetization.lean`. -/
-
 
 end Ambient
 
