@@ -3,15 +3,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorrP
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorrMem
 
 /-!
-# Cubic named-rate decay-plus-interval bundles
+# Decay-and-interval bundles for the origin-anchored cubic pseudo-mass
 
-Narrow child module for five ℤ^d `cubicNamedRate_decay_mem_*` bundle
-wrappers (each pairs validating exponential decay with `ENNReal.ofReal`
-membership in the appropriate target interval) extracted from
-`CubicPseudoMassNamedRateCorr.lean`.
-
-Each wrapper is a thin combination of the already-merged decay theorem and
-the corresponding interval-membership theorem at `IsingModel.latticeGraph d`.
+Pairs, in a single conclusion, the statement that the origin-anchored cubic pseudo-mass is a
+validating exponential-decay rate at an arbitrary target exhaustion with membership of its
+`ENNReal.ofReal` image in an interval whose upper endpoint is the lattice mass of that
+exhaustion. Every statement assumes `0 ≤ J`, `0 < β` and `βJ·2d < 1`, and each rests on a
+comparison of the pseudo-mass with the high-temperature rate `-log(βJ·2d)`, given either
+outright or by the anchored cubic pair correlation lying in `(0,2)` together with a
+`pseudoMassG` lower bound on it. The closed interval `[0, latticeMass]` needs nothing beyond
+that comparison; the half-open `(0, latticeMass]` additionally needs strict positivity of
+the pseudo-mass, hypothesised outright or read off that same `(0,2)` membership.
 -/
 
 namespace IsingModel

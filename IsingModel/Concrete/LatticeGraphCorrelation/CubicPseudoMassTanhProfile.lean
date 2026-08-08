@@ -3,11 +3,16 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassTanhProfileCubicPair
 
 /-!
-# Cubic tanh-profile bridges
+# From the named tanh-power profile condition to the cubic-correlation inputs
 
-This module contains named tanh-profile bridge theorems for the anchored cubic
-pseudo-mass API. It sits between the lightweight names in `CubicPseudoMassBasic`
-and the larger `CubicPseudoMass` capstone module.
+Converts `cubicTanhProfileBound`, the named condition
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0, z)`, into the hypotheses that the
+profile-to-rate comparison consumes: the anchored cubic pair correlation dominates the
+profile value `pseudoMassG α r (-log(βJ·2d))`, it is strictly positive and lies in `(0,2)`,
+and an eliminator feeds those facts to an arbitrary goal. Domination transfers along the
+tanh-power lower bound on that correlation and assumes only `0 ≤ J`, `0 < β` and a nonzero
+displacement; positivity, the `(0,2)` placement and the eliminator additionally assume
+`0 < r` and `βJ·2d < 1`.
 -/
 
 namespace IsingModel
@@ -39,16 +44,6 @@ theorem correlationInfinite_cubic_pair_pos_of_cubicTanhProfileBound
         {(0 : Fin d → ℤ), z} :=
   correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist
     (α := α) hr hJ hβ hlt hz hprofile_tanh
-
-/-! ## Moved: correlationInfinite_cubic_pair_*_of_cubicTanhProfileBound
-
-The four wrappers
-`correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_cubicTanhProfileBound`,
-`correlationInfinite_cubic_pair_ne_zero_of_cubicTanhProfileBound`,
-`correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_cubicTanhProfileBound`,
-`correlationInfinite_cubic_pair_lt_two_of_cubicTanhProfileBound`
-now live in `CubicPseudoMassTanhProfileCubicPair.lean`. -/
-
 
 /-- **Cubic active-range/profile input bundle from the named tanh-profile
 condition**: the named predicate supplies exactly the two hypotheses consumed by
@@ -97,12 +92,6 @@ theorem cubicTanhProfileBound_elim_cubic_corr_mem_Ioo_and_profile
   rcases cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
       hr hJ hβ hlt hz hprofile_tanh with ⟨hcorr_cubic, hprofile_cubic⟩
   exact h hcorr_cubic hprofile_cubic
-
-/-! ## Moved: latticeMass tanh-profile wrappers
-
-The five wrappers `latticeMass_*_of_high_temp_exhaustion_of_cubic*_tanh_profile*`
-now live in `CubicPseudoMassTanhProfileLatticeMass.lean`. -/
-
 
 end Ambient
 end IsingModel

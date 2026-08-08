@@ -5,12 +5,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLatticeMass
 
 /-!
-# Cubic named-rate `_cubic_corr_mem` family
+# Lattice-mass and decay consequences of the named rate comparison
 
-Narrow child module for five ℤ^d
-`*_cubicOriginNamedRateLeHighTemp_cubic_corr_mem*` wrappers (latticeMass
-positivity / non-zero / cubicNamedRate decay membership). Each wrapper
-is a thin pass-through to the corresponding ambient lemma.
+Reads the irreducible `cubicOriginNamedRateLeHighTemp` as the comparison of the
+origin-anchored cubic pseudo-mass with the high-temperature rate `-log(βJ·2d)`, and draws
+the consequences at an arbitrary target exhaustion: strict positivity of the lattice mass,
+its non-vanishing, membership of the `ENNReal.ofReal` pseudo-mass in `(0, latticeMass]`, and
+bundles pairing a validating exponential-decay rate with interval membership. Throughout,
+`0 ≤ J`, `0 < β` and `βJ·2d < 1`. The bundle landing in the closed interval
+`[0, latticeMass]` takes the named proposition as its only further input; every other
+statement here also assumes the anchored cubic pair correlation lies in `(0,2)`, which is
+what makes the pseudo-mass strictly positive.
 -/
 
 namespace IsingModel
@@ -128,19 +133,6 @@ theorem cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp
       hα hr Λ hJ hβ hlt hnamed,
     cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp
       hα hr Λ hJ hβ hlt hcorr_cubic hnamed⟩
-
-/-! ## Moved: cubic-correlation lower-bound named-rate bridges
-
-The 17 named-rate / latticeMass / Icc / Ioc wrappers driven by
-cubic-correlation comparisons (`*_of_cubic_pseudoMassG_le_corr`,
-`*_of_cubic_corr_mem_le_high_temp_rate`,
-`cubicNamedRate_decay_mem_*_of_cubic_pseudoMassG_le_corr`,
-`cubicNamedRate_decay_mem_*_of_le_high_temp_rate`,
-`cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate`,
-`cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate`) now live
-in `IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateCorr`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 end IsingModel

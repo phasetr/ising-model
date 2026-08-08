@@ -3,11 +3,18 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDistCubicPair
 
 /-!
-# Cubic tanh-profile latticeMass wrappers
+# High-temperature lattice-mass bounds carried under a cubic tanh-power profile
 
-Narrow child module for five ℤ^d
-`latticeMass_*_of_high_temp_exhaustion_of_cubic*_tanh_profile*` wrappers.
-Each wrapper is a thin pass-through to the corresponding ambient lemma.
+States the high-temperature lattice-mass facts at an arbitrary target exhaustion in a form
+that accepts a cubic tanh-power profile hypothesis in the raw inequality form
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0, z)` as well as in its named
+`cubicTanhProfileBound` form: the lattice mass is at least `ENNReal.ofReal (-log(βJ·2d))`,
+it is strictly positive, and a conjunction form supplies the lower bound and positivity
+together. The lower bound assumes `0 ≤ J`, `0 < β`, `βJ·2d < 1`, `0 < r` and a nonzero
+displacement; the positivity statement, and the conjunction form containing it, additionally
+assume `1 ≤ d` and `0 < βJ`. The profile hypothesis is carried for interface compatibility:
+every conclusion here is a high-temperature lattice-mass estimate that already holds without
+it.
 -/
 
 namespace IsingModel

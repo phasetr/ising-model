@@ -5,23 +5,20 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHig
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRatePos
 
 /-!
-# Cubic named-rate lattice-mass bridges
+# The named high-temperature comparison for the origin-anchored cubic pseudo-mass
 
-This module contains anchored cubic named-rate lattice-mass, interval, and
-decay wrappers. It builds directly on the lightweight names in
-`CubicPseudoMassBasic` and feeds the larger `CubicPseudoMass` capstone module.
+Introduces and eliminates `cubicOriginNamedRateLeHighTemp`, the irreducible proposition
+naming the comparison of the origin-anchored cubic pseudo-mass with the high-temperature
+rate `-log(βJ·2d)`. Under `0 ≤ J`, `0 < β` and `βJ·2d < 1`, that comparison follows — in the
+plain inequality form and in the named form alike — from the anchored cubic pair correlation
+lying in `(0,2)` together with a `pseudoMassG` lower bound on it, and the same assumptions
+turn the named form into a validating exponential-decay rate at an arbitrary target
+exhaustion. Unfolding the named form back to the inequality, and strict positivity of the
+pseudo-mass from that `(0,2)` membership, require none of those assumptions.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: `_of_le_high_temp_rate` family
-
-The six wrappers (each of form `<head>_*_of_le_high_temp_rate`,
-with heads `HasExponentialDecay`, `latticeMass_ge`,
-`cubicNamedRate_ofReal_mem_Icc_latticeMass`, `latticeMass_pos`,
-`cubicNamedRate_ofReal_mem_Ioc_latticeMass`, `latticeMass_ne_zero`)
-now live in `CubicPseudoMassNamedRateLeHighTempRate.lean`. -/
 
 /-- **Anchored cubic named-rate comparison from a cubic profile lower bound**:
 if the anchored cubic pair correlation lies in the active pseudo-mass interval
@@ -123,28 +120,6 @@ theorem HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_cubicOrigin
     hα hr Λ hJ hβ hlt
     (cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNamedRateLeHighTemp
       hα hr hnamed)
-
-/-! ## Moved: cubic named-rate latticeMass-bound wrappers
-
-The two wrappers
-`latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp`,
-`cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubicOriginNamedRateLeHighTemp`
-now live in `CubicPseudoMassNamedRateLatticeMass.lean`. -/
-
-
-/-! ## Moved: `_pos` family wrappers
-
-The four `*_cubicOriginNamedRateLeHighTemp_pos` wrappers
-(`latticeMass_pos`, `cubicNamedRate_ofReal_mem_Ioc_latticeMass`,
-`latticeMass_ne_zero`, `cubicNamedRate_decay_mem_Ioc`) now live in
-`CubicPseudoMassNamedRatePos.lean`. -/
-
-
-/-! ## Moved: `_cubic_corr_mem` family
-
-The five `*_cubicOriginNamedRateLeHighTemp_cubic_corr_mem*` wrappers
-now live in `CubicPseudoMassNamedRateCubicCorrMem.lean`. -/
-
 
 end Ambient
 end IsingModel

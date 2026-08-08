@@ -3,17 +3,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRate
 
 /-!
-# Cubic named-rate corr-mem + high-temp-rate wrappers
+# Lattice-mass consequences of the active range and an explicit rate comparison
 
-Narrow child module for three ℤ^d cubic named-rate
-`*_corr_mem_le_high_temp_rate` wrappers extracted from
-`CubicPseudoMassNamedRateCorr.lean`:
+Turns the anchored cubic pair correlation lying in `(0,2)`, together with an explicit
+comparison of the origin-anchored cubic pseudo-mass with the high-temperature rate
+`-log(βJ·2d)`, into strict positivity of the lattice mass at an arbitrary target exhaustion,
+into non-vanishing of that lattice mass, and into membership of the `ENNReal.ofReal`
+pseudo-mass in `(0, latticeMass]`. Throughout, `0 ≤ J`, `0 < β` and `βJ·2d < 1`; the `(0,2)`
+membership is what supplies strict positivity of the pseudo-mass, and the comparison is what
+makes it an admissible decay rate.
 
-* `latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_cubic_corr_mem_le_high_temp_rate`,
-* `cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_corr_mem_le_high_temp_rate`,
-* `latticeMass_ne_zero_of_cubic_corr_mem_le_high_temp_rate`.
-
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312.
+Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
 -/
 
 namespace IsingModel

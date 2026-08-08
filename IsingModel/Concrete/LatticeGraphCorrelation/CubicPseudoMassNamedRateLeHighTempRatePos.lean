@@ -2,20 +2,15 @@ import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassBasic
 import IsingModel.Concrete.LatticeGraphCorrelation.CubicPseudoMassNamedRateLeHighTempRate
 
 /-!
-# Concrete cubic named-rate le-high-temp positivity wrappers
+# Lattice-mass consequences of a positive pseudo-mass below the high-temperature rate
 
-Narrow child module for 3 ℤ^d cubic named-rate le-high-temp positivity
-wrappers extracted from `CubicPseudoMassNamedRateLeHighTempRate.lean`:
-
-* `latticeMass_pos_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate`,
-* `cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_pos_le_high_temp_rate`,
-* `latticeMass_ne_zero_of_cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate`.
-
-Each result is a thin composition wrapper around
-`HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate`
-plus the `latticeMass_*_of_HasExponentialDecay` positivity bridge. The
-theorem names are unchanged from the former
-`CubicPseudoMassNamedRateLeHighTempRate` declarations.
+Turns strict positivity of the origin-anchored cubic pseudo-mass, together with the
+comparison placing it below the high-temperature rate `-log(βJ·2d)`, into strict positivity
+of the lattice mass at an arbitrary target exhaustion, into non-vanishing of that lattice
+mass, and into membership of the `ENNReal.ofReal` pseudo-mass in `(0, latticeMass]`. Every
+statement assumes `0 ≤ J`, `0 < β` and `βJ·2d < 1`. The comparison is what makes the
+pseudo-mass an admissible decay rate, so that the lattice mass dominates it; positivity is
+what moves the lower endpoint of the interval off zero.
 -/
 
 namespace IsingModel
