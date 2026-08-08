@@ -366,7 +366,23 @@ from typing import Dict, Iterable, List, NamedTuple, Optional, Sequence, Set, Tu
 REPO_ROOT = Path(__file__).resolve().parent.parent
 BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 
-# Documents whose ``.lean`` citations are audited by default.
+# Documents whose ``.lean`` citations are audited by default. A fixed tuple on
+# purpose, where the deletion scanner's documentation set is a walk over the
+# roots -- the two tools ask opposite questions of their input. That scanner asks
+# whether *any* document cites a declaration, so a document it fails to read
+# manufactures a false absence of evidence and can cost a deletion; its input
+# must therefore be discovered, and a document it cannot reach must stop it. This
+# tool asks whether the ``.lean`` paths written in a *registered* document are
+# still real and whether its citation health is improving, and every one of those
+# questions is asked against per-target state: a floor in :data:`MIN_CITATIONS`,
+# a census and ratcheted rows in the baseline, a share of the drop budget. A
+# target here is a document *plus* a pinned measurement, so one discovered at
+# runtime would arrive with no floor, no baseline and no budget -- audited, but
+# to a weaker standard than the document it joined, and silently so.
+# What that leaves open, stated rather than hidden: a ``docs/paper.tex`` written
+# tomorrow is read by the deletion scanner and its stale path citations are
+# unaudited here until it is registered. Registering it is deliberate because
+# the constants it must bring are.
 TARGETS = ("docs/index.md",)
 
 # Anti-vacuity floors (R8/R9), and **catastrophic backstops only**: they answer

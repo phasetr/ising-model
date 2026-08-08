@@ -167,6 +167,13 @@ README = REPO_ROOT / "README.md"
 # retired, so reading them as evidence would keep declarations alive on the
 # strength of a file nobody publishes.
 FIXTURE_TEX_DIR = REPO_ROOT / "scripts" / "audit" / "citation_corpus"
+# The suffixes read as LaTeX documentation, compared case-folded. Both halves
+# matter and both were holes: this repository is developed on a case-insensitive
+# filesystem, where ``guide.TEX`` is a file that exists, opens and typesets while
+# matching no ``*.tex`` glob, and ``.ltx`` is the other name LaTeX itself accepts
+# for a document. A document named either way was read by nobody and reported
+# absent, which is the one fatal error class of this tool.
+LATEX_SUFFIXES = frozenset({".tex", ".ltx"})
 
 # Verdicts, ordered by decreasing severity for reporting.
 PUBLISHED = "published-result"
@@ -184,7 +191,7 @@ VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN)
 # read as does not.
 NO_EVIDENCE_REASON = (
     "no reference outside the delete set, no citation in the scanned "
-    "documentation (README.md, docs/**/*.md, docs/**/*.tex, tex/**/*.tex)"
+    "documentation (README.md, docs/**/*.md, and every .tex/.ltx under docs/ or tex/)"
 )
 
 EXIT_OK = 0
@@ -1536,12 +1543,74 @@ def markdown_sources() -> list[Path]:
     return paths
 
 
+def _is_latex_document(path: Path) -> bool:
+    """Return whether ``path`` is *named* like a LaTeX document, case-folded."""
+    return path.suffix.lower() in LATEX_SUFFIXES
+
+
+def _walk_error(error: OSError) -> None:
+    """Abort a documentation walk instead of skipping what it cannot list.
+
+    :func:`os.walk` swallows every traversal error by default: a directory the
+    process cannot read yields no entry, no exception and no note, so a document
+    under it is unread for a reason the report never states. That is the same
+    false absence as an unread root, delivered as a clean exit.
+    """
+    where = Path(error.filename) if error.filename else REPO_ROOT
+    raise Inconsistency(
+        f"{where}: this directory could not be listed ({error}), so a LaTeX "
+        "document under it would be invisible while the run reports citations absent"
+    )
+
+
+def _walk_latex(root: Path) -> tuple[list[Path], list[Path]]:
+    """Return ``(LaTeX documents, directory symlinks not entered)`` under ``root``.
+
+    :func:`os.walk` rather than :meth:`Path.rglob`, on three counts -- each one a
+    shape a glob answers "no document here" to while one is there. The suffix
+    test is case-folded (:data:`LATEX_SUFFIXES`), so ``guide.TEX`` on the
+    case-insensitive filesystem this repository is developed on is a document
+    and not a near-miss. An unlistable directory raises (:func:`_walk_error`)
+    instead of yielding nothing. And a directory *symlink* -- which neither
+    walker descends, silently -- is returned rather than dropped, so a caller can
+    refuse it instead of inheriting a blind spot.
+
+    Directories whose name begins with ``.`` are excluded everywhere, both from
+    what is read and from what is reported: a hidden path is not published
+    documentation, and this project writes its working ``math-before-code`` TeX
+    into ``.self-local``, so reading one would keep declarations alive on the
+    strength of a draft. :data:`FIXTURE_TEX_DIR`, the frozen corpus the reader's
+    own tests run against, is excluded for the same reason.
+    """
+    latex: list[Path] = []
+    links: list[Path] = []
+    if not root.is_dir():
+        return latex, links
+    fixture = FIXTURE_TEX_DIR.resolve()
+    for dirpath, dirnames, filenames in os.walk(root, onerror=_walk_error):
+        kept: list[str] = []
+        for name in sorted(dirnames):
+            child = Path(dirpath) / name
+            if name.startswith(".") or name == "__pycache__" or child.resolve() == fixture:
+                continue
+            if child.is_symlink():
+                links.append(child)
+                continue
+            kept.append(name)
+        dirnames[:] = kept
+        for name in sorted(filenames):
+            path = Path(dirpath) / name
+            if _is_latex_document(path):
+                latex.append(path)
+    return latex, links
+
+
 def tex_sources() -> list[Path]:
     """Return every LaTeX documentation file whose citations count.
 
     The documentation roots are ``docs/`` and ``tex/`` -- the same two the
     inventory ratchet scans for ``.tex`` (``SCAN_ROOTS`` there) -- and the set is
-    a **glob over them**, never a pinned path. A pinned path is what made the
+    a **walk over them**, never a pinned path. A pinned path is what made the
     retirement of ``tex/proof-guide.tex`` narrow this channel rather than empty
     it: with the only ``.tex`` the scan ever named gone, a document written back
     into either root would have been read by nobody, and the run would have gone
@@ -1555,43 +1624,100 @@ def tex_sources() -> list[Path]:
     """
     out: list[Path] = []
     for root in (DOCS_DIR, TEX_DIR):
-        if root.is_dir():
-            out.extend(sorted(root.rglob("*.tex")))
-    return out
+        out.extend(_walk_latex(root)[0])
+    return sorted(out)
 
 
-def unscanned_tex_documents() -> list[Path]:
-    """Return the LaTeX files in the working tree that no channel reads.
+# ``\input``/``\include``/``\subfile`` splice another file into a document, and
+# LaTeX supplies the ``.tex`` suffix when the target is written without one, so
+# the spliced file need not look like a document at all. The negative lookahead
+# keeps ``\includegraphics{fig}`` out; the unbraced alternative is TeX's own
+# ``\input foo`` form.
+_TEX_INCLUDE_RE = re.compile(
+    r"\\(?:input|include|subfile)(?![A-Za-z])\s*(?:\{([^{}]*)\}|([^\s{}\\%]+))"
+)
 
-    :func:`tex_sources` covers the documentation roots; a ``.tex`` written
-    anywhere else is documentation to a reader and invisible here, which is the
-    same false absence in a different place. So the difference is *measured*
-    rather than assumed empty, and it aborts: a scan cannot both claim to read
-    the documentation and walk past a document.
 
-    Two exclusions, both about files that are not documentation. Directories
-    whose name begins with ``.`` are skipped -- ``.lake`` (build output),
-    ``.git``, and ``.self-local``, which is where this project's working
-    ``math-before-code`` TeX is written; those drafts are not published claims
-    about the library and reading them would keep declarations alive on the
-    strength of a scratch file. So is :data:`FIXTURE_TEX_DIR`, the frozen corpus
-    the reader's own tests run against.
+def _tex_include_targets(path: Path) -> list[str]:
+    """Return the ``\\input``/``\\include`` targets written in ``path``, as written.
+
+    Comments are stripped first: a commented-out include names nothing, and
+    reporting it would be a false alarm about a document that is read correctly.
     """
-    scanned = {path.resolve() for path in tex_sources()}
-    fixture = FIXTURE_TEX_DIR.resolve()
-    out: list[Path] = []
-    for dirpath, dirnames, filenames in os.walk(REPO_ROOT):
-        dirnames[:] = sorted(
-            name
-            for name in dirnames
-            if not name.startswith(".")
-            and name != "__pycache__"
-            and (Path(dirpath) / name).resolve() != fixture
-        )
-        for name in sorted(filenames):
-            if name.endswith(".tex") and (Path(dirpath) / name).resolve() not in scanned:
-                out.append(Path(dirpath) / name)
+    try:
+        raw = _TEX_COMMENT_RE.sub("", path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError):  # pragma: no cover - reported by _read_doc
+        return []
+    out: list[str] = []
+    for match in _TEX_INCLUDE_RE.finditer(raw):
+        target = (match.group(1) or match.group(2) or "").strip()
+        if target and target not in out:
+            out.append(target)
     return out
+
+
+def _resolve_tex_include(document: Path, target: str) -> Path | None:
+    """Return the file ``target`` names inside ``document``, or ``None`` if there is none.
+
+    Resolution mirrors what a LaTeX run does with the repository as its working
+    directory: relative to the including document, then to the root, with
+    ``.tex`` supplied when the target carries no LaTeX suffix. It is deliberately
+    not a ``TEXINPUTS`` search -- a target this cannot find is *reported*, not
+    assumed harmless.
+    """
+    names = [target] if _is_latex_document(Path(target)) else [f"{target}.tex", target]
+    for base in (document.parent, REPO_ROOT):
+        for name in names:
+            candidate = base / name
+            if candidate.is_file():
+                return candidate
+    return None
+
+
+@dataclass
+class UnreadDocumentation:
+    """Documentation that exists and that no channel reads, measured not assumed.
+
+    Three ways in, and every one of them ends in the same report: a citation is
+    present and readable, the scan says there is none, exit ``0``.
+    """
+
+    #: LaTeX documents outside the roots :func:`tex_sources` walks.
+    outside: list[Path]
+    #: Directory symlinks no walk enters, so their contents are unseen either way.
+    links: list[Path]
+    #: ``document: \input{target}`` pairs whose target is not itself scanned.
+    includes: list[str]
+
+
+def unread_documentation() -> UnreadDocumentation:
+    """Return the documentation in the working tree that no channel reads.
+
+    :func:`tex_sources` covers the documentation roots; a document that is
+    reachable, readable and outside them is invisible here, which is the same
+    false absence in a different place. So the difference is *measured* rather
+    than assumed empty, and :func:`require_documentation` aborts on it: a scan
+    cannot both claim to read the documentation and walk past a document.
+
+    A ``\\input`` target counts as documentation of its own. It is the one shape
+    that is unread while sitting *inside* the roots: LaTeX supplies the missing
+    ``.tex``, so ``\\input{result}`` reading ``docs/result`` splices a whole file
+    of citations into a document this scan reads and reads none of them.
+    """
+    sources = tex_sources()
+    scanned = {path.resolve() for path in sources}
+    latex, links = _walk_latex(REPO_ROOT)
+    includes: list[str] = []
+    for document in sources:
+        for target in _tex_include_targets(document):
+            resolved = _resolve_tex_include(document, target)
+            if resolved is None or resolved.resolve() not in scanned:
+                includes.append(f"{rel(document)}: \\input{{{target}}}")
+    return UnreadDocumentation(
+        outside=[path for path in latex if path.resolve() not in scanned],
+        links=links,
+        includes=includes,
+    )
 
 
 def require_documentation() -> None:
@@ -1608,11 +1734,13 @@ def require_documentation() -> None:
     evidence base.
 
     An **unread** file is the same failure with the file present, so the second
-    half checks the direction the first cannot see: a LaTeX document outside the
-    globs of :func:`tex_sources`. Both halves exist because this channel has
-    already narrowed once -- retiring the proof guide left ``.tex`` documentation
-    reachable by no reader at all -- and neither the build nor any other gate
-    looks at what this scan reads.
+    half checks the direction the first cannot see (:func:`unread_documentation`):
+    a LaTeX document outside the roots :func:`tex_sources` walks, a directory
+    symlink no walk enters, and a file spliced into a scanned document by
+    ``\\input`` without being scanned itself. Both halves exist because this
+    channel has already narrowed once -- retiring the proof guide left ``.tex``
+    documentation reachable by no reader at all -- and neither the build nor any
+    other gate looks at what this scan reads.
     """
     required = (README, DOCS_DIR / "index.md")
     missing = [rel(path) for path in required if not path.is_file()]
@@ -1621,14 +1749,29 @@ def require_documentation() -> None:
             "documentation source(s) missing, which would silence a whole citation "
             "channel without warning: " + ", ".join(missing)
         )
-    unread = unscanned_tex_documents()
-    if unread:
+    unread = unread_documentation()
+    if unread.outside:
         raise Inconsistency(
             "LaTeX document(s) outside the scanned documentation roots (docs/, tex/), "
             "so every citation in them is invisible while the run still reports "
             "citations absent: "
-            + ", ".join(rel(path) for path in unread)
+            + ", ".join(rel(path) for path in unread.outside)
             + ". Move each under docs/ or tex/ so the TeX reader reads it."
+        )
+    if unread.links:
+        raise Inconsistency(
+            "directory symlink(s) in the working tree, which no walk enters, so a "
+            "LaTeX document under one is read by nobody while the run still reports "
+            "citations absent: "
+            + ", ".join(rel(path) for path in unread.links)
+            + ". Replace each with a real directory holding the documents."
+        )
+    if unread.includes:
+        raise Inconsistency(
+            "LaTeX document(s) splice in a file the TeX reader does not read, so every "
+            "citation in it is invisible while the run still reports citations absent: "
+            + "; ".join(unread.includes)
+            + ". Give each spliced file a .tex suffix under docs/ or tex/."
         )
 
 
@@ -1751,9 +1894,9 @@ def load_docs() -> list[DocSource]:
     then every LaTeX document under ``docs/`` or ``tex/`` (:func:`tex_sources`).
     The TeX half is empty on this tree and is still wired, because what it costs
     to leave unwired is a citation that exists and is reported absent: the
-    channel follows the glob, so a document written back into either root is read
+    channel follows the roots, so a document written back into either one is read
     by the run that adds it, and :func:`require_documentation` stops the scan on
-    one written anywhere else.
+    a document that exists and would go unread.
     """
     require_documentation()
     out = [_markdown_source(path) for path in markdown_sources()]
@@ -2702,12 +2845,24 @@ L7c a bare line break inside a code citation is the same gap as L7a without the
    name), so it is a documentation bug as well as a scanner blind spot. Four
    published results were hidden this way in the retired proof guide and were
    rescued only by an unrelated `docs/` citation.
-L7d the doc channel reads README.md, every docs/**/*.md, and every .tex under
-   docs/ or tex/ -- and nothing else. A citation living anywhere else (a GitHub
-   issue, a PR body, a .self-local note) is invisible, so "no documentation
-   citation" means "none in those files". The one shape that used to escape
-   silently no longer can: a .tex outside those roots aborts the run
-   (`require_documentation`) rather than being walked past. Mitigation: keep
+L7d the doc channel reads README.md, every docs/**/*.md, and every .tex or .ltx
+   under docs/ or tex/ -- and nothing else. A citation living anywhere else (a
+   GitHub issue, a PR body, a .self-local note) is invisible, so "no
+   documentation citation" means "none in those files". What used to escape
+   *silently* no longer can, because every way a LaTeX document can exist and go
+   unread now aborts the run rather than being walked past
+   (`require_documentation`): outside the roots, under a directory symlink no
+   walk enters, under a directory the process cannot list, or spliced into a
+   scanned document by `\input` without being scanned itself (LaTeX supplies the
+   `.tex` the target omits, so `\input{result}` reads a file that looks like no
+   document at all). The suffix test is case-folded, since the filesystem this is
+   developed on is: `guide.TEX` opens and typesets. Two boundaries are accepted
+   rather than closed, and both are silent by design. A hidden directory is not
+   published documentation anywhere in the tree, so a .tex under one is neither
+   read nor reported. And the guard is LaTeX-only: a *Markdown* file outside
+   docs/ (`notes/theorems.md`) is unread and unflagged, because the Markdown
+   channel is keyed to README.md plus docs/ and widening it is a decision about
+   what this repository publishes, not a defect of the reader. Mitigation: keep
    published results cited from the scanned set; the module-cited metadata
    catches file-level mentions.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.

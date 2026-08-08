@@ -94,7 +94,7 @@ freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Conc
 
 # --- Unicode identifiers must behave exactly like ASCII ones ---
 freeEnergyΛ_nonneg_of_ferromagnetic	load-bearing	3 consumers; the U+039B in the name must not split the key. Its documentation citation was in the retired proof guide, so the Lean channel is now the one that answers
-correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; same
+correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; the same U+039B key requirement, and its docs/index.md citation is intact, so this one is still answered by the documentation channel
 
 # --- A zero-consumer declaration conservatively retained by shorthand evidence ---
 # Issue #4927 leaves this retained sibling with no Lean consumer, but the current

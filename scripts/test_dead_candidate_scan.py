@@ -43,6 +43,7 @@ and share it.
 from __future__ import annotations
 
 import io
+import os
 import sys
 import tempfile
 import time
@@ -1987,8 +1988,11 @@ class TexChannelWiringTest(unittest.TestCase):
     work, and it would have been produced by a document doing everything right.
 
     So the channel follows the documentation roots (``docs/``, ``tex/``: the same
-    two the inventory ratchet scans for ``.tex``) instead of a path, and the one
-    remaining way to be unread -- a ``.tex`` outside them -- aborts.
+    two the inventory ratchet scans for ``.tex``) instead of a path, and every
+    remaining way for a document to exist and go unread is either read (a
+    ``.TEX`` or ``.ltx`` spelling) or aborts: outside the roots, behind a
+    directory symlink, under a directory that cannot be listed, or spliced into a
+    scanned document by ``\\input``.
     """
 
     CITED = "synthetic_xyzzy_tex_lemma"
@@ -2022,10 +2026,107 @@ class TexChannelWiringTest(unittest.TestCase):
             (root / "paper").mkdir()
             path = root / "paper" / "note.tex"
             path.write_text(self.DOCUMENT, encoding="utf-8")
-            self.assertEqual(dcs.unscanned_tex_documents(), [path])
+            self.assertEqual(dcs.unread_documentation().outside, [path])
             with self.assertRaises(dcs.Inconsistency) as caught:
                 dcs.require_documentation()
         self.assertIn("paper/note.tex", str(caught.exception))
+
+    def test_every_latex_spelling_is_read(self) -> None:
+        """The suffix test is case-folded and knows both LaTeX extensions.
+
+        The filesystem this repository is developed on is case-insensitive and
+        Python's globbing is not, so ``guide.TEX`` is a file that exists, opens
+        and typesets while matching no ``*.tex``; ``.ltx`` is the other name
+        LaTeX accepts. Either one was a document read by nobody.
+        """
+        for name in ("upper.TEX", "mixed.Tex", "alternate.ltx"):
+            with self.subTest(name=name), scratch_repository() as root:
+                path = root / "docs" / name
+                path.write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(dcs.tex_sources(), [path])
+                self.assertEqual(dcs.unread_documentation().outside, [])
+                source = self.cited_tokens(dcs.load_docs(), dcs.rel(path))
+                self.assertIn(self.CITED, [token for token, _line in source.tokens])
+
+    def test_a_directory_symlink_is_reported_rather_than_walked_past(self) -> None:
+        """No walker descends a directory symlink, and only one of them says so.
+
+        ``os.walk`` does not follow links by default and ``rglob`` does not
+        either, so a document under ``docs/link-to-elsewhere`` is outside every
+        channel *and* outside the guard that reports documents outside the
+        channels -- an unread document that looks like an empty directory.
+        """
+        with scratch_repository() as root, tempfile.TemporaryDirectory() as elsewhere:
+            (Path(elsewhere) / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            link = root / "docs" / "linked"
+            link.symlink_to(elsewhere)
+            unread = dcs.unread_documentation()
+            self.assertEqual(dcs.tex_sources(), [])
+            self.assertEqual(unread.outside, [])
+            self.assertEqual(unread.links, [link])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("docs/linked", str(caught.exception))
+
+    @unittest.skipIf(hasattr(os, "geteuid") and os.geteuid() == 0, "root reads every directory")
+    def test_a_directory_that_cannot_be_listed_stops_the_walk(self) -> None:
+        """A traversal error must raise, not silently contribute nothing.
+
+        ``os.walk`` swallows them by default: an unreadable directory yields no
+        entry and no exception, so a document under it is unread and the run
+        exits ``0`` reporting the citations in it absent.
+        """
+        with scratch_repository() as root:
+            locked = root / "docs" / "locked"
+            locked.mkdir()
+            (locked / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            locked.chmod(0o000)
+            try:
+                with self.assertRaises(dcs.Inconsistency) as caught:
+                    dcs.require_documentation()
+            finally:
+                locked.chmod(0o700)
+        self.assertIn("could not be listed", str(caught.exception))
+
+    def test_a_spliced_file_the_reader_does_not_read_aborts(self) -> None:
+        """``\\input`` splices a file in; LaTeX supplies the suffix, so this scan cannot.
+
+        ``\\input{result}`` typesets ``docs/result``, a file whose name looks
+        like no document at all, so it is read by the LaTeX run and by no
+        channel here -- the one unread shape that sits *inside* the roots.
+        """
+        for target, spliced in (("result", "result"), ("missing", None)):
+            with self.subTest(target=target), scratch_repository() as root:
+                guide = root / "docs" / "guide.tex"
+                guide.write_text(f"\\input{{{target}}}\n", encoding="utf-8")
+                if spliced is not None:
+                    (root / "docs" / spliced).write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(
+                    dcs.unread_documentation().includes,
+                    [f"{dcs.rel(guide)}: \\input{{{target}}}"],
+                )
+                with self.assertRaises(dcs.Inconsistency) as caught:
+                    dcs.require_documentation()
+                self.assertIn(f"\\input{{{target}}}", str(caught.exception))
+
+    def test_a_spliced_file_the_reader_does_read_is_not_reported(self) -> None:
+        """The guard fires on unread splices only, or it would forbid a correct document.
+
+        A part under the roots is read as a document of its own; a commented-out
+        include names nothing; and ``\\includegraphics`` is not an include of
+        this kind.
+        """
+        with scratch_repository() as root:
+            (root / "docs" / "guide.tex").write_text(
+                "\\input{part}\n% \\input{retired}\n\\includegraphics{figure}\n",
+                encoding="utf-8",
+            )
+            part = root / "docs" / "part.tex"
+            part.write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.unread_documentation().includes, [])
+            dcs.require_documentation()
+            source = self.cited_tokens(dcs.load_docs(), dcs.rel(part))
+            self.assertIn(self.CITED, [token for token, _line in source.tokens])
 
     def test_a_citation_broken_across_a_line_refuses_the_document(self) -> None:
         """The one unreadable shape that leaves no trace must reject its document.
@@ -2060,12 +2161,15 @@ class TexChannelWiringTest(unittest.TestCase):
             dcs.FIXTURE_TEX_DIR.mkdir(parents=True)
             (dcs.FIXTURE_TEX_DIR / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
             self.assertEqual(dcs.tex_sources(), [])
-            self.assertEqual(dcs.unscanned_tex_documents(), [])
+            self.assertEqual(dcs.unread_documentation().outside, [])
             dcs.require_documentation()
 
     def test_the_real_tree_has_no_unread_latex(self) -> None:
         """The guard over the live repository, which is what the scan reports on."""
-        self.assertEqual([dcs.rel(path) for path in dcs.unscanned_tex_documents()], [])
+        unread = dcs.unread_documentation()
+        self.assertEqual([dcs.rel(path) for path in unread.outside], [])
+        self.assertEqual([dcs.rel(path) for path in unread.links], [])
+        self.assertEqual(unread.includes, [])
         self.assertTrue((dcs.FIXTURE_TEX_DIR / "guide.tex").is_file())
         self.assertNotIn(
             "scripts/audit/citation_corpus/guide.tex", [source.label for source in docs()]
