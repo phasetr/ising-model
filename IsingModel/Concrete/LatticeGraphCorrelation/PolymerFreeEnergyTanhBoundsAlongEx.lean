@@ -5,8 +5,8 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBounds
 # ℤ^d §18.5 AlongExhaustion polymerFreeEnergy tanh-bound / `hasDerivAt` wrappers
 
 Instantiates the along-exhaustion polymer free-energy `tanh`-form upper bound, its closed
-form `log (1 + ε)`, and its derivative at `IsingModel.latticeGraph d`, the ℤ^d shape of the
-GJ §18.5 estimates.
+form `log (1 + ε)`, and its derivative at `IsingModel.latticeGraph d`,
+the ℤ^d shape of the GJ §18.5 estimates.
 -/
 
 namespace IsingModel

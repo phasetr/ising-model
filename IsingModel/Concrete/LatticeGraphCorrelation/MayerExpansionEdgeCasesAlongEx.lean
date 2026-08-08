@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe
 # ℤ^d AlongExhaustion mayer-expansion edge-case wrappers
 
 Instantiates the along-exhaustion evaluations and absolute bound for the second-order Mayer
-expansion term at `IsingModel.latticeGraph d`, which is where the GJ §18.5 remainder
-estimate is anchored.
+expansion term at `IsingModel.latticeGraph d`, which is where the GJ §18.5
+remainder estimate is anchored.
 -/
 
 namespace IsingModel

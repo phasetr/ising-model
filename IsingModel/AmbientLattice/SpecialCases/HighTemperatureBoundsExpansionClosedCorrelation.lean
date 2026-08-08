@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.Exhaustion
 Carries the GJ §18.3–§18.4 correlation facts that accompany the partition-function closed
 form to the along-exhaustion layer: zero-field nonnegativity, the zero-field closed form, and
 the general-field subset form. Each unfolds `correlationAlongExhaustion` and dispatches on
-`A ⊆ Λ.volume n`, falling back to the trivial value outside the exhaustion and lifting via
-`liftFinset` otherwise.
+`A ⊆ Λ.volume n`, falling back to the trivial value outside the exhaustion and
+lifting via `liftFinset` otherwise.
 -/
 
 namespace IsingModel

@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesJZero
 
 Evaluates `freeEnergyAlongExhaustion` on the degenerate parameter slices where the model
 decouples, so a stagewise argument can discharge those cases by rewriting instead of
-re-running the ambient computation. Each identity specializes an `IsingModel.freeEnergy_*`
-lemma through `freeEnergyΛ` at the induced subgraph.
+re-running the ambient computation. Each identity specializes an
+`IsingModel.freeEnergy_*` lemma through `freeEnergyΛ` at the induced subgraph.
 -/
 
 namespace IsingModel

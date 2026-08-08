@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro
 
 Carries the GJ §18.5 cluster-expansion convergence statements for the polymer free energy in
 the `tanh` parametrization to the along-exhaustion layer, where the infinite-volume limit is
-taken. Each is a stagewise pass-through of the corresponding `polymerFreeEnergy_Λ_tanh_*`
-ambient lemma.
+taken. Each is a stagewise pass-through of the corresponding
+`polymerFreeEnergy_Λ_tanh_*` ambient lemma.
 -/
 
 namespace IsingModel

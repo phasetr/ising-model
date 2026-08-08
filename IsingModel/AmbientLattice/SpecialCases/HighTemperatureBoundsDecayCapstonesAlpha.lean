@@ -5,8 +5,8 @@ import IsingModel.AmbientLattice.Exhaustion
 
 Expresses the GJ §18.7 pair-correlation decay with the rate written as a free parameter `α`
 rather than as the named high-temperature rate, which is the form the ℤ^d layer and the
-monotone-rate comparisons need. Each bound passes through to the matching `correlationΛ_*`
-ambient lemma.
+monotone-rate comparisons need. Each bound passes through to the matching
+`correlationΛ_*` ambient lemma.
 -/
 
 namespace IsingModel

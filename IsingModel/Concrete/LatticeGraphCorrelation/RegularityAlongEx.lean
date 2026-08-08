@@ -7,9 +7,9 @@ import IsingModel.AmbientLattice.FieldDerivative
 # Concrete ℤ^d along-exhaustion `hasDerivAt` wrappers (GJ §17.5–§17.6)
 
 Instantiates the along-exhaustion parameter derivatives of the correlation at
-`IsingModel.latticeGraph d`, in the `β`, general-field `β`, `J` and field directions. Each
-is stated in existence form `∃ d : ℝ, HasDerivAt _ d _`, which is what the GJ §17.5–§17.6
-arguments consume.
+`IsingModel.latticeGraph d`, in the `β`, general-field `β`, `J` and field directions.
+Each is stated in existence form `∃ d : ℝ, HasDerivAt _ d _`, which is what the
+GJ §17.5–§17.6 arguments consume.
 -/
 
 open scoped symmDiff

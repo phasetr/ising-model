@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 Instantiates the ferromagnetic GJ §18.5 cluster-expansion statements at
 `IsingModel.latticeGraph d` — the `tanh`-form polymer free-energy sandwich and summability,
-and the polymer-family sum sandwich — so ℤ^d callers avoid re-deriving the `0 ≤ β·J` side
-condition.
+and the polymer-family sum sandwich — so ℤ^d callers avoid re-deriving the
+`0 ≤ β·J` side condition.
 -/
 
 namespace IsingModel

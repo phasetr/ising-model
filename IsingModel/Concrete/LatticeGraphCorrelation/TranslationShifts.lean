@@ -6,8 +6,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 Instantiates translation invariance at `IsingModel.latticeGraph d`: the free energy along an
 exhaustion and in infinite volume, and the along-exhaustion correlation of a translated
-observation set. Each is a pass-through of the corresponding abstract translation-invariance
-lemma.
+observation set. Each is a pass-through of the corresponding abstract
+translation-invariance lemma.
 -/
 
 open scoped symmDiff

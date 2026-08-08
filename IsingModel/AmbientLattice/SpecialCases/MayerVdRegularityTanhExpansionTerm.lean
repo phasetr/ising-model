@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
 
 Records regularity of the individual along-exhaustion Mayer expansion terms in the
 `tanh`-composed parameters `β` and `J` (GJ §18.5), so termwise differentiation of the
-expansion is available stagewise. Each passes through to its `mayerExpansionTerm_Λ_tanh_*`
-ambient counterpart.
+expansion is available stagewise. Each passes through to its
+`mayerExpansionTerm_Λ_tanh_*` ambient counterpart.
 -/
 
 namespace IsingModel

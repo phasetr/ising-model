@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # Concrete HT Λ-layer complete_summary_exp wrappers
 
 Instantiates the Λ-level complete-summary exponential bounds of GJ §18.3–§18.4 at
-`IsingModel.latticeGraph d`, so a ℤ^d caller obtains the whole two-sided estimate in one
-application.
+`IsingModel.latticeGraph d`, so a ℤ^d caller obtains the whole two-sided
+estimate in one application.
 -/
 
 namespace IsingModel

@@ -7,8 +7,7 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 
 Provides the joint pointwise regularity of the along-exhaustion free energy, obtained from
 the Λ-level `freeEnergyΛ_{continuous,differentiable}_*` lemmas through the `.continuousAt` /
-`.differentiableAt` projections. This is the layer the §17.5–§17.6 derivative arguments
-quote.
+`.differentiableAt` projections. This is the layer the §17.5–§17.6 derivative arguments quote.
 -/
 
 namespace IsingModel

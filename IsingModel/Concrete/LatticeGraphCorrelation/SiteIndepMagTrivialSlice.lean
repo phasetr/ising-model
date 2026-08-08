@@ -7,8 +7,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 Evaluates the ℤ^d uniform magnetization on the degenerate parameter slices, where the model
 decouples or the field vanishes by symmetry. Each is a pass-through of the ambient
-`magnetizationInfinite_*` lemma at `IsingModel.latticeGraph d` and `Ambient.cubicExhaustion
-d`.
+`magnetizationInfinite_*` lemma at `IsingModel.latticeGraph d` and
+`Ambient.cubicExhaustion d`.
 -/
 
 open scoped symmDiff

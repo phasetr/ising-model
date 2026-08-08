@@ -6,8 +6,8 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 # Susceptibility `ContinuousAt` along-ex wrappers
 
 Turns the parametrized continuity of the along-exhaustion susceptibility into pointwise
-`ContinuousAt` form via the `.continuousAt` projection, the shape used by the GJ §17.6
-derivative arguments.
+`ContinuousAt` form via the `.continuousAt` projection, the shape used by the
+GJ §17.6 derivative arguments.
 -/
 
 namespace IsingModel

@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # Concrete log partition-function h-symmetry wrappers
 
 Instantiates the ℤ^d form of the spin-flip symmetry argument for the Λ-level log partition
-function at `IsingModel.latticeGraph d`: how it behaves under `h ↦ -h`, and how it depends
-on `|h|`.
+function at `IsingModel.latticeGraph d`: how it behaves under `h ↦ -h`, and
+how it depends on `|h|`.
 -/
 
 namespace IsingModel

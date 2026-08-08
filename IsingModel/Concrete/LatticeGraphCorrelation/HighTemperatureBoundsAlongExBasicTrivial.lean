@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 
 Instantiates the ambient zero-field correlation degeneracies along an exhaustion at
 `IsingModel.latticeGraph d`: the single-site value and the Z₂ vanishing on odd subsets.
-Each is a pass-through of the matching `correlationAlongExhaustion_high_temp_h_zero_*`
-ambient lemma.
+Each is a pass-through of the matching
+`correlationAlongExhaustion_high_temp_h_zero_*` ambient lemma.
 -/
 
 namespace IsingModel

@@ -6,9 +6,10 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVari
 /-!
 # Ambient alongExhaustion high-temp expansion variant wrappers at h = 0
 
-States the GJ §18.3 high-temperature expansion `Z_n = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ)
-σ_iσ_j)` stagewise, together with the even-subgraph sum lower bound it is paired with, each
-a per-stage application of the corresponding Λ-level lemma.
+States the GJ §18.3 high-temperature expansion
+`Z_n = (cosh βJ)^|E_n| · ∑_σ ∏_e (1 + tanh(βJ) σ_iσ_j)` stagewise, together with the
+even-subgraph sum lower bound it is paired with, each a per-stage application of
+the corresponding Λ-level lemma.
 -/
 
 namespace IsingModel

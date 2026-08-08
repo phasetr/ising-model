@@ -5,8 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperCom
 # Ambient alongExhaustion sharper-exp complete-summary ferromagnetic wrappers at h = 0
 
 Restates the along-exhaustion complete-summary exponential bounds under the ferromagnetic
-hypotheses `0 ≤ J`, `0 < β`, discharging the general `0 ≤ β·J` side condition by
-`mul_nonneg`.
+hypotheses `0 ≤ J`, `0 < β`, discharging the general `0 ≤ β·J` side condition by `mul_nonneg`.
 -/
 
 namespace IsingModel
