@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # Concrete ℤ^d `freeEnergyΛ` special-case wrappers
 
 Instantiates the abstract `freeEnergyΛ_*` special-case estimates at
-`IsingModel.latticeGraph d`, so ℤ^d arguments can quote the lower bounds and degenerate
-values without carrying the ambient graph as a variable.
+`IsingModel.latticeGraph d`, so ℤ^d arguments can quote the ferromagnetic lower bounds
+without carrying the ambient graph as a variable.
 -/
 
 namespace IsingModel

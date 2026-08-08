@@ -3,11 +3,11 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZeroDifferentiableAt
 
 /-!
-# Ambient partitionFunctionAlongExhaustion h = 0 pointwise wrappers
+# Ambient partitionFunctionAlongExhaustion h = 0 pointwise `ContinuousAt` wrappers
 
-Gives pointwise regularity of the along-exhaustion partition function on the zero-field
+Gives pointwise continuity of the along-exhaustion partition function on the zero-field
 slice, where the §18.3 expansion applies. Each result lifts the matching Λ-level
-`partitionFunctionΛ_*_h_zero` lemma via `.continuousAt` / `.differentiableAt`.
+`partitionFunctionΛ_continuous_*_h_zero` lemma via `.continuousAt`.
 -/
 
 namespace IsingModel

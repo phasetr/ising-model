@@ -3,12 +3,11 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityPartitionGeneralHDifferentiableAt
 
 /-!
-# Ambient partitionFunctionAlongExhaustion general-h pointwise wrappers
+# Ambient partitionFunctionAlongExhaustion general-h pointwise `ContinuousAt` wrappers
 
-Gives pointwise regularity of the along-exhaustion partition function at general external
+Gives pointwise continuity of the along-exhaustion partition function at general external
 field, the form needed where the zero-field restriction is unavailable. Each result lifts
-the matching Λ-level `partitionFunctionΛ_*_general_h` lemma via
-`.continuousAt` / `.differentiableAt`.
+the matching Λ-level `partitionFunctionΛ_continuous_*_general_h` lemma via `.continuousAt`.
 -/
 
 namespace IsingModel
