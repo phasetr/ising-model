@@ -7,9 +7,9 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the basic facts about the
 cluster-expansion remainder `ε(t)`, the activity sum over the nonempty members of
 `vdCompatiblePolymerFamilies`: its sign for `0 ≤ t`, the vanishing of its positive powers at
-`t = 0`, and the strict ceiling by `(1 + t) ^ |E| − 1` that a positive remainder buys for the
-polymer free energy. These sharpen the GJ §18.5 polymer free-energy bounds on ℤ^d away from
-the `tanh` parametrization.
+`t = 0`, and, again for `0 ≤ t`, the strict ceiling by `(1 + t) ^ |E| − 1` that a positive
+remainder buys for the polymer free energy. These sharpen the GJ §18.5 polymer free-energy
+bounds on ℤ^d away from the `tanh` parametrization.
 -/
 
 namespace IsingModel

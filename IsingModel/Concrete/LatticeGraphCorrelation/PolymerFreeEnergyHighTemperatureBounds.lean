@@ -5,10 +5,10 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 # ℤ^d Λ `vdPolymerFamilies_sum` high-temperature bounds (§18.5)
 
 Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the high-temperature control
-of the van-den-Berg polymer-family sum: its sandwich between `1` and `(1 + t) ^ |E|` for
-`0 ≤ t`, its monotonicity on `Set.Ici 0`, and the matching ceiling `(1 + t) ^ |E| − 1` on the
-remainder `ε(t)` left after dropping the empty family. This is the convergence input for the
-ℤ^d GJ §18.5 cluster expansion.
+of the vertex-disjoint compatible polymer-family sum: its sandwich between `1` and
+`(1 + t) ^ |E|` for `0 ≤ t`, its monotonicity on `Set.Ici 0`, and the matching ceiling
+`(1 + t) ^ |E| − 1` on the remainder `ε(t)` left after dropping the empty family. This is the
+convergence input for the ℤ^d GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel

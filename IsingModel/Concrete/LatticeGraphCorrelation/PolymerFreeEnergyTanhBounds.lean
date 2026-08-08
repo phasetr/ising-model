@@ -5,10 +5,11 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 # ℤ^d Λ polymerFreeEnergy log-form, tanh ceiling and derivative (§18.5)
 
 Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the closed form
-`polymerFreeEnergy t = log (1 + ε(t))`, valid at every real activity, the ceiling
-`|E| * tanh (β * J)` at activity `tanh (β * J)` under `0 ≤ β * J`, and the derivative at each
-nonnegative activity. These put the GJ §18.5 cluster expansion on ℤ^d in log form, under a
-`tanh` ceiling, and in differentiable form in the activity variable.
+`polymerFreeEnergy t = log (1 + ε(t))` — with `ε(t)` the cluster-expansion remainder, the
+activity sum over the nonempty members of `vdCompatiblePolymerFamilies` — valid at every real
+activity, the ceiling `|E| * tanh (β * J)` at activity `tanh (β * J)` under `0 ≤ β * J`, and
+the derivative at each nonnegative activity. These put the GJ §18.5 cluster expansion on ℤ^d
+in log form, under a `tanh` ceiling, and in differentiable form in the activity variable.
 -/
 
 namespace IsingModel
