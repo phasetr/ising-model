@@ -8,9 +8,11 @@ Locates the ℤ^d infinite-volume pair correlation at `(0, z)` on the cubic exha
 external field, once `cubicTanhProfileBound` holds: it is strictly positive, hence nonzero,
 and it lies in `(0,1]` and in `(0,2)`. The lower endpoint is what the profile condition
 buys, through the tanh-power lower bound on that correlation; the upper endpoints come from
-the unconditional bound `correlationInfinite ≤ 1`, so the statement placing the correlation
-below `2` carries the profile condition without using it. Every statement assumes `0 < r`,
-`0 ≤ J`, `0 < β`, `βJ·2d < 1` and a nonzero displacement.
+the unconditional bound `correlationInfinite ≤ 1`, so the correlation lies below `2` even
+without the profile condition. The isolated `< 2` statement nevertheless keeps that
+condition, and proves its bound by projecting the profile-conditioned active-range
+membership rather than by applying the unconditional bound directly. Every statement assumes
+`0 < r`, `0 ≤ J`, `0 < β`, `βJ·2d < 1` and a nonzero displacement.
 -/
 
 namespace IsingModel

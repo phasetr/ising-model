@@ -7,12 +7,16 @@ import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 Introduces the abbreviations that the ℤ^d pseudo-mass development is phrased in: the
 pseudo-mass of the infinite-volume pair correlation at `(0, z)` for the cubic exhaustion at
 zero external field, the pointwise product `w ↦ U₂(x, w) · U₂(y, w)` of infinite-volume
-Ursell two-point functions on that exhaustion, and named propositions for the comparison of
-that pseudo-mass with the high-temperature rate `-log(βJ·2d)`, kept `irreducible`, and for
-the tanh-power profile condition `pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0, z)`.
+Ursell two-point functions on that exhaustion, an `irreducible` named proposition for the
+comparison of that pseudo-mass with the high-temperature rate `-log(βJ·2d)`, and a named
+proposition for the tanh-power profile condition
+`pseudoMassG α r (-log(βJ·2d)) ≤ tanh(βJ) ^ dist(0, z)`.
 Naming these keeps the high-arity concrete expressions out of downstream statements, where
 they elaborate too slowly. The pseudo-mass and the tanh-power condition each come with an
-unfolding lemma, and the pseudo-mass is nonnegative at arbitrary parameters.
+unfolding lemma; the profile one is proved by `Iff.rfl`, so that condition stays at the
+default transparency rather than being made `irreducible` as well. The pseudo-mass is
+nonnegative at arbitrary coupling, inverse temperature and displacement, under the `1 ≤ α`
+and `0 < r` that the abbreviation itself carries.
 -/
 
 namespace IsingModel
