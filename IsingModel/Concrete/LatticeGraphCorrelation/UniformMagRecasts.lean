@@ -15,9 +15,10 @@ import IsingModel.AmbientFKG
 Rewrites the ℤ^d infinite-volume two-point observables in terms of the scalar
 `uniformMagnetization`, the value of `magnetizationInfinite` at the origin for
 `Ambient.cubicExhaustion d`: `twoPointFunction` at separation `0` is that scalar, and, under
-`Ferromagnetic` parameters, `truncated2TwoPoint` is `twoPointFunction` minus its square, so
-`twoPointFunction` dominates that square. Also records that `truncated2TwoPoint` vanishes at
-zero inverse temperature, with no condition on the coupling or on the field.
+`Ferromagnetic` parameters, `truncated2TwoPoint` is `twoPointFunction` minus the square of
+`uniformMagnetization`, so `twoPointFunction` dominates that square. Also records that
+`truncated2TwoPoint` vanishes at zero inverse temperature, with no condition on the coupling
+or on the field.
 -/
 
 namespace IsingModel
