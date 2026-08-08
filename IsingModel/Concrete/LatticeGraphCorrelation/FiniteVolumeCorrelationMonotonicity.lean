@@ -12,9 +12,11 @@ the inverse partition function times the unnormalized expectation, the transfer 
 nonnegativity from that unnormalized expectation to the Gibbs expectation, and the range of
 the correlation read as a function of the coupling: nonnegative by the first Griffiths
 inequality under `0 ≤ J`, `0 ≤ h` and `0 < β`, and at most `1` with no condition on the
-parameters at all. The ferromagnetic and nonnegative-correlations conditions belong to the
-covariance inequality alone; the ratio presentation holds at an arbitrary parameter record,
-and the nonnegativity transfer holds there under its numerator hypothesis.
+parameters at all. The nonnegative-correlations condition belongs to the covariance
+inequality alone, which is also the only statement here that takes the ferromagnetic
+condition as a bundled hypothesis; the coupling nonnegativity assumes the same sign
+conditions separately. The ratio presentation holds at an arbitrary parameter record, and
+the nonnegativity transfer holds there under its numerator hypothesis.
 -/
 
 namespace IsingModel

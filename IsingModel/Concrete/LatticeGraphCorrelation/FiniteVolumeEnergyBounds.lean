@@ -10,9 +10,11 @@ the product of the edge factors gained, which is stated for an arbitrary pair of
 graphs on those sites rather than only for the induced nearest-neighbor one. On the
 subgraph induced by the nearest-neighbor lattice graph, the Boltzmann weight is positive,
 the finite-volume partition function is nonzero, and the Hamiltonian is bounded in absolute
-value by `|J|` times the number of edges plus `|h|` times the number of sites. The graph
-inclusion is the only hypothesis anywhere here; the parameter record and the configuration
-are arbitrary.
+value by `|J|` times the number of edges plus `|h|` times the number of sites. The
+factorization assumes the graph inclusion together with finiteness of each graph's edge set,
+the latter as an instance argument that an arbitrary graph on the sites of `Λ` need not
+supply; no other statement here carries a hypothesis, and the parameter record and the
+configuration are arbitrary.
 -/
 
 namespace IsingModel
