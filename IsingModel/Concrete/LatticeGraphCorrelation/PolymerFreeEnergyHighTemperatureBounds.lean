@@ -2,18 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Concrete polymer free-energy high-temperature bound wrappers
+# ℤ^d Λ `vdPolymerFamilies_sum` high-temperature bounds (§18.5)
 
-Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich/monotone,
-`ε(t)` bound, and `polymerFreeEnergy(tanh)` high-temperature bound wrappers on
-`latticeGraph d`. The theorem names are the same as the former
-declarations, but callers can now import this child module directly.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the high-temperature control
+of the vertex-disjoint compatible polymer-family sum: its sandwich between `1` and
+`(1 + t) ^ |E|` for `0 ≤ t`, its monotonicity on `Set.Ici 0`, and, again for `0 ≤ t`, the
+matching ceiling `(1 + t) ^ |E| − 1` on the remainder `ε(t)` left after dropping the empty
+family. This is the convergence input for the ℤ^d GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-/-! ## §18.5 polymer free-energy high-temperature bounds ℤ^d wraps -/
+/-! ## §18.5 vdPolymerFamilies_sum high-temperature bounds ℤ^d wraps -/
 
 /-- **ℤ^d Λ: vdSum sandwich for `t ≥ 0`**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_sandwich_of_nonneg
@@ -55,22 +56,6 @@ theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_le_of_nonneg
         1 :=
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_le_of_nonneg
     (IsingModel.latticeGraph d) Λ ht
-
-/-! ## Moved: Λ-direct polymerFreeEnergy_Λ tanh bound wrappers
-
-The three Λ-direct `polymerFreeEnergy_Λ_latticeGraph_tanh_*` bound
-wrappers (`_le_eps`, `_le_pow_sub_one`, `_lt_log_two_of_pow_lt_two`)
-now live in `PolymerFreeEnergyHighTemperatureBoundsPFE.lean`. -/
-
-
-
-/-! ## Moved: AlongExhaustion polymer free-energy high-temperature bounds
-
-The six AlongExhaustion `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*`
-and `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*` wrappers now
-live in `PolymerFreeEnergyHighTemperatureBoundsAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

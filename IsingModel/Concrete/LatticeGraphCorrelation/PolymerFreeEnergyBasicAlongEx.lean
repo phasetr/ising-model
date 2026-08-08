@@ -2,20 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
 
 /-!
-# ℤ^d AlongExhaustion polymerFreeEnergy basic wrappers
+# ℤ^d AlongExhaustion polymerFreeEnergy trivial activities and sandwich (§18.5)
 
-Narrow child module for three ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` basic wrappers
-extracted from `PolymerFreeEnergyBasic.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_at_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_at_one`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_sandwich_of_nonneg`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyBasic` declarations.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the polymer free energy at
+the two trivial activities — it vanishes at `t = 0` and is the logarithm of the number of
+vertex-disjoint compatible polymer families at `t = 1` — together with its two-sided bound
+between `0` and `|E| * log (1 + t)` for `0 ≤ t`. These are the ℤ^d base values against which
+the GJ §18.5 cluster-expansion estimates are calibrated, stage by stage.
 -/
 
 namespace IsingModel

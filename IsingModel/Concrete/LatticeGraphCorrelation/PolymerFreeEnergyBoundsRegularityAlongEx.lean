@@ -4,19 +4,10 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsRegularity
 /-!
 # ℤ^d AlongExhaustion polymerFreeEnergy regularity wrappers (§18.5)
 
-Narrow child module for the four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` regularity wrappers
-extracted from `PolymerFreeEnergyBoundsRegularity.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_continuousAt`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableAt`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_continuousOn_Ici_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_differentiableOn_Ici_zero`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*` regularity lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyBoundsRegularity` declarations.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the regularity of the polymer
+free energy in the activity variable: continuity and differentiability at each nonnegative
+activity, and their `Set.Ici 0` counterparts. This is the ℤ^d input for differentiating the
+GJ §18.5 cluster expansion stage by stage.
 -/
 
 namespace IsingModel

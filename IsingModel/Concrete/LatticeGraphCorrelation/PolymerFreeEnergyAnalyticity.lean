@@ -2,34 +2,16 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticity
 
 /-!
-# Concrete polymer free-energy analyticity wrappers for the lattice graph
+# ℤ^d polymerFreeEnergy analyticity in the activity variable (§18.5)
 
-Narrow child module for ℤ^d `polymerFreeEnergy` analytic wrappers. The theorem
-names are the same as the former declarations, but callers can now
-import this child module directly.
+Instantiates real-analyticity of the polymer free energy in the activity variable at
+`IsingModel.latticeGraph d`, both at a single nonnegative activity and on a neighbourhood of
+the ray `Set.Ici 0`, in the fixed-volume `Λ` form and along an exhaustion. This is the ℤ^d
+analyticity input for the GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: Λ-layer polymerFreeEnergy tanh analyticity wrappers
-
-The four wrappers
-`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_beta`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_J`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_J_Ici_zero` now
-live in `PolymerFreeEnergyAnalyticityLambdaTanh.lean`. -/
-
-
-/-! ## Moved: AlongExhaustion polymerFreeEnergy tanh analyticity wrappers
-
-The four `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*` analyticity
-wrappers (`analyticAt_beta`, `analyticAt_J`,
-`analyticOnNhd_beta_Ici_zero`, `analyticOnNhd_J_Ici_zero`) now live in
-`PolymerFreeEnergyAnalyticityAlongExTanh.lean`. -/
-
-
 
 /-- **ℤ^d Λ: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_analyticAt

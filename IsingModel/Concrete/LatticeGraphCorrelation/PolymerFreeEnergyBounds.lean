@@ -2,26 +2,16 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 import IsingModel.Lattice
 
 /-!
-# Concrete polymer free-energy bound wrappers for the lattice graph
+# ℤ^d Λ polymerFreeEnergy sign, upper bounds and monotonicity (§18.5)
 
-Narrow child module for ℤ^d `polymerFreeEnergy` regularity, bounds,
-comparison, and edge-case wrappers. This keeps callers that only need these
-forwarders out of the monolithic concrete module.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the elementary envelope of
+the polymer free energy: nonnegativity and the ceilings `|E| * log (1 + t)` and `|E| * t` for
+`0 ≤ t`, together with monotonicity on `Set.Ici 0`. These are the ℤ^d bounds that keep the
+GJ §18.5 cluster expansion under control in the activity variable.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: ℤ^d polymerFreeEnergy regularity wrappers
-
-The 8 ℤ^d `polymerFreeEnergy_Λ_latticeGraph_*` and
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` regularity wrappers
-(`continuousAt`, `differentiableAt`, `continuousOn_Ici_zero`,
-`differentiableOn_Ici_zero` in both Λ and AlongExhaustion forms) now
-live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsRegularity`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-! ### §18.5 polymerFreeEnergy bound family ℤ^d wraps -/
 
@@ -67,44 +57,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_monotoneOn_Ici_zero
       (Set.Ici 0) :=
   Ambient.polymerFreeEnergy_Λ_monotoneOn_Ici_zero
     (IsingModel.latticeGraph d) Λ
-
-/-! ## Moved: ℤ^d along-exhaustion polymerFreeEnergy bound wrappers
-
-The four wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_nonneg_of_nonneg`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_log_one_plus_of_nonneg`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_mul_of_nonneg`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_monotoneOn_Ici_zero` now
-live in `PolymerFreeEnergyBoundsAlongEx.lean`. -/
-
-
-/-! ## Moved: Λ polymerFreeEnergy edge-case / comparison wrappers
-
-The four `polymerFreeEnergy_Λ_latticeGraph_*` edge-case / comparison
-wrappers (`eq_zero_of_no_polymers`, `eq_zero_of_edgeFinset_empty`,
-`le_of_le_of_nonneg`, `le_of_le_strict_form`) now live in
-`PolymerFreeEnergyBoundsLambdaEdgeCases.lean`. -/
-
-
-
-/-! ## Moved: AlongExhaustion polymerFreeEnergy eq_zero / le wrappers
-
-The four wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` (`eq_zero_of_no_polymers`,
-`eq_zero_of_edgeFinset_empty`, `le_of_le_of_nonneg`,
-`le_of_le_strict_form`) now live in
-`PolymerFreeEnergyBoundsAlongExZeroLe.lean`. -/
-
-/-! ## Moved: ℤ^d polymerFreeEnergy tanh-bound wrappers
-
-The 4 remaining ℤ^d polymerFreeEnergy tanh-bound wrappers
-(`polymerFreeEnergyAlongExhaustion_latticeGraph_{tanh_sandwich,
-le_card_log_two_of_le_one, tanh_le_card_log_two, tanh_double_bound}`)
-live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PolymerFreeEnergyBoundsTanhAlongEx`.
-The four Λ-direct `polymerFreeEnergy_Λ_latticeGraph_*` counterparts were
-deleted; no consumer of them was found in this repository.
--/
 
 end Ambient
 end IsingModel

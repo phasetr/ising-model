@@ -2,16 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh
 
 /-!
-# ℤ^d AlongExhaustion polymerFreeEnergy tanh analyticity wrappers
+# ℤ^d AlongExhaustion polymerFreeEnergy tanh-composition analyticity (§18.6)
 
-Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*` analyticity wrappers
-extracted from `PolymerFreeEnergyAnalyticity.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticAt_beta`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticAt_J`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_analyticOnNhd_J_Ici_zero`.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the analyticity of the
+polymer free energy at activity `tanh (β * J)` as a function of `β` and as a function of `J`:
+analytic at a single parameter value under `0 ≤ β * J`, and analytic on a neighbourhood of
+`Set.Ici 0` in one parameter whenever the other is nonnegative. This is the ℤ^d form of the
+GJ §18.6 analyticity of the cluster expansion in the physical parameters.
 -/
 
 namespace IsingModel

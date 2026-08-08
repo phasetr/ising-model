@@ -2,21 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# ℤ^d Λ-layer polymerFreeEnergy tanh-bound ferromagnetic wrappers
+# ℤ^d Λ ferromagnetic polymerFreeEnergy tanh bounds (§18.5)
 
-Narrow child module for three ferromagnetic Λ-layer
-`polymerFreeEnergy_Λ_latticeGraph_tanh_*_ferro` tanh-bound wrappers
-extracted from `PolymerFreeEnergyTanhBounds.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul_ferro`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_sandwich_ferro`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_log_two_ferro`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergy_Λ_tanh_*_ferromagnetic` /
-`*_le_card_log_two_ferro` lemma at `G := IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`PolymerFreeEnergyTanhBounds` declarations.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the ferromagnetic form of the
+polymer free-energy estimates at activity `tanh (β * J)` — the ceilings `|E| * tanh (β * J)`
+and `|E| * log 2`, and the sandwich between `0` and `|E| * log (1 + tanh (β * J))` — stated
+under the ferromagnetic hypotheses `0 ≤ J` and `0 < β`. These are the ℤ^d ferromagnetic
+high-temperature bounds of the GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel

@@ -2,19 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsTanh
 
 /-!
-# ℤ^d AlongExhaustion polymerFreeEnergy tanh-bound wrappers (§18.5)
+# ℤ^d AlongExhaustion polymerFreeEnergy `log 2` and tanh-form ceilings (§18.5)
 
-Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` tanh-bound wrappers:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_sandwich`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_log_two_of_le_one`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_le_card_log_two`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_double_bound`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*` tanh-bound lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the ceilings on the polymer
+free energy in the high-temperature regime: the activity-free `|E| * log 2` for an activity
+in `[0, 1]`, and, at activity `tanh (β * J)` under `0 ≤ β * J`, that same `|E| * log 2`
+ceiling, the companion ceiling `|E| * tanh (β * J)`, and the sandwich between `0` and
+`|E| * log (1 + tanh (β * J))`. These are the ℤ^d high-temperature estimates of the GJ §18.5
+cluster expansion.
 -/
 
 namespace IsingModel

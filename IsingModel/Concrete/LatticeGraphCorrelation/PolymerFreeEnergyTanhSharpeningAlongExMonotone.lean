@@ -2,19 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpening
 
 /-!
-# Concrete along-ex polymer free-energy tanh-sharpening monotone wrappers
+# ℤ^d AlongExhaustion polymerFreeEnergy strict growth in β and in J (§18.5)
 
-Narrow child module for 4 ℤ^d along-exhaustion polymer free-energy
-tanh-sharpening monotone-in-(β,J) wrappers:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_of_lt_in_beta_polymers_nonempty`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_of_lt_in_J_polymers_nonempty`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_strictMonoOn_beta_polymers`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_strictMonoOn_J_polymers`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the strict growth of the
+polymer free energy at activity `tanh (β * J)` in each of `β` and `J`, on a stage whose
+induced graph carries at least one polymer and with the other parameter strictly positive:
+as a two-point strict inequality from a nonnegative lower argument, and as
+`StrictMonoOn (Set.Ici 0)`. This is the ℤ^d strict monotonicity of the GJ §18.5 cluster
+expansion in the physical parameters.
 -/
 
 namespace IsingModel
