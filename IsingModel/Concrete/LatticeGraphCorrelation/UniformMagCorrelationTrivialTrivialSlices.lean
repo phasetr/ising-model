@@ -1,15 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetizationInfinite trivial-slice wrappers
+# ℤ^d `magnetizationInfinite` on degenerate parameter slices
 
-Narrow child module for three ℤ^d
-`magnetizationInfinite_latticeGraph_*` trivial-slice wrappers
-extracted from `UniformMagCorrelationTrivial.lean`:
-
-* `magnetizationInfinite_latticeGraph_zero_at_h_zero`,
-* `magnetizationInfinite_latticeGraph_beta_zero`,
-* `magnetizationInfinite_latticeGraph_J_zero`.
+Evaluates the ℤ^d infinite-volume single-site magnetization when one parameter is switched
+off: it vanishes at zero external field and at zero inverse temperature, in both cases
+without further hypothesis, and at zero coupling it collapses to the single-spin value
+`Real.tanh (β * h)` under `Ferromagnetic` parameters.
 -/
 
 namespace IsingModel

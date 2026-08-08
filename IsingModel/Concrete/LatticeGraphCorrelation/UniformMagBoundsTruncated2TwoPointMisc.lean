@@ -11,20 +11,13 @@ import IsingModel.Concrete.LatticeGraphCorrelation.UniformMagRecasts
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices
 
 /-!
-# ℤ^d `truncated2TwoPoint` relational / trivial-slice wrappers
+# ℤ^d `truncated2TwoPoint` compared with `twoPointFunction`
 
-Narrow child module for three ℤ^d `truncated2TwoPoint_*` wrappers
-extracted from `UniformMagBoundsTruncated2TwoPoint.lean`:
-
-* `truncated2TwoPoint_le_twoPointFunction`,
-* `truncated2TwoPoint_h_zero_eq`,
-* `truncated2TwoPoint_J_zero_of_ne_zero`.
-
-Each result is a thin pass-through of the
-`truncated2TwoPoint_eq_twoPointFunction_sub_uniformMagnetization_sq`
-identity combined with auxiliary facts about `twoPointFunction` and
-`uniformMagnetization`. The theorem names are unchanged from the
-former `UniformMagBoundsTruncated2TwoPoint` declarations.
+Compares the ℤ^d truncated two-point function with the untruncated one through the identity
+`truncated2TwoPoint = twoPointFunction − uniformMagnetization ^ 2`: it never exceeds
+`twoPointFunction`; at zero external field, where the magnetization vanishes, the two agree;
+and at zero coupling it vanishes at every nonzero separation. Each of the three statements
+binds `Ferromagnetic` at the parameters it uses.
 -/
 
 namespace IsingModel

@@ -1,14 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Cor 4.3.5 ∞-volume correlation wrappers
+# ℤ^d Corollary 4.3.5 at infinite volume
 
-Narrow child module for two ℤ^d
-`correlationInfinite_latticeGraph_*_cor_4_3_5_h0` wrappers extracted
-from `UniformMagCorrelationTrivial.lean`:
-
-* `correlationInfinite_latticeGraph_cor_4_3_5_h0`,
-* `correlationInfinite_latticeGraph_cubicExhaustion_cor_4_3_5_h0`.
+Instantiates at `IsingModel.latticeGraph d` the inductive `(n+2)`-point correlation bound of
+Glimm–Jaffe §4.3 Corollary 4.3.5 (p. 62) in the infinite-volume state at zero external field:
+for `Ferromagnetic` parameters and two distinct sites `j`, `k` outside a finite set `S`, the
+correlation on `insert j (insert k S)` is at most `⟨σ^S⟩ * ⟨σ^{j,k}⟩` plus the sum over
+`T ∈ S.powerset` of `⟨σ^(insert j T)⟩ * ⟨σ^(insert k (S \ T))⟩`. Stated once for an arbitrary
+exhaustion and once for `Ambient.cubicExhaustion d`.
 -/
 
 namespace IsingModel

@@ -1,12 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlationInfinite monotonicity wrappers
+# ℤ^d parameter monotonicity of `correlationInfinite`
 
-Narrow child module for three ℤ^d
-`correlationInfinite_latticeGraph_monotone_{J,h,beta}` wrappers, each
-a thin pass-through to the corresponding ambient
-`correlationInfinite_monotone_*` lemma at `IsingModel.latticeGraph d`.
+Records that the ℤ^d infinite-volume correlation is `MonotoneOn` in the coupling and in the
+external field over `Set.Ici 0`, and in the inverse temperature over `Set.Ioi 0`, each
+statement holding the two other parameters fixed under the sign conditions `0 ≤ J`, `0 ≤ h`,
+`0 < β` as applicable. The exhaustion and the subset `A` are arbitrary.
 -/
 
 namespace IsingModel
