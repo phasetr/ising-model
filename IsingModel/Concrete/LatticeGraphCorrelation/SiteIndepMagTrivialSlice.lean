@@ -6,9 +6,11 @@ import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 # Concrete `uniformMagnetization` trivial-slice wrappers
 
 Evaluates the ℤ^d uniform magnetization on the degenerate parameter slices, where the model
-decouples or the field vanishes by symmetry. Each is a pass-through of the ambient
-`magnetizationInfinite_*` lemma at `IsingModel.latticeGraph d` and
-`Ambient.cubicExhaustion d`.
+decouples or the field vanishes by symmetry. The `β = 0`, `J = 0` and `h = 0` slices pass
+through the matching ambient `magnetizationInfinite_*` lemma at
+`IsingModel.latticeGraph d` and `Ambient.cubicExhaustion d`; the `J = h = 0` slice instead
+unfolds to `correlationInfinite` at the singleton `{0}` and quotes
+`correlationInfinite_zero_params_vanish`.
 -/
 
 open scoped symmDiff

@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 
 Instantiates the along-exhaustion §18.3–§18.5 capstones at `IsingModel.latticeGraph d`: the
 polymer-family and even-subgraph closed forms of the zero-field partition function, and the
-normalization of the Mayer partial sum at unit activity.
+order-1 Mayer partial sum at unit activity, which evaluates to the polymer count.
 -/
 
 namespace IsingModel

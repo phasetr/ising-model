@@ -6,8 +6,9 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 
 Extends continuity of the infinite-volume correlation in `β` and in `J` from the open
 high-temperature interval up to the closed interval including the zero boundary, which is
-what the GJ §17.5 mass-gap argument needs there. The boundary value itself is supplied by
-the vanishing of the infinite-volume correlation at `J = 0` proved here.
+what the GJ §17.5 mass-gap argument needs there. The `J = 0` boundary value is
+`correlationInfinite_eq_zero_at_J_zero`, proved here; the `β = 0` one is the imported
+`correlationInfinite_eq_zero_at_beta_zero`.
 -/
 
 open scoped symmDiff
