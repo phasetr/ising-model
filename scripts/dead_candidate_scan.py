@@ -48,9 +48,13 @@ Two architectural decisions follow, and they are the whole design:
 2. **The documentation channel is a first-class input.** Reference-zero *from
    Lean* does not mean deletable: a declaration may be a published result cited
    by ``README.md`` or any ``docs/**/*.md``. Reading only Lean rescues 7 of the
-   10 keepers of PR #4641; reading only docs rescues 3; both are needed. The
-   TeX reader below has no input in this repository: no ``.tex`` documentation
-   is tracked, so a citation that lived only in one is gone with it.
+   10 keepers of PR #4641; reading only docs rescues 3; both are needed. The TeX
+   reader below has no input on this tree -- no ``.tex`` documentation is
+   tracked, so a citation that lived only in one is gone with it -- but it is
+   wired to a glob over the documentation roots rather than to a named file, so
+   the run that reintroduces such a document reads it, and
+   :func:`require_documentation` aborts on a ``.tex`` outside those roots
+   instead of leaving it unread.
 
 A third rule follows from the first two and is just as load-bearing:
 
@@ -97,8 +101,8 @@ A third rule follows from the first two and is just as load-bearing:
    carrying no evidence at all. Refutation from partially read TeX is not robustly
    implementable, so :attr:`UnreadableSpan.refutes` is now ``False``
    unconditionally and the rule set it gated is gone. Over-charging costs
-   ``uncertain`` verdicts and nothing else, and with no ``.tex`` documentation
-   tracked it costs nothing at all: only the TeX reader raises such a span.
+   ``uncertain`` verdicts and nothing else, and on a tree with no ``.tex``
+   documentation it costs nothing at all: only the TeX reader raises such a span.
 
 Boundary predicate
 ------------------
@@ -135,6 +139,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -155,7 +160,13 @@ from audit_gate import (  # noqa: E402  (path bootstrap must precede the import)
 
 FIXTURES_FILE = REPO_ROOT / "scripts" / "audit" / "dead_candidate_fixtures.tsv"
 DOCS_DIR = REPO_ROOT / "docs"
+TEX_DIR = REPO_ROOT / "tex"
 README = REPO_ROOT / "README.md"
+# The frozen LaTeX corpus the TeX reader's own tests run against. It is a test
+# input, not documentation: its citations describe a document this repository
+# retired, so reading them as evidence would keep declarations alive on the
+# strength of a file nobody publishes.
+FIXTURE_TEX_DIR = REPO_ROOT / "scripts" / "audit" / "citation_corpus"
 
 # Verdicts, ordered by decreasing severity for reporting.
 PUBLISHED = "published-result"
@@ -173,7 +184,7 @@ VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN)
 # read as does not.
 NO_EVIDENCE_REASON = (
     "no reference outside the delete set, no citation in the scanned "
-    "documentation (README.md, docs/**/*.md)"
+    "documentation (README.md, docs/**/*.md, docs/**/*.tex, tex/**/*.tex)"
 )
 
 EXIT_OK = 0
@@ -1215,8 +1226,9 @@ def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
     perfectly clean span, so there is nothing to charge, while the newline they
     keep hides the name from the literal search as well; a code wrapper the span
     grammar does not know (``L7b``) produces no span in the first place. A
-    ``.tex`` document this reads must therefore be checked for the first two
-    shapes (:func:`tex_citation_line_breaks`) before its verdicts mean anything.
+    ``.tex`` document this reads is therefore checked for the first two shapes
+    before its verdicts mean anything: :func:`_tex_source` runs
+    :func:`tex_citation_line_breaks` over every document it loads and aborts.
     """
     partial = _normalize_tex_body(text)
     spans: list[UnreadableSpan] = []
@@ -1260,9 +1272,11 @@ def tex_citation_line_breaks(text: str) -> tuple[int, list[tuple[int, str]]]:
     rule cannot reach: the span parses, so nothing is charged, and the name it
     spells is split by a newline, so no literal search finds it either. It is
     invisible to the whole TeX channel while the run still reports zero coverage
-    warnings -- the fail-open direction. So it is a check to run over any
-    ``.tex`` document fed to :func:`normalize_tex`, not merely a documented
-    limitation; the repository tracks none today, so nothing calls it.
+    warnings -- the fail-open direction. So it is a check run over any ``.tex``
+    document fed to :func:`normalize_tex`, not merely a documented limitation:
+    :func:`_tex_source` calls it on every document it loads and refuses the
+    document rather than reporting on it. The repository tracks none today, so
+    it runs over nothing -- a fact about the tree, not about the wiring.
 
     Both flavours are caught, because both leave the same newline behind: the
     line ending in ``%`` (which TeX splices, so the typeset name has no break)
@@ -1522,8 +1536,66 @@ def markdown_sources() -> list[Path]:
     return paths
 
 
+def tex_sources() -> list[Path]:
+    """Return every LaTeX documentation file whose citations count.
+
+    The documentation roots are ``docs/`` and ``tex/`` -- the same two the
+    inventory ratchet scans for ``.tex`` (``SCAN_ROOTS`` there) -- and the set is
+    a **glob over them**, never a pinned path. A pinned path is what made the
+    retirement of ``tex/proof-guide.tex`` narrow this channel rather than empty
+    it: with the only ``.tex`` the scan ever named gone, a document written back
+    into either root would have been read by nobody, and the run would have gone
+    on printing :data:`NO_EVIDENCE_REASON` -- a citation exists, is readable, and
+    is reported absent -- with no warning and exit ``0``. That is the one fatal
+    error class of this tool, so the channel is keyed to where documentation
+    lives instead of to what happened to live there.
+
+    Empty on this tree. That is a fact about the tree, and the day it stops
+    being one nothing has to be rewired.
+    """
+    out: list[Path] = []
+    for root in (DOCS_DIR, TEX_DIR):
+        if root.is_dir():
+            out.extend(sorted(root.rglob("*.tex")))
+    return out
+
+
+def unscanned_tex_documents() -> list[Path]:
+    """Return the LaTeX files in the working tree that no channel reads.
+
+    :func:`tex_sources` covers the documentation roots; a ``.tex`` written
+    anywhere else is documentation to a reader and invisible here, which is the
+    same false absence in a different place. So the difference is *measured*
+    rather than assumed empty, and it aborts: a scan cannot both claim to read
+    the documentation and walk past a document.
+
+    Two exclusions, both about files that are not documentation. Directories
+    whose name begins with ``.`` are skipped -- ``.lake`` (build output),
+    ``.git``, and ``.self-local``, which is where this project's working
+    ``math-before-code`` TeX is written; those drafts are not published claims
+    about the library and reading them would keep declarations alive on the
+    strength of a scratch file. So is :data:`FIXTURE_TEX_DIR`, the frozen corpus
+    the reader's own tests run against.
+    """
+    scanned = {path.resolve() for path in tex_sources()}
+    fixture = FIXTURE_TEX_DIR.resolve()
+    out: list[Path] = []
+    for dirpath, dirnames, filenames in os.walk(REPO_ROOT):
+        dirnames[:] = sorted(
+            name
+            for name in dirnames
+            if not name.startswith(".")
+            and name != "__pycache__"
+            and (Path(dirpath) / name).resolve() != fixture
+        )
+        for name in sorted(filenames):
+            if name.endswith(".tex") and (Path(dirpath) / name).resolve() not in scanned:
+                out.append(Path(dirpath) / name)
+    return out
+
+
 def require_documentation() -> None:
-    """Abort unless every documentation channel the scan claims to read exists.
+    """Abort unless the documentation the scan claims to read is what it reads.
 
     A missing file is the fail-open direction, and silently so: with no
     ``README.md`` or no ``docs/index.md``, the corresponding channel
@@ -1534,6 +1606,13 @@ def require_documentation() -> None:
     is never a normal state; it is a moved path, a truncated checkout or a bad
     rename, and each must stop the scan instead of quietly shrinking its
     evidence base.
+
+    An **unread** file is the same failure with the file present, so the second
+    half checks the direction the first cannot see: a LaTeX document outside the
+    globs of :func:`tex_sources`. Both halves exist because this channel has
+    already narrowed once -- retiring the proof guide left ``.tex`` documentation
+    reachable by no reader at all -- and neither the build nor any other gate
+    looks at what this scan reads.
     """
     required = (README, DOCS_DIR / "index.md")
     missing = [rel(path) for path in required if not path.is_file()]
@@ -1541,6 +1620,15 @@ def require_documentation() -> None:
         raise Inconsistency(
             "documentation source(s) missing, which would silence a whole citation "
             "channel without warning: " + ", ".join(missing)
+        )
+    unread = unscanned_tex_documents()
+    if unread:
+        raise Inconsistency(
+            "LaTeX document(s) outside the scanned documentation roots (docs/, tex/), "
+            "so every citation in them is invisible while the run still reports "
+            "citations absent: "
+            + ", ".join(rel(path) for path in unread)
+            + ". Move each under docs/ or tex/ so the TeX reader reads it."
         )
 
 
@@ -1609,16 +1697,68 @@ def _markdown_source(path: Path) -> DocSource:
     )
 
 
-def load_docs() -> list[DocSource]:
-    """Return the normalised documentation sources (``README.md`` and ``docs/``).
+def _tex_source(path: Path) -> DocSource:
+    """Return the citation tokens of one LaTeX file.
 
-    Every source is Markdown. The TeX reader (:func:`normalize_tex`) is what
-    builds a :class:`DocSource` out of a ``.tex`` document, and no such document
-    is tracked here, so it is called by nothing on this path; a citation that
-    lived only in one was removed with it rather than silently unread.
+    Tokens are read from the *pre-unwrap* normalisation, where the ``\\texttt``
+    delimiters still mark which spans are code citations; the text kept is the
+    fully unwrapped normalisation, which is what the literal search reads. The
+    two halves see different strings on purpose, and a name found by either is
+    cited.
+
+    The line-break check runs here rather than as a separate pass over one named
+    file, so it covers whatever :func:`tex_sources` returns. It aborts: a
+    citation split across a line parses into a *clean* span, so the charging rule
+    has nothing to charge and the newline hides the name from the literal search
+    as well (``L7a``/``L7c``). It is the one unreadable shape that leaves no
+    trace in the report, which makes every no-evidence sentence about that
+    document false while it stands.
+    """
+    raw = _read_doc(path)
+    label = rel(path)
+    _read, broken = tex_citation_line_breaks(raw)
+    if broken:
+        listing = "\n  ".join(
+            f"{label}:{line}: {' '.join(body.split())[:80]!r}" for line, body in broken[:20]
+        )
+        raise Inconsistency(
+            f"{len(broken)} code citation(s) in {label} are broken across a line, "
+            "which makes the name invisible to the TeX channel with no warning; "
+            "join each citation onto one line (use `\\allowbreak` for the break "
+            f"hint):\n  {listing}"
+        )
+    partial = _normalize_tex_body(raw)
+    partial_starts = line_starts(partial)
+    tokens: list[tuple[str, int]] = []
+    for body, offset in code_citation_spans(partial):
+        lineno = offset_to_line(partial_starts, offset)
+        for token in _citation_tokens(body):
+            tokens.append((token, lineno))
+    text, unreadable = normalize_tex(raw)
+    return DocSource(
+        label=label,
+        text=text,
+        starts=line_starts(text),
+        tokens=tokens,
+        unreadable=unreadable,
+    )
+
+
+def load_docs() -> list[DocSource]:
+    """Return the normalised documentation sources.
+
+    ``README.md`` and every Markdown under ``docs/`` (:func:`markdown_sources`),
+    then every LaTeX document under ``docs/`` or ``tex/`` (:func:`tex_sources`).
+    The TeX half is empty on this tree and is still wired, because what it costs
+    to leave unwired is a citation that exists and is reported absent: the
+    channel follows the glob, so a document written back into either root is read
+    by the run that adds it, and :func:`require_documentation` stops the scan on
+    one written anywhere else.
     """
     require_documentation()
-    return [_markdown_source(path) for path in markdown_sources()]
+    out = [_markdown_source(path) for path in markdown_sources()]
+    out.extend(_tex_source(path) for path in tex_sources())
+    return out
 
 
 def expand_braces(token: str) -> list[str]:
@@ -2523,10 +2663,12 @@ L7 the TeX macro table is incomplete by construction, so the normaliser meets
    with a comment, L7c without one) *does* produce a span, and a clean one, so there
    is nothing to charge -- while the newline it keeps also hides the name from the
    literal search. An unrecognised wrapper (L7b) produces no span at all. None of
-   this is live in this repository: no `.tex` documentation is tracked, so the TeX
-   reader has no input and every L7 shape below is a property of the parser alone.
-   Feeding it a document again means checking that document for the line-break
-   shapes first (`tex_citation_line_breaks`).
+   this is live on this tree: no `.tex` documentation is tracked, so the TeX reader
+   has no input and every L7 shape below is a property of the parser alone. A
+   document written back under `docs/` or `tex/` is read by the run that adds it
+   (`tex_sources`) and is rejected outright if it carries the line-break shapes
+   (`_tex_source`, `tex_citation_line_breaks`); one written anywhere else stops the
+   scan (`require_documentation`).
 L7a a `%` comment inside a code citation is a silent gap. TeX splices the comment's
    line into the next one (`\texttt{foo% c` + newline + `\beta bar}` typesets
    `fooβbar`), but comment stripping keeps the line break, so the span parses
@@ -2560,11 +2702,14 @@ L7c a bare line break inside a code citation is the same gap as L7a without the
    name), so it is a documentation bug as well as a scanner blind spot. Four
    published results were hidden this way in the retired proof guide and were
    rescued only by an unrelated `docs/` citation.
-L7d the doc channel reads README.md and every docs/**/*.md, and nothing else.
-   A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
-   a TeX file) is invisible, so "no documentation citation"
-   means "none in those files". Mitigation: keep published results cited from the
-   scanned set; the module-cited metadata catches file-level mentions.
+L7d the doc channel reads README.md, every docs/**/*.md, and every .tex under
+   docs/ or tex/ -- and nothing else. A citation living anywhere else (a GitHub
+   issue, a PR body, a .self-local note) is invisible, so "no documentation
+   citation" means "none in those files". The one shape that used to escape
+   silently no longer can: a .tex outside those roots aborts the run
+   (`require_documentation`) rather than being walked past. Mitigation: keep
+   published results cited from the scanned set; the module-cited metadata
+   catches file-level mentions.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
    site and the kind of prose) but never classifies: prose is not a reference, so

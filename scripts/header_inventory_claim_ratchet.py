@@ -1266,7 +1266,8 @@ CITATION_WORDS = frozenset(
 )
 
 #: An inline code span: backticks in Lean and Markdown prose, ``\texttt``/``\path``
-#: in the TeX guide.
+#: in a TeX source (:data:`SCAN_SUFFIXES` scans ``.tex``; the repository tracks
+#: none since the proof guide was retired).
 _CODE_SPAN = re.compile(r"`[^`]*`|\\(?:texttt|path)\{[^}]*\}")
 
 
@@ -1550,8 +1551,9 @@ def _extract_predicate(flat: str, match: re.Match[str]) -> tuple[str, bool, str]
 _RELOCATION_ANCHOR = re.compile(r"now\s+live(?:s|d)?\s+in", re.IGNORECASE)
 
 #: One written reference: a backticked module or file name, or a
-#: ``\texttt{...}`` / ``\path{...}`` one in the TeX guide.  ``\path`` is how the
-#: guide writes most of its file names, and without it 53 of its relocations
+#: ``\texttt{...}`` / ``\path{...}`` one in a TeX source.  ``\path`` is how the
+#: retired proof guide wrote most of its file names, and the measurement that
+#: put it here was taken on that document: without it, 53 of its relocations
 #: shared the one ``->?`` key.
 #:
 #: Neither spelling may hold a backtick or a :data:`SENTINELS` character.  The

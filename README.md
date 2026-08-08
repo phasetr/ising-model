@@ -41,8 +41,7 @@ locally-uniform convergence of the finite-stage β-derivatives on the genuine cl
 convergence window (`window d J ⊆ Ioo 0 (1/(J·2d))`) with no axiom, and the sharp-HLS capstone is
 scoped to that window accordingly.
 
-For the complete list of formalized theorems, the axiom-freeness audit, and the Glimm–Jaffe
-chapter-by-chapter progress table, see the
+For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress table, see the
 **[project page](https://phasetr.github.io/ising-model/)**.
 
 ## Documentation

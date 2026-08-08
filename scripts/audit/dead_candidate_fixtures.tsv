@@ -2,6 +2,11 @@
 #
 #   name <TAB> expected-class <TAB> provenance
 #
+# The provenance column names the citing document and identifies the row by what
+# it is about, never by a line number: a pinned line is falsified by the next
+# insertion above it, silently, in a file whose whole point is to be a record of
+# measured truth. Four rows carried numbers that were already wrong.
+#
 # expected-class is one of: published-result, load-bearing, uncertain. Issue
 # #4976 retired the fourth class and with it the weak `not-safe` expectation,
 # which was defined by reference to it ("anything but that class") and would
@@ -80,12 +85,12 @@ one_div_one_add_pow_le_one_div_pow	published-result	#4641 keeper; consumed by on
 one_div_mul_pow_eq_one_div_pow_mul_one_div_pow	published-result	#4641 keeper; consumed by one_div_mul_pow_mul_one_div_mul_pow_eq
 
 # --- PR #4641 keepers with ZERO Lean consumers, saved only by docs/index.md ---
-one_div_mul_pow_mul_one_div_mul_pow_eq	published-result	docs/index.md:2052 (GJ Thm 17.5.1 M-factor factorization, Done row)
-one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow	published-result	docs/index.md:2054 (pair-product bridge, Done row)
-pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md:1945 (Sec 17.5 Step 132b, Done row)
+one_div_mul_pow_mul_one_div_mul_pow_eq	published-result	docs/index.md, GJ Thm 17.5.1 M-factor factorization (Done row)
+one_div_one_add_pow_mul_one_div_one_add_pow_le_one_div_pow_mul_one_div_pow	published-result	docs/index.md, pair-product bridge (Done row)
+pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md, Sec 17.5 Step 132b (Done row)
 
 # --- The _ferromagnetic case: candidate -> consumer -> GJ Prop 4.6.1 ---
-freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
+freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Concrete/CubicFreeEnergy.lean proves the GJ Prop 4.6.1 row of docs/index.md
 
 # --- Unicode identifiers must behave exactly like ASCII ones ---
 freeEnergyΛ_nonneg_of_ferromagnetic	load-bearing	3 consumers; the U+039B in the name must not split the key. Its documentation citation was in the retired proof guide, so the Lean channel is now the one that answers
@@ -105,7 +110,7 @@ Ambient.correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_
 # channel now answers for the whole Unicode-key question. The TeX spellings
 # themselves are pinned by unit tests in scripts/test_dead_candidate_scan.py
 # (TexNormalisationTest, EnsureMathTest), which need no document to run.
-log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	cited at docs/index.md:422 (GJ Prop 4.6.1 tiling row)
-freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	cited at docs/index.md:2153 (Sec 18.5 Lambda-layer Mayer row)
-fieldPolymerZℂ_ne_zero	published-result	cited at docs/index.md:2118 (Sec 17.6.1 brick 6 row)
-norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	cited at docs/index.md:2118 (same row, Penrose majorant bound)
+log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	cited in docs/index.md, GJ Prop 4.6.1 tiling row
+freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	cited in docs/index.md, Sec 18.5 Lambda-layer Mayer row
+fieldPolymerZℂ_ne_zero	published-result	cited in docs/index.md, Sec 17.6.1 brick 6 row
+norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	cited in docs/index.md, same row (Penrose majorant bound)

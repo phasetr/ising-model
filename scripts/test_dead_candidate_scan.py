@@ -47,7 +47,8 @@ import sys
 import tempfile
 import time
 import unittest
-from contextlib import redirect_stderr, redirect_stdout
+from collections.abc import Iterator
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -1863,15 +1864,23 @@ class DocScopeTest(unittest.TestCase):
     ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
     """
 
-    def test_readme_and_every_docs_markdown_are_scanned(self) -> None:
-        """The scanned set is exactly README.md and docs/**/*.md."""
+    def test_the_scanned_set_is_the_documentation_roots(self) -> None:
+        """The scanned set is exactly README.md, docs/**/*.md and the root .tex.
+
+        Stated as a set equality against the globs, not against a list of
+        paths: a channel that reads a *file* stops reading when that file is
+        retired, which is how the TeX half came to have a reader and no input.
+        """
         labels = {source.label for source in docs()}
         self.assertIn("README.md", labels)
         self.assertIn("docs/index.md", labels)
         for path in dcs.DOCS_DIR.rglob("*.md"):
             self.assertIn(dcs.rel(path), labels)
         self.assertEqual(
-            labels, {"README.md"} | {dcs.rel(p) for p in dcs.DOCS_DIR.rglob("*.md")}
+            labels,
+            {"README.md"}
+            | {dcs.rel(p) for p in dcs.DOCS_DIR.rglob("*.md")}
+            | {dcs.rel(p) for p in dcs.tex_sources()},
         )
 
     def test_readme_citation_is_seen(self) -> None:
@@ -1932,6 +1941,135 @@ class MissingDocumentationTest(unittest.TestCase):
         # No report at all: an aborted run must not print a classification whose
         # documentation channel was never read.
         self.assertNotIn("== dead-candidate scan ==", out.getvalue())
+
+
+@contextmanager
+def scratch_repository() -> Iterator[Path]:
+    """Yield a repository-shaped scratch tree with the module's roots aimed at it.
+
+    The roots are module globals, so the whole documentation channel can be
+    pointed at a directory that holds exactly what a test wants it to hold. The
+    tree lives under ``.self-local/tmp`` -- gitignored, and *inside* the real
+    root, so :func:`dcs.rel` can still name the files it reports.
+    """
+    scratch = dcs.REPO_ROOT / ".self-local" / "tmp"
+    scratch.mkdir(parents=True, exist_ok=True)
+    names = ("REPO_ROOT", "DOCS_DIR", "TEX_DIR", "README", "FIXTURE_TEX_DIR")
+    with tempfile.TemporaryDirectory(dir=scratch) as tmp:
+        root = Path(tmp)
+        (root / "docs").mkdir()
+        (root / "tex").mkdir()
+        (root / "README.md").write_text("", encoding="utf-8")
+        (root / "docs" / "index.md").write_text("", encoding="utf-8")
+        saved = {name: getattr(dcs, name) for name in names}
+        dcs.REPO_ROOT = root
+        dcs.DOCS_DIR = root / "docs"
+        dcs.TEX_DIR = root / "tex"
+        dcs.README = root / "README.md"
+        dcs.FIXTURE_TEX_DIR = root / "scripts" / "audit" / "citation_corpus"
+        try:
+            yield root
+        finally:
+            for name, value in saved.items():
+                setattr(dcs, name, value)
+
+
+class TexChannelWiringTest(unittest.TestCase):
+    """A LaTeX document must be read where it is written, or stop the run.
+
+    The defect this pins down is a *narrowing* that no other gate can see. The
+    TeX channel was wired to one named file; retiring that file left the reader
+    intact and its input unreachable, so a LaTeX document written back into the
+    repository was read by nobody while the scan went on reporting
+    :data:`dcs.NO_EVIDENCE_REASON` -- "no citation in the scanned documentation"
+    -- about names that document cited verbatim, with no warning and exit ``0``.
+    A false absence of a citation is the one report of this tool that destroys
+    work, and it would have been produced by a document doing everything right.
+
+    So the channel follows the documentation roots (``docs/``, ``tex/``: the same
+    two the inventory ratchet scans for ``.tex``) instead of a path, and the one
+    remaining way to be unread -- a ``.tex`` outside them -- aborts.
+    """
+
+    CITED = "synthetic_xyzzy_tex_lemma"
+    DOCUMENT = "The lemma \\texttt{synthetic\\_xyzzy\\_tex\\_lemma} is a result.\n"
+
+    def cited_tokens(self, sources: list[dcs.DocSource], label: str) -> dcs.DocSource:
+        """Return the loaded source named ``label``, asserting it was loaded at all."""
+        matching = [source for source in sources if source.label == label]
+        self.assertEqual(len(matching), 1, [source.label for source in sources])
+        return matching[0]
+
+    def test_a_tex_document_in_each_root_is_read(self) -> None:
+        """A document under ``tex/`` or ``docs/`` reaches both halves of the channel.
+
+        Both halves, because they read different strings: the tokens come from
+        the pre-unwrap normalisation (where ``\\texttt`` still marks the spans)
+        and the literal search from the unwrapped text.
+        """
+        for parent in ("tex", "docs"):
+            with self.subTest(parent=parent), scratch_repository() as root:
+                path = root / parent / "guide.tex"
+                path.write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(dcs.tex_sources(), [path])
+                source = self.cited_tokens(dcs.load_docs(), dcs.rel(path))
+                self.assertIn(self.CITED, [token for token, _line in source.tokens])
+                self.assertIn(self.CITED, source.text)
+
+    def test_a_tex_document_outside_the_roots_aborts(self) -> None:
+        """An unread document is the same false absence, so it is never walked past."""
+        with scratch_repository() as root:
+            (root / "paper").mkdir()
+            path = root / "paper" / "note.tex"
+            path.write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.unscanned_tex_documents(), [path])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("paper/note.tex", str(caught.exception))
+
+    def test_a_citation_broken_across_a_line_refuses_the_document(self) -> None:
+        """The one unreadable shape that leaves no trace must reject its document.
+
+        A citation split by a newline parses into a clean span, so the charging
+        rule has nothing to charge, and the newline hides the name from the
+        literal search too: the document would be read, report nothing, and make
+        every no-evidence sentence about the names it cites false.
+        """
+        with scratch_repository() as root:
+            path = root / "tex" / "guide.tex"
+            path.write_text("\\texttt{synthetic\\_xyzzy\\_\ntex\\_lemma}\n", encoding="utf-8")
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.load_docs()
+        self.assertIn("broken across a line", str(caught.exception))
+
+    def test_neither_scratch_drafts_nor_the_reader_fixture_are_documentation(self) -> None:
+        """Two exclusions, and both must be exclusions from *reading*, not blind spots.
+
+        A dot-directory holds build output and this project's working
+        ``math-before-code`` TeX; the fixture corpus is the reader's own test
+        input, describing a document the repository retired. Reading either as
+        evidence would keep declarations alive on the strength of a file nobody
+        publishes -- so they are skipped, and skipped silently, which is only
+        sound because neither is a claim about the library.
+        """
+        with scratch_repository() as root:
+            (root / ".self-local" / "tex").mkdir(parents=True)
+            (root / ".self-local" / "tex" / "draft.tex").write_text(
+                self.DOCUMENT, encoding="utf-8"
+            )
+            dcs.FIXTURE_TEX_DIR.mkdir(parents=True)
+            (dcs.FIXTURE_TEX_DIR / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.tex_sources(), [])
+            self.assertEqual(dcs.unscanned_tex_documents(), [])
+            dcs.require_documentation()
+
+    def test_the_real_tree_has_no_unread_latex(self) -> None:
+        """The guard over the live repository, which is what the scan reports on."""
+        self.assertEqual([dcs.rel(path) for path in dcs.unscanned_tex_documents()], [])
+        self.assertTrue((dcs.FIXTURE_TEX_DIR / "guide.tex").is_file())
+        self.assertNotIn(
+            "scripts/audit/citation_corpus/guide.tex", [source.label for source in docs()]
+        )
 
 
 def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
@@ -2130,17 +2268,24 @@ class EnsureMathTest(unittest.TestCase):
     def test_the_scanned_documentation_charges_nothing(self) -> None:
         """No scanned source leaves an unreadable span, and the check can fail.
 
-        The live half alone cannot fail and must not be read as if it could:
-        only the TeX reader raises such a span, ``load_docs`` returns Markdown
-        alone, and the Markdown reader hard-codes an empty span list, so an
-        empty result there is a property of the reader rather than a
-        measurement of the tree. Two things are therefore asserted around it.
-        The premise -- every scanned source is Markdown -- is checked, so the
-        day a ``.tex`` document returns to the scanned set the live half stops
-        being trivial and this test says so. And the *same expression* is run
-        against a source that does carry such a span, so a reader that stopped
-        reporting them, which is the failure the live half is meant to catch,
-        fails here instead of passing silently.
+        The live half alone cannot fail *on this tree* and must not be read as
+        if it could: only the TeX reader raises such a span, this tree tracks no
+        ``.tex`` documentation, and the Markdown reader hard-codes an empty span
+        list, so an empty result there is a property of the reader rather than a
+        measurement. Two things are therefore asserted around it.
+
+        The premise -- every scanned source is Markdown -- is checked, and it is
+        now a statement about the *tree* as well as the code: ``load_docs``
+        reads every ``.tex`` under ``docs/`` or ``tex/``, so a document written
+        back into either root enters the scanned set and fails this assertion.
+        That is the intended answer to it. The live half stops being trivial the
+        moment such a document exists, and what it then measures -- how much of
+        that document the macro table could not read -- has to be looked at
+        rather than inherited from this docstring.
+
+        And the *same expression* is run against a source that does carry such a
+        span, so a reader that stopped reporting them, which is the failure the
+        live half is meant to catch, fails here instead of passing silently.
         """
 
         def unreadable_messages(sources: list[dcs.DocSource]) -> list[str]:
@@ -2148,7 +2293,13 @@ class EnsureMathTest(unittest.TestCase):
 
         sources = docs()
         self.assertTrue(sources)
-        self.assertEqual([s.label for s in sources if not s.label.endswith(".md")], [])
+        self.assertEqual(
+            [s.label for s in sources if not s.label.endswith(".md")],
+            [],
+            "a non-Markdown documentation source is in the scanned set, so the "
+            "emptiness asserted below is no longer a property of the reader: "
+            "re-derive it against that document",
+        )
         self.assertEqual(unreadable_messages(sources), [])
 
         _normalized, spans = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
@@ -2741,11 +2892,18 @@ class FixtureTest(unittest.TestCase):
         self.assertEqual(code, dcs.EXIT_OK, buffer.getvalue())
 
     def test_lean_only_rescues_seven_docs_only_rescues_three(self) -> None:
-        """The design in miniature: neither channel alone saves all ten keepers."""
+        """The design in miniature: neither channel alone saves all ten keepers.
+
+        The ten are selected by the *prefix* of their provenance note, which is
+        otherwise free text, so a rewrite of those notes can unselect a row. It
+        cannot do so silently: the count below is asserted before anything is
+        classified, and a selector that matches nine rows fails there rather
+        than measuring a smaller population and reporting a smaller split.
+        """
         keepers = [
             row[0]
             for row in dcs.read_fixtures(dcs.FIXTURES_FILE)
-            if row[2].startswith("#4641 keeper") or row[2].startswith("docs/index.md:")
+            if row[2].startswith("#4641 keeper") or row[2].startswith("docs/index.md")
         ]
         self.assertEqual(len(keepers), 10)
         verdicts, _cascade, _labels = dcs.classify(tree(), keepers, docs(), allow_homonym=False)
