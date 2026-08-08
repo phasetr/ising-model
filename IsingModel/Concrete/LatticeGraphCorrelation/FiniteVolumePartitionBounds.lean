@@ -2,18 +2,17 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume partition-function bounds
+# Positivity of the finite-volume partition function in ℤ^d and its dependence on `|h|`
 
-Narrow child module for direct concrete `latticeGraph` finite-volume
-`partitionFunction` absolute-field, positivity, and ferromagnetic lower-bound
-wrappers. The theorem names are the same as the former declarations, but
-callers can now avoid importing the monolithic concrete module.
+Records that the partition function of the subgraph induced by the nearest-neighbor lattice
+graph on a finite `Λ ⊆ ℤ^d` depends on the external field only through its absolute value,
+and that it is positive, hence nonzero, being a sum of exponentials over a nonempty
+configuration space. No hypothesis is imposed in any of these statements; in particular
+positivity needs no sign condition on the coupling, the field or the inverse temperature.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d direct finite-volume partition-function bounds -/
 
 /-- **ℤ^d partitionFunction_eq_abs_h direct** at Λ-induced. -/
 theorem partitionFunction_eq_abs_h_latticeGraph
@@ -26,24 +25,6 @@ theorem partitionFunction_eq_abs_h_latticeGraph
           (⟨J, |h|, β⟩ : IsingParams ℝ) :=
   IsingModel.partitionFunction_eq_abs_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-
-/-! ## Moved: ferromagnetic / |h|-monotonicity wrappers
-
-The three wrappers
-`partitionFunction_monotone_abs_h_latticeGraph`,
-`partitionFunction_ge_one_of_ferromagnetic_latticeGraph`, and
-`log_partitionFunction_nonneg_of_ferromagnetic_latticeGraph` now live
-in `FiniteVolumePartitionBoundsFerromagnetic.lean`. -/
-
-
-/-! ## Moved: ferromagnetic 2^|Λ| / (2 cosh)^|Λ| partition wrappers
-
-The four wrappers
-`partitionFunction_ge_two_pow_card_of_ferromagnetic_latticeGraph`,
-`partitionFunction_ge_two_cosh_pow_card_of_ferromagnetic_latticeGraph`,
-`log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic_latticeGraph`,
-`log_partitionFunction_ge_card_mul_log_two_cosh_of_ferromagnetic_latticeGraph`
-now live in `FiniteVolumePartitionBoundsFerromagneticPow.lean`. -/
 
 /-- **ℤ^d partitionFunction_pos direct** at Λ-induced: `0 < Z_Λ`. -/
 theorem partitionFunction_pos_latticeGraph

@@ -1,12 +1,16 @@
 import IsingModel.InfiniteVolume.Boundedness
 
 /-!
-# Concrete Walsh-basis + spin-config wrappers
+# The Walsh system on configurations of a finite volume in ℤ^d
 
-Narrow child module for five ℤ^d Walsh-basis / spin-config wrappers
-(`walsh_orthogonality`, `walsh_completeness`, `walsh_fourier_inversion`,
-`walsh_normalization`, and `card_config_eq_two_pow`). Each wrapper is a
-thin pass-through to the corresponding `IsingModel.*` lemma.
+Records the orthogonality, normalization, completeness and inversion identities for the
+Walsh functions `σ ↦ σ^S` indexed by subsets `S` of a finite `Λ ⊆ ℤ^d`. Summed over
+configurations, distinct index sets give zero and a repeated index set gives the number of
+configurations; summed over index sets, `σ^S(σ)·σ^S(τ)` detects equality of the two
+configurations; and every real function of a configuration is recovered from its Walsh
+coefficients. The number of configurations is itself `2` raised to the number of sites.
+Distinctness of the index sets in the orthogonality statement is the only hypothesis
+anywhere here, and no graph, interaction or parameter record enters.
 -/
 
 open scoped symmDiff

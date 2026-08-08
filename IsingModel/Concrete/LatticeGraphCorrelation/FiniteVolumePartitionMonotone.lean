@@ -2,20 +2,14 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d finite-volume partitionFunction monotone wrappers
+# Parameter monotonicity of the finite-volume partition function in ℤ^d
 
-Narrow child module for three ℤ^d
-`partitionFunction_monotone_*_latticeGraph` wrappers extracted from
-`FiniteVolumePartition.lean`:
-
-* `partitionFunction_monotone_h_latticeGraph`,
-* `partitionFunction_monotone_J_latticeGraph`,
-* `partitionFunction_monotone_beta_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding abstract
-`IsingModel.partitionFunction_monotone_*` lemma at the Λ-induced
-subgraph of `IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `FiniteVolumePartition` declarations.
+Records that the partition function of the subgraph induced by the nearest-neighbor lattice
+graph on a finite `Λ ⊆ ℤ^d` increases when the coupling, the external field or the inverse
+temperature is increased with the other two held fixed. Each statement assumes
+nonnegativity of the two parameters held fixed, strengthened to strict positivity when the
+inverse temperature is one of them, together with nonnegativity of the smaller of the two
+compared values, again strict for the inverse-temperature comparison.
 -/
 
 namespace IsingModel
