@@ -2,21 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFE
 
 /-!
-# Concrete along-ex polymerFreeEnergyAlongExhaustion ε(t) sharpening wrappers
+# ℤ^d AlongExhaustion polymerFreeEnergy against the remainder ε(t) (§18.5)
 
-Narrow child module for 4 ℤ^d along-exhaustion
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` ε(t)-sharpening
-wrappers extracted from `PolymerFreeEnergyEpsilonSharpeningAlongEx.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_eq_zero_iff_eps_eq_zero`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_pos_iff_eps_pos`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_lt_eps_iff_eps_pos`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_lt_pow_sub_one_of_eps_pos`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyEpsilonSharpeningAlongEx` declarations.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d`, for `0 ≤ t`, the
+equivalences that pin the polymer free energy to the cluster-expansion remainder `ε(t)`, the
+activity sum over the nonempty members of `vdCompatiblePolymerFamilies`: the free energy
+vanishes exactly when the remainder does, is positive exactly when the remainder is, and
+falls strictly below the remainder exactly then too. The strict ceiling by
+`(1 + t) ^ |E| − 1` that a positive remainder buys sits here as well. These sharpen the
+GJ §18.5 polymer free-energy bounds on ℤ^d stage by stage.
 -/
 
 namespace IsingModel

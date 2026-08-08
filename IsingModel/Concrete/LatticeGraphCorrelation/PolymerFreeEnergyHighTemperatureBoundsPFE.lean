@@ -2,19 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Concrete polymerFreeEnergy_Λ tanh HT bound wrappers
+# ℤ^d Λ polymerFreeEnergy tanh-form high-temperature ceilings (§18.5)
 
-Narrow child module for 3 ℤ^d Λ-direct `polymerFreeEnergy_Λ_*_tanh_*`
-bound wrappers extracted from `PolymerFreeEnergyHighTemperatureBounds.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_le_eps_of_betaJ_nonneg`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_le_pow_sub_one_of_betaJ_nonneg`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_lt_log_two_of_pow_lt_two`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergy_Λ_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyHighTemperatureBounds` declarations.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d`, under `0 ≤ β * J`, the
+ceilings on the polymer free energy at activity `tanh (β * J)`: by the cluster-expansion
+remainder `ε`, by `(1 + tanh (β * J)) ^ |E| − 1`, and — when that power is in addition below
+`2` — strictly by `log 2`. These are the ℤ^d high-temperature convergence estimates of the
+GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel

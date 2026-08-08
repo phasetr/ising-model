@@ -3,21 +3,12 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonneg
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn
 
 /-!
-# ℤ^d along-exhaustion polymerFreeEnergy bound wrappers
+# ℤ^d AlongExhaustion polymerFreeEnergy sign, bounds and monotonicity (§18.5)
 
-Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` bound wrappers
-extracted from `PolymerFreeEnergyBounds.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_nonneg_of_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_log_one_plus_of_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_le_card_mul_of_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_monotoneOn_Ici_zero`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyBounds` declarations.
+Instantiates along an exhaustion at `IsingModel.latticeGraph d` the elementary envelope of
+the polymer free energy: nonnegativity and the ceilings `|E| * log (1 + t)` and `|E| * t` for
+`0 ≤ t`, together with monotonicity on `Set.Ici 0`. These are the ℤ^d bounds that keep the
+GJ §18.5 cluster expansion under control stage by stage.
 -/
 
 namespace IsingModel

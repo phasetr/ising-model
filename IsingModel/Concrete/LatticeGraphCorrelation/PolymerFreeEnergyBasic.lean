@@ -2,11 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Concrete basic polymer free-energy wrappers
+# ℤ^d Λ polymerFreeEnergy trivial activities and nonnegative sandwich (§18.5)
 
-Narrow child module for concrete `ℤ^d` `polymerFreeEnergy` at-zero, at-one,
-and nonnegative sandwich wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation module.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the polymer free energy at
+the two trivial activities — it vanishes at `t = 0` and is the logarithm of the number of
+compatible polymer families at `t = 1` — together with its two-sided bound between `0` and
+`|E| * log (1 + t)` for `0 ≤ t`. These are the ℤ^d base values against which the GJ §18.5
+cluster-expansion estimates are calibrated.
 -/
 
 namespace IsingModel
@@ -46,15 +48,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_sandwich_of_nonneg
         Real.log (1 + t) :=
   Ambient.polymerFreeEnergy_Λ_sandwich_of_nonneg
     (IsingModel.latticeGraph d) Λ ht
-
-/-! ## Moved: AlongExhaustion basic wrappers
-
-The three wrappers
-`polymerFreeEnergyAlongExhaustion_latticeGraph_at_zero`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_at_one`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_sandwich_of_nonneg` now
-live in `PolymerFreeEnergyBasicAlongEx.lean`. -/
-
 
 end Ambient
 end IsingModel

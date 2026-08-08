@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# ℤ^d Λ-layer polymerFreeEnergy ε iff wrappers
+# ℤ^d Λ polymerFreeEnergy against the remainder ε(t) (§18.5)
 
-Narrow child module for three Λ-layer
-`polymerFreeEnergy_Λ_latticeGraph_*_eps_*` iff wrappers extracted
-from `PolymerFreeEnergyEpsilonSharpening.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_eq_zero_iff_eps_eq_zero`,
-* `polymerFreeEnergy_Λ_latticeGraph_pos_iff_eps_pos`,
-* `polymerFreeEnergy_Λ_latticeGraph_lt_eps_iff_eps_pos`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergy_Λ_*_iff_eps_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyEpsilonSharpening` declarations.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d`, for `0 ≤ t`, the
+equivalences that pin the polymer free energy to the cluster-expansion remainder `ε(t)`, the
+activity sum over the nonempty members of `vdCompatiblePolymerFamilies`: the free energy
+vanishes exactly when the remainder does, is positive exactly when the remainder is, and
+falls strictly below the remainder exactly then too. These sharpen the GJ §18.5 polymer
+free-energy bounds on ℤ^d.
 -/
 
 namespace IsingModel

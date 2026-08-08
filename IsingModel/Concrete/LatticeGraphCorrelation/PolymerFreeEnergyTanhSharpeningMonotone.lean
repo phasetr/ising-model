@@ -2,21 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Concrete polymer free-energy tanh-sharpening β/J strict-mono wrappers
+# ℤ^d Λ polymerFreeEnergy strict growth in β and in J (§18.5)
 
-Narrow child module for 4 ℤ^d Λ-direct polymer free-energy
-`tanh_*_of_polymers_nonempty` monotonicity-in-(β,J) wrappers extracted
-from `PolymerFreeEnergyTanhSharpening.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_beta_of_polymers_nonempty`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_J_of_polymers_nonempty`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_strictMonoOn_beta_of_polymers_nonempty`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_strictMonoOn_J_of_polymers_nonempty`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergy_Λ_tanh_*_of_polymers_nonempty` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyTanhSharpening` declarations.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the strict growth of the
+polymer free energy at activity `tanh (β * J)` in each of `β` and `J`, when the induced graph
+carries at least one polymer and the other parameter is strictly positive: as a two-point
+strict inequality from a nonnegative lower argument, and as `StrictMonoOn (Set.Ici 0)`. This
+is the ℤ^d strict monotonicity of the GJ §18.5 cluster expansion in the physical parameters.
 -/
 
 namespace IsingModel

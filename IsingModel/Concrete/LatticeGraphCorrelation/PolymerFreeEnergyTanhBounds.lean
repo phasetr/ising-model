@@ -2,19 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Concrete polymer free-energy tanh-bound wrappers
+# ℤ^d Λ polymerFreeEnergy log-form, tanh ceiling and derivative (§18.5)
 
-Narrow child module for concrete `ℤ^d` `polymerFreeEnergy` tanh bounds,
-ferromagnetic bounds, the `log(1 + eps)` decomposition, and the `HasDerivAt`
-wrapper. This keeps callers that only need these forwarders out of the
-monolithic lattice-correlation module.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the closed form
+`polymerFreeEnergy t = log (1 + ε(t))`, valid at every real activity, the ceiling
+`|E| * tanh (β * J)` at activity `tanh (β * J)` under `0 ≤ β * J`, and the derivative at each
+nonnegative activity. These put the GJ §18.5 cluster expansion on ℤ^d in log form, under a
+`tanh` ceiling, and in differentiable form in the activity variable.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-/-! ### §18.5 polymerFreeEnergy tanh-bound + ferro + hasDerivAt +
-eq_log_one_add ℤ^d wraps -/
+/-! ### §18.5 polymerFreeEnergy tanh-bound + eq_log_one_add + hasDerivAt ℤ^d wraps -/
 
 /-- **ℤ^d Λ: polymerFreeEnergy tanh ≤ |E| · tanh** under `0 ≤ β·J`. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul
@@ -28,15 +28,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul
         Real.tanh (β * J) :=
   Ambient.polymerFreeEnergy_Λ_tanh_le_card_mul
     (IsingModel.latticeGraph d) Λ hβJ
-
-/-! ## Moved: ferromagnetic tanh-bound wrappers
-
-The three ferromagnetic Λ-layer wrappers
-`polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_mul_ferro`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_sandwich_ferro`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_le_card_log_two_ferro` now
-live in `PolymerFreeEnergyTanhBoundsFerro.lean`. -/
-
 
 /-- **ℤ^d Λ: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_eq_log_one_add_eps
@@ -67,14 +58,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_hasDerivAt
             ∏ P ∈ Γ, t ^ P.card)) t :=
   Ambient.polymerFreeEnergy_Λ_hasDerivAt
     (IsingModel.latticeGraph d) Λ ht
-
-/-! ## Moved: AlongExhaustion polymerFreeEnergy tanh-bound wrappers
-
-The six AlongExhaustion `polymerFreeEnergyAlongExhaustion_latticeGraph_*`
-wrappers (tanh bounds, ferro variants, log_one_add_eps, hasDerivAt) now
-live in `PolymerFreeEnergyTanhBoundsAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

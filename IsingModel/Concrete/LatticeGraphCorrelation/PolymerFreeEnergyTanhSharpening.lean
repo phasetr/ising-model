@@ -2,13 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Concrete polymer free-energy tanh sharpening + β/J strict-mono
-wrappers
+# ℤ^d Λ polymerFreeEnergy against ε in the tanh parametrization (§18.5)
 
-Narrow child module for concrete `ℤ^d` polymer free-energy
-`tanh sharpening + β/J strict-mono` wrappers. This keeps callers that
-only need these forwarders out of the monolithic lattice-correlation
-original module.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d`, under `0 ≤ β * J`, the
+equivalences that pin the polymer free energy at activity `tanh (β * J)` to the
+cluster-expansion remainder `ε`: it vanishes exactly when `ε` does, is positive exactly when
+`ε` is, and falls strictly below `ε` exactly then too. The strict bounds that a positive
+remainder buys — below `ε` and below `(1 + tanh (β * J)) ^ |E| − 1` — sit here as well. These
+sharpen the GJ §18.5 polymer free-energy bounds on ℤ^d.
 -/
 
 namespace IsingModel
@@ -16,8 +17,7 @@ namespace Ambient
 
 open Finset Real
 
-/-! ### §18.5 polymerFreeEnergy tanh sharpening + β/J strict-mono
-ℤ^d wraps -/
+/-! ### §18.5 polymerFreeEnergy tanh sharpening ℤ^d wraps -/
 
 /-- **ℤ^d Λ: pFE(tanh) < ε(tanh) ↔ 0 < ε(tanh)** under `0 ≤ β·J`. -/
 theorem polymerFreeEnergy_Λ_latticeGraph_tanh_lt_eps_iff_eps_pos
@@ -98,25 +98,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_lt_pow_sub_one_of_eps_pos
         1 :=
   Ambient.polymerFreeEnergy_Λ_tanh_lt_pow_sub_one_of_eps_pos
     (IsingModel.latticeGraph d) Λ hβJ h_eps_pos
-
-/-! ## Moved: Λ-direct tanh-sharpening monotone-in-(β,J) wrappers
-
-The four Λ-direct monotone wrappers
-(`polymerFreeEnergy_Λ_latticeGraph_tanh_lt_of_lt_in_{beta,J}_of_polymers_nonempty`
-and `*_strictMonoOn_{beta,J}_of_polymers_nonempty`) now live in
-`PolymerFreeEnergyTanhSharpeningMonotone.lean`. -/
-
-
-
-/-! ## Moved: AlongExhaustion polymerFreeEnergy tanh sharpening wrappers
-
-The four remaining `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*`
-monotone-in-(β,J) wrappers now live in
-`PolymerFreeEnergyTanhSharpeningAlongExMonotone.lean`. The five
-`tanh_{eq_zero_iff_eps_eq_zero, lt_eps_iff_eps_pos, lt_eps_of_eps_pos,
-lt_pow_sub_one_of_eps_pos, pos_iff_eps_pos}` wrappers were deleted; no
-consumer of them was found in this repository. -/
-
 
 end Ambient
 end IsingModel

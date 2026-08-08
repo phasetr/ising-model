@@ -2,15 +2,13 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 import IsingModel.Lattice
 
 /-!
-# ℤ^d §18.5 Λ polymerFreeEnergy edge-case / comparison wrappers
+# ℤ^d Λ polymerFreeEnergy degenerate volumes and order (§18.5)
 
-Narrow child module for four ℤ^d Λ `polymerFreeEnergy_Λ_*` edge-case +
-comparison wrappers extracted from `PolymerFreeEnergyBounds.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_eq_zero_of_no_polymers`,
-* `polymerFreeEnergy_Λ_latticeGraph_eq_zero_of_edgeFinset_empty`,
-* `polymerFreeEnergy_Λ_latticeGraph_le_of_le_of_nonneg`,
-* `polymerFreeEnergy_Λ_latticeGraph_le_of_le_strict_form`.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the degenerate behaviour of
+the polymer free energy — it vanishes identically when the induced graph carries no polymer,
+and likewise when it has no edge — and its preservation of the order `t ≤ s`, once with both
+activities assumed nonnegative and once with only the lower one. These fix the boundary
+cases of the GJ §18.5 cluster expansion on ℤ^d.
 -/
 
 namespace IsingModel

@@ -2,21 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
-# ℤ^d Λ-layer polymerFreeEnergy tanh analyticity wrappers (§18.6)
+# ℤ^d Λ polymerFreeEnergy tanh-composition analyticity (§18.6)
 
-Narrow child module for four ℤ^d Λ-layer
-`polymerFreeEnergy_Λ_latticeGraph_tanh_*` analyticity wrappers
-extracted from `PolymerFreeEnergyAnalyticity.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_beta`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_analyticAt_J`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_beta_Ici_zero`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_analyticOnNhd_J_Ici_zero`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.polymerFreeEnergy_Λ_tanh_*` analytic lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PolymerFreeEnergyAnalyticity` declarations.
+Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the analyticity of the
+polymer free energy at activity `tanh (β * J)` as a function of `β` and as a function of `J`:
+analytic at a single parameter value under `0 ≤ β * J`, and analytic on a neighbourhood of
+`Set.Ici 0` in one parameter whenever the other is nonnegative. This is the ℤ^d form of the
+GJ §18.6 analyticity of the cluster expansion in the physical parameters.
 -/
 
 namespace IsingModel
