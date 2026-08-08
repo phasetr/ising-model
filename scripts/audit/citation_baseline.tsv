@@ -35,7 +35,6 @@
 # any more -- removing the commit that created it; each of those is a loud diff,
 # and that is the point.
 #tracked	2018
-#census	tex/proof-guide.tex	1216	1209	RESOLVED=987,AMBIGUOUS=104,BASENAME_ONLY=125,SELFREF=4
 #census	docs/index.md	2693	2628	RESOLVED=1962,AMBIGUOUS=107,BASENAME_ONLY=624,SELFREF=89
 class	target	token	count	first_line
 AMBIGUOUS	docs/index.md	Analyticity.lean	24	2195
@@ -50,37 +49,6 @@ AMBIGUOUS	docs/index.md	Lattice.lean	4	1558
 AMBIGUOUS	docs/index.md	Magnetization.lean	4	1408
 AMBIGUOUS	docs/index.md	Peierls.lean	4	860
 AMBIGUOUS	docs/index.md	TwoPoint.lean	8	1370
-AMBIGUOUS	tex/proof-guide.tex	Analyticity.lean	29	19710
-AMBIGUOUS	tex/proof-guide.tex	Basic.lean	5	124
-AMBIGUOUS	tex/proof-guide.tex	BetaDerivative.lean	7	21136
-AMBIGUOUS	tex/proof-guide.tex	DirectRange.lean	1	14066
-AMBIGUOUS	tex/proof-guide.tex	FieldDerivative.lean	4	21137
-AMBIGUOUS	tex/proof-guide.tex	FreeEnergy.lean	5	140
-AMBIGUOUS	tex/proof-guide.tex	FreeEnergyAnalyticity.lean	1	22238
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBounds.lean	10	22989
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviation.lean	1	23060
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviationContinuity.lean	1	23074
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsDeviationStrict.lean	1	23068
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpSharper.lean	1	23085
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpSharperSandwich.lean	1	23099
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsExpansion.lean	1	23109
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsRatioBounds.lean	1	23037
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsRatioLogFe.lean	1	23046
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureBoundsTripleRatio.lean	1	23042
-AMBIGUOUS	tex/proof-guide.tex	HighTemperatureCapstones.lean	1	22007
-AMBIGUOUS	tex/proof-guide.tex	InfiniteVolume.lean	5	139
-AMBIGUOUS	tex/proof-guide.tex	JDerivative.lean	2	21123
-AMBIGUOUS	tex/proof-guide.tex	Lattice.lean	2	147
-AMBIGUOUS	tex/proof-guide.tex	Magnetization.lean	2	3855
-AMBIGUOUS	tex/proof-guide.tex	PartitionFunctionRegularity.lean	1	21529
-AMBIGUOUS	tex/proof-guide.tex	Peierls.lean	3	145
-AMBIGUOUS	tex/proof-guide.tex	PerStage.lean	1	15986
-AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyEpsilonSharpening.lean	1	22281
-AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyHighTemperatureBounds.lean	1	22260
-AMBIGUOUS	tex/proof-guide.tex	PolymerFreeEnergyTanhSharpening.lean	1	22310
-AMBIGUOUS	tex/proof-guide.tex	RelCompact.lean	1	14066
-AMBIGUOUS	tex/proof-guide.tex	SusceptibilityConvergence.lean	1	22031
-AMBIGUOUS	tex/proof-guide.tex	TwoPoint.lean	6	22071
 BASENAME_ONLY	docs/index.md	AlternatingFinThree.lean	1	2126
 BASENAME_ONLY	docs/index.md	AmbientComplexAnalyticity.lean	91	524
 BASENAME_ONLY	docs/index.md	AmbientLattice.lean	32	356
@@ -304,88 +272,6 @@ BASENAME_ONLY	docs/index.md	UniformTransferLargeK.lean	2	1850
 BASENAME_ONLY	docs/index.md	UrsellFinThree.lean	2	2126
 BASENAME_ONLY	docs/index.md	VolumeUniformHZ.lean	2	538
 BASENAME_ONLY	docs/index.md	WeakBound.lean	1	2077
-BASENAME_ONLY	tex/proof-guide.tex	AlternatingCompleteGraph.lean	1	17897
-BASENAME_ONLY	tex/proof-guide.tex	AlternatingFinThree.lean	1	19536
-BASENAME_ONLY	tex/proof-guide.tex	AmbientLattice.lean	8	96
-BASENAME_ONLY	tex/proof-guide.tex	AmbientLatticeSum.lean	1	25097
-BASENAME_ONLY	tex/proof-guide.tex	Asano.lean	4	136
-BASENAME_ONLY	tex/proof-guide.tex	CEConditionalCapstone.lean	2	21685
-BASENAME_ONLY	tex/proof-guide.tex	ChebyshevRateBridge.lean	1	5761
-BASENAME_ONLY	tex/proof-guide.tex	ComparisonTheorem.lean	1	31922
-BASENAME_ONLY	tex/proof-guide.tex	Conditioning.lean	2	141
-BASENAME_ONLY	tex/proof-guide.tex	CorrelationAlongExhaustionDeriv.lean	1	26051
-BASENAME_ONLY	tex/proof-guide.tex	CorrelationSymmetry.lean	3	5582
-BASENAME_ONLY	tex/proof-guide.tex	CountGeometricCapstone.lean	1	1941
-BASENAME_ONLY	tex/proof-guide.tex	CubicBoxComponentSize.lean	1	1890
-BASENAME_ONLY	tex/proof-guide.tex	CubicBoxFreeLimit.lean	1	31943
-BASENAME_ONLY	tex/proof-guide.tex	CubicBoxMagnetizationDecay.lean	1	2002
-BASENAME_ONLY	tex/proof-guide.tex	CubicShellDecaySum.lean	1	21939
-BASENAME_ONLY	tex/proof-guide.tex	DerivativeLimitProviderInfiniteHLS.lean	1	33164
-BASENAME_ONLY	tex/proof-guide.tex	EdgeSetDistance.lean	1	1824
-BASENAME_ONLY	tex/proof-guide.tex	EdgeSetHandshake.lean	1	1851
-BASENAME_ONLY	tex/proof-guide.tex	EdgeSiteSums.lean	1	898
-BASENAME_ONLY	tex/proof-guide.tex	EdgeWalkCounting.lean	1	1982
-BASENAME_ONLY	tex/proof-guide.tex	EdgeWalkExistence.lean	1	1960
-BASENAME_ONLY	tex/proof-guide.tex	FKG.lean	1	133
-BASENAME_ONLY	tex/proof-guide.tex	FiniteRegionPseudoMassDistLipschitz.lean	1	33283
-BASENAME_ONLY	tex/proof-guide.tex	FreeLayerWalshOpenAxisDecay.lean	2	9603
-BASENAME_ONLY	tex/proof-guide.tex	FreeLayerWalshOpenAxisInfiniteVolume.lean	1	9636
-BASENAME_ONLY	tex/proof-guide.tex	FunctionTheoryAxioms.lean	1	33053
-BASENAME_ONLY	tex/proof-guide.tex	GHS.lean	2	134
-BASENAME_ONLY	tex/proof-guide.tex	GKS.lean	4	132
-BASENAME_ONLY	tex/proof-guide.tex	GeometricTail.lean	1	1926
-BASENAME_ONLY	tex/proof-guide.tex	GibbsMeasure.lean	5	128
-BASENAME_ONLY	tex/proof-guide.tex	HLSBridgeFromSimonLieb.lean	1	26180
-BASENAME_ONLY	tex/proof-guide.tex	Hamiltonian.lean	5	126
-BASENAME_ONLY	tex/proof-guide.tex	HighTempMassGap.lean	1	31306
-BASENAME_ONLY	tex/proof-guide.tex	HighTempZeroMagnetization.lean	1	2023
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionRatioBounds.lean	2	23160
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionRatioLogFe.lean	1	23171
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsAlongExhaustionTripleRatio.lean	1	23165
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpSharperComplete.lean	1	23092
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionClosedForms.lean	1	23119
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionLowerUpper.lean	1	23138
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsExpansionVariants.lean	1	23126
-BASENAME_ONLY	tex/proof-guide.tex	HighTemperatureBoundsFreeEnergyInfinite.lean	1	23147
-BASENAME_ONLY	tex/proof-guide.tex	IncrementCapstone.lean	1	21993
-BASENAME_ONLY	tex/proof-guide.tex	InduceDistanceTransfer.lean	1	1872
-BASENAME_ONLY	tex/proof-guide.tex	Inequalities.lean	1	21395
-BASENAME_ONLY	tex/proof-guide.tex	LatticeBoundaryBED.lean	1	21703
-BASENAME_ONLY	tex/proof-guide.tex	LatticeExpSum.lean	1	30443
-BASENAME_ONLY	tex/proof-guide.tex	LatticeGraphCorrelation.lean	2	21157
-BASENAME_ONLY	tex/proof-guide.tex	LatticeSphereCard.lean	1	31327
-BASENAME_ONLY	tex/proof-guide.tex	LeeYang.lean	4	137
-BASENAME_ONLY	tex/proof-guide.tex	MainTheorem.lean	1	31307
-BASENAME_ONLY	tex/proof-guide.tex	MassContinuityDartRatio.lean	1	33414
-BASENAME_ONLY	tex/proof-guide.tex	MassContinuityRatioBound.lean	1	33382
-BASENAME_ONLY	tex/proof-guide.tex	MayerCompleteContribution.lean	1	17905
-BASENAME_ONLY	tex/proof-guide.tex	MayerFilterConnected.lean	1	22044
-BASENAME_ONLY	tex/proof-guide.tex	MayerVdBounds.lean	2	19710
-BASENAME_ONLY	tex/proof-guide.tex	NonnegCorrelations.lean	4	131
-BASENAME_ONLY	tex/proof-guide.tex	PartitionFreeEnergyRegularity.lean	1	22029
-BASENAME_ONLY	tex/proof-guide.tex	PartitionFunctionGeneralAnalyticity.lean	1	21564
-BASENAME_ONLY	tex/proof-guide.tex	PartitionFunctionIso.lean	1	25046
-BASENAME_ONLY	tex/proof-guide.tex	PeierlsContourCount.lean	1	2670
-BASENAME_ONLY	tex/proof-guide.tex	PhaseTransition.lean	3	143
-BASENAME_ONLY	tex/proof-guide.tex	PlanarBondReduction.lean	1	2394
-BASENAME_ONLY	tex/proof-guide.tex	PlusHighTempRepresentation.lean	1	1732
-BASENAME_ONLY	tex/proof-guide.tex	PlusOnePointConnectedBound.lean	1	1795
-BASENAME_ONLY	tex/proof-guide.tex	PlusOnePointRepresentation.lean	1	1766
-BASENAME_ONLY	tex/proof-guide.tex	PositiveReal.lean	1	14068
-BASENAME_ONLY	tex/proof-guide.tex	PseudoMass.lean	8	19716
-BASENAME_ONLY	tex/proof-guide.tex	SharpHLSDenominatorComparison.lean	2	33200
-BASENAME_ONLY	tex/proof-guide.tex	SimonLiebDistanceDecay.lean	1	17792
-BASENAME_ONLY	tex/proof-guide.tex	SpontaneousMagnetizationTwoPoint.lean	1	1707
-BASENAME_ONLY	tex/proof-guide.tex	SumGraph.lean	2	24743
-BASENAME_ONLY	tex/proof-guide.tex	SumModel.lean	1	24867
-BASENAME_ONLY	tex/proof-guide.tex	Truncated2GeneralFieldCluster.lean	1	17807
-BASENAME_ONLY	tex/proof-guide.tex	Truncated2GeneralFieldDecay.lean	1	17793
-BASENAME_ONLY	tex/proof-guide.tex	UnconditionalFiniteRegionLipschitz.lean	1	33350
-BASENAME_ONLY	tex/proof-guide.tex	UnconditionalProfileLower.lean	1	33316
-BASENAME_ONLY	tex/proof-guide.tex	UrsellFinThree.lean	2	19549
-BASENAME_ONLY	tex/proof-guide.tex	ViaLocal.lean	1	14067
-BASENAME_ONLY	tex/proof-guide.tex	WalkCountDegreeBound.lean	1	1907
-BASENAME_ONLY	tex/proof-guide.tex	WeightedSystem.lean	1	4790
 SELFREF	docs/index.md	AmbientComplexAnalyticity.lean >> AmbientComplexAnalyticity.lean	1	524
 SELFREF	docs/index.md	AmbientLattice.lean >> AmbientLattice.lean	3	851
 SELFREF	docs/index.md	AmbientLattice/Analyticity.lean >> Analyticity.lean	1	2126
@@ -468,7 +354,3 @@ SELFREF	docs/index.md	TransferMatrix/LayerSpectral.lean >> TransferMatrix/LayerS
 SELFREF	docs/index.md	UniformTransferLargeK.lean >> Concrete/LatticeGraphCorrelation/Lemma_17_5_2/UniformTransferLargeK.lean	1	1850
 SELFREF	docs/index.md	UniformTransferLargeK.lean >> UniformTransferLargeK.lean	1	1850
 SELFREF	docs/index.md	VitaliPorter/Theorem.lean >> VitaliPorter/Theorem.lean	1	539
-SELFREF	tex/proof-guide.tex	Analyticity.lean >> Analyticity.lean	1	22568
-SELFREF	tex/proof-guide.tex	Concrete/LatticeGraphCorrelation/Inequalities.lean >> Concrete/LatticeGraphCorrelation/Inequalities.lean	1	10439
-SELFREF	tex/proof-guide.tex	IsingModel/AmbientLattice/Analyticity.lean >> Analyticity.lean	1	22678
-SELFREF	tex/proof-guide.tex	TwoPoint.lean >> TwoPoint.lean	1	22071

@@ -96,8 +96,9 @@ Why the cumulative cap is a frozen constant and not the census
 --------------------------------------------------------------
 R11 alone is not a brake on erosion, because ``--update-baseline`` rewrites the
 ``#census`` from the live run: each accepted deletion lowers the reference the
-*next* run is judged against, so a budget of 5% compounds. Measured on the tex's
-numbers, twelve within-budget updates take it from 1,333 citations to 723 -- a
+*next* run is judged against, so a budget of 5% compounds. Measured on the
+retired proof guide's numbers, twelve within-budget updates take it from 1,333
+citations to 723 -- a
 46% loss, deletions of 66, 63, 60, ... 38 -- with no hard failure at any step
 and ``ratchet: OK`` reported throughout, because deleting the citing sentence
 clears its finding. Only the thirteenth is stopped, and only by the floor.
@@ -124,8 +125,7 @@ exactly like remediation) but its input was wrong: with mutable documents,
 did not change, so it fails on every remediation commit by construction. It was
 a document freeze wearing an extractor pin's clothes. What it was meant to pin is
 pinned instead on a **frozen corpus**, ``scripts/audit/citation_corpus/``, whose
-expected census is committed and which no edit to ``tex/proof-guide.tex`` or
-``docs/index.md`` can move.
+expected census is committed and which no edit to an audited document can move.
 
 Updating the baseline
 ---------------------
@@ -365,15 +365,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 
 # Documents whose ``.lean`` citations are audited by default.
-TARGETS = ("tex/proof-guide.tex", "docs/index.md")
+TARGETS = ("docs/index.md",)
 
 # Anti-vacuity floors (R8/R9), and **catastrophic backstops only**: they answer
 # "was this document gutted", not "was it edited". A target accidentally emptied
 # would otherwise report "0 findings, all clean" -- the most convincing possible
 # false pass. Lowering these constants is the cheapest way to disarm the whole
 # tool, so each move must be deliberate, in the same commit, with a reason.
-# Measured on the tree this file was written against: 1,333 citations in the tex,
-# 2,698 in the markdown, 2,018 tracked .lean files.
+# Measured on the tree this file was written against: 2,698 citations in the
+# markdown, 2,018 tracked .lean files. (The proof guide, 1,333 citations, was a
+# second target until it was retired; its floor and measurement went with it.)
 #
 # Why they sit near half of that and not just below it. A floor close to the
 # working value does not guard the tokeniser -- a tokeniser that stops matching
@@ -386,7 +387,7 @@ TARGETS = ("tex/proof-guide.tex", "docs/index.md")
 # incidental, because the ``SELFREF`` class is *defined* as a duplicated legacy
 # citation, so its correct fix always lowers the count. The guard that actually
 # fires per commit is the drop budget below; these two are the cliff behind it.
-MIN_CITATIONS = {"tex/proof-guide.tex": 700, "docs/index.md": 1400}
+MIN_CITATIONS = {"docs/index.md": 1400}
 MIN_TRACKED_LEAN = 1800
 
 # The measurement this tool was written against, frozen (R12). Unlike the
@@ -399,7 +400,7 @@ MIN_TRACKED_LEAN = 1800
 # Charged only for a target listed here, so an ad-hoc ``--targets`` run against
 # a document nobody measured is not judged against an invented reference. That
 # the *default* targets are all listed is pinned by the test suite.
-MEASURED_CITATIONS = {"tex/proof-guide.tex": 1333, "docs/index.md": 2698}
+MEASURED_CITATIONS = {"docs/index.md": 2698}
 # The tracked-set half of the same measurement. Nothing charges it at runtime,
 # and that is deliberate: remediation edits documents and never deletes ``.lean``
 # files, so there is no per-run erosion of the tracked set to bound, and a gutted
@@ -418,10 +419,10 @@ MEASURED_TRACKED_LEAN = 2018
 # turn every ordinary remediation commit into a re-anchoring ceremony -- which
 # is how a frozen constant becomes a rubber stamp. Below: the floors, at ~48%
 # loss, are a cliff that twelve compounding 5% runs get to within 23 citations
-# of. 15% (199 citations for the tex, 404 for the markdown) admits three
+# of. 15% (404 citations for the markdown) admits three
 # consecutive full-budget runs and the whole remediation programme measured so
-# far (PR #4730 removes 47 of the tex's, its batch-1 follow-up 5 more), and
-# stops that walk at its fourth step, at 1,144.
+# far (PR #4730 removed 47 of the retired proof guide's, its batch-1 follow-up 5
+# more), and stops that walk at its fourth step.
 #
 # Exceeding it is not a defect to be forced through: it is the point at which
 # somebody re-measures the documents and says so in a diff.
@@ -444,29 +445,31 @@ DEFAULT_MIN_CITATIONS = 1
 #
 # Sized against the frozen numbers rather than against today's census, which is
 # whatever the last accepted deletion left behind: at ``MEASURED_CITATIONS`` the
-# budget is 66 for the tex (1,333) and 134 for the markdown (2,698), and at the
-# lowest census R12 can ever admit -- ``measured - cap``, i.e. 1,134 and 2,294 --
-# it is still 56 and 114. Both ends clear ``MEASURED_REMEDIATION_DROP`` and are
+# budget is 134 for the markdown (2,698), and at the lowest census R12 can ever
+# admit -- ``measured - cap``, i.e. 2,294 -- it is still 114. Both ends clear
+# ``MEASURED_REMEDIATION_DROP`` and are
 # far below a gutting. The test suite states that as a claim over the whole
 # range, so an ordinary remediation commit does not have to restate it.
 CITATION_DROP_BUDGET_FRACTION = 0.05
 MIN_CITATION_DROP_BUDGET = 25
 
-# The drop measured on the first remediation pass over ``tex/proof-guide.tex``
-# (PR #4730), whose ``#census`` citation count moves 1,333 -> 1,286. Frozen.
+# The drop measured on the first remediation pass over the proof guide this
+# repository then tracked (PR #4730), whose ``#census`` citation count moves
+# 1,333 -> 1,286. Frozen, and kept after that document was retired: it is a
+# measurement of what a remediation pass costs, which is the same order of work
+# on any target.
 #
 # It is not maintained as a running maximum of what remediation has needed, and
-# a later pass that deletes more is not required to update it: from a census of
-# 1,281 the tool accepts a 60-citation drop (inside R11's budget of 64 and
-# inside R12's cap, 1,333 - 1,221 = 112) with this constant still reading 47.
+# a later pass that deletes more is not required to update it: it stands as the
+# measured pass it names, whatever a later one costs.
 # Nothing charges it at runtime -- like ``MEASURED_TRACKED_LEAN`` it is the test
 # suite's reference point -- and what it is for is the *lower* side of the
 # budget above, which has no other guard: a budget that stops clearing this
 # turns the work the tool exists to support into a hard failure, and a guard
 # that blocks legitimate work is a guard somebody deletes. Raising it honestly
-# is fail-closed in the suite: at or above the low-end budget of 56 the headroom
+# is fail-closed in the suite: at or above the low-end budget of 114 the headroom
 # claim reddens, which is the point at which the sizing gets restated in a diff.
-# 47 leaves 9 of those 56, so a re-measurement much larger than this one is the
+# 47 leaves 67 of those 114, so a re-measurement much larger than this one is the
 # one that has to restate the sizing rather than edit this number again.
 MEASURED_REMEDIATION_DROP = 47
 
@@ -1289,7 +1292,7 @@ def audit(targets: Optional[Sequence[str]] = None) -> Report:
         if target in TARGETS and measured <= 0:
             # The *value* is checked, not just the key: ``measured`` of ``0`` is
             # the "never measured" sentinel a line below, so an entry of
-            # ``{"tex/proof-guide.tex": 0}`` satisfies a membership-only arming
+            # ``{"docs/index.md": 0}`` satisfies a membership-only arming
             # check while disarming the cap exactly as deleting the entry does.
             hard.append(
                 f"VACUOUS {target}: default target with no positive frozen citation "

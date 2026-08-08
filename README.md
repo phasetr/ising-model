@@ -60,20 +60,8 @@ chapter-by-chapter progress table, see the
 > reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
 > and open `.lake/build/doc/index.html`.
 
-Mathematical documentation for the formalized proofs is in `tex/` as
-LaTeX source files. To compile:
-
-```sh
-cd tex
-latexmk -lualatex -f -interaction=nonstopmode proof-guide.tex
-```
-
-Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
-to the repository.
-
-| File                       | Description                                          |
-|----------------------------|------------------------------------------------------|
-| `tex/proof-guide.tex`      | Mathematical walkthrough of the formalized proofs    |
+Mathematical documentation for the formalized proofs is `docs/index.md`,
+which tracks every result against its source in the literature.
 
 ## Related projects and references
 

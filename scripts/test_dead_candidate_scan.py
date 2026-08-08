@@ -299,14 +299,22 @@ class TexNormalisationTest(unittest.TestCase):
         _normalized, warnings = dcs.normalize_tex(r"\texttt{foo\unknownmacro bar}")
         self.assertEqual(len(warnings), 1)
 
-    def test_real_guide_contains_the_mangled_names(self) -> None:
-        """End-to-end on the real file: both fixture names must be found."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        for name in (
-            "log_partitionFunctionΛ_latticeGraph_biUnion_super_additive",
-            "freeEnergyΛ_eq_tsum_mayer_of_high_temp",
+    def test_the_mangled_fixture_names_survive_normalisation(self) -> None:
+        """Both fixture names, spelled the way LaTeX spells them, are found."""
+        for spelling, name in (
+            (
+                r"\texttt{log\_partitionFunction\(\Lambda\)\_latticeGraph"
+                r"\_biUnion\_super\_additive}",
+                "log_partitionFunctionΛ_latticeGraph_biUnion_super_additive",
+            ),
+            (
+                r"\texttt{freeEnergy$\Lambda$\_eq\_tsum\_mayer\_of\_high\_temp}",
+                "freeEnergyΛ_eq_tsum_mayer_of_high_temp",
+            ),
         ):
-            self.assertTrue(dcs.find_occurrences(tex.text, name), name)
+            normalized, warnings = dcs.normalize_tex(spelling)
+            self.assertEqual(warnings, [], name)
+            self.assertTrue(dcs.find_occurrences(normalized, name), name)
 
 
 class DocTokenTest(unittest.TestCase):
@@ -735,7 +743,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
 class SpacedBraceCitationTest(unittest.TestCase):
     """A brace alternation spaced like prose is one citation, not several words.
 
-    ``docs/index.md`` and ``tex/proof-guide.tex`` both write
+    ``docs/index.md`` writes
     ``freeEnergyAlongExhaustion_latticeGraph_{continuousAt, differentiableAt}_{beta,
     field, J, joint}`` -- one shorthand for eight results, with the spacing of an
     English list. Splitting the citation body on every whitespace run cut it at
@@ -746,10 +754,11 @@ class SpacedBraceCitationTest(unittest.TestCase):
     search to fall back on, so the eight results reached no verdict at all.
 
     Measured at ``2380eb36``: 133 name-shaped tokens of this shape (102 in
-    ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
-    declarations, 160 of which a whole-library sweep reported as carrying no
-    evidence -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
-    cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
+    ``docs/index.md``, 31 in the proof guide the repository tracked then) expand
+    onto 307 declarations, 160 of which a whole-library sweep reported as carrying
+    no evidence -- among them
+    ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``, cited at
+    ``docs/index.md:1979``. That is
     the fatal error class, so the split is pinned here from both sides: the
     spaced citation must survive whole, and the plain whitespace split must keep
     every token it produced before.
@@ -815,7 +824,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
         )
 
     def test_the_real_documentation_cites_the_measured_example(self) -> None:
-        """End-to-end: the two real citation sites reach the declaration."""
+        """End-to-end: the real citation site reaches the declaration."""
         target = "freeEnergyAlongExhaustion_latticeGraph_continuousAt_J"
         labels = {
             doc.label
@@ -823,7 +832,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
             for token, _line in doc.tokens
             if "{" in token and target in dcs.expand_braces(token)
         }
-        self.assertEqual(labels, {"docs/index.md", "tex/proof-guide.tex"})
+        self.assertEqual(labels, {"docs/index.md"})
 
     def test_the_measured_example_is_a_published_result(self) -> None:
         """The verdict the defect inverted, replayed against the real tree."""
@@ -1366,19 +1375,38 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             unreadable=[],
         )
 
+    @classmethod
+    def rows(cls) -> dcs.DocSource:
+        """Return a documentation source spelling the two measured rows.
+
+        The rows were read from the retired proof guide; the shapes they pin --
+        a qualified brace product and a qualified glob -- are properties of the
+        citation reader and of the tree, not of that file, so they are replayed
+        from a source that carries the same two tokens *and their raw text*. The
+        text matters: with an empty document the "never as exact" half of
+        :meth:`test_the_two_measured_rows_add_exactly_20_shorthand_charges`
+        would pass because no literal search can hit, rather than because a
+        shorthand row does not spell the names it abbreviates.
+        """
+        text = f"| {cls.ROW_3867_TOKEN} | row |\n| {cls.ROW_27030_TOKEN} | row |\n"
+        return dcs.DocSource(
+            label="docs/index.md",
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=[(cls.ROW_3867_TOKEN, 1), (cls.ROW_27030_TOKEN, 2)],
+            unreadable=[],
+        )
+
     def real_names(self) -> list[str]:
-        """Return the exact 20 declarations named at the two real sites."""
+        """Return the exact 20 declarations named at the two measured rows."""
         return [
             name
             for names in self.ROW_3867.values()
             for name in names
         ] + self.ROW_27030
 
-    def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
-        """Brace composition yields 4/1/4/4 matches, then the second site 7."""
-        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
-        self.assertIn((self.ROW_3867_TOKEN, 3869), guide.tokens)
-        self.assertIn((self.ROW_27030_TOKEN, 27037), guide.tokens)
+    def test_the_two_measured_rows_resolve_to_13_and_7_declarations(self) -> None:
+        """Brace composition yields 4/1/4/4 matches, then the second row 7."""
         patterns = dcs.expand_citation_token(self.ROW_3867_TOKEN)
         self.assertEqual(patterns, sorted(self.ROW_3867))
 
@@ -1392,27 +1420,27 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             expected,
         )
 
-    def test_the_two_real_sites_add_exactly_20_shorthand_charges(self) -> None:
+    def test_the_two_measured_rows_add_exactly_20_shorthand_charges(self) -> None:
         """The raw row tokens charge 13 plus 7 declarations, never as exact."""
         verdicts = dcs.classify(
-            tree(), self.real_names(), docs(), allow_homonym=False
+            tree(), self.real_names(), [self.rows()], allow_homonym=False
         )[0]
-        counts = {3869: 0, 27037: 0}
+        counts = {1: 0, 2: 0}
         for verdict in verdicts:
             for citation in verdict.doc_citations:
                 for line, token in (
-                    (3869, self.ROW_3867_TOKEN),
-                    (27037, self.ROW_27030_TOKEN),
+                    (1, self.ROW_3867_TOKEN),
+                    (2, self.ROW_27030_TOKEN),
                 ):
-                    if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
+                    if citation.startswith(f"shorthand docs/index.md:{line}:"):
                         self.assertIn(token, citation)
                         counts[line] += 1
                     self.assertFalse(
-                        citation.startswith(f"exact tex/proof-guide.tex:{line}:")
+                        citation.startswith(f"exact docs/index.md:{line}:")
                         and token in citation,
                         (verdict.decl.full, citation),
                     )
-        self.assertEqual(counts, {3869: 13, 27037: 7})
+        self.assertEqual(counts, {1: 13, 2: 7})
 
     def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
         """A qualified glob selects the root namespace, while bare keeps finals."""
@@ -1830,19 +1858,21 @@ class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
     :data:`dcs.NO_EVIDENCE_REASON` prints "no citation in the scanned
-    documentation". While only ``docs/index.md`` and the guide were read, that
-    sentence was a claim about two files: ``README.md`` cites
+    documentation". While only ``docs/index.md`` and the retired proof guide
+    were read, that sentence was a claim about two files: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
     """
 
     def test_readme_and_every_docs_markdown_are_scanned(self) -> None:
-        """The scanned set is README.md, docs/**/*.md and the TeX guide."""
+        """The scanned set is exactly README.md and docs/**/*.md."""
         labels = {source.label for source in docs()}
         self.assertIn("README.md", labels)
         self.assertIn("docs/index.md", labels)
-        self.assertIn("tex/proof-guide.tex", labels)
         for path in dcs.DOCS_DIR.rglob("*.md"):
             self.assertIn(dcs.rel(path), labels)
+        self.assertEqual(
+            labels, {"README.md"} | {dcs.rel(p) for p in dcs.DOCS_DIR.rglob("*.md")}
+        )
 
     def test_readme_citation_is_seen(self) -> None:
         """The real README citation reaches the channel, verbatim and as a token."""
@@ -1855,12 +1885,12 @@ class DocScopeTest(unittest.TestCase):
 class MissingDocumentationTest(unittest.TestCase):
     """A documentation channel that vanishes must stop the run, not shrink it.
 
-    Every citation lives in one of three tracked files. If one of them is gone
+    Every citation lives in a tracked file. If one of them is gone
     -- moved, renamed, checked out partially -- the channel contributes no token
     and no literal text, so every name cited *only* there becomes uncited, and
     the run still prints "no citation in the scanned documentation": a
     no-evidence verdict resting on evidence that was never read. So the
-    absence is a hard failure (exit 2), like the canaries.
+    absence is a hard failure (exit 2), like the canary.
     """
 
     def missing(self, attribute: str, replacement: Path) -> list[str]:
@@ -1875,9 +1905,8 @@ class MissingDocumentationTest(unittest.TestCase):
             setattr(dcs, attribute, original)
 
     def test_each_channel_is_required(self) -> None:
-        """The guide, the README and the progress index each abort when absent."""
+        """The README and the progress index each abort when absent."""
         for attribute, replacement, expected in (
-            ("TEX_GUIDE", dcs.REPO_ROOT / "tex" / "no-such-guide.tex", "tex/no-such-guide.tex"),
             ("README", dcs.REPO_ROOT / "no-such-readme.md", "no-such-readme.md"),
             ("DOCS_DIR", dcs.REPO_ROOT / "no-such-docs", "no-such-docs/index.md"),
         ):
@@ -1888,18 +1917,18 @@ class MissingDocumentationTest(unittest.TestCase):
         """The check must not fire on a healthy tree."""
         dcs.require_documentation()
 
-    def test_a_missing_guide_fails_the_whole_run(self) -> None:
-        """End to end: the CLI exits 2 rather than reporting a silent tex channel."""
-        original = dcs.TEX_GUIDE
-        dcs.TEX_GUIDE = dcs.REPO_ROOT / "tex" / "no-such-guide.tex"
+    def test_a_missing_channel_fails_the_whole_run(self) -> None:
+        """End to end: the CLI exits 2 rather than reporting a silent channel."""
+        original = dcs.README
+        dcs.README = dcs.REPO_ROOT / "no-such-readme.md"
         try:
             out, err = io.StringIO(), io.StringIO()
             with redirect_stdout(out), redirect_stderr(err):
                 code = dcs.main(["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"])
         finally:
-            dcs.TEX_GUIDE = original
+            dcs.README = original
         self.assertEqual(code, dcs.EXIT_INCONSISTENT, out.getvalue())
-        self.assertIn("no-such-guide.tex", err.getvalue())
+        self.assertIn("no-such-readme.md", err.getvalue())
         # No report at all: an aborted run must not print a classification whose
         # documentation channel was never read.
         self.assertNotIn("== dead-candidate scan ==", out.getvalue())
@@ -2066,8 +2095,9 @@ class TexCoverageTest(unittest.TestCase):
     def test_nested_citation_is_not_residue_of_its_wrapper(self) -> None:
         """The inner span is read recursively, so the outer one is not a gap.
 
-        Ten of the guide's warnings were this self-inflicted false positive, and
-        a coverage count is worthless if the tool inflates it itself.
+        Ten warnings measured on the retired proof guide were this
+        self-inflicted false positive, and a coverage count is worthless if the
+        tool inflates it itself.
         """
         _normalized, warnings = dcs.normalize_tex(
             r"\texttt{(removed; archived \texttt{archive/branch-name})}"
@@ -2079,10 +2109,9 @@ class TexCoverageTest(unittest.TestCase):
         spans = dcs.code_citation_spans(r"\texttt{prose \texttt{inner_name_here} tail}")
         self.assertIn("inner_name_here", [body for body, _offset in spans])
 
-    def test_real_guide_yields_its_brace_family_citations(self) -> None:
-        """End to end: the guide's brace families are tokens, not blind spots."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        tokens = {token for token, _line in tex.tokens}
+    def test_docs_yield_their_brace_family_citations(self) -> None:
+        """End to end: brace families in the scanned docs are tokens, not blind spots."""
+        tokens = {token for doc in docs() for token, _line in doc.tokens}
         self.assertIn("magnetization_convergent_{J,h,beta}_latticeGraph", tokens)
         self.assertGreater(len([t for t in tokens if "{" in t]), 50)
 
@@ -2098,33 +2127,29 @@ class EnsureMathTest(unittest.TestCase):
         self.assertIn("fieldPolymerZℂ_ofReal", normalized)
         self.assertEqual(warnings, [])
 
-    def test_real_guide_has_no_name_shaped_blind_spot(self) -> None:
-        """Every span the guide leaves unreadable is prose, not a name citation.
+    def test_the_scanned_documentation_charges_nothing(self) -> None:
+        """No scanned source leaves an unreadable span, so nothing is charged.
 
-        The measured state of main: no unreadable span at all (the three type
-        signatures written with ``\\to`` are read since the macro table carries
-        the arrow), and therefore nothing charged to any declaration. A failure
-        here is a maintenance signal, not a flake -- the macro table needs the
-        entry, or those names go out as ``uncertain``.
+        Only the TeX reader raises such a span and no ``.tex`` document is
+        tracked, so this is the measured state rather than a tolerance. A
+        failure here means a source acquired spans the normaliser cannot read,
+        and every candidate would go out as ``uncertain``.
         """
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        self.assertLessEqual(len(tex.unreadable), 5, [w.message for w in tex.unreadable])
-        charged = [
-            (span.line, decl.final)
-            for span in tex.unreadable
-            for decl in tree().decls
-            if not decl.anonymous and span.could_cite_decl(decl)
-        ]
-        self.assertEqual(charged, [])
+        spans = [span for doc in docs() for span in doc.unreadable]
+        self.assertEqual([span.message for span in spans], [])
 
-    def test_real_guide_publishes_the_complex_family(self) -> None:
-        """The 16 ``...ℂ...`` names of section 18 were invisible before the unwrap."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        for name in (
-            "fieldPolymerZℂ_ne_zero",
-            "norm_fieldMayerExpansionTermℂ_le_tree_activity_pow",
+    def test_the_complex_family_is_read_through_the_unwrap(self) -> None:
+        """The ``...ℂ...`` names were invisible before the two-stage unwrap."""
+        for spelling, name in (
+            (r"\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}",
+             "fieldPolymerZℂ_ne_zero"),
+            (r"\texttt{norm\_fieldMayerExpansionTerm\ensuremath{\mathbb{C}}"
+             r"\_le\_tree\_activity\_pow}",
+             "norm_fieldMayerExpansionTermℂ_le_tree_activity_pow"),
         ):
-            self.assertTrue(dcs.find_occurrences(tex.text, name), name)
+            normalized, warnings = dcs.normalize_tex(spelling)
+            self.assertEqual(warnings, [], name)
+            self.assertTrue(dcs.find_occurrences(normalized, name), name)
 
 
 class UnreadableCitationTest(unittest.TestCase):
@@ -2240,11 +2265,10 @@ class TexChannelLimitTest(unittest.TestCase):
     they escape differently: a ``%`` comment inside a citation (``L7a``) and a
     bare line break inside one (``L7c``) parse into a clean span, so there is no
     residue to charge, while an unrecognised wrapper (``L7b``) yields no span at
-    all. The first two are properties
-    of the *parser* only, because :func:`dcs.run_tex_canary` forbids them in the
-    guide (see :class:`CanaryTest`); the tests below pin the parser behaviour so
-    that a future fix is noticed as a *test failure* instead of shipping
-    unremarked.
+    all. All three are properties of the *parser* only while no ``.tex``
+    document is tracked; the tests below pin that behaviour so that a future
+    fix is noticed as a *test failure* instead of shipping unremarked, and so
+    that a document fed to the reader again meets a described parser.
     """
 
     def test_a_comment_inside_a_citation_is_a_silent_gap(self) -> None:
@@ -2295,7 +2319,7 @@ class TexChannelLimitTest(unittest.TestCase):
         self.assertIn("%", dcs.LIMITATIONS)
         self.assertIn(r"{\tt", dcs.LIMITATIONS)
         self.assertIn("L7c", dcs.LIMITATIONS)
-        self.assertIn("run_tex_canary", dcs.LIMITATIONS)
+        self.assertIn("tex_citation_line_breaks", dcs.LIMITATIONS)
 
     def test_unreadable_citation_forces_uncertain(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
@@ -2408,7 +2432,20 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """219 candidates -> 103 uncertain (15 of them no-evidence) / 81 / 35.
+        """219 candidates -> 103 uncertain (15 of them no-evidence) / 84 / 32.
+
+        Recalibrated by the removal of the proof guide (issue #4994), which took
+        a whole documentation channel out of the scan. Exactly three members
+        move, all ``published-result -> load-bearing``:
+        ``freeEnergyΛ_nonneg_of_ferromagnetic``,
+        ``log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic`` and
+        ``vdPolymerFamilies_sum_tanh_gt_one_iff_ferromagnetic``. Each was cited
+        only by the guide, so its documentation evidence is gone with the
+        document; each keeps Lean consumers, which is why none reaches the
+        no-evidence state. That direction is the one to check on a removal: the
+        no-evidence count and the ``uncertain`` bucket are unchanged at 15 and
+        103, so no declaration was left with nothing at all arguing for keeping
+        it.
 
         Issue #4976 folded the retired fourth class into ``uncertain``, so the
         bucket that read 88 now reads 88 + 15 = 103 (re-measured, not
@@ -2451,7 +2488,7 @@ class FamilyCalibrationTest(unittest.TestCase):
         and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
         deviation_pos_ferromagnetic`` go ``no-evidence -> charged`` (charged
         by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
-        5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
+        5 matches, and by ``docs/index.md:2117``
         ``log_*_deviation_pos_ferromagnetic``, 5 matches);
         ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
         ``no-evidence -> load-bearing`` and
@@ -2507,8 +2544,8 @@ class FamilyCalibrationTest(unittest.TestCase):
         self.assertEqual(len(verdicts), 219)
         self.assertEqual(sum(1 for v in verdicts if no_evidence(v)), 15)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 103)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
-        self.assertEqual(counts.get(dcs.PUBLISHED), 35)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 84)
+        self.assertEqual(counts.get(dcs.PUBLISHED), 32)
 
     def test_zero_consumer_count(self) -> None:
         """110 of the 219 have no Lean consumer at all.
@@ -2641,17 +2678,7 @@ class CanaryTest(unittest.TestCase):
             dcs.run_canary(plain)
         self.assertIn("degenerated", str(caught.exception))
 
-    def test_no_guide_citation_is_broken_across_a_line(self) -> None:
-        """The real guide keeps every code citation on one line.
-
-        A citation split across lines is invisible to *both* halves of the TeX
-        channel and warns about nothing (``L7a``/``L7c``), so the guard has to
-        be a property of the guide rather than of the parser.
-        """
-        citations = dcs.run_tex_canary()
-        self.assertGreater(citations, 1000)
-
-    def test_the_canary_rejects_a_broken_citation(self) -> None:
+    def test_the_line_break_check_rejects_a_broken_citation(self) -> None:
         """Both flavours of the break -- with and without ``%`` -- are caught."""
         for source in ("\\texttt{foo\\_%\nbar}", "\\texttt{foo\\_\nbar}"):
             citations, broken = dcs.tex_citation_line_breaks(source)
@@ -2660,21 +2687,23 @@ class CanaryTest(unittest.TestCase):
         self.assertEqual(dcs.tex_citation_line_breaks("\\texttt{foo\\_bar}")[1], [])
 
     def test_the_names_the_break_used_to_hide_are_visible(self) -> None:
-        """The four published results the broken citations hid are found again.
+        """The four published results the broken citations hid are still cited.
 
-        Each was cited only in a citation the guide split across a line, so the
-        TeX channel saw nothing while reporting zero coverage warnings; only an
-        unrelated ``docs/`` citation kept evidence attached to them.
+        Each was cited only in a citation the retired proof guide split across a
+        line, so the TeX channel saw nothing while reporting zero coverage
+        warnings; the ``docs/`` citation that rescued them then is the one that
+        carries them now, so it is what this pins.
         """
-        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
+        sources = docs()
         for name in (
             "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_ball",
             "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform",
             "plusStateExpectation_eq_minusStateExpectation_originObs",
             "polymerFreeEnergy_analyticOnNhd_Ici_zero",
         ):
-            self.assertTrue(dcs.find_occurrences(guide.text, name), name)
-            self.assertIn(name, [token for token, _line in guide.tokens], name)
+            self.assertTrue(
+                any(dcs.find_occurrences(source.text, name) for source in sources), name
+            )
 
 
 class FixtureTest(unittest.TestCase):

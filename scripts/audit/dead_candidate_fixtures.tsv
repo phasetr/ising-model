@@ -88,7 +88,7 @@ pseudoMassG_le_two_div_one_add_pow_of_preimage_le	published-result	docs/index.md
 freeEnergyAlongExhaustion_nonneg_of_ferromagnetic	load-bearing	3 consumers; Concrete/CubicFreeEnergy.lean:263 proves the GJ Prop 4.6.1 row of docs/index.md:401
 
 # --- Unicode identifiers must behave exactly like ASCII ones ---
-freeEnergyΛ_nonneg_of_ferromagnetic	published-result	3 consumers; the U+039B in the name must not split the key
+freeEnergyΛ_nonneg_of_ferromagnetic	load-bearing	3 consumers; the U+039B in the name must not split the key. Its documentation citation was in the retired proof guide, so the Lean channel is now the one that answers
 correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; same
 
 # --- A zero-consumer declaration conservatively retained by shorthand evidence ---
@@ -96,17 +96,16 @@ correlationΛ_high_temp_h_zero_nonneg	published-result	3 consumers; same
 # 7-of-7 ferromagnetic and 5-of-5 pair-positive shorthands charge it.
 Ambient.correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic	uncertain	zero Lean consumers; synchronized shorthands charge all 7 of 7 ferromagnetic and all 5 of 5 pair-positive declarations
 
-# --- TeX channel: names spelled with \_ and $\Lambda$ / \(\Lambda\) ---
-log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	tex/proof-guide.tex spells it \texttt{log\_partitionFunction\(\Lambda\)\_...}
-freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	tex/proof-guide.tex spells it \texttt{freeEnergy$\Lambda$\_...}
-
-# --- TeX channel: the two-stage \ensuremath{\mathbb{C}} unwrap ---
-# 16 section-18 names are spelled \texttt{...\ensuremath{\mathbb{C}}...}; before
-# the unwrap all 16 were invisible to the TeX channel, while the run printed the
-# 20 warnings that said so and exited 0 anyway. Both rows *also* pass on
-# docs/index.md alone -- which is why they never reported a false absence -- so the row
-# that pins the unwrap itself is EnsureMathTest in
-# scripts/test_dead_candidate_scan.py, asserting the names are findable in the
-# normalised TeX. These two rows record the case; the unit test guards it.
-fieldPolymerZℂ_ne_zero	published-result	tex/proof-guide.tex:18996 \texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}
-norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	tex/proof-guide.tex:18893 same spelling, name longer than the 60-char warning excerpt
+# --- Names carrying a Greek letter or a blackboard-bold character ---
+# These four were the TeX channel's fixtures while a proof guide was tracked: it
+# spelled them \texttt{log\_partitionFunction\(\Lambda\)\_...},
+# \texttt{freeEnergy$\Lambda$\_...} and \texttt{...\ensuremath{\mathbb{C}}...}.
+# Each is also cited by docs/index.md, which is why the guide's removal reports
+# no false absence for them and why they stay published-result: the Markdown
+# channel now answers for the whole Unicode-key question. The TeX spellings
+# themselves are pinned by unit tests in scripts/test_dead_candidate_scan.py
+# (TexNormalisationTest, EnsureMathTest), which need no document to run.
+log_partitionFunctionΛ_latticeGraph_biUnion_super_additive	published-result	cited at docs/index.md:422 (GJ Prop 4.6.1 tiling row)
+freeEnergyΛ_eq_tsum_mayer_of_high_temp	published-result	cited at docs/index.md:2153 (Sec 18.5 Lambda-layer Mayer row)
+fieldPolymerZℂ_ne_zero	published-result	cited at docs/index.md:2118 (Sec 17.6.1 brick 6 row)
+norm_fieldMayerExpansionTermℂ_le_tree_activity_pow	published-result	cited at docs/index.md:2118 (same row, Penrose majorant bound)

@@ -4,7 +4,7 @@
 What this is
 ------------
 Hand-maintained canonical prose in this repository -- Lean module ``/-!``
-headers, ``docs/index.md`` and ``tex/proof-guide.tex`` -- carries a second copy
+headers and the Markdown documents -- carries a second copy
 of a mechanically derivable fact: *how many* declarations a module holds, and
 *which module* a group of declarations now lives in.  Those sentences are true
 when written and false after the next split, which is why the same stale-header
@@ -607,7 +607,7 @@ def _raw_string_opener(text: str, index: int) -> tuple[int, str] | None:
 def decompose_document(text: str) -> Decomposition:
     """Return the whole of ``text`` as one prose region.
 
-    ``docs/index.md`` and ``tex/proof-guide.tex`` are prose end to end; there is
+    A document is prose end to end; there is
     no code/comment distinction to get wrong, so the decomposition is total and
     ``K2`` degenerates to "every anchor is in prose" for them -- which is the
     honest statement, not a weakening.  ``module_doc`` is irrelevant for them:
