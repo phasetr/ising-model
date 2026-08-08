@@ -2,18 +2,21 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume energy and partition bounds
+# Boltzmann weights and energy bounds at finite volume in ℤ^d
 
-Narrow child module for direct concrete `latticeGraph` finite-volume
-Boltzmann-weight, Hamiltonian, partition-function, and free-energy bound
-wrappers. The theorem names are the same as the former declarations, but
-callers can now avoid importing the monolithic concrete module.
+Records how the Boltzmann weight over the sites of a finite `Λ ⊆ ℤ^d` responds to
+enlarging the graph: passing to a larger graph on the same sites multiplies the weight by
+the product of the edge factors gained, which is stated for an arbitrary pair of comparable
+graphs on those sites rather than only for the induced nearest-neighbor one. On the
+subgraph induced by the nearest-neighbor lattice graph, the Boltzmann weight is positive,
+the finite-volume partition function is nonzero, and the Hamiltonian is bounded in absolute
+value by `|J|` times the number of edges plus `|h|` times the number of sites. The graph
+inclusion is the only hypothesis anywhere here; the parameter record and the configuration
+are arbitrary.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d finite-volume energy and partition bounds -/
 
 /-- **ℤ^d boltzmannWeight_subgraph_factor direct** (Λ-induced):
 `w_{G₂} = (∏_e exp(...)) · w_{G₁}` for `G₁ ≤ G₂` on `↑Λ`. -/
@@ -58,15 +61,6 @@ theorem hamiltonianΛ_latticeGraph_abs_le
         + |p.h| * Fintype.card (↑Λ : Type _) :=
   IsingModel.hamiltonian_abs_le
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p σ
-
-/-! ## Moved: freeEnergyΛ / partitionFunctionΛ upper / lower wrappers
-
-The three wrappers
-`freeEnergyΛ_latticeGraph_upper_bound`,
-`partitionFunctionΛ_latticeGraph_upper`,
-`partitionFunctionΛ_latticeGraph_lower` now live in
-`FiniteVolumeEnergyBoundsPartition.lean`. -/
-
 
 end Ambient
 end IsingModel

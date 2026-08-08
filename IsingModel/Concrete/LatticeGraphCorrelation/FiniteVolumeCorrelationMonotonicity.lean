@@ -2,18 +2,23 @@ import IsingModel.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume correlation monotonicity wrappers
+# Gibbs expectations and the coupling slice of the correlation at finite volume in ℤ^d
 
-Narrow child module for direct concrete `latticeGraph` finite-volume HNC,
-Gibbs-expectation, and correlation monotonicity/convergence wrappers. The
-theorem names are the same as the former declarations, but callers can
-now avoid importing the monolithic concrete module.
+Records, on the subgraph induced by the nearest-neighbor lattice graph on a finite
+`Λ ⊆ ℤ^d`, the covariance inequality behind the reweighting arguments: the unnormalized
+covariance of a spin product against a function with nonnegative correlations is
+nonnegative at a ferromagnetic parameter record. It also records the Gibbs expectation as
+the inverse partition function times the unnormalized expectation, the transfer of
+nonnegativity from that unnormalized expectation to the Gibbs expectation, and the range of
+the correlation read as a function of the coupling: nonnegative by the first Griffiths
+inequality under `0 ≤ J`, `0 ≤ h` and `0 < β`, and at most `1` with no condition on the
+parameters at all. The ferromagnetic and nonnegative-correlations conditions belong to the
+covariance inequality alone; the ratio presentation holds at an arbitrary parameter record,
+and the nonnegativity transfer holds there under its numerator hypothesis.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d finite-volume expectation and correlation monotonicity wrappers -/
 
 /-- **ℤ^d cov_hnc_boltzmann_nonneg direct** (Λ-induced, ferromagnetic):
 covariance bound for HNC `f` with Boltzmann weight. -/
@@ -58,15 +63,6 @@ theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
   IsingModel.gibbsExpectation_nonneg_of_numerator_nonneg
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p F hnum
 
-/-! ## Moved: correlation_monotone_{J,h,β} wrappers
-
-The three wrappers
-`correlation_monotone_J_latticeGraph`,
-`correlation_monotone_h_latticeGraph`,
-`correlation_monotone_beta_latticeGraph` now live in
-`FiniteVolumeCorrelationMonotonicityMonotone.lean`. -/
-
-
 /-- **ℤ^d correlationJ_nonneg direct** (Λ-induced, ferromagnetic): for
 `h ≥ 0`, `β > 0`, and `J ≥ 0`, `0 ≤ correlationJ (inducedGraph … Λ) h β B J`.
 Thin pass-through of `IsingModel.correlationJ_nonneg`; GJ §4.2 Prop 4.2.1
@@ -89,15 +85,6 @@ theorem correlationJ_le_one_latticeGraph
         (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B J ≤ 1 :=
   IsingModel.correlationJ_le_one
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β B J
-
-/-! ## Moved: correlation_convergent_* wrappers
-
-The three `correlation_convergent_latticeGraph`,
-`correlation_convergent_h_latticeGraph`,
-`correlation_convergent_beta_latticeGraph` wrappers now live in
-`FiniteVolumeCorrelationMonotonicityConvergent.lean`. -/
-
-
 
 end Ambient
 end IsingModel

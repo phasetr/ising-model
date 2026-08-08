@@ -2,14 +2,17 @@ import IsingModel.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlation_convergent wrappers
+# Convergence of finite-volume correlations along integer parameter sequences in ℤ^d
 
-Narrow child module for three ℤ^d Λ-induced ferromagnetic correlation
-convergence wrappers extracted from `FiniteVolumeCorrelationMonotonicity.lean`:
-
-* `correlation_convergent_latticeGraph` (along J),
-* `correlation_convergent_h_latticeGraph`,
-* `correlation_convergent_beta_latticeGraph`.
+Records that on the subgraph induced by the nearest-neighbor lattice graph on a finite
+`Λ ⊆ ℤ^d` the correlation of a fixed spin product converges as one parameter runs to
+infinity through the natural numbers with the other two held fixed: along the coupling,
+along the external field, and along the inverse temperature, the last taken along `n + 1`
+so that the sequence stays strictly positive. Each statement assumes nonnegativity of the
+two parameters held fixed, strengthened to strict positivity when the inverse temperature
+is one of them. The limit comes from the monotone-and-bounded route of Glimm–Jaffe's
+Theorem 4.2.3, p. 59, taken here in a parameter direction at fixed `Λ` rather than in the
+volume direction.
 -/
 
 namespace IsingModel

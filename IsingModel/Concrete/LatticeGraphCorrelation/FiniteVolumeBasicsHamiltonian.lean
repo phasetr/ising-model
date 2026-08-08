@@ -2,14 +2,16 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete Hamiltonian flip / symmetry wrappers
+# Spin-flip symmetry of the finite-volume energy in ℤ^d
 
-Narrow child module for five ℤ^d Hamiltonian flip / negative-field /
-bottom-graph wrappers at the Λ layer (`edgeSpin_flip`,
-`interactionEnergy_flip`, `hamiltonianΛ_flip_eq`,
-`hamiltonianΛ_neg_h`, and `hamiltonian_bot`). Each wrapper is a thin
-pass-through to the corresponding `IsingModel.*` lemma at the induced
-graph.
+Records how the energy of a configuration on a finite `Λ ⊆ ℤ^d` responds to a global spin
+flip: the per-edge spin product is invariant, with no graph entering that statement; the
+interaction energy of the subgraph induced by the nearest-neighbor lattice graph is
+invariant, as is its full Hamiltonian once the external field vanishes; and reversing the
+sign of the field has the same effect on that Hamiltonian as flipping the configuration.
+On the edgeless graph over the sites of `Λ` the energy reduces to the field term alone.
+The vanishing-field condition belongs to the Hamiltonian invariance alone; the coupling,
+the field and the inverse temperature are otherwise unconstrained.
 -/
 
 open scoped symmDiff

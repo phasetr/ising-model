@@ -2,20 +2,15 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyΛ / partitionFunctionΛ upper / lower bounds
+# Free-energy and partition-function bounds at finite volume in ℤ^d
 
-Narrow child module for three ℤ^d Λ-layer free-energy and
-partition-function bound wrappers extracted from
-`FiniteVolumeEnergyBounds.lean`:
-
-* `freeEnergyΛ_latticeGraph_upper_bound`,
-* `partitionFunctionΛ_latticeGraph_upper`,
-* `partitionFunctionΛ_latticeGraph_lower`.
-
-Each result is a thin pass-through of the corresponding abstract
-`IsingModel.*` lemma on the Λ-induced graph at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `FiniteVolumeEnergyBounds` declarations.
+Records the crude energy bounds for the subgraph induced by the nearest-neighbor lattice
+graph on a finite `Λ ⊆ ℤ^d`: the partition function is at least
+`exp(-|β|·(|J|·|E| + |h|·|Λ|))` and at most the number of configurations times
+`exp(|β|·(|J|·|E| + |h|·|Λ|))`, and the free energy per site is at most
+`log 2 + |β|·(|J|·|E| + |h|·|Λ|) / |Λ|`. Only the free-energy statement requires `Λ` to
+carry at least one site, since it divides by the site count; the partition-function bounds
+hold at an arbitrary parameter record and an arbitrary `Λ`.
 -/
 
 namespace IsingModel

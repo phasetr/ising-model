@@ -2,14 +2,18 @@ import IsingModel.Inequalities.GHS
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-induced truncated-four-point wrappers
+# The truncated four-point function at finite volume in ℤ^d
 
-Narrow child module for three ℤ^d Λ-induced truncated-four-point
-inequalities extracted from `FiniteVolumeCorrelationInequalities.lean`:
+Records the truncated four-point function of the subgraph induced by the nearest-neighbor
+lattice graph on a finite `Λ ⊆ ℤ^d` on the decoupled slices and under the ferromagnetic
+condition: it vanishes at zero inverse temperature, it equals `-2·tanh(β·h)^4` at zero
+coupling and pairwise distinct sites, and it is nonpositive at zero external field for a
+ferromagnetic parameter record and pairwise distinct sites. The zero-inverse-temperature
+statement holds at arbitrary, possibly repeated, sites and imposes no condition on the
+coupling or the external field.
 
-* `truncated4_beta_zero_latticeGraph`,
-* `truncated4_J_zero_of_pairwise_distinct_latticeGraph`,
-* `cor_4_3_3_latticeGraph`.
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.3, p. 61; the reading as `U_4 ≤ 0` is the remark
+on p. 62.
 -/
 
 namespace IsingModel

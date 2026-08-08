@@ -2,16 +2,13 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d ferromagnetic 2^|Λ| / (2 cosh)^|Λ| partition-function wrappers
+# Extensive ferromagnetic lower bounds on the finite-volume partition function in ℤ^d
 
-Narrow child module for four ℤ^d ferromagnetic finite-volume
-partition-function lower-bound wrappers extracted from
-`FiniteVolumePartitionBounds.lean`:
-
-* `partitionFunction_ge_two_pow_card_of_ferromagnetic_latticeGraph`,
-* `partitionFunction_ge_two_cosh_pow_card_of_ferromagnetic_latticeGraph`,
-* `log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic_latticeGraph`,
-* `log_partitionFunction_ge_card_mul_log_two_cosh_of_ferromagnetic_latticeGraph`.
+Records that under the ferromagnetic condition the partition function of the subgraph
+induced by the nearest-neighbor lattice graph on a finite `Λ ⊆ ℤ^d` is bounded below by `2`
+and by `2·cosh(β·h)`, each raised to the number of sites, in the multiplicative form and in
+the logarithmic form alike. The ferromagnetic condition is the only hypothesis, and `Λ` is
+not required to be nonempty.
 -/
 
 namespace IsingModel

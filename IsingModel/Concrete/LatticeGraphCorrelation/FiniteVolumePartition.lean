@@ -2,27 +2,20 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume partition-function wrappers
+# Closed forms and field symmetry of the finite-volume partition function in ℤ^d
 
-Narrow child module for direct concrete `latticeGraph` finite-volume
-`partitionFunction` monotonicity, trivial-slice, and h-symmetry wrappers. The
-theorem names are the same as the former declarations, but callers can
-now avoid importing the monolithic concrete module.
+Records the values taken by the partition function of the subgraph induced by the
+nearest-neighbor lattice graph on a finite `Λ ⊆ ℤ^d` on the parameter slices where the
+sites decouple, together with its behavior under reversing the field. At zero coupling it
+is `2·cosh(β·h)` raised to the number of sites; at zero inverse temperature, and likewise
+at zero coupling and zero field together, every configuration carries weight `1` and the
+value is the number of configurations. Reversing the sign of the external field leaves the
+partition function unchanged. No hypothesis is imposed in any of these statements: each
+slice is expressed by fixing entries of the parameter record.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d direct finite-volume partition-function wrappers -/
-
-/-! ## Moved: partitionFunction monotone wrappers
-
-The three wrappers
-`partitionFunction_monotone_h_latticeGraph`,
-`partitionFunction_monotone_J_latticeGraph`,
-`partitionFunction_monotone_beta_latticeGraph` now live in
-`FiniteVolumePartitionMonotone.lean`. -/
-
 
 /-- **ℤ^d partitionFunction_J_zero direct** at Λ-induced:
 `Z_Λ at ⟨0, h, β⟩ = (2·cosh(β·h))^|Λ|`. -/

@@ -2,20 +2,15 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume partition-function ferromagnetic wrappers
+# Ferromagnetic bounds on the finite-volume partition function in ℤ^d
 
-Narrow child module for 3 ℤ^d `latticeGraph` finite-volume
-`partitionFunction` ferromagnetic / |h|-monotonicity wrappers extracted
-from `FiniteVolumePartitionBounds.lean`:
-
-* `partitionFunction_monotone_abs_h_latticeGraph`,
-* `partitionFunction_ge_one_of_ferromagnetic_latticeGraph`,
-* `log_partitionFunction_nonneg_of_ferromagnetic_latticeGraph`.
-
-Each is a thin pass-through to the corresponding abstract
-`IsingModel.partitionFunction_*` lemma at
-`Ambient.inducedGraph (latticeGraph d) Λ`. The theorem names are
-unchanged from the former `FiniteVolumePartitionBounds` declarations.
+Records, for the subgraph induced by the nearest-neighbor lattice graph on a finite
+`Λ ⊆ ℤ^d`, that the partition function increases with the absolute value of the external
+field, and that under the ferromagnetic condition it is at least `1`, so that its logarithm
+is nonnegative. The monotonicity statement sits in the ferromagnetic regime without taking
+the ferromagnetic condition as a hypothesis: it assumes nonnegative coupling and positive
+inverse temperature, and compares the two fields through `|h₁| ≤ |h₂|` rather than through
+a sign condition on either.
 -/
 
 namespace IsingModel

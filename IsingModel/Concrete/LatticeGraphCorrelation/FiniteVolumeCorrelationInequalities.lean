@@ -2,18 +2,28 @@ import IsingModel.Inequalities.GHS
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume correlation inequality wrappers
+# Correlation and truncated-correlation inequalities at finite volume in ℤ^d
 
-Narrow child module for concrete `latticeGraph` finite-volume correlation and
-truncated-correlation inequality, symmetry, and trivial-slice wrappers. The
-theorem names are the same as the former declarations, but callers can
-now avoid importing the monolithic concrete module.
+Records, on the subgraph induced by the nearest-neighbor lattice graph on a finite
+`Λ ⊆ ℤ^d`, the zero-field bound of the correlation over `S ∪ {j, k}` by the correlation
+over `S` times the pair correlation of `j` and `k`, plus a sum over the splittings of `S`;
+the vanishing of odd-cardinality correlations at zero external field; nonnegativity of the
+truncated two-point function; and nonpositivity of the truncated three-point function at
+pairwise distinct sites.
+
+The zero-field statements put `0` in the field slot of the parameter record. The
+odd-vanishing one adds only that `A` has odd cardinality, imposing no condition on the
+coupling or the inverse temperature; the `S ∪ {j, k}` bound also assumes the ferromagnetic
+condition and that `j` and `k` are distinct and lie outside `S`. The truncated statements
+assume the ferromagnetic condition at an otherwise arbitrary parameter record, and the
+two-point one is stated at sites that need not be distinct.
+
+Reference: Glimm–Jaffe §4.3, Corollary 4.3.5, p. 63, for the `S ∪ {j, k}` bound, which is
+the inductive step of its proof, and Corollary 4.3.4, p. 62, for the GHS inequality.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d finite-volume correlation and truncated-correlation inequalities -/
 
 /-- **ℤ^d Cor 4.3.5 at `h = 0`, Λ-induced subgraph** (GJ §4.3 Cor 4.3.5):
 inductive `(n+2)`-point bound at finite volume. -/
@@ -50,16 +60,6 @@ theorem correlation_odd_vanish_latticeGraph
   IsingModel.correlation_odd_vanish
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β A hodd
 
-/-! ## Moved: truncated{2,3} finite-volume trivial-slice wrappers
-
-The four wrappers
-`truncated2_J_zero_of_ne_latticeGraph`,
-`truncated2_beta_zero_latticeGraph`,
-`truncated3_J_zero_of_pairwise_distinct_latticeGraph`,
-`truncated3_beta_zero_latticeGraph` now live in
-`FiniteVolumeCorrelationInequalitiesTrivialSlice.lean`. -/
-
-
 /-- **ℤ^d truncated2 nonneg** at Λ-induced (ferromagnetic). -/
 theorem truncated2_nonneg_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (p : IsingParams ℝ) (hf : Ferromagnetic p)
@@ -78,15 +78,6 @@ theorem ghs_inequality_latticeGraph
         (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p i j k ≤ 0 :=
   IsingModel.ghs_inequality
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf i j k hij hjk hik
-
-/-! ## Moved: truncated-four-point wrappers
-
-The three `truncated4_beta_zero_latticeGraph`,
-`truncated4_J_zero_of_pairwise_distinct_latticeGraph`, and
-`cor_4_3_3_latticeGraph` wrappers now live in
-`FiniteVolumeCorrelationInequalitiesTruncated4.lean`. -/
-
-
 
 end Ambient
 end IsingModel
