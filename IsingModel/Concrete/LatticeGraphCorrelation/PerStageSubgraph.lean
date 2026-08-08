@@ -3,9 +3,10 @@ import IsingModel.FreeEnergy.SubgraphBounds
 /-!
 # Concrete ℤ^d Λ-induced subgraph monotonicity wrappers
 
-Instantiates the abstract subgraph-monotonicity statements at `IsingModel.latticeGraph d` for
-the partition function, the correlation, the log partition function and the free energy —
-the per-stage comparison that drives the ℤ^d exhaustion limits.
+Specializes the abstract subgraph-monotonicity statements to graphs on the finite
+subtype `↑Λ` of `Fin d → ℤ`, for the partition function, the correlation, the log partition
+function and the free energy — the per-stage comparison that drives the ℤ^d exhaustion
+limits. The compared graphs `G₁ ≤ G₂` stay arbitrary; only the vertex type is fixed.
 -/
 
 namespace IsingModel

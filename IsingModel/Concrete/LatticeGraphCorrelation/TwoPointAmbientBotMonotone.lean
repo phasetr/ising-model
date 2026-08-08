@@ -3,8 +3,8 @@ import IsingModel.AmbientLattice.Monotonicity.AmbientSubgraph
 /-!
 # ℤ^d Λ + alongExhaustion `*_monotone_ambient_subgraph` wrappers
 
-Records monotonicity under enlarging the ambient graph at the Λ and along-exhaustion levels
-for the free energy and the partition function on `IsingModel.latticeGraph d`. Each is a
+Records monotonicity under enlarging an arbitrary ambient graph on `Fin d → ℤ` at the Λ and
+along-exhaustion levels for the free energy and the partition function. Each is a
 pass-through of the corresponding ambient `*_monotone_ambient_subgraph` lemma.
 -/
 
