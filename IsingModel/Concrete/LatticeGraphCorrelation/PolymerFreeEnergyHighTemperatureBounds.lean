@@ -6,9 +6,9 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the high-temperature control
 of the vertex-disjoint compatible polymer-family sum: its sandwich between `1` and
-`(1 + t) ^ |E|` for `0 ≤ t`, its monotonicity on `Set.Ici 0`, and the matching ceiling
-`(1 + t) ^ |E| − 1` on the remainder `ε(t)` left after dropping the empty family. This is the
-convergence input for the ℤ^d GJ §18.5 cluster expansion.
+`(1 + t) ^ |E|` for `0 ≤ t`, its monotonicity on `Set.Ici 0`, and, again for `0 ≤ t`, the
+matching ceiling `(1 + t) ^ |E| − 1` on the remainder `ε(t)` left after dropping the empty
+family. This is the convergence input for the ℤ^d GJ §18.5 cluster expansion.
 -/
 
 namespace IsingModel

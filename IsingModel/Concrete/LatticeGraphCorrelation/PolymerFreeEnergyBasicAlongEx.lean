@@ -6,9 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBasic
 
 Instantiates along an exhaustion at `IsingModel.latticeGraph d` the polymer free energy at
 the two trivial activities — it vanishes at `t = 0` and is the logarithm of the number of
-compatible polymer families at `t = 1` — together with its two-sided bound between `0` and
-`|E| * log (1 + t)` for `0 ≤ t`. These are the ℤ^d base values against which the GJ §18.5
-cluster-expansion estimates are calibrated, stage by stage.
+vertex-disjoint compatible polymer families at `t = 1` — together with its two-sided bound
+between `0` and `|E| * log (1 + t)` for `0 ≤ t`. These are the ℤ^d base values against which
+the GJ §18.5 cluster-expansion estimates are calibrated, stage by stage.
 -/
 
 namespace IsingModel
