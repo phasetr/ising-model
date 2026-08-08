@@ -108,8 +108,8 @@ which owns the proof (Issue #4854); this name is a documented compatibility
 alias and forwards to it.  The routes never differed as proofs: the data-layer
 conversion `toRangeRelCompactData_direct` used previously here is a verbatim
 forward to the `toRangeRelCompactData_closedBallLocal_direct` used by the owner.
-The name is kept because the direct-range route is cited by `docs/index.md`,
-`tex/proof-guide.tex`, and the ℤ^d wrappers in
+The name is kept because the direct-range route is cited by `docs/index.md`
+and the ℤ^d wrappers in
 `PerStageComplex/EventualClosedBallPatches/ClosedBallDeviation.lean`. -/
 theorem
     freeEnergyComplexAlongExhaustion_closedBallBranchDeviationRelCompact_directRange_patch

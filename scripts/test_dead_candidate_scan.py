@@ -43,11 +43,13 @@ and share it.
 from __future__ import annotations
 
 import io
+import os
 import sys
 import tempfile
 import time
 import unittest
-from contextlib import redirect_stderr, redirect_stdout
+from collections.abc import Iterator
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -299,14 +301,22 @@ class TexNormalisationTest(unittest.TestCase):
         _normalized, warnings = dcs.normalize_tex(r"\texttt{foo\unknownmacro bar}")
         self.assertEqual(len(warnings), 1)
 
-    def test_real_guide_contains_the_mangled_names(self) -> None:
-        """End-to-end on the real file: both fixture names must be found."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        for name in (
-            "log_partitionFunctionΛ_latticeGraph_biUnion_super_additive",
-            "freeEnergyΛ_eq_tsum_mayer_of_high_temp",
+    def test_the_mangled_fixture_names_survive_normalisation(self) -> None:
+        """Both fixture names, spelled the way LaTeX spells them, are found."""
+        for spelling, name in (
+            (
+                r"\texttt{log\_partitionFunction\(\Lambda\)\_latticeGraph"
+                r"\_biUnion\_super\_additive}",
+                "log_partitionFunctionΛ_latticeGraph_biUnion_super_additive",
+            ),
+            (
+                r"\texttt{freeEnergy$\Lambda$\_eq\_tsum\_mayer\_of\_high\_temp}",
+                "freeEnergyΛ_eq_tsum_mayer_of_high_temp",
+            ),
         ):
-            self.assertTrue(dcs.find_occurrences(tex.text, name), name)
+            normalized, warnings = dcs.normalize_tex(spelling)
+            self.assertEqual(warnings, [], name)
+            self.assertTrue(dcs.find_occurrences(normalized, name), name)
 
 
 class DocTokenTest(unittest.TestCase):
@@ -735,7 +745,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
 class SpacedBraceCitationTest(unittest.TestCase):
     """A brace alternation spaced like prose is one citation, not several words.
 
-    ``docs/index.md`` and ``tex/proof-guide.tex`` both write
+    ``docs/index.md`` writes
     ``freeEnergyAlongExhaustion_latticeGraph_{continuousAt, differentiableAt}_{beta,
     field, J, joint}`` -- one shorthand for eight results, with the spacing of an
     English list. Splitting the citation body on every whitespace run cut it at
@@ -746,10 +756,11 @@ class SpacedBraceCitationTest(unittest.TestCase):
     search to fall back on, so the eight results reached no verdict at all.
 
     Measured at ``2380eb36``: 133 name-shaped tokens of this shape (102 in
-    ``docs/index.md``, 31 in ``tex/proof-guide.tex``) expand onto 307
-    declarations, 160 of which a whole-library sweep reported as carrying no
-    evidence -- among them ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``,
-    cited at ``docs/index.md:1979`` and ``tex/proof-guide.tex:21095``. That is
+    ``docs/index.md``, 31 in the proof guide the repository tracked then) expand
+    onto 307 declarations, 160 of which a whole-library sweep reported as carrying
+    no evidence -- among them
+    ``freeEnergyAlongExhaustion_latticeGraph_continuousAt_J``, cited at
+    ``docs/index.md:1979``. That is
     the fatal error class, so the split is pinned here from both sides: the
     spaced citation must survive whole, and the plain whitespace split must keep
     every token it produced before.
@@ -815,7 +826,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
         )
 
     def test_the_real_documentation_cites_the_measured_example(self) -> None:
-        """End-to-end: the two real citation sites reach the declaration."""
+        """End-to-end: the real citation site reaches the declaration."""
         target = "freeEnergyAlongExhaustion_latticeGraph_continuousAt_J"
         labels = {
             doc.label
@@ -823,7 +834,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
             for token, _line in doc.tokens
             if "{" in token and target in dcs.expand_braces(token)
         }
-        self.assertEqual(labels, {"docs/index.md", "tex/proof-guide.tex"})
+        self.assertEqual(labels, {"docs/index.md"})
 
     def test_the_measured_example_is_a_published_result(self) -> None:
         """The verdict the defect inverted, replayed against the real tree."""
@@ -1366,19 +1377,38 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             unreadable=[],
         )
 
+    @classmethod
+    def rows(cls) -> dcs.DocSource:
+        """Return a documentation source spelling the two measured rows.
+
+        The rows were read from the retired proof guide; the shapes they pin --
+        a qualified brace product and a qualified glob -- are properties of the
+        citation reader and of the tree, not of that file, so they are replayed
+        from a source that carries the same two tokens *and their raw text*. The
+        text matters: with an empty document the "never as exact" half of
+        :meth:`test_the_two_measured_rows_add_exactly_20_shorthand_charges`
+        would pass because no literal search can hit, rather than because a
+        shorthand row does not spell the names it abbreviates.
+        """
+        text = f"| {cls.ROW_3867_TOKEN} | row |\n| {cls.ROW_27030_TOKEN} | row |\n"
+        return dcs.DocSource(
+            label="docs/index.md",
+            text=text,
+            starts=dcs.line_starts(text),
+            tokens=[(cls.ROW_3867_TOKEN, 1), (cls.ROW_27030_TOKEN, 2)],
+            unreadable=[],
+        )
+
     def real_names(self) -> list[str]:
-        """Return the exact 20 declarations named at the two real sites."""
+        """Return the exact 20 declarations named at the two measured rows."""
         return [
             name
             for names in self.ROW_3867.values()
             for name in names
         ] + self.ROW_27030
 
-    def test_the_two_real_sites_resolve_to_13_and_7_declarations(self) -> None:
-        """Brace composition yields 4/1/4/4 matches, then the second site 7."""
-        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
-        self.assertIn((self.ROW_3867_TOKEN, 3869), guide.tokens)
-        self.assertIn((self.ROW_27030_TOKEN, 27037), guide.tokens)
+    def test_the_two_measured_rows_resolve_to_13_and_7_declarations(self) -> None:
+        """Brace composition yields 4/1/4/4 matches, then the second row 7."""
         patterns = dcs.expand_citation_token(self.ROW_3867_TOKEN)
         self.assertEqual(patterns, sorted(self.ROW_3867))
 
@@ -1392,27 +1422,27 @@ class QualifiedGlobCitationTest(unittest.TestCase):
             expected,
         )
 
-    def test_the_two_real_sites_add_exactly_20_shorthand_charges(self) -> None:
+    def test_the_two_measured_rows_add_exactly_20_shorthand_charges(self) -> None:
         """The raw row tokens charge 13 plus 7 declarations, never as exact."""
         verdicts = dcs.classify(
-            tree(), self.real_names(), docs(), allow_homonym=False
+            tree(), self.real_names(), [self.rows()], allow_homonym=False
         )[0]
-        counts = {3869: 0, 27037: 0}
+        counts = {1: 0, 2: 0}
         for verdict in verdicts:
             for citation in verdict.doc_citations:
                 for line, token in (
-                    (3869, self.ROW_3867_TOKEN),
-                    (27037, self.ROW_27030_TOKEN),
+                    (1, self.ROW_3867_TOKEN),
+                    (2, self.ROW_27030_TOKEN),
                 ):
-                    if citation.startswith(f"shorthand tex/proof-guide.tex:{line}:"):
+                    if citation.startswith(f"shorthand docs/index.md:{line}:"):
                         self.assertIn(token, citation)
                         counts[line] += 1
                     self.assertFalse(
-                        citation.startswith(f"exact tex/proof-guide.tex:{line}:")
+                        citation.startswith(f"exact docs/index.md:{line}:")
                         and token in citation,
                         (verdict.decl.full, citation),
                     )
-        self.assertEqual(counts, {3869: 13, 27037: 7})
+        self.assertEqual(counts, {1: 13, 2: 7})
 
     def test_qualified_resolution_is_namespace_exact_and_cache_separated(self) -> None:
         """A qualified glob selects the root namespace, while bare keeps finals."""
@@ -1830,19 +1860,29 @@ class DocScopeTest(unittest.TestCase):
     """Which files the documentation channel reads.
 
     :data:`dcs.NO_EVIDENCE_REASON` prints "no citation in the scanned
-    documentation". While only ``docs/index.md`` and the guide were read, that
-    sentence was a claim about two files: ``README.md`` cites
+    documentation". While only ``docs/index.md`` and the retired proof guide
+    were read, that sentence was a claim about two files: ``README.md`` cites
     ``ConvergenceRegion.derivativeLimit_on_window`` and was invisible.
     """
 
-    def test_readme_and_every_docs_markdown_are_scanned(self) -> None:
-        """The scanned set is README.md, docs/**/*.md and the TeX guide."""
+    def test_the_scanned_set_is_the_documentation_roots(self) -> None:
+        """The scanned set is exactly README.md, docs/**/*.md and the root .tex.
+
+        Stated as a set equality against the globs, not against a list of
+        paths: a channel that reads a *file* stops reading when that file is
+        retired, which is how the TeX half came to have a reader and no input.
+        """
         labels = {source.label for source in docs()}
         self.assertIn("README.md", labels)
         self.assertIn("docs/index.md", labels)
-        self.assertIn("tex/proof-guide.tex", labels)
         for path in dcs.DOCS_DIR.rglob("*.md"):
             self.assertIn(dcs.rel(path), labels)
+        self.assertEqual(
+            labels,
+            {"README.md"}
+            | {dcs.rel(p) for p in dcs.DOCS_DIR.rglob("*.md")}
+            | {dcs.rel(p) for p in dcs.tex_sources()},
+        )
 
     def test_readme_citation_is_seen(self) -> None:
         """The real README citation reaches the channel, verbatim and as a token."""
@@ -1855,12 +1895,12 @@ class DocScopeTest(unittest.TestCase):
 class MissingDocumentationTest(unittest.TestCase):
     """A documentation channel that vanishes must stop the run, not shrink it.
 
-    Every citation lives in one of three tracked files. If one of them is gone
+    Every citation lives in a tracked file. If one of them is gone
     -- moved, renamed, checked out partially -- the channel contributes no token
     and no literal text, so every name cited *only* there becomes uncited, and
     the run still prints "no citation in the scanned documentation": a
     no-evidence verdict resting on evidence that was never read. So the
-    absence is a hard failure (exit 2), like the canaries.
+    absence is a hard failure (exit 2), like the canary.
     """
 
     def missing(self, attribute: str, replacement: Path) -> list[str]:
@@ -1875,9 +1915,8 @@ class MissingDocumentationTest(unittest.TestCase):
             setattr(dcs, attribute, original)
 
     def test_each_channel_is_required(self) -> None:
-        """The guide, the README and the progress index each abort when absent."""
+        """The README and the progress index each abort when absent."""
         for attribute, replacement, expected in (
-            ("TEX_GUIDE", dcs.REPO_ROOT / "tex" / "no-such-guide.tex", "tex/no-such-guide.tex"),
             ("README", dcs.REPO_ROOT / "no-such-readme.md", "no-such-readme.md"),
             ("DOCS_DIR", dcs.REPO_ROOT / "no-such-docs", "no-such-docs/index.md"),
         ):
@@ -1888,21 +1927,360 @@ class MissingDocumentationTest(unittest.TestCase):
         """The check must not fire on a healthy tree."""
         dcs.require_documentation()
 
-    def test_a_missing_guide_fails_the_whole_run(self) -> None:
-        """End to end: the CLI exits 2 rather than reporting a silent tex channel."""
-        original = dcs.TEX_GUIDE
-        dcs.TEX_GUIDE = dcs.REPO_ROOT / "tex" / "no-such-guide.tex"
+    def test_a_missing_channel_fails_the_whole_run(self) -> None:
+        """End to end: the CLI exits 2 rather than reporting a silent channel."""
+        original = dcs.README
+        dcs.README = dcs.REPO_ROOT / "no-such-readme.md"
         try:
             out, err = io.StringIO(), io.StringIO()
             with redirect_stdout(out), redirect_stderr(err):
                 code = dcs.main(["--name", "freeEnergyAlongExhaustion_nonneg_of_ferromagnetic"])
         finally:
-            dcs.TEX_GUIDE = original
+            dcs.README = original
         self.assertEqual(code, dcs.EXIT_INCONSISTENT, out.getvalue())
-        self.assertIn("no-such-guide.tex", err.getvalue())
+        self.assertIn("no-such-readme.md", err.getvalue())
         # No report at all: an aborted run must not print a classification whose
         # documentation channel was never read.
         self.assertNotIn("== dead-candidate scan ==", out.getvalue())
+
+
+@contextmanager
+def scratch_repository() -> Iterator[Path]:
+    """Yield a repository-shaped scratch tree with the module's roots aimed at it.
+
+    The roots are module globals, so the whole documentation channel can be
+    pointed at a directory that holds exactly what a test wants it to hold. The
+    tree lives under ``.self-local/tmp`` -- gitignored, and *inside* the real
+    root, so :func:`dcs.rel` can still name the files it reports.
+    """
+    scratch = dcs.REPO_ROOT / ".self-local" / "tmp"
+    scratch.mkdir(parents=True, exist_ok=True)
+    names = ("REPO_ROOT", "DOCS_DIR", "TEX_DIR", "README", "FIXTURE_TEX_DIR")
+    with tempfile.TemporaryDirectory(dir=scratch) as tmp:
+        root = Path(tmp)
+        (root / "docs").mkdir()
+        (root / "tex").mkdir()
+        (root / "README.md").write_text("", encoding="utf-8")
+        (root / "docs" / "index.md").write_text("", encoding="utf-8")
+        saved = {name: getattr(dcs, name) for name in names}
+        dcs.REPO_ROOT = root
+        dcs.DOCS_DIR = root / "docs"
+        dcs.TEX_DIR = root / "tex"
+        dcs.README = root / "README.md"
+        dcs.FIXTURE_TEX_DIR = root / "scripts" / "audit" / "citation_corpus"
+        try:
+            yield root
+        finally:
+            for name, value in saved.items():
+                setattr(dcs, name, value)
+
+
+class TexChannelWiringTest(unittest.TestCase):
+    """A LaTeX document must be read where it is written, or stop the run.
+
+    The defect this pins down is a *narrowing* that no other gate can see. The
+    TeX channel was wired to one named file; retiring that file left the reader
+    intact and its input unreachable, so a LaTeX document written back into the
+    repository was read by nobody while the scan went on reporting
+    :data:`dcs.NO_EVIDENCE_REASON` -- "no citation in the scanned documentation"
+    -- about names that document cited verbatim, with no warning and exit ``0``.
+    A false absence of a citation is the one report of this tool that destroys
+    work, and it would have been produced by a document doing everything right.
+
+    So the channel follows the documentation roots (``docs/``, ``tex/``: the same
+    two the inventory ratchet scans for ``.tex``) instead of a path, and every
+    remaining way for a document to exist and go unread is either read (a
+    ``.TEX`` or ``.ltx`` spelling) or aborts: outside the roots, behind a
+    directory symlink, under a directory that cannot be listed, or spliced into a
+    scanned document by ``\\input``.
+    """
+
+    CITED = "synthetic_xyzzy_tex_lemma"
+    DOCUMENT = "The lemma \\texttt{synthetic\\_xyzzy\\_tex\\_lemma} is a result.\n"
+
+    def cited_tokens(self, sources: list[dcs.DocSource], label: str) -> dcs.DocSource:
+        """Return the loaded source named ``label``, asserting it was loaded at all."""
+        matching = [source for source in sources if source.label == label]
+        self.assertEqual(len(matching), 1, [source.label for source in sources])
+        return matching[0]
+
+    def test_a_tex_document_in_each_root_is_read(self) -> None:
+        """A document under ``tex/`` or ``docs/`` reaches both halves of the channel.
+
+        Both halves, because they read different strings: the tokens come from
+        the pre-unwrap normalisation (where ``\\texttt`` still marks the spans)
+        and the literal search from the unwrapped text.
+        """
+        for parent in ("tex", "docs"):
+            with self.subTest(parent=parent), scratch_repository() as root:
+                path = root / parent / "guide.tex"
+                path.write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(dcs.tex_sources(), [path])
+                source = self.cited_tokens(dcs.load_docs(), dcs.rel(path))
+                self.assertIn(self.CITED, [token for token, _line in source.tokens])
+                self.assertIn(self.CITED, source.text)
+
+    def test_a_tex_document_outside_the_roots_aborts(self) -> None:
+        """An unread document is the same false absence, so it is never walked past."""
+        with scratch_repository() as root:
+            (root / "paper").mkdir()
+            path = root / "paper" / "note.tex"
+            path.write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.unread_documentation().outside, [path])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("paper/note.tex", str(caught.exception))
+
+    def test_every_latex_spelling_is_read(self) -> None:
+        """The suffix test is case-folded and knows both LaTeX extensions.
+
+        The filesystem this repository is developed on is case-insensitive and
+        Python's globbing is not, so ``guide.TEX`` is a file that exists, opens
+        and typesets while matching no ``*.tex``; ``.ltx`` is the other name
+        LaTeX accepts. Either one was a document read by nobody.
+        """
+        for name in ("upper.TEX", "mixed.Tex", "alternate.ltx"):
+            with self.subTest(name=name), scratch_repository() as root:
+                path = root / "docs" / name
+                path.write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(dcs.tex_sources(), [path])
+                self.assertEqual(dcs.unread_documentation().outside, [])
+                source = self.cited_tokens(dcs.load_docs(), dcs.rel(path))
+                self.assertIn(self.CITED, [token for token, _line in source.tokens])
+
+    def test_a_directory_symlink_is_reported_rather_than_walked_past(self) -> None:
+        """No walker descends a directory symlink, and only one of them says so.
+
+        ``os.walk`` does not follow links by default and ``rglob`` does not
+        either, so a document under ``docs/link-to-elsewhere`` is outside every
+        channel *and* outside the guard that reports documents outside the
+        channels -- an unread document that looks like an empty directory.
+        """
+        with scratch_repository() as root, tempfile.TemporaryDirectory() as elsewhere:
+            (Path(elsewhere) / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            link = root / "docs" / "linked"
+            link.symlink_to(elsewhere)
+            unread = dcs.unread_documentation()
+            self.assertEqual(dcs.tex_sources(), [])
+            self.assertEqual(unread.outside, [])
+            self.assertEqual(unread.links, [link])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("docs/linked", str(caught.exception))
+
+    @unittest.skipIf(hasattr(os, "geteuid") and os.geteuid() == 0, "root reads every directory")
+    def test_a_directory_that_cannot_be_listed_stops_the_walk(self) -> None:
+        """A traversal error must raise, not silently contribute nothing.
+
+        ``os.walk`` swallows them by default: an unreadable directory yields no
+        entry and no exception, so a document under it is unread and the run
+        exits ``0`` reporting the citations in it absent.
+        """
+        with scratch_repository() as root:
+            locked = root / "docs" / "locked"
+            locked.mkdir()
+            (locked / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            locked.chmod(0o000)
+            try:
+                with self.assertRaises(dcs.Inconsistency) as caught:
+                    dcs.require_documentation()
+            finally:
+                locked.chmod(0o700)
+        self.assertIn("could not be listed", str(caught.exception))
+
+    def test_a_spliced_file_the_reader_does_not_read_aborts(self) -> None:
+        """``\\input`` splices a file in; LaTeX supplies the suffix, so this scan cannot.
+
+        ``\\input{result}`` typesets ``docs/result``, a file whose name looks
+        like no document at all, so it is read by the LaTeX run and by no
+        channel here -- the one unread shape that sits *inside* the roots.
+        """
+        for target, spliced in (("result", "result"), ("missing", None)):
+            with self.subTest(target=target), scratch_repository() as root:
+                guide = root / "docs" / "guide.tex"
+                guide.write_text(f"\\input{{{target}}}\n", encoding="utf-8")
+                if spliced is not None:
+                    (root / "docs" / spliced).write_text(self.DOCUMENT, encoding="utf-8")
+                self.assertEqual(
+                    dcs.unread_documentation().includes,
+                    [f"{dcs.rel(guide)}: \\input{{{target}}}"],
+                )
+                with self.assertRaises(dcs.Inconsistency) as caught:
+                    dcs.require_documentation()
+                self.assertIn(f"\\input{{{target}}}", str(caught.exception))
+
+    def test_a_spliced_file_the_reader_does_read_is_not_reported(self) -> None:
+        """The guard fires on unread splices only, or it would forbid a correct document.
+
+        A part under the roots is read as a document of its own; a commented-out
+        include names nothing; and ``\\includegraphics`` is not an include of
+        this kind.
+        """
+        with scratch_repository() as root:
+            (root / "docs" / "guide.tex").write_text(
+                "\\input{part}\n% \\input{retired}\n\\includegraphics{figure}\n",
+                encoding="utf-8",
+            )
+            part = root / "docs" / "part.tex"
+            part.write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.unread_documentation().includes, [])
+            dcs.require_documentation()
+            source = self.cited_tokens(dcs.load_docs(), dcs.rel(part))
+            self.assertIn(self.CITED, [token for token, _line in source.tokens])
+
+    QUOTED = (
+        ("verbatim environment", "\\begin{verbatim}\n\\input{quoted}\n\\end{verbatim}\n"),
+        ("starred environment", "\\begin{verbatim*}\n\\input{quoted}\n\\end{verbatim*}\n"),
+        ("listing environment", "\\begin{lstlisting}\n\\subfile{quoted}\n\\end{lstlisting}\n"),
+        ("delimited verb", "Write \\verb|\\input{quoted}| to splice a part.\n"),
+        ("braced verb", "Write \\verb{\\include{quoted}} to splice a part.\n"),
+        ("optional argument", "Write \\lstinline[language=TeX]!\\input{quoted}! here.\n"),
+        ("language argument", "Write \\mintinline{latex}{\\input{quoted}} here.\n"),
+    )
+
+    def test_a_quoted_include_splices_nothing_and_is_not_reported(self) -> None:
+        """An ``\\input`` inside a verbatim span is example text, not an inclusion.
+
+        LaTeX typesets its characters and reads no file, so the citations of the
+        named file are not unread -- there is no named file. Aborting on one
+        would refuse to run over a document this scan reads correctly, which is a
+        gate on how documentation may be written rather than on what can be read.
+        """
+        for label, body in self.QUOTED:
+            with self.subTest(shape=label), scratch_repository() as root:
+                (root / "docs" / "guide.tex").write_text(body, encoding="utf-8")
+                self.assertEqual(dcs.unread_documentation().includes, [])
+                dcs.require_documentation()
+
+    def test_masking_a_quoted_include_never_hides_a_real_one(self) -> None:
+        """The mask is bounded on both spellings, or it would silence the guard.
+
+        A mask that runs past its span is the fail-open direction: the include it
+        swallows is spliced for real and read by nobody. So an unclosed
+        environment masks nothing, an unterminated ``\\verb`` stops at its line,
+        and a genuine include standing beside a quoted one is still reported.
+        """
+        cases = (
+            ("unclosed environment", "\\begin{verbatim}\n\\input{quoted}\n\\input{missing}\n"),
+            (
+                "unterminated verb",
+                "Write \\verb|\\input{quoted}\n\\input{missing} and a | further down\n",
+            ),
+            (
+                "quoted beside real",
+                "\\begin{verbatim}\n\\input{quoted}\n\\end{verbatim}\n\\input{missing}\n",
+            ),
+        )
+        for label, body in cases:
+            with self.subTest(shape=label), scratch_repository() as root:
+                guide = root / "docs" / "guide.tex"
+                guide.write_text(body, encoding="utf-8")
+                self.assertIn(
+                    f"{dcs.rel(guide)}: \\input{{missing}}",
+                    dcs.unread_documentation().includes,
+                )
+                with self.assertRaises(dcs.Inconsistency):
+                    dcs.require_documentation()
+
+    def test_a_symlink_hiding_no_document_is_not_reported(self) -> None:
+        """A link is a blind spot only when something is behind it.
+
+        The link is entered -- the one place anything does -- so a link to a tree
+        with no LaTeX in it is what it looks like: an ordinary directory reached
+        through a link, with no citation of any declaration unread behind it.
+        """
+        for label, contents in (("empty", {}), ("no LaTeX", {"notes.md": "x", "data.txt": "y"})):
+            with (
+                self.subTest(target=label),
+                scratch_repository() as root,
+                tempfile.TemporaryDirectory() as elsewhere,
+            ):
+                for name, text in contents.items():
+                    (Path(elsewhere) / name).write_text(text, encoding="utf-8")
+                link = root / "docs" / "linked"
+                link.symlink_to(elsewhere)
+                self.assertEqual(dcs.unread_documentation().links, [])
+                dcs.require_documentation()
+
+    def test_a_symlink_is_followed_far_enough_to_see_the_document(self) -> None:
+        """A document two links deep is exactly as unread as one directly behind.
+
+        Following them means a cycle has to terminate, so the walk records the
+        resolved directories it has already entered.
+        """
+        with scratch_repository() as root, tempfile.TemporaryDirectory() as elsewhere:
+            outer = Path(elsewhere) / "outer"
+            inner = Path(elsewhere) / "inner"
+            outer.mkdir()
+            inner.mkdir()
+            (inner / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            (outer / "nested").symlink_to(inner)
+            (outer / "cycle").symlink_to(outer)
+            link = root / "docs" / "linked"
+            link.symlink_to(outer)
+            self.assertEqual(dcs.unread_documentation().links, [link])
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.require_documentation()
+        self.assertIn("docs/linked", str(caught.exception))
+
+    def test_a_citation_broken_across_a_line_refuses_the_document(self) -> None:
+        """The one unreadable shape that leaves no trace must reject its document.
+
+        A citation split by a newline parses into a clean span, so the charging
+        rule has nothing to charge, and the newline hides the name from the
+        literal search too: the document would be read, report nothing, and make
+        every no-evidence sentence about the names it cites false.
+        """
+        with scratch_repository() as root:
+            path = root / "tex" / "guide.tex"
+            path.write_text("\\texttt{synthetic\\_xyzzy\\_\ntex\\_lemma}\n", encoding="utf-8")
+            with self.assertRaises(dcs.Inconsistency) as caught:
+                dcs.load_docs()
+        self.assertIn("broken across a line", str(caught.exception))
+
+    def test_neither_scratch_drafts_nor_the_reader_fixture_are_documentation(self) -> None:
+        """Three exclusions, and each must be an exclusion from *reading*, not a blind spot.
+
+        A dot-directory at the root holds build output and this project's
+        working ``math-before-code`` TeX (``.self-local/tex``); the fixture
+        corpus is the reader's own test input, describing a document the
+        repository retired. Reading either as evidence would keep declarations
+        alive on the strength of a file nobody publishes.
+
+        A dot-directory *inside* ``docs/`` is the same rule and needs its own
+        assertion, because it is the one that is not obviously right and because
+        it is the one this branch has answered both ways: ``rglob`` descends
+        dot-directories, so the intermediate reader read one. It is settled
+        here, in the direction ``.gitignore``-style conventions settle it -- a
+        dot-directory is not source and not published -- so a ``.tex`` under one
+        is neither read nor reported, and the choice is pinned rather than left
+        to whichever walker a later edit happens to use.
+        """
+        with scratch_repository() as root:
+            (root / ".self-local" / "tex").mkdir(parents=True)
+            (root / ".self-local" / "tex" / "draft.tex").write_text(
+                self.DOCUMENT, encoding="utf-8"
+            )
+            (root / "docs" / ".published").mkdir()
+            (root / "docs" / ".published" / "hidden.tex").write_text(
+                self.DOCUMENT, encoding="utf-8"
+            )
+            dcs.FIXTURE_TEX_DIR.mkdir(parents=True)
+            (dcs.FIXTURE_TEX_DIR / "guide.tex").write_text(self.DOCUMENT, encoding="utf-8")
+            self.assertEqual(dcs.tex_sources(), [])
+            self.assertEqual(dcs.unread_documentation().outside, [])
+            dcs.require_documentation()
+
+    def test_the_real_tree_has_no_unread_latex(self) -> None:
+        """The guard over the live repository, which is what the scan reports on."""
+        unread = dcs.unread_documentation()
+        self.assertEqual([dcs.rel(path) for path in unread.outside], [])
+        self.assertEqual([dcs.rel(path) for path in unread.links], [])
+        self.assertEqual(unread.includes, [])
+        self.assertTrue((dcs.FIXTURE_TEX_DIR / "guide.tex").is_file())
+        self.assertNotIn(
+            "scripts/audit/citation_corpus/guide.tex", [source.label for source in docs()]
+        )
 
 
 def synthetic_tree(sources: dict[str, str]) -> dcs.Tree:
@@ -2066,8 +2444,9 @@ class TexCoverageTest(unittest.TestCase):
     def test_nested_citation_is_not_residue_of_its_wrapper(self) -> None:
         """The inner span is read recursively, so the outer one is not a gap.
 
-        Ten of the guide's warnings were this self-inflicted false positive, and
-        a coverage count is worthless if the tool inflates it itself.
+        Ten warnings measured on the retired proof guide were this
+        self-inflicted false positive, and a coverage count is worthless if the
+        tool inflates it itself.
         """
         _normalized, warnings = dcs.normalize_tex(
             r"\texttt{(removed; archived \texttt{archive/branch-name})}"
@@ -2079,10 +2458,9 @@ class TexCoverageTest(unittest.TestCase):
         spans = dcs.code_citation_spans(r"\texttt{prose \texttt{inner_name_here} tail}")
         self.assertIn("inner_name_here", [body for body, _offset in spans])
 
-    def test_real_guide_yields_its_brace_family_citations(self) -> None:
-        """End to end: the guide's brace families are tokens, not blind spots."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        tokens = {token for token, _line in tex.tokens}
+    def test_docs_yield_their_brace_family_citations(self) -> None:
+        """End to end: brace families in the scanned docs are tokens, not blind spots."""
+        tokens = {token for doc in docs() for token, _line in doc.tokens}
         self.assertIn("magnetization_convergent_{J,h,beta}_latticeGraph", tokens)
         self.assertGreater(len([t for t in tokens if "{" in t]), 50)
 
@@ -2098,33 +2476,66 @@ class EnsureMathTest(unittest.TestCase):
         self.assertIn("fieldPolymerZℂ_ofReal", normalized)
         self.assertEqual(warnings, [])
 
-    def test_real_guide_has_no_name_shaped_blind_spot(self) -> None:
-        """Every span the guide leaves unreadable is prose, not a name citation.
+    def test_the_scanned_documentation_charges_nothing(self) -> None:
+        """No scanned source leaves an unreadable span, and the check can fail.
 
-        The measured state of main: no unreadable span at all (the three type
-        signatures written with ``\\to`` are read since the macro table carries
-        the arrow), and therefore nothing charged to any declaration. A failure
-        here is a maintenance signal, not a flake -- the macro table needs the
-        entry, or those names go out as ``uncertain``.
+        The live half alone cannot fail *on this tree* and must not be read as
+        if it could: only the TeX reader raises such a span, this tree tracks no
+        ``.tex`` documentation, and the Markdown reader hard-codes an empty span
+        list, so an empty result there is a property of the reader rather than a
+        measurement. Two things are therefore asserted around it.
+
+        The premise -- every scanned source is Markdown -- is checked, and it is
+        now a statement about the *tree* as well as the code: ``load_docs``
+        reads every ``.tex`` under ``docs/`` or ``tex/``, so a document written
+        back into either root enters the scanned set and fails this assertion.
+        That is the intended answer to it. The live half stops being trivial the
+        moment such a document exists, and what it then measures -- how much of
+        that document the macro table could not read -- has to be looked at
+        rather than inherited from this docstring.
+
+        And the *same expression* is run against a source that does carry such a
+        span, so a reader that stopped reporting them, which is the failure the
+        live half is meant to catch, fails here instead of passing silently.
         """
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        self.assertLessEqual(len(tex.unreadable), 5, [w.message for w in tex.unreadable])
-        charged = [
-            (span.line, decl.final)
-            for span in tex.unreadable
-            for decl in tree().decls
-            if not decl.anonymous and span.could_cite_decl(decl)
-        ]
-        self.assertEqual(charged, [])
 
-    def test_real_guide_publishes_the_complex_family(self) -> None:
-        """The 16 ``...ℂ...`` names of section 18 were invisible before the unwrap."""
-        tex = next(doc for doc in docs() if doc.label.endswith("proof-guide.tex"))
-        for name in (
-            "fieldPolymerZℂ_ne_zero",
-            "norm_fieldMayerExpansionTermℂ_le_tree_activity_pow",
+        def unreadable_messages(sources: list[dcs.DocSource]) -> list[str]:
+            return [span.message for source in sources for span in source.unreadable]
+
+        sources = docs()
+        self.assertTrue(sources)
+        self.assertEqual(
+            [s.label for s in sources if not s.label.endswith(".md")],
+            [],
+            "a non-Markdown documentation source is in the scanned set, so the "
+            "emptiness asserted below is no longer a property of the reader: "
+            "re-derive it against that document",
+        )
+        self.assertEqual(unreadable_messages(sources), [])
+
+        _normalized, spans = dcs.normalize_tex(r"\texttt{caf\'e\_lemma}")
+        charged = dcs.DocSource(
+            label="synthetic.tex",
+            text="",
+            starts=[0],
+            tokens=[],
+            unreadable=spans,
+        )
+        self.assertNotEqual(unreadable_messages([charged]), [])
+        self.assertTrue(charged.unreadable[0].could_cite("café_lemma"))
+
+    def test_the_complex_family_is_read_through_the_unwrap(self) -> None:
+        """The ``...ℂ...`` names were invisible before the two-stage unwrap."""
+        for spelling, name in (
+            (r"\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}\_ne\_zero}",
+             "fieldPolymerZℂ_ne_zero"),
+            (r"\texttt{norm\_fieldMayerExpansionTerm\ensuremath{\mathbb{C}}"
+             r"\_le\_tree\_activity\_pow}",
+             "norm_fieldMayerExpansionTermℂ_le_tree_activity_pow"),
         ):
-            self.assertTrue(dcs.find_occurrences(tex.text, name), name)
+            normalized, warnings = dcs.normalize_tex(spelling)
+            self.assertEqual(warnings, [], name)
+            self.assertTrue(dcs.find_occurrences(normalized, name), name)
 
 
 class UnreadableCitationTest(unittest.TestCase):
@@ -2240,11 +2651,10 @@ class TexChannelLimitTest(unittest.TestCase):
     they escape differently: a ``%`` comment inside a citation (``L7a``) and a
     bare line break inside one (``L7c``) parse into a clean span, so there is no
     residue to charge, while an unrecognised wrapper (``L7b``) yields no span at
-    all. The first two are properties
-    of the *parser* only, because :func:`dcs.run_tex_canary` forbids them in the
-    guide (see :class:`CanaryTest`); the tests below pin the parser behaviour so
-    that a future fix is noticed as a *test failure* instead of shipping
-    unremarked.
+    all. All three are properties of the *parser* only while no ``.tex``
+    document is tracked; the tests below pin that behaviour so that a future
+    fix is noticed as a *test failure* instead of shipping unremarked, and so
+    that a document fed to the reader again meets a described parser.
     """
 
     def test_a_comment_inside_a_citation_is_a_silent_gap(self) -> None:
@@ -2295,7 +2705,7 @@ class TexChannelLimitTest(unittest.TestCase):
         self.assertIn("%", dcs.LIMITATIONS)
         self.assertIn(r"{\tt", dcs.LIMITATIONS)
         self.assertIn("L7c", dcs.LIMITATIONS)
-        self.assertIn("run_tex_canary", dcs.LIMITATIONS)
+        self.assertIn("tex_citation_line_breaks", dcs.LIMITATIONS)
 
     def test_unreadable_citation_forces_uncertain(self) -> None:
         """End to end: an unread span downgrades the name it might be citing."""
@@ -2408,7 +2818,20 @@ class FamilyCalibrationTest(unittest.TestCase):
     """
 
     def test_ferromagnetic_family_counts(self) -> None:
-        """219 candidates -> 103 uncertain (15 of them no-evidence) / 81 / 35.
+        """219 candidates -> 103 uncertain (15 of them no-evidence) / 84 / 32.
+
+        Recalibrated by the removal of the proof guide (issue #4994), which took
+        a whole documentation channel out of the scan. Exactly three members
+        move, all ``published-result -> load-bearing``:
+        ``freeEnergyΛ_nonneg_of_ferromagnetic``,
+        ``log_partitionFunction_ge_card_mul_log_two_of_ferromagnetic`` and
+        ``vdPolymerFamilies_sum_tanh_gt_one_iff_ferromagnetic``. Each was cited
+        only by the guide, so its documentation evidence is gone with the
+        document; each keeps Lean consumers, which is why none reaches the
+        no-evidence state. That direction is the one to check on a removal: the
+        no-evidence count and the ``uncertain`` bucket are unchanged at 15 and
+        103, so no declaration was left with nothing at all arguing for keeping
+        it.
 
         Issue #4976 folded the retired fourth class into ``uncertain``, so the
         bucket that read 88 now reads 88 + 15 = 103 (re-measured, not
@@ -2451,7 +2874,7 @@ class FamilyCalibrationTest(unittest.TestCase):
         and ``log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_
         deviation_pos_ferromagnetic`` go ``no-evidence -> charged`` (charged
         by ``docs/index.md:2193`` ``correlationΛ_latticeGraph_..._ferromagnetic``,
-        5 matches, and by ``docs/index.md:2117`` / ``tex/proof-guide.tex:23284``
+        5 matches, and by ``docs/index.md:2117``
         ``log_*_deviation_pos_ferromagnetic``, 5 matches);
         ``correlationΛ_high_temp_h_zero_at_singleton_ferromagnetic``
         ``no-evidence -> load-bearing`` and
@@ -2507,8 +2930,8 @@ class FamilyCalibrationTest(unittest.TestCase):
         self.assertEqual(len(verdicts), 219)
         self.assertEqual(sum(1 for v in verdicts if no_evidence(v)), 15)
         self.assertEqual(counts.get(dcs.UNCERTAIN), 103)
-        self.assertEqual(counts.get(dcs.LOAD_BEARING), 81)
-        self.assertEqual(counts.get(dcs.PUBLISHED), 35)
+        self.assertEqual(counts.get(dcs.LOAD_BEARING), 84)
+        self.assertEqual(counts.get(dcs.PUBLISHED), 32)
 
     def test_zero_consumer_count(self) -> None:
         """110 of the 219 have no Lean consumer at all.
@@ -2641,17 +3064,7 @@ class CanaryTest(unittest.TestCase):
             dcs.run_canary(plain)
         self.assertIn("degenerated", str(caught.exception))
 
-    def test_no_guide_citation_is_broken_across_a_line(self) -> None:
-        """The real guide keeps every code citation on one line.
-
-        A citation split across lines is invisible to *both* halves of the TeX
-        channel and warns about nothing (``L7a``/``L7c``), so the guard has to
-        be a property of the guide rather than of the parser.
-        """
-        citations = dcs.run_tex_canary()
-        self.assertGreater(citations, 1000)
-
-    def test_the_canary_rejects_a_broken_citation(self) -> None:
+    def test_the_line_break_check_rejects_a_broken_citation(self) -> None:
         """Both flavours of the break -- with and without ``%`` -- are caught."""
         for source in ("\\texttt{foo\\_%\nbar}", "\\texttt{foo\\_\nbar}"):
             citations, broken = dcs.tex_citation_line_breaks(source)
@@ -2660,21 +3073,23 @@ class CanaryTest(unittest.TestCase):
         self.assertEqual(dcs.tex_citation_line_breaks("\\texttt{foo\\_bar}")[1], [])
 
     def test_the_names_the_break_used_to_hide_are_visible(self) -> None:
-        """The four published results the broken citations hid are found again.
+        """The four published results the broken citations hid are still cited.
 
-        Each was cited only in a citation the guide split across a line, so the
-        TeX channel saw nothing while reporting zero coverage warnings; only an
-        unrelated ``docs/`` citation kept evidence attached to them.
+        Each was cited only in a citation the retired proof guide split across a
+        line, so the TeX channel saw nothing while reporting zero coverage
+        warnings; the ``docs/`` citation that rescued them then is the one that
+        carries them now, so it is what this pins.
         """
-        guide = next(source for source in docs() if source.label == "tex/proof-guide.tex")
+        sources = docs()
         for name in (
             "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_ball",
             "gibbsExpectationBC_originObs_cubicExhaustion_boundary_influence_uniform",
             "plusStateExpectation_eq_minusStateExpectation_originObs",
             "polymerFreeEnergy_analyticOnNhd_Ici_zero",
         ):
-            self.assertTrue(dcs.find_occurrences(guide.text, name), name)
-            self.assertIn(name, [token for token, _line in guide.tokens], name)
+            self.assertTrue(
+                any(dcs.find_occurrences(source.text, name) for source in sources), name
+            )
 
 
 class FixtureTest(unittest.TestCase):
@@ -2688,11 +3103,18 @@ class FixtureTest(unittest.TestCase):
         self.assertEqual(code, dcs.EXIT_OK, buffer.getvalue())
 
     def test_lean_only_rescues_seven_docs_only_rescues_three(self) -> None:
-        """The design in miniature: neither channel alone saves all ten keepers."""
+        """The design in miniature: neither channel alone saves all ten keepers.
+
+        The ten are selected by the *prefix* of their provenance note, which is
+        otherwise free text, so a rewrite of those notes can unselect a row. It
+        cannot do so silently: the count below is asserted before anything is
+        classified, and a selector that matches nine rows fails there rather
+        than measuring a smaller population and reporting a smaller split.
+        """
         keepers = [
             row[0]
             for row in dcs.read_fixtures(dcs.FIXTURES_FILE)
-            if row[2].startswith("#4641 keeper") or row[2].startswith("docs/index.md:")
+            if row[2].startswith("#4641 keeper") or row[2].startswith("docs/index.md")
         ]
         self.assertEqual(len(keepers), 10)
         verdicts, _cascade, _labels = dcs.classify(tree(), keepers, docs(), allow_homonym=False)

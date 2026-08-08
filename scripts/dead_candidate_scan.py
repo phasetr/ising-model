@@ -34,9 +34,10 @@ symptoms had one cause: every sweep re-implemented its own ad-hoc name matcher.
 * An ASCII token class ``[A-Za-z_][A-Za-z0-9_']*`` splits ``freeEnergyLambda``
   spelled with a real ``U+039B`` at the Greek letter, so the declaration key and
   the reference key break *differently* and a live lemma looks reference-zero.
-* ``tex/proof-guide.tex`` spells names with ``\\_`` and ``$\\Lambda$`` /
-  ``\\(\\Lambda\\)``, so a plain fixed-string search misses essentially every
-  published result whose name carries a Greek letter.
+* Documentation markup hides the same name a second way: a LaTeX document
+  spells it with ``\\_`` and ``$\\Lambda$`` / ``\\(\\Lambda\\)``, so a plain
+  fixed-string search misses essentially every published result whose name
+  carries a Greek letter.
 
 Two architectural decisions follow, and they are the whole design:
 
@@ -46,9 +47,14 @@ Two architectural decisions follow, and they are the whole design:
    match itself.
 2. **The documentation channel is a first-class input.** Reference-zero *from
    Lean* does not mean deletable: a declaration may be a published result cited
-   by ``README.md``, any ``docs/**/*.md`` or ``tex/proof-guide.tex``. Reading
-   only Lean rescues 7 of the 10 keepers of PR #4641; reading only docs rescues
-   3; both are needed.
+   by ``README.md`` or any ``docs/**/*.md``. Reading only Lean rescues 7 of the
+   10 keepers of PR #4641; reading only docs rescues 3; both are needed. The TeX
+   reader below has no input on this tree -- no ``.tex`` documentation is
+   tracked, so a citation that lived only in one is gone with it -- but it is
+   wired to a glob over the documentation roots rather than to a named file, so
+   the run that reintroduces such a document reads it, and
+   :func:`require_documentation` aborts on a ``.tex`` outside those roots
+   instead of leaving it unread.
 
 A third rule follows from the first two and is just as load-bearing:
 
@@ -95,8 +101,8 @@ A third rule follows from the first two and is just as load-bearing:
    carrying no evidence at all. Refutation from partially read TeX is not robustly
    implementable, so :attr:`UnreadableSpan.refutes` is now ``False``
    unconditionally and the rule set it gated is gone. Over-charging costs
-   ``uncertain`` verdicts and nothing else; on the real guide it costs nothing,
-   since the guide leaves no unreadable span at all.
+   ``uncertain`` verdicts and nothing else, and on a tree with no ``.tex``
+   documentation it costs nothing at all: only the TeX reader raises such a span.
 
 Boundary predicate
 ------------------
@@ -133,6 +139,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -153,8 +160,20 @@ from audit_gate import (  # noqa: E402  (path bootstrap must precede the import)
 
 FIXTURES_FILE = REPO_ROOT / "scripts" / "audit" / "dead_candidate_fixtures.tsv"
 DOCS_DIR = REPO_ROOT / "docs"
+TEX_DIR = REPO_ROOT / "tex"
 README = REPO_ROOT / "README.md"
-TEX_GUIDE = REPO_ROOT / "tex" / "proof-guide.tex"
+# The frozen LaTeX corpus the TeX reader's own tests run against. It is a test
+# input, not documentation: its citations describe a document this repository
+# retired, so reading them as evidence would keep declarations alive on the
+# strength of a file nobody publishes.
+FIXTURE_TEX_DIR = REPO_ROOT / "scripts" / "audit" / "citation_corpus"
+# The suffixes read as LaTeX documentation, compared case-folded. Both halves
+# matter and both were holes: this repository is developed on a case-insensitive
+# filesystem, where ``guide.TEX`` is a file that exists, opens and typesets while
+# matching no ``*.tex`` glob, and ``.ltx`` is the other name LaTeX itself accepts
+# for a document. A document named either way was read by nobody and reported
+# absent, which is the one fatal error class of this tool.
+LATEX_SUFFIXES = frozenset({".tex", ".ltx"})
 
 # Verdicts, ordered by decreasing severity for reporting.
 PUBLISHED = "published-result"
@@ -172,7 +191,7 @@ VERDICT_ORDER = (PUBLISHED, LOAD_BEARING, UNCERTAIN)
 # read as does not.
 NO_EVIDENCE_REASON = (
     "no reference outside the delete set, no citation in the scanned "
-    "documentation (README.md, docs/**/*.md, tex/proof-guide.tex)"
+    "documentation (README.md, docs/**/*.md, and every .tex/.ltx under docs/ or tex/)"
 )
 
 EXIT_OK = 0
@@ -971,14 +990,14 @@ TEX_MACROS: dict[str, str] = {
     r"\mathbb{Z}": "ℤ",
     r"\mathbb{Q}": "ℚ",
     r"\mathbb{C}": "ℂ",
-    # Text-mode subscripts: the guide spells ``le_div_iff₀`` this way.
+    # Text-mode subscripts: ``le_div_iff₀`` is spelled this way in LaTeX.
     **{rf"\textsubscript{{{digit}}}": chr(0x2080 + digit) for digit in range(10)},
-    # Repository-local macro (tex/proof-guide.tex:44): 139 occurrences, every
-    # one of them inside a declaration name.
+    # Repository-local macro of the retired proof guide, kept because it is the
+    # spelling this project's LaTeX used for a name-internal Lambda.
     r"\LeanLambda": "Λ",
-    # Not identifier characters, but the guide writes type signatures inside code
-    # citations, so without these the whole span is unreadable and every name it
-    # could be citing is forced to `uncertain`.
+    # Not identifier characters, but a type signature written inside a code
+    # citation needs them: without them the whole span is unreadable and every
+    # name it could be citing is forced to `uncertain`.
     r"\to": "→",
     r"\langle": "⟨",
     r"\rangle": "⟩",
@@ -986,10 +1005,9 @@ TEX_MACROS: dict[str, str] = {
 
 # ``\ensuremath`` selects math mode without changing the token it wraps, so it
 # is *transparent* for name matching and must be removed before the macro table
-# is consulted: the guide writes ``\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}``
-# and reading it needs both stages (drop the wrapper, then spell ``ℂ``). Skipping
-# stage one hid all 16 published ``...ℂ...`` results (20 citations) from the TeX
-# channel entirely.
+# is consulted: ``\texttt{fieldPolymerZ\ensuremath{\mathbb{C}}}`` needs both
+# stages (drop the wrapper, then spell ``ℂ``). Skipping stage one hid all 16
+# published ``...ℂ...`` results (20 citations) from the TeX channel entirely.
 _TRANSPARENT_WRAPPERS = ("ensuremath",)
 # The gap before the brace is matched with ``[ \t]*`` rather than ``\s*``: a
 # newline swallowed here would join two source lines and shift every TeX line
@@ -1004,16 +1022,16 @@ _MAX_UNWRAP_ROUNDS = 8
 _TEX_COMMENT_RE = re.compile(r"(?<!\\)%.*")
 _TEX_MATH_RE = re.compile(r"\$([^$\n]*)\$|\\\(((?:[^\\]|\\(?!\)))*)\\\)")
 _TEX_CODE_CMDS = r"\\(?:texttt|verb|lstinline|mintinline)\s*\{"
-# The body admits one level of nested braces, because the guide writes brace
-# alternation *inside* code citations (``\texttt{magnetization\_{J,h}\_lattice}``).
+# The body admits one level of nested braces, because brace alternation is
+# written *inside* code citations (``\texttt{magnetization\_{J,h}\_lattice}``).
 # A body of ``[^{}]*`` made those spans fail to match at all: no token, and no
 # coverage warning either, since the warning loop iterated over the same regex.
 _TEXTTT_RE = re.compile(_TEX_CODE_CMDS + r"((?:[^{}]|\{[^{}]*\})*)\}")
 _TEXTTT_CMD_RE = re.compile(_TEX_CODE_CMDS)
 
 
-# Line-breaking hints are written *inside* long declaration names in the guide,
-# so they must vanish before matching, not merely be tolerated.
+# Line-breaking hints are written *inside* long declaration names, so they must
+# vanish before matching, not merely be tolerated.
 _TEX_UNESCAPE = (
     # `\dots` inside a code citation is an ellipsis shorthand for a name prefix,
     # so it must survive as one rather than be dropped.
@@ -1087,9 +1105,9 @@ def _normalize_tex_body(text: str) -> str:
 def code_citation_spans(text: str) -> list[tuple[str, int]]:
     """Return ``(body, offset)`` for every code citation, nested ones included.
 
-    ``\\texttt`` nests in the guide (a citation whose prose carries another
-    citation), and the span regex consumes the outer one whole; recursing keeps
-    the inner name visible instead of swallowing it with its wrapper.
+    ``\\texttt`` nests (a citation whose prose carries another citation), and the
+    span regex consumes the outer one whole; recursing keeps the inner name
+    visible instead of swallowing it with its wrapper.
     """
     out: list[tuple[str, int]] = []
     for match in _TEXTTT_RE.finditer(text):
@@ -1186,9 +1204,9 @@ class UnreadableSpan:
 def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
     """Return ``(normalized text, unreadable spans)`` for a LaTeX source.
 
-    ``tex/proof-guide.tex`` writes declaration names with ``\\_`` for the
-    underscore and ``$\\Lambda$`` / ``\\(\\Lambda\\)`` for the Greek letter, so a
-    raw fixed-string search finds *none* of the published results whose name
+    A LaTeX document writes declaration names with ``\\_`` for the underscore
+    and ``$\\Lambda$`` / ``\\(\\Lambda\\)`` for the Greek letter, so a raw
+    fixed-string search finds *none* of the published results whose name
     carries one. Normalisation is therefore a precondition, not a nicety.
 
     Steps: drop comments, unwrap transparent wrappers, unescape LaTeX
@@ -1214,10 +1232,10 @@ def normalize_tex(text: str) -> tuple[str, list[UnreadableSpan]]:
     (``L7a``) and a bare line break inside one (``L7c``) both parse into a
     perfectly clean span, so there is nothing to charge, while the newline they
     keep hides the name from the literal search as well; a code wrapper the span
-    grammar does not know (``L7b``) produces no span in the first place. The
-    first two are kept out of the real guide by :func:`run_tex_canary`, which
-    aborts the run if any citation body in the guide contains a line break at
-    all.
+    grammar does not know (``L7b``) produces no span in the first place. A
+    ``.tex`` document this reads is therefore checked for the first two shapes
+    before its verdicts mean anything: :func:`_tex_source` runs
+    :func:`tex_citation_line_breaks` over every document it loads and aborts.
     """
     partial = _normalize_tex_body(text)
     spans: list[UnreadableSpan] = []
@@ -1261,9 +1279,11 @@ def tex_citation_line_breaks(text: str) -> tuple[int, list[tuple[int, str]]]:
     rule cannot reach: the span parses, so nothing is charged, and the name it
     spells is split by a newline, so no literal search finds it either. It is
     invisible to the whole TeX channel while the run still reports zero coverage
-    warnings -- the fail-open direction. The check is therefore run against the
-    real guide on every invocation (:func:`run_tex_canary`), not merely
-    documented as a limitation.
+    warnings -- the fail-open direction. So it is a check run over any ``.tex``
+    document fed to :func:`normalize_tex`, not merely a documented limitation:
+    :func:`_tex_source` calls it on every document it loads and refuses the
+    document rather than reporting on it. The repository tracks none today, so
+    it runs over nothing -- a fact about the tree, not about the wiring.
 
     Both flavours are caught, because both leave the same newline behind: the
     line ending in ``%`` (which TeX splices, so the typeset name has no break)
@@ -1410,7 +1430,7 @@ def _citation_nameish(token: str) -> bool:
 def _brace_grouped_pieces(body: str) -> list[str]:
     """Split ``body`` on the whitespace *outside* braces, dropping the rest.
 
-    Both documentation files write a brace alternation with the spacing of
+    The documentation writes a brace alternation with the spacing of
     ordinary prose -- ``freeEnergyAlongExhaustion_latticeGraph_{continuousAt,
     differentiableAt}_{beta, field, J, joint}`` is one citation of eight results,
     not seven words. Splitting the body on every whitespace run (what
@@ -1421,7 +1441,8 @@ def _brace_grouped_pieces(body: str) -> list[str]:
     them. The whole citation therefore reaches no verdict, and -- a brace
     shorthand having no verbatim fallback -- the eight results it names come out
     uncited. Measured on the scanned documentation at ``2380eb36``: 133 such
-    name-shaped tokens (102 in ``docs/index.md``, 31 in ``tex/proof-guide.tex``),
+    name-shaped tokens (102 in ``docs/index.md``, 31 in the proof guide the
+    repository tracked then),
     108 of which expand onto 307 real declarations, 160 of those declarations
     reporting no evidence at all in a whole-library sweep with this citation as
     their only one -- the fatal error class.
@@ -1522,25 +1543,331 @@ def markdown_sources() -> list[Path]:
     return paths
 
 
+def _is_latex_document(path: Path) -> bool:
+    """Return whether ``path`` is *named* like a LaTeX document, case-folded."""
+    return path.suffix.lower() in LATEX_SUFFIXES
+
+
+def _walk_error(error: OSError) -> None:
+    """Abort a documentation walk instead of skipping what it cannot list.
+
+    :func:`os.walk` swallows every traversal error by default: a directory the
+    process cannot read yields no entry, no exception and no note, so a document
+    under it is unread for a reason the report never states. That is the same
+    false absence as an unread root, delivered as a clean exit.
+    """
+    where = Path(error.filename) if error.filename else REPO_ROOT
+    raise Inconsistency(
+        f"{where}: this directory could not be listed ({error}), so a LaTeX "
+        "document under it would be invisible while the run reports citations absent"
+    )
+
+
+def _walk_latex(root: Path) -> tuple[list[Path], list[Path]]:
+    """Return ``(LaTeX documents, directory symlinks not entered)`` under ``root``.
+
+    :func:`os.walk` rather than :meth:`Path.rglob`, on three counts -- each one a
+    shape a glob answers "no document here" to while one is there. The suffix
+    test is case-folded (:data:`LATEX_SUFFIXES`), so ``guide.TEX`` on the
+    case-insensitive filesystem this repository is developed on is a document
+    and not a near-miss. An unlistable directory raises (:func:`_walk_error`)
+    instead of yielding nothing. And a directory *symlink* -- which neither
+    walker descends, silently -- is returned rather than dropped, so a caller can
+    refuse it instead of inheriting a blind spot.
+
+    Directories whose name begins with ``.`` are excluded everywhere, both from
+    what is read and from what is reported, and the exclusion is deliberate in
+    both walks this function serves -- for one reason at the repository root and
+    a different one inside the documentation roots, which is why it is spelled
+    out rather than asserted once.
+
+    At the root it is concrete: this project writes its working
+    ``math-before-code`` TeX into ``.self-local`` and its build output into other
+    dot-directories, so reading one would keep declarations alive on the strength
+    of a draft. Inside ``docs/`` or ``tex/`` there is no such directory today,
+    and the rule is a convention rather than an observation: a dot-directory is
+    not source and not published -- the same reading ``.gitignore`` files and
+    most source tools give it -- so a document under one is not documentation
+    this repository publishes. It is the fail-open half of the pair (a citation
+    written there is one this scan will not count), it is the one boundary here
+    that is a decision rather than a limit of the reader, and ``L7d`` states it
+    as such. :data:`FIXTURE_TEX_DIR`, the frozen corpus the reader's own tests
+    run against, is excluded because it describes a retired document.
+    """
+    latex: list[Path] = []
+    links: list[Path] = []
+    if not root.is_dir():
+        return latex, links
+    fixture = FIXTURE_TEX_DIR.resolve()
+    for dirpath, dirnames, filenames in os.walk(root, onerror=_walk_error):
+        kept: list[str] = []
+        for name in sorted(dirnames):
+            child = Path(dirpath) / name
+            if name.startswith(".") or name == "__pycache__" or child.resolve() == fixture:
+                continue
+            if child.is_symlink():
+                links.append(child)
+                continue
+            kept.append(name)
+        dirnames[:] = kept
+        for name in sorted(filenames):
+            path = Path(dirpath) / name
+            if _is_latex_document(path):
+                latex.append(path)
+    return latex, links
+
+
+def tex_sources() -> list[Path]:
+    """Return every LaTeX documentation file whose citations count.
+
+    The documentation roots are ``docs/`` and ``tex/`` -- the same two the
+    inventory ratchet scans for ``.tex`` (``SCAN_ROOTS`` there) -- and the set is
+    a **walk over them**, never a pinned path. A pinned path is what made the
+    retirement of ``tex/proof-guide.tex`` narrow this channel rather than empty
+    it: with the only ``.tex`` the scan ever named gone, a document written back
+    into either root would have been read by nobody, and the run would have gone
+    on printing :data:`NO_EVIDENCE_REASON` -- a citation exists, is readable, and
+    is reported absent -- with no warning and exit ``0``. That is the one fatal
+    error class of this tool, so the channel is keyed to where documentation
+    lives instead of to what happened to live there.
+
+    Empty on this tree. That is a fact about the tree, and the day it stops
+    being one nothing has to be rewired.
+    """
+    out: list[Path] = []
+    for root in (DOCS_DIR, TEX_DIR):
+        out.extend(_walk_latex(root)[0])
+    return sorted(out)
+
+
+# ``\input``/``\include``/``\subfile`` splice another file into a document, and
+# LaTeX supplies the ``.tex`` suffix when the target is written without one, so
+# the spliced file need not look like a document at all. The negative lookahead
+# keeps ``\includegraphics{fig}`` out; the unbraced alternative is TeX's own
+# ``\input foo`` form.
+_TEX_INCLUDE_RE = re.compile(
+    r"\\(?:input|include|subfile)(?![A-Za-z])\s*(?:\{([^{}]*)\}|([^\s{}\\%]+))"
+)
+
+# A verbatim span typesets its characters and splices nothing, so an ``\input``
+# written inside one includes no file: it is example text, exactly like a
+# commented-out include, and reporting it would abort a run over a document that
+# is read correctly. Both spellings are masked -- the environments below and the
+# inline commands -- and the environment match requires its own ``\end``, so an
+# unclosed one masks nothing and its includes stay reported.
+_TEX_VERBATIM_ENVS = ("verbatim", "Verbatim", "lstlisting", "minted", "alltt")
+_TEX_VERBATIM_ENV_RE = re.compile(
+    r"\\begin\{(" + "|".join(_TEX_VERBATIM_ENVS) + r")\*?\}.*?\\end\{\1\*?\}", re.DOTALL
+)
+# ``\verb`` takes the first non-letter after it as its delimiter and its body may
+# not cross a line, so the body ends at the delimiter or the newline, whichever
+# comes first -- the bound is what keeps a stray ``|`` from masking the rest of a
+# document. The braced alternative is listed first so ``\verb{...}`` is read as
+# this repository's own code-span spelling (:data:`_TEX_CODE_CMDS`) rather than
+# as a body delimited by ``{``.
+_TEX_VERBATIM_INLINE_RE = re.compile(
+    r"\\mintinline[ \t]*\{[^{}]*\}[ \t]*\{(?:[^{}]|\{[^{}]*\})*\}"
+    r"|\\(?:verb|lstinline)\*?(?:\[[^\]\n]*\])?[ \t]*(?:"
+    r"\{(?:[^{}]|\{[^{}]*\})*\}"
+    r"|(?P<delim>[^A-Za-z*\s])(?:(?!(?P=delim))[^\n])*(?P=delim)"
+    r")"
+)
+
+
+def _mask_tex_verbatim(text: str) -> str:
+    """Return ``text`` with every verbatim span replaced by its own line breaks.
+
+    The line breaks are kept so that masking can never join two source lines and
+    manufacture an include that is written in neither.
+    """
+
+    def blank(match: re.Match[str]) -> str:
+        return "\n" * match.group(0).count("\n")
+
+    return _TEX_VERBATIM_INLINE_RE.sub(blank, _TEX_VERBATIM_ENV_RE.sub(blank, text))
+
+
+def _tex_include_targets(path: Path) -> list[str]:
+    """Return the ``\\input``/``\\include`` targets written in ``path``, as written.
+
+    Comments are stripped first and verbatim spans masked second: a
+    commented-out include names nothing and a quoted one includes nothing, so
+    reporting either would be a false alarm about a document that is read
+    correctly. The order is the fail-closed one. A ``%`` inside a verbatim body
+    is literal to LaTeX, so stripping comments first can only destroy that body's
+    closing ``\\end`` -- and an unclosed environment masks nothing, leaving the
+    include reported. Masking first would let a commented-out
+    ``\\begin{verbatim}`` swallow a real include instead.
+
+    A target that expands from a macro (``\\input{\\jobname-part}``) stays
+    reported. It is not a false alarm: this scan cannot know which file such a
+    target names, so the spliced citations really are unread.
+    """
+    try:
+        raw = _mask_tex_verbatim(_TEX_COMMENT_RE.sub("", path.read_text(encoding="utf-8")))
+    except (OSError, UnicodeDecodeError):  # pragma: no cover - reported by _read_doc
+        return []
+    out: list[str] = []
+    for match in _TEX_INCLUDE_RE.finditer(raw):
+        target = (match.group(1) or match.group(2) or "").strip()
+        if target and target not in out:
+            out.append(target)
+    return out
+
+
+def _resolve_tex_include(document: Path, target: str) -> Path | None:
+    """Return the file ``target`` names inside ``document``, or ``None`` if there is none.
+
+    Resolution mirrors what a LaTeX run does with the repository as its working
+    directory: relative to the including document, then to the root, with
+    ``.tex`` supplied when the target carries no LaTeX suffix. It is deliberately
+    not a ``TEXINPUTS`` search -- a target this cannot find is *reported*, not
+    assumed harmless.
+    """
+    names = [target] if _is_latex_document(Path(target)) else [f"{target}.tex", target]
+    for base in (document.parent, REPO_ROOT):
+        for name in names:
+            candidate = base / name
+            if candidate.is_file():
+                return candidate
+    return None
+
+
+def _links_to_latex(link: Path, seen: set[Path] | None = None) -> bool:
+    """Return whether a LaTeX document lives under the directory ``link`` points at.
+
+    A directory symlink is only a blind spot when something is hiding behind it.
+    The link is *entered* here -- which is the one place anything does -- so a
+    link to a tree with no LaTeX in it is what it looks like, an ordinary
+    directory that happens to be reached through a link, and is not reported.
+    Nested links are followed too, since a document two links deep is exactly as
+    unread as one; ``seen`` holds the resolved directories already visited, so a
+    cycle terminates instead of spinning.
+
+    Unresolvable is treated as hiding a document, because that is the direction
+    that cannot cost a deletion.
+    """
+    seen = set() if seen is None else seen
+    try:
+        resolved = link.resolve()
+    except OSError:  # pragma: no cover - a link this broken is not a normal state
+        return True
+    if resolved in seen:
+        return False
+    seen.add(resolved)
+    latex, nested = _walk_latex(resolved)
+    return bool(latex) or any(_links_to_latex(child, seen) for child in nested)
+
+
+@dataclass
+class UnreadDocumentation:
+    """Documentation that exists and that no channel reads, measured not assumed.
+
+    Three ways in, and every one of them ends in the same report: a citation is
+    present and readable, the scan says there is none, exit ``0``.
+    """
+
+    #: LaTeX documents outside the roots :func:`tex_sources` walks.
+    outside: list[Path]
+    #: Directory symlinks that hold a LaTeX document no walk enters.
+    links: list[Path]
+    #: ``document: \input{target}`` pairs whose target is not itself scanned.
+    includes: list[str]
+
+
+def unread_documentation() -> UnreadDocumentation:
+    """Return the documentation in the working tree that no channel reads.
+
+    :func:`tex_sources` covers the documentation roots; a document that is
+    reachable, readable and outside them is invisible here, which is the same
+    false absence in a different place. So the difference is *measured* rather
+    than assumed empty, and :func:`require_documentation` aborts on it: a scan
+    cannot both claim to read the documentation and walk past a document.
+
+    A ``\\input`` target counts as documentation of its own. It is the one shape
+    that is unread while sitting *inside* the roots: LaTeX supplies the missing
+    ``.tex``, so ``\\input{result}`` reading ``docs/result`` splices a whole file
+    of citations into a document this scan reads and reads none of them.
+
+    Each of the three is measured on the *content* rather than on the shape: a
+    directory symlink is reported when a document is behind it
+    (:func:`_links_to_latex`) and an include when its target is really unread,
+    so the guard states a fact about this tree instead of refusing a
+    construction.
+    """
+    sources = tex_sources()
+    scanned = {path.resolve() for path in sources}
+    latex, links = _walk_latex(REPO_ROOT)
+    includes: list[str] = []
+    for document in sources:
+        for target in _tex_include_targets(document):
+            resolved = _resolve_tex_include(document, target)
+            if resolved is None or resolved.resolve() not in scanned:
+                includes.append(f"{rel(document)}: \\input{{{target}}}")
+    return UnreadDocumentation(
+        outside=[path for path in latex if path.resolve() not in scanned],
+        links=[link for link in links if _links_to_latex(link)],
+        includes=includes,
+    )
+
+
 def require_documentation() -> None:
-    """Abort unless every documentation channel the scan claims to read exists.
+    """Abort unless the documentation the scan claims to read is what it reads.
 
     A missing file is the fail-open direction, and silently so: with no
-    ``README.md``, no ``docs/index.md`` or no guide, the corresponding channel
+    ``README.md`` or no ``docs/index.md``, the corresponding channel
     contributes no token and no literal text, every citation living in it
     disappears, and the run still prints "no citation in the scanned
     documentation" -- the sentence a deletion write-up cites as its evidence --
-    with a clean bill of health. The three files are tracked, so their absence
+    with a clean bill of health. Both files are tracked, so their absence
     is never a normal state; it is a moved path, a truncated checkout or a bad
     rename, and each must stop the scan instead of quietly shrinking its
     evidence base.
+
+    An **unread** file is the same failure with the file present, so the second
+    half checks the direction the first cannot see (:func:`unread_documentation`):
+    a LaTeX document outside the roots :func:`tex_sources` walks, one behind a
+    directory symlink no walk enters, and a file spliced into a scanned document
+    by ``\\input`` without being scanned itself. Both halves exist because this
+    channel has already narrowed once -- retiring the proof guide left ``.tex``
+    documentation reachable by no reader at all -- and neither the build nor any
+    other gate looks at what this scan reads.
+
+    Every one of the three names a document that exists. Aborting on a shape
+    that hides none -- a link to a tree with no LaTeX in it, an ``\\input``
+    quoted inside a verbatim span -- would be a gate on how a repository is
+    arranged rather than on what this scan can read, so neither does.
     """
-    required = (README, DOCS_DIR / "index.md", TEX_GUIDE)
+    required = (README, DOCS_DIR / "index.md")
     missing = [rel(path) for path in required if not path.is_file()]
     if missing:
         raise Inconsistency(
             "documentation source(s) missing, which would silence a whole citation "
             "channel without warning: " + ", ".join(missing)
+        )
+    unread = unread_documentation()
+    if unread.outside:
+        raise Inconsistency(
+            "LaTeX document(s) outside the scanned documentation roots (docs/, tex/), "
+            "so every citation in them is invisible while the run still reports "
+            "citations absent: "
+            + ", ".join(rel(path) for path in unread.outside)
+            + ". Move each under docs/ or tex/ so the TeX reader reads it."
+        )
+    if unread.links:
+        raise Inconsistency(
+            "directory symlink(s) holding LaTeX document(s), which no walk enters, so "
+            "every citation under one is read by nobody while the run still reports "
+            "citations absent: "
+            + ", ".join(rel(path) for path in unread.links)
+            + ". Replace each with a real directory holding the documents."
+        )
+    if unread.includes:
+        raise Inconsistency(
+            "LaTeX document(s) splice in a file the TeX reader does not read, so every "
+            "citation in it is invisible while the run still reports citations absent: "
+            + "; ".join(unread.includes)
+            + ". Give each spliced file a .tex suffix under docs/ or tex/."
         )
 
 
@@ -1609,30 +1936,67 @@ def _markdown_source(path: Path) -> DocSource:
     )
 
 
-def load_docs() -> list[DocSource]:
-    """Return the normalised documentation sources (Markdown plus proof-guide.tex)."""
-    require_documentation()
-    out: list[DocSource] = [_markdown_source(path) for path in markdown_sources()]
-    raw = _read_doc(TEX_GUIDE)
-    # Tokens are read from the *pre-unwrap* normalisation so the \texttt
-    # delimiters still mark which spans are code citations.
+def _tex_source(path: Path) -> DocSource:
+    """Return the citation tokens of one LaTeX file.
+
+    Tokens are read from the *pre-unwrap* normalisation, where the ``\\texttt``
+    delimiters still mark which spans are code citations; the text kept is the
+    fully unwrapped normalisation, which is what the literal search reads. The
+    two halves see different strings on purpose, and a name found by either is
+    cited.
+
+    The line-break check runs here rather than as a separate pass over one named
+    file, so it covers whatever :func:`tex_sources` returns. It aborts: a
+    citation split across a line parses into a *clean* span, so the charging rule
+    has nothing to charge and the newline hides the name from the literal search
+    as well (``L7a``/``L7c``). It is the one unreadable shape that leaves no
+    trace in the report, which makes every no-evidence sentence about that
+    document false while it stands.
+    """
+    raw = _read_doc(path)
+    label = rel(path)
+    _read, broken = tex_citation_line_breaks(raw)
+    if broken:
+        listing = "\n  ".join(
+            f"{label}:{line}: {' '.join(body.split())[:80]!r}" for line, body in broken[:20]
+        )
+        raise Inconsistency(
+            f"{len(broken)} code citation(s) in {label} are broken across a line, "
+            "which makes the name invisible to the TeX channel with no warning; "
+            "join each citation onto one line (use `\\allowbreak` for the break "
+            f"hint):\n  {listing}"
+        )
     partial = _normalize_tex_body(raw)
     partial_starts = line_starts(partial)
-    tokens = []
+    tokens: list[tuple[str, int]] = []
     for body, offset in code_citation_spans(partial):
         lineno = offset_to_line(partial_starts, offset)
         for token in _citation_tokens(body):
             tokens.append((token, lineno))
     text, unreadable = normalize_tex(raw)
-    out.append(
-        DocSource(
-            label=rel(TEX_GUIDE),
-            text=text,
-            starts=line_starts(text),
-            tokens=tokens,
-            unreadable=unreadable,
-        )
+    return DocSource(
+        label=label,
+        text=text,
+        starts=line_starts(text),
+        tokens=tokens,
+        unreadable=unreadable,
     )
+
+
+def load_docs() -> list[DocSource]:
+    """Return the normalised documentation sources.
+
+    ``README.md`` and every Markdown under ``docs/`` (:func:`markdown_sources`),
+    then every LaTeX document under ``docs/`` or ``tex/`` (:func:`tex_sources`).
+    The TeX half is empty on this tree and is still wired, because what it costs
+    to leave unwired is a citation that exists and is reported absent: the
+    channel follows the roots, so a document written back into either one is read
+    by the run that adds it, and :func:`require_documentation` stops the scan on
+    a document that exists and would go unread.
+    """
+    require_documentation()
+    out = [_markdown_source(path) for path in markdown_sources()]
+    out.extend(_tex_source(path) for path in tex_sources())
     return out
 
 
@@ -2477,41 +2841,6 @@ def run_canary(tree: Tree) -> tuple[int, dict[str, int]]:
     return len(names), per_char
 
 
-def run_tex_canary() -> int:
-    """Assert no code citation in the guide is split across source lines.
-
-    The declaration canary above asks whether a name can find *itself* in its
-    defining file; this one asks the same question of the guide, and for the
-    same reason: a citation broken across a line raises no coverage warning, so
-    the run prints a clean bill of health while the cited name is invisible to
-    both halves of the TeX channel (no span to charge, no literal hit to find).
-    Four published results were hidden that way and were only rescued -- by
-    accident -- by a second citation in ``docs/``.
-
-    Unconditional and cheap, like the declaration canary, and it aborts the run
-    rather than warning: this is the guard that keeps ``L7a``/``L7c`` a
-    statement about the real guide and not merely about the parser. A guide that
-    is *absent* silences the same channel just as completely, so that too aborts
-    (:func:`require_documentation`) rather than returning a vacuous zero.
-    Returns the number of code citations checked.
-    """
-    require_documentation()
-    raw = _read_doc(TEX_GUIDE)
-    citations, broken = tex_citation_line_breaks(raw)
-    if broken:
-        listing = "\n  ".join(
-            f"{rel(TEX_GUIDE)}:{line}: {' '.join(body.split())[:80]!r}"
-            for line, body in broken[:20]
-        )
-        raise Inconsistency(
-            f"{len(broken)} code citation(s) in {rel(TEX_GUIDE)} are broken across a "
-            "line, which makes the name invisible to the TeX channel with no "
-            "warning; join each citation onto one line (use `\\allowbreak` for the "
-            f"break hint):\n  {listing}"
-        )
-    return citations
-
-
 def char_class_selftest() -> None:
     """Assert the identifier class matches Lean's, in both directions."""
     for char in "λΠΣ×÷ⁿ":  # reserved syntax, or outside Lean's tables
@@ -2568,31 +2897,32 @@ L7 the TeX macro table is incomplete by construction, so the normaliser meets
    accent in `\texttt{caf\'e\_lemma}` left `e` behind as a readable fragment and
    refuted `café_lemma` while satisfying every precondition then in force. So the
    residue is no longer a refutation rule: charging every candidate can only cost
-   `uncertain` verdicts, and on the real guide it costs nothing, the guide leaving
-   no unreadable span at all. What remains are the shapes charging never reaches,
+   `uncertain` verdicts. What remains are the shapes charging never reaches,
    and they escape for two different reasons. A line break inside a citation (L7a
    with a comment, L7c without one) *does* produce a span, and a clean one, so there
    is nothing to charge -- while the newline it keeps also hides the name from the
-   literal search. An unrecognised wrapper (L7b) produces no span at all. The
-   line-break shapes are now excluded from the real guide by an unconditional canary,
-   so they are a property of the parser, not a live gap; the wrapper shape is still
-   editorial.
+   literal search. An unrecognised wrapper (L7b) produces no span at all. None of
+   this is live on this tree: no `.tex` documentation is tracked, so the TeX reader
+   has no input and every L7 shape below is a property of the parser alone. A
+   document written back under `docs/` or `tex/` is read by the run that adds it
+   (`tex_sources`) and is rejected outright if it carries the line-break shapes
+   (`_tex_source`, `tex_citation_line_breaks`); one written anywhere else stops the
+   scan (`require_documentation`).
 L7a a `%` comment inside a code citation is a silent gap. TeX splices the comment's
    line into the next one (`\texttt{foo% c` + newline + `\beta bar}` typesets
    `fooβbar`), but comment stripping keeps the line break, so the span parses
    cleanly, raises no warning, normalises to `foo`+newline+`βbar`, and a literal
    search for `fooβbar` finds nothing: the name is charged to nobody. This is the
    counterexample to "a citation that cannot be read is always charged" -- charging
-   only applies to material that produced a span. Mitigation: `run_tex_canary`
-   rejects any citation in the guide whose body contains a line break, so this
-   shape cannot re-enter unnoticed; write `\allowbreak` for the break hint.
+   only applies to material that produced a span. Mitigation: `tex_citation_line_breaks`
+   reports any citation whose body contains a line break, so a document fed to the
+   reader can be rejected for it; write `\allowbreak` for the break hint.
 L7b only a *recognised* code wrapper is charged, and only in its braced form: the
    span grammar reads `\texttt{...}`, `\verb{...}`, `\lstinline{...}` and
    `\mintinline{...}`, so the delimiter form the last three normally take
    (`\verb|foo\_bar|`) is no span, and `\mintinline{lean}{foo\_bar}` is read as a
-   span spelling its language argument (`lean`) rather than the name. The guide
-   uses none of those three today (only `\texttt`), so that approximation is not
-   live. A name written with any other wrapper (`{\tt caf\'{e}\_lemma}`) is
+   span spelling its language argument (`lean`) rather than the name. A name
+   written with any other wrapper (`{\tt caf\'{e}\_lemma}`) is
    likewise not a citation for this scan, so it raises no span and no warning. It
    is *not* generally invisible: normalisation runs over the whole document, not
    only inside spans, so a wrapper-less ASCII name (`{\tt foo\_bar}`) is still
@@ -2601,20 +2931,39 @@ L7b only a *recognised* code wrapper is charged, and only in its braced form: th
    with any markup whose normalisation does not reproduce the name. A character
    the macro table cannot spell (`caf\'e`) is only one way in; an unbraced accent,
    a surviving macro or an intervening break do it too. Mitigation is
-   editorial: cite code with `\texttt` in the guide. This gap and L7a/L7c are why a
-   machine-readable citation macro shared by the guide and this scanner remains the
-   permanent fix; PR #4647 records the analysis.
+   editorial: cite code with `\texttt`. This gap and L7a/L7c are why a
+   machine-readable citation macro shared by the document and this scanner remains
+   the permanent fix; PR #4647 records the analysis.
 L7c a bare line break inside a code citation is the same gap as L7a without the
    comment: `\texttt{foo\_` + newline + `bar}` parses as one span, raises no
    warning, and normalises to `foo_`+newline+`bar`, which no search for `foo_bar`
    finds. It also typesets wrongly (TeX turns the break into a space *inside* the
    name), so it is a documentation bug as well as a scanner blind spot. Four
-   published results were hidden this way in the guide and were rescued only by an
-   unrelated `docs/` citation. Both shapes are now forbidden by the same canary.
-L7d the doc channel reads README.md, every docs/**/*.md and tex/proof-guide.tex.
-   A citation living anywhere else (a GitHub issue, a PR body, a .self-local note,
-   a TeX file other than the guide) is invisible, so "no documentation citation"
-   means "none in those files". Mitigation: keep published results cited from the
+   published results were hidden this way in the retired proof guide and were
+   rescued only by an unrelated `docs/` citation.
+L7d the doc channel reads README.md, every docs/**/*.md, and every .tex or .ltx
+   under docs/ or tex/ -- and nothing else. A citation living anywhere else (a
+   GitHub issue, a PR body, a .self-local note) is invisible, so "no
+   documentation citation" means "none in those files". What used to escape
+   *silently* no longer can, because every way a LaTeX document can exist and go
+   unread now aborts the run rather than being walked past
+   (`require_documentation`): outside the roots, under a directory symlink no
+   walk enters, under a directory the process cannot list, or spliced into a
+   scanned document by `\input` without being scanned itself (LaTeX supplies the
+   `.tex` the target omits, so `\input{result}` reads a file that looks like no
+   document at all). Each of those four is decided on the content, not on the
+   shape: the symlink is entered to see whether a document is behind it
+   (`_links_to_latex`), and an `\input` written inside a verbatim span or a
+   comment splices nothing and is not one (`_mask_tex_verbatim`), so neither
+   costs a run that has nothing hidden from it. The suffix test is case-folded,
+   since the filesystem this is developed on is: `guide.TEX` opens and typesets.
+   Two boundaries are accepted rather than closed, and both are silent by
+   design. A hidden directory is not published documentation anywhere in the
+   tree, so a .tex under one is neither read nor reported. And the guard is
+   LaTeX-only: a *Markdown* file outside docs/ (`notes/theorems.md`) is unread
+   and unflagged, because the Markdown channel is keyed to README.md plus docs/
+   and widening it is a decision about what this repository publishes, not a
+   defect of the reader. Mitigation: keep published results cited from the
    scanned set; the module-cited metadata catches file-level mentions.
 L8 the scanner reads the working tree, not the git index. Run it on a clean tree.
 L9 a name mentioned only in a comment or a module docstring is reported (with the
@@ -2679,7 +3028,6 @@ def report(
     warnings: list[UnreadableSpan],
     malformed: list[str],
     canary: tuple[int, dict[str, int]],
-    tex_citations: int,
     elapsed: float,
 ) -> None:
     """Print the human-readable report (deterministic: every list is sorted)."""
@@ -2689,10 +3037,6 @@ def report(
         f"canary: {count} declarations carrying "
         + ", ".join(f"{char!r}x{per_char[char]}" for char in CANARY_CHARS)
         + " each find themselves: PASS"
-    )
-    print(
-        f"canary: {tex_citations} code citations in {rel(TEX_GUIDE)}, none broken "
-        "across a line: PASS"
     )
     print()
     buckets: dict[str, list[Verdict]] = {name: [] for name in VERDICT_ORDER}
@@ -3032,7 +3376,6 @@ def main(argv: list[str] | None = None) -> int:
 
         tree = load_tree()
         canary = run_canary(tree)
-        tex_citations = run_tex_canary()
         docs = load_docs()
         warnings = [span for doc in docs for span in doc.unreadable]
         malformed = [item for doc in docs for item in doc.malformed]
@@ -3071,7 +3414,6 @@ def main(argv: list[str] | None = None) -> int:
             warnings,
             malformed,
             canary,
-            tex_citations,
             time.time() - started,
         )
         # A completed scan reports; it does not adjudicate. There is no verdict

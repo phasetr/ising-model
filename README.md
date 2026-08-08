@@ -41,8 +41,7 @@ locally-uniform convergence of the finite-stage β-derivatives on the genuine cl
 convergence window (`window d J ⊆ Ioo 0 (1/(J·2d))`) with no axiom, and the sharp-HLS capstone is
 scoped to that window accordingly.
 
-For the complete list of formalized theorems, the axiom-freeness audit, and the Glimm–Jaffe
-chapter-by-chapter progress table, see the
+For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress table, see the
 **[project page](https://phasetr.github.io/ising-model/)**.
 
 ## Documentation
@@ -60,20 +59,11 @@ chapter-by-chapter progress table, see the
 > reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
 > and open `.lake/build/doc/index.html`.
 
-Mathematical documentation for the formalized proofs is in `tex/` as
-LaTeX source files. To compile:
-
-```sh
-cd tex
-latexmk -lualatex -f -interaction=nonstopmode proof-guide.tex
-```
-
-Requires a TeX Live installation with LuaLaTeX. PDFs are not committed
-to the repository.
-
-| File                       | Description                                          |
-|----------------------------|------------------------------------------------------|
-| `tex/proof-guide.tex`      | Mathematical walkthrough of the formalized proofs    |
+Mathematical documentation for the formalized proofs is `docs/index.md`.
+It records the formalized results against their sources in the literature
+and states the regime each one holds in. It is a curated account of the
+programme, not an index of the library: many declarations, in particular
+internal steps of a proof, are not named there.
 
 ## Related projects and references
 

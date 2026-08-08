@@ -625,10 +625,10 @@ class ShapeTest(unittest.TestCase):
             self.assertEqual(tokens(source, "RELOCATION"), [expected], body)
 
     def test_a_texttt_or_path_destination_is_read(self) -> None:
-        """The TeX guide writes most of its file names with `\\path`."""
+        """A TeX document writes most of its file names with `\\path`."""
         for markup in (r"\texttt{Foo/Bar.lean}", r"\path{Foo/Bar.lean}"):
             source = doc_source(
-                "tex/proof-guide.tex",
+                "tex/guide.tex",
                 f"The three foo wrappers now live in {markup}.",
             )
             self.assertEqual(tokens(source, "RELOCATION"), ["3->Foo/Bar.lean"], markup)
@@ -3280,7 +3280,6 @@ class RealTreeTest(unittest.TestCase):
         self.assertIn("IsingModel.lean", paths, "the top-level umbrella is in scope")
         self.assertIn("README.md", paths)
         self.assertIn("docs/index.md", paths)
-        self.assertIn("tex/proof-guide.tex", paths)
         self.assertIn("docs/architecture-import-layers.md", paths)
 
     def test_the_documented_exclusions_are_really_excluded(self) -> None:

@@ -74,7 +74,8 @@ defect survived. What a deletion budget has to satisfy is a claim about the
 ``MEASURED_REMEDIATION_DROP`` at every one of them, a full-budget run leaves the
 document above its floor and inside the cumulative cap -- and not the value the
 rule happens to produce from today's ``#census``. The equality form was tried
-first here too: pinned at 66 for the tex, the suite went red on the very
+first here too: pinned at 66 for the proof guide this repository then tracked,
+the suite went red on the very
 remediation commit that took the census to 1,286, and the cheapest repair there
 is to write 64 and repeat the edit on the next pass -- a guard number lowered
 without review, once per remediation. Because a range claim can be widened until
@@ -1450,7 +1451,7 @@ class FrozenCorpusTest(unittest.TestCase):
     defect this replaces.
 
     The distinction that matters: this expectation moves **iff the extractor
-    moves**. Editing ``tex/proof-guide.tex`` cannot touch it, so remediation
+    moves**. Editing an audited document cannot touch it, so remediation
     never has to update it -- and a relaxed resolution rule (the one change the
     ratchet cannot see, because clearing findings is what remediation looks
     like) shows up here as a diff nobody can mistake for progress.
@@ -1922,7 +1923,7 @@ class CumulativeErosionTest(unittest.TestCase):
         self.assertIn("citation audit: FAIL", out)
 
     def test_the_cap_stops_a_walk_the_per_run_budget_waves_through(self) -> None:
-        """The demonstration, on the tex's own numbers.
+        """The demonstration, on the retired proof guide's own numbers.
 
         Three full-budget rounds are accepted (1333 -> 1267 -> 1204 -> 1144, a
         14% loss); the fourth, which would land at 1087, is refused. Without
@@ -3544,9 +3545,9 @@ def budget_headroom_violations(module: types.ModuleType) -> List[str]:
     This does not say a measured remediation pass always goes through. R12
     bounds the total independently of R11, so the real per-run allowance is
     ``min(citation_drop_budget(census), census - (measured - cap))``: at the
-    binding low end (census 1,134 for the tex) R12 refuses even a one-citation
-    deletion, and a 47-citation drop needs a census of 1,181 or more. What is
-    claimed here is only that R11 is not the brake that stops it.
+    binding low end (census 2,294 for the markdown) R12 refuses even a
+    one-citation deletion, and a 47-citation drop needs a census of 2,341 or
+    more. What is claimed here is only that R11 is not the brake that stops it.
     """
     out: List[str] = []
     drop = module.MEASURED_REMEDIATION_DROP
@@ -3573,13 +3574,12 @@ def budget_ordering_violations(module: types.ModuleType) -> List[str]:
     that is the magnitude comparison ``budget < cap``, over the censuses R12
     admits. It is *not* the claim that a full-budget run leaves the document
     inside the cap -- it does not, and bounding the position after a run is
-    R12's job rather than R11's: at the binding low end (census 1,134 for the
-    tex) a full budget lands at 1,078, i.e. 255 below ``MEASURED_CITATIONS``
-    and past the cap of 199, and R12 is what refuses that run. The comparison
+    R12's job rather than R11's: at the binding low end (census 2,294) a full
+    budget lands at 2,180, i.e. 518 below ``MEASURED_CITATIONS`` and past the
+    cap of 404, and R12 is what refuses that run. The comparison
     is also true only over the admitted range: far above it the per-run share
-    overtakes the fixed cap (first at census 3,980 for the tex, 8,080 for the
-    markdown), which is why the growth samples below are fed to the floor
-    sub-claim alone.
+    overtakes the fixed cap (first at census 8,080), which is
+    why the growth samples below are fed to the floor sub-claim alone.
 
     The floors are backstops, so no run R11 waves through may land on one. That
     sub-claim is checked over growth as well, because "the budget is a share"
@@ -3639,8 +3639,8 @@ def budget_ratio_violations(module: types.ModuleType) -> List[str]:
 class RealTreePinTest(unittest.TestCase):
     """Claims about this repository, so the committed numbers cannot drift silently."""
 
-    def test_coverage_is_clean_on_both_live_targets(self) -> None:
-        """Today every raw ``.lean`` occurrence in both documents is accounted for,
+    def test_coverage_is_clean_on_every_live_target(self) -> None:
+        """Today every raw ``.lean`` occurrence in the documents is accounted for,
         which is what makes the guard bite on the very next uncovered variant."""
         self.assertEqual(live_report().coverage, [])
 
@@ -3815,15 +3815,13 @@ class RealTreePinTest(unittest.TestCase):
         makes impossible is re-anchoring the measurement *silently*, which is
         the one move that would restore the compounding walk.
         """
-        self.assertEqual(
-            ca.MEASURED_CITATIONS, {"tex/proof-guide.tex": 1333, "docs/index.md": 2698}
-        )
+        self.assertEqual(ca.MEASURED_CITATIONS, {"docs/index.md": 2698})
         self.assertEqual(ca.MEASURED_TRACKED_LEAN, 2018)
         self.assertEqual(ca.MAX_CUMULATIVE_CITATION_LOSS_FRACTION, 0.15)
         self.assertEqual(set(ca.TARGETS) - set(ca.MEASURED_CITATIONS), set())
         self.assertEqual(
             {target: ca.cumulative_loss_cap(ca.MEASURED_CITATIONS[target]) for target in ca.TARGETS},
-            {"tex/proof-guide.tex": 199, "docs/index.md": 404},
+            {"docs/index.md": 404},
         )
 
     def test_the_frozen_measurement_still_describes_the_live_documents(self) -> None:
@@ -3988,7 +3986,7 @@ class RealTreePinTest(unittest.TestCase):
                 target: ca.citation_drop_budget(ca.MEASURED_CITATIONS[target])
                 for target in ca.TARGETS
             },
-            {"tex/proof-guide.tex": 66, "docs/index.md": 134},
+            {"docs/index.md": 134},
         )
         self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 47)
 
@@ -4022,7 +4020,7 @@ class RealTreePinTest(unittest.TestCase):
 
     def test_default_targets_are_the_published_documents(self) -> None:
         """Shrinking ``TARGETS`` would make the tool pass by looking away."""
-        self.assertEqual(ca.TARGETS, ("tex/proof-guide.tex", "docs/index.md"))
+        self.assertEqual(ca.TARGETS, ("docs/index.md",))
 
     def test_every_default_target_has_a_measured_floor(self) -> None:
         """A default target without a floor would fall back to the floor of one."""
@@ -4106,20 +4104,34 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
         R12's cap is what bounds the censuses R11 can ever be asked about, so
         widening it is how the floor stops being a backstop without any line
         near the budget being edited: at 60% the smallest admissible census is
-        534 for the tex, where a full budget lands below the floor of 700. The
-        rule and the share are untouched and stay quiet, which is the point --
-        the guard that catches this is the one that quantifies over the range.
+        1,080 for the markdown, where a full budget of 54 lands at 1,026, below
+        the floor of 1,400. The rule and the share are untouched and stay quiet,
+        which is the point -- the guard that catches this is the one that
+        quantifies over the range.
+
+        The headroom claim is a separate threshold and is stated as such. A
+        widened cap starves the budget only once the smallest admissible census
+        is small enough for the share to fall under
+        :data:`citation_audit.MEASURED_REMEDIATION_DROP`, which for a single
+        2,698-citation target happens between 60% and 70%; at 80% the smallest
+        census is 540 and the budget 27, so both guards speak. Asserting
+        headroom at 60% would be asserting something false about the tool.
         """
-        mutant = load_mutated(
-            (
-                "MAX_CUMULATIVE_CITATION_LOSS_FRACTION = 0.15",
-                "MAX_CUMULATIVE_CITATION_LOSS_FRACTION = 0.6",
-            )
-        )
-        self.assertNotEqual(budget_ordering_violations(mutant), [])
-        self.assertNotEqual(budget_headroom_violations(mutant), [])
-        self.assertEqual(budget_rule_violations(mutant), [])
-        self.assertEqual(budget_ratio_violations(mutant), [])
+        for share, headroom_fires in (("0.6", False), ("0.8", True)):
+            with self.subTest(share=share):
+                mutant = load_mutated(
+                    (
+                        "MAX_CUMULATIVE_CITATION_LOSS_FRACTION = 0.15",
+                        f"MAX_CUMULATIVE_CITATION_LOSS_FRACTION = {share}",
+                    )
+                )
+                self.assertNotEqual(budget_ordering_violations(mutant), [])
+                if headroom_fires:
+                    self.assertNotEqual(budget_headroom_violations(mutant), [])
+                else:
+                    self.assertEqual(budget_headroom_violations(mutant), [])
+                self.assertEqual(budget_rule_violations(mutant), [])
+                self.assertEqual(budget_ratio_violations(mutant), [])
 
     def test_zeroing_the_measured_remediation_drop_is_caught(self) -> None:
         """The reference point of the headroom claim deleted rather than the claim.
