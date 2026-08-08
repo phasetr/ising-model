@@ -3,10 +3,12 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStri
 /-!
 # Ambient alongExhaustion ferromagnetic strict-deviation wrappers at h = 0
 
-Specializes the along-exhaustion strict-deviation statements of GJ §18.3–§18.4 to the
-ferromagnetic hypotheses `0 ≤ J`, `0 < β`, so that ferromagnetic consumers need not carry
-the general `0 ≤ β·J` side condition. Each passes through to the corresponding
-general-parameter statement.
+Specializes to ferromagnetic parameters the two zero-field deviation statements that GJ
+§18.3–§18.4 draws from the high-temperature expansion, each discharging the general `β·J` side
+condition by multiplying its own two hypotheses: the two-sided relative sandwich for `Z` from
+`0 ≤ J`, `0 < β` (giving `0 ≤ β·J`), and the strict free-energy deviation `0 < f - log 2` from
+`0 < J`, `0 < β` (giving `0 < β·J`). The strict one keeps the nonempty stage volume and
+nonempty stage edge set that its general-parameter source also demands.
 -/
 
 namespace IsingModel

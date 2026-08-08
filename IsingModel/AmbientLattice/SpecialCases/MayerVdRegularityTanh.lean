@@ -4,11 +4,14 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhExpansionTerm
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanhDifferentiable
 
 /-!
-# `mayerPartialSum` tanh regularity wrappers along an exhaustion
+# `mayerPartialSum` tanh `Continuous` wrappers along an exhaustion
 
-Records regularity of the along-exhaustion Mayer partial sums in the `tanh`-composed
-parameters `β` and `J` (GJ §18.5–§18.6), the input for differentiating the cluster expansion
-stagewise. Each is a pass-through of the corresponding `mayerPartialSum_Λ_tanh_*` lemma.
+Records continuity of the along-exhaustion Mayer partial sums in the `tanh`-composed
+parameters `β` and `J` (GJ §18.5–§18.6), one wrapper varying `β` at fixed `J` and the other
+varying `J` at fixed `β`. Each is a pass-through of the corresponding
+`mayerPartialSum_Λ_tanh_continuous_*` lemma. The matching
+`mayerPartialSumAlongExhaustion_tanh_differentiable_*` statements are not proved here; they
+reach importers of this module through its imports.
 -/
 
 namespace IsingModel

@@ -3,11 +3,14 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanhDifferentiable
 
 /-!
-# `vdPolymerFamilies_sum` tanh regularity wrappers along an exhaustion
+# `vdPolymerFamilies_sum` tanh `Continuous` wrappers along an exhaustion
 
-Records regularity of the along-exhaustion van-den-Berg polymer-family sum in the
-`tanh`-composed parameters `β` and `J` (GJ §18.5). Each is a pass-through of the
-corresponding `vdPolymerFamilies_sum_Λ_tanh_*` ambient lemma.
+Records continuity of the along-exhaustion van-den-Berg polymer-family sum in the
+`tanh`-composed parameters `β` and `J` (GJ §18.5), one wrapper varying `β` at fixed `J` and
+the other varying `J` at fixed `β`. Each is a pass-through of the corresponding
+`vdPolymerFamilies_sum_Λ_tanh_continuous_*` ambient lemma. The matching
+`vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_*` statements are not proved here;
+they reach importers of this module through its imports.
 -/
 
 namespace IsingModel
