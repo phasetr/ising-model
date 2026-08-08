@@ -2,20 +2,23 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete finite-volume basic wrappers
+# Vanishing coupling collapses a finite volume in ℤ^d to the edgeless graph
 
-Narrow child module for concrete `latticeGraph` finite-volume graph, spin
-algebra, bottom-graph, and Hamiltonian symmetry wrappers. The theorem names are
-the same as the former declarations, but callers can now avoid importing
-the monolithic concrete module.
+Records that the induced-subgraph construction on a finite `Λ ⊆ ℤ^d` is monotone in the
+ambient graph, and that at zero coupling the finite-volume partition function and the
+finite-volume correlations of the nearest-neighbor lattice graph agree with those of the
+edgeless graph on the sites of `Λ`, whose correlations have the closed form
+`tanh(β·h) ^ |A|`. Monotonicity is stated for an arbitrary pair of comparable graphs on
+`ℤ^d` rather than for the nearest-neighbor one, and the closed form holds at an arbitrary
+parameter record. The collapse statements fix the coupling at `0` inside the parameter
+record instead of assuming an inequality, so apart from the graph inclusion in the
+monotonicity statement no hypothesis is imposed anywhere here.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d finite-volume basic wrappers -/
 
 /-- **ℤ^d inducedGraph_mono**: `G₁ ≤ G₂` lifts to `inducedGraph G₁ Λ ≤ inducedGraph G₂ Λ`. -/
 theorem inducedGraph_mono_latticeGraph
@@ -55,31 +58,6 @@ theorem correlation_bot_closed_latticeGraph
     IsingModel.correlation (⊥ : SimpleGraph (↑Λ : Type _)) p A
       = Real.tanh (p.β * p.h) ^ A.card :=
   IsingModel.correlation_bot_closed p A
-
-/-! ## Moved: spinProduct + edgeSpin algebra wrappers
-
-The four wrappers
-`sum_config_spinProduct_{eq_zero,empty}_latticeGraph`,
-`spinProduct_mul_latticeGraph`, and `edgeSpin_sq_latticeGraph`
-now live in `FiniteVolumeBasicsSpin.lean`. -/
-
-
-/-! ## Moved: Walsh basis + spin-config wrappers
-
-The five wrappers
-`walsh_{orthogonality,completeness,fourier_inversion,normalization}_latticeGraph`
-and `card_config_eq_two_pow_latticeGraph` now live in
-`FiniteVolumeBasicsWalsh.lean`. -/
-
-
-/-! ## Moved: Hamiltonian flip / symmetry wrappers
-
-The five wrappers
-`edgeSpin_flip_latticeGraph`, `interactionEnergy_flip_latticeGraph`,
-`hamiltonianΛ_flip_eq_latticeGraph`, `hamiltonianΛ_neg_h_latticeGraph`,
-and `hamiltonian_bot_latticeGraph` now live in
-`FiniteVolumeBasicsHamiltonian.lean`. -/
-
 
 end Ambient
 end IsingModel

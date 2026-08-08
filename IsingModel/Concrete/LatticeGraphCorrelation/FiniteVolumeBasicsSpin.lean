@@ -1,12 +1,15 @@
 import IsingModel.Inequalities.NonnegCorrelations
 
 /-!
-# Concrete spinProduct + edgeSpin algebra wrappers
+# Spin-product algebra on the sites of a finite volume in ℤ^d
 
-Narrow child module for four ℤ^d spinProduct / edgeSpin algebra
-wrappers (`sum_config_spinProduct_*`, `spinProduct_mul`,
-`edgeSpin_sq`). Each wrapper is a thin pass-through to the
-corresponding `IsingModel.*` lemma.
+Records the configuration-sum and multiplicative identities for spin products over the
+sites of a finite `Λ ⊆ ℤ^d`: summing `σ^A` over all configurations gives zero as soon as
+`A` is nonempty and gives the number of configurations when `A` is empty; the product of
+two spin products is the spin product of the symmetric difference of their index sets; and
+a per-edge spin product squares to `1`. Nonemptiness of `A` is the only hypothesis anywhere
+here, and no graph, interaction or parameter record enters these statements, which involve
+`Λ` only through its site type.
 -/
 
 open scoped symmDiff

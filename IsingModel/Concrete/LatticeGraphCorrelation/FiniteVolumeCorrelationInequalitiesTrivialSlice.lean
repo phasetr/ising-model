@@ -2,16 +2,15 @@ import IsingModel.Inequalities.GHS
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated{2,3} finite-volume trivial-slice wrappers
+# Truncated two- and three-point functions on the trivial parameter slices in ℤ^d
 
-Narrow child module for four ℤ^d truncated{2,3} finite-volume
-trivial-slice wrappers extracted from
-`FiniteVolumeCorrelationInequalities.lean`:
-
-* `truncated2_J_zero_of_ne_latticeGraph`,
-* `truncated2_beta_zero_latticeGraph`,
-* `truncated3_J_zero_of_pairwise_distinct_latticeGraph`,
-* `truncated3_beta_zero_latticeGraph`.
+Records that the truncated two- and three-point functions of the subgraph induced by the
+nearest-neighbor lattice graph on a finite `Λ ⊆ ℤ^d` vanish on the parameter slices where
+the sites decouple: at zero coupling, where the Boltzmann weight factors over sites, and at
+zero inverse temperature, where every configuration carries the same weight. Distinctness
+of the sites is assumed only on the zero-coupling slice, pairwise for the three-point
+function; the zero-inverse-temperature statements hold at arbitrary, possibly repeated,
+sites. The parameters left free are unconstrained on either slice.
 -/
 
 namespace IsingModel

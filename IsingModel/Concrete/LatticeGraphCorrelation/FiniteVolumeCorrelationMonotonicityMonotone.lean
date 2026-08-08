@@ -2,11 +2,15 @@ import IsingModel.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d finite-volume correlation_monotone_{J,h,β} wrappers
+# Parameter monotonicity of finite-volume correlations in ℤ^d
 
-Narrow child module for three ℤ^d
-`correlation_monotone_{J,h,beta}_latticeGraph` wrappers extracted
-from `FiniteVolumeCorrelationMonotonicity.lean`.
+Records that on the subgraph induced by the nearest-neighbor lattice graph on a finite
+`Λ ⊆ ℤ^d` the correlation of a fixed spin product is monotone increasing in each parameter
+separately: in the coupling and in the external field on `[0, ∞)`, and in the inverse
+temperature on `(0, ∞)`. Each statement assumes nonnegativity of the two parameters held
+fixed, strengthened to strict positivity when the inverse temperature is one of them.
+
+Reference: Glimm–Jaffe §4.2 Proposition 4.2.1, p. 58, for the coupling direction.
 -/
 
 namespace IsingModel
