@@ -2,15 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularity
 
 /-!
-# Concrete along-ex partitionFunction regularity wrappers
+# ℤ^d global regularity of the partition function at a general field
 
-Narrow child module for four ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_*`
-`Continuous`/`Differentiable` regularity wrappers (continuous_*,
-differentiable_* in β, J at general h). Each wrapper is a thin
-pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the regularity of the partition function as a function
+of one parameter of the record `⟨J, h, β⟩` with the field left arbitrary: `Continuous` and
+`Differentiable ℝ` in the inverse temperature with the coupling fixed, and in the coupling
+with the inverse temperature fixed, in each case on the whole line. No sign condition on any
+parameter is imposed.
 -/
 
 namespace IsingModel
