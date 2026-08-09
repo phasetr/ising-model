@@ -2,13 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# ℤ^d `partitionFunctionComplex` entire wrappers
+# ℤ^d entirety of the complex partition function
 
-Narrow child module for four ℤ^d Λ-induced
-`partitionFunctionComplex_entire_{h,J,beta,joint}_latticeGraph` wrappers
-extracted from `ComplexBranchEntire.lean`. Each wrapper is a thin
-pass-through to the corresponding ambient
-`IsingModel.partitionFunctionComplex_entire_*` lemma.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the statement that the complex partition function is entire, that
+is complex differentiable on the whole space: separately in the external field, in the
+coupling and in the inverse temperature with the other two held fixed, and jointly in
+`(J, h, β)`. No statement here carries a hypothesis.
 -/
 
 namespace IsingModel

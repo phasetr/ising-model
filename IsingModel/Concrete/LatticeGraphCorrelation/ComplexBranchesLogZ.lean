@@ -2,15 +2,19 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Branches
 
 /-!
-# ℤ^d exists_logZ_* branch-on-ball wrappers
+# ℤ^d logarithmic branches of the complex partition function
 
-Narrow child module for four ℤ^d `exists_logZ_*` branch-on-ball
-wrappers extracted from `ComplexBranches.lean`:
-
-* `exists_logZ_branch_on_ball_of_leeYangDomain_latticeGraph`,
-* `exists_logZ_holomorphic_branch_on_ball_latticeGraph`,
-* `exists_logZ_analytic_branch_on_ball_latticeGraph`,
-* `exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the construction of a logarithm of the complex partition function
+in the external field: on a ball contained in `leeYangDomain` as a primitive of the
+logarithmic derivative, then as a genuine logarithm normalised at the centre by
+`Complex.log`, in a form carrying the derivative identity and in a form carrying analyticity
+on a neighbourhood of the ball; and, pointwise, as a germ analytic at a point of
+`leeYangDomain` whose exponential and whose value reproduce the partition function and its
+principal logarithm there. Every statement assumes `0 < β` and `0 < J`. The primitive form
+assumes only containment of the ball in `leeYangDomain`, with no positivity of the radius;
+the normalised forms assume that containment together with a positive radius; the pointwise
+form assumes membership of the base point in `leeYangDomain`.
 -/
 
 namespace IsingModel

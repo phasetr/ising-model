@@ -2,14 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# ℤ^d freeEnergyComplex continuity / differentiability wrappers
+# ℤ^d continuity and differentiability of the complex free energy in all parameters
 
-Narrow child module for three ℤ^d freeEnergyComplex continuity /
-differentiability wrappers extracted from `ComplexBranchEntire.lean`:
-
-* `continuous_freeEnergyComplex_on_locus_latticeGraph`,
-* `continuousAt_freeEnergyComplex_at_real_joint_latticeGraph`,
-* `differentiableAt_freeEnergyComplex_at_real_joint_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the regularity of the complex free-energy density as a function
+of `(J, h, β)` jointly: continuity on the locus where the complex partition function lies in
+`Complex.slitPlane`, and continuity and complex differentiability at the image of an
+arbitrary real parameter record. No statement here carries a hypothesis.
 -/
 
 namespace IsingModel
