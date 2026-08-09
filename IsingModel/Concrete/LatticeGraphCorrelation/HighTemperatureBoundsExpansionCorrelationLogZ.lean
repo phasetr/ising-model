@@ -3,20 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperClosed
 
 /-!
-# Concrete HT correlation + log Z closed-form wrappers
+# ℤ^d closed forms for the correlation and for `log Z` at zero field (§18.3)
 
-Narrow child module for the 3 ℤ^d HT correlation / log-partition
-closed-form wrappers
-(`correlationΛ_latticeGraph_high_temp_expansion_h_zero_closed`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed`)
-extracted from `HighTemperatureBoundsExpansion.lean` in PR #2069.
-Each is a thin pass-through to the corresponding ambient
-`correlationΛ_high_temp_expansion_h_zero_closed` /
-`log_partitionFunctionΛ_high_temp_expansion_h_zero_closed` /
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed`
-lemma at `IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBoundsExpansion` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the
+high-temperature closed form of the correlation on a fixed finite volume `Λ` as the ratio of
+the edge-subset sum of `tanh (β * J) ^ |X|` over subsets whose parity matches the observable
+to the same sum over even subsets; and the decomposition of `log Z` as
+`|Λ| * log 2 + |E_Λ| * log (cosh (β * J))` plus the logarithm of the even-subgraph sum, on a
+fixed volume and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`. The correlation
+closed form holds with no condition on `J` or `β`; each decomposition of `log Z` assumes
+`0 ≤ β * J`.
 -/
 
 namespace IsingModel

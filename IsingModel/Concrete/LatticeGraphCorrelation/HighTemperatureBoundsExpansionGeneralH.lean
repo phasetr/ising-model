@@ -3,18 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariantsGeneralH
 
 /-!
-# ℤ^d HT partition expansion general-h / closed / subset wrappers
+# ℤ^d high-temperature expansion of the partition function at a general field (§18.3)
 
-Narrow child module for four ℤ^d high-temperature partition-function
-expansion wrappers extracted from `HighTemperatureBoundsExpansion.lean`:
-
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion` (general h),
-* `partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion`
-  (general h),
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed`
-  (closed form),
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_subset_form`
-  (subset form).
+Instantiates at `IsingModel.latticeGraph d`, at an arbitrary parameter record, the expansion
+of the partition function as `cosh (β * J) ^ |E|` times the configuration sum of
+`∏_e (1 + tanh (β * J) * σ_e)` weighted by `exp (β * h * ∑_i σ_i)`, on a fixed finite volume
+`Λ` and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`; the same expansion
+reorganised as a sum over edge subsets `X` of `tanh (β * J) ^ |X|` against the configuration
+sum of `∏_{e ∈ X} σ_e` with that same field weight; and, at zero external field, the closed
+form `2 ^ |Λ| * cosh (β * J) ^ |E_Λ|` times the even-subgraph sum. No statement here imposes
+a condition on the parameter record.
 -/
 
 namespace IsingModel
