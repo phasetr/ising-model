@@ -1,23 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyInfinite bridge wrappers
+# ℤ^d evaluation of the infinite-volume free-energy density
 
-Narrow child module for four ℤ^d `freeEnergyInfinite_latticeGraph_*`
-bridge wrappers extracted from
-`PartitionFreeEnergyBoundsInfinite.lean`:
-
-* `freeEnergyInfinite_latticeGraph_eq_of_tendsto`,
-* `freeEnergyInfinite_latticeGraph_of_eventually_const`,
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_eq_of_tendsto`,
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_of_eventually_const`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyInfinite_eq_of_tendsto` /
-`freeEnergyInfinite_of_eventually_const` lemma at
-`G := IsingModel.latticeGraph d` (with generic Exhaustion or
-cubicExhaustion). The theorem names are unchanged from the former
-`PartitionFreeEnergyBoundsInfinite` declarations.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and along `Ambient.cubicExhaustion d`, the evaluation of `freeEnergyInfinite` —
+the `limsup` of the per-stage free-energy densities — whenever that sequence is known to
+converge or to be eventually constant: the value is the limit, respectively the eventual
+constant. That convergence or eventual-constancy hypothesis is the only hypothesis each
+statement carries.
 -/
 
 namespace IsingModel
