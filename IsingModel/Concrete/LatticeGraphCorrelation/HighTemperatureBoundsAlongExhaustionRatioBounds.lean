@@ -6,76 +6,19 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExR
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExRatioBoundBundle
 
 /-!
-# Concrete alongExhaustion Z ratio sandwich and ratio bound wrappers at h = 0
+# ℤ^d along-exhaustion partition-function ratio family, assembled
 
-Backwards-compatibility shim. All eight ℤ^d alongExhaustion
-`partitionFunctionAlongExhaustion_latticeGraph_*` Z ratio wrappers
-that used to live here have been carved out into three narrower
-children:
-`HighTemperatureBoundsAlongExRatioSandwichBundle.lean` (PR #2089) for
-the two `ratio_sandwich_bundle` wrappers;
-`HighTemperatureBoundsAlongExRatioBoundSlices.lean` (PR #2090) for the
-four J = 0 / β = 0 `ratio_bound` slice wrappers; and
-`HighTemperatureBoundsAlongExRatioBoundBundle.lean` (PR #2091) for the
-two `ratio_bound_bundle` wrappers. The 4
-`triple_ratio_sandwich_bundle` wrappers live in
-`HighTemperatureBoundsAlongExhaustionTripleRatio.lean` (PR #1996; the
-bound-bundle variants were dropped in PR #4676) and the 12
-`log_partitionFunction` / `freeEnergy` ratio
-wrappers live in `HighTemperatureBoundsAlongExhaustionRatioLogFe.lean`
-(PR #1997). The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Aggregates, for callers that want the family behind a single import, the ℤ^d along-exhaustion
+zero-field partition-function ratio results proved in the modules it imports: the sandwich
+bundle placing the ratios against the `J = 0` and `β = 0` parameter records between
+`cosh (β * J) ^ |E_n|` and `exp (β * J * |E_n|)`, those ratios' separate upper bounds, and the
+bundle collecting the upper bounds.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open scoped symmDiff
-
-/-! ## Moved: alongExhaustion Z `ratio_sandwich_bundle` wrappers
-
-The two wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_sandwich_bundle`
-and `partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_sandwich_bundle_ferromagnetic`
-now live in `HighTemperatureBoundsAlongExRatioSandwichBundle.lean`. -/
-
-
-/-! ## Moved: alongExhaustion Z `ratio_bound` J = 0 / β = 0 slice wrappers
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound`,
-`*_ratio_bound_beta_zero`, `*_ratio_bound_ferromagnetic`, and
-`*_ratio_bound_beta_zero_ferromagnetic` now live in
-`HighTemperatureBoundsAlongExRatioBoundSlices.lean`. -/
-
-
-/-! ## Moved: alongExhaustion Z `ratio_bound_bundle` wrappers
-
-The two wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_ratio_bound_bundle`
-and `partitionFunctionAlongExhaustion_latticeGraph_h_zero_ratio_bound_bundle_ferromagnetic`
-now live in `HighTemperatureBoundsAlongExRatioBoundBundle.lean`. -/
-
-/-! ## Moved: ℤ^d log Z + freeEnergy ratio wrappers
-
-The 12 ℤ^d alongExhaustion `log_partitionFunction` and `freeEnergy`
-ratio_sandwich / ratio_bound (+ deviation_pos / pow_two_lt) wrappers
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionRatioLogFe`.
-The umbrella `HighTemperatureBounds.lean` re-imports
-the new child so the import paths and theorem names remain
-unchanged.
--/
-
-/-! ## Moved: ℤ^d alongExhaustion triple-ratio wrappers
-
-The 4 ℤ^d alongExhaustion `triple_ratio_sandwich_bundle` wrappers
-(J = 0 / β = 0 trivial slices, ferromagnetic variants) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionTripleRatio`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella module that aggregates it.
--/
-
 
 end Ambient
 

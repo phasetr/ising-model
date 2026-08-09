@@ -3,14 +3,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBound
 
 /-!
-# Concrete alongExhaustion Z ratio_bound_bundle wrappers at h = 0
+# ℤ^d along-exhaustion partition-function ratio bounds against the trivial slices
 
-Narrow child module for two ℤ^d alongExhaustion
-`partitionFunctionAlongExhaustion_latticeGraph_*_ratio_bound_bundle`
-wrappers (general and ferromagnetic) at `h = 0`. Each wrapper is a
-thin pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_bundle*`
-lemma at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, a bundle bounding the ratio of the partition function at `⟨J, 0, β⟩` to its value
+at `⟨0, 0, β⟩` and the ratio to its value at `⟨J, 0, 0⟩`, each by `exp (β * J * |E_n|)`. The
+bundle is stated under `0 ≤ β * J` and again in a ferromagnetic form under `0 ≤ J` together
+with `0 < β`; no nonemptiness or edge-count condition enters.
 -/
 
 namespace IsingModel
