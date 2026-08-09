@@ -1,21 +1,18 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictZ
 
 /-!
-# Ambient alongExhaustion ferromagnetic Z / log Z strict-deviation wrappers at h = 0
+# Strict zero-field deviation of `Z` and `log Z` under `0 < J` and `0 < β`
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-ferromagnetic `partitionFunction` / `log_partitionFunction`
-strict-deviation wrappers extracted from
-`HighTemperatureBoundsDeviationStrictFerro.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic`
-* `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos_ferromagnetic`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-Each wrapper derives `0 < β * J` from `0 < J` and `0 < β` and
-forwards to the corresponding general non-ferromagnetic wrapper
-(in `HighTemperatureBoundsDeviationStrictZ`). Theorem names are
-unchanged from the former `HighTemperatureBoundsDeviation`
-declarations.
+Under `0 < J`, `0 < β` and `0 < |E|`, the partition function at the parameter record
+`⟨J, 0, β⟩` is strictly greater than `2 ^ |Λ|`, and its logarithm is strictly greater than
+`|Λ| * Real.log 2`.
 -/
 
 namespace IsingModel

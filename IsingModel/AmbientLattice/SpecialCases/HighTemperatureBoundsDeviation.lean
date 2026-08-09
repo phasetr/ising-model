@@ -1,18 +1,19 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp
 
 /-!
-# Ambient alongExhaustion f/Z/log Z deviation wrappers at h = 0
+# Deviation of the zero-field free energy and log partition function from `Real.log 2`
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-`deviation_bound_exp` / `deviation_sandwich` wrappers (with
-ferromagnetic variants for f and log Z). The 4
-`freeEnergyAlongExhaustion_*_continuity_*` wrappers were further
-narrowed into `HighTemperatureBoundsDeviationContinuity` (PR #2024)
-and the 10 strict-deviation wrappers (`relative_sandwich`,
-`deviation_pos`, `pow_two_lt`, `_strict_deviation_bundle`) were
-further narrowed into `HighTemperatureBoundsDeviationStrict`
-(PR #2018). The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. All statements are at the parameter record `⟨J, 0, β⟩` under `0 ≤ β * J`.
+
+Under the additional hypothesis `0 < |Λ|`, the free energy exceeds `Real.log 2` by at most
+`β * J * |E| / |Λ|`, and that excess is recorded again in the two-sided form
+`0 ≤ f - Real.log 2 ≤ β * J * |E| / |Λ|`. Under `0 ≤ β * J` alone, the logarithm of the
+partition function satisfies `0 ≤ log Z - |Λ| * Real.log 2 ≤ β * J * |E|`.
 -/
 
 namespace IsingModel
@@ -22,8 +23,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-
 
 /-- **Along-ex sharper f deviation bound at stage `n`**: under
 `0 ≤ β·J` and `0 < |Λ_n|`,
@@ -38,17 +37,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp
   have h := freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp
     G Λ J β hβJ n hne
   linarith
-
-/-! ## Moved: f continuity wrappers
-
-The 4 ambient alongExhaustion `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_*`
-wrappers (`_at_J_zero`, `_at_beta_zero`, `_bundle`,
-`_bundle_ferromagnetic`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
-
 
 /-- **Along-ex f deviation sandwich at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_sandwich
@@ -82,30 +70,6 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviatio
       (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)) - _ ≤ _
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich
     G (Λ.volume n) J β hβJ
-
-/-! ## Moved: ferromagnetic deviation wrappers
-
-The three `*_deviation_*_ferromagnetic` wrappers
-(`freeEnergyAlongExhaustion_..._deviation_bound_exp_ferromagnetic`,
-`freeEnergyAlongExhaustion_..._deviation_sandwich_ferromagnetic`,
-`log_partitionFunctionAlongExhaustion_..._deviation_sandwich_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `HighTemperatureBounds.lean`.
--/
-
-/-! ## Moved: strict-deviation wrappers
-
-The 10 ambient alongExhaustion strict-deviation wrappers covering
-`*_relative_sandwich`, `*_deviation_pos`, `*_pow_two_lt`,
-`log_partitionFunctionAlongExhaustion_*_deviation_pos`, and
-`_strict_deviation_bundle` (with ferromagnetic variants) now live
-in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
 
 end Ambient
 

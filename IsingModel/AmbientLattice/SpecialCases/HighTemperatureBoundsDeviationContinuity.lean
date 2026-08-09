@@ -1,17 +1,19 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial
 
 /-!
-# Ambient alongExhaustion freeEnergy continuity wrappers at h = 0
+# Joint quantitative continuity of the zero-field free energy in `J` and in `β`
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-freeEnergy quantitative continuity wrappers. 4 theorems:
-`freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero`,
-`_at_beta_zero`, `_bundle`, `_bundle_ferromagnetic`. Wrappers pass
-through to the Λ-level `freeEnergyΛ_high_temp_h_zero_continuity_*`
-versions via `change ... ; exact` (the bundle is an anonymous
-constructor; the ferromagnetic bundle applies `mul_nonneg`). The
-theorem names are unchanged from the former
-`HighTemperatureBoundsDeviation` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
+
+Under `0 ≤ β * J` and `0 < |Λ|`, a conjunction records that the free energy at the parameter
+record `⟨J, 0, β⟩` differs from its value at `⟨0, 0, β⟩`, and from its value at `⟨J, 0, 0⟩`,
+by at most `β * J * |E| / |Λ|` in absolute value. The same conjunction is stated under
+`0 ≤ J` together with `0 < β` in place of `0 ≤ β * J`.
 -/
 
 namespace IsingModel
@@ -21,18 +23,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 2 trivial-slice continuity wrappers
-
-The two along-ex freeEnergy continuity wrappers at trivial
-parameter slices
-(`freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuityTrivial`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex f continuity bundle at stage `n`**. -/
 theorem freeEnergyAlongExhaustion_high_temp_h_zero_continuity_bundle
