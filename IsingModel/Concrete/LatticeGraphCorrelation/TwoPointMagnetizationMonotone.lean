@@ -1,11 +1,24 @@
-/- TwoPointMagnetizationMonotone.lean
-Narrow child module for the 5 ℤ^d magnetization monotonicity wrappers
-(`spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_{J,beta}`,
-`magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`)
-extracted from `TwoPoint.lean` in PR #2026. The theorem names are
-unchanged from the former `TwoPoint` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# Parameter monotonicity of the ℤ^d magnetization at a site
+
+Concrete `IsingModel.latticeGraph d` statements along `Ambient.cubicExhaustion d`, each at
+an arbitrary site of `Fin d → ℤ` and each monotone in one parameter with the rest held
+fixed.
+
+The infinite-volume magnetization takes the whole parameter record and is monotone in each
+of its fields: in the coupling and in the external field on `Set.Ici 0`, and in the inverse
+temperature on `Set.Ioi 0`. Each of those assumes exactly the sign conditions on the fields
+it holds fixed — non-negative for the coupling and for the external field, positive for the
+inverse temperature — and nothing about the field it varies.
+
+The spontaneous magnetization takes the coupling and the inverse temperature separately and
+carries no external field at all, so the directions recorded for it are the coupling on
+`Set.Ici 0` and the inverse temperature on `Set.Ioi 0`, each under the single sign
+condition on the parameter it holds fixed. No instance argument is taken anywhere in this
+module.
+-/
 
 open scoped symmDiff
 
