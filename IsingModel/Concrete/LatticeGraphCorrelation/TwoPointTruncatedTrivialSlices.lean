@@ -18,8 +18,10 @@ switch part of the interaction off.
 At vanishing external field the three-point function vanishes whenever the origin and the
 separations are pairwise distinct, and that assumes no ferromagnetic condition. At
 vanishing coupling the same vanishing holds under `Ferromagnetic` on the record
-`⟨0, h, β⟩`, while the four-point function is there not zero but
-`-2 * Real.tanh (β * h) ^ 4`, again at pairwise distinct sites.
+`⟨0, h, β⟩`, while the four-point function there has the closed form
+`-2 * Real.tanh (β * h) ^ 4`, again at pairwise distinct sites; under that same condition
+the closed form is `0` exactly when the external field vanishes and is strictly negative
+otherwise.
 
 At zero inverse temperature both functions vanish at arbitrary separations, distinct or
 not, and under no hypothesis whatever: each infinite-volume correlation entering the Ursell

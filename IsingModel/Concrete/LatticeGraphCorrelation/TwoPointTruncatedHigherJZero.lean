@@ -8,9 +8,11 @@ Concrete `IsingModel.latticeGraph d` statements along an arbitrary `Ambient.Exha
 how the sites coincide.
 
 At pairwise distinct sites the value vanishes, and it still vanishes when the first two
-sites coincide and the third differs from them. When all the sites coincide the value is
-not zero: writing `t` for `Real.tanh (β * h)`, it is `t * (1 - t) * (1 - 2 * t)`.
-No instance argument is taken.
+sites coincide and the third differs from them. When all the sites coincide it has the
+closed form `t * (1 - t) * (1 - 2 * t)`, writing `t` for `Real.tanh (β * h)`. The
+ferromagnetic condition confines `t` to `[0, 1)`, where that cubic vanishes exactly at
+`t = 0`, that is at `h = 0`, and at `t = 1 / 2`; between those two roots it is positive,
+and above the larger one it is negative. No instance argument is taken.
 -/
 
 namespace IsingModel
