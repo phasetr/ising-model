@@ -2,13 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# Concrete Complex restrict-real-axis wrappers
+# ℤ^d restriction of the complex partition function and free energy to real parameters
 
-Narrow child module for four ℤ^d
-`{freeEnergy,partitionFunction}Complex_restrict_*_latticeGraph`
-real-axis restriction wrappers (`restrict_real_axis_eq` /
-`restrict_joint_real_eq`). Each wrapper is a thin pass-through to the
-corresponding ambient `*_restrict_*` lemma at `IsingModel.latticeGraph d`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the equalities of functions obtained by restricting the complex
+partition function and the complex free-energy density to real arguments: as functions of a
+real external field with the coupling and the inverse temperature held fixed and real, and as
+functions of a real parameter record. In each case the restriction is the cast of the
+corresponding real quantity, and no statement carries a hypothesis.
 -/
 
 namespace IsingModel

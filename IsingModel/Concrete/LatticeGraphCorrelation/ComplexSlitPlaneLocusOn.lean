@@ -2,21 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# Concrete Complex slitPlane-locus `*On` wrappers
+# ℤ^d regularity of the complex free energy on the slit-plane locus in the field
 
-Narrow child module for 3 ℤ^d slitPlane-locus `*On`-style wrappers
-(`ContinuousOn`, `DifferentiableOn`, `AnalyticOn`) on `latticeGraph d`
-extracted from `ComplexSlitPlane.lean`:
-
-* `freeEnergyComplex_continuousOn_slitPlane_locus_latticeGraph`,
-* `freeEnergyComplex_differentiableOn_slitPlane_locus_latticeGraph`,
-* `freeEnergyComplex_analyticOn_slitPlane_locus_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding abstract
-`IsingModel.freeEnergyComplex_{continuousOn,differentiableOn,analyticOn}_slitPlane_locus`
-lemma at `Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The
-theorem names are unchanged from the former `ComplexSlitPlane`
-declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the continuity, the complex differentiability and the analyticity
+of the complex free-energy density, as a function of the external field, on the locus where
+the complex partition function lies in `Complex.slitPlane`. Each statement is given for
+arbitrary complex `J` and `β` and carries no hypothesis.
 -/
 
 namespace IsingModel

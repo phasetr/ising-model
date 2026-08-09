@@ -5,16 +5,15 @@ import IsingModel.AmbientComplexAnalyticity
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 /-!
-# ℤ^d per-stage `freeEnergyComplexAlongExhaustion` wrappers
+# ℤ^d per-stage regularity of the complex free energy along an exhaustion
 
-Narrow child module for four ℤ^d per-stage Lee-Yang regularity wrappers for
-the complex free energy along an exhaustion extracted from
-`PerStageComplex.lean`:
-
-* `freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
-* `freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
-* `freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
-* `freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage_latticeGraph`.
+Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n` of an `Ambient.Exhaustion`
+of `Fin d → ℤ`, the regularity in the external field of the complex free-energy density of
+that stage's volume. Analyticity at a complex base point is given for arbitrary complex `J`
+and `β` and assumes exactly that the stage partition function lies in `Complex.slitPlane`
+there. Analyticity on a neighbourhood, complex differentiability and continuity on
+`leeYangSubdomain β (Fintype.card ↑(Λ.volume n))` are given for real `J` and `β`, and each
+assumes `0 < β` and nothing else.
 -/
 
 namespace IsingModel
