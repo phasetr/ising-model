@@ -3,18 +3,18 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFEClosed
 
 /-!
-# Ambient freeEnergyAlongExhaustion HT expansion lower/upper wrappers
+# Two-sided zero-field bounds on the free energy in `Real.cosh` form
 
-Narrow child module for the two ambient
-`freeEnergyAlongExhaustion_high_temp_h_zero_{upper,lower}_bound`
-wrappers. The closed-form decomposition wrapper
-(`_high_temp_expansion_h_zero_closed`) now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFEClosed`
-and is re-imported through this parent module. Each remaining
-wrapper is a per-stage application of the corresponding Λ-level
-`freeEnergyΛ_high_temp_*` lemma. The theorem names are unchanged
-from the former `HighTemperatureBoundsExpansionLowerUpper`
-declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
+
+Under `0 ≤ β * J` and `0 < |Λ|`, the free energy at the parameter record `⟨J, 0, β⟩` is at
+least `Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` and at most
+`Real.log 2 + (|E| / |Λ|) * Real.log (2 * Real.cosh (β * J))`.
 -/
 
 namespace IsingModel
@@ -24,17 +24,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-
-/-! ## Moved: 1 freeEnergy closed-form decomposition wrapper
-
-The
-`freeEnergyAlongExhaustion_high_temp_expansion_h_zero_closed`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFEClosed`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-exhaustion freeEnergy high-temperature upper bound (FV (3.45))**:
 under `0 ≤ β·J` and `0 < |Λ.volume n|`, at every stage `n`,

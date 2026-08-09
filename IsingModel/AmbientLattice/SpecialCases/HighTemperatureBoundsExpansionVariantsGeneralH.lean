@@ -1,20 +1,22 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion partition function high-temperature expansion (general h)
+# The high-temperature expansion of the partition function at general external field
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-high-temperature `partitionFunctionAlongExhaustion` expansion
-wrappers at general `h` extracted from
-`HighTemperatureBoundsExpansionVariants.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_subset_form`
+Each statement is at an arbitrary parameter record `p : IsingParams ℝ`. Write `|E|` for the
+edge count of the stage subgraph.
 
-Each wrapper unfolds `partitionFunctionAlongExhaustion` to the
-ambient `partitionFunctionΛ_high_temp_expansion*` lemma via
-`change` + `exact`. Theorem names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+The partition function of the stage volume is `Real.cosh (p.β * p.J) ^ |E|` times a
+configuration sum. In the product form the summand is
+`(∏ e, (1 + Real.tanh (p.β * p.J) * edgeSpin σ e))` times
+`Real.exp (p.β * p.h * ∑ i, Spin.sign ℝ (σ i))`. In the subset form an outer sum runs over
+the subsets `X` of the stage edge finset with weight `Real.tanh (p.β * p.J) ^ X.card`, and
+the summand of the inner configuration sum is `(∏ e ∈ X, edgeSpin σ e)` times the same field
+factor.
 -/
 
 namespace IsingModel
