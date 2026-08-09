@@ -104,7 +104,7 @@ For `z ≠ 0` and `β ∈ ConvergenceRegion.window d J`, the distance-radius pro
 direct-path rate `−log tanh(βJ)` lower-bounds the anchored two-point function:
 `pseudoMassG α (dist 0 z) (−log tanh(βJ)) ≤ ⟨φ₀ φ_z⟩^∞`.
 
-The bound is unconditional at this rate, and at this rate only: it is the correlation lower bound
+The bound is unconditional at this rate: it is the correlation lower bound
 that the rate-agnostic Lipschitz route of `UnconditionalFiniteRegionLipschitz.lean` re-parametrizes
 to.  The `hprofile` binder of the conditional modules
 (`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window_of_profile_lower` and its
