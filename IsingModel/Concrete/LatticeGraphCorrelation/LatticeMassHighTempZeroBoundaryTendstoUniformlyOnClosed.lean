@@ -3,18 +3,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
-# correlationAlongExhaustion uniform convergence on [0, b]
+# ℤ^d uniform convergence on a closed interval from the origin
 
-Narrow child module for two ℤ^d
-`correlationAlongExhaustion_tendstoUniformlyOn_{beta,J}_zero_closed`
-wrappers (and the two helper lemmas
-`correlationAlongExhaustion_eq_zero_at_{beta,J}_zero`)
-extracted from `LatticeMassHighTempZeroBoundary.lean`:
-
-* `correlationAlongExhaustion_eq_zero_at_beta_zero` (Step 178 helper),
-* `correlationAlongExhaustion_tendstoUniformlyOn_beta_zero_closed` (Step 178),
-* `correlationAlongExhaustion_eq_zero_at_J_zero` (Step 232 helper),
-* `correlationAlongExhaustion_tendstoUniformlyOn_J_zero_closed` (Step 232).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the uniform convergence of the
+finite-volume correlations to the infinite-volume one on `Set.Icc 0 b`, in the
+inverse-temperature direction and in the coupling direction. Each convergence statement
+assumes `1 ≤ d`, distinctness of the two sites, `0 < b`, strict positivity of the parameter
+held fixed, and that `b` times that parameter times `2 * d` is below one. Each rests on the
+observation, recorded here at a fixed exhaustion stage, that the finite-volume correlation
+vanishes when the parameter being varied is zero; those observations hold for an arbitrary
+pair of sites, not assumed distinct, and carry no hypothesis.
 -/
 
 open scoped symmDiff

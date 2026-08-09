@@ -1,13 +1,20 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.NormSub
 
 /-!
-# High-temperature zero-boundary and half-open wrappers at ℤ^d
+# ℤ^d linear bounds on the two-point function at the zero boundary (§17.5)
 
-This module contains the concrete §17.5 high-temperature zero-boundary layer
-split from the original `Inequalities` module: β/J linear bounds at the zero
-boundary, closed-interval continuity and uniform convergence, zero-included
-Lipschitz bounds, half-line a.e. differentiability, and half-open locally
-uniform convergence wrappers.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the bound of the two-point correlation by an explicit
+constant times the parameter that is being sent to zero, in the inverse-temperature direction
+and in the coupling direction. Each direction is proved first on the subgraph induced by the
+volume of a single exhaustion stage, for two distinct vertices of that volume, and then in
+the infinite-volume limit, for two distinct sites of the lattice. The inverse-temperature
+statements assume `0 ≤ J` and confine the inverse temperature to `(0, b]` with `b` times the
+coupling times `2 * d` below one; the coupling statements assume `0 < β` and confine the
+coupling to `(0, b]` with `b` times the inverse temperature times `2 * d` below one; the
+infinite-volume statements assume `0 < b` as well. The module also records that the
+infinite-volume correlation vanishes at zero inverse temperature and zero field, for an
+arbitrary pair of sites, not assumed distinct, and with no hypothesis at all.
 -/
 
 open scoped symmDiff
@@ -158,8 +165,6 @@ theorem correlationInfinite_le_const_mul_beta_of_high_temp
       exact add_nonneg (mul_nonneg hJ (pow_nonneg hM_nn 2))
                        (mul_nonneg hJ (mul_nonneg (by norm_num) (Nat.cast_nonneg _)))
     exact mul_nonneg hC_nn hβ_pos.le
-
-/-! ## Step 230: linear bound at J = 0 + right-continuity in J -/
 
 /-- **Helper for Step 230**: per-stage finite-volume linear bound at J = 0. -/
 private lemma inducedLatticeGraph_correlation_le_const_mul_J
@@ -341,77 +346,6 @@ lemma correlationInfinite_eq_zero_at_beta_zero
     · exact ⟨1, fun y hy => by
         obtain ⟨n, rfl⟩ := hy
         exact correlationAlongExhaustion_le_one (IsingModel.latticeGraph d) Λ _ _ _⟩
-
-/-! ## Moved: correlationInfinite ContinuousOn on closed [0, b]
-
-The two wrappers
-`correlationInfinite_continuousOn_beta_of_high_temp_zero_closed`,
-`correlationInfinite_continuousOn_J_of_high_temp_zero_closed`,
-together with the helper lemma
-`correlationInfinite_eq_zero_at_J_zero`, now live in
-`LatticeMassHighTempZeroBoundaryContinuousOnClosed.lean`. -/
-
-
-/-! ## Moved: correlationAlongExhaustion uniform convergence on [0, b]
-
-The two wrappers
-`correlationAlongExhaustion_tendstoUniformlyOn_beta_zero_closed`,
-`correlationAlongExhaustion_tendstoUniformlyOn_J_zero_closed`
-together with the two helper lemmas
-`correlationAlongExhaustion_eq_zero_at_beta_zero`,
-`correlationAlongExhaustion_eq_zero_at_J_zero` now live in
-`LatticeMassHighTempZeroBoundaryTendstoUniformlyOnClosed.lean`. -/
-
-
-/-! ## Moved: correlationInfinite monotone/ae-diff on closed [0, b]
-
-The four wrappers
-`correlationInfinite_monotoneOn_beta_zero_closed`,
-`correlationInfinite_ae_differentiableWithinAt_beta_zero_closed`,
-`correlationInfinite_monotoneOn_J_zero_closed`,
-`correlationInfinite_ae_differentiableWithinAt_J_zero_closed`
-now live in `LatticeMassHighTempZeroBoundaryMonotoneClosed.lean`. -/
-
-
-/-! ## Moved: lipschitz-zero-closed correlationInfinite wrappers
-
-The two `correlationInfinite_lipschitzOnWith_{beta,J}_zero_closed`
-wrappers together with their private
-`correlationInfinite_diff_le_const_mul_diff{,_J}` helpers now live in
-`LatticeMassHighTempZeroBoundaryLipschitzClosed.lean`. -/
-
-
-
-/-! ## Moved: linear bounds on Icc [0, b] (zero_incl variants)
-
-The two wrappers
-`correlationInfinite_le_const_mul_{beta,J}_of_high_temp_zero_incl`
-now live in `LatticeMassHighTempZeroIncl.lean`. -/
-
-
-/-! ## Moved: continuity of corr_∞ on Ico 0 _c (half-open) high-temperature intervals
-
-The two wrappers
-`correlationInfinite_continuousOn_{beta,J}_of_high_temp_Ico`
-now live in `LatticeMassHighTempZeroBoundaryContinuousOnIco.lean`. -/
-
-
-
-/-! ## Moved: correlationInfinite monotoneOn / a.e. differentiability on Ici 0
-
-The four wrappers
-`correlationInfinite_{monotoneOn,ae_differentiableWithinAt}_{beta,J}_Ici_zero`
-now live in `LatticeMassHighTempIciZero.lean`. -/
-
-
-/-! ## Moved: Ico half-open locally-uniform convergence wrappers
-
-The two wrappers
-`correlationAlongExhaustion_tendstoLocallyUniformlyOn_{beta,J}_Ico`
-now live in `LatticeMassHighTempZeroBoundaryIco.lean`. -/
-
-
-
 
 end Ambient
 end IsingModel

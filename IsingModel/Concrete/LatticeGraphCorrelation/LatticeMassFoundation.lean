@@ -2,29 +2,26 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.PseudoMass.FromParamsBasic.BasicSlices
 
 /-!
-# §17 lattice mass foundation at ℤ^d
+# ℤ^d exponential decay of the truncated two-point function, and the lattice mass
 
-Bundled foundation for GJ §17.1 (mass m(σ) of (17.1.5)) and
-§17.5 (correlation length) on the lattice. Defines the
-exponential-decay predicate `HasExponentialDecay`, proves it at
-the trivial slices `β = 0` and `J = 0` (ferromagnetic), and
-provides α-monotonicity sanity.
-
-The general non-trivial-slice exponential decay rate (positive
-mass for `β < β_c`) requires the Simon--Lieb inequality or
-random-current representation, both research-level (Issue #780).
-
-References:
-* Glimm--Jaffe *Quantum Physics* 2nd ed., §17.1 pp. 304--306.
-* Friedli--Velenik, §6 (cluster property), Prop 9.31 (Simon--Lieb).
+Defines, for `IsingModel.latticeGraph d` and an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, the predicate that the infinite-volume truncated two-point function at distinct
+sites is dominated by a non-negative constant times `exp (-α * latticeDistance d i j)`, and
+the lattice mass as the supremum in `ENNReal` of the non-negative rates satisfying it. The
+predicate holds at every rate at zero inverse temperature with no hypothesis, and at zero
+coupling under the ferromagnetic condition on the parameter record; it is antitone in the
+rate; and at a strictly positive rate it implies the cluster property. The lattice mass is
+non-negative unconditionally, is bounded below by any validating non-negative rate, and is
+strictly positive as soon as some validating rate is strictly positive. The lower bound and
+the positivity are recorded again for the concrete pair pseudo-mass at zero external field,
+on the assumption that it validates the decay predicate, positivity additionally requiring
+the pseudo-mass itself to be positive.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## §17.1 / §17.5 lattice mass / correlation length foundation -/
 
 /-- **Exponential decay of the ∞-volume Ursell 2-point function**:
 on `latticeGraph d`, there exists a constant `C ≥ 0` such that
@@ -166,18 +163,6 @@ theorem clusterProperty_latticeGraph_of_HasExponentialDecay
   exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hng_zero hg
     hbound_neg hbound_pos
 
-/-! ## §17.5 latticeMass — formal definition + nonneg sanity
-
-Defines the lattice mass / inverse correlation length
-`latticeMass d Λ p : ENNReal` as the supremum of decay rates
-`α : NNReal` for which `HasExponentialDecay d Λ p (α : ℝ)` holds,
-extended to `ENNReal`. Trivial slices (β = 0, J = 0 ferromagnetic)
-give `latticeMass = ⊤` (decay arbitrarily fast since `U_2 ≡ 0`
-or `U_2 = 0` off-diagonally), matching the physical picture that
-no correlation = infinite mass = zero correlation length.
-
-Reference: Glimm--Jaffe *Quantum Physics* 2nd ed., §17.1 pp. 304--306. -/
-
 /-- **Lattice mass / inverse correlation length** for `latticeGraph d`:
 the supremum (in `ENNReal`) of nonneg decay rates `α : NNReal` for
 which `HasExponentialDecay d Λ p (α : ℝ)` holds. The convention
@@ -274,15 +259,6 @@ theorem latticeMass_pos_of_pseudoMassFromParamsAtPair_decay
         (⟨J, 0, β⟩ : IsingParams ℝ) x z)) :
     0 < latticeMass d Λ (⟨J, 0, β⟩ : IsingParams ℝ) :=
   latticeMass_pos_of_HasExponentialDecay hpos hdecay
-
-/-! ## Moved: `latticeMass` trivial-slice and exhaustion-independence wrappers
-
-The four theorems
-`latticeMass_top_of_beta_zero`, `latticeMass_top_of_J_zero`,
-`latticeMass_indep_exhaustion`, `latticeMass_indep_cubicExhaustion`
-now live in `LatticeMassFoundationTrivialSliceAndIndep.lean`. -/
-
-
 
 end Ambient
 end IsingModel

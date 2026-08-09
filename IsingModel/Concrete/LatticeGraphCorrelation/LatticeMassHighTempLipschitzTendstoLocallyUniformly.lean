@@ -2,14 +2,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzC
 import Mathlib.Topology.UniformSpace.Dini
 
 /-!
-# High-temperature locally uniform convergence wrappers at ℤ^d
+# ℤ^d locally uniform convergence on the open high-temperature interval
 
-Narrow child module for two ℤ^d
-`correlationAlongExhaustion_tendstoLocallyUniformlyOn_{beta,J}_of_high_temp_open`
-wrappers (Steps 174 / 228) extracted from `LatticeMassHighTempLipschitz.lean`.
-Each statement upgrades the compact-uniform convergence package to
-`TendstoLocallyUniformlyOn` on the open high-temperature interval via
-`Monotone.tendstoLocallyUniformlyOn_of_forall_tendsto`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the locally uniform convergence of
+the finite-volume correlations to the infinite-volume one on the open interval `Set.Ioo 0 c`,
+where `c` is the reciprocal of `2 * d` times the parameter held fixed. The statement is given
+in the inverse-temperature direction and in the coupling direction, and each assumes `1 ≤ d`,
+distinctness of the two sites, and strict positivity of the parameter held fixed.
 -/
 
 namespace IsingModel

@@ -2,19 +2,15 @@ import Mathlib.Analysis.BoundedVariation
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.Lipschitz
 
 /-!
-# ℤ^d open-interval correlationInfinite BV / a.e.-differentiability wrappers
+# ℤ^d bounded variation and a.e. differentiability on the open high-temperature interval
 
-Narrow child module for four ℤ^d wrappers extracted from
-`LatticeMassHighTempLipschitz.lean`:
-
-* `correlationInfinite_locallyBoundedVariationOn_beta_of_high_temp` (Step 172),
-* `correlationInfinite_ae_differentiableWithinAt_beta_of_high_temp_open`,
-* `correlationInfinite_locallyBoundedVariationOn_J_of_high_temp` (Step 226),
-* `correlationInfinite_ae_differentiableWithinAt_J_of_high_temp_open`.
-
-Each combines the open-interval Lipschitz package with
-`LipschitzOnWith.locallyBoundedVariationOn` and
-`LocallyBoundedVariationOn.ae_differentiableWithinAt`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the locally bounded variation of
+the infinite-volume correlation on the open interval `Set.Ioo 0 c`, where `c` is the
+reciprocal of `2 * d` times the parameter held fixed, and the differentiability within that
+interval at Lebesgue-almost every point that follows from it. Each is given in the
+inverse-temperature direction and in the coupling direction, and each assumes `1 ≤ d`,
+distinctness of the two sites, and strict positivity of the parameter held fixed.
 -/
 
 namespace IsingModel

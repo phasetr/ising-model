@@ -3,16 +3,16 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
-# correlationInfinite monotone / ae-diff on closed [0, b]
+# ℤ^d monotonicity and a.e. differentiability on a closed interval from the origin
 
-Narrow child module for four ℤ^d
-`correlationInfinite_{monotoneOn,ae_differentiableWithinAt}_{beta,J}_zero_closed`
-wrappers extracted from `LatticeMassHighTempZeroBoundary.lean`:
-
-* `correlationInfinite_monotoneOn_beta_zero_closed` (Step 179 helper),
-* `correlationInfinite_ae_differentiableWithinAt_beta_zero_closed` (Step 179),
-* `correlationInfinite_monotoneOn_J_zero_closed` (Step 233 helper),
-* `correlationInfinite_ae_differentiableWithinAt_J_zero_closed` (Step 233).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and a pair of sites at zero external field, the monotonicity of the
+infinite-volume correlation on `Set.Icc 0 b` and, through bounded variation, its
+differentiability within that interval at Lebesgue-almost every point. The statements are
+given in the inverse-temperature direction, under `0 ≤ J`, and in the coupling direction,
+under `0 < β`. Nothing further is assumed: the right endpoint `b` is an arbitrary real, no
+high-temperature condition is imposed, no condition is placed on the dimension, and the sites
+are not assumed distinct.
 -/
 
 open scoped symmDiff

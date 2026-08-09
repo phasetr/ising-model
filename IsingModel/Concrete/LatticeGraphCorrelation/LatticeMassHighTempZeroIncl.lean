@@ -2,15 +2,16 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
-# correlationInfinite linear bounds on Icc [0, b] (β, J)
+# ℤ^d linear bounds on the two-point function including the zero endpoint
 
-Narrow child module for two ℤ^d
-`correlationInfinite_le_const_mul_{beta,J}_of_high_temp_zero_incl`
-wrappers that extend the linear bounds of Step 176 / 230 to include
-the zero boundary point. Each statement reduces to the parent
-`correlationInfinite_le_const_mul_{beta,J}_of_high_temp` plus the
-public helper `correlationInfinite_eq_zero_at_{beta,J}_zero` at the
-boundary.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the bound of the infinite-volume
+correlation by an explicit constant times the varying parameter on the closed interval
+`[0, b]`, so that the endpoint zero is included, where the inequality degenerates to `0 ≤ 0`.
+The statement is given in the inverse-temperature direction, under `0 ≤ J`, and in the
+coupling direction, under `0 < β`; each also assumes `0 < b`, that `b` times the parameter
+held fixed times `2 * d` is below one, and that the varying parameter is non-negative and at
+most `b`.
 -/
 
 open scoped symmDiff

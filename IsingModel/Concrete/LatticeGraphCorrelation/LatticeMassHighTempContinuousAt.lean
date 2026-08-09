@@ -1,12 +1,15 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzContinuousOnOpen
 
 /-!
-# correlationInfinite continuousAt wrappers on Ioo 0 _c
+# ℤ^d continuity of the two-point function at an interior high-temperature point
 
-Narrow child module for two ℤ^d
-`correlationInfinite_continuousAt_{beta,J}_of_high_temp` wrappers. Each
-statement promotes the corresponding `ContinuousOn ... _open` lemma to
-`ContinuousAt` at an interior point.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the continuity of the
+infinite-volume correlation as a function of the inverse temperature, and as a function of
+the coupling, at a point of the corresponding open high-temperature interval; continuity is
+unrestricted, not merely within that interval. Each statement assumes `1 ≤ d`, distinctness
+of the two sites, strict positivity of the parameter held fixed, and membership of the base
+point in the open interval below the reciprocal of `2 * d` times that fixed parameter.
 -/
 
 namespace IsingModel
