@@ -1,11 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d log_partitionFunctionAlongExhaustion cubic monotone wrappers
+# ℤ^d per-stage parameter monotonicity of the log partition function, cubic exhaustion
 
-Narrow child module for three ℤ^d
-`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
-wrappers extracted from `PartitionFreeEnergyMonotonicity.lean`.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at a fixed
+stage `n`, the monotonicity of the logarithm of the partition function in each parameter of
+the record `⟨J, h, β⟩` separately. In each statement the frozen parameters carry their
+ferromagnetic signs — nonnegative coupling and field, strictly positive inverse temperature —
+and the varying parameter starts from a nonnegative value, strictly positive in the case of
+the inverse temperature.
 -/
 
 namespace IsingModel
