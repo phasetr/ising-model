@@ -6,13 +6,14 @@ import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the
 high-temperature control of `polymerFreeEnergy` in the regime where `(1 + t) ^ |E_Λ|` stays
-below `2`: a chain placing the polymer free energy between `0` and the activity sum
-`∑_Γ ∏_{P ∈ Γ} t ^ |P|` over the vertex-disjoint compatible polymer families other than the
-empty one, placing that sum below `(1 + t) ^ |E_Λ| - 1`, that quantity below `1`, and hence
-the polymer free energy below `log 2`; and, in the same regime, an alternating logarithmic
-series in that activity sum which `HasSum`s to the polymer free energy. Each statement is
-given at a bare activity `t` under `0 ≤ t` and at the activity `tanh (β * J)` under
-`0 ≤ β * J`, and each carries the convergence hypothesis in its own activity.
+strictly below `2`: a chain in which the polymer free energy is at least `0` and at most the
+activity sum `∑_Γ ∏_{P ∈ Γ} t ^ |P|` over the vertex-disjoint compatible polymer families
+other than the empty one, that sum is at most `(1 + t) ^ |E_Λ| - 1`, that quantity is
+strictly below `1`, and hence the polymer free energy is strictly below `log 2`; and, in the
+same regime, an alternating logarithmic series in that activity sum which `HasSum`s to the
+polymer free energy. Each statement is given at a bare activity `t` under `0 ≤ t` and at the
+activity `tanh (β * J)` under `0 ≤ β * J`, and each carries the convergence hypothesis in its
+own activity.
 -/
 
 namespace IsingModel
