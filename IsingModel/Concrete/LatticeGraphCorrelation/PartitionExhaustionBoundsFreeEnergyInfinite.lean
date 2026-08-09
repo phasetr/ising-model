@@ -1,15 +1,16 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyInfinite positivity / non-negativity wrappers
+# ℤ^d positivity of the infinite-volume free-energy density
 
-Narrow child module for four ℤ^d `freeEnergyInfinite_latticeGraph_*`
-wrappers extracted from `PartitionExhaustionBounds.lean`:
-
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_pos`,
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_nonneg`,
-* `freeEnergyInfinite_latticeGraph_pos`,
-* `freeEnergyInfinite_latticeGraph_nonneg`.
+Instantiates at `IsingModel.latticeGraph d` the strict positivity and the nonnegativity of
+`freeEnergyInfinite`, which is the `limsup` of the finite-volume free-energy densities along
+an exhaustion rather than a limit. Along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` the
+statements carry, besides the ferromagnetic hypothesis on the parameter record and
+the instance `Nonempty (Fin d → ℤ)`, a hypothesis bounding the stage edge count linearly by
+the stage vertex count; along `Ambient.cubicExhaustion d` that hypothesis is discharged by
+`inducedLatticeGraph_card_edgeFinset_le`, so only the ferromagnetic hypothesis and the
+nonemptiness instance remain.
 -/
 
 namespace IsingModel
