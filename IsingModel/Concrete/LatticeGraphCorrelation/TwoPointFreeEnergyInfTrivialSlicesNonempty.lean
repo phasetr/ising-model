@@ -2,19 +2,17 @@ import IsingModel.AmbientLatticeSum.TrivialSlices
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `freeEnergyInfinite_latticeGraph_*` Nonempty trivial-slice wrappers
+# The ℤ^d infinite-volume free energy along any exhaustion, at degenerate records
 
-Narrow child module for three ℤ^d
-`freeEnergyInfinite_latticeGraph_*` unconditional trivial-slice
-wrappers:
+Concrete `IsingModel.latticeGraph d` statements at an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, at parameter records that switch part of the interaction off. What
+distinguishes them from their cubic-exhaustion counterparts is the arbitrary exhaustion,
+not the `Nonempty` condition the module name records, which both carry.
 
-* `freeEnergyInfinite_latticeGraph_beta_zero` (`= log 2`),
-* `freeEnergyInfinite_latticeGraph_zero_params` (`= log 2`),
-* `freeEnergyInfinite_latticeGraph_J_zero` (`= log(2 cosh(β·h))`).
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyInfinite_*_of_nonempty` lemma at
-`G := IsingModel.latticeGraph d` (under `[Nonempty (Fin d → ℤ)]`).
+At zero inverse temperature, and separately at vanishing coupling and vanishing external
+field together, the value is `Real.log 2`; at vanishing coupling alone it is
+`Real.log (2 * Real.cosh (β * h))`. None of these takes a hypothesis, and each takes
+exactly one instance argument, `Nonempty (Fin d → ℤ)`.
 -/
 
 namespace IsingModel

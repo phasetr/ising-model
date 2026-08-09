@@ -2,21 +2,19 @@ import IsingModel.AmbientLatticeSumFInfHSymMono
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_*` wrappers
+# Parameter monotonicity of the ℤ^d infinite-volume free energy
 
-Narrow child module for three ℤ^d
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_*` wrappers
-extracted from `TwoPointFreeEnergyInfMonotone.lean`:
+Concrete `IsingModel.latticeGraph d` statements along `Ambient.cubicExhaustion d`. The
+infinite-volume free energy is monotone in the coupling on `Set.Ici 0` assuming a
+non-negative external field and a positive inverse temperature, in the external field on
+`Set.Ici 0` assuming a non-negative coupling and a positive inverse temperature, and in the
+inverse temperature on `Set.Ioi 0` assuming a non-negative coupling and a non-negative
+external field.
 
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_J`,
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_h`,
-* `freeEnergyInfinite_latticeGraph_cubicExhaustion_monotone_beta`.
-
-Each result instantiates the corresponding generic
-`freeEnergyInfinite_monotone_*` lemma at the concrete cubic
-exhaustion via the BED constant `c = d`. The theorem names are
-unchanged from the former `TwoPointFreeEnergyInfMonotone`
-declarations.
+Every statement requires `Nonempty (Fin d → ℤ)` as an instance argument, and each proof
+supplies the ambient monotonicity statement with the constant `d`, discharging the side
+condition by the handshake bound `|E| ≤ d · |Λ|` for the graph the lattice induces at each
+stage volume.
 -/
 
 namespace IsingModel

@@ -1,14 +1,19 @@
-/- TwoPointCorrelationInfinite.lean
-Narrow child module for the ℤ^d `correlationInfinite_latticeGraph_*`
-wrappers extracted from `TwoPoint.lean` in PR #2025. Four of the
-original seven live here (`_le_one`, `_nonneg`, `_indep_exhaustion`,
-`_cubicExhaustion_gks_second`); the three
-`_cubicExhaustion_monotone_{h,beta,J}` wrappers were split out again in
-PR #2354 and now live in
-`IsingModel/Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean`.
-The theorem names are unchanged from the former `TwoPoint` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# Range, exhaustion-independence and GKS-II for the ℤ^d infinite-volume correlation
+
+Concrete `IsingModel.latticeGraph d` statements about `correlationInfinite` at a finite
+site set.
+
+Along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` the value is at most `1`, with no
+assumption on the parameter record. Under `Ferromagnetic` it is also non-negative, and it
+does not depend on which exhaustion computes it — the exhaustion-independence corollary of
+the infinite-volume convergence theorem of Glimm-Jaffe, *Quantum Physics*, Theorem 4.2.3,
+p. 59. Along `Ambient.cubicExhaustion d`, and again under `Ferromagnetic`, the product of
+the values at two site sets is at most the value at their symmetric difference. No instance
+argument is taken.
+-/
 
 open scoped symmDiff
 
@@ -40,15 +45,6 @@ theorem correlationInfinite_latticeGraph_indep_exhaustion
       = correlationInfinite (IsingModel.latticeGraph d) Λ' p A :=
   correlationInfinite_indep_exhaustion (IsingModel.latticeGraph d) Λ Λ' p hf A
 
-/-! ## Moved: cubicExhaustion monotone wrappers
-
-The three wrappers
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_h`,
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta`,
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_J` now
-live in `TwoPointCorrelationInfiniteMonotoneCubicEx.lean`. -/
-
-
 /-- **GKS-II at ∞-volume on ℤ^d**: for ferromagnetic `p` and any
 `A, B : Finset (Fin d → ℤ)`,
 
@@ -56,7 +52,7 @@ live in `TwoPointCorrelationInfiniteMonotoneCubicEx.lean`. -/
   ≤ correlationInfinite ... p (A ∆ B)`.
 
 Concrete ℤ^d specialisation of `correlationInfinite_gks_second`
-(Glimm–Jaffe §4.2 Thm 4.2.3). -/
+(Glimm–Jaffe §4.1 Thm 4.1.3, p. 57, in its Ising symmetric-difference form). -/
 theorem correlationInfinite_latticeGraph_cubicExhaustion_gks_second
     (d : ℕ) (p : IsingParams ℝ) (hf : Ferromagnetic p)
     (A B : Finset (Fin d → ℤ)) :

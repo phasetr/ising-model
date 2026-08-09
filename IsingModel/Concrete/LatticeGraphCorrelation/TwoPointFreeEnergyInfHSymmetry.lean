@@ -2,16 +2,22 @@ import IsingModel.AmbientLatticeSumFInfHSymMono
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyInfinite h-symmetry wrappers
+# Evenness in the external field of the ℤ^d infinite-volume free energy
 
-Narrow child module for the 5 ℤ^d `freeEnergyInfinite_latticeGraph_*`
-h-symmetry / |h|-monotonicity wrappers
-(`cubicExhaustion_monotone_abs_h`, `cubicExhaustion_neg_h`,
-`cubicExhaustion_eq_abs_h`, `neg_h`, `eq_abs_h`) extracted from
-`TwoPointFreeEnergy.lean` in PR #2055. Each is a thin pass-through to
-the corresponding ambient `freeEnergyInfinite_*` h-symmetry lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `TwoPointFreeEnergy` declarations.
+Concrete `IsingModel.latticeGraph d` statements about `freeEnergyInfinite`, the limit
+superior of the free energy along an exhaustion.
+
+Reversing the sign of the external field leaves the value unchanged, so the value at a
+field equals the value at its absolute value. Both readings are stated along an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ` and again along `Ambient.cubicExhaustion d`, and none
+of them takes a hypothesis or an instance argument.
+
+Monotonicity in the size of the external field is the one statement here that takes either.
+Along the cubic exhaustion, a non-negative coupling and a positive inverse temperature make
+the value monotone under `|h₁| ≤ |h₂|`; it requires `Nonempty (Fin d → ℤ)` as an instance
+argument, and its proof supplies the ambient monotonicity statement with the constant `d`,
+discharging the side condition by the handshake bound `|E| ≤ d · |Λ|` for the graph the
+lattice induces at each stage volume.
 -/
 
 namespace IsingModel
