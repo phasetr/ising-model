@@ -4,19 +4,16 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClos
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariants
 
 /-!
-# Concrete HT AlongExhaustion subset / even-subgraph wrappers
+# ℤ^d along-exhaustion subset expansion and even-subgraph normalisation (§18.3)
 
-Narrow child module for the 4 ℤ^d along-exhaustion HT wrappers
-(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_subset_form`,
-`one_le_sum_pow_tanh_even_subgraph_alongExhaustion_latticeGraph`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_at_J_zero`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed_at_beta_zero`)
-extracted from `HighTemperatureBounds.lean` in PR #2071. Each is a
-thin pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_*` or
-`one_le_sum_pow_tanh_even_subgraph_alongExhaustion` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the subset form of the high-temperature expansion — the partition function at an
+arbitrary parameter record as `cosh (β * J) ^ |E_n|` times a sum over edge subsets `X` of
+`tanh (β * J) ^ |X|` against the configuration sum of `∏_{e ∈ X} σ_e` weighted by the external
+field — together with the statement that the even-subgraph sum `∑_X tanh (β * J) ^ |X|` is at
+least `1`, and the value `2 ^ |Λ_n|` taken by the partition function at `⟨0, 0, β⟩` and at
+`⟨J, 0, 0⟩`. Only the even-subgraph bound carries a hypothesis, namely `0 ≤ β * J`; the
+expansion and the slice values hold with none.
 -/
 
 namespace IsingModel

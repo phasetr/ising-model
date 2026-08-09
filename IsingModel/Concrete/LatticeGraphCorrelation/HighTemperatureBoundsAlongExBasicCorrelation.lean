@@ -4,31 +4,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingletonBundle
 
 /-!
-# Concrete HT AlongExhaustion correlation bound wrappers
+# ℤ^d along-exhaustion correlation bounds at zero field
 
-Narrow child module for the ℤ^d along-exhaustion correlation
-bound wrappers (`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`_at_pair_nonneg`, `_at_pair_ferromagnetic`,
-`_at_singleton_eq_zero_le_one`, `_at_pair_le_one`, `_at_pair_sandwich`)
-extracted from
-`HighTemperatureBoundsAlongExhaustionBasic.lean` in PR #2077. Each is
-a thin pass-through to the corresponding ambient
-`correlationAlongExhaustion_high_temp_h_zero_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBoundsAlongExhaustionBasic` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, elementary bounds on
+`correlationAlongExhaustion`: a pair correlation lies between `0` and `1`, and a single-site
+correlation vanishes and is at most `1`. The upper bound `1` for a pair and the single-site
+statement hold with no condition on `J` or `β`; the pair sandwich assumes `0 ≤ β * J`, and its
+ferromagnetic form assumes `0 ≤ J` together with `0 < β`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: along-ex correlation simple bound wrappers
-
-The two wrappers
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_nonneg`
-now live in
-`HighTemperatureBoundsAlongExBasicCorrelationBounds.lean`. -/
-
 
 /-- **ℤ^d along-ex pair ferromagnetic sandwich at h = 0**: under
 `0 ≤ J, 0 < β`, `0 ≤ ⟨σ_i σ_j⟩^Λ_n ≤ 1`. -/

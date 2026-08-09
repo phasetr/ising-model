@@ -2,13 +2,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesEdge
 
 /-!
-# ℤ^d AlongExhaustion pair-positivity wrappers
+# ℤ^d along-exhaustion pair correlations are strictly positive across an edge
 
-Narrow child module for two ℤ^d AlongExhaustion pair-positivity wrappers extracted from
-`HighTemperatureBoundsAlongExhaustionBasic.lean`:
-
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`,
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the strict positivity of the pair
+correlation at distinct sites of `Λ.volume n` whose unordered pair lies in the edge set of the
+stage-`n` induced subgraph. The statement is given under `0 < β * J` and again under the
+ferromagnetic pair `0 < J` and `0 < β`; the distinctness and edge hypotheses are carried in
+either form, and the conclusion is stated for `correlationΛ` on `Λ.volume n` rather than for
+`correlationAlongExhaustion`.
 -/
 
 namespace IsingModel

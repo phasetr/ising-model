@@ -3,20 +3,21 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBounds
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete alongExhaustion correlation/sandwich basic wrappers at h = 0
+# ℤ^d along-exhaustion correlation closed form, parity and sandwiches at zero field
 
-Narrow child module for the §18.3-§18.4 concrete alongExhaustion basic
-wrappers on `latticeGraph d` at `h = 0`. 25 theorems for
-`correlationAlongExhaustion_latticeGraph` (closed form, nonneg, sandwich,
-ferromagnetic, trivial-slice vanishings, pair_sandwich,
-pair_singleton_bundle, pair_pos_of_edge, singleton, odd_card_eq_zero)
-plus `partitionFunctionAlongExhaustion_latticeGraph` sandwich,
-`freeEnergyAlongExhaustion_latticeGraph` sandwich, and the high-temp
-numerator filter helper. The two `_of_latticeAdj` along-exhaustion
-variants intentionally remain in the parent `HighTemperatureBounds`,
-since they directly call the Λ-level `_of_latticeAdj` wrappers (which
-also live in the parent). The theorem names are unchanged from the
-former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the high-temperature closed form of the
+correlation as a ratio of parity-constrained edge-subset sums of `tanh (β * J) ^ |X|`, the
+emptiness of the numerator's index set when the observable has odd cardinality, the sandwich
+of the partition function between `2 ^ |Λ_n| * cosh (β * J) ^ |E_n|` and
+`2 ^ (|Λ_n| + |E_n|) * cosh (β * J) ^ |E_n|`, the corresponding free-energy sandwich, and the
+lower bound `tanh (β * J) / 2 ^ |E_n|` on a pair correlation carried by an edge of the
+stage-`n` induced subgraph. The closed form assumes the observable to sit inside `Λ.volume n`
+and the parity statement assumes odd cardinality, neither of them constraining `J` or `β`; the
+sandwiches and the pair bound assume `0 ≤ β * J`, the free-energy sandwich additionally needs
+`Λ.volume n` nonempty, and the pair bound additionally needs the sites distinct and their
+unordered pair in the stage-`n` edge set. That pair bound is stated for `correlationΛ` on
+`Λ.volume n` rather than for `correlationAlongExhaustion`.
 -/
 
 namespace IsingModel
@@ -99,26 +100,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich
   freeEnergyAlongExhaustion_high_temp_h_zero_sandwich
     (IsingModel.latticeGraph d) Λ J β hβJ n hne
 
-/-! ## Moved: ℤ^d HT AlongExhaustion correlation bound wrappers
-
-The 7 ℤ^d along-exhaustion correlation bound wrappers
-(`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_empty_A`,
-`_at_pair_nonneg`, `_at_pair_ferromagnetic`, `_at_singleton_eq_zero_le_one`,
-`_at_pair_le_one`, `_at_pair_sandwich`, `_at_pair_singleton_bundle`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExBasicCorrelation`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: along-ex pair+singleton bundle wrappers
-
-The three `correlationAlongExhaustion_*_pair_singleton` bundle
-wrappers (`bundle_ferromagnetic`, `complete_summary`,
-`trivial_slices_bundle`) now live in
-`HighTemperatureBoundsAlongExBasicPairSingletonBundles.lean`. -/
-
-
-
 /-- **ℤ^d transport of the project-derived pair lower bound at stage `n`.**
 Applies the Λ-level single-edge lower bound at the stage-`n` subtype.
 ℤ^d wrapper of
@@ -137,25 +118,6 @@ theorem
           (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑(Λ.volume n)) :=
   correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges
     (IsingModel.latticeGraph d) Λ J β hβJ n i j hij he
-
-/-! ## Moved: AlongExhaustion pair-positivity wrappers
-
-The two `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`
-wrappers now live in `HighTemperatureBoundsAlongExhaustionBasicPairPositive.lean`. -/
-
-
-
-/-! ## Moved: ℤ^d HT AlongExhaustion correlation trivial-slice wrappers
-
-The 6 ℤ^d along-exhaustion correlation trivial-slice / symmetry
-wrappers
-(`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero`,
-`_at_pair_beta_zero`, `_at_singleton_J_zero`, `_at_singleton_beta_zero`,
-`_at_singleton`, `_odd_card_eq_zero`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExBasicTrivial`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

@@ -3,20 +3,17 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosed
 
 /-!
-# Concrete HT AlongExhaustion closed + lower-bound wrappers
+# ℤ^d along-exhaustion high-temperature closed form and lower bounds at zero field
 
-Narrow child module for the 4 ℤ^d along-exhaustion HT wrappers
-(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_nonneg`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_lower_bound`,
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_lower_bound`)
-extracted from `HighTemperatureBounds.lean` in PR #2072. Each is a
-thin pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_*` /
-`correlationAlongExhaustion_*` /
-`freeEnergyAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the high-temperature representation of
+the partition function as `2 ^ |Λ_n| * cosh (β * J) ^ |E_n|` times the even-subgraph sum
+`∑_X tanh (β * J) ^ |X|`, together with the lower bounds recorded alongside it: nonnegativity
+of the correlation at an arbitrary observable, the partition function above
+`2 ^ |Λ_n| * cosh (β * J) ^ |E_n|`, and the free-energy density above
+`log 2 + (|E_n| / |Λ_n|) * log (cosh (β * J))`. The representation itself carries no
+hypothesis; each bound assumes `0 ≤ β * J`, and the free-energy bound additionally needs
+`Λ.volume n` nonempty.
 -/
 
 namespace IsingModel

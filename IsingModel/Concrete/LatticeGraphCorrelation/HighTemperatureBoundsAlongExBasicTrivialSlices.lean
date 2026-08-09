@@ -4,20 +4,13 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicPairTrivial
 
 /-!
-# Concrete HT AlongExhaustion correlation trivial-slice wrappers (J = 0, β = 0)
+# ℤ^d along-exhaustion correlations vanish on the trivial slices `J = 0` and `β = 0`
 
-Narrow child module for 4 ℤ^d along-exhaustion correlation trivial-slice
-wrappers extracted from `HighTemperatureBoundsAlongExBasicTrivial.lean`:
-
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_J_zero`,
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_beta_zero`,
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_J_zero`,
-* `correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_singleton_beta_zero`.
-
-Each result is a thin pass-through of the corresponding ambient
-`correlationAlongExhaustion_high_temp_h_zero_at_*_{J,beta}_zero` lemma
-at `G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBoundsAlongExBasicTrivial` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the vanishing of `correlationAlongExhaustion` on a pair `{i, j}` and on a
+singleton `{i}` at the parameter records `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`. The vanishing coupling
+or vanishing inverse temperature is fixed inside the parameter record rather than assumed, so
+no hypothesis is carried by any statement here.
 -/
 
 namespace IsingModel
