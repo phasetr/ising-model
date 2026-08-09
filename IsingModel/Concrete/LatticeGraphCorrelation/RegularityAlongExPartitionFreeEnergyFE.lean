@@ -10,8 +10,8 @@ Concrete `latticeGraph d` statements that, at a fixed stage of an arbitrary
 `Ambient.Exhaustion` of `Fin d → ℤ`, the free energy of that stage has a derivative in the
 inverse temperature, in the coupling, and in the external field, at a prescribed value of the
 parameter in question and with the others held fixed and unrestricted. Every statement is in
-existence form and requires a `Fintype` instance on the edge set induced at every stage; that
-instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
+existence form and requires a `Fintype` instance on the edge set induced at every stage;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

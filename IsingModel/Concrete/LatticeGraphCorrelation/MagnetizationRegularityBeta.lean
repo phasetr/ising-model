@@ -7,9 +7,9 @@ import IsingModel.AmbientLattice.SpecialCases.Magnetization
 Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
 of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage is continuous, and
 differentiable over `ℝ`, as a function of the inverse temperature on the whole line, with the
-coupling and the external field held fixed and unrestricted. Each requires a `Fintype`
-instance on the edge set induced at every stage, and that instance is its entire requirement:
-no `Prop`-typed hypothesis is carried here.
+coupling and the external field held fixed and unrestricted. Each requires a
+`Fintype` instance on the edge set induced at every stage, and that instance is its entire
+requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

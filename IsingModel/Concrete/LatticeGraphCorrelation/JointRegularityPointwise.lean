@@ -7,8 +7,8 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 Concrete `latticeGraph d` statements that the correlation of a fixed finite set of vertices
 of a fixed finite volume, read as a function of the triple `(β, J, h)`, is continuous at an
 arbitrary prescribed triple and differentiable over `ℝ` there. Each is stated over the
-subgraph induced by that volume and requires a `Fintype` instance on its edge set; that
-instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
+subgraph induced by that volume and requires a `Fintype` instance on its edge set;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

@@ -8,9 +8,9 @@ Concrete `latticeGraph d` statements that, at a fixed stage of an arbitrary
 `Ambient.Exhaustion` of `Fin d → ℤ`, the free energy of that stage is analytic on a
 neighbourhood of all of `Set.univ` as a function of one real parameter with the others held
 fixed. The inverse temperature and the coupling are each treated at an unrestricted external
-field, and the external field itself is treated as well. Each statement requires a `Fintype`
-instance on the edge set induced at every stage, and that instance is its entire requirement:
-no `Prop`-typed hypothesis is carried anywhere in this module.
+field, and the external field itself is treated as well. Each statement requires a
+`Fintype` instance on the edge set induced at every stage, and that instance is its entire
+requirement: no `Prop`-typed hypothesis is carried anywhere in this module.
 -/
 
 namespace IsingModel

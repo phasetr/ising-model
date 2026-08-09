@@ -10,8 +10,8 @@ minus the external field times the sum of the spin signs, and agrees with the Ha
 the edgeless graph over the same vertex type; at vanishing coupling and field it is zero.
 Reversing the sign of the field has the same effect as flipping every spin, and, when the
 field of the parameter record vanishes, flipping every spin leaves the Hamiltonian unchanged.
-That vanishing-field equation is the only hypothesis appearing in this module, and no
-instance argument is taken.
+That vanishing-field equation is the only hypothesis appearing in this module, and
+no instance argument is taken.
 -/
 
 namespace IsingModel

@@ -7,8 +7,8 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Concrete statements, on the subgraph induced by a fixed finite volume of `Fin d → ℤ`, about
 the magnetization at a vertex for an arbitrary parameter record: its absolute value is at
 most `1`, it lies above `-1` and below `1`, and its square is at most `1`, all with no
-hypothesis at all. Non-negativity assumes in addition that the record is `Ferromagnetic`. No
-instance argument is taken.
+hypothesis at all. Non-negativity assumes in addition that the record is `Ferromagnetic`.
+No instance argument is taken.
 -/
 
 open scoped symmDiff

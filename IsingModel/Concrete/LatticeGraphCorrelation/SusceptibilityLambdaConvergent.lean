@@ -8,8 +8,8 @@ Concrete `latticeGraph d` statements that, at a fixed vertex of a fixed finite v
 susceptibility converges when one parameter of the record is sampled along the natural
 numbers and the others are held fixed. Growth of the inverse temperature, taken shifted by
 one, assumes `0 ≤ J` and `0 ≤ h`; growth of the external field assumes `0 ≤ J` and `0 < β`;
-growth of the coupling assumes `0 ≤ h` and `0 < β`. Each statement also requires a `Fintype`
-instance on the edge set induced by the volume.
+growth of the coupling assumes `0 ≤ h` and `0 < β`. Each statement also requires a
+`Fintype` instance on the edge set induced by the volume.
 -/
 
 namespace IsingModel

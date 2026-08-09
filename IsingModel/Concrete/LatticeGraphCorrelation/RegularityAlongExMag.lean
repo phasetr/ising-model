@@ -12,8 +12,8 @@ of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage has a deri
 parameter of the record at a prescribed value, the others being held fixed. The inverse
 temperature is treated at zero external field and again at an unrestricted one; the coupling
 and the external field are each treated at unrestricted parameters. Every statement is in
-existence form and requires a `Fintype` instance on the edge set induced at every stage; that
-instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
+existence form and requires a `Fintype` instance on the edge set induced at every stage;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

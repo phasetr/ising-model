@@ -15,8 +15,8 @@ its absence-of-even-bound-states reading alike.
 
 The infinite-volume truncated two-point function is non-negative at an unrestricted parameter
 record satisfying `Ferromagnetic` and, in contrast with the four-point statements, at an
-arbitrary pair of sites with no distinctness assumed; it too requires the per-stage `Fintype`
-instance.
+arbitrary pair of sites with no distinctness assumed; it too requires the per-stage
+`Fintype` instance.
 -/
 
 namespace IsingModel

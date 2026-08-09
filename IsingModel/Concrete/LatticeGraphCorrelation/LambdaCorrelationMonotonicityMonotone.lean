@@ -7,8 +7,8 @@ Concrete `latticeGraph d` statements that the correlation of a fixed finite set 
 of a fixed finite volume, as a function of one parameter of the record with the others held
 fixed, is monotone on a ray. Monotonicity in the external field on `Set.Ici 0` assumes
 `0 ≤ J` and `0 < β`; monotonicity in the inverse temperature on `Set.Ioi 0` assumes `0 ≤ J`
-and `0 ≤ h`; monotonicity in the coupling on `Set.Ici 0` assumes `0 ≤ h` and `0 < β`. No
-instance argument is taken.
+and `0 ≤ h`; monotonicity in the coupling on `Set.Ici 0` assumes `0 ≤ h` and `0 < β`.
+No instance argument is taken.
 -/
 
 namespace IsingModel
