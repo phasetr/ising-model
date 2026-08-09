@@ -2,22 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
-# Concrete magnetization convergence wrappers
+# ℤ^d along-exhaustion magnetization as a parameter grows without bound
 
-Narrow child module for concrete finite-stage magnetization convergence
-wrappers on the lattice graph. The theorem names are the same as the former
-former declarations, but callers can now avoid importing the monolithic
-concrete original module.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage converges when one
+parameter is sampled along the natural numbers and the others are held fixed. Growth of the
+inverse temperature, taken shifted by one, assumes `0 ≤ J` and `0 ≤ h`; growth of the
+external field assumes `0 ≤ J` and `0 < β`; growth of the coupling assumes `0 ≤ h` and
+`0 < β`. Each statement also requires a `Fintype` instance on the edge set induced at every
+stage.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### magnetization parameter-direction convergent (β/h/J → ∞)
-ℤ^d wraps. Λ-direct versions already exist as
-`magnetizationΛ_latticeGraph_convergent_{beta,h,J}` (in
-`correlationΛ` form) earlier in the original module; this section adds the
-along-exhaustion versions only. -/
 
 /-- **ℤ^d along-ex: magnetization β → ∞ convergence**. -/
 theorem magnetizationAlongExhaustion_latticeGraph_convergent_beta

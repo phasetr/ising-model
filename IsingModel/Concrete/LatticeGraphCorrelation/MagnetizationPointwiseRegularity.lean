@@ -2,21 +2,20 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
-# Concrete pointwise regularity wrappers for lattice magnetization
+# ℤ^d pointwise regularity of the along-exhaustion magnetization in the inverse temperature
 
-This module contains concrete `latticeGraph` specializations of ambient
-`ContinuousAt` and `DifferentiableAt` APIs for per-parameter
-`magnetizationAlongExhaustion` regularity. It is split out of the original
-concrete correlation module so future magnetization pointwise work can build a
-narrower child path.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage is continuous, and
+differentiable over `ℝ`, at a prescribed inverse temperature, with the coupling and the
+external field held fixed and unrestricted. Each requires a `Fintype` instance on the edge
+set induced at every stage, and that instance is its entire requirement: no `Prop`-typed
+hypothesis is carried here.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d along-ex pointwise magnetization wrappers -/
 
 /-- **ℤ^d along-ex: `magnetizationAlongExhaustion` ContinuousAt β** (general h). -/
 theorem magnetizationAlongExhaustion_latticeGraph_continuousAt_beta
@@ -41,16 +40,6 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiableAt_beta
         (⟨J, h, β'⟩ : IsingParams ℝ) i n) β :=
   Ambient.magnetizationAlongExhaustion_differentiableAt_beta
     (IsingModel.latticeGraph d) Λ J h β i n
-
-/-! ## Moved: field/J pointwise wrappers
-
-The four wrappers
-`magnetizationAlongExhaustion_latticeGraph_continuousAt_field`,
-`magnetizationAlongExhaustion_latticeGraph_differentiableAt_field`,
-`magnetizationAlongExhaustion_latticeGraph_continuousAt_J`,
-`magnetizationAlongExhaustion_latticeGraph_differentiableAt_J` now
-live in `MagnetizationPointwiseRegularityFieldJ.lean`. -/
-
 
 end Ambient
 end IsingModel

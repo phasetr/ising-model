@@ -2,18 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
-# Concrete magnetization regularity wrappers
+# ℤ^d regularity of the along-exhaustion magnetization in field and coupling
 
-Narrow child module for concrete finite-stage magnetization `Continuous` and
-`Differentiable` wrappers on the lattice graph. The theorem names are the same
-as the former declarations, but callers can now avoid importing the
-monolithic concrete module.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage is continuous, and
+differentiable over `ℝ`, as a function of the external field on the whole line, and likewise
+as a function of the coupling, with the remaining parameters held fixed and unrestricted.
+Each requires a `Fintype` instance on the edge set induced at every stage, and that instance
+is its entire requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### magnetization regularity ℤ^d wraps -/
 
 /-- **ℤ^d along-ex: magnetization Continuous in `h`**. -/
 theorem magnetizationAlongExhaustion_latticeGraph_continuous_field
@@ -58,13 +58,6 @@ theorem magnetizationAlongExhaustion_latticeGraph_differentiable_J
         Λ (⟨J', h, β⟩ : IsingParams ℝ) i n) :=
   Ambient.magnetizationAlongExhaustion_differentiable_J
     (IsingModel.latticeGraph d) Λ h β i n
-
-/-! ## Moved: magnetizationAlongExhaustion β-direction wrappers
-
-The two `magnetizationAlongExhaustion_latticeGraph_{continuous,differentiable}_beta`
-wrappers (general `h`) now live in `MagnetizationRegularityBeta.lean`. -/
-
-
 
 end Ambient
 end IsingModel

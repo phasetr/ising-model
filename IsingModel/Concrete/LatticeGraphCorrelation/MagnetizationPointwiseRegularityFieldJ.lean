@@ -2,23 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
-# ℤ^d `magnetizationAlongExhaustion_latticeGraph_*At_{field,J}` wrappers
+# ℤ^d pointwise regularity of the along-exhaustion magnetization in field and coupling
 
-Narrow child module for four ℤ^d
-`magnetizationAlongExhaustion_latticeGraph_*At_{field,J}` pointwise
-wrappers extracted from `MagnetizationPointwiseRegularity.lean`:
-
-* `magnetizationAlongExhaustion_latticeGraph_continuousAt_field`,
-* `magnetizationAlongExhaustion_latticeGraph_differentiableAt_field`,
-* `magnetizationAlongExhaustion_latticeGraph_continuousAt_J`,
-* `magnetizationAlongExhaustion_latticeGraph_differentiableAt_J`.
-
-Each result is a direct instantiation of the corresponding ambient pointwise
-wrapper
-`Ambient.magnetizationAlongExhaustion_{continuousAt,differentiableAt}_{field,J}`
-(`AmbientLattice/SpecialCases/Magnetization.lean`) at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged from the
-former `MagnetizationPointwiseRegularity` declarations.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage is continuous, and
+differentiable over `ℝ`, at a prescribed value of the external field, and likewise at a
+prescribed value of the coupling, with the remaining parameters held fixed and unrestricted.
+Each requires a `Fintype` instance on the edge set induced at every stage, and that instance
+is its entire requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 open scoped symmDiff

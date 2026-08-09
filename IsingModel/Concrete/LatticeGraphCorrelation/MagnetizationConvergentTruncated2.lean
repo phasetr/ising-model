@@ -3,19 +3,14 @@ import IsingModel.Inequalities.GHS.TruncatedDefs
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `truncated2_convergent_*_latticeGraph` wrappers
+# ℤ^d truncated two-point function as a parameter grows without bound
 
-Narrow child module for three ℤ^d `truncated2_convergent_*_latticeGraph`
-wrappers extracted from `MagnetizationConvergent.lean`:
-
-* `truncated2_convergent_J_latticeGraph`,
-* `truncated2_convergent_h_latticeGraph`,
-* `truncated2_convergent_beta_latticeGraph`.
-
-Each result is a thin pass-through of the abstract
-`IsingModel.truncated2_convergent_*` lemma on the Λ-induced graph at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `MagnetizationConvergent` declarations.
+Concrete `latticeGraph d` statements that, at a pair of vertices of the subgraph induced by a
+fixed finite volume, the truncated two-point function converges when one parameter of the
+record is sampled along the natural numbers and the others are held fixed. Growth of the
+coupling assumes `0 ≤ h` and `0 < β`; growth of the external field assumes `0 ≤ J` and
+`0 < β`; growth of the inverse temperature, taken shifted by one, assumes `0 ≤ J` and
+`0 ≤ h`. The vertices are not assumed distinct, and no instance argument is taken.
 -/
 
 open scoped symmDiff

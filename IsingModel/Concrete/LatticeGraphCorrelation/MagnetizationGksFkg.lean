@@ -1,13 +1,17 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d HNC / GKS / FKG wrappers on `latticeGraph d`
+# ℤ^d non-negative correlations of Gibbs-type weights
 
-Narrow child module for the remaining four direct HNC / GKS thin
-pass-throughs, plus the remaining four GKS / FKG / supermodular wrappers in
-`MagnetizationGksFkgTail.lean`, on the induced subgraph
-`inducedGraph (latticeGraph d) Λ`. Theorem names are unchanged from the former
-`Magnetization` declarations.
+Concrete statements on the subgraph induced by a fixed finite volume of `Fin d → ℤ`, to the
+effect that certain weights on the configuration space have non-negative correlations. A
+product of exponentials of couplings times spin products, indexed by an arbitrary family of
+vertex sets, has the property once every coupling in that family is non-negative; the product
+of edge and site exponentials has it once the edge weights are non-negative on the induced
+edge set and the site weights are non-negative at every vertex. For a parameter record
+satisfying `Ferromagnetic`, the Boltzmann weight itself has the property, and the
+unnormalized Gibbs expectation of the spin product of a finite set of vertices is
+non-negative. No instance argument is taken.
 -/
 
 namespace IsingModel
@@ -60,14 +64,6 @@ theorem boltzmannWeight_hasNonnegCorrelations_latticeGraph
       (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p) :=
   IsingModel.boltzmannWeight_hasNonnegCorrelations
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p hf
-
-/-! ## Moved: GKS / FKG / supermodular wrappers
-
-The four `gks_first_latticeGraph`, `gks_second_latticeGraph`,
-`boltzmannWeight_log_supermodular_latticeGraph`, `fkg_ising_latticeGraph`
-wrappers now live in `MagnetizationGksFkgTail.lean`. -/
-
-
 
 end Ambient
 

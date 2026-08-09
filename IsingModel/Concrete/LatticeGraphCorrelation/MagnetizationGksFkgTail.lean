@@ -2,15 +2,17 @@ import IsingModel.Inequalities.FKG
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d tail GKS / FKG / supermodular wrappers
+# ℤ^d Griffiths and FKG inequalities on a finite volume (§4.4)
 
-Narrow child module for four ℤ^d Λ-induced ferromagnetic correlation
-wrappers extracted from `MagnetizationGksFkg.lean`:
-
-* `gks_first_latticeGraph` (GKS-I),
-* `gks_second_latticeGraph` (GKS-II),
-* `boltzmannWeight_log_supermodular_latticeGraph`,
-* `fkg_ising_latticeGraph` (FKG).
+Concrete statements on the subgraph induced by a fixed finite volume of `Fin d → ℤ`, all for
+a parameter record satisfying `Ferromagnetic`. The correlation of a finite set of vertices is
+non-negative, and the product of the correlations of a pair of finite sets is bounded by the
+correlation of their symmetric difference. The Boltzmann weight is log-supermodular over the
+lattice of configurations, which is the input to the FKG inequality: the product of the Gibbs
+expectations of a pair of observables is bounded by the Gibbs expectation of their product,
+provided each of them is non-negative and monotone. Beyond `Ferromagnetic`, non-negativity
+and monotonicity of those observables are the only hypotheses, and no instance argument is
+taken.
 -/
 
 open scoped symmDiff

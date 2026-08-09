@@ -2,22 +2,13 @@ import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d site-level magnetization sign/bound wrappers
+# ℤ^d bounds on the finite-volume magnetization
 
-Narrow child module for five ℤ^d `magnetization_*_latticeGraph`
-sign/bound wrappers extracted from `MagnetizationSiteLevel.lean`:
-
-* `abs_magnetization_le_one_latticeGraph`,
-* `magnetization_le_one_latticeGraph`,
-* `neg_one_le_magnetization_latticeGraph`,
-* `magnetization_nonneg_latticeGraph` (ferromagnetic),
-* `magnetization_sq_le_one_latticeGraph`.
-
-Each result is a thin pass-through of the abstract
-`IsingModel.magnetization_*` lemma at
-`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem
-names are unchanged from the former `MagnetizationSiteLevel`
-declarations.
+Concrete statements, on the subgraph induced by a fixed finite volume of `Fin d → ℤ`, about
+the magnetization at a vertex for an arbitrary parameter record: its absolute value is at
+most `1`, it lies above `-1` and below `1`, and its square is at most `1`, all with no
+hypothesis at all. Non-negativity assumes in addition that the record is `Ferromagnetic`. No
+instance argument is taken.
 -/
 
 open scoped symmDiff
