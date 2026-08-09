@@ -2,24 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 
 /-!
-# Concrete along-ex polymerFreeEnergyAlongExhaustion positivity wrappers
+# ℤ^d strict positivity of the polymer free energy, along an exhaustion
 
-Narrow child module for 2 ℤ^d along-exhaustion
-`polymerFreeEnergyAlongExhaustion_*_pos_of_*_polymers_nonempty`
-positivity wrappers extracted from `MayerStrictPositivityAlongEx.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_pos_of_t_pos_of_polymers_nonempty`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_*_pos_of_*_polymers_nonempty`
-lemma at `G := IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `MayerStrictPositivityAlongEx` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the strict positivity of `polymerFreeEnergy` on the stage-`n` induced subgraph
+once that subgraph has at least one polymer: at a bare activity under `0 < t`, and at the
+activity `tanh (β * J)` under `0 < tanh (β * J)`. Strict positivity is assumed of whichever
+activity the statement uses, and no sign condition on `β` or `J` separately is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: 0 < pFE under `0 < t` and polymers exist**. -/
 theorem

@@ -2,19 +2,20 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
-# Concrete Mayer strict positivity wrappers
+# ℤ^d strict monotonicity and strict positivity of the polymer activity sum
 
-Narrow child module for concrete `ℤ^d` strict-monotonicity and strict
-positivity wrappers under `allPolymers` nonempty hypotheses. This keeps callers
-that only need these forwarders out of the monolithic lattice-correlation
-original module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the strict
+behaviour of the activity sum over the vertex-disjoint compatible polymer families of the
+induced subgraph once that subgraph has at least one polymer: the sum strictly increases from
+activity `s` to activity `t`, it is `StrictMonoOn (Set.Ici 0)`, it exceeds `1` at a strictly
+positive activity, and the corresponding sum over the families other than the empty one is
+strictly positive there. Every statement here assumes that the polymer set is nonempty. Beyond
+that, the pointwise increase assumes `0 ≤ s` and `s < t`, the statements at a single activity
+assume `0 < t`, and the `StrictMonoOn` statement assumes nothing further.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### §18.5 strict-mono / strict-pos under polymers ≠ ∅ ℤ^d
-wraps -/
 
 /-- **ℤ^d Λ: vdSum(s) < vdSum(t) under polymers exist**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_lt_of_lt_of_polymers_nonempty
@@ -46,12 +47,6 @@ vdPolymerFamilies_sum_Λ_latticeGraph_strictMonoOn_of_polymers_nonempty
   Ambient.vdPolymerFamilies_sum_Λ_strictMonoOn_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_poly
 
-/-! ## Moved: polymerFreeEnergy_Λ_pos_of_t_pos wrapper
-
-`polymerFreeEnergy_Λ_latticeGraph_pos_of_t_pos_of_polymers_nonempty`
-now lives in `MayerStrictPositivityPFE.lean`. -/
-
-
 /-- **ℤ^d Λ: 1 < vdSum under `0 < t` and polymers exist**. -/
 theorem
 vdPolymerFamilies_sum_Λ_latticeGraph_gt_one_of_t_pos_of_polymers_nonempty
@@ -79,31 +74,6 @@ vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_pos_of_t_pos_of_polymers_nonempt
             ∏ P ∈ Γ, t ^ P.card) :=
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_pos_of_t_pos_of_polymers_nonempty
     (IsingModel.latticeGraph d) Λ h_t_pos h_poly
-
-/-! ## Moved: polymerFreeEnergy_Λ_tanh_pos_of_tanh_pos wrapper
-
-`polymerFreeEnergy_Λ_latticeGraph_tanh_pos_of_tanh_pos_of_polymers_nonempty`
-now lives in `MayerStrictPositivityPFE.lean`. -/
-
-
-/-! ## Moved: Λ-tanh / strictMono mayer wrappers
-
-The four Λ-tanh / strictMono mayer wrappers
-(`vdPolymerFamilies_sum_Λ_latticeGraph_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
-`_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`,
-`polymerFreeEnergy_Λ_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`,
-`vdPolymerFamilies_sum_Λ_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`)
-now live in `MayerStrictPositivityTanhAndStrictMono.lean`. -/
-
-
-
-/-! ## Moved: AlongExhaustion strict-positivity / strictMono wrappers
-
-The ten AlongExhaustion `*_polymers_nonempty` wrappers
-(`vdPolymerFamilies_sumAlongExhaustion_*` and
-`polymerFreeEnergyAlongExhaustion_*`) now live in
-`MayerStrictPositivityAlongEx.lean`. -/
-
 
 end Ambient
 end IsingModel
