@@ -17,52 +17,24 @@ import IsingModel.LatticeExpSum
 import IsingModel.BetaDerivative
 
 /-!
-# Inequalities and §17 lattice mass at ℤ^d
+# ℤ^d degenerate cases of the critical inverse temperature (§17.1)
 
-ℤ^d wrappers for:
-1. GHS inequality (truncated3 ≤ 0) and Lebowitz inequality (truncated4 ≤ 0)
-2. §17.1/§17.5 lattice mass / correlation length
+The critical inverse temperature of the `d`-dimensional lattice is `⊤` wherever no
+ferromagnetic interaction is present: in dimension zero, and at vanishing coupling in every
+dimension. The zero-dimensional case rests on file-private observations that the vertex type
+`Fin 0 → ℤ` admits no pair of distinct sites, so exponential decay holds vacuously at every
+rate and the lattice mass is `⊤`; the vanishing-coupling case runs instead through the
+lattice mass being `⊤` at every non-negative inverse temperature. No statement here carries a
+hypothesis, and no instance argument is taken.
 
-This module also imports
-`IsingModel.Concrete.LatticeGraphCorrelation.CorrelationDecay` to preserve the
-original `Inequalities` import path for §5.1 conditional and distance-based
-cluster-decay wrappers, and
-`IsingModel.Concrete.LatticeGraphCorrelation.PointwiseRegularity` /
-`IsingModel.Concrete.LatticeGraphCorrelation.SusceptibilityPointwiseRegularity`
-to preserve the import path for finite-stage correlation and susceptibility
-regularity compatibility names. New code should import the narrower child
-modules directly for those declarations.
+This module also gathers, for callers that want them behind a single import, the ℤ^d
+correlation-inequality and lattice-mass surfaces proved in the modules it imports.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## §17.1 / §17.5 lattice mass / correlation length foundation
-
-The foundational `HasExponentialDecay` and `latticeMass` API now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation`. This
-module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §5.1 / §17.5 high-temperature lattice-mass bounds
-
-The concrete high-temperature `HasExponentialDecay`, lattice-mass bounds,
-antitonicity, and tanh lower-bound API now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature`. This
-module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §17.1 / §17.5 pseudo-mass transfer and critical-temperature bridges
-
-The concrete product-summability, critical inverse temperature, pseudo-mass
-transfer, and below-critical cluster / summability bridge API now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer`.
-This module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §17.1 d = 0 special case -/
 
 /-- **Vacuous HasExponentialDecay in dimension zero**: for `d = 0`, the lattice
 `Fin 0 → ℤ` is a singleton, so there are no distinct pairs `(i, j)`, and
@@ -126,8 +98,6 @@ theorem criticalInverseTemp_eq_top_of_dim_zero (J : ℝ) :
   rw [hβ₀_eq] at hle
   exact absurd hle (not_le.mpr (ENNReal.lt_add_right hb_ne_top one_ne_zero))
 
-/-! ## §17.1 J = 0 special case -/
-
 /-- **Critical inverse temperature is `⊤` when `J = 0`** (GJ §17.1):
 for zero coupling constant, `latticeMass = ⊤` for every `β ≥ 0` (either from
 `latticeMass_top_of_beta_zero` at `β = 0`, or from `latticeMass_top_of_J_zero` at `β > 0`),
@@ -150,43 +120,6 @@ theorem criticalInverseTemp_eq_top_of_J_zero (d : ℕ) :
       ⟨le_refl _, le_refl _, by positivity⟩
     rw [latticeMass_top_of_J_zero d (cubicExhaustion d) 0 _ hf]
     exact ENNReal.zero_lt_top
-
-/-! ## §17.1 / §17.5 finite susceptibility and Lebowitz derivative bounds
-
-The concrete finite-susceptibility wrapper and Lebowitz derivative bound API
-now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative`.
-This module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §17.5 high-temperature Lipschitz and uniform convergence wrappers
-
-The concrete high-temperature Lipschitz, continuity, uniform convergence,
-a.e. differentiability, locally bounded variation, locally uniform convergence,
-and interior-continuity API now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz`.
-This module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §17.5 high-temperature zero-boundary and half-open wrappers
-
-The concrete high-temperature zero-boundary linear bounds, closed-interval
-continuity and uniform convergence wrappers, zero-included Lipschitz bounds,
-half-line a.e. differentiability wrappers, and half-open locally uniform
-convergence API now lives in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary`.
-This module imports it to preserve the original `Inequalities` import path.
--/
-
-/-! ## §17.5 truncated2Infinite high-temperature wrappers
-
-The concrete high-temperature regularity wrappers for the infinite-volume
-Ursell two-point function `truncated2Infinite` at `h = 0` (Step 185--187 in
-the β-direction, Step 239--240 in the J-direction, and Step 241 interior
-`ContinuousAt` wrappers) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassTruncated2HighTemp`.
-This module imports it to preserve the original `Inequalities` import path.
--/
 
 end Ambient
 
