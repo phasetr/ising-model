@@ -2,24 +2,22 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
-# ℤ^d Λ-direct Mayer identity edge-case wrappers
+# ℤ^d Mayer identity at the trivial activity slices, on a fixed volume
 
-Narrow child module for four ℤ^d Λ-direct
-`mayer_identity_at_*_Λ_latticeGraph` wrappers extracted from
-`MayerEdgeCases.lean`:
-
-* `mayer_identity_at_zero_Λ_latticeGraph`,
-* `mayer_identity_at_betaJ_zero_Λ_latticeGraph`,
-* `mayer_identity_at_beta_zero_Λ_latticeGraph`,
-* `mayer_identity_at_J_zero_Λ_latticeGraph`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the Mayer identity
+in unfolded form — the logarithm of the activity sum over the vertex-disjoint compatible
+polymer families of the induced subgraph equals the Mayer partial sum at every truncation
+order — at the activity slices where each side is trivial: at the bare activity `0`, and at
+the activity `tanh (β * J)` under `β * J = 0`, at `β = 0`, and at `J = 0`. The bare-activity
+statement assumes nothing about the parameters; the statement at a general parameter pair
+assumes `β * J = 0`; the remaining ones substitute `0` for `β` and for `J` literally and leave
+the other parameter arbitrary.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
-/-! ### §18.5 mayer_identity_at edge-case ℤ^d wraps -/
 
 /-- **ℤ^d Λ: Mayer identity at `t = 0`**. -/
 theorem mayer_identity_at_zero_Λ_latticeGraph

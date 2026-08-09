@@ -2,25 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 
 /-!
-# Concrete along-ex Mayer-identity polymer_free_energy edge-case wrappers
+# ℤ^d Mayer identity at vanishing coupling or inverse temperature
 
-Narrow child module for 3 ℤ^d along-exhaustion
-`mayer_identity_*_polymer_free_energy_AlongExhaustion_latticeGraph`
-wrappers extracted from `MayerEdgeCasesPolymerFreeEnergy.lean`:
-
-* `mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion_latticeGraph`,
-* `mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion_latticeGraph`,
-* `mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.mayer_identity_at_*_zero_polymer_free_energy_AlongExhaustion`
-lemma at `G := IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `MayerEdgeCasesPolymerFreeEnergy` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the agreement of `polymerFreeEnergy` on the stage-`n` induced subgraph with the
+Mayer partial sum at every truncation order, at the activity `tanh (β * J)` with `J` replaced
+by `0`, with `β` replaced by `0`, and with each of them replaced by `0`. The vanishing
+parameters are substituted literally, so no condition on a surviving parameter is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
 theorem
