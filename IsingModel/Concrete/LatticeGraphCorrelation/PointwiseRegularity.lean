@@ -2,34 +2,20 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.JDerivative
 
 /-!
-# Concrete pointwise regularity wrappers for the ℤ^d Ising correlation
+# ℤ^d pointwise regularity of the along-exhaustion correlation in the coupling
 
-This module contains concrete `latticeGraph` specializations of ambient
-`ContinuousAt`, `DifferentiableAt`, `Continuous`, and `Differentiable` APIs for
-β- and J-direction along-exhaustion correlation. It is split out of the original
-concrete correlation module so future pointwise regularity work can build a
-narrower child path.
+Concrete `latticeGraph d` statements that, for a fixed finite subset of `Fin d → ℤ` and at a
+fixed stage of an arbitrary `Ambient.Exhaustion`, the correlation of that subset is
+continuous, and differentiable over `ℝ`, at a prescribed value of the coupling, with the
+external field and the inverse temperature held fixed and unrestricted. Each requires a
+`Fintype` instance on the edge set induced at every stage, and that instance is its entire
+requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d along-ex pointwise (ContinuousAt / DifferentiableAt)
-wrappers, lifting the ambient general-G versions from PR #1635 -/
-
-/-! ## Moved: correlationAlongEx β-direction (h=0) wrappers
-
-The four wrappers
-`correlationAlongExhaustion_continuousAt_beta`,
-`correlationAlongExhaustion_continuous_beta`,
-`correlationAlongExhaustion_differentiableAt_beta`,
-`correlationAlongExhaustion_differentiable_beta` (all at `h = 0`) now
-live in `PointwiseRegularityBetaHZero.lean`. -/
-
-
-/-! #### J-direction latticeGraph-named wrappers -/
 
 /-- **ℤ^d along-ex: `correlationAlongExhaustion` ContinuousAt J**. -/
 theorem correlationAlongExhaustion_latticeGraph_continuousAt_J

@@ -3,21 +3,13 @@ import IsingModel.AmbientLattice.BetaDerivative
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Compatibility-named ℤ^d correlationAlongEx β-direction (h=0) wrappers
+# ℤ^d regularity of the along-exhaustion correlation in β at zero external field
 
-Narrow child module for four compatibility-named ℤ^d
-`correlationAlongExhaustion_*_beta` wrappers (at `h = 0`)
-extracted from `PointwiseRegularity.lean`:
-
-* `correlationAlongExhaustion_continuousAt_beta`,
-* `correlationAlongExhaustion_continuous_beta`,
-* `correlationAlongExhaustion_differentiableAt_beta`,
-* `correlationAlongExhaustion_differentiable_beta`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.correlationAlongExhaustion_*_beta_gen` lemma at
-`G := IsingModel.latticeGraph d` and `h = 0`. The theorem names are
-unchanged from the former `PointwiseRegularity` declarations.
+Concrete `latticeGraph d` statements that, for a fixed finite subset of `Fin d → ℤ` and at a
+fixed stage of an arbitrary `Ambient.Exhaustion`, the correlation of that subset at zero
+external field is continuous, and differentiable over `ℝ`, as a function of the inverse
+temperature — at a prescribed value, and on the whole line. The coupling is held fixed and
+unrestricted. No statement here carries a hypothesis or takes an instance argument.
 -/
 
 open scoped symmDiff
