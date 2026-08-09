@@ -2,21 +2,16 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 /-!
-# ℤ^d `vdPolymerFamilies_sum` tanh-composed analyticity wrappers
+# ℤ^d analyticity of the polymer-family activity sum along the hyperbolic tangent
 
-Narrow child module for four ℤ^d
-`vdPolymerFamilies_sum_*_latticeGraph_tanh_analyticAt_*` wrappers
-extracted from `VdPolymerFamiliesAnalyticity.lean`:
-
-* `vdPolymerFamilies_sum_Λ_latticeGraph_tanh_analyticAt_beta`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_tanh_analyticAt_J`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_beta`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_J`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.vdPolymerFamilies_sum*_tanh_analyticAt_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `VdPolymerFamiliesAnalyticity` declarations.
+Concrete `latticeGraph d` statements that the sum, over the compatible polymer families of an
+induced subgraph, of the product of `Real.tanh` of the product of inverse temperature and
+coupling raised to each polymer's cardinality is analytic in the inverse temperature, and
+analytic in the coupling, at every real point of the parameter in question. Each is stated on
+the subgraph induced by a fixed finite volume, requiring a `Fintype` instance on that induced
+edge set, and at a fixed stage of an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`, requiring
+instead a `Fintype` instance on the edge set induced at every stage. Those instances are the
+entire requirement, since no `Prop`-typed hypothesis is carried anywhere in this module.
 -/
 
 namespace IsingModel
