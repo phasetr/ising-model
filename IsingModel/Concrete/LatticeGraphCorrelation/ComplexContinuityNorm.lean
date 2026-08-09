@@ -2,33 +2,18 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.FugacityCalculus
 
 /-!
-# Concrete continuity / analyticOn wrappers for complex Z / f
+# ℤ^d global analyticity and Lee-Yang-domain regularity of the complex partition function
 
-Narrow parent module for the residual eleven ℤ^d continuity,
-`AnalyticOnNhd` / `AnalyticOn`, and leeYang-related wrappers for
-`partitionFunctionComplex` / `freeEnergyComplex` on `latticeGraph d`
-(`continuous_*_{h,J,beta,joint}_latticeGraph`,
-`partitionFunctionComplex_analyticOnNhd_univ_*`,
-`partitionFunctionComplex_{continuousOn,analyticOn}_leeYangDomain_latticeGraph`,
-`freeEnergyComplex_{analyticOn,continuousOn,differentiableOn}_leeYangSubdomain_latticeGraph`).
-The four `norm_partitionFunctionComplex_le_*` /
-`norm_freeEnergyComplex_le_*` bound wrappers were further carved out
-into `ComplexContinuityNormNorm.lean` in PR #2160. Theorem names are
-unchanged from the former `Complex` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity of the complex partition function on a
+neighbourhood of every point of the whole space, in the external field and jointly in
+`(J, h, β)`, together with its continuity and its analyticity on `leeYangDomain` as a
+function of the external field alone. No statement here carries a hypothesis, and the
+parameters held fixed range over all of `ℂ`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: continuous_partitionFunctionComplex wrappers
-
-The four wrappers
-`continuous_partitionFunctionComplex_h_latticeGraph`,
-`continuous_partitionFunctionComplex_J_latticeGraph`,
-`continuous_partitionFunctionComplex_beta_latticeGraph`,
-`continuous_partitionFunctionComplex_joint_latticeGraph` now live in
-`ComplexContinuityNormContinuous.lean`. -/
-
 
 /-- **ℤ^d `partitionFunctionComplex` `AnalyticOnNhd ℂ Set.univ` in `h`**
 (Λ-induced). -/
@@ -69,22 +54,6 @@ theorem partitionFunctionComplex_analyticOn_leeYangDomain_latticeGraph
       IsingModel.leeYangDomain :=
   IsingModel.partitionFunctionComplex_analyticOn_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
-
-/-! ## Moved: freeEnergyComplex leeYangSubdomain wrappers
-
-The three `freeEnergyComplex_*_leeYangSubdomain_latticeGraph` wrappers
-(`analyticOn`, `continuousOn`, `differentiableOn`) now live in
-`ComplexContinuityNormFreeEnergyLeeYang.lean`. -/
-
-
-
-/-! ## Moved: Complex norm-bound wrappers
-
-The four wrappers
-`norm_partitionFunctionComplex_le_{partitionFunction,trivial_bound,of_re_bound}_latticeGraph`
-and `norm_freeEnergyComplex_le_trivial_bound_latticeGraph` now live in
-`ComplexContinuityNormNorm.lean`. -/
-
 
 end Ambient
 

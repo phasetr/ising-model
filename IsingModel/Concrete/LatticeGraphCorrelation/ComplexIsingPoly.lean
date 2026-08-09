@@ -2,15 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# Concrete Complex isingEdgePoly + Hamiltonian + miscellaneous wrappers
+# ℤ^d Lee-Yang polynomial non-vanishing and the modulus at real parameters
 
-Narrow child module for concrete `isingEdgePoly` evaluations,
-`exp_neg_beta_hamiltonian_*`, `prod_exp_beta_J_edgeSpin_eq`,
-`exists_normalised_logZ_branch_on_ball`,
-`partitionFunctionComplex_ne_zero_not_iff_slitPlane`, and
-`norm_partitionFunctionComplex_eq_partitionFunction_at_real` wrappers
-on `latticeGraph d`. 10 theorems. The theorem names are unchanged from
-the former `Complex` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the identity of the modulus of the complex partition function
+with the real partition function at a real parameter record, which carries no hypothesis, and
+the non-vanishing of `isingEdgePoly` evaluated at `leeYangFugacityVec`, on its own and after
+multiplication by `leeYangNormalization`. Each non-vanishing statement assumes an edge
+activity in `[0, 1)`, `0 < β` and membership of the field in `leeYangDomain`; the normalised
+form takes the complex coupling and the edge and site counts entering `leeYangNormalization`
+as free parameters, unconstrained by the hypotheses.
 -/
 
 namespace IsingModel
@@ -27,14 +28,6 @@ theorem norm_partitionFunctionComplex_eq_partitionFunction_at_real_latticeGraph
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p :=
   IsingModel.norm_partitionFunctionComplex_eq_partitionFunction_at_real
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
-
-/-! #### Friedli-Velenik / Lee-Yang polynomial helpers
-
-Direct ℤ^d forwarders for the remaining Lee-Yang polynomial nonvanishing,
-Friedli-Velenik factorisation helpers, `Re(exp(-β·H)) > 0` on the
-subdomain, logarithmic branch intermediate step, and non-vanishing
-restatement from `IsingModel/ComplexAnalyticity.lean`. Closes ℤ^d
-coverage of that module. -/
 
 /-- **ℤ^d Lee-Yang polynomial evaluation is non-zero on the Lee-Yang
 domain** (Λ-induced). -/
@@ -64,25 +57,6 @@ theorem leeYangNormalization_mul_isingEdgePoly_eval_ne_zero_latticeGraph
   IsingModel.leeYangNormalization_mul_isingEdgePoly_eval_ne_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
     ht₀ ht₁ J hβ hh edgeCount siteCount
-
-/-! ## Moved: Friedli-Velenik factorisation wrappers
-
-The three factorisation wrappers
-`prod_exp_beta_J_edgeSpin_eq_latticeGraph`,
-`isingEdgePoly_apply_configToFinset_latticeGraph`, and
-`exp_neg_beta_hamiltonian_eq_latticeGraph` now live in
-`ComplexIsingPolyFactorization.lean`. -/
-
-
-/-! ## Moved: Lee-Yang / log-Z / isingEdgePoly tail wrappers
-
-The four wrappers
-`exp_neg_beta_hamiltonian_re_pos_latticeGraph`,
-`exists_normalised_logZ_branch_on_ball_latticeGraph`,
-`partitionFunctionComplex_ne_zero_not_iff_slitPlane_latticeGraph`,
-`isingEdgePoly_eval_leeYangFugacityVec_eq_latticeGraph` now live in
-`ComplexIsingPolyLeeYangAndLogZ.lean`. -/
-
 
 end Ambient
 

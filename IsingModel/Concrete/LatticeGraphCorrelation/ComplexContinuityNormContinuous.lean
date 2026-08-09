@@ -2,16 +2,12 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.DomainGeometry
 
 /-!
-# ℤ^d continuous_partitionFunctionComplex wrappers
+# ℤ^d continuity of the complex partition function
 
-Narrow child module for four ℤ^d
-`continuous_partitionFunctionComplex_*_latticeGraph` wrappers
-extracted from `ComplexContinuityNorm.lean`:
-
-* `continuous_partitionFunctionComplex_h_latticeGraph`,
-* `continuous_partitionFunctionComplex_J_latticeGraph`,
-* `continuous_partitionFunctionComplex_beta_latticeGraph`,
-* `continuous_partitionFunctionComplex_joint_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the continuity of the complex partition function separately in
+the external field, in the coupling and in the inverse temperature with the other two held
+fixed, and jointly as a function on `ℂ × ℂ × ℂ`. No statement here carries a hypothesis.
 -/
 
 namespace IsingModel

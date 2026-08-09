@@ -2,15 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Subdomain
 
 /-!
-# ℤ^d Lee-Yang subdomain analyticity wrappers
+# ℤ^d positive real part and analyticity on the Lee-Yang subdomain (§4.6)
 
-Narrow child module for four ℤ^d Lee-Yang subdomain wrappers extracted
-from `ComplexRealCompat.lean`:
-
-* `partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph`,
-* `partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain_latticeGraph`,
-* `freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph`,
-* `freeEnergyComplex_analyticOnNhd_leeYangSubdomain_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the chain that makes the complex free energy analytic on the
+Lee-Yang subdomain: the complex partition function has positive real part there, hence lies
+in `Complex.slitPlane`, hence the free-energy density is analytic at the point. Those
+pointwise statements assume `0 < β` together with the explicit subdomain bound
+`β * |Im h| * |Λ| < π / 2` on the field. The set-level statement that the free-energy density
+is `AnalyticOnNhd` on `leeYangSubdomain β (Fintype.card ↑Λ)` assumes `0 < β` alone, the bound
+being absorbed into the set. No statement constrains the real coupling.
 -/
 
 namespace IsingModel

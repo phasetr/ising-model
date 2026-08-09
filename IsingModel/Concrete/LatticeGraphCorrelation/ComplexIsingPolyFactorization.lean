@@ -2,21 +2,17 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Factorization
 
 /-!
-# Concrete Complex Friedli-Velenik factorisation wrappers
+# ℤ^d Friedli-Velenik factorisation of the Boltzmann weight
 
-Narrow child module for 3 ℤ^d Friedli-Velenik factorisation wrappers
-extracted from `ComplexIsingPoly.lean`:
-
-* `prod_exp_beta_J_edgeSpin_eq_latticeGraph`,
-* `isingEdgePoly_apply_configToFinset_latticeGraph`,
-* `exp_neg_beta_hamiltonian_eq_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`IsingModel.{prod_exp_beta_J_edgeSpin_eq,
-isingEdgePoly_apply_configToFinset,
-exp_neg_beta_hamiltonian_eq}` lemma at
-`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem names
-are unchanged from the former `ComplexIsingPoly` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the per-configuration factorisation used to write the complex
+partition function as a Lee-Yang polynomial: the product of the edge exponentials splits into
+an edge-count prefactor times a product of `edgeWeight` values, the evaluation of
+`isingEdgePoly` at the subset associated with a configuration is exactly that product, and
+the exponentiated negative Hamiltonian equals `leeYangNormalization` times that polynomial
+value times the product of `leeYangFugacityVec` over the configuration's subset. No statement
+here carries a hypothesis; the real parameters, the edge activity and the complex field are
+unconstrained.
 -/
 
 namespace IsingModel
