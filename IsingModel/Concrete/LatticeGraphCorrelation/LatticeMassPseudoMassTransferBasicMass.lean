@@ -1,18 +1,18 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 
 /-!
-# ℤ^d latticeMass_{ge,pos}_of_pseudoMassFromParamsAtPair wrappers
+# ℤ^d lattice-mass bounds from the pair pseudo-mass (§17.5)
 
-Narrow child module for four ℤ^d
-`latticeMass_{ge,pos}_of_pseudoMassFromParamsAtPair_*` wrappers
-extracted from `LatticeMassPseudoMassTransferBasic.lean`:
-
-* `latticeMass_ge_pseudoMassFromParamsAtPair_of_le_high_temp_rate`,
-* `latticeMass_ge_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr`,
-* `latticeMass_pos_of_pseudoMassFromParamsAtPair_le_high_temp_rate`,
-* `latticeMass_pos_of_pseudoMassFromParamsAtPair_pseudoMassG_le_corr`.
-
-Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the passage from the pair pseudo-mass to the lattice
+mass: its `ENNReal.ofReal` value is a lower bound for the lattice mass, and the lattice mass
+is strictly positive. Each conclusion is reached in a form driven by the numerical comparison
+of the pseudo-mass with the transferred high-temperature rate, and in a form driven by the
+profile lower bound on the pair correlation. Every statement assumes `1 ≤ α`, `0 < r`,
+`0 ≤ J`, `0 < β` and that `β * J * (2 * d)` is below one. The profile-driven forms assume in
+addition that the pair correlation lies in `Set.Ioo 0 2` and dominates the profile at that
+rate; the comparison-driven lower bound assumes only that comparison, while the
+comparison-driven positivity assumes it together with strict positivity of the pseudo-mass.
 -/
 
 namespace IsingModel

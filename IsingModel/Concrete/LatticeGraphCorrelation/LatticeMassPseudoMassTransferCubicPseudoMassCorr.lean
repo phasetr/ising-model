@@ -1,18 +1,18 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReferencePos
 
 /-!
-# Concrete cubic-pseudoMass corr-profile wrappers
+# ℤ^d transfer from the cubic exhaustion to an arbitrary target exhaustion (§17.5)
 
-Narrow child module for the 3 ℤ^d cubic-pseudoMass
-`_pseudoMassG_le_corr` profile wrappers:
-
-* `HasExponentialDecay_cubic_pseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr`,
-* `latticeMass_ge_cubic_pseudoMassFromParamsAtPair_of_cubic_pseudoMassG_le_corr`,
-* `latticeMass_pos_of_cubic_pseudoMassFromParamsAtPair_cubic_pseudoMassG_le_corr`.
-
-Each result is a thin composition wrapper around the
-`*_reference_pseudoMassFromParamsAtPair_of_exhaustion_pseudoMassG_le_corr`
-lemma at the cubic exhaustion.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field, the specialisation in
+which the hypotheses are checked on `Ambient.cubicExhaustion d` while the conclusion is drawn
+for an arbitrary target `Ambient.Exhaustion` of `Fin d → ℤ`. The pseudo-mass computed on the
+cubic exhaustion is a validating exponential-decay rate for the target exhaustion, its
+`ENNReal.ofReal` value is a lower bound for the target lattice mass, and that lattice mass is
+strictly positive. Every statement assumes `1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β`, that
+`β * J * (2 * d)` is below one, and — on the cubic exhaustion only — that the pair
+correlation lies in `Set.Ioo 0 2` and dominates the pseudo-mass profile at the transferred
+high-temperature rate. The `Fintype` instance on the induced edge sets is likewise required
+only along the cubic exhaustion.
 -/
 
 namespace IsingModel

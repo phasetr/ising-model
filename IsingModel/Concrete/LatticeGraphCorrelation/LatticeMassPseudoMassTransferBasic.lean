@@ -9,19 +9,18 @@ import IsingModel.Inequalities.HighTemp
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 
 /-!
-# Lattice-mass: pseudoMassFromParamsAtPair basic comparison wrappers
+# ℤ^d comparison of the pair pseudo-mass with the high-temperature rate
 
-Narrow child module for the basic §17.5 pseudoMassFromParamsAtPair
-comparison + latticeMass_ge / latticeMass_pos wrappers (7 theorems):
-`pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr`,
-`HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate`,
-`HasExponentialDecay_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr`,
-`latticeMass_ge_pseudoMassFromParamsAtPair_of_le_high_temp_rate`,
-`latticeMass_ge_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr`,
-`latticeMass_pos_of_pseudoMassFromParamsAtPair_le_high_temp_rate`, and
-`latticeMass_pos_of_pseudoMassFromParamsAtPair_pseudoMassG_le_corr`. The
-theorem names are unchanged from the former `LatticeMassPseudoMassTransfer`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the step that turns a lower bound on the infinite-volume
+pair correlation by the pseudo-mass profile into a bound of the concrete pair pseudo-mass by
+the transferred high-temperature rate `-log (β * J * (2 * d))`, and the step that turns such
+a bound into the statement that the pseudo-mass is itself a validating exponential-decay
+rate, in the form driven by the numerical comparison and in the form driven by the profile
+bound. Every statement assumes `1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β` and that `β * J * (2 * d)`
+is below one. The profile-driven statements assume in addition that the pair correlation lies
+in `Set.Ioo 0 2` and dominates the profile at that rate, while the statement driven by the
+numerical comparison assumes only that comparison.
 -/
 
 open scoped symmDiff
@@ -119,17 +118,6 @@ theorem HasExponentialDecay_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr
     hα hr Λ hJ hβ hlt
     (pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr
       hα hr Λ hJ hβ hlt hcorr hprofile)
-
-/-! ## Moved: latticeMass_{ge,pos}_of_pseudoMassFromParamsAtPair wrappers
-
-The four wrappers
-`latticeMass_ge_pseudoMassFromParamsAtPair_of_le_high_temp_rate`,
-`latticeMass_ge_pseudoMassFromParamsAtPair_of_pseudoMassG_le_corr`,
-`latticeMass_pos_of_pseudoMassFromParamsAtPair_le_high_temp_rate`,
-`latticeMass_pos_of_pseudoMassFromParamsAtPair_pseudoMassG_le_corr`
-now live in `LatticeMassPseudoMassTransferBasicMass.lean`. -/
-
-
 
 end Ambient
 

@@ -5,17 +5,14 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist
 
 /-!
-# Lattice-mass cubic pair correlation tanh-power profile wrappers
+# ℤ^d range of the anchored cubic pair correlation under the tanh-power bound (§17.5)
 
-Narrow child module for four ℤ^d cubic-pair correlation wrappers extracted
-from `LatticeMassPseudoMassTransferTanhPowDist.lean`:
-`correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_ne_zero_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_lt_two_of_pseudoMassG_le_tanh_pow_dist`.
-
-Each wrapper is a thin pass-through to the anchored cubic-pair positivity
-bridge and the universal correlation bound.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field and along
+`Ambient.cubicExhaustion d`, the range statements for the pair correlation anchored at the
+origin and at a site `z` distinct from it, under the tanh-power profile bound: membership in
+`Set.Ioo 0 2`, non-vanishing, membership in `Set.Ioc 0 1`, and the strict upper bound by two.
+Every statement assumes `0 < r`, `0 ≤ J`, `0 < β`, that `β * J * (2 * d)` is below one,
+`z ≠ 0` and the profile bound itself; none imposes a lower bound on `α`.
 -/
 
 open scoped symmDiff

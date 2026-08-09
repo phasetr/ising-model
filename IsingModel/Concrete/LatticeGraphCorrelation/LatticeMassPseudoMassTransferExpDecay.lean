@@ -9,24 +9,22 @@ import IsingModel.Inequalities.HighTemp
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.ExpDecay
 
 /-!
-# Lattice-mass: HasExponentialDecay transfer + high-temp exhaustion
+# ℤ^d extraction and transfer of exponential-decay rates
 
-Narrow child module for the §17.1 / §17.5 HasExponentialDecay transfer
-wrappers: `HasExponentialDecay_of_latticeMass_pos`,
-`HasExponentialDecay_transfer_exhaustion`,
-`HasExponentialDecay_transfer_high_temp`,
-`latticeMass_ge_neg_log_of_high_temp_exhaustion`, and
-`latticeMass_pos_of_high_temp_exhaustion`. The theorem names are
-unchanged from the former `LatticeMassPseudoMassTransfer`
-declarations.
+Instantiates at `IsingModel.latticeGraph d` the moves on the exponential-decay predicate that
+the pseudo-mass bridge needs. From strict positivity of the lattice mass of one
+`Ambient.Exhaustion` a strictly positive validating rate is extracted, with no further
+hypothesis. Between two exhaustions a validating rate transfers whenever the parameter record
+is ferromagnetic, the rate and the witnessing constant carrying over unchanged. Finally, at
+zero external field, the transferred Simon-Lieb high-temperature rate
+`-log (β * J * (2 * d))` validates the predicate for an arbitrary exhaustion, under `0 ≤ J`,
+`0 < β` and `β * J * (2 * d)` below one.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## §17.1 Cluster property below criticalInverseTemp (Step 146) -/
 
 /-- **Extract positive decay rate from positive lattice mass** (GJ §17.1):
 if `latticeMass d Λ p > 0`, there exists `α : NNReal` with `0 < (α : ℝ)` and
@@ -90,14 +88,6 @@ theorem HasExponentialDecay_transfer_high_temp
     (p := (⟨J, 0, β⟩ : IsingParams ℝ))
     ⟨hJ, le_refl 0, hβ⟩
     (hasExponentialDecay_of_high_temp (mul_nonneg hβ.le hJ) hlt)
-
-/-! ## Moved: latticeMass arbitrary-exhaustion high-temperature wrappers
-
-The two wrappers
-`latticeMass_ge_neg_log_of_high_temp_exhaustion`,
-`latticeMass_pos_of_high_temp_exhaustion` now live in
-`LatticeMassPseudoMassTransferExpDecayMass.lean`. -/
-
 
 end Ambient
 

@@ -10,14 +10,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic
 
 /-!
-# Lattice-mass: reference pseudoMassFromParamsAtPair variants
+# ℤ^d the reference pseudo-mass as a rate for the target exhaustion (§17.5)
 
-Narrow child module for the §17.5 reference-rate variant wrappers (6
-theorems): `HasExponentialDecay_reference_pseudoMassFromParamsAtPair_of_exhaustion_*`,
-`latticeMass_ge_reference_pseudoMassFromParamsAtPair_of_exhaustion_*`,
-and `latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_*`.
-The theorem names are unchanged from the former
-`LatticeMassPseudoMassTransfer` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field, the variant in which the
+value transported to the target exhaustion is the pseudo-mass of the reference exhaustion
+itself: that value validates the exponential-decay predicate for the target exhaustion `Λ`,
+and its `ENNReal.ofReal` image is a lower bound for the lattice mass of `Λ`. Each conclusion
+is reached in a form driven by the numerical comparison of the reference pseudo-mass with the
+transferred high-temperature rate, and in a form driven by the profile lower bound on the
+reference pair correlation. Every statement assumes `1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β` and
+that `β * J * (2 * d)` is below one, and requires a `Fintype` instance on the induced edge
+sets along the reference exhaustion only, not along the target one.
 -/
 
 open scoped symmDiff
@@ -128,14 +131,6 @@ theorem latticeMass_ge_reference_pseudoMassFromParamsAtPair_of_exhaustion_pseudo
     hα hr Λ Λ₀ hJ hβ hlt
     (pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr
       hα hr Λ₀ hJ hβ hlt hcorr₀ hprofile₀)
-
-/-! ## Moved: latticeMass_pos reference pseudoMassFromParamsAtPair
-
-The two wrappers
-`latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_le_high_temp_rate`,
-`latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_pseudoMassG_le_corr`
-now live in `LatticeMassPseudoMassTransferReferencePos.lean`. -/
-
 
 end Ambient
 

@@ -1,16 +1,18 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReference
 
 /-!
-# ℤ^d latticeMass_pos reference pseudoMassFromParamsAtPair wrappers
+# ℤ^d positivity of the target lattice mass from the reference pseudo-mass (§17.5)
 
-Narrow child module for two ℤ^d
-`latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_*`
-wrappers extracted from `LatticeMassPseudoMassTransferReference.lean`:
-
-* `latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_le_high_temp_rate`,
-* `latticeMass_pos_of_reference_pseudoMassFromParamsAtPair_exhaustion_pseudoMassG_le_corr`.
-
-Reference: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field, the strict positivity of
+the lattice mass of a target `Ambient.Exhaustion` `Λ` obtained from the pseudo-mass of a
+reference exhaustion `Λ₀`. The positivity is given in a form driven by the numerical
+comparison of the reference pseudo-mass with the transferred high-temperature rate, and in a
+form driven by the profile lower bound on the reference pair correlation. Each form assumes
+`1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β`, that `β * J * (2 * d)` is below one, and a `Fintype`
+instance on the induced edge sets along the reference exhaustion only, not along the target
+one. The comparison-driven form assumes in addition strict positivity of the reference
+pseudo-mass; the profile-driven form does not, obtaining positivity instead from the
+reference pair correlation lying in `Set.Ioo 0 2`.
 -/
 
 namespace IsingModel

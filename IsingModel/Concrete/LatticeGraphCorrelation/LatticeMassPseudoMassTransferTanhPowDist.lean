@@ -11,25 +11,18 @@ import IsingModel.Inequalities.HighTemp
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PathLowerBound
 
 /-!
-# Lattice-mass: tanh-power profile + twoPointFunction bridges
+# ℤ^d the tanh-power profile bound and its pseudo-mass consequences (§17.5)
 
-Narrow child module for the §17.5 tanh-power profile + twoPointFunction
-bridge wrappers (13 theorems):
-`pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist`,
-`twoPointFunction_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMass_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_ne_zero_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_ne_zero_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_mem_Ioc_zero_one_of_pseudoMassG_le_tanh_pow_dist`,
-`correlationInfinite_cubic_pair_lt_two_of_pseudoMassG_le_tanh_pow_dist`. The
-theorem names are unchanged from the former
-`LatticeMassPseudoMassTransfer` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field, the chain that starts
+from the numerical condition that `pseudoMassG α r (-log (β * J * (2 * d)))` is at most
+`tanh (β * J) ^ latticeDistance d 0 z` at a site `z` distinct from the origin. That condition
+already yields the same lower bound for the pair correlation anchored at the origin along
+`Ambient.cubicExhaustion d`, assuming only `0 ≤ J`, `0 < β` and `z ≠ 0` — no positivity of
+`r`, no lower bound on `α`, and no high-temperature condition. Adding `0 < r` and the
+high-temperature condition that `β * J * (2 * d)` is below one makes that correlation
+strictly positive and places the anchored two-point function in `Set.Ioo 0 2`. Adding `1 ≤ α`
+on top of those bounds the totalised pseudo-mass of the anchored two-point function, and then
+its non-totalised counterpart, by the transferred rate `-log (β * J * (2 * d))`.
 -/
 
 open scoped symmDiff
@@ -182,24 +175,6 @@ theorem pseudoMass_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow
         twoPointFunction d (⟨J, 0, β⟩ : IsingParams ℝ) z :=
     hprofile_tanh.trans (twoPointFunction_ge_tanh_betaJ_pow_dist hJ hβ hz)
   exact (pseudoMass_le_iff_pseudoMassG_le hα hr hcorr hrate_nonneg).mpr hprofile_two
-
-/-! ## Moved: pseudoMass cluster on tanh-power profile
-
-The four wrappers
-`pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-`pseudoMassExt_twoPointFunction_ne_zero_of_pseudoMassG_le_tanh_pow_dist`
-now live in
-`LatticeMassPseudoMassTransferTanhPowDistPseudoMassCluster.lean`. -/
-
-/-! ## Moved: cubic pair correlation tanh-power profile wrappers
-
-The four `correlationInfinite_cubic_pair_*_of_pseudoMassG_le_tanh_pow_dist`
-wrappers (`mem_Ioo_zero_two`, `ne_zero`, `mem_Ioc_zero_one`, `lt_two`) now
-live in `LatticeMassPseudoMassTransferTanhPowDistCubicPair.lean`. -/
-
-
 
 end Ambient
 

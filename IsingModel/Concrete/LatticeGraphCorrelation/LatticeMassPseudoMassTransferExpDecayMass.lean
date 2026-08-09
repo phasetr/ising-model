@@ -1,17 +1,14 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay
 
 /-!
-# ℤ^d latticeMass arbitrary-exhaustion high-temperature wrappers
+# ℤ^d high-temperature lower bound and positivity of the lattice mass (§17.5)
 
-Narrow child module for two ℤ^d
-`latticeMass_*_of_high_temp_exhaustion` wrappers extracted from
-`LatticeMassPseudoMassTransferExpDecay.lean`:
-
-* `latticeMass_ge_neg_log_of_high_temp_exhaustion`,
-* `latticeMass_pos_of_high_temp_exhaustion`.
-
-References: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2,
-pp. 311--312.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field and for an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`, the high-temperature facts about the lattice mass. Its
+value dominates `ENNReal.ofReal (-log (β * J * (2 * d)))` under `0 ≤ J`, `0 < β` and
+`β * J * (2 * d)` below one. Strict positivity of the lattice mass needs more: besides the
+same conditions it assumes `1 ≤ d` and `0 < β * J`, which is what makes the transferred rate
+itself strictly positive.
 -/
 
 namespace IsingModel

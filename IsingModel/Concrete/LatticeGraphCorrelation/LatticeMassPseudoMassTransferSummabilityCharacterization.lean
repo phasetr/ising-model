@@ -2,24 +2,19 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundationTrivialSliceAndIndep
 
 /-!
-# ℤ^d criticalInverseTemp characterization wrappers
+# ℤ^d characterisation of the critical inverse temperature (§17.1)
 
-Narrow child module for three ℤ^d criticalInverseTemp characterization
-theorems extracted from `LatticeMassPseudoMassTransferSummability.lean`:
-
-* `criticalInverseTemp_ge_ofReal_of_latticeMass_pos`,
-* `latticeMass_eq_zero_of_criticalInverseTemp_lt`,
-* `latticeMass_pos_of_lt_criticalInverseTemp`.
-
-These together characterise the high-temperature regime via the critical
-inverse temperature: positive lattice mass exactly corresponds to
-`ENNReal.ofReal β < criticalInverseTemp d J`.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at zero
+external field, the relation between the lattice mass and `criticalInverseTemp d J`. A
+strictly positive lattice mass puts `ENNReal.ofReal β` at or below the critical value, and an
+inverse temperature strictly above the critical value forces the lattice mass to vanish; each
+of those assumes only `0 ≤ β`. Conversely an inverse temperature strictly below the critical
+value forces the lattice mass to be strictly positive, and that direction assumes `0 ≤ J` as
+well as `0 ≤ β`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## §17.1 Critical inverse temperature — characterization -/
 
 /-- **Lower bound on `criticalInverseTemp` from positive mass** (GJ §17.1):
 if `latticeMass d (cubicExhaustion d) ⟨J, 0, β⟩ > 0` for some `β ≥ 0`, then

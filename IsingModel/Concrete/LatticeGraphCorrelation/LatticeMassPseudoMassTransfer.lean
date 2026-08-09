@@ -20,84 +20,20 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist
 
 /-!
-# Lattice-mass pseudo-mass transfer bridges at ℤ^d
+# ℤ^d consequences of lying below the critical inverse temperature
 
-This module contains the concrete §17.1 / §17.5 bridge layer split from the
-original `Inequalities` module: Step 127 product summability bounds, critical
-inverse temperature wrappers, high-temperature decay transfer to arbitrary
-exhaustions, pseudo-mass comparison bridges, and below-critical cluster /
-summability consequences.
+Proves at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`
+at zero external field, that below the critical inverse temperature the cluster property
+holds and the truncated two-point function is summable in its second argument. Each assumes
+`0 ≤ β`, `0 ≤ J` and that `ENNReal.ofReal β` is strictly below `criticalInverseTemp d J`. The
+module also re-exports the pseudo-mass transfer family proved in the modules it imports, so
+that callers of the earlier single import continue to see it.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-
-/-! ## Moved: Step 127 summability + criticalInverseTemp foundations
-
-The §17.5 Step 127 Lebowitz-exponential product summability bounds and
-§17.1 / §17.5 criticalInverseTemp foundations now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferSummability`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: HasExponentialDecay transfer + high-temp exhaustion
-
-The 5 `HasExponentialDecay_*_transfer*` and
-`latticeMass_*_high_temp_exhaustion` wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExpDecay`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: pseudoMassFromParamsAtPair basic comparison wrappers
-
-The 7 basic §17.5 pseudoMassFromParamsAtPair comparison +
-latticeMass_ge / latticeMass_pos wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferBasic`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: pseudoMassFromParamsAtPair exhaustion variants
-
-The 6 exhaustion-variant pseudoMassFromParamsAtPair wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferExhaustion`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: reference pseudoMassFromParamsAtPair variants
-
-The 6 reference-variant pseudoMassFromParamsAtPair wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferReference`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: cubic_pseudoMassFromParamsAtPair variants
-
-The 3 surviving cubic_pseudoMassFromParamsAtPair `_pseudoMassG_le_corr`
-variant wrappers live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferCubicPseudoMassCorr`,
-which this module does not import; import that child directly.
-
-The `LatticeMassPseudoMassTransferReferencePos` import above carries no declaration used here: it
-preserves transitive visibility of the surviving reference-positivity API for downstream modules,
-so it must not be removed as unused.
--/
-
-
-
-/-! ## Moved: tanh-power profile + twoPointFunction bridges
-
-The 13 tanh-power profile + twoPointFunction bridge wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **Cluster property holds below the critical inverse temperature** (GJ §17.1):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J`, the
