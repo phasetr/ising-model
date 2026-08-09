@@ -5,15 +5,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzC
 import IsingModel.AmbientLattice.TruncatedFunctions
 
 /-!
-# Truncated 2-point β-direction Lipschitz / ae-diff / monotone wrappers at ℤ^d
+# ℤ^d inverse-temperature regularity of the truncated two-point function
 
-Narrow child module for four ℤ^d `truncated2Infinite_*_beta_*` β-direction
-regularity wrappers extracted from `LatticeMassTruncated2HighTemp.lean`:
-
-* `truncated2Infinite_lipschitzOnWith_beta_of_high_temp` (Step 186 [a,b]),
-* `truncated2Infinite_lipschitzOnWith_beta_zero_closed` (Step 186 [0,b]),
-* `truncated2Infinite_ae_differentiableWithinAt_beta_Ici_zero` (Step 186 ae),
-* `truncated2Infinite_monotoneOn_beta_Ici_zero` (Step 187).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the regularity in the inverse temperature of the
+infinite-volume truncated two-point function under `0 ≤ J`. It is Lipschitz on a compact
+interval `Set.Icc a b` with `0 < a ≤ b`, and on `Set.Icc 0 b` with `0 < b`, in each case with
+the explicit constant built from `b`, the coupling and the dimension, in each case under the
+high-temperature condition that `b * J * (2 * d)` is below one, and in each case with the two
+sites assumed distinct. On `Set.Ici 0` it is monotone and, at Lebesgue-almost every point,
+differentiable within that half-line; the monotonicity and the almost-everywhere
+differentiability assume no high-temperature condition and no distinctness of the sites.
 -/
 
 open scoped symmDiff

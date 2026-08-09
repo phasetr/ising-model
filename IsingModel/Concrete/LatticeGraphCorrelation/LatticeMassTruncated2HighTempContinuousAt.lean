@@ -2,18 +2,19 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuousAt
 
 /-!
-# truncated2Infinite ContinuousAt at every interior point in β / J
+# ℤ^d continuity of the truncated two-point function at an interior point
 
-Narrow child module for two ℤ^d
-`truncated2Infinite_continuousAt_{beta,J}_of_high_temp` wrappers. Each
-wrapper promotes the corresponding `_continuousOn_*_open` to
-`ContinuousAt` at an interior point of `Ioo 0 _c`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the unrestricted continuity of the
+infinite-volume truncated two-point function at a point of the open high-temperature
+interval, in the inverse-temperature direction and in the coupling direction. Each statement
+assumes `1 ≤ d`, distinctness of the two sites, strict positivity of the parameter held
+fixed, and membership of the base point in `Set.Ioo 0 c`, where `c` is the reciprocal of
+`2 * d` times that fixed parameter.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Step 241: truncated2Infinite ContinuousAt at every interior point in β + J -/
 
 /-- **truncated2Infinite ContinuousAt every β ∈ Ioo 0 β_c at h = 0** (Step 241).
 For any β₀ ∈ Ioo 0 (1/(J·2d)): truncated2Infinite is ContinuousAt at β₀

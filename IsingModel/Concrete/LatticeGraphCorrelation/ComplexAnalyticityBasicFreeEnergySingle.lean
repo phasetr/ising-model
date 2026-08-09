@@ -2,13 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Basic
 
 /-!
-# ℤ^d single-variable `freeEnergyComplex` analyticity wrappers
+# ℤ^d single-variable analyticity of the complex free energy
 
-Narrow child module for three ℤ^d Λ-induced single-variable
-`freeEnergyComplex_analyticAt_{h,J,beta}_latticeGraph` wrappers extracted
-from `ComplexAnalyticityBasic.lean`. Each wrapper is a thin pass-through to
-the corresponding ambient `freeEnergyComplex_analyticAt_*` lemma, conditional
-on `Z ∈ slitPlane` at the base point.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity of the complex free-energy density separately in
+the external field, in the coupling and in the inverse temperature, the other two parameters
+being held fixed. Each statement is conditional on `partitionFunctionComplex` lying in
+`Complex.slitPlane` at the base point of the differentiated variable, and carries no further
+hypothesis.
 -/
 
 namespace IsingModel

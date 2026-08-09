@@ -2,15 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# Concrete Complex analyticBranch + entire wrappers
+# ℤ^d analytic branch of the complex free energy over the Lee-Yang domain (§4.6)
 
-Narrow child module for concrete `leeYangDomain_subset_branch_locus`,
-`freeEnergyComplex_exists_analyticBranch*`, `analyticBranch_freeEnergyComplex_*`,
-`continuous_freeEnergyComplex_on_locus`, and
-`continuousAt/differentiableAt_freeEnergyComplex_at_real_joint` wrappers on
-`latticeGraph d`. The `partitionFunctionComplex_entire_*` wrappers now live
-in `ComplexBranchEntirePartition.lean`. The theorem names are unchanged
-from the former `Complex` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the Lee-Yang branch statement: at every point of `leeYangDomain`
+there is a function analytic at that point whose exponential, scaled by the cardinality of
+`Λ`, is the complex partition function; in a plain form, and in a strengthened form that also
+pins the branch value at the base point to the principal-branch `freeEnergyComplex`. Every
+branch statement here assumes `Λ` nonempty, `0 < β` and `0 < J`. The module also records that
+`freeEnergyComplex` is `AnalyticOnNhd` on `leeYangSubdomain`, and that statement assumes
+`0 < β` alone: no nonemptiness of `Λ`, and no sign condition on the coupling.
 -/
 
 namespace IsingModel
@@ -94,22 +95,6 @@ theorem freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain_latticeGraph
       (IsingModel.leeYangSubdomain β (Fintype.card (↑Λ : Type _))) :=
   IsingModel.freeEnergyComplex_analyticOnNhd_of_leeYangSubdomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J
-
-/-! ## Moved: freeEnergyComplex continuity / differentiability wrappers
-
-The three wrappers
-`continuous_freeEnergyComplex_on_locus_latticeGraph`,
-`continuousAt_freeEnergyComplex_at_real_joint_latticeGraph`,
-`differentiableAt_freeEnergyComplex_at_real_joint_latticeGraph`
-now live in `ComplexBranchEntireContinuity.lean`. -/
-
-
-/-! ## Moved: partitionFunctionComplex entire wrappers
-
-The four `partitionFunctionComplex_entire_{h,J,beta,joint}_latticeGraph`
-wrappers now live in `ComplexBranchEntirePartition.lean`. -/
-
-
 
 end Ambient
 

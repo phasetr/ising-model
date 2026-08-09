@@ -4,14 +4,15 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryTendstoUniformlyOnClosed
 
 /-!
-# Half-open Ico locally-uniform convergence wrappers at ℤ^d
+# ℤ^d locally uniform convergence on the half-open high-temperature interval
 
-Narrow child module for two ℤ^d
-`correlationAlongExhaustion_tendstoLocallyUniformlyOn_{beta,J}_Ico` wrappers
-(Steps 184 / 238) extracted from `LatticeMassHighTempZeroBoundary.lean`. Each
-combines the open-interval locally-uniform convergence with the closed
-zero-boundary continuity to obtain locally uniform convergence on the
-half-open interval `Ico 0 _c`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the locally uniform convergence of
+the finite-volume correlations to the infinite-volume one on the half-open interval
+`Set.Ico 0 c`, closed at the origin and open at the endpoint `c`, the reciprocal of `2 * d`
+times the parameter held fixed. The statement is given in the inverse-temperature direction
+and in the coupling direction, and each assumes `1 ≤ d`, distinctness of the two sites, and
+strict positivity of the parameter held fixed.
 -/
 
 namespace IsingModel

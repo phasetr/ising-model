@@ -2,12 +2,18 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Bounds
 
 /-!
-# Concrete Complex norm-bound wrappers
+# ℤ^d norm bounds for the complex partition function and free energy
 
-Narrow child module for four ℤ^d
-`norm_{partitionFunction,freeEnergy}Complex_*_latticeGraph` norm-bound
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient lemma at `IsingModel.latticeGraph d`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` upper bounds on the modulus of the complex partition function and
+of the complex free-energy density. The partition function is dominated by its real
+counterpart evaluated at the real part of the field, and by an explicit exponential
+expression in the number of configurations, the number of edges and the number of sites of
+the induced subgraph; each of those holds for arbitrary real `β` and `J` and arbitrary
+complex field, with no hypothesis. One further partition-function bound replaces the real
+part of the field by an upper bound for it, and assumes exactly that inequality. The
+free-energy bound is stated through the logarithm of the modulus of the partition function,
+and assumes that `Λ` is nonempty.
 -/
 
 namespace IsingModel

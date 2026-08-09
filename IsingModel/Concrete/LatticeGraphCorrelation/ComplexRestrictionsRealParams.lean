@@ -2,14 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# ℤ^d real-params joint analyticity wrappers
+# ℤ^d real parameter records inside the joint slit-plane locus
 
-Narrow child module for three ℤ^d real-parameter joint-analyticity
-wrappers extracted from `ComplexRestrictions.lean`:
-
-* `real_params_in_analyticity_locus_joint_latticeGraph`,
-* `real_params_analyticAt_joint_latticeGraph`,
-* `real_params_image_subset_analyticity_locus_joint_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the fact that the image of a real parameter record in `ℂ × ℂ × ℂ`
+lies in the locus where the complex partition function meets `Complex.slitPlane`, that the
+complex free-energy density is jointly analytic at such a point, and that the image of the
+whole space of real parameter records is contained in that locus. No statement here carries a
+hypothesis.
 -/
 
 namespace IsingModel

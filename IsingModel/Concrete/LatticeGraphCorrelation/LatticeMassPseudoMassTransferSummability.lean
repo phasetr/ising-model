@@ -11,26 +11,28 @@ import IsingModel.LatticeExpSum
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PosAndAntitone
 
 /-!
-# Lattice-mass: Step 127 summability + criticalInverseTemp foundations
+# ℤ^d summability of the truncated two-point product, and the critical inverse temperature
 
-Narrow child module for the §17.5 Step 127 Lebowitz-exponential product
-summability bounds and §17.1 / §17.5 criticalInverseTemp foundations:
-`summable_truncated2Infinite_prod_of_hasExponentialDecay`,
-`tsum_truncated2Infinite_prod_le`, `criticalInverseTemp_set_nonempty`,
-`criticalInverseTemp_nonneg`, `criticalInverseTemp_ge_ofReal_high_temp`,
-`criticalInverseTemp_pos`, `criticalInverseTemp_antitone_J`,
-`criticalInverseTemp_ge_ofReal_of_latticeMass_pos`,
-`latticeMass_eq_zero_of_criticalInverseTemp_lt`, and
-`latticeMass_pos_of_lt_criticalInverseTemp`. The theorem names are
-unchanged from the former `LatticeMassPseudoMassTransfer` declarations.
+Along `Ambient.cubicExhaustion d` at `IsingModel.latticeGraph d` and zero external field, the
+product of two truncated two-point functions anchored at a common summation site is summable
+over the lattice, and its sum is bounded by an explicit constant times `exp` of a negative
+multiple of the distance between the two anchors. The summability statement assumes `0 ≤ J`,
+`0 < β`, a strictly positive rate and the exponential-decay predicate at that rate, whereas
+the quantitative bound instead assumes an explicit non-negative witnessing constant together
+with the pointwise decay bound it satisfies; a private uniform bound that also covers the
+diagonal underlies them.
+
+Independently of any exhaustion argument, the critical inverse temperature is defined as the
+supremum in `ENNReal` of the inverse temperatures at which the lattice mass along the cubic
+exhaustion is strictly positive. Its defining set is non-empty and it is non-negative, each
+with no hypothesis; it dominates `ENNReal.ofReal (1 / (2 * J * (2 * d)))` and is strictly
+positive under `1 ≤ d` and `0 < J`; and it is antitone in the coupling for `0 ≤ J₁ ≤ J₂`.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Step 127: Lebowitz–exponential product bound (GJ §17.5 PR N+2) -/
 
 /-- Uniform upper bound on each factor under exponential decay.
 
@@ -214,8 +216,6 @@ theorem tsum_truncated2Infinite_prod_le
                     Real.exp (-(α / 2) * (latticeDistance d 0 z : ℝ))) *
                 Real.exp (-(α / 2) * (latticeDistance d x y : ℝ) / 2) := by ring
 
-/-! ## §17.1 Critical inverse temperature -/
-
 /-- **Critical inverse temperature** for the d-dimensional Ising model on ℤ^d
 with coupling `J` (no ferromagneticity required in the definition): the supremum (in `ENNReal`)
 of all inverse temperatures `β ≥ 0` for which the lattice mass
@@ -309,15 +309,6 @@ theorem criticalInverseTemp_antitone_J
   · simp [latticeMass_top_of_beta_zero]
   · exact lt_of_lt_of_le hmass_pos
       (latticeMass_antitone_J (cubicExhaustion d) hJ₁ hJ₁₂ hβ_pos)
-
-/-! ## Moved: criticalInverseTemp characterization wrappers
-
-The three `criticalInverseTemp_ge_ofReal_of_latticeMass_pos`,
-`latticeMass_eq_zero_of_criticalInverseTemp_lt`,
-`latticeMass_pos_of_lt_criticalInverseTemp` characterization theorems now
-live in `LatticeMassPseudoMassTransferSummabilityCharacterization.lean`. -/
-
-
 
 end Ambient
 

@@ -1,16 +1,14 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassFoundation
 
 /-!
-# `latticeMass` trivial-slice and exhaustion-independence wrappers at ℤ^d
+# ℤ^d lattice mass at the trivial slices, and its independence of the exhaustion
 
-Narrow child module for four `latticeMass` theorems extracted from
-`LatticeMassFoundation.lean`:
-
-* `latticeMass_top_of_beta_zero` and `latticeMass_top_of_J_zero`
-  (trivial slices have lattice mass `⊤`),
-* `latticeMass_indep_exhaustion` and `latticeMass_indep_cubicExhaustion`
-  (the lattice mass is independent of the chosen exhaustion in the
-  ferromagnetic regime).
+Instantiates at `IsingModel.latticeGraph d` the value and the exhaustion-independence of the
+lattice mass. At zero inverse temperature the mass is `⊤` for an arbitrary exhaustion, with
+no hypothesis on the coupling or the field; at zero coupling it is `⊤` for an arbitrary
+exhaustion, under the ferromagnetic condition on the parameter record. Independence, stated
+for a ferromagnetic parameter record, is recorded between two arbitrary exhaustions and, as a
+special case, between an arbitrary exhaustion and `Ambient.cubicExhaustion d`.
 -/
 
 namespace IsingModel

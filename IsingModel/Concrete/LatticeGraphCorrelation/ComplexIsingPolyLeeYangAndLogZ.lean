@@ -2,15 +2,18 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.DomainGeometry
 
 /-!
-# ℤ^d Lee-Yang / log-Z / isingEdgePoly tail wrappers
+# ℤ^d positive real part, a normalised log-branch, and a polynomial expansion
 
-Narrow child module for four ℤ^d wrappers extracted from
-`ComplexIsingPoly.lean`:
-
-* `exp_neg_beta_hamiltonian_re_pos_latticeGraph`,
-* `exists_normalised_logZ_branch_on_ball_latticeGraph`,
-* `partitionFunctionComplex_ne_zero_not_iff_slitPlane_latticeGraph`,
-* `isingEdgePoly_eval_leeYangFugacityVec_eq_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` unrelated steps of the Lee-Yang argument, each with its own
+hypotheses. The real part of the exponentiated negative Hamiltonian is positive at every
+configuration, under `0 < β` together with the subdomain bound `β * |Im h| * |Λ| < π / 2`. A
+logarithm of the partition function normalised at the centre of a ball exists whenever that
+ball lies in `leeYangDomain`, under `0 < β` and `0 < J`, with no positivity assumed of the
+radius. Non-vanishing of the partition function is restated as membership in the set of
+non-zero complex numbers, assuming exactly that non-vanishing. Finally `isingEdgePoly`
+evaluated at `leeYangFugacityVec` is expanded as a sum over subsets of the vertex type, with
+no hypothesis.
 -/
 
 namespace IsingModel

@@ -2,13 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# ℤ^d `freeEnergyComplex` local-branch ball wrappers
+# ℤ^d free-energy branch on a ball inside the Lee-Yang domain
 
-Narrow child module for two ℤ^d
-`exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
-wrappers extracted from `ComplexBranches.lean`. Each wrapper is a thin
-pass-through to the corresponding ambient `IsingModel.exists_freeEnergyComplex_*`
-lemma at `IsingModel.latticeGraph d`, conditional on `Metric.ball h₀ r ⊆ leeYangDomain`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the existence, on a ball contained in `leeYangDomain`, of a
+branch of the complex free-energy density whose exponential, scaled by the cardinality of
+`Λ`, reproduces the complex partition function on that ball. The branch is produced in an
+`AnalyticOnNhd` form and in a `DifferentiableOn` form, and each form assumes `Λ` nonempty,
+`0 < β`, `0 < J`, a positive radius, and containment of the ball in `leeYangDomain`.
 -/
 
 namespace IsingModel

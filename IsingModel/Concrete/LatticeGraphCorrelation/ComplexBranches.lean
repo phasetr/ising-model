@@ -2,22 +2,18 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.DomainGeometry
 
 /-!
-# Concrete Complex log-branch construction wrappers
+# ℤ^d Lee-Yang non-vanishing and the local branch of the complex free energy (§4.6)
 
-Narrow child module for concrete log Z / freeEnergyComplex local-branch
-construction wrappers on `latticeGraph d`. Covers
-`partitionFunctionComplex_ne_zero_on_leeYangSubdomain_latticeGraph`,
-`partitionFunctionComplex_mapsTo_ne_zero_leeYangDomain_latticeGraph`,
-`freeEnergyComplex_analyticOnNhd_slitPlane_locus_latticeGraph`,
-`isOpen_freeEnergy_analyticity_locus_latticeGraph`,
-`exists_logZ_branch_on_ball_of_leeYangDomain_latticeGraph`,
-`exists_logZ_holomorphic_branch_on_ball_latticeGraph`,
-`exists_logZ_analytic_branch_on_ball_latticeGraph`,
-`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`, and
-`exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph`.
-The `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
-ball wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. The theorem
-names are unchanged from the former `Complex` declarations.
+All statements are instantiated at the subgraph induced on a fixed finite volume
+`Λ : Finset (Fin d → ℤ)` of `IsingModel.latticeGraph d`. The complex partition function does
+not vanish on `leeYangSubdomain`, and maps `leeYangDomain` into the non-zero complex numbers;
+each of these assumes `0 < β` and `0 < J`. The locus in the external field on which the
+partition function lies in `Complex.slitPlane` is open, and the complex free-energy density
+is `AnalyticOnNhd` on that locus; each of these is stated for arbitrary complex `J` and `β`
+and carries no hypothesis. At a point of `leeYangDomain` there is a representative analytic
+at that point whose exponential, scaled by the cardinality of `Λ`, is the partition function
+and whose value there is the principal-branch free energy; that statement assumes `Λ`
+nonempty, `0 < β` and `0 < J`.
 -/
 
 namespace IsingModel
@@ -68,15 +64,6 @@ theorem isOpen_freeEnergy_analyticity_locus_latticeGraph
   IsingModel.isOpen_freeEnergy_analyticity_locus
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
 
-/-! ## Moved: ℤ^d exists_logZ_* branch-on-ball wrappers
-
-The four wrappers
-`exists_logZ_branch_on_ball_of_leeYangDomain_latticeGraph`,
-`exists_logZ_holomorphic_branch_on_ball_latticeGraph`,
-`exists_logZ_analytic_branch_on_ball_latticeGraph`,
-`exists_logZ_analyticAt_of_leeYangDomain_latticeGraph`
-now live in `ComplexBranchesLogZ.lean`. -/
-
 /-- **ℤ^d GJ §4.6 Thm 4.6.2 finite-volume (branch form)** (Λ-induced,
 nonempty `Λ`, ferromagnetic): at every `h₀ ∈ leeYangDomain` there is an
 `AnalyticAt` representative `f` with `exp(|Λ|·f) = Z` and
@@ -97,13 +84,6 @@ theorem exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain_latticeGraph
           (J : ℂ) h₀ (β : ℂ) :=
   IsingModel.exists_freeEnergyComplex_analyticAt_branch_of_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hmem
-
-/-! ## Moved: freeEnergyComplex local-branch ball wrappers
-
-The two `exists_freeEnergyComplex_{analyticOnNhd,differentiableOn}_ball_latticeGraph`
-wrappers now live in `ComplexBranchesFreeEnergyBall.lean`. -/
-
-
 
 end Ambient
 

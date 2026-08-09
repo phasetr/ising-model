@@ -2,19 +2,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# Concrete Complex slitPlane-locus wrappers + log-branch-on-ball wrappers
+# ℤ^d continuity at a real field value and analyticity on the slit-plane locus
 
-Narrow parent module for the residual ten ℤ^d slitPlane-locus
-continuity / analyticOn / differentiableOn wrappers on
-`latticeGraph d` (continuousAt at real `h`, slitPlane-locus
-continuousOn / differentiableOn / analyticOn / analyticOnNhd joint
-variants). The five log-branch-on-ball wrappers
-(`logZ_branch_at_real_basepoint`,
-`exp_card_mul_freeEnergyComplex_at_real`,
-`exists_logZ_analyticOnNhd_ball`, `continuous_logZ_branch_on_ball`,
-`exists_logZ_differentiableOn_ball`) were further carved out into
-`ComplexSlitPlaneLogZBranch.lean` in PR #2159. Theorem names are
-unchanged from the former `Complex` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the continuity of the complex partition function and of the
+complex free-energy density, as functions of the external field, at the complex point
+obtained by casting a real value; these are given for real `J` and `β` and carry no
+hypothesis. It also instantiates the analyticity of the free-energy density at a complex
+field value, for arbitrary complex `J` and `β`, assuming exactly that the partition function
+lies in `Complex.slitPlane` there.
 -/
 
 namespace IsingModel
@@ -50,33 +46,6 @@ theorem analyticAt_freeEnergyComplex_of_slitPlane_h_latticeGraph
       (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β) h₀ :=
   IsingModel.analyticAt_freeEnergyComplex_of_slitPlane_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β hZ
-
-/-! ## Moved: slitPlane-locus `*On`-style wrappers
-
-The three slitPlane-locus
-`freeEnergyComplex_{continuousOn,differentiableOn,analyticOn}_slitPlane_locus_latticeGraph`
-wrappers now live in `ComplexSlitPlaneLocusOn.lean`. -/
-
-
-/-! ## Moved: joint slitPlane-locus wrappers
-
-The four wrappers
-`freeEnergyComplex_analyticOnNhd_slitPlane_locus_joint_latticeGraph`,
-`isOpen_freeEnergy_analyticity_locus_joint_latticeGraph`,
-`freeEnergyComplex_continuousOn_slitPlane_locus_joint_latticeGraph`,
-`freeEnergyComplex_differentiableOn_slitPlane_locus_joint_latticeGraph`
-now live in `ComplexSlitPlaneJointLocus.lean`. -/
-
-
-/-! ## Moved: logZ branch-on-ball wrappers
-
-The five wrappers `logZ_branch_at_real_basepoint_latticeGraph`,
-`exp_card_mul_freeEnergyComplex_at_real_latticeGraph`,
-`exists_logZ_analyticOnNhd_ball_latticeGraph`,
-`continuous_logZ_branch_on_ball_latticeGraph`, and
-`exists_logZ_differentiableOn_ball_latticeGraph` now live in
-`ComplexSlitPlaneLogZBranch.lean`. -/
-
 
 end Ambient
 

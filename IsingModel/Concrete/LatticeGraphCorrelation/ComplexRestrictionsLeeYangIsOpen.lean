@@ -2,23 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# Concrete Complex leeYang + slitPlane-locus openness wrappers
+# ℤ^d the Lee-Yang subdomain inside the slit-plane locus, and openness of that locus
 
-Narrow child module for 4 ℤ^d Complex leeYangSubdomain inclusion +
-slitPlane-locus openness wrappers extracted from
-`ComplexRestrictions.lean`:
-
-* `leeYangSubdomain_subset_slitPlane_locus_latticeGraph`,
-* `mem_slitPlane_locus_of_mem_leeYangSubdomain_latticeGraph`,
-* `isOpen_logZ_slitPlane_locus_latticeGraph`,
-* `isOpen_slitPlane_locus_h_beta_latticeGraph`.
-
-Each is a thin pass-through of the corresponding ambient
-`IsingModel.{leeYangSubdomain_subset_slitPlane_locus,
-mem_slitPlane_locus_of_mem_leeYangSubdomain,
-isOpen_logZ_slitPlane_locus, isOpen_slitPlane_locus_h_beta}` lemma at
-`Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The theorem
-names are unchanged from the former `ComplexRestrictions` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the inclusion of `leeYangSubdomain` in the locus where the
+complex partition function lies in `Complex.slitPlane`, as a set inclusion and in the
+membership form for a given field value; the inclusion assumes `0 < β`, the membership form
+assumes `0 < β` together with membership of the field in the subdomain, and the real coupling
+is left unconstrained in each. It also instantiates the openness of that locus, in the
+external field alone for arbitrary complex `J` and `β`, and in the pair `(h, β)` for
+arbitrary complex `J`; the openness statements carry no hypothesis.
 -/
 
 namespace IsingModel

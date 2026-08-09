@@ -2,15 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# ℤ^d freeEnergyComplex leeYangSubdomain wrappers
+# ℤ^d regularity of the complex free energy on the Lee-Yang subdomain
 
-Narrow child module for three ℤ^d Λ-induced
-`freeEnergyComplex_*_leeYangSubdomain_latticeGraph` wrappers extracted
-from `ComplexContinuityNorm.lean`:
-
-* `freeEnergyComplex_analyticOn_leeYangSubdomain_latticeGraph`,
-* `freeEnergyComplex_continuousOn_leeYangSubdomain_latticeGraph`,
-* `freeEnergyComplex_differentiableOn_leeYangSubdomain_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity, the continuity and the complex differentiability
+of the complex free-energy density, as a function of the external field, on
+`leeYangSubdomain β (Fintype.card ↑Λ)`. Each statement assumes `0 < β` and imposes no
+condition on the real coupling.
 -/
 
 namespace IsingModel

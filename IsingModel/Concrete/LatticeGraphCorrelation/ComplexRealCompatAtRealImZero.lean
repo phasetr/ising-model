@@ -2,16 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# ℤ^d ComplexRealCompat at real parameters: im-zero / re-equalities
+# ℤ^d complex partition function and free energy at real parameters
 
-Narrow child module for five ℤ^d `*_at_real_latticeGraph` wrappers
-extracted from `ComplexRealCompatAtReal.lean`:
-
-* `partitionFunctionComplex_re_pos_at_real_latticeGraph`,
-* `partitionFunctionComplex_im_zero_at_real_latticeGraph`,
-* `log_partitionFunctionComplex_im_zero_at_real_latticeGraph`,
-* `freeEnergyComplex_im_zero_at_real_latticeGraph`,
-* `freeEnergyComplex_re_eq_freeEnergy_at_real_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the consequences of evaluating the complex quantities at the
+image of a real parameter record: the partition function has positive real part and vanishing
+imaginary part, its principal logarithm has vanishing imaginary part, and the complex
+free-energy density has vanishing imaginary part and real part equal to the real free-energy
+density. No statement here carries a hypothesis, and the real parameter record is arbitrary.
 -/
 
 namespace IsingModel

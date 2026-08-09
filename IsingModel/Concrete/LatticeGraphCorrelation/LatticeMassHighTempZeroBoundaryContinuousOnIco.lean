@@ -3,14 +3,15 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempContinuous
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryContinuousOnClosed
 
 /-!
-# Continuity of corr_∞ on half-open `Ico 0 _c` high-temperature intervals at ℤ^d
+# ℤ^d continuity of the two-point function on the half-open high-temperature interval
 
-Narrow child module for two ℤ^d
-`correlationInfinite_continuousOn_{beta,J}_of_high_temp_Ico` wrappers
-(Steps 182 / 236) extracted from `LatticeMassHighTempZeroBoundary.lean`. Each
-combines the closed-interval continuity at the zero boundary with the
-open-interval `ContinuousAt` to obtain continuity on the half-open interval
-`Ico 0 _c`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the continuity of the
+infinite-volume correlation on the half-open interval `Set.Ico 0 c`, closed at the origin
+and open at the endpoint `c`, the reciprocal of `2 * d` times the parameter held fixed. The
+statement is given in the inverse-temperature direction and in the coupling direction, and
+each assumes `1 ≤ d`, distinctness of the two sites, and strict positivity of the parameter
+held fixed.
 -/
 
 namespace IsingModel

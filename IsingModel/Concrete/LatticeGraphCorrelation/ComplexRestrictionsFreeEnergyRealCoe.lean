@@ -2,13 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# ℤ^d `freeEnergyComplex` real-coe regularity wrappers
+# ℤ^d regularity of the complex free energy at a real value of the external field
 
-Narrow child module for three ℤ^d Λ-induced
-`freeEnergyComplex_*_h_real_coe_latticeGraph` wrappers
-(`analyticAt`, `differentiableAt`, `continuousAt`) extracted from
-`ComplexRestrictions.lean`. Each wrapper is a thin pass-through to the
-corresponding ambient `IsingModel.freeEnergyComplex_*_h_real_coe` lemma.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity, the complex differentiability and the continuity
+of the complex free-energy density, as a function of the external field, at the complex point
+obtained by casting a real value. Each statement is given for real `J` and `β` and carries no
+hypothesis.
 -/
 
 namespace IsingModel

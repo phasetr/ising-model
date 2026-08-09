@@ -2,16 +2,17 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Locus
 
 /-!
-# Concrete Complex logZ-branch-on-ball wrappers
+# ℤ^d logarithm of the partition function at real parameters and on a ball
 
-Narrow child module for five ℤ^d log-branch-on-ball wrappers
-(`logZ_branch_at_real_basepoint`,
-`exp_card_mul_freeEnergyComplex_at_real`,
-`exists_logZ_analyticOnNhd_ball`,
-`continuous_logZ_branch_on_ball`,
-`exists_logZ_differentiableOn_ball`). Each wrapper is a thin
-pass-through to the corresponding ambient lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` statements about the logarithm of the complex partition function,
+at real parameters and on a ball. At the image of a real parameter record the principal
+logarithm is the cast of the real logarithm, which carries no hypothesis, and the exponential
+of the cardinality of `Λ` times the complex free-energy density is the cast of the real
+partition function, which assumes `Λ` nonempty and nothing else. On a ball contained in
+`leeYangDomain` there is a logarithm of the partition function analytic on a neighbourhood of
+the ball, one continuous on it, and one complex differentiable on it; each of those assumes
+`0 < β`, `0 < J`, a positive radius and containment of the ball in `leeYangDomain`.
 -/
 
 namespace IsingModel

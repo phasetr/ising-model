@@ -1,13 +1,15 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundary
 
 /-!
-# correlationInfinite monotoneOn / a.e. differentiability on Ici 0 (β, J)
+# ℤ^d monotonicity and a.e. differentiability on the closed half-line
 
-Narrow child module for four ℤ^d `correlationInfinite_{monotoneOn,
-ae_differentiableWithinAt}_{beta,J}_Ici_zero` wrappers. Each statement
-is proved by combining `correlationInfinite_monotone_{beta,J}` with
-`MonotoneOn.locallyBoundedVariationOn.ae_differentiableWithinAt`. No
-high-temperature condition is required.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and a pair of sites at zero external field, the monotonicity of the
+infinite-volume correlation on `Set.Ici 0` and, as a consequence through bounded variation,
+its differentiability within `Set.Ici 0` at Lebesgue-almost every point. The statements cover
+the inverse-temperature direction, under `0 ≤ J`, and the coupling direction, under `0 < β`.
+No high-temperature condition is imposed, no condition is placed on the dimension, the
+half-line reaches the origin, and the sites are not assumed distinct.
 -/
 
 open scoped symmDiff

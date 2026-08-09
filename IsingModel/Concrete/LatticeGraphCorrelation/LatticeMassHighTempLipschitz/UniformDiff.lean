@@ -1,9 +1,16 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitz.Continuity
 
 /-!
-# Lattice mass high-temp Lipschitz split — uniform convergence and a.e.-differentiability
+# ℤ^d uniform convergence on a compact interval, and a.e. differentiability
 
-Part of the split high-temperature Lipschitz layer (Issue #1850).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the uniform convergence of the
+finite-volume correlations to the infinite-volume one on a compact interval `Set.Icc a b`
+with `0 < a ≤ b`, and the differentiability of the limit within that interval at
+Lebesgue-almost every point. Each is given in the inverse-temperature direction, where the
+coupling satisfies `0 ≤ J`, and in the coupling direction, where the inverse temperature
+satisfies `0 < β`; in each direction the high-temperature condition is that `b` times the
+parameter held fixed times `2 * d` is below one. No condition is placed on the dimension.
 -/
 
 open scoped symmDiff
@@ -177,40 +184,6 @@ theorem correlationInfinite_ae_differentiableWithinAt_J_of_high_temp
   have hlip := correlationInfinite_lipschitzOnWith_J_of_high_temp
     Λ r_val s_val hrs β hβ a b ha hab hlt
   exact LipschitzOnWith.ae_differentiableWithinAt_real hlip measurableSet_Icc
-
-/-! ## Moved: open-interval correlationInfinite BV / a.e.-diff wrappers
-
-The four open-interval `correlationInfinite_*` regularity wrappers
-(`locallyBoundedVariationOn` and `ae_differentiableWithinAt_*_of_high_temp_open`
-in both β and J directions) now live in
-`LatticeMassHighTempLipschitzOpenIntervalAe.lean`. -/
-
-
-
-/-! ## Moved: continuity of corr_∞ on open high-temperature intervals
-
-The two wrappers
-`correlationInfinite_continuousOn_{beta,J}_of_high_temp_open`
-now live in `LatticeMassHighTempLipschitzContinuousOnOpen.lean`. -/
-
-
-
-/-! ## Moved: locally uniform convergence on open high-temperature interval
-
-The two wrappers
-`correlationAlongExhaustion_tendstoLocallyUniformlyOn_{beta,J}_of_high_temp_open`
-now live in `LatticeMassHighTempLipschitzTendstoLocallyUniformly.lean`. -/
-
-
-
-/-! ## Moved: continuousAt wrappers on Ioo 0 _c
-
-The two wrappers
-`correlationInfinite_continuousAt_{beta,J}_of_high_temp` now live in
-`LatticeMassHighTempContinuousAt.lean`. -/
-
-
-
 
 end Ambient
 end IsingModel

@@ -3,15 +3,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBounda
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempZeroBoundaryMonotoneClosed
 
 /-!
-# ℤ^d lipschitz-zero-closed correlationInfinite wrappers
+# ℤ^d Lipschitz bound on the two-point function up to the zero boundary
 
-Narrow child module for two ℤ^d
-`correlationInfinite_lipschitzOnWith_{beta,J}_zero_closed` wrappers
-(Step 180 and its J-direction analogue), together with the two private
-helper lemmas `correlationInfinite_diff_le_const_mul_diff{,_J}` that
-they consume. Each wrapper strengthens the standard `[a, b]` Lipschitz
-package (with `a > 0`) to the closed-at-zero interval `[0, b]` via the
-boundary identity `correlationInfinite_eq_zero_at_*_zero`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the Lipschitz property of the
+infinite-volume correlation on the closed interval `Set.Icc 0 b`, with the explicit constant
+built from `b`, the parameter held fixed and the dimension. The statement is given in the
+inverse-temperature direction, under `0 ≤ J`, and in the coupling direction, under `0 < β`;
+each also assumes `0 < b` and that `b` times the parameter held fixed times `2 * d` is below
+one. Behind each of them sits a private ordered increment bound carrying the same hypotheses
+together with the ordering of the two arguments, non-negativity of the smaller one and the
+bound `b` on the larger one.
 -/
 
 namespace IsingModel

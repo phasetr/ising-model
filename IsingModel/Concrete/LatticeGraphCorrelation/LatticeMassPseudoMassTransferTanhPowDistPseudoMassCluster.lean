@@ -1,18 +1,14 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransferTanhPowDist
 
 /-!
-# Lattice-mass: pseudoMass cluster on tanh-power profile
+# ℤ^d the two-point pseudo-mass under the tanh-power profile bound (§17.5)
 
-Narrow child module for four ℤ^d
-`pseudoMass{Ext}_twoPointFunction_*_of_pseudoMassG_le_tanh_pow_dist`
-wrappers extracted from `LatticeMassPseudoMassTransferTanhPowDist.lean`:
-
-* `pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_dist`,
-* `pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-* `pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist`,
-* `pseudoMassExt_twoPointFunction_ne_zero_of_pseudoMassG_le_tanh_pow_dist`.
-
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312.
+Instantiates at `IsingModel.latticeGraph d`, at zero external field, the consequences of the
+tanh-power profile bound for the pseudo-mass of the two-point function anchored at the origin
+and at a site `z` distinct from it: the totalised pseudo-mass agrees there with the
+non-totalised one, and each of them is strictly positive, with non-vanishing of the totalised
+one recorded separately. Every statement assumes `1 ≤ α`, `0 < r`, `0 ≤ J`, `0 < β`, that
+`β * J * (2 * d)` is below one, `z ≠ 0` and the profile bound itself.
 -/
 
 open scoped symmDiff

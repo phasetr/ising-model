@@ -1,15 +1,16 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative
 
 /-!
-# ℤ^d Lebowitz derivative ≤ J · χ² + J · 4d wrappers
+# ℤ^d derivative bounds through the infinite-volume susceptibility (§17.5)
 
-Narrow child module for two ℤ^d Lebowitz-derivative-by-χ² wrappers
-extracted from `LatticeMassLebowitzDerivative.lean`:
-
-* `inducedLatticeGraph_beta_deriv_le_susc_sq` (Step 163),
-* `inducedLatticeGraph_J_deriv_le_susc_sq` (Step 219).
-
-Reference: Glimm--Jaffe §17.5 (uniform derivative bound for ∞-vol limit).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at a fixed stage and at zero external field, the bound on the derivative of the
+correlation of two distinct vertices of the stage volume by the product of the
+infinite-volume susceptibilities at those vertices, scaled by the parameter held fixed, plus
+a term linear in the dimension. The bound is given in the inverse-temperature direction and
+in the coupling direction, and each assumes `0 ≤ J`, `0 < β`, distinctness of the two
+vertices, and that the susceptibility sequence along the exhaustion at each of them is
+bounded above.
 -/
 
 namespace IsingModel

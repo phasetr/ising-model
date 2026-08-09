@@ -1,21 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete per-direction real analyticity wrappers
+# ℤ^d real analyticity of the partition function and of the free-energy density
 
-Narrow child module for 4 ℤ^d per-direction real analyticity wrappers
-extracted from `ComplexAnalyticityBasic.lean`:
-
-* `partitionFunctionH_analyticAt_latticeGraph`,
-* `freeEnergyH_analyticOn_latticeGraph`,
-* `partitionFunctionJ_analyticAt_latticeGraph`,
-* `freeEnergyJ_analyticOn_latticeGraph`.
-
-Each is a thin pass-through of the corresponding ambient
-`IsingModel.{partitionFunction,freeEnergy}{H,J}_analytic{At,On}`
-lemma at `Ambient.inducedGraph (IsingModel.latticeGraph d) Λ`. The
-theorem names are unchanged from the former `ComplexAnalyticityBasic`
-declarations.
+Instantiates on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of `IsingModel.latticeGraph d`
+the real analyticity of the partition function and of the free-energy density in the external
+field and in the coupling, the remaining parameters being held fixed. The partition-function
+statements are pointwise, at an arbitrary real base point of the differentiated variable; the
+free-energy statements are set-level, and are asserted only on the open half-line `Set.Ioi 0`
+of the differentiated variable. None of them carries a hypothesis.
 -/
 
 namespace IsingModel

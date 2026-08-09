@@ -2,14 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Branches
 
 /-!
-# ℤ^d Lee-Yang domain analyticity wrappers
+# ℤ^d analyticity on the Lee-Yang domain and of the logarithmic derivative
 
-Narrow child module for three ℤ^d Λ-induced Lee-Yang-domain analyticity
-wrappers extracted from `ComplexRealCompat.lean`:
-
-* `freeEnergyComplex_analyticAt_h_ofReal_latticeGraph`,
-* `partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph`,
-* `logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity of the complex free-energy density in the
+external field at a real base point, and the analyticity on a neighbourhood of
+`leeYangDomain` of the complex partition function and of its logarithmic derivative. The
+free-energy statement is given for real `J`, `h₀` and `β` and carries no hypothesis; the
+partition-function statement is given for arbitrary complex `J` and `β` and likewise carries
+no hypothesis; the logarithmic-derivative statement is given for real `J` and `β` and assumes
+`0 < β` and `0 < J`.
 -/
 
 namespace IsingModel

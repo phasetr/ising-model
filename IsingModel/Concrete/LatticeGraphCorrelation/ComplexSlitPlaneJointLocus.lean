@@ -2,15 +2,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.RealAxis
 
 /-!
-# ℤ^d joint slitPlane-locus wrappers
+# ℤ^d joint slit-plane locus: openness and regularity of the complex free energy
 
-Narrow child module for four ℤ^d joint slitPlane-locus wrappers
-extracted from `ComplexSlitPlane.lean`:
-
-* `freeEnergyComplex_analyticOnNhd_slitPlane_locus_joint_latticeGraph`,
-* `isOpen_freeEnergy_analyticity_locus_joint_latticeGraph`,
-* `freeEnergyComplex_continuousOn_slitPlane_locus_joint_latticeGraph`,
-* `freeEnergyComplex_differentiableOn_slitPlane_locus_joint_latticeGraph`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the openness of the locus in `ℂ × ℂ × ℂ` on which the complex
+partition function lies in `Complex.slitPlane`, together with the analyticity on a
+neighbourhood, the continuity and the complex differentiability of the complex free-energy
+density on that locus, all as functions of `(J, h, β)` jointly. No statement here carries a
+hypothesis.
 -/
 
 namespace IsingModel

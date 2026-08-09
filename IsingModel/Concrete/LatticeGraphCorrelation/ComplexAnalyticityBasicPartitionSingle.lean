@@ -2,11 +2,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Basic
 
 /-!
-# ℤ^d partitionFunctionComplex single-variable analyticAt wrappers
+# ℤ^d single-variable analyticity of the complex partition function
 
-Narrow child module for three ℤ^d single-variable
-`partitionFunctionComplex_analyticAt_{h,J,beta}_latticeGraph`
-wrappers extracted from `ComplexAnalyticityBasic.lean`.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the analyticity of the complex partition function separately in
+the external field, in the coupling and in the inverse temperature, the other two parameters
+being held fixed. Each statement holds at an arbitrary base point of the
+differentiated variable and carries no hypothesis at all.
 -/
 
 namespace IsingModel

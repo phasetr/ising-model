@@ -2,23 +2,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.ComplexAnalyticity.Factorization
 
 /-!
-# Concrete real-complex compatibility / Lee-Yang domain wrappers
+# ℤ^d real-complex compatibility and Lee-Yang non-vanishing (§4.6)
 
-Narrow child module for concrete real-complex compatibility,
-Lee-Yang-domain non-vanishing, and analyticity restriction wrappers on
-`latticeGraph d`. Twelve theorems remain here including
-`partitionFunction_ofReal_eq_partitionFunctionComplex_latticeGraph`,
-`partitionFunctionComplex_mem_slitPlane_of_real_latticeGraph`,
-`freeEnergy_ofReal_eq_freeEnergyComplex_latticeGraph`,
-`partitionFunctionComplex_eq_normalization_mul_isingEdgePoly_latticeGraph`,
-`partitionFunctionComplex_ne_zero_on_leeYangDomain_latticeGraph`,
-`partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph`, and
-`freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph`. The
-ten `*_at_real_latticeGraph` real-axis evaluation wrappers
-(`partitionFunctionComplex_at_real_pos`, `freeEnergyComplex_at_real`,
-`norm_partitionFunctionComplex_at_real`, etc.) were carved out into
-`ComplexRealCompatAtReal.lean` in PR #2121. Theorem names are
-unchanged from the former `Complex` declarations.
+Instantiates at the subgraph induced on a fixed finite volume `Λ : Finset (Fin d → ℤ)` of
+`IsingModel.latticeGraph d` the agreement of the complex partition function and free energy
+with the real ones at a real parameter record, the membership of the partition function in
+`Complex.slitPlane` on that real slice, and the Friedli-Velenik factorisation of the
+partition function as `leeYangNormalization` times the evaluation of `isingEdgePoly` at
+`leeYangFugacityVec`; none of those carries a hypothesis. It also instantiates the Lee-Yang
+non-vanishing of the partition function, which assumes `0 < β`, `0 < J` and membership of the
+field in `leeYangDomain`.
 -/
 
 namespace IsingModel
@@ -59,15 +52,6 @@ theorem freeEnergy_ofReal_eq_freeEnergyComplex_latticeGraph
   IsingModel.freeEnergy_ofReal_eq_freeEnergyComplex
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) p
 
-/-! #### Lee-Yang domain / subdomain analyticity (GJ §4.6 Thm 4.6.2)
-
-Direct ℤ^d forwarders for the Lee-Yang nonvanishing and free-energy
-analyticity package from `IsingModel/ComplexAnalyticity.lean`:
-Friedli-Velenik factorisation, Lee-Yang nonvanishing, `Re Z > 0` /
-`slitPlane` on the subdomain, `freeEnergyComplex` analyticity on the
-subdomain / real slice, and `logDeriv Z / Z` on the entire Lee-Yang
-domain. These feed GJ §4.6 Thm 4.6.2 Vitali completion at ℤ^d. -/
-
 /-- **ℤ^d Friedli-Velenik factorisation** (Λ-induced):
 `Z_ℂ G (J, h, β) = N(β, J, h, |E|, |ι|) · P_E(leeYangFugacityVec β h)`.
 Thin pass-through of
@@ -102,37 +86,6 @@ theorem partitionFunctionComplex_ne_zero_on_leeYangDomain_latticeGraph
         (J : ℂ) h (β : ℂ) ≠ 0 :=
   IsingModel.partitionFunctionComplex_ne_zero_on_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ hh
-
-/-! ## Moved: ℤ^d Lee-Yang subdomain analyticity wrappers
-
-The four wrappers
-`partitionFunctionComplex_re_pos_of_leeYangSubdomain_latticeGraph`,
-`partitionFunctionComplex_mem_slitPlane_of_leeYangSubdomain_latticeGraph`,
-`freeEnergyComplex_analyticAt_h_of_leeYangSubdomain_latticeGraph`,
-`freeEnergyComplex_analyticOnNhd_leeYangSubdomain_latticeGraph` now live
-in `ComplexRealCompatLeeYangSubdomain.lean`. -/
-
-
-/-! ## Moved: Lee-Yang domain analyticity wrappers
-
-The three `freeEnergyComplex_analyticAt_h_ofReal_latticeGraph`,
-`partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph`,
-`logDeriv_partitionFunctionComplex_analyticOnNhd_leeYangDomain_latticeGraph`
-wrappers now live in `ComplexRealCompatLeeYangDomain.lean`. -/
-
-
-
-/-! ## Moved: real-axis evaluation of the complex Z / f
-
-The ten `*_at_real_latticeGraph` wrappers (`partitionFunctionComplex_at_real_pos`,
-`freeEnergyComplex_at_real`, `freeEnergyComplex_ofReal_eq_freeEnergy`,
-`{partitionFunctionComplex,freeEnergyComplex}_{re_pos,im_zero}_at_real`,
-`log_partitionFunctionComplex_im_zero_at_real`,
-`freeEnergyComplex_re_eq_freeEnergy_at_real`,
-`norm_partitionFunctionComplex_at_real`, and
-`partitionFunctionComplex_is_pos_real_at_real`) now live in
-`ComplexRealCompatAtReal.lean`. -/
-
 
 end Ambient
 
