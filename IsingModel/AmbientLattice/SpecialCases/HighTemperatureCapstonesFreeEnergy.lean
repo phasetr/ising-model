@@ -2,20 +2,20 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
-# §18.6 freeEnergyAlongExhaustion = polymerFreeEnergy decomposition wrappers
+# The zero-field free energy as `Real.log 2` plus cosh and polymer corrections
 
-Narrow child module for the two §18.6 ambient alongExhaustion
-free-energy decomposition wrappers extracted from
-`HighTemperatureCapstones.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_eq_polymerFreeEnergy`
-* `freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-Each wrapper is a thin pass-through to the corresponding
-`freeEnergyΛ_eq_polymerFreeEnergy*` ambient lemma expressing the
-free energy as `log 2 + cosh correction + polymer correction`.
-Theorem names are unchanged from the former
-`HighTemperatureCapstones` declarations.
+Under `0 ≤ β * J` and a nonempty stage volume, the free energy at the parameter record
+`⟨J, 0, β⟩` is `Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` plus
+`IsingModel.polymerFreeEnergy` of the stage subgraph at `Real.tanh (β * J)`, divided by
+`|Λ|`. The same identity is stated under `0 ≤ J` together with `0 < β` in place of
+`0 ≤ β * J`.
 -/
 
 namespace IsingModel

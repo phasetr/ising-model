@@ -1,18 +1,19 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion log Z high-temperature closed-form wrapper at h = 0
+# The zero-field high-temperature closed form for `log Z`, along an exhaustion
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-log Z high-temperature closed-form decomposition wrapper extracted
-from `HighTemperatureBoundsExpansionLowerUpper.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The wrapper is a thin pass-through to the Λ-level
-`log_partitionFunctionΛ_high_temp_expansion_h_zero_closed` lemma
-(Step 316). The theorem name is unchanged from the former
-`HighTemperatureBoundsExpansion` declaration.
+Under `0 ≤ β * J`, the logarithm of the partition function at the parameter record
+`⟨J, 0, β⟩` is `|Λ| * Real.log 2 + |E| * Real.log (Real.cosh (β * J))` plus the logarithm of
+`∑ X, Real.tanh (β * J) ^ X.card`, the sum running over the subsets `X` of the stage edge
+finset in which every site has even degree.
 -/
 
 namespace IsingModel

@@ -7,12 +7,21 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe
 
 /-!
-# Ambient alongExhaustion triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
+# The packaged two-sided bound on `Z`, `log Z` and `f` against one trivial slice
 
-Narrow child module for the 2 §18.3-§18.4 ambient alongExhaustion
-`triple_ratio_sandwich_bundle` wrappers (J = 0 trivial slice, β = 0
-specialisation). The theorem names are unchanged from the former
-`HighTemperatureBoundsRatioBounds` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. Each statement fixes one of the trivial slices `⟨0, 0, β⟩` and `⟨J, 0, 0⟩` as
+the comparison point.
+
+Under `0 ≤ β * J` and `0 < |Λ|`, a conjunction records, against the fixed slice: the
+partition-function ratio lies between `Real.cosh (β * J) ^ |E|` and
+`Real.exp (β * J * |E|)`; the `log Z` difference lies between
+`|E| * Real.log (Real.cosh (β * J))` and `β * J * |E|`; and the free-energy difference lies
+between `(|E| / |Λ|) * Real.log (Real.cosh (β * J))` and `β * J * |E| / |Λ|`.
 -/
 
 namespace IsingModel

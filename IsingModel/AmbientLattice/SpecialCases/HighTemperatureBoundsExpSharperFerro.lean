@@ -1,14 +1,19 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 
 /-!
-# Ambient alongExhaustion sharper-exp ferromagnetic wrappers at h = 0
+# Exponential upper bounds at zero field under `0 ≤ J` and `0 < β`
 
-Narrow child module for the three ambient
-`*AlongExhaustion_high_temp_*_h_zero_upper_bound_exp_ferromagnetic`
-wrappers extracted from `HighTemperatureBoundsExpSharper.lean`.
-Each wrapper is a thin pass-through to its non-ferromagnetic
-sibling under `mul_nonneg hβ.le hJ`. Theorem names are unchanged
-from the former `HighTemperatureBoundsExpSharper` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. All statements assume `0 ≤ J` together with `0 < β`.
+
+At the parameter record `⟨J, 0, β⟩` the partition function is at most
+`2 ^ |Λ| * Real.exp (β * J * |E|)` and its logarithm is at most
+`|Λ| * Real.log 2 + β * J * |E|`; under the additional hypothesis `0 < |Λ|` the free energy
+is at most `Real.log 2 + β * J * |E| / |Λ|`.
 -/
 
 namespace IsingModel

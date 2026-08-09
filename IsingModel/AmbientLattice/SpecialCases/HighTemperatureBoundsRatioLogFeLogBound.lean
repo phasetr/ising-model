@@ -1,19 +1,18 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion log Z ratio sandwich / bound wrappers at h = 0
+# The packaged two-sided bound on the zero-field `log Z` difference
 
-Narrow child module for the single surviving §18.3-§18.4 ambient
-alongExhaustion
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle`
-wrapper (general variant). It is a thin pass-through to the
-corresponding `log_partitionFunctionΛ_*` ambient lemma. The former
-ferromagnetic `ratio_sandwich_bundle` variant and the four `ratio_bound`
-variants (`J = 0`, `β = 0`, the general `ratio_bound_bundle`, and the
-ferromagnetic `ratio_bound_bundle_ferromagnetic`) were removed as unused
-pass-through wrappers (see the `## Removed` note below). The theorem name
-is unchanged from the former `HighTemperatureBoundsRatioLogFe`
-declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph. The difference taken is the logarithm
+of the partition function at `⟨J, 0, β⟩` minus its value at one of the trivial slices
+`⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
+
+Under `0 ≤ β * J`, a conjunction records for each of those two differences that it lies
+between `|E| * Real.log (Real.cosh (β * J))` and `β * J * |E|`.
 -/
 
 namespace IsingModel
@@ -61,14 +60,6 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sa
               (⟨J, 0, 0⟩ : IsingParams ℝ)) ∧ _)
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich_bundle
     G (Λ.volume n) J β hβJ
-
-/-! ## Removed: log Z `ratio_bound` wrappers
-
-The `ratio_bound{,_beta_zero}` slice-singleton wrappers together with
-the `ratio_bound_bundle`, `ratio_bound_bundle_ferromagnetic`, and
-`ratio_sandwich_bundle_ferromagnetic` conjunction wrappers were removed
-as unused pass-through wrappers.
--/
 
 end Ambient
 

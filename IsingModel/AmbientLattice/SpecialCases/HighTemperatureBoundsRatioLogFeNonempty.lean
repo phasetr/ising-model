@@ -5,29 +5,24 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
 
 /-!
-# Ambient alongExhaustion ratio-LogFe `_of_nonempty` freeEnergy wrappers
+# Zero-field free-energy deviation stated from a nonempty stage volume
 
-Narrow child module for the two ambient
-`freeEnergyAlongExhaustion_high_temp_*_of_nonempty` wrappers
-extracted from `HighTemperatureBoundsRatioLogFe.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_bound_exp_of_nonempty`
-* `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. Each statement takes the stage volume's nonemptiness as a hypothesis.
 
-The corresponding partition-function `_pow_two_lt_of_nonempty`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ`
-and is re-imported through this parent module. Each remaining
-wrapper is a thin pass-through of the corresponding `*_card_pos`
-or related lemma. The theorem names are unchanged from the former
-`HighTemperatureBoundsRatioLogFe` declarations.
+Under `0 ≤ β * J`, the free energy at the parameter record `⟨J, 0, β⟩` exceeds `Real.log 2`
+by at most `β * J * |E| / |Λ|`. Under `0 < β * J` and `0 < |E|`, that excess is strictly
+positive.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
 
 /-- **Along-ex f deviation bound under `(Λ.volume n).Nonempty`**:
 under `0 ≤ β·J` and `(Λ.volume n).Nonempty`,
@@ -51,16 +46,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos_of_nonempty
     0 < freeEnergyAlongExhaustion G Λ (⟨J, 0, β⟩ : IsingParams ℝ) n - Real.log 2 :=
   freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos
     G Λ J β hβJ n hne.card_pos hEpos
-
-/-! ## Moved: 1 Z `pow_two_lt_of_nonempty` wrapper
-
-The
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonemptyZ`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

@@ -2,20 +2,21 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
-# Mayer filter-connected wrappers along an exhaustion
+# Connected polymer sequences at small order, and powers of the reduced family sum
 
-Narrow child module for the §18.5 Mayer filter-connected and epsilon-power
-wrappers along an exhaustion. The theorem names are the same as the former
-declarations, but callers can now avoid importing the monolithic
-special-cases original module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-The two `mayerExpansionTermAlongExhaustion_filter_connected_{zero,one}`
-base-case wrappers (previously in `MayerFilterConnectedBase.lean`) are
-merged here as of the #4563 cycle-14 fixed-cost consolidation. Each such
-wrapper is a thin pass-through to the corresponding ambient
-`mayerExpansionTerm_Λ_filter_connected_{zero,one}` lemma stating that the
-filter-connected piFinset is empty at `k = 0` and the entire piFinset at
-`k = 1`. All theorem names/statements are preserved verbatim.
+Inside the length-`k` sequences of the stage subgraph's polymers sits the sub-finset on
+which the incompatibility graph of the sequence is connected. That sub-finset is empty at
+`k = 0`; it is the whole finset at `k = 1`; and at `k = 2` it is the sub-finset on which the
+entry at index `0` and the entry at index `1` are incompatible.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible
+polymer families of the stage subgraph other than the empty family. Its `k`-th power is
+expanded as the sum, over length-`k` sequences `ω` of such families, of
+`∏ i, ∏ P ∈ ω i, t ^ P.card`.
 -/
 
 namespace IsingModel
@@ -24,8 +25,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 Mayer filter-connected base cases -/
 
 /-- **Along-ex: mayerExpansionTerm filter-connected at k=0 = ∅**. -/
 theorem mayerExpansionTermAlongExhaustion_filter_connected_zero
@@ -56,8 +55,6 @@ theorem mayerExpansionTermAlongExhaustion_filter_connected_one
           IsingModel.allPolymers
             (inducedGraph G (Λ.volume n))) :=
   mayerExpansionTerm_Λ_filter_connected_one G (Λ.volume n)
-
-/-! ### §18.5 Mayer filter-connected + ε^n along-ex wraps -/
 
 /-- **Along-ex: ε(t)^n as multi-Γ piFinset sum**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_pow

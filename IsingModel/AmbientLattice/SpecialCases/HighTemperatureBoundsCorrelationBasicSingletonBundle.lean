@@ -4,17 +4,16 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton
 
 /-!
-# Ambient alongExhaustion correlation singleton + pair-singleton bundle wrapper at h = 0
+# A packaged summary of the zero-field one- and two-site correlations
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-correlation wrappers covering the singleton family
-(`_at_singleton_J_zero`, `_at_singleton_beta_zero`, `_at_singleton`,
-`_at_singleton_eq_zero_le_one`) and the pair-singleton
-`_at_pair_singleton_complete_summary` bundle. Each wrapper is a thin
-pass-through that reduces to `_odd_card_eq_zero`, the `_at_pair_*`
-basic wrappers, or `correlationΛ_*` ambient lemmas. Theorem names
-are unchanged from the former `HighTemperatureBoundsCorrelationBasic`
-declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Under `0 ≤ β * J`, a conjunction records, for ambient sites `i` and `j`: the
+along-exhaustion correlation of `{i, j}` at the parameter record `⟨J, 0, β⟩` is at most `1`
+and non-negative; the correlation of the singleton `{i}` at `⟨J, 0, β⟩` vanishes; and the
+correlation of `{i, j}` vanishes at `⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`.
 -/
 
 namespace IsingModel
@@ -23,16 +22,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: correlation singleton wrappers
-
-The four `correlationAlongExhaustion_high_temp_h_zero_at_singleton*`
-wrappers (`_J_zero`, `_beta_zero`, `_at_singleton`, `_eq_zero_le_one`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasicSingleton`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex pair + singleton complete-summary bundle at h = 0**:
 under `0 ≤ β·J`, at every stage `n` packages pair upper bound, pair

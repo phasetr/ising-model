@@ -4,16 +4,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesFreeEnergy
 
 /-!
-# High-temperature capstone wrappers along an exhaustion
+# The zero-field free energy at vanishing coupling, and a polymer count
 
-Narrow child module for the §18.6 free-energy capstone wrappers
-along an exhaustion: the two `freeEnergyAlongExhaustion =
-log 2 + cosh-correction + polymer correction` decompositions
-(general and ferromagnetic), the `freeEnergyAlongExhaustion = log 2`
-identity at `β · J = 0`, and the `mayerPartialSum_one_at_one`
-identity. Theorem names are the same as the former
-declarations, but callers can now avoid importing the monolithic
-special-cases original module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Under `β * J = 0` and a nonempty stage volume, the free energy at the parameter record
+`⟨J, 0, β⟩` is `Real.log 2`.
+
+Separately, the Mayer partial sum of the stage subgraph truncated at order `1` and read at
+activity `1` is the cardinality of that subgraph's polymer universe
+`IsingModel.allPolymers`.
 -/
 
 namespace IsingModel
@@ -23,31 +25,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.4-§18.6 capstones along-ex wraps -/
-
-/-! ## Moved: 2 partitionFunctionAlongExhaustion polymer/even-subgraph closed forms
-
-The two §18.4 partition-function high-temperature expansion
-closed-form wrappers
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_polymer_family`,
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesPartition`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 freeEnergy decomposition wrappers
-
-The two §18.6 free-energy decomposition wrappers
-(`freeEnergyAlongExhaustion_eq_polymerFreeEnergy`,
-`freeEnergyAlongExhaustion_eq_polymerFreeEnergy_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstonesFreeEnergy`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 /-- **Along-ex: freeEnergy = log 2 at `β·J = 0`** under
 `(Λ.volume n).Nonempty`. -/

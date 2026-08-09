@@ -2,19 +2,18 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnlyFerro
 
 /-!
-# Ambient alongExhaustion freeEnergy ratio_bound non-bundle wrappers at h = 0
+# Upper bounds on the zero-field free-energy difference, along an exhaustion
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-non-ferromagnetic
-`freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*` non-bundle
-wrappers (`J = 0`, `β = 0`). Each wrapper is a thin pass-through to
-the corresponding `freeEnergyΛ_high_temp_h_zero_ratio_bound*` ambient
-lemma under the joint hypothesis `0 ≤ β * J`. The ferromagnetic
-counterparts now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnlyFerro`
-and are re-imported through this parent module. Theorem names are
-unchanged from the former
-`HighTemperatureBoundsRatioLogFeFreeEnergyBound` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. The difference taken is the free energy at `⟨J, 0, β⟩` minus its value at one
+of the trivial slices `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
+
+Under `0 ≤ β * J` and `0 < |Λ|`, each of those two differences is at most
+`β * J * |E| / |Λ|`.
 -/
 
 namespace IsingModel
@@ -51,16 +50,6 @@ theorem freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_beta_zero
       - freeEnergyΛ G (Λ.volume n) (⟨J, 0, 0⟩ : IsingParams ℝ) ≤ _
   exact freeEnergyΛ_high_temp_h_zero_ratio_bound_beta_zero
     G (Λ.volume n) J β hβJ hne
-
-/-! ## Moved: 2 ferromagnetic f ratio_bound wrappers
-
-The two ferromagnetic
-`freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*_ferromagnetic`
-non-bundle wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnlyFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

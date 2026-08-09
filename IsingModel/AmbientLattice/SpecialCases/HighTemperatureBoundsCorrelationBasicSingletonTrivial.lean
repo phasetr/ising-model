@@ -1,22 +1,18 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic
 
 /-!
-# Ambient alongExhaustion correlation singleton trivial-slice wrappers at h = 0
+# The zero-field single-site correlation at the trivial parameter slices
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-correlation singleton wrappers at the trivial parameter slices
-`J = 0` and `β = 0` extracted from
-`HighTemperatureBoundsCorrelationBasicSingleton.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton_J_zero`
-* `correlationAlongExhaustion_high_temp_h_zero_at_singleton_beta_zero`
-
-The `J_zero` wrapper reduces to the `_odd_card_eq_zero` general
-helper at singleton cardinality. The `β = 0` wrapper unfolds
-`correlationAlongExhaustion` and dispatches on `{i} ⊆ Λ.volume n`,
-falling back to the trivial `0` case when the singleton lies outside
-the exhaustion. Theorem names are unchanged from the former
-`HighTemperatureBoundsCorrelationBasic` declarations.
+For an ambient site `i`, the along-exhaustion correlation of the singleton `{i}` vanishes at
+the parameter record `⟨0, 0, β⟩` for arbitrary `β`, and at `⟨J, 0, 0⟩` for arbitrary `J`.
+The first goes through the vanishing of zero-field correlations on site sets of odd
+cardinality; the second reduces, on the stages whose volume contains `i`, to the
+finite-volume statement, the remaining stages giving `0` by definition of
+`correlationAlongExhaustion`.
 -/
 
 namespace IsingModel

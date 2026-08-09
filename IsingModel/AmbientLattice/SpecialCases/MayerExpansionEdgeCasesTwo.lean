@@ -3,22 +3,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwoPartialSum
 
 /-!
-# Mayer expansion-term `n = 2` wrappers along an exhaustion
+# The order-2 Mayer expansion term, along an exhaustion
 
-Narrow child module for the two §18.5 along-exhaustion Mayer
-expansion-term `n = 2` wrappers extracted from
-`MayerExpansionEdgeCases.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `mayerExpansionTermAlongExhaustion_two`
-* `mayerExpansionTermAlongExhaustion_two_filter`
-
-The corresponding partial-sum wrapper (`mayerPartialSumAlongExhaustion_two`)
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwoPartialSum`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding `mayer*_Λ_two*` ambient
-lemma. Theorem names are unchanged from the former
-`MayerExpansionEdgeCases` declarations.
+At every real activity `t`, the order-`2` Mayer expansion term of the stage subgraph is
+written over the product of that subgraph's polymer universe with itself: once with the
+summand carrying the coefficient `-1/2` on incompatible pairs and `0` elsewhere, and once as
+`-1/2` times the sum restricted by `Finset.filter` to the incompatible pairs.
 -/
 
 namespace IsingModel
@@ -58,14 +52,6 @@ theorem mayerExpansionTermAlongExhaustion_two_filter
             (fun pq => IsingModel.PolymersIncompatible pq.1 pq.2),
           (t ^ pq.1.card * t ^ pq.2.card) :=
   mayerExpansionTerm_Λ_two_filter G (Λ.volume n) t
-
-/-! ## Moved: 1 mayerPartialSum_two wrapper
-
-The `mayerPartialSumAlongExhaustion_two` wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwoPartialSum`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

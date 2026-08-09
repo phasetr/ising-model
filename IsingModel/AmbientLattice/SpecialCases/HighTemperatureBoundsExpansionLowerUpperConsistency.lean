@@ -1,21 +1,20 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion HT expansion bounds consistency wrappers at h = 0
+# Consistency of the zero-field high-temperature lower and upper bounds
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-`lower ≤ upper` bound consistency wrappers extracted from
-`HighTemperatureBoundsExpansionLowerUpper.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Each statement takes the
+stagewise `Fintype` instance on that subgraph's edge set and omits `DecidableEq V`.
 
-* `partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper`
-* `freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. Each statement compares two bounding expressions of the high-temperature
+sandwich directly.
 
-Each wrapper is a thin pass-through to the corresponding Λ-level
-`partitionFunctionΛ_high_temp_h_zero_lower_le_upper` /
-`freeEnergyΛ_high_temp_h_zero_lower_le_upper` lemma stating that
-the high-temperature expansion's lower bound does not exceed the
-upper bound. Theorem names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+For arbitrary `J` and `β`,
+`2 ^ |Λ| * Real.cosh (β * J) ^ |E| ≤ 2 ^ (|Λ| + |E|) * Real.cosh (β * J) ^ |E|`. Under
+`0 ≤ β * J`, `Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` is at most
+`Real.log 2 + (|E| / |Λ|) * Real.log (2 * Real.cosh (β * J))`.
 -/
 
 namespace IsingModel

@@ -2,20 +2,27 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Mayer trivial-case wrappers along an exhaustion
+# Order-zero comparison and the Mayer identity on trivial stage subgraphs
 
-Narrow child module for along-exhaustion `mayerPartialSum 0 ≤ polymerFreeEnergy`
-comparisons and Mayer identity wrappers for no-polymer, trivial, and edgeless
-cases. This keeps callers that only need these forwarders out of the
-monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+The Mayer partial sum of the stage subgraph at truncation order `0` is at most
+`IsingModel.polymerFreeEnergy` of that subgraph: for an activity `t` with `0 ≤ t`; for the
+activity `Real.tanh (β * J)` under `0 ≤ β * J`; and for that activity again under `0 ≤ J`
+together with `0 < β`.
+
+The identity `IsingModel.polymerFreeEnergy = IsingModel.mayerPartialSum`, at every
+truncation order `N`, is recorded in these degenerate situations: on a subgraph with no
+polymer and on one with an empty edge finset, each at a general activity `t` and again at
+`Real.tanh (β * J)`; and, at that activity, under the disjunction `β * J = 0` or no polymer.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 mayerPartialSum_zero ≤ polymerFreeEnergy along-ex wraps -/
 
 /-- **Along-ex: mayerPartialSum 0 ≤ polymerFreeEnergy under `t ≥ 0`**. -/
 theorem mayerPartialSum_zero_AlongExhaustion_le_polymerFreeEnergy
@@ -56,8 +63,6 @@ mayerPartialSum_zero_AlongExhaustion_tanh_le_polymerFreeEnergy_ferromagnetic
         (Real.tanh (β * J)) :=
   mayerPartialSum_zero_Λ_tanh_le_polymerFreeEnergy_ferromagnetic
     G (Λ.volume n) hJ hβ
-
-/-! ### §18.5 mayer_identity_of edge-case along-ex wraps -/
 
 /-- **Along-ex: Mayer identity for empty-polymer induced graphs**. -/
 theorem mayer_identity_of_no_polymers_AlongExhaustion

@@ -1,22 +1,16 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionClosedCorrelation
 
 /-!
-# Ambient alongExhaustion correlation pair base wrappers at h = 0
+# Elementary bounds on the zero-field pair correlation, along an exhaustion
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-correlation pair base wrappers extracted from
-`HighTemperatureBoundsCorrelationBasicPair.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_le_one`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_nonneg`
-
-The `_le_one` wrapper unfolds `correlationAlongExhaustion` and
-dispatches on `{i, j} ⊆ Λ.volume n`, falling back to `0 ≤ 1` when
-the pair lies outside the exhaustion. The `_nonneg` wrapper is a
-thin specialisation of the general
-`correlationAlongExhaustion_high_temp_h_zero_nonneg` at the
-two-point finset. Theorem names are unchanged from the former
-`HighTemperatureBoundsCorrelationBasic` declarations.
+For ambient sites `i` and `j`, the along-exhaustion correlation of `{i, j}` at the parameter
+record `⟨J, 0, β⟩` is at most `1`, for arbitrary `J` and `β`; under `0 ≤ β * J` it is also
+non-negative. On the stages whose volume misses the pair, `correlationAlongExhaustion` is
+`0` by definition, and each bound includes that case.
 -/
 
 namespace IsingModel

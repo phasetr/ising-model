@@ -2,18 +2,14 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 
 /-!
-# `mayerExpansionTerm` tanh `Differentiable` along-ex wrappers
+# Differentiability of a Mayer expansion term in `β` and in `J`, along an exhaustion
 
-Narrow child module for the two §18.5--§18.6 along-exhaustion
-`mayerExpansionTerm ∘ tanh ∘ (·)` `Differentiable` wrappers
-extracted from `MayerVdRegularityTanhExpansionTerm.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `mayerExpansionTermAlongExhaustion_tanh_differentiable_beta`
-* `mayerExpansionTermAlongExhaustion_tanh_differentiable_J`
-
-Each wrapper is a thin pass-through to the corresponding
-`mayerExpansionTerm_Λ_tanh_differentiable_*` ambient lemma. Theorem
-names are unchanged from the former `MayerVdRegularity` declarations.
+At every order `k`, the Mayer expansion term of the stage subgraph read at the activity
+`Real.tanh (β * J)` is differentiable over `ℝ` in `β` at fixed `J`, and in `J` at fixed `β`.
 -/
 
 namespace IsingModel

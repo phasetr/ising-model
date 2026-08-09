@@ -1,20 +1,18 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrict
 
 /-!
-# Ambient alongExhaustion strict-deviation bundle wrapper at h = 0
+# Strict zero-field deviation of `Z`, `log Z` and `f`, packaged along an exhaustion
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-`Z + log Z + f` strict-deviation bundle wrapper extracted from
-`HighTemperatureBoundsDeviationStrictFerro.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_strict_deviation_bundle`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The bundle assembles three strict-positivity facts from
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt`,
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_deviation_pos`,
-and `freeEnergyAlongExhaustion_high_temp_h_zero_deviation_pos`. The
-theorem name is unchanged from the former
-`HighTemperatureBoundsDeviationStrictFerro` declaration.
+Under `0 < β * J`, `0 < |Λ|` and `0 < |E|`, a conjunction records at the parameter record
+`⟨J, 0, β⟩` that `2 ^ |Λ| < Z`, that `0 < log Z - |Λ| * Real.log 2`, and that
+`0 < f - Real.log 2`.
 -/
 
 namespace IsingModel
