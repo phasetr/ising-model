@@ -5,22 +5,20 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 
 /-!
-# Ambient alongExhaustion ferromagnetic sharper-exp sandwich wrappers at h = 0
+# Two-sided zero-field bounds on `Z` and `f` under `0 ≤ J` and `0 < β`
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-ferromagnetic sharper-exp `_sandwich_exp_ferromagnetic` wrappers
-extracted from `HighTemperatureBoundsExpSharperSandwich.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp_ferromagnetic`
-* `freeEnergyAlongExhaustion_high_temp_h_zero_sandwich_exp_ferromagnetic`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. All statements assume `0 ≤ J` together with `0 < β`.
 
-Each ferromagnetic wrapper derives `0 ≤ β * J` from `0 ≤ J` and
-`0 < β` and assembles the sandwich from the existing lower / sharper
-exp upper bounds (the same construction as the corresponding general
-sandwich wrapper in
-`HighTemperatureBoundsExpSharperSandwich.lean`). Theorem names are
-unchanged from the former `HighTemperatureBoundsExpSharper`
-declarations.
+The partition function at the parameter record `⟨J, 0, β⟩` lies between
+`2 ^ |Λ| * Real.cosh (β * J) ^ |E|` and `2 ^ |Λ| * Real.exp (β * J * |E|)`. Under the
+additional hypothesis `0 < |Λ|`, the free energy lies between
+`Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` and
+`Real.log 2 + β * J * |E| / |Λ|`.
 -/
 
 namespace IsingModel
