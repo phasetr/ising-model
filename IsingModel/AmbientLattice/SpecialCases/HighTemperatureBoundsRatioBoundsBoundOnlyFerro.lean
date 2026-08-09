@@ -1,24 +1,17 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons
 
 /-!
-# Ambient alongExhaustion ferromagnetic Z ratio_bound non-bundle wrappers at h = 0
+# Upper bounds on the partition-function ratio under `0 ≤ J` and `0 < β`
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-ferromagnetic
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound*_ferromagnetic`
-non-bundle wrappers extracted from
-`HighTemperatureBoundsRatioBoundsBoundOnly.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_ferromagnetic`
-  (J = 0 trivial slice, ferromagnetic specialisation)
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic`
-  (β = 0 trivial slice, ferromagnetic specialisation)
+Write `|E|` for the edge count of the stage subgraph. The ratio taken is the partition
+function at `⟨J, 0, β⟩` over its value at one of the trivial slices `⟨0, 0, β⟩` and
+`⟨J, 0, 0⟩`.
 
-To avoid an import cycle, the proofs inline the same
-`.2`-projection-of-`_ratio_sandwich*` construction the
-non-ferromagnetic siblings use, derived under `mul_nonneg hβ.le hJ`.
-Theorem names are unchanged from the former
-`HighTemperatureBoundsRatioBoundsBound` declarations.
+Under `0 ≤ J` and `0 < β`, each of those two ratios is at most `Real.exp (β * J * |E|)`.
 -/
 
 namespace IsingModel

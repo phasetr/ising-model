@@ -2,19 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
 
 /-!
-# `vdPolymerFamilies_sum` tanh `Differentiable` along-ex wrappers
+# Differentiability of the polymer-family sum in `β` and in `J`, along an exhaustion
 
-Narrow child module for the two §18.5 along-exhaustion
-`vdPolymerFamilies_sum ∘ tanh ∘ (·)` `Differentiable` wrappers
-extracted from `MayerVdRegularityVdPolymerTanh.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_beta`
-* `vdPolymerFamilies_sumAlongExhaustion_tanh_differentiable_J`
-
-Each wrapper is a thin pass-through to the corresponding
-`vdPolymerFamilies_sum_Λ_tanh_differentiable_*` ambient lemma.
-Theorem names are unchanged from the former
-`MayerVdRegularityVdPolymer` declarations.
+The sum of `∏ P ∈ Γ, Real.tanh (β * J) ^ P.card` over the stage subgraph's vertex-disjoint
+compatible polymer families is differentiable over `ℝ` in `β` at fixed `J`, and in `J` at
+fixed `β`.
 -/
 
 namespace IsingModel

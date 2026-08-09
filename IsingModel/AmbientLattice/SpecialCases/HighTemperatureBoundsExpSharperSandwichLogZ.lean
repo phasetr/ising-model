@@ -1,18 +1,18 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion sharper-exp log Z sandwich wrapper at h = 0
+# Two-sided zero-field bounds on `log Z` in exponential form
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-sharper-exp `log_partitionFunctionAlongExhaustion_..._sandwich_exp`
-wrapper extracted from `HighTemperatureBoundsExpSharperSandwich.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The wrapper is a thin `change` + Λ-level pass-through to
-`log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp`.
-The theorem name is unchanged from the former
-`HighTemperatureBoundsExpSharper` declaration.
+Under `0 ≤ β * J`, the logarithm of the partition function at the parameter record
+`⟨J, 0, β⟩` lies between `|Λ| * Real.log 2 + |E| * Real.log (Real.cosh (β * J))` and
+`|Λ| * Real.log 2 + β * J * |E|`.
 -/
 
 namespace IsingModel

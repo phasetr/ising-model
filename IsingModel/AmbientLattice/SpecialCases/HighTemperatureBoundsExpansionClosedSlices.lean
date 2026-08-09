@@ -1,19 +1,16 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion partitionFunction closed-form trivial slice wrappers
+# The zero-field partition function at the trivial parameter slices
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-partition function closed-form trivial-slice consistency wrappers
-extracted from `HighTemperatureBoundsExpansionClosed.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_J_zero`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_at_beta_zero`
+Write `|Λ|` for the cardinality of the stage volume.
 
-Each wrapper is a thin `change` + Λ-level pass-through to the
-corresponding `partitionFunctionΛ_high_temp_expansion_h_zero_closed_at_*_zero`
-trivial-slice lemma. The theorem names are unchanged from the
-former `HighTemperatureBoundsExpansionClosedForms` declarations.
+At the parameter record `⟨0, 0, β⟩` for arbitrary `β`, and at `⟨J, 0, 0⟩` for arbitrary `J`,
+the partition function of the stage volume equals `2 ^ |Λ|`.
 -/
 
 namespace IsingModel

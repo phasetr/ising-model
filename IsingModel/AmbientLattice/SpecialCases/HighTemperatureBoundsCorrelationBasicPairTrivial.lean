@@ -1,22 +1,17 @@
 import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 
 /-!
-# Ambient alongExhaustion correlation pair trivial-slice wrappers at h = 0
+# The zero-field pair correlation at the trivial parameter slices, along an exhaustion
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-correlation pair trivial-slice wrappers extracted from
-`HighTemperatureBoundsCorrelationBasicPair.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_J_zero`
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_beta_zero`
-
-Both wrappers unfold `correlationAlongExhaustion` via the
-`liftFinset_card` cardinality identity and the `correlationΛ_J_zero`
-or `IsingModel.correlation_beta_zero_vanish_of_nonempty_A`
-specializations to obtain the closed-form vanishing identities at
-the trivial parameter slices `J = 0, h = 0` and `β = 0, h = 0`.
-Theorem names are unchanged from the former
-`HighTemperatureBoundsCorrelationBasicPair` declarations.
+For ambient sites `i` and `j`, the along-exhaustion correlation of `{i, j}` vanishes at the
+parameter record `⟨0, 0, β⟩` for arbitrary `β`, and at `⟨J, 0, 0⟩` for arbitrary `J`. On the
+stages whose volume misses the pair the value is `0` by definition of
+`correlationAlongExhaustion`; on the remaining stages the lifted site set is nonempty, and a
+nonempty site set has vanishing correlation at either slice.
 -/
 
 namespace IsingModel

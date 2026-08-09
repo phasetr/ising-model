@@ -3,17 +3,20 @@ import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Mayer vd iff characterization wrappers along an exhaustion
+# Equivalences for the vertex-disjoint compatible polymer-family sum
 
-Narrow child module for along-exhaustion iff characterizations of
-`vdPolymerFamilies_sum`. This keeps callers that only need the equivalence
-wrappers out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-Merged from the former `MayerVdIffTanh.lean` child (#4563 cycle 15 fixed-cost
-consolidation): the two along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_tanh_*_iff` characterization wrappers
-now live directly here. All theorem names/statements are preserved verbatim;
-see git history of the deleted `MayerVdIffTanh.lean` for provenance.
+Write `Ξ(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the stage subgraph's vertex-disjoint
+compatible polymer families and `ε(t)` for the same sum with the empty family removed.
+
+At every real `t`, `Ξ(t) = 1` is equivalent to `ε(t) = 0`; for an activity `t` with `0 ≤ t`,
+`1 < Ξ(t)` is equivalent to `0 < ε(t)`. With the activity read as `Real.tanh (β * J)` under
+`0 ≤ β * J`, `1 < Ξ` is equivalent to `0 < Real.tanh (β * J)` together with the stage
+subgraph having a polymer, and `Ξ = 1` is equivalent to `Real.tanh (β * J) = 0` or that
+subgraph having no polymer.
 -/
 
 namespace IsingModel
@@ -22,8 +25,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 vdPolymerFamilies_sum iff characterizations along-ex wraps -/
 
 /-- **Along-ex: vdSum = 1 ↔ ε = 0**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_eq_one_iff_eps_eq_zero
@@ -50,8 +51,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_gt_one_iff_eps_pos
             (inducedGraph G (Λ.volume n))).erase ∅,
             ∏ P ∈ Γ, t ^ P.card :=
   vdPolymerFamilies_sum_Λ_gt_one_iff_eps_pos G (Λ.volume n) ht
-
-/-! ### §18.5 vdPolymerFamilies_sum `tanh` iff characterizations along-ex wraps -/
 
 /-- **Along-ex: vdSum_tanh > 1 ↔ 0 < tanh ∧ allPolymers ≠ ∅**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_tanh_gt_one_iff

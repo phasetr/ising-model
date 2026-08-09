@@ -1,18 +1,19 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion freeEnergy HT closed-form decomposition wrapper
+# The zero-field high-temperature closed form for the free energy
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-freeEnergy high-temperature closed-form decomposition wrapper
-extracted from `HighTemperatureBoundsExpansionLowerUpperFE.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_high_temp_expansion_h_zero_closed`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The wrapper is a thin `change` + Λ-level pass-through to
-`freeEnergyΛ_high_temp_expansion_h_zero_closed` (Step 318). The
-theorem name is unchanged from the former
-`HighTemperatureBoundsExpansionLowerUpperFE` declaration.
+Under `0 ≤ β * J` and `0 < |Λ|`, the free energy at the parameter record `⟨J, 0, β⟩` is
+`Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` plus the logarithm of
+`∑ X, Real.tanh (β * J) ^ X.card` divided by `|Λ|`, the sum running over the subsets `X` of
+the stage edge finset in which every site has even degree.
 -/
 
 namespace IsingModel

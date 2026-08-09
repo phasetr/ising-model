@@ -2,33 +2,23 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Mayer edge-case wrappers along an exhaustion
+# The Mayer identity at the zero-activity parameter slices, along an exhaustion
 
-Narrow child module gathering the §18.5 along-exhaustion Mayer identity
-edge-case forwarders and the `polymerFreeEnergyAlongExhaustion = mayerPartialSum`
-wrappers. Every declaration is a thin pass-through to the corresponding ambient
-`*_Λ` lemma, so callers that only need these forwarders stay out of the
-monolithic original special-cases module. This module collects:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `mayer_identity_at_zero_AlongExhaustion`,
-* `mayer_identity_at_betaJ_zero_AlongExhaustion`,
-* `mayer_identity_at_beta_zero_AlongExhaustion`,
-* `mayer_identity_at_J_zero_AlongExhaustion`,
-* `mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion`,
-* `mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion`,
-* `mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion`,
-* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_zero`,
-* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_betaJ_zero`,
-* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_beta_zero`,
-* `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_J_zero`.
+At an activity forced to `0` -- written as the literal `0`, or as `Real.tanh (β * J)` under
+`β * J = 0`, at `β = 0`, at `J = 0`, or at `β` and `J` both zero -- the logarithm of the
+vertex-disjoint compatible polymer-family sum of the stage subgraph agrees with the Mayer
+partial sum truncated at any order `N`. The same identity is also written with its left-hand
+side as `IsingModel.polymerFreeEnergy`, which is that logarithm by definition.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 mayer_identity_at edge-case along-ex wraps -/
 
 /-- **Along-ex: Mayer identity at `t = 0`**. -/
 theorem mayer_identity_at_zero_AlongExhaustion
@@ -81,8 +71,6 @@ theorem mayer_identity_at_J_zero_AlongExhaustion
         (Real.tanh (β * (0 : ℝ))) :=
   mayer_identity_at_J_zero_Λ G (Λ.volume n) β N
 
-/-! ### §18.5 mayer_identity polymer_free_energy variants along-ex wraps -/
-
 /-- **Along-ex: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
 theorem
 mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion
@@ -122,8 +110,6 @@ mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion
         (inducedGraph G (Λ.volume n)) N
         (Real.tanh ((0 : ℝ) * (0 : ℝ))) :=
   mayer_identity_at_either_zero_polymer_free_energy_Λ G (Λ.volume n) N
-
-/-! ### §18.5 polymerFreeEnergy_eq_mayerPartialSum_at edge-case along-ex wraps -/
 
 /-- **Along-ex: polymerFreeEnergy = mayerPartialSum at t = 0**. -/
 theorem polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_zero

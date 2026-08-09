@@ -4,15 +4,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
 
 /-!
-# Ambient alongExhaustion sharper-exp Z/f/log Z wrappers at h = 0
+# Exponential upper bounds on the zero-field `Z` and `log Z`, along an exhaustion
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-sharper-exp upper-bound / sandwich / complete-summary wrappers. 16
-theorems for `partitionFunctionAlongExhaustion`,
-`freeEnergyAlongExhaustion`, and `log_partitionFunctionAlongExhaustion`
-high-temperature wrappers with `_exp` suffix at `h = 0` plus
-ferromagnetic variants. The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
+
+Under `0 ≤ β * J`, the partition function at the parameter record `⟨J, 0, β⟩` is at most
+`2 ^ |Λ| * Real.exp (β * J * |E|)`, and its logarithm is at most
+`|Λ| * Real.log 2 + β * J * |E|`.
 -/
 
 namespace IsingModel
@@ -22,7 +25,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
 
 /-- **Along-ex sharper Z upper bound at stage `n`**: under `0 ≤ β·J`,
 `Z_n(⟨J, 0, β⟩) ≤ 2^|Λ_n| · exp(β·J·|E_n|)`. Stage-`n` Λ-level
@@ -56,40 +58,6 @@ theorem log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bo
       (⟨J, 0, β⟩ : IsingParams ℝ)) ≤ _
   exact log_partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound_exp
     G (Λ.volume n) J β hβJ
-
-/-! ## Moved: sharper-exp sandwich wrappers
-
-The 5 ambient alongExhaustion sharper-exp `_sandwich_exp` wrappers
-(`log_partitionFunctionAlongExhaustion_*_sandwich_exp`,
-`partitionFunctionAlongExhaustion_*_sandwich_exp`,
-`freeEnergyAlongExhaustion_*_sandwich_exp`, plus ferromagnetic
-variants for Z and f) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
-
-
-/-! ## Moved: ferromagnetic upper-bound exp wrappers
-
-The three `*AlongExhaustion_high_temp_*_h_zero_upper_bound_exp_ferromagnetic`
-wrappers (for `partitionFunction`, `log_partitionFunction`,
-`freeEnergy`) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperFerro`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `HighTemperatureBounds.lean`.
--/
-
-/-! ## Moved: complete_summary_exp wrappers
-
-The 6 ambient alongExhaustion `complete_summary_exp` wrappers
-(`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`,
-`log_partitionFunctionAlongExhaustion` with ferromagnetic variants)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperComplete`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
 
 end Ambient
 

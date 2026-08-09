@@ -27,12 +27,23 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBa
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation
 
 /-!
-# High-temperature expansion and bound wrappers along an exhaustion
+# The zero-field free-energy sandwich and the odd-set numerator, along an exhaustion
 
-Narrow child module for the §18.3-§18.4 high-temperature expansion,
-lower/upper bound, sandwich, correlation, and deviation wrappers along an
-exhaustion. The theorem names are the same as the former declarations,
-but callers can now avoid importing the monolithic special-cases original module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
+
+Under `0 ≤ β * J` and `0 < |Λ|`, the free energy at the parameter record `⟨J, 0, β⟩` lies
+between `Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J))` and
+`Real.log 2 + (|E| / |Λ|) * Real.log (2 * Real.cosh (β * J))`.
+
+Separately, for a site set `A` of the stage volume of odd cardinality, the finset of subsets
+`X` of the stage edge finset whose degree at every site is even off `A` and odd on `A` is
+empty. Beyond the ambient data, that statement takes only the stage index `n`, the site set
+`A`, and the hypothesis `Odd A.card`.
 -/
 
 namespace IsingModel
@@ -42,68 +53,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-
-/-! ## Moved: alongExhaustion partition/free-energy expansion wrappers
-
-The §18.3-§18.4 ambient alongExhaustion partition function / free energy
-expansion / closed-form / lower-bound / upper-bound / sandwich /
-complete-summary wrappers (20 theorems for
-`partitionFunctionAlongExhaustion`, `freeEnergyAlongExhaustion`,
-`log_partitionFunctionAlongExhaustion`, `correlationAlongExhaustion` closed
-forms, plus the `one_le_sum_pow_tanh_even_subgraph_alongExhaustion` helper)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansion`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: alongExhaustion sharper-exp Z/f/log Z wrappers
-
-The §18.3-§18.4 ambient alongExhaustion sharper-exp upper-bound /
-sandwich / complete-summary wrappers (16 theorems for
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_*_exp`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_*_exp`, and
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_*_exp`
-with ferromagnetic variants) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: alongExhaustion f/Z/log Z deviation / continuity wrappers
-
-The §18.3-§18.4 ambient alongExhaustion deviation_bound_exp /
-deviation_sandwich / relative_sandwich / deviation_pos / pow_two_lt /
-strict_deviation_bundle wrappers (20 theorems for
-`freeEnergyAlongExhaustion`, `partitionFunctionAlongExhaustion`, and
-`log_partitionFunctionAlongExhaustion` with ferromagnetic variants)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation`,
-with the 4 `freeEnergyAlongExhaustion_*_continuity_*` wrappers
-(`_at_J_zero`, `_at_beta_zero`, `_bundle`, `_bundle_ferromagnetic`)
-subsequently narrowed in PR #2024 into
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity`.
-The earlier import path is preserved by re-importing both children.
--/
-
-/-! ## Moved: alongExhaustion Z/f/log Z ratio sandwich/ratio bound wrappers
-
-The §18.3-§18.4 ambient alongExhaustion `partitionFunctionAlongExhaustion`
-`ratio_sandwich` / `ratio_bound` wrappers (with bundle / `_of_nonempty`
-variants plus ferromagnetic counterparts) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds`.
-The 12 `log_partitionFunctionAlongExhaustion` and
-`freeEnergyAlongExhaustion` ratio_sandwich / ratio_bound (+
-deviation_pos / pow_two_lt) wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`
-(narrowed in PR #1995). The 2 `triple_ratio_sandwich_bundle` wrappers
-(J = 0 / β = 0 trivial slices) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
-(narrowed in PR #1994; the bound-bundle and ferromagnetic variants were
-dropped in PR #4676). The earlier import path is preserved by
-re-importing all three children.
--/
-
 
 /-- **Along-exhaustion freeEnergy high-temp sandwich (FV (3.45))**: under
 `0 ≤ β·J` and `0 < |Λ_n|`, at every stage `n`,
@@ -137,43 +86,6 @@ theorem high_temp_numerator_filter_eq_empty_of_odd_card_alongExhaustion
           Even ((if v ∈ A then (1 : ℕ) else 0)
                 + (X.filter (v ∈ ·)).card)) = ∅ :=
   high_temp_numerator_filter_eq_empty_of_odd_card_Λ G (Λ.volume n) A hA_odd
-
--- `correlationAlongExhaustion_high_temp_h_zero_odd_card_eq_zero` moved
--- into `HighTemperatureBoundsCorrelationBasic.lean` (PR #2001) because
--- the singleton wrappers there depend on it.
-
-/-! ## Moved: correlation basic + bundle wrappers
-
-The 15 ambient alongExhaustion §18.3-§18.4 correlation basic /
-bundle wrappers (`correlationAlongExhaustion_high_temp_h_zero_at_*`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelationBasic`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
-
-/-! ## Moved: §18.7 decay capstone wrappers
-
-The 11 ambient alongExhaustion §18.7 high-temperature exponential
-decay capstone wrappers (pair correlation `tanh_pow_dist` /
-`exp_rate_dist` / `exp_highTempExpRate_dist` / `exp_alpha_dist` /
-`pos_of_edge` / `ge_tanh_div_two_pow_edges`, with ferromagnetic
-variants) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstones`.
-The earlier import path is preserved by re-importing the new child
-via the umbrella.
--/
-
-
-/-! ## Moved: umbrella-residue correlation wrapper
-
-The umbrella-residue correlation wrapper
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsCorrelation`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

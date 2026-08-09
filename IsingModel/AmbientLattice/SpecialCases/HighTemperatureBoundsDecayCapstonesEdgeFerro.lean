@@ -1,18 +1,15 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion §18.3 / §18.7 edge-pair ferromagnetic capstones
+# Strict positivity of the zero-field pair correlation across an edge
 
-Narrow child module for the §18.3 / §18.7 ambient
-alongExhaustion ferromagnetic edge-pair strict-positivity wrapper extracted from
-`HighTemperatureBoundsDecayCapstonesEdge.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`
-
-The wrapper is a thin pass-through to
-`correlationΛ_high_temp_h_zero_at_pair_pos_of_edge_ferromagnetic`. The theorem name is
-unchanged from the former
-`AmbientLattice/SpecialCases/HighTemperatureBounds` declarations.
+Under `0 < J` and `0 < β`, for distinct sites `i` and `j` of the stage volume joined by an
+edge of the stage subgraph, the finite-volume correlation of `{i, j}` at the parameter
+record `⟨J, 0, β⟩` is strictly positive.
 -/
 
 namespace IsingModel

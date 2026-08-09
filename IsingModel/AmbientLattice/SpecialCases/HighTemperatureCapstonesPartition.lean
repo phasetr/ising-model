@@ -2,20 +2,20 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
-# §18.4 partitionFunctionAlongExhaustion polymer/even-subgraph closed forms
+# Closed forms for the zero-field partition function, along an exhaustion
 
-Narrow child module for the two §18.4 ambient alongExhaustion
-partition-function high-temperature expansion closed-form wrappers
-extracted from `HighTemperatureCapstones.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_polymer_family`
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed_evenSubgraphs`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. Each is stated for arbitrary `J` and `β`.
 
-Each wrapper is a thin pass-through to the corresponding
-`partitionFunctionΛ_high_temp_expansion_h_zero_*` ambient lemma
-expressing `Z_n(⟨J, 0, β⟩)` either in the polymer-family form or
-in the closed even-subgraph form. Theorem names are unchanged from
-the former `HighTemperatureCapstones` declarations.
+The partition function at the parameter record `⟨J, 0, β⟩` is
+`2 ^ |Λ| * Real.cosh (β * J) ^ |E|` times a combinatorial factor: the sum of
+`∏ P ∈ Γ, Real.tanh (β * J) ^ P.card` over the stage subgraph's vertex-disjoint compatible
+polymer families in one form, and the sum of `Real.tanh (β * J) ^ X.card` over that
+subgraph's `IsingModel.evenSubgraphs` in the other.
 -/
 
 namespace IsingModel

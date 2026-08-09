@@ -2,13 +2,17 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Mayer expansion `abs_le` along an exhaustion
+# Triangle-inequality bound on a Mayer expansion term, along an exhaustion
 
-Narrow child module for the along-exhaustion
-`mayerExpansionTermAlongExhaustion_abs_le` wrapper extracted from
-`MayerExpansionEdgeCases.lean`. The wrapper is a thin pass-through
-to `mayerExpansionTerm_Λ_abs_le`. The theorem name is unchanged
-from the former `MayerExpansionEdgeCases` declaration.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+By definition the order-`k` Mayer expansion term of the stage subgraph is the sum, over
+length-`k` sequences `ω` of that subgraph's polymers, of
+`ursellCoefficient ω * clusterSeqActivity t ω`. Its absolute value is bounded by the same
+sum with both factors replaced by their absolute values, at every order `k` and every real
+activity `t`.
 -/
 
 namespace IsingModel

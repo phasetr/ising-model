@@ -1,14 +1,20 @@
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviation
 
 /-!
-# Ambient alongExhaustion deviation ferromagnetic wrappers at h = 0
+# The zero-field deviation bounds under `0 ≤ J` and `0 < β`
 
-Narrow child module for the three §18.3-§18.4 ambient
-alongExhaustion `_deviation_*_ferromagnetic` wrappers extracted
-from `HighTemperatureBoundsDeviation.lean`. Each wrapper is a thin
-pass-through to its non-ferromagnetic sibling under
-`mul_nonneg hβ.le hJ`. Theorem names are unchanged from the former
-`HighTemperatureBoundsDeviation` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. All statements are at the parameter record `⟨J, 0, β⟩` and assume `0 ≤ J`
+together with `0 < β`.
+
+Under the additional hypothesis `0 < |Λ|`, the free energy exceeds `Real.log 2` by at most
+`β * J * |E| / |Λ|`, and that excess is recorded again in the two-sided form
+`0 ≤ f - Real.log 2 ≤ β * J * |E| / |Λ|`. Under `0 ≤ J` and `0 < β` alone, the logarithm of
+the partition function satisfies `0 ≤ log Z - |Λ| * Real.log 2 ≤ β * J * |E|`.
 -/
 
 namespace IsingModel

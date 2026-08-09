@@ -2,20 +2,19 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
-# §18.5 strict `freeEnergyAlongExhaustion` cluster-expansion bounds
+# A strict zero-field free-energy bound in the cluster-expansion convergence regime
 
-Narrow child module for the two §18.5 strict
-`freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction*`
-along-exhaustion wrappers extracted from `HighTemperatureVdSandwichFE.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction`
-* `freeEnergyAlongExhaustion_lt_log_two_plus_high_temp_correction_ferromagnetic`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The general wrapper unfolds `freeEnergyAlongExhaustion` to the
-ambient `freeEnergyΛ_lt_log_two_plus_high_temp_correction` lemma;
-the ferromagnetic specialization derives `0 ≤ β * J` from `0 ≤ J`
-and `0 < β` and reuses the general wrapper. Theorem names are
-unchanged from the former `HighTemperatureVdSandwichFE` declarations.
+Under `0 ≤ β * J`, `0 < |Λ|` and the convergence condition
+`(1 + Real.tanh (β * J)) ^ |E| < 2`, the free energy at the parameter record `⟨J, 0, β⟩` is
+strictly below `Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J)) + Real.log 2 / |Λ|`.
+The same bound is stated under `0 ≤ J` together with `0 < β` in place of `0 ≤ β * J`.
 -/
 
 namespace IsingModel

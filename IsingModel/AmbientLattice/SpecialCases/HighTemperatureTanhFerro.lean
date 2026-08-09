@@ -2,19 +2,20 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 /-!
-# High-temperature tanh ferromagnetic sandwich / `HasSum` wrappers along an exhaustion
+# The cluster-expansion convergence regime at activity `Real.tanh (β * J)`
 
-Narrow child module for the two §18.5 along-exhaustion
-ferromagnetic `polymerFreeEnergyAlongExhaustion_tanh_*_ferromagnetic`
-wrappers extracted from `HighTemperatureTanh.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_high_temp_sandwich_ferromagnetic`
-* `polymerFreeEnergyAlongExhaustion_tanh_hasSum_via_log_of_pow_lt_two_ferromagnetic`
+Each statement assumes `0 ≤ J`, `0 < β` and the convergence condition
+`(1 + Real.tanh (β * J)) ^ |E| < 2`, where `|E|` is the edge count of the stage subgraph.
+Write `ε` for the sum of `∏ P ∈ Γ, Real.tanh (β * J) ^ P.card` over that subgraph's
+vertex-disjoint compatible polymer families other than the empty family, and `F` for
+`IsingModel.polymerFreeEnergy` of that subgraph at `Real.tanh (β * J)`.
 
-Each wrapper is a thin pass-through to the corresponding
-`polymerFreeEnergy_Λ_tanh_*_ferromagnetic` ambient lemma. Theorem
-names are unchanged from the former `HighTemperatureTanh`
-declarations.
+In that regime `0 ≤ F ≤ ε ≤ (1 + Real.tanh (β * J)) ^ |E| - 1 < 1`, together with
+`F < Real.log 2`; and the alternating series `(-1) ^ k * ε ^ (k + 1) / (k + 1)` sums to `F`.
 -/
 
 namespace IsingModel

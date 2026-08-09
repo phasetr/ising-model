@@ -3,21 +3,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSumEventually
 
 /-!
-# Mayer ε(t) `at_zero` / `continuous` wrappers along an exhaustion
+# The reduced polymer-family sum at zero activity, and its continuity
 
-Narrow child module for the two §18.5 ambient alongExhaustion
-ε(t) = `vdPolymerFamilies_sum_minus_one` infrastructure
-pointwise wrappers extracted from `MayerEpsilonInfrastructure.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `vdPolymerFamilies_sumAlongExhaustion_minus_one_at_zero`
-* `vdPolymerFamilies_sumAlongExhaustion_minus_one_continuous`
-
-The corresponding `_lt_one_eventually` wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSumEventually`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding ambient
-`vdPolymerFamilies_sum_Λ_minus_one_*` lemma. Theorem names are
-unchanged from the former `MayerEpsilonInfrastructure` declarations.
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible
+polymer families of the stage subgraph other than the empty family. Then `ε(0) = 0`, and `ε`
+is continuous on `ℝ` as a function of the activity.
 -/
 
 namespace IsingModel
@@ -43,15 +37,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_continuous
               (inducedGraph G (Λ.volume n))).erase ∅,
         ∏ P ∈ Γ, t ^ P.card) :=
   vdPolymerFamilies_sum_Λ_minus_one_continuous G (Λ.volume n)
-
-/-! ## Moved: 1 lt_one_eventually wrapper
-
-The `vdPolymerFamilies_sumAlongExhaustion_minus_one_lt_one_eventually`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSumEventually`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

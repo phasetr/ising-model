@@ -5,15 +5,17 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowe
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperClosed
 
 /-!
-# Ambient alongExhaustion expansion lower/upper-bound wrappers at h = 0
+# Two-sided zero-field bounds on `Z` in `Real.cosh` form, along an exhaustion
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-partition function / free energy / log partition function
-high-temperature expansion lower-bound, upper-bound, closed-form, and
-lower_le_upper consistency wrappers. 8 theorems wrapping the Λ-level
-versions through the stage-`n` subtype `↑(Λ.volume n)`. The theorem
-names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
+
+Under `0 ≤ β * J`, the partition function at the parameter record `⟨J, 0, β⟩` is at least
+`2 ^ |Λ| * Real.cosh (β * J) ^ |E|` and at most `2 ^ (|Λ| + |E|) * Real.cosh (β * J) ^ |E|`.
 -/
 
 namespace IsingModel
@@ -23,18 +25,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Along-exhaustion high-temperature lower bounds (GJ §18.3) -/
-
-/-! ## Moved: 1 log Z closed-form decomposition wrapper
-
-The
-`log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_closed`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperClosed`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-exhaustion Z high-temperature upper bound (GJ §18.3 / FV (3.45))**:
 under `0 ≤ β·J`, at every stage `n`,
@@ -52,17 +42,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_upper_bound
   change partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ) ≤ _
   exact partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
     G (Λ.volume n) J β hβJ
-
-/-! ## Moved: 2 lower_le_upper consistency wrappers
-
-The two `lower ≤ upper` bound consistency wrappers
-(`partitionFunctionAlongExhaustion_high_temp_h_zero_lower_le_upper`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_lower_le_upper`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperConsistency`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-exhaustion partition function high-temperature lower bound**:
 under `0 ≤ β * J`, at every stage `n`,
@@ -82,15 +61,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_lower_bound
   change _ ≤ partitionFunctionΛ G (Λ.volume n) (⟨J, 0, β⟩ : IsingParams ℝ)
   exact partitionFunctionΛ_high_temp_expansion_h_zero_lower_bound
     G (Λ.volume n) J β hβJ
-
-/-! ## Moved: freeEnergyAlongExhaustion HT expansion lower/upper wrappers
-
-The three trailing `freeEnergyAlongExhaustion_high_temp_*` wrappers
-(`expansion_h_zero_closed`, `h_zero_upper_bound`, `h_zero_lower_bound`)
-now live in `HighTemperatureBoundsExpansionLowerUpperFE.lean`. They are
-re-imported here so downstream consumers continue to see the symbols. -/
-
-
 
 end Ambient
 

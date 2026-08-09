@@ -1,17 +1,16 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion correlation wrappers at h = 0 (umbrella residue)
+# A single-edge lower bound on the zero-field pair correlation, along an exhaustion
 
-Narrow child module for the §18.3 / §18.7 ambient alongExhaustion
-correlation wrapper extracted from `HighTemperatureBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `correlationAlongExhaustion_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`
-
-It is a pass-through to
-`correlationΛ_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges`.
-The theorem name is unchanged from the former `HighTemperatureBounds`
-declaration.
+Under `0 ≤ β * J`, for distinct sites `i` and `j` of the stage volume joined by an edge of
+the stage subgraph, the finite-volume correlation of `{i, j}` at the parameter record
+`⟨J, 0, β⟩` is at least `Real.tanh (β * J) / 2 ^ |E|`, where `|E|` is the edge count of that
+subgraph.
 -/
 
 namespace IsingModel

@@ -2,20 +2,30 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Mayer tanh ferromagnetic iff wrappers along an exhaustion
+# Characterizations of the polymer sums at activity `Real.tanh (β * J)`
 
-Narrow child module for along-exhaustion ferromagnetic tanh iff wrappers for
-`polymerFreeEnergy` and `vdPolymerFamilies_sum`. This keeps callers that only
-need these forwarders out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Every statement assumes `0 ≤ β` and `0 ≤ J` and reads the activity as `Real.tanh (β * J)`.
+Write `Ξ` for the sum of `∏ P ∈ Γ, Real.tanh (β * J) ^ P.card` over the stage subgraph's
+vertex-disjoint compatible polymer families, `ε` for the same sum with the empty family
+removed, `F` for `IsingModel.polymerFreeEnergy` of that subgraph at that activity, and `|E|`
+for its edge count.
+
+`1 < Ξ` is equivalent to `0 < Real.tanh (β * J)` together with the stage subgraph having a
+polymer, and `Ξ = 1` is equivalent to `Real.tanh (β * J) = 0` or that subgraph having no
+polymer. Those same conditions characterize `0 < F` and `F = 0` respectively; `0 < F` is in
+addition equivalent to `0 < ε`, and `F = 0` to `ε = 0`. Under `0 < ε` the free energy is
+strictly below `ε`, and strictly below `(1 + Real.tanh (β * J)) ^ |E| - 1`; the strict bound
+by `ε` is also given as an equivalence with `0 < ε`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 polymerFreeEnergy/vdSum tanh ferromagnetic iff family
-along-ex wraps -/
 
 /-- **Along-ex: 1 < vdSum(tanh) ↔ 0 < tanh ∧ allPolymers ≠ ∅**
 (ferro). -/

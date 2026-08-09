@@ -2,27 +2,27 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon
 
 /-!
-# Mayer recurrence and polymer free-energy HasSum wrappers along an exhaustion
+# The Mayer recurrence and the logarithmic series for the polymer free energy
 
-Narrow child module for along-exhaustion Mayer recurrence wrappers,
-`polymerFreeEnergy` log-series `HasSum` wrappers, and the
-`vdPolymerFamilies_sum - 1` tendsto-zero wrapper. This keeps callers that only
-need these forwarders out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-The two along-exhaustion polymer free-energy log-series `HasSum` wrappers
-(`polymerFreeEnergyAlongExhaustion_hasSum_via_log`,
-`polymerFreeEnergyAlongExhaustion_hasSum_via_log_eventually`) previously lived
-in a separate `MayerRecurrenceHasSumLog` child and are merged back here
-(#4563 cycle 15, 2→1 fixed-cost consolidation); their names/statements are
-unchanged.
+Raising the truncation order by one adds the next Mayer expansion term to the Mayer partial
+sum of the stage subgraph, and that term is equally the difference of two consecutive
+partial sums.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible
+polymer families of the stage subgraph other than the empty family. Under `|ε(t)| < 1` the
+alternating series `(-1) ^ k * ε(t) ^ (k + 1) / (k + 1)` sums to
+`IsingModel.polymerFreeEnergy` of the stage subgraph at `t`; the same summability is stated
+again for `t` in some neighbourhood of `0`. Finally `ε(t) → 0` as `t → 0`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 Mayer recurrence + hasSum + tendsto along-ex wraps -/
 
 /-- **Along-ex: mayerPartialSum recurrence** in `N`. -/
 theorem mayerPartialSumAlongExhaustion_succ
@@ -47,8 +47,6 @@ theorem mayerExpansionTermAlongExhaustion_eq_mayerPartialSum_diff
           (inducedGraph G (Λ.volume n)) (N + 1) t -
         IsingModel.mayerPartialSum (inducedGraph G (Λ.volume n)) N t :=
   mayerExpansionTerm_Λ_eq_mayerPartialSum_diff G (Λ.volume n) N t
-
-/-! ### §18.5 polymerFreeEnergy log-series HasSum along-ex wraps -/
 
 /-- **Along-ex: polymerFreeEnergy hasSum via log under `|ε(t)| < 1`**. -/
 theorem polymerFreeEnergyAlongExhaustion_hasSum_via_log

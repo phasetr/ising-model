@@ -5,19 +5,19 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich
 
 /-!
-# Ambient alongExhaustion sharper-exp freeEnergy complete-summary wrapper at h = 0
+# A packaged summary of the zero-field free energy in exponential form
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-sharper-exp freeEnergy complete-summary wrapper extracted from
-`HighTemperatureBoundsExpSharperComplete.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_complete_summary_exp`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-The wrapper bundles the sharper-exp sandwich (lower + upper) with
-the two J=0 / β=0 trivial-slice values `f = log 2`, under
-`0 ≤ β·J` and `(Λ.volume n).Nonempty`. The theorem name is
-unchanged from the former `HighTemperatureBoundsExpSharper`
-declaration.
+Under `0 ≤ β * J` and a nonempty stage volume, a conjunction records the two-sided bound
+`Real.log 2 + (|E| / |Λ|) * Real.log (Real.cosh (β * J)) ≤ f` and
+`f ≤ Real.log 2 + β * J * |E| / |Λ|` at the parameter record `⟨J, 0, β⟩`, together with the
+values `f = Real.log 2` at `⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`.
 -/
 
 namespace IsingModel

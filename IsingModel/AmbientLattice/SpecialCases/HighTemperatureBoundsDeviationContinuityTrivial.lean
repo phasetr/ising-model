@@ -1,19 +1,18 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion freeEnergy continuity at trivial slices at h = 0
+# Quantitative continuity of the zero-field free energy at the trivial slices
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-freeEnergy quantitative continuity wrappers at trivial parameter
-slices extracted from `HighTemperatureBoundsDeviationContinuity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_J_zero`
-* `freeEnergyAlongExhaustion_high_temp_h_zero_continuity_at_beta_zero`
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume.
 
-Each wrapper unfolds `freeEnergyAlongExhaustion` to the ambient
-`freeEnergyΛ_high_temp_h_zero_continuity_at_*` lemma via
-`change ... ; exact`. Theorem names are unchanged from the former
-`HighTemperatureBoundsDeviation` declarations.
+Under `0 ≤ β * J` and `0 < |Λ|`, the free energy at the parameter record `⟨J, 0, β⟩` differs
+from its value at `⟨0, 0, β⟩` by at most `β * J * |E| / |Λ|` in absolute value, and the same
+bound is stated for its difference from the value at `⟨J, 0, 0⟩`.
 -/
 
 namespace IsingModel

@@ -1,24 +1,18 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion ferromagnetic freeEnergy ratio_bound non-bundle wrappers at h = 0
+# Upper bounds on the free-energy difference under `0 ≤ J` and `0 < β`
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-ferromagnetic
-`freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*_ferromagnetic`
-non-bundle wrappers extracted from
-`HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_ferromagnetic`
-  (J = 0 trivial slice, ferromagnetic specialisation)
-* `freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic`
-  (β = 0 trivial slice, ferromagnetic specialisation)
+Write `|E|` for the edge count of the stage subgraph and `|Λ|` for the cardinality of the
+stage volume. The difference taken is the free energy at `⟨J, 0, β⟩` minus its value at one
+of the trivial slices `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
 
-To avoid an import cycle, the proofs inline the same
-`freeEnergyΛ_high_temp_h_zero_ratio_bound*` ambient lemma the
-non-ferromagnetic siblings call, derived under
-`mul_nonneg hβ.le hJ`. Theorem names are unchanged from the former
-`HighTemperatureBoundsRatioLogFeFreeEnergyBound` declarations.
+Under `0 ≤ J`, `0 < β` and `0 < |Λ|`, each of those two differences is at most
+`β * J * |E| / |Λ|`.
 -/
 
 namespace IsingModel
