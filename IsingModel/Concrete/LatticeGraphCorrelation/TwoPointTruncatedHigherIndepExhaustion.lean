@@ -1,12 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated{2,3,4}Infinite exhaustion-independence wrappers
+# Exhaustion-independence of the ℤ^d truncated correlations
 
-Narrow child module for three ℤ^d
-`truncated{2,3,4}Infinite_latticeGraph_indep_exhaustion` wrappers extracted
-from `TwoPointTruncatedHigher.lean`. Each wrapper is a thin pass-through to
-the corresponding ambient lemma at `IsingModel.latticeGraph d`.
+Concrete `IsingModel.latticeGraph d` statements: under `Ferromagnetic` on the parameter
+record, the truncated two-, three- and four-point infinite-volume correlations at fixed
+sites take the same value along any two `Ambient.Exhaustion`s of `Fin d → ℤ`. No instance
+argument is taken.
 -/
 
 namespace IsingModel
