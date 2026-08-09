@@ -2,14 +2,16 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd
 
 /-!
-# ℤ^d site-independence / exhaustion-independence wrappers
+# ℤ^d independence of the exhaustion and of the site
 
-Narrow child module for three ℤ^d wrappers extracted from
-`Translation.lean`:
-
-* `spontaneousCorrelation_latticeGraph_indep_exhaustion`,
-* `magnetizationInfinite_latticeGraph_cubicExhaustion_eq`,
-* `spontaneousMagnetization_latticeGraph_cubicExhaustion_eq`.
+Concrete `latticeGraph d` statements that certain infinite-volume quantities do not depend on
+choices made in their construction. For a fixed finite subset of `Fin d → ℤ`, and under
+`0 ≤ J` and `0 < β`, the spontaneous correlation agrees along any pair of
+`Ambient.Exhaustion`s of `Fin d → ℤ`. At `Ambient.cubicExhaustion d` the infinite-volume
+magnetization agrees at any pair of sites for a parameter record satisfying `Ferromagnetic`,
+and the spontaneous magnetization agrees at any pair of sites under `0 ≤ J` and `0 < β`; each
+is read off translation invariance by translating one site onto the other. No instance
+argument is taken.
 -/
 
 namespace IsingModel

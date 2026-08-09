@@ -2,11 +2,13 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated{2,3,4}Infinite cubicExhaustion translation wrappers
+# ℤ^d translation invariance of the truncated functions at the cubic exhaustion
 
-Narrow child module for three ℤ^d
-`truncated{2,3,4}Infinite_latticeGraph_cubicExhaustion_translation`
-wrappers extracted from `TranslationVadd.lean`.
+Concrete `latticeGraph d` statements that, at `Ambient.cubicExhaustion d` and for a parameter
+record satisfying `Ferromagnetic`, translating every argument by one lattice vector leaves
+the infinite-volume truncated two-, three- and four-point functions unchanged. The sites are
+not assumed distinct, `Ferromagnetic` is the only hypothesis, and no instance argument is
+taken.
 -/
 
 open scoped symmDiff
@@ -50,8 +52,6 @@ theorem truncated4Infinite_latticeGraph_cubicExhaustion_translation
           (Ambient.cubicExhaustion d) p i j k l :=
   truncated4Infinite_translation (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) t p hf i j k l
-
-/-! ## Any-exhaustion and finite-volume translation wrappers -/
 
 end Ambient
 end IsingModel

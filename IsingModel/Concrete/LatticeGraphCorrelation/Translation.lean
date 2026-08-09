@@ -1,45 +1,23 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
-/- Translation.lean
-Concrete translation invariance theorems for the ℤ^d Ising model:
-finite-volume, along-exhaustion, and infinite-volume wrappers for
-correlations, partition functions, free energy, truncated 2/3/4-point
-functions, and spontaneous correlation/magnetization.
+
+/-!
+# ℤ^d spontaneous correlation and its comparison at positive external field
+
+Concrete `latticeGraph d` statements about the spontaneous correlation of a fixed finite
+subset of `Fin d → ℤ` and about the spontaneous magnetization at a fixed site.
+
+At `Ambient.cubicExhaustion d`, and under `0 ≤ J` and `0 < β`, the spontaneous correlation
+lies between `0` and `1`. Once the external field is taken strictly positive, the spontaneous
+correlation is below the infinite-volume correlation at that field — stated at
+`Ambient.cubicExhaustion d` and along an arbitrary `Ambient.Exhaustion` alike — and, along an
+arbitrary exhaustion, the spontaneous magnetization is below the infinite-volume
+magnetization at that field. No instance argument is taken.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: ℤ^d vaddFinset / translation-invariance wrappers
-
-The 11 ℤ^d translation-invariance wrappers
-(`correlationInfinite_latticeGraph_cubicExhaustion_vaddFinset`,
-4 `*_latticeGraph_cubicExhaustion_translation` for `magnetizationInfinite`
-and `truncated{2,3,4}Infinite`,
-`correlationInfinite_latticeGraph_vaddFinset_of_translationInvariant`,
-5 `*_latticeGraph_translation` for `spontaneousCorrelation`,
-`spontaneousMagnetization`, and `truncated{2,3,4}Infinite`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TranslationVadd`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: ℤ^d shift / vaddFinset_eq wrappers
-
-The 8 ℤ^d shift / vaddFinset_eq wrappers
-(`freeEnergyAlongExhaustion_latticeGraph_shift_eq`,
-`freeEnergyInfinite_latticeGraph_shift_eq`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_shift`,
-`correlationAlongExhaustion_latticeGraph_shift_vaddFinset_eq`,
-`correlationΛ_latticeGraph_vaddFinset_eq`,
-`partitionFunctionΛ_latticeGraph_vaddFinset_eq`,
-`freeEnergyΛ_latticeGraph_vaddFinset_eq`,
-`log_partitionFunctionΛ_latticeGraph_vaddFinset_eq`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TranslationShifts`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Concrete `spontaneousCorrelation` on ℤ^d -/
 
 /-- **Nonnegativity of `spontaneousCorrelation` on ℤ^d**. -/
 theorem spontaneousCorrelation_latticeGraph_cubicExhaustion_nonneg
@@ -93,30 +71,6 @@ theorem spontaneousCorrelation_le_correlationInfinite_latticeGraph_general
           (⟨J, h, β⟩ : IsingParams ℝ) A :=
   spontaneousCorrelation_le_correlationInfinite (IsingModel.latticeGraph d)
     Λ hJ hβ hh A
-
-/-! ## Moved: ℤ^d tendsto correlationInfinite/magnetizationInfinite → spontaneous
-
-The three wrappers
-`tendsto_correlationInfinite_spontaneousCorrelation_latticeGraph`,
-`tendsto_correlationInfinite_spontaneousCorrelation_latticeGraph_any`,
-`tendsto_magnetizationInfinite_spontaneousMagnetization_latticeGraph_any`
-now live in `TranslationTendstoSpontaneous.lean`. -/
-
-
-/-! ## Moved: spontaneousCorrelation cubicExhaustion translation + monotone
-
-The three wrappers
-`spontaneousCorrelation_latticeGraph_cubicExhaustion_{translation,monotone_J,monotone_beta}`
-now live in `TranslationCubicMonotone.lean`. -/
-
-/-! ## Moved: site-independence / exhaustion-independence wrappers
-
-The three `spontaneousCorrelation_latticeGraph_indep_exhaustion`,
-`magnetizationInfinite_latticeGraph_cubicExhaustion_eq`,
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq` wrappers now
-live in `TranslationSiteIndep.lean`. -/
-
-
 
 end Ambient
 end IsingModel

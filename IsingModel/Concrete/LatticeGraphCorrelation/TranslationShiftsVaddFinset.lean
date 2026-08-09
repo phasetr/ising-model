@@ -1,16 +1,15 @@
 import IsingModel.Concrete.IntLattice
 
 /-!
-# ℤ^d Λ-direct vaddFinset_eq translation wrappers
+# ℤ^d translation invariance of finite-volume quantities
 
-Narrow child module for four ℤ^d
-`*Λ_latticeGraph_vaddFinset_eq` translation wrappers extracted from
-`TranslationShifts.lean`:
-
-* `correlationΛ_latticeGraph_vaddFinset_eq`,
-* `partitionFunctionΛ_latticeGraph_vaddFinset_eq`,
-* `freeEnergyΛ_latticeGraph_vaddFinset_eq`,
-* `log_partitionFunctionΛ_latticeGraph_vaddFinset_eq`.
+Concrete `latticeGraph d` statements that translating a finite volume by a lattice vector
+leaves its partition function, the logarithm of that partition function, its free energy, and
+the correlation of a finite set of its vertices transported along the translation, all
+unchanged. Every statement requires a `Fintype` instance on the edge set induced by the
+original volume and another on the edge set induced by the translated volume; these instances
+are the entire requirement, since no `Prop`-typed hypothesis is carried anywhere in this
+module.
 -/
 
 open scoped symmDiff
