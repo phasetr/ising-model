@@ -2,31 +2,20 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete f/Z/log Z deviation wrappers at h = 0
+# ℤ^d fixed-volume deviation sandwiches for `f_Λ` and `log Z_Λ` at zero field
 
-Narrow child module for the §18.3-§18.4 concrete deviation_bound /
-deviation_sandwich / relative_sandwich / deviation_pos / pow_two_lt
-wrappers on `latticeGraph d` at `h = 0`. 14 theorems for
-`freeEnergyΛ_latticeGraph`, `partitionFunctionΛ_latticeGraph`, and
-`log_partitionFunctionΛ_latticeGraph`, with their ferromagnetic variants.
-The theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, a sandwich for the deviation of the free-energy density from `log 2`,
+between `0` and `β * J * |E_Λ| / |Λ|`, and one for the deviation of `log Z_Λ` from
+`|Λ| * log 2`, between `0` and `β * J * |E_Λ|`. Each is stated under `0 ≤ β * J` and again in
+a ferromagnetic form under `0 ≤ J` together with `0 < β`. Nonemptiness of `Λ` is required by
+the free-energy statements and by them alone.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open scoped symmDiff
-
-
-/-! ## Moved: ℤ^d HT Λ-layer deviation_bound wrappers
-
-The 2 ℤ^d Λ-layer `freeEnergyΛ_latticeGraph_high_temp_h_zero_*`
-wrappers (`deviation_bound_exp`, `deviation_bound_exp_ferromagnetic`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationContinuity`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **ℤ^d Λ f deviation sandwich**. -/
 theorem freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_sandwich
@@ -81,28 +70,6 @@ log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_sandwi
           (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
   log_partitionFunctionΛ_high_temp_expansion_h_zero_deviation_sandwich_ferromagnetic
     (IsingModel.latticeGraph d) Λ J β hJ hβ
-
-/-! ## Moved: Λ-direct partitionFunctionΛ relative-sandwich wrappers
-
-The two Λ-direct
-`partitionFunctionΛ_*_relative_sandwich` wrappers (direct +
-`_ferromagnetic`) now live in
-`HighTemperatureBoundsDeviationRelative.lean`. -/
-
-
-
-/-! ## Moved: ℤ^d HT Λ-layer strict-deviation wrappers
-
-The 6 ℤ^d Λ-layer strict-deviation HT wrappers
-(`freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_pos`,
-`_ferromagnetic`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt`,
-`_ferromagnetic`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos`,
-`_ferromagnetic`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

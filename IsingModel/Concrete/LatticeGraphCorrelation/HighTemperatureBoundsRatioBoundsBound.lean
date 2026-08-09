@@ -2,16 +2,13 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-direct Z ratio-bound wrappers
+# ℤ^d fixed-volume partition-function ratio bounds against the trivial slices
 
-Narrow child module for four ℤ^d Λ-direct
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_ratio_bound*`
-wrappers extracted from `HighTemperatureBoundsRatioBounds.lean`:
-
-* `_ratio_bound`,
-* `_ratio_bound_beta_zero`,
-* `_ratio_bound_ferromagnetic`,
-* `_ratio_bound_beta_zero_ferromagnetic`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the bound
+`exp (β * J * |E_Λ|)` on the ratio of the partition function at `⟨J, 0, β⟩` to its value at
+`⟨0, 0, β⟩`, and on the ratio to its value at `⟨J, 0, 0⟩`. Each ratio is bounded under
+`0 ≤ β * J` and again under the ferromagnetic pair `0 ≤ J` and `0 < β`; no nonemptiness or
+edge-count condition enters any statement here.
 -/
 
 namespace IsingModel

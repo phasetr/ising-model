@@ -2,14 +2,16 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-direct triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
+# ℤ^d fixed-volume triple ratio sandwiches at zero field
 
-Narrow child module for 4 §18.3-§18.4 concrete (`latticeGraph d`)
-Λ-direct `triple_ratio_sandwich_bundle` wrappers (J = 0 trivial slice,
-β = 0 specialisation, ferromagnetic variants). Theorem names are
-unchanged from the former
-`Concrete/LatticeGraphCorrelation/HighTemperatureBoundsRatioBounds`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, bundles that
+sandwich simultaneously the partition-function ratio between `cosh (β * J) ^ |E_Λ|` and
+`exp (β * J * |E_Λ|)`, the difference of logarithms between `|E_Λ| * log (cosh (β * J))` and
+`β * J * |E_Λ|`, and the difference of free-energy densities between
+`(|E_Λ| / |Λ|) * log (cosh (β * J))` and `β * J * |E_Λ| / |Λ|`. The comparison is made against
+the parameter record `⟨0, 0, β⟩` and against `⟨J, 0, 0⟩`, in a form assuming `0 ≤ β * J` and
+in a ferromagnetic form assuming `0 ≤ J` together with `0 < β`; every statement here also
+assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

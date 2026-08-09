@@ -2,21 +2,15 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete §18.3-§18.4 Λ-direct sharper-exp ferromagnetic complete-summary wrappers
+# ℤ^d fixed-volume ferromagnetic complete-summary bundles at zero field
 
-Narrow child module for 3 ℤ^d Λ-direct ferromagnetic sharper-exp
-`complete_summary_exp` wrappers extracted from
-`HighTemperatureBoundsExpSharperCompleteSummary.lean`:
-
-* `partitionFunctionΛ_*_complete_summary_exp_ferromagnetic`,
-* `log_partitionFunctionΛ_*_complete_summary_exp_ferromagnetic`,
-* `freeEnergyΛ_*_complete_summary_exp_ferromagnetic`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*Λ_high_temp_*_complete_summary_exp_ferromagnetic` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBoundsExpSharperCompleteSummary`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, ferromagnetic bundles for the partition function, for its logarithm and
+for the free-energy density. Each collects a lower bound in which every edge contributes a
+factor `cosh (β * J)`, the sharper upper bound in which every edge contributes `exp (β * J)`
+instead, and the values taken at `⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`. Every statement here assumes
+`0 ≤ J` together with `0 < β`; the free-energy bundle additionally needs `Λ` nonempty, which
+the partition-function and logarithm bundles do not.
 -/
 
 namespace IsingModel

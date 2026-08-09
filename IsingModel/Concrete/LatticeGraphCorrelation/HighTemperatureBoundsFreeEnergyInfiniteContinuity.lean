@@ -2,15 +2,14 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d ∞-vol f continuity-at-trivial-slice wrappers
+# ℤ^d infinite-volume free energy near the trivial slices on the cubic exhaustion
 
-Narrow child module for three ℤ^d
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_*`
-wrappers extracted from `HighTemperatureBoundsFreeEnergyInfinite.lean`:
-
-* `_continuity_at_J_zero`,
-* `_continuity_at_beta_zero`,
-* `_continuity_bundle`.
+Instantiates at `IsingModel.latticeGraph d` and on `Ambient.cubicExhaustion d`, at the
+parameter record `⟨J, 0, β⟩`, the quantitative continuity bound `β * J * d` on the absolute
+difference between `freeEnergyInfinite` and its value at `⟨0, 0, β⟩`, the same bound against
+its value at `⟨J, 0, 0⟩`, and the statement pairing them. Every statement here assumes
+`0 ≤ J` together with `0 < β`, and the separate bounds obtain the edge-density constant `d`
+from `inducedLatticeGraph_card_edgeFinset_le`.
 -/
 
 namespace IsingModel

@@ -2,16 +2,13 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyΛ ratio-bound wrappers
+# ℤ^d fixed-volume free-energy differences against the trivial slices
 
-Narrow child module for four ℤ^d
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound*` wrappers
-extracted from `HighTemperatureBoundsRatioLogFe.lean`:
-
-* `freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound`,
-* `freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_beta_zero`,
-* `freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_ferromagnetic`,
-* `freeEnergyΛ_latticeGraph_high_temp_h_zero_ratio_bound_beta_zero_ferromagnetic`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the bound
+`β * J * |E_Λ| / |Λ|` on the difference between the free-energy density at `⟨J, 0, β⟩` and its
+value at `⟨0, 0, β⟩`, and on the difference against its value at `⟨J, 0, 0⟩`. Each difference
+is bounded under `0 ≤ β * J` and again under the ferromagnetic pair `0 ≤ J` and `0 < β`, and
+every statement here also assumes `Λ` nonempty.
 -/
 
 namespace IsingModel
