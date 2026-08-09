@@ -3,13 +3,14 @@ import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 import IsingModel.AmbientLattice.SpecialCases.JointRegularityAt
 
 /-!
-# ℤ^d AlongExhaustion joint pointwise regularity wrappers
+# ℤ^d pointwise joint regularity of the along-exhaustion correlation
 
-Narrow child module for two ℤ^d AlongExhaustion joint pointwise wrappers
-(`correlationAlongExhaustion_latticeGraph_*_joint`
-with `continuousAt` and `differentiableAt`) extracted from
-`JointRegularityPointwise.lean`. Each wrapper is a thin pass-through to the
-corresponding ambient joint pointwise lemma at `IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, for a fixed finite subset of `Fin d → ℤ` and at a
+fixed stage of an arbitrary `Ambient.Exhaustion`, the correlation of that subset, read as a
+function of the triple `(β, J, h)`, is continuous at an arbitrary prescribed triple and
+differentiable over `ℝ` there. Each requires a `Fintype` instance on the edge set induced at
+every stage, and that instance is its entire requirement: no `Prop`-typed hypothesis is
+carried here.
 -/
 
 namespace IsingModel

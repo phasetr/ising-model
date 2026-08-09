@@ -2,14 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.TruncatedFunctions.Cluster
 
 /-!
-# ℤ^d clusterProperty_latticeGraph wrappers
+# ℤ^d cluster property (§5.1)
 
-Narrow child module for three ℤ^d `clusterProperty_latticeGraph_*`
-wrappers extracted from `CorrelationDecay.lean`:
-
-* `clusterProperty_latticeGraph_of_summable`,
-* `clusterProperty_latticeGraph_J_zero`,
-* `clusterProperty_latticeGraph_beta_zero`.
+Concrete `latticeGraph d` forms of the cluster property along an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`. The general form assumes that the infinite-volume Ursell
+two-point function `j ↦ truncated2Infinite … i j` is summable at every basepoint `i`; the
+vanishing-coupling form assumes only that `⟨0, h, β⟩` satisfies `Ferromagnetic`; and the
+vanishing-inverse-temperature form at `⟨J, h, 0⟩` assumes nothing about the parameters.
+Underneath sits a file-local `Fintype` instance on the induced edge set of an arbitrary
+finite volume.
 -/
 
 namespace IsingModel

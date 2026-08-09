@@ -2,12 +2,15 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlationAlongExhaustion ciSup / infinite-limit wrappers
+# ℤ^d along-exhaustion correlations converging to their supremum
 
-Narrow child module for four ℤ^d
-`correlationAlongExhaustion_latticeGraph_tendsto_ciSup{,_general}`
-and `tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph{,_general}`
-wrappers extracted from `CorrelationExhaustionLimits.lean`.
+Concrete `latticeGraph d` statements that, for a parameter record satisfying `Ferromagnetic`
+and a fixed finite subset `A` of `Fin d → ℤ`, the along-exhaustion correlation sequence of
+`A` converges to its own supremum over the stages, and equally to the infinite-volume
+correlation of `A`. The supremum form and the infinite-volume form are each stated along an
+arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` and at `Ambient.cubicExhaustion d`. No
+statement here carries any hypothesis beyond `Ferromagnetic`, and none takes an instance
+argument.
 -/
 
 namespace IsingModel

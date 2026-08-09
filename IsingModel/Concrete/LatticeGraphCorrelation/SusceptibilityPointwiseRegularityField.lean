@@ -4,13 +4,13 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete susceptibilityAlongExhaustion field-direction regularity
+# ℤ^d regularity of the along-exhaustion susceptibility in the external field
 
-Narrow child module for four ℤ^d
-`susceptibilityAlongExhaustion_{continuousAt,differentiableAt,continuous,differentiable}_field`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `susceptibilityAlongExhaustion_*_field_gen` lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the susceptibility of that stage is continuous, and
+differentiable over `ℝ`, as a function of the external field — at a prescribed value, and on
+the whole line. The coupling and the inverse temperature are held fixed and unrestricted. No
+statement here carries a hypothesis or takes an instance argument.
 -/
 
 open scoped symmDiff

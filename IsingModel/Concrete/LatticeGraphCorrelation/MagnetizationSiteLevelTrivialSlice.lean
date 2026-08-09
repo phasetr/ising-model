@@ -2,15 +2,12 @@ import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetization Λ-induced trivial-slice wrappers
+# ℤ^d finite-volume magnetization on the trivial slices
 
-Narrow child module for three ℤ^d Λ-induced
-`magnetization_*_latticeGraph` trivial-slice wrappers extracted from
-`MagnetizationSiteLevelTrivialAndMonotone.lean`:
-
-* `magnetization_zero_at_h_zero_latticeGraph`,
-* `magnetization_beta_zero_latticeGraph`,
-* `magnetization_J_zero_latticeGraph`.
+Concrete closed forms, on the subgraph induced by a fixed finite volume of `Fin d → ℤ`, for
+the magnetization at a vertex. It vanishes at zero external field and at zero inverse
+temperature, and at zero coupling it is `Real.tanh (β * h)`. No statement here carries a
+hypothesis, and no instance argument is taken.
 -/
 
 namespace IsingModel

@@ -2,14 +2,14 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated{2,3,4}Infinite translation invariance wrappers
+# ℤ^d translation invariance of the infinite-volume truncated functions
 
-Narrow child module for three ℤ^d
-`truncated{2,3,4}Infinite_latticeGraph_translation` (any-Exhaustion)
-wrappers extracted from `TranslationVadd.lean`. Each wrapper is a thin
-pass-through to the corresponding ambient
-`truncated{2,3,4}Infinite_translation` lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and for a parameter record satisfying `Ferromagnetic`, translating every argument
+by one lattice vector leaves the infinite-volume truncated two-, three- and four-point
+functions unchanged. The sites are not assumed distinct. `Ferromagnetic` is the only
+hypothesis, and each statement requires a `Fintype` instance on the edge set induced at every
+stage.
 -/
 
 namespace IsingModel

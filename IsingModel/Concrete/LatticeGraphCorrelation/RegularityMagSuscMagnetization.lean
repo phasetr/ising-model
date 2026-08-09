@@ -2,16 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Regularity.HasDerivCorr
 
 /-!
-# ℤ^d Λ-layer magnetizationΛ hasDerivAt wrappers
+# ℤ^d differentiability of the finite-volume magnetization in one parameter
 
-Narrow child module for four ℤ^d Λ-layer
-`magnetizationΛ_latticeGraph_hasDerivAt_*` wrappers extracted from
-`RegularityMagSusc.lean`:
-
-* `magnetizationΛ_latticeGraph_hasDerivAt_field`,
-* `magnetizationΛ_latticeGraph_hasDerivAt_beta`,
-* `magnetizationΛ_latticeGraph_hasDerivAt_beta_general_h`,
-* `magnetizationΛ_latticeGraph_hasDerivAt_J`.
+Concrete `latticeGraph d` statements that the magnetization at a fixed vertex of a fixed
+finite volume has a derivative in one parameter of the record at a prescribed value, the
+others being held fixed. The external field and the coupling are treated at unrestricted
+parameters, and the inverse temperature is treated at zero external field and again at an
+unrestricted one. Every statement is in existence form and requires a `Fintype` instance on
+the edge set induced by the volume; that instance is its entire requirement, since no
+`Prop`-typed hypothesis is carried here.
 -/
 
 open scoped symmDiff

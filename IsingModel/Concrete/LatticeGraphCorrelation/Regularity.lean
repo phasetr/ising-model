@@ -2,28 +2,25 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Regularity.HasDerivCorr
 
 /-!
-# Concrete regularity wrappers for the ℤ^d Ising correlation
+# ℤ^d differentiability of the finite-volume correlation in one parameter
 
-This module contains concrete `latticeGraph` specializations of ambient
-`HasDerivAt` APIs. It is split out of the original concrete correlation module
-so future derivative-wrapper work can build a narrower child path instead of
-touching the monolithic original file.
+Concrete `latticeGraph d` statements that the correlation of a fixed finite set of vertices
+of a fixed finite volume has a derivative in one parameter of the record at a prescribed
+value, the others being held fixed. The inverse temperature is treated at zero external field
+and again at an unrestricted one; the coupling and the external field are each treated at
+unrestricted parameters. Every statement is in existence form, asserting that some real
+number is the derivative rather than naming it, and requires a `Fintype` instance on the edge
+set induced by the volume; that instance is its entire requirement, since no `Prop`-typed
+hypothesis is carried anywhere in this module.
+
+Reference: Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5--§17.6, where the finite-volume
+correlation is differentiated in the parameter and the existence of such derivatives is stated.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d Λ-layer `hasDerivAt` wrappers (GJ §17.5–§17.6)
-
-Direct instantiations of the `hasDerivAt_*Λ_*` family
-(PRs #1619, #1623–#1628) at `G := IsingModel.latticeGraph d`.
-
-All wrappers are stated in existence form `∃ d : ℝ, HasDerivAt _ d _`
-to avoid reproducing the long explicit-derivative formulas at the
-ℤ^d concrete layer; consumers needing the explicit formula can call
-the underlying `Ambient.hasDerivAt_*Λ_*` directly. -/
 
 /-- **ℤ^d Λ: `correlationΛ` HasDerivAt in β at h = 0**. -/
 theorem hasDerivAt_correlationΛ_latticeGraph_beta
@@ -68,50 +65,6 @@ theorem hasDerivAt_correlationΛ_latticeGraph_field
           (⟨J, h', β⟩ : IsingParams ℝ) A) c h :=
   ⟨_, Ambient.hasDerivAt_correlationΛ_field
     (IsingModel.latticeGraph d) Λ J h β A⟩
-
-/-! ## Moved: ℤ^d Λ-layer `freeEnergyΛ` `hasDerivAt` wrappers
-
-The three wrappers
-`hasDerivAt_freeEnergyΛ_latticeGraph_beta_general_h`,
-`hasDerivAt_freeEnergyΛ_latticeGraph_J`,
-`hasDerivAt_freeEnergyΛ_latticeGraph_field` now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.RegularityFreeEnergyLambda`.
-The earlier import path is preserved by re-importing the new child. -/
-
-
-/-! ## Moved: ℤ^d Λ-layer `partitionFunctionΛ`/`boltzmannWeightΛ` `hasDerivAt` wrappers
-
-The 6 ℤ^d Λ-layer
-`hasDerivAt_partitionFunctionΛ_latticeGraph_{beta,J,field}` and
-`hasDerivAt_boltzmannWeightΛ_latticeGraph_{beta,J,field}` wrappers
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.RegularityPartitionBoltzmann`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d Λ-layer `magnetizationΛ`/`susceptibilityΛ` `hasDerivAt` wrappers
-
-The 8 ℤ^d Λ-layer `magnetizationΛ_latticeGraph_hasDerivAt_*` and
-`susceptibilityΛ_latticeGraph_hasDerivAt_*` wrappers (in field/β/
-β_general_h/J directions) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.RegularityMagSusc`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d along-exhaustion `hasDerivAt` wrappers
-
-The 15 ℤ^d along-exhaustion `hasDerivAt` wrappers
-(`correlationAlongExhaustion`, `magnetizationAlongExhaustion`,
-`freeEnergyAlongExhaustion`, `susceptibilityAlongExhaustion` — in
-β/β_general_h/J/field directions) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.RegularityAlongEx`.
-The three `partitionFunctionAlongExhaustion_latticeGraph_hasDerivAt_*`
-wrappers of the same family were deleted; no consumer of them was
-found in this repository.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

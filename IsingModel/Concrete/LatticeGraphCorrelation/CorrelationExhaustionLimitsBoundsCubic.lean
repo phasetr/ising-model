@@ -2,22 +2,14 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete cubicExhaustion-specific correlationAlongEx bound wrappers
+# ℤ^d along-exhaustion correlation bounds at the cubic exhaustion
 
-Narrow child module for 4 ℤ^d cubicExhaustion-specific
-`correlationAlongExhaustion_latticeGraph_*` bound wrappers extracted
-from `CorrelationExhaustionLimitsBounds.lean`:
-
-* `correlationAlongExhaustion_latticeGraph_cubicExhaustion_bddAbove`,
-* `abs_correlationAlongExhaustion_latticeGraph_eventually_le_one`,
-* `correlationAlongExhaustion_latticeGraph_cubicExhaustion_le_one`,
-* `correlationAlongExhaustion_latticeGraph_cubicExhaustion_nonneg`.
-
-Each is a thin pass-through to the ambient
-`correlationAlongExhaustion_{bddAbove,eventually_le_one,le_one,nonneg}`
-lemma at `(G, Λ) := (IsingModel.latticeGraph d, Ambient.cubicExhaustion d)`.
-The theorem names are unchanged from the former
-`CorrelationExhaustionLimitsBounds` declarations.
+Concrete `latticeGraph d` bounds on the along-exhaustion correlation of a finite subset of
+`Fin d → ℤ` at `Ambient.cubicExhaustion d`, for an arbitrary parameter record. The range of
+the sequence is bounded above, its absolute value is eventually bounded by `1`, and the value
+at a stage is bounded by `1`, none of which assumes anything about the parameters.
+Non-negativity at a stage assumes in addition that the record is `Ferromagnetic`. No instance
+argument is taken anywhere in this module.
 -/
 
 namespace IsingModel

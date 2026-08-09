@@ -4,14 +4,13 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityA
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAtContinuousAtBeta
 
 /-!
-# ℤ^d susceptibilityAlongExhaustion β-general-h regularity wrappers
+# ℤ^d regularity of the along-exhaustion susceptibility in β at an unrestricted field
 
-Narrow child module for four ℤ^d
-`susceptibilityAlongExhaustion_*_beta_general_h` wrappers extracted from
-`SusceptibilityPointwiseRegularity.lean`. Each wrapper is a thin
-pass-through to the corresponding ambient
-`susceptibilityAlongExhaustion_*_beta_gen` lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the susceptibility of that stage is continuous, and
+differentiable over `ℝ`, as a function of the inverse temperature — at a prescribed value,
+and on the whole line — with the coupling and the external field held fixed and unrestricted.
+No statement here carries a hypothesis or takes an instance argument.
 -/
 
 namespace IsingModel

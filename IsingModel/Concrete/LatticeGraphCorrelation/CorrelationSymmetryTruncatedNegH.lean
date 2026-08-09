@@ -4,11 +4,13 @@ import IsingModel.AmbientLattice.MagnetizationInfinite
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated{2,3,4}_neg_h wrappers
+# ℤ^d truncated correlations under sign change of the external field
 
-Narrow child module for three ℤ^d
-`truncated{2,3,4}_neg_h_latticeGraph` wrappers extracted from
-`CorrelationSymmetry.lean`.
+Concrete `latticeGraph d` statements about the truncated (Ursell) correlations on the
+subgraph induced by a fixed finite volume when the external field `h` is replaced by `-h`.
+The two-point and four-point functions are invariant under that replacement; the three-point
+function changes sign. Pairwise distinctness of the arguments is the only hypothesis of each
+statement, no positivity of `J`, `h` or `β` is assumed, and no instance argument is taken.
 -/
 
 namespace IsingModel

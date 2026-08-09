@@ -2,6 +2,37 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseu
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PathLowerBound
 import IsingModel.ClusterExpansion.TwoPointConvergenceWindow
 
+/-!
+# Unconditional lower bound on the ℤ^d two-point function by the distance profile
+
+Supplies outright, rather than as an assumption, a per-pair lower bound on the infinite-volume
+ℤ^d correlation by the distance profile: on the high-temperature convergence window, and at
+the direct-path rate `-Real.log (Real.tanh (β * J))`, the profile `pseudoMassG` evaluated at
+the lattice distance between a pair of sites is at most the infinite-volume correlation of
+that pair along `Ambient.cubicExhaustion d`.
+
+The steps taken here are arithmetic; the combinatorial input is imported. Whenever the product
+of rate and radius is at least `1`, the profile is at most `Real.exp` of the negative of that
+product, its denominator being at least `2` there. On `ConvergenceRegion.window d J` the
+activity `Real.tanh (β * J)` is strictly below `Real.exp (-1)`, since the window confines
+`β * J` strictly below `Real.artanh` of the activity radius `ConvergenceRegion.R d` and that
+radius is itself at most `Real.exp (-1)`; hence the rate is at least `1`, and for a pair of
+distinct sites the product of rate and lattice distance is at least `1` as well. The profile
+is therefore at most `Real.tanh (β * J)` raised to the lattice distance, which the upstream
+GKS direct-path bound in turn bounds above by the two-point function.
+
+The conclusion is recorded first anchored at the origin, for a nonzero site, and then for an
+arbitrary pair of distinct sites. The general form follows from the anchored one by translating
+the pair `{x, z}` to `{0, z - x}`: that translation leaves the infinite-volume correlation along
+the cubic exhaustion unchanged, and it leaves the lattice distance unchanged. The anchored
+bound and the general-pair bound each assume positivity of the coupling, positivity of the
+inverse temperature, distinctness of the sites involved and membership of the inverse
+temperature in the window; the arithmetic step assumes only that the product of rate and radius
+is at least `1`, and the window observations assume positivity of the coupling and membership
+in the window, saying nothing about the sites. No instance argument is taken anywhere in this
+module.
+-/
+
 namespace IsingModel
 namespace Ambient
 
@@ -52,7 +83,7 @@ theorem tanh_betaJ_lt_exp_neg_one_of_window {d : ℕ} {J β : ℝ} (hJ : 0 < J)
     exact le_trans hmin hle2
   linarith
 
-/-- **On the window the inverse correlation length rate `−log tanh(βJ)` is `≥ 1`.** -/
+/-- **On the window the direct-path rate `−log tanh(βJ)` is `≥ 1`.** -/
 theorem one_le_neg_log_tanh_betaJ_of_window {d : ℕ} {J β : ℝ} (hJ : 0 < J)
     (hβ : β ∈ ConvergenceRegion.window d J) :
     (1 : ℝ) ≤ -Real.log (Real.tanh (β * J)) := by
@@ -69,14 +100,21 @@ theorem one_le_neg_log_tanh_betaJ_of_window {d : ℕ} {J β : ℝ} (hJ : 0 < J)
   linarith
 
 /-- **GJ §17.5 unconditional faithful profile lower bound (anchored, cubic, on the window).**
-For `z ≠ 0` and `β ∈ ConvergenceRegion.window d J`, the distance-radius profile at the genuine
-inverse-correlation-length rate `−log tanh(βJ)` lower-bounds the anchored two-point function:
+For `z ≠ 0` and `β ∈ ConvergenceRegion.window d J`, the distance-radius profile at the
+direct-path rate `−log tanh(βJ)` lower-bounds the anchored two-point function:
 `pseudoMassG α (dist 0 z) (−log tanh(βJ)) ≤ ⟨φ₀ φ_z⟩^∞`.
 
-This is the unconditional discharge of the §17.5 correlation-lower-bound hypothesis (the faithful
-distance form), previously thought gated on §18.  Proof: on the window `tanh(βJ) ≤ e⁻¹` so the rate
-`q := −log tanh(βJ) ≥ 1`, hence `q·dist ≥ 1` and
-`pseudoMassG α (dist) q ≤ e^{−q·dist} = tanh(βJ)^{dist}`
+The bound is unconditional at this rate: it is the correlation lower bound
+that the rate-agnostic Lipschitz route of `UnconditionalFiniteRegionLipschitz.lean` re-parametrizes
+to.  The `hprofile` binder of the conditional modules
+(`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window_of_profile_lower` and its
+finite-region consumer) is a *different* statement, taken at the walk rate `−log (βJ·2d)`: for
+`1 ≤ d` on the window `tanh(βJ) < βJ ≤ βJ·2d`, so the direct-path rate is the larger of the two,
+and `pseudoMassG` is antitone in the rate (`pseudoMassG_antitoneOn`).  The bound proved here is
+therefore strictly weaker than that binder and does not discharge it.
+
+Proof: on the window `tanh(βJ) < e⁻¹`, so the rate `q := −log tanh(βJ)` satisfies `1 ≤ q`, hence
+`q·dist ≥ 1` and `pseudoMassG α (dist) q ≤ e^{−q·dist} = tanh(βJ)^{dist}`
 (`pseudoMassG_le_exp_neg_of_one_le`); the GKS direct-path bound
 `twoPointFunction_ge_tanh_betaJ_pow_dist` gives `tanh(βJ)^{dist} ≤ ⟨φ₀ φ_z⟩`.
 
@@ -121,8 +159,12 @@ theorem pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic_zero
 For any distinct pair `x ≠ z` and `β ∈ ConvergenceRegion.window d J`,
 `pseudoMassG α (dist x z) (−log tanh(βJ)) ≤ ⟨φ_x φ_z⟩^∞`.  Reduces to the anchored form by
 translation invariance (`correlationInfinite_latticeGraph_pair_eq_twoPointFunction`,
-`latticeDistance_translate_eq`).  This unconditionally discharges the faithful per-pair correlation
-lower bound (`hprofile`) on the window, for every pair.
+`latticeDistance_translate_eq`).  This supplies, for every pair on the window, the per-pair
+correlation lower bound at the direct-path rate `−log tanh(βJ)`, which is exactly the local
+tanh-rate hypothesis discharged inside
+`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window`.  The walk-rate `hprofile` of the
+conditional modules is the strictly stronger statement described on the anchored bound above, and is
+*not* discharged here.
 
 References: Glimm--Jaffe §17.5, Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312. -/
 theorem pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic

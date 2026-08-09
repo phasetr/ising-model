@@ -1,14 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d tendsto correlationInfinite/magnetizationInfinite → spontaneous wrappers
+# ℤ^d spontaneous quantities as the right-hand limit at zero external field
 
-Narrow child module for three ℤ^d tendsto-spontaneous wrappers
-extracted from `Translation.lean`:
-
-* `tendsto_correlationInfinite_spontaneousCorrelation_latticeGraph`,
-* `tendsto_correlationInfinite_spontaneousCorrelation_latticeGraph_any`,
-* `tendsto_magnetizationInfinite_spontaneousMagnetization_latticeGraph_any`.
+Concrete `latticeGraph d` statements that, under `0 ≤ J` and `0 < β`, the infinite-volume
+correlation of a fixed finite subset of `Fin d → ℤ` converges to the spontaneous correlation
+as the external field decreases to `0` from above, and that the infinite-volume magnetization
+at a fixed site converges likewise to the spontaneous magnetization. The correlation form is
+stated at `Ambient.cubicExhaustion d` and along an arbitrary `Ambient.Exhaustion`; the
+magnetization form is stated along an arbitrary exhaustion. No instance argument is taken.
 -/
 
 open scoped symmDiff

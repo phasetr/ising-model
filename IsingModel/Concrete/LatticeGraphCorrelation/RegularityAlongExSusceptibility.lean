@@ -4,22 +4,24 @@ import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
 
 /-!
-# Concrete susceptibility along-ex hasDerivAt wrappers (GJ §17.5–§17.6)
+# ℤ^d differentiability of the along-exhaustion susceptibility in one parameter
 
-Narrow child module for four ℤ^d
-`susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_*` wrappers
-(at h = 0 in β, general-h β, J, field). Each wrapper is a thin
-pass-through to the corresponding ambient `susceptibility*_hasDerivAt_*`
-lemma at `IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the susceptibility of that stage has a derivative in
+one parameter of the record at a prescribed value, the others being held fixed. The inverse
+temperature is treated at zero external field and again at an unrestricted one; the coupling
+and the external field are each treated at unrestricted parameters. Every statement is in
+existence form and requires a `Fintype` instance on the edge set induced at every stage;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
+
+Reference: Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5--§17.6, where the correlation
+functions are differentiated in the parameter and the existence of such derivatives is stated.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d along-ex `susceptibilityAlongExhaustion` `hasDerivAt`
-wrappers (GJ §17.5–§17.6) -/
 
 /-- **ℤ^d along-ex: `susceptibilityAlongExhaustion` HasDerivAt in β at h = 0**. -/
 theorem susceptibilityAlongExhaustion_latticeGraph_hasDerivAt_beta

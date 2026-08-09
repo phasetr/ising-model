@@ -4,18 +4,14 @@ import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
 
 /-!
-# ℤ^d along-ex `freeEnergyAlongExhaustion` HasDerivAt wrappers
+# ℤ^d differentiability of the along-exhaustion free energy in one parameter
 
-Narrow child module for three ℤ^d along-exhaustion
-`freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_*` wrappers:
-
-* `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h`,
-* `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_J`,
-* `freeEnergyAlongExhaustion_latticeGraph_hasDerivAt_field`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyAlongExhaustion_hasDerivAt_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed stage of an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`, the free energy of that stage has a derivative in the
+inverse temperature, in the coupling, and in the external field, at a prescribed value of the
+parameter in question and with the others held fixed and unrestricted. Every statement is in
+existence form and requires a `Fintype` instance on the edge set induced at every stage;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

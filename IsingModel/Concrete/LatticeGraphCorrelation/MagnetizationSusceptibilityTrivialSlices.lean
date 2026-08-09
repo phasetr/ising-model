@@ -2,14 +2,15 @@ import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d susceptibility / truncated2 J=0 / h=0 trivial-slice wrappers
+# ℤ^d susceptibility and truncated two-point function on the trivial slices
 
-Narrow child module for three ℤ^d trivial-slice wrappers extracted
-from `MagnetizationSusceptibility.lean`:
-
-* `susceptibility_J_zero_latticeGraph`,
-* `truncated2_h_zero_latticeGraph`,
-* `susceptibility_h_zero_latticeGraph`.
+Concrete identities on the subgraph induced by a fixed finite volume of `Fin d → ℤ`. At zero
+coupling the susceptibility at a vertex is `t * (1 - t)` for `t = Real.tanh (β * h)`; the
+`Finset`-indexed truncated two-point function underlying it contributes `t - t ^ 2` on the
+diagonal, which is what makes the closed form differ from the physical `1 - t ^ 2`. At zero
+external field the truncated two-point function at a pair of vertices is the correlation of
+that pair, and the susceptibility at a vertex is the sum of those correlations over all
+vertices. No statement here carries a hypothesis, and no instance argument is taken.
 -/
 
 namespace IsingModel

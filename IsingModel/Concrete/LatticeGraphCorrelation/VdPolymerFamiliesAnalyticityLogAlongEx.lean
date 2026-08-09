@@ -2,19 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 
 /-!
-# Concrete log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
+# ℤ^d analyticity of the logarithm of the polymer-family activity sum
 
-Narrow child module for 4 ℤ^d along-exhaustion
-`log_vdPolymerFamilies_sumAlongExhaustion_*` analyticity wrappers:
-
-* `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticAt`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_analyticOnNhd_Ici_zero`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_beta`,
-* `log_vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_analyticAt_J`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.log_vdPolymerFamilies_sumAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements at a fixed stage of an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, about the logarithm of the sum over the compatible polymer families of the
+induced subgraph. As a function of the activity it is analytic at every non-negative point,
+and analytic on a neighbourhood of `Set.Ici 0` with no hypothesis at all. Composed with
+`Real.tanh` of the product of inverse temperature and coupling, it is analytic in the inverse
+temperature and analytic in the coupling wherever that product is non-negative. Every
+statement requires a `Fintype` instance on the edge set induced at every stage.
 -/
 
 namespace IsingModel

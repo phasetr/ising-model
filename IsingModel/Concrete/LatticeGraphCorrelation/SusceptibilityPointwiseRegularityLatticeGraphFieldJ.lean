@@ -3,20 +3,14 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularity
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt
 
 /-!
-# ℤ^d `susceptibilityAlongExhaustion_latticeGraph_*At_{field,J}` wrappers
+# ℤ^d pointwise regularity of the along-exhaustion susceptibility in field and coupling
 
-Narrow child module for four ℤ^d
-`susceptibilityAlongExhaustion_latticeGraph_*At_{field,J}` pointwise
-wrappers:
-
-* `susceptibilityAlongExhaustion_latticeGraph_continuousAt_field`,
-* `susceptibilityAlongExhaustion_latticeGraph_differentiableAt_field`,
-* `susceptibilityAlongExhaustion_latticeGraph_continuousAt_J`,
-* `susceptibilityAlongExhaustion_latticeGraph_differentiableAt_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.susceptibilityAlongExhaustion_*_gen` lemma at
-`G := IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the susceptibility of that stage is continuous, and
+differentiable over `ℝ`, at a prescribed value of the external field, and likewise at a
+prescribed value of the coupling, with the remaining parameters held fixed and unrestricted.
+Each requires a `Fintype` instance on the edge set induced at every stage, and that instance
+is its entire requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 open scoped symmDiff

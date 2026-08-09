@@ -2,12 +2,16 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d partition / freeEnergy bound wrappers
+# ℤ^d partition-function and free-energy bounds on a finite volume (§10.3)
 
-Narrow child module for three ℤ^d
-`partitionFunction_{upper,lower}_latticeGraph` and
-`freeEnergy_upper_bound_latticeGraph` wrappers extracted from
-`EnergyClosedForms.lean`.
+Concrete `latticeGraph d` bounds on the subgraph induced by a fixed finite volume, for an
+arbitrary parameter record. Write the energy bound for the absolute coupling times the
+induced edge-set cardinality plus the absolute field times the number of sites. With no
+hypothesis at all, the partition function is bounded above by the number of configurations
+times the exponential of the absolute inverse temperature times that energy bound, and below
+by the exponential of the negative of the same quantity. The free energy is bounded above by
+`Real.log 2` plus that quantity divided by the number of sites; this last bound assumes the
+volume to have positive cardinality. No instance argument is taken.
 -/
 
 namespace IsingModel

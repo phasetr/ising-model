@@ -1,15 +1,15 @@
 import IsingModel.PhaseTransition.CriticalGrowth
 
 /-!
-# ℤ^d *_convergent_subgraph_latticeGraph wrappers
+# ℤ^d convergence along an increasing sequence of graphs on a finite volume
 
-Narrow child module for three ℤ^d
-`*_convergent_subgraph_latticeGraph` wrappers extracted from
-`MagnetizationConvergent.lean`:
-
-* `truncated2_convergent_subgraph_latticeGraph`,
-* `susceptibility_convergent_subgraph_latticeGraph`,
-* `magnetization_total_convergent_subgraph_latticeGraph`.
+Concrete statements at the vertex type of a fixed finite volume of `Fin d → ℤ`: along a
+monotone sequence of simple graphs on that vertex type, and for a parameter record satisfying
+`Ferromagnetic`, the truncated two-point function at a pair of vertices, the susceptibility
+at a vertex, and the sum of the magnetizations over all vertices each converge. Only the
+vertex type comes from `latticeGraph d`; the graphs in the sequence are arbitrary.
+Monotonicity of the sequence and `Ferromagnetic` are the hypotheses in every case, and every
+statement requires a `Fintype` instance on the edge set of each graph in the sequence.
 -/
 
 open scoped symmDiff

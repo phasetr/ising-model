@@ -1,26 +1,23 @@
-/- MagnetizationConvergent.lean
-Narrow child module for the three ℤ^d `magnetization_convergent_*`
-wrappers extracted from `Magnetization.lean` in PR #2030. The theorem
-names are unchanged from the former `Magnetization` declarations.
--/
 import IsingModel.PhaseTransition.MagnetizationSusceptibility
 import IsingModel.PhaseTransition.CriticalGrowth
 import IsingModel.PhaseTransition.BetaRegularity
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
+/-!
+# ℤ^d finite-volume magnetization as a parameter grows without bound
+
+Concrete `latticeGraph d` statements that, at a fixed vertex of the subgraph induced by a
+fixed finite volume, the magnetization converges when one parameter of the record is sampled
+along the natural numbers and the others are held fixed. Growth of the coupling assumes
+`0 ≤ h` and `0 < β`; growth of the external field assumes `0 ≤ J` and `0 < β`; growth of the
+inverse temperature, taken shifted by one, assumes `0 ≤ J` and `0 ≤ h`. No instance argument
+is taken.
+-/
+
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### Magnetization convergence wrappers
-
-Direct ℤ^d forwarders for `magnetization_convergent_{J,h,beta}`.
-The abstract J-convergence owner is
-`IsingModel/PhaseTransition/BetaRegularity.lean`; the h- and
-beta-convergence owner is `IsingModel/PhaseTransition/CriticalGrowth.lean`.
-`IsingModel/PhaseTransition/MagnetizationSusceptibility.lean` owns
-`magnetization`. -/
 
 /-- **ℤ^d magnetization_convergent_J direct** (Λ-induced, ferromagnetic):
 `n ↦ M_i(J = n, h, β)` converges for `h ≥ 0`, `β > 0`. Thin pass-through
@@ -63,24 +60,6 @@ theorem magnetization_convergent_beta_latticeGraph
       Filter.atTop (nhds L) :=
   IsingModel.magnetization_convergent_beta
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J hJ h hh i
-
-/-! ## Moved: truncated2_convergent wrappers
-
-The three wrappers
-`truncated2_convergent_J_latticeGraph`,
-`truncated2_convergent_h_latticeGraph`,
-`truncated2_convergent_beta_latticeGraph` now live in
-`MagnetizationConvergentTruncated2.lean`. -/
-
-
-/-! ## Moved: ℤ^d *_convergent_subgraph_latticeGraph wrappers
-
-The three wrappers
-`truncated2_convergent_subgraph_latticeGraph`,
-`susceptibility_convergent_subgraph_latticeGraph`,
-`magnetization_total_convergent_subgraph_latticeGraph`
-now live in `MagnetizationConvergentSubgraph.lean`. -/
-
 
 end Ambient
 

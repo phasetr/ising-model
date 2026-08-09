@@ -2,16 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyAnalyticity
 
 /-!
-# ℤ^d freeEnergyAlongEx AnalyticOnNhd general-h wrappers
+# ℤ^d along-exhaustion free-energy analyticity at a general external field
 
-Narrow child module for three ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_*` general-h
-wrappers, the only surviving ℤ^d along-exhaustion members of the
-free-energy per-direction analyticity family:
-
-* `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_beta_general_h`,
-* `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_J_general_h`,
-* `freeEnergyAlongExhaustion_latticeGraph_analyticOnNhd_h`.
+Concrete `latticeGraph d` statements that, at a fixed stage of an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`, the free energy of that stage is analytic on a
+neighbourhood of all of `Set.univ` as a function of one real parameter with the others held
+fixed. The inverse temperature and the coupling are each treated at an unrestricted external
+field, and the external field itself is treated as well. Each statement requires a
+`Fintype` instance on the edge set induced at every stage, and that instance is its entire
+requirement: no `Prop`-typed hypothesis is carried anywhere in this module.
 -/
 
 namespace IsingModel

@@ -2,15 +2,13 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyAlongEx any-Λ trivial-slice wrappers
+# ℤ^d per-stage free-energy trivial slices
 
-Narrow child module for three ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_*` any-Exhaustion
-trivial-slice wrappers:
-
-* `freeEnergyAlongExhaustion_latticeGraph_beta_zero`,
-* `freeEnergyAlongExhaustion_latticeGraph_zero_params`,
-* `freeEnergyAlongExhaustion_latticeGraph_J_zero`.
+Concrete `latticeGraph d` closed forms for the free energy at one stage of an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`. At vanishing inverse temperature, and at vanishing
+coupling and field together, the value is `Real.log 2`; at vanishing coupling and
+unrestricted field it is `Real.log (2 * Real.cosh (β * h))`. Nonemptiness of the volume at
+that stage is the only hypothesis of each, and no instance argument is taken.
 -/
 
 namespace IsingModel

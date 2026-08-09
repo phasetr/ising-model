@@ -8,51 +8,29 @@ import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 /-!
-# Per-stage complex analyticity, convergence, and critical-exponent bounds at ℤ^d
+# ℤ^d per-stage Gibbs expectation, FKG, and the plus-boundary bound
 
-ℤ^d forwarders for:
+Concrete `latticeGraph d` statements along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`,
+each of which requires a `Fintype` instance on the edge set induced at every stage.
 
-1. **Per-stage analyticity / continuity / norm-bound** — entire in `h`, `J`, `β`;
-   `AnalyticOnNhd` on the Lee–Yang subdomain; per-stage Montel norm bound;
-   `Z_ℂ ≠ 0` on `leeYangDomain`. Foundation for the GJ §4.6 Vitali extraction.
-2. **Per-stage Gibbs expectation + FKG** — along-exhaustion Gibbs unfolding and
-   the GJ §4.4 FKG inequality per stage; GJ §5.4 Prop 5.4.2 `+`-BC bound.
-3. **GJ §17.7 critical-exponent bounds** — `η ≥ 0` and `ζ ≥ 0` at finite and
-   ∞ volume; absence of even bound states.
-4. **Subgraph monotonicity and convergence** — `partitionFunction`, `correlation`,
-   `freeEnergy` monotone in subgraph; convergence of monotone subgraph sequences.
+The along-exhaustion Gibbs expectation of a family of observables unfolds, at every stage, to
+the ordinary Gibbs expectation on the subgraph induced by that stage's volume; this identity
+carries no `Prop`-typed hypothesis. The FKG inequality then holds stage by stage for a
+parameter record satisfying `Ferromagnetic` and families that are non-negative and monotone
+at every stage: the product of the along-exhaustion expectations is bounded by the
+expectation of the product.
 
-## References
-
-* Glimm–Jaffe, *Quantum Physics* 2nd ed., §4.4, §4.6, §5.4, §17.7.
+Finally, at zero external field with positive coupling and positive inverse temperature, with
+every induced stage subgraph preconnected, a nonempty plus-boundary set and a distinguished
+site chosen at each stage, and a Peierls-type exponential bound assumed stage by stage, the
+plus-boundary expectation of the spin sign at the distinguished site, taken as a `liminf`
+along the exhaustion, falls short of `1` by at most that exponential.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Moved: ℤ^d per-stage complex analyticity wrappers
-
-The 8 remaining ℤ^d per-stage complex analyticity / continuity /
-norm-bound wrappers
-(`partitionFunctionComplexAlongExhaustion_continuous_h_stage_latticeGraph`,
-`norm_partitionFunctionComplexAlongExhaustion_le_of_re_bound_stage_latticeGraph`,
-`partitionFunctionComplexAlongExhaustion_ne_zero_on_leeYangDomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_analyticAt_h_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_analyticOnNhd_leeYangSubdomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_differentiableOn_leeYangSubdomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_continuousOn_leeYangSubdomain_stage_latticeGraph`,
-`freeEnergyComplexAlongExhaustion_tendsto_at_real_of_disjointTowerHypotheses_latticeGraph`)
-live under `IsingModel.Concrete.LatticeGraphCorrelation.PerStageComplex`,
-in its `Bounds.PerStage` (3) and `Branches.StageLeeYang` (1) children and
-in `PerStageComplexFreeEnergy` (4). The four
-`partitionFunctionComplexAlongExhaustion_analyticAt_{h,J,beta,joint}_stage_latticeGraph`
-wrappers were deleted; no consumer of them was found in this repository.
--/
-
-
-/-! #### Per-stage Gibbs expectation along an exhaustion + FKG (ℤ^d) -/
 
 /-- **ℤ^d `gibbsExpectationAlongExhaustion` unfolding**: equal to
 `gibbsExpectation` on the `n`-th volume with the `n`-th family
@@ -124,34 +102,6 @@ theorem prop_5_4_2_plusGibbsExpectationLiminf_bound_latticeGraph
   classical
   exact IsingModel.prop_5_4_2_plusGibbsExpectationLiminf_bound
     (IsingModel.latticeGraph d) Λ hconn J β c hβ hJ B hB i hexp
-
-/-! ## Moved: ℤ^d ζ/η/absence-of-even-bound-states wrappers
-
-The 5 ℤ^d GJ §17.2/§17.7 critical-exponent wrappers
-(`zeta_nonneg_finite_vol_latticeGraph`,
-`eta_nonneg_infinite_vol_latticeGraph`,
-`zeta_nonneg_infinite_vol_latticeGraph`,
-`absence_of_even_bound_states_finite_vol_latticeGraph`,
-`absence_of_even_bound_states_infinite_vol_latticeGraph`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PerStageZetaEta`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d Λ-induced subgraph monotone/convergent wrappers
-
-The 8 ℤ^d Λ-induced subgraph wrappers
-(`partitionFunction_monotone_subgraph_latticeGraph`,
-`correlation_monotone_subgraph_latticeGraph`,
-`log_partitionFunction_monotone_subgraph_latticeGraph`,
-`freeEnergy_monotone_subgraph_latticeGraph`,
-`correlation_convergent_subgraph_latticeGraph`,
-`magnetization_convergent_subgraph_latticeGraph`,
-`twoPoint_convergent_subgraph_latticeGraph`,
-`freeEnergy_convergent_subgraph_latticeGraph`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.PerStageSubgraph`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 end IsingModel

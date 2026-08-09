@@ -2,19 +2,13 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `freeEnergyΛ_latticeGraph` closed-form wrappers (J = 0, β = 0)
+# ℤ^d finite-volume free-energy closed forms on the trivial slices
 
-Narrow child module for 3 ℤ^d `freeEnergyΛ_latticeGraph` closed-form
-wrappers extracted from `FreeEnergySpecialCasesLambda.lean`:
-
-* `freeEnergyΛ_latticeGraph_J_zero`,
-* `freeEnergyΛ_latticeGraph_beta_zero`,
-* `freeEnergyΛ_latticeGraph_zero_params`.
-
-Each result is a thin pass-through of the corresponding ambient
-`freeEnergyΛ_{J_zero,beta_zero,zero_params}` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `FreeEnergySpecialCasesLambda` declarations.
+Concrete `latticeGraph d` closed forms for the free energy on a fixed finite volume. At
+vanishing coupling and unrestricted field the value is `Real.log (2 * Real.cosh (β * h))`; at
+vanishing inverse temperature, and at vanishing coupling and field together, it is
+`Real.log 2`. Nonemptiness of the volume is the only hypothesis of each, and no instance
+argument is taken.
 -/
 
 namespace IsingModel

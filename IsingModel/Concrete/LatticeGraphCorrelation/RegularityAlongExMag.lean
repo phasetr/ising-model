@@ -5,16 +5,15 @@ import IsingModel.AmbientLattice.JDerivative
 import IsingModel.AmbientLattice.FieldDerivative
 
 /-!
-# ℤ^d magnetizationAlongExhaustion hasDerivAt wrappers
+# ℤ^d differentiability of the along-exhaustion magnetization in one parameter
 
-Narrow child module for four ℤ^d
-`magnetizationAlongExhaustion_latticeGraph_hasDerivAt_*` wrappers
-extracted from `RegularityAlongEx.lean`:
-
-* `magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta`,
-* `magnetizationAlongExhaustion_latticeGraph_hasDerivAt_beta_general_h`,
-* `magnetizationAlongExhaustion_latticeGraph_hasDerivAt_J`,
-* `magnetizationAlongExhaustion_latticeGraph_hasDerivAt_field`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage has a derivative in one
+parameter of the record at a prescribed value, the others being held fixed. The inverse
+temperature is treated at zero external field and again at an unrestricted one; the coupling
+and the external field are each treated at unrestricted parameters. Every statement is in
+existence form and requires a `Fintype` instance on the edge set induced at every stage;
+that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

@@ -2,18 +2,20 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete free-energy special-case wrappers
+# ℤ^d free-energy trivial slices and the edgeless-graph comparison
 
-Narrow child module for concrete `latticeGraph` free-energy closed forms,
-monotonicity wrappers, h-symmetry, and bottom-graph comparison wrappers. The
-theorem names are the same as the former declarations, but callers can
-now avoid importing the monolithic concrete module.
+Concrete `latticeGraph d` statements along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`.
+At vanishing inverse temperature, and at vanishing coupling and field together, the
+infinite-volume free energy is `Real.log 2`; nonemptiness of every volume of the exhaustion
+is the hypothesis in each case, and no instance argument is taken. At vanishing coupling the
+free energy agrees with its value on the edgeless graph over `Fin d → ℤ`, in the
+infinite-volume form as well as at a fixed stage; these carry no `Prop`-typed hypothesis, but
+each requires a `Fintype` instance on the edge set induced by the edgeless graph on every
+volume.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d free-energy infinite-volume and along-exhaustion wrappers -/
 
 /-- **ℤ^d `freeEnergyInfinite_beta_zero`** (any-Exhaustion, ∀ n nonempty):
 `freeEnergyInfinite ⟨J, h, 0⟩ = log 2`. -/
@@ -61,16 +63,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_eq_bot_at_J_zero
           (⟨0, h, β⟩ : IsingParams ℝ) n :=
   freeEnergyAlongExhaustion_eq_bot_at_J_zero
     (IsingModel.latticeGraph d) Λ h β n
-
-/-! ## Moved: ℤ^d `freeEnergyΛ` special-case wrappers
-
-The 12 ℤ^d `freeEnergyΛ_latticeGraph_*` wrappers
-(`ge_log_two_cosh`, `ge_log_two`, `nonneg`, `J_zero`, `beta_zero`,
-`zero_params`, `neg_h`, `eq_abs_h`, `monotone_abs_h`, `monotone_J`,
-`monotone_h`, `monotone_beta`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.FreeEnergySpecialCasesLambda`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 end IsingModel

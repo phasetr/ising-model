@@ -3,14 +3,14 @@ import IsingModel.PhaseTransition.BetaRegularity
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d susceptibility_convergent wrappers
+# ℤ^d finite-volume susceptibility as a parameter grows without bound
 
-Narrow child module for three ℤ^d Λ-induced ferromagnetic susceptibility
-convergence wrappers extracted from `MagnetizationSusceptibility.lean`:
-
-* `susceptibility_convergent_J_latticeGraph`,
-* `susceptibility_convergent_h_latticeGraph`,
-* `susceptibility_convergent_beta_latticeGraph`.
+Concrete statements that, at a vertex of the subgraph induced by a fixed finite volume of
+`Fin d → ℤ`, the susceptibility converges when one parameter of the record is sampled along
+the natural numbers and the others are held fixed. Growth of the coupling assumes `0 ≤ h` and
+`0 < β`; growth of the external field assumes `0 ≤ J` and `0 < β`; growth of the inverse
+temperature, taken shifted by one, assumes `0 ≤ J` and `0 ≤ h`. No instance argument is
+taken.
 -/
 
 namespace IsingModel

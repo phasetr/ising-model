@@ -2,14 +2,17 @@ import IsingModel.AmbientLattice.MagnetizationInfinite
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete susceptibility h-symmetry wrappers
+# ℤ^d susceptibility at the external field and at its absolute value (§5.3)
 
-Narrow child module for four ℤ^d `susceptibility*_latticeGraph_*_abs_h`
-h-symmetry / absolute-field wrappers (`susceptibilityΛ_eq_abs_h`,
-`susceptibilityAlongExhaustion_eq_abs_h`, `_le_abs_h`, and
-`susceptibilityInfinite_le_abs_h`). Each wrapper is a thin pass-through
-to the corresponding ambient `susceptibility*_*` lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` comparisons at a fixed site between the susceptibility at external
+field `h` and at `|h|`.
+
+The exact identity — the susceptibility at `|h|` equals the susceptibility at `h` plus the
+magnetization at `|h|` minus the magnetization at `h` — holds with no hypothesis at all, on a
+fixed finite volume and at a stage of an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` alike.
+The one-sided inequality at a stage assumes `0 ≤ J` and `0 < β`; its infinite-volume
+counterpart assumes those and, in addition, that the along-exhaustion susceptibility sequence
+at `|h|` is bounded above. No instance argument is taken.
 -/
 
 namespace IsingModel

@@ -2,34 +2,23 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete along-exhaustion correlation limit wrappers
+# ℤ^d finite-volume correlations and the infinite-volume correlation
 
-Narrow child module for concrete `latticeGraph` along-exhaustion correlation
-monotonicity, boundedness, eventuality, and infinite-volume limit wrappers. The
-theorem names are the same as the former declarations, but callers can
-now avoid importing the monolithic concrete module.
+Concrete `latticeGraph d` statements about the sequence of finite-volume correlations of a
+fixed finite subset `A` of `Fin d → ℤ`, lifted into the volumes of an arbitrary
+`Ambient.Exhaustion`, for a parameter record satisfying `Ferromagnetic`.
+
+Given an index beyond which `A` is contained in every volume, that shifted sequence is
+monotone and bounded above by `1`, hence converges, and its limit is the infinite-volume
+correlation of `A`. The containment index is then produced existentially, so that for an
+arbitrary `A` the convergence to the infinite-volume correlation holds for some index; that
+existential form is stated along an arbitrary exhaustion and at `Ambient.cubicExhaustion d`.
+`Ferromagnetic` and the containment hypothesis are the only requirements anywhere here, and
+no instance argument is needed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d along-exhaustion correlation limit wrappers -/
-
-/-! ## Moved: cubicExhaustion correlationAlongExhaustion monotonicity wrappers
-
-The three wrappers
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{h,beta,J}`
-now live in `CorrelationExhaustionLimitsCubicMonotone.lean`. -/
-
-
-/-! ## Moved: correlationAlongExhaustion bound + eventually wrappers
-
-The six wrappers
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_{bddAbove,le_one,nonneg}`,
-`abs_correlationAlongExhaustion_latticeGraph_eventually_le_one`,
-`correlationAlongExhaustion_latticeGraph_eventually`, and
-`abs_correlationAlongExhaustion_latticeGraph_eventually_le_one_general`
-now live in `CorrelationExhaustionLimitsBounds.lean`. -/
 
 /-- **ℤ^d shifted correlationΛ sequence is monotone and bounded by 1**
 (any-Exhaustion, ferromagnetic). -/
@@ -102,16 +91,6 @@ theorem tendsto_correlationΛ_correlationInfinite_latticeGraph
           (Ambient.cubicExhaustion d) p A)) :=
   tendsto_correlationΛ_correlationInfinite (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p hf A
-
-/-! ## Moved: correlationAlongExhaustion ciSup / infinite-limit wrappers
-
-The four wrappers
-`correlationAlongExhaustion_latticeGraph_tendsto_ciSup_general`,
-`correlationAlongExhaustion_latticeGraph_tendsto_ciSup`,
-`tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph`,
-`tendsto_correlationAlongExhaustion_correlationInfinite_latticeGraph_general`
-now live in `CorrelationExhaustionLimitsAlongExhaustion.lean`. -/
-
 
 end Ambient
 end IsingModel

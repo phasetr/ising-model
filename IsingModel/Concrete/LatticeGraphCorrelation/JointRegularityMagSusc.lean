@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
-# ℤ^d Λ-layer joint mag + susc Continuous/Differentiable wrappers
+# ℤ^d joint regularity of the finite-volume magnetization and susceptibility
 
-Narrow child module for four ℤ^d Λ-layer joint Continuous/Differentiable
-wrappers extracted from `JointRegularity.lean`:
-
-* `magnetizationΛ_latticeGraph_continuous_joint`,
-* `magnetizationΛ_latticeGraph_differentiable_joint`,
-* `susceptibilityΛ_latticeGraph_continuous_joint`,
-* `susceptibilityΛ_latticeGraph_differentiable_joint`.
-
-Each result is a thin pass-through of the corresponding ambient
-`{magnetization,susceptibility}Λ_{continuous,differentiable}_joint`
-lemma at `G := IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `JointRegularity` declarations.
+Concrete `latticeGraph d` statements that, at a fixed vertex of a fixed finite volume, the
+magnetization and the susceptibility of that volume, read as functions of the triple
+`(β, J, h)`, are continuous and differentiable over `ℝ` on the whole parameter space. Every
+statement is made over the subgraph induced by that volume and requires a `Fintype` instance
+on its edge set; that instance is its entire requirement, since no `Prop`-typed hypothesis is
+carried anywhere in this module.
 -/
 
 namespace IsingModel

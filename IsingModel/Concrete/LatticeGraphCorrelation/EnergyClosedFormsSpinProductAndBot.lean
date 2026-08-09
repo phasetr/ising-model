@@ -2,16 +2,15 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-induced spinProduct and `J = 0` bot wrappers
+# ℤ^d spin products and the edgeless-graph comparison at vanishing coupling
 
-Narrow child module for five ℤ^d Λ-induced wrappers extracted from
-`EnergyClosedForms.lean`:
-
-* `partitionFunction_eq_bot_at_J_zero_latticeGraph`,
-* `correlation_eq_bot_at_J_zero_latticeGraph`,
-* `spinProduct_singleton_latticeGraph`,
-* `spinProduct_union_latticeGraph`,
-* `spinProduct_sq_latticeGraph`.
+Concrete `latticeGraph d` statements on the subgraph induced by a fixed finite volume. At
+vanishing coupling the partition function and the correlation of a finite set of vertices
+each agree with their values on the edgeless graph over the same vertex type. For the spin
+product of a finite set of vertices at a configuration: on a singleton it is the sign of the
+spin there, over a union it factors as the product over the parts, and its square is `1`.
+Disjointness of the parts is the only hypothesis in this module, carried by the factorisation
+alone; no instance argument is taken.
 -/
 
 namespace IsingModel

@@ -2,13 +2,14 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete cubicExhaustion correlationAlongExhaustion monotonicity wrappers
+# ℤ^d per-stage parameter monotonicity of the along-exhaustion correlation
 
-Narrow child module for three ℤ^d
-`correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{h,beta,J}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `correlationAlongExhaustion_monotone_*` lemma at
-`IsingModel.latticeGraph d` and `Ambient.cubicExhaustion d`.
+Concrete `latticeGraph d` statements that, at a fixed stage of `Ambient.cubicExhaustion d`
+and for a fixed finite subset of `Fin d → ℤ`, the along-exhaustion correlation grows when one
+parameter of the record is raised and the others are held fixed. Raising the external field
+from `h₁` to `h₂` assumes `0 ≤ J`, `0 < β` and `0 ≤ h₁`; raising the inverse temperature from
+`β₁` to `β₂` assumes `0 ≤ J`, `0 ≤ h` and `0 < β₁`; raising the coupling from `J₁` to `J₂`
+assumes `0 ≤ h`, `0 < β` and `0 ≤ J₁`. No instance argument is taken.
 -/
 
 namespace IsingModel

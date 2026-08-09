@@ -2,13 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.Magnetization
 
 /-!
-# ℤ^d along-ex magnetizationAlongExhaustion β-direction regularity wrappers
+# ℤ^d regularity of the along-exhaustion magnetization in the inverse temperature
 
-Narrow child module for two ℤ^d
-`magnetizationAlongExhaustion_latticeGraph_{continuous,differentiable}_beta`
-wrappers (general `h`) extracted from `MagnetizationRegularity.lean`. Each
-wrapper is a thin pass-through to the corresponding ambient lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization of that stage is continuous, and
+differentiable over `ℝ`, as a function of the inverse temperature on the whole line, with the
+coupling and the external field held fixed and unrestricted. Each requires a
+`Fintype` instance on the edge set induced at every stage, and that instance is its entire
+requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel

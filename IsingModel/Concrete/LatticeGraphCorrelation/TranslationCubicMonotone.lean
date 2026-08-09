@@ -2,12 +2,13 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete spontaneousCorrelation cubicExhaustion translation + monotone wrappers
+# ℤ^d translation invariance and parameter monotonicity of the spontaneous correlation
 
-Narrow child module for three ℤ^d
-`spontaneousCorrelation_latticeGraph_cubicExhaustion_{translation,monotone_J,monotone_beta}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `spontaneousCorrelation_*` lemma at `IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements at `Ambient.cubicExhaustion d`, for a fixed finite
+subset of `Fin d → ℤ`. Translating the subset by a lattice vector leaves the spontaneous
+correlation unchanged, under `0 ≤ J` and `0 < β`. As a function of the coupling it is
+monotone on `Set.Ici 0`, assuming only `0 < β`; as a function of the inverse temperature it
+is monotone on `Set.Ioi 0`, assuming only `0 ≤ J`. No instance argument is taken.
 -/
 
 open scoped symmDiff
