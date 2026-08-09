@@ -2,14 +2,16 @@ import IsingModel.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete `hamiltonian_*_latticeGraph` direct wrappers
+# ℤ^d Hamiltonian identities on the induced subgraph
 
-Narrow child module for five ℤ^d `hamiltonian_*_latticeGraph` direct
-wrappers (`hamiltonian_J_zero`, `hamiltonian_flip_eq`,
-`hamiltonian_neg_h`, `hamiltonian_zero_params`,
-`hamiltonian_eq_bot_at_J_zero`). Each wrapper is a thin pass-through to
-the corresponding `IsingModel.hamiltonian_*` lemma at the induced
-graph.
+Concrete `latticeGraph d` identities for the Hamiltonian on the subgraph induced by a fixed
+finite volume, at a configuration on that volume. At vanishing coupling the Hamiltonian is
+minus the external field times the sum of the spin signs, and agrees with the Hamiltonian of
+the edgeless graph over the same vertex type; at vanishing coupling and field it is zero.
+Reversing the sign of the field has the same effect as flipping every spin, and, when the
+field of the parameter record vanishes, flipping every spin leaves the Hamiltonian unchanged.
+That vanishing-field equation is the only hypothesis appearing in this module, and no
+instance argument is taken.
 -/
 
 namespace IsingModel
@@ -27,8 +29,6 @@ theorem hamiltonian_J_zero_latticeGraph
       = -h * ∑ i : (↑Λ : Type _), IsingModel.Spin.sign ℝ (σ i) :=
   IsingModel.hamiltonian_J_zero
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) h β σ
-
-/-! ### Hamiltonian spin-flip, `J = 0` graph-independence, and spinProduct helpers -/
 
 /-- **ℤ^d hamiltonian_flip_eq direct** (Λ-induced, `h = 0`): at `h = 0`
 the Hamiltonian is invariant under global spin flip. Thin pass-through
