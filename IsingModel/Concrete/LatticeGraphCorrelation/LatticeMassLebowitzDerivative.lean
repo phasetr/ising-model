@@ -4,21 +4,31 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassPseudoMassTransfer
 import IsingModel.BetaDerivative
 
 /-!
-# Finite susceptibility and Lebowitz derivative bounds at ℤ^d
+# ℤ^d Lebowitz sums and derivative bounds for the two-point function
 
-This module contains the concrete §17.1 finite-susceptibility wrapper and
-§17.5 Lebowitz derivative bound layer split from the original `Inequalities`
-module: Step 149 finite susceptibility below the critical inverse temperature,
-Steps 157--166 finite-volume derivative bounds, finite-to-infinite correlation
-comparison, Lebowitz sum bounds, and high-temperature consequences.
+Collects results stated at several different scopes. For an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the infinite-volume susceptibility is bounded by the sum
+of the truncated two-point function over the lattice, under `0 ≤ β`, `0 ≤ J` and the strict
+inequality between `ENNReal.ofReal β` and `criticalInverseTemp d J`. On the subgraph induced
+by a fixed finite volume, the correlation of two distinct vertices is differentiable in the
+inverse temperature, and in the coupling at zero field, with derivative bounded by the
+coupling, respectively the inverse temperature, times the Lebowitz edge sum plus a term
+linear in the dimension; each assumes `0 ≤ J`, `0 < β` and distinctness of the two vertices.
+Also on a fixed finite volume, and with no distinctness assumed, the Lebowitz edge sum is
+bounded by the product of the correlation row sums at the two vertices. At a fixed exhaustion
+stage the correlation of the induced subgraph is below the infinite-volume correlation with
+no hypothesis at all, and the Lebowitz edge sum is bounded by the product of the stage
+susceptibilities at the two vertices under `0 ≤ J` and `0 < β`, and by the product of the
+infinite-volume susceptibilities once the susceptibility sequences at both vertices are
+assumed bounded above. Underneath all of this sits a private counting bound, stated for an
+arbitrary finite simple graph and arbitrary non-negative weights, dominating a sum over darts
+by the product of the two vertex sums.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## §17.1 Finite susceptibility below critical inverse temperature (Step 149) -/
 
 /-- **Susceptibility bounded above in the high-temperature regime** (GJ §17.1, ℤ^d):
 for `J ≥ 0`, `β ≥ 0`, and `ENNReal.ofReal β < criticalInverseTemp d J` (high temperature,
@@ -173,9 +183,6 @@ theorem correlation_inducedLatticeGraph_le_correlationInfinite
                Subtype.ext_iff]
   rw [heq]
   exact Ambient.correlationAlongExhaustion_le_correlationInfinite _ _ _ _ _
-
-
-/-! ## Step 160: Lebowitz sum ≤ product of correlation sums (GJ §17.5) -/
 
 /-- **Dart injection bound** (Step 160 helper): for non-negative `f g : V → ℝ`,
 `∑ d : G.Dart, f d.fst * g d.snd ≤ (∑ u, f u) * (∑ v, g v)`.
@@ -353,26 +360,6 @@ theorem inducedLatticeGraph_leb_sum_le_susceptibilityInfinite
         (⟨J, 0, β⟩ : IsingParams ℝ) s.val n :=
     susceptibilityAlongExhaustion_nonneg _ _ _ hf _ _
   exact h161.trans (mul_le_mul hr hs hs_nn (hr_nn.trans hr))
-
-/-! ## Moved: Lebowitz derivative ≤ χ²(Σ²+4d) wrappers
-
-The two wrappers
-`inducedLatticeGraph_beta_deriv_le_susc_sq`,
-`inducedLatticeGraph_J_deriv_le_susc_sq` now live in
-`LatticeMassLebowitzDerivativeSuscSq.lean`. -/
-
-
-/-! ## Moved: high-temperature Lebowitz / derivative wrappers
-
-The three wrappers
-`inducedLatticeGraph_leb_sum_le_susceptibilityInfinite_high_temp`,
-`inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp`,
-`inducedLatticeGraph_J_deriv_le_susc_sq_high_temp`
-now live in `LatticeMassLebowitzDerivativeHighTemp.lean`. -/
-
-
-
-
 
 end Ambient
 end IsingModel

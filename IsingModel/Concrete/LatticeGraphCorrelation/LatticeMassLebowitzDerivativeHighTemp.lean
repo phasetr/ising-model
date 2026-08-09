@@ -2,20 +2,18 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivative
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassLebowitzDerivativeSuscSq
 
 /-!
-# §17.5 high-temperature Lebowitz / β/J derivative wrappers
+# ℤ^d unconditional Lebowitz and derivative bounds at high temperature (§17.5)
 
-Narrow child module for three unconditional high-temperature
-`inducedLatticeGraph_*_high_temp` wrappers extracted from
-`LatticeMassLebowitzDerivative.lean`:
-
-* `inducedLatticeGraph_leb_sum_le_susceptibilityInfinite_high_temp`,
-* `inducedLatticeGraph_beta_deriv_le_susc_sq_high_temp`,
-* `inducedLatticeGraph_J_deriv_le_susc_sq_high_temp`.
-
-Each wrapper combines Step 164
-(`susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp`)
-with the corresponding `BddAbove`-conditioned step (Steps 162 / 163 / 219),
-removing the explicit `BddAbove` hypothesis.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at a fixed stage and at zero external field, the versions of the Lebowitz
+edge-sum bound and of the derivative bounds in which no boundedness of the susceptibility
+sequences has to be supplied: the high-temperature condition already forces it. The Lebowitz
+edge sum is bounded by the product of the infinite-volume susceptibilities at an arbitrary
+pair of vertices of the stage volume; the derivative in the inverse temperature, and the
+derivative in the coupling, are bounded by that same product scaled by the parameter held
+fixed, plus a term linear in the dimension, and the derivative statements require the two
+vertices to be distinct. Every statement assumes `0 ≤ J`, `0 < β` and that `β * J * (2 * d)`
+is below one.
 -/
 
 namespace IsingModel
