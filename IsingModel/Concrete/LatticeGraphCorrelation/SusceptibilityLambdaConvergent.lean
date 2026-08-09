@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Regularity.Convergent
 
 /-!
-# ℤ^d Λ-layer susceptibility parameter-direction convergent wrappers
+# ℤ^d finite-volume susceptibility as a parameter grows without bound
 
-Narrow child module for three ℤ^d
-`susceptibilityΛ_latticeGraph_convergent_*` wrappers extracted from
-`SusceptibilityLambda.lean`:
-
-* `susceptibilityΛ_latticeGraph_convergent_beta`,
-* `susceptibilityΛ_latticeGraph_convergent_h`,
-* `susceptibilityΛ_latticeGraph_convergent_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.susceptibilityΛ_convergent_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `SusceptibilityLambda` declarations.
+Concrete `latticeGraph d` statements that, at a fixed vertex of a fixed finite volume, the
+susceptibility converges when one parameter of the record is sampled along the natural
+numbers and the others are held fixed. Growth of the inverse temperature, taken shifted by
+one, assumes `0 ≤ J` and `0 ≤ h`; growth of the external field assumes `0 ≤ J` and `0 < β`;
+growth of the coupling assumes `0 ≤ h` and `0 < β`. Each statement also requires a `Fintype`
+instance on the edge set induced by the volume.
 -/
 
 namespace IsingModel

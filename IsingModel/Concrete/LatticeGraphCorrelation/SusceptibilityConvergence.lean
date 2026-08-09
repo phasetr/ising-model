@@ -2,21 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityConvergence
 
 /-!
-# Concrete susceptibility convergence wrappers
+# ℤ^d along-exhaustion susceptibility as a parameter grows without bound
 
-Narrow child module for concrete finite-stage susceptibility convergence
-wrappers on the lattice graph. The theorem names are the same as the former
-former declarations, but callers can now avoid importing the monolithic
-concrete original module.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the susceptibility of that stage converges when one
+parameter is sampled along the natural numbers and the others are held fixed. Growth of the
+inverse temperature, taken shifted by one, assumes `0 ≤ J` and `0 ≤ h`; growth of the
+external field assumes `0 ≤ J` and `0 < β`; growth of the coupling assumes `0 ≤ h` and
+`0 < β`. Each statement also requires a `Fintype` instance on the edge set induced at every
+stage.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### susceptibility parameter-direction convergent (β/h/J → ∞)
-ℤ^d wraps. Λ-direct versions remain in the original module because they sit with
-the nearby Λ-level susceptibility regularity wrappers; this module contains the
-along-exhaustion versions only. -/
 
 /-- **ℤ^d along-ex: susceptibility β → ∞ convergence**. -/
 theorem susceptibilityAlongExhaustion_latticeGraph_convergent_beta_param

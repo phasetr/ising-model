@@ -2,18 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.Defs.Regularity.Defs
 
 /-!
-# Concrete Lambda-layer susceptibility wrappers
+# ℤ^d regularity of the finite-volume susceptibility in field and coupling
 
-Narrow child module for concrete `latticeGraph` specializations of
-`susceptibilityΛ` regularity and parameter-direction convergence wrappers.
-The theorem names are the same as the former declarations, but callers
-can now avoid importing the monolithic concrete module.
+Concrete `latticeGraph d` statements that the susceptibility at a fixed vertex of a fixed
+finite volume is continuous, and differentiable over `ℝ`, as a function of the external field
+on the whole line, and likewise as a function of the coupling, with the remaining parameters
+held fixed and unrestricted. Each requires a `Fintype` instance on the edge set induced by
+the volume, and that instance is its entire requirement: no `Prop`-typed hypothesis is
+carried here.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### susceptibility regularity ℤ^d wraps -/
 
 /-- **ℤ^d Λ: susceptibility Continuous in `h`**. -/
 theorem susceptibilityΛ_latticeGraph_continuous_field
@@ -58,15 +58,6 @@ theorem susceptibilityΛ_latticeGraph_differentiable_J
         (⟨J', h, β⟩ : IsingParams ℝ) i) :=
   Ambient.susceptibilityΛ_differentiable_J
     (IsingModel.latticeGraph d) Λ h β i
-
-/-! ## Moved: susceptibility parameter-direction convergent wrappers
-
-The three wrappers
-`susceptibilityΛ_latticeGraph_convergent_beta`,
-`susceptibilityΛ_latticeGraph_convergent_h`,
-`susceptibilityΛ_latticeGraph_convergent_J` now live in
-`SusceptibilityLambdaConvergent.lean`. -/
-
 
 end Ambient
 end IsingModel
