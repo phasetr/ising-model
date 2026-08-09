@@ -2,16 +2,12 @@ import IsingModel.AmbientLattice.AnalyticityLambdaMayer
 import IsingModel.Lattice
 
 /-!
-# ℤ^d Λ-direct mayerPartialSum regularity wrappers
+# ℤ^d regularity of the Mayer partial sum in the activity, on a fixed volume
 
-Narrow child module for four ℤ^d Λ-direct
-`mayerPartialSum_Λ_latticeGraph_*` continuous/differentiable wrappers
-extracted from `MayerVdRegularity.lean`:
-
-* `mayerPartialSum_Λ_latticeGraph_continuous`,
-* `mayerPartialSum_Λ_latticeGraph_differentiable`,
-* `mayerPartialSum_Λ_latticeGraph_continuousOn`,
-* `mayerPartialSum_Λ_latticeGraph_differentiableOn`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the regularity of
+the Mayer partial sum of the induced subgraph in its activity argument: `Continuous` and
+`Differentiable ℝ` on the whole line, and `ContinuousOn` and `DifferentiableOn ℝ` on an
+arbitrary set. No condition on the activity, on the truncation order or on the set is imposed.
 -/
 
 namespace IsingModel

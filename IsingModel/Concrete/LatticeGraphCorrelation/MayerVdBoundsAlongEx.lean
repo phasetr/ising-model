@@ -2,25 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerVdBounds
 
 /-!
-# Concrete along-ex vdPolymerFamilies_sumAlongExhaustion tanh-bound wrappers
+# ℤ^d bounds on the polymer activity sum at the `tanh` activity
 
-Narrow child module for 3 ℤ^d along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_*` tanh-bound wrappers:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_le_two_pow`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_le_one_plus_tanh_pow`,
-* `one_le_vdPolymerFamilies_sumAlongExhaustion_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
-one_le_vdPolymerFamilies_sumAlongExhaustion}` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the bounds on the activity sum over the vertex-disjoint compatible polymer
+families of the stage-`n` induced subgraph at the activity `tanh (β * J)`: it is at least `1`,
+at most `(1 + tanh (β * J)) ^ |E_n|`, and at most `2 ^ |E_n|`. Every statement assumes
+`0 ≤ β * J`, and none assumes a sign for `β` or `J` separately.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-
 
 /-- **ℤ^d along-ex: vdSum_tanh ≤ 2^|E|** under `0 ≤ β·J`. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_latticeGraph_le_two_pow

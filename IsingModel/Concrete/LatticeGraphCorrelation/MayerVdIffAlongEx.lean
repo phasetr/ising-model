@@ -2,26 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerVdIff
 
 /-!
-# Concrete along-exhaustion §18.5 Mayer VdIff wrappers
+# ℤ^d threshold characterisations of the polymer activity sum, along an exhaustion
 
-Narrow child module for 4 ℤ^d along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_*_iff` wrappers extracted from
-`MayerVdIff.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_eq_one_iff_eps_eq_zero`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_gt_one_iff_eps_pos`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_gt_one_iff`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_eq_one_iff`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.vdPolymerFamilies_sumAlongExhaustion_*_iff_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerVdIff` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the characterisations of when the activity sum over the vertex-disjoint
+compatible polymer families of the stage-`n` induced subgraph sits at `1` and of when it
+exceeds `1`: it equals `1` exactly when the sum over the families other than the empty one
+vanishes, it exceeds `1` exactly when that sum is strictly positive, and at the activity
+`tanh (β * J)` these unfold to the activity being `0`, respectively strictly positive,
+together with that subgraph having no polymer, respectively at least one. The comparison at
+equality holds at an arbitrary activity; its strict counterpart assumes `0 ≤ t`, and the
+`tanh` statements assume `0 ≤ β * J`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: vdSum = 1 ↔ ε = 0**. -/
 theorem

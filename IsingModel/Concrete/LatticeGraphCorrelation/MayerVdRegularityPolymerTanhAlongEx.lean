@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanh
 
 /-!
-# ℤ^d vdPolymerFamilies_sumAlongEx tanh regularity wrappers
+# ℤ^d regularity of the polymer activity sum at the `tanh` activity
 
-Narrow child module for four ℤ^d
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_*` regularity
-wrappers:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_beta`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_continuous_J`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_beta`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_differentiable_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.vdPolymerFamilies_sumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the regularity of the activity sum over the vertex-disjoint compatible polymer
+families of the stage-`n` induced subgraph, evaluated at the activity `tanh (β * J)`,
+separately in the inverse temperature with the coupling fixed and in the coupling with the
+inverse temperature fixed: `Continuous` and `Differentiable ℝ` in each direction. No sign
+condition on either parameter is imposed.
 -/
 
 namespace IsingModel
