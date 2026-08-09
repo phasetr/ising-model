@@ -2,16 +2,20 @@ import IsingModel.AmbientLattice.Analyticity
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Mayer vd bound wrappers along an exhaustion
+# Bounds on the vertex-disjoint compatible polymer-family sum, along an exhaustion
 
-Narrow child module for along-exhaustion `vdPolymerFamilies_sum` bound
-wrappers. This keeps callers that only need these forwarders out of the
-monolithic original special-cases module. It collects both the
-tanh-form bounds (`_le_two_pow`, `_le_one_plus_tanh_pow`,
-`one_le_*`) and the generic-`t` bound / decomposition / sandwich
-forwarders (`_pos_of_nonneg`, `_eq_one_add`, `_ge_one_of_nonneg`,
-`_le_one_plus_pow_of_nonneg`). Each theorem is a thin pass-through to
-the corresponding `vdPolymerFamilies_sum_Λ_*` ambient lemma.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `Ξ(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the stage subgraph's vertex-disjoint
+compatible polymer families and `|E|` for that subgraph's edge count.
+
+At every real `t`, `Ξ(t)` splits as `1 + ε(t)`, where `ε(t)` is the same sum with the empty
+family removed. For an activity `t` with `0 ≤ t`, `0 < Ξ(t)`, `1 ≤ Ξ(t)` and
+`Ξ(t) ≤ (1 + t) ^ |E|`. With the activity read as `Real.tanh (β * J)` under `0 ≤ β * J`, the
+lower bound `1 ≤ Ξ` is recorded together with the upper bounds
+`Ξ ≤ (1 + Real.tanh (β * J)) ^ |E|` and `Ξ ≤ 2 ^ |E|`.
 -/
 
 namespace IsingModel
@@ -20,8 +24,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 vdPolymerFamilies_sum bound family along-ex wraps -/
 
 /-- **Along-ex: vdSum_tanh ≤ 2^|E|**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_le_two_pow
@@ -55,8 +57,6 @@ theorem one_le_vdPolymerFamilies_sumAlongExhaustion
               (inducedGraph G (Λ.volume n)),
         ∏ P ∈ Γ, Real.tanh (β * J) ^ P.card :=
   one_le_vdPolymerFamilies_sum_Λ G (Λ.volume n) hβJ
-
-/-! ### §18.5 vdPolymerFamilies_sum generic-t bounds along-ex -/
 
 /-- **Along-ex: 0 < vdSum** under `0 ≤ t`. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_pos_of_nonneg
