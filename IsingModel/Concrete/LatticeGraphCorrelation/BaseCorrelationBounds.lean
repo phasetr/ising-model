@@ -8,11 +8,10 @@ and an unrestricted parameter record.
 
 The partition function of the finite volume is strictly positive, and the correlation of a
 site set of that volume is at most `1` in absolute value. The one-sided bound by `1` is
-taken directly from the ambient statement rather than read off the absolute-value bound.
-Those statements take no hypothesis. Non-negativity of the same correlation is the one
-statement here that assumes `Ferromagnetic` on the parameter record, and it is the
-finite-volume form of the first Griffiths-Kelly-Sherman inequality. No instance argument is
-taken.
+taken directly from the ambient statement. Those statements take no hypothesis.
+Non-negativity of the same correlation is the one statement here that assumes
+`Ferromagnetic` on the parameter record, and it is the finite-volume form of the first
+Griffiths-Kelly-Sherman inequality. No instance argument is taken.
 -/
 
 open scoped symmDiff
