@@ -3,21 +3,15 @@ import IsingModel.TranslationInvariance
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
-# ℤ^d `uniformMagnetization_monotone_*` wrappers
+# Parameter monotonicity of the ℤ^d uniform magnetization
 
-Narrow child module for three ℤ^d `uniformMagnetization_monotone_*`
-parameter-direction monotonicity wrappers extracted from
-`SiteIndepMagTrivialSlice.lean`:
-
-* `uniformMagnetization_monotone_J`,
-* `uniformMagnetization_monotone_h`,
-* `uniformMagnetization_monotone_beta`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.magnetizationInfinite_monotone_*` lemma at
-`G := IsingModel.latticeGraph d` and `Ambient.cubicExhaustion d` at
-site `0`. The theorem names are unchanged from the former
-`SiteIndepMagTrivialSlice` declarations.
+Concrete `IsingModel.latticeGraph d` statements along `Ambient.cubicExhaustion d`: the
+uniform magnetization is monotone in each field of the parameter record separately, with
+the others held fixed. It is monotone in the coupling on `Set.Ici 0` assuming a
+non-negative external field and a positive inverse temperature, in the external field on
+`Set.Ici 0` assuming a non-negative coupling and a positive inverse temperature, and in the
+inverse temperature on `Set.Ioi 0` assuming a non-negative coupling and a non-negative
+external field. No instance argument is taken.
 -/
 
 open scoped symmDiff

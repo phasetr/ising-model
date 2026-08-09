@@ -1,20 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `spontaneousMagnetization_latticeGraph` sign/bound wrappers
+# Range of the ℤ^d spontaneous magnetization
 
-Narrow child module for the four ℤ^d `spontaneousMagnetization_latticeGraph`
-sign-range and absolute-bound wrappers:
-
-* `neg_one_le_spontaneousMagnetization_latticeGraph`,
-* `abs_spontaneousMagnetization_latticeGraph_le_one`,
-* `spontaneousMagnetization_latticeGraph_nonneg`,
-* `spontaneousMagnetization_latticeGraph_le_one`.
-
-Each result is a thin pass-through to the corresponding ambient
-`spontaneousMagnetization_*` lemma at `IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`SiteIndepMagSpontaneous` declarations.
+Concrete `IsingModel.latticeGraph d` statements at an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at an arbitrary site. The spontaneous magnetization is bounded below by
+`-1`, bounded above by `1`, and bounded in absolute value by `1`; it is moreover
+non-negative, which sharpens the lower bound. Every statement assumes a non-negative
+coupling and a positive inverse temperature, and none takes an instance argument.
 -/
 
 open scoped symmDiff

@@ -2,16 +2,15 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
-# ℤ^d uniformSpontaneousMagnetization bound wrappers
+# Range of the ℤ^d uniform spontaneous magnetization
 
-Narrow child module for five ℤ^d uniform-spontaneous-magnetization bound
-wrappers extracted from `SiteIndepMagUniformSpontaneous.lean`:
-
-* `uniformSpontaneousMagnetization_nonneg`,
-* `uniformSpontaneousMagnetization_le_one`,
-* `neg_one_le_uniformSpontaneousMagnetization`,
-* `abs_uniformSpontaneousMagnetization_le_one`,
-* `uniformSpontaneousMagnetization_sq_le_one`.
+Concrete statements about `uniformSpontaneousMagnetization` at
+`IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`. The value is non-negative
+and at most `1`. The lower bound by `-1` is read off that non-negativity rather than proved
+separately, and the bound on the absolute value is assembled from the pair; the bound on
+the square is taken directly from the ambient statement instead. Every statement assumes a
+non-negative coupling and a positive inverse temperature, and none takes an instance
+argument.
 -/
 
 namespace IsingModel
