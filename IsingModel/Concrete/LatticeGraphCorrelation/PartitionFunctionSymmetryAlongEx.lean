@@ -5,11 +5,12 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d evenness of the partition function in the field, along an exhaustion
 
-Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n`, along an arbitrary
-`Ambient.Exhaustion` of `Fin d → ℤ` and along `Ambient.cubicExhaustion d`, the evenness of the
-partition function under negating the external field, its rewriting at `|h|`, and its
-monotonicity in `|h|`. The evenness and rewriting statements carry no hypothesis; the
-monotonicity statement assumes `0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
+Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n`, the evenness of the partition
+function under negating the external field, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and also along `Ambient.cubicExhaustion d`, together with its rewriting at `|h|` and
+its monotonicity in `|h|`, each of which is stated along an arbitrary exhaustion only. The
+evenness and rewriting statements carry no hypothesis; the monotonicity statement assumes
+`0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
 -/
 
 namespace IsingModel

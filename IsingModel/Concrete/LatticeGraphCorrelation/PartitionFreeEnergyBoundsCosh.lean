@@ -6,7 +6,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the sharpened
 ferromagnetic lower bound `(2 * cosh (β * h)) ^ |Λ|` on the partition function and its
 logarithmic form `|Λ| * log (2 * cosh (β * h))`. Each statement assumes the ferromagnetic
-hypothesis on the parameter record, and neither assumes `Λ` nonempty.
+hypothesis on the parameter record, and none assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

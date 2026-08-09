@@ -4,11 +4,11 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 /-!
 # ℤ^d evenness of the partition function in the external field
 
-Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and on the stage-`n`
-volume of `Ambient.cubicExhaustion d`, the evenness of the partition function under negating
-the external field, its rewriting at `|h|`, and its monotonicity in `|h|`. The evenness and
-rewriting statements carry no hypothesis; the monotonicity statement assumes `0 ≤ J`, `0 < β`
-and `|h₁| ≤ |h₂|`.
+Instantiates at `IsingModel.latticeGraph d` the evenness of the partition function under
+negating the external field, on a fixed finite volume `Λ` and also on the stage-`n` volume of
+`Ambient.cubicExhaustion d`, together with its rewriting at `|h|` and its monotonicity in `|h|`,
+each of which is stated on a fixed finite volume `Λ` only. The evenness and rewriting statements
+carry no hypothesis; the monotonicity statement assumes `0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
 -/
 
 namespace IsingModel

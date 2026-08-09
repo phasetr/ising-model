@@ -9,8 +9,8 @@ density: on a nonempty volume the product `|Λ| * f_Λ` is the logarithm of the 
 function, that product does not decrease when the volume is enlarged by a disjoint one, and it
 is super-additive across a disjoint union. The identity assumes only that the volume is
 nonempty; the enlargement statement assumes in addition disjointness and the ferromagnetic
-hypothesis on the parameter record, and the super-additivity statement assumes each volume
-nonempty.
+hypothesis on the parameter record; and the super-additivity statement assumes exactly the
+enlargement statement's hypotheses together with nonemptiness of the second volume.
 -/
 
 namespace IsingModel
