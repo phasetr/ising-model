@@ -3,21 +3,16 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureTanhFerro
 
 /-!
-# Concrete §18.5 along-exhaustion high-temperature ferromagnetic wrappers
+# ℤ^d along-exhaustion ferromagnetic cluster-expansion estimates (§18.5)
 
-Narrow child module for 4 ℤ^d along-exhaustion §18.5 ferromagnetic
-wrappers extracted from `HighTemperatureFerromagnetic.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_high_temp_sandwich_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_hasSum_via_log_of_pow_lt_two_ferro`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_sandwich_ferro`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_sandwich_sharp_ferro`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{polymerFreeEnergyAlongExhaustion_tanh_*_ferromagnetic,
-vdPolymerFamilies_sumAlongExhaustion_sandwich_*_ferromagnetic}` lemma
-at `G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureFerromagnetic` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the ferromagnetic form of the cluster-expansion estimates at activity
+`tanh (β * J)`: the sandwich chain controlling `polymerFreeEnergy` and, in the same regime,
+the alternating logarithmic series that `HasSum`s to it, each carrying the convergence
+hypothesis `(1 + tanh (β * J)) ^ |E_n| < 2`; and the sandwich of the activity sum over all
+vertex-disjoint compatible polymer families between `1` and `2 ^ |E_n|`, sharpened to
+`(1 + tanh (β * J)) ^ |E_n|`, which carry no convergence hypothesis. Every statement here
+assumes `0 ≤ J` together with `0 < β`.
 -/
 
 namespace IsingModel

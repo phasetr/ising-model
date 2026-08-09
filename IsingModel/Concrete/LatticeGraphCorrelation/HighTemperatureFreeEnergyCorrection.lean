@@ -2,15 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFreeEnergy
 
 /-!
-# Concrete `freeEnergy_lt_log_two_plus_high_temp_correction` wrappers
+# ℤ^d strict free-energy ceiling in the cluster-expansion convergence regime (§18.5)
 
-Narrow child module for four ℤ^d strict free-energy upper-bound
-wrappers (in the cluster-expansion convergence regime) for
-`freeEnergyΛ` and `freeEnergyAlongExhaustion` (each with a
-ferromagnetic variant). Each wrapper is a thin pass-through to the
-corresponding ambient
-`*_lt_log_two_plus_high_temp_correction*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the strict
+upper bound placing the free-energy density below
+`log 2 + (|E| / |Λ|) * log (cosh (β * J)) + log 2 / |Λ|`, on a fixed finite volume and at a
+stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`. Each version is stated under `0 ≤ β * J`
+and again in a ferromagnetic form under `0 ≤ J` together with `0 < β`, and every statement
+here also assumes the volume nonempty and the convergence hypothesis
+`(1 + tanh (β * J)) ^ |E| < 2`.
 -/
 
 namespace IsingModel

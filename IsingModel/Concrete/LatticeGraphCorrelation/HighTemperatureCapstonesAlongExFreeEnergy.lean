@@ -2,20 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureCapstones
 
 /-!
-# Concrete along-ex freeEnergyAlongExhaustion HT capstone wrappers
+# ℤ^d along-exhaustion free energy as a polymer free-energy decomposition (§18.6)
 
-Narrow child module for 3 ℤ^d along-exhaustion §18.6
-freeEnergyAlongExhaustion capstone wrappers extracted from
-`HighTemperatureCapstonesAlongEx.lean`:
-
-* `freeEnergyAlongExhaustion_latticeGraph_eq_polymerFreeEnergy`,
-* `freeEnergyAlongExhaustion_latticeGraph_eq_polymerFreeEnergy_ferro`,
-* `freeEnergyAlongExhaustion_latticeGraph_eq_log_two_at_betaJ_zero`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.freeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureCapstonesAlongEx` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the decomposition of the free-energy
+density as `log 2` plus `(|E_n| / |Λ_n|) * log (cosh (β * J))` plus `polymerFreeEnergy` at
+activity `tanh (β * J)` divided by the site count; and its degenerate value `log 2` when
+`β * J` vanishes. The decomposition is stated under `0 ≤ β * J` and again under the
+ferromagnetic pair `0 ≤ J` and `0 < β`, the degenerate value under the equation `β * J = 0`,
+and every statement here assumes `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel
