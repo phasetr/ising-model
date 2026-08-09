@@ -4,19 +4,25 @@ import IsingModel.AmbientLattice.MagnetizationInfinite
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete correlation symmetry wrappers
+# ℤ^d correlations and magnetization under sign change of the external field
 
-Narrow child module for concrete `latticeGraph` correlation, magnetization, and
-susceptibility h-symmetry / absolute-field wrappers, including finite-volume,
-along-exhaustion, and infinite-volume forms. The theorem names are the same as
-the former declarations, but callers can now avoid importing the
-monolithic concrete module.
+Concrete `latticeGraph d` statements relating the value of a correlation at external field
+`h` to its value at `-h` and at `|h|`, with no positivity assumed on any parameter.
+
+On the subgraph induced by a fixed finite volume, and with no hypothesis at all, replacing
+`h` by `-h` multiplies the correlation of a finite set of vertices by `(-1)` raised to the
+cardinality of that set, and reverses the sign of the magnetization at a vertex. When the set
+has even cardinality, the correlation is moreover unchanged by replacing `h` with `|h|`,
+evenness being that identity's only hypothesis.
+
+For the infinite-volume correlation along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`,
+even cardinality is likewise the only hypothesis, and it yields invariance under `h ↦ -h` as
+well as equality with the value at `|h|`. No instance argument is taken anywhere in this
+module.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d direct finite-volume correlation symmetry wrappers -/
 
 /-- **ℤ^d correlation_neg_h direct** at Λ-induced: Z₂ odd-symmetry
 under `h → -h`. `correlation ⟨J,-h,β⟩ A = (-1)^|A| · correlation ⟨J,h,β⟩ A`.
@@ -45,15 +51,6 @@ theorem magnetization_neg_h_latticeGraph
   IsingModel.magnetization_neg_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β i
 
-/-! ## Moved: truncated{2,3,4}_neg_h wrappers
-
-The three wrappers
-`truncated2_neg_h_latticeGraph`,
-`truncated3_neg_h_latticeGraph`,
-`truncated4_neg_h_latticeGraph` now live in
-`CorrelationSymmetryTruncatedNegH.lean`. -/
-
-
 /-- **ℤ^d correlation_eq_abs_h_of_even_card direct** at Λ-induced:
 for `|A|` even, `correlation ⟨J, h, β⟩ A = correlation ⟨J, |h|, β⟩ A`.
 Concrete wrapper for `IsingModel.correlation_eq_abs_h_of_even_card`
@@ -69,8 +66,6 @@ theorem correlation_eq_abs_h_of_even_card_latticeGraph
           (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
   IsingModel.correlation_eq_abs_h_of_even_card
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β A heven
-
-/-! ### ℤ^d infinite-volume even-card correlation symmetry wrappers -/
 
 /-- **ℤ^d correlationInfinite invariance under `h → -h`** (even `|A|`):
 `correlationInfinite ⟨J,-h,β⟩ A = correlationInfinite ⟨J,h,β⟩ A`.
@@ -94,11 +89,6 @@ theorem correlationInfinite_eq_abs_h_of_even_card_latticeGraph
       = correlationInfinite (IsingModel.latticeGraph d) Λ
           (⟨J, |h|, β⟩ : IsingParams ℝ) A :=
   correlationInfinite_eq_abs_h_of_even_card (IsingModel.latticeGraph d) Λ J h β A heven
-
-/-! ## Moved: susceptibility h-symmetry wrappers
-
-The four wrappers `susceptibility*_latticeGraph_*_abs_h` now live in
-`CorrelationSymmetrySusceptibility.lean`. -/
 
 end Ambient
 end IsingModel
