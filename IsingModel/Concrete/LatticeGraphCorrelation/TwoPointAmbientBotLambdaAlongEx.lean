@@ -3,19 +3,16 @@ import IsingModel.AmbientLattice.CorrelationInfinite.AmbientSubgraph
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d AlongExhaustion `*_bot_le_latticeGraph` wrappers
+# Per-stage comparison of the edgeless ambient graph with ℤ^d
 
-Narrow child module for three ℤ^d `*AlongExhaustion_bot_le_latticeGraph`
-ambient-subgraph monotonicity wrappers (from ⊥ to `latticeGraph d`)
-extracted from `TwoPointAmbientBotLambda.lean`:
+Concrete statements along `Ambient.cubicExhaustion d`, comparing the edgeless graph `⊥` on
+`Fin d → ℤ` with `IsingModel.latticeGraph d` at a fixed stage. Under `Ferromagnetic` on the
+parameter record, the free energy, the partition function and — at a fixed site set — the
+correlation are each no larger at `⊥` than at the lattice; each is the ambient
+subgraph-monotonicity statement instantiated at `bot_le`.
 
-* `freeEnergyAlongExhaustion_bot_le_latticeGraph`,
-* `partitionFunctionAlongExhaustion_bot_le_latticeGraph`,
-* `correlationAlongExhaustion_bot_le_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*_monotone_ambient_subgraph` lemma at `bot_le`. The theorem names
-are unchanged from the former `TwoPointAmbientBotLambda` declarations.
+Every statement takes one instance argument, a stagewise `Fintype` on the edge set that `⊥`
+induces at each stage volume; the lattice side is supplied by instances already in scope.
 -/
 
 namespace IsingModel

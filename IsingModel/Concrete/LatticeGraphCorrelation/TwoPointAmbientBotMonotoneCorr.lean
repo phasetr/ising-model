@@ -1,20 +1,18 @@
 import IsingModel.AmbientLattice.CorrelationInfinite.AmbientSubgraph
 
 /-!
-# ℤ^d correlation `*_monotone_ambient_subgraph` wrappers
+# Ambient-subgraph monotonicity of the correlation on ℤ^d sites
 
-Narrow child module for three ℤ^d
-`correlation*_latticeGraph_monotone_ambient_subgraph` wrappers
-(Λ + along-exhaustion + Infinite forms) extracted from
-`TwoPointAmbientBotMonotone.lean`:
+Statements on the vertex type `Fin d → ℤ` comparing two ambient simple graphs `G₁ ≤ G₂` on
+it. Despite the declaration names, no statement here mentions `IsingModel.latticeGraph d`:
+the dimension only fixes the vertex type, and the graphs are arbitrary.
 
-* `correlationΛ_latticeGraph_monotone_ambient_subgraph`,
-* `correlationAlongExhaustion_latticeGraph_monotone_ambient_subgraph`,
-* `correlationInfinite_latticeGraph_monotone_ambient_subgraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`correlation*_monotone_ambient_subgraph` lemma. The theorem names are
-unchanged from the former `TwoPointAmbientBotMonotone` declarations.
+Under `Ferromagnetic` on the parameter record, adding edges to the ambient graph does not
+decrease the correlation of a site set — at a fixed finite volume, at a stage of an
+arbitrary `Ambient.Exhaustion`, and in the infinite-volume limit along one. Every statement
+takes a pair of instance arguments, one per graph: a `Fintype` on the edge set induced at
+the fixed finite volume in the Λ-layer statement, and a stagewise `Fintype` on the edge
+sets induced along the exhaustion in the others.
 -/
 
 namespace IsingModel

@@ -5,12 +5,20 @@ import IsingModel.AmbientLattice.SpontaneousMono
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetization / spontaneous `*_bot_le_latticeGraph` wrappers
+# Comparison of the edgeless ambient graph with ℤ^d for magnetization and spontaneous values
 
-Narrow child module for five ℤ^d `magnetization*` / `spontaneous*`
-`_bot_le_latticeGraph` ambient-subgraph monotonicity wrappers (from
-`⊥` to `latticeGraph d`). Each wrapper is a thin pass-through to the
-corresponding ambient `*_monotone_ambient_subgraph` lemma.
+Concrete statements comparing the edgeless graph `⊥` on `Fin d → ℤ` with
+`IsingModel.latticeGraph d`: at an arbitrary finite subset for the finite-volume
+magnetization, and at an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` for everything else.
+Each value is no larger at `⊥` than at the lattice, and each statement is the ambient
+subgraph-monotonicity statement instantiated at `bot_le`.
+
+The magnetization statements assume `Ferromagnetic` on the parameter record. The
+spontaneous correlation of a finite site set and the spontaneous magnetization at a site
+take the coupling and the inverse temperature separately instead, and assume the coupling
+non-negative and the inverse temperature positive. Every statement takes one instance
+argument on the `⊥` side — a `Fintype` on the edge set `⊥` induces at the fixed finite
+subset, or a stagewise one along the exhaustion — and none on the lattice side.
 -/
 
 namespace IsingModel
