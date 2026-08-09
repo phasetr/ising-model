@@ -2,11 +2,13 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyΛ |h|-symmetry / monotonicity wrappers
+# ℤ^d finite-volume free energy in the external field and its absolute value
 
-Narrow child module for three ℤ^d
-`freeEnergyΛ_latticeGraph_{neg_h,eq_abs_h,monotone_abs_h}` wrappers
-extracted from `FreeEnergySpecialCasesLambda.lean`.
+Concrete `latticeGraph d` statements about the free energy on a fixed finite volume as the
+external field varies. Reversing the sign of the field leaves it unchanged, so its value at
+`h` equals its value at `|h|`, and each of those identities is hypothesis-free. Monotonicity
+in the absolute field — the value at `h₁` lies below the value at `h₂` whenever `|h₁| ≤ |h₂|`
+— assumes `0 ≤ J` and `0 < β` in addition. No instance argument is taken.
 -/
 
 namespace IsingModel

@@ -2,19 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
-# Concrete free-energy per-direction analyticity wrappers
+# ℤ^d finite-volume free-energy analyticity in one parameter at zero field
 
-This module contains `latticeGraph` wrappers for per-direction free-energy
-`AnalyticAt` and `AnalyticOnNhd` APIs at the finite-volume and
-along-exhaustion layers. It is split out of the original concrete correlation
-module so downstream users can import the free-energy analyticity surface
-without pulling the whole original module.
+Concrete `latticeGraph d` statements that the free energy of a fixed finite volume at zero
+external field, read as a function of a single real parameter with the other held fixed, is
+analytic. Analyticity at a prescribed base point and analyticity on a neighbourhood of all of
+`Set.univ` are each stated in the inverse temperature and in the coupling. Every statement is
+made over the subgraph induced by that volume and requires a `Fintype` instance on its edge
+set; that instance is the entire requirement, since no `Prop`-typed hypothesis is carried
+anywhere in this module.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d finite-volume free-energy per-direction analyticity -/
 
 /-- **ℤ^d Λ: freeEnergy `AnalyticAt ℝ` in `β` at `h = 0`**. -/
 theorem freeEnergyΛ_latticeGraph_analyticAt_beta_h_zero
@@ -61,13 +61,6 @@ theorem freeEnergyΛ_latticeGraph_analyticOnNhd_J_h_zero
         ⟨J', 0, β⟩) Set.univ :=
   Ambient.freeEnergyΛ_analyticOnNhd_J_h_zero
     (IsingModel.latticeGraph d) Λ β
-
-/-! ## Moved: along-ex free-energy analyticity wrappers
-
-The three surviving `freeEnergyAlongExhaustion_latticeGraph_analytic*`
-wrappers (`analyticOnNhd` in β/J/h at general h) now live in
-`FreeEnergyAnalyticityAlongExOnNhdGeneralH.lean`. -/
-
 
 end Ambient
 end IsingModel
