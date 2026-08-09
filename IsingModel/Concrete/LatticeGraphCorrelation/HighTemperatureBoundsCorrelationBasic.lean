@@ -2,16 +2,12 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete correlationΛ pair / singleton high-temperature wrappers at h = 0
+# ℤ^d fixed-volume pair correlation bounds at zero field
 
-Narrow child module for the §18.3-§18.4 concrete `correlationΛ_latticeGraph`
-basic high-temperature wrappers at `h = 0`: pair nonneg, pair `≤ 1`,
-singleton / pair trivial-slice vanishings at `J = 0` and `β = 0`, pair
-sandwich, singleton / pair ferromagnetic, and singleton `= 0 ∧ ≤ 1`.
-Bundle / single-edge-bound / capstone / §18.7 exponential-decay wrappers
-remain in the parent `HighTemperatureBounds`.
-The theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the nonnegativity of the pair correlation `⟨σ_i σ_j⟩` and its upper bound
+`1`. Nonnegativity assumes `0 ≤ β * J`; the upper bound holds with no condition on `J`, `β`,
+`Λ` or the sites.
 -/
 
 namespace IsingModel
@@ -37,22 +33,6 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_pair_le_one
         (⟨J, 0, β⟩ : IsingParams ℝ) ({i, j} : Finset ↑Λ) ≤ 1 :=
   correlationΛ_high_temp_h_zero_at_pair_le_one
     (IsingModel.latticeGraph d) Λ J β i j
-
-/-! ## Moved: trivial-slice wrappers (J = 0, β = 0)
-
-The four `correlationΛ_latticeGraph_high_temp_h_zero_at_*_{J,beta}_zero`
-trivial-slice wrappers (singleton/pair at J = 0 and β = 0) now live in
-`HighTemperatureBoundsCorrelationBasicTrivialSlices.lean`. -/
-
-
-/-! ## Moved: pair sandwich / ferromagnetic / bundle wrappers
-
-The four `correlationΛ_latticeGraph_high_temp_h_zero_*` wrappers
-(`pair_sandwich`, `singleton_ferromagnetic`, `pair_ferromagnetic`,
-`singleton_eq_zero_le_one`) now live in
-`HighTemperatureBoundsCorrelationBasicBundles.lean`. -/
-
-
 
 end Ambient
 

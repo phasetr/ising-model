@@ -1,16 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-induced high-temperature h=0 sandwich / ferromagnetic / bundle wrappers
+# ℤ^d fixed-volume pair sandwich and single-site vanishing at zero field
 
-Narrow child module for four ℤ^d Λ-induced
-`correlationΛ_latticeGraph_high_temp_h_zero_*` wrappers extracted from
-`HighTemperatureBoundsCorrelationBasic.lean`:
-
-* `_at_pair_sandwich`,
-* `_at_singleton_ferromagnetic`,
-* `_at_pair_ferromagnetic`,
-* `_at_singleton_eq_zero_le_one`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the sandwich of the pair correlation between `0` and `1`, and the
+vanishing of the single-site correlation. The pair sandwich is stated under `0 ≤ β * J` and
+again under the ferromagnetic pair `0 ≤ J` and `0 < β`; the ferromagnetic single-site
+vanishing carries that same ferromagnetic pair, while the statement combining the vanishing
+with the bound `1` carries no hypothesis at all.
 -/
 
 namespace IsingModel

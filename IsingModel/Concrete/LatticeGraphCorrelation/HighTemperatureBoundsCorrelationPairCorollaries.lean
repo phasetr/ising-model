@@ -2,23 +2,17 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPair
 
 /-!
-# Concrete HT correlation pair corollaries (latticeAdj + trivial slices)
+# ℤ^d fixed-volume pair bounds from ambient adjacency, and odd-observable vanishing
 
-Narrow child module for 4 ℤ^d Λ-level correlation non-edge-based
-corollaries extracted from `HighTemperatureBoundsCorrelationPair.lean`:
-
-* `correlationΛ_latticeGraph_high_temp_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj`,
-* `correlationΛ_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj`,
-* `correlationΛ_latticeGraph_high_temp_h_zero_at_singleton`,
-* `correlationΛ_latticeGraph_high_temp_h_zero_odd_card_eq_zero`.
-
-The two `_of_latticeAdj` corollaries are `induce_adj`-bridged from
-the corresponding edge-based wrappers in the parent. The singleton
-and odd-card lemmas are direct thin pass-throughs of the ambient
-`correlationΛ_high_temp_h_zero_at_singleton` and
-`correlationΛ_high_temp_h_zero_odd_card_eq_zero` lemmas at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBoundsCorrelationPair` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the pair-correlation lower bound `tanh (β * J) / 2 ^ |E_Λ|` and the strict
+positivity of the pair correlation for sites adjacent in the ambient lattice graph, obtained
+by rewriting that adjacency into membership of the induced edge set through
+`SimpleGraph.induce_adj`; together with the vanishing of the single-site correlation and the
+vanishing of the correlation at any observable of odd cardinality. The lower bound assumes
+`0 ≤ β * J` and the strict positivity assumes `0 < β * J`, each of them together with the
+ambient adjacency; the single-site vanishing carries no hypothesis, and the odd-observable
+vanishing carries only the parity of the observable's cardinality.
 -/
 
 namespace IsingModel

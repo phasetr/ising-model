@@ -2,22 +2,16 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesAlpha
 
 /-!
-# Concrete along-ex §18.7 exp_alpha_dist decay capstone wrappers
+# ℤ^d along-exhaustion exponential decay at any admissible rate (§18.7)
 
-Narrow child module for 3 ℤ^d along-exhaustion §18.7
-`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_*_exp_alpha_dist`
-decay capstone wrappers extracted from
-`HighTemperatureBoundsDecayAlphaDist.lean`:
-
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_alpha_dist`,
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_exp_alpha_dist_of_le_highTempExpRate`,
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_exp_alpha_dist_ferro`.
-
-Each result is a thin pass-through of the corresponding ambient
-`correlationAlongExhaustion_high_temp_h_zero_at_pair_le_*_exp_alpha_dist`
-lemma (or composes Λ-direct + AlongEx ferro) at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBoundsDecayAlphaDist` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the decay bound
+`2 ^ |E_n| * exp (-α * dist i j)` on the pair correlation, valid for every rate `α` that does
+not exceed `-log (tanh (β * J))`; the same bound is also recorded with that ceiling written as
+`highTempExpRate β J`. The rate condition is carried by every statement here; the sign
+condition is `0 ≤ β * J`, replaced in the ferromagnetic form by `0 ≤ J` together with `0 < β`.
+The distance is graph distance in the stage-`n` induced subgraph, and the conclusion is stated
+for `correlationΛ` on `Λ.volume n` rather than for `correlationAlongExhaustion`.
 -/
 
 namespace IsingModel
