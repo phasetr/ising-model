@@ -3,21 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwich
 
 /-!
-# Concrete HT AlongExhaustion sandwich_exp wrappers
+# ℤ^d along-exhaustion sharper sandwiches for `Z_n` and `f_n` at zero field
 
-Narrow child module for the 4 ℤ^d along-exhaustion sandwich_exp HT
-wrappers
-(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
-`_ferromagnetic`,
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp`,
-`_ferromagnetic`) extracted from
-`HighTemperatureBoundsAlongExhaustionExpSharper.lean` in PR #2082.
-Each is a thin pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_*_sandwich_exp` /
-`freeEnergyAlongExhaustion_*_sandwich_exp` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBoundsAlongExhaustionExpSharper`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, sandwiches in which the lower bound gives
+every edge a factor `cosh (β * J)` and the sharper upper bound gives it `exp (β * J)` instead:
+the partition function between `2 ^ |Λ_n| * cosh (β * J) ^ |E_n|` and
+`2 ^ |Λ_n| * exp (β * J * |E_n|)`, and the free-energy density between
+`log 2 + (|E_n| / |Λ_n|) * log (cosh (β * J))` and `log 2 + β * J * |E_n| / |Λ_n|`. Each
+appears under `0 ≤ β * J` and in a ferromagnetic form under `0 ≤ J` together with `0 < β`;
+the free-energy statements, and they alone, also need `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel

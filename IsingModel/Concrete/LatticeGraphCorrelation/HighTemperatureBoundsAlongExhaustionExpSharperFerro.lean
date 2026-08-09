@@ -3,21 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperFerro
 
 /-!
-# ℤ^d alongExhaustion sharper-exp ferromagnetic upper-bound wrappers
+# ℤ^d along-exhaustion ferromagnetic sharper upper bounds at zero field
 
-Narrow child module for three ℤ^d alongExhaustion sharper-exp HT
-upper-bound ferromagnetic wrappers extracted from
-`HighTemperatureBoundsAlongExhaustionExpSharper.lean`:
-
-* `partitionFunctionAlongExhaustion_latticeGraph_h_zero_upper_bound_exp_ferromagnetic`,
-* `log_partitionFunctionAlongExhaustion_latticeGraph_h_zero_upper_bound_exp_ferromagnetic`,
-* `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*_ferromagnetic` along-exhaustion HT bound at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBoundsAlongExhaustionExpSharper`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the ferromagnetic form of the upper
+bounds in which each edge contributes `exp (β * J)`: the partition function below
+`2 ^ |Λ_n| * exp (β * J * |E_n|)`, its logarithm below `|Λ_n| * log 2 + β * J * |E_n|`, and
+the free-energy density below `log 2 + β * J * |E_n| / |Λ_n|`. Every statement here assumes
+`0 ≤ J` together with `0 < β`, and the free-energy bound alone also assumes `Λ.volume n`
+nonempty.
 -/
 
 namespace IsingModel

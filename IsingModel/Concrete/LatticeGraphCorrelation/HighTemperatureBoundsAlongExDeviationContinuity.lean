@@ -4,13 +4,15 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerr
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationContinuity
 
 /-!
-# Concrete alongExhaustion f deviation_bound_exp + continuity_bundle wrappers at h = 0
+# ℤ^d along-exhaustion free-energy deviation bound and continuity at zero field
 
-Narrow child module for four ℤ^d alongExhaustion `freeEnergyAlongExhaustion_latticeGraph_*`
-wrappers at `h = 0`: `deviation_bound_exp` and `continuity_bundle` (each with a
-ferromagnetic variant). Each wrapper is a thin pass-through to the corresponding
-ambient `freeEnergyAlongExhaustion_high_temp_h_zero_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the bound
+`f_n - log 2 ≤ β * J * |E_n| / |Λ_n|` on the free-energy density, and the bundle bounding by
+that same quantity how far `f_n` moves, in absolute value, from its values at `⟨0, 0, β⟩` and
+at `⟨J, 0, 0⟩`. Each appears in a form assuming `0 ≤ β * J` and in a ferromagnetic form
+assuming `0 ≤ J` together with `0 < β`, and every statement here also needs `Λ.volume n`
+nonempty.
 -/
 
 namespace IsingModel

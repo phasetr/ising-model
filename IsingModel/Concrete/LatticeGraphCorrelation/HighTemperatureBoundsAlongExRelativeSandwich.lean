@@ -3,14 +3,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerro
 
 /-!
-# Concrete alongExhaustion Z relative_sandwich wrappers at h = 0
+# ℤ^d along-exhaustion partition function relative to the free-spin count
 
-Narrow child module for two ℤ^d alongExhaustion
-`partitionFunctionAlongExhaustion_latticeGraph_*_relative_sandwich`
-wrappers (general and ferromagnetic) at `h = 0`. Each wrapper is a thin
-pass-through to the corresponding ambient
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_relative_sandwich*`
-lemma at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the sandwich of the partition function
+divided by `2 ^ |Λ_n|` between `cosh (β * J) ^ |E_n|` and `exp (β * J * |E_n|)`. The sandwich
+is stated under `0 ≤ β * J` and again in a ferromagnetic form under `0 ≤ J` together with
+`0 < β`; no condition on `Λ.volume n` or on the stage-`n` edge count enters.
 -/
 
 namespace IsingModel

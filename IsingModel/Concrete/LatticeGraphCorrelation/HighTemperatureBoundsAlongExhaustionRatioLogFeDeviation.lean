@@ -3,14 +3,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeNonempty
 
 /-!
-# ℤ^d AlongExhaustion freeEnergy deviation bound wrappers
+# ℤ^d along-exhaustion free-energy deviation on a nonempty stage volume
 
-Narrow child module for two ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_*`
-wrappers extracted from `HighTemperatureBoundsAlongExhaustionRatioLogFe.lean`:
-
-* `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_bound_exp_of_nonempty`,
-* `freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_deviation_pos_of_nonempty`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the bound
+`f_n - log 2 ≤ β * J * |E_n| / |Λ_n|` and the strict statement `log 2 < f_n`, each with the
+stage volume assumed nonempty in the `Finset.Nonempty` spelling. The bound assumes
+`0 ≤ β * J`; the strict statement assumes `0 < β * J` and, in addition, that the stage-`n`
+induced subgraph carries at least one edge.
 -/
 
 namespace IsingModel

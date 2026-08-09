@@ -3,13 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationFerro
 
 /-!
-# Concrete alongExhaustion f / log Z deviation_sandwich wrappers at h = 0
+# ℤ^d along-exhaustion deviation sandwiches for `f_n` and `log Z_n` at zero field
 
-Narrow child module for four ℤ^d alongExhaustion `*_deviation_sandwich`
-wrappers (free energy and log Z, each with a ferromagnetic variant) at
-`h = 0`. Each wrapper is a thin pass-through to the corresponding
-ambient `*_high_temp_h_zero_deviation_sandwich` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, a sandwich for the deviation of the
+free-energy density from `log 2`, between `0` and `β * J * |E_n| / |Λ_n|`, and one for the
+deviation of `log Z_n` from `|Λ_n| * log 2`, between `0` and `β * J * |E_n|`. Each appears in
+a form assuming `0 ≤ β * J` and in a ferromagnetic form assuming `0 ≤ J` together with
+`0 < β`. Nonemptiness of `Λ.volume n` is required by the free-energy statements and by them
+alone.
 -/
 
 namespace IsingModel

@@ -4,16 +4,15 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharper
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpSharperSandwichLogZ
 
 /-!
-# Concrete alongExhaustion sharper-exp Z/f/log Z wrappers at h = 0
+# ℤ^d along-exhaustion sharper upper bounds and the `log Z_n` sandwich at zero field
 
-Narrow child module for the §18.3-§18.4 concrete alongExhaustion
-sharper-exp upper-bound / sandwich / complete-summary wrappers on
-`latticeGraph d` at `h = 0`. 17 theorems for
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_*_exp`,
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_*_exp`, and
-`log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_*_exp`
-families plus ferromagnetic variants. The theorem names are unchanged
-from the former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, the upper bounds in which each edge
+contributes `exp (β * J)`: the partition function below `2 ^ |Λ_n| * exp (β * J * |E_n|)`, its
+logarithm below `|Λ_n| * log 2 + β * J * |E_n|`, and the free-energy density below
+`log 2 + β * J * |E_n| / |Λ_n|`; together with the sandwich placing `log Z_n` above
+`|Λ_n| * log 2 + |E_n| * log (cosh (β * J))` as well. Every statement here assumes
+`0 ≤ β * J`, and the free-energy bound alone also assumes `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel
@@ -79,35 +78,6 @@ theorem log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_
           (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)).edgeFinset.card :=
   log_partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_sandwich_exp
     (IsingModel.latticeGraph d) Λ J β hβJ n
-/-! ## Moved: ℤ^d HT AlongExhaustion ferromagnetic upper_bound_exp wrappers
-
-The three ferromagnetic alongExhaustion sharper-exp HT upper-bound
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExhaustionExpSharperFerro`.
-The earlier import path is preserved by re-importing the new child. -/
-
-
-/-! ## Moved: ℤ^d HT AlongExhaustion sandwich_exp wrappers
-
-The 4 ℤ^d along-exhaustion sandwich_exp HT wrappers
-(`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
-`_ferromagnetic`,
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_sandwich_exp`,
-`_ferromagnetic`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperSandwich`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: ℤ^d HT AlongExhaustion complete_summary_exp wrappers
-
-The 6 ℤ^d along-exhaustion `*_complete_summary_exp` HT wrappers
-(3 base: `freeEnergyAlongExhaustion_*`, `partitionFunctionAlongExhaustion_*`,
-`log_partitionFunctionAlongExhaustion_*`; plus 3 `_ferromagnetic`
-variants) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsAlongExExpSharperCompleteSummary`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 end Ambient
 
