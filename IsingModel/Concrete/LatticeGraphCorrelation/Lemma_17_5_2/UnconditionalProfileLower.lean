@@ -2,6 +2,38 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.FiniteRegionPseu
 import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTemperature.PathLowerBound
 import IsingModel.ClusterExpansion.TwoPointConvergenceWindow
 
+/-!
+# Unconditional lower bound on the ℤ^d two-point function by the distance profile
+
+Supplies outright, rather than as an assumption, the per-pair correlation lower bound that
+the correlation-length programme elsewhere takes as an input: on the high-temperature
+convergence window, and at the genuine inverse-correlation-length rate
+`-Real.log (Real.tanh (β * J))`, the distance profile `pseudoMassG` evaluated at the lattice
+distance between a pair of sites lies below the infinite-volume correlation of that pair
+along `Ambient.cubicExhaustion d`.
+
+The route is arithmetic rather than combinatorial. Whenever the product of rate and radius is
+at least `1`, the profile lies below `Real.exp` of the negative of that product, its
+denominator being at least `2` there. On `ConvergenceRegion.window d J` the activity
+`Real.tanh (β * J)` lies below `Real.exp (-1)`, since the window confines `β * J` below
+`Real.artanh` of the convergence radius and that radius is itself at most `Real.exp (-1)`;
+hence the rate is at least `1`, and for a pair of distinct sites the product of rate and
+lattice distance is at least `1` as well. The profile is therefore below `Real.tanh (β * J)`
+raised to the lattice distance, which the upstream GKS direct-path bound places below the
+two-point function.
+
+The conclusion is recorded first anchored at the origin, for a nonzero site, and then for an
+arbitrary pair of distinct sites, the general form following from the anchored one because
+the infinite-volume pair correlation along the cubic exhaustion is translation-invariant and
+depends on the pair only through its lattice distance. The anchored bound and the
+general-pair bound each assume positivity of the coupling, positivity of the inverse
+temperature, distinctness of the sites involved and membership of the inverse temperature in
+the window; the arithmetic step assumes only that the product of rate and radius is at least
+`1`, and the window observations assume positivity of the coupling and membership in the
+window, saying nothing about the sites. No instance argument is taken anywhere in this
+module.
+-/
+
 namespace IsingModel
 namespace Ambient
 
