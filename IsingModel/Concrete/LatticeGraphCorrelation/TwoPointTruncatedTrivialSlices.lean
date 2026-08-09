@@ -1,12 +1,3 @@
-/- TwoPointTruncatedTrivialSlices.lean
-Narrow child module for the 5 ℤ^d `truncated3/4TwoPoint` trivial-slice
-wrappers (`truncated3TwoPoint_h_zero_of_distinct`,
-`truncated3TwoPoint_J_zero_of_distinct`,
-`truncated4TwoPoint_J_zero_of_distinct`,
-`truncated4TwoPoint_beta_zero`, `truncated3TwoPoint_beta_zero`)
-extracted from `TwoPoint.lean` in PR #2028. The theorem names are
-unchanged from the former `TwoPoint` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
@@ -16,6 +7,25 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+
+/-!
+# The ℤ^d truncated three- and four-point functions at degenerate parameter records
+
+Concrete statements about the anchored `truncated3TwoPoint` and `truncated4TwoPoint` at
+`IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`, at parameter records that
+switch part of the interaction off.
+
+At vanishing external field the three-point function vanishes whenever the origin and the
+separations are pairwise distinct, and that assumes no ferromagnetic condition. At
+vanishing coupling the same vanishing holds under `Ferromagnetic` on the record
+`⟨0, h, β⟩`, while the four-point function is there not zero but
+`-2 * Real.tanh (β * h) ^ 4`, again at pairwise distinct sites.
+
+At zero inverse temperature both functions vanish at arbitrary separations, distinct or
+not, and under no hypothesis whatever: each infinite-volume correlation entering the Ursell
+combination is itself zero there, and the combination is then closed by ring arithmetic.
+No instance argument is taken anywhere in this module.
+-/
 
 open scoped symmDiff
 
