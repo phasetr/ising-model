@@ -1,16 +1,15 @@
 import IsingModel.FreeEnergy.SpecialValues
 
 /-!
-# ℤ^d *_convergent_subgraph_latticeGraph wrappers
+# ℤ^d convergence of finite-volume quantities along an increasing graph sequence
 
-Narrow child module for four ℤ^d
-`*_convergent_subgraph_latticeGraph` wrappers extracted from
-`PerStageSubgraph.lean`:
-
-* `correlation_convergent_subgraph_latticeGraph`,
-* `magnetization_convergent_subgraph_latticeGraph`,
-* `twoPoint_convergent_subgraph_latticeGraph`,
-* `freeEnergy_convergent_subgraph_latticeGraph`.
+Concrete statements at the vertex type of a fixed finite volume of `Fin d → ℤ`: along a
+monotone sequence of simple graphs on that vertex type, and for a parameter record satisfying
+`Ferromagnetic`, the correlation of a finite set of vertices converges, as do its
+specialisations at a singleton and at a pair, and so does the free energy. Only the vertex
+type comes from `latticeGraph d`; the graphs in the sequence are arbitrary. Monotonicity of
+the sequence and `Ferromagnetic` are the hypotheses in every case, and every statement
+requires a `Fintype` instance on the edge set of each graph in the sequence.
 -/
 
 namespace IsingModel

@@ -2,28 +2,25 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete ℤ^d ζ/η/absence-of-even-bound-states wrappers (GJ §17.2/§17.7)
+# ℤ^d sign of the truncated four-point and two-point functions
 
-Narrow child module for the 5 ℤ^d critical-exponent wrappers
-(`zeta_nonneg_finite_vol_latticeGraph`,
-`eta_nonneg_infinite_vol_latticeGraph`,
-`zeta_nonneg_infinite_vol_latticeGraph`,
-`absence_of_even_bound_states_finite_vol_latticeGraph`,
-`absence_of_even_bound_states_infinite_vol_latticeGraph`)
-extracted from `PerStage.lean` in PR #2050. Each is a thin
-pass-through to the corresponding abstract `IsingModel.*` /
-`Ambient.*` lemma. The theorem names are unchanged from the former
-`PerStage` declarations.
+Concrete `latticeGraph d` statements for parameter records satisfying `Ferromagnetic`.
+
+At zero external field and for four pairwise distinct vertices the truncated four-point
+function is non-positive. That sign is recorded on the subgraph induced by a fixed finite
+volume, where no instance argument is taken, and in the infinite-volume form along an
+arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`, which requires a `Fintype` instance on the
+edge set induced at every stage; it is stated under its critical-exponent reading and under
+its absence-of-even-bound-states reading alike.
+
+The infinite-volume truncated two-point function is non-negative at an unrestricted parameter
+record satisfying `Ferromagnetic` and, in contrast with the four-point statements, at an
+arbitrary pair of sites with no distinctness assumed; it too requires the per-stage `Fintype`
+instance.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! #### §17.7 critical-exponent bounds at ℤ^d
-
-Direct ℤ^d wrappers for the `η ≥ 0` and `ζ ≥ 0` critical-exponent
-bounds at ℤ^d, for both finite-volume and ∞-volume. Pass-throughs of
-`IsingModel.{eta,zeta}_nonneg_{finite,infinite}_vol`. -/
 
 /-- **ℤ^d `ζ ≥ 0` finite-volume** (Λ-induced, GJ §17.7 Thm 17.7.1,
 ferromagnetic at `h = 0`). Pass-through of
