@@ -2,25 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases
 
 /-!
-# Concrete along-ex mayerPartialSumAlongExhaustion wrappers
+# ℤ^d Mayer partial sum at truncation order two and on polymer-free stages
 
-Narrow child module for 3 ℤ^d along-exhaustion
-`mayerPartialSumAlongExhaustion_latticeGraph_*` wrappers extracted
-from `MayerExpansionEdgeCasesAlongEx.lean`:
-
-* `mayerPartialSumAlongExhaustion_latticeGraph_two`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_eq_zero_of_no_polymers`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_eq_zero_of_edgeFinset_empty`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.mayerPartialSumAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerExpansionEdgeCasesAlongEx` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the closed form of the Mayer partial sum at truncation order `2` — the polymer
+activity sum `∑_P t ^ |P|` plus `-1/2` times the sum over the incompatible ordered pairs of
+polymers — and its vanishing at every truncation order and activity when the stage-`n` induced
+subgraph has no polymer, and when that subgraph has no edge. The order-`2` closed form assumes
+nothing about the activity; the vanishing statements assume only the stated emptiness.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: mayerPartialSum at `N = 2`**. -/
 theorem mayerPartialSumAlongExhaustion_latticeGraph_two

@@ -2,16 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerRecurrenceHasSum
 
 /-!
-# ℤ^d AlongExhaustion mayer recurrence / hasSum wrappers
+# ℤ^d Mayer recurrence and the logarithmic series, along an exhaustion
 
-Narrow child module for five ℤ^d AlongExhaustion mayer recurrence /
-hasSum wrappers extracted from `MayerRecurrenceHasSum.lean`:
-
-* `mayerPartialSumAlongExhaustion_latticeGraph_succ`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_eq_mayerPartialSum_diff`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_hasSum_via_log`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_hasSum_via_log_eventually`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tendsto_zero`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the step recurrence between consecutive Mayer partial sums of the stage-`n`
+induced subgraph and its rearrangement giving a Mayer expansion term as the difference of
+consecutive partial sums; the alternating logarithmic series in the activity sum over the
+vertex-disjoint compatible polymer families other than the empty one, which `HasSum`s to
+`polymerFreeEnergy` whenever the absolute value of that sum is strictly below `1`, together
+with the same conclusion holding eventually as the activity tends to `0`; and the convergence
+of that activity sum to `0` as the activity tends to `0`. The recurrence statements assume
+nothing about the activity, and the series statement carries its convergence hypothesis in the
+activity sum itself rather than in the activity.
 -/
 
 namespace IsingModel

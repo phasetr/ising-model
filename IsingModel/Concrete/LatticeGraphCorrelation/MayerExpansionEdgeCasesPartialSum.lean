@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# ℤ^d Λ-layer `mayerPartialSum_Λ_latticeGraph_*` edge-case wrappers
+# ℤ^d Mayer partial sum at truncation order two and on polymer-free volumes
 
-Narrow child module for three ℤ^d Λ-layer
-`mayerPartialSum_Λ_latticeGraph_*` edge-case wrappers extracted from
-`MayerExpansionEdgeCases.lean`:
-
-* `mayerPartialSum_Λ_latticeGraph_two`,
-* `mayerPartialSum_Λ_latticeGraph_eq_zero_of_no_polymers`,
-* `mayerPartialSum_Λ_latticeGraph_eq_zero_of_edgeFinset_empty`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.mayerPartialSum_Λ_*` lemma at `G := IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`MayerExpansionEdgeCases` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the closed form of
+the Mayer partial sum at truncation order `2` — the polymer activity sum `∑_P t ^ |P|` plus
+`-1/2` times the sum over the incompatible ordered pairs of polymers — and its vanishing at
+every truncation order and activity when the induced subgraph has no polymer, and when that
+subgraph has no edge. The order-`2` closed form assumes nothing about the activity; the
+vanishing statements assume only the stated emptiness.
 -/
 
 namespace IsingModel
