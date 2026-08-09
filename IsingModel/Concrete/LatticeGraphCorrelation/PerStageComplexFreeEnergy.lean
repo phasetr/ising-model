@@ -9,11 +9,12 @@ import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
 Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n` of an `Ambient.Exhaustion`
 of `Fin d → ℤ`, the regularity in the external field of the complex free-energy density of
-that stage's volume. Analyticity at a complex base point is given for arbitrary complex `J`
-and `β` and assumes exactly that the stage partition function lies in `Complex.slitPlane`
-there. Analyticity on a neighbourhood, complex differentiability and continuity on
-`leeYangSubdomain β (Fintype.card ↑(Λ.volume n))` are given for real `J` and `β`, and each
-assumes `0 < β` and nothing else.
+that stage's volume. Every statement requires a `Fintype` instance on the induced edge sets
+along that exhaustion, at every stage. Beyond that instance, analyticity at a complex base
+point is given for arbitrary complex `J` and `β` and assumes exactly that the stage partition
+function lies in `Complex.slitPlane` there, while analyticity on a neighbourhood, complex
+differentiability and continuity on `leeYangSubdomain β (Fintype.card ↑(Λ.volume n))` are
+given for real `J` and `β` and each assumes `0 < β` and nothing else.
 -/
 
 namespace IsingModel

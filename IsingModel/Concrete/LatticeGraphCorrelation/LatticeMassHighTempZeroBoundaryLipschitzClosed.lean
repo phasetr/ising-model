@@ -11,9 +11,9 @@ infinite-volume correlation on the closed interval `Set.Icc 0 b`, with the expli
 built from `b`, the parameter held fixed and the dimension. The statement is given in the
 inverse-temperature direction, under `0 ≤ J`, and in the coupling direction, under `0 < β`;
 each also assumes `0 < b` and that `b` times the parameter held fixed times `2 * d` is below
-one. Behind each of them sits a private ordered increment bound on the same interval,
-carrying the same hypotheses together with the ordering of the two arguments and the
-containment of the larger one in `Set.Icc 0 b`.
+one. Behind each of them sits a private ordered increment bound carrying the same hypotheses
+together with the ordering of the two arguments, non-negativity of the smaller one and the
+bound `b` on the larger one.
 -/
 
 namespace IsingModel
