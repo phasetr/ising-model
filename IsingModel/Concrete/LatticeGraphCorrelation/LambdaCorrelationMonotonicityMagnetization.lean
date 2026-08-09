@@ -2,11 +2,14 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d magnetizationΛ convergent_{J,h,β} wrappers
+# ℤ^d finite-volume magnetization as a parameter grows without bound
 
-Narrow child module for three ℤ^d
-`magnetizationΛ_latticeGraph_convergent_{J,h,beta}` wrappers
-extracted from `LambdaCorrelationMonotonicity.lean`.
+Concrete `latticeGraph d` statements that, at a fixed vertex of a fixed finite volume, the
+magnetization — the correlation of the singleton at that vertex — converges when one
+parameter is sampled along the natural numbers and the others are held fixed. Growth of the
+coupling assumes `0 ≤ h` and `0 < β`; growth of the external field assumes `0 ≤ J` and
+`0 < β`; growth of the inverse temperature, taken shifted by one, assumes `0 ≤ J` and
+`0 ≤ h`. No instance argument is taken.
 -/
 
 namespace IsingModel

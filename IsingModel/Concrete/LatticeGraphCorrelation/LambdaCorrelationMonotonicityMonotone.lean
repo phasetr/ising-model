@@ -1,11 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d per-Λ `correlationΛ` monotone wrappers
+# ℤ^d finite-volume correlation monotonicity in one parameter
 
-Narrow child module for three ℤ^d Λ-induced
-`correlationΛ_latticeGraph_monotone_{h,beta,J}` wrappers extracted from
-`LambdaCorrelationMonotonicity.lean`.
+Concrete `latticeGraph d` statements that the correlation of a fixed finite set of vertices
+of a fixed finite volume, as a function of one parameter of the record with the others held
+fixed, is monotone on a ray. Monotonicity in the external field on `Set.Ici 0` assumes
+`0 ≤ J` and `0 < β`; monotonicity in the inverse temperature on `Set.Ioi 0` assumes `0 ≤ J`
+and `0 ≤ h`; monotonicity in the coupling on `Set.Ici 0` assumes `0 ≤ h` and `0 < β`. No
+instance argument is taken.
 -/
 
 namespace IsingModel

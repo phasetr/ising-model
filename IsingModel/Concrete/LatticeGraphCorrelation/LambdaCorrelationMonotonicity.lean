@@ -2,27 +2,21 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete Lambda-layer correlation monotonicity wrappers
+# ℤ^d finite-volume correlation as a parameter grows without bound
 
-Narrow child module for concrete `latticeGraph` Lambda-layer correlation and
-magnetization convergence / monotonicity wrappers. The theorem names are the
-same as the former declarations, but callers can now avoid importing the
-monolithic concrete module.
+Concrete `latticeGraph d` statements on the subgraph induced by a fixed finite volume, about
+the correlation of a finite set of vertices read as a function of one parameter of the
+record.
+
+Read as a function of the coupling, the correlation is bounded above by `1` with no
+hypothesis, and is non-negative under `0 ≤ h`, `0 < β` and `0 ≤ J`. Sampled along the natural
+numbers it converges: in the coupling under `0 ≤ h` and `0 < β`, in the inverse temperature
+shifted by one under `0 ≤ J` and `0 ≤ h`, and in the external field under `0 ≤ J` and
+`0 < β`. No instance argument is taken.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d Lambda-layer correlation and magnetization wrappers -/
-
-/-! ## Moved: magnetizationΛ convergent_{J,h,β} wrappers
-
-The three wrappers
-`magnetizationΛ_latticeGraph_convergent_J`,
-`magnetizationΛ_latticeGraph_convergent_h`,
-`magnetizationΛ_latticeGraph_convergent_beta` now live in
-`LambdaCorrelationMonotonicityMagnetization.lean`. -/
-
 
 /-- **ℤ^d correlationJΛ nonneg** at Λ-induced (ferromagnetic):
 `0 ≤ correlationJ Λ h β B J` for `h, J ≥ 0, β > 0`. -/
@@ -78,13 +72,6 @@ theorem correlationΛ_latticeGraph_convergent_h
       Filter.atTop (nhds L) :=
   IsingModel.correlation_convergent_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J hJ β hβ A
-
-/-! ## Moved: correlationΛ monotone wrappers
-
-The three `correlationΛ_latticeGraph_monotone_{h,beta,J}` wrappers
-now live in `LambdaCorrelationMonotonicityMonotone.lean`. -/
-
-
 
 end Ambient
 end IsingModel
