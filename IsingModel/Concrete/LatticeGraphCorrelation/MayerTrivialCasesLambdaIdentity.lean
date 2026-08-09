@@ -2,21 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerIdentity
 
 /-!
-# ℤ^d Λ-layer Mayer identity trivial-case wrappers
+# ℤ^d Mayer identity on polymer-free and edgeless volumes
 
-Narrow child module for five ℤ^d Λ-layer Mayer identity
-trivial-case wrappers extracted from `MayerTrivialCases.lean`:
-
-* `mayer_identity_of_no_polymers_Λ_latticeGraph`,
-* `mayer_identity_of_no_polymers_tanh_Λ_latticeGraph`,
-* `mayer_identity_of_trivial_Λ_latticeGraph`,
-* `mayer_identity_of_edgeFinset_empty_Λ_latticeGraph`,
-* `mayer_identity_of_edgeFinset_empty_tanh_Λ_latticeGraph`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.mayer_identity_of_*_Λ` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerTrivialCases` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the agreement of
+`polymerFreeEnergy` with the Mayer partial sum at every truncation order in the degenerate
+cases: when the induced subgraph has no polymer, when it has no edge, and, at the activity
+`tanh (β * J)`, under the disjunction that `β * J = 0` or that subgraph has no polymer. The
+polymer-free and edgeless cases are each given at a bare activity and at the activity
+`tanh (β * J)`, and no statement here imposes a sign condition on the activity or on the
+parameters.
 -/
 
 namespace IsingModel

@@ -3,19 +3,23 @@ import IsingModel.AmbientLattice.AnalyticityLambdaPolymer
 import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
-# Concrete Mayer vd iff characterization wrappers
+# ℤ^d threshold characterisations of the polymer activity sum at `1`
 
-Narrow child module for concrete `ℤ^d` iff characterizations of
-`vdPolymerFamilies_sum`. This keeps callers that only need these wrappers out
-of the monolithic lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the
+characterisations of when the activity sum over the vertex-disjoint compatible polymer
+families of the induced subgraph sits at `1` and of when it exceeds `1`: it equals `1` exactly
+when the sum over the families other than the empty one vanishes, it exceeds `1` exactly when
+that sum is strictly positive, and at the activity `tanh (β * J)` these unfold to the activity
+being `0`, respectively strictly positive, together with the induced subgraph having no
+polymer, respectively at least one. The comparison against the nonempty-family sum at equality
+holds at an arbitrary activity; its strict counterpart assumes `0 ≤ t`, and the `tanh`
+statements assume `0 ≤ β * J`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
-/-! ### §18.5 vdPolymerFamilies_sum iff characterizations ℤ^d wraps -/
 
 /-- **ℤ^d Λ: vdSum = 1 ↔ ε = 0**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_eq_one_iff_eps_eq_zero
@@ -72,15 +76,6 @@ theorem vdPolymerFamilies_sum_Λ_latticeGraph_tanh_eq_one_iff
           (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅ :=
   Ambient.vdPolymerFamilies_sum_Λ_tanh_eq_one_iff
     (IsingModel.latticeGraph d) Λ hβJ
-
-/-! ## Moved: along-ex vdPolymerFamilies_sum _iff wrappers
-
-The four `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*_iff`
-wrappers (`_eq_one_iff_eps_eq_zero`, `_gt_one_iff_eps_pos`,
-`_tanh_gt_one_iff`, `_tanh_eq_one_iff`) now live in
-`MayerVdIffAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

@@ -2,20 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFE
 
 /-!
-# ℤ^d along-ex `freeEnergyAlongExhaustion` pointwise J/joint regularity wrappers
+# ℤ^d pointwise regularity of the free-energy density in the coupling and jointly
 
-Narrow child module for four ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{J,joint}`
-pointwise regularity wrappers:
-
-* `freeEnergyAlongExhaustion_latticeGraph_continuousAt_J`,
-* `freeEnergyAlongExhaustion_latticeGraph_differentiableAt_J`,
-* `freeEnergyAlongExhaustion_latticeGraph_continuousAt_joint`,
-* `freeEnergyAlongExhaustion_latticeGraph_differentiableAt_joint`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the pointwise regularity of the free-energy density in
+the coupling with the field and the inverse temperature fixed, and jointly in the triple
+`(β, J, h)` read off a point of `ℝ × ℝ × ℝ`: `ContinuousAt` and `DifferentiableAt ℝ` in each
+case. No sign condition on any parameter is imposed.
 -/
 
 namespace IsingModel

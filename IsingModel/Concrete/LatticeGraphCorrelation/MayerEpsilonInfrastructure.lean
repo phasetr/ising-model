@@ -2,19 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon
 
 /-!
-# Concrete Mayer epsilon infrastructure wrappers
+# ℤ^d signs of the leading Mayer terms and the edgeless polymer set
 
-Narrow child module for concrete `ℤ^d` epsilon infrastructure wrappers,
-the first Mayer-term sign wrappers, and the edgeless `allPolymers` wrapper.
-This keeps callers that only need these forwarders out of the monolithic
-lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the signs of the
+leading Mayer expansion terms of the induced subgraph — the order-`1` term is nonnegative and
+the order-`2` term is nonpositive — together with the vanishing of the polymer set of that
+subgraph when its edge set is empty. The sign statements assume `0 ≤ t` on the activity and
+nothing else; the polymer statement assumes only that empty edge set.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### §18.5 ε(t) infrastructure + Mayer term sign + allPolymers
-empty ℤ^d wraps -/
 
 /-- **ℤ^d Λ: 0 ≤ mayerExpansionTerm at n = 1** under `0 ≤ t`. -/
 theorem mayerExpansionTerm_Λ_latticeGraph_one_nonneg_of_nonneg
@@ -36,14 +34,6 @@ theorem mayerExpansionTerm_Λ_latticeGraph_two_nonpos_of_nonneg
   Ambient.mayerExpansionTerm_Λ_two_nonpos_of_nonneg
     (IsingModel.latticeGraph d) Λ ht
 
-/-! ## Moved: Λ-direct ε(t) infrastructure wrappers
-
-The three `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_*` wrappers
-(`_at_zero`, `_continuous`, `_lt_one_eventually`) now live in
-`MayerEpsilonInfrastructureVdSum.lean`. -/
-
-
-
 /-- **ℤ^d Λ: allPolymers = ∅ on edgeless induced graphs**. -/
 theorem allPolymers_Λ_latticeGraph_eq_empty_of_edgeFinset_empty
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
@@ -54,15 +44,6 @@ theorem allPolymers_Λ_latticeGraph_eq_empty_of_edgeFinset_empty
         (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅ :=
   Ambient.allPolymers_Λ_eq_empty_of_edgeFinset_empty
     (IsingModel.latticeGraph d) Λ h_empty
-
-/-! ## Moved: AlongExhaustion mayer-epsilon infrastructure wrappers
-
-The six AlongExhaustion `mayer*AlongExhaustion_latticeGraph_*` /
-`vdPolymerFamilies_sumAlongExhaustion_*` /
-`allPolymersAlongExhaustion_*` infrastructure wrappers now live in
-`MayerEpsilonInfrastructureAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

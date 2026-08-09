@@ -1,13 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete log_partitionFunctionΛ monotonicity wrappers
+# ℤ^d parameter monotonicity of the log partition function on a fixed volume
 
-Narrow child module for three ℤ^d Λ-layer log-monotonicity wrappers:
-`log_partitionFunctionΛ_latticeGraph_monotone_{J,h,beta}`. Each wrapper
-is a thin pass-through to the corresponding ambient
-`log_partitionFunctionΛ_monotone_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the monotonicity of
+the logarithm of the partition function in each parameter of the record `⟨J, h, β⟩`
+separately. In each statement the frozen parameters carry their ferromagnetic signs —
+nonnegative coupling and field, strictly positive inverse temperature — the varying parameter
+starts from a nonnegative value, strictly positive in the case of the inverse temperature, and
+`Λ` is not assumed nonempty.
 -/
 
 namespace IsingModel

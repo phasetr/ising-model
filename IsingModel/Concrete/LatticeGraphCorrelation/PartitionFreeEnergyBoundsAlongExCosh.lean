@@ -1,17 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d partitionFunctionAlongEx 2^|Λ_n| / (2 cosh)^|Λ_n| wrappers
+# ℤ^d per-stage lower bounds on the partition function, cubic exhaustion
 
-Narrow child module for four ℤ^d ferromagnetic
-`partitionFunctionAlongExhaustion_latticeGraph_*` and
-`log_partitionFunctionAlongExhaustion_latticeGraph_*` bound wrappers
-extracted from `PartitionFreeEnergyBoundsAlongEx.lean`:
-
-* `partitionFunctionAlongExhaustion_latticeGraph_ge_two_pow_card`,
-* `partitionFunctionAlongExhaustion_latticeGraph_ge_two_cosh_pow_card`,
-* `log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two`,
-* `log_partitionFunctionAlongExhaustion_latticeGraph_ge_card_mul_log_two_cosh`.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at a fixed
+stage `n`, the ferromagnetic lower bounds `2 ^ |Λ_n|` and `(2 * cosh (β * h)) ^ |Λ_n|` on the
+partition function, together with their logarithmic forms `|Λ_n| * log 2` and
+`|Λ_n| * log (2 * cosh (β * h))`. Every statement assumes the ferromagnetic hypothesis on the
+parameter record, and none assumes the stage volume nonempty.
 -/
 
 namespace IsingModel

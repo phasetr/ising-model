@@ -2,17 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
-# Concrete Mayer epsilon positivity wrappers
+# ℤ^d positivity and vanishing of the nonempty-family activity sum
 
-Narrow child module for concrete `ℤ^d` `ε(t)` and `polymerFreeEnergy`
-positivity/zero iff wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the
+characterisations of when the activity sum over the vertex-disjoint compatible polymer
+families of the induced subgraph other than the empty one is strictly positive and of when it
+vanishes: it is strictly positive exactly when the activity is strictly positive and that
+subgraph has at least one polymer, and it vanishes exactly when the activity is `0` or that
+subgraph has none. Each characterisation is given at a bare activity under `0 ≤ t` and at the
+activity `tanh (β * J)` under `0 ≤ β * J`, with no sign condition on `β` or `J` separately.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### §18.5 ε(t) / polymerFreeEnergy positivity-iff ℤ^d wraps -/
 
 /-- **ℤ^d Λ: 0 < ε(t) ↔ 0 < t ∧ allPolymers ≠ ∅**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_pos_iff
@@ -71,21 +73,6 @@ vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_tanh_eq_zero_iff
           (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅ :=
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_tanh_eq_zero_iff
     (IsingModel.latticeGraph d) Λ hβJ
-
-/-! ## Moved: polymerFreeEnergy_Λ_tanh _iff wrappers
-
-The two Λ-direct `polymerFreeEnergy_Λ_latticeGraph_tanh_{pos,eq_zero}_iff`
-wrappers now live in `MayerEpsilonPositivityPFE.lean`. -/
-
-
-
-/-! ## Moved: AlongExhaustion mayer-epsilon positivity / equality wrappers
-
-The six AlongExhaustion `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*`
-and `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*` positivity /
-equality wrappers now live in `MayerEpsilonPositivityAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

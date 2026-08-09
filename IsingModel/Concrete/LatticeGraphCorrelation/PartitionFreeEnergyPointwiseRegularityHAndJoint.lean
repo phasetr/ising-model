@@ -2,16 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularity
 
 /-!
-# ℤ^d partitionFunctionAlongExhaustion h / joint pointwise regularity wrappers
+# ℤ^d pointwise regularity of the partition function in the field and jointly
 
-Narrow child module for four ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_*` wrappers extracted from
-`PartitionFreeEnergyPointwiseRegularity.lean`:
-
-* `continuousAt_h`,
-* `differentiableAt_h`,
-* `continuousAt_joint`,
-* `differentiableAt_joint`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the pointwise regularity of the partition function in
+the external field with the coupling and the inverse temperature fixed, and jointly in the
+triple `(β, J, h)` read off a point of `ℝ × ℝ × ℝ`: `ContinuousAt` and `DifferentiableAt ℝ` in
+each case. No sign condition on any parameter is imposed.
 -/
 
 namespace IsingModel

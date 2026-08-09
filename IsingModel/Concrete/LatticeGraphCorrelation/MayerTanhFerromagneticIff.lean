@@ -2,18 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaTanhFerroIff
 
 /-!
-# Concrete Mayer tanh ferromagnetic iff wrappers
+# ℤ^d ferromagnetic sign characterisations of the polymer free energy
 
-Narrow child module for concrete `Z^d` ferromagnetic tanh iff wrappers for
-`polymerFreeEnergy` and `vdPolymerFamilies_sum`. This keeps callers that only
-need these forwarders out of the monolithic lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the ferromagnetic
+characterisations of `polymerFreeEnergy` at the activity `tanh (β * J)` against the activity
+sum over the vertex-disjoint compatible polymer families of the induced subgraph other than
+the empty one: the free energy is strictly below that sum exactly when the sum is strictly
+positive, it vanishes exactly when the sum vanishes, and it is strictly positive exactly when
+the sum is; and, unfolding those right-hand sides, it is strictly positive exactly when the
+activity is strictly positive and the induced subgraph has at least one polymer, and it
+vanishes exactly when the activity is `0` or that subgraph has none. Every statement here
+assumes `0 ≤ β` and `0 ≤ J` separately, not merely `0 ≤ β * J`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### §18.5 polymerFreeEnergy/vdSum tanh ferromagnetic iff family
-Z^d wraps -/
 
 /-- **Z^d Λ: pFE(tanh) < eps(tanh) iff eps(tanh) > 0** (ferro). -/
 theorem polymerFreeEnergy_Λ_latticeGraph_tanh_lt_eps_iff_eps_pos_ferro
@@ -88,22 +91,6 @@ theorem polymerFreeEnergy_Λ_latticeGraph_tanh_eq_zero_iff_ferro
           (inducedGraph (IsingModel.latticeGraph d) Λ) = ∅ :=
   Ambient.polymerFreeEnergy_Λ_tanh_eq_zero_iff_ferro
     (IsingModel.latticeGraph d) Λ hβ hJ
-
-/-! ## Moved: Λ-layer vdSum iff and pFE-comparison-under-eps-pos wrappers
-
-The four wrappers
-`vdPolymerFamilies_sum_Λ_latticeGraph_tanh_gt_one_iff_ferro`,
-`vdPolymerFamilies_sum_Λ_latticeGraph_tanh_eq_one_iff_ferro`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_lt_pow_sub_one_of_eps_pos_ferro`,
-`polymerFreeEnergy_Λ_latticeGraph_tanh_lt_eps_of_eps_pos_ferro` now
-live in `MayerTanhFerromagneticIffVdSum.lean`. -/
-
-
-/-! ## Moved: AlongExhaustion Mayer tanh ferromagnetic iff wrappers
-
-The four `*AlongExhaustion_latticeGraph_tanh_*_ferro` tail wrappers
-live in `MayerTanhFerromagneticIffAlongExTail.lean`. -/
-
 
 end Ambient
 end IsingModel

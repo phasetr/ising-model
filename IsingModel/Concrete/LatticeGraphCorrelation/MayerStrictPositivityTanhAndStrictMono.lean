@@ -2,15 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
-# ℤ^d Λ-tanh / strictMono mayer wrappers
+# ℤ^d strict polymer bounds at the `tanh` activity and strict monotonicity
 
-Narrow child module for four ℤ^d Λ-tanh / strictMono mayer wrappers
-extracted from `MayerStrictPositivity.lean`:
-
-* `vdPolymerFamilies_sum_Λ_latticeGraph_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`,
-* `polymerFreeEnergy_Λ_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the strict
+statements available once the induced subgraph has at least one polymer: at the activity
+`tanh (β * J)` the activity sum over the vertex-disjoint compatible polymer families exceeds
+`1`, and the sum over the families other than the empty one is strictly positive, each under
+`0 < tanh (β * J)`; and `polymerFreeEnergy` and that activity sum are each
+`StrictMonoOn (Set.Ioi 0)`, with no hypothesis beyond the nonempty polymer set.
 -/
 
 namespace IsingModel

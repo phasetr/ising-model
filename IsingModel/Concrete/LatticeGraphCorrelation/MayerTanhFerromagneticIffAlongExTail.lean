@@ -2,25 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerTanhFerromagneticIff
 
 /-!
-# Concrete along-ex tanh ferromagnetic tail wrappers (vd + pow_sub_one)
+# ℤ^d ferromagnetic thresholds and strict bounds, along an exhaustion
 
-Narrow child module for 4 ℤ^d along-exhaustion ferromagnetic
-trailing wrappers:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_gt_one_iff_ferro`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_eq_one_iff_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_pow_sub_one_of_eps_pos_ferro`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_lt_eps_of_eps_pos_ferro`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
-polymerFreeEnergyAlongExhaustion_*}_ferro` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, at the activity `tanh (β * J)`, the ferromagnetic thresholds for the activity sum
+over the vertex-disjoint compatible polymer families of the stage-`n` induced subgraph — it
+exceeds `1` exactly when the activity is strictly positive and that subgraph has at least one
+polymer, and it equals `1` exactly when the activity is `0` or that subgraph has none —
+together with strict upper bounds on `polymerFreeEnergy`, by `(1 + tanh (β * J)) ^ |E_n| - 1`
+and by the activity sum over the families other than the empty one. Every statement assumes
+`0 ≤ β` and `0 ≤ J` separately; the strict upper bounds assume in addition that the latter sum
+is strictly positive.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **Z^d along-ex: 1 < vdSum(tanh) iff 0 < tanh and allPolymers nonempty**
 (ferro). -/

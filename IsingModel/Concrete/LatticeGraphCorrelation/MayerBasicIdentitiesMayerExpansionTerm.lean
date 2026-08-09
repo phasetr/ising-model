@@ -2,15 +2,12 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
-# ℤ^d mayerExpansionTerm_Λ_latticeGraph wrappers
+# ℤ^d Mayer expansion term at its trivial orders and at zero activity
 
-Narrow child module for three ℤ^d
-`mayerExpansionTerm_Λ_latticeGraph_*` wrappers extracted from
-`MayerBasicIdentities.lean`:
-
-* `mayerExpansionTerm_Λ_latticeGraph_zero`,
-* `mayerExpansionTerm_Λ_latticeGraph_one`,
-* `mayerExpansionTerm_Λ_latticeGraph_at_zero`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the values of a
+single Mayer expansion term of the induced subgraph: it vanishes at order `0` and at activity
+`0`, and at order `1` it is the activity sum `∑_P t ^ |P|` over the polymers of that subgraph.
+No condition on the activity or on the order is imposed.
 -/
 
 namespace IsingModel

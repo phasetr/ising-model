@@ -1,19 +1,21 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete partition/free-energy parameter monotonicity wrappers
+# ℤ^d per-stage free-energy upper bound and comparison with the zero-parameter values
 
-Thin `ℤ^d` specializations of finite-volume and along-exhaustion partition /
-free-energy monotonicity statements.  These wrappers keep downstream users from
-importing the original concrete correlation module when they only need parameter
-monotonicity or zero-parameter comparison facts.
+Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n`, the explicit per-stage
+upper bound `log 2 + |β| * (|J| * |E_n| + |h| * |Λ_n|) / |Λ_n|` on the free-energy density,
+along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` and along `Ambient.cubicExhaustion d`,
+together with the comparison along the cubic exhaustion placing the free-energy density and
+the partition function at the parameter record `⟨0, 0, β⟩` at or below their values at
+`⟨J, h, β⟩`. The upper bounds assume the stage volume nonempty and nothing about the
+parameters; the comparisons assume `0 ≤ J`, `0 ≤ h` and `0 < β` and nothing about the stage
+volume.
 -/
 
 namespace IsingModel
 
 namespace Ambient
-
-/-! ## Along-exhaustion free-energy bounds and monotonicity -/
 
 /-- **ℤ^d per-stage explicit upper bound on freeEnergyAlongExhaustion**. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_upper_bound
@@ -43,24 +45,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_upper_bound
   freeEnergyAlongExhaustion_upper_bound
     (IsingModel.latticeGraph d) Λ p n hne
 
-/-! ## Moved: freeEnergyAlongExhaustion monotonicity wrappers
-
-The three wrappers
-`freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
-now live in `PartitionFreeEnergyMonotonicityFreeEnergyAlongExCubic.lean`.
-Their three non-`cubicExhaustion` companions had no consumers and were
-deleted in PR #4754. -/
-
-
-/-! ## Moved: along-exhaustion `log_partitionFunctionAlongExhaustion` monotonicity wrappers
-
-The three wrappers
-`log_partitionFunctionAlongExhaustion_latticeGraph_monotone_J`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_monotone_h`,
-`log_partitionFunctionAlongExhaustion_latticeGraph_monotone_beta` now live in
-`PartitionFreeEnergyMonotonicityAlongExLog.lean`. -/
-
-
 /-- **ℤ^d freeEnergyAlongExhaustion ≥ zero_params**: `f(0,0,β) ≤ f(J,h,β)`. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_ge_zero_params
     (d : ℕ) {J h β : ℝ} (hJ : 0 ≤ J) (hh : 0 ≤ h) (hβ : 0 < β) (n : ℕ) :
@@ -80,22 +64,6 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_ge_zero_params
         (Ambient.cubicExhaustion d) ⟨J, h, β⟩ n :=
   partitionFunctionAlongExhaustion_ge_zero_params (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) hJ hh hβ n
-
-/-! ## Lambda-layer partition-function monotonicity -/
-
-/-! ## Moved: Λ-layer partitionFunctionΛ / log_partitionFunctionΛ monotonicity wrappers
-
-The six wrappers `partitionFunctionΛ_latticeGraph_monotone_{J,h,beta}`
-and `log_partitionFunctionΛ_latticeGraph_monotone_{J,h,beta}` now live in
-`PartitionFreeEnergyMonotonicityLambda.lean`. -/
-
-/-! ## Moved: cubic log monotone wrappers
-
-The three
-`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
-wrappers now live in `PartitionFreeEnergyMonotonicityCubicLog.lean`. -/
-
-
 
 end Ambient
 

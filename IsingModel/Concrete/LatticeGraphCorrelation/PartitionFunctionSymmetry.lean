@@ -2,18 +2,17 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete partition-function symmetry wrappers
+# ℤ^d evenness of the partition function in the external field
 
-Narrow child module for concrete `latticeGraph` partition-function h-symmetry,
-absolute-field rewrite, and absolute-field monotonicity wrappers. The theorem
-names are the same as the former declarations, but callers can now avoid
-importing the monolithic concrete module.
+Instantiates at `IsingModel.latticeGraph d` the evenness of the partition function under
+negating the external field, on a fixed finite volume `Λ` and also on the stage-`n` volume of
+`Ambient.cubicExhaustion d`, together with its rewriting at `|h|` and its monotonicity in `|h|`,
+each of which is stated on a fixed finite volume `Λ` only. The evenness and rewriting statements
+carry no hypothesis; the monotonicity statement assumes `0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d partition-function h-symmetry and absolute-field wrappers -/
 
 /-- **ℤ^d partitionFunctionΛ h-evenness** (any Finset):
 `Z_Λ(J, -h, β) = Z_Λ(J, h, β)`. -/
@@ -61,33 +60,6 @@ theorem partitionFunctionΛ_latticeGraph_monotone_abs_h
       ≤ partitionFunctionΛ (IsingModel.latticeGraph d) Λ
           (⟨J, h₂, β⟩ : IsingParams ℝ) :=
   partitionFunctionΛ_monotone_abs_h (IsingModel.latticeGraph d) Λ J β hJ hβ hh
-
-/-! ## Moved: partitionFunctionAlongEx |h|-symmetry wrappers
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_neg_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_eq_abs_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_monotone_abs_h`
-now live in `PartitionFunctionSymmetryAlongEx.lean`. -/
-
-
-/-! ## Removed: cubicExhaustion abs-h wrappers
-
-The two ℤ^d cubic-exhaustion `partitionFunctionAlongExhaustion` absolute-field
-wrappers of this family had no consumers and were deleted in PR #4754.  The
-`log_` variants remain in `PartitionFunctionSymmetryLogCubic.lean`. -/
-
-
-
-/-! ## Moved: log partition-function h-symmetry wrappers
-
-The six ℤ^d `log_partitionFunction*` h-symmetry wrappers (`_neg_h`,
-`_eq_abs_h`, `_monotone_abs_h`, at the Λ-direct and cubicExhaustion
-along-exhaustion variants) now live in
-`PartitionFunctionSymmetryLog.lean` and its
-`PartitionFunctionSymmetryLogCubic.lean` child. -/
-
 
 end Ambient
 end IsingModel

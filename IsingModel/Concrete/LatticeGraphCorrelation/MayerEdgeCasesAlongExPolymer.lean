@@ -2,21 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases
 
 /-!
-# Concrete along-ex polymerFreeEnergy = mayerPartialSum edge cases
+# ℤ^d polymer free energy at trivial activities, along an exhaustion
 
-Narrow child module for four ℤ^d
-`polymerFreeEnergyAlongExhaustion_latticeGraph_eq_mayerPartialSum_at`
-wrappers (`{_zero, _betaJ_zero, _beta_zero, _J_zero}`).
-Each wrapper is a thin pass-through to the corresponding
-ambient `polymerFreeEnergyAlongExhaustion_eq_mayerPartialSum_at_*`
-lemma at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the agreement of `polymerFreeEnergy` on the stage-`n` induced subgraph with the
+Mayer partial sum at every truncation order, at the activity slices where each side is
+trivial: at the bare activity `0`, and at the activity `tanh (β * J)` under `β * J = 0`, at
+`β = 0`, and at `J = 0`. Only the statement at a general parameter pair assumes anything about
+the parameters, namely `β * J = 0`; the remaining `tanh` statements substitute `0` for `β` and
+for `J` literally and leave the other parameter arbitrary.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
 
 /-- **ℤ^d along-ex: polymerFreeEnergy = mayerPartialSum at t = 0**. -/
 theorem

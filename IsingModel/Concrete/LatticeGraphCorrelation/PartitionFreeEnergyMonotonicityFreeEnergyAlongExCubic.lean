@@ -1,19 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d cubicExhaustion freeEnergyAlongEx monotone wrappers
+# ℤ^d per-stage parameter monotonicity of the free-energy density, cubic exhaustion
 
-Narrow child module for three ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_*`
-wrappers of the along-exhaustion free-energy monotonicity family:
-
-* `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_J`,
-* `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_h`,
-* `freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_monotone_beta`.
-
-Each result instantiates the corresponding generic
-`freeEnergyAlongExhaustion_monotone_*` lemma at the concrete cubic
-exhaustion.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at a fixed
+stage `n`, the `MonotoneOn` statements for the free-energy density in each parameter of the
+record `⟨J, h, β⟩` separately: in the coupling and in the field on `Set.Ici 0`, and in the
+inverse temperature on `Set.Ioi 0`. In each statement the frozen parameters carry their
+ferromagnetic signs, and no condition on the stage volume is imposed.
 -/
 
 namespace IsingModel

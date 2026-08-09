@@ -1,20 +1,14 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionClosedFormsCubicLambda
 
 /-!
-# ℤ^d cubicExhaustion-Λ `log_partitionFunctionΛ` closed-form wrappers
+# ℤ^d closed forms for the log partition function on the cubic box
 
-Narrow child module for three ℤ^d cubicExhaustion-Λ
-`log_partitionFunctionΛ_*` closed-form wrappers extracted from
-`PartitionFunctionClosedFormsCubicLambda.lean`:
-
-* `log_partitionFunctionΛ_latticeGraph_cubicExhaustion_J_zero`,
-* `log_partitionFunctionΛ_latticeGraph_cubicExhaustion_beta_zero`,
-* `log_partitionFunctionΛ_latticeGraph_cubicExhaustion_zero_params`.
-
-Each result is derived from the corresponding
-`partitionFunctionΛ_latticeGraph_cubicExhaustion_*` closed form via
-`Real.log_pow`. The theorem names are unchanged from the former
-`PartitionFunctionClosedFormsCubicLambda` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on the stage-`n` volume of
+`Ambient.cubicExhaustion d` taken as a fixed finite volume, the logarithmic forms of the
+degenerate closed forms for the partition function: `|Λ_n| * log (2 * cosh (β * h))` at zero
+coupling, and `|Λ_n| * log 2` at zero inverse temperature and at zero coupling with zero
+field. Each is obtained from the corresponding closed form by `Real.log_pow`, and none carries
+a hypothesis.
 -/
 
 namespace IsingModel

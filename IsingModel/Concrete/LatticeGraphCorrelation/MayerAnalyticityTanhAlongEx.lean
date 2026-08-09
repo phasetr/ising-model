@@ -2,19 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 
 /-!
-# ℤ^d AlongExhaustion mayerPartialSum tanh analyticity wrappers
+# ℤ^d analyticity of the Mayer partial sum at the `tanh` activity
 
-Narrow child module for four ℤ^d
-`mayerPartialSumAlongExhaustion_latticeGraph_tanh_analytic*` wrappers:
-
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticAt_beta`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticAt_J`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticOnNhd_beta`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_analyticOnNhd_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.mayerPartialSumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the analyticity of `mayerPartialSum` of the stage-`n` induced subgraph evaluated
+at the activity `tanh (β * J)`, separately in the inverse temperature with the coupling fixed
+and in the coupling with the inverse temperature fixed: `AnalyticAt ℝ` at an arbitrary point
+of the varying parameter, and `AnalyticOnNhd ℝ` on `Set.univ`. No sign condition on either
+parameter is imposed.
 -/
 
 namespace IsingModel

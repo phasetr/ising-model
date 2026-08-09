@@ -2,14 +2,13 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d log_partitionFunctionAlongEx cubicExhaustion |h| wrappers
+# ℤ^d evenness of the log partition function in the field, cubic exhaustion
 
-Narrow child module for three ℤ^d
-`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
-|h|-related wrappers extracted from
-`PartitionFunctionSymmetryLog.lean`:
-
-* `_neg_h`, `_eq_abs_h`, `_monotone_abs_h`.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at a fixed
+stage `n`, the evenness of the logarithm of the partition function under negating the external
+field, its rewriting at `|h|`, and its monotonicity in `|h|`. The evenness and rewriting
+statements carry no hypothesis; the monotonicity statement assumes `0 ≤ J`, `0 < β` and
+`|h₁| ≤ |h₂|`.
 -/
 
 namespace IsingModel

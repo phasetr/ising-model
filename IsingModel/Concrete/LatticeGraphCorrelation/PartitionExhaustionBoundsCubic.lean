@@ -1,20 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d cubicExhaustion partitionFunctionAlongEx volume + pos wrappers
+# ℤ^d partition function along the cubic exhaustion: volume growth and positivity
 
-Narrow child module for three ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
-wrappers extracted from `PartitionExhaustionBounds.lean`:
-
-* `log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume`,
-* `partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_monotone_volume`,
-* `partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_pos`.
-
-Each result instantiates the corresponding generic
-`partitionFunctionAlongExhaustion_*` lemma at the concrete cubic
-exhaustion. The theorem names are unchanged from the former
-`PartitionExhaustionBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d`, whose
+stage-`n` volume is the box `{x | ∀ i, -n ≤ x i ≤ n}`, the passage from stage `n` to stage
+`n + 1`: the partition function does not decrease, and neither does its logarithm, under the
+ferromagnetic hypothesis on the parameter record. Strict positivity of the partition function
+is stated separately and carries no hypothesis.
 -/
 
 namespace IsingModel

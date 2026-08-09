@@ -2,18 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon
 
 /-!
-# Concrete Mayer recurrence and polymer free-energy HasSum wrappers
+# ℤ^d Mayer recurrence and the logarithmic series for the polymer free energy
 
-Narrow child module for concrete `ℤ^d` Mayer recurrence wrappers,
-`polymerFreeEnergy` log-series `HasSum` wrappers, and the
-`vdPolymerFamilies_sum - 1` tendsto-zero wrapper. This keeps callers that only
-need these forwarders out of the monolithic lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the step recurrence
+between consecutive Mayer partial sums of the induced subgraph and its rearrangement giving a
+Mayer expansion term as the difference of consecutive partial sums; the alternating
+logarithmic series in the activity sum over the vertex-disjoint compatible polymer families
+other than the empty one, which `HasSum`s to `polymerFreeEnergy` whenever the absolute value
+of that sum is strictly below `1`, together with the same conclusion holding eventually as the
+activity tends to `0`; and the convergence of that activity sum to `0` as the activity tends
+to `0`. The recurrence statements assume nothing about the activity, and the series statement
+carries its convergence hypothesis in the activity sum itself rather than in the activity.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### §18.5 Mayer recurrence + hasSum + tendsto ℤ^d wraps -/
 
 /-- **ℤ^d Λ: mayerPartialSum recurrence** in `N`. -/
 theorem mayerPartialSum_Λ_latticeGraph_succ
@@ -89,18 +92,6 @@ theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_tendsto_zero
         ∏ P ∈ Γ, t ^ P.card) (nhds 0) (nhds 0) :=
   Ambient.vdPolymerFamilies_sum_Λ_minus_one_tendsto_zero
     (IsingModel.latticeGraph d) Λ
-
-/-! ## Moved: AlongExhaustion mayer recurrence / hasSum wrappers
-
-The five AlongExhaustion mayer recurrence / hasSum wrappers
-(`mayerPartialSumAlongExhaustion_latticeGraph_succ`,
-`mayerExpansionTermAlongExhaustion_latticeGraph_eq_mayerPartialSum_diff`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_hasSum_via_log`,
-`polymerFreeEnergyAlongExhaustion_latticeGraph_hasSum_via_log_eventually`,
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tendsto_zero`)
-now live in `MayerRecurrenceHasSumAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

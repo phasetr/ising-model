@@ -1,12 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete log/partitionFunctionAlongEx tendsto_atTop wrappers
+# ℤ^d divergence of the partition function along an exhaustion
 
-Narrow child module for four ℤ^d
-`{log_,}partitionFunctionAlongExhaustion_latticeGraph_tendsto_atTop{_general,}`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `*_tendsto_atTop_*` lemma at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and along `Ambient.cubicExhaustion d`, the divergence to `atTop` of the partition
+function and of its logarithm as the stage index grows. Each statement assumes the
+ferromagnetic hypothesis on the parameter record and the instance `Infinite (Fin d → ℤ)`, and
+nothing else.
 -/
 
 namespace IsingModel

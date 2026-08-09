@@ -2,19 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymer
 
 /-!
-# ℤ^d vdPolymerFamilies_sumAlongEx t-regularity wrappers
+# ℤ^d regularity of the polymer activity sum in the activity
 
-Narrow child module for three ℤ^d
-`vdPolymerFamilies_sumAlongExhaustion_latticeGraph_*` t-regularity
-wrappers:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_continuous`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_differentiable`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_hasDerivAt`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.vdPolymerFamilies_sumAlongExhaustion_*` regularity lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the regularity in the activity of the activity sum over the vertex-disjoint
+compatible polymer families of the stage-`n` induced subgraph: it is `Continuous` and
+`Differentiable ℝ`, and it `HasDerivAt` the termwise derivative
+`∑_Γ ∑_{Q ∈ Γ} (∏_{P ∈ Γ.erase Q} t ^ |P|) * (|Q| * t ^ (|Q| - 1))`. No condition on the
+activity is imposed.
 -/
 
 namespace IsingModel

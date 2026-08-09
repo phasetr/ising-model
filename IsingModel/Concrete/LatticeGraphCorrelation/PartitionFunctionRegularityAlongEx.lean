@@ -2,14 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionRegularity
 
 /-!
-# Concrete partitionFunctionAlongExhaustion regularity at `h = 0`
+# ℤ^d analyticity of the partition function at zero field, along an exhaustion
 
-Narrow child module for four ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_*_h_zero` regularity
-wrappers (analyticAt/analyticOnNhd in β/J at
-`h = 0`). Each wrapper is a thin pass-through to the corresponding
-ambient `partitionFunctionAlongExhaustion_*_h_zero` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the analyticity of the partition function at the
+parameter record `⟨J, 0, β⟩`: `AnalyticAt ℝ` in the inverse temperature with the coupling
+fixed and in the coupling with the inverse temperature fixed, and `AnalyticOnNhd ℝ` on
+`Set.univ` in each of those directions. No sign condition on either parameter is imposed.
 -/
 
 namespace IsingModel

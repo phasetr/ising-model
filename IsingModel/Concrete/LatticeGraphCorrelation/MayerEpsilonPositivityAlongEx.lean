@@ -2,16 +2,16 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 
 /-!
-# ℤ^d AlongExhaustion mayer-epsilon positivity / equality wrappers
+# ℤ^d positivity and vanishing of the nonempty-family sum, along an exhaustion
 
-Narrow child module for four ℤ^d AlongExhaustion mayer-epsilon
-positivity / equality wrappers extracted from
-`MayerEpsilonPositivity.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pos_iff`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_eq_zero_iff`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_pos_iff`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_eq_zero_iff`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the characterisations of when the activity sum over the vertex-disjoint
+compatible polymer families of the stage-`n` induced subgraph other than the empty one is
+strictly positive and of when it vanishes: it is strictly positive exactly when the activity
+is strictly positive and that subgraph has at least one polymer, and it vanishes exactly when
+the activity is `0` or that subgraph has none. Each characterisation is given at a bare
+activity under `0 ≤ t` and at the activity `tanh (β * J)` under `0 ≤ β * J`, with no sign
+condition on `β` or `J` separately.
 -/
 
 namespace IsingModel
@@ -86,12 +86,6 @@ vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_eq_zero_iff
             (Λ.volume n)) = ∅ :=
   Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_tanh_eq_zero_iff
     (IsingModel.latticeGraph d) Λ hβJ n
-
-/-! ## Moved: polymerFreeEnergyAlongExhaustion_tanh _iff wrappers
-
-The two along-ex `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_{pos,eq_zero}_iff`
-wrappers now live in `MayerEpsilonPositivityAlongExPFE.lean`. -/
-
 
 end Ambient
 end IsingModel

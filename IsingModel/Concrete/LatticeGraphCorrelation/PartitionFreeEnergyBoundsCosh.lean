@@ -1,14 +1,12 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d partition (2 cosh)^|Λ| sharp bound wrappers
+# ℤ^d sharp cosh lower bounds on the partition function on a fixed volume
 
-Narrow child module for two ℤ^d sharp ferromagnetic `(2 cosh βh)^|Λ|`
-partition-function bound wrappers extracted from
-`PartitionFreeEnergyBounds.lean`:
-
-* `partitionFunctionΛ_latticeGraph_ge_two_cosh_pow_card`,
-* `log_partitionFunctionΛ_latticeGraph_ge_card_mul_log_two_cosh`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the sharpened
+ferromagnetic lower bound `(2 * cosh (β * h)) ^ |Λ|` on the partition function and its
+logarithmic form `|Λ| * log (2 * cosh (β * h))`. Each statement assumes the ferromagnetic
+hypothesis on the parameter record, and none assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

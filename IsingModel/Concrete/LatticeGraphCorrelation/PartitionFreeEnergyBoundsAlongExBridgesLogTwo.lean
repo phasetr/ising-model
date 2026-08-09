@@ -1,11 +1,14 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyAlongEx ge_log_two wrappers
+# ℤ^d per-stage lower bounds on the free-energy density
 
-Narrow child module for four ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_{cubicExhaustion,}_ge_log_two{,_cosh}`
-wrappers of the per-stage free-energy bound family.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and along `Ambient.cubicExhaustion d`, the per-stage lower bounds `log 2` and
+`log (2 * cosh (β * h))` on the free-energy density, which at stage `n` is the logarithm of
+the partition function divided by the stage volume. Every statement assumes the ferromagnetic
+signs `0 ≤ J`, `0 ≤ h` and `0 < β` on the parameter record `⟨J, h, β⟩`, and every statement
+assumes the stage volume nonempty.
 -/
 
 namespace IsingModel
@@ -52,7 +55,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_ge_log_two_cosh
         (⟨J, h, β⟩ : IsingParams ℝ) n :=
   freeEnergyAlongExhaustion_ge_log_two_cosh (IsingModel.latticeGraph d) Λ
     hJ hh hβ n hne
-
 
 end Ambient
 end IsingModel

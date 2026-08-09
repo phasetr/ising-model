@@ -1,20 +1,13 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-layer `freeEnergyΛ` identity/nonneg wrappers
+# ℤ^d free-energy density as a normalised logarithm, on a fixed volume
 
-Narrow child module for three ℤ^d Λ-layer
-`freeEnergyΛ_latticeGraph_*` identity / nonneg wrappers extracted from
-`PartitionFreeEnergyBounds.lean`:
-
-* `freeEnergyΛ_latticeGraph_eq_inv_card_mul_log`,
-* `freeEnergyΛ_latticeGraph_eq_inv_Λcard_mul_log`,
-* `freeEnergyΛ_latticeGraph_nonneg_of_ferromagnetic`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyΛ_*` lemma at `G := IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`PartitionFreeEnergyBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the identification
+of the free-energy density with the logarithm of the partition function scaled by the inverse
+volume, in the `Fintype.card` normalisation and in the `Finset.card` normalisation, together
+with its nonnegativity. The identities carry no hypothesis; the nonnegativity assumes the
+ferromagnetic hypothesis on the parameter record and `Λ` nonempty.
 -/
 
 namespace IsingModel

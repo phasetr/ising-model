@@ -2,27 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerFilterConnected
 
 /-!
-# Concrete §18.5 along-exhaustion Mayer filter-connected wrappers
+# ℤ^d powers of the nonempty-family activity sum and connected polymer sequences
 
-Narrow child module for 4 ℤ^d along-exhaustion §18.5 Mayer
-filter-connected wrappers:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_pow`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_filter_connected_zero`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_filter_connected_one`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_two_filter_conn_eq_incompat`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{vdPolymerFamilies_sumAlongExhaustion_*,
-mayerExpansionTermAlongExhaustion_*}` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the expansion of an arbitrary power of the activity sum over the vertex-disjoint
+compatible polymer families of the stage-`n` induced subgraph other than the empty one as a
+sum over sequences of such families, together with the description of the polymer sequences of
+that subgraph whose incompatibility graph is `Connected`: at length `0` there are none, at
+length `1` they are all of them, and at length `2` they are exactly the incompatible pairs. No
+condition on the activity or on the exponent is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
 
 /-- **ℤ^d along-ex: ε(t)^n as multi-Γ piFinset sum**. -/
 theorem

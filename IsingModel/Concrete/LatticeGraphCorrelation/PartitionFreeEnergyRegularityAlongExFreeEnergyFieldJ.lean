@@ -2,23 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFE
 
 /-!
-# ℤ^d along-ex freeEnergyAlongEx field/J regularity wrappers
+# ℤ^d global regularity of the free-energy density in the field and the coupling
 
-Narrow child module for four ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_*` field/J `Continuous` /
-`Differentiable` regularity wrappers extracted from
-`PartitionFreeEnergyRegularityAlongExFreeEnergy.lean`:
-
-* `freeEnergyAlongExhaustion_latticeGraph_continuous_field`,
-* `freeEnergyAlongExhaustion_latticeGraph_differentiable_field`,
-* `freeEnergyAlongExhaustion_latticeGraph_continuous_J`,
-* `freeEnergyAlongExhaustion_latticeGraph_differentiable_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.freeEnergyAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `PartitionFreeEnergyRegularityAlongExFreeEnergy`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the regularity of the free-energy density as a function
+of one parameter of the record `⟨J, h, β⟩` with the others fixed: `Continuous` and
+`Differentiable ℝ` in the external field, and `Continuous` and `Differentiable ℝ` in the
+coupling, in each case on the whole line. No sign condition on any parameter is imposed.
 -/
 
 namespace IsingModel

@@ -1,24 +1,19 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete ℤ^d freeEnergyAlongExhaustion identity wrappers
+# ℤ^d free-energy density as a normalised logarithm, along an exhaustion
 
-Narrow child module for the 4 ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_*` per-stage identity /
-nonneg wrappers (`eq_inv_card_mul_log`, `eq_inv_Λcard_mul_log`,
-`nonneg_of_ferromagnetic`, `eq_log_div_card`) extracted from
-`PartitionFreeEnergyBounds.lean` in PR #2066. Each is a thin
-pass-through to the corresponding ambient
-`freeEnergyAlongExhaustion_*` lemma at `IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`PartitionFreeEnergyBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the identification of the free-energy density with the
+logarithm of the partition function scaled by the inverse stage volume, in the `Fintype.card`
+normalisation and in the `Finset.card` normalisation, together with its nonnegativity. The
+identities carry no hypothesis; the nonnegativity assumes the ferromagnetic hypothesis on the
+parameter record and a nonempty stage volume.
 -/
 
 namespace IsingModel
 
 namespace Ambient
-
-/-! ## Along-exhaustion partition and free-energy bounds -/
 
 /-- **ℤ^d `freeEnergyAlongExhaustion = |↑(Λ_n)|⁻¹ · log Z_n`** per stage. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_eq_inv_card_mul_log

@@ -2,19 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityHZero
 
 /-!
-# Concrete partition/free-energy pointwise regularity wrappers
+# ℤ^d pointwise regularity of the partition function at zero field
 
-This module contains concrete `latticeGraph` specializations of ambient
-`ContinuousAt` and `DifferentiableAt` APIs for along-exhaustion partition
-function and free energy. It is split out of the original concrete correlation
-module so downstream users can depend on a narrower child path.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the pointwise regularity of the partition function at
+the parameter record `⟨J, 0, β⟩`: `ContinuousAt` and `DifferentiableAt ℝ` in the inverse
+temperature with the coupling fixed, and in the coupling with the inverse temperature fixed.
+No sign condition on either parameter is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d along-ex `partitionFunctionAlongExhaustion` /
-`freeEnergyAlongExhaustion` pointwise wrappers -/
 
 /-- **ℤ^d along-ex: `partitionFunctionAlongExhaustion` ContinuousAt β at h = 0**. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_continuousAt_beta_h_zero
@@ -63,35 +61,6 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_J_h_zero
         Λ ⟨J', 0, β⟩ n) J :=
   Ambient.partitionFunctionAlongExhaustion_differentiableAt_J_h_zero
     (IsingModel.latticeGraph d) Λ J β n
-
-/-! ## Moved: partitionFunctionAlongEx continuousAt/diffAt general-h
-
-The four wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_continuousAt_beta_general_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_continuousAt_J_general_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_beta_general_h`,
-`partitionFunctionAlongExhaustion_latticeGraph_differentiableAt_J_general_h`
-now live in
-`PartitionFreeEnergyPointwiseRegularityGeneralH.lean`. -/
-
-
-/-! ## Moved: partitionFunctionAlongExhaustion h / joint wrappers
-
-The four `partitionFunctionAlongExhaustion_latticeGraph_*` wrappers
-(`continuousAt_h`, `differentiableAt_h`, `continuousAt_joint`,
-`differentiableAt_joint`) now live in
-`PartitionFreeEnergyPointwiseRegularityHAndJoint.lean`. -/
-
-
-
-/-! ## Moved: freeEnergyAlongExhaustion pointwise regularity wrappers
-
-The four remaining wrappers
-`freeEnergyAlongExhaustion_latticeGraph_{continuousAt,differentiableAt}_{J,joint}`
-now live in `PartitionFreeEnergyPointwiseRegularityFreeEnergyJJoint.lean`.
-The four `{continuousAt,differentiableAt}_{beta,field}` wrappers were
-deleted; no consumer of them was found in this repository. -/
-
 
 end Ambient
 end IsingModel

@@ -2,15 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 
 /-!
-# ℤ^d AlongExhaustion tanh / strictMono mayer wrappers
+# ℤ^d strict polymer bounds at the `tanh` activity, along an exhaustion
 
-Narrow child module for four ℤ^d AlongExhaustion tanh / strictMono mayer
-wrappers extracted from `MayerStrictPositivityAlongEx.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_tanh_pos_polymers_nonempty`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_strictMonoOn_Ioi_zero_of_polymers_nonempty`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the strict statements available once the stage-`n` induced subgraph has at least
+one polymer: at the activity `tanh (β * J)` the activity sum over the vertex-disjoint
+compatible polymer families exceeds `1`, and the sum over the families other than the empty
+one is strictly positive, each under `0 < tanh (β * J)`; and `polymerFreeEnergy` and that
+activity sum are each `StrictMonoOn (Set.Ioi 0)`, with no hypothesis beyond the nonempty
+polymer set.
 -/
 
 namespace IsingModel

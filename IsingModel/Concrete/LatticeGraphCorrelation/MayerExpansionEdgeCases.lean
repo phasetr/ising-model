@@ -2,19 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Concrete Mayer expansion edge-case wrappers
+# ℤ^d order-two Mayer term and the absolute bound on a Mayer term
 
-Narrow child module for concrete `ℤ^d` Mayer expansion `n = 2`, no-polymer,
-edgeless, and absolute-bound wrappers. This keeps callers that only need these
-forwarders out of the monolithic lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the closed form of
+the order-`2` Mayer expansion term of the induced subgraph as a sum over ordered pairs of
+polymers weighted by `-1/2` on the incompatible pairs — given as a weighted sum over all
+pairs, and as `-1/2` times the sum restricted to the incompatible pairs — together with the
+absolute bound on a Mayer expansion term of arbitrary order by the sum of
+`|ursellCoefficient ω| * |clusterSeqActivity t ω|` over polymer sequences. No condition on the
+activity or on the order is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
-/-! ### §18.5 Mayer expansion edge-cases + n=2 + abs_le ℤ^d wraps -/
 
 /-- **ℤ^d Λ: mayerExpansionTerm at `n = 2`**. -/
 theorem mayerExpansionTerm_Λ_latticeGraph_two
@@ -49,15 +51,6 @@ theorem mayerExpansionTerm_Λ_latticeGraph_two_filter
   Ambient.mayerExpansionTerm_Λ_two_filter
     (IsingModel.latticeGraph d) Λ t
 
-/-! ## Moved: mayerPartialSum_Λ edge-case wrappers
-
-The three wrappers
-`mayerPartialSum_Λ_latticeGraph_two`,
-`mayerPartialSum_Λ_latticeGraph_eq_zero_of_no_polymers`,
-`mayerPartialSum_Λ_latticeGraph_eq_zero_of_edgeFinset_empty` now live
-in `MayerExpansionEdgeCasesPartialSum.lean`. -/
-
-
 /-- **ℤ^d Λ: mayerExpansionTerm absolute bound**. -/
 theorem mayerExpansionTerm_Λ_latticeGraph_abs_le
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
@@ -72,13 +65,6 @@ theorem mayerExpansionTerm_Λ_latticeGraph_abs_le
           |IsingModel.clusterSeqActivity t ω| :=
   Ambient.mayerExpansionTerm_Λ_abs_le
     (IsingModel.latticeGraph d) Λ n t
-
-/-! ## Moved: AlongExhaustion mayer-expansion edge-case wrappers
-
-The six AlongExhaustion `mayer*AlongExhaustion_latticeGraph_*` edge-case
-wrappers now live in `MayerExpansionEdgeCasesAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

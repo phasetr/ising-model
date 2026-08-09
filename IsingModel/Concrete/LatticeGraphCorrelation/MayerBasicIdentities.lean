@@ -2,20 +2,21 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaBasicIdentities
 
 /-!
-# Concrete Mayer basic identity wrappers
+# ℤ^d polymer activity sum and Mayer partial sum at their trivial arguments
 
-Narrow child module for concrete `ℤ^d` at-zero and at-one identities for
-`vdPolymerFamilies_sum`, `mayerPartialSum`, and `mayerExpansionTerm`. This
-keeps callers that only need these wrappers out of the monolithic
-lattice-correlation module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the values taken at
+trivial arguments by the activity sum `∑_Γ ∏_{P ∈ Γ} t ^ |P|` over the vertex-disjoint
+compatible polymer families of the induced subgraph and by the Mayer partial sum: the activity
+sum is `1` at activity `0` and, at activity `1`, the cardinality of that family set; the Mayer
+partial sum vanishes at truncation order `0` and at activity `0`, and at truncation order `1`
+it is `∑_P t ^ |P|` over the polymers of the induced subgraph. No condition on the activity or
+on the truncation order is imposed anywhere here.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 open Finset Real
-
-/-! ### §18.5 basic identities at_zero / at_one ℤ^d wraps -/
 
 /-- **ℤ^d Λ: vdPolymerFamilies_sum at t = 0 = 1**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_at_zero
@@ -65,22 +66,6 @@ theorem mayerPartialSum_Λ_latticeGraph_at_zero
     IsingModel.mayerPartialSum
         (inducedGraph (IsingModel.latticeGraph d) Λ) N 0 = 0 :=
   Ambient.mayerPartialSum_Λ_at_zero (IsingModel.latticeGraph d) Λ N
-
-/-! ## Moved: mayerExpansionTerm_Λ_latticeGraph wrappers
-
-The three wrappers
-`mayerExpansionTerm_Λ_latticeGraph_zero`,
-`mayerExpansionTerm_Λ_latticeGraph_one`,
-`mayerExpansionTerm_Λ_latticeGraph_at_zero` now live in
-`MayerBasicIdentitiesMayerExpansionTerm.lean`. -/
-
-
-/-! ## Moved: AlongExhaustion Mayer basic identity wrappers
-
-The three `mayerExpansionTermAlongExhaustion_latticeGraph_*` Mayer basic
-identity wrappers (at `zero` / `one` / `_at_zero`) live in
-`MayerBasicIdentitiesAlongExMayerExpansionTerm.lean`. -/
-
 
 end Ambient
 end IsingModel

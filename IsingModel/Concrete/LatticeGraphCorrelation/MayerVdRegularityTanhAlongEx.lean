@@ -2,20 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityTanh
 
 /-!
-# ℤ^d AlongExhaustion Mayer tanh regularity wrappers
+# ℤ^d regularity of the Mayer partial sum at the `tanh` activity
 
-Narrow child module for four ℤ^d
-`mayerPartialSumAlongExhaustion_latticeGraph_tanh_*` regularity
-wrappers:
-
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_continuous_beta`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_continuous_J`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_differentiable_beta`,
-* `mayerPartialSumAlongExhaustion_latticeGraph_tanh_differentiable_J`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.mayerPartialSumAlongExhaustion_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the regularity of the Mayer partial sum of the stage-`n` induced subgraph
+evaluated at the activity `tanh (β * J)`, separately in the inverse temperature with the
+coupling fixed and in the coupling with the inverse temperature fixed: `Continuous` and
+`Differentiable ℝ` in each direction. No sign condition on either parameter is imposed.
 -/
 
 namespace IsingModel
