@@ -1,20 +1,13 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.PartitionFunctionClosedForms
 
 /-!
-# ℤ^d `log_partitionFunctionΛ_latticeGraph_*` closed-form wrappers
+# ℤ^d closed forms for the log partition function at trivial parameter slices
 
-Narrow child module for three ℤ^d
-`log_partitionFunctionΛ_latticeGraph_*` closed-form wrappers
-extracted from `PartitionFunctionClosedForms.lean`:
-
-* `log_partitionFunctionΛ_latticeGraph_J_zero`,
-* `log_partitionFunctionΛ_latticeGraph_beta_zero`,
-* `log_partitionFunctionΛ_latticeGraph_zero_params`.
-
-Each result is derived from the corresponding
-`partitionFunctionΛ_latticeGraph_*` closed form via `Real.log_pow`.
-The theorem names are unchanged from the former
-`PartitionFunctionClosedForms` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the logarithmic
+forms of the degenerate closed forms for the partition function:
+`|Λ| * log (2 * cosh (β * h))` at zero coupling, and `|Λ| * log 2` at zero inverse temperature
+and at zero coupling with zero field. Each is obtained from the corresponding closed form by
+`Real.log_pow`, and none carries a hypothesis.
 -/
 
 namespace IsingModel

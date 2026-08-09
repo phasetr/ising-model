@@ -1,18 +1,17 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete partition-function closed-form wrappers
+# ℤ^d closed forms for the partition function at trivial parameter slices
 
-Narrow child module for concrete `latticeGraph` partition-function closed-form
-wrappers at trivial parameter slices. The theorem names are the same as the
-former declarations, but callers can now avoid importing the monolithic
-concrete original module.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the closed forms
+taken by the partition function where the interaction degenerates: `(2 * cosh (β * h)) ^ |Λ|`
+at zero coupling, and `2 ^ |Λ|` at zero inverse temperature and at zero coupling with zero
+field. The vanishing parameters are substituted literally, so no statement here carries a
+hypothesis.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d partition-function closed forms -/
 
 /-- **ℤ^d partitionFunctionΛ closed form at `J = 0`** (any Finset):
 `Z_Λ(⟨0, h, β⟩) = (2·cosh(β·h))^|Λ|`. -/
@@ -40,42 +39,6 @@ theorem partitionFunctionΛ_latticeGraph_zero_params
         (⟨0, 0, β⟩ : IsingParams ℝ)
       = (2 : ℝ) ^ Λ.card :=
   partitionFunctionΛ_zero_params (IsingModel.latticeGraph d) Λ β
-
-/-! ## Moved: log_partitionFunctionΛ closed-form wrappers
-
-The three wrappers
-`log_partitionFunctionΛ_latticeGraph_J_zero`,
-`log_partitionFunctionΛ_latticeGraph_beta_zero`,
-`log_partitionFunctionΛ_latticeGraph_zero_params` now live in
-`PartitionFunctionClosedFormsLog.lean`. -/
-
-
-/-! ## Moved: cubicExhaustion-Λ closed-form wrappers
-
-The six wrappers
-`partitionFunctionΛ_latticeGraph_cubicExhaustion_{J_zero,beta_zero,zero_params}`
-and `log_partitionFunctionΛ_latticeGraph_cubicExhaustion_{J_zero,beta_zero,zero_params}`
-now live in `PartitionFunctionClosedFormsCubicLambda.lean`. -/
-
-
-/-! ## Moved: along-ex closed-form trivial-slice wrappers
-
-The six wrappers
-`{partitionFunction,log_partitionFunction}AlongExhaustion_latticeGraph_*`
-(`{_beta_zero, _zero_params, _J_zero}`) now live in
-`PartitionFunctionClosedFormsAlongEx.lean`. -/
-
-
-
-/-! ## Moved: cubicExhaustion-alongEx closed-form wrappers
-
-The six wrappers
-`partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
-and
-`log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_*`
-(`{_J_zero, _beta_zero, _zero_params}` each) now live in
-`PartitionFunctionClosedFormsCubicAlongEx.lean`. -/
-
 
 end Ambient
 end IsingModel

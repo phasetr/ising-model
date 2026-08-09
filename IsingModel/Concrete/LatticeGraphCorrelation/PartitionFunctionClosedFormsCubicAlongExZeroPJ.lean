@@ -2,22 +2,13 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedForms
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d cubicExhaustion-alongEx zero_params + J_zero closed-form wrappers
+# ℤ^d closed forms for the partition function at zero coupling, cubic exhaustion
 
-Narrow child module for four ℤ^d cubicExhaustion-alongExhaustion
-closed-form wrappers extracted from
-`PartitionFunctionClosedFormsCubicAlongEx.lean`:
-
-* `partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_zero_params`,
-* `log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_zero_params`,
-* `partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_J_zero`,
-* `log_partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_J_zero`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{partition,log_partition}FunctionAlongExhaustion_*` lemma
-at the `cubicExhaustion` exhaustion. The theorem names are unchanged
-from the former `PartitionFunctionClosedFormsCubicAlongEx`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, along `Ambient.cubicExhaustion d` and at a fixed
+stage `n`, the closed forms taken by the partition function and by its logarithm at zero
+coupling with zero field, `2 ^ |Λ_n|` and `|Λ_n| * log 2`, and at zero coupling with an
+arbitrary field, `(2 * cosh (β * h)) ^ |Λ_n|` and `|Λ_n| * log (2 * cosh (β * h))`. The
+vanishing parameters are substituted literally, so no statement here carries a hypothesis.
 -/
 
 namespace IsingModel
