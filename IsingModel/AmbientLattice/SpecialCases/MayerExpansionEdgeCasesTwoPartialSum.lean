@@ -2,14 +2,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Mayer partial-sum at `N = 2` wrapper along an exhaustion
+# The Mayer partial sum at truncation order 2, along an exhaustion
 
-Narrow child module for the §18.5 along-exhaustion
-`mayerPartialSumAlongExhaustion_two` wrapper extracted from
-`MayerExpansionEdgeCasesTwo.lean`. The wrapper is a thin
-pass-through to the corresponding `mayerPartialSum_Λ_two` ambient
-lemma. The theorem name is unchanged from the former
-`MayerExpansionEdgeCases` declaration.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+At every real activity `t`, the Mayer partial sum of the stage subgraph truncated at order
+`2` is the total polymer activity `∑ P, t ^ P.card` plus `-1/2` times the sum of
+`t ^ p.card * t ^ q.card` over the ordered pairs `(p, q)` of that subgraph's polymers that
+are incompatible.
 -/
 
 namespace IsingModel

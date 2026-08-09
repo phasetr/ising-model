@@ -4,22 +4,20 @@ import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureAllPolymers
 
 /-!
-# Mayer term sign wrappers and edgeless `allPolymers` along an exhaustion
+# Sign of the order-1 and order-2 Mayer expansion terms, along an exhaustion
 
-Narrow child module for the first Mayer-term sign wrappers
-(`mayerExpansionTerm` at `n = 1`, `n = 2`) and the edgeless
-`allPolymers` wrapper along an exhaustion. This keeps callers that
-only need these forwarders out of the monolithic original special-cases
-module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+For an activity `t` with `0 ≤ t`, the Mayer expansion term of the stage subgraph is
+non-negative at order `1` and non-positive at order `2`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 ε(t) infrastructure + Mayer term sign + allPolymers
-empty along-ex wraps -/
 
 /-- **Along-ex: 0 ≤ mayerExpansionTerm at n = 1** under `0 ≤ t`. -/
 theorem mayerExpansionTermAlongExhaustion_one_nonneg_of_nonneg
@@ -38,25 +36,6 @@ theorem mayerExpansionTermAlongExhaustion_two_nonpos_of_nonneg
     IsingModel.mayerExpansionTerm (inducedGraph G (Λ.volume n)) 2 t
       ≤ 0 :=
   mayerExpansionTerm_Λ_two_nonpos_of_nonneg G (Λ.volume n) ht
-
-/-! ## Moved: 3 ε(t) infrastructure wrappers
-
-The three `vdPolymerFamilies_sumAlongExhaustion_minus_one_*` ε(t)
-infrastructure wrappers (`_at_zero`, `_continuous`,
-`_lt_one_eventually`) now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 1 allPolymers wrapper
-
-The `allPolymersAlongExhaustion_eq_empty_of_edgeFinset_empty`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureAllPolymers`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

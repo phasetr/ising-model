@@ -4,11 +4,14 @@ import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo
 import IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe
 
 /-!
-# Mayer expansion edge-case wrappers along an exhaustion
+# Vanishing of the Mayer partial sum on trivial stage subgraphs
 
-Narrow child module for along-exhaustion Mayer expansion `n = 2`, no-polymer,
-edgeless, and absolute-bound wrappers. This keeps callers that only need these
-forwarders out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+When the stage subgraph has no polymer, and when its edge finset is empty, its Mayer partial
+sum is `0`, at every truncation order `N` and every real activity `t`.
 -/
 
 namespace IsingModel
@@ -17,17 +20,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 Mayer expansion edge-cases + abs_le along-ex -/
-
-/-! ## Moved: mayer expansion `_two` wrappers
-
-The three `mayer*AlongExhaustion_two*` wrappers (`_two`,
-`_two_filter`, `mayerPartialSumAlongExhaustion_two`) now live in
-`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesTwo`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: mayerPartialSum = 0 on no-polymer graphs**. -/
 theorem mayerPartialSumAlongExhaustion_eq_zero_of_no_polymers
@@ -47,15 +39,6 @@ theorem mayerPartialSumAlongExhaustion_eq_zero_of_edgeFinset_empty
     IsingModel.mayerPartialSum (inducedGraph G (Λ.volume n)) N t = 0 :=
   mayerPartialSum_Λ_eq_zero_of_edgeFinset_empty
     G (Λ.volume n) h_empty t N
-
-/-! ## Moved: 1 mayerExpansionTerm abs_le wrapper
-
-The `mayerExpansionTermAlongExhaustion_abs_le` wrapper now lives
-in
-`IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCasesAbsLe`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel
