@@ -104,10 +104,17 @@ For `z ≠ 0` and `β ∈ ConvergenceRegion.window d J`, the distance-radius pro
 direct-path rate `−log tanh(βJ)` lower-bounds the anchored two-point function:
 `pseudoMassG α (dist 0 z) (−log tanh(βJ)) ≤ ⟨φ₀ φ_z⟩^∞`.
 
-This is the unconditional discharge of the §17.5 correlation-lower-bound hypothesis (the faithful
-distance form), previously thought gated on §18.  Proof: on the window `tanh(βJ) ≤ e⁻¹` so the rate
-`q := −log tanh(βJ) ≥ 1`, hence `q·dist ≥ 1` and
-`pseudoMassG α (dist) q ≤ e^{−q·dist} = tanh(βJ)^{dist}`
+The bound is unconditional at this rate, and at this rate only: it is the correlation lower bound
+that the rate-agnostic Lipschitz route of `UnconditionalFiniteRegionLipschitz.lean` re-parametrizes
+to.  The `hprofile` binder of the conditional modules
+(`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window_of_profile_lower` and its
+finite-region consumer) is a *different* statement, taken at the walk rate `−log (βJ·2d)`: for
+`1 ≤ d` on the window `tanh(βJ) < βJ ≤ βJ·2d`, so the direct-path rate is the larger of the two,
+and `pseudoMassG` is antitone in the rate (`pseudoMassG_antitoneOn`).  The bound proved here is
+therefore strictly weaker than that binder and does not discharge it.
+
+Proof: on the window `tanh(βJ) < e⁻¹`, so the rate `q := −log tanh(βJ)` satisfies `1 ≤ q`, hence
+`q·dist ≥ 1` and `pseudoMassG α (dist) q ≤ e^{−q·dist} = tanh(βJ)^{dist}`
 (`pseudoMassG_le_exp_neg_of_one_le`); the GKS direct-path bound
 `twoPointFunction_ge_tanh_betaJ_pow_dist` gives `tanh(βJ)^{dist} ≤ ⟨φ₀ φ_z⟩`.
 
@@ -152,8 +159,12 @@ theorem pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic_zero
 For any distinct pair `x ≠ z` and `β ∈ ConvergenceRegion.window d J`,
 `pseudoMassG α (dist x z) (−log tanh(βJ)) ≤ ⟨φ_x φ_z⟩^∞`.  Reduces to the anchored form by
 translation invariance (`correlationInfinite_latticeGraph_pair_eq_twoPointFunction`,
-`latticeDistance_translate_eq`).  This unconditionally discharges the faithful per-pair correlation
-lower bound (`hprofile`) on the window, for every pair.
+`latticeDistance_translate_eq`).  This supplies, for every pair on the window, the per-pair
+correlation lower bound at the direct-path rate `−log tanh(βJ)`, which is exactly the local
+tanh-rate hypothesis discharged inside
+`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window`.  The walk-rate `hprofile` of the
+conditional modules is the strictly stronger statement described on the anchored bound above, and is
+*not* discharged here.
 
 References: Glimm--Jaffe §17.5, Theorem 17.5.1 / Lemma 17.5.2, pp.~311--312. -/
 theorem pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic
