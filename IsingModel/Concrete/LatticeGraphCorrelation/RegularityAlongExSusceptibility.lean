@@ -13,6 +13,9 @@ temperature is treated at zero external field and again at an unrestricted one; 
 and the external field are each treated at unrestricted parameters. Every statement is in
 existence form and requires a `Fintype` instance on the edge set induced at every stage;
 that instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
+
+Reference: Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5--§17.6, where the correlation
+functions are differentiated in the parameter and the existence of such derivatives is stated.
 -/
 
 open scoped symmDiff

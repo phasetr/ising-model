@@ -12,6 +12,9 @@ unrestricted parameters. Every statement is in existence form, asserting that so
 number is the derivative rather than naming it, and requires a `Fintype` instance on the edge
 set induced by the volume; that instance is its entire requirement, since no `Prop`-typed
 hypothesis is carried anywhere in this module.
+
+Reference: Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5--§17.6, where the finite-volume
+correlation is differentiated in the parameter and the existence of such derivatives is stated.
 -/
 
 open scoped symmDiff

@@ -8,6 +8,9 @@ Concrete statement, on the subgraph induced by a fixed finite volume of `Fin d โ
 an arbitrary parameter record, that the magnetization at a vertex is the correlation of the
 singleton set containing that vertex. It carries no hypothesis and takes no instance
 argument.
+
+Reference: Glimm--Jaffe, *Quantum Physics* (2nd ed.), ยง5.3, equation (5.3.5), where the
+magnetization is the one-point expectation.
 -/
 
 open scoped symmDiff

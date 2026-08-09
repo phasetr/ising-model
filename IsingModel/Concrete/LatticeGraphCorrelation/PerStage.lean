@@ -24,7 +24,7 @@ Finally, at zero external field with positive coupling and positive inverse temp
 every induced stage subgraph preconnected, a nonempty plus-boundary set and a distinguished
 site chosen at each stage, and a Peierls-type exponential bound assumed stage by stage, the
 plus-boundary expectation of the spin sign at the distinguished site, taken as a `liminf`
-along the exhaustion, differs from `1` by at most that exponential.
+along the exhaustion, falls short of `1` by at most that exponential.
 -/
 
 open scoped symmDiff

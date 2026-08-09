@@ -7,7 +7,7 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 Concrete `latticeGraph d` statements about the free energy on a fixed finite volume as the
 external field varies. Reversing the sign of the field leaves it unchanged, so its value at
 `h` equals its value at `|h|`, and each of those identities is hypothesis-free. Monotonicity
-in the absolute field — the value at `h₁` lies below the value at `h₂` whenever `|h₁| ≤ |h₂|`
+in the absolute field — the value at `h₁` is at most the value at `h₂` whenever `|h₁| ≤ |h₂|`
 — assumes `0 ≤ J` and `0 < β` in addition. No instance argument is taken.
 -/
 

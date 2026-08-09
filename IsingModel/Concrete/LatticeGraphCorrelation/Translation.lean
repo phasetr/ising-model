@@ -8,9 +8,9 @@ subset of `Fin d → ℤ` and about the spontaneous magnetization at a fixed sit
 
 At `Ambient.cubicExhaustion d`, and under `0 ≤ J` and `0 < β`, the spontaneous correlation
 lies between `0` and `1`. Once the external field is taken strictly positive, the spontaneous
-correlation is below the infinite-volume correlation at that field — stated at
+correlation is at most the infinite-volume correlation at that field — stated at
 `Ambient.cubicExhaustion d` and along an arbitrary `Ambient.Exhaustion` alike — and, along an
-arbitrary exhaustion, the spontaneous magnetization is below the infinite-volume
+arbitrary exhaustion, the spontaneous magnetization is at most the infinite-volume
 magnetization at that field. No instance argument is taken.
 -/
 
