@@ -1,19 +1,19 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated3/4Infinite_latticeGraph nonpos + h_zero_of_distinct wrappers
+# Sign of the ℤ^d truncated three- and four-point correlations
 
-Narrow child module for three ℤ^d wrappers extracted from
-`TwoPointTruncatedHigher.lean`:
+Concrete `IsingModel.latticeGraph d` statements along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, at pairwise distinct sites.
 
-* `truncated3Infinite_latticeGraph_nonpos` (GHS),
-* `truncated4Infinite_latticeGraph_nonpos_h_zero` (Lebowitz),
-* `truncated3Infinite_latticeGraph_h_zero_of_distinct`.
+Under `Ferromagnetic` on an unrestricted parameter record the truncated three-point
+correlation is non-positive, which is the Griffiths-Hurst-Sherman inequality. At a record
+whose external field vanishes, and again under `Ferromagnetic`, the truncated four-point
+correlation is non-positive, which is the Lebowitz inequality.
 
-Each result is a thin pass-through of the ambient
-`Ambient.truncated{3,4}Infinite_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `TwoPointTruncatedHigher` declarations.
+At a record whose external field vanishes the truncated three-point correlation vanishes
+outright, and that statement assumes no ferromagnetic condition, only that the sites are
+pairwise distinct. Nothing in this module takes an instance argument.
 -/
 
 namespace IsingModel

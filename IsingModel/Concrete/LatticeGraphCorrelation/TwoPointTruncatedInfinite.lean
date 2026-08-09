@@ -1,12 +1,19 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncatedInfinite_latticeGraph wrappers
+# Sign of the ℤ^d truncated two-point correlation, and its comparison with the untruncated
 
-Narrow child module for ℤ^d `truncated2Infinite_latticeGraph_*`
-nonneg wrappers and the `correlationInfinite` comparison.
-Trivial-slice / symmetry / h-zero wrappers now live in
-`TwoPointTruncatedInfiniteTrivialSlice.lean`.
+Concrete `IsingModel.latticeGraph d` statements, all assuming `Ferromagnetic` on the
+parameter record.
+
+Along `Ambient.cubicExhaustion d` the truncated two-point correlation is non-negative. That
+is recorded at an arbitrary pair of sites, again at a pair carrying an explicit distinctness
+hypothesis, and on the diagonal, where the sites are one and the same variable rather than
+the subject of a hypothesis. Along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` the
+truncated correlation is at most the untruncated infinite-volume correlation of the pair.
+
+That distinctness hypothesis is the only assumption anywhere here beyond `Ferromagnetic`,
+and no instance argument is taken.
 -/
 
 namespace IsingModel
@@ -45,14 +52,6 @@ theorem truncated2Infinite_latticeGraph_le_correlationInfinite
     truncated2Infinite (IsingModel.latticeGraph d) Λ p i j
       ≤ correlationInfinite (IsingModel.latticeGraph d) Λ p {i, j} :=
   truncated2Infinite_le_correlationInfinite (IsingModel.latticeGraph d) Λ p hf i j
-
-/-! ## Moved: trivial-slice / symmetry / h-zero wrappers
-
-The five wrappers
-`truncated2Infinite_latticeGraph_{J_zero_of_ne, J_zero_diagonal, beta_zero, symm, h_zero}`
-now live in `TwoPointTruncatedInfiniteTrivialSlice.lean`. -/
-
-
 
 end Ambient
 

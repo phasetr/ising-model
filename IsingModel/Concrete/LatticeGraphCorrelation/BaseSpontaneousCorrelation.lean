@@ -1,16 +1,21 @@
-/- BaseSpontaneousCorrelation.lean
-Narrow child module for the two ℤ^d spontaneous-correlation bound
-wrappers `abs_spontaneousCorrelation_latticeGraph_le_one` and
-`spontaneousCorrelation_latticeGraph_sq_le_one`, plus the
-`spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
-companion, extracted from `Base.lean` in PR #2032. Each is a thin
-pass-through to the abstract `abs_spontaneousCorrelation_le_one` /
-`spontaneousCorrelation_sq_le_one` /
-`spontaneousMagnetization_monotone_ambient_subgraph` lemma at
-`latticeGraph d`. The theorem names are unchanged from the former
-`Base` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d spontaneous correlation: absolute range, and ambient-subgraph monotonicity
+
+The subjects here differ in scope and are kept apart on that account.
+
+At `IsingModel.latticeGraph d` and along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`,
+the spontaneous correlation of a fixed finite site set is at most `1` in absolute value,
+and hence its square is at most `1`. Both assume a non-negative coupling and a positive
+inverse temperature, and neither takes an instance argument.
+
+The remaining statement does not mention `latticeGraph d` at all: for two ambient simple
+graphs `G₁ ≤ G₂` on the vertex type `Fin d → ℤ`, the spontaneous magnetization at a site
+does not decrease when edges are added, again under a non-negative coupling and a positive
+inverse temperature. It takes a pair of instance arguments, a stagewise `Fintype` on the
+edge sets induced along the exhaustion by each of the two graphs.
+-/
 
 open scoped symmDiff
 

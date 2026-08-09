@@ -1,11 +1,24 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Base finite-volume and ∞-volume correlation wrappers at ℤ^d
+# ℤ^d finite-volume correlation monotonicity, the log bridge, and GKS-II
 
-Concrete wrappers for the finite-volume (`correlationΛ`, `partitionFunctionΛ`,
-`freeEnergyΛ`) and ∞-volume (`correlationInfinite`, `magnetizationInfinite`,
-`spontaneousCorrelation`) functionals on the ℤ^d Ising model.
+Concrete `latticeGraph d` statements about the finite-volume correlation `correlationΛ`,
+about the free energy along `Ambient.cubicExhaustion d`, and about the infinite-volume
+correlation.
+
+Enlarging the finite volume does not decrease the correlation of a site set that already
+lies in the smaller volume, and the product of the correlations of two site sets of one
+finite volume is at most the correlation of their symmetric difference. Both of those
+assume `Ferromagnetic` on the parameter record, and the symmetric-difference statement
+carries the containment of that difference in the enclosing volume inside its conclusion
+rather than taking it as a hypothesis.
+
+At a stage of the cubic exhaustion the free energy is the logarithm of the partition
+function of that stage divided by the number of sites the stage holds, and the
+infinite-volume correlation of the empty site set is `1` along an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`; neither of those takes a hypothesis. No instance
+argument is taken anywhere in this module.
 -/
 
 open scoped symmDiff
@@ -24,26 +37,6 @@ theorem correlationΛ_latticeGraph_monotone_volume
           (liftFinset A (hA.trans h12)) :=
   correlationΛ_monotone_volume (IsingModel.latticeGraph d) h12 p hf hA
 
-/-! ## Moved: correlationΛ / partitionFunctionΛ basic bound wrappers
-
-The four wrappers
-`partitionFunctionΛ_latticeGraph_pos`,
-`abs_correlationΛ_latticeGraph_le_one`,
-`correlationΛ_latticeGraph_le_one`,
-`correlationΛ_latticeGraph_nonneg` now live in
-`BaseCorrelationBounds.lean`. -/
-
-
-/-! ## Moved: AlongExhaustion apply unfoldings
-
-The 2 `@[simp]` ℤ^d `freeEnergyAlongExhaustion_latticeGraph_apply` and
-`partitionFunctionAlongExhaustion_latticeGraph_apply` wrappers now live
-alongside the Λ-layer apply unfoldings in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
 /-- **ℤ^d freeEnergyAlongExhaustion = log Z / |Λ|** (log-bridge). -/
 theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_log_div_card
     (d : ℕ) (p : IsingParams ℝ) (n : ℕ) :
@@ -55,17 +48,6 @@ theorem freeEnergyAlongExhaustion_latticeGraph_cubicExhaustion_eq_log_div_card
   freeEnergyAlongExhaustion_eq_log_div_card (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) p n
 
-/-! ## Moved: correlationAlongExhaustion per-stage bound wrappers
-
-The 4 ℤ^d wrappers
-`correlationAlongExhaustion_latticeGraph_le_one`,
-`_le_correlationInfinite_of_other`, `_le_correlationInfinite`,
-and `_nonneg` now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongExBounds`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
 /-- **ℤ^d `correlationInfinite` on the empty site set = 1** (any Exhaustion). -/
 @[simp]
 theorem correlationInfinite_latticeGraph_empty
@@ -73,50 +55,6 @@ theorem correlationInfinite_latticeGraph_empty
     (p : IsingParams ℝ) :
     correlationInfinite (IsingModel.latticeGraph d) Λ p ∅ = 1 :=
   correlationInfinite_empty (IsingModel.latticeGraph d) Λ p
-
-/-! ## Moved: Λ-layer apply unfoldings
-
-The 3 ℤ^d `partitionFunctionΛ_latticeGraph_apply`,
-`correlationΛ_latticeGraph_apply`, and `freeEnergyΛ_latticeGraph_apply`
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseApply`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: magnetization* / spontaneousCorrelation monotone_ambient_subgraph wrappers
-
-The 4 ℤ^d
-`magnetization{Λ,AlongExhaustion,Infinite}_latticeGraph_monotone_ambient_subgraph`
-and `spontaneousCorrelation_latticeGraph_monotone_ambient_subgraph`
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseMonotoneAmbientSubgraph`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: spontaneousCorrelation / spontaneousMagnetization_monotone_ambient_subgraph wrappers
-
-The two ℤ^d wrappers
-`abs_spontaneousCorrelation_latticeGraph_le_one` and
-`spontaneousCorrelation_latticeGraph_sq_le_one`, plus the
-`spontaneousMagnetization_latticeGraph_monotone_ambient_subgraph`
-companion, now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseSpontaneousCorrelation`.
--/
-
-
-/-! ## Moved: correlationΛ + correlationAlongExhaustion empty/subset/J_zero wrappers
-
-The 7 ℤ^d wrappers
-`correlationAlongExhaustion_latticeGraph_{J_zero_of_subset,J_zero_eventually_eq}`,
-`correlationΛ_latticeGraph_empty`, and
-`correlationAlongExhaustion_latticeGraph_{empty,of_subset,of_not_subset,cubicExhaustion_monotone}`
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.BaseCorrelationAlongEx`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 /-- **ℤ^d correlationΛ_gks_second** (GKS-II at finite volume). -/
 theorem correlationΛ_latticeGraph_gks_second

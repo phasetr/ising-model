@@ -1,9 +1,3 @@
-/- TwoPoint.lean
-Two-point, truncated two-point, three-point, four-point functions on ℤ^d,
-together with their free-energy and correlation monotonicity wrappers.
-All definitions and theorems are concrete specialisations of the abstract
-`IsingModel.Ambient.*` results to `(IsingModel.latticeGraph d, Ambient.cubicExhaustion d)`.
--/
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.Translation
@@ -15,12 +9,32 @@ import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
 
+/-!
+# ℤ^d correlations as functions of the separations from the origin
+
+Defines, at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`, the two-point
+function and the truncated two-, three- and four-point functions as the corresponding
+infinite-volume correlations anchored at the origin, and records how they relate back to
+the unanchored correlations.
+
+Each definition unfolds to its anchored form by definition, without a hypothesis. Under
+`Ferromagnetic` each is also computed by any other `Ambient.Exhaustion` of `Fin d → ℤ` in
+place of the cubic one. Under the same condition the two-point and truncated two-point
+functions recover the unanchored correlations: the infinite-volume correlation of a pair of
+sites is the two-point function at their difference, and the truncated two-point
+correlation of a pair is the truncated two-point function at their difference. Both of
+those are proved by translating the pair so that its first site becomes the origin.
+
+Anchoring uses the `Finset` literal `{0, r}`, and at `r = 0` that literal collapses to the
+singleton `{0}`, so the two-point function at zero separation is the infinite-volume
+magnetization rather than `1`. Readers taking these as physical correlations should keep to
+a nonzero separation. No instance argument is taken anywhere in this module.
+-/
+
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Two-point function on ℤ^d -/
 
 /-- **Two-point function on ℤ^d** (Finset-based):
 `twoPointFunction d p r := correlationInfinite (latticeGraph d)
@@ -88,11 +102,6 @@ theorem correlationInfinite_latticeGraph_pair_eq_twoPointFunction
   -- Now `h_translate : correlationInfinite ... {0, j - i} = correlationInfinite ... {i, j}`.
   exact h_translate.symm
 
-/-! ## Moved: ℤ^d twoPointFunction_symm
-
-The sign-inversion symmetry wrapper now lives in `TwoPointSymm.lean`. -/
-
-
 /-- **Truncated two-point function on ℤ^d**:
 `truncated2TwoPoint d p r := truncated2Infinite ... p 0 r`.
 
@@ -142,20 +151,6 @@ theorem truncated2Infinite_latticeGraph_cubicExhaustion_eq_twoPoint
   rw [h1, h2] at h
   exact h.symm
 
-/-! ## Moved: ℤ^d truncated2TwoPoint_symm
-
-The sign-inversion symmetry wrapper now lives in `TwoPointSymm.lean`. -/
-
-
-/-! ## Moved: ℤ^d two-point quantities at `r = 0` (Finset-collapse)
-
-The two wrappers
-`twoPointFunction_zero`, `truncated2TwoPoint_zero` now live in
-`TwoPointZeroCollapse.lean`. -/
-
-
-/-! ## Three-point function on ℤ^d -/
-
 /-- **Truncated three-point (Ursell) function on ℤ^d**:
 `truncated3TwoPoint d p r s := truncated3Infinite ... p 0 r s`.
 
@@ -185,24 +180,6 @@ theorem truncated3TwoPoint_eq_truncated3Infinite_any_exhaustion
   exact truncated3Infinite_indep_exhaustion (IsingModel.latticeGraph d)
     _ Λ' p hf 0 r s
 
-/-! ## Moved: ℤ^d truncated3/4Infinite swap wrappers
-
-The 6 concrete ℤ^d `truncated3Infinite_latticeGraph_swap_{ij,jk,ik}`
-and `truncated4Infinite_latticeGraph_swap_{ij,jk,kl}` symmetry
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedSwaps`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: truncated3Infinite_latticeGraph_cubicExhaustion_eq_threePoint
-
-The translation-invariance wrapper now lives in
-`TwoPointEqSeparations.lean`. -/
-
-
-/-! ## Four-point function on ℤ^d -/
-
 /-- **Lebowitz truncated four-point function on ℤ^d**:
 `truncated4TwoPoint d p r s u := truncated4Infinite ... p 0 r s u`.
 
@@ -231,112 +208,6 @@ theorem truncated4TwoPoint_eq_truncated4Infinite_any_exhaustion
   rw [truncated4TwoPoint_apply]
   exact truncated4Infinite_indep_exhaustion (IsingModel.latticeGraph d)
     _ Λ' p hf 0 r s u
-
-/-! ## Moved: truncated4Infinite_latticeGraph_cubicExhaustion_eq_fourPoint
-
-The translation-invariance wrapper now lives in
-`TwoPointEqSeparations.lean`. -/
-
-
-/-! ## Moved: ℤ^d truncated2TwoPoint = twoPointFunction - M²
-
-The wrapper
-`truncated2TwoPoint_eq_twoPointFunction_sub_magnetization_sq` now
-lives in `TwoPointTruncated2EqSubMagSq.lean`. -/
-
-
-/-! ## Moved: ℤ^d truncated3/4TwoPoint trivial-slice wrappers
-
-The 5 concrete ℤ^d `truncated3TwoPoint` and `truncated4TwoPoint`
-trivial-slice wrappers (`truncated3TwoPoint_h_zero_of_distinct`,
-`truncated3TwoPoint_J_zero_of_distinct`,
-`truncated4TwoPoint_J_zero_of_distinct`,
-`truncated4TwoPoint_beta_zero`, `truncated3TwoPoint_beta_zero`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedTrivialSlices`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d twoPointFunction trivial-slice wrappers
-
-The 3 concrete ℤ^d `twoPointFunction_zero_params`,
-`twoPointFunction_beta_zero`, and `twoPointFunction_J_zero_of_ne_zero`
-trivial-slice wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFunctionTrivialSlices`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: freeEnergy / magnetizationInfinite cubicExhaustion wrappers
-
-The 22 ℤ^d `freeEnergyInfinite_latticeGraph` / cubicExhaustion
-trivial-slice, monotonicity, and bound wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointFreeEnergy`.
-The 9 ℤ^d `freeEnergyAlongExhaustion_latticeGraph_*_tendsto_*` wrappers
-that used to sit beside them (3 `_of_hcard_add` / `_of_eventually_const`
-forms, then the 6 held by the two `AlongExTendsto*` child modules) were
-deleted; no consumer of them was found in this repository.
-The 2 `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_*`
-and 3 `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_*`
-variants were further narrowed in PR #2026 into
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`
-(see the next Moved block).
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: ℤ^d magnetization monotonicity wrappers
-
-The 5 concrete ℤ^d `spontaneousMagnetization_latticeGraph_cubicExhaustion_monotone_{J,beta}`
-and `magnetizationInfinite_latticeGraph_cubicExhaustion_monotone_{J,h,beta}`
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointMagnetizationMonotone`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ambient-subgraph monotonicity + bot wrappers
-
-The 24 ℤ^d wrappers covering ambient-subgraph monotonicity from
-`⊥` to `latticeGraph d` (`inducedGraph_latticeGraph_bot`,
-`*_bot_le_latticeGraph`, and
-`*_latticeGraph_monotone_ambient_subgraph` for `freeEnergy*`,
-`partitionFunction*`, `correlation*`, `magnetization*`,
-`spontaneous*`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointAmbientBot`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: truncatedInfinite_latticeGraph wrappers
-
-The 9 ℤ^d `truncated2Infinite_latticeGraph_*` wrappers (3 nonneg,
-symmetry, the `correlationInfinite` comparison, trivial slices
-`J_zero` / `β_zero` / `h_zero`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedInfinite`
-and its `TwoPointTruncatedInfiniteTrivialSlice` child.
--/
-
-/-! ## Moved: truncated3/4Infinite_latticeGraph trivial-slice wrappers
-
-The 12 ℤ^d `truncated3Infinite_latticeGraph_*` and
-`truncated4Infinite_latticeGraph_*` trivial-slice + nonpos wrappers,
-together with the three
-`truncated{2,3,4}Infinite_latticeGraph_indep_exhaustion` wrappers, now
-live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncatedHigher`
-and its child modules.
--/
-
-/-! ## Moved: ℤ^d correlationInfinite wrappers
-
-The 7 concrete ℤ^d `correlationInfinite_latticeGraph_*` wrappers
-(`_le_one`, `_nonneg`, `_indep_exhaustion`,
-`_cubicExhaustion_monotone_h`, `_beta`, `_J`, `_gks_second`) now
-live in
-`IsingModel.Concrete.LatticeGraphCorrelation.TwoPointCorrelationInfinite`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 end Ambient
 end IsingModel

@@ -1,15 +1,18 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated3Infinite J=0 trivial-slice wrappers
+# The ℤ^d truncated three-point correlation at vanishing coupling
 
-Narrow child module for three ℤ^d
-`truncated3Infinite_latticeGraph_J_zero_*` trivial-slice wrappers
-extracted from `TwoPointTruncatedHigher.lean`:
+Concrete `IsingModel.latticeGraph d` statements along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, at the parameter record `⟨0, h, β⟩` and under `Ferromagnetic` on it, sorted by
+how the sites coincide.
 
-* `truncated3Infinite_latticeGraph_J_zero_of_pairwise_distinct`,
-* `truncated3Infinite_latticeGraph_J_zero_of_pair_coincidence`,
-* `truncated3Infinite_latticeGraph_J_zero_all_coincident`.
+At pairwise distinct sites the value vanishes, and it still vanishes when the first two
+sites coincide and the third differs from them. When all the sites coincide it has the
+closed form `t * (1 - t) * (1 - 2 * t)`, writing `t` for `Real.tanh (β * h)`. The
+ferromagnetic condition confines `t` to `[0, 1)`, where that cubic vanishes exactly at
+`t = 0`, that is at `h = 0`, and at `t = 1 / 2`; between those two roots it is positive,
+and above the larger one it is negative. No instance argument is taken.
 -/
 
 namespace IsingModel

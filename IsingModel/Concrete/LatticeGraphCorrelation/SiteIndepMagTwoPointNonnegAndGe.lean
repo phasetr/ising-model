@@ -4,14 +4,20 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPointTruncated2EqSubMagSq
 
 /-!
-# ℤ^d twoPointFunction / truncated2TwoPoint nonneg / ge mag² / symm wrappers
+# ℤ^d truncated two-point sign, the magnetization-squared bound, and 3-point symmetry
 
-Narrow child module for three ℤ^d wrappers extracted from
-`SiteIndepMagTwoPoint.lean`:
+Concrete statements at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`.
 
-* `truncated2TwoPoint_nonneg`,
-* `twoPointFunction_ge_magnetization_sq`,
-* `truncated3TwoPoint_symm_rs`.
+Under `Ferromagnetic` the truncated two-point function is non-negative, which is the second
+Griffiths-Kelly-Sherman inequality read at the anchored pair. Combined with the identity
+that the truncation is the two-point function less the squared infinite-volume
+magnetization at the origin, that sign turns into a lower bound on the two-point function
+by that same square.
+
+The truncated three-point function is symmetric under exchanging its separations, and that
+statement takes no hypothesis: it is proved by unfolding the Ursell combination and using
+that the `Finset` literals it contains are unordered. No instance argument is taken
+anywhere in this module.
 -/
 
 namespace IsingModel

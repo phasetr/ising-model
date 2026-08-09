@@ -1,16 +1,20 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated2Infinite trivial-slice / symmetry / h-zero wrappers
+# The ℤ^d truncated two-point correlation at degenerate records, and its site symmetry
 
-Narrow child module for five ℤ^d `truncated2Infinite_latticeGraph_*` wrappers
-extracted from `TwoPointTruncatedInfinite.lean`:
+Concrete `IsingModel.latticeGraph d` statements.
 
-* `truncated2Infinite_latticeGraph_J_zero_of_ne`,
-* `truncated2Infinite_latticeGraph_J_zero_diagonal`,
-* `truncated2Infinite_latticeGraph_beta_zero`,
-* `truncated2Infinite_latticeGraph_symm`,
-* `truncated2Infinite_latticeGraph_h_zero`.
+Along an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ`, at the record `⟨0, h, β⟩` and under
+`Ferromagnetic` on it, the truncated correlation vanishes at distinct sites and equals
+`Real.tanh (β * h) * (1 - Real.tanh (β * h))` on the diagonal. Along the same arbitrary
+exhaustion, at zero inverse temperature, it vanishes at every pair of sites with no
+ferromagnetic condition assumed.
+
+Along `Ambient.cubicExhaustion d` the truncated correlation is symmetric in its two sites,
+and at a record whose external field vanishes it collapses to the untruncated
+infinite-volume correlation of the pair; neither of those assumes anything about the
+parameter record. No instance argument is taken.
 -/
 
 namespace IsingModel

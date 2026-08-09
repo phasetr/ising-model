@@ -1,16 +1,16 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 
 /-!
-# ℤ^d twoPoint sign-inversion symmetry wrappers
+# Sign-inversion symmetry of the ℤ^d two-point functions
 
-Narrow child module for two ℤ^d symmetry-under-sign-inversion wrappers
-extracted from `TwoPoint.lean`:
+Concrete statements at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`: under
+`Ferromagnetic` on the parameter record, the two-point function and the truncated two-point
+function each take the same value at a separation and at its negation.
 
-* `twoPointFunction_symm` — `G(r) = G(-r)`,
-* `truncated2TwoPoint_symm` — `G_T(r) = G_T(-r)`.
-
-Both express the `{0, r} ↔ {0, -r}` symmetry of the ∞-volume two-point
-correlation on the ℤ^d Ising model.
+The first proof swaps the entries of the unordered anchoring pair and then reads the result
+back as a two-point function at the difference `0 - r`; the second swaps the two site
+arguments of the truncated infinite-volume correlation and reads the result back the same
+way. No instance argument is taken.
 -/
 
 open scoped symmDiff

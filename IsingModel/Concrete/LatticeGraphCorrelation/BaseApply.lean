@@ -1,15 +1,18 @@
-/- BaseApply.lean
-Narrow child module for the 5 ℤ^d `_apply` unfolding wrappers
-extracted from `Base.lean` in PR #2037. Theorems:
-`freeEnergyAlongExhaustion_latticeGraph_apply` (`@[simp]`),
-`partitionFunctionAlongExhaustion_latticeGraph_apply` (`@[simp]`),
-`partitionFunctionΛ_latticeGraph_apply`,
-`correlationΛ_latticeGraph_apply`,
-`freeEnergyΛ_latticeGraph_apply`. Each is a thin pass-through to the
-corresponding abstract `*_apply` lemma at `latticeGraph d`. The
-theorem names are unchanged from the former `Base` declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# Defining equations of the ℤ^d finite-volume and per-stage functionals
+
+Concrete `IsingModel.latticeGraph d` unfoldings. Every equation here holds by definition,
+none of them carries a hypothesis, and none of them takes an instance argument.
+
+At a fixed finite subset of `Fin d → ℤ`, the partition function, the correlation of a site
+set of that subset, and the free energy are the corresponding quantities of the graph the
+subset induces. Along `Ambient.cubicExhaustion d`, the free energy and the partition
+function at a stage are the finite-volume free energy and partition function at that
+stage's volume; those two along-exhaustion equations are `@[simp]`, the finite-volume ones
+are not.
+-/
 
 open scoped symmDiff
 

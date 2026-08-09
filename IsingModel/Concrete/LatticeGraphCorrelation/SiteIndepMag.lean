@@ -3,18 +3,31 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TranslationSiteIndep
 import IsingModel.TranslationInvariance
 
 /-!
-# Site-independent magnetization and two-point bounds at ℤ^d
+# ℤ^d site-independent magnetization and its spontaneous limit
 
-- `uniformMagnetization` definition and basic properties.
-- Basic bounds on the ℤ^d two-point functions (`twoPointFunction`).
+Defines the uniform magnetization and the uniform spontaneous magnetization at
+`IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d` as the value of
+`magnetizationInfinite`, respectively of `spontaneousMagnetization`, at the origin.
+Naming the magnetization at the origin loses nothing: under `Ferromagnetic` the
+infinite-volume magnetization along the cubic exhaustion takes the same value at every
+site, recorded here as a `@[simp]` rewrite towards the uniform form.
+
+The uniform magnetization unfolds to its definition without a hypothesis. It is at least
+`Real.tanh (β * h)` for a non-negative coupling, a non-negative field and a positive
+inverse temperature, and under `Ferromagnetic` it also agrees with the infinite-volume
+magnetization at the origin computed along any other `Ambient.Exhaustion` of `Fin d → ℤ`.
+
+The uniform spontaneous magnetization is the limit of the uniform magnetization as the
+external field decreases to zero from above, and it is a lower bound for the uniform
+magnetization at every strictly positive field. Both of those assume a non-negative
+coupling and a positive inverse temperature, the second a strictly positive field as well.
+No instance argument is taken anywhere in this module.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Site-independent magnetization on ℤ^d -/
 
 /-- **Uniform magnetization on ℤ^d**: since the ∞-vol magnetization is
 site-independent on the translation-invariant ℤ^d lattice (PR #257),
@@ -65,16 +78,6 @@ theorem magnetizationInfinite_latticeGraph_cubicExhaustion_eq_uniform
       = uniformMagnetization d p :=
   magnetizationInfinite_latticeGraph_cubicExhaustion_eq d p hf i 0
 
-/-! ## Moved: uniformMagnetization bound wrappers
-
-The five `uniformMagnetization_nonneg`, `uniformMagnetization_le_one`,
-`neg_one_le_uniformMagnetization`, `abs_uniformMagnetization_le_one`,
-`uniformMagnetization_sq_le_one` wrappers now live in
-`SiteIndepMagUniformBounds.lean`. -/
-
-
-
-
 /-- **Uniform spontaneous magnetization on ℤ^d**: by site-independence
 of spontaneous magnetization on the translation-invariant ℤ^d lattice
 (PR #257), we package the value at `0` as a scalar.
@@ -85,38 +88,6 @@ noncomputable def uniformSpontaneousMagnetization
     (d : ℕ) (J β : ℝ) : ℝ :=
   spontaneousMagnetization (IsingModel.latticeGraph d)
     (Ambient.cubicExhaustion d) J β 0
-
-/-! ## Moved: ℤ^d `uniformSpontaneousMagnetization` wrappers
-
-The 10 ℤ^d `uniformSpontaneousMagnetization*` wrappers
-(`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`,
-`_monotone_J`, `_monotone_beta`,
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`,
-`_nonneg`, `_le_one`, `neg_one_le_*`,
-`abs_*_le_one`, `_sq_le_one`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagUniformSpontaneous`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: ℤ^d `spontaneousCorrelation`/`spontaneousMagnetization_latticeGraph` wrappers
-
-The 8 ℤ^d wrappers `spontaneousCorrelation_latticeGraph_apply`,
-`spontaneousMagnetization_latticeGraph_apply`,
-`neg_one_le_spontaneousMagnetization_latticeGraph`,
-`abs_spontaneousMagnetization_latticeGraph_le_one`,
-`spontaneousMagnetization_latticeGraph_{nonneg,le_one,monotone_J,monotone_beta}`
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagSpontaneous`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: uniformMagnetization trivial-slice + monotonicity wrappers
-
-The seven `uniformMagnetization_*` wrappers
-(`{beta_zero,monotone_J,monotone_h,monotone_beta,J_zero,zero_params,zero_at_h_zero}`)
-now live in `SiteIndepMagTrivialSlice.lean`. -/
-
 
 /-- **Right-limit** `uniformMagnetization` → `uniformSpontaneousMagnetization`
 as `h → 0⁺`.
@@ -153,16 +124,6 @@ theorem uniformSpontaneousMagnetization_le_uniformMagnetization
       ≤ uniformMagnetization d ⟨J, h, β⟩ :=
   spontaneousMagnetization_le_magnetizationInfinite
     (IsingModel.latticeGraph d) (Ambient.cubicExhaustion d) hJ hβ hh 0
-
-/-! ## Moved: two-point function bounds + symmetry wrappers
-
-The 17 ℤ^d `twoPointFunction_*` / `truncated2TwoPoint_*` /
-`truncated3TwoPoint_*` / `truncated4TwoPoint_*` bounds + symmetry
-wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMagTwoPoint`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 end Ambient
 end IsingModel

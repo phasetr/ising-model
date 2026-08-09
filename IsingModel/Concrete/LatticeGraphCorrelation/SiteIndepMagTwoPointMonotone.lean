@@ -6,13 +6,22 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 
 /-!
-# ℤ^d twoPointFunction monotone wrappers
+# Parameter monotonicity of the ℤ^d two-point function
 
-Narrow child module for three ℤ^d
-`twoPointFunction_monotone_{J,h,beta}` wrappers (GJ Prop 4.2.1). Each
-wrapper is a thin pass-through to the corresponding ambient
-`correlationInfinite_latticeGraph_cubicExhaustion_monotone_*` lemma at
-`A = {(0 : Fin d → ℤ), r}`.
+Concrete statements about `twoPointFunction` at `IsingModel.latticeGraph d` along
+`Ambient.cubicExhaustion d`, at an arbitrary separation. The value is monotone in the
+coupling on `Set.Ici 0` assuming a non-negative external field and a positive inverse
+temperature, in the external field on `Set.Ici 0` assuming a non-negative coupling and a
+positive inverse temperature, and in the inverse temperature on `Set.Ioi 0` assuming a
+non-negative coupling and a non-negative external field. Each is the corresponding
+monotonicity of `correlationInfinite` read at the anchoring site set. No instance argument
+is taken.
+
+The mathematical source is Glimm-Jaffe, *Quantum Physics*, Proposition 4.2.1, p. 58: a
+correlation function is monotone increasing in the couplings of the Hamiltonian. Raising
+the external field raises the singleton couplings, which is the remark Glimm-Jaffe make on
+that same page; raising the inverse temperature at a non-negative coupling and a
+non-negative field raises every coupling at once.
 -/
 
 namespace IsingModel
@@ -29,7 +38,8 @@ theorem twoPointFunction_monotone_J
   correlationInfinite_latticeGraph_cubicExhaustion_monotone_J d hh hβ
     {(0 : Fin d → ℤ), r}
 
-/-- **h-monotonicity of `twoPointFunction`** (GJ Prop 4.2.4):
+/-- **h-monotonicity of `twoPointFunction`** (GJ Prop 4.2.1, p. 58, at the singleton
+couplings):
 for `0 ≤ J, 0 < β`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
 `h` on `Ici 0`. Direct specialization of
 `correlationInfinite_latticeGraph_cubicExhaustion_monotone_h`. -/
@@ -39,7 +49,8 @@ theorem twoPointFunction_monotone_h
   correlationInfinite_latticeGraph_cubicExhaustion_monotone_h d hJ hβ
     {(0 : Fin d → ℤ), r}
 
-/-- **β-monotonicity of `twoPointFunction`** (GJ Prop 4.2.4):
+/-- **β-monotonicity of `twoPointFunction`** (GJ Prop 4.2.1, p. 58, at all couplings at
+once):
 for `0 ≤ J, 0 ≤ h`, `twoPointFunction d ⟨J, h, β⟩ r` is monotone in
 `β` on `Ioi 0`. Direct specialization of
 `correlationInfinite_latticeGraph_cubicExhaustion_monotone_beta`. -/

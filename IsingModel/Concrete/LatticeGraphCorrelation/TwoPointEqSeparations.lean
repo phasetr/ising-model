@@ -3,15 +3,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.Concrete.LatticeGraphCorrelation.TranslationVaddTruncatedTranslation
 
 /-!
-# ℤ^d truncated{3,4}Infinite eq-separation wrappers
+# ℤ^d truncated three- and four-point correlations as functions of separations
 
-Narrow child module for two ℤ^d
-`truncated{3,4}Infinite_latticeGraph_cubicExhaustion_eq_{three,four}Point`
-translation-invariance wrappers extracted from `TwoPoint.lean`. Each
-combines the translation-invariance lemma at the (cubicExhaustion d)
-exhaustion with simplification of `-i +ᵥ ·` to express the truncated
-∞-volume Lebowitz {3,4}-point correlation as a function of the
-(j - i, k - i, l - i) separations.
+Concrete `IsingModel.latticeGraph d` statements along `Ambient.cubicExhaustion d`. Under
+`Ferromagnetic` on the parameter record, the truncated three-point correlation at a triple
+of sites is the anchored three-point function evaluated at the differences of the second
+and third sites from the first, and the truncated four-point correlation at a quadruple is
+the anchored four-point function at the differences of the second, third and fourth sites
+from the first.
+
+Both are proved by translating by the negative of the first site, which sends that site to
+the origin and each of the others to its difference from it. No instance argument is taken.
 -/
 
 open scoped symmDiff

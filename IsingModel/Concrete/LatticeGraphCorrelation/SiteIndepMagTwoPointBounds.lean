@@ -5,14 +5,13 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 
 /-!
-# ℤ^d twoPointFunction basic bound wrappers
+# Range of the ℤ^d two-point function
 
-Narrow child module for three ℤ^d basic `twoPointFunction` bound
-wrappers extracted from `SiteIndepMagTwoPoint.lean`:
-
-* `twoPointFunction_nonneg`,
-* `twoPointFunction_le_one`,
-* `neg_one_le_twoPointFunction`.
+Concrete statements about `twoPointFunction` at `IsingModel.latticeGraph d` along
+`Ambient.cubicExhaustion d`, at an arbitrary separation. The value is at most `1` and at
+least `-1` with no assumption on the parameter record. Under `Ferromagnetic` the lower
+bound sharpens to `0`, by the first Griffiths-Kelly-Sherman inequality applied to the
+anchoring site set. No instance argument is taken.
 -/
 
 namespace IsingModel

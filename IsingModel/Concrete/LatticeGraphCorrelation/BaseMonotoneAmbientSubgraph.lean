@@ -1,13 +1,23 @@
-/- BaseMonotoneAmbientSubgraph.lean
-Narrow child module for the 4 ℤ^d
-`magnetization{Λ,AlongExhaustion,Infinite}_latticeGraph_monotone_ambient_subgraph`
-and `spontaneousCorrelation_latticeGraph_monotone_ambient_subgraph`
-wrappers extracted from `Base.lean` in PR #2033. Each is a thin
-pass-through to the abstract `*_monotone_ambient_subgraph` lemma at
-`latticeGraph d`. The theorem names are unchanged from the former
-`Base` declarations.
--/
 import IsingModel.AmbientLattice.SpontaneousMono
+
+/-!
+# Ambient-subgraph monotonicity of the magnetization on ℤ^d sites
+
+Statements on the vertex type `Fin d → ℤ` comparing two ambient simple graphs `G₁ ≤ G₂` on
+it. Despite the declaration names, no statement here mentions `IsingModel.latticeGraph d`:
+the dimension only fixes the vertex type, and the graphs are arbitrary.
+
+Adding edges to the ambient graph does not decrease the magnetization — at a fixed finite
+volume, at a stage of an arbitrary `Ambient.Exhaustion`, and in the infinite-volume limit
+along one — nor the spontaneous correlation of a fixed finite site set. The magnetization
+statements assume `Ferromagnetic` on the parameter record; the spontaneous-correlation one
+takes the coupling and the inverse temperature separately rather than as a record, and
+assumes instead that the coupling is non-negative and the inverse temperature positive.
+
+Every statement here takes a pair of instance arguments, one per graph: a `Fintype` on the
+edge set induced at the fixed finite volume in the Λ-layer statement, and a stagewise
+`Fintype` on the edge sets induced along the exhaustion in the others.
+-/
 
 open scoped symmDiff
 

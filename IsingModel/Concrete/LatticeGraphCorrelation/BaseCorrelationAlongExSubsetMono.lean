@@ -1,20 +1,16 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `correlationAlongExhaustion` subset / monotone wrappers
+# ℤ^d per-stage correlation along the cubic exhaustion
 
-Narrow child module for three ℤ^d
-`correlationAlongExhaustion_latticeGraph_*` wrappers extracted from
-`BaseCorrelationAlongEx.lean`:
+Concrete `IsingModel.latticeGraph d` statements along `Ambient.cubicExhaustion d`.
 
-* `correlationAlongExhaustion_latticeGraph_of_subset`,
-* `correlationAlongExhaustion_latticeGraph_of_not_subset`,
-* `correlationAlongExhaustion_latticeGraph_cubicExhaustion_monotone`.
-
-Each result is a thin pass-through of the corresponding abstract
-`correlationAlongExhaustion_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `BaseCorrelationAlongEx` declarations.
+At a stage whose volume contains the site set, the correlation along the exhaustion is the
+finite-volume correlation of that set inside the stage volume; at a stage whose volume does
+not contain it, the value is `0`. Each of those reads is stated under exactly the
+containment hypothesis it names and under no other. Under `Ferromagnetic` on the parameter
+record the stage index enters monotonically: the correlation of a fixed site set does not
+decrease as the stage grows. No instance argument is taken.
 -/
 
 open scoped symmDiff

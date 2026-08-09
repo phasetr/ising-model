@@ -2,16 +2,13 @@ import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.SiteIndepMag
 
 /-!
-# ℤ^d uniformMagnetization bound wrappers
+# Range of the ℤ^d uniform magnetization
 
-Narrow child module for five ℤ^d uniform-magnetization bound wrappers
-extracted from `SiteIndepMag.lean`:
-
-* `uniformMagnetization_nonneg`,
-* `uniformMagnetization_le_one`,
-* `neg_one_le_uniformMagnetization`,
-* `abs_uniformMagnetization_le_one`,
-* `uniformMagnetization_sq_le_one`.
+Concrete statements about `uniformMagnetization` at `IsingModel.latticeGraph d` along
+`Ambient.cubicExhaustion d`. With no assumption on the parameter record the value is
+bounded below by `-1` and above by `1`, and the corresponding bounds on its absolute value
+and on its square are recorded too. Non-negativity is the one statement here that assumes
+`Ferromagnetic`. No instance argument is taken.
 -/
 
 namespace IsingModel

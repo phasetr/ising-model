@@ -1,10 +1,3 @@
-/- TwoPointFunctionTrivialSlices.lean
-Narrow child module for the 3 ℤ^d `twoPointFunction` trivial-slice
-wrappers (`twoPointFunction_zero_params`, `_beta_zero`,
-`_J_zero_of_ne_zero`) extracted from `TwoPoint.lean` in PR #2029.
-The theorem names are unchanged from the former `TwoPoint`
-declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED
 import IsingModel.Concrete.IntLattice
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
@@ -14,6 +7,25 @@ import IsingModel.PhaseTransition
 import IsingModel.Inequalities.FKG
 import IsingModel.AmbientFKG
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolume
+
+/-!
+# The ℤ^d two-point function at degenerate parameter records
+
+Concrete statements about `twoPointFunction` at `IsingModel.latticeGraph d` along
+`Ambient.cubicExhaustion d`, at parameter records that switch part of the interaction off.
+
+With the coupling and the external field both zero, and separately at zero inverse
+temperature, the value is `0` at every separation and under no hypothesis: the
+infinite-volume correlation of a nonempty site set vanishes at those records, and the
+anchoring literal `{0, r}` is nonempty whatever the separation is.
+
+With only the coupling zero the external field survives, and there the infinite-volume
+correlation of a site set is `Real.tanh (β * h)` raised to that set's cardinality. The
+anchoring set has cardinality `2` exactly when the separation is nonzero, so the two-point
+function is `Real.tanh (β * h)` squared. That statement assumes `Ferromagnetic` on the
+record `⟨0, h, β⟩` and, unlike the degenerate slices above, a nonzero separation.
+No instance argument is taken anywhere in this module.
+-/
 
 open scoped symmDiff
 

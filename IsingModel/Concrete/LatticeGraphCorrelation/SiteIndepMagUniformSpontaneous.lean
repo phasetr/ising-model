@@ -4,18 +4,23 @@ import IsingModel.Concrete.LatticeGraphCorrelation.TranslationSiteIndep
 import IsingModel.TranslationInvariance
 
 /-!
-# ℤ^d `uniformSpontaneousMagnetization` wrappers
+# The ℤ^d uniform spontaneous magnetization
 
-Narrow child module for ℤ^d `uniformSpontaneousMagnetization*` wrappers
-(`_apply`, `_eq_spontaneousMagnetization_any_exhaustion`, `_monotone_J`,
-`_monotone_beta`,
-`spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform`)
-extracted from `SiteIndepMag.lean` in PR #2047. Each is a thin
-pass-through to the corresponding `spontaneousMagnetization_*` lemma
-at `(latticeGraph d, cubicExhaustion d)`. The bound wrappers (`_nonneg`,
-`_le_one`, `neg_one_le_*`, `abs_*_le_one`, `_sq_le_one`) now live in
-`SiteIndepMagUniformSpontaneousBounds.lean`. The theorem names are
-unchanged from the former `SiteIndepMag` declarations.
+Concrete statements about `uniformSpontaneousMagnetization`, the value of
+`spontaneousMagnetization` at `IsingModel.latticeGraph d` along
+`Ambient.cubicExhaustion d` taken at the origin. That unfolding holds by definition and
+takes no hypothesis.
+
+The exhaustion bridge and the site-independence statement each assume a non-negative
+coupling and a positive inverse temperature: under those the uniform value agrees with the
+spontaneous magnetization at the origin computed along any other `Ambient.Exhaustion` of
+`Fin d → ℤ`, and the spontaneous magnetization along the cubic exhaustion has that same
+value at every site.
+
+The monotonicity statements assume less, each dropping the condition on the parameter it
+varies: monotone in the coupling on `Set.Ici 0` under a positive inverse temperature alone,
+and monotone in the inverse temperature on `Set.Ioi 0` under a non-negative coupling alone.
+No instance argument is taken.
 -/
 
 open scoped symmDiff
@@ -73,15 +78,6 @@ theorem spontaneousMagnetization_latticeGraph_cubicExhaustion_eq_uniform
         (Ambient.cubicExhaustion d) J β i
       = uniformSpontaneousMagnetization d J β :=
   spontaneousMagnetization_latticeGraph_cubicExhaustion_eq d hJ hβ i 0
-
-/-! ## Moved: uniformSpontaneousMagnetization bound wrappers
-
-The five `uniformSpontaneousMagnetization_*` bound wrappers (`nonneg`,
-`le_one`, `neg_one_le`, `abs_le_one`, `sq_le_one`) now live in
-`SiteIndepMagUniformSpontaneousBounds.lean`. -/
-
-
-
 
 end Ambient
 

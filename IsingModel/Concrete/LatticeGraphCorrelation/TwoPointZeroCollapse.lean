@@ -1,26 +1,23 @@
 import IsingModel.Concrete.LatticeGraphCorrelation.TwoPoint
 
 /-!
-# ℤ^d two-point quantities at `r = 0` (Finset-collapse)
+# The ℤ^d two-point quantities at zero separation
 
-Narrow child module for two ℤ^d r=0 collapse wrappers extracted from
-`TwoPoint.lean`:
+Concrete statements at `IsingModel.latticeGraph d` along `Ambient.cubicExhaustion d`, at
+separation `0` and at an unrestricted parameter record.
 
-* `twoPointFunction_zero`,
-* `truncated2TwoPoint_zero`.
-
-Both witness the Finset-vs-physics caveat: the literal `{0, 0}`
-collapses to `{0}` in `Finset`, so the "two-point function at zero
-separation" equals the magnetization (not the physical
-`⟨σ_0^2⟩_∞ = 1`).
+Anchoring uses the `Finset` literal `{0, r}`, and at `r = 0` that literal is the singleton
+`{0}` rather than a pair. The two-point function at zero separation is therefore the
+infinite-volume magnetization at the origin — recorded as a `@[simp]` rewrite — and not the
+value `1` that the physical `⟨σ₀²⟩` would give. Subtracting the square of that same
+magnetization, as the truncation does, leaves the magnetization times one minus itself.
+Neither statement takes a hypothesis or an instance argument.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## r = 0 collapse of the ℤ^d two-point quantities -/
 
 /-- **`twoPointFunction` at `r = 0` collapses to the magnetization**:
 `twoPointFunction d p 0 = magnetizationInfinite (latticeGraph d)
