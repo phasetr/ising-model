@@ -5,26 +5,16 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempLipschitzC
 import IsingModel.AmbientLattice.TruncatedFunctions
 
 /-!
-# Truncated two-point high-temperature wrappers at ℤ^d
+# ℤ^d continuity of the truncated two-point function at high temperature (§17.5)
 
-This module contains the concrete high-temperature regularity wrappers for the
-infinite-volume Ursell two-point function `truncated2Infinite` at `h = 0`,
-split from the original `Inequalities` module. Every wrapper reduces to the
-corresponding `correlationInfinite {r, s}` statement via
-`truncated2Infinite_h_zero`:
-
-* Step 185 (β-direction): `ContinuousOn` on `Ioo 0 β_c`, on closed `Icc 0 b`,
-  and on half-open `Ico 0 β_c`.
-* Step 239 (J-direction analogue of Step 185): `ContinuousOn` on `Ioo 0 J_c`,
-  on closed `Icc 0 b`, and on half-open `Ico 0 J_c`.
-* Step 186 (β-direction): `LipschitzOnWith` on `Icc a b` and on `Icc 0 b`,
-  almost-everywhere `DifferentiableWithinAt` on `Ici 0`.
-* Step 187 (β-direction): `MonotoneOn` on `Ici 0`.
-* Step 240 (J-direction analogue of Step 186 / 187): `LipschitzOnWith` on
-  `Icc a b` and on `Icc 0 b`, almost-everywhere `DifferentiableWithinAt` on
-  `Ici 0`, and `MonotoneOn` on `Ici 0`.
-* Step 241: `ContinuousAt` at every interior point of `Ioo 0 β_c` /
-  `Ioo 0 J_c` (full neighborhood, not just within-set).
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and two distinct sites at zero external field, the continuity of the
+infinite-volume truncated two-point function, in the inverse-temperature direction and in the
+coupling direction, on the open interval `Set.Ioo 0 c`, on the closed interval `Set.Icc 0 b`
+and on the half-open interval `Set.Ico 0 c`, where `c` is the reciprocal of `2 * d` times the
+parameter held fixed. Every statement assumes `1 ≤ d`, distinctness of the two sites and
+strict positivity of the parameter held fixed; the statements on `Set.Icc 0 b` assume in
+addition `0 < b` and that `b` times the parameter held fixed times `2 * d` is below one.
 -/
 
 open scoped symmDiff
@@ -151,32 +141,6 @@ theorem truncated2Infinite_continuousOn_J_of_high_temp_Ico
     exact truncated2Infinite_h_zero (IsingModel.latticeGraph d) Λ J β r_val s_val
   rw [heq]
   exact correlationInfinite_continuousOn_J_of_high_temp_Ico hd Λ r_val s_val hrs β hβ_pos
-
-/-! ## Moved: truncated2Infinite β-direction Lipschitz/ae-diff/MonotoneOn
-
-The four β-direction wrappers
-`truncated2Infinite_lipschitzOnWith_beta_of_high_temp`,
-`truncated2Infinite_lipschitzOnWith_beta_zero_closed`,
-`truncated2Infinite_ae_differentiableWithinAt_beta_Ici_zero`,
-`truncated2Infinite_monotoneOn_beta_Ici_zero` now live in
-`LatticeMassTruncated2HighTempBetaLipschitz.lean`. -/
-
-/-! ## Moved: truncated2Infinite J-direction Lipschitz/ae diff/MonotoneOn
-
-The four wrappers
-`truncated2Infinite_lipschitzOnWith_J_of_high_temp`,
-`truncated2Infinite_lipschitzOnWith_J_zero_closed`,
-`truncated2Infinite_ae_differentiableWithinAt_J_Ici_zero`,
-`truncated2Infinite_monotoneOn_J_Ici_zero` now live in
-`LatticeMassTruncated2HighTempJDirection.lean`. -/
-
-
-/-! ## Moved: truncated2Infinite continuousAt pair
-
-The two wrappers
-`truncated2Infinite_continuousAt_{beta,J}_of_high_temp` now live in
-`LatticeMassTruncated2HighTempContinuousAt.lean`. -/
-
 
 end Ambient
 

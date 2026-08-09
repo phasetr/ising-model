@@ -4,22 +4,23 @@ import IsingModel.Concrete.LatticeGraphCorrelation.LatticeMassHighTempIciZero
 import IsingModel.AmbientLattice.TruncatedFunctions
 
 /-!
-# Truncated two-point high-temperature J-direction wrappers at ℤ^d
+# ℤ^d coupling-direction regularity of the truncated two-point function
 
-Narrow child module for four ℤ^d `truncated2Infinite` J-direction wrappers
-(Step 240) extracted from `LatticeMassTruncated2HighTemp.lean`:
-`LipschitzOnWith` on `Icc a b` and on `Icc 0 b`, almost-everywhere
-`DifferentiableWithinAt` on `Ici 0`, and `MonotoneOn` on `Ici 0`. Each is a
-thin pass-through to the corresponding `correlationInfinite {r, s}` lemma
-via `truncated2Infinite_h_zero`.
+Instantiates at `IsingModel.latticeGraph d`, for an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` at zero external field, the regularity in the coupling of the infinite-volume
+truncated two-point function under `0 < β`. It is Lipschitz on a compact interval
+`Set.Icc a b` with `0 < a ≤ b`, and on `Set.Icc 0 b` with `0 < b`, in each case with the
+explicit constant built from `b`, the inverse temperature and the dimension, in each case
+under the high-temperature condition that `b * β * (2 * d)` is below one, and in each case
+with the two sites assumed distinct. On `Set.Ici 0` it is monotone and, at Lebesgue-almost
+every point, differentiable within that half-line; the monotonicity and the almost-everywhere
+differentiability assume no high-temperature condition and no distinctness of the sites.
 -/
 
 open scoped symmDiff
 
 namespace IsingModel
 namespace Ambient
-
-/-! ## Step 240: truncated2Infinite J-direction Lipschitz/ae diff/MonotoneOn -/
 
 /-- **truncated2Infinite LipschitzOnWith J on [a, b] at h = 0** (Step 240).
 J-direction analogue of Step 186 (Icc a b). Wrapper of Step 222. -/
