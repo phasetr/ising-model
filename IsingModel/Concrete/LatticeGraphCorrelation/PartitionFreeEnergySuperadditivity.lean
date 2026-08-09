@@ -2,18 +2,17 @@ import IsingModel.AmbientLatticeSum.LambdaSuperadditivity
 import IsingModel.Lattice
 
 /-!
-# Concrete partition/free-energy superadditivity wrappers
+# ℤ^d super-multiplicativity of the partition function on disjoint unions
 
-Narrow child module for concrete `latticeGraph` partition-function and
-free-energy disjoint-union monotonicity / superadditivity wrappers. The theorem
-names are the same as the former declarations, but callers can now avoid
-importing the monolithic concrete module.
+Instantiates at `IsingModel.latticeGraph d` the behaviour of the partition function under the
+union of disjoint finite volumes: it is super-multiplicative and its logarithm is
+super-additive, each under disjointness of the volumes and the ferromagnetic hypothesis on the
+parameter record. A congruence statement transporting the partition function along an equality
+of volumes is included; it assumes only that equality.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d partition/free-energy disjoint-union wrappers -/
 
 /-- **ℤ^d `Z` is super-multiplicative on disjoint Finset unions**
 (ferromagnetic). Direct wrapper of `partitionFunctionΛ_disjUnion_super_multiplicative`. -/
@@ -43,15 +42,6 @@ theorem log_partitionFunctionΛ_latticeGraph_disjUnion_super_additive
   log_partitionFunctionΛ_disjUnion_super_additive
     (IsingModel.latticeGraph d) hd p hf
 
-/-! ## Moved: freeEnergyΛ superadditivity wrappers
-
-The three wrappers
-`card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty`,
-`card_mul_freeEnergyΛ_latticeGraph_le_of_disjoint_union`,
-`freeEnergyΛ_latticeGraph_weighted_super_additive_of_nonempty` now live
-in `PartitionFreeEnergySuperadditivityFE.lean`. -/
-
-
 /-- **ℤ^d `partitionFunctionΛ` respects Finset equality**. -/
 theorem partitionFunctionΛ_latticeGraph_congr_finset
     (d : ℕ) {Λ₁ Λ₂ : Finset (Fin d → ℤ)} (h : Λ₁ = Λ₂)
@@ -61,14 +51,6 @@ theorem partitionFunctionΛ_latticeGraph_congr_finset
     partitionFunctionΛ (IsingModel.latticeGraph d) Λ₁ p
       = partitionFunctionΛ (IsingModel.latticeGraph d) Λ₂ p :=
   partitionFunctionΛ_congr_finset (IsingModel.latticeGraph d) h p
-
-/-! ## Moved: partitionFunctionΛ disjoint_union ≤ wrappers
-
-The two wrappers
-`log_partitionFunctionΛ_latticeGraph_le_of_disjoint_union`,
-`partitionFunctionΛ_latticeGraph_le_of_disjoint_union` now live in
-`PartitionFreeEnergySuperadditivityDisjointUnion.lean`. -/
-
 
 end Ambient
 end IsingModel

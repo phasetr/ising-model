@@ -2,21 +2,15 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d freeEnergyΛ superadditivity wrappers
+# ℤ^d weighted super-additivity of the free-energy density
 
-Narrow child module for three ℤ^d Λ-layer freeEnergyΛ
-superadditivity wrappers extracted from
-`PartitionFreeEnergySuperadditivity.lean`:
-
-* `card_mul_freeEnergyΛ_latticeGraph_eq_log_partitionFunctionΛ_of_nonempty`,
-* `card_mul_freeEnergyΛ_latticeGraph_le_of_disjoint_union`,
-* `freeEnergyΛ_latticeGraph_weighted_super_additive_of_nonempty`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.{card_mul_freeEnergyΛ_*,freeEnergyΛ_weighted_super_additive_*}`
-lemma at `G := IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `PartitionFreeEnergySuperadditivity`
-declarations.
+Instantiates at `IsingModel.latticeGraph d` the volume-weighted form of the free-energy
+density: on a nonempty volume the product `|Λ| * f_Λ` is the logarithm of the partition
+function, that product does not decrease when the volume is enlarged by a disjoint one, and it
+is super-additive across a disjoint union. The identity assumes only that the volume is
+nonempty; the enlargement statement assumes in addition disjointness and the ferromagnetic
+hypothesis on the parameter record, and the super-additivity statement assumes each volume
+nonempty.
 -/
 
 namespace IsingModel

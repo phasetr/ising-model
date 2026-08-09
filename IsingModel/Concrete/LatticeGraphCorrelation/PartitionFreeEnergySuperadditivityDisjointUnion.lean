@@ -2,11 +2,12 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d partitionFunctionΛ disjoint_union ≤ wrappers
+# ℤ^d growth of the partition function under disjoint enlargement
 
-Narrow child module for two ℤ^d
-`{log_,}partitionFunctionΛ_latticeGraph_le_of_disjoint_union`
-wrappers extracted from `PartitionFreeEnergySuperadditivity.lean`.
+Instantiates at `IsingModel.latticeGraph d` the growth of the partition function and of its
+logarithm when a finite volume is enlarged by a disjoint one. Each statement assumes
+disjointness of the volumes and the ferromagnetic hypothesis on the parameter record, and no
+volume is assumed nonempty.
 -/
 
 namespace IsingModel
