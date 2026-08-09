@@ -3,18 +3,14 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiableExpansionTerm
 
 /-!
-# Mayer `mayerPartialSum` Differentiable along-ex wrappers
+# Differentiability of the Mayer partial sum in the activity, along an exhaustion
 
-Narrow child module for the two §18.6 along-exhaustion
-`mayerPartialSumAlongExhaustion_*` `Differentiable` /
-`DifferentiableOn` wrappers. The corresponding
-`mayerExpansionTermAlongExhaustion_differentiable` wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiableExpansionTerm`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding
-`mayer*_Λ_differentiable*` ambient lemma. Theorem names are
-unchanged from the former `MayerVdRegularity` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+At every truncation order `N`, the Mayer partial sum of the stage subgraph is differentiable
+over `ℝ` in the activity, and differentiable on an arbitrary subset of `ℝ`.
 -/
 
 namespace IsingModel
@@ -41,15 +37,6 @@ theorem mayerPartialSumAlongExhaustion_differentiableOn
         IsingModel.mayerPartialSum
           (inducedGraph G (Λ.volume n)) N t) s :=
   mayerPartialSum_Λ_differentiableOn G (Λ.volume n) N s
-
-/-! ## Moved: 1 `mayerExpansionTerm` Differentiable wrapper
-
-The `mayerExpansionTermAlongExhaustion_differentiable` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityDifferentiableExpansionTerm`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel
