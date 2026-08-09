@@ -2,25 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonPositivity
 
 /-!
-# Concrete along-ex polymerFreeEnergyAlongExhaustion tanh _iff wrappers
+# ℤ^d positivity and vanishing of the polymer free energy, along an exhaustion
 
-Narrow child module for 2 ℤ^d along-exhaustion
-`polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_*_iff`
-positivity / equality wrappers extracted from
-`MayerEpsilonPositivityAlongEx.lean`:
-
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_pos_iff`,
-* `polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_eq_zero_iff`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergyAlongExhaustion_tanh_{pos,eq_zero}_iff` lemma
-at `G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerEpsilonPositivityAlongEx` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the characterisations of when `polymerFreeEnergy` on the stage-`n` induced
+subgraph at the activity `tanh (β * J)` is strictly positive and of when it vanishes: strict
+positivity holds exactly when that activity is strictly positive and that subgraph has at
+least one polymer, and vanishing holds exactly when the activity is `0` or that subgraph has
+none. Each statement assumes `0 ≤ β * J` and nothing else about the parameters.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: 0 < polymerFreeEnergy(tanh) ↔ 0 < tanh ∧
 allPolymers ≠ ∅**. -/
@@ -55,7 +48,6 @@ theorem polymerFreeEnergyAlongExhaustion_latticeGraph_tanh_eq_zero_iff
             (Λ.volume n)) = ∅ :=
   Ambient.polymerFreeEnergyAlongExhaustion_tanh_eq_zero_iff
     (IsingModel.latticeGraph d) Λ hβJ n
-
 
 end Ambient
 end IsingModel

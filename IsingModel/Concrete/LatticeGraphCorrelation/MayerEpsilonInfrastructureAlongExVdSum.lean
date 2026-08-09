@@ -2,25 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerEpsilonInfrastructureVdSum
 
 /-!
-# Concrete along-ex vdPolymerFamilies_sumAlongExhaustion ε(t) wrappers
+# ℤ^d nonempty-family activity sum near zero activity, along an exhaustion
 
-Narrow child module for 3 ℤ^d along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_*_minus_one_*` ε(t) wrappers
-extracted from `MayerEpsilonInfrastructureAlongEx.lean`:
-
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_at_zero`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_continuous`,
-* `vdPolymerFamilies_sumAlongExhaustion_latticeGraph_minus_one_lt_one_eventually`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.vdPolymerFamilies_sumAlongExhaustion_minus_one_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerEpsilonInfrastructureAlongEx` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the behaviour near activity `0` of the activity sum `∑_Γ ∏_{P ∈ Γ} t ^ |P|` taken
+over the vertex-disjoint compatible polymer families of the stage-`n` induced subgraph other
+than the empty one: it vanishes at activity `0`, it is `Continuous` in the activity, and it is
+eventually strictly below `1` as the activity tends to `0`. No condition on the activity is
+imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d along-ex: ε(0) = 0**. -/
 theorem

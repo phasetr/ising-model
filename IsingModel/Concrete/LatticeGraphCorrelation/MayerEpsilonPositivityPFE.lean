@@ -2,24 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaEpsilonIff
 
 /-!
-# Concrete Λ-direct polymerFreeEnergy_Λ tanh positivity / equality wrappers
+# ℤ^d positivity and vanishing of the polymer free energy at the `tanh` activity
 
-Narrow child module for 2 ℤ^d Λ-direct
-`polymerFreeEnergy_Λ_latticeGraph_tanh_*_iff` wrappers extracted
-from `MayerEpsilonPositivity.lean`:
-
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_pos_iff`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_eq_zero_iff`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.polymerFreeEnergy_Λ_tanh_{pos,eq_zero}_iff` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerEpsilonPositivity` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the
+characterisations of when `polymerFreeEnergy` at the activity `tanh (β * J)` is strictly
+positive and of when it vanishes: strict positivity holds exactly when that activity is
+strictly positive and the induced subgraph has at least one polymer, and vanishing holds
+exactly when the activity is `0` or that subgraph has none. Each statement assumes `0 ≤ β * J`
+and nothing else about the parameters.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d Λ: 0 < polymerFreeEnergy(tanh) ↔ 0 < tanh ∧
 allPolymers ≠ ∅**. -/

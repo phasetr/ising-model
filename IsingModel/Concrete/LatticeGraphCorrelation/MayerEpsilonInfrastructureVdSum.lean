@@ -2,25 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerRecurrenceEpsilon
 
 /-!
-# Concrete Λ-direct vdPolymerFamilies_sum_Λ ε(t) wrappers
+# ℤ^d nonempty-family activity sum near zero activity, on a fixed volume
 
-Narrow child module for 3 ℤ^d Λ-direct
-`vdPolymerFamilies_sum_Λ_*_minus_one_*` ε(t) wrappers extracted from
-`MayerEpsilonInfrastructure.lean`:
-
-* `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_at_zero`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_continuous`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_lt_one_eventually`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.vdPolymerFamilies_sum_Λ_minus_one_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerEpsilonInfrastructure` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the behaviour near
+activity `0` of the activity sum `∑_Γ ∏_{P ∈ Γ} t ^ |P|` taken over the vertex-disjoint
+compatible polymer families of the induced subgraph other than the empty one: it vanishes at
+activity `0`, it is `Continuous` in the activity, and it is eventually strictly below `1` as
+the activity tends to `0`. No condition on the activity is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
 
 /-- **ℤ^d Λ: ε(0) = 0**. -/
 theorem vdPolymerFamilies_sum_Λ_latticeGraph_minus_one_at_zero
