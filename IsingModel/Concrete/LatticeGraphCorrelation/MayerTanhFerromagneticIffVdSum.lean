@@ -2,21 +2,16 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaTanhFerroIff
 
 /-!
-# ℤ^d Mayer tanh-ferromagnetic vdSum iff and pFE-comparison wrappers
+# ℤ^d ferromagnetic activity-sum thresholds and strict free-energy bounds
 
-Narrow child module for four Λ-layer ℤ^d Mayer tanh-ferromagnetic
-wrappers extracted from `MayerTanhFerromagneticIff.lean`:
-
-* `vdPolymerFamilies_sum_Λ_latticeGraph_tanh_gt_one_iff_ferro`,
-* `vdPolymerFamilies_sum_Λ_latticeGraph_tanh_eq_one_iff_ferro`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_lt_pow_sub_one_of_eps_pos_ferro`,
-* `polymerFreeEnergy_Λ_latticeGraph_tanh_lt_eps_of_eps_pos_ferro`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.vdPolymerFamilies_sum_Λ_tanh_*` /
-`Ambient.polymerFreeEnergy_Λ_tanh_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `MayerTanhFerromagneticIff` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, at the activity
+`tanh (β * J)`, the ferromagnetic thresholds for the activity sum over the vertex-disjoint
+compatible polymer families of the induced subgraph — it exceeds `1` exactly when the activity
+is strictly positive and that subgraph has at least one polymer, and it equals `1` exactly
+when the activity is `0` or that subgraph has none — together with strict upper bounds on
+`polymerFreeEnergy`, by `(1 + tanh (β * J)) ^ |E_Λ| - 1` and by the activity sum over the
+families other than the empty one. Every statement assumes `0 ≤ β` and `0 ≤ J` separately; the
+strict upper bounds assume in addition that the latter sum is strictly positive.
 -/
 
 namespace IsingModel

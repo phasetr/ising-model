@@ -2,17 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases
 
 /-!
-# ℤ^d AlongExhaustion mayerPartialSum_zero ≤ polymerFreeEnergy wrappers
+# ℤ^d order-zero Mayer partial sum below the free energy, along an exhaustion
 
-Narrow child module for three ℤ^d AlongExhaustion mayerPartialSum_zero
-≤ polymerFreeEnergy wrappers extracted from `MayerTrivialCases.lean`:
-
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_le_polymerFreeEnergy`
-  (plain `t ≥ 0`),
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy`
-  (tanh form, `0 ≤ β·J`),
-* `mayerPartialSum_zero_AlongExhaustion_latticeGraph_tanh_le_polymerFreeEnergy_ferro`
-  (ferro variant at `0 < β`).
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the comparison placing the Mayer partial sum at truncation order `0` at or below
+`polymerFreeEnergy` on the stage-`n` induced subgraph: at a bare activity under `0 ≤ t`, at
+the activity `tanh (β * J)` under `0 ≤ β * J`, and in a ferromagnetic form of the latter under
+`0 ≤ J` together with `0 < β`. The ferromagnetic form is the only statement here that assumes
+a sign for `β` and `J` separately.
 -/
 
 namespace IsingModel
