@@ -2,20 +2,18 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaSandwich
 
 /-!
-# §18.5 cluster-expansion convergence ferromagnetic sandwich wrappers
+# Two-sided bounds on the polymer-family sum at activity `Real.tanh (β * J)`
 
-Narrow child module for the two §18.5 ambient alongExhaustion
-ferromagnetic `vdPolymerFamilies_sumAlongExhaustion_sandwich*_ferromagnetic`
-cluster-expansion convergence sandwich wrappers extracted from
-`HighTemperatureVdSandwichFE.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `vdPolymerFamilies_sumAlongExhaustion_sandwich_ferromagnetic`
-* `vdPolymerFamilies_sumAlongExhaustion_sandwich_sharp_ferromagnetic`
+Each statement assumes `0 ≤ J` and `0 < β`. Write `Ξ` for the sum of
+`∏ P ∈ Γ, Real.tanh (β * J) ^ P.card` over the stage subgraph's vertex-disjoint compatible
+polymer families and `|E|` for that subgraph's edge count.
 
-Each wrapper is a thin pass-through to the corresponding
-`vdPolymerFamilies_sum_Λ_sandwich_*_ferromagnetic` ambient lemma.
-Theorem names are unchanged from the former
-`HighTemperatureVdSandwichFE` declarations.
+`Ξ` lies between `1` and `2 ^ |E|`, and also between `1` and
+`(1 + Real.tanh (β * J)) ^ |E|`.
 -/
 
 namespace IsingModel
