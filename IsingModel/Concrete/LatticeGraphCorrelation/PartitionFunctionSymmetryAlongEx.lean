@@ -3,16 +3,13 @@ import IsingModel.AmbientLatticeSum
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d partitionFunctionAlongEx |h|-symmetry wrappers
+# ℤ^d evenness of the partition function in the field, along an exhaustion
 
-Narrow child module for four ℤ^d
-`partitionFunctionAlongExhaustion_latticeGraph_*` |h|-related wrappers
-extracted from `PartitionFunctionSymmetry.lean`:
-
-* `partitionFunctionAlongExhaustion_latticeGraph_cubicExhaustion_neg_h`,
-* `partitionFunctionAlongExhaustion_latticeGraph_neg_h`,
-* `partitionFunctionAlongExhaustion_latticeGraph_eq_abs_h`,
-* `partitionFunctionAlongExhaustion_latticeGraph_monotone_abs_h`.
+Instantiates at `IsingModel.latticeGraph d`, at a fixed stage `n`, along an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ` and along `Ambient.cubicExhaustion d`, the evenness of the
+partition function under negating the external field, its rewriting at `|h|`, and its
+monotonicity in `|h|`. The evenness and rewriting statements carry no hypothesis; the
+monotonicity statement assumes `0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
 -/
 
 namespace IsingModel

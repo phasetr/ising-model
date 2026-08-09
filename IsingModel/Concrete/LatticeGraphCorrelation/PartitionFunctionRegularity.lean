@@ -2,18 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
-# Concrete partition-function regularity wrappers
+# ℤ^d analyticity of the partition function at zero field, on a fixed volume
 
-This module contains concrete `latticeGraph` specializations of `AnalyticAt`
-and `AnalyticOnNhd` APIs for partition functions at zero external field. It is
-split out of the original concrete correlation module so downstream users can
-depend on a narrower child path.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the analyticity of
+the partition function at the parameter record `⟨J, 0, β⟩`: `AnalyticAt ℝ` in the inverse
+temperature with the coupling fixed and in the coupling with the inverse temperature fixed,
+and `AnalyticOnNhd ℝ` on `Set.univ` in each of those directions. No sign condition on either
+parameter is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d partition-function regularity at `h = 0` -/
 
 /-- **ℤ^d Λ: partitionFunction `AnalyticAt ℝ` in `β` at `h = 0`**. -/
 theorem partitionFunctionΛ_latticeGraph_analyticAt_beta_h_zero
@@ -60,13 +59,6 @@ theorem partitionFunctionΛ_latticeGraph_analyticOnNhd_J_h_zero
         ⟨J', 0, β⟩) Set.univ :=
   Ambient.partitionFunctionΛ_analyticOnNhd_J_h_zero
     (IsingModel.latticeGraph d) Λ β
-
-/-! ## Moved: partitionFunctionAlongExhaustion regularity at `h = 0`
-
-The four `partitionFunctionAlongExhaustion_latticeGraph_*_h_zero`
-regularity wrappers (`AnalyticAt` / `AnalyticOnNhd` in β/J) now live in
-`PartitionFunctionRegularityAlongEx.lean`. -/
-
 
 end Ambient
 end IsingModel

@@ -2,17 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionGeneralAnalyticity
 
 /-!
-# ℤ^d AlongExhaustion partition-function general analyticity wrappers
+# ℤ^d joint regularity and per-parameter analyticity of the partition function
 
-Narrow child module for five ℤ^d AlongExhaustion
-`partitionFunctionAlongExhaustion_latticeGraph_*` analyticity wrappers
-of the concrete general-analyticity family:
-
-* `partitionFunctionAlongExhaustion_latticeGraph_continuous_joint`,
-* `partitionFunctionAlongExhaustion_latticeGraph_differentiable_joint`,
-* `partitionFunctionAlongExhaustion_latticeGraph_analyticAt_beta_general_h`,
-* `partitionFunctionAlongExhaustion_latticeGraph_analyticAt_J_general_h`,
-* `partitionFunctionAlongExhaustion_latticeGraph_analyticAt_h`.
+Instantiates at `IsingModel.latticeGraph d`, along an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ` and at a fixed stage `n`, the joint `Continuous` and `Differentiable ℝ` statements
+for the partition function as a function of the triple `(β, J, h)` read off a point of
+`ℝ × ℝ × ℝ`, together with `AnalyticAt ℝ` in each parameter separately: in the inverse
+temperature and in the coupling at an arbitrary field, and in the field itself. No sign
+condition on any parameter is imposed.
 -/
 
 namespace IsingModel
@@ -78,7 +75,6 @@ theorem partitionFunctionAlongExhaustion_latticeGraph_analyticAt_h
         (IsingModel.latticeGraph d) Λ ⟨J, h', β⟩ n) h :=
   Ambient.partitionFunctionAlongExhaustion_analyticAt_h
     (IsingModel.latticeGraph d) Λ J β h n
-
 
 end Ambient
 end IsingModel
