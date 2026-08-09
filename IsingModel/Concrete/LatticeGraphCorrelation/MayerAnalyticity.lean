@@ -2,17 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 
 /-!
-# Concrete Mayer analyticity wrappers for the lattice graph
+# ℤ^d analyticity of the Mayer partial sum in the activity
 
-Narrow child module for ℤ^d `mayerPartialSum` and `mayerExpansionTerm`
-analytic wrappers. The theorem names are the same as the former
-declarations, but callers can now import this child module directly.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at a stage `n`
+of an `Ambient.Exhaustion` of `Fin d → ℤ`, the analyticity of the Mayer partial sum
+`mayerPartialSum` of the induced subgraph in its activity argument: `AnalyticAt ℝ` at an
+arbitrary point, and `AnalyticOnNhd ℝ` on `Set.univ`. No condition on the activity or on the
+truncation order is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### `mayerPartialSum` analyticity ℤ^d wraps -/
 
 /-- **ℤ^d Λ: mayerPartialSum AnalyticAt ℝ**. -/
 theorem mayerPartialSum_Λ_latticeGraph_analyticAt
@@ -57,25 +57,6 @@ theorem mayerPartialSumAlongExhaustion_latticeGraph_analyticOnNhd
             (Λ.volume n)) N s) Set.univ :=
   Ambient.mayerPartialSumAlongExhaustion_analyticOnNhd
     (IsingModel.latticeGraph d) Λ N n
-
-/-! ## Moved: mayerExpansionTerm analyticity wrappers
-
-The four wrappers
-`mayerExpansionTerm_Λ_latticeGraph_analyticAt`,
-`mayerExpansionTerm_Λ_latticeGraph_analyticOnNhd`,
-`mayerExpansionTermAlongExhaustion_latticeGraph_analyticAt`,
-`mayerExpansionTermAlongExhaustion_latticeGraph_analyticOnNhd` now
-live in `MayerAnalyticityExpansionTerm.lean`. -/
-
-/-! ## Moved: Mayer tanh-composed analyticity wrappers
-
-The four remaining `*_tanh_analytic*` wrappers at the tanh substitution
-live in `MayerAnalyticityTanhAlongEx.lean`
-(`mayerPartialSumAlongExhaustion_*`, four wrappers). The four ℤ^d
-`mayerExpansionTerm` tanh `AnalyticAt` counterparts at the Λ and
-along-exhaustion layers were deleted; no consumer of them was found in
-this repository. -/
-
 
 end Ambient
 end IsingModel

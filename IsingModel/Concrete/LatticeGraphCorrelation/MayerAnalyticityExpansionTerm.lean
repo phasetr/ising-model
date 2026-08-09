@@ -2,22 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity
 
 /-!
-# ℤ^d mayerExpansionTerm analyticity wrappers
+# ℤ^d analyticity of a Mayer expansion term in the activity
 
-Narrow child module for four ℤ^d mayerExpansionTerm
-AnalyticAt/AnalyticOnNhd wrappers extracted from
-`MayerAnalyticity.lean`:
-
-* `mayerExpansionTerm_Λ_latticeGraph_analyticAt`,
-* `mayerExpansionTerm_Λ_latticeGraph_analyticOnNhd`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_analyticAt`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_analyticOnNhd`.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at a stage `n`
+of an `Ambient.Exhaustion` of `Fin d → ℤ`, the analyticity of a single Mayer expansion term
+`mayerExpansionTerm` of the induced subgraph, at a fixed order, in its activity argument:
+`AnalyticAt ℝ` at an arbitrary point, and `AnalyticOnNhd ℝ` on `Set.univ`. No condition on the
+activity or on the order is imposed.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### `mayerExpansionTerm` analyticity ℤ^d wraps -/
 
 /-- **ℤ^d Λ: mayerExpansionTerm AnalyticAt ℝ**. -/
 theorem mayerExpansionTerm_Λ_latticeGraph_analyticAt

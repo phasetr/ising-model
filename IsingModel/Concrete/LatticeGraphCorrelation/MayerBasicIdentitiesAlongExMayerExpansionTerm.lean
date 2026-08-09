@@ -2,14 +2,13 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities
 
 /-!
-# ℤ^d mayerExpansionTermAlongExhaustion_latticeGraph wrappers
+# ℤ^d Mayer expansion term at its trivial orders, along an exhaustion
 
-Narrow child module for three ℤ^d
-`mayerExpansionTermAlongExhaustion_latticeGraph_*` wrappers:
-
-* `mayerExpansionTermAlongExhaustion_latticeGraph_zero`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_one`,
-* `mayerExpansionTermAlongExhaustion_latticeGraph_at_zero`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the values of a single Mayer expansion term of the stage-`n` induced subgraph: it
+vanishes at order `0` and at activity `0`, and at order `1` it is the activity sum
+`∑_P t ^ |P|` over the polymers of that subgraph. No condition on the activity or on the order
+is imposed.
 -/
 
 namespace IsingModel
