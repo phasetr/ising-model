@@ -1,15 +1,16 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d correlationΛ / partitionFunctionΛ basic bound wrappers
+# ℤ^d finite-volume partition-function positivity and correlation range
 
-Narrow child module for four ℤ^d basic Λ-direct bound wrappers
-extracted from `Base.lean`:
+Concrete `IsingModel.latticeGraph d` statements at a fixed finite subset of `Fin d → ℤ`
+and an unrestricted parameter record.
 
-* `partitionFunctionΛ_latticeGraph_pos`,
-* `abs_correlationΛ_latticeGraph_le_one`,
-* `correlationΛ_latticeGraph_le_one`,
-* `correlationΛ_latticeGraph_nonneg`.
+The partition function of the finite volume is strictly positive, and the correlation of a
+site set of that volume is at most `1` in absolute value and hence at most `1`; those
+statements take no hypothesis. Non-negativity of the same correlation is the one statement
+here that assumes `Ferromagnetic` on the parameter record, and it is the finite-volume form
+of the first Griffiths-Kelly-Sherman inequality. No instance argument is taken.
 -/
 
 open scoped symmDiff
