@@ -7,18 +7,18 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSi
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsFerro
 
 /-!
-# Ambient alongExhaustion Z/f/log Z ratio sandwich / ratio bound wrappers at h = 0
+# The packaged two-sided zero-field bound on the partition-function ratio
 
-Narrow child module for the §18.3-§18.4 ambient alongExhaustion
-`partitionFunctionAlongExhaustion` `ratio_sandwich` / `ratio_bound`
-wrappers (with `J = 0` / `β = 0` / bundle variants plus ferromagnetic
-counterparts). The log / freeEnergy ratio wrappers now live in
-`HighTemperatureBoundsRatioLogFe.lean` (split off in PR #1995); the 2
-`triple_ratio_sandwich_bundle` wrappers now live in
-`HighTemperatureBoundsTripleRatio.lean` (split off in PR #1994; the
-bound-bundle and ferromagnetic variants were dropped in PR #4676). The
-theorem names are unchanged from the former `HighTemperatureBounds`
-declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph. The ratio taken is the partition
+function at `⟨J, 0, β⟩` over its value at one of the trivial slices `⟨0, 0, β⟩` and
+`⟨J, 0, 0⟩`.
+
+Under `0 ≤ β * J`, a conjunction records for each of those two ratios that it lies between
+`Real.cosh (β * J) ^ |E|` and `Real.exp (β * J * |E|)`.
 -/
 
 namespace IsingModel
@@ -28,19 +28,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-
-/-! ## Moved: 2 Z ratio sandwich singleton wrappers
-
-The two slice-singleton wrappers
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich`
-[J = 0 trivial slice],
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero`
-[β = 0 trivial slice]) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsSingletons`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex Z ratio sandwich bundle at stage `n`**. -/
 theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle
@@ -71,44 +58,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwi
       G Λ J β hβJ n,
    partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
       G Λ J β hβJ n⟩
-
-/-! ## Moved: 1 ferromagnetic Z ratio_sandwich_bundle wrapper
-
-The ferromagnetic
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_bundle_ferromagnetic`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: Z `ratio_bound` (non-bundle and bundle) wrappers
-
-The six ambient alongExhaustion `partitionFunctionAlongExhaustion`
-`ratio_bound` wrappers (four non-bundle slice variants — `J = 0` /
-`β = 0` and ferromagnetic counterparts — and the two
-`ratio_bound_bundle` wrappers, general and ferromagnetic) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBound`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `HighTemperatureBounds.lean`.
--/
-
-/-! ## Moved: log Z + freeEnergy ratio wrappers
-
-The 12 ambient alongExhaustion `log_partitionFunction` and
-`freeEnergy` ratio_sandwich / ratio_bound (+ deviation_pos /
-pow_two_lt) wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFe`.
-The umbrella `HighTemperatureBounds.lean` re-imports
-the new child so the import paths and theorem names remain
-unchanged.
-
-The 2 ambient alongExhaustion `triple_ratio_sandwich_bundle` wrappers
-(J = 0 / β = 0 trivial slices) now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio`
-(narrowed in PR #1994). The earlier import path is preserved by
-re-exporting the child from the umbrella module that aggregates it.
--/
 
 end Ambient
 

@@ -2,19 +2,17 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBounds
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnlyFerro
 
 /-!
-# Ambient alongExhaustion Z ratio_bound non-bundle wrappers at h = 0
+# Upper bounds on the zero-field partition-function ratio, along an exhaustion
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-non-ferromagnetic
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound*`
-non-bundle wrappers (`J = 0`, `β = 0`). Each wrapper extracts the
-`.2`-projection of the corresponding `_ratio_sandwich*` bundle under
-the joint hypothesis `0 ≤ β * J`. The ferromagnetic counterparts now
-live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnlyFerro`
-and are re-imported through this parent module. Theorem names are
-unchanged from the former `HighTemperatureBoundsRatioBoundsBound`
-declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `|E|` for the edge count of the stage subgraph. The ratio taken is the partition
+function at `⟨J, 0, β⟩` over its value at one of the trivial slices `⟨0, 0, β⟩` and
+`⟨J, 0, 0⟩`.
+
+Under `0 ≤ β * J`, each of those two ratios is at most `Real.exp (β * J * |E|)`.
 -/
 
 namespace IsingModel
@@ -46,18 +44,6 @@ theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_
       ≤ Real.exp (β * J * (inducedGraph G (Λ.volume n)).edgeFinset.card) :=
   (partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero
     G Λ J β hβJ n).2
-
-/-! ## Moved: 2 ferromagnetic ratio_bound wrappers
-
-The two ferromagnetic `_ratio_bound*_ferromagnetic` non-bundle
-wrappers
-(`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_ferromagnetic`,
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_bound_beta_zero_ferromagnetic`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioBoundsBoundOnlyFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 

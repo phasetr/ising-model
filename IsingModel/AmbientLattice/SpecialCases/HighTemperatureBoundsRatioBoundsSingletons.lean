@@ -1,22 +1,18 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient alongExhaustion Z ratio sandwich singleton wrappers at h = 0
+# Two-sided bounds on the zero-field partition-function ratio, slice by slice
 
-Narrow child module for the two §18.3-§18.4 ambient alongExhaustion
-`partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich*`
-slice-singleton wrappers extracted from
-`HighTemperatureBoundsRatioBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich`
-  (J = 0 trivial slice)
-* `partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_ratio_sandwich_beta_zero`
-  (β = 0 trivial slice)
+Write `|E|` for the edge count of the stage subgraph. The ratio taken is the partition
+function at `⟨J, 0, β⟩` over its value at one of the trivial slices `⟨0, 0, β⟩` and
+`⟨J, 0, 0⟩`.
 
-Each wrapper unfolds `partitionFunctionAlongExhaustion` to
-`partitionFunctionΛ_high_temp_expansion_h_zero_ratio_sandwich*` via
-`change` + `exact`. Theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Under `0 ≤ β * J`, each of those two ratios lies between `Real.cosh (β * J) ^ |E|` and
+`Real.exp (β * J * |E|)`, stated one slice at a time.
 -/
 
 namespace IsingModel
