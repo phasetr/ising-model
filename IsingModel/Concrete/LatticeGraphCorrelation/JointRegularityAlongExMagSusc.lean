@@ -2,21 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.JointRegularity
 
 /-!
-# ℤ^d AlongExhaustion joint mag + susc Continuous/Differentiable wrappers
+# ℤ^d joint regularity of the along-exhaustion magnetization and susceptibility
 
-Narrow child module for four ℤ^d AlongExhaustion joint
-Continuous/Differentiable wrappers extracted from
-`JointRegularityAlongEx.lean`:
-
-* `magnetizationAlongExhaustion_latticeGraph_continuous_joint`,
-* `magnetizationAlongExhaustion_latticeGraph_differentiable_joint`,
-* `susceptibilityAlongExhaustion_latticeGraph_continuous_joint`,
-* `susceptibilityAlongExhaustion_latticeGraph_differentiable_joint`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*AlongExhaustion_{continuous,differentiable}_joint*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `JointRegularityAlongEx` declarations.
+Concrete `latticeGraph d` statements that, at a fixed site of `Fin d → ℤ` and a fixed stage
+of an arbitrary `Ambient.Exhaustion`, the magnetization and the susceptibility of that stage,
+read as functions of the triple `(β, J, h)`, are continuous and differentiable over `ℝ` on
+the whole parameter space. Every statement requires a `Fintype` instance on the edge set
+induced at every stage, and that instance is its entire requirement: no `Prop`-typed
+hypothesis is carried anywhere in this module.
 -/
 
 namespace IsingModel

@@ -2,24 +2,19 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnergy
 
 /-!
-# Concrete joint analyticity wrappers for the lattice graph
+# ℤ^d joint analyticity of the along-exhaustion partition function and free energy
 
-Narrow child module for ℤ^d `AnalyticAt` / `AnalyticOnNhd` forwarders in the
-joint `(β, J, h)` parameters. The theorem names are the same as the former
-former declarations, but callers can now import this child module directly.
+Concrete `latticeGraph d` statements that, at a fixed stage of an arbitrary
+`Ambient.Exhaustion` of `Fin d → ℤ`, the partition function and the free energy of that stage
+are analytic in the inverse temperature, the coupling and the external field jointly, read as
+a function of the triple `(β, J, h)`. Analyticity at a prescribed base triple and analyticity
+on a neighbourhood of all of `Set.univ` are stated for each of them. Every statement requires
+a `Fintype` instance on the edge set induced at every stage; that instance is its entire
+requirement, since no `Prop`-typed hypothesis is carried anywhere in this module.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d joint AnalyticAt + AnalyticOnNhd wrappers
-(partitionFunction / freeEnergy) along-ex -/
-
-/-! ## Moved: AlongEx correlation joint analyticity
-
-The two wrappers
-`correlationAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
-now live in `JointAnalyticityAlongExCorr.lean`. -/
 
 /-- **ℤ^d along-ex: partitionFunctionAlongExhaustion jointly AnalyticAt**. -/
 theorem partitionFunctionAlongExhaustion_latticeGraph_analyticAt_joint

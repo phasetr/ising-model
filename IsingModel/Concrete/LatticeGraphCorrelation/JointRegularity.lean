@@ -2,19 +2,17 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 
 /-!
-# Concrete joint regularity wrappers
+# ℤ^d joint regularity of the finite-volume correlation
 
-This module contains concrete `latticeGraph` specializations of joint
-`Continuous`, `Differentiable`, `ContinuousAt`, and `DifferentiableAt` APIs for
-correlation, magnetization, and susceptibility. It is split out of the original
-concrete correlation module so downstream users can depend on a narrower child
-path.
+Concrete `latticeGraph d` statements that the correlation of a fixed finite set of vertices
+of a fixed finite volume, read as a function of the triple `(β, J, h)`, is continuous and is
+differentiable over `ℝ` on the whole parameter space. Each is stated over the subgraph
+induced by that volume and requires a `Fintype` instance on its edge set; that instance is
+its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel
 namespace Ambient
-
-/-! ### ℤ^d Λ-layer and along-exhaustion joint wrappers -/
 
 /-- **ℤ^d Λ: correlationΛ jointly Continuous in `(β, J, h)`**. -/
 theorem correlationΛ_latticeGraph_continuous_joint
@@ -33,30 +31,6 @@ theorem correlationΛ_latticeGraph_differentiable_joint
     Differentiable ℝ (fun p : ℝ × ℝ × ℝ =>
       Ambient.correlationΛ (IsingModel.latticeGraph d) Λ ⟨p.2.1, p.2.2, p.1⟩ A) :=
   Ambient.correlationΛ_differentiable_joint (IsingModel.latticeGraph d) Λ A
-
-/-! ## Moved: ℤ^d Λ-layer mag + susc joint regularity wrappers
-
-The four wrappers
-`magnetizationΛ_latticeGraph_{continuous,differentiable}_joint` and
-`susceptibilityΛ_latticeGraph_{continuous,differentiable}_joint`
-now live in `JointRegularityMagSusc.lean`. -/
-
-
-/-! ## Moved: along-exhaustion joint regularity wrappers
-
-The six wrappers
-`correlationAlongExhaustion_latticeGraph_{continuous,differentiable}_joint`,
-`magnetizationAlongExhaustion_latticeGraph_{continuous,differentiable}_joint`,
-and `susceptibilityAlongExhaustion_latticeGraph_{continuous,differentiable}_joint`
-now live in `JointRegularityAlongEx.lean`. -/
-
-/-! ## Moved: pointwise joint regularity wrappers
-
-The twelve `*_continuousAt_joint` / `*_differentiableAt_joint` wrappers
-for `correlation`, `magnetization`, and `susceptibility` on the
-Λ-layer and along-exhaustion variants now live in
-`JointRegularityPointwise.lean`. -/
-
 
 end Ambient
 end IsingModel

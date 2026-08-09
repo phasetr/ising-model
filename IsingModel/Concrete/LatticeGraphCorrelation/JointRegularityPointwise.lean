@@ -2,21 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
-# Concrete pointwise joint regularity wrappers
+# ℤ^d pointwise joint regularity of the finite-volume correlation
 
-Narrow child module for two ℤ^d Λ-layer pointwise
-`correlationΛ_latticeGraph_*_joint`
-wrappers (with `continuousAt` and `differentiableAt`). Each wrapper is a
-thin pass-through to the corresponding ambient lemma at
-`IsingModel.latticeGraph d`. The two AlongExhaustion variants now live in
-`JointRegularityPointwiseAlongEx.lean`.
+Concrete `latticeGraph d` statements that the correlation of a fixed finite set of vertices
+of a fixed finite volume, read as a function of the triple `(β, J, h)`, is continuous at an
+arbitrary prescribed triple and differentiable over `ℝ` there. Each is stated over the
+subgraph induced by that volume and requires a `Fintype` instance on its edge set; that
+instance is its entire requirement, since no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel
 namespace Ambient
 
-
-/-! ### ℤ^d joint pointwise wrappers -/
 
 /-- **ℤ^d Λ: correlationΛ jointly ContinuousAt**. -/
 theorem correlationΛ_latticeGraph_continuousAt_joint
@@ -35,15 +32,6 @@ theorem correlationΛ_latticeGraph_differentiableAt_joint
     DifferentiableAt ℝ (fun q : ℝ × ℝ × ℝ =>
       Ambient.correlationΛ (IsingModel.latticeGraph d) Λ ⟨q.2.1, q.2.2, q.1⟩ A) p :=
   Ambient.correlationΛ_differentiableAt_joint (IsingModel.latticeGraph d) Λ A p
-
-/-! ## Moved: AlongExhaustion joint pointwise wrappers
-
-The two AlongExhaustion joint pointwise wrappers
-(`correlationAlongExhaustion_latticeGraph_*_joint`
-with `continuousAt` and `differentiableAt`) now live in
-`JointRegularityPointwiseAlongEx.lean`. -/
-
-
 
 end Ambient
 end IsingModel

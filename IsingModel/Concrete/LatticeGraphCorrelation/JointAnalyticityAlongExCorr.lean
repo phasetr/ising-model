@@ -2,13 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticity
 
 /-!
-# Concrete AlongExhaustion correlation joint analyticity
+# ℤ^d joint analyticity of the along-exhaustion correlation
 
-Narrow child module for two ℤ^d
-`correlationAlongExhaustion_latticeGraph_analytic{At,OnNhd}_joint`
-wrappers. Each wrapper is a thin pass-through to the corresponding
-ambient `*AlongExhaustion_analytic*_joint` lemma at
-`IsingModel.latticeGraph d`.
+Concrete `latticeGraph d` statements that, for a fixed finite subset of `Fin d → ℤ` and at a
+fixed stage of an arbitrary `Ambient.Exhaustion`, the correlation of that subset is analytic
+in the inverse temperature, the coupling and the external field jointly, read as a function
+of the triple `(β, J, h)` — at a prescribed base triple, and on a neighbourhood of all of
+`Set.univ`. Each requires a `Fintype` instance on the edge set induced at every stage, and
+that instance is its entire requirement: no `Prop`-typed hypothesis is carried here.
 -/
 
 namespace IsingModel
