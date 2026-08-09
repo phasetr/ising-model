@@ -2,17 +2,19 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete freeEnergyInfinite high-temperature wrappers
+# ℤ^d infinite-volume free energy under a bounded edge density at zero field
 
-Narrow child module for the §18.3-§18.4 concrete `freeEnergyInfinite`
-high-temperature wrappers on `latticeGraph d` (with caller-supplied
-`Exhaustion` BED witness) and on `cubicExhaustion d` (with the BED
-constant `c = d`). 9 theorems: `upper_bound_exp_uniform`,
-`upper_bound_exp`, `sandwich_exp`, `complete_summary_exp`,
-`deviation_bound_exp`, `continuity_at_J_zero`,
-`continuity_at_beta_zero`, `continuity_bundle`,
-`deviation_sandwich_exp`. The theorem names are
-unchanged from the former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, upper bounds
+on `freeEnergyInfinite` — the `limsup` of the finite-volume free-energy densities along an
+exhaustion. For an arbitrary `Ambient.Exhaustion` of `Fin d → ℤ` the bound is
+`log 2 + β * J * c`, where `c` is a caller-supplied constant bounding the edge count of every
+nonempty stage by `c` times its site count. For `Ambient.cubicExhaustion d` that constant is
+taken to be `d`, giving the bound `log 2 + β * J * d`, the sandwich of `freeEnergyInfinite`
+between `log 2` and that bound, the bundle adding to the sandwich the value `log 2` taken at
+`⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`, and the deviation form
+`freeEnergyInfinite - log 2 ≤ β * J * d`. Every statement here assumes `0 ≤ J` together with
+`0 < β`, and the cubic ones obtain the edge-density constant from
+`inducedLatticeGraph_card_edgeFinset_le`.
 -/
 
 namespace IsingModel
@@ -115,25 +117,6 @@ theorem freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_deviati
   intro n _
   exact inducedLatticeGraph_card_edgeFinset_le d
     ((Ambient.cubicExhaustion d).volume n)
-
-/-! ## Moved: ∞-vol f continuity-at-trivial-slice wrappers
-
-The three wrappers
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_at_J_zero`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_at_beta_zero`,
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_continuity_bundle`
-now live in `HighTemperatureBoundsFreeEnergyInfiniteContinuity.lean`. -/
-
-
-/-! ## Moved: ℤ^d ∞-vol f deviation sandwich wrapper
-
-The ℤ^d
-`freeEnergyInfinite_latticeGraph_cubicExhaustion_high_temp_h_zero_deviation_sandwich_exp`
-wrapper now lives in
-`...HighTemperatureBoundsFreeEnergyInfiniteDeviationAndRatio`.
-The earlier import path is preserved by re-importing the new child. -/
-
-
 
 end Ambient
 

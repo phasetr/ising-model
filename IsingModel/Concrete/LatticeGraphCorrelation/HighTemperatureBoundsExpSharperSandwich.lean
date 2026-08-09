@@ -2,19 +2,16 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete HT Λ-layer sandwich_exp wrappers
+# ℤ^d fixed-volume sharper sandwiches for `Z_Λ` and `f_Λ` at zero field
 
-Narrow child module for the 4 ℤ^d Λ-layer sandwich_exp HT wrappers
-(`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
-`_ferromagnetic`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp`,
-`_ferromagnetic`) extracted from
-`HighTemperatureBoundsExpSharper.lean` in PR #2080. Each is a thin
-pass-through to the corresponding ambient
-`partitionFunctionΛ_*_sandwich_exp` / `freeEnergyΛ_*_sandwich_exp`
-lemma at `IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `HighTemperatureBoundsExpSharper`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, sandwiches in which the lower bound gives every edge a factor
+`cosh (β * J)` and the sharper upper bound gives it `exp (β * J)` instead: the partition
+function between `2 ^ |Λ| * cosh (β * J) ^ |E_Λ|` and `2 ^ |Λ| * exp (β * J * |E_Λ|)`, and the
+free-energy density between `log 2 + (|E_Λ| / |Λ|) * log (cosh (β * J))` and
+`log 2 + β * J * |E_Λ| / |Λ|`. Each appears under `0 ≤ β * J` and in a ferromagnetic form
+under `0 ≤ J` together with `0 < β`; the free-energy statements, and they alone, also need `Λ`
+nonempty.
 -/
 
 namespace IsingModel

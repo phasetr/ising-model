@@ -5,18 +5,17 @@ import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelat
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsCorrelationPairCorollaries
 
 /-!
-# Concrete HT AlongExhaustion complete_summary + latticeAdj wrappers
+# ℤ^d along-exhaustion adjacency pair bounds and complete-summary bundles at zero field
 
-Narrow child module for the 4 ℤ^d along-exhaustion HT wrappers
-(`correlationAlongExhaustion_latticeGraph_h_zero_at_pair_ge_tanh_div_two_pow_edges_of_latticeAdj`,
-`correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_pos_of_latticeAdj`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_complete_summary`,
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_complete_summary`)
-extracted from `HighTemperatureBounds.lean` in PR #2074. Each is a
-thin pass-through (either delegating to the Λ-layer version at the
-stage subtype or directly to the ambient lemma) at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`: for sites of `Λ.volume n` adjacent in the
+ambient lattice graph, the lower bound `tanh (β * J) / 2 ^ |E_n|` on the stage-`n` pair
+correlation and, under a strict sign condition, its strict positivity — each stated for
+`correlationΛ` on `Λ.volume n` rather than for `correlationAlongExhaustion`; and bundles
+collecting, for the partition function and for the free-energy density, the high-temperature
+lower and upper bounds together with the values taken at `⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`. The
+tanh lower bound and the bundles assume `0 ≤ β * J`, the strict positivity assumes
+`0 < β * J`, and the free-energy bundle additionally needs `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel

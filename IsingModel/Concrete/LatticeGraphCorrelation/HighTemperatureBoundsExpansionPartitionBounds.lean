@@ -3,20 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpper
 
 /-!
-# Concrete high-temperature partitionFunction / freeEnergy lower/upper bound wrappers
+# ℤ^d high-temperature lower and upper bounds for `Z` and their consistency (§18.3)
 
-Narrow child module for the 5 ℤ^d HT partition-function / free-energy
-bound wrappers (`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound`,
-`partitionFunctionΛ_latticeGraph_high_temp_h_zero_lower_le_upper`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_lower_le_upper`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_lower_bound`)
-extracted from `HighTemperatureBoundsExpansion.lean` in PR #2068. Each
-is a thin pass-through to the corresponding ambient
-`partitionFunctionΛ_high_temp_*` / `partitionFunctionAlongExhaustion_high_temp_*` /
-`freeEnergyΛ_high_temp_*` lemma at `IsingModel.latticeGraph d`. The
-theorem names are unchanged from the former
-`HighTemperatureBoundsExpansion` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the upper
+bound `2 ^ (|Λ| + |E_Λ|) * cosh (β * J) ^ |E_Λ|` on the partition function, on a fixed finite
+volume and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`, the matching lower bound
+`2 ^ |Λ| * cosh (β * J) ^ |E_Λ|` on a fixed volume, and the consistency statements comparing
+the bounding expressions directly, for the partition function and for the free-energy density.
+The comparison of the partition-function bounds holds with no condition on `J` or `β`; every
+other statement here assumes `0 ≤ β * J`, and none assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

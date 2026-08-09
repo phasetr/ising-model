@@ -2,20 +2,13 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete Λ-direct partitionFunctionΛ relative-sandwich wrappers
+# ℤ^d fixed-volume partition function relative to the free-spin count
 
-Narrow child module for 2 ℤ^d Λ-direct
-`partitionFunctionΛ_*_relative_sandwich` wrappers extracted from
-`HighTemperatureBoundsDeviation.lean`:
-
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_relative_sandwich`,
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_relative_sandwich_ferromagnetic`.
-
-Each result is a thin pass-through of the corresponding ambient
-`partitionFunctionΛ_high_temp_expansion_h_zero_relative_sandwich*`
-lemma at `G := IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `HighTemperatureBoundsDeviation`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the sandwich of the partition function divided by `2 ^ |Λ|` between
+`cosh (β * J) ^ |E_Λ|` and `exp (β * J * |E_Λ|)`. The sandwich is stated under `0 ≤ β * J` and
+again in a ferromagnetic form under `0 ≤ J` together with `0 < β`; no nonemptiness or
+edge-count condition enters.
 -/
 
 namespace IsingModel

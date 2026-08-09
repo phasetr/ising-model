@@ -2,23 +2,15 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete HT FV (3.46) numerator and even-subgraph wrappers
+# ℤ^d parity vanishing of the high-temperature numerator and the even-subgraph sum
 
-Narrow child module for 4 ℤ^d Λ-level FV (3.46) numerator and
-even-subgraph wrappers at `h = 0` extracted from
-`HighTemperatureBounds.lean`:
-
-* `sum_high_temp_numerator_h_zero_odd_card_eq_zero_latticeGraph`,
-* `correlationΛ_latticeGraph_high_temp_h_zero_nonneg`,
-* `one_le_sum_pow_tanh_even_subgraph_latticeGraph`,
-* `high_temp_numerator_filter_eq_empty_of_odd_card_latticeGraph`.
-
-Each result is a thin pass-through of the corresponding ambient
-`sum_high_temp_numerator_*_Λ` / `correlationΛ_high_temp_*` /
-`one_le_sum_pow_tanh_even_subgraph_Λ` /
-`high_temp_numerator_filter_eq_empty_of_odd_card_Λ` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ`, the vanishing of
+the parity-constrained edge-subset sum `∑_X tanh (β * J) ^ |X|` — and the emptiness of its
+index set — when the observable has odd cardinality; together with the lower bound `1` on the
+even-subgraph sum and the nonnegativity of the correlation at an arbitrary observable at the
+parameter record `⟨J, 0, β⟩`. The parity statements assume only that the observable's
+cardinality is odd, with no condition on `J` or `β`; the even-subgraph bound and the
+correlation nonnegativity assume `0 ≤ β * J`.
 -/
 
 namespace IsingModel

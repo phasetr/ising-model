@@ -3,21 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
 
 /-!
-# Concrete §18.7 exp_rate_dist decay-capstone wrappers
+# ℤ^d exponential decay written with the explicit rate `-log (tanh (β * J))` (§18.7)
 
-Narrow child module for 4 ℤ^d §18.7 exp_rate_dist decay-capstone
-wrappers extracted from `HighTemperatureBoundsDecayCapstones.lean`:
-
-* `correlationΛ_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist`,
-* `correlationΛ_latticeGraph_h_zero_at_pair_le_exp_rate_dist_ferro`,
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist`,
-* `correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_exp_rate_dist_ferro`.
-
-Each result is a thin pass-through of the corresponding ambient
-`correlation{Λ,AlongExhaustion}_high_temp_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist`
-lemma (or the tanh_pow_dist capstone composed with the explicit rate
-`-log(tanh(β·J))`). The theorem names are unchanged from the former
-`HighTemperatureBoundsDecayCapstones` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the decay
+bound `2 ^ |E| * exp (-(-log (tanh (β * J))) * dist i j)` on the pair correlation, on a fixed
+finite volume `Λ` and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`. Each version
+is stated under `0 ≤ β * J` and again in a ferromagnetic form under `0 ≤ J` together with
+`0 < β`. The distance is graph distance in the induced subgraph carrying the correlation, and
+the along-exhaustion version is stated for `correlationΛ` on `Λ.volume n` rather than for
+`correlationAlongExhaustion`.
 -/
 
 namespace IsingModel

@@ -4,17 +4,16 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStri
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ
 
 /-!
-# Concrete alongExhaustion strict-deviation bundle + residual ferromagnetic wrappers at h = 0
+# ℤ^d along-exhaustion strict deviation bundles and their ferromagnetic residues
 
-Narrow child module for the remaining ℤ^d alongExhaustion strict
-deviation wrappers at `h = 0`: the
-`partitionFunctionAlongExhaustion_*_strict_deviation_bundle` pair
-(general and ferromagnetic), plus the two residual ferromagnetic
-strict-deviation wrappers
-`partitionFunctionAlongExhaustion_*_pow_two_lt_ferromagnetic` and
-`log_partitionFunctionAlongExhaustion_*_deviation_pos_ferromagnetic`.
-Each wrapper is a thin pass-through to the corresponding ambient lemma
-at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, a bundle asserting simultaneously that
+the partition function exceeds `2 ^ |Λ_n|`, that its logarithm exceeds `|Λ_n| * log 2` and
+that the free-energy density exceeds `log 2`, together with the separate ferromagnetic forms
+of its partition-function and logarithm components. Every statement here requires the
+stage-`n` induced subgraph to carry at least one edge; nonemptiness of `Λ.volume n` is
+required by the bundles and not by the separate statements. The sign condition is
+`0 < β * J`, replaced in every ferromagnetic form by `0 < J` together with `0 < β`.
 -/
 
 namespace IsingModel

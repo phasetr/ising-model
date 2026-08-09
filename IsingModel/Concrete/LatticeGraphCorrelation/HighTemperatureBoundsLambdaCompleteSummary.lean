@@ -2,18 +2,13 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete HT Λ-layer complete_summary wrappers
+# ℤ^d fixed-volume complete-summary bundles at zero field
 
-Narrow child module for the 2 ℤ^d Λ-layer HT complete_summary
-wrappers
-(`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_complete_summary`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_complete_summary`)
-extracted from `HighTemperatureBounds.lean` in PR #2075. Each is a
-thin pass-through to the corresponding ambient
-`partitionFunctionΛ_*_complete_summary` /
-`freeEnergyΛ_*_complete_summary` lemma at `IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, bundles collecting, for the partition function and for the free-energy
+density, their high-temperature lower and upper bounds in `cosh (β * J)` together with the
+values taken at `⟨0, 0, β⟩` and at `⟨J, 0, 0⟩`. Each assumes `0 ≤ β * J`; the free-energy
+bundle additionally needs `Λ` nonempty, which the partition-function bundle does not.
 -/
 
 namespace IsingModel

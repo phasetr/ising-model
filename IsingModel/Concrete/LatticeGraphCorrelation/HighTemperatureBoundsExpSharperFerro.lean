@@ -2,20 +2,14 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d Λ-layer HT sharper-exp ferromagnetic upper-bound wrappers
+# ℤ^d fixed-volume ferromagnetic sharper upper bounds at zero field
 
-Narrow child module for three ℤ^d Λ-layer sharper-exp HT upper-bound
-ferromagnetic wrappers extracted from
-`HighTemperatureBoundsExpSharper.lean`:
-
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic`,
-* `log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic`,
-* `freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*_ferromagnetic` HT bound at `G := IsingModel.latticeGraph d`. The
-theorem names are unchanged from the former
-`HighTemperatureBoundsExpSharper` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the ferromagnetic form of the upper bounds in which each edge contributes
+`exp (β * J)`: the partition function below `2 ^ |Λ| * exp (β * J * |E_Λ|)`, its logarithm
+below `|Λ| * log 2 + β * J * |E_Λ|`, and the free-energy density below
+`log 2 + β * J * |E_Λ| / |Λ|`. Every statement here assumes `0 ≤ J` together with `0 < β`, and
+the free-energy bound alone also assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

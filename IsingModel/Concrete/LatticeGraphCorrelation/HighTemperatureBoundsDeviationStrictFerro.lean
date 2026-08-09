@@ -2,19 +2,13 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsDeviationStrict
 
 /-!
-# ℤ^d HT Λ-layer strict-deviation ferromagnetic Z/logZ wrappers
+# ℤ^d fixed-volume ferromagnetic strict deviation for `Z_Λ` and `log Z_Λ`
 
-Narrow child module for two ℤ^d Λ-layer strict-deviation HT
-ferromagnetic wrappers extracted from
-`HighTemperatureBoundsDeviationStrict.lean`:
-
-* `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_pow_two_lt_ferromagnetic`,
-* `log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_deviation_pos_ferromagnetic`.
-
-Each result is a thin pass-through of the corresponding ambient
-`*_ferromagnetic` strict-deviation lemma at `IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`HighTemperatureBoundsDeviationStrict` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the strict inequalities `2 ^ |Λ| < Z_Λ` and `|Λ| * log 2 < log Z_Λ` in
+their ferromagnetic form. Each assumes `0 < J` together with `0 < β`, strict in the coupling
+as well as in the inverse temperature, and each requires the induced subgraph on `Λ` to carry
+at least one edge; nonemptiness of `Λ` is not assumed.
 -/
 
 namespace IsingModel

@@ -2,16 +2,15 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete sharper-exp Z/f/log Z high-temperature bounds at h = 0
+# ℤ^d fixed-volume sharper upper bounds and the `log Z_Λ` sandwich at zero field
 
-Narrow child module for the §18.3-§18.4 concrete sharper-exp upper-bound /
-sandwich / complete-summary wrappers on `latticeGraph d` at `h = 0`. 17
-theorems covering `partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_*_exp`, and
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_*_exp`
-families (upper-bound, sandwich, complete-summary), each with their
-ferromagnetic variants. The theorem names are unchanged from the former
-`HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the upper bounds in which each edge contributes `exp (β * J)`: the
+partition function below `2 ^ |Λ| * exp (β * J * |E_Λ|)`, its logarithm below
+`|Λ| * log 2 + β * J * |E_Λ|`, and the free-energy density below
+`log 2 + β * J * |E_Λ| / |Λ|`; together with the sandwich placing `log Z_Λ` above
+`|Λ| * log 2 + |E_Λ| * log (cosh (β * J))` as well. Every statement here assumes `0 ≤ β * J`,
+and the free-energy bound alone also assumes `Λ` nonempty.
 -/
 
 namespace IsingModel
@@ -73,37 +72,6 @@ theorem log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich
           (inducedGraph (IsingModel.latticeGraph d) Λ).edgeFinset.card :=
   log_partitionFunctionΛ_high_temp_expansion_h_zero_sandwich_exp
     (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-! ## Moved: ℤ^d HT Λ-layer ferromagnetic upper_bound_exp wrappers
-
-The three ferromagnetic Λ-layer sharper-exp HT upper-bound wrappers
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound_exp_ferromagnetic`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_upper_bound_exp_ferromagnetic`
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperFerro`.
-The earlier import path is preserved by re-importing the new child. -/
-
-
-/-! ## Moved: ℤ^d HT Λ-layer sandwich_exp wrappers
-
-The 4 ℤ^d Λ-layer sandwich_exp HT wrappers
-(`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_sandwich_exp`,
-`_ferromagnetic`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_sandwich_exp`,
-`_ferromagnetic`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperSandwich`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-/-! ## Moved: ℤ^d HT Λ-layer complete_summary_exp wrappers
-
-The 6 ℤ^d Λ-layer `*_complete_summary_exp` HT wrappers (3 base:
-`partitionFunctionΛ_*`, `freeEnergyΛ_*`, `log_partitionFunctionΛ_*`;
-plus 3 `_ferromagnetic` variants) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpSharperCompleteSummary`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 end Ambient
 

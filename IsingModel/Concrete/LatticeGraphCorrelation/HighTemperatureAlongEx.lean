@@ -2,14 +2,18 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperature
 
 /-!
-# Concrete polymerFreeEnergyAlongExhaustion cluster-expansion wrappers
+# ℤ^d polymer free energy along an exhaustion, inside the convergence radius (§18.5)
 
-Narrow child module for four ℤ^d non-ferromagnetic
-`polymerFreeEnergyAlongExhaustion_latticeGraph_*` wrappers
-(`high_temp_sandwich`, `hasSum_via_log_of_pow_lt_two`, and tanh
-variants). Each wrapper is a thin pass-through to the corresponding
-ambient `polymerFreeEnergyAlongExhaustion_*` lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the high-temperature control of `polymerFreeEnergy` on the volume `Λ.volume n`
+in the regime where `(1 + t) ^ |E_n|` stays strictly below `2`: a chain in which the polymer
+free energy is at least `0` and at most the activity sum `∑_Γ ∏_{P ∈ Γ} t ^ |P|` over the
+vertex-disjoint compatible polymer families other than the empty one, that sum is at most
+`(1 + t) ^ |E_n| - 1`, that quantity is strictly below `1`, and hence the polymer free energy
+is strictly below `log 2`; and, in the same regime, an alternating logarithmic series in that
+activity sum which `HasSum`s to the polymer free energy. Each statement is given at a bare
+activity `t` under `0 ≤ t` and at the activity `tanh (β * J)` under `0 ≤ β * J`, and each
+carries the convergence hypothesis in its own activity at the stage in question.
 -/
 
 namespace IsingModel

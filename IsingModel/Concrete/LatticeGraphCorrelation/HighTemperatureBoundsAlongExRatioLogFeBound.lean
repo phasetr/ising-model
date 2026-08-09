@@ -3,14 +3,13 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsRatioLogFeFreeEnergyBoundOnly
 
 /-!
-# ℤ^d alongExhaustion freeEnergy ratio_bound wrappers at h = 0
+# ℤ^d along-exhaustion free-energy differences against the trivial slices
 
-Narrow child module for four ℤ^d
-`freeEnergyAlongExhaustion_latticeGraph_high_temp_h_zero_ratio_bound`
-wrappers (`{,_beta_zero,_ferromagnetic,_beta_zero_ferromagnetic}`).
-Each wrapper is a thin pass-through to the corresponding
-ambient `freeEnergyAlongExhaustion_high_temp_h_zero_ratio_bound*`
-lemma at `IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, the bound `β * J * |E_n| / |Λ_n|` on the difference between the free-energy
+density at `⟨J, 0, β⟩` and its value at `⟨0, 0, β⟩`, and on the difference against its value
+at `⟨J, 0, 0⟩`. Each difference is bounded under `0 ≤ β * J` and again under the ferromagnetic
+pair `0 ≤ J` and `0 < β`, and every statement here also assumes `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel

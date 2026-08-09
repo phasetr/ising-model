@@ -3,17 +3,14 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDistNamedRate
 
 /-!
-# ℤ^d §18.7 highTempExpRate decay-capstone wrappers
+# ℤ^d exponential decay written with the named rate `highTempExpRate` (§18.7)
 
-Narrow child module for two ℤ^d
-`*_latticeGraph_*_le_two_pow_edges_mul_exp_highTempExpRate_dist`
-wrappers (Λ and AlongExhaustion variants) extracted from
-`HighTemperatureBoundsDecayCapstones.lean`:
-
-* `correlationΛ_latticeGraph_*_two_pow_edges_mul_exp_highTempExpRate_dist`
-  (Λ variant),
-* `correlationAlongExhaustion_latticeGraph_*_two_pow_edges_mul_exp_highTempExpRate_dist`
-  (AlongExhaustion variant). Both at `_h_zero_at_pair_le_`.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the decay
+bound `2 ^ |E| * exp (-highTempExpRate β J * dist i j)` on the pair correlation, on a fixed
+finite volume `Λ` and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`. Each version
+carries `0 ≤ β * J` as its only sign condition. The distance is graph distance in the induced
+subgraph carrying the correlation, and the along-exhaustion version is stated for
+`correlationΛ` on `Λ.volume n` rather than for `correlationAlongExhaustion`.
 -/
 
 namespace IsingModel

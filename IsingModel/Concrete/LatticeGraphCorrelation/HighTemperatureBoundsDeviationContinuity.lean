@@ -2,16 +2,12 @@ import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# Concrete HT Λ-layer deviation_bound wrappers
+# ℤ^d fixed-volume free-energy deviation bound at zero field
 
-Narrow child module for the 2 ℤ^d Λ-layer freeEnergy deviation_bound
-wrappers
-(`freeEnergyΛ_latticeGraph_high_temp_h_zero_deviation_bound_exp`,
-`_ferromagnetic`) extracted from
-`HighTemperatureBoundsDeviation.lean` in PR #2079. Each is a thin
-pass-through to the corresponding ambient `freeEnergyΛ_*` lemma at
-`IsingModel.latticeGraph d`. The theorem names are unchanged from
-the former `HighTemperatureBoundsDeviation` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the bound `f_Λ - log 2 ≤ β * J * |E_Λ| / |Λ|` on the free-energy density.
+It is stated under `0 ≤ β * J` and again in a ferromagnetic form under `0 ≤ J` together with
+`0 < β`, and each form also assumes `Λ` nonempty.
 -/
 
 namespace IsingModel

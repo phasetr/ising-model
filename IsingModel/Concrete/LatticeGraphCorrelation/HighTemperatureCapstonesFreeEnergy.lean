@@ -2,19 +2,15 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 
 /-!
-# Concrete Λ-direct freeEnergyΛ high-temperature capstone wrappers
+# ℤ^d fixed-volume free energy as a polymer free-energy decomposition (§18.6)
 
-Narrow child module for 3 ℤ^d Λ-direct §18.6 freeEnergyΛ capstone
-wrappers extracted from `HighTemperatureCapstones.lean`:
-
-* `freeEnergyΛ_latticeGraph_eq_polymerFreeEnergy`,
-* `freeEnergyΛ_latticeGraph_eq_polymerFreeEnergy_ferromagnetic`,
-* `freeEnergyΛ_latticeGraph_eq_log_two_at_betaJ_zero`.
-
-Each result is a thin pass-through of the corresponding ambient
-`Ambient.freeEnergyΛ_*` lemma at `G := IsingModel.latticeGraph d`.
-The theorem names are unchanged from the former
-`HighTemperatureCapstones` declarations.
+Instantiates at `IsingModel.latticeGraph d`, on a fixed finite volume `Λ` and at the parameter
+record `⟨J, 0, β⟩`, the decomposition of the free-energy density as `log 2` plus
+`(|E_Λ| / |Λ|) * log (cosh (β * J))` plus `polymerFreeEnergy` at activity `tanh (β * J)`
+divided by the site count; and its degenerate value `log 2` when `β * J` vanishes. The
+decomposition is stated under `0 ≤ β * J` and again under the ferromagnetic pair `0 ≤ J` and
+`0 < β`, the degenerate value under the equation `β * J = 0`, and every statement here assumes
+`Λ` nonempty.
 -/
 
 namespace IsingModel

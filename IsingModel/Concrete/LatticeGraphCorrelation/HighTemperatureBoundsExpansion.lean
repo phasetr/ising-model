@@ -3,20 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionVariants
 
 /-!
-# Concrete high-temperature partition-function and free-energy expansion wrappers
+# ℤ^d high-temperature product expansion of the partition function at zero field
 
-Narrow child module for the §18.3-§18.4 high-temperature partition-function
-and free-energy expansion / closed-form / lower-bound / upper-bound /
-`lower_le_upper` wrappers on `latticeGraph d`, plus the
-`correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A` consistency check.
-Sandwich and downstream wrappers remain in the parent
-`HighTemperatureBounds`; sharper-exp wrappers were further split out into
-`HighTemperatureBoundsExpSharper` in PR #1935; deviation / continuity
-wrappers were further split out into `HighTemperatureBoundsDeviation` in
-PR #1936; ratio_sandwich / ratio_bound wrappers were further split out
-into `HighTemperatureBoundsRatioBounds` in PR #1937. The theorem names
-are the same as the former declarations in `HighTemperatureBounds`, but
-callers can now import this child module directly.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the
+expansion of the partition function as `cosh (β * J) ^ |E|` times the configuration sum of
+`∏_e (1 + tanh (β * J) * σ_e)`, on a fixed finite volume `Λ` and at a stage `n` of an
+`Ambient.Exhaustion` of `Fin d → ℤ`; together with the value `2 ^ |Λ|` taken at `⟨0, 0, β⟩`
+and at `⟨J, 0, 0⟩`, and the normalisation of the correlation at the empty observable to `1`.
+Only that normalisation carries a hypothesis, namely `0 ≤ β * J`; the expansions and the slice
+values hold with no condition on `J` or `β`.
 -/
 
 namespace IsingModel
@@ -86,57 +81,6 @@ theorem correlationΛ_latticeGraph_high_temp_h_zero_at_empty_A
         (⟨J, 0, β⟩ : IsingParams ℝ) (∅ : Finset ↑Λ) = 1 :=
   correlationΛ_high_temp_h_zero_at_empty_A
     (IsingModel.latticeGraph d) Λ J β hβJ
-
-/-! ## Moved: ℤ^d HT partition expansion general-h/closed/subset wrappers
-
-The four wrappers
-`partitionFunctionΛ_latticeGraph_high_temp_expansion`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_subset_form`
-now live in `HighTemperatureBoundsExpansionGeneralH.lean`. -/
-
-
-/-! ## Moved: ℤ^d HT correlation + log Z closed-form wrappers
-
-The 3 ℤ^d
-`correlationΛ_latticeGraph_high_temp_expansion_h_zero_closed`,
-`log_partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_closed`,
-and `log_partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_closed`
-closed-form wrappers now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionCorrelationLogZ`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d partitionFunction / freeEnergy HT lower/upper bound wrappers
-
-The 5 ℤ^d HT partition-function / free-energy bound wrappers
-(`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_upper_bound`,
-`partitionFunctionAlongExhaustion_latticeGraph_high_temp_expansion_h_zero_upper_bound`,
-`partitionFunctionΛ_latticeGraph_high_temp_h_zero_lower_le_upper`,
-`freeEnergyΛ_latticeGraph_high_temp_h_zero_lower_le_upper`,
-`partitionFunctionΛ_latticeGraph_high_temp_expansion_h_zero_lower_bound`)
-now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionPartitionBounds`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: ℤ^d freeEnergyΛ / freeEnergyAlongExhaustion HT expansion + bound wrappers
-
-The 5 ℤ^d `freeEnergyΛ_latticeGraph_*` /
-`freeEnergyAlongExhaustion_latticeGraph_*` §18.3-§18.4
-high-temperature wrappers
-(`freeEnergyΛ_high_temp_expansion_h_zero_closed`,
-`freeEnergyAlongExhaustion_high_temp_expansion_h_zero_closed`,
-`freeEnergyΛ_high_temp_h_zero_upper_bound`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound`,
-`freeEnergyΛ_high_temp_h_zero_lower_bound`) now live in
-`IsingModel.Concrete.LatticeGraphCorrelation.HighTemperatureBoundsExpansionFreeEnergy`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 end Ambient
 

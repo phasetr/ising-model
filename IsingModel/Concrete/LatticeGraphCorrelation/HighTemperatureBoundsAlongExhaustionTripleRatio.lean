@@ -3,14 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsTripleRatio
 
 /-!
-# ℤ^d alongExhaustion triple-ratio (Z + log Z + f) sandwich wrappers at h = 0
+# ℤ^d along-exhaustion triple ratio sandwiches at zero field
 
-Narrow child module for the 4 §18.3-§18.4 concrete (`latticeGraph d`)
-alongExhaustion `triple_ratio_sandwich_bundle` wrappers (J = 0 trivial
-slice, β = 0 specialisation, ferromagnetic variants). Theorem names are
-unchanged from the former
-`Concrete/LatticeGraphCorrelation/HighTemperatureBoundsAlongExhaustionRatioBounds`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ`, bundles that sandwich simultaneously the partition-function ratio between
+`cosh (β * J) ^ |E_n|` and `exp (β * J * |E_n|)`, the difference of logarithms between
+`|E_n| * log (cosh (β * J))` and `β * J * |E_n|`, and the difference of free-energy densities
+between `(|E_n| / |Λ_n|) * log (cosh (β * J))` and `β * J * |E_n| / |Λ_n|`. The comparison is
+made against the parameter record `⟨0, 0, β⟩` and against `⟨J, 0, 0⟩`, in a form assuming
+`0 ≤ β * J` and in a ferromagnetic form assuming `0 ≤ J` together with `0 < β`; every
+statement here also assumes `Λ.volume n` nonempty.
 -/
 
 namespace IsingModel

@@ -3,22 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsExpansionLowerUpperFE
 
 /-!
-# Concrete high-temperature freeEnergy expansion / bound wrappers
+# ℤ^d high-temperature decomposition and bounds for the free-energy density (§18.3)
 
-Narrow child module for the 5 ℤ^d
-`freeEnergyΛ_latticeGraph_*` / `freeEnergyAlongExhaustion_latticeGraph_*`
-§18.3-§18.4 high-temperature wrappers
-(`freeEnergyΛ_high_temp_expansion_h_zero_closed`,
-`freeEnergyAlongExhaustion_high_temp_expansion_h_zero_closed`,
-`freeEnergyΛ_high_temp_h_zero_upper_bound`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound`,
-`freeEnergyΛ_high_temp_h_zero_lower_bound`) extracted from
-`HighTemperatureBoundsExpansion.lean` in PR #2067. Each is a thin
-pass-through to the corresponding ambient
-`freeEnergyΛ_high_temp_*` / `freeEnergyAlongExhaustion_high_temp_*`
-lemma at `IsingModel.latticeGraph d`. The theorem names are
-unchanged from the former `HighTemperatureBoundsExpansion`
-declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the
+decomposition of the free-energy density as `log 2 + (|E| / |Λ|) * log (cosh (β * J))` plus
+the logarithm of the even-subgraph sum divided by the site count, on a fixed finite volume and
+at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`; the upper bound
+`log 2 + (|E| / |Λ|) * log (2 * cosh (β * J))` in each of those scopes; and the lower bound
+`log 2 + (|E_Λ| / |Λ|) * log (cosh (β * J))` on a fixed volume. Every statement here assumes
+`0 ≤ β * J` and a nonempty volume.
 -/
 
 namespace IsingModel

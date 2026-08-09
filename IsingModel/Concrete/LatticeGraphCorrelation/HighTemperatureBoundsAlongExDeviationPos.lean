@@ -3,14 +3,16 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerro
 
 /-!
-# Concrete alongExhaustion f / Z / log Z deviation_pos wrappers at h = 0
+# ℤ^d along-exhaustion strict deviation from the free-spin values at zero field
 
-Narrow child module for four ℤ^d alongExhaustion strict-deviation
-wrappers at `h = 0`: `freeEnergyAlongExhaustion_*_deviation_pos` (general
-and ferromagnetic), `partitionFunctionAlongExhaustion_*_pow_two_lt`, and
-`log_partitionFunctionAlongExhaustion_*_deviation_pos`. Each wrapper is
-a thin pass-through to the corresponding ambient lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at a stage `n` of an `Ambient.Exhaustion` of
+`Fin d → ℤ` and at the parameter record `⟨J, 0, β⟩`, strict versions of the deviation bounds:
+the free-energy density exceeds `log 2`, the partition function exceeds `2 ^ |Λ_n|`, and its
+logarithm exceeds `|Λ_n| * log 2`. Every statement here requires the stage-`n` induced
+subgraph to carry at least one edge; the free-energy statements additionally require
+`Λ.volume n` nonempty, which the partition-function and logarithm statements do not. The sign
+condition is `0 < β * J`, sharpened in the ferromagnetic free-energy form to `0 < J` together
+with `0 < β`.
 -/
 
 namespace IsingModel

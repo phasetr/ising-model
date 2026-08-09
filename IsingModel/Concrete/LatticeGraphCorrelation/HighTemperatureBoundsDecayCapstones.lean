@@ -3,20 +3,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDecayCapstonesDist
 
 /-!
-# Concrete §18.7 high-temperature exponential decay capstone wrappers
+# ℤ^d exponential decay of the pair correlation in graph distance (§18.7)
 
-Narrow child module for the §18.7 high-temperature pair-correlation
-exponential-decay capstone wrappers on `latticeGraph d` at `h = 0`.
-16 theorems total, drawn from five capstone families --
-`tanh_pow_dist`, `exp_rate_dist`, `exp_highTempExpRate_dist`,
-`exp_alpha_dist`, and `exp_alpha_dist_of_le_highTempExpRate` -- in their
-`correlationΛ_latticeGraph` / `correlationAlongExhaustion_latticeGraph`
-versions and the ferromagnetic variants that previously lived alongside
-them in `HighTemperatureBounds.lean`. (Some named-rate / monotone-rate
-ferromagnetic variants of `exp_highTempExpRate_dist` continue to live in
-`Concrete/LatticeGraphCorrelation/CorrelationDecay.lean` and are
-intentionally not moved.) The theorem names are unchanged from the
-former `HighTemperatureBounds` declarations.
+Instantiates at `IsingModel.latticeGraph d`, at the parameter record `⟨J, 0, β⟩`, the decay
+bound `2 ^ |E| * tanh (β * J) ^ dist i j` on the pair correlation, on a fixed finite volume
+`Λ` and at a stage `n` of an `Ambient.Exhaustion` of `Fin d → ℤ`. Each version is stated under
+`0 ≤ β * J` and again in a ferromagnetic form under `0 ≤ J` together with `0 < β`. The
+distance is graph distance in the induced subgraph carrying the correlation, and the
+along-exhaustion version is stated for `correlationΛ` on `Λ.volume n` rather than for
+`correlationAlongExhaustion`.
 -/
 
 namespace IsingModel
@@ -100,31 +95,6 @@ correlationAlongExhaustion_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_tanh
             (Λ.volume n)).dist i j :=
 correlationAlongExhaustion_latticeGraph_high_temp_h_zero_at_pair_le_two_pow_edges_mul_tanh_pow_dist
   d Λ J β (mul_nonneg hβ.le hJ) n i j
-
-/-! ## Moved: §18.7 exp_rate_dist decay-capstone wrappers
-
-The four exp_rate_dist wrappers
-(`correlationΛ_latticeGraph_h_zero_at_pair_le_two_pow_edges_mul_exp_rate_dist`,
-its `_ferro` variant, and the corresponding
-`correlationAlongExhaustion_latticeGraph` variants) now live in
-`HighTemperatureBoundsDecayCapstonesExpRate.lean`. -/
-
-
-
-/-! ## Moved: §18.7 highTempExpRate decay-capstone wrappers
-
-The two `*_latticeGraph_*_le_two_pow_edges_mul_exp_highTempExpRate_dist`
-wrappers (Λ and AlongExhaustion variants) now live in
-`HighTemperatureBoundsDecayCapstonesHighTempExpRate.lean`. -/
-
-
-
-/-! ## Moved: §18.7 exp_alpha_dist capstone wrappers
-
-The six wrappers `correlation*_latticeGraph_*_exp_alpha_dist*`
-(Λ + AlongExhaustion variants, including `of_le_highTempExpRate`) now
-live in `HighTemperatureBoundsDecayAlphaDist.lean`. -/
-
 
 end Ambient
 

@@ -2,14 +2,14 @@ import IsingModel.Lattice
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFE
 
 /-!
-# Concrete vdPolymerFamilies sandwich wrappers
+# ℤ^d sandwich for the vertex-disjoint polymer-family activity sum (§18.5)
 
-Narrow child module for four ℤ^d non-ferromagnetic vdPolymerFamilies
-sum sandwich wrappers
-(`vdPolymerFamilies_sum_{Λ,AlongExhaustion}_latticeGraph_sandwich(_sharp)`).
-Each wrapper is a thin pass-through to the corresponding ambient
-`vdPolymerFamilies_sum_*` sandwich lemma at
-`IsingModel.latticeGraph d`.
+Instantiates at `IsingModel.latticeGraph d`, at activity `tanh (β * J)`, the sandwich of the
+activity sum `∑_Γ ∏_{P ∈ Γ} tanh (β * J) ^ |P|` over all vertex-disjoint compatible polymer
+families between `1` and `2 ^ |E|`, and its sharpening with the upper bound
+`(1 + tanh (β * J)) ^ |E|`, on a fixed finite volume `Λ` and at a stage `n` of an
+`Ambient.Exhaustion` of `Fin d → ℤ`. Every statement here carries `0 ≤ β * J` as its only sign
+condition, and none carries a convergence hypothesis on the edge count.
 -/
 
 namespace IsingModel
