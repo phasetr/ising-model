@@ -1,15 +1,22 @@
-/- BaseCorrelationAlongExBounds.lean
-Narrow child module for the 4 ℤ^d per-stage `correlationAlongExhaustion_latticeGraph_*`
-bound wrappers extracted from `Base.lean` in PR #2038. Theorems:
-`correlationAlongExhaustion_latticeGraph_le_one`,
-`_le_correlationInfinite_of_other`,
-`_le_correlationInfinite`,
-`_nonneg`. Each is a thin pass-through to the corresponding
-abstract `correlationAlongExhaustion_*` lemma at `latticeGraph d`.
-The theorem names are unchanged from the former `Base`
-declarations.
--/
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
+
+/-!
+# ℤ^d per-stage bounds on the correlation along an exhaustion
+
+Concrete `IsingModel.latticeGraph d` statements at an arbitrary `Ambient.Exhaustion` of
+`Fin d → ℤ`, for a fixed site set and a fixed stage.
+
+The correlation at a stage is at most `1`, and it is at most the infinite-volume
+correlation taken along the same exhaustion; neither of those assumes anything about the
+parameter record, the second because the infinite-volume value is by definition the
+supremum over stages.
+
+Comparing across two exhaustions does assume `Ferromagnetic`: under it, the correlation at
+a stage of one exhaustion is at most the infinite-volume correlation formed from the other.
+`Ferromagnetic` is also what makes the correlation at a stage non-negative, through the
+first Griffiths-Kelly-Sherman inequality at that stage's volume. No instance argument is
+taken anywhere in this module.
+-/
 
 open scoped symmDiff
 
@@ -37,7 +44,7 @@ theorem correlationAlongExhaustion_latticeGraph_le_correlationInfinite_of_other
     (IsingModel.latticeGraph d) Λ Λ' p hf A n
 
 /-- **ℤ^d `correlationAlongExhaustion ≤ correlationInfinite`** per stage
-(ferromagnetic): stage-wise upper bound by the limsup value. -/
+(unconditional): stage-wise upper bound by the supremum over stages. -/
 theorem correlationAlongExhaustion_latticeGraph_le_correlationInfinite
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (A : Finset (Fin d → ℤ)) (n : ℕ) :
