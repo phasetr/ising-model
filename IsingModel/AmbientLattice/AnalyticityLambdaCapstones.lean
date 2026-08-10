@@ -10,9 +10,13 @@ the zero field, read on the induced subgraph `inducedGraph G Λ`. The polymer su
 `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` has no
 definition of its own, so the statements that use it — the polymer-sum form of the
 high-temperature closed form, and the power identity for the same sum with its empty family
-removed — carry the summation written out, while the free-energy and Mayer statements are
-phrased through `freeEnergyΛ`, `polymerFreeEnergy`, `mayerPartialSum` and
-`mayerExpansionTerm`. Writing `E` for
+removed — carry the summation written out, as does the even-subgraph closed form for its own
+sum over `evenSubgraphs (inducedGraph G Λ)`. The free-energy statements are phrased through
+`freeEnergyΛ`, and through `polymerFreeEnergy` where the decomposition needs it; of the Mayer
+statements, those about the partial sum are phrased through `mayerPartialSum`, while the
+connectedness-filter identities are phrased through `Fintype.piFinset`, `allPolymers` and
+`polymerSeqIncompatibilityGraph`, `mayerExpansionTerm` occurring in their names and in no
+statement of this file. Writing `E` for
 `(inducedGraph G Λ).edgeFinset`, `polymerFreeEnergy (inducedGraph G Λ) t` is by definition
 `Real.log` of that sum at activity `t`.
 

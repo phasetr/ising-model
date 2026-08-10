@@ -25,13 +25,15 @@ For the polymer free energy: `polymerFreeEnergy … 0 = 0` and
 literal activities, and `polymerFreeEnergy … t = Real.log (1 + ε t)` for every real `t`,
 which is the `Ξ t = 1 + ε t` decomposition read through the logarithm.
 
-Its analytic statements name the region they hold on, and each lies in the nonnegative
+Its analytic statements name where they are anchored, and each anchor lies in the nonnegative
 activity: `AnalyticAt ℝ` at a point assumed to satisfy `0 ≤ t`, `AnalyticOnNhd ℝ` over
 `Set.Ici 0`, and `HasDerivAt` at a point assumed to satisfy `0 ≤ t` with the derivative
-named explicitly as the ratio of the termwise derivative of `Ξ` to `Ξ t`. Nothing here
-treats a negative activity, in either direction. Under `0 ≤ t` the free energy is also
-sandwiched between `0` and `E.card * Real.log (1 + t)`; at `Real.tanh (β * J)` it is bounded
-by `E.card * Real.tanh (β * J)` under `0 ≤ β * J`, and, under the ferromagnetic pair
+named explicitly as the ratio of the termwise derivative of `Ξ` to `Ξ t`. All of them are
+two-sided neighbourhood statements at that anchor — `AnalyticOnNhd ℝ` because it is
+`AnalyticAt ℝ` at each point of its set — so at the admitted anchor `0`, where `Ξ 0 = 1`,
+they describe the free energy at negative activity as well. Under `0 ≤ t` the free energy is
+also sandwiched between `0` and `E.card * Real.log (1 + t)`; at `Real.tanh (β * J)` it is
+bounded by `E.card * Real.tanh (β * J)` under `0 ≤ β * J`, and, under the ferromagnetic pair
 `0 ≤ J`, `0 < β`, by the same product, by `E.card * Real.log 2`, and by the sandwich with
 `E.card * Real.log (1 + tanh (β * J))` on the right.
 

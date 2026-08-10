@@ -21,8 +21,11 @@ condition on the parameters.
 `Real.log (Ξ t)` is where the region starts to matter, since `Ξ` is `1` at `t = 0` and at
 least `1` throughout `0 ≤ t`. Its statements are therefore `AnalyticAt ℝ` at a point `t`
 assumed to satisfy `0 ≤ t`, `AnalyticOnNhd ℝ` over `Set.Ici 0`, and — in the `Real.tanh`
-composition — `AnalyticAt ℝ` in `β` and in `J` under `0 ≤ β * J`. Nothing here treats a
-negative activity, in either direction.
+composition — `AnalyticAt ℝ` in `β` and in `J` under `0 ≤ β * J`. Those hypotheses constrain
+the anchor only: `AnalyticAt ℝ` is a two-sided neighbourhood statement, and `AnalyticOnNhd ℝ`
+is `AnalyticAt ℝ` at each point of its set, so at the admitted anchor `0`, where `Ξ` is `1`,
+they do reach the negative activity — negative `t` directly, and negative
+`Real.tanh (β' * J)` once the frozen parameter is positive.
 
 Every statement takes exactly two instance binders, `DecidableEq V` and
 `Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
