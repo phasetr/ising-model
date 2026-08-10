@@ -1,5 +1,46 @@
 import IsingModel.RandomCurrent.Switching.Core
 
+/-!
+# The support of a current and the simple graph it carries
+
+The edges a current is nonzero at, the simple graph they induce on `↥Λ`, and what the source
+set of the current inherits from that graph. The graph `G : SimpleGraph V` and the finite
+volume `Λ : Finset V` are arbitrary throughout, and `inducedGraph G Λ` denotes the subgraph
+of `G` that `Λ` induces.
+
+`Current.support G Λ n` is the `Finset` of edges of `inducedGraph G Λ` at which `n` is
+nonzero; membership in it is `n e ≠ 0`. The support of `n - m` is contained in the support of
+`n`, the support is monotone in the pointwise order on currents, and it is empty exactly when
+the current is the zero current.
+
+`Current.Adj G Λ n u v` holds when `u` and `v` are distinct and some edge of the support of
+`n` contains both. It is irreflexive and symmetric, and at the zero current it is equivalent
+to `False`. `Current.toSimpleGraph G Λ n` packages it as a `SimpleGraph ↥Λ` whose adjacency
+is that relation; at the zero current that graph is `⊥`, it is bounded above by
+`inducedGraph G Λ`, and it is monotone in the pointwise order on currents.
+
+The source set is tied to the support. A vertex of the source set of `n` lies on some edge of
+the support, hence has a `Current.Adj`-neighbour; and a vertex `v` such that no `u` satisfies
+`Current.Adj G Λ n u v` is not in the source set.
+
+`Current.supportAt G Λ n v` restricts the support to the edges containing `v`. It is
+contained in the support and is nonempty at every vertex of the source set. The total
+incident degree `Current.degreeAt G Λ n v` is the sum of the multiplicities `n e` over it,
+and its cardinality is at most that degree, so the degree is strictly positive at every
+vertex of the source set.
+
+The edge-endpoint cardinality, the handshake count that uses it and the `ZMod 2` consequence
+of that count are recorded together: the endpoint `Finset` of an edge of `inducedGraph G Λ`
+has cardinality `2`; the sum of `Current.degreeAt G Λ n v` over all vertices of `Λ` is twice
+the sum of `n e` over all edges; and the sum of `Current.parity G Λ n v` over all vertices is
+`0` in `ZMod 2`. A further statement records that the `ℕ`-valued indicator of
+`Current.parity G Λ n v ≠ 0`, cast into `ZMod 2`, is that parity again.
+
+Every statement here takes `[DecidableEq ↥Λ]`. The edge-endpoint cardinality is the only one
+that does not take `[Fintype (inducedGraph G Λ).edgeSet]`, and it is also the only one whose
+statement does not mention a current.
+-/
+
 namespace IsingModel
 
 namespace Ambient

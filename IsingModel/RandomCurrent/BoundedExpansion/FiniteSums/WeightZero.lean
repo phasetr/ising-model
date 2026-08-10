@@ -1,5 +1,34 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.ASourceSpinSums
 
+/-!
+# Prescribed-source spin sum, degenerate weight sums, and a per-edge weight factorization
+
+Statements about currents on `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, for an
+arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. The spin sum and
+the weight factorization are stated at a fixed current `n`; the degenerate weight sums are
+stated about `Current.weightSum`, a `tsum` over all currents, and bind no current.
+
+For a vertex `Finset A`, the sum over all spin configurations `σ : ↥Λ → Spin` of the product
+of the spin signs over `A` times the product, over the edges, of the product of the spin
+signs over the endpoint `Finset` of the edge raised to the multiplicity `n e`, is
+`2 ^ Fintype.card ↥Λ` when `n` has source set exactly `A`, and `0` otherwise; that statement
+takes a `[Decidable (n.HasSources G Λ A)]` instance.
+
+`Current.weightSum G Λ A β J` is recorded on the parameter slices where one of its two real
+parameters is `0`: it is `1` when `A` is empty and `0` otherwise, once with `β` set to `0`
+and `J` left arbitrary, once with `J` set to `0` and `β` left arbitrary. Neither of those
+statements constrains the remaining parameter.
+
+For an arbitrary real-valued function `x` on the edges, `Current.weight G Λ β J n` times the
+product over the edges of `x e` raised to `n e` equals the product over the edges of
+`(β * J * x e)` raised to `n e`, each factor divided by the factorial of `n e`. This holds
+for arbitrary real `β` and `J`.
+
+Every statement here takes `[Fintype (inducedGraph G Λ).edgeSet]` and none carries a
+hypothesis; the factorization statement is the only one that does not take
+`[DecidableEq ↥Λ]`.
+-/
+
 namespace IsingModel
 
 namespace Ambient
