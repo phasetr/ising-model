@@ -2,16 +2,39 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
 
 /-!
-# AmbientLattice/Analyticity Mayer identity edge-case wrappers
+# The Mayer identity where it holds unconditionally in the order (§18.5)
 
-Narrow child module for 19 §18.5 Λ-layer wrappers covering Mayer
-identity / polymerFreeEnergy = mayerPartialSum identity at edge-case
-parameter slices (`t = 0`, `β·J = 0`, `β = 0`, `J = 0`), Mayer
-identity in `polymer_free_energy` form, `mayerPartialSum 0 ≤
-polymerFreeEnergy` bounds (raw, tanh, ferromagnetic), and Mayer
-identity for edge-case induced graphs (no-polymer / trivial /
-edgeless). The theorem names are unchanged from the former
-`Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `Ξ t` for the polymer sum
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`, which has no
+definition of its own and is written out in each statement; by definition
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)`.
+
+The Mayer identity equates `Real.log (Ξ t)` with `mayerPartialSum (inducedGraph G Λ) N t`
+for an order `N : ℕ` that is universally quantified and otherwise unconstrained. In general
+that equality needs the full series; what is recorded here are the situations where it holds
+for every `N` at once, because both sides are `0`.
+
+Two families of such situations occur. In the first the activity itself is `0`: at `t = 0`;
+at `Real.tanh (β * J)` under the hypothesis `β * J = 0`; and at `Real.tanh (0 * J)` and
+`Real.tanh (β * 0)`, where the vanishing parameter is a literal `0` substituted into the
+statement rather than a hypothesis. Each is stated both with `Real.log (Ξ …)` written out
+and in the `polymerFreeEnergy` form, and the doubly-substituted `Real.tanh (0 * 0)` case is
+recorded as well. In the second family the graph carries no polymer at all — under
+`allPolymers (inducedGraph G Λ) = ∅`, or under `(inducedGraph G Λ).edgeFinset = ∅`, or under
+the disjunction `β * J = 0 ∨ allPolymers (inducedGraph G Λ) = ∅` — and the identity then
+holds at every activity, in the bare and in the `Real.tanh (β * J)` form.
+
+Away from those situations the statements weaken to an inequality: the order-`0` partial sum
+is at most the polymer free energy, at a bare activity under `0 ≤ t` and at
+`Real.tanh (β * J)` under `0 ≤ β * J` and again under the ferromagnetic pair `0 ≤ J`,
+`0 < β`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `β * J = 0`, `allPolymers (inducedGraph G Λ) = ∅`,
+`(inducedGraph G Λ).edgeFinset = ∅`, the disjunction of the first two, `0 ≤ t`, `0 ≤ β * J`,
+`0 ≤ J` and `0 < β`; the literal-substitution slices carry none.
 -/
 
 namespace IsingModel

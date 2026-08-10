@@ -2,12 +2,30 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
 
 /-!
-# AmbientLattice/Analyticity mayer wrappers
+# Regularity of the Mayer partial sums and expansion terms (§18.6)
 
-Narrow child module for 23 §18.6 mayerPartialSum_Λ + mayerExpansionTerm_Λ
-continuous/differentiable/analyticAt/analyticOnNhd wrappers (raw and
-tanh-composed variants). The theorem names are unchanged from the
-former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`,
+about `mayerPartialSum (inducedGraph G Λ) N` at an order `N : ℕ` and
+`mayerExpansionTerm (inducedGraph G Λ) n` at an order `n : ℕ`, as functions of the activity.
+Both are finite sums of monomials in the activity, and every statement below reflects that:
+each regularity property is asserted at an arbitrary point or over an arbitrary set, with no
+region excluded.
+
+In the activity itself: `Continuous` and `Differentiable ℝ` on all of `ℝ`, `AnalyticAt ℝ` at
+an arbitrary real point, and `AnalyticOnNhd ℝ` over `Set.univ` for the expansion term. The
+partial sum is also `ContinuousOn` and `DifferentiableOn ℝ` over a set `s : Set ℝ` that is
+an explicit argument, hence over every subset of `ℝ`.
+
+In the physical parameters, both are composed with `Real.tanh (β * J)` and read as functions
+of `β` with `J` frozen, and of `J` with `β` frozen. Both compositions are `Continuous`,
+`Differentiable ℝ` and `AnalyticAt ℝ` at an arbitrary point in each of the two directions;
+the partial sum is in addition `AnalyticOnNhd ℝ` over `Set.univ` in each direction. No sign
+condition on `β`, `J` or `β * J` appears anywhere here: `Real.tanh` is real-analytic on all
+of `ℝ`, and the function it is substituted into is polynomial in the activity.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`, and its Prop-valued hypothesis list is empty; the
+order, the frozen parameter and the evaluation point all range freely.
 -/
 
 namespace IsingModel
