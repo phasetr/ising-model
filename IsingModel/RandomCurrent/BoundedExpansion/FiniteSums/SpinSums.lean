@@ -1,5 +1,28 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.BoundedWeights
 
+/-!
+# Spin sums of sign products over a finite index type
+
+Sums, over all configurations of spins, of products of the integer sign `(· : Spin).toSign`
+cast to `ℝ` and raised to per-site exponents. No statement here mentions a graph, a finite
+volume or a current: those indexed by a type range over an arbitrary `ι` carrying
+`[Fintype ι]` and `[DecidableEq ι]`, and the one about a single spin carries no instance
+binder at all.
+
+Summing the sign of one spin raised to `k` over the two spins gives `2` when `k` is even and
+`0` when `k` is odd. Forming the product over the index type of `((σ v).toSign : ℝ)` raised
+to `k v` and summing over all `σ : ι → Spin` gives `2 ^ Fintype.card ι` when every exponent
+`k v` is even, and `0` as soon as one exponent is odd. Each is stated as a single
+`if`-`then`-`else` equality, hence as a complete case split rather than as a one-sided bound.
+
+One statement replaces the exponent family by membership in a `Finset`. It is written through
+`IsingModel.spinProduct A σ`, the product of `((σ i).toSign : ℝ)` over `i ∈ A` for
+`A : Finset ι`, and says that the sum of that product over all configurations is
+`2 ^ Fintype.card ι` when `A` is empty and `0` otherwise.
+
+No statement here carries a hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
