@@ -12,9 +12,9 @@ instance binders are `[DecidableEq V]` and a `Fintype` instance on the induced e
 taken on the volume itself at the finite-volume layer and stagewise at the exhaustion layer.
 
 Two closed forms are recorded, and they stand at the finite-volume layer only, with no
-counterpart along an exhaustion: at `J = 0` the value is `↑Λ.card * log (2 * cosh (β * h))`,
-and at `β = 0` it is `↑Λ.card * log 2`. Both hold for an arbitrary finite volume, the empty
-one included, where each side is `0`.
+counterpart along an exhaustion in this module: at `J = 0` the value is
+`↑Λ.card * log (2 * cosh (β * h))`, and at `β = 0` it is `↑Λ.card * log 2`. Both hold for an
+arbitrary finite volume, the empty one included, where each side is `0`.
 
 The remaining shapes stand at both layers. Negating the field leaves the value unchanged, so
 it may be rewritten with `|h|` in place of `h`, and those two carry no hypothesis on the

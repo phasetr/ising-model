@@ -26,11 +26,13 @@ singly; as `BoundedEdgeDensity G Λ`, from which that `BddAbove` is obtained, ag
 three given singly; and as `BoundedEdgeDensity G Λ` together with a single
 `DisjointTowerHypotheses` record.
 
-The ambient graph `G : SimpleGraph V` is arbitrary and nothing here constrains it. The only
-instance binders anywhere in the module are `[DecidableEq V]` and the stagewise `Fintype`
-instance on the edge set of the induced subgraph; in particular nothing here takes
-`[Nonempty V]`, and no statement assumes `Ferromagnetic p` or any sign condition on `p.J`,
-`p.h` or `p.β`.
+No typeclass binder applies to the ambient graph `G : SimpleGraph V` itself, but `G` is not
+left unconstrained: the super-additivity hypothesis on `log (partitionFunctionΛ G …)` names
+it in every shape, singly or through the bundle, and `BoundedEdgeDensity G Λ` names it in the
+two shapes that obtain the upper bound instead of assuming it. The only instance binders
+anywhere in the module are `[DecidableEq V]` and the stagewise `Fintype` instance on the edge
+set of the induced subgraph; in particular nothing here takes `[Nonempty V]`, and no
+statement assumes `Ferromagnetic p` or any sign condition on `p.J`, `p.h` or `p.β`.
 
 Reference: Glimm-Jaffe, *Quantum Physics*, 2nd ed., Springer 1987, §4.6 Proposition 4.6.1,
 p. 68, "as `Λ ↑ ∞`, `f_Λ` converges". The proposition is stated there for a lattice field

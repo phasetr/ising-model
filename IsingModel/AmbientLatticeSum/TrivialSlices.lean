@@ -11,7 +11,8 @@ condition on `p.J`, `p.h` or `p.β`: the slices below are exact parameter values
 inequalities.
 
 At `J = h = 0` the logarithm of the partition function on a finite volume `Λ : Finset V` has
-the closed form `↑Λ.card * log 2`, with no hypothesis on `Λ` whatever.
+the closed form `↑Λ.card * log 2`, asking nothing of `Λ` beyond the `Fintype` instance on
+the edge set it induces — in particular not that it be nonempty.
 
 `DisjointTowerHypotheses` is built here in three ways. Given a real `c` with
 `log (partitionFunctionΛ G (Λ.volume n) p) = ↑(Λ.volume n).card * c` at every stage, the

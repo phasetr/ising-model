@@ -10,13 +10,15 @@ partition function and the free energy of the subgraph that `Λ` induces, and th
 `Λ.volume n` of an exhaustion. Every statement takes `[DecidableEq V]` and a `Fintype`
 instance on the induced edge set of each volume it names.
 
-Merging two disjoint volumes can only raise these quantities. For disjoint `Λ₁` and `Λ₂` under
-`Ferromagnetic p` the partition function is super-multiplicative across the union and its
-logarithm super-additive; the first piece's value is at most the union's, in the
-multiplicative and in the logarithmic form alike; and the free energy weighted by the
-volume's cardinality obeys the same two comparisons, under nonemptiness of the pieces each
-comparison names — both pieces in the two-piece super-additivity, the first piece alone in
-the comparison against the union.
+Merging two disjoint volumes can only raise the partition function, its logarithm and the
+free energy weighted by the volume's cardinality; the unweighted `freeEnergyΛ` is compared
+across a union nowhere here. For disjoint `Λ₁` and `Λ₂` under `Ferromagnetic p` the
+partition function is super-multiplicative across the union and its logarithm
+super-additive; the first piece's value is at most the union's, in the multiplicative and in
+the logarithmic form alike; and the free energy weighted by the volume's cardinality obeys
+the same two comparisons, under nonemptiness of the pieces each comparison names — both
+pieces in the two-piece super-additivity, the first piece alone in the comparison against
+the union.
 
 Two statements stand outside that regime and assume no sign condition on `p` at all:
 `partitionFunctionΛ` is unchanged when the volume is replaced by an equal one, and on a
