@@ -1,5 +1,31 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.EdgeFinsetParity
 
+/-!
+# Exchanging a vertex-indexed and an edge-indexed aggregate along a current
+
+Rewriting an aggregate indexed by the vertices of `Λ`, weighted by the total incident degree
+`Current.degreeAt G Λ n v` of a current `n` — the sum of the multiplicities `n e` over the
+edges containing `v` — as the corresponding aggregate indexed by the edges of
+`inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, weighted by those multiplicities.
+The graph `G : SimpleGraph V` and the finite volume `Λ : Finset V` are arbitrary.
+
+In the additive form the target is an `AddCommMonoid M` and the data a function `f : ↥Λ → M`:
+the sum over all vertices of `Current.degreeAt G Λ n v • f v` equals the sum over all edges
+of `n e •` the sum of `f` over the endpoint `Finset` of `e`. In the multiplicative form the
+target is a `CommMonoid M` and the data a function `g : ↥Λ → M`: the product over all
+vertices of `g v` raised to `Current.degreeAt G Λ n v` equals the product over all edges of
+the product of `g` over the endpoint `Finset` of `e`, raised to `n e`.
+
+One statement is the multiplicative form instantiated at `M := ℝ` and at
+`g := fun v => ((σ v).toSign : ℝ)` for a spin configuration `σ : ↥Λ → Spin`, so on the edge
+side it carries the product of the spin signs over the endpoint `Finset` of each edge, raised
+to the multiplicity of that edge.
+
+Every statement here takes `[Fintype (inducedGraph G Λ).edgeSet]` together with
+`[DecidableEq ↥Λ]`, the forms over a general target additionally take the monoid instance on
+`M`, and none carries a hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
