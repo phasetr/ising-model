@@ -1,5 +1,33 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.SourceFreeSpinSums
 
+/-!
+# The spin sum against a vertex-subset sign product, and its prescribed-source form
+
+The spin sum at a fixed current `n`, multiplied by the product of the spin signs over a
+vertex `Finset A`, and the condition characterizing when that sum is nonzero.
+
+For a spin configuration `σ : ↥Λ → Spin`, the product of `((σ a).toSign : ℝ)` over `a ∈ A` is
+rewritten as a product over all of `↥Λ` whose factor at `v` is `((σ v).toSign : ℝ)` raised to
+the indicator exponent `if v ∈ A then 1 else 0`. That statement is the only one here that
+mentions no graph: it is stated for a `Λ : Finset V` under explicitly bound `[Fintype ↥Λ]`
+and `[DecidableEq ↥Λ]` instances.
+
+Multiplying that product by the product, over the edges of `inducedGraph G Λ`, the subgraph
+of `G` that `Λ` induces, of the product of the spin signs over the endpoint `Finset` of the
+edge raised to the multiplicity `n e`, gives a single product over vertices whose exponent at
+`v` is the indicator of `A` at `v` plus the total incident degree `Current.degreeAt G Λ n v`.
+
+Summing that single product over all spin configurations gives `2 ^ Fintype.card ↥Λ` when
+that exponent is even at every vertex, and `0` otherwise, as a single `if`-`then`-`else`
+equality. Evenness at every vertex is in turn equivalent to `n` having source set exactly
+`A`. Since `2 ^ Fintype.card ↥Λ` is positive in `ℝ` for every value of the cardinality, and
+since neither statement carries a hypothesis, the sum is nonzero precisely at those currents
+whose source set is `A`, for every `G`, every `Λ` and every `A`.
+
+Every statement here takes `[DecidableEq ↥Λ]` and none carries a hypothesis; the statements
+that mention the graph take `[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 
 namespace Ambient
