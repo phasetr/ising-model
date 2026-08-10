@@ -1,5 +1,51 @@
 import IsingModel.RandomCurrent.Switching.PairClosedForms
 
+/-!
+# Source-conditioned pair and sub-current Finsets
+
+`Current.pairFinset_with_sources G Λ n A B` filters the pairs of currents summing to `n` on
+`inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, keeping those whose first component
+has source set exactly `A` and whose second has source set exactly `B`.
+`Current.subFinset_with_source G Λ n A` filters the currents bounded by `n`, keeping those
+whose source set is exactly `A`. The graph `G : SimpleGraph V` and the finite volume
+`Λ : Finset V` are arbitrary throughout.
+
+Membership in each unfolds to the defining conjunction: a pair lies in the first exactly when
+its two components add up to `n` and carry the prescribed source sets, and a current lies in
+the second exactly when it is bounded by `n` and carries the prescribed source set. The
+second `Finset` is contained in `Current.subFinset G Λ n`.
+
+The two families are related under the hypothesis `symmDiff (n.sources G Λ) A = B`. Under it,
+the source-conditioned pair `Finset` is the image of the source-conditioned sub-current
+`Finset` under `m ↦ (m, n - m)`; sums over the two agree after that substitution; and the sum
+of the product of the two weights factors as the weight of `n` times the sum of
+`Current.jointFactor G Λ m (n - m)` over the source-conditioned sub-current `Finset`.
+
+A second hypothesis shape occurs, written with a different argument order:
+`symmDiff A B ≠ n.sources G Λ`. Under it the source-conditioned pair `Finset` is empty, and
+the same weight sum is therefore `0`.
+
+At the zero current these Finsets degenerate. With both prescribed source sets empty, the
+pair `Finset` is the singleton of the pair of zero currents and the sub-current `Finset` is
+the singleton of the zero current; a nonempty prescribed source set makes each of them empty,
+where for the pair `Finset` it is enough that one of the two prescribed source sets is
+nonempty.
+
+The joint-factor sum and the pair-weight sum are each bounded above. The sum of
+`Current.jointFactor G Λ m (n - m)` over the source-conditioned sub-current `Finset` is at
+most `2` raised to the sum of `n e` over all edges, under no hypothesis at all. Under
+`symmDiff (n.sources G Λ) A = B` together with `0 ≤ β * J`, the source-conditioned
+pair-weight sum is at most the weight of `n` times that same power; that is the only
+statement in this module which constrains `β` or `J`.
+
+Exchanging the two prescribed source sets corresponds to `Prod.swap` on the pairs: the image
+of the pair `Finset` under `Prod.swap` is the pair `Finset` with `A` and `B` exchanged, sums
+transform accordingly, and the two cardinalities agree.
+
+Every statement here takes `[DecidableEq V]`, `[Fintype (inducedGraph G Λ).edgeSet]` and
+`[DecidableEq ↥Λ]`.
+-/
+
 namespace IsingModel
 
 namespace Ambient
