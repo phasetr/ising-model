@@ -5,17 +5,30 @@ import IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero
 import IsingModel.AmbientLattice.MagnetizationInfiniteEmptyTrivial
 
 /-!
-# Ambient magnetizationΛ / magnetizationAlongExhaustion trivial-slice wrappers
+# Trivial parameter slices for the finite-volume and stage magnetization
 
-Narrow child module for the magnetizationΛ /
-magnetizationAlongExhaustion trivial-slice wrappers (7 theorems):
-`magnetizationΛ_beta_zero`, `magnetizationAlongExhaustion_beta_zero`,
-`magnetizationΛ_zero_params`,
-`magnetizationAlongExhaustion_zero_params`, `magnetizationΛ_J_zero`,
-`magnetizationAlongExhaustion_J_zero_of_mem`,
-`magnetizationAlongExhaustion_J_zero_eventually_eq`. The theorem
-names are unchanged from the former `MagnetizationInfinite`
-declarations.
+Statements for an ambient graph `G : SimpleGraph V` about the single-site magnetization at two
+layers: `magnetizationΛ` on a finite volume `Λ : Finset V`, and `magnetizationAlongExhaustion`
+along an exhaustion `Λ` of `V`, the stage sequence whose value at a stage whose volume omits
+the site is `0`.
+
+Instance binders follow the layer. Every declaration takes `DecidableEq V`; the
+`magnetizationΛ` statements take `Fintype` on the edge set of the induced subgraph of the
+finite volume, and the along-exhaustion statements take the stagewise `Fintype` family indexed
+by the stage. The Prop-valued hypotheses are exactly these: the on-stage noninteracting closed
+form assumes that the site lies in the stage volume, and no other declaration carries one.
+
+On the infinite-temperature slice `β = 0`, and on the slice where the coupling and the field
+vanish together, the magnetization is `0` at the finite-volume and the stage layer alike, with
+no hypothesis. On the noninteracting slice the finite-volume magnetization is
+`Real.tanh (β * h)`, again with no hypothesis; the stage magnetization takes that same value
+once the site lies in the stage volume, and since an exhaustion eventually covers the
+singleton at the site, the stage sequence is eventually equal to it.
+
+With no sign hypothesis on the field or the inverse temperature, that closed form vanishes
+exactly when `β * h = 0` and otherwise carries the sign of `β * h`. That is consistent with
+the vanishing slices above: `β = 0` is one of its roots, and so is the slice where the field
+vanishes.
 -/
 
 namespace IsingModel

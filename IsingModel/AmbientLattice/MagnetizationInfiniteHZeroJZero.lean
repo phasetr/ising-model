@@ -3,20 +3,37 @@ import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
 
 /-!
-# Ambient h_zero / J_zero / zero_params / tanh_pow wrappers
+# Zero-field vanishing and the noninteracting closed form for the correlation
 
-Narrow child module for the h_zero / J_zero / zero_params / tanh_pow
-wrappers (8 theorems): `correlationInfinite_h_zero`,
-`magnetizationΛ_h_zero`, `magnetizationAlongExhaustion_h_zero`,
-`correlationAlongExhaustion_J_zero_of_subset`,
-`correlationAlongExhaustion_J_zero_eventually_eq`,
-`correlationInfinite_J_zero`,
-`correlationInfinite_zero_params_vanish_of_nonempty_A`,
-`correlationInfinite_ge_tanh_pow_card`. The closely-related
-`magnetizationInfinite_ge_tanh` intentionally stays in the parent
-because it references `magnetizationInfinite` which is defined there.
-The theorem names are unchanged from the former
-`MagnetizationInfinite` declarations.
+Statements for an ambient graph `G : SimpleGraph V`, about the correlation at the stage and
+infinite-volume layers along an exhaustion `Λ` of `V`, and about the single-site magnetization
+read off it at the finite-volume and stage layers.
+
+Instance binders follow the layer. The statement about `magnetizationΛ` takes `DecidableEq V`
+and `Fintype` on the edge set of the induced subgraph of its own `Λ : Finset V`; every other
+declaration takes `DecidableEq V` and the stagewise `Fintype` family indexed by the stage. The
+Prop-valued hypotheses are exactly these: the infinite-volume zero-field statement assumes
+`Odd A.card`; the on-stage closed form assumes `A ⊆ Λ.volume n`; the infinite-volume closed
+form assumes `Ferromagnetic ⟨0, h, β⟩`, whose content on that slice is `0 ≤ h` and `0 < β`;
+the vanishing statement at zero coupling and zero field assumes `0 < β` together with
+`A.Nonempty`; the lower bound assumes `0 ≤ J`, `0 ≤ h` and `0 < β`; and the remaining
+statements assume nothing.
+
+At zero field the infinite-volume correlation of an odd test set vanishes, and the single-site
+magnetization vanishes at the finite-volume and stage layers, the singleton being one such
+test set.
+
+On the noninteracting slice the stage correlation equals `Real.tanh (β * h) ^ A.card` as soon
+as the test set is covered by the stage volume; since an exhaustion covers every finite set
+eventually, the stage sequence is eventually equal to that value, and passing to the supremum
+under `0 ≤ h` and `0 < β` gives the same closed form for the infinite-volume correlation.
+
+Under those two hypotheses `Real.tanh (β * h)` lies in `Set.Ico 0 1`, so the closed form
+vanishes exactly when the test set is nonempty and `h = 0`, is strictly positive when the test
+set is nonempty and `0 < h`, and equals `1` at the empty test set for every field. Reading it
+at `h = 0` with a nonempty test set recovers the vanishing statement at zero coupling and zero
+field. Raising the coupling from `0` while keeping `0 ≤ h` and `0 < β` turns the closed form
+into a lower bound for the infinite-volume correlation at an arbitrary nonnegative coupling.
 -/
 
 namespace IsingModel

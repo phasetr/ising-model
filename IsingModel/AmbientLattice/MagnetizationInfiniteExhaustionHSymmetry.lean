@@ -2,19 +2,36 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 
 /-!
-# Ambient alongExhaustion / correlationInfinite h-symmetry wrappers
+# Behaviour of the stage and infinite-volume observables under reversal of the field
 
-Narrow child module for the alongExhaustion / correlationInfinite
-h-symmetry wrappers (9 theorems): `correlationAlongExhaustion_h_zero`,
-`correlationAlongExhaustion_neg_h`,
-`correlationInfinite_neg_h_of_even_card`,
-`correlationInfinite_eq_abs_h_of_even_card`,
-`magnetizationAlongExhaustion_neg_h`,
-`abs_magnetizationAlongExhaustion_eq_magnetizationAlongExhaustion_abs_h`,
-`susceptibilityAlongExhaustion_neg_h`,
-`susceptibilityAlongExhaustion_eq_abs_h`,
-`susceptibilityAlongExhaustion_le_abs_h`. The theorem names are
-unchanged from the former `MagnetizationInfinite` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`, about the
+stage correlation, the stage magnetization and the stage susceptibility, together with the
+infinite-volume correlation obtained as the supremum over stages.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The Prop-valued
+hypotheses are exactly these: the zero-field vanishing statement assumes `Odd A.card`; the
+infinite-volume statements assume `Even A.card`; the absolute-field magnetization identity and
+the susceptibility comparison assume `0 ≤ J` and `0 < β`; and the reversal identities for the
+stage correlation, the stage magnetization and the stage susceptibility, together with the
+stage susceptibility identity at `|h|`, assume nothing.
+
+Reversing the field multiplies the stage correlation by `(-1) ^ A.card`, with no hypothesis;
+at the singleton test set that is a sign flip of the stage magnetization. At an odd test set
+and zero field the stage correlation is therefore `0`.
+
+At an even test set the stagewise sign is `1`, so the stagewise family is unchanged by the
+reversal and the suprema agree. That gives invariance of the infinite-volume correlation under
+reversal and, by splitting on which of `h` and `-h` is `|h|`, its equality with the value at
+`|h|`.
+
+At `0 ≤ J` and `0 < β` the absolute value of the stage magnetization at a field `h` equals its
+value at `|h|`. For the stage susceptibility, reversal subtracts twice the stage
+magnetization, and passing to `|h|` adds the difference of the stage magnetizations at `|h|`
+and at `h`; these identities hold with no hypothesis. Under `0 ≤ J` and `0 < β` that
+difference is nonnegative — it is `0` when `h` is already `|h|`, and twice the nonnegative
+value at `|h|` otherwise — so the stage susceptibility at `h` is bounded above by its value at
+`|h|`.
 -/
 
 namespace IsingModel
