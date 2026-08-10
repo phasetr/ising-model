@@ -17,7 +17,9 @@ the edge set it induces — in particular not that it be nonempty.
 `DisjointTowerHypotheses` is built here in three ways. Given a real `c` with
 `log (partitionFunctionΛ G (Λ.volume n) p) = ↑(Λ.volume n).card * c` at every stage, the
 super-additivity field follows from additivity of the stage cardinalities alone, so beyond
-that closed form the builder asks only for that additivity and for `(Λ.volume 1).card ≠ 0`.
+that closed form the builder asks only for that additivity, for `(Λ.volume 1).card ≠ 0` and
+for the two instance binders `DisjointTowerHypotheses` itself carries, `[DecidableEq V]` and
+the stagewise `Fintype` instance on the edge set of the induced subgraph.
 The slices `J = 0` and `β = 0` are instances of it, the constant coming from the closed forms
 `log (partitionFunctionΛ G Λ ⟨0, h, β⟩) = ↑Λ.card * log (2 * cosh (β * h))` and
 `log (partitionFunctionΛ G Λ ⟨J, h, 0⟩) = ↑Λ.card * log 2`. Feeding those records into the

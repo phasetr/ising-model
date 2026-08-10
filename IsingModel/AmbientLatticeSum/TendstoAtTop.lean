@@ -11,7 +11,9 @@ Under `Ferromagnetic p` that sequence, and its logarithm, tend to `atTop`. Both 
 take `[Infinite V]`, the instance under which `Exhaustion.tendsto_card_atTop` sends the stage
 cardinalities to `atTop`, together with `[DecidableEq V]` and the stagewise `Fintype`
 instance on the edge set of the induced subgraph; those three are the only instance binders
-here, and `Ferromagnetic p` is the only Prop-valued hypothesis.
+here, and `Ferromagnetic p` is the only explicit hypothesis. Of those four binders,
+`Ferromagnetic p` and `[Infinite V]` are the Prop-valued ones — `Infinite` is declared a
+`Prop` class — while `[DecidableEq V]` and the `Fintype` instance carry data.
 -/
 
 namespace IsingModel
