@@ -10,12 +10,12 @@ external field: the one parameter record occurring here is `⟨J, 0, β⟩`, so 
 together with the number of edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ`
 induces.
 
-Under `0 ≤ β * J` the logarithm of the partition function is given exactly. It is
-`Λ.card * log 2`, plus that edge count times `log (cosh (β * J))`, plus the logarithm of a
-sum taken over those subsets of the induced graph's edges in which every site of `Λ` meets
-an even number of the chosen edges, each subset contributing `tanh (β * J)` raised to its
-own number of edges; the free energy is the same expression divided by `Λ.card`. This is
-the logarithmic form of the high-temperature representation of the partition function.
+Under `0 ≤ β * J` the logarithm of the partition function is given exactly, in the form the
+high-temperature representation takes after logarithms: it is `Λ.card * log 2`, plus that
+edge count times `log (cosh (β * J))`, plus the logarithm of a sum taken over those subsets
+of the induced graph's edges in which every site of `Λ` meets an even number of the chosen
+edges, each subset contributing `tanh (β * J)` raised to its own number of edges. The free
+energy is that same expression divided by `Λ.card`.
 
 Under that same hypothesis the partition function is at least `2 ^ Λ.card` times
 `cosh (β * J)` raised to the edge count; it is at most `2 ^ (Λ.card + edge count)` times
