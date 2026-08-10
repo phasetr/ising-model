@@ -2,18 +2,41 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 
 /-!
-# AmbientLattice/Analyticity Mayer recurrence + ε infrastructure wrappers
+# Mayer recurrence and the small-activity behaviour of the excess sum (§18.5)
 
-Narrow child module for 12 §18.5 Λ-layer wrappers covering Mayer
-recurrence (`mayerPartialSum_Λ_succ`,
-`mayerExpansionTerm_Λ_eq_mayerPartialSum_diff`),
-`polymerFreeEnergy_Λ_hasSum_via_log` / `_hasSum_via_log_eventually`,
-`vdPolymerFamilies_sum_Λ_minus_one_tendsto_zero`, Mayer term sign at
-`n = 1, 2` (`mayerExpansionTerm_Λ_one_nonneg_of_nonneg`,
-`_two_nonpos_of_nonneg`), `vdPolymerFamilies_sum_Λ_minus_one_{at_zero,
-continuous, analyticAt, lt_one_eventually}`, and
-`allPolymers_Λ_eq_empty_of_edgeFinset_empty`. The theorem names are
-unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `ε t` for the excess polymer sum
+`∑ Γ ∈ (vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅, ∏ P ∈ Γ, t ^ P.card`, the
+polymer sum with its empty-family term removed; it has no definition of its own, so a
+statement that mentions it carries the summation written out, while the recurrence, the
+low-order sign statements and the edgeless-graph statement mention it nowhere and are
+phrased through `mayerPartialSum`, `mayerExpansionTerm` and `allPolymers`. By definition
+`polymerFreeEnergy (inducedGraph G Λ) t` is `Real.log` of the full polymer sum
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`; that this also
+equals `Real.log (1 + ε t)` is the content of the decomposition of that sum as `1 + ε t`, a
+theorem about the two sums rather than part of the definition.
+
+The Mayer recurrence is stated in both directions and for every order and activity:
+`mayerPartialSum … (N + 1) t = mayerPartialSum … N t + mayerExpansionTerm … (N + 1) t`, and
+the same equation solved for the expansion term as a difference of consecutive partial sums.
+At low order and nonnegative activity the terms alternate in sign — the order-`1` term is
+nonnegative, the order-`2` term is nonpositive.
+
+The series statements are about `fun n ↦ (-1) ^ n * (ε t) ^ (n + 1) / (n + 1)`, the
+logarithm series of `1 + ε t`. It `HasSum` to `polymerFreeEnergy (inducedGraph G Λ) t` under
+the single hypothesis `|ε t| < 1`, and, with no hypothesis, it does so for all `t` in a
+neighbourhood of `0` in the `Filter.Eventually` sense. Two facts about `ε` near `0` support
+that: `ε` tends to `0` as `t` tends to `0`, and `ε t < 1` eventually as `t` tends to `0`.
+Both are limit statements at `0` alone and neither names a radius.
+
+The excess sum itself is a finite sum of monomials with no constant term, so it vanishes at
+a literal activity `0`, is `Continuous` on all of `ℝ`, and is `AnalyticAt ℝ` at an arbitrary
+real point, all without hypotheses. Finally, an edgeless induced subgraph has no polymer:
+`(inducedGraph G Λ).edgeFinset = ∅` implies `allPolymers (inducedGraph G Λ) = ∅`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `|ε t| < 1`, `0 ≤ t` and `(inducedGraph G Λ).edgeFinset = ∅`.
 -/
 
 namespace IsingModel

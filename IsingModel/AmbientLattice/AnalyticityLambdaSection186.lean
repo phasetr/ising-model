@@ -2,19 +2,32 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity.FreeEnergyAnalyticity
 
 /-!
-# AmbientLattice/Analyticity §18.6 partitionFunction + freeEnergy regularity wrappers
+# Directional analyticity of the Λ-restricted partition function and free energy (§18.6)
 
-Narrow child module for 23 §18.6 Λ-layer wrappers covering:
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`,
+about `partitionFunctionΛ G Λ` and `freeEnergyΛ G Λ`. Three parameter regimes appear, and
+each statement belongs to exactly one of them; the regime is fixed by which field value the
+slice freezes, so the qualifications below do not carry across the paragraph breaks.
 
-- partitionFunctionΛ per-direction regularity at `h = 0` (β / J
-  Continuous, Differentiable, AnalyticAt, AnalyticOnNhd).
-- freeEnergyΛ per-direction `AnalyticAt` / `AnalyticOnNhd` analyticity
-  at `h = 0` (β / J).
-- partitionFunction joint + general-h `AnalyticAt` / `AnalyticOnNhd`
-  Λ-layer wrappers over `(β, J, h)` and at the general-h slice.
+*Zero field.* For the slices `fun β' ↦ partitionFunctionΛ G Λ ⟨J, 0, β'⟩` and
+`fun J' ↦ partitionFunctionΛ G Λ ⟨J', 0, β⟩`: `Continuous`, `Differentiable ℝ`,
+`AnalyticAt ℝ` at an arbitrary point, and `AnalyticOnNhd ℝ` over `Set.univ`. For the two
+matching free-energy slices: `AnalyticAt ℝ` at an arbitrary point and `AnalyticOnNhd ℝ`
+over `Set.univ`.
 
-The theorem names are unchanged from the former `Analyticity`
-declarations.
+*Arbitrary field.* The free energy is `AnalyticAt ℝ` at an arbitrary point and
+`AnalyticOnNhd ℝ` over `Set.univ` in each of the three directions `β`, `J` and `h` taken
+separately; the partition function is `AnalyticAt ℝ` in each of the same three directions.
+
+*Joint in the triple.* `fun (β, J, h) ↦ partitionFunctionΛ G Λ ⟨J, h, β⟩` is `Continuous`
+and `Differentiable ℝ` on `ℝ × ℝ × ℝ`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`, and its Prop-valued hypothesis list is empty; in
+particular the free-energy statements ask nothing of `Λ`, whose cardinality enters
+`freeEnergyΛ` only through the factor `(Λ.card : ℝ)⁻¹`. Each proof rewrites the Λ-layer
+definition to its base-layer counterpart at `inducedGraph G Λ` and applies the §18.6 result
+there.
 -/
 
 namespace IsingModel

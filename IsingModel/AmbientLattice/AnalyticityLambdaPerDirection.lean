@@ -2,17 +2,21 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity.GibbsExpectation
 
 /-!
-# AmbientLattice/Analyticity Λ partitionFunction per-direction wrappers
+# Per-direction continuity and differentiability of the Λ-restricted partition function
 
-Narrow child module for the 6 partitionFunctionΛ per-direction
-Continuous / Differentiable wrappers at general h:
-`partitionFunctionΛ_continuous_beta_general_h`,
-`partitionFunctionΛ_differentiable_beta_general_h`,
-`partitionFunctionΛ_continuous_J_general_h`,
-`partitionFunctionΛ_differentiable_J_general_h`,
-`partitionFunctionΛ_continuous_h`,
-`partitionFunctionΛ_differentiable_h`. The theorem names are
-unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`,
+about the three one-variable slices of `partitionFunctionΛ G Λ` obtained by freezing two of
+the three parameters: `fun β' ↦ partitionFunctionΛ G Λ ⟨J, h, β'⟩`,
+`fun J' ↦ partitionFunctionΛ G Λ ⟨J', h, β⟩` and
+`fun h' ↦ partitionFunctionΛ G Λ ⟨J, h', β⟩`. Each slice is `Continuous` and
+`Differentiable ℝ` on all of `ℝ`. In the inverse-temperature and coupling slices the frozen
+field is an arbitrary real rather than `0`, which is what the `_general_h` name marks.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`, and its Prop-valued hypothesis list is empty: the two
+frozen parameters range over all of `ℝ`, and `Λ` is unrestricted. Each is the corresponding
+base-layer statement at `inducedGraph G Λ`, to which `partitionFunctionΛ G Λ` is equal by
+definition.
 -/
 
 namespace IsingModel

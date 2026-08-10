@@ -2,12 +2,39 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity.PolymerBounds
 
 /-!
-# AmbientLattice/Analyticity Λ regularity wrappers
+# Regularity of the polymer free energy, and a high-temperature free-energy bound
 
-Narrow child module for the 10 Λ-layer freeEnergyΛ correction +
-polymerFreeEnergy_Λ continuous/differentiable + tanh
-analyticAt/analyticOnNhd wrappers. The theorem names are unchanged from
-the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`.
+By definition `polymerFreeEnergy (inducedGraph G Λ) t` is `Real.log` of
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`, a polynomial in
+the activity `t` whose empty-family term is the constant `1`, so the argument of the
+logarithm is `1` at `t = 0` and at least `1` throughout `0 ≤ t`.
+
+Each regularity statement about it accordingly names where it is anchored, and every such
+anchor lies in the nonnegative activity: `ContinuousAt` and `DifferentiableAt ℝ` at a point
+`t` assumed to satisfy `0 ≤ t`; `ContinuousOn` and `DifferentiableOn ℝ` over `Set.Ici 0`;
+and, in the composition with `Real.tanh (β * J)`, `AnalyticAt ℝ` in `β` and in `J` under
+`0 ≤ β * J`, together with `AnalyticOnNhd ℝ` over `Set.Ici 0` in `β` under `0 ≤ J` and in
+`J` under `0 ≤ β`. The hypotheses constrain that anchor only. `ContinuousOn` and
+`DifferentiableOn ℝ` are relative to `Set.Ici 0` and stay inside it, but `ContinuousAt`,
+`DifferentiableAt ℝ` and `AnalyticAt ℝ` — hence `AnalyticOnNhd ℝ`, which is `AnalyticAt ℝ`
+at each point of its set — describe a two-sided neighbourhood of the point they are anchored
+at. Every hypothesis here admits the anchor `0`, where the polynomial inside the logarithm
+equals `1`, so at that anchor those statements do reach the negative activity: negative `t`
+directly, and negative `Real.tanh (β' * J)` once the frozen parameter is positive.
+
+The remaining statements bound the Λ-restricted free energy at the zero field. Under
+`0 ≤ β * J`, or under the ferromagnetic pair `0 ≤ J` and `0 < β`, and in both cases under
+`0 < Λ.card` and the high-temperature hypothesis `(1 + Real.tanh (β * J)) ^ E.card < 2`,
+`freeEnergyΛ G Λ ⟨J, 0, β⟩` is strictly below
+`Real.log 2 + E.card / Λ.card * Real.log (Real.cosh (β * J)) + Real.log 2 / Λ.card`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t`, `0 ≤ β * J`, `0 ≤ J`, `0 ≤ β`, `0 < β`, `0 < Λ.card` and
+`(1 + Real.tanh (β * J)) ^ E.card < 2`; the volume condition is spelled `0 < Λ.card` here,
+not `Λ.Nonempty`. The `Set.Ici 0` statements about the bare activity carry none.
 -/
 
 namespace IsingModel

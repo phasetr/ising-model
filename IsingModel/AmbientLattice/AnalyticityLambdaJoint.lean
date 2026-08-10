@@ -2,12 +2,22 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity.CorrelationRegularity
 
 /-!
-# AmbientLattice/Analyticity Λ-level joint analyticity wrappers
+# Joint regularity of the Λ-restricted partition function, free energy and correlation
 
-Narrow child module for the 10 Λ-level joint analyticity wrappers
-(partitionFunctionΛ + freeEnergyΛ + correlationΛ AnalyticAt /
-AnalyticOnNhd / Continuous / Differentiable joint). The theorem
-names are unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`,
+about the maps on `ℝ × ℝ × ℝ` that send `(β, J, h)` to `partitionFunctionΛ G Λ ⟨J, h, β⟩`,
+to `freeEnergyΛ G Λ ⟨J, h, β⟩`, and — for a test set `A : Finset ↑Λ` — to
+`correlationΛ G Λ ⟨J, h, β⟩ A`. All three are jointly `AnalyticAt ℝ` at an arbitrary point
+of `ℝ × ℝ × ℝ` and jointly `AnalyticOnNhd ℝ` over `Set.univ`, so no parameter value is
+excluded and no radius is named. The free energy and the correlation are in addition
+`Continuous` and `Differentiable ℝ`; the partition function appears here in the two
+analyticity forms alone.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`, and its Prop-valued hypothesis list is empty: the
+coupling, the field and the inverse temperature range over all of `ℝ`, and `Λ` is
+unrestricted, the empty volume included. Each proof rewrites the Λ-layer definition to its
+base-layer counterpart at `inducedGraph G Λ` and applies the §18.6 joint result there.
 -/
 
 namespace IsingModel

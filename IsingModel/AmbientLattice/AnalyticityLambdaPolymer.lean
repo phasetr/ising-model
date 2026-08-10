@@ -4,12 +4,47 @@ import IsingModel.ClusterExpansion.StrictPositivity.CycleSeven
 import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
 
 /-!
-# AmbientLattice/Analyticity polymerFreeEnergy_Λ basic wrappers
+# Sign, zero set and strict growth of the polymer free energy on a finite volume (§18.4)
 
-Narrow child module for the 16 §18.4 polymerFreeEnergy_Λ /
-vdPolymerFamilies_sum_Λ / mayer*_Λ basic iff / strict-mono /
-strict-pos / le-pow / hasSum filter-connected wrappers. The theorem
-names are unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Two sums recur and neither has a definition of
+its own, so a statement that mentions one carries the summation written out; most statements
+here mention neither and are phrased through `polymerFreeEnergy`, `mayerPartialSum` or
+`mayerExpansionTerm`. Write `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ),
+∏ P ∈ Γ, t ^ P.card`, which the theorem names abbreviate to `vdPolymerFamilies_sum_Λ`, and
+`ε t` for the same sum over `(vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅`, which
+they abbreviate to `eps`. Then `polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by
+definition, and `E` below is `(inducedGraph G Λ).edgeFinset`.
+
+Growth in the activity is strict once a polymer exists: assuming
+`(allPolymers (inducedGraph G Λ)).Nonempty`, the polymer free energy at `t` exceeds the one
+at `s` whenever `0 ≤ s < t`, and it is `StrictMonoOn` over `Set.Ici 0`.
+
+On `0 ≤ t` its sign and its zero set are settled exactly, and the two conditions are
+complementary there: it is positive precisely when `0 < t` and
+`(allPolymers (inducedGraph G Λ)).Nonempty`, and it is `0` precisely when `t = 0` or
+`allPolymers (inducedGraph G Λ) = ∅`. The same alternative is recorded on `Ξ` through `ε`:
+under `0 ≤ t`, `1 < Ξ t` exactly when `0 < ε t`; and `Ξ t = 1` exactly when `ε t = 0`, this
+last one for every real `t`.
+
+Upper bounds for the polymer free energy are `ε t` under `0 ≤ t`, sharpened to a strict
+`< ε t` under `0 < ε t` alone, then `(1 + t) ^ E.card - 1` under `0 ≤ t`, and `Real.log 2`
+under `0 ≤ t` together with the high-temperature hypothesis `(1 + t) ^ E.card < 2`.
+
+On the Mayer side, `mayerExpansionTerm (inducedGraph G Λ)` vanishes at every order and every
+activity when `allPolymers (inducedGraph G Λ) = ∅`, and `mayerPartialSum (inducedGraph G Λ)`
+vanishes at order `0` for every activity; at order `1` it is nonnegative under `0 ≤ t` and
+strictly positive under `0 < t` with a polymer present. Both are also rewritten as sums
+restricted to the length-`n` polymer sequences whose `polymerSeqIncompatibilityGraph` is
+`Connected`, with `ursellCoefficient` and `clusterSeqActivity` as the summand.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `(allPolymers (inducedGraph G Λ)).Nonempty`,
+`allPolymers (inducedGraph G Λ) = ∅`, `0 ≤ t`, `0 < t`, `0 ≤ s`, `s < t`, `0 < ε t` and
+`(1 + t) ^ E.card < 2`. The statements carrying none are `Ξ t = 1 ↔ ε t = 0`, the
+order-`0` vanishing of `mayerPartialSum`, and the connected-form rewrites of
+`mayerExpansionTerm` and `mayerPartialSum`.
 -/
 
 namespace IsingModel

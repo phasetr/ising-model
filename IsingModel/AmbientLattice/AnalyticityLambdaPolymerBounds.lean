@@ -2,11 +2,31 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.PolymerBounds
 
 /-!
-# AmbientLattice/Analyticity polymerFreeEnergy_Λ bounds wrappers
+# Nonnegativity, monotonicity and edge-count bounds for the polymer free energy
 
-Narrow child module for 12 Λ-layer polymerFreeEnergy_Λ nonneg / bounds /
-monotone / eq_zero / tanh sandwich / tanh double bound wrappers. The
-theorem names are unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`;
+`polymerFreeEnergy (inducedGraph G Λ) t` is by definition `Real.log` of
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`.
+
+At a nonnegative activity the polymer free energy is nonnegative, and it is bounded above
+by `E.card * Real.log (1 + t)`, by `E.card * t`, and — once `t ≤ 1` as well — by
+`E.card * Real.log 2`. It is `MonotoneOn` over `Set.Ici 0` with no hypothesis at all, and
+the same ordering is restated twice in comparison form: from `0 ≤ t`, `0 ≤ s` and `t ≤ s`,
+and from `0 ≤ t` and `t ≤ s` alone.
+
+It vanishes identically in the activity in two degenerate situations, each stated for every
+real `t`: when `allPolymers (inducedGraph G Λ) = ∅`, and when `E = ∅`.
+
+At the physical activity `Real.tanh (β * J)` under `0 ≤ β * J` the same material appears as
+a conjunction `0 ≤ polymerFreeEnergy ∧ polymerFreeEnergy ≤ E.card * Real.log (1 + tanh)`, as
+the single bound `E.card * Real.log 2`, and as a two-fold conjunction pairing
+`E.card * Real.tanh (β * J)` with `E.card * Real.log 2`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t`, `0 ≤ s`, `t ≤ s`, `t ≤ 1`, `0 ≤ β * J`,
+`allPolymers (inducedGraph G Λ) = ∅` and `E = ∅`; the `MonotoneOn` statement carries none.
 -/
 
 namespace IsingModel

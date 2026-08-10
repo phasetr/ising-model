@@ -2,28 +2,38 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.StrictPositivity.StrictMono
 
 /-!
-# AmbientLattice/Analyticity ε(t) positivity-iff + strict-mono wrappers
+# When the excess polymer sum is positive, and when it is zero (§18.5)
 
-Narrow child module for 16 §18.5 Λ-layer wrappers covering:
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `Ξ t` for the polymer sum
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and `ε t` for
+the same sum over `… .erase ∅`, so that `Ξ t = 1 + ε t` and
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)`. Neither sum has a definition of
+its own, so a statement that mentions one carries the summation written out — never both in
+the same statement here — while the statements phrased through `polymerFreeEnergy` mention
+neither. The theorem names abbreviate `Ξ` to `vdPolymerFamilies_sum_Λ` and `ε` to
+`vdPolymerFamilies_sum_Λ_minus_one`.
 
-- ε(t) / polymerFreeEnergy positivity / zero iff family
-  (`vdPolymerFamilies_sum_Λ_minus_one_{pos_iff, eq_zero_iff,
-  tanh_pos_iff, tanh_eq_zero_iff}`,
-  `polymerFreeEnergy_Λ_tanh_{pos_iff, eq_zero_iff}`).
-- strict-mono / strict-pos under polymers ≠ ∅
-  (`vdPolymerFamilies_sum_Λ_lt_of_lt_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_strictMonoOn_of_polymers_nonempty`,
-  `polymerFreeEnergy_Λ_pos_of_t_pos_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_gt_one_of_t_pos_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_minus_one_pos_of_t_pos_of_polymers_nonempty`,
-  `polymerFreeEnergy_Λ_tanh_pos_of_tanh_pos_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_tanh_gt_one_of_tanh_pos_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_minus_one_tanh_pos_of_tanh_pos_of_polymers_nonempty`,
-  `polymerFreeEnergy_Λ_strictMonoOn_Ioi_zero_of_polymers_nonempty`,
-  `vdPolymerFamilies_sum_Λ_strictMonoOn_Ioi_zero_of_polymers_nonempty`).
+The characterisations are exact and their two cases are complementary. Under `0 ≤ t`:
+`0 < ε t` precisely when `0 < t` and `(allPolymers (inducedGraph G Λ)).Nonempty`, and
+`ε t = 0` precisely when `t = 0` or `allPolymers (inducedGraph G Λ) = ∅`. At the physical
+activity `Real.tanh (β * J)` under `0 ≤ β * J` the same pair is stated for `ε` and again for
+`polymerFreeEnergy`, with `0 < Real.tanh (β * J)` and `Real.tanh (β * J) = 0` in place of
+the conditions on `t`. So the excess sum, the polymer sum's departure from `1`, and the
+polymer free energy all vanish together and are all positive together.
 
-The theorem names are unchanged from the former `Analyticity`
-declarations.
+The strict statements assume `(allPolymers (inducedGraph G Λ)).Nonempty` and are then
+unconditional in the graph: `Ξ` is strictly larger at `t` than at `s` whenever `0 ≤ s < t`,
+and `StrictMonoOn` over `Set.Ici 0`; both `polymerFreeEnergy` and `Ξ` are `StrictMonoOn`
+over `Set.Ioi 0`. Under `0 < t` with that nonemptiness, `polymerFreeEnergy` is strictly
+positive, `1 < Ξ t`, and `0 < ε t`; the same three are stated at `Real.tanh (β * J)` under
+`0 < Real.tanh (β * J)` with that nonemptiness.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t`, `0 ≤ β * J`, `0 < t`, `0 ≤ s`, `s < t`,
+`0 < Real.tanh (β * J)` and `(allPolymers (inducedGraph G Λ)).Nonempty`; every statement
+here carries at least one of them.
 -/
 
 namespace IsingModel

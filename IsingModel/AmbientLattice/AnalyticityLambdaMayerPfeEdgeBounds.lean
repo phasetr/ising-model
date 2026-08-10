@@ -2,16 +2,45 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 
 /-!
-# AmbientLattice/Analyticity Mayer expansion + polymerFreeEnergy bound wrappers
+# Second-order Mayer terms and the polymer free energy at low order (§18.5)
 
-Narrow child module for 17 §18.5 Λ-layer wrappers covering Mayer
-expansion edge-cases (`n = 2`, `_two_filter`, `mayerPartialSum at
-N = 2`, `_eq_zero_of_no_polymers`, `_eq_zero_of_edgeFinset_empty`,
-`mayerExpansionTerm_abs_le`), polymerFreeEnergy at_zero / at_one +
-analyticAt + analyticOnNhd_Ici_zero + sandwich_of_nonneg, and
-polymerFreeEnergy tanh-bound + ferromagnetic + hasDerivAt +
-`_eq_log_one_add_eps`. The theorem names are unchanged from the
-former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
+`Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
+`ε t` for the same sum over `… .erase ∅`; neither has a definition of its own, and
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
+
+At order `2` the Mayer expansion term is written out over
+`allPolymers (inducedGraph G Λ) ×ˢ allPolymers (inducedGraph G Λ)`, once with the weight
+`if PolymersIncompatible pq.1 pq.2 then -1/2 else 0` and once as `-1/2` times the sum over
+the `PolymersIncompatible` filter of that product; the order-`2` partial sum is then the
+order-`1` sum `∑ P ∈ allPolymers (inducedGraph G Λ), t ^ P.card` plus that term. Independent
+of the order, the expansion term is bounded in absolute value by the sum of
+`|ursellCoefficient ω| * |clusterSeqActivity t ω|` over all length-`n` polymer sequences,
+and the partial sum vanishes at every order and activity when
+`allPolymers (inducedGraph G Λ) = ∅` or when `E = ∅`.
+
+For the polymer free energy: `polymerFreeEnergy … 0 = 0` and
+`polymerFreeEnergy … 1 = Real.log (vdCompatiblePolymerFamilies (inducedGraph G Λ)).card` at
+literal activities, and `polymerFreeEnergy … t = Real.log (1 + ε t)` for every real `t`,
+which is the `Ξ t = 1 + ε t` decomposition read through the logarithm.
+
+Its analytic statements name where they are anchored, and each anchor lies in the nonnegative
+activity: `AnalyticAt ℝ` at a point assumed to satisfy `0 ≤ t`, `AnalyticOnNhd ℝ` over
+`Set.Ici 0`, and `HasDerivAt` at a point assumed to satisfy `0 ≤ t` with the derivative
+named explicitly as the ratio of the termwise derivative of `Ξ` to `Ξ t`. All of them are
+two-sided neighbourhood statements at that anchor — `AnalyticOnNhd ℝ` because it is
+`AnalyticAt ℝ` at each point of its set — so at the admitted anchor `0`, where `Ξ 0 = 1`,
+they describe the free energy at negative activity as well. Under `0 ≤ t` the free energy is
+also sandwiched between `0` and `E.card * Real.log (1 + t)`; at `Real.tanh (β * J)` it is
+bounded by `E.card * Real.tanh (β * J)` under `0 ≤ β * J`, and, under the ferromagnetic pair
+`0 ≤ J`, `0 < β`, by the same product, by `E.card * Real.log 2`, and by the sandwich with
+`E.card * Real.log (1 + tanh (β * J))` on the right.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t`, `0 ≤ β * J`, `0 ≤ J`, `0 < β`,
+`allPolymers (inducedGraph G Λ) = ∅` and `E = ∅`.
 -/
 
 namespace IsingModel
