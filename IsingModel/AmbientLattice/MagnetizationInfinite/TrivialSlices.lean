@@ -1,9 +1,27 @@
 import IsingModel.AmbientLattice.MagnetizationInfinite.HSymmetryBounds
 
 /-!
-# Infinite-volume magnetization trivial slices
+# Trivial parameter slices and the tanh lower bound for the infinite-volume magnetization
 
-`tanh`, β=0, J=0, and h=0 wrappers for `magnetizationInfinite`.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and an ambient
+site `i : V`, about `magnetizationInfinite G Λ p i`, the supremum over stages of the stage
+magnetization at `i`.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The Prop-valued
+hypotheses are exactly these: the lower bound assumes `0 ≤ J`, `0 ≤ h` and `0 < β`; the
+noninteracting closed form assumes `Ferromagnetic ⟨0, h, β⟩`, whose content on that slice is
+`0 ≤ h` and `0 < β`; and the vanishing statements assume nothing.
+
+At `0 ≤ J`, `0 ≤ h` and `0 < β` the magnetization is bounded below by `Real.tanh (β * h)`, the
+singleton case of the corresponding lower bound for the infinite-volume correlation. On the
+noninteracting slice that bound is attained: the magnetization equals `Real.tanh (β * h)`,
+which under `0 ≤ h` and `0 < β` lies in `Set.Ico 0 1` and vanishes exactly at `h = 0`.
+
+The magnetization is `0`, with no hypothesis at all, on the infinite-temperature slice `β = 0`
+and on the zero-field slice `h = 0`, where correlations of odd-cardinality test sets vanish by
+the Z₂ spin-flip symmetry and the singleton is one of them. The zero-field statement agrees
+with the closed form above, which also vanishes at `h = 0`.
 -/
 
 namespace IsingModel
@@ -13,15 +31,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: h_zero / J_zero / zero_params / tanh_pow wrappers
-
-The 8 h_zero / J_zero / zero_params / tanh_pow wrappers now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteHZeroJZero`.
-The earlier import path is preserved by re-importing the new child.
-The closely related `magnetizationInfinite_ge_tanh` stays here because
-it references `magnetizationInfinite` directly.
--/
 
 /-- **∞-volume lower bound `magnetizationInfinite ≥ tanh(β·h)`**
 (ferromagnetic): specialization of `correlationInfinite_ge_tanh_pow_card`
@@ -34,23 +43,6 @@ theorem magnetizationInfinite_ge_tanh
       ≤ magnetizationInfinite G Λ (⟨J, h, β⟩ : IsingParams ℝ) i := by
   have := correlationInfinite_ge_tanh_pow_card G Λ hJ hh hβ ({i} : Finset V)
   simpa [Finset.card_singleton] using this
-
-
-/-! ## Moved: empty / beta_zero / zero_params correlation wrappers
-
-The 9 empty / beta_zero_vanish / zero_params_vanish wrappers now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteEmptyTrivial`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: magnetizationΛ / magnetizationAlongExhaustion trivial-slice wrappers
-
-The 7 magnetizationΛ / magnetizationAlongExhaustion trivial-slice
-wrappers now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteMagTrivial`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **β=0 infinite-volume magnetization vanishes**: at infinite
 temperature (`β = 0`), spins are uniformly distributed and decoupled,

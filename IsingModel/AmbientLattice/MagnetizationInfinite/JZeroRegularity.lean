@@ -1,10 +1,26 @@
 import IsingModel.AmbientLattice.MagnetizationInfinite.TrivialSlices
 
 /-!
-# Infinite-volume magnetization regularity at J = 0
+# Regularity of the infinite-volume magnetization on the noninteracting slice
 
-Continuity and differentiability wrappers for `magnetizationInfinite` on the
-noninteracting `J = 0` slice.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and an ambient
+site `i : V`, on the slice where the coupling is `0`.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The Prop-valued
+hypotheses are exactly these: the field-direction statements assume `0 < β`, and the
+inverse-temperature statements assume `0 ≤ h`; no declaration carries any other.
+
+On that slice the infinite-volume magnetization has the closed form `Real.tanh (β * h)`. Under
+either hypothesis the argument `β * h` is nonnegative, so the closed form takes values in
+`Set.Ico 0 1` and vanishes exactly when `β * h = 0`. In the field direction, where `0 < β`,
+that is exactly at `h = 0`. In the inverse-temperature direction, where `0 ≤ h` and the
+inverse temperature ranges over `Set.Ioi 0`, the closed form is identically `0` when `h = 0`
+and strictly positive throughout when `0 < h`.
+
+Transporting continuity and differentiability of the closed form along that equality gives
+continuity in the field on `Set.Ici 0`, differentiability in the field on `Set.Ioi 0`, and, in
+the inverse temperature, continuity and differentiability on `Set.Ioi 0`.
 -/
 
 namespace IsingModel
@@ -14,14 +30,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: susceptibilityInfinite J = 0 closed form + regularity at J = 0
-
-The 7 susceptibilityInfinite J = 0 closed form + trivial-slice +
-regularity-at-J=0 wrappers now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibilityRegularity`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **`magnetizationInfinite` ContinuousOn h on Ici 0 at J = 0** (Step 266):
 For `0 < β`, `h ↦ magnetizationInfinite ⟨0, h, β⟩ i = tanh(β·h)` (Step 233's
