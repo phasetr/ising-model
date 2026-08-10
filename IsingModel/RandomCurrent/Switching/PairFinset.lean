@@ -10,8 +10,8 @@ of `Current.subFinset G Λ n`, the currents bounded by `n` in the pointwise orde
 `m ↦ (m, n - m)`, and its membership predicate is stated without reference to that image: a
 pair belongs to it exactly when its two components add up to `n`.
 
-Its cardinality equals that of `Current.subFinset G Λ n`, and in closed form the product over
-the edges of `n e + 1`.
+Its cardinality equals that of `Current.subFinset G Λ n`, and in closed form it is the
+product over the edges of `n e + 1`.
 
 Summation transports along the same map: for a real-valued `f` on pairs, the sum of `f` over
 the pair `Finset` equals the sum of `f (m, n - m)` over the currents bounded by `n`. Taking

@@ -7,9 +7,10 @@ import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.SpinSums
 `S` and `0` to every other edge of `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces,
 for an arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`.
 
-Its weight, support, parity and source set are computed. At the empty edge `Finset` it is the
-zero current. Its support — the edges at which it is nonzero — is `S` itself. Its weight is
-`(β * J)` raised to the number of edges of `S`, for arbitrary real `β` and `J`.
+Its weight and support are computed for an arbitrary `S`, and its parity and source set for a
+one-edge `S`. At the empty edge `Finset` it is the zero current. Its support — the edges at
+which it is nonzero — is `S` itself. Its weight is `(β * J)` raised to the number of edges of
+`S`, for arbitrary real `β` and `J`.
 
 At a one-edge `Finset {e₀}` the parity at a vertex `v` is `1` in `ZMod 2` when `v` lies on
 `e₀` and `0` otherwise, so the source set is the endpoint `Finset` of `e₀`; and that source

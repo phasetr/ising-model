@@ -16,7 +16,7 @@ target is a `CommMonoid M` and the data a function `g : ↥Λ → M`: the produc
 vertices of `g v` raised to `Current.degreeAt G Λ n v` equals the product over all edges of
 the product of `g` over the endpoint `Finset` of `e`, raised to `n e`.
 
-One statement is the multiplicative form instantiated at `M := ℝ` and at
+A spin specialization instantiates the multiplicative form at `M := ℝ` and at
 `g := fun v => ((σ v).toSign : ℝ)` for a spin configuration `σ : ↥Λ → Spin`, so on the edge
 side it carries the product of the spin signs over the endpoint `Finset` of each edge, raised
 to the multiplicity of that edge.
