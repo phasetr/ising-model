@@ -1,5 +1,29 @@
 import IsingModel.RandomCurrent.Switching.Core
 
+/-!
+# The Finset of ordered pairs of currents with a prescribed sum
+
+`Current.pairFinset G Λ n` is the `Finset` of ordered pairs of currents on
+`inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, whose sum is `n`, for an arbitrary
+`G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. It is defined as the image
+of `Current.subFinset G Λ n`, the currents bounded by `n` in the pointwise order, under
+`m ↦ (m, n - m)`, and its membership predicate is stated without reference to that image: a
+pair belongs to it exactly when its two components add up to `n`.
+
+Its cardinality equals that of `Current.subFinset G Λ n`, and in closed form the product over
+the edges of `n e + 1`.
+
+Summation transports along the same map: for a real-valued `f` on pairs, the sum of `f` over
+the pair `Finset` equals the sum of `f (m, n - m)` over the currents bounded by `n`. Taking
+for `f` the function sending a pair `p` to
+`Current.weight G Λ β J p.1 * Current.weight G Λ β J p.2` gives a factored form — the weight
+of `n` times the sum, over the currents bounded by `n`, of
+`Current.jointFactor G Λ m (n - m)` — for arbitrary real `β` and `J`.
+
+Every statement here takes `[DecidableEq V]` together with
+`[Fintype (inducedGraph G Λ).edgeSet]`, and none carries a hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
