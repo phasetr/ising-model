@@ -3,14 +3,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero
 
 /-!
-# log-form J=0 partition-function closed form along an exhaustion
+# Closed form of the log partition function at `J = 0`
 
-Narrow child module for the along-exhaustion
-`log_partitionFunctionAlongExhaustion_J_zero` closed-form wrapper
-extracted from `PartitionFunctionClosedForms.lean`. The wrapper
-follows from `partitionFunctionAlongExhaustion_J_zero` via
-`Real.log_pow`. The theorem name is unchanged from the former
-`PartitionFunctionClosedForms` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At `J = 0` with `h` and `β` arbitrary, the logarithm of the stage partition function equals
+`(Λ.volume n).card * Real.log (2 * Real.cosh (β * h))`. The proof rewrites with the
+corresponding partition-function closed form and then with `Real.log_pow`.
 -/
 
 namespace IsingModel
@@ -19,8 +21,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## J = 0 closed form for `log_partitionFunctionAlongExhaustion` -/
 
 /-- **Log form**: `log (partitionFunctionAlongExhaustion G Λ ⟨0, h, β⟩ n)
 = |Λ.volume n| · log (2·cosh(β·h))`. Follows from
