@@ -3,7 +3,7 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.BetaDerivative
 
 /-!
-# Inverse-temperature derivatives of the stage partition function, energy and susceptibility
+# Inverse-temperature derivatives of the stage partition function, free energy, susceptibility
 
 Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and a stage
 index `n`. Each quantity is read on the finite volume `Λ.volume n`: the stage partition

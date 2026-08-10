@@ -16,10 +16,14 @@ Prop-valued hypotheses are exactly these: nonnegativity assumes `Ferromagnetic p
 absolute-field comparison assumes `0 ≤ J`, `0 < β` and `BddAbove` for the range of the
 stagewise susceptibility at `|h|`; the definition and its restatement assume nothing.
 
-Unlike the correlation and the magnetization, each stagewise value here is a sum of truncated
-two-point functions indexed by the whole stage volume, so the number of summands grows with
-the stage and the stagewise family need not be bounded above. On a family that is not bounded
-above the supremum on `ℝ` returns `0`, and the statements here are shaped by that convention.
+On a stage whose volume contains `i` the value is the sum of the truncated two-point functions
+of `i` against that whole stage volume, and on a stage whose volume omits `i` it is `0`. The
+stage volumes are monotone and exhaust `V`, so the site is covered from some stage on and the
+family is `0` before that. An exhaustion asks its volumes to be monotone, not to grow
+strictly, so the number of summands is nondecreasing but need not increase. Unlike the
+correlation and the magnetization, which are bounded above by `1` at every stage, no statement
+here bounds this family above. On a family that is not bounded above the supremum on `ℝ`
+returns `0`, and the statements here are shaped by that convention.
 
 Nonnegativity survives it: under `Ferromagnetic p` every stage value is nonnegative, and on
 the unbounded branch the supremum is `0`, which is nonnegative as well. The comparison does
