@@ -1,5 +1,23 @@
 import IsingModel.RandomCurrent.Switching.SourceFilters
 
+/-!
+# Switching between two prescribed source sets
+
+Comparisons between the source-conditioned sub-current Finsets at two prescribed source sets
+`A` and `B`, for a current `n` on `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces,
+under the hypothesis `symmDiff (n.sources G Λ) A = B`. The graph `G : SimpleGraph V` and the
+finite volume `Λ : Finset V` are arbitrary.
+
+Under that hypothesis `Current.subFinset_with_source G Λ n A` and
+`Current.subFinset_with_source G Λ n B` have the same cardinality, and the sums over them of
+`Current.weight G Λ β J m` times `Current.weight G Λ β J (n - m)` are equal. In the second
+statement `β` and `J` are implicit binders standing after the symmetric-difference
+hypothesis, and they are otherwise unconstrained: it holds for arbitrary real `β` and `J`.
+
+Each statement here takes `[DecidableEq V]`, `[Fintype (inducedGraph G Λ).edgeSet]` and
+`[DecidableEq ↥Λ]`, and the symmetric-difference equation is its only hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
