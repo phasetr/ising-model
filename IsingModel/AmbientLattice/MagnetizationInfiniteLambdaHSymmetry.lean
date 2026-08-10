@@ -1,17 +1,35 @@
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 
 /-!
-# Ambient Λ-level h-symmetry / J_zero / tanh-power wrappers
+# Finite-volume field reversal, the noninteracting closed form and the tanh lower bounds
 
-Narrow child module for the Λ-level h-symmetry, odd-vanish at h=0,
-J_zero, and tanh-power lower-bound wrappers (10 theorems):
-`correlationΛ_odd_vanish_h_zero`, `correlationΛ_neg_h`,
-`magnetizationΛ_neg_h`, `correlationΛ_eq_abs_h_of_even_card`,
-`abs_magnetizationΛ_eq_magnetizationΛ_abs_h`,
-`susceptibilityΛ_neg_h`, `susceptibilityΛ_eq_abs_h`,
-`correlationΛ_J_zero`, `correlationΛ_ge_tanh_pow_card`,
-`magnetizationΛ_ge_tanh`. The theorem names are unchanged from the
-former `MagnetizationInfinite` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph of `Λ`: the correlation `correlationΛ` at a test set of that
+subgraph's vertex type, the single-site magnetization `magnetizationΛ`, and the susceptibility
+`susceptibilityΛ`.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and `Fintype` on the
+edge set of that induced subgraph; no statement here mentions an exhaustion or a stage. The
+Prop-valued hypotheses are exactly these: the zero-field vanishing statement assumes
+`Odd A.card`; the absolute-field correlation identity assumes `Even A.card`; the
+absolute-field magnetization identity assumes `0 ≤ J` and `0 < β`; the lower bounds assume
+`0 ≤ J`, `0 ≤ h` and `0 < β`; and the reversal identities, the susceptibility identity at
+`|h|` and the noninteracting closed form assume nothing.
+
+At zero field the correlation of an odd test set vanishes. Reversing the field multiplies the
+correlation by `(-1) ^ A.card`, so at an even test set the values at `h` and at `|h|` agree,
+while at the singleton test set the magnetization changes sign. At `0 ≤ J` and `0 < β` the
+absolute value of the magnetization at `h` equals its value at `|h|`. For the susceptibility,
+reversal subtracts twice the magnetization, and passing to `|h|` adds the difference of the
+magnetizations at `|h|` and at `h`; these identities hold with no hypothesis.
+
+On the noninteracting slice the correlation is `Real.tanh (β * h) ^ A.card`, with no
+hypothesis on the field or the inverse temperature. Since `Real.tanh` vanishes only at `0` and
+otherwise carries the sign of its argument, that closed form equals `1` at the empty test set,
+and at a nonempty one it vanishes exactly when `β * h = 0`, is positive when `0 < β * h`, and
+has the sign of `(-1) ^ A.card` when `β * h < 0`. Raising the coupling from `0` under `0 ≤ J`,
+`0 ≤ h` and `0 < β` turns the closed form into a lower bound for the correlation, and at the
+singleton test set into a lower bound of `Real.tanh (β * h)` for the magnetization.
 -/
 
 namespace IsingModel

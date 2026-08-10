@@ -1,10 +1,28 @@
 import IsingModel.AmbientLattice.MagnetizationInfinite.Basic
 
 /-!
-# Infinite-volume magnetization h-symmetry bounds
+# Sign and vanishing of the infinite-volume magnetization at a nonpositive field
 
-One-sided absolute-field and nonpositive-field wrappers for
-`magnetizationInfinite`.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and an ambient
+site `i : V`. The infinite-volume magnetization `magnetizationInfinite G Λ p i` is the
+supremum over stages of `magnetizationAlongExhaustion G Λ p i`, whose value at a stage whose
+volume omits `i` is `0`.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The Prop-valued
+hypotheses are exactly these: the one-sided absolute-field bound assumes `0 ≤ J` and `0 < β`;
+the nonpositivity statement assumes those together with `h ≤ 0`; and the vanishing statement
+assumes all three together with the existence of a stage whose volume omits `i`.
+
+At `0 ≤ J` and `0 < β` the absolute value of the magnetization at a field `h` is bounded above
+by the magnetization at `|h|`, since stagewise the value at `h` and the value at `|h|` agree
+up to the absolute value, and the supremum respects the pointwise comparison.
+
+Two further statements pin the value itself on the nonpositive-field side. At `h ≤ 0` every
+stage value is nonpositive, because reversing the field negates it and the reversed field is
+ferromagnetic, so the supremum is nonpositive. If in addition some stage omits `i`, that stage
+contributes exactly `0`; a family that is nonpositive at every stage and `0` at one has
+supremum `0`, so the magnetization is `0` there.
 -/
 
 namespace IsingModel
@@ -14,35 +32,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-
-/-! ## Moved: Λ-level h-symmetry / J_zero / tanh-power wrappers
-
-The 10 Λ-level h-symmetry, odd-vanish at h=0, J_zero, and tanh-power
-lower-bound wrappers now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: alongExhaustion / correlationInfinite h-symmetry wrappers
-
-The 9 alongExhaustion / correlationInfinite h-symmetry wrappers now
-live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-/-! ## Moved: susceptibilityInfinite definition + 4 wrappers
-
-The infinite-volume susceptibility definition `susceptibilityInfinite`
-and 4 of its properties now live in
-`IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibility`.
-The earlier import path is preserved by re-importing the new child.
-The h-symmetry bound `abs_magnetizationInfinite_le_magnetizationInfinite_abs_h`
-remains here because it directly references `magnetizationInfinite`.
--/
 
 /-- **∞-volume one-sided `|M_∞(h)| ≤ M_∞(|h|)`** under ferromagnetism
 at `|h|` (`0 ≤ J`, `0 < β`).

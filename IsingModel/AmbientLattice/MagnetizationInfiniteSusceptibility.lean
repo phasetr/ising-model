@@ -3,16 +3,32 @@ import IsingModel.AmbientLattice.MagnetizationInfiniteLambdaHSymmetry
 import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
 
 /-!
-# Ambient susceptibilityInfinite definition + wrappers
+# The infinite-volume susceptibility and its comparison at the absolute field
 
-Narrow child module for the infinite-volume susceptibility definition
-`susceptibilityInfinite` and its 4 properties
-(`susceptibilityInfinite_eq_ciSup`, `_apply`, `_nonneg`, `_le_abs_h`).
-The definition and theorem names are unchanged from the former
-`MagnetizationInfinite` declarations. The h-symmetry consequence
-`abs_magnetizationInfinite_le_magnetizationInfinite_abs_h` was
-intentionally left in the parent because it directly references
-`magnetizationInfinite` which still lives there.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and an ambient
+site `i : V`. The infinite-volume susceptibility is defined here as the supremum over stages
+of `susceptibilityAlongExhaustion G Λ p i`, and comes with a named restatement of that
+definition for use in rewrites.
+
+The definition and every statement take exactly two instance binders, `DecidableEq V` and the
+stagewise `Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The
+Prop-valued hypotheses are exactly these: nonnegativity assumes `Ferromagnetic p`; the
+absolute-field comparison assumes `0 ≤ J`, `0 < β` and `BddAbove` for the range of the
+stagewise susceptibility at `|h|`; the definition and its restatement assume nothing.
+
+On a stage whose volume contains `i` the value is the sum of the truncated two-point functions
+of `i` against that whole stage volume, and on a stage whose volume omits `i` it is `0`. The
+stage volumes are monotone and exhaust `V`, so the site is covered from some stage on and the
+family is `0` before that. An exhaustion asks its volumes to be monotone, not to grow
+strictly, so the number of summands is nondecreasing but need not increase. Unlike the
+correlation and the magnetization, which are bounded above by `1` at every stage, no statement
+here bounds this family above. On a family that is not bounded above the supremum on `ℝ`
+returns `0`, and the statements here are shaped by that convention.
+
+Nonnegativity survives it: under `Ferromagnetic p` every stage value is nonnegative, and on
+the unbounded branch the supremum is `0`, which is nonnegative as well. The comparison does
+not survive it, and therefore carries `BddAbove` on the `|h|` side as an explicit hypothesis;
+given that hypothesis, the stagewise inequality at `|h|` passes to the supremum.
 -/
 
 namespace IsingModel

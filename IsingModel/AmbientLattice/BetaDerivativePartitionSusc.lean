@@ -3,19 +3,28 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.BetaDerivative
 
 /-!
-# Partition / free-energy / susceptibility β-derivative wrappers (GJ §17.5)
+# Inverse-temperature derivatives of the stage partition function, free energy, susceptibility
 
-Narrow child module for the 4 `*AlongExhaustion_hasDerivAt_beta*`
-wrappers (`partitionFunctionAlongExhaustion_hasDerivAt_beta`,
-`freeEnergyAlongExhaustion_hasDerivAt_beta_general_h`,
-`susceptibilityAlongExhaustion_hasDerivAt_beta_gen`,
-`susceptibilityAlongExhaustion_hasDerivAt_beta_general_h_gen`)
-extracted from `BetaDerivative.lean` in PR #2065. Each is a thin
-pass-through to the corresponding Λ-level `hasDerivAt_*` lemma at
-`Λ := Λ.volume n`; the susceptibility variants split on `i ∈ Λ.volume n`
-and fall back to the constant-0 derivative on the off-stage branch.
-The theorem names are unchanged from the former `BetaDerivative`
-declarations.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and a stage
+index `n`. Each quantity is read on the finite volume `Λ.volume n`: the stage partition
+function and the stage free energy are `partitionFunctionΛ` and `freeEnergyΛ` there, and the
+stage susceptibility is `susceptibilityΛ` at the lifted site when the site lies in that
+volume, and `0` otherwise.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`, and its
+Prop-valued hypothesis list is empty.
+
+Fixing the remaining parameters and varying the inverse temperature, the stage partition
+function and the stage free energy have a derivative at every point, and so does the stage
+susceptibility, at the zero field and at an arbitrary field alike. Every statement is in the
+existence form `∃ d, HasDerivAt … d β`, without naming the derivative.
+
+The partition-function and free-energy statements are specializations of the corresponding
+finite-volume statements at `Λ.volume n`. The susceptibility statements split on whether the
+site lies in `Λ.volume n`: on the covered branch they specialize the finite-volume
+susceptibility statement at the lifted site, and off it the map is constant `0`, whose
+derivative is `0`.
 -/
 
 namespace IsingModel.Ambient

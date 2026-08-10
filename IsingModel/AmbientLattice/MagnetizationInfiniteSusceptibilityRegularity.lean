@@ -4,18 +4,36 @@ import IsingModel.AmbientLattice.MagnetizationInfiniteExhaustionHSymmetry
 import IsingModel.AmbientLattice.MagnetizationInfiniteSusceptibility
 
 /-!
-# Ambient susceptibilityInfinite regularity at J = 0
+# The infinite-volume susceptibility on the noninteracting slice
 
-Narrow child module for the susceptibilityInfinite J = 0 closed form +
-trivial-slice + regularity-at-J=0 wrappers (7 theorems):
-`susceptibilityInfinite_J_zero`, `susceptibilityInfinite_beta_zero`,
-`susceptibilityInfinite_zero_params`,
-`susceptibilityInfinite_continuousOn_field_J_zero`,
-`susceptibilityInfinite_continuousOn_beta_J_zero`,
-`susceptibilityInfinite_differentiableOn_field_J_zero`,
-`susceptibilityInfinite_differentiableOn_beta_J_zero`. The theorem
-names are unchanged from the former `MagnetizationInfinite`
-declarations.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V` and an ambient
+site `i : V`, on the slice where the coupling is `0`, together with the infinite-temperature
+slice.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`. The Prop-valued
+hypotheses are exactly these: the closed form assumes `Ferromagnetic ⟨0, h, β⟩`, whose content
+on that slice is `0 ≤ h` and `0 < β`; the field-direction regularity statements and the
+vanishing statement at zero coupling and zero field assume `0 < β`; the inverse-temperature
+regularity statements assume `0 ≤ h`; and the infinite-temperature statement assumes nothing.
+
+On the noninteracting slice the infinite-volume susceptibility has the closed form
+`Real.tanh (β * h) * (1 - Real.tanh (β * h))`. The stage value is the finite-volume
+susceptibility at the lifted site once the site is covered by the stage volume, and `0`
+before, so the stagewise family is eventually constant at that value and its supremum is that
+value.
+
+Write `t` for `Real.tanh (β * h)`. Over all of `ℝ` the expression `t * (1 - t)` has roots at
+`t = 0` and at `t = 1`, but under `0 ≤ h` and `0 < β` the argument `β * h` is nonnegative, so
+`t` ranges over `Set.Ico 0 1` and the root at `t = 1` is not attained. On that range the
+closed form therefore vanishes exactly at `t = 0`, that is exactly at `h = 0`, and is strictly
+positive for `0 < h`. Reading it at `h = 0` gives the vanishing statement at zero coupling and
+zero field, and on the infinite-temperature slice `β = 0` the susceptibility vanishes at every
+coupling and field.
+
+Transporting continuity and differentiability of the closed form along that equality gives
+continuity in the field on `Set.Ici 0`, differentiability in the field on `Set.Ioi 0`, and, in
+the inverse temperature, continuity and differentiability on `Set.Ioi 0`.
 -/
 
 namespace IsingModel

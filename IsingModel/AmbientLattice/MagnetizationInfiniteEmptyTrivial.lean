@@ -1,18 +1,30 @@
 import IsingModel.AmbientLattice.CorrelationInfinite.Basic
 
 /-!
-# Ambient empty / beta_zero / zero_params correlation wrappers
+# Empty-set normalization and vanishing of the correlation at trivial parameters
 
-Narrow child module for the empty-set normalization + beta_zero vanish +
-zero_params vanish wrappers (9 theorems): `correlationΛ_empty`,
-`correlationAlongExhaustion_empty`, `correlationInfinite_empty`,
-`correlationΛ_beta_zero_vanish_of_nonempty`,
-`correlationAlongExhaustion_beta_zero_vanish`,
-`correlationInfinite_beta_zero_vanish`,
-`correlationΛ_zero_params_vanish_of_nonempty`,
-`correlationAlongExhaustion_zero_params_vanish`,
-`correlationInfinite_zero_params_vanish`. The theorem names are
-unchanged from the former `MagnetizationInfinite` declarations.
+Statements for an ambient graph `G : SimpleGraph V` at three layers, each named after the
+object it speaks about: the finite-volume correlation `correlationΛ` on a `Λ : Finset V`, the
+stage correlation `correlationAlongExhaustion` along an exhaustion, and the infinite-volume
+correlation `correlationInfinite`, the supremum over stages of the stage correlation.
+
+Instance binders follow the layer. Every declaration takes `DecidableEq V`; the `correlationΛ`
+statements take `Fintype` on the edge set of the induced subgraph of the finite volume itself,
+while the stage and infinite-volume statements take the stagewise `Fintype` family indexed by
+the stage. The Prop-valued hypotheses are exactly these: the empty-set statements carry none,
+and every vanishing statement assumes `A.Nonempty` and nothing else.
+
+At the empty test set the correlation is `1` at every layer above, and those statements are
+`simp` lemmas. At a nonempty test set it is `0` on the infinite-temperature slice `β = 0`, and
+also on the slice where the coupling and the field vanish together, again at every layer. Each
+layer is reduced to the one below it: the finite-volume statements lift the corresponding
+statement on the induced subgraph, the stage statements split on whether the test set is
+covered by the stage volume, and the infinite-volume statements take the supremum of a
+constant stagewise family.
+
+The nonemptiness hypothesis is what separates the empty-set statements from the vanishing
+ones, rather than a convenience: at the empty test set the very same parameters give `1`, not
+`0`.
 -/
 
 namespace IsingModel
