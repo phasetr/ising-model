@@ -1,5 +1,43 @@
 import IsingModel.RandomCurrent.Switching.PairFinset
 
+/-!
+# Truncated differences of currents, degenerate cases, and closed forms
+
+Source-set algebra of the truncated difference of two currents on `inducedGraph G Λ`, the
+subgraph of `G` that `Λ` induces, the values `Current.subFinset` and `Current.pairFinset`
+take at the zero current, the images that fix them, and the closed form of the joint-factor
+sum. The graph `G : SimpleGraph V` and the finite volume `Λ : Finset V` are arbitrary
+throughout.
+
+Subtraction of currents is pointwise truncated subtraction in `ℕ`. Under `m ≤ n` the source
+set of `n - m` is the symmetric difference of the source sets of `n` and of `m`, and the
+prescribed-source form of the same fact reads: `n - m` has source set `A` exactly when that
+symmetric difference equals `A`. With no order hypothesis, `n - 0` is `n`, `0 - n` is the
+zero current and `n - n` is the zero current; under `m ≤ n`, subtracting `n - m` from `n`
+returns `m`.
+
+At the zero current `Current.subFinset G Λ 0` is the singleton of the zero current and
+`Current.pairFinset G Λ 0` the singleton of the pair of zero currents. For every `n`, both
+`(0, n)` and `(n, 0)` belong to `Current.pairFinset G Λ n`, and that `Finset` is nonempty.
+
+Each of `Current.subFinset G Λ n` and `Current.pairFinset G Λ n` is fixed by an image: the
+image of the first under `m ↦ n - m` is the first again, and the image of the second under
+`Prod.swap` is the second again.
+
+For `m ≤ n` the joint factor of `m` and `n - m` is the product over the edges of the binomial
+coefficients `(n e).choose (m e)`, cast to `ℝ`. Summing it over the currents bounded by `n`
+gives `2` raised to the sum of `n e` over all edges; that statement needs no order
+hypothesis, because the summation range already imposes one. The pair-weight sum then has a
+fully closed form: the sum, over the pairs of currents summing to `n`, of the product of the
+two weights is the weight of `n` times `2` raised to that same exponent, for arbitrary real
+`β` and `J`.
+
+Every statement here takes `[Fintype (inducedGraph G Λ).edgeSet]`. `[DecidableEq V]` is taken
+by exactly those statements that mention `Current.subFinset` or `Current.pairFinset`, and
+`[DecidableEq ↥Λ]` by exactly those that mention `Current.sources` or `Current.HasSources`.
+The only hypothesis occurring anywhere in this module is `m ≤ n`.
+-/
+
 namespace IsingModel
 
 namespace Ambient
