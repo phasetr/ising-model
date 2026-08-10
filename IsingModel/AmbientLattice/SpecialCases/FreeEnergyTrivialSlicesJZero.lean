@@ -1,20 +1,17 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Free-energy J = 0 trivial-slice wrappers along an exhaustion
+# The stage free energy at `J = 0`
 
-Narrow child module for the two `freeEnergyAlongExhaustion_*_J_zero`
-trivial-slice wrappers extracted from `FreeEnergyTrivialSlices.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set; the
+graph-independence statement takes in addition the stagewise `Fintype` instance for the
+induced subgraph of the empty ambient graph.
 
-* `freeEnergyAlongExhaustion_eq_bot_at_J_zero`
-* `freeEnergyAlongExhaustion_J_zero`
-
-The first is a graph-independence statement at `J = 0` (the free
-energy reduces to the bottom-graph value); the second is the closed
-form `log (2·cosh(β·h))` at `J = 0`. Each wrapper is a thin
-pass-through to the corresponding base `IsingModel.freeEnergy_*`
-lemma via `change` + `exact`. Theorem names are unchanged from the
-former `FreeEnergyTrivialSlices` declarations.
+At `J = 0`, and at every stage, the stage free energy of `G` agrees with the stage free energy
+of the empty ambient graph; that statement carries no Prop-valued hypothesis. At a stage whose
+volume is nonempty it equals `Real.log (2 * Real.cosh (β * h))`, for arbitrary `h` and `β`.
 -/
 
 namespace IsingModel

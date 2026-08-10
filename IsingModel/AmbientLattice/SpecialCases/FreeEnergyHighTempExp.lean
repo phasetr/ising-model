@@ -1,21 +1,21 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Sharper high-temperature free-energy upper bound wrappers along an exhaustion
+# High-temperature upper bounds on the stage free energy at zero external field
 
-Narrow child module for the two sharper-exp `freeEnergyAlongExhaustion`
-high-temperature upper bound wrappers extracted from
-`FreeEnergy.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V`, the stagewise `Fintype` instance on that subgraph's edge set, and the
+hypothesis `0 ≤ β * J`.
 
-* `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp`
-* `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform`
+At the zero-field triple `⟨J, 0, β⟩` and a stage whose volume has positive cardinality, the
+stage free energy is at most `Real.log 2 + β * J * |E| / |Λ.volume n|`, writing `|E|` for the
+edge count of the stage subgraph.
 
-The pointwise stage-`n` wrapper unfolds `freeEnergyAlongExhaustion`
-to the ambient `freeEnergyΛ_high_temp_h_zero_upper_bound_exp`
-lemma; the uniform variant combines it with the
-`BoundedEdgeDensity` hypothesis to produce a uniform-in-`n` bound.
-Theorem names are unchanged from the former `FreeEnergy`
-declarations.
+Adding a constant `c : ℝ` that bounds `|E|` by `c * |Λ.volume n|` at every stage with nonempty
+volume gives, at each such stage, the bound `Real.log 2 + β * J * c`, whose right-hand side is
+determined by `β`, `J` and `c` alone. It follows by bounding the edge ratio by `c` and
+multiplying by the nonnegative factor `β * J`.
 -/
 
 namespace IsingModel
