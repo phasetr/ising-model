@@ -1,5 +1,33 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition.ExpBounds
 
+/-!
+# Λ-restricted high-temperature summaries at zero external field
+
+Single-statement bundles for `partitionFunctionΛ`, for its logarithm and for `freeEnergyΛ`,
+for an arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. Each
+bundle is one conjunction whose parts are a lower bound, an upper bound, and the two values
+the quantity takes on the degenerate slices `J = 0` and `β = 0`. The external field is zero
+throughout: the parameter records occurring are `⟨J, 0, β⟩`, `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
+
+Written with the number of edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ`
+induces, the lower bounds are the hyperbolic-cosine ones and the upper bounds the
+exponential ones. The partition function lies between `2 ^ Λ.card` times `cosh (β * J)`
+raised to that edge count and `2 ^ Λ.card` times `exp (β * J * edge count)`; its logarithm
+lies between `Λ.card * log 2` plus the edge count times `log (cosh (β * J))` and
+`Λ.card * log 2` plus `β * J` times the edge count; the free energy lies between `log 2`
+plus the edge count over `Λ.card` times `log (cosh (β * J))` and `log 2` plus `β * J` times
+the edge count over `Λ.card`.
+
+On the two slices the recorded values agree with one another and involve neither `J` nor
+`β`: the partition function is `2 ^ Λ.card` on both, its logarithm is `Λ.card * log 2` on
+both, and the free energy is `log 2` on both.
+
+Each bundle comes in two forms, one assuming `0 ≤ β * J` and one assuming `0 ≤ J` together
+with `0 < β`. The two free-energy bundles additionally assume `0 < Λ.card`; the partition
+function and logarithm bundles do not. Every statement takes `[DecidableEq V]` and
+`[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 namespace Ambient
 
