@@ -2,15 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# `vdPolymerFamilies_sum` `MonotoneOn (Set.Ici 0)` wrapper along an exhaustion
+# Monotonicity of the polymer-family sum on the nonnegative activity ray
 
-Narrow child module for the §18.5 along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_monotoneOn_Ici_zero` wrapper
-extracted from `PolymerFreeEnergyHighTemperatureBounds.lean`. The
-wrapper is a thin pass-through to
-`vdPolymerFamilies_sum_Λ_monotoneOn_Ici_zero`. The theorem name is
-unchanged from the former
-`PolymerFreeEnergyHighTemperatureBounds` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+As a function of the activity, the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint
+compatible polymer families `Γ` of the stage subgraph is monotone on `Set.Ici 0`.
 -/
 
 namespace IsingModel

@@ -4,21 +4,26 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsHasDerivAt
 
 /-!
-# Polymer free-energy tanh-bound wrappers along an exhaustion
+# The polymer free energy as `log (1 + ε)`, and its linear `tanh` bound
 
-Narrow child module for along-exhaustion `polymerFreeEnergy` general
-tanh bound, the `log(1 + eps)` decomposition, and the `HasDerivAt`
-wrapper. This keeps callers that only need these forwarders out of the
-monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set, and `|E|`
+for the edge count of that subgraph.
+
+At the activity `Real.tanh (β * J)`, and with `0 ≤ β * J` as the only Prop-valued hypothesis,
+the polymer free energy is at most `|E| * Real.tanh (β * J)`. Separately, and with no
+Prop-valued hypothesis, the polymer free energy at an arbitrary activity `t : ℝ` equals
+`Real.log (1 + ε(t))`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 polymerFreeEnergy tanh-bound + ferro + hasDerivAt +
-eq_log_one_add along-ex wraps -/
 
 /-- **Along-ex: polymerFreeEnergy tanh ≤ |E| · tanh** under
 `0 ≤ β·J`. -/
@@ -32,18 +37,6 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_mul
         Real.tanh (β * J) :=
   polymerFreeEnergy_Λ_tanh_le_card_mul G (Λ.volume n) hβJ
 
-/-! ## Moved: 3 ferromagnetic tanh bound wrappers
-
-The three §18.5 ferromagnetic bound wrappers
-(`polymerFreeEnergyAlongExhaustion_tanh_le_card_mul_ferro`,
-`polymerFreeEnergyAlongExhaustion_tanh_sandwich_ferro`,
-`polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two_ferro`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerro`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
 /-- **Along-ex: polymerFreeEnergy = log(1 + ε(t))** decomposition. -/
 theorem polymerFreeEnergyAlongExhaustion_eq_log_one_add_eps
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -54,15 +47,6 @@ theorem polymerFreeEnergyAlongExhaustion_eq_log_one_add_eps
               (inducedGraph G (Λ.volume n))).erase ∅,
               ∏ P ∈ Γ, t ^ P.card) :=
   polymerFreeEnergy_Λ_eq_log_one_add_eps G (Λ.volume n) t
-
-/-! ## Moved: 1 hasDerivAt wrapper
-
-The `polymerFreeEnergyAlongExhaustion_hasDerivAt` wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsHasDerivAt`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

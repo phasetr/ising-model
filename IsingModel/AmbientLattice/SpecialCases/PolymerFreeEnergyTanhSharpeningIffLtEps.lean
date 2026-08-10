@@ -2,15 +2,18 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Polymer free-energy tanh `< ε(tanh) ↔ 0 < ε(tanh)` wrapper
+# A strict-bound criterion at a `tanh` activity, in terms of the reduced sum
 
-Narrow child module for the §18.5 along-exhaustion
-`polymerFreeEnergyAlongExhaustion_tanh_lt_eps_iff_eps_pos` wrapper
-extracted from `PolymerFreeEnergyTanhSharpeningIff.lean`. The
-wrapper is a thin pass-through to
-`polymerFreeEnergy_Λ_tanh_lt_eps_iff_eps_pos`. The theorem name is
-unchanged from the former `PolymerFreeEnergyTanhSharpening`
-declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and has `0 ≤ β * J` as its only
+Prop-valued hypothesis.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set.
+
+Under `0 ≤ β * J`, the polymer free energy at the activity `Real.tanh (β * J)` is strictly
+below `ε(Real.tanh (β * J))` if and only if that value `ε(Real.tanh (β * J))` is positive.
 -/
 
 namespace IsingModel

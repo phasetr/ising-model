@@ -3,12 +3,18 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFE
 
 /-!
-# Polymer free-energy epsilon-sum basic wrappers along an exhaustion
+# Sign and zero-activity value of the reduced polymer-family sum
 
-Narrow child module for along-exhaustion `ε(t)` (`vdPolymerFamilies_sum`
-minus one) nonnegativity and zero-power identities. This keeps callers
-that only need these forwarders out of the monolithic
-special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set.
+
+Under `0 ≤ t` as the only Prop-valued hypothesis, `ε(t)` is nonnegative. At the activity `0`
+the power `ε(0) ^ k` is `0` for every exponent `k` admitted by the only Prop-valued hypothesis
+`1 ≤ k`; the restriction is sharp, since `ε(0) ^ 0` is `1`.
 -/
 
 namespace IsingModel
@@ -17,9 +23,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 epsilon(t) nonneg + non-tanh polymerFreeEnergy sharpening
-along-ex wraps -/
 
 /-- **Along-ex: 0 ≤ ε(t)** for `0 ≤ t`. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_nonneg_of_nonneg
@@ -40,20 +43,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_pow_at_zero
               (inducedGraph G (Λ.volume n))).erase ∅,
           ∏ P ∈ Γ, (0 : ℝ) ^ P.card) ^ k = 0 :=
   vdPolymerFamilies_sum_Λ_minus_one_pow_at_zero G (Λ.volume n) hk
-
-/-! ## Moved: 4 polymerFreeEnergy ↔ ε equivalence wrappers
-
-The four §18.5 `polymerFreeEnergy_*_iff_eps_*` and
-`_lt_*_of_eps_pos` wrappers
-(`polymerFreeEnergyAlongExhaustion_eq_zero_iff_eps_eq_zero`,
-`polymerFreeEnergyAlongExhaustion_pos_iff_eps_pos`,
-`polymerFreeEnergyAlongExhaustion_lt_eps_iff_eps_pos`,
-`polymerFreeEnergyAlongExhaustion_lt_pow_sub_one_of_eps_pos`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyEpsilonSharpeningPFE`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

@@ -2,14 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 
 /-!
-# Ambient polymerFreeEnergyAlongExhaustion `MonotoneOn (Set.Ici 0)` wrapper
+# Monotonicity of the polymer free energy on the nonnegative activity ray
 
-Narrow child module for the along-exhaustion
-`polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero` wrapper
-extracted from `PolymerFreeEnergyBounds.lean`. The wrapper is a
-thin pass-through to `polymerFreeEnergy_Λ_monotoneOn_Ici_zero`. The
-theorem name is unchanged from the former `PolymerFreeEnergyBounds`
-declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+As a function of the activity, the polymer free energy of the stage subgraph is monotone on
+`Set.Ici 0`.
 -/
 
 namespace IsingModel

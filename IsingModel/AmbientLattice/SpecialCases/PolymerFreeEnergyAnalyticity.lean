@@ -3,31 +3,22 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh
 
 /-!
-# Polymer free-energy analyticity wrappers along an exhaustion (direct in `t`)
+# Real-analyticity of the polymer free energy in the activity, along an exhaustion
 
-Narrow child module for along-exhaustion `polymerFreeEnergy` direct
-`s ↦ polymerFreeEnergy (·) s` analytic wrappers. This keeps callers
-that only need these analytic forwarders out of the monolithic
-special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+The polymer free energy of the stage subgraph, viewed as a function of the activity, is
+real-analytic at each point of the nonnegative ray. The pointwise statement has `0 ≤ t` as its
+only Prop-valued hypothesis; the `AnalyticOnNhd ℝ · (Set.Ici 0)` statement carries no
+Prop-valued hypothesis.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 4 tanh-composition analyticity wrappers
-
-The four §18.6 `polymerFreeEnergy ∘ tanh ∘ (·)` analytic wrappers
-(`polymerFreeEnergyAlongExhaustion_tanh_analyticAt_beta`,
-`polymerFreeEnergyAlongExhaustion_tanh_analyticAt_J`,
-`polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_beta_Ici_zero`,
-`polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_J_Ici_zero`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanh`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: polymerFreeEnergy is `AnalyticAt ℝ` for `t ≥ 0`**. -/
 theorem polymerFreeEnergyAlongExhaustion_analyticAt

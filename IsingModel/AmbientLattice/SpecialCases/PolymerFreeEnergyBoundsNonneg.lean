@@ -3,38 +3,21 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase
 
 /-!
-# Ambient polymerFreeEnergyAlongExhaustion `≤` upper-bound wrappers
+# Edge-count upper bounds on the polymer free energy at a nonnegative activity
 
-Narrow child module for the two ambient
-`polymerFreeEnergyAlongExhaustion_le_*_of_nonneg` upper-bound
-wrappers extracted from `PolymerFreeEnergyBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and has
+`0 ≤ t` as its only Prop-valued hypothesis.
 
-* `polymerFreeEnergyAlongExhaustion_le_card_log_one_plus_of_nonneg`,
-* `polymerFreeEnergyAlongExhaustion_le_card_mul_of_nonneg`.
-
-The corresponding base lower-bound wrapper
-(`_nonneg_of_nonneg`) now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through of the corresponding Λ-level
-`polymerFreeEnergy_Λ_*_of_nonneg` lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyBounds` declarations.
+Writing `|E|` for the edge count of the stage subgraph, the polymer free energy at activity
+`t` is at most `|E| * Real.log (1 + t)` and at most `|E| * t`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-
-/-! ## Moved: 1 nonneg_of_nonneg wrapper
-
-The `polymerFreeEnergyAlongExhaustion_nonneg_of_nonneg` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsNonnegBase`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: `polymerFreeEnergy ≤ |E| · log(1 + t)` under
 `t ≥ 0`** (§18.5 along-ex wrap). -/

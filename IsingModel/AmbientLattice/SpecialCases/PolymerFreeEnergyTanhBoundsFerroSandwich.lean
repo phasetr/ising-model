@@ -2,15 +2,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMayerPfeEdgeBounds
 
 /-!
-# Polymer free-energy ferromagnetic tanh sandwich wrapper along an exhaustion
+# A ferromagnetic sandwich for the polymer free energy at a `tanh` activity
 
-Narrow child module for the §18.5 ambient alongExhaustion
-ferromagnetic `polymerFreeEnergyAlongExhaustion_tanh_sandwich_ferro`
-wrapper extracted from `PolymerFreeEnergyTanhBoundsFerro.lean`. The
-wrapper is a thin pass-through to
-`polymerFreeEnergy_Λ_tanh_sandwich_ferromagnetic`. The theorem
-name is unchanged from the former `PolymerFreeEnergyTanhBounds`
-declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and its Prop-valued hypotheses
+are exactly `0 ≤ J` and `0 < β`.
+
+Writing `|E|` for the edge count of the stage subgraph, the polymer free energy at the
+activity `Real.tanh (β * J)` lies between `0` and
+`|E| * Real.log (1 + Real.tanh (β * J))`.
 -/
 
 namespace IsingModel
