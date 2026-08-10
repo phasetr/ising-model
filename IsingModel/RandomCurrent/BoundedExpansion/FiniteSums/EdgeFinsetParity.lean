@@ -1,5 +1,23 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.EdgeFinsetBasic
 
+/-!
+# Parity, sources and incident degree of the current carried by an edge Finset
+
+How the parity, the source set and the total incident degree of
+`Current.fromEdgeFinset G Λ S` are read off from the edge `Finset` `S` alone, for an
+arbitrary `G : SimpleGraph V`, an arbitrary finite volume `Λ : Finset V` and an arbitrary `S`
+of edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces.
+
+At a vertex `v` the parity is the `ZMod 2` sum, over the edges `e ∈ S`, of `1` for those
+containing `v` and `0` for the rest. Equivalently `v` belongs to the source set exactly when
+the number of edges of `S` containing `v` is odd. Dropping the reduction modulo `2` gives the
+natural-number counterpart: `Current.degreeAt G Λ (Current.fromEdgeFinset G Λ S) v`, the sum
+of the multiplicities over the edges containing `v`, is that same number of edges.
+
+Every statement here takes `[Fintype (inducedGraph G Λ).edgeSet]` together with
+`[DecidableEq ↥Λ]`, and none carries a hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
