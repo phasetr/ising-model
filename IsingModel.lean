@@ -548,3 +548,27 @@ import IsingModel.Dobrushin.Uniqueness
 import IsingModel.Dobrushin.InfiniteVolumeUniformInfluence
 import IsingModel.Dobrushin.InfiniteVolumeBoundaryInfluence
 import IsingModel.Dobrushin.InfiniteVolumeUniqueness
+
+/-!
+# The `IsingModel` library, aggregated
+
+This module declares nothing — no definition, no theorem, no instance, not even a namespace
+— and consists of `import` lines alone, so it serves re-export and nothing else: every name
+it puts in scope is declared in one of its imports, directly or transitively. It bears the
+`IsingModel` library's own name, and importing it is the one step that brings the development
+into scope. Lean requires the imports to open the file, so this description follows them
+rather than heading them.
+
+What those imports develop is the rigorous statistical mechanics of the Ising ferromagnet:
+correlation inequalities (GKS, FKG, Lebowitz), random-current and switching representations,
+Simon-Lieb and walk-sum decay estimates, Peierls contours and the low-temperature phase
+transition, transfer matrices, cluster and Mayer expansions, Dobrushin uniqueness, Lee-Yang
+and complex analyticity, and the passage from finite volumes to the infinite-volume limit
+along exhaustions. Both layers of that development are reachable from here: the base layer,
+whose subject is a graph on a finite vertex type, and the ambient layer, whose subject is a
+finite volume `Λ : Finset V` inside an arbitrary `G : SimpleGraph V`.
+
+One module of the library is not reached from here, `IsingModel.TestGenerators`: its small
+explicit graphs and configuration enumerations serve the property tests of the separate
+`test` library, which imports that module directly.
+-/
