@@ -1,5 +1,25 @@
 import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.DegreeProducts
 
+/-!
+# The spin sum at a fixed current, and its source-free form
+
+At a fixed current `n` on `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, for an
+arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`, the quantity
+summed is the product over the edges of the product of the spin signs over the endpoint
+`Finset` of the edge, raised to the multiplicity `n e`; the sum ranges over all spin
+configurations `σ : ↥Λ → Spin`.
+
+That sum is `2 ^ Fintype.card ↥Λ` when the total incident degree `Current.degreeAt G Λ n v`
+is even at every vertex of `Λ`, and `0` otherwise, as a single `if`-`then`-`else` equality.
+Evenness at every vertex is equivalent to `n` being source-free, which is to say that its
+source set is empty, and the same sum is recorded again with source-freeness in place of the
+evenness condition; that second form additionally takes a `[Decidable (n.IsSourceFree G Λ)]`
+instance.
+
+Every statement here takes `[Fintype (inducedGraph G Λ).edgeSet]` together with
+`[DecidableEq ↥Λ]`, and none carries a hypothesis.
+-/
+
 namespace IsingModel
 
 namespace Ambient
