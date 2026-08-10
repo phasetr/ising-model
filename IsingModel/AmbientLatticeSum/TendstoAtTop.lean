@@ -1,5 +1,19 @@
 import IsingModel.AmbientLatticeSum.InfiniteHighTemp
 
+/-!
+# Divergence of the partition function along an exhaustion of an infinite type
+
+`partitionFunctionAlongExhaustion G Λ p` reads at a stage `n` the partition function of the
+subgraph of `G` induced by the stage volume `Λ.volume n`, for an arbitrary ambient graph
+`G : SimpleGraph V` and an arbitrary exhaustion `Λ : Exhaustion V`.
+
+Under `Ferromagnetic p` that sequence, and its logarithm, tend to `atTop`. Both statements
+take `[Infinite V]`, the instance under which `Exhaustion.tendsto_card_atTop` sends the stage
+cardinalities to `atTop`, together with `[DecidableEq V]` and the stagewise `Fintype`
+instance on the edge set of the induced subgraph; those three are the only instance binders
+here, and `Ferromagnetic p` is the only Prop-valued hypothesis.
+-/
+
 namespace IsingModel
 
 open Ambient
@@ -7,13 +21,6 @@ open Ambient
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: freeEnergyInfinite h-symmetry + monotonicity wrappers
-
-The 6 freeEnergyInfinite h-symmetry + monotonicity wrappers now live in
-`IsingModel.AmbientLatticeSumFInfHSymMono`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **`log Z` tends to `∞` along any exhaustion of an infinite ambient
 type**, under ferromagnetic parameters.
