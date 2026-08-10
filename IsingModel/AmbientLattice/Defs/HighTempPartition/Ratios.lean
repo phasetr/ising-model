@@ -1,5 +1,34 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition.Deviation
 
+/-!
+# Λ-restricted high-temperature comparison against the degenerate parameter slices
+
+How far `partitionFunctionΛ`, its logarithm and `freeEnergyΛ` at `⟨J, 0, β⟩` depart from
+their values at the two degenerate slices `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`, for an arbitrary
+`G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. The external field is
+zero in every record occurring here. The bounds are written with the number of edges of
+`inducedGraph G Λ`, the subgraph of `G` that `Λ` induces.
+
+Only the partition function is compared multiplicatively. Under `0 ≤ β * J` its value at
+`⟨J, 0, β⟩` divided by its value at either slice lies between `cosh (β * J)` raised to the
+edge count and `exp (β * J * edge count)`; the upper half of that is stated on its own as
+well, and the two slices are also conjoined into a single statement. Both denominators are
+values of `partitionFunctionΛ`, which is positive at every parameter record.
+
+The logarithm and the free energy are compared additively, so what is bounded there is a
+difference of two values rather than the logarithm of a quotient. Under `0 ≤ β * J` the
+difference between the logarithm at `⟨J, 0, β⟩` and the logarithm at a slice lies between
+the edge count times `log (cosh (β * J))` and `β * J` times the edge count, and the
+difference of the free energies lies between the edge count over `Λ.card` times
+`log (cosh (β * J))` and `β * J` times the edge count over `Λ.card`. For each of those two
+quantities the two slices are conjoined into a single statement, and for the free energy
+the upper half at each slice is stated on its own as well.
+
+Some statements assume `0 ≤ J` together with `0 < β` in place of `0 ≤ β * J`. `0 < Λ.card`
+is assumed by exactly those statements whose conclusion mentions `freeEnergyΛ`. Every
+statement takes `[DecidableEq V]` and `[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 namespace Ambient
 
