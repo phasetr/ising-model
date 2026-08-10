@@ -1,16 +1,17 @@
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 
 /-!
-# Ambient susceptibility `Continuous` in `β` per-parameter wrapper
+# Continuity of the stage susceptibility in the inverse temperature
 
-Narrow child module for the along-exhaustion
-`susceptibilityAlongExhaustion_continuous_beta_gen` wrapper
-extracted from `SusceptibilityPointwiseRegularity.lean`. The
-wrapper unfolds `susceptibilityAlongExhaustion` and dispatches on
-`i ∈ Λ.volume n`, falling back to `continuous_const` off-volume
-and forwarding to `susceptibilityΛ_continuous_beta` on-volume. The
-theorem name is unchanged from the former
-`SusceptibilityPointwiseRegularity` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At a site `i : V` and arbitrary `J` and `h`, the stage susceptibility is continuous on `ℝ` as
+a function of the inverse temperature. The site is arbitrary: the proof splits on
+`i ∈ Λ.volume n`, applying the finite-volume continuity on one branch and reading the stage
+susceptibility as a constant on the other.
 -/
 
 namespace IsingModel
