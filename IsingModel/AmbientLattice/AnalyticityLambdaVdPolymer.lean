@@ -19,7 +19,7 @@ real point, and `HasDerivAt` at an arbitrary point with the derivative named exp
 condition on the parameters.
 
 `Real.log (Ξ t)` is where the region starts to matter, since `Ξ` is `1` at `t = 0` and at
-least `1` only once `0 ≤ t`. Its statements are therefore `AnalyticAt ℝ` at a point `t`
+least `1` throughout `0 ≤ t`. Its statements are therefore `AnalyticAt ℝ` at a point `t`
 assumed to satisfy `0 ≤ t`, `AnalyticOnNhd ℝ` over `Set.Ici 0`, and — in the `Real.tanh`
 composition — `AnalyticAt ℝ` in `β` and in `J` under `0 ≤ β * J`. Nothing here treats a
 negative activity, in either direction.

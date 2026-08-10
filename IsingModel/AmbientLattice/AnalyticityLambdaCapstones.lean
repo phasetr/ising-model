@@ -7,9 +7,12 @@ import IsingModel.ClusterExpansion.StrictPositivity.CycleSeven
 
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, at
 the zero field, read on the induced subgraph `inducedGraph G Λ`. The polymer sum
-`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` recurs below
-and has no definition of its own: it is written out in each statement, and only the theorem
-names abbreviate it to `vdPolymerFamilies_sum_Λ`. Writing `E` for
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` has no
+definition of its own, so the statements that use it — the polymer-sum form of the
+high-temperature closed form, and the power identity for the same sum with its empty family
+removed — carry the summation written out, while the free-energy and Mayer statements are
+phrased through `freeEnergyΛ`, `polymerFreeEnergy`, `mayerPartialSum` and
+`mayerExpansionTerm`. Writing `E` for
 `(inducedGraph G Λ).edgeFinset`, `polymerFreeEnergy (inducedGraph G Λ) t` is by definition
 `Real.log` of that sum at activity `t`.
 

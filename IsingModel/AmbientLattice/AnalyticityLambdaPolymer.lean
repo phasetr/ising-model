@@ -8,12 +8,13 @@ import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
 
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
 on the induced subgraph `inducedGraph G Λ`. Two sums recur and neither has a definition of
-its own — both are written out in every statement, and only the theorem names abbreviate
-them. Write `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ,
-t ^ P.card`, abbreviated `vdPolymerFamilies_sum_Λ`, and `ε t` for the same sum over
-`(vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅`, abbreviated `…_minus_one`. Then
-`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition, and `E` below is
-`(inducedGraph G Λ).edgeFinset`.
+its own, so a statement that mentions one carries the summation written out; most statements
+here mention neither and are phrased through `polymerFreeEnergy`, `mayerPartialSum` or
+`mayerExpansionTerm`. Write `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ),
+∏ P ∈ Γ, t ^ P.card`, which the theorem names abbreviate to `vdPolymerFamilies_sum_Λ`, and
+`ε t` for the same sum over `(vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅`, which
+they abbreviate to `eps`. Then `polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by
+definition, and `E` below is `(inducedGraph G Λ).edgeFinset`.
 
 Growth in the activity is strict once a polymer exists: assuming
 `(allPolymers (inducedGraph G Λ)).Nonempty`, the polymer free energy at `t` exceeds the one

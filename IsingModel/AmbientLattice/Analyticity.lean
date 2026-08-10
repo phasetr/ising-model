@@ -23,10 +23,11 @@ import IsingModel.AmbientLattice.AnalyticityLambdaCapstones
 # Λ-restricted analyticity: aggregation point
 
 This module declares nothing — no definition, no theorem, no instance — so its imports
-serve re-export alone, and importing this path is what brings the whole Λ-layer analyticity
-development into scope at once. Every name reachable through it is declared in one of its
-imports: the ambient-lattice definitions, the base-layer cluster expansion, and the
-`AnalyticityLambda*` modules.
+serve re-export alone, and importing this path is what brings the whole generic
+`AnalyticityLambda*` development into scope at once; the `latticeGraph` specializations of
+it are downstream of these children and are not reachable from here. Every name reachable
+through it is declared in one of its imports: the ambient-lattice definitions, the
+base-layer cluster expansion, and the `AnalyticityLambda*` modules.
 
 What those imports develop is the Glimm-Jaffe §18.4-§18.6 cluster expansion, and the
 regularity that accompanies it, transported from a graph on a finite vertex type to the

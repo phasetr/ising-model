@@ -7,9 +7,10 @@ import IsingModel.ClusterExpansion.HighTempGeneralRegularity.PolymerBounds
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
 on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
 `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
-`ε t` for the same sum over `… .erase ∅`; neither sum has a definition of its own, both are
-written out in every statement, and `polymerFreeEnergy (inducedGraph G Λ) t` is by
-definition `Real.log (Ξ t)`.
+`ε t` for the same sum over `… .erase ∅`; neither sum has a definition of its own, so a
+statement that mentions one carries the summation written out — the free-energy sandwich and
+series statements carry `ε`, the polymer-sum bounds carry `Ξ`, and none carries both — and
+`polymerFreeEnergy (inducedGraph G Λ) t` is by definition `Real.log (Ξ t)`.
 
 The sandwich is stated as one five-fold conjunction:
 `0 ≤ polymerFreeEnergy`, `polymerFreeEnergy ≤ ε t`, `ε t ≤ (1 + t) ^ E.card - 1`,

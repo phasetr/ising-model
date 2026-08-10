@@ -7,9 +7,14 @@ import IsingModel.ClusterExpansion.MayerCore.LogTaylor
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
 on the induced subgraph `inducedGraph G Λ`. Write `ε t` for the excess polymer sum
 `∑ Γ ∈ (vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅, ∏ P ∈ Γ, t ^ P.card`, the
-polymer sum with its empty-family term removed; it has no definition of its own and is
-written out in each statement. By definition `polymerFreeEnergy (inducedGraph G Λ) t` is the
-logarithm of `1 + ε t`.
+polymer sum with its empty-family term removed; it has no definition of its own, so a
+statement that mentions it carries the summation written out, while the recurrence, the
+low-order sign statements and the edgeless-graph statement mention it nowhere and are
+phrased through `mayerPartialSum`, `mayerExpansionTerm` and `allPolymers`. By definition
+`polymerFreeEnergy (inducedGraph G Λ) t` is `Real.log` of the full polymer sum
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`; that this also
+equals `Real.log (1 + ε t)` is the content of the decomposition of that sum as `1 + ε t`, a
+theorem about the two sums rather than part of the definition.
 
 The Mayer recurrence is stated in both directions and for every order and activity:
 `mayerPartialSum … (N + 1) t = mayerPartialSum … N t + mayerExpansionTerm … (N + 1) t`, and

@@ -9,7 +9,10 @@ on the induced subgraph `inducedGraph G Λ`. Write `Ξ t` for the polymer sum
 `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and `ε t` for
 the same sum over `… .erase ∅`, so that `Ξ t = 1 + ε t` and
 `polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)`. Neither sum has a definition of
-its own; both are written out in each statement.
+its own, so a statement that mentions one carries the summation written out — never both in
+the same statement here — while the statements phrased through `polymerFreeEnergy` mention
+neither. The theorem names abbreviate `Ξ` to `vdPolymerFamilies_sum_Λ` and `ε` to
+`vdPolymerFamilies_sum_Λ_minus_one`.
 
 The characterisations are exact and their two cases are complementary. Under `0 ≤ t`:
 `0 < ε t` precisely when `0 < t` and `(allPolymers (inducedGraph G Λ)).Nonempty`, and

@@ -7,8 +7,11 @@ import IsingModel.ClusterExpansion.StrictPositivity.IffCharacterisations
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
 on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
 `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
-`ε t` for the same sum over `… .erase ∅`. Neither sum has a definition of its own; both are
-written out in every statement, and only the theorem names abbreviate them.
+`ε t` for the same sum over `… .erase ∅`. Neither sum has a definition of its own, so a
+statement that mentions one carries the summation written out; the `mayerPartialSum` and
+`mayerExpansionTerm` statements mention neither, and `ε` occurs only in the decomposition
+`Ξ t = 1 + ε t`. Of the two, only `Ξ` is abbreviated in the theorem names, as
+`vdPolymerFamilies_sum_Λ`.
 
 Special values are recorded at literal arguments substituted into the statement: `Ξ 0 = 1`,
 `Ξ 1 = (vdCompatiblePolymerFamilies (inducedGraph G Λ)).card`,

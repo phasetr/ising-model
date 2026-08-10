@@ -19,7 +19,7 @@ and, in the composition with `Real.tanh (β * J)`, `AnalyticAt ℝ` in `β` and 
 `J` under `0 ≤ β`. No declaration here says anything about a negative activity, in either
 direction.
 
-The remaining two statements bound the Λ-restricted free energy at the zero field. Under
+The remaining statements bound the Λ-restricted free energy at the zero field. Under
 `0 ≤ β * J`, or under the ferromagnetic pair `0 ≤ J` and `0 < β`, and in both cases under
 `0 < Λ.card` and the high-temperature hypothesis `(1 + Real.tanh (β * J)) ^ E.card < 2`,
 `freeEnergyΛ G Λ ⟨J, 0, β⟩` is strictly below

@@ -7,7 +7,8 @@ import IsingModel.ClusterExpansion.MayerCore.PolymerFreeEnergy
 Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
 on the induced subgraph `inducedGraph G Λ`. Write `Ξ t` for the polymer sum
 `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`, which has no
-definition of its own and is written out in each statement; by definition
+definition of its own, so the statements that name it carry the summation written out while
+the rest are phrased through `polymerFreeEnergy`; by definition
 `polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)`.
 
 The Mayer identity equates `Real.log (Ξ t)` with `mayerPartialSum (inducedGraph G Λ) N t`
@@ -20,10 +21,14 @@ at `Real.tanh (β * J)` under the hypothesis `β * J = 0`; and at `Real.tanh (0 
 `Real.tanh (β * 0)`, where the vanishing parameter is a literal `0` substituted into the
 statement rather than a hypothesis. Each is stated both with `Real.log (Ξ …)` written out
 and in the `polymerFreeEnergy` form, and the doubly-substituted `Real.tanh (0 * 0)` case is
-recorded as well. In the second family the graph carries no polymer at all — under
-`allPolymers (inducedGraph G Λ) = ∅`, or under `(inducedGraph G Λ).edgeFinset = ∅`, or under
-the disjunction `β * J = 0 ∨ allPolymers (inducedGraph G Λ) = ∅` — and the identity then
-holds at every activity, in the bare and in the `Real.tanh (β * J)` form.
+recorded as well. In the second family the graph carries no polymer: under
+`allPolymers (inducedGraph G Λ) = ∅`, and under the stronger hypothesis
+`(inducedGraph G Λ).edgeFinset = ∅`, which forces it, the identity holds at every activity,
+in the bare and in the `Real.tanh (β * J)` form. The disjunctive statement straddles the two
+families rather than joining either: under
+`β * J = 0 ∨ allPolymers (inducedGraph G Λ) = ∅` the first disjunct kills the activity and
+the second kills the polymers, and it is recorded at `Real.tanh (β * J)` alone, with no
+bare-activity counterpart.
 
 Away from those situations the statements weaken to an inequality: the order-`0` partial sum
 is at most the polymer free energy, at a bare activity under `0 ≤ t` and at
