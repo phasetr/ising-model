@@ -3,31 +3,27 @@ import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
 
 /-!
-# correlationAlongExhaustion field/J regularity wrappers (GJ §17.5–§17.6)
+# Regularity of the stage correlation in the field and in the coupling
 
-Narrow child module for the 6 `correlationAlongExhaustion_*_gen`
-field/J regularity wrappers extracted from `BetaDerivative.lean` in
-PR #2064. Theorems:
-`correlationAlongExhaustion_continuousAt_field_gen`,
-`correlationAlongExhaustion_continuous_field_gen`,
-`correlationAlongExhaustion_differentiableAt_field_gen`,
-`correlationAlongExhaustion_differentiable_field_gen`,
-`correlationAlongExhaustion_continuous_J_gen`,
-`correlationAlongExhaustion_differentiable_J_gen`. Four of them
-(`_continuousAt_field_gen`, `_differentiableAt_field_gen`,
-`_continuous_J_gen`, `_differentiable_J_gen`) split on
-`A ⊆ Λ.volume n`; subset case lifts to the finite-volume `correlation_*`
-lemma on the induced graph; non-subset case is the constant zero
-function. In those four, both branches are discharged by the
-first-order family equations
-`correlationAlongExhaustion_family_eq_of_subset` and
-`correlationAlongExhaustion_family_eq_zero_of_not_subset`
-(`AmbientLattice/Exhaustion.lean`) instead of rebuilding the
-corresponding function equation in-proof with `funext` and the pointwise
-`correlationAlongExhaustion_of_{subset, not_subset}` lemmas. The
-remaining two (`_continuous_field_gen`, `_differentiable_field_gen`) are
-branch-free whole-ℝ wrappers around the `*At` versions. The theorem
-names are unchanged from the former `BetaDerivative` declarations.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V`, a test set
+`A : Finset V` and a stage index `n`, about the stage correlation
+`correlationAlongExhaustion G Λ p A n`: `correlationΛ` read on the induced subgraph of the
+finite volume `Λ.volume n` when `A ⊆ Λ.volume n`, and `0` otherwise.
+
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of that induced subgraph, and its Prop-valued hypothesis
+list is empty.
+
+Holding the coupling and the inverse temperature fixed and varying the field, the map
+`h' ↦ correlationAlongExhaustion G Λ ⟨J, h', β⟩ A n` is continuous and differentiable, at a
+point and on all of `ℝ`. Holding the field and the inverse temperature fixed and varying the
+coupling, the map `J' ↦ correlationAlongExhaustion G Λ ⟨J', h, β⟩ A n` is continuous and
+differentiable on all of `ℝ`; in the coupling direction only the whole-`ℝ` forms are stated.
+
+The pointwise field statements and the coupling statements are proved by splitting on
+`A ⊆ Λ.volume n`: the covered branch lifts to the finite-volume correlation on the induced
+subgraph, and off it the map is constant `0`. The whole-`ℝ` field statements are wrappers
+around their pointwise counterparts.
 -/
 
 namespace IsingModel.Ambient

@@ -3,22 +3,30 @@ import IsingModel.BetaDerivative
 import IsingModel.FieldDerivative
 
 /-!
-# β-derivative of correlationAlongExhaustion (GJ §17.5)
+# Regularity of the stage correlation in the inverse temperature
 
-Shows that for any graph G whose exhaustion stages have finite edge sets,
-the function `fun β' => correlationAlongExhaustion G Λ ⟨J, 0, β'⟩ A n` has a derivative at β.
+Statements for an ambient graph `G : SimpleGraph V`, an exhaustion `Λ` of `V`, a test set
+`A : Finset V` and a stage index `n`. The stage correlation
+`correlationAlongExhaustion G Λ p A n` is `correlationΛ` read on the induced subgraph of the
+finite volume `Λ.volume n` when `A ⊆ Λ.volume n`, and `0` otherwise.
 
-When `A ⊆ Λ.volume n` the function reduces to the finite-volume correlation
-(differentiable by `hasDerivAt_correlation_beta`); otherwise it is constant zero.
+Every declaration takes exactly two instance binders, `DecidableEq V` and the stagewise
+`Fintype` instance on the edge set of that induced subgraph, and its Prop-valued hypothesis
+list is empty: the coupling, the field and the inverse temperature are unconstrained reals.
 
-The four case-splitting proofs below discharge both branches through the
-first-order family equations `correlationAlongExhaustion_family_eq_of_subset`
-and `correlationAlongExhaustion_family_eq_zero_of_not_subset`
-(`AmbientLattice/Exhaustion.lean`) instead of rebuilding the corresponding
-function equation in-proof with `funext` and the pointwise
-`correlationAlongExhaustion_of_{subset, not_subset}` lemmas.
+Fixing the coupling and the field and varying the inverse temperature, the map
+`β' ↦ correlationAlongExhaustion G Λ ⟨J, h, β'⟩ A n` has a derivative at every point — stated
+in the existence form `∃ d, HasDerivAt … d β`, without naming the derivative — and is
+differentiable and continuous, at a point and on all of `ℝ`. Statements are given at the zero
+field and at an arbitrary field.
 
-Step 156, GJ §17.5 (first step toward ∞-vol β-derivative). -/
+Derivative existence, and the pointwise continuity and differentiability at an arbitrary
+field, are proved by splitting on `A ⊆ Λ.volume n`: on the covered branch the stage
+correlation is the finite-volume correlation on the induced subgraph, which is differentiable
+in the inverse temperature; off it the map is constant `0`, whose derivative is `0`. The
+zero-field pointwise statements are read off zero-field derivative existence, and each
+whole-`ℝ` `Continuous` or `Differentiable` statement from its pointwise counterpart.
+-/
 
 namespace IsingModel.Ambient
 
@@ -162,37 +170,5 @@ theorem correlationAlongExhaustion_differentiable_beta_general_h_gen
     Differentiable ℝ
       (fun β' => correlationAlongExhaustion G Λ (⟨J, h, β'⟩ : IsingParams ℝ) A n) :=
   fun β => correlationAlongExhaustion_differentiableAt_beta_general_h_gen G Λ J h β A n
-
-/-! ## Moved: correlationAlongExhaustion field/J regularity wrappers
-
-The 6 `correlationAlongExhaustion_*_gen` field/J regularity wrappers
-(`continuousAt_field`, `continuous_field`, `differentiableAt_field`,
-`differentiable_field`, `continuous_J`, `differentiable_J`) now live
-in `IsingModel.Ambient.BetaDerivativeFieldJ`
-(`AmbientLattice/BetaDerivativeFieldJ.lean`).
--/
-
-/-! ## Moved: magnetizationAlongExhaustion regularity wrappers
-
-The 10 `magnetizationAlongExhaustion` regularity wrappers (9 with
-`_gen` suffix plus `magnetizationAlongExhaustion_hasDerivAt_beta`):
-continuous + differentiable + differentiableAt + hasDerivAt in
-β / β_general_h / field / J directions. They now live in
-`IsingModel.Ambient.BetaDerivativeMagnetization`
-(`AmbientLattice/BetaDerivativeMagnetization.lean`).
--/
-
-
-/-! ## Moved: partition / free-energy / susceptibility β-derivative wrappers
-
-The 4 `*AlongExhaustion_hasDerivAt_beta*` wrappers
-(`partitionFunctionAlongExhaustion_hasDerivAt_beta`,
-`freeEnergyAlongExhaustion_hasDerivAt_beta_general_h`,
-`susceptibilityAlongExhaustion_hasDerivAt_beta_gen`,
-`susceptibilityAlongExhaustion_hasDerivAt_beta_general_h_gen`) now
-live in `IsingModel.Ambient.BetaDerivativePartitionSusc`
-(`AmbientLattice/BetaDerivativePartitionSusc.lean`).
--/
-
 
 end IsingModel.Ambient
