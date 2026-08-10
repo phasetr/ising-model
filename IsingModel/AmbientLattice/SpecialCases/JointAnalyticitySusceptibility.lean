@@ -2,22 +2,18 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
-# Joint analyticity wrappers along an exhaustion (susceptibility)
+# Joint real-analyticity of the stage susceptibility in `(β, J, h)`
 
-Narrow child module for the two ambient
-`susceptibilityAlongExhaustion_*_joint_gen` general-graph
-joint-`(β, J, h)` analyticity wrappers extracted from
-`JointAnalyticity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `susceptibilityAlongExhaustion_analyticAt_joint_gen`
-* `susceptibilityAlongExhaustion_analyticOnNhd_joint_gen`
-
-The pointwise `AnalyticAt` wrapper unfolds
-`susceptibilityAlongExhaustion` and dispatches on `i ∈ Λ.volume n`,
-falling back to the constant analytic case when the index is
-outside the exhaustion. The `AnalyticOnNhd` wrapper is a thin
-specialization to `Set.univ`. Theorem names are unchanged from the
-former `JointAnalyticity` declarations.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage susceptibility at
+a site `i : V` is real-analytic at every such point, and the same fact is packaged as
+`AnalyticOnNhd ℝ · Set.univ`. The site is arbitrary: the pointwise proof splits on
+`i ∈ Λ.volume n`, applying the finite-volume joint analyticity on one branch and reading the
+stage susceptibility as a constant on the other.
 -/
 
 namespace IsingModel

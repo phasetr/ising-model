@@ -5,20 +5,24 @@ import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityPartitionFreeEnerg
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility
 
 /-!
-# Joint analyticity wrappers along an exhaustion
+# Joint real-analyticity of the stage correlation in `(β, J, h)`
 
-Narrow child module for general-graph `AnalyticAt` / `AnalyticOnNhd` wrappers
-in the joint `(β, J, h)` parameters. This keeps callers that only need these
-along-exhaustion forwarders out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage correlation of a
+finite observable set `A : Finset V` is real-analytic at every such point, and the same fact
+is packaged as `AnalyticOnNhd ℝ · Set.univ`. The observable set is arbitrary: the pointwise
+proof splits on `A ⊆ Λ.volume n`, applying the finite-volume joint analyticity on one branch
+and reading the stage correlation as a constant on the other.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### Joint AnalyticAt + AnalyticOnNhd along-ex wrappers
-(general G), for correlation, magnetization, susceptibility -/
 
 /-- **Along-ex: correlation jointly AnalyticAt in `(β, J, h)`** (general G). -/
 theorem correlationAlongExhaustion_analyticAt_joint_gen
@@ -42,36 +46,6 @@ theorem correlationAlongExhaustion_analyticOnNhd_joint_gen
     AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
       correlationAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ A n) Set.univ :=
   fun ⟨β, J, h⟩ _ => correlationAlongExhaustion_analyticAt_joint_gen G Λ A n β J h
-
-/-! ## Moved: 2 magnetizationAlongExhaustion joint analyticity wrappers
-
-The two `magnetizationAlongExhaustion_*_joint` general-graph
-joint-`(β, J, h)` analyticity wrappers
-(`magnetizationAlongExhaustion_analyticAt_joint`,
-`magnetizationAlongExhaustion_analyticOnNhd_joint`) now live in
-`IsingModel.AmbientLattice.SpecialCases.JointAnalyticityMagnetization`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 susceptibilityAlongExhaustion joint analyticity wrappers
-
-The two `susceptibilityAlongExhaustion_*_joint_gen` general-graph
-joint-`(β, J, h)` analyticity wrappers
-(`susceptibilityAlongExhaustion_analyticAt_joint_gen`,
-`susceptibilityAlongExhaustion_analyticOnNhd_joint_gen`) now live in
-`IsingModel.AmbientLattice.SpecialCases.JointAnalyticitySusceptibility`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: partitionFunction + freeEnergy joint analyticity wrappers
-
-The four `{partitionFunction,freeEnergy}AlongExhaustion_analytic{At,OnNhd}_joint`
-wrappers now live in `JointAnalyticityPartitionFreeEnergy.lean`. They
-are re-imported here so downstream consumers continue to see the symbols. -/
-
-
 
 end Ambient
 end IsingModel

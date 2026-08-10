@@ -3,23 +3,17 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.SpecialCases.JointAnalyticityFreeEnergy
 
 /-!
-# Ambient joint analyticity partitionFunction wrappers
+# Joint real-analyticity of the stage partition function in `(β, J, h)`
 
-Narrow child module for the two ambient
-`partitionFunctionAlongExhaustion_analytic{At,OnNhd}_joint`
-wrappers extracted from `JointAnalyticity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `partitionFunctionAlongExhaustion_analyticAt_joint`,
-* `partitionFunctionAlongExhaustion_analyticOnNhd_joint`.
-
-The corresponding two freeEnergy joint-analyticity wrappers now
-live in
-`IsingModel.AmbientLattice.SpecialCases.JointAnalyticityFreeEnergy`
-and are re-imported through this parent module. Each result is a
-thin pass-through of the corresponding Λ-level
-`{partitionFunction,freeEnergy}Λ_analytic*_joint` lemma. The
-theorem names are unchanged from the former `JointAnalyticity`
-declarations.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage partition
+function is real-analytic at every such point, and the same fact is packaged as
+`AnalyticOnNhd ℝ · Set.univ`. Each statement is the finite-volume statement for the induced
+subgraph of `Λ.volume n`, applied at that volume.
 -/
 
 namespace IsingModel
@@ -45,15 +39,6 @@ theorem partitionFunctionAlongExhaustion_analyticOnNhd_joint
     AnalyticOnNhd ℝ (fun p : ℝ × ℝ × ℝ =>
       partitionFunctionAlongExhaustion G Λ ⟨p.2.1, p.2.2, p.1⟩ n) Set.univ :=
   partitionFunctionΛ_analyticOnNhd_joint G (Λ.volume n)
-
-/-! ## Moved: 2 freeEnergy joint-analyticity wrappers
-
-The two `freeEnergyAlongExhaustion_analytic{At,OnNhd}_joint`
-wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.JointAnalyticityFreeEnergy`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

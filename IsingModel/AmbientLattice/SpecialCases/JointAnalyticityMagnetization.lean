@@ -2,22 +2,19 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 
 /-!
-# Joint analyticity wrappers along an exhaustion (magnetization)
+# Joint real-analyticity of the stage magnetization in `(β, J, h)`
 
-Narrow child module for the two ambient
-`magnetizationAlongExhaustion_*_joint` general-graph joint-`(β, J, h)`
-analyticity wrappers extracted from `JointAnalyticity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `magnetizationAlongExhaustion_analyticAt_joint`
-* `magnetizationAlongExhaustion_analyticOnNhd_joint`
-
-The pointwise `AnalyticAt` wrapper unfolds
-`magnetizationAlongExhaustion` (which factors through
-`correlationAlongExhaustion` at the singleton `{i}`) and dispatches
-on `{i} ⊆ Λ.volume n`, falling back to the constant analytic case
-when the singleton lies outside the exhaustion. The `AnalyticOnNhd`
-wrapper is a thin specialization to `Set.univ`. Theorem names are
-unchanged from the former `JointAnalyticity` declarations.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage magnetization at
+a site `i : V` is real-analytic at every such point, and the same fact is packaged as
+`AnalyticOnNhd ℝ · Set.univ`. The site is arbitrary: the pointwise proof unfolds the
+magnetization to the stage correlation at the singleton `{i}` and splits on
+`{i} ⊆ Λ.volume n`, applying the finite-volume joint analyticity on one branch and reading
+the stage magnetization as a constant on the other.
 -/
 
 namespace IsingModel
