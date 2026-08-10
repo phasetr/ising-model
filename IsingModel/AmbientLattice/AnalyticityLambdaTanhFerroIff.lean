@@ -2,16 +2,36 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.StrictPositivity.MayerPartialFerro
 
 /-!
-# AmbientLattice/Analyticity polymerFreeEnergy/vdSum tanh ferromagnetic iff wrappers
+# The positivity dichotomy at ferromagnetic parameters (§18.5)
 
-Narrow child module for 9 §18.5 Λ-layer wrappers covering the
-`polymerFreeEnergy_Λ_tanh_*_ferro` and
-`vdPolymerFamilies_sum_Λ_tanh_*_ferro` ferromagnetic iff family
-under `0 ≤ β`, `0 ≤ J` (`_lt_eps_iff_eps_pos`,
-`_eq_zero_iff_eps_eq_zero`, `_pos_iff_eps_pos`, `_pos_iff`,
-`_eq_zero_iff`, `_gt_one_iff`, `_eq_one_iff`,
-`_lt_pow_sub_one_of_eps_pos`, `_lt_eps_of_eps_pos`). The theorem
-names are unchanged from the former `Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`, all at the physical activity
+`Real.tanh (β * J)`. Write `E` for `(inducedGraph G Λ).edgeFinset`, `Ξ t` for
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and `ε t` for
+the same sum over `… .erase ∅`; neither sum has a definition of its own, and
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
+
+The regime here is the ferromagnetic pair: `0 ≤ β` together with `0 ≤ J`, stated as two
+separate hypotheses rather than as the single product condition `0 ≤ β * J`, which the pair
+implies but which does not imply it.
+
+Under that pair the polymer free energy at `Real.tanh (β * J)` is positive exactly when
+`ε (tanh (β * J))` is, and is `0` exactly when `ε (tanh (β * J))` is `0`; it is strictly
+below `ε (tanh (β * J))` exactly when the latter is positive. Resolving the excess sum into
+the parameters, positivity holds exactly when `0 < Real.tanh (β * J)` and
+`(allPolymers (inducedGraph G Λ)).Nonempty`, and vanishing exactly when
+`Real.tanh (β * J) = 0` or `allPolymers (inducedGraph G Λ) = ∅` — two complementary
+conditions, recorded both for the polymer free energy and, as `1 < Ξ` and `Ξ = 1`, for the
+polymer sum.
+
+Adding `0 < ε (tanh (β * J))` to the pair yields the two strict upper bounds
+`polymerFreeEnergy < ε (tanh (β * J))` and
+`polymerFreeEnergy < (1 + Real.tanh (β * J)) ^ E.card - 1`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ β`, `0 ≤ J` and `0 < ε (tanh (β * J))`; the first two are carried by
+every statement here, the third by the two strict bounds alone.
 -/
 
 namespace IsingModel

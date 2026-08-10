@@ -2,28 +2,43 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.StrictPositivity.TanhMonotone
 
 /-!
-# AmbientLattice/Analyticity polymerFreeEnergy sharpening + vdSum sandwich wrappers
+# The positivity dichotomy under the product condition, and strict growth in β and J
 
-Narrow child module for 21 §18.5 Λ-layer wrappers covering:
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
+`Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
+`ε t` for the same sum over `… .erase ∅`; neither sum has a definition of its own, and
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
 
-- polymerFreeEnergy tanh sharpening (non-ferromagnetic) + β/J strict-mono
-  (`polymerFreeEnergy_Λ_tanh_{lt_eps_iff_eps_pos,
-  eq_zero_iff_eps_eq_zero, pos_iff_eps_pos, lt_eps_of_eps_pos,
-  lt_pow_sub_one_of_eps_pos}` under `0 ≤ β·J`;
-  `_tanh_{lt_of_lt_in_beta, lt_of_lt_in_J, strictMonoOn_beta,
-  strictMonoOn_J}_of_polymers_nonempty`).
-- ε(t) nonneg + non-tanh polymerFreeEnergy sharpening
-  (`vdPolymerFamilies_sum_Λ_minus_one_{nonneg_of_nonneg, pow_at_zero}`,
-  `polymerFreeEnergy_Λ_{eq_zero_iff_eps_eq_zero, pos_iff_eps_pos,
-  lt_eps_iff_eps_pos, lt_pow_sub_one_of_eps_pos}`).
-- vdSum sandwich/monotone + ε bound + pFE(tanh) bound + log2
-  (`vdPolymerFamilies_sum_Λ_{sandwich_of_nonneg, monotoneOn_Ici_zero,
-  minus_one_le_of_nonneg}`,
-  `polymerFreeEnergy_Λ_tanh_{le_eps_of_betaJ_nonneg,
-  le_pow_sub_one_of_betaJ_nonneg, lt_log_two_of_pow_lt_two}`).
+Three parameter regimes occur and each statement belongs to exactly one, so the conditions
+below do not carry across the paragraph breaks.
 
-The theorem names are unchanged from the former `Analyticity`
-declarations.
+*Product condition on the physical activity.* Under `0 ≤ β * J`, at `Real.tanh (β * J)`:
+the polymer free energy is `0` exactly when `ε` is, positive exactly when `ε` is, and
+strictly below `ε` exactly when `ε` is positive. Adding `0 < ε (tanh (β * J))` gives the
+strict bounds by `ε (tanh (β * J))` and by `(1 + Real.tanh (β * J)) ^ E.card - 1`; the
+non-strict counterparts of those two need only `0 ≤ β * J`, and adding instead
+`(1 + Real.tanh (β * J)) ^ E.card < 2` gives `polymerFreeEnergy < Real.log 2`.
+
+*Bare nonnegative activity.* Under `0 ≤ t` the same three equivalences hold with `t` in
+place of `Real.tanh (β * J)`, and adding `0 < ε t` gives
+`polymerFreeEnergy < (1 + t) ^ E.card - 1`. Also under `0 ≤ t`: `0 ≤ ε t`,
+`ε t ≤ (1 + t) ^ E.card - 1`, and the sandwich `1 ≤ Ξ t ≤ (1 + t) ^ E.card`. Independently
+of any hypothesis, `Ξ` is `MonotoneOn` over `Set.Ici 0`, and `(ε 0) ^ n = 0` for `1 ≤ n`.
+
+*Strict growth in a physical parameter.* Assuming
+`(allPolymers (inducedGraph G Λ)).Nonempty`, the polymer free energy at
+`Real.tanh (β * J)` is strictly increasing in `β` when `0 < J` and strictly increasing in
+`J` when `0 < β`: strictly larger at `β₂` than at `β₁` whenever `0 ≤ β₁ < β₂`, strictly
+larger at `J₂` than at `J₁` whenever `0 ≤ J₁ < J₂`, and `StrictMonoOn` over `Set.Ici 0` in
+each of the two variables.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ β * J`, `0 ≤ t`, `0 < ε` in its bare and `tanh` forms,
+`(1 + Real.tanh (β * J)) ^ E.card < 2`, `1 ≤ n`,
+`(allPolymers (inducedGraph G Λ)).Nonempty`, `0 ≤ β₁`, `β₁ < β₂`, `0 < J`, `0 ≤ J₁`,
+`J₁ < J₂` and `0 < β`. The `MonotoneOn` statement carries none.
 -/
 
 namespace IsingModel

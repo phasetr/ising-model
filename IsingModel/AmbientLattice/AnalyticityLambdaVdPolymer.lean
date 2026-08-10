@@ -2,13 +2,31 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.MayerCore.ZeroBounds
 
 /-!
-# AmbientLattice/Analyticity vdPolymerFamilies + log_vd wrappers
+# Regularity of the polymer sum and of its logarithm (§18.5-§18.6)
 
-Narrow child module for 14 §18.5-18.6 vdPolymerFamilies_sum_Λ +
-log_vdPolymerFamilies_sum_Λ continuous / differentiable / analyticAt /
-analyticOnNhd / hasDerivAt wrappers (raw and tanh-composed variants).
-The theorem names are unchanged from the former `Analyticity`
-declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `Ξ t` for the polymer sum
+`∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`; it has no
+definition of its own, is written out in every statement, and only the theorem names
+abbreviate it to `vdPolymerFamilies_sum_Λ`.
+
+`Ξ` is a finite sum of monomials in the activity, and its statements say so with no region
+excluded: `Continuous` and `Differentiable ℝ` on all of `ℝ`, `AnalyticAt ℝ` at an arbitrary
+real point, and `HasDerivAt` at an arbitrary point with the derivative named explicitly as
+`∑ Γ, ∑ Q ∈ Γ, (∏ P ∈ Γ.erase Q, t ^ P.card) * (Q.card * t ^ (Q.card - 1))`. Composed with
+`Real.tanh (β * J)` and read in `β` with `J` frozen, or in `J` with `β` frozen, it is again
+`Continuous`, `Differentiable ℝ` and `AnalyticAt ℝ` at an arbitrary point, with no sign
+condition on the parameters.
+
+`Real.log (Ξ t)` is where the region starts to matter, since `Ξ` is `1` at `t = 0` and at
+least `1` only once `0 ≤ t`. Its statements are therefore `AnalyticAt ℝ` at a point `t`
+assumed to satisfy `0 ≤ t`, `AnalyticOnNhd ℝ` over `Set.Ici 0`, and — in the `Real.tanh`
+composition — `AnalyticAt ℝ` in `β` and in `J` under `0 ≤ β * J`. Nothing here treats a
+negative activity, in either direction.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t` and `0 ≤ β * J`; every statement about `Ξ` itself carries neither.
 -/
 
 namespace IsingModel

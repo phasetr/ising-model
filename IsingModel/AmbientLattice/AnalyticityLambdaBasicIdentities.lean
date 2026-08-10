@@ -2,18 +2,37 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.StrictPositivity.IffCharacterisations
 
 /-!
-# AmbientLattice/Analyticity basic identities + bounds + iff wrappers
+# Values, decomposition and elementary bounds of the polymer sum (§18.5)
 
-Narrow child module for 17 §18.5 Λ-layer wrappers covering basic
-`at_zero` / `at_one` identities for `vdPolymerFamilies_sum`,
-`mayerPartialSum`, and `mayerExpansionTerm`; tanh iff characterizations
-for `vdPolymerFamilies_sum_Λ` (`tanh_gt_one_iff`, `tanh_eq_one_iff`);
-the bound family
-(`le_two_pow`, `le_one_plus_tanh_pow`, `one_le_vdPolymerFamilies_sum_Λ`);
-and generic-`t` bounds + `_eq_one_add` decomposition
-(`ge_one_of_nonneg`, `le_one_plus_pow_of_nonneg`, `pos_of_nonneg`,
-`eq_one_add`). The theorem names are unchanged from the former
-`Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
+`Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
+`ε t` for the same sum over `… .erase ∅`. Neither sum has a definition of its own; both are
+written out in every statement, and only the theorem names abbreviate them.
+
+Special values are recorded at literal arguments substituted into the statement: `Ξ 0 = 1`,
+`Ξ 1 = (vdCompatiblePolymerFamilies (inducedGraph G Λ)).card`,
+`mayerPartialSum (inducedGraph G Λ) N 0 = 0` and
+`mayerExpansionTerm (inducedGraph G Λ) n 0 = 0` at a literal activity `0`, and at low order
+`mayerPartialSum … 0 t = 0`, `mayerExpansionTerm … 0 t = 0`, with both
+`mayerPartialSum … 1 t` and `mayerExpansionTerm … 1 t` equal to
+`∑ P ∈ allPolymers (inducedGraph G Λ), t ^ P.card`. The decomposition `Ξ t = 1 + ε t`, which
+isolates the empty family, holds for every real `t` and needs no hypothesis.
+
+At a nonnegative activity, `Ξ t` is strictly positive, at least `1`, and at most
+`(1 + t) ^ E.card`. At the physical activity `Real.tanh (β * J)` under `0 ≤ β * J` the same
+bounds appear as `1 ≤ Ξ (tanh (β * J))`, `Ξ (tanh (β * J)) ≤ (1 + tanh (β * J)) ^ E.card`
+and the cruder `Ξ (tanh (β * J)) ≤ 2 ^ E.card`.
+
+Where `Ξ` sits relative to `1` is settled exactly there, and the two cases are
+complementary: `1 < Ξ (tanh (β * J))` precisely when `0 < Real.tanh (β * J)` and
+`(allPolymers (inducedGraph G Λ)).Nonempty`, and `Ξ (tanh (β * J)) = 1` precisely when
+`Real.tanh (β * J) = 0` or `allPolymers (inducedGraph G Λ) = ∅`.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t` and `0 ≤ β * J`; the special values and the `1 + ε t` decomposition
+carry neither.
 -/
 
 namespace IsingModel

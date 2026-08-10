@@ -2,13 +2,36 @@ import IsingModel.AmbientLattice.Defs.Core
 import IsingModel.ClusterExpansion.HighTempGeneralRegularity.PolymerBounds
 
 /-!
-# AmbientLattice/Analyticity polymerFreeEnergy_Λ sandwich + hasSum wrappers
+# High-temperature sandwich and log series for the polymer free energy (§18.4-§18.5)
 
-Narrow child module for 10 §18.4 / §18.5 polymerFreeEnergy_Λ
-high_temp_sandwich, tanh sandwich, hasSum_via_log, and
-vdPolymerFamilies_sum_Λ sandwich wrappers (with ferromagnetic
-variants). The theorem names are unchanged from the former
-`Analyticity` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Finset V`, read
+on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
+`Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
+`ε t` for the same sum over `… .erase ∅`; neither sum has a definition of its own, both are
+written out in every statement, and `polymerFreeEnergy (inducedGraph G Λ) t` is by
+definition `Real.log (Ξ t)`.
+
+The sandwich is stated as one five-fold conjunction:
+`0 ≤ polymerFreeEnergy`, `polymerFreeEnergy ≤ ε t`, `ε t ≤ (1 + t) ^ E.card - 1`,
+`(1 + t) ^ E.card - 1 < 1`, and `polymerFreeEnergy < Real.log 2`. Alongside it, and under the
+same hypotheses, the alternating logarithm series
+`fun n ↦ (-1) ^ n * (ε t) ^ (n + 1) / (n + 1)` `HasSum` to `polymerFreeEnergy`.
+
+Both are stated at a bare activity `t` under `0 ≤ t`, and at the physical activity
+`Real.tanh (β * J)` under `0 ≤ β * J` and again under the ferromagnetic pair `0 ≤ J`,
+`0 < β`; in every case the high-temperature hypothesis `(1 + t) ^ E.card < 2`, with `t` the
+activity in force, is also required; it is that hypothesis which forces `ε t < 1`, through
+the third and fourth conjuncts of the sandwich, and so makes the series converge.
+
+The polymer sum itself is sandwiched at the physical activity, `1 ≤ Ξ (tanh (β * J))` on the
+left in every case and, on the right, either the crude `2 ^ E.card` or the sharp
+`(1 + tanh (β * J)) ^ E.card`; each of those two right-hand bounds is stated once under
+`0 ≤ β * J` and once under the ferromagnetic pair, with no high-temperature hypothesis.
+
+Every statement takes exactly two instance binders, `DecidableEq V` and
+`Fintype (inducedGraph G Λ).edgeSet`. The Prop-valued hypotheses occurring anywhere in the
+file are exactly `0 ≤ t`, `0 ≤ β * J`, `0 ≤ J`, `0 < β` and `(1 + t) ^ E.card < 2` in its
+bare and `tanh` forms; every statement here carries at least one of them.
 -/
 
 namespace IsingModel
