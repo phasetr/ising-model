@@ -3,8 +3,10 @@ import IsingModel.RandomCurrent.BoundedExpansion.FiniteSums.ASourceSpinSums
 /-!
 # Prescribed-source spin sum, degenerate weight sums, and a per-edge weight factorization
 
-Statements about a current `n` on `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces,
-for an arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`.
+Statements about currents on `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces, for an
+arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. The spin sum and
+the weight factorization are stated at a fixed current `n`; the degenerate weight sums are
+stated about `Current.weightSum`, a `tsum` over all currents, and bind no current.
 
 For a vertex `Finset A`, the sum over all spin configurations `σ : ↥Λ → Spin` of the product
 of the spin signs over `A` times the product, over the edges, of the product of the spin

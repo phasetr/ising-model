@@ -29,12 +29,12 @@ incident degree `Current.degreeAt G Λ n v` is the sum of the multiplicities `n 
 and its cardinality is at most that degree, so the degree is strictly positive at every
 vertex of the source set.
 
-The handshake count is recorded together with its ingredient and its `ZMod 2` consequence:
-the endpoint `Finset` of an edge of `inducedGraph G Λ` has cardinality `2`; the sum of
-`Current.degreeAt G Λ n v` over all vertices of `Λ` is twice the sum of `n e` over all edges;
-and the sum of `Current.parity G Λ n v` over all vertices is `0` in `ZMod 2`. A further
-statement records that the `ℕ`-valued indicator of `Current.parity G Λ n v ≠ 0`, cast into
-`ZMod 2`, is that parity again.
+The edge-endpoint cardinality, the handshake count that uses it and the `ZMod 2` consequence
+of that count are recorded together: the endpoint `Finset` of an edge of `inducedGraph G Λ`
+has cardinality `2`; the sum of `Current.degreeAt G Λ n v` over all vertices of `Λ` is twice
+the sum of `n e` over all edges; and the sum of `Current.parity G Λ n v` over all vertices is
+`0` in `ZMod 2`. A further statement records that the `ℕ`-valued indicator of
+`Current.parity G Λ n v ≠ 0`, cast into `ZMod 2`, is that parity again.
 
 Every statement here takes `[DecidableEq ↥Λ]`. The edge-endpoint cardinality is the only one
 that does not take `[Fintype (inducedGraph G Λ).edgeSet]`, and it is also the only one whose

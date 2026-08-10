@@ -25,11 +25,11 @@ A second hypothesis shape occurs, written with a different argument order:
 `symmDiff A B ≠ n.sources G Λ`. Under it the source-conditioned pair `Finset` is empty, and
 the same weight sum is therefore `0`.
 
-At the zero current these Finsets degenerate. With both prescribed source sets empty, the
-pair `Finset` is the singleton of the pair of zero currents and the sub-current `Finset` is
-the singleton of the zero current; a nonempty prescribed source set makes each of them empty,
-where for the pair `Finset` it is enough that one of the two prescribed source sets is
-nonempty.
+At the zero current these Finsets degenerate. With its prescribed source set empty, the
+sub-current `Finset` is the singleton of the zero current, and it is empty as soon as that
+prescribed source set is nonempty. With both prescribed source sets empty, the pair `Finset`
+is the singleton of the pair of zero currents, and it is empty as soon as one of the two
+prescribed source sets is nonempty.
 
 The joint-factor sum and the pair-weight sum are each bounded above. The sum of
 `Current.jointFactor G Λ m (n - m)` over the source-conditioned sub-current `Finset` is at
