@@ -1,24 +1,23 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# AmbientLatticeSum partition ≥ ferromagnetic wrappers
+# Ferromagnetic lower bounds on the partition function and on its logarithm
 
-Narrow child module for the 12 partitionFunction / log_partitionFunction
-ferromagnetic lower-bound wrappers:
-`partitionFunctionΛ_ge_one_of_ferromagnetic`,
-`log_partitionFunctionΛ_nonneg_of_ferromagnetic`,
-`partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic`,
-`log_partitionFunctionAlongExhaustion_nonneg_of_ferromagnetic`,
-`partitionFunctionΛ_ge_two_pow_card_of_ferromagnetic`,
-`log_partitionFunctionΛ_ge_card_mul_log_two_of_ferromagnetic`,
-`partitionFunctionAlongExhaustion_ge_two_pow_card_of_ferromagnetic`,
-`partitionFunctionΛ_ge_two_cosh_pow_card_of_ferromagnetic`,
-`partitionFunctionAlongExhaustion_ge_two_cosh_pow_card_of_ferromagnetic`,
-`log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_of_ferromagnetic`,
-`log_partitionFunctionΛ_ge_card_mul_log_two_cosh_of_ferromagnetic`,
-`log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_cosh_of_ferromagnetic`.
-The theorem names are unchanged from the former `AmbientLatticeSum`
-declarations.
+`partitionFunctionΛ G Λ p` is the partition function of the subgraph that a finite volume
+`Λ : Finset V` induces in an arbitrary ambient graph `G : SimpleGraph V`, and
+`partitionFunctionAlongExhaustion G Λ p` reads it at the stage volume `Λ.volume n` of an
+exhaustion. Every statement here assumes `Ferromagnetic p` — that is `0 ≤ p.J`, `0 ≤ p.h` and
+`0 < p.β` — and nothing further; in particular no volume is required to be nonempty, and the
+only instance binders are `[DecidableEq V]` and a `Fintype` instance on the induced edge set,
+taken on the volume itself at the finite-volume layer and stagewise at the exhaustion layer.
+
+Three lower bounds occur, each in a multiplicative and a logarithmic form: `1` and `0`; the
+vertex-count power `2 ^ Λ.card` and `↑Λ.card * log 2`; and the refinement
+`(2 * cosh (p.β * p.h)) ^ Λ.card` and `↑Λ.card * log (2 * cosh (p.β * p.h))`, which
+`Real.one_le_cosh` makes at least as strong as the second. Each of the six appears twice,
+once at the finite-volume layer and once at the exhaustion layer, the latter being the same
+inequality with `Λ` replaced by `Λ.volume n` and the stage index quantified inside the
+statement.
 -/
 
 namespace IsingModel

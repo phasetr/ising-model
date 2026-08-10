@@ -1,14 +1,28 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# AmbientLatticeSum log Z trivial-slice + monotonicity wrappers
+# Closed forms, field symmetry and monotonicity for the logarithm of the partition function
 
-Narrow child module for the 14 log_partitionFunctionΛ /
-log_partitionFunctionAlongExhaustion trivial-slice + monotonicity
-wrappers (J_zero / beta_zero / neg_h / eq_abs_h / monotone_J /
-monotone_h / monotone_beta / monotone_abs_h for both Λ and
-AlongExhaustion versions). The theorem names are unchanged from the
-former `AmbientLatticeSum` declarations.
+`partitionFunctionΛ G Λ p` is the partition function of the subgraph that a finite volume
+`Λ : Finset V` induces in an arbitrary ambient graph `G : SimpleGraph V`, and
+`partitionFunctionAlongExhaustion G Λ p` reads it at the stage volume `Λ.volume n` of an
+exhaustion; every statement here is about `Real.log` of one of those two. No statement
+assumes `Ferromagnetic p` as a bundle or requires a volume to be nonempty, and the only
+instance binders are `[DecidableEq V]` and a `Fintype` instance on the induced edge set,
+taken on the volume itself at the finite-volume layer and stagewise at the exhaustion layer.
+
+Two closed forms are recorded, and they stand at the finite-volume layer only, with no
+counterpart along an exhaustion: at `J = 0` the value is `↑Λ.card * log (2 * cosh (β * h))`,
+and at `β = 0` it is `↑Λ.card * log 2`. Both hold for an arbitrary finite volume, the empty
+one included, where each side is `0`.
+
+The remaining shapes stand at both layers. Negating the field leaves the value unchanged, so
+it may be rewritten with `|h|` in place of `h`, and those two carry no hypothesis on the
+parameters. The monotonicity statements carry their sign conditions singly rather than
+through `Ferromagnetic`: in the coupling under `0 ≤ h`, `0 < β`, `0 ≤ J₁` and `J₁ ≤ J₂`; in
+the field under `0 ≤ J`, `0 < β`, `0 ≤ h₁` and `h₁ ≤ h₂`; in the inverse temperature under
+`0 ≤ J`, `0 ≤ h`, `0 < β₁` and `β₁ ≤ β₂`; and in `|h|` under `0 ≤ J`, `0 < β` and
+`|h₁| ≤ |h₂|`, which asks nothing of the signs of `h₁` and `h₂`.
 -/
 
 namespace IsingModel
