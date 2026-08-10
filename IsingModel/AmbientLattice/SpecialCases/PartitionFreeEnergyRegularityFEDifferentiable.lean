@@ -3,37 +3,22 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiableJoint
 
 /-!
-# Ambient freeEnergyAlongExhaustion `Differentiable` per-direction wrappers
+# Differentiability of the stage free energy in each parameter direction
 
-Narrow child module for the three per-direction ambient
-`freeEnergyAlongExhaustion_differentiable_*` regularity wrappers
-extracted from `PartitionFreeEnergyRegularityFE.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `freeEnergyAlongExhaustion_differentiable_beta`
-* `freeEnergyAlongExhaustion_differentiable_field`
-* `freeEnergyAlongExhaustion_differentiable_J`
-
-The corresponding joint wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiableJoint`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through of the corresponding Λ-level
-`freeEnergyΛ_differentiable_*` lemma. Theorem names are unchanged
-from the former `PartitionFreeEnergyRegularity` declarations.
+The stage free energy is differentiable over `ℝ` as a function of the inverse temperature with
+`J` and `h` fixed, as a function of the external field with `J` and `β` fixed, and as a
+function of the coupling with `h` and `β` fixed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 freeEnergyAlongExhaustion_differentiable_joint wrapper
-
-The `freeEnergyAlongExhaustion_differentiable_joint` wrapper now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityFEDifferentiableJoint`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: freeEnergy Differentiable in β** (general h). -/
 theorem freeEnergyAlongExhaustion_differentiable_beta

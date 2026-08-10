@@ -2,15 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPerDirection
 
 /-!
-# Ambient `partitionFunctionAlongExhaustion` `Differentiable` in `h` wrapper
+# Differentiability of the stage partition function in the external field
 
-Narrow child module for the along-exhaustion
-`partitionFunctionAlongExhaustion_differentiable_h` h-direction
-regularity wrapper extracted from
-`PartitionFreeEnergyRegularityDifferentiable.lean`. The wrapper is
-a thin pass-through to `partitionFunctionΛ_differentiable_h`. The
-theorem name is unchanged from the former
-`PartitionFreeEnergyRegularity` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At arbitrary `J` and `β`, the stage partition function is differentiable over `ℝ` as a
+function of the external field.
 -/
 
 namespace IsingModel

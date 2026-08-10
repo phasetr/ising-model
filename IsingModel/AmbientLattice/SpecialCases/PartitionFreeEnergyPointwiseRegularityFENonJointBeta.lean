@@ -1,16 +1,16 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient `freeEnergyAlongExhaustion` ContinuousAt β wrapper
+# Continuity of the stage free energy at a point of the inverse-temperature axis
 
-Narrow child module for the along-exhaustion
-`freeEnergyAlongExhaustion_continuousAt_beta` β-direction pointwise
-wrapper extracted from
-`PartitionFreeEnergyPointwiseRegularityFENonJoint.lean`. The wrapper
-is a thin pass-through to `freeEnergyΛ_continuous_beta` via the
-`.continuousAt` projection. The theorem name is unchanged from the
-former `PartitionFreeEnergyPointwiseRegularity` /
-`PartitionFreeEnergyPointwiseRegularityFE` declarations.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At arbitrary `J` and `h`, the stage free energy as a function of the inverse temperature is
+continuous at every point `β`. The statement is the `.continuousAt` projection of the
+corresponding continuity on all of `ℝ`.
 -/
 
 namespace IsingModel
