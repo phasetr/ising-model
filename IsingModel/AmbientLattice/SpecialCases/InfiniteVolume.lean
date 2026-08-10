@@ -8,7 +8,7 @@ Statements for an ambient graph `G : SimpleGraph V` over an arbitrary vertex typ
 
 Over an arbitrary finite subset of `V`, the induced subgraph of the empty ambient graph is
 again the empty graph. That statement is a `simp` lemma, carries no Prop-valued hypothesis,
-and omits `DecidableEq V`.
+and takes no instance binder at all, `DecidableEq V` included.
 
 Along an exhaustion `Λ` of `V`, the infinite-volume truncated two-point function of a
 parameter triple `p : IsingParams ℝ` is nonnegative at every pair of sites `i j : V`, with

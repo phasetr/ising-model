@@ -11,10 +11,11 @@ read on the induced subgraph of the finite volume `Λ.volume n`. Every statement
 `DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
 With the polymer set of the stage subgraph nonempty, the polymer free energy at the activity
-`Real.tanh (β * J)` is strictly increasing in each of the two parameters separately: the
-Prop-valued hypotheses are exactly that nonemptiness together with `0 ≤ β₁`, `0 < J` and
-`β₁ < β₂` for the inverse-temperature statement, and that nonemptiness together with
-`0 ≤ J₁`, `0 < β` and `J₁ < J₂` for the coupling statement.
+`Real.tanh (β * J)` increases strictly when the inverse temperature moves from `β₁` to `β₂`
+with the coupling fixed, and when the coupling moves from `J₁` to `J₂` with the inverse
+temperature fixed. The Prop-valued hypotheses are exactly that nonemptiness together with
+`0 ≤ β₁`, `0 < J` and `β₁ < β₂` in the first statement, and that nonemptiness together with
+`0 ≤ J₁`, `0 < β` and `J₁ < J₂` in the second.
 -/
 
 namespace IsingModel
