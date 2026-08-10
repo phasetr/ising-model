@@ -3,19 +3,17 @@ import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaMagSuscep
 
 /-!
-# Joint `Differentiable` susceptibility along-ex wrapper
+# Joint differentiability of the stage susceptibility in `(β, J, h)`
 
-Narrow child module for the along-exhaustion susceptibility joint
-`Differentiable` wrapper extracted from
-`JointRegularityDifferentiable.lean`:
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
 
-* `susceptibilityAlongExhaustion_differentiable_joint_gen`
-
-The wrapper unfolds `susceptibilityAlongExhaustion` and dispatches
-on `i ∈ Λ.volume n`, falling back to `differentiable_const`
-off-volume and forwarding to `susceptibilityΛ_differentiable_joint`
-on-volume. The theorem name is unchanged from the former
-`JointRegularity` declaration.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage susceptibility at
+a site `i : V` is differentiable over `ℝ`. The site is arbitrary: the proof splits on
+`i ∈ Λ.volume n`, applying the finite-volume joint differentiability on one branch and reading
+the stage susceptibility as a constant on the other.
 -/
 
 namespace IsingModel
