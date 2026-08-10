@@ -1,29 +1,22 @@
 import IsingModel.AmbientLattice.TruncatedFunctions.FourPoint
 
 /-!
-# Infinite-volume `truncated4Infinite` aliases at `h = 0`
+# Sign of the infinite-volume truncated four-point function at zero external field
 
-Narrow child module for the two §17.7 ambient infinite-volume
-aliases of `truncated4Infinite_nonpos_h_zero` extracted from
-`InfiniteVolume.lean`:
+Statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`. Every
+statement takes `DecidableEq V` and the stagewise `Fintype` instance on the edge set of the
+induced subgraph of `Λ.volume n`.
 
-* `zeta_nonneg_infinite_vol` (GJ §17.7 Thm 17.7.1 critical-exponent
-  naming),
-* `absence_of_even_bound_states_infinite_vol` (GJ §17.2 pp. 311-313
-  named-theorem alias).
-
-Both wrappers state `U₄^∞(i,j,k,l) ≤ 0` for ferromagnetic
-`⟨J, 0, β⟩` and pairwise-distinct sites; each is a thin alias of
-`truncated4Infinite_nonpos_h_zero`. Theorem names are unchanged
-from the former `InfiniteVolume` declarations.
+At the zero-field parameter triple `⟨J, 0, β⟩` the infinite-volume truncated four-point
+function is nonpositive at four sites `i j k l : V`. The Prop-valued hypotheses are exactly
+`Ferromagnetic ⟨J, 0, β⟩` together with the six inequalities making `i`, `j`, `k`, `l`
+pairwise distinct.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Critical exponents at infinite volume (GJ §17.7 Thm 17.7.1) -/
 
 /-- **ζ ≥ 0 at infinite volume** (GJ §17.7 Thm 17.7.1, infinite-volume
 lattice version, at `h = 0`). Explicit alias of

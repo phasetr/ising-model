@@ -2,21 +2,17 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Polymer free-energy tanh `StrictMonoOn` wrappers along an exhaustion
+# Strict monotonicity of the polymer free energy at a `tanh` activity, on `Set.Ici 0`
 
-Narrow child module for the two §18.5 along-exhaustion
-`polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_*` wrappers
-extracted from `PolymerFreeEnergyTanhSharpening.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_beta_of_polymers_nonempty`
-* `polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_J_of_polymers_nonempty`
-
-Each wrapper is a thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_strictMonoOn_*_of_polymers_nonempty`
-lemma stating that `pFE(tanh(β·J))` is `StrictMonoOn (Set.Ici 0)`
-in `β` (resp. `J`) under nonempty polymer family. Theorem names are
-unchanged from the former `PolymerFreeEnergyTanhSharpening`
-declarations.
+At the activity `Real.tanh (β * J)`, the polymer free energy of the stage subgraph is strictly
+monotone on `Set.Ici 0` as a function of the inverse temperature and as a function of the
+coupling. The Prop-valued hypotheses are exactly the nonemptiness of the polymer set of the
+stage subgraph together with `0 < J` for the inverse-temperature statement, and that same
+nonemptiness together with `0 < β` for the coupling statement.
 -/
 
 namespace IsingModel

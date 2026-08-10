@@ -2,19 +2,17 @@ import IsingModel.AmbientLattice.Defs
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Partition-function `Z = 2^|Λ|` closed forms along an exhaustion
+# Closed form of the partition function at `β = 0` and at `J = h = 0`
 
-Narrow child module for the two along-exhaustion
-`partitionFunctionAlongExhaustion_*` closed-form wrappers whose
-right-hand side equals `2^|Λ.volume n|` (the `β = 0` slice and the
-`J = h = 0` zero-params slice). The corresponding `J = 0`
-closed-form wrapper (whose right-hand side depends on `h`) now
-lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding `IsingModel.partitionFunction_*`
-ambient lemma. Theorem names are unchanged from the former
-`PartitionFunctionClosedForms` declarations.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+At `β = 0` with `J` and `h` arbitrary, and at `J = h = 0` with `β` arbitrary, the stage
+partition function equals `2 ^ (Λ.volume n).card`. On each of these parameter slices every
+Boltzmann weight is `1`, so the sum counts the spin configurations of the stage volume, and
+that count is `2` to the power of the volume's cardinality.
 -/
 
 namespace IsingModel
@@ -23,8 +21,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## β = 0 closed form for `partitionFunctionAlongExhaustion` -/
 
 /-- **Along-exhaustion β=0 partition function closed form**:
 `partitionFunctionAlongExhaustion G Λ ⟨J, h, 0⟩ n = 2 ^ |Λ.volume n|`
@@ -46,8 +42,6 @@ theorem partitionFunctionAlongExhaustion_beta_zero
   push_cast
   rfl
 
-/-! ## J = h = 0 closed form for `partitionFunctionAlongExhaustion` -/
-
 /-- **Along-exhaustion J=h=0 partition function closed form**:
 `partitionFunctionAlongExhaustion G Λ ⟨0, 0, β⟩ n = 2 ^ |Λ.volume n|`
 for any ambient graph `G, Λ` and any `β`.
@@ -67,14 +61,6 @@ theorem partitionFunctionAlongExhaustion_zero_params
       Fintype.card_coe]
   push_cast
   rfl
-
-/-! ## Moved: 1 J = 0 closed-form wrapper
-
-The `partitionFunctionAlongExhaustion_J_zero` wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFunctionClosedFormsPartitionJZero`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

@@ -2,16 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Polymer free-energy tanh `< log 2` wrapper along an exhaustion
+# A strict `log 2` bound on the polymer free energy at a `tanh` activity
 
-Narrow child module for the §18.5 ambient alongExhaustion
-`polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two`
-wrapper extracted from
-`PolymerFreeEnergyHighTemperatureBoundsTanh.lean`. The wrapper is
-a thin pass-through to
-`polymerFreeEnergy_Λ_tanh_lt_log_two_of_pow_lt_two`. The theorem
-name is unchanged from the former
-`PolymerFreeEnergyHighTemperatureBounds` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set.
+
+Writing `|E|` for the edge count of the stage subgraph, the Prop-valued hypotheses are exactly
+`0 ≤ β * J` and `(1 + Real.tanh (β * J)) ^ |E| < 2`; under them the polymer free energy at the
+activity `Real.tanh (β * J)` is strictly below `Real.log 2`.
 -/
 
 namespace IsingModel

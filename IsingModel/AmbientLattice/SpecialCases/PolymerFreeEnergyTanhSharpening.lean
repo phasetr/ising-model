@@ -4,13 +4,18 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningStrictMono
 
 /-!
-# Polymer free-energy tanh sharpening + β/J strict-mono wrappers along
-an exhaustion
+# Strict increase of the polymer free energy at a `tanh` activity
 
-Narrow child module for along-exhaustion polymer free-energy
-`tanh sharpening + β/J strict-mono` wrappers. This keeps callers that
-only need these forwarders out of the monolithic original special-cases
-module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+With the polymer set of the stage subgraph nonempty, the polymer free energy at the activity
+`Real.tanh (β * J)` increases strictly when the inverse temperature moves from `β₁` to `β₂`
+with the coupling fixed, and when the coupling moves from `J₁` to `J₂` with the inverse
+temperature fixed. The Prop-valued hypotheses are exactly that nonemptiness together with
+`0 ≤ β₁`, `0 < J` and `β₁ < β₂` in the first statement, and that nonemptiness together with
+`0 ≤ J₁`, `0 < β` and `J₁ < J₂` in the second.
 -/
 
 namespace IsingModel
@@ -19,18 +24,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### §18.5 polymerFreeEnergy tanh sharpening + β/J strict-mono
-along-ex wraps -/
-
-/-! ## Moved: pFE tanh iff / `_of_eps_pos` wrappers
-
-The five `polymerFreeEnergyAlongExhaustion_tanh_*` iff /
-`_of_eps_pos` wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningIff`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: pFE(tanh(β₁·J)) < pFE(tanh(β₂·J))** under `J > 0`,
 `0 ≤ β₁ < β₂`, polymers nonempty. -/
@@ -63,15 +56,6 @@ polymerFreeEnergyAlongExhaustion_tanh_lt_of_lt_in_J_of_polymers_nonempty
         (Real.tanh (β * J₂)) :=
   polymerFreeEnergy_Λ_tanh_lt_of_lt_in_J_of_polymers_nonempty
     G (Λ.volume n) h_poly hJ₁ hβ hJ
-
-/-! ## Moved: 2 `_strictMonoOn_*` wrappers
-
-The two along-ex `polymerFreeEnergyAlongExhaustion_tanh_strictMonoOn_*`
-wrappers (`_strictMonoOn_beta`, `_strictMonoOn_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhSharpeningStrictMono`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
 
 end Ambient
 end IsingModel

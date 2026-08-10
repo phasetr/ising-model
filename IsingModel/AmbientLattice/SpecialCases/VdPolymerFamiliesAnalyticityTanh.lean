@@ -2,19 +2,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaVdPolymer
 
 /-!
-# Polymer-family `tanh ∘ (·)` analyticity wrappers along an exhaustion
+# Real-analyticity of the polymer-family sum at a `tanh` activity, along an exhaustion
 
-Narrow child module for the two along-exhaustion
-`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_{beta,J}`
-wrappers extracted from `VdPolymerFamiliesAnalyticity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta`
-* `vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J`
-
-Each wrapper is a thin pass-through to the corresponding ambient
-`vdPolymerFamilies_sum_Λ_tanh_analyticAt_*` lemma. Theorem names
-are unchanged from the former `VdPolymerFamiliesAnalyticity`
-declarations.
+At the activity `Real.tanh (β * J)`, the sum over vertex-disjoint compatible polymer families
+of the stage subgraph is real-analytic at `β` as a function of the inverse temperature with
+`J` held fixed, and real-analytic at `J` as a function of the coupling with `β` held fixed.
 -/
 
 namespace IsingModel

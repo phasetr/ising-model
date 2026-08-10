@@ -2,19 +2,20 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Polymer free-energy `_of_eps_pos` tanh sharpening wrappers along an exhaustion
+# Strict bounds on the polymer free energy at a `tanh` activity with positive reduced sum
 
-Narrow child module for the two §18.5 along-exhaustion
-`polymerFreeEnergyAlongExhaustion_tanh_*_of_eps_pos` wrappers
-extracted from `PolymerFreeEnergyTanhSharpeningIff.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_lt_eps_of_eps_pos`
-* `polymerFreeEnergyAlongExhaustion_tanh_lt_pow_sub_one_of_eps_pos`
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set, and `|E|`
+for the edge count of that subgraph.
 
-Each wrapper is a thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_*_of_eps_pos` lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyTanhSharpening`
-declarations.
+The Prop-valued hypotheses of each statement are exactly `0 ≤ β * J` and
+`0 < ε(Real.tanh (β * J))`; under them the polymer free energy at the activity
+`Real.tanh (β * J)` is strictly below `ε(Real.tanh (β * J))`, and strictly below
+`(1 + Real.tanh (β * J)) ^ |E| - 1`.
 -/
 
 namespace IsingModel

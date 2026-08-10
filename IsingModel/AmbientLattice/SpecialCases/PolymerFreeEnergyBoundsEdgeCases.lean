@@ -2,18 +2,17 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPolymerBounds
 
 /-!
-# Polymer free-energy edge-case vanishing wrappers along an exhaustion
+# Vanishing of the polymer free energy on a degenerate stage subgraph
 
-Narrow child module for the two §18.5 ambient alongExhaustion
-`polymerFreeEnergyAlongExhaustion_eq_zero_of_*` boundary-case
-vanishing wrappers extracted from `PolymerFreeEnergyBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `polymerFreeEnergyAlongExhaustion_eq_zero_of_no_polymers`
-* `polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty`
-
-Each wrapper is a thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_eq_zero_of_*` lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyBounds` declarations.
+When the polymer set of the stage subgraph equals `∅`, and likewise when its edge finset
+equals `∅`, the polymer free energy of that subgraph is `0` at every activity `t : ℝ`: the
+activity is universally quantified over all of `ℝ`, with no sign or size restriction, so the
+function vanishes identically. The stated emptiness equation is the only Prop-valued
+hypothesis of each statement.
 -/
 
 namespace IsingModel

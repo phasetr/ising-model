@@ -2,18 +2,17 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 
 /-!
-# Ambient joint analyticity freeEnergy wrappers
+# Joint real-analyticity of the stage free energy in `(β, J, h)`
 
-Narrow child module for the two ambient
-`freeEnergyAlongExhaustion_analytic{At,OnNhd}_joint` wrappers
-extracted from `JointAnalyticityPartitionFreeEnergy.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `freeEnergyAlongExhaustion_analyticAt_joint`
-* `freeEnergyAlongExhaustion_analyticOnNhd_joint`
-
-Each result is a thin pass-through of the corresponding Λ-level
-`freeEnergyΛ_analytic*_joint` lemma. The theorem names are
-unchanged from the former `JointAnalyticity` declarations.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage free energy is
+real-analytic at every such point, and the same fact is packaged as
+`AnalyticOnNhd ℝ · Set.univ`. Each statement is the finite-volume statement for the induced
+subgraph of `Λ.volume n`, applied at that volume.
 -/
 
 namespace IsingModel

@@ -2,19 +2,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaRegularity
 
 /-!
-# Polymer free-energy `tanh`-composition `AnalyticOnNhd` wrappers along an exhaustion
+# Real-analyticity of the polymer free energy at a `tanh` activity on the nonnegative ray
 
-Narrow child module for the two §18.6 ambient alongExhaustion
-`polymerFreeEnergy ∘ tanh ∘ (·)` `AnalyticOnNhd ℝ _ (Set.Ici 0)`
-wrappers extracted from `PolymerFreeEnergyAnalyticityTanh.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_beta_Ici_zero`
-* `polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_J_Ici_zero`
-
-Each wrapper is a thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_analyticOnNhd_*_Ici_zero` lemma. Theorem
-names are unchanged from the former
-`PolymerFreeEnergyAnalyticity` declarations.
+At the activity `Real.tanh (β * J)`, the polymer free energy of the stage subgraph is
+real-analytic on a neighbourhood of each point of `Set.Ici 0`: as a function of the inverse
+temperature with `0 ≤ J` as the only Prop-valued hypothesis, and as a function of the coupling
+with `0 ≤ β` as the only Prop-valued hypothesis.
 -/
 
 namespace IsingModel

@@ -2,15 +2,15 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaJoint
 
 /-!
-# Ambient freeEnergyAlongExhaustion `Differentiable` joint wrapper
+# Joint differentiability of the stage free energy in `(β, J, h)`
 
-Narrow child module for the ambient
-`freeEnergyAlongExhaustion_differentiable_joint` regularity wrapper
-extracted from `PartitionFreeEnergyRegularityFEDifferentiable.lean`.
-The wrapper is a thin pass-through to the Λ-level
-`freeEnergyΛ_differentiable_joint` lemma. The theorem name is
-unchanged from the former `PartitionFreeEnergyRegularity`
-declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage free energy is
+differentiable over `ℝ` on all of `ℝ × ℝ × ℝ`.
 -/
 
 namespace IsingModel

@@ -1,36 +1,24 @@
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 
 /-!
-# Susceptibility `Differentiable` in `h` / `J` along-ex wrappers
+# Differentiability of the stage susceptibility in the external field and in the coupling
 
-Narrow child module for the two along-exhaustion susceptibility
-`Differentiable` wrappers in the field and coupling directions:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `susceptibilityAlongExhaustion_differentiable_field_gen`
-* `susceptibilityAlongExhaustion_differentiable_J_gen`
-
-The corresponding `β`-direction wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding
-`susceptibilityΛ_differentiable_*` ambient lemma via `unfold`
-+ `by_cases`. Theorem names are unchanged from the former
-`SusceptibilityPointwiseRegularity` declarations.
+At a site `i : V`, the stage susceptibility is differentiable over `ℝ` as a function of the
+external field with `J` and `β` fixed, and as a function of the coupling with `h` and `β`
+fixed. The site is arbitrary: each proof splits on `i ∈ Λ.volume n`, applying the
+finite-volume differentiability on one branch and reading the stage susceptibility as a
+constant on the other.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 Differentiable in `β` wrapper
-
-The `susceptibilityAlongExhaustion_differentiable_beta_gen` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: susceptibility Differentiable in `h`** (general G). -/
 theorem susceptibilityAlongExhaustion_differentiable_field_gen

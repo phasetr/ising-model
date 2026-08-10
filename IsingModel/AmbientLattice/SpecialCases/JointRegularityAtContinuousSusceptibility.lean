@@ -1,18 +1,16 @@
 import IsingModel.AmbientLattice.SpecialCases.JointRegularityContinuousSusceptibility
 
 /-!
-# Joint `ContinuousAt` susceptibility along-ex wrapper
+# Joint continuity of the stage susceptibility at a point of `(β, J, h)`-space
 
-Narrow child module for the pointwise susceptibility joint
-`ContinuousAt` wrapper along an exhaustion extracted from
-`JointRegularityAt.lean`:
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
 
-* `susceptibilityAlongExhaustion_continuousAt_joint_gen`
-
-The wrapper is a thin pass-through to
-`susceptibilityAlongExhaustion_continuous_joint_gen` via the
-`.continuousAt` projection. The theorem name is unchanged from the
-former `JointRegularity` declaration.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage susceptibility at
+a site `i : V` is continuous at every such point. The statement is the `.continuousAt`
+projection of the corresponding continuity on all of `ℝ × ℝ × ℝ`.
 -/
 
 namespace IsingModel

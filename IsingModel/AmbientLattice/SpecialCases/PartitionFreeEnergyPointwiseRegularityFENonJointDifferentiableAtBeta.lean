@@ -1,17 +1,16 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Ambient `freeEnergyAlongExhaustion` DifferentiableAt β wrapper
+# Differentiability of the stage free energy at a point of the inverse-temperature axis
 
-Narrow child module for the along-exhaustion
-`freeEnergyAlongExhaustion_differentiableAt_beta` β-direction
-pointwise wrapper extracted from
-`PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAt.lean`.
-The wrapper is a thin pass-through to
-`freeEnergyΛ_differentiable_beta` via the `.differentiableAt`
-projection. The theorem name is unchanged from the former
-`PartitionFreeEnergyPointwiseRegularity` /
-`PartitionFreeEnergyPointwiseRegularityFE` declarations.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At arbitrary `J` and `h`, the stage free energy as a function of the inverse temperature is
+differentiable over `ℝ` at every point `β`. The statement is the `.differentiableAt`
+projection of the corresponding differentiability on all of `ℝ`.
 -/
 
 namespace IsingModel

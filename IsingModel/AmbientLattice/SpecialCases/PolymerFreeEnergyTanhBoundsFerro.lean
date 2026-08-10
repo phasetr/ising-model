@@ -3,21 +3,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerroSandwich
 
 /-!
-# Polymer free-energy ferromagnetic tanh ≤ bound wrappers along an exhaustion
+# Ferromagnetic upper bounds on the polymer free energy at a `tanh` activity
 
-Narrow child module for the two §18.5 ambient alongExhaustion
-ferromagnetic `polymerFreeEnergy_tanh_*_ferro` upper-bound
-wrappers extracted from `PolymerFreeEnergyTanhBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and its
+Prop-valued hypotheses are exactly `0 ≤ J` and `0 < β`.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_le_card_mul_ferro`
-* `polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two_ferro`
-
-The corresponding sandwich wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerroSandwich`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_*_ferromagnetic` lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyTanhBounds` declarations.
+Writing `|E|` for the edge count of the stage subgraph, the polymer free energy at the
+activity `Real.tanh (β * J)` is at most `|E| * Real.tanh (β * J)`, and at most
+`|E| * Real.log 2`.
 -/
 
 namespace IsingModel
@@ -36,15 +31,6 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_mul_ferro
         Real.tanh (β * J) :=
   polymerFreeEnergy_Λ_tanh_le_card_mul_ferromagnetic
     G (Λ.volume n) hJ hβ
-
-/-! ## Moved: 1 ferromagnetic sandwich wrapper
-
-The `polymerFreeEnergyAlongExhaustion_tanh_sandwich_ferro` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyTanhBoundsFerroSandwich`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: ferromagnetic polymerFreeEnergy_tanh ≤ |E|·log 2**. -/
 theorem polymerFreeEnergyAlongExhaustion_tanh_le_card_log_two_ferro

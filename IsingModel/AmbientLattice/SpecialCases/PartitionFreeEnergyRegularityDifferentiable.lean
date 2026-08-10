@@ -3,23 +3,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiableH
 
 /-!
-# Ambient `partitionFunctionAlongExhaustion` `Differentiable` β/J general-h wrappers
+# Differentiability of the stage partition function in the inverse temperature and coupling
 
-Narrow child module for the two ambient
-`partitionFunctionAlongExhaustion_differentiable_*_general_h`
-β/J general-h regularity wrappers extracted from
-`PartitionFreeEnergyRegularity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `partitionFunctionAlongExhaustion_differentiable_beta_general_h`
-* `partitionFunctionAlongExhaustion_differentiable_J_general_h`
-
-The corresponding `h`-direction wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiableH`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through of the corresponding Λ-level
-`partitionFunctionΛ_differentiable_*` lemma. Theorem names are
-unchanged from the former `PartitionFreeEnergyRegularity`
-declarations.
+With the external field `h` an arbitrary real, the stage partition function is differentiable
+over `ℝ` as a function of the inverse temperature with `J` fixed, and as a function of the
+coupling with `β` fixed.
 -/
 
 namespace IsingModel
@@ -46,15 +39,6 @@ theorem partitionFunctionAlongExhaustion_differentiable_J_general_h
     Differentiable ℝ (fun J' : ℝ =>
       partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) :=
   partitionFunctionΛ_differentiable_J_general_h G (Λ.volume n) β h
-
-/-! ## Moved: 1 Differentiable in `h` wrapper
-
-The `partitionFunctionAlongExhaustion_differentiable_h` h-direction
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiableH`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

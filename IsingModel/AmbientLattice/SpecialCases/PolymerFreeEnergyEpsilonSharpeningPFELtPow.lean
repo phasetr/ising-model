@@ -2,16 +2,18 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaPfeSharpening
 
 /-!
-# Polymer free-energy `< (1+t)^|E| - 1` wrapper along an exhaustion
+# A strict `(1 + t) ^ |E| - 1` bound on the polymer free energy
 
-Narrow child module for the §18.5 ambient alongExhaustion
-`polymerFreeEnergyAlongExhaustion_lt_pow_sub_one_of_eps_pos`
-wrapper extracted from
-`PolymerFreeEnergyEpsilonSharpeningPFE.lean`. The wrapper is a
-thin pass-through to the ambient
-`polymerFreeEnergy_Λ_lt_pow_sub_one_of_eps_pos` lemma. The
-theorem name is unchanged from the former
-`PolymerFreeEnergyEpsilonSharpening` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set.
+
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set, and `|E|`
+for the edge count of that subgraph.
+
+The Prop-valued hypotheses are exactly `0 ≤ t` and `0 < ε(t)`; under them the polymer free
+energy at activity `t` is strictly below `(1 + t) ^ |E| - 1`.
 -/
 
 namespace IsingModel

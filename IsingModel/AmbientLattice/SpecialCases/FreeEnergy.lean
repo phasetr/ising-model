@@ -5,15 +5,20 @@ import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlicesInfinite
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp
 
 /-!
-# Non-analytic free-energy special cases
+# Bounded edge density and the resulting uniform bound on the stage free energy
 
-This module contains the special-case free-energy APIs that do not depend on
-the analytic cluster-expansion stack: bounded edge density, trivial parameter
-slices, basic `h`-symmetry, and uniform exhaustion bounds.
+Statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`, read on the
+induced subgraph of the finite volume `Λ.volume n`. Every declaration takes the stagewise
+`Fintype` instance on that subgraph's edge set; the definition omits `DecidableEq V` and each
+theorem takes it.
 
-It is split from the original `AmbientLattice.SpecialCases` body so modules such
-as `AmbientLatticeSum` can use these free-energy facts without importing
-`AmbientLattice.Analyticity`.
+Bounded edge density is the predicate asserting a constant `c : ℝ` such that the edge count of
+the stage subgraph is at most `c * |Λ.volume n|` at every stage whose volume is nonempty.
+
+Given such a constant and a stage with nonempty volume, the stage free energy at a parameter
+triple `p` is at most `Real.log 2 + |p.β| * (|p.J| * c + |p.h|)`, a bound determined by `p`
+and `c` alone. Under bounded edge density the range of the stage free energy over all stages
+is therefore bounded above, a stage with empty volume contributing the value `0`.
 -/
 
 namespace IsingModel
@@ -23,8 +28,6 @@ open Finset Real
 open scoped symmDiff
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Uniform upper bound under bounded edge density -/
 
 /-- **Bounded edge density along an exhaustion**: there is `c : ℝ` such
 that for every `n` with `Λ.volume n` nonempty,
@@ -74,41 +77,6 @@ theorem freeEnergyAlongExhaustion_le_uniform_upper_bound
           field_simp
     _ ≤ Real.log 2 + |p.β| * (|p.J| * c + |p.h|) := by
           gcongr
-
-/-! ## Moved: trivial free-energy slices along exhaustion
-
-The six trivial-parameter-slice closed forms
-(`freeEnergyAlongExhaustion_beta_zero`,
-`freeEnergyInfinite_beta_zero`,
-`freeEnergyAlongExhaustion_zero_params`,
-`freeEnergyInfinite_zero_params`,
-`freeEnergyAlongExhaustion_eq_bot_at_J_zero`,
-`freeEnergyAlongExhaustion_J_zero`) now live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 sharper high-temperature free-energy upper bounds
-
-The two sharper-exp `freeEnergyAlongExhaustion`
-high-temperature upper bound wrappers
-(`freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp`,
-`freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyHighTempExp`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: `h`-symmetry / `|h|`-monotonicity wrappers
-
-The three `freeEnergyAlongExhaustion_{neg_h, eq_abs_h, monotone_abs_h}`
-wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.FreeEnergyHSymmetry`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **BddAbove for `freeEnergyAlongExhaustion` under bounded edge density**:
 assuming `BoundedEdgeDensity G Λ`, the range of the exhaustion free energy

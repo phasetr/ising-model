@@ -1,14 +1,16 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# Free-energy ferromagnetic `|h|`-monotonicity along an exhaustion
+# Monotonicity of the stage free energy in the size of the external field
 
-Narrow child module for the along-exhaustion
-`freeEnergyAlongExhaustion_monotone_abs_h` wrapper extracted from
-`FreeEnergyHSymmetry.lean`. The wrapper is a thin pass-through to
-the corresponding `IsingModel.freeEnergy_monotone_abs_h` ambient
-lemma via `change` + `exact`. The theorem name is unchanged from
-the former `FreeEnergy` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and its Prop-valued hypotheses
+are exactly `0 ≤ J`, `0 < β` and `|h₁| ≤ |h₂|`.
+
+Under those hypotheses the stage free energy at `⟨J, h₁, β⟩` is at most its value at
+`⟨J, h₂, β⟩`, at every stage. The proof rewrites the stage free energy as the free energy of
+the induced subgraph and applies the corresponding finite-volume monotonicity.
 -/
 
 namespace IsingModel

@@ -3,30 +3,23 @@ import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityD
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityContinuousBeta
 
 /-!
-# Ambient susceptibility pointwise regularity wrappers
+# Continuity of the stage susceptibility in the external field and in the coupling
 
-This module contains general-graph `Continuous`, `Differentiable`,
-`ContinuousAt`, and `DifferentiableAt` APIs for per-parameter
-`susceptibilityAlongExhaustion` regularity. It is split out of the original
-ambient special-cases module so concrete susceptibility pointwise wrappers can
-depend on a narrower child path.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+At a site `i : V`, the stage susceptibility is continuous on `ℝ` as a function of the external
+field with `J` and `β` fixed, and as a function of the coupling with `h` and `β` fixed. The
+site is arbitrary: each proof splits on `i ∈ Λ.volume n`, applying the finite-volume
+continuity on one branch and reading the stage susceptibility as a constant on the other.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### Along-exhaustion susceptibility regularity wrappers -/
-
-/-! ## Moved: 1 Continuous in `β` wrapper
-
-The `susceptibilityAlongExhaustion_continuous_beta_gen` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityContinuousBeta`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: susceptibility Continuous in `h`** (general G). -/
 theorem susceptibilityAlongExhaustion_continuous_field_gen
@@ -57,25 +50,6 @@ theorem susceptibilityAlongExhaustion_continuous_J_gen
     exact susceptibilityΛ_continuous_J G (Λ.volume n) h β _
   · simp only [hi, dif_neg, not_false_iff]
     exact continuous_const
-
-/-! ## Moved: Differentiable along-ex susceptibility wrappers
-
-The three `susceptibilityAlongExhaustion_differentiable_*_gen`
-wrappers (`_beta`, `_field`, `_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiable`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: ContinuousAt / DifferentiableAt along-ex susceptibility wrappers
-
-The six `susceptibilityAlongExhaustion_{continuousAt,differentiableAt}_{beta,field,J}_gen`
-pointwise wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityAt`.
-The earlier import path is preserved by re-exporting the new child
-from the umbrella `SpecialCases.lean` and from each downstream consumer that previously
-imported only this parent.
--/
 
 end Ambient
 end IsingModel

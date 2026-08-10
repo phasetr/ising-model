@@ -1,39 +1,23 @@
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityFENonJointDifferentiableAtBeta
 
 /-!
-# Ambient `freeEnergyAlongExhaustion` non-joint pointwise `DifferentiableAt` h/J wrappers
+# Differentiability of the stage free energy at a point of the field and coupling axes
 
-Narrow child module for the two ambient
-`freeEnergyAlongExhaustion_differentiableAt_{field,J}` non-joint
-pointwise wrappers extracted from
-`PartitionFreeEnergyPointwiseRegularityFENonJoint.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `freeEnergyAlongExhaustion_differentiableAt_field`
-* `freeEnergyAlongExhaustion_differentiableAt_J`
-
-The corresponding `_differentiableAt_beta` wrapper now lives in a
-sibling `_FENonJointDifferentiableAtBeta` child module (re-imported
-through this parent). Each wrapper is a
-thin pass-through to the corresponding `freeEnergyΛ_differentiable_*`
-ambient lemma via the `.differentiableAt` projection. Theorem
-names are unchanged from the former
-`PartitionFreeEnergyPointwiseRegularity` /
-`PartitionFreeEnergyPointwiseRegularityFE` declarations.
+The stage free energy as a function of the external field is differentiable over `ℝ` at every
+point `h`, with `J` and `β` fixed, and as a function of the coupling it is differentiable over
+`ℝ` at every point `J`, with `h` and `β` fixed. Each statement is the `.differentiableAt`
+projection of the corresponding differentiability on all of `ℝ`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: 1 DifferentiableAt β wrapper
-
-The `freeEnergyAlongExhaustion_differentiableAt_beta` β-direction
-wrapper now lives in the sibling
-`_FENonJointDifferentiableAtBeta` child module. The earlier
-import path is preserved by re-exporting the new child from this
-parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **freeEnergyAlongExhaustion DifferentiableAt h**. -/
 theorem freeEnergyAlongExhaustion_differentiableAt_field

@@ -4,20 +4,22 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLog
 import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh
 
 /-!
-# Polymer-family analyticity wrappers along an exhaustion
+# Real-analyticity of the polymer-family sum in the activity, along an exhaustion
 
-Narrow child module for along-exhaustion `vdPolymerFamilies_sum`,
-`log_vdPolymerFamilies_sum`, and epsilon analyticity wrappers. This keeps
-callers that only need these analytic forwarders out of the monolithic
-special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+Summing `∏ P ∈ Γ, s ^ P.card` over the vertex-disjoint compatible polymer families `Γ` of the
+stage subgraph gives a function of the activity `s` that is real-analytic at every point of
+`ℝ`. The same holds after the empty family is erased from the index set.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### `vdPolymerFamilies_sum` analyticity along an exhaustion -/
 
 /-- **Along-ex: `vdPolymerFamilies_sum` is `AnalyticAt ℝ` in `t`**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_analyticAt
@@ -29,28 +31,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_analyticAt
             (inducedGraph G (Λ.volume n)),
           ∏ P ∈ Γ, s ^ P.card) t :=
   vdPolymerFamilies_sum_Λ_analyticAt G (Λ.volume n) t
-
-/-! ## Moved: 2 tanh analyticity wrappers
-
-The two along-ex tanh-composition analyticity wrappers
-(`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_beta`,
-`vdPolymerFamilies_sumAlongExhaustion_tanh_analyticAt_J`) now live in
-`IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityTanh`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
-
-/-! ## Moved: log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
-
-The four `log_vdPolymerFamilies_sumAlongExhaustion_*` analyticity
-wrappers (`analyticAt`, `analyticOnNhd_Ici_zero`,
-`tanh_analyticAt_beta`, `tanh_analyticAt_J`) now live in
-`VdPolymerFamiliesAnalyticityLog.lean`. They are re-imported here so
-downstream consumers continue to see the symbols. -/
-
-
-
-/-! ### Epsilon analyticity along an exhaustion -/
 
 /-- **Along-ex: ε(t) is `AnalyticAt ℝ` at every `t`**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_analyticAt

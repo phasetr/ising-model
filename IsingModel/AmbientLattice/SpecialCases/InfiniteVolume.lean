@@ -2,12 +2,18 @@ import IsingModel.AmbientLattice.TruncatedFunctions
 import IsingModel.AmbientLattice.SpecialCases.InfiniteVolumeTruncated4
 
 /-!
-# Infinite-volume special-case aliases
+# The empty ambient graph, and the sign of the infinite-volume truncated two-point function
 
-This module contains lightweight ambient special-case APIs that depend only on
-the infinite-volume truncated-correlation layer. Keeping them outside the original
-special-cases body lets concrete correlation modules use these aliases without
-importing the analytic or cluster-expansion stack.
+Statements for an ambient graph `G : SimpleGraph V` over an arbitrary vertex type.
+
+Over an arbitrary finite subset of `V`, the induced subgraph of the empty ambient graph is
+again the empty graph. That statement is a `simp` lemma, carries no Prop-valued hypothesis,
+and takes no instance binder at all, `DecidableEq V` included.
+
+Along an exhaustion `Λ` of `V`, the infinite-volume truncated two-point function of a
+parameter triple `p : IsingParams ℝ` is nonnegative at every pair of sites `i j : V`, with
+`Ferromagnetic p` as its only Prop-valued hypothesis. That statement takes `DecidableEq V`
+and the stagewise `Fintype` instance on the edge set of the induced subgraph of `Λ.volume n`.
 -/
 
 namespace IsingModel
@@ -26,8 +32,6 @@ theorem inducedGraph_bot (Λ : Finset V) :
     inducedGraph (⊥ : SimpleGraph V) Λ = (⊥ : SimpleGraph (↑Λ : Type _)) :=
   SimpleGraph.comap_bot _
 
-/-! ## Critical exponents at infinite volume (GJ §17.7 Thm 17.7.1) -/
-
 /-- **η ≥ 0 at infinite volume** (GJ §17.7 Thm 17.7.1, infinite-volume
 lattice version). Explicit alias of `truncated2Infinite_nonneg` matching the
 `eta_nonneg_finite_vol` naming convention. -/
@@ -37,16 +41,6 @@ theorem eta_nonneg_infinite_vol
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : V) :
     0 ≤ truncated2Infinite G Λ p i j :=
   truncated2Infinite_nonneg G Λ p hf i j
-
-/-! ## Moved: 2 `truncated4Infinite` ζ/U₄ aliases at `h = 0`
-
-The two `truncated4Infinite_nonpos_h_zero` aliases
-(`zeta_nonneg_infinite_vol`,
-`absence_of_even_bound_states_infinite_vol`) now live in
-`IsingModel.AmbientLattice.SpecialCases.InfiniteVolumeTruncated4`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

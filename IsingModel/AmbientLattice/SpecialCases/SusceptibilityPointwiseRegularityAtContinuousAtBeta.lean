@@ -1,15 +1,16 @@
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityContinuousBeta
 
 /-!
-# Susceptibility `ContinuousAt` in `β` along-ex wrapper
+# Continuity of the stage susceptibility at a point of the inverse-temperature axis
 
-Narrow child module for the pointwise
-`susceptibilityAlongExhaustion_continuousAt_beta_gen` wrapper
-extracted from `SusceptibilityPointwiseRegularityAt.lean`. The
-wrapper is a thin pass-through to
-`susceptibilityAlongExhaustion_continuous_beta_gen` via the
-`.continuousAt` projection. The theorem name is unchanged from
-the former `SusceptibilityPointwiseRegularity` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At a site `i : V` and arbitrary `J` and `h`, the stage susceptibility as a function of the
+inverse temperature is continuous at every point `β`. The statement is the `.continuousAt`
+projection of the corresponding continuity on all of `ℝ`.
 -/
 
 namespace IsingModel

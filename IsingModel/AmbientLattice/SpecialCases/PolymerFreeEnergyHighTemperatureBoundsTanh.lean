@@ -3,22 +3,19 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanhLtLog2
 
 /-!
-# Polymer free-energy tanh ≤ high-temperature bound wrappers along an exhaustion
+# Upper bounds on the polymer free energy at a `tanh` activity
 
-Narrow child module for the two §18.5 ambient alongExhaustion
-`polymerFreeEnergy_tanh_*_le_*` non-strict bound wrappers extracted
-from `PolymerFreeEnergyHighTemperatureBounds.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and has
+`0 ≤ β * J` as its only Prop-valued hypothesis.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_le_eps_of_betaJ_nonneg`
-* `polymerFreeEnergyAlongExhaustion_tanh_le_pow_sub_one_of_betaJ_nonneg`
+Write `ε(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph with the empty family erased from the index set, and `|E|`
+for the edge count of that subgraph.
 
-The corresponding strict-inequality
-`_lt_log_two_of_pow_lt_two` wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanhLtLog2`
-and is re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_*` lemma. Theorem names are unchanged
-from the former `PolymerFreeEnergyHighTemperatureBounds` declarations.
+At the activity `Real.tanh (β * J)` the polymer free energy is at most `ε(Real.tanh (β * J))`,
+and at most `(1 + Real.tanh (β * J)) ^ |E| - 1`.
 -/
 
 namespace IsingModel
@@ -50,15 +47,6 @@ polymerFreeEnergyAlongExhaustion_tanh_le_pow_sub_one_of_betaJ_nonneg
         (inducedGraph G (Λ.volume n)).edgeFinset.card - 1 :=
   polymerFreeEnergy_Λ_tanh_le_pow_sub_one_of_betaJ_nonneg
     G (Λ.volume n) hβJ
-
-/-! ## Moved: 1 lt_log_two_of_pow_lt_two wrapper
-
-The `polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanhLtLog2`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

@@ -4,21 +4,25 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBo
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsMonotone
 
 /-!
-# Polymer free-energy high-temperature bound wrappers along an exhaustion
+# Sandwich bounds on the polymer-family sum at a nonnegative activity
 
-Narrow child module for the §18.5 `vdPolymerFamilies_sum` sandwich,
-`MonotoneOn`, and `ε(t)` bound wrappers along an exhaustion. The
-theorem names are the same as the former declarations, but
-callers can now avoid importing the monolithic special-cases
-module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and has
+`0 ≤ t` as its only Prop-valued hypothesis.
+
+Write `Z(t)` for the sum of `∏ P ∈ Γ, t ^ P.card` over the vertex-disjoint compatible polymer
+families `Γ` of the stage subgraph, `ε(t)` for the same sum with the empty family erased from
+the index set, and `|E|` for the edge count of that subgraph.
+
+Under `0 ≤ t`, the value `Z(t)` lies between `1` and `(1 + t) ^ |E|`, and `ε(t)` is at most
+`(1 + t) ^ |E| - 1`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## §18.5 polymer free-energy high-temperature bounds along-exhaustion wraps -/
 
 /-- **Along-ex: vdSum sandwich for `t ≥ 0`**. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_of_nonneg
@@ -34,15 +38,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_sandwich_of_nonneg
       (1 + t) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card :=
   vdPolymerFamilies_sum_Λ_sandwich_of_nonneg G (Λ.volume n) ht
 
-/-! ## Moved: 1 monotoneOn_Ici_zero wrapper
-
-The `vdPolymerFamilies_sumAlongExhaustion_monotoneOn_Ici_zero`
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsMonotone`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
 /-- **Along-ex: ε(t) ≤ (1+t)^|E| - 1** for `0 ≤ t`. -/
 theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_le_of_nonneg
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -53,18 +48,6 @@ theorem vdPolymerFamilies_sumAlongExhaustion_minus_one_le_of_nonneg
           ∏ P ∈ Γ, t ^ P.card) ≤
       (1 + t) ^ (inducedGraph G (Λ.volume n)).edgeFinset.card - 1 :=
   vdPolymerFamilies_sum_Λ_minus_one_le_of_nonneg G (Λ.volume n) ht
-
-/-! ## Moved: 3 polymerFreeEnergy_tanh high-temperature bound wrappers
-
-The three §18.5 `polymerFreeEnergy_tanh_*` wrappers
-(`polymerFreeEnergyAlongExhaustion_tanh_le_eps_of_betaJ_nonneg`,
-`polymerFreeEnergyAlongExhaustion_tanh_le_pow_sub_one_of_betaJ_nonneg`,
-`polymerFreeEnergyAlongExhaustion_tanh_lt_log_two_of_pow_lt_two`)
-now live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBoundsTanh`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel

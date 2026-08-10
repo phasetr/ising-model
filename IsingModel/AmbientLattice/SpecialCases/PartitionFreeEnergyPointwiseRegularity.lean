@@ -6,39 +6,23 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegula
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityJoint
 
 /-!
-# Ambient partition/free-energy pointwise regularity wrappers
+# Regularity of the stage partition function at a point of the external-field axis
 
-This module contains general-graph `ContinuousAt` and `DifferentiableAt` APIs
-for per-parameter and joint `partitionFunctionAlongExhaustion` /
-`freeEnergyAlongExhaustion` regularity. It is split out of the original ambient
-special-cases module so concrete partition/free-energy pointwise wrappers can
-depend on a narrower child path.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+At arbitrary `J` and `β`, the stage partition function as a function of the external field is
+continuous at every point `h` and differentiable over `ℝ` at every point `h`. Each statement
+is the `.continuousAt` or `.differentiableAt` projection of the corresponding regularity on
+all of `ℝ`.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### Along-exhaustion partition-function pointwise wrappers -/
-
-/-! ## Moved: partitionFunctionAlongExhaustion h = 0 pointwise wrappers
-
-The four `partitionFunctionAlongExhaustion_*_h_zero` ContinuousAt /
-DifferentiableAt pointwise wrappers now live in
-`PartitionFreeEnergyPointwiseRegularityHZero.lean`. They are re-imported
-here so downstream consumers continue to see the symbols. -/
-
-
-
-/-! ## Moved: partitionFunctionAlongExhaustion general-h pointwise wrappers
-
-The four `partitionFunctionAlongExhaustion_*_general_h` ContinuousAt /
-DifferentiableAt pointwise wrappers now live in
-`PartitionFreeEnergyPointwiseRegularityPartitionGeneralH.lean`. They are
-re-imported here so downstream consumers continue to see the symbols. -/
-
-
 
 /-- **partitionFunctionAlongExhaustion ContinuousAt h**. -/
 theorem partitionFunctionAlongExhaustion_continuousAt_h
@@ -57,24 +41,6 @@ theorem partitionFunctionAlongExhaustion_differentiableAt_h
     DifferentiableAt ℝ (fun h' : ℝ =>
       partitionFunctionAlongExhaustion G Λ ⟨J, h', β⟩ n) h :=
   (partitionFunctionΛ_differentiable_h G (Λ.volume n) J β).differentiableAt
-
-/-! ## Moved: 2 joint pointwise wrappers
-
-The two `partitionFunctionAlongExhaustion_*_joint` joint pointwise
-wrappers (`_continuousAt_joint`, `_differentiableAt_joint`) now live
-in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyPointwiseRegularityJoint`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella.
--/
-
-/-! ## Moved: freeEnergyAlongExhaustion pointwise wrappers
-
-The eight `freeEnergyAlongExhaustion_{continuousAt,differentiableAt}_*`
-pointwise wrappers (beta, field, J, joint) now live in
-`PartitionFreeEnergyPointwiseRegularityFE.lean`. They are re-imported
-here so downstream consumers continue to see the symbols. -/
-
 
 end Ambient
 end IsingModel

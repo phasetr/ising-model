@@ -5,20 +5,22 @@ import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDiffe
 import IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityH
 
 /-!
-# Ambient partition/free-energy regularity wrappers
+# Continuity of the stage partition function in the inverse temperature and the coupling
 
-This module contains general-graph `Continuous` and `Differentiable` APIs for
-per-stage `partitionFunctionAlongExhaustion` and `freeEnergyAlongExhaustion`.
-It is split out of the original ambient special-cases module so concrete
-partition/free-energy wrappers can depend on a narrower child path.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
+
+With the external field `h` an arbitrary real, the stage partition function is continuous on
+`ℝ` as a function of the inverse temperature with `J` fixed, and as a function of the coupling
+with `β` fixed.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### Along-exhaustion partition/free-energy Continuous and Differentiable -/
 
 /-- **Along-ex: partitionFunction Continuous in `β` at general `h`**. -/
 theorem partitionFunctionAlongExhaustion_continuous_beta_general_h
@@ -37,35 +39,6 @@ theorem partitionFunctionAlongExhaustion_continuous_J_general_h
     Continuous (fun J' : ℝ =>
       partitionFunctionAlongExhaustion G Λ ⟨J', h, β⟩ n) :=
   partitionFunctionΛ_continuous_J_general_h G (Λ.volume n) β h
-
-/-! ## Moved: 3 partitionFunctionAlongExhaustion_differentiable_* wrappers
-
-The three `Differentiable ℝ` wrappers
-(`partitionFunctionAlongExhaustion_differentiable_beta_general_h`,
-`partitionFunctionAlongExhaustion_differentiable_J_general_h`,
-`partitionFunctionAlongExhaustion_differentiable_h`) now live in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityDifferentiable`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 1 Continuous in `h` wrapper
-
-The `partitionFunctionAlongExhaustion_continuous_h` h-direction
-wrapper now lives in
-`IsingModel.AmbientLattice.SpecialCases.PartitionFreeEnergyRegularityH`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: freeEnergyAlongExhaustion regularity wrappers
-
-The eight `freeEnergyAlongExhaustion_{continuous,differentiable}_*`
-regularity wrappers (joint, beta, field, J) now live in
-`PartitionFreeEnergyRegularityFE.lean`. They are re-imported here so
-downstream consumers continue to see the symbols. -/
-
-
 
 end Ambient
 end IsingModel

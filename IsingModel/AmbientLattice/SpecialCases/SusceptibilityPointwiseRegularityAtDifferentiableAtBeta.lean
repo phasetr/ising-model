@@ -1,16 +1,16 @@
 import IsingModel.AmbientLattice.SpecialCases.SusceptibilityPointwiseRegularityDifferentiableBeta
 
 /-!
-# Susceptibility `DifferentiableAt` in `β` along-ex wrapper
+# Differentiability of the stage susceptibility at a point of the inverse-temperature axis
 
-Narrow child module for the pointwise
-`susceptibilityAlongExhaustion_differentiableAt_beta_gen` wrapper
-extracted from
-`SusceptibilityPointwiseRegularityAtDifferentiableAt.lean`. The
-wrapper is a thin pass-through to
-`susceptibilityAlongExhaustion_differentiable_beta_gen` via the
-`.differentiableAt` projection. The theorem name is unchanged from
-the former `SusceptibilityPointwiseRegularity` declaration.
+Stage-`n` statement for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. It takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and carries no Prop-valued
+hypothesis.
+
+At a site `i : V` and arbitrary `J` and `h`, the stage susceptibility as a function of the
+inverse temperature is differentiable over `ℝ` at every point `β`. The statement is the
+`.differentiableAt` projection of the corresponding differentiability on all of `ℝ`.
 -/
 
 namespace IsingModel

@@ -2,20 +2,17 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.AnalyticityLambdaSection186
 
 /-!
-# Ambient `partitionFunctionAlongExhaustion` joint pointwise wrappers
+# Joint regularity of the stage partition function at a point of `(β, J, h)`-space
 
-Narrow child module for the two ambient
-`partitionFunctionAlongExhaustion_*_joint` pointwise wrappers
-extracted from `PartitionFreeEnergyPointwiseRegularity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and carries
+no Prop-valued hypothesis.
 
-* `partitionFunctionAlongExhaustion_continuousAt_joint`
-* `partitionFunctionAlongExhaustion_differentiableAt_joint`
-
-Each wrapper is a thin pass-through to the corresponding Λ-level
-`partitionFunctionΛ_{continuous,differentiable}_joint` lemma via
-the `.continuousAt` / `.differentiableAt` projection. Theorem
-names are unchanged from the former
-`PartitionFreeEnergyPointwiseRegularity` declarations.
+Reading the parameter triple as the point `(β, J, h) : ℝ × ℝ × ℝ`, the stage partition
+function is continuous at every such point and differentiable over `ℝ` at every such point.
+Each statement is the `.continuousAt` or `.differentiableAt` projection of the corresponding
+regularity on all of `ℝ × ℝ × ℝ`.
 -/
 
 namespace IsingModel

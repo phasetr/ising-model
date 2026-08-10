@@ -7,56 +7,21 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn
 
 /-!
-# Polymer free-energy bound wrappers along an exhaustion
+# Order preservation of the polymer free energy in the activity, along an exhaustion
 
-Narrow child module for along-exhaustion `polymerFreeEnergy` regularity,
-bounds, comparison, and edge-case wrappers. This keeps callers that only need
-these forwarders out of the monolithic original special-cases module.
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
+
+The polymer free energy of the stage subgraph is order-preserving in the activity on the
+nonnegative ray: from `0 ≤ t` and `t ≤ s` the value at `t` is at most the value at `s`. The
+same conclusion is recorded a second time with `0 ≤ s` added to the hypothesis list.
 -/
 
 namespace IsingModel
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: polymerFreeEnergyAlongExhaustion regularity wrappers
-
-The four `polymerFreeEnergyAlongExhaustion_*` regularity wrappers
-(`continuousAt`, `differentiableAt`, `continuousOn_Ici_zero`,
-`differentiableOn_Ici_zero`) now live in
-`PolymerFreeEnergyBoundsRegularity.lean`. They are re-imported here
-so downstream consumers continue to see the symbols. -/
-
-
-
-/-! ## Moved: polymerFreeEnergyAlongExhaustion `_of_nonneg` bound wrappers
-
-The three `polymerFreeEnergyAlongExhaustion_*_of_nonneg` bound wrappers
-(`nonneg`, `le_card_log_one_plus`, `le_card_mul`) now live in
-`PolymerFreeEnergyBoundsNonneg.lean`. They are re-imported here so
-downstream consumers continue to see the symbols. -/
-
-
-
-/-! ## Moved: 1 `polymerFreeEnergy` MonotoneOn wrapper
-
-The `polymerFreeEnergyAlongExhaustion_monotoneOn_Ici_zero` wrapper
-now lives in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsMonotoneOn`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
-
-/-! ## Moved: 2 `polymerFreeEnergy_eq_zero_of_*` edge-case wrappers
-
-The two §18.5 along-ex boundary-case vanishing wrappers
-(`polymerFreeEnergyAlongExhaustion_eq_zero_of_no_polymers`,
-`polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty`) now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyBoundsEdgeCases`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 /-- **Along-ex: `polymerFreeEnergy` preserves order on `[0, ∞)`**
 (§18.5 along-ex wrap of Step 649). -/
@@ -83,16 +48,6 @@ theorem polymerFreeEnergyAlongExhaustion_le_of_le_strict_form
         (inducedGraph G (Λ.volume n)) s :=
   polymerFreeEnergy_Λ_le_of_le_strict_form
     G (Λ.volume n) ht hts
-
-/-! ## Moved: polymerFreeEnergyAlongExhaustion tanh bound wrappers
-
-The four `polymerFreeEnergyAlongExhaustion_*` tanh / log_two bound
-wrappers (`tanh_sandwich`, `le_card_log_two_of_le_one`,
-`tanh_le_card_log_two`, `tanh_double_bound`) now live in
-`PolymerFreeEnergyBoundsTanh.lean`. They are re-imported here so
-downstream consumers continue to see the symbols. -/
-
-
 
 end Ambient
 end IsingModel

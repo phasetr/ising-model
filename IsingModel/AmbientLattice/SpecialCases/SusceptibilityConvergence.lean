@@ -3,20 +3,20 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.MagnetizationAlongExhaustion
 
 /-!
-# Susceptibility h/J/β → ∞ convergence wrappers along an exhaustion
+# Convergence of the stage susceptibility along integer parameter sequences
 
-Narrow child module for the finite-stage along-exhaustion
-susceptibility convergence wrappers in the `h`, `J`, and `β`
-directions:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set.
 
-* `susceptibilityAlongExhaustion_convergent_h_param`
-* `susceptibilityAlongExhaustion_convergent_J_param`
-* `susceptibilityAlongExhaustion_convergent_beta_param`
+At a site `i : V`, each statement exhibits a limit `L : ℝ` for the sequence obtained from the
+stage susceptibility by driving one parameter to infinity through the naturals while the other
+two stay fixed: the inverse temperature along `k + 1` with `0 ≤ J` and `0 ≤ h` as the
+Prop-valued hypotheses, the external field along `k` with `0 ≤ J` and `0 < β`, and the
+coupling along `k` with `0 ≤ h` and `0 < β`.
 
-Theorem names are unchanged from the former monolithic
-special-cases declarations. (Merged from the former
-`SusceptibilityConvergenceBeta.lean` child — #4563 cycle-12
-fixed-cost consolidation; statements and proofs preserved verbatim.)
+The site is arbitrary: each proof splits on `i ∈ Λ.volume n`, applying the finite-volume
+convergence on one branch and taking the limit `0` of a constant sequence on the other.
 -/
 
 namespace IsingModel
@@ -25,9 +25,6 @@ namespace Ambient
 open Finset Real
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ### susceptibility parameter-direction convergent (β/h/J → ∞)
-along-ex wraps -/
 
 /-- **Along-ex: susceptibility β → ∞ convergence**. Per-stage `n`. -/
 theorem susceptibilityAlongExhaustion_convergent_beta_param

@@ -1,15 +1,17 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergyTrivialSlices
 
 /-!
-# Infinite-volume free-energy trivial-slice closed forms
+# The infinite-volume free energy at `β = 0` and at `J = h = 0`
 
-Narrow child module for the two infinite-volume `freeEnergyInfinite_*`
-trivial-parameter-slice closed-form wrappers extracted from
-`FreeEnergyTrivialSlices.lean`. Each wrapper unfolds
-`freeEnergyInfinite` to a constant sequence (using the
-corresponding `freeEnergyAlongExhaustion_*` parent theorem) and
-applies `Filter.limsup_const`. Theorem names are unchanged from
-the former `FreeEnergyTrivialSlices` declarations.
+Statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`, read on the
+induced subgraph of the finite volume `Λ.volume n`. Every statement takes `DecidableEq V` and
+the stagewise `Fintype` instance on that subgraph's edge set, and has as its only Prop-valued
+hypothesis that every stage volume is nonempty.
+
+At `β = 0` with `J` and `h` arbitrary, and at `J = h = 0` with `β` arbitrary, the
+infinite-volume free energy equals `Real.log 2`. In each case the stage free energy is
+constantly `Real.log 2`, so the `limsup` along `atTop` that defines the infinite-volume free
+energy is that same constant.
 -/
 
 namespace IsingModel

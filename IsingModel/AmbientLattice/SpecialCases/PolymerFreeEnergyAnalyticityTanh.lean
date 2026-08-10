@@ -3,22 +3,16 @@ import IsingModel.AmbientLattice.Exhaustion
 import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanhOnNhd
 
 /-!
-# Polymer free-energy `tanh`-composition `AnalyticAt` wrappers along an exhaustion
+# Real-analyticity of the polymer free energy at a `tanh` activity, along an exhaustion
 
-Narrow child module for the two §18.6 ambient alongExhaustion
-`polymerFreeEnergy ∘ tanh ∘ (·)` `AnalyticAt ℝ` wrappers extracted
-from `PolymerFreeEnergyAnalyticity.lean`:
+Stage-`n` statements for an ambient graph `G : SimpleGraph V` and an exhaustion `Λ` of `V`,
+read on the induced subgraph of the finite volume `Λ.volume n`. Every statement takes
+`DecidableEq V` and the stagewise `Fintype` instance on that subgraph's edge set, and has
+`0 ≤ β * J` at the base point as its only Prop-valued hypothesis.
 
-* `polymerFreeEnergyAlongExhaustion_tanh_analyticAt_beta`
-* `polymerFreeEnergyAlongExhaustion_tanh_analyticAt_J`
-
-The two corresponding `AnalyticOnNhd ℝ _ (Set.Ici 0)` wrappers now
-live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanhOnNhd`
-and are re-imported through this parent module. Each wrapper is a
-thin pass-through to the corresponding ambient
-`polymerFreeEnergy_Λ_tanh_analytic*_*` lemma. Theorem names are
-unchanged from the former `PolymerFreeEnergyAnalyticity` declarations.
+At the activity `Real.tanh (β * J)`, the polymer free energy of the stage subgraph is
+real-analytic at `β` as a function of the inverse temperature with `J` held fixed, and
+real-analytic at `J` as a function of the coupling with `β` held fixed.
 -/
 
 namespace IsingModel
@@ -47,15 +41,6 @@ theorem polymerFreeEnergyAlongExhaustion_tanh_analyticAt_J
         IsingModel.polymerFreeEnergy
           (inducedGraph G (Λ.volume n)) (Real.tanh (β * J'))) J :=
   polymerFreeEnergy_Λ_tanh_analyticAt_J G (Λ.volume n) β J hβJ
-
-/-! ## Moved: 2 `AnalyticOnNhd` Ici-zero wrappers
-
-The two `polymerFreeEnergyAlongExhaustion_tanh_analyticOnNhd_*_Ici_zero`
-wrappers now live in
-`IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyAnalyticityTanhOnNhd`.
-The earlier import path is preserved by re-exporting the new child
-from this parent module and from the umbrella `SpecialCases.lean`.
--/
 
 end Ambient
 end IsingModel
