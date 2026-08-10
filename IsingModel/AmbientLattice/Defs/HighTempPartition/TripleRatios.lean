@@ -1,5 +1,29 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition.Ratios
 
+/-!
+# Λ-restricted high-temperature slice comparison, bundled across the three quantities
+
+Conjunctions that gather the comparison of `partitionFunctionΛ`, of its logarithm and of
+`freeEnergyΛ` at `⟨J, 0, β⟩` against one degenerate slice into a single statement, for an
+arbitrary `G : SimpleGraph V` and an arbitrary finite volume `Λ : Finset V`. The two such
+conjunctions differ only in which slice they use, `⟨0, 0, β⟩` or `⟨J, 0, 0⟩`; the external
+field is zero in every record occurring here. The bounds are written with the number of
+edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces.
+
+Inside a conjunction, under `0 ≤ β * J`, the partition function at `⟨J, 0, β⟩` divided by
+the partition function at the slice lies between `cosh (β * J)` raised to the edge count and
+`exp (β * J * edge count)`; the difference of the logarithms lies between the edge count
+times `log (cosh (β * J))` and `β * J` times the edge count; and the difference of the free
+energies lies between the edge count over `Λ.card` times `log (cosh (β * J))` and `β * J`
+times the edge count over `Λ.card`. The partition function is therefore the only one of the
+three that is compared multiplicatively.
+
+Beside the conjunctions stand the upper halves of the free-energy comparison, one for each
+slice, assuming `0 ≤ J` together with `0 < β` rather than `0 ≤ β * J`. Every statement here
+assumes `0 < Λ.card` and takes `[DecidableEq V]` together with
+`[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 namespace Ambient
 

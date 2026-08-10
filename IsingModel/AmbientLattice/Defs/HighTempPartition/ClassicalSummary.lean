@@ -1,5 +1,31 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition.TripleRatios
 
+/-!
+# Λ-restricted high-temperature hyperbolic-cosine brackets and their summaries
+
+The partition function and the free energy of an arbitrary `G : SimpleGraph V` on an
+arbitrary finite volume `Λ : Finset V`, bracketed by expressions built from `Λ.card` and
+from the number of edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces. The
+external field is zero throughout: the parameter records occurring are `⟨J, 0, β⟩`,
+`⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
+
+Both brackets carry the hyperbolic cosine on either side. Under `0 ≤ β * J` the partition
+function at `⟨J, 0, β⟩` lies between `2 ^ Λ.card` and `2 ^ (Λ.card + edge count)`, each of
+them multiplied by `cosh (β * J)` raised to the edge count, so the two bounding expressions
+differ by the factor `2 ^ edge count`. The free energy lies between `log 2` plus the edge
+count over `Λ.card` times `log (cosh (β * J))` and the same expression with
+`log (2 * cosh (β * J))` in place of `log (cosh (β * J))`, so there the two bounding
+expressions differ by the edge count over `Λ.card` times `log 2`.
+
+Each bracket is stated by itself and again inside a conjunction that adds the values on the
+two degenerate slices: the partition function is `2 ^ Λ.card` both at `⟨0, 0, β⟩` and at
+`⟨J, 0, 0⟩`, and the free energy is `log 2` at both.
+
+The free-energy statements assume `0 < Λ.card` in addition to `0 ≤ β * J`; the
+partition-function statements assume only `0 ≤ β * J`. Every statement takes
+`[DecidableEq V]` and `[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 namespace Ambient
 

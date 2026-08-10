@@ -1,5 +1,37 @@
 import IsingModel.AmbientLattice.Defs.HighTempPartition.ExpSummary
 
+/-!
+# Λ-restricted high-temperature deviation bounds at zero external field
+
+How far `partitionFunctionΛ`, its logarithm and `freeEnergyΛ` sit above their values at the
+degenerate parameter slices, for an arbitrary `G : SimpleGraph V` and an arbitrary finite
+volume `Λ : Finset V`. The external field is zero throughout: the parameter records
+occurring are `⟨J, 0, β⟩`, `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`. The reference values are
+`2 ^ Λ.card` for the partition function, `Λ.card * log 2` for its logarithm and `log 2` for
+the free energy; the first two are what the partition function and its logarithm are equal
+to at `J = 0` and at `β = 0` alike. The size of a deviation is expressed through the number
+of edges of `inducedGraph G Λ`, the subgraph of `G` that `Λ` induces.
+
+Under `0 ≤ β * J` the free energy exceeds `log 2` by a non-negative amount that is at most
+`β * J` times the edge count over `Λ.card`, and the logarithm exceeds `Λ.card * log 2` by a
+non-negative amount that is at most `β * J` times the edge count. For the partition
+function the comparison is a quotient instead of a difference: `partitionFunctionΛ` over
+`2 ^ Λ.card` lies between `cosh (β * J)` raised to the edge count and
+`exp (β * J * edge count)`. The same bound that controls the free-energy deviation also
+controls, in absolute value, the gap between the free energy at `⟨J, 0, β⟩` and the free
+energy at either of `⟨0, 0, β⟩` and `⟨J, 0, 0⟩`.
+
+Strengthening `0 ≤ β * J` to `0 < β * J` and asking the induced graph to have at least one
+edge yields strict statements: `2 ^ Λ.card` is then strictly below the partition function,
+and the two differences are then strictly above `0`.
+
+Both hypothesis shapes recur in a ferromagnetic form, `0 ≤ J` with `0 < β` replacing
+`0 ≤ β * J` and `0 < J` with `0 < β` replacing `0 < β * J`; every strict statement has one.
+`0 < Λ.card` is assumed by exactly those statements whose conclusion mentions
+`freeEnergyΛ`. Every statement takes `[DecidableEq V]` and
+`[Fintype (inducedGraph G Λ).edgeSet]`.
+-/
+
 namespace IsingModel
 namespace Ambient
 

@@ -81,12 +81,6 @@
 # columns: class<TAB>target<TAB>token<TAB>count
 
 MISSING_MODULE_DOC	IsingModel.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/ClassicalSummary.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/Deviation.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/ExpBounds.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/ExpSummary.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/Ratios.lean	-	1
-MISSING_MODULE_DOC	IsingModel/AmbientLattice/Defs/HighTempPartition/TripleRatios.lean	-	1
 MISSING_MODULE_DOC	IsingModel/AmbientLatticeSum/InfiniteBounds.lean	-	1
 MISSING_MODULE_DOC	IsingModel/AmbientLatticeSum/InfiniteHighTemp.lean	-	1
 MISSING_MODULE_DOC	IsingModel/AmbientLatticeSum/SuperadditiveConvergence.lean	-	1
