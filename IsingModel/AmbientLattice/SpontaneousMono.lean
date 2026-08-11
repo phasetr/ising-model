@@ -135,7 +135,7 @@ Lift `IsingModel.cor_4_3_5_h0` to the thermodynamic limit using the
 liftFinset infrastructure from PR #107 and `Finset.sum_bij` to reindex
 the powerset sum.
 
-Reference: Glimm–Jaffe §4.3 Corollary 4.3.5, p. 62. -/
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.5, p. 63. -/
 
 /-- **Cor 4.3.5 lifted to infinite volume**: the inductive (n+2)-point
 bound holds for `correlationInfinite` at `h = 0`.  For ferromagnetic

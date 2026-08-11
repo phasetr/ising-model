@@ -32,7 +32,7 @@ machinery; it is exactly `u₃ ≤ 0`, so `ghs_inequality` below now follows
 directly with no GKS-I or truncated-two-point input.
 
 References:
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.4, p. 61
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.4, p. 62
 * Lebowitz, Comm. Math. Phys. 35 (1974) -/
 
 /-! ## GHS inequality

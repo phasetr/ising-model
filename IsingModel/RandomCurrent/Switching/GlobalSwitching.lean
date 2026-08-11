@@ -20,10 +20,11 @@ deferred to later bricks.
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7
+  (the switching lemma, eq. (3.5)).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and
   Triviality* (1992), Chapter 12.
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik, Theorem 9.35.
+* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik, Lemma 3.55, p. 144.
 -/
 
 namespace IsingModel
@@ -42,7 +43,7 @@ is `Φ : (n₁, n₂) ↦ (n₁ + n₂, n₁)`, with inverse `(M, m) ↦ (m, M �
 (M − m).weight` term by term. The doubled current lands in `boundedFinset (2 N)`,
 the distinguished subcurrent ranges over `M.subFinset` with the two source
 filters and the two per-edge caps `m e ≤ N`, `(M − m) e ≤ N` retained. Proved by
-`Finset.sum_nbij'` (Aizenman 1982 Lemma 4.1 / FV Theorem 9.35). -/
+`Finset.sum_nbij'` (Aizenman 1982 Lemma 3.2, p. 7 / FV Lemma 3.55, p. 144). -/
 theorem Current.sum_prod_eq_sum_doubled_subFinset
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

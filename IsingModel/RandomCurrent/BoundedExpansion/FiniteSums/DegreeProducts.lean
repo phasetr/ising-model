@@ -38,7 +38,7 @@ omit [DecidableEq V] in
 `∑_v degreeAt n v • f v = ∑_e n e • (e.toFinset.sum f)`. The
 additive form of the central combinatorial step in the
 random-current expansion of the Ising partition function
-(FV §3.7); converts a vertex-side count weighted by edge
+(FV §3.10.6); converts a vertex-side count weighted by edge
 multiplicities into an edge-side count weighted by per-vertex
 sums. -/
 theorem Current.sum_degreeAt_smul {M : Type*} [AddCommMonoid M]
@@ -79,7 +79,7 @@ omit [DecidableEq V] in
 multiplicative analogue of `sum_degreeAt_smul`; used to convert
 the per-vertex spin product `∏_v σ_v^(degree)` into the per-edge
 product `∏_e (σ_u σ_w)^(n e)` in the random-current expansion of
-the Ising partition function (FV §3.7). -/
+the Ising partition function (FV §3.10.6). -/
 theorem Current.prod_pow_degreeAt {M : Type*} [CommMonoid M]
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

@@ -43,7 +43,7 @@ omit [DecidableEq V] in
 `Current.even_indicator_add_degreeAt_iff_hasSources`; the
 A-source per-current spin-sum identity in its final form,
 ready to feed into the random-current expression of
-`⟨σ_A⟩^Λ` (FV §3.7). -/
+`⟨σ_A⟩^Λ` (FV §3.10.6). -/
 theorem Config.sum_spinA_prod_spin_pow_hasSources
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -109,7 +109,7 @@ omit [DecidableEq V] in
 The per-current summand identity bridging \`weight\` with the
 per-edge Taylor terms `(β J σ_u σ_w)^k / k!`, preparing the
 random-current expansion of the partition function
-(FV §3.7, eq. (3.45)). -/
+(FV §3.10.6, p. 144). -/
 theorem Current.weight_mul_prod_pow (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (β J : ℝ) (n : Current G Λ)

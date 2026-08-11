@@ -18,11 +18,11 @@ contracted by two-point functions:
 This is the finite-volume correlation-inequality content of the
 Griffiths–Hurst–Sherman bound used in the proof of GJ Theorem 17.6.1
 (*Quantum Physics* 2nd ed., p. 313). It combines:
-* the GHS inequality (GJ Cor 4.3.4, p. 61) `⟨σ_i; σ_j; σ_k⟩ ≤ 0`, and
-* GKS-II (second Griffiths inequality, GJ Cor 4.3.3, pp. 61–62)
+* the GHS inequality (GJ Cor 4.3.4, p. 62) `⟨σ_i; σ_j; σ_k⟩ ≤ 0`, and
+* GKS-II (second Griffiths inequality, GJ Thm 4.1.3, (4.1.11), p. 57)
   `⟨σ_iσ_j⟩·⟨σ_k⟩ ≤ ⟨σ_iσ_jσ_k⟩` regrouped against the pair `{i,j}` vs `{k}`.
 
-No Lebowitz inductive bound (GJ Cor 4.3.5, pp. 61–62) is needed here: that
+No Lebowitz inductive bound (GJ Cor 4.3.5, p. 63) is needed here: that
 provides only the wrong-sign upper bound `⟨σ_i;σ_j;σ_k⟩ ≤ 2⟨σ_i⟩⟨σ_j⟩⟨σ_k⟩`,
 whereas GHS gives the required `|·| = −⟨σ_i;σ_j;σ_k⟩`.
 
@@ -62,7 +62,7 @@ GKS-II (`⟨σ_iσ_j⟩⟨σ_k⟩ ≤ ⟨σ_iσ_jσ_k⟩`, via `symmDiff {i,j} {
 shows the left-hand sum is non-negative, which is the claim.
 
 Reference: Glimm–Jaffe, *Quantum Physics* 2nd ed., Thm 17.6.1 (p. 313),
-Cor 4.3.4 (p. 61), Cor 4.3.3 (pp. 61–62). -/
+Cor 4.3.4 (p. 62), Thm 4.1.3, (4.1.11) (p. 57). -/
 theorem abs_truncated3_le_weighted
     (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) {i j k : ι}
@@ -132,7 +132,7 @@ Proof: GKS-II (`gks_second`) applied to `{i,j}` and `{l}` gives
 `⟨σ_iσ_j⟩⟨σ_l⟩ ≤ ⟨σ^{{i,j} △ {l}}⟩ = ⟨σ_iσ_jσ_l⟩` (using `l ∉ {i,j}`, so the
 symmetric difference is `{i,j,l}`).  This is the GKS-II lower half of the
 semi-truncated two-block bound of GJ Theorem 17.6.1 (*Quantum Physics* 2nd ed.,
-p. 313; Cor. 4.3.3, pp. 61–62). -/
+p. 313; Thm 4.1.3, (4.1.11), p. 57). -/
 theorem semiTruncated_pair_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) {i j l : ι}
     (hil : i ≠ l) (hjl : j ≠ l) :
@@ -165,7 +165,7 @@ with GHS (`ghs_inequality`, `truncated3 ≤ 0`), the magnetization bound
 `⟨σ_·⟩ ≤ 1` (`abs_correlation_le_one`), and `τ₂ ≥ 0` (`truncated2_nonneg`), gives
 `⟨σ_iσ_j; σ_l⟩ ≤ 0 + 1·τ₂(j,l) + 1·τ₂(i,l)`.  This is the GHS/GKS-I upper half of
 the semi-truncated two-block bound of GJ Theorem 17.6.1 (*Quantum Physics* 2nd
-ed., p. 313; Cor. 4.3.4, p. 61). -/
+ed., p. 313; Cor. 4.3.4, p. 62). -/
 theorem semiTruncated_pair_le (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) {i j l : ι}
     (hij : i ≠ j) (hil : i ≠ l) (hjl : j ≠ l) :

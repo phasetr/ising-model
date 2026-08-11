@@ -36,12 +36,12 @@ the live capstone until D1b / SL-D₂ / SL-E land. Its intended downstream posit
 the (future) Lemma 5.1 → P2-ii → `hLogLip` → the explicitly-tracked
 lower-semicontinuity half of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread #4418).
 The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current weight of
-FV, eq. (3.45); D1a itself uses only the source/parity combinatorics, not the
+FV §3.10.6, p. 144; D1a itself uses only the source/parity combinatorics, not the
 weight.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7, eq. (3.45).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
 * Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
@@ -61,7 +61,7 @@ vertex `v`, the ℕ-valued sum of `n e` over edges `e ∈ S` incident to `v`,
 full edge set (`Current.degreeOn_univ_eq_degreeAt`); `degreeOn` is additive over
 disjoint edge subsets (`Current.degreeOn_union`). Part of ingredient **SL-D₁**
 brick D1a (tracked ingredient, Group 1a; the SL-D₂ conditioned-switching core
-awaits explicit user authorisation); weight source FV (3.45). -/
+awaits explicit user authorisation); weight source FV §3.10.6. -/
 def Current.degreeOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) (v : ↑Λ) : ℕ :=
@@ -72,7 +72,7 @@ incident degree `Current.degreeOn`, `∑_{e ∈ S} [v ∈ e] · (n e mod 2)`. Eq
 `(Current.degreeOn S n v mod 2)` (`Current.parityOn_eq_degreeOn`); the global
 `Current.parity` is `parityOn` over the full edge set. Part of ingredient
 **SL-D₁** brick D1a (tracked ingredient, Group 1a; the SL-D₂ conditioned-switching
-core awaits explicit user authorisation); weight source FV (3.45). -/
+core awaits explicit user authorisation); weight source FV §3.10.6. -/
 def Current.parityOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) (v : ↑Λ) : ZMod 2 :=
@@ -177,7 +177,7 @@ carries `M e = 0` (F3); so the sum collapses to the `e₀` term, equal to
 `[v ∈ s(a,b)] · M e₀ = [v ∈ {a,b}]` (F2 gives `M e₀ = 1`), which is `[v = a] + [v = b]`
 because `a ≠ b`. Part of ingredient **SL-D₁** brick D1a (tracked ingredient,
 Group 1a; the SL-D₂ conditioned-switching core awaits explicit user authorisation);
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 theorem Current.degreeOn_cross_eq (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
@@ -343,7 +343,7 @@ D1a foundation of `SL-D₁` (product Fubini); **D1b (the restriction/gluing Fubi
 and the SL-D₂ conditioned-switching core (Aizenman Lemma 4.1) are follow-ups, the
 latter awaiting explicit user authorisation.** Tracked ingredient (Group 1a),
 downstream position: future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1
-(§17.5, issue #4386 / thread #4418); weight source FV (3.45). -/
+(§17.5, issue #4386 / thread #4418); weight source FV §3.10.6. -/
 theorem Current.pivotalFiber_sources_split (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
@@ -426,7 +426,7 @@ theorem Current.pivotalFiber_sources_split (G : SimpleGraph V) (Λ : Finset V)
 with non-zero `S`-restricted parity (`Current.parityOn S n v ≠ 0`). The global
 `Current.sources` is `sourcesOn` over the full edge set. Part of ingredient
 **SL-D₁** brick D1a (tracked ingredient, Group 1a; the SL-D₂ conditioned-switching
-core awaits explicit user authorisation); weight source FV (3.45). -/
+core awaits explicit user authorisation); weight source FV §3.10.6. -/
 noncomputable def Current.sourcesOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) : Finset ↑Λ :=
@@ -517,7 +517,7 @@ the exterior symmetric difference is normalised by `symmDiff_comm`. **D1b (the
 product Fubini) and the SL-D₂ conditioned-switching core (Aizenman Lemma 4.1) are
 follow-ups, the latter awaiting explicit user authorisation.** Tracked ingredient
 (Group 1a), downstream: future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem
-17.5.1 (§17.5, issue #4386 / thread #4418); weight source FV (3.45). -/
+17.5.1 (§17.5, issue #4386 / thread #4418); weight source FV §3.10.6. -/
 theorem Current.pivotalFiber_sourcesOn_symmDiff (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)

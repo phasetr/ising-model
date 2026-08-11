@@ -55,7 +55,8 @@ lemma gibbsExpectation_totalMag_eq_sum
 by GKS-II: each term `⟨σ^{AΔ{i}}⟩ - ⟨σ^A⟩·⟨σ_i⟩ ≥ 0` for ferromagnetic `h ≥ 0`.
 This is the infinitesimal form underlying the monotonicity of correlations in `h`.
 
-Reference: Friedli–Velenik §4.2, Prop. 4.2.4 (p. 58);
+Reference: Glimm–Jaffe §4.2, Proposition 4.2.1, p. 58, applied to the
+singleton couplings that carry `h`;
 Glimm–Jaffe §17.6 pp. 348–351 (derivative formula). -/
 theorem correlation_field_deriv_nonneg
     (G : SimpleGraph ι) [Fintype G.edgeSet]

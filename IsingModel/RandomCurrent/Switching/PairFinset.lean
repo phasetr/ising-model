@@ -35,8 +35,8 @@ set_option linter.unusedDecidableInType false in
 `(n₁, n₂) : Current G Λ × Current G Λ` with `n₁ + n₂ = n`, realized
 concretely as `(subFinset n).image (m ↦ (m, n - m))`. The LHS of
 the Aizenman switching pair-bijection
-`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
-FV §3.7). -/
+`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 3.2, p. 7 /
+FV §3.10.6). -/
 def Current.pairFinset (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
     Finset (Current G Λ × Current G Λ) :=
@@ -106,7 +106,7 @@ set_option linter.unusedDecidableInType false in
 The pair-bijection `m ↦ (m, n - m)` is injective, so summing over
 the image equals summing pre-image with the function composed with
 the bijection (`Finset.sum_image`). The fundamental sum reindexing
-behind the Aizenman switching identity (FV §3.7). -/
+behind the Aizenman switching identity (FV §3.10.6). -/
 theorem Current.sum_pairFinset_eq_sum_subFinset
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

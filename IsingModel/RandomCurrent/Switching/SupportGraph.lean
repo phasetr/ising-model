@@ -112,7 +112,7 @@ iff they are distinct and connected by an edge in `n.support` (i.e.
 some `e` with `n e ≠ 0` containing both `u` and `v`). The vertex
 adjacency relation of the multigraph defined by `n`'s active edges,
 the foundation for the connectivity-based Aizenman switching argument
-(Aizenman 1982 Lemma 4.1 / FV §3.7). -/
+(Aizenman 1982 Lemma 3.2, p. 7 / FV §3.10.6). -/
 def Current.Adj (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (u v : ↑Λ) : Prop :=
@@ -232,7 +232,7 @@ set_option linter.unusedDecidableInType false in
 `v ∈ n.sources`, then there exists an edge `e ∈ n.support` containing
 `v`. The foundation for the Aizenman switching argument: the boundary
 vertices of a current are non-isolated in the active-edge multigraph.
-(Aizenman 1982 Lemma 4.1 / FV §3.7.) -/
+(Aizenman 1982 Lemma 3.2, p. 7 / FV §3.10.6.) -/
 theorem Current.exists_support_edge_of_mem_sources
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -261,7 +261,7 @@ set_option linter.unusedDecidableInType false in
 /-- **A source vertex has a `Current.Adj` neighbour**: if
 `v ∈ n.sources`, then there exists `u` with `n.Adj G Λ u v`, i.e.
 `v` is not isolated in `n.toSimpleGraph`. A foundational step toward
-the switching lemma's path argument (Aizenman 1982 / FV §3.7):
+the switching lemma's path argument (Aizenman 1982 / FV §3.10.6):
 non-isolation of source vertices is the base case for constructing
 walks from source to source in the active-edge graph. Path existence
 itself is a downstream consequence, not established here. -/
@@ -293,7 +293,7 @@ theorem Current.not_mem_sources_of_isolated
 vertex `v : ↑Λ`, the Finset of edges `e ∈ n.support` containing `v`.
 The Finset form of `exists_support_edge_of_mem_sources`, usable in
 downstream counting / partitioning arguments for the switching lemma
-(Aizenman 1982 / FV §3.7). -/
+(Aizenman 1982 / FV §3.10.6). -/
 noncomputable def Current.supportAt (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (v : ↑Λ) :

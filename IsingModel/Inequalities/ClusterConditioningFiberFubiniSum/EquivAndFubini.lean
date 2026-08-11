@@ -31,7 +31,7 @@ on the single ambient current type (no subgraph current). Round-trips are
 (right); landing is `restrictOn_mem_interiorBlockSet`/`_exteriorBlockSet` (forward)
 and `glueBlocks_mem_pivotalFiberSet` (reverse). Part of ingredient **SL-D₁** brick
 D1b part 2b (tracked ingredient, Group 1a; SL-D₂ awaits explicit user
-authorisation); weight source FV (3.45). -/
+authorisation); weight source FV §3.10.6. -/
 noncomputable def Current.pivotalFiberEquiv (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) :
@@ -61,13 +61,13 @@ noncomputable def Current.pivotalFiberEquiv (e₀ : (inducedGraph G Λ).edgeSet)
 
 set_option linter.unusedDecidableInType false in
 /-- **Pointwise weight factorisation of the glue** (part 2b §④ weight preservation).
-For block currents `n_int ∈ 𝒜_int`, `n_ext ∈ 𝒜_ext`, the FV (3.45) weight of the glue
+For block currents `n_int ∈ 𝒜_int`, `n_ext ∈ 𝒜_ext`, the FV §3.10.6 weight of the glue
 factors as `weight (glueBlocks e₀ n_int n_ext) = (βJ)·w_int(n_int)·w_ext(n_ext)`, with
 `w_int`/`w_ext` the interior/exterior block products. Proof: the glue is in the pinned
 pivotal fiber (`glueBlocks_mem_pivotalFiberSet`), so the SL-C fiber factorisation
 `weight_pivotal_fiber_factor` applies; on `E_int` (resp. `E_ext`) the glue reads
 `n_int` (resp. `n_ext`). Part of ingredient **SL-D₁** brick D1b part 2b;
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 theorem Current.weight_glueBlocks_factor (β J : ℝ) (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) (n_int n_ext : Current G Λ)
@@ -145,7 +145,7 @@ lemma `summable_block_weight_if_sourcesOn` (restricted by `Summable.subtype`). T
 **completes SL-D₁ (range independence)**; it forms **no** subgraph current and does
 **not** collapse `Ξ_ext` to a two-point function — that is the SL-D₂ core, which
 **awaits explicit user authorisation and gates Lemma 5.1**. Part of ingredient
-**SL-D₁** brick D1b part 2b (tracked ingredient, Group 1a); weight source FV (3.45). -/
+**SL-D₁** brick D1b part 2b (tracked ingredient, Group 1a); weight source FV §3.10.6. -/
 theorem Current.pivotalNumerator_fiber_factor (β J : ℝ) (hβJ : 0 ≤ β * J)
     (e₀ : (inducedGraph G Λ).edgeSet) (C : Finset ↑Λ) (x y a b : ↑Λ)
     (hab : (e₀ : Sym2 ↑Λ) = s(a, b)) (haC : a ∈ C) (hbC : b ∉ C) :

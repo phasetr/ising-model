@@ -55,7 +55,7 @@ when every `k v` is even, else `0`. The Fubini-style sum-product
 swap reduces to per-vertex sums (`Spin.sum_toSign_pow_real`); each
 factor is `2` (even exponent) or `0` (odd exponent), so the product
 is `2^|ι|` when all even, else `0`. The central spin-sum step of
-the random-current expansion (FV §3.7). -/
+the random-current expansion (FV §3.10.6). -/
 theorem Config.sum_prod_toSign_pow_real {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ℕ) :
     (∑ σ : ι → Spin, ∏ v : ι, ((σ v).toSign : ℝ)^(k v))
@@ -81,7 +81,7 @@ theorem Config.sum_prod_toSign_pow_real {ι : Type*} [Fintype ι] [DecidableEq �
 `∑ σ : ι → Spin, spinProduct A σ = 2^(Fintype.card ι)` if `A = ∅`,
 else `0`. The basic spin-sum identity feeding into the
 random-current expansion of `Z = ∑_σ exp(-βH)` and
-`⟨σ_A⟩^Λ = (∑_σ σ^A · exp(-βH)) / Z` (FV §3.7). Direct corollary
+`⟨σ_A⟩^Λ = (∑_σ σ^A · exp(-βH)) / Z` (FV §3.10.6). Direct corollary
 of `Config.sum_prod_toSign_pow_real` with the indicator exponent
 `k v := if v ∈ A then 1 else 0`. -/
 theorem Config.sum_spinProduct {ι : Type*} [Fintype ι] [DecidableEq ι]

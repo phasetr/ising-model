@@ -56,11 +56,11 @@ of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread #4418). Because `SL-D₂`
 Aizenman Lemma 4.1) **awaits explicit user authorisation**, D1b does **not**
 complete Lemma 5.1: `SL-D₂` remains the gate, and this module touches none of it.
 The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current weight of
-Friedli–Velenik, eq. (3.45).
+Friedli–Velenik, §3.10.6, p. 144.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7, eq. (3.45).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
 * Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
@@ -78,7 +78,7 @@ It represents a *block-restricted* current in place, on the single ambient curre
 type `Current G Λ = E → ℕ`; no "current on a subgraph" is ever formed. This is the
 first verifiable brick of ingredient **SL-D₁** (product Fubini) brick D1b (tracked
 ingredient, Group 1a; the SL-D₂ conditioned-switching core awaits explicit user
-authorisation); weight source FV (3.45). -/
+authorisation); weight source FV §3.10.6. -/
 def Current.restrictOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) : Current G Λ :=
@@ -122,10 +122,10 @@ theorem Current.support_restrictOn_subset (G : SimpleGraph V) (Λ : Finset V)
   exact he (Current.restrictOn_apply_not_mem G Λ S n hS)
 
 omit [DecidableEq V] in
-/-- **Block-weight invariance of `restrictOn`**: the FV (3.45) block factor over
+/-- **Block-weight invariance of `restrictOn`**: the FV §3.10.6 block factor over
 `S` reads only `n|_S`, so `restrictOn S n` and `n` give the same block product
 `∏_{e ∈ S} (βJ)^{n_e}/n_e!`. Part of ingredient **SL-D₁** brick D1b foundation;
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 theorem Current.prod_factor_restrictOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] (β J : ℝ)
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ) :

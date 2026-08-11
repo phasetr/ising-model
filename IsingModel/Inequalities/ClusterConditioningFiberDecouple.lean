@@ -41,11 +41,11 @@ it does **not** touch the exterior → two-point collapse (SL-D₂: conditioned-
 subgraph-current), which **awaits explicit user authorisation**; `A_ext` stays an
 *ambient* block weight sum. **D1b therefore does NOT complete Lemma 5.1**: SL-D₂ remains
 the gate. The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current
-weight of Friedli–Velenik, eq. (3.45).
+weight of Friedli–Velenik, §3.10.6, p. 144.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7, eq. (3.45).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
 * Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
@@ -80,7 +80,7 @@ already an `m`-adjacency and the cluster is closed under it
 of `C` (c2) therefore stays inside `reachableCluster m x`. No subgraph current is
 formed; everything is ambient. Part of ingredient **SL-D₁** brick D1b part 2a
 (tracked ingredient, Group 1a; part 2b `Φ`/Fubini is the follow-up, and the SL-D₂
-conditioned-switching core awaits explicit user authorisation); weight FV (3.45). -/
+conditioned-switching core awaits explicit user authorisation); weight FV §3.10.6. -/
 theorem Current.reachableCluster_confined_eq (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (m N : Current G Λ) (C : Finset ↑Λ) (x : ↑Λ)
@@ -130,7 +130,7 @@ the source filters (odd-parity vertices) then coincide. Used in part 2b ③(b)(i
 read a block-supported exterior current's global source set as its exterior block
 source set. Part of ingredient **SL-D₁** brick D1b part 2a (tracked ingredient,
 Group 1a; part 2b `Φ`/Fubini follow-up, SL-D₂ awaits explicit user authorisation);
-weight FV (3.45). -/
+weight FV §3.10.6. -/
 theorem Current.sources_eq_sourcesOn_of_supported (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (S : Finset (inducedGraph G Λ).edgeSet) (n : Current G Λ)
@@ -157,7 +157,7 @@ set `A`, the block-restricted, source-constrained weight family
     \cdot \prod_{e \in S} (\beta J)^{n_e}/n_e!
 \]
 is summable over the ambient current type. The block product `∏_{e ∈ S}` is
-dominated by the full FV (3.45) weight `Current.weight` under the support constraint
+dominated by the full FV §3.10.6 weight `Current.weight` under the support constraint
 `restrictOn S n = n`: off `S` the current vanishes (`Current.restrictOn_apply_not_mem`),
 so the complement factors are all `1` (`Current.weight_edge_partition_factor`) and the
 block product equals the full weight; when the constraint fails the summand is `0`, in
@@ -168,7 +168,7 @@ exposing it). This is the block-summability input needed for the part 2b product
 Fubini (`Summable.tsum_mul_tsum`); introduced here as part 2a foundation only. Part of
 ingredient **SL-D₁** brick D1b part 2a (tracked ingredient, Group 1a; part 2b
 `Φ`/Fubini follow-up, and the SL-D₂ conditioned-switching core awaits explicit user
-authorisation); weight FV (3.45). -/
+authorisation); weight FV §3.10.6. -/
 theorem Current.summable_block_weight_if_sourcesOn (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -184,7 +184,7 @@ theorem Current.summable_block_weight_if_sourcesOn (G : SimpleGraph V) (Λ : Fin
       exact Finset.prod_nonneg
         (fun e _ => div_nonneg (pow_nonneg hβJ _) (Nat.cast_nonneg _))
     · exact le_of_eq (if_neg h).symm
-  · -- domination by the full FV (3.45) weight
+  · -- domination by the full FV §3.10.6 weight
     intro n
     by_cases h : n.restrictOn G Λ S = n ∧ n.sourcesOn G Λ S = A
     · rw [if_pos h]

@@ -56,11 +56,11 @@ Aizenman Lemma 4.1) **awaits explicit user authorisation** and remains the gate:
 **SL-D₁ completion does not complete Lemma 5.1** (SL-D₂ gates it). This module
 touches none of SL-D₂; it stays reference-count zero into the live capstone. The
 weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current weight of
-Friedli–Velenik, eq. (3.45).
+Friedli–Velenik, §3.10.6, p. 144.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7, eq. (3.45).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
 * Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.

@@ -52,7 +52,7 @@ The set of ambient currents `M : Current G Λ` that are pivotal for `x, y` throu
 dominant edge `e₀`, have global source set `{x, y}`, and decremented cluster value
 `reachableCluster (M − 1_{e₀}) x = C`. Its weight sum is the fiber numerator `Σ_C`.
 Part of ingredient **SL-D₁** brick D1b part 2b (tracked ingredient, Group 1a; SL-D₂
-awaits explicit user authorisation); weight source FV (3.45). -/
+awaits explicit user authorisation); weight source FV §3.10.6. -/
 def Current.pivotalFiberSet (e₀ : (inducedGraph G Λ).edgeSet) (C : Finset ↑Λ)
     (x y : ↑Λ) : Set (Current G Λ) :=
   {M | Current.EdgePivotal G Λ e₀ M x y ∧ M.sources G Λ = {x, y} ∧
@@ -64,7 +64,7 @@ The set of ambient currents `n` supported in the interior edge block
 the symmetric difference `{x} △ {a}` and reachable cluster
 `reachableCluster n x = C`. Its ambient block weight sum is `Ξ_int`. Part of
 ingredient **SL-D₁** brick D1b part 2b (tracked ingredient, Group 1a; SL-D₂ awaits
-explicit user authorisation); weight source FV (3.45). -/
+explicit user authorisation); weight source FV §3.10.6. -/
 def Current.interiorBlockSet (C : Finset ↑Λ) (x a : ↑Λ) : Set (Current G Λ) :=
   {n | n.restrictOn G Λ (Current.interiorEdges G Λ C) = n ∧
     n.sourcesOn G Λ (Current.interiorEdges G Λ C) = ({x} : Finset ↑Λ) ∆ {a} ∧
@@ -77,7 +77,7 @@ the symmetric difference `{b} △ {y}`. **No** cluster constraint and, crucially
 identification with a two-point function: `𝒜_ext` stays an *ambient* block weight sum
 (the SL-D₂ collapse awaits explicit user authorisation). Its ambient block weight sum
 is `Ξ_ext`. Part of ingredient **SL-D₁** brick D1b part 2b (tracked ingredient,
-Group 1a; SL-D₂ awaits explicit user authorisation); weight source FV (3.45). -/
+Group 1a; SL-D₂ awaits explicit user authorisation); weight source FV §3.10.6. -/
 def Current.exteriorBlockSet (C : Finset ↑Λ) (b y : ↑Λ) : Set (Current G Λ) :=
   {n | n.restrictOn G Λ (Current.interiorEdges G Λ Cᶜ) = n ∧
     n.sourcesOn G Λ (Current.interiorEdges G Λ Cᶜ) = ({b} : Finset ↑Λ) ∆ {y}}
@@ -91,7 +91,7 @@ realised as the ambient sum `n_int + n_ext + 1_{e₀}`
 crossing edges (the two blocks and `{e₀}` occupy disjoint edges, so the sum reads off
 one summand per edge). Part of ingredient **SL-D₁** brick D1b part 2b (tracked
 ingredient, Group 1a; SL-D₂ awaits explicit user authorisation);
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 def Current.glueBlocks (e₀ : (inducedGraph G Λ).edgeSet)
     (n_int n_ext : Current G Λ) : Current G Λ :=
   n_int + n_ext + Current.fromEdgeFinset G Λ {e₀}
@@ -143,7 +143,7 @@ For `M` in the pinned pivotal fiber, its interior restriction
 and reachable cluster `C` by the part 2a interior-confinement lemma
 `reachableCluster_confined_eq`. Part of ingredient **SL-D₁** brick D1b part 2b
 (tracked ingredient, Group 1a; SL-D₂ awaits explicit user authorisation);
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 theorem Current.restrictOn_mem_interiorBlockSet (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) (M : Current G Λ)
@@ -206,7 +206,7 @@ block ensemble `𝒜_ext(C, b, y)`: block-supported (`restrictOn_idem`), with ex
 source set `{b} △ {y}` (`sourcesOn_restrictOn` + `pivotalFiber_sourcesOn_symmDiff`).
 No cluster constraint (exterior side). Part of ingredient **SL-D₁** brick D1b part 2b
 (tracked ingredient, Group 1a; SL-D₂ awaits explicit user authorisation);
-weight source FV (3.45). -/
+weight source FV §3.10.6. -/
 theorem Current.restrictOn_mem_exteriorBlockSet (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) (M : Current G Λ)
@@ -227,7 +227,7 @@ the corresponding restriction reads `M`; on the bridge `e₀` the glue is `1 = M
 (F2, `edgePivotal_dominant_edge_eq_one`); on the remaining crossing edges the glue is
 `0 = M e` (F3, `edgePivotal_no_spectator_crossing`). Part of ingredient **SL-D₁**
 brick D1b part 2b (tracked ingredient, Group 1a; SL-D₂ awaits explicit user
-authorisation); weight source FV (3.45). -/
+authorisation); weight source FV §3.10.6. -/
 theorem Current.glueBlocks_restrictOn (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) (M : Current G Λ)
@@ -357,7 +357,7 @@ pinned pivotal fiber `𝓕_C`:
   leaving `[v = x] + [v = y]` (`x ∈ C`, `y ∉ C`, so `x ≠ y`).
 
 Part of ingredient **SL-D₁** brick D1b part 2b (tracked ingredient, Group 1a; SL-D₂
-awaits explicit user authorisation); weight source FV (3.45). -/
+awaits explicit user authorisation); weight source FV §3.10.6. -/
 theorem Current.glueBlocks_mem_pivotalFiberSet (e₀ : (inducedGraph G Λ).edgeSet)
     (C : Finset ↑Λ) (x y a b : ↑Λ) (hab : (e₀ : Sym2 ↑Λ) = s(a, b))
     (haC : a ∈ C) (hbC : b ∉ C) (n_int n_ext : Current G Λ)

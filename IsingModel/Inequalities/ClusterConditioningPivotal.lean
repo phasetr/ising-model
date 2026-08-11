@@ -8,7 +8,7 @@ This module implements ingredient **SL-C**: the pointwise-per-current geometric
 fact that, on the pivotal fiber conditioned by the cluster value
 `C = C_x(M − 1_{e₀})`, the dominant edge `e₀` is the *unique* active edge of `M`
 crossing `C`–`Cᶜ`, together with the derived facts `M e₀ = 1` (F2) and "every
-other crossing edge carries multiplicity `0`" (F3), which make the FV (3.45)
+other crossing edge carries multiplicity `0`" (F3), which make the FV §3.10.6
 **weight** factorise exactly as `w = w_int · (βJ) · w_ext` on the fiber (Prop.
 `Current.weight_pivotal_fiber_factor`). This is a *weight-exact* factorisation,
 **not** a set partition of the edge set: the crossing edges
@@ -30,7 +30,7 @@ the live capstone until SL-D/SL-E land; its intended downstream position is the
 (future) Lemma 5.1 → P2-ii → `hLogLip` → the explicitly-tracked
 lower-semicontinuity half of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread
 #4418). The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current
-weight of FV, eq. (3.45). (Aizenman 1982 Lemma 4.1; FFS 1992 Ch. 12, pivotal
+weight of FV §3.10.6, p. 144. (Aizenman 1982; FFS 1992 Ch. 12, pivotal
 bridge / backbone.)
 
 ## Placement note
@@ -46,11 +46,12 @@ separate module, importing both dependencies.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7,
-  eq. (3.45) (random-current weight).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6,
+  p. 144 (random-current weight).
 * Glimm–Jaffe, *Quantum Physics*, §17.5 (intended downstream position:
   cluster-conditioning → lsc half of Theorem 17.5.1).
-* Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
+* Aizenman (1982), Geometric analysis of φ⁴ fields;
+  Fernández–Fröhlich–Sokal (1992), Ch. 12.
 -/
 
 namespace IsingModel
@@ -75,7 +76,7 @@ decremented graph, contradicting the second conjunct of `Current.EdgePivotal`.
 Part of ingredient **SL-C** (bridge-uniqueness of the pivotal edge, the SL-D
 avoiding prerequisite; tracked ingredient, Group 1a, aimed downstream at the
 future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight
-source FV (3.45). -/
+source FV §3.10.6. -/
 theorem Current.edgePivotal_endpoint_split (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
@@ -111,7 +112,7 @@ If `M e₀ ≥ 2`, then `(M − 1_{e₀}) e₀ = M e₀ − 1 ≥ 1`, so `e₀` 
 `Current.reachableCluster_closed`. Hence `M e₀ = 1` — the combinatorial fact
 behind the `(βJ)^1/1! = βJ` factor of the SL-A split. Part of ingredient **SL-C**
 (bridge-uniqueness; tracked ingredient, Group 1a, aimed downstream at the future
-Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight FV (3.45). -/
+Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight FV §3.10.6. -/
 theorem Current.edgePivotal_dominant_edge_eq_one (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
@@ -154,7 +155,7 @@ The pivotal hypothesis is not needed (the fact is the elementary cut/closure at
 `M − 1_{e₀}`), so this is the geometric strengthening consumed by F4. Part of
 ingredient **SL-C** (bridge-uniqueness; tracked ingredient, Group 1a, aimed
 downstream at the future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1,
-§17.5); weight FV (3.45). -/
+§17.5); weight FV §3.10.6. -/
 theorem Current.edgePivotal_no_spectator_crossing (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ e : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x w w' : ↑Λ)
@@ -189,7 +190,7 @@ and is active, contradicting F3, so `e = e₀`. This is the load-bearing geometr
 content SL-D requires, holding on the *undecremented* `M`. Part of ingredient
 **SL-C** (bridge-uniqueness; tracked ingredient, Group 1a, aimed downstream at the
 future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight
-FV (3.45). -/
+FV §3.10.6. -/
 theorem Current.edgePivotal_bridge_unique (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)
@@ -261,7 +262,7 @@ set_option linter.unusedDecidableInType false in
 /-- **SL-C avoiding form: the exact SL-A weight split on the pivotal fiber**
 (Prop.). For `M` on the pivotal fiber with cluster value `C`, i.e.
 `Current.EdgePivotal G Λ e₀ M x y` and
-`reachableCluster (M − 1_{e₀}) x = C`, and `e₀ = s(a, b)`, the FV (3.45) weight
+`reachableCluster (M − 1_{e₀}) x = C`, and `e₀ = s(a, b)`, the FV §3.10.6 weight
 `Current.weight` factorises as
 \[
   w(M)
@@ -281,7 +282,7 @@ SL-C deliverable that SL-D consumes; the genuine research core SL-D
 (product-index Fubini + exterior → `Z_{x,y}/Z_∅` collapse) and SL-E (re-assembly)
 are follow-ups. Part of ingredient **SL-C** (tracked ingredient, Group 1a, aimed
 downstream at the future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1,
-§17.5); weight source FV (3.45). -/
+§17.5); weight source FV §3.10.6. -/
 theorem Current.weight_pivotal_fiber_factor (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ)
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)

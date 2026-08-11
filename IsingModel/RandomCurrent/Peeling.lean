@@ -349,7 +349,7 @@ private theorem Current.summable_weight_if_sources
 set_option linter.unusedDecidableInType false in
 /-- **Weight-dominated summability** (private-machinery reuse, non-private).
 Any real-valued current function `g` that is nonnegative and pointwise bounded by
-the FV (3.45) weight `Current.weight` is summable over the (countable)
+the FV §3.10.6 weight `Current.weight` is summable over the (countable)
 ambient current type, because every finite partial sum is bounded by
 `exp(β J)^{|E|}` via the private bounded-partial-sum estimate
 `Current.sum_weight_boundedFinset_le`. This is the general dominated-summability
@@ -359,7 +359,7 @@ restriction/source objects defined in later modules and hence cannot live in thi
 file — can reuse the private partial-sum machinery (`Current.boundedFinset`,
 `Current.sum_weight_boundedFinset_le`) without exposing or duplicating it. Part of
 ingredient **SL-D₁** brick D1b part 2a (tracked ingredient, Group 1a; the SL-D₂
-conditioned-switching core awaits explicit user authorisation); weight FV (3.45). -/
+conditioned-switching core awaits explicit user authorisation); weight FV §3.10.6. -/
 theorem Current.summable_of_le_weight (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     {β J : ℝ} (hβJ : 0 ≤ β * J) (g : Current G Λ → ℝ)

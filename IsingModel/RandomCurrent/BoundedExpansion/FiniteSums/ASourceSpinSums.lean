@@ -41,7 +41,7 @@ spin configuration `σ : ↑Λ → Spin` and subset `A ⊆ ↑Λ`,
 `∏_{a ∈ A} ((σ a).toSign : ℝ) = ∏_v ((σ v).toSign : ℝ)^(1_A v)`.
 The indicator-power form needed to combine `σ_A` with the
 per-vertex spin powers in the random-current expansion of
-`⟨σ_A⟩^Λ` (FV §3.7). -/
+`⟨σ_A⟩^Λ` (FV §3.10.6). -/
 theorem Config.prod_subset_eq_prod_pow_indicator
     (Λ : Finset V) [Fintype ↑Λ] [DecidableEq ↑Λ]
     (σ : ↑Λ → Spin) (A : Finset ↑Λ) :
@@ -70,7 +70,7 @@ omit [DecidableEq V] in
 Combines the indicator-power form of `σ_A` with the per-vertex
 power form of the spin-edge product, ready to apply
 `Config.sum_prod_toSign_pow_real` for the A-source spin sum
-(FV §3.7). -/
+(FV §3.10.6). -/
 theorem Config.spinA_mul_prod_spin_pow_eq_prod_pow_sum
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

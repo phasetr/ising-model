@@ -33,7 +33,7 @@ fixed current `n`,
 `degreeAt n` is even at every vertex (i.e. `n` is source-free),
 else `0`. Direct consequence of `prod_pow_spin_degreeAt` and
 `Config.sum_prod_toSign_pow_real`; the per-current spin-sum step
-of the random-current expansion (FV §3.7). -/
+of the random-current expansion (FV §3.10.6). -/
 theorem Config.sum_prod_spin_pow_degreeAt
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -68,7 +68,7 @@ current `n`, the spin sum of the spin-edge product equals
 `2^|Λ|` if `n` is source-free, else `0`. Combines
 `Config.sum_prod_spin_pow_degreeAt` with
 `Current.even_degreeAt_iff_isSourceFree` to produce the per-current
-spin-sum identity in its final form (FV §3.7, eq. (3.45)). -/
+spin-sum identity in its final form (FV §3.10.6, p. 144). -/
 theorem Config.sum_prod_spin_pow_degreeAt_isSourceFree
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
