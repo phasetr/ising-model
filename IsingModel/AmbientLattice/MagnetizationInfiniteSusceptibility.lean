@@ -52,9 +52,12 @@ stage. Stage-uniform bounds do exist elsewhere in the tree, under
 hypotheses: at high temperature,
 `susceptibilityAlongExhaustion_le_of_high_temp` and
 `susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp`
-(`Inequalities/HighTemp/Susceptibility.lean`; the latter discharges the
-`BddAbove` hypothesis of `susceptibilityInfinite_le_abs_h` below for the
-lattice graph). Further size facts hold on special slices, such as the
+(`Inequalities/HighTemp/Susceptibility.lean`), both stated at zero
+field. The latter gives `BddAbove` for the lattice-graph sequence at
+`⟨J, 0, β⟩`, which is the hypothesis of `susceptibilityInfinite_le_abs_h`
+below only when `h = 0`, where that comparison is an identity; at
+`h ≠ 0` that hypothesis sits at `⟨J, |h|, β⟩` and is not supplied by it.
+Further size facts hold on special slices, such as the
 closed form `susceptibilityInfinite_J_zero` at `J = 0`.
 Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
 when the along-exhaustion sequence is unbounded (physically: near or at
