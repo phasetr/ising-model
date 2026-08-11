@@ -1,5 +1,28 @@
 import IsingModel.TranslationInvariance.ConfigEquiv
 
+/-!
+# Translating a finite volume: spin products, correlations, and lifted observables
+
+The setting continues that of the site and configuration bijections: an additive group `T` acting
+on a vertex type `V` with `[DecidableEq V]`, and a group element `t : T`.
+
+For a finite volume `Λ : Finset V`, an observable `A : Finset ↥Λ` and a configuration
+`σ : Config ↥Λ`, the spin product of the image of `A` under the site bijection, evaluated at the
+configuration transported by `configVaddEquiv t Λ`, equals the spin product of `A` at `σ`; this is
+a reindexing of a product over `A` and needs neither an ambient graph nor an invariance
+assumption. Assuming a graph `G : SimpleGraph V` translation invariant under the action, and
+`Fintype` instances on the edge sets of the graphs induced on `Λ` and on `vaddFinset t Λ`, the
+finite-volume correlation of the transported observable in the translated volume equals the
+correlation of `A` in `Λ`: the partition functions agree, and the numerators match term by term
+under the same reindexing.
+
+Two set-level facts prepare the passage to exhaustions. Translating both sides of an inclusion of
+finite sets is reversible, so `vaddFinset t A ⊆ vaddFinset t Λ` holds exactly when `A ⊆ Λ`. And
+for `hA : A ⊆ Λ`, lifting the translated set into the subtype of the translated volume gives the
+image, under the site bijection for `Λ`, of the lift of `A` into the subtype of `Λ` — the
+identification that lets the correlation statement above be read at a stage of an exhaustion.
+-/
+
 universe u v
 
 namespace IsingModel
