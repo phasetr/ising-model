@@ -24,16 +24,16 @@ induced on `vaddFinset t Λ`. Another packages it as a graph isomorphism from th
 `vaddFinset t Λ` to the graph induced on `Λ`, whose underlying equivalence is the inverse of the
 site bijection.
 
-The energy identities come in two layers. The external-field energy of a configuration on the
+The transport identities come in two layers. The external-field energy of a configuration on the
 translate equals the external-field energy of its pullback along the configuration equivalence,
-and the edge spin of a configuration on the translate at a `Sym2`-image edge equals the edge spin
-of that pullback at the original edge; the binders of these two carry the group action and the
-volume, and neither an ambient graph nor a translation-invariance instance. Assuming that `G` is
-translation invariant and that both
-induced graphs carry a `Fintype` instance on their edge sets, the interaction energy at a
-coupling `J`, and then the Hamiltonian at parameters `p`, of a configuration on the translate
-agree with the same quantity for its pullback. Reindexing the Boltzmann sum by the configuration
-equivalence then yields `partitionFunctionΛ G (vaddFinset t Λ) p = partitionFunctionΛ G Λ p`.
+and the per-edge spin product of a configuration on the translate at a `Sym2`-image edge equals
+that product for the pullback at the original edge; the binders of these two carry the group
+action and the volume, and neither an ambient graph nor a translation-invariance instance.
+Assuming that `G` is translation invariant and that both induced graphs carry a `Fintype`
+instance on their edge sets, the interaction energy at a coupling `J`, and then the Hamiltonian
+at parameters `p`, of a configuration on the translate agree with the same quantity for its
+pullback. Reindexing the Boltzmann sum by the configuration equivalence then yields
+`partitionFunctionΛ G (vaddFinset t Λ) p = partitionFunctionΛ G Λ p`.
 -/
 
 universe u v

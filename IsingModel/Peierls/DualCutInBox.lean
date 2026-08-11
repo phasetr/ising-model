@@ -20,7 +20,7 @@ when the image is taken.
 edge finset of the graph induced by `latticeGraph 2` on `Λd`; its cardinality equals the number
 of boundary darts of `F`; and it is edge-connected either when all boundary darts of `F` lie in a
 single orbit, or from anchored dart-reachability data — a choice of dart at each site of `F`,
-reachability of every dart from the dart chosen at its left site, reachability between the darts
+reachability from every dart to the dart chosen at its left site, reachability between the darts
 chosen at lattice-adjacent sites, and reachability inside `F` between any two of its sites.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*

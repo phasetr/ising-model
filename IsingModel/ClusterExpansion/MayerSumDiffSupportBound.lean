@@ -22,9 +22,9 @@ the support of at least one coordinate.
 The abstract-gas form quantifies over a `𝓟 : Finset (Finset (Sym2 ι))` with `PolymerGasData G 𝓟`
 together with a nonnegative real `c` bounding `(polymerSupport P).card` by `c * P.card` for every
 `P ∈ 𝓟`. In that generality the order-indexed sequence is summable, and its `tsum` is bounded by
-`(1 / (1 - rr)) * (1 - 4 * c * rr / (1 - rr) ^ 2)⁻¹ ^ 2`, a bound that is uniform in `v` and in
-the order. Both the summability statement and that bound have a counterpart at the even gas
-`allPolymers G` with `c = 1`, where the support-versus-size hypothesis holds automatically.
+`(1 / (1 - rr)) * (1 - 4 * c * rr / (1 - rr) ^ 2)⁻¹ ^ 2`, a bound that does not depend on `v`.
+Both the summability statement and that bound have a counterpart at the even gas `allPolymers G`
+with `c = 1`, where the support-versus-size hypothesis holds automatically.
 
 A combinatorial estimate at a fixed order `n` and `0 ≤ t` trades the condition that some
 coordinate of `ω` fails to be vertex-disjoint from an edge set `C` for the condition that some
