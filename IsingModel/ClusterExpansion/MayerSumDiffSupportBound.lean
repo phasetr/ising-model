@@ -4,6 +4,40 @@ import IsingModel.ClusterExpansion.MayerCore.TermsComplexPerSiteBound
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 
+/-!
+# Local Kotecky-Preiss bound on the Mayer sum lost by avoiding a polymer support
+
+Apart from one purely real-analytic statement — it fixes `ρ : ℝ` with `0 ≤ ρ` and `ρ < 1`, takes
+no other argument, and evaluates the shifted geometric moment `∑' n : ℕ, ((n + 1 : ℕ) : ℝ) * ρ ^ n`
+as `(1 - ρ)⁻¹ ^ 2` — everything here is about a vertex type `ι` with `[Fintype ι]` and
+`[DecidableEq ι]` and an ambient `G : SimpleGraph ι` with a `Fintype` instance on its edge set.
+
+The summability and `tsum` estimates fix a vertex `v : ι` and a real activity `t` with `0 ≤ t`,
+and add a `DecidableRel` instance for `G.Adj`. Their smallness hypotheses are written through
+`rr := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * |t|)`: `rr < 1`, and `4 * c * rr / (1 - rr) ^ 2 < 1`.
+What they estimate at order `n` is the sum of `|ursellCoefficient ω| * clusterSeqActivity t ω`
+over the polymer sequences `ω : Fin (n + 1) → Finset (Sym2 ι)` drawn from a gas and having `v` in
+the support of at least one coordinate.
+
+The abstract-gas form quantifies over a `𝓟 : Finset (Finset (Sym2 ι))` with `PolymerGasData G 𝓟`
+together with a nonnegative real `c` bounding `(polymerSupport P).card` by `c * P.card` for every
+`P ∈ 𝓟`. In that generality the order-indexed sequence is summable, and its `tsum` is bounded by
+`(1 / (1 - rr)) * (1 - 4 * c * rr / (1 - rr) ^ 2)⁻¹ ^ 2`, a bound that is uniform in `v` and in
+the order. Both the summability statement and that bound have a counterpart at the even gas
+`allPolymers G` with `c = 1`, where the support-versus-size hypothesis holds automatically.
+
+A combinatorial estimate at a fixed order `n` and `0 ≤ t` trades the condition that some
+coordinate of `ω` fails to be vertex-disjoint from an edge set `C` for the condition that some
+coordinate of `ω` has a prescribed vertex in its support, summed over `polymerSupport C`; the
+trade is valid because polymers that are not vertex-disjoint share a support vertex.
+
+The concluding estimate is at a real activity `t` with `0 ≤ t` under the smallness hypotheses at
+`c = 1`: the norm of the difference between `∑' n, mayerExpansionTermComplex G n (t : ℂ)` and the
+same sum for `Gavoid G C` is bounded by `(1 / (1 - rr)) * (1 - 4 * rr / (1 - rr) ^ 2)⁻¹ ^ 2` times
+`(polymerSupport C).card`, so deleting the edges that touch `C` moves the Mayer sum by at most a
+fixed amount per avoided vertex.
+-/
+
 namespace IsingModel
 
 open Finset
