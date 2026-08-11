@@ -30,7 +30,7 @@ the live capstone until SL-D/SL-E land; its intended downstream position is the
 (future) Lemma 5.1 → P2-ii → `hLogLip` → the explicitly-tracked
 lower-semicontinuity half of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread
 #4418). The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current
-weight of FV §3.10.6, p. 144. (Aizenman 1982 Lemma 4.1; FFS 1992 Ch. 12, pivotal
+weight of FV §3.10.6, p. 144. (Aizenman 1982; FFS 1992 Ch. 12, pivotal
 bridge / backbone.)
 
 ## Placement note
@@ -50,7 +50,8 @@ separate module, importing both dependencies.
   p. 144 (random-current weight).
 * Glimm–Jaffe, *Quantum Physics*, §17.5 (intended downstream position:
   cluster-conditioning → lsc half of Theorem 17.5.1).
-* Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
+* Aizenman (1982), Geometric analysis of φ⁴ fields;
+  Fernández–Fröhlich–Sokal (1992), Ch. 12.
 -/
 
 namespace IsingModel

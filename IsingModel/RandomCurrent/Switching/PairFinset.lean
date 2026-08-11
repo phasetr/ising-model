@@ -35,7 +35,7 @@ set_option linter.unusedDecidableInType false in
 `(n₁, n₂) : Current G Λ × Current G Λ` with `n₁ + n₂ = n`, realized
 concretely as `(subFinset n).image (m ↦ (m, n - m))`. The LHS of
 the Aizenman switching pair-bijection
-`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
+`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 3.2, p. 7 /
 FV §3.10.6). -/
 def Current.pairFinset (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :

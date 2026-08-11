@@ -24,7 +24,8 @@ variable {V : Type*} [DecidableEq V]
 omit [DecidableEq V] in
 /-- **Pointwise order on currents**: `n ≤ m` iff `n e ≤ m e` for every edge `e`.
 The Pi LE on `Current G Λ` unfolds definitionally to the pointwise order.
-Used in the Aizenman switching lemma (Aizenman 1982 Lemma 4.1 / FV §3.10.6). -/
+Used in the Aizenman switching lemma (Aizenman 1982 Lemma 3.2, p. 7 /
+FV §3.10.6). -/
 theorem Current.le_def (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n m : Current G Λ) :
     n ≤ m ↔ ∀ e, n e ≤ m e := Iff.rfl
@@ -54,7 +55,7 @@ theorem Current.le_self_add_left (G : SimpleGraph V) (Λ : Finset V)
 `m` with `m ≤ n` pointwise, enumerated via
 `Fintype.piFinset (fun e => Finset.range (n e + 1))`. This is the
 parameterizing set for the Aizenman switching pair-bijection
-`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
+`{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 3.2, p. 7 /
 FV §3.10.6). -/
 def Current.subFinset (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
@@ -92,7 +93,7 @@ theorem Current.subFinset_card_eq_prod (G : SimpleGraph V) (Λ : Finset V)
 
 /-- **Pointwise truncated subtraction** of currents: `(n - m) e := n e - m e`
 in `ℕ` (which is `Nat.sub`, cut off at `0`). The truncation primitive
-needed for the switching pair-bijection (Aizenman 1982 Lemma 4.1 /
+needed for the switching pair-bijection (Aizenman 1982 Lemma 3.2, p. 7 /
 FV §3.10.6), parameterized by `m ↦ (m, n - m)` for `m ≤ n`. -/
 instance Current.instSub (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] : Sub (Current G Λ) :=

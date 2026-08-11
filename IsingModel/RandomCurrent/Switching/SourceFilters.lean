@@ -55,7 +55,7 @@ variable {V : Type*} [DecidableEq V]
 /-- **Source-conditioned pair-Finset**: pairs `(n₁, n₂) ∈ pairFinset n`
 filtered by `n₁.HasSources A ∧ n₂.HasSources B`. The LHS / RHS data
 type for source-bijection statements of the switching lemma
-(Aizenman 1982 Lemma 4.1 / FV §3.10.6). -/
+(Aizenman 1982 Lemma 3.2, p. 7 / FV §3.10.6). -/
 noncomputable def Current.pairFinset_with_sources
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

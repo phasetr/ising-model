@@ -46,7 +46,8 @@ No inequality is introduced at this stage.
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7
+  (the switching lemma, eq. (3.5)).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and
   Triviality* (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, §5.1 and §17.5 Theorem 17.5.1 (p. 312);
@@ -90,7 +91,7 @@ Proof: (P) `correlation_inducedGraph_eq_weightSum_ratio` gives
 subtype — a no-op on the value, since `Function.support F` already sits
 inside it by the contrapositive of B2
 (`Current.doubled_pair_sum_eq_zero_of_not_reachable`).
-(Aizenman 1982 Lemma 4.1 / FV Lemma 3.55, p. 144 / GJ §17.5.) -/
+(Aizenman 1982 Lemma 3.2, p. 7 / FV Lemma 3.55, p. 144 / GJ §17.5.) -/
 theorem Current.correlation_mul_weightSum_empty_sq_eq_tsum_reachable_doubled
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
