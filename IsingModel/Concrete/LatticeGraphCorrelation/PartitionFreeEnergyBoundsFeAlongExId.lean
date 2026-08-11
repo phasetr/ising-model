@@ -46,9 +46,13 @@ theorem freeEnergyAlongExhaustion_latticeGraph_nonneg_of_ferromagnetic
   freeEnergyAlongExhaustion_nonneg_of_ferromagnetic
     (IsingModel.latticeGraph d) Λ p hf hne
 
-/-- **ℤ^d `freeEnergyAlongExhaustion` as `log Z / card`** (any-Exhaustion):
-alternate form of `freeEnergyAlongExhaustion_eq_inv_card_mul_log` using the
-Fintype-card expression. -/
+/-- **ℤ^d `freeEnergyAlongExhaustion` as `log Z / card`** (any-Exhaustion).
+
+Restates `freeEnergyAlongExhaustion_latticeGraph_eq_inv_card_mul_log` above:
+the two conclusions are the same proposition, and the declarations differ only
+in the ambient lemma they delegate to. The genuinely different cardinality
+spelling is `freeEnergyAlongExhaustion_latticeGraph_eq_inv_Λcard_mul_log`,
+which uses `(Λ.volume n).card` in place of `Fintype.card`. -/
 theorem freeEnergyAlongExhaustion_latticeGraph_eq_log_div_card
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (n : ℕ) :
