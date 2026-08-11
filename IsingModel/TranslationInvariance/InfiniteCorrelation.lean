@@ -1,5 +1,29 @@
 import IsingModel.TranslationInvariance.FiniteVolume
 
+/-!
+# Translation invariance of the infinite-volume correlation of a translated observable
+
+Both statements fix an additive group `T` acting on a vertex type `V` with `[DecidableEq V]`, a
+graph `G : SimpleGraph V` carrying an `IsTranslationInvariant T G` instance, an exhaustion
+`Λ : Exhaustion V`, a group element `t : T`, and stagewise `Fintype` instances on the edge sets of
+the graphs induced by `G` on the volumes of `Λ` and on those of `Λ.shift t`, whose stage `n`
+volume is the translate of the stage `n` volume of `Λ`.
+
+The stagewise statement is an equality of `correlationAlongExhaustion` at each stage `n`, between
+the shifted exhaustion at the translated observable `vaddFinset t A` and the original exhaustion
+at `A`, for an arbitrary `p : IsingParams ℝ` and `A : Finset V`. Because
+`correlationAlongExhaustion` is defined by a `dite` on whether the observable is contained in the
+stage volume, the proof splits accordingly: translation preserves that containment in both
+directions, so either both branches take the finite-volume correlation — matched by the lift
+identity together with the finite-volume correlation identity — or both branches are `0`.
+
+The infinite-volume statement adds `Ferromagnetic p`, that is `0 ≤ p.J`, `0 ≤ p.h` and `0 < p.β`,
+and concludes `correlationInfinite G Λ p (vaddFinset t A) = correlationInfinite G Λ p A`. Since
+`correlationInfinite` is the supremum over stages of `correlationAlongExhaustion`, the
+ferromagnetic hypothesis is what allows the exhaustion to be replaced by `Λ.shift t` first; the
+stagewise equality then matches the two families of stage values term by term.
+-/
+
 universe u v
 
 namespace IsingModel

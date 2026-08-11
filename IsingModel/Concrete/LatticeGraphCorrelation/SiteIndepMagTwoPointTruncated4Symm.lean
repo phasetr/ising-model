@@ -5,11 +5,20 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Translation
 import IsingModel.TranslationInvariance
 
 /-!
-# ℤ^d truncated4TwoPoint symmetry wrappers
+# Symmetry of the ℤ^d four-point truncated function in its three free sites
 
-Narrow child module for three ℤ^d `truncated4TwoPoint_symm_{rs,su,ru}`
-symmetry wrappers. Each statement is proved by `unfold` +
-`Finset` extensionality.
+`truncated4TwoPoint d p r s u` is `truncated4Infinite` of `IsingModel.latticeGraph d` along the
+cubic exhaustion of `Fin d → ℤ`, at an arbitrary parameter record `p : IsingParams ℝ`, with the
+first of its four sites pinned to the origin and the remaining three given by `r`, `s` and `u`.
+That truncation subtracts from the infinite-volume correlation of `{0, r, s, u}` the three
+products of pair correlations formed by the pairings of those four sites.
+
+Since the truncation is symmetric under permuting the four sites, its value is unchanged by
+exchanging `r` with `s`, by exchanging `s` with `u`, and by exchanging `r` with `u`. The first
+two act on adjacent slots and are proved by unfolding to the underlying correlations and
+rewriting the unordered site sets, the pair products being permuted among themselves; the third
+is obtained by composing the other two, on the first pair of slots, then the last pair, then the
+first pair again.
 -/
 
 namespace IsingModel

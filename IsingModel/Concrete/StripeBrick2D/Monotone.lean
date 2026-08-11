@@ -1,5 +1,34 @@
 import IsingModel.Concrete.StripeBrick2D.InfiniteVolume
 
+/-!
+# Monotonicity, positivity and field symmetry of the 2D stripe free energy
+
+`freeEnergyInfinite_stripeBrick2D` takes a width `w : ℕ` with `w ≠ 0`, a parameter record
+`p : IsingParams ℝ` and a proof of `Ferromagnetic p`, that is `0 ≤ p.J`, `0 ≤ p.h` and `0 < p.β`,
+and returns the limit of the free energies of the graphs induced by the boxes `stripeBrick2D w n`
+inside `latticeGraph 2`; that box is `Fintype.piFinset` of `Finset.Ico (0 : ℤ) n` in the first
+coordinate and `Finset.Ico (0 : ℤ) w` in the second, so the stripe grows in one direction while
+its width stays fixed. Every statement below carries the width hypothesis, spells the parameter
+record out as `⟨J, h, β⟩`, and builds its ferromagnetism proof from the separate sign hypotheses
+it takes.
+
+The monotonicity statements each move one coordinate and hold the other two fixed: the value is
+monotone in `β` for `0 < β₁ ≤ β₂` at nonnegative `J` and `h`, monotone in `h` for `0 ≤ h₁ ≤ h₂`
+at nonnegative `J` and positive `β`, and monotone in `J` for `0 ≤ J₁ ≤ J₂` at nonnegative `h` and
+positive `β`. Each follows from the corresponding monotonicity of `IsingModel.freeEnergy` at
+every stage, carried to the limit by comparing two convergent stage sequences.
+
+Positivity is inherited from the lower bound of the value by `Real.log 2`, which is itself
+positive; being positive, the value is in particular nonzero, and both are stated at nonnegative
+`J` and `h` and positive `β`.
+
+The last statement removes the sign restriction on the field. For nonnegative `J`, positive `β`
+and an arbitrary real `h`, the stage sequence of free energies at `⟨J, h, β⟩` converges to
+`freeEnergyInfinite_stripeBrick2D hw ⟨J, |h|, β⟩`: the stagewise identity
+`IsingModel.freeEnergy_eq_abs_h` makes that sequence equal to the sequence at `|h|`, whose limit
+is the ferromagnetic value.
+-/
+
 namespace IsingModel
 
 namespace Concrete

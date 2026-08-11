@@ -1,6 +1,22 @@
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
+/-!
+# Geometric majorants for a finite weighted sum graded by a size function
+
+Everything here is stated for an arbitrary type `α` carrying no instance assumption whatsoever,
+a finite set `s : Finset α`, a grading `size : α → ℕ`, a weight `w : α → ℝ`, real parameters `A`,
+`a`, `B`, and a natural number `M`. The hypotheses are that `size` is bounded by `M` on `s`, that
+`w` is nonnegative on `s`, that `w x` is bounded by `A * a ^ size x` on `s`, that the cardinality of
+the `size = n` fibre of `s`, cast to `ℝ`, is bounded by `B ^ n` — quantified over every `n : ℕ`,
+including those beyond `M` — and that `A`, `a` and `B` are nonnegative.
+
+Under those hypotheses `∑ x ∈ s, w x` is bounded by `A * ∑ n ∈ Finset.range (M + 1), (a * B) ^ n`:
+grading by `size` turns a per-element weight bound together with a fibre-counting bound into a
+single finite geometric majorant of ratio `a * B`. Adding the hypothesis `a * B < 1` replaces
+that finite sum by the closed geometric value `A / (1 - a * B)`.
+-/
+
 namespace IsingModel
 
 open Finset

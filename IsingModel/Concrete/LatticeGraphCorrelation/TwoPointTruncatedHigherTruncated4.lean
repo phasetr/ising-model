@@ -1,13 +1,20 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d truncated4Infinite trivial-slice wrappers
+# Trivial slices of the ℤ^d four-point truncated function
 
-Narrow child module for three ℤ^d `truncated4Infinite_latticeGraph_*`
-trivial-slice wrappers (β = 0, and J = 0 at pairwise-distinct or
-one-pair-coincident sites). Each wrapper is a thin pass-through to the
-corresponding ambient `truncated4Infinite_*` lemma at
-`IsingModel.latticeGraph d`.
+The statements here evaluate `truncated4Infinite (IsingModel.latticeGraph d) Λ p` on the
+parameter slices where the truncation collapses, for an arbitrary exhaustion `Λ` of `Fin d → ℤ`.
+
+At `β = 0` the value is `0`, for arbitrary couplings `J` and `h` and arbitrary sites.
+
+At `J = 0` the spins are decoupled and each carries magnetization `Real.tanh (β * h)`, and the
+truncation leaves `-2 * Real.tanh (β * h) ^ 4`. This is stated under `Ferromagnetic ⟨0, h, β⟩`,
+which here amounts to `0 ≤ h` together with `0 < β`, once for four pairwise distinct sites and
+once at the site tuple `i, i, k, l` in which the first two arguments coincide and `i`, `k`, `l`
+are pairwise distinct; the coincidence changes the individual terms but not their combination.
+
+Each is the specialization of the corresponding ambient statement to `IsingModel.latticeGraph d`.
 -/
 
 namespace IsingModel

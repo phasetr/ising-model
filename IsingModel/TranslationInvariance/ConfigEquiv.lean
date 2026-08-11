@@ -1,5 +1,41 @@
 import IsingModel.TranslationInvariance.Shift
 
+/-!
+# Translating a finite volume: site and configuration bijections, and invariance of `Z_Λ`
+
+Every statement here fixes an additive group `T` acting on a vertex type `V` with
+`[DecidableEq V]`, a group element `t : T`, and a finite volume `Λ : Finset V`, and relates
+objects attached to `Λ` with objects attached to its translate `vaddFinset t Λ`, the image of `Λ`
+under `t +ᵥ ·`.
+
+The carriers are an `Equiv` between the coercions of `Λ` and of `vaddFinset t Λ`, sending a site
+to its translate by `t` and back by `-t`, and the `Equiv` between `Config ↥Λ` and
+`Config ↥(vaddFinset t Λ)` obtained from it by `Equiv.arrowCongr` with the identity on `Spin`.
+Pointwise `simp` lemmas evaluate them: the underlying vertex of the image of a site is `t +ᵥ`
+that site; the transported configuration at a site of the translate is the original configuration
+at the preimage site; and the inverse transport at a site of `Λ` is the given configuration at
+the image site.
+
+The statements that mention the ambient graph `G : SimpleGraph V` assume it translation invariant
+under the action, recorded as an `IsTranslationInvariant T G` instance, whose content is that
+`G.Adj (t +ᵥ u) (t +ᵥ v) ↔ G.Adj u v`. One transfers that to the induced graphs: two sites of `Λ`
+are adjacent in the graph induced on `Λ` exactly when their images are adjacent in the graph
+induced on `vaddFinset t Λ`. Another packages it as a graph isomorphism from the graph induced on
+`vaddFinset t Λ` to the graph induced on `Λ`, whose underlying equivalence is the inverse of the
+site bijection.
+
+The transport identities come in two layers. The external-field energy of a configuration on the
+translate equals the external-field energy of its pullback along the configuration equivalence,
+and the per-edge spin product of a configuration on the translate at a `Sym2`-image edge equals
+that product for the pullback at the original edge; the binders of these two carry the group
+action and the volume, and neither an ambient graph nor a translation-invariance instance.
+Assuming that `G` is translation invariant and that both induced graphs carry a `Fintype`
+instance on their edge sets, the interaction energy at a coupling `J`, and then the Hamiltonian
+at parameters `p`, of a configuration on the translate agree with the same quantity for its
+pullback. Reindexing the Boltzmann sum by the configuration equivalence then yields
+`partitionFunctionΛ G (vaddFinset t Λ) p = partitionFunctionΛ G Λ p`.
+-/
+
 universe u v
 
 namespace IsingModel
