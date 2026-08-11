@@ -45,8 +45,21 @@ variable {V : Type*} [DecidableEq V]
 Analog of `magnetizationInfinite` / `correlationInfinite`, but for the
 susceptibility χ. Unlike `correlation` (bounded by 1) or
 `magnetization` (bounded by 1), susceptibility is *not automatically
-bounded* as the exhaustion grows: `|χ_Λ(i)| ≤ 2·|Λ|`, which diverges
-with `|Λ|`. Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
+bounded* as the exhaustion grows: `susceptibilityΛ` unfolds to
+`∑ j, truncated2 …`, so the number of summands is nondecreasing in the
+stage volume, and no statement here bounds the family uniformly in the
+stage. Stage-uniform bounds do exist elsewhere in the tree, under
+hypotheses: at high temperature,
+`susceptibilityAlongExhaustion_le_of_high_temp` and
+`susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp`
+(`Inequalities/HighTemp/Susceptibility.lean`), both stated at zero
+field. The latter gives `BddAbove` for the lattice-graph sequence at
+`⟨J, 0, β⟩`, which is the hypothesis of `susceptibilityInfinite_le_abs_h`
+below only when `h = 0`, where that comparison is an identity; at
+`h ≠ 0` that hypothesis sits at `⟨J, |h|, β⟩` and is not supplied by it.
+Further size facts hold on special slices, such as the
+closed form `susceptibilityInfinite_J_zero` at `J = 0`.
+Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
 when the along-exhaustion sequence is unbounded (physically: near or at
 the critical point, where χ diverges in the genuine thermodynamic
 limit). Theorems that compare `susceptibilityInfinite` values
@@ -97,7 +110,7 @@ along-exhaustion sequence.
 Stage-wise pointwise inequality `χ_along(h) ≤ χ_along(|h|)` at every
 `n` (A-4c, PR #780) transfers to the `⨆` once the `|h|`-side is
 known to be bounded above. Under the `BddAbove` hypothesis, the
-pointwise comparison plus `ciSup_le_ciSup` gives the result.
+pointwise comparison plus `ciSup_mono` gives the result.
 
 **Necessity of `BddAbove`**: the susceptibility is unbounded at the
 ferromagnetic critical point, where `⨆ χ_along(|h|)` would default to

@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.PolymerFreeEnergyHighTemperatureBo
 # ℤ^d §18.5 AlongExhaustion `vdPolymerFamilies_sum` high-temperature bounds
 
 Instantiates the along-exhaustion high-temperature bounds and monotonicity of the
-van-den-Berg polymer-family sum at `IsingModel.latticeGraph d`, the convergence input for
+vertex-disjoint polymer-family sum at `IsingModel.latticeGraph d`, the convergence input for
 the ℤ^d cluster expansion.
 -/
 

@@ -6,7 +6,7 @@ import IsingModel.AmbientLattice.SpecialCases.HighTemperatureVdSandwichFEFerro
 /-!
 # §18.5 cluster-expansion convergence sandwich wrappers along an exhaustion
 
-Provides the GJ §18.5 two-sided bound on the van-den-Berg polymer-family sum along an
+Provides the GJ §18.5 two-sided bound on the vertex-disjoint polymer-family sum along an
 exhaustion, in plain and sharpened form — the convergence input for the stagewise
 cluster-expansion estimates. Each passes through to its
 `vdPolymerFamilies_sum_Λ_sandwich*` ambient counterpart.

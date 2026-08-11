@@ -83,7 +83,8 @@ whenever the test set `A` is contained in `Λ.volume n`,
 Specialization of `IsingModel.correlation_J_zero`
 (`⟨σ^A⟩ = tanh(β·h)^{|A|}`) along the induced-subgraph coercion.
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1
-(infinite-temperature slice of the correlation function). -/
+(non-interacting `J = 0` slice of the correlation function; `β` is
+free here, so this is not the infinite-temperature limit `β → 0`). -/
 theorem correlationAlongExhaustion_J_zero_of_subset
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -123,7 +124,9 @@ constant at `tanh(β·h)^A.card`, so it tends to that value; by
 `correlationInfinite`, so the two limits coincide.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §4.1 / §5.1
-infinite-temperature slice. -/
+non-interacting `J = 0` slice (`β` is constrained only by
+`Ferromagnetic.hβ : 0 < β`, not by the infinite-temperature limit
+`β → 0`). -/
 theorem correlationInfinite_J_zero
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

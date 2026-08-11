@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.VdPolymerFamiliesAnalyticityLogTan
 /-!
 # Ambient log_vdPolymerFamilies_sumAlongExhaustion analyticity wrappers
 
-Carries analyticity of the logarithm of the van-den-Berg polymer-family sum to the
+Carries analyticity of the logarithm of the vertex-disjoint polymer-family sum to the
 along-exhaustion layer (GJ §18.5), where it feeds the analyticity of the infinite-volume
 free energy. Each result passes through the corresponding Λ-level
 `log_vdPolymerFamilies_sum_Λ_*` lemma.

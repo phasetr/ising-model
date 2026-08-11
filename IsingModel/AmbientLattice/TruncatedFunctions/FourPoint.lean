@@ -369,8 +369,10 @@ in `Inequalities/GHS.lean`). Uses the ∞-vol closed form
 six Finsets of card 2.
 
 Complements `truncated4Infinite_beta_zero` (vanishing slice at
-`β = 0`): this is the J=0 slice with explicit closed form `-2·t⁴`
-(non-vanishing). Note `-2·t⁴ ≤ 0` always, consistent with
+`β = 0`): this is the J=0 slice with explicit closed form `-2·t⁴`,
+which over the `Ferromagnetic` range `0 ≤ h`, `0 < β` is `0` exactly
+when the external field vanishes and is strictly negative otherwise.
+Note `-2·t⁴ ≤ 0` always, consistent with
 `truncated4Infinite_nonpos_h_zero`.
 
 Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74

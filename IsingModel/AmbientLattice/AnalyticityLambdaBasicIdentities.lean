@@ -11,7 +11,9 @@ on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).
 statement that mentions one carries the summation written out; the `mayerPartialSum` and
 `mayerExpansionTerm` statements mention neither, and `ε` occurs only in the decomposition
 `Ξ t = 1 + ε t`. Of the two, only `Ξ` is abbreviated in the theorem names, as
-`vdPolymerFamilies_sum_Λ`.
+`vdPolymerFamilies_sum_Λ`. The declaration comments below write `vdSum` for `Ξ`, `vdSum_tanh`
+for `Ξ (tanh (β * J))` and `ε(t)` for `ε t`; all three are prose shorthands of this file and
+none is a name in the library.
 
 Special values are recorded at literal arguments substituted into the statement: `Ξ 0 = 1`,
 `Ξ 1 = (vdCompatiblePolymerFamilies (inducedGraph G Λ)).card`,

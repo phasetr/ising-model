@@ -5,7 +5,7 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerTanhDiff
 /-!
 # `vdPolymerFamilies_sum` tanh `Continuous` wrappers along an exhaustion
 
-Records continuity of the along-exhaustion van-den-Berg polymer-family sum in the
+Records continuity of the along-exhaustion vertex-disjoint polymer-family sum in the
 `tanh`-composed parameters `β` and `J` (GJ §18.5), one wrapper varying `β` at fixed `J` and
 the other varying `J` at fixed `β`. Each is a pass-through of the corresponding
 `vdPolymerFamilies_sum_Λ_tanh_continuous_*` ambient lemma. The matching

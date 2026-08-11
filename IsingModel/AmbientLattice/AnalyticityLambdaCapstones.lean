@@ -18,7 +18,9 @@ connectedness-filter identities are phrased through `Fintype.piFinset`, `allPoly
 `polymerSeqIncompatibilityGraph`, `mayerExpansionTerm` occurring in their names and in no
 statement of this file. Writing `E` for
 `(inducedGraph G Λ).edgeFinset`, `polymerFreeEnergy (inducedGraph G Λ) t` is by definition
-`Real.log` of that sum at activity `t`.
+`Real.log` of that sum at activity `t`. The declaration comment on the power identity writes
+`ε(t)` for the polymer sum with its empty family removed; that is a prose shorthand of this
+file and not a name in the library.
 
 The high-temperature expansion gives `partitionFunctionΛ G Λ ⟨J, 0, β⟩` in closed form as
 `2 ^ Fintype.card ↑Λ * Real.cosh (β * J) ^ E.card` times the polymer sum at activity
@@ -67,7 +69,7 @@ theorem partitionFunctionΛ_high_temp_expansion_h_zero_polymer_family
   exact IsingModel.partitionFunction_high_temp_expansion_h_zero_polymer_family
     (inducedGraph G Λ) J β
 
-/-- **Λ-layer: §18.4 partitionFunction even-subgraph form** (FV (3.45))**:
+/-- **Λ-layer: §18.4 partitionFunction even-subgraph form** (FV (3.45)):
 `Z_Λ = 2^|Λ| · cosh(β·J)^|E_Λ| · ∑_X tanh(β·J)^|X|`. -/
 theorem
 partitionFunctionΛ_high_temp_expansion_h_zero_closed_evenSubgraphs

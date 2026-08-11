@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalPro
 # GJ §17.5 Lemma 17.5.2(a) — UNCONDITIONAL finite-region Lipschitz of `m⁻(σ, A)`
 
 This module removes the `hprofile` hypothesis from the conditional finite-region Lipschitz
-(`FiniteRegionPseudoMassDistLipschitz.lean`, #4332) by re-parametrizing the chain to the **faithful
-inverse-correlation-length rate `−log tanh(βJ)`** and discharging the per-pair profile lower bound
+(`FiniteRegionPseudoMassDistLipschitz.lean`, #4332) by re-parametrizing the chain to the
+**direct-path rate `−log tanh(βJ)`** and discharging the per-pair profile lower bound
 with the unconditional bound `pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic` (#4333).
 
 The engine is the rate-agnostic abstracted interval Lipschitz
@@ -139,7 +139,7 @@ theorem pseudoMassFromParamsAtPair_pow_succ_lipschitz_on_window_of_ratio_lower
 `pseudoMassG α ρ q ≤ c` (and active range `c ∈ Ioo 0 2`), the denominator ratio is lower-bounded:
 `pseudoMassG α ρ q / q^(2α) ≤ c / m^(2α)` (`m = pseudoMassFromParamsAtPair`).  This is the
 rate-generalized form of `lemma_17_5_2_profile_lower_ratio_lower_cubic` (#4330), which fixed
-`q = −log(βJ·2d)`; here `q` is arbitrary (used at the faithful rate `q = −log tanh(βJ)`). -/
+`q = −log(βJ·2d)`; here `q` is arbitrary (used at the direct-path rate `q = −log tanh(βJ)`). -/
 theorem pseudoMassFromParamsAtPair_ratio_lower_of_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {ρ : ℝ} (hρ : 0 < ρ) {J β q : ℝ} (hq_pos : 0 < q)
     {x z : Fin d → ℤ}
@@ -180,7 +180,7 @@ theorem pseudoMassFromParamsAtPair_ratio_lower_of_pseudoMassG_le_corr
 /-- **GJ §17.5 UNCONDITIONAL per-pair distance interval Lipschitz of `(m⁻(x,z,·))^{2α+1}` on the
 window.**  For any distinct pair `x ≠ z` and `Icc β₁ β₂ ⊆ ConvergenceRegion.window d J`,
 `∃ K>0, |m⁻(x,z,β₂)^{2α+1} − m⁻(x,z,β₁)^{2α+1}| ≤ (2α+1)K/dist·(β₂−β₁)` with **no profile
-hypothesis** — the faithful profile lower bound is discharged by
+hypothesis** — the direct-path-rate profile lower bound is discharged by
 `pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic` (#4333) at the rate `−log tanh(βJ)`.
 
 The interval-uniform ratio lower bound `Lmin = pseudoMassG α (dist) q₁ / q₁^{2α}`
@@ -276,7 +276,7 @@ convergence window, **with no profile hypothesis**,
 
 This removes the conditional `hprofile` of #4332: each per-pair distance interval Lipschitz is now
 unconditional (`pseudoMassFromParamsAtPairDist_pow_succ_lipschitz_on_window`, discharged via the
-faithful-rate profile bound #4333); the finite `Finset.inf'` assembly is unchanged (odd-power
+direct-path-rate profile bound #4333); the finite `Finset.inf'` assembly is unchanged (odd-power
 commutes with `inf'`; `inf'` of finitely many Lipschitz functions is Lipschitz via the achieved
 infimum).  The constant is per-`A` (uniform-in-`A` / infinite-envelope continuity remains a separate
 question, #4320).
