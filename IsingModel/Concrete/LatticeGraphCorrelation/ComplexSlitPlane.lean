@@ -26,7 +26,10 @@ theorem partitionFunctionComplex_continuousAt_real_h_latticeGraph
   IsingModel.partitionFunctionComplex_continuousAt_real_h
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β h₀
 
-/-- **ℤ^d `f_ℂ` `ContinuousAt` real positive `h₀`** (Λ-induced). -/
+/-- **ℤ^d `f_ℂ` `ContinuousAt` real `h₀`** (Λ-induced): continuity holds at
+every real `h₀`. The `_pos_h_` in the name, inherited from the ambient
+`freeEnergyComplex_continuousAt_real_pos_h`, promises a positivity hypothesis
+that neither statement carries. -/
 theorem freeEnergyComplex_continuousAt_real_pos_h_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℝ) (h₀ : ℝ) :
     ContinuousAt (fun h : ℂ => IsingModel.freeEnergyComplex

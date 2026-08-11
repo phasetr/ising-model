@@ -112,7 +112,7 @@ private lemma inducedLatticeGraph_correlation_le_const_mul_beta
   exact ge_of_tendsto h_g_tendsto h_eventual
 
 /-- **Linear bound on corr_∞ at β = 0** (Step 176, GJ §17.5):
-For `0 ≤ J`, `1 ≤ d`, `0 < b` with `bJ·2d < 1`, and any `r ≠ s`, on the interval `(0, b]`:
+For `0 ≤ J`, `0 < b` with `bJ·2d < 1`, and any `r ≠ s`, on the interval `(0, b]`:
 `corr_∞(r, s, β) ≤ (J·M(b)² + J·4d) · β`,
 where `M(b) = bJ·2d/(1 - bJ·2d)`.
 
