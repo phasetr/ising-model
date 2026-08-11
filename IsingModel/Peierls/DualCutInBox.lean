@@ -1,20 +1,27 @@
 import IsingModel.Peierls.DualCutSubConnected
 
 /-!
-# The dual cut over a common box (FV §3.7.2)
+# The dual cut of a region placed in a common box (FV §3.7.2)
 
-The contour count `card_connected_edge_sets_inducedLatticeGraph_le` ranges over a **fixed** box
-`Λd`, so the per-region support box `dualSupport F` must be promoted into a common box `Λd ⊇
-dualSupport F`. We map `dualCutSub F` along the subtype inclusion `↑(dualSupport F) ↪ ↑Λd`
-and carry over its three count-ready properties: edge-finset membership, cardinality, and
-(given one orbit) edge-connectivity.
+The contour bound `card_connected_edge_sets_inducedLatticeGraph_le` counts edge sets inside the
+graph induced on one **fixed** box, whereas `dualCutSub F` — the set of dual edges joining the
+tail and head of each boundary dart of `F` — lives on the subtype of `dualSupport F`, the set of
+those tails and heads. Transporting it along the subtype inclusion determined by an inclusion
+`dualSupport F ⊆ Λd` puts regions with different supports inside one common box, where the bound
+applies.
 
-* `isEdgeConnected_image_map` — forward connectivity transfer.
-* `dualCutInBox` — the dual cut placed in the common box.
-* `dualCutInBox_subset_edgeFinset`, `dualCutInBox_card`,
-  `dualCutInBox_isEdgeConnected_of_single_orbit`.
-* `dualCutInBox_isEdgeConnected_of_anchored` — the common-box connectivity wrapper for the
-  anchored `DartReachable` route.
+The transport rests on a fact about edge sets in general: edge-connectivity survives taking the
+image under `Sym2.map f` for an arbitrary `f`, since a shared vertex maps to a shared vertex and
+an edge-adjacency chain maps forward step by step, no injectivity being needed. The inclusion of
+the support into the containing box is injective, and that is what keeps cardinality unchanged
+when the image is taken.
+
+`dualCutInBox` is the image of `dualCutSub F` under `Sym2.map` of that inclusion. It lies in the
+edge finset of the graph induced by `latticeGraph 2` on `Λd`; its cardinality equals the number
+of boundary darts of `F`; and it is edge-connected either when all boundary darts of `F` lie in a
+single orbit, or from anchored dart-reachability data — a choice of dart at each site of `F`,
+reachability of every dart from the dart chosen at its left site, reachability between the darts
+chosen at lattice-adjacent sites, and reachability inside `F` between any two of its sites.
 
 References: Friedli–Velenik, *Statistical Mechanics of Lattice Systems*
 (Cambridge, 2017), §3.7.2, pp. 109–116.
