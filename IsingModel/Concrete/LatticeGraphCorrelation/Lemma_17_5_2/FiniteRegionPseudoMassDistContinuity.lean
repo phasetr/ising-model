@@ -62,9 +62,12 @@ infimum over the finitely many distinct pairs of the bounded region `A` of the
 distance-parametrized per-pair pseudo-mass `pseudoMassFromParamsAtPairDist`.
 
 Each contributing pair uses its own ℓ¹ lattice distance as the profile radius,
-so this finite infimum is the genuine inverse correlation length restricted to
-the region `A`.  It is the book's continuous object (a *finite* infimum, hence
-continuous), in contrast to the infinite lower envelope `globalPseudoMassDist`.
+so the radius is faithful to the pair rather than fixed.  No relation between
+this infimum and the inverse correlation length `latticeMass` is proved here;
+even the global envelope reaches `latticeMass` only through the
+constant-carrying sandwich of `globalPseudoMassDist_fullSandwich`.  It is the
+book's continuous object (a *finite* infimum, hence continuous), in contrast to
+the infinite lower envelope `globalPseudoMassDist`.
 
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, pp.~311--312. -/
 noncomputable def finiteRegionPseudoMassDist {α d : ℕ} (hα : 1 ≤ α)

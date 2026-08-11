@@ -5,8 +5,8 @@ import IsingModel.Concrete.LatticeGraphCorrelation.Lemma_17_5_2.UnconditionalPro
 # GJ §17.5 Lemma 17.5.2(a) — UNCONDITIONAL finite-region Lipschitz of `m⁻(σ, A)`
 
 This module removes the `hprofile` hypothesis from the conditional finite-region Lipschitz
-(`FiniteRegionPseudoMassDistLipschitz.lean`, #4332) by re-parametrizing the chain to the **faithful
-inverse-correlation-length rate `−log tanh(βJ)`** and discharging the per-pair profile lower bound
+(`FiniteRegionPseudoMassDistLipschitz.lean`, #4332) by re-parametrizing the chain to the
+**direct-path rate `−log tanh(βJ)`** and discharging the per-pair profile lower bound
 with the unconditional bound `pseudoMassG_dist_tanh_rate_le_correlationInfinite_cubic` (#4333).
 
 The engine is the rate-agnostic abstracted interval Lipschitz
