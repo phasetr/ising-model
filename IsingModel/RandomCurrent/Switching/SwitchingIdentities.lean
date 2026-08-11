@@ -29,7 +29,7 @@ set_option linter.unusedDecidableInType false in
 the bijection `m ↦ n - m` (involution by `sub_sub_self_of_le`) maps
 `subFinset_with_source n A` bijectively to `subFinset_with_source n B`,
 hence the two source-conditioned sub-current sets have equal cardinality.
-(GJ §5.1 Theorem 5.1.2 / FV Theorem 9.35.) -/
+(FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1.) -/
 theorem Current.subFinset_with_source_card_switching
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -64,7 +64,7 @@ set_option linter.unusedDecidableInType false in
 the bijection `m ↦ n - m` preserves the function `m ↦ w(m) * w(n - m)`
 (since `w(n-m) * w(n-(n-m)) = w(n-m) * w(m)` by `sub_sub_self_of_le` + `mul_comm`),
 so the weighted sums over `subFinset_with_source n A` and `subFinset_with_source n B` are equal.
-(GJ §5.1 Theorem 5.1.2 / FV Theorem 9.35.) -/
+(FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1.) -/
 theorem Current.sum_subFinset_with_source_weight_mul_weight_switching
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

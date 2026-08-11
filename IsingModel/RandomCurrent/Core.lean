@@ -16,7 +16,7 @@ the `Current` type, parity, sources, weights, and related predicates.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.7.
+* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.10.6, pp. 143–145.
 -/
 
 namespace IsingModel
@@ -68,7 +68,7 @@ theorem Current.add_apply (G : SimpleGraph V) (Λ : Finset V)
 `Zero` and `Add` to the full additive commutative monoid
 structure (via `Pi.addCommMonoid`). Allows use of `Finset.sum`,
 `nsmul`, etc. on currents in subsequent random-current expansion
-PRs (FV §3.7). -/
+PRs (FV §3.10.6). -/
 instance Current.instAddCommMonoid (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] :
     AddCommMonoid (Current G Λ) :=
@@ -79,7 +79,7 @@ instance Current.instAddCommMonoid (G : SimpleGraph V) (Λ : Finset V)
 incident to `v`. The source set of `n` is the set of vertices
 where the parity is non-zero; the parity drives the source/sink
 characterisation and the Aizenman switching lemma in subsequent
-PRs (FV §3.7). -/
+PRs (FV §3.10.6). -/
 def Current.parity (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (v : ↑Λ) : ZMod 2 :=
@@ -90,7 +90,7 @@ def Current.parity (G : SimpleGraph V) (Λ : Finset V)
 vertex `v : ↑Λ`, the ℕ-valued sum of `n e` over edges `e`
 incident to `v`. Lifts `parity` from `ZMod 2` to ℕ; equals the
 exponent of `σ_v` in the random-current expansion of the Ising
-partition function (FV §3.7). -/
+partition function (FV §3.10.6). -/
 def Current.degreeAt (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (v : ↑Λ) : ℕ :=
@@ -167,7 +167,7 @@ theorem Current.add_parity (G : SimpleGraph V) (Λ : Finset V)
 with odd parity (`n.parity v ≠ 0`). The standard "boundary" `∂n`
 in the random-current literature; `⟨σ_A⟩^Λ` is expressed as a
 weighted sum over currents whose source set is exactly `A`
-(FV §3.7). -/
+(FV §3.10.6). -/
 noncomputable def Current.sources (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) : Finset ↑Λ :=
@@ -227,7 +227,7 @@ theorem Current.add_sources_eq (G : SimpleGraph V) (Λ : Finset V)
 /-- **Random-current weight** for uniform coupling `J` and inverse
 temperature `β`: `weight β J n := ∏_e (β J)^(n e) / (n e)!`.
 The weight of a current `n` in the random-current expansion of
-the Ising partition function (FV (3.45)). Expectation values
+the Ising partition function (FV §3.10.6). Expectation values
 `⟨σ_A⟩^Λ` are expressed as weighted sums over `A`-source
 currents. -/
 noncomputable def Current.weight (G : SimpleGraph V) (Λ : Finset V)
@@ -355,7 +355,7 @@ theorem Current.support_add_subset (G : SimpleGraph V) (Λ : Finset V)
 `weightSum A β J := ∑' n : Current G Λ, if n.sources = A then weight β J n else 0`.
 The unnormalized random-current measure of A-source currents,
 central to the random-current expression of correlations
-`⟨σ_A⟩^Λ = weightSum A / weightSum ∅` (FV (3.45)).
+`⟨σ_A⟩^Λ = weightSum A / weightSum ∅` (FV §3.10.6).
 
 If the underlying sum is not Summable, mathlib's `tsum` returns
 `0` as a junk value; convergence is analysed in subsequent PRs. -/

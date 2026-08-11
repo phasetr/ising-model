@@ -8,7 +8,7 @@ import IsingModel.RandomCurrent.Switching.SupportGraph
 Edge-partition factorization of the random-current weight `Current.weight`
 (SL-A) and the cluster-extraction + cluster-index reindexing of the pivotal
 current sum (SL-B). The weight `∏_e (βJ)^{n_e}/n_e!` is the random-current
-weight of Friedli–Velenik, eq. (3.45) (§3.7); see `RandomCurrent/Core.lean`.
+weight of Friedli–Velenik, §3.10.6, p. 144; see `RandomCurrent/Core.lean`.
 
 This module implements ingredients **SL-A** and **SL-B** intended to supply the
 (future) Lemma 5.1 (cluster-conditioning factorisation). It is a **tracked
@@ -16,9 +16,10 @@ ingredient** under the Group 1a authorisation, not an isolated decoration: it is
 planned to feed the weight-factorization + cluster-extraction steps of Lemma
 5.1, which in turn is aimed at `hLogLip` → the lower-semicontinuity half of GJ
 Theorem 17.5.1 (§17.5). That GJ §17.5 reference records the intended downstream
-position of these ingredients, not the source of the weight itself (which is FV
-(3.45)). The downstream ingredients SL-C (avoiding / bridge-uniqueness on the
-undecremented ensemble), SL-D (exterior → `Z`-ratio collapse), and SL-E
+position of these ingredients, not the source of the weight itself (which is
+FV §3.10.6, p. 144). The downstream ingredients SL-C (avoiding /
+bridge-uniqueness on the undecremented ensemble), SL-D (exterior → `Z`-ratio
+collapse), and SL-E
 (re-assembly) are not yet implemented: SL-C and SL-D are new mathematics and
 require a math-before-code pass before implementation.
 
@@ -28,7 +29,7 @@ The SL-A main statement `Current.weight_edge_partition_factor` splits the
 weight product over the induced-graph edge set into a factor over an arbitrary
 edge-subset `S` and a factor over its complement. The corollary
 `Current.weight_dominant_edge_factor` specialises `S` to a single dominant edge
-`e₀`, the algebraic form of the FV (3.45) weight used by the
+`e₀`, the algebraic form of the FV §3.10.6 weight used by the
 cluster-conditioning factorisation.
 
 The **SL-B** block adds the *component extraction + cluster-index reindexing*
@@ -45,8 +46,8 @@ downstream of SL-B and are follow-ups.
 
 ## References
 
-* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.7,
-  eq. (3.45) (random-current weight).
+* Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6,
+  p. 144 (random-current weight).
 * Glimm–Jaffe, *Quantum Physics*, §17.5 (intended downstream position of these
   ingredients: cluster-conditioning → lsc half of Theorem 17.5.1).
 -/
@@ -59,7 +60,7 @@ variable {V : Type*} [DecidableEq V]
 
 /-- **Edge-partition factorization of the random-current weight**
 (ingredient SL-A). For any edge-subset `S` of the induced-graph edge set, the
-FV (3.45) weight `Current.weight` factors as the product of per-edge factors
+FV §3.10.6 weight `Current.weight` factors as the product of per-edge factors
 over `S` times the product over the complement `Sᶜ`:
 \[
   w(n) = \Bigl(\prod_{e \in S} (\beta J)^{n_e}/n_e!\Bigr)
@@ -85,7 +86,7 @@ theorem Current.weight_edge_partition_factor (G : SimpleGraph V) (Λ : Finset V)
 
 /-- **Dominant-edge factorization of the random-current weight**
 (ingredient SL-A). Specialising `Current.weight_edge_partition_factor` to the
-singleton `{e₀}` separates the FV (3.45) weight into the factor of the dominant
+singleton `{e₀}` separates the FV §3.10.6 weight into the factor of the dominant
 edge `e₀` and the product over all remaining edges,
 \[
   w(n) = \bigl((\beta J)^{n_{e_0}}/n_{e_0}!\bigr)
@@ -115,7 +116,7 @@ cluster-index + interior/exterior connection engine of the (future) Lemma 5.1
 Theorem 17.5.1 (§17.5). It is a **tracked ingredient** (Group 1a authorisation),
 buildable and axiom-free; the genuinely new devices SL-C (avoiding /
 bridge-uniqueness) and SL-D (`Z`-ratio collapse) are follow-ups. The weight is
-FV (3.45).
+FV §3.10.6.
 -/
 
 /-- **Reachable cluster of a root** (the SL-B index; Lemma 5.1 step (i)). For a
@@ -128,7 +129,7 @@ vertices reachable from `x` in the support graph `n.toSimpleGraph`,
 This is the deterministic reachable-filter of `Peeling.lean` (no `ExistsUnique`
 or `Classical.choose`: reachability is a relation on the fintype `↑Λ`). Part of
 ingredient **SL-B** (cluster-index engine of the future Lemma 5.1 → `hLogLip` →
-lsc half of GJ Theorem 17.5.1, §17.5); weight source FV (3.45). -/
+lsc half of GJ Theorem 17.5.1, §17.5); weight source FV §3.10.6. -/
 noncomputable def Current.reachableCluster (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (x : ↑Λ) : Finset ↑Λ := by
@@ -158,7 +159,7 @@ Equivalently, no active edge of `n` has exactly one endpoint in the cluster: the
 cluster is a cut. This is the closure step `hclosed` of
 `Current.sources_reachable_of_sources_eq_pair` (`Peeling.lean`), transported to
 a general root. Part of ingredient **SL-B** (cluster-index engine of the future
-Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight FV (3.45). -/
+Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1, §17.5); weight FV §3.10.6. -/
 theorem Current.reachableCluster_closed (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (n : Current G Λ) (x : ↑Λ) {w w' : ↑Λ}
@@ -179,7 +180,7 @@ This is a deterministic function of the vertex set `C` alone (independent of the
 current), supplying the edge subset `S = S_C` to
 `Current.weight_edge_partition_factor` (SL-A). Part of ingredient **SL-B**
 (cluster-index engine of the future Lemma 5.1 → `hLogLip` → lsc half of GJ
-Theorem 17.5.1, §17.5); weight source FV (3.45). -/
+Theorem 17.5.1, §17.5); weight source FV §3.10.6. -/
 noncomputable def Current.interiorEdges (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (C : Finset ↑Λ) : Finset (inducedGraph G Λ).edgeSet := by
@@ -189,7 +190,7 @@ noncomputable def Current.interiorEdges (G : SimpleGraph V) (Λ : Finset V)
 /-- **Cluster interior/exterior weight split** (SL-A ↔ SL-B interface; Lemma 5.1
 step (i)). Feeding the interior edge subset `S_C = interiorEdges C` into the
 SL-A edge-partition factorization `Current.weight_edge_partition_factor` yields,
-at a fixed cluster value `C`, the interior/exterior split of the FV (3.45)
+at a fixed cluster value `C`, the interior/exterior split of the FV §3.10.6
 weight
 \[
   w(n) = \Bigl(\prod_{e \in S_C} (\beta J)^{n_e}/n_e!\Bigr)
@@ -198,7 +199,7 @@ weight
 This is the sole SL-A ↔ SL-B interface: SL-B supplies the
 vertex-cluster-determined `S_C`; SL-A supplies the algebraic split. Part of
 ingredient **SL-B** (cluster-index engine of the future Lemma 5.1 → `hLogLip` →
-lsc half of GJ Theorem 17.5.1, §17.5); weight source FV (3.45). -/
+lsc half of GJ Theorem 17.5.1, §17.5); weight source FV §3.10.6. -/
 theorem Current.weight_cluster_interior_factor (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (β J : ℝ) (n : Current G Λ)
     (C : Finset ↑Λ) :
@@ -234,7 +235,7 @@ used, so the statement holds for an *arbitrary* index set `𝓜`. Specialising
 boxed inner double-sum of Lemma 5.1's step (i); on that pivotal support `e₀`
 carries a current so the truncated subtraction is honest (`M e₀ ≥ 1`). Part of
 ingredient **SL-B** (cluster-index engine of the future Lemma 5.1 → `hLogLip` →
-lsc half of GJ Theorem 17.5.1, §17.5); weight source FV (3.45). -/
+lsc half of GJ Theorem 17.5.1, §17.5); weight source FV §3.10.6. -/
 theorem Current.pivotalNumerator_eq_sum_by_cluster (G : SimpleGraph V)
     (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (x : ↑Λ) (e₀ : (inducedGraph G Λ).edgeSet)

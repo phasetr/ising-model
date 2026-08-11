@@ -78,7 +78,7 @@ theorem CurrentBounded.weightSum_J_zero (G : SimpleGraph V)
 omit [DecidableEq V] in
 /-- **Joint weight = sum-weight × product of binomial coefficients**:
 the key combinatorial identity feeding the **Aizenman switching
-lemma** (FV §3.7), \(weight β J n₁ \cdot weight β J n₂
+lemma** (FV §3.10.6), \(weight β J n₁ \cdot weight β J n₂
   = weight β J (n₁ + n₂) \cdot ∏_e \binom{n₁ e + n₂ e}{n₁ e}\).
 Each per-edge factor uses
 `Nat.add_choose_mul_factorial_mul_factorial`. -/
@@ -123,7 +123,7 @@ theorem Current.weight_mul_weight_eq_weight_add_mul_choose
 \(σ\)-independent factor in the switching-lemma identity
 `weight n₁ * weight n₂ = weight (n₁+n₂) * jointFactor n₁ n₂`
 (see #843). The structural object underlying Aizenman switching
-(FV §3.7). -/
+(FV §3.10.6). -/
 noncomputable def Current.jointFactor (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     (n₁ n₂ : Current G Λ) : ℝ :=
@@ -181,7 +181,7 @@ omit [DecidableEq V] in
 /-- **Joint weight = sum-weight × `jointFactor`**: clean alias of
 `Current.weight_mul_weight_eq_weight_add_mul_choose` (#843)
 using the named `Current.jointFactor` (#844). The Aizenman
-switching key identity in its final form (FV §3.7). -/
+switching key identity in its final form (FV §3.10.6). -/
 theorem Current.weight_mul_weight_eq_weight_add_mul_jointFactor
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

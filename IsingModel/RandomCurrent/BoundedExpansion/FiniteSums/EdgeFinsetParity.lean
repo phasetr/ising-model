@@ -57,7 +57,7 @@ omit [DecidableEq V] in
 /-- **Source characterisation for `fromEdgeFinset`**: a vertex `v`
 is a source of `fromEdgeFinset G Λ S` iff an odd number of edges
 in `S` are incident to `v`. The standard combinatorial source
-characterisation (FV §3.7), feeding the source-set
+characterisation (FV §3.10.6), feeding the source-set
 manipulations in the random-current expansion of `⟨σ_A⟩^Λ` and
 the Aizenman switching lemma. -/
 @[simp]

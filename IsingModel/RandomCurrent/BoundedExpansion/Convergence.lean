@@ -19,7 +19,7 @@ and `NormedSpace.exp_eq_tsum_div` (the `exp = ∑' n, x^n / n!`
 formula in `CharZero` algebras). Bridges `Real.exp` and the
 bounded Taylor partial-sum form used in
 `Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum`
-(#841) for the random-current expansion (FV §3.7). -/
+(#841) for the random-current expansion (FV §3.10.6). -/
 theorem Real.exp_eq_tsum_div_factorial (x : ℝ) :
     Real.exp x = ∑' n : ℕ, x ^ n / (n.factorial : ℝ) := by
   rw [Real.exp_eq_exp_ℝ]
@@ -28,7 +28,7 @@ theorem Real.exp_eq_tsum_div_factorial (x : ℝ) :
 /-- **Real Taylor partial sum converges to `Real.exp`**:
 \(∑_{k ≤ N} x^k / k! → Real.exp x\) as `N → ∞`. The first analytic
 limit step toward `N → ∞` in the bounded random-current expansion
-(FV §3.7). Combines `Real.exp_eq_tsum_div_factorial` with
+(FV §3.10.6). Combines `Real.exp_eq_tsum_div_factorial` with
 `Real.summable_pow_div_factorial` and `Summable.tendsto_sum_tsum_nat`,
 shifting the index from `range N` to `range (N+1)` via
 `tendsto_add_atTop_nat 1`. -/
@@ -51,7 +51,7 @@ and each per-edge factor converges by
 `Real.tendsto_partial_sum_atTop_exp` (#851). The `Fin (N+1)` sum
 matches the `range (N+1)` sum via `Fin.sum_univ_eq_sum_range`.
 Second analytic step toward the `N → ∞` limit of the bounded
-random-current expansion (FV §3.7). -/
+random-current expansion (FV §3.10.6). -/
 theorem Config.tendsto_prod_Fin_partial_sum_atTop_prod_exp
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -95,7 +95,7 @@ The third analytic step in the `N → ∞` limit, combining
 edge-product convergence) with `Tendsto.const_mul` (σ_A is
 `N`-independent) and `tendsto_finset_sum` (finite σ-sum is
 continuous). Bridges the bounded random-current expansion with
-the actual Boltzmann weight `Z · ⟨σ_A⟩` (FV §3.7). -/
+the actual Boltzmann weight `Z · ⟨σ_A⟩` (FV §3.10.6). -/
 theorem Config.tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -126,7 +126,7 @@ Combines `sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weight
 `tendsto_sum_spinA_prod_partial_sum_atTop_sum_spinA_prod_exp`
 (#853). Closes the LHS-side `N → ∞` limit, connecting the
 bounded random-current sum to the actual Ising Boltzmann weight
-`Z · ⟨σ_A⟩` (FV §3.7). -/
+`Z · ⟨σ_A⟩` (FV §3.10.6). -/
 theorem Config.tendsto_pow_card_mul_currentBounded_weightSum_atTop_sum_spinA_prod_exp
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -175,7 +175,7 @@ realised as the image of `CurrentBounded G Λ N` under `toCurrent`.
 The natural `Finset` filtration of `Current G Λ` whose limit
 covers all currents (every current has finite max value since the
 edge set is finite). Foundation for the RHS-side `N → ∞` limit
-of the random-current expansion (FV §3.7). -/
+of the random-current expansion (FV §3.10.6). -/
 noncomputable def Current.boundedFinset (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
     Finset (Current G Λ) := by
@@ -305,7 +305,7 @@ weight-with-source-condition function,
 the LHS-side limit (#854), gives
 `Current.weightSum A β J = (1/2^|Λ|) · ∑_σ σ_A · ∏_e Real.exp (β J σ_e)`
 under summability — the random-current expression of the Ising
-correlation function (FV §3.7). -/
+correlation function (FV §3.10.6). -/
 theorem CurrentBounded.tendsto_weightSum_atTop_currentWeightSum
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -460,7 +460,7 @@ combines the LHS-side limit (#854) with the unconditional RHS-side
 monotone-convergence limit (#864) — no external `Summable` or
 `BddAbove` hypothesis needed (the bound `exp(β J)^|edgeSet|`
 established in #863 discharges it). The random-current expression
-of the Ising correlation function `Z · ⟨σ_A⟩` (FV §3.7 eq. (3.45))
+of the Ising correlation function `Z · ⟨σ_A⟩` (FV §3.10.6, p. 144)
 in `iSup` form. -/
 theorem CurrentBounded.pow_card_mul_iSup_weightSum_eq_sum_spinA_prod_exp
     (G : SimpleGraph V) (Λ : Finset V)

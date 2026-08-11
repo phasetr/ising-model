@@ -19,7 +19,7 @@ variable {V : Type*} [DecidableEq V]
 for a (nonexistent in a `SimpleGraph`) loop edge `e = s(v, v)` it
 is just `(σ v).toSign ∈ {-1, +1}`. The per-edge factor in the
 Taylor expansion `exp(β J σ_u σ_w) = ∑_k (β J σ_u σ_w)^k / k!`
-feeding the random-current representation (FV §3.7). -/
+feeding the random-current representation (FV §3.10.6). -/
 noncomputable def Config.spinEdgeProduct {W : Type*} [DecidableEq W]
     (σ : W → Spin) (e : Sym2 W) : ℝ :=
   e.toFinset.prod (fun v => ((σ v).toSign : ℝ))
@@ -143,7 +143,7 @@ source set `A`,
 `∑_σ σ_A · weight β J n · ∏_e (spinEdgeProduct σ e)^(n e)
   = weight β J n · 2^|Λ|` if `n.HasSources A`, else `0`. The
 per-current contribution to the random-current expression of
-`⟨σ_A⟩^Λ` (FV §3.7). -/
+`⟨σ_A⟩^Λ` (FV §3.10.6). -/
 theorem Config.sum_spinA_weight_prod_spinEdgeProduct_pow_hasSources
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -180,7 +180,7 @@ current `n` and source set `A`,
   = weight β J n · 2^|Λ|` if `n.HasSources A`, else `0`. The
 per-current contribution to the random-current expansion of
 `Z · ⟨σ_A⟩` in the standard Taylor-coefficient form
-(FV §3.7, eq. (3.45)). -/
+(FV §3.10.6, p. 144). -/
 theorem Config.sum_spinA_prod_taylor_pow_hasSources
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -216,7 +216,7 @@ the Fubini swap
   = ∑_{n : CurrentBounded N} ∏_e (β J · spinEdgeProduct σ e)^(n e) / (n e)!`.
 The finite analogue (using `Fintype.prod_sum`) of the infinite
 Taylor expansion that links the partition function to the
-random-current sum (FV §3.7). -/
+random-current sum (FV §3.10.6). -/
 theorem Config.prod_sum_taylor_eq_sum_currentBounded
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -237,7 +237,7 @@ theorem Config.prod_sum_taylor_eq_sum_currentBounded
 omit [DecidableEq V] in
 /-- **Bounded random-current expansion of `∑_σ σ_A · ∏_e Taylor
 partial sum`**: the finite-`N` analogue of the random-current
-expansion of `Z · ⟨σ_A⟩` (FV §3.7, eq. (3.45)),
+expansion of `Z · ⟨σ_A⟩` (FV §3.10.6, p. 144),
 \(∑_σ σ_A · ∏_e ∑_{k ≤ N} (β J σ_e)^k / k!
   = ∑_{n : CurrentBounded N} [n.toCurrent.HasSources A]
      · weight β J n.toCurrent · 2^|Λ|\).
@@ -277,7 +277,7 @@ collecting the indicator+weight sum into the existing
 `CurrentBounded.weightSum` definition,
 \(∑_σ σ_A · ∏_e ∑_{k ≤ N} (β J σ_e)^k / k!
   = 2^|Λ| · CurrentBounded.weightSum N A β J\). The finite-`N`
-analogue ready for the `N → ∞` limit step (FV §3.7, eq. (3.45)). -/
+analogue ready for the `N → ∞` limit step (FV §3.10.6, p. 144). -/
 theorem Config.sum_spinA_prod_taylor_partialSum_eq_pow_card_mul_currentBounded_weightSum
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

@@ -30,7 +30,7 @@ lower-semicontinuous half of Glimm–Jaffe Theorem 17.5.1 (issue #4386, thread
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and
   Triviality* (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, §5.1 and §17.5 Theorem 17.5.1 (p. 312);
-  Friedli–Velenik, Theorem 9.35.
+  Friedli–Velenik, Lemma 3.55, p. 144.
 -/
 
 namespace IsingModel
@@ -166,7 +166,7 @@ the bounded sums; the right side is squeezed between the cap-free envelopes
 `∑_{M ∈ boundedFinset N} F` and `∑_{M ∈ boundedFinset (2 N)} F`, both converging
 to the `tsum` (summable via the uniform bound `exp(β J)^|E|`). Uniqueness of
 limits (`tendsto_nhds_unique`) closes the identity. Zero field (`h = 0`) is
-baked in. (Aizenman 1982 Lemma 4.1 / FV Theorem 9.35 / GJ §17.5.) -/
+baked in. (Aizenman 1982 Lemma 4.1 / FV Lemma 3.55, p. 144 / GJ §17.5.) -/
 theorem Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -286,7 +286,7 @@ if `m ∈ subFinset M` (i.e. `m ≤ M`) has source set `∂m = {x, y}` with
 lemma `Current.sources_reachable_of_sources_eq_pair` gives
 `(m.toSimpleGraph).Reachable x y`, lifted along the support-graph
 monotonicity `Current.toSimpleGraph_mono_of_le` (`m ≤ M`) by
-`SimpleGraph.Reachable.mono`. (Aizenman 1982 Lemma 4.1 / FV §3.7.) -/
+`SimpleGraph.Reachable.mono`. (Aizenman 1982 Lemma 4.1 / FV §3.10.6.) -/
 theorem Current.reachable_of_subFinset_sources_pair
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

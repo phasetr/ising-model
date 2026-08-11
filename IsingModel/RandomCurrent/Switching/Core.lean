@@ -6,11 +6,11 @@ import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 Sub-current operations, pair-Finset parameterizations, joint factors,
 source-set algebra, and connectivity results leading to the
-Aizenman switching lemma (GJ §5.1 Thm 5.1.2 / FV Thm 9.35).
+Aizenman switching lemma (FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1).
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.7.
+* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.10.6, pp. 143–145.
 * Aizenman, M. (1982). Geometric analysis of φ⁴ fields.
 -/
 
@@ -23,7 +23,7 @@ variable {V : Type*} [DecidableEq V]
 omit [DecidableEq V] in
 /-- **Pointwise order on currents**: `n ≤ m` iff `n e ≤ m e` for every edge `e`.
 The Pi LE on `Current G Λ` unfolds definitionally to the pointwise order.
-Used in the Aizenman switching lemma (Aizenman 1982 Lemma 4.1 / FV §3.7). -/
+Used in the Aizenman switching lemma (Aizenman 1982 Lemma 4.1 / FV §3.10.6). -/
 theorem Current.le_def (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n m : Current G Λ) :
     n ≤ m ↔ ∀ e, n e ≤ m e := Iff.rfl
@@ -54,7 +54,7 @@ theorem Current.le_self_add_left (G : SimpleGraph V) (Λ : Finset V)
 `Fintype.piFinset (fun e => Finset.range (n e + 1))`. This is the
 parameterizing set for the Aizenman switching pair-bijection
 `{(n₁, n₂) : n₁ + n₂ = n} ↔ {m : m ≤ n}` (Aizenman 1982 Lemma 4.1 /
-FV §3.7). -/
+FV §3.10.6). -/
 def Current.subFinset (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) :
     Finset (Current G Λ) :=
@@ -92,7 +92,7 @@ theorem Current.subFinset_card_eq_prod (G : SimpleGraph V) (Λ : Finset V)
 /-- **Pointwise truncated subtraction** of currents: `(n - m) e := n e - m e`
 in `ℕ` (which is `Nat.sub`, cut off at `0`). The truncation primitive
 needed for the switching pair-bijection (Aizenman 1982 Lemma 4.1 /
-FV §3.7), parameterized by `m ↦ (m, n - m)` for `m ≤ n`. -/
+FV §3.10.6), parameterized by `m ↦ (m, n - m)` for `m ≤ n`. -/
 instance Current.instSub (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] : Sub (Current G Λ) :=
   ⟨fun n m => fun e => n e - m e⟩
