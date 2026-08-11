@@ -23,7 +23,10 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Along-ex Z strict deviation under nonempty volume**. -/
+/-- **Along-ex Z strict deviation under a nonempty edge set**: the hypotheses are
+`0 < β * J` and `0 < |E|`. Unlike its `_of_nonempty` siblings in
+`HighTemperatureBoundsRatioLogFeNonempty`, this statement takes no nonemptiness
+hypothesis on the stage volume. -/
 theorem partitionFunctionAlongExhaustion_high_temp_expansion_h_zero_pow_two_lt_of_nonempty
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
