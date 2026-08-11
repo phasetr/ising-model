@@ -8,7 +8,10 @@ Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Fi
 on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
 `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
 `ε t` for the same sum over `… .erase ∅`; neither sum has a definition of its own, and
-`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition. The declaration
+comments below write `vdSum` for `Ξ`, `ε(t)` for `ε t` and `pFE` for
+`polymerFreeEnergy (inducedGraph G Λ)`; all three are prose shorthands of this file, and
+only the last abbreviates something that is a `def`.
 
 Three parameter regimes occur and each statement belongs to exactly one, so the conditions
 below do not carry across the paragraph breaks.

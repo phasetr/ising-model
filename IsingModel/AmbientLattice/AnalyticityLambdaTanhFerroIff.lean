@@ -9,7 +9,10 @@ on the induced subgraph `inducedGraph G Λ`, all at the physical activity
 `Real.tanh (β * J)`. Write `E` for `(inducedGraph G Λ).edgeFinset`, `Ξ t` for
 `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and `ε t` for
 the same sum over `… .erase ∅`; neither sum has a definition of its own, and
-`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition. The declaration
+comments below write `vdSum` for `Ξ`, `ε(t)` for `ε t` and `pFE` for
+`polymerFreeEnergy (inducedGraph G Λ)`; all three are prose shorthands of this file, and
+only the last abbreviates something that is a `def`.
 
 The regime here is the ferromagnetic pair: `0 ≤ β` together with `0 ≤ J`, stated as two
 separate hypotheses rather than as the single product condition `0 ≤ β * J`, which the pair

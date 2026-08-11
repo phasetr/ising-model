@@ -14,7 +14,9 @@ here mention neither and are phrased through `polymerFreeEnergy`, `mayerPartialS
 ∏ P ∈ Γ, t ^ P.card`, which the theorem names abbreviate to `vdPolymerFamilies_sum_Λ`, and
 `ε t` for the same sum over `(vdCompatiblePolymerFamilies (inducedGraph G Λ)).erase ∅`, which
 they abbreviate to `eps`. Then `polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by
-definition, and `E` below is `(inducedGraph G Λ).edgeFinset`.
+definition, and `E` below is `(inducedGraph G Λ).edgeFinset`. The declaration comments below
+write `vdSum` for `Ξ` and `ε(t)` for `ε t`; both are prose shorthands of this file and
+neither is a name in the library.
 
 Growth in the activity is strict once a polymer exists: assuming
 `(allPolymers (inducedGraph G Λ)).Nonempty`, the polymer free energy at `t` exceeds the one

@@ -12,7 +12,9 @@ the same sum over `… .erase ∅`, so that `Ξ t = 1 + ε t` and
 its own, so a statement that mentions one carries the summation written out — never both in
 the same statement here — while the statements phrased through `polymerFreeEnergy` mention
 neither. The theorem names abbreviate `Ξ` to `vdPolymerFamilies_sum_Λ` and `ε` to
-`vdPolymerFamilies_sum_Λ_minus_one`.
+`vdPolymerFamilies_sum_Λ_minus_one`. The declaration comments below write `vdSum` for `Ξ`,
+`ε(t)` for `ε t` and `pFE` for `polymerFreeEnergy (inducedGraph G Λ)`; all three are prose
+shorthands of this file, and only the last abbreviates something that is a `def`.
 
 The characterisations are exact and their two cases are complementary. Under `0 ≤ t`:
 `0 < ε t` precisely when `0 < t` and `(allPolymers (inducedGraph G Λ)).Nonempty`, and
