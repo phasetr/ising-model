@@ -85,8 +85,13 @@ Combines the per-stage uniform bound
 condition is discharged via the ferromagnetic lower bound
 `freeEnergyAlongExhaustion_ge_log_two_cosh` at `h = 0`.
 
-Globally tighter than `freeEnergyInfinite_le_uniform_upper_bound` at
-`h = 0` (the cosh-based bound). -/
+Numerically the same bound as `freeEnergyInfinite_le_uniform_upper_bound`
+at `h = 0`: that lemma's `log 2 + |β|·(|J|·c + |h|)` collapses to
+`log 2 + β·J·c` under `0 ≤ J`, `0 < β`, `h = 0`. What this statement adds
+is the specialized form, not a sharper constant. (`Real.cosh` occurs in
+neither conclusion; it enters only through the lower bound
+`freeEnergyAlongExhaustion_ge_log_two_cosh` used to discharge
+coboundedness in both proofs.) -/
 theorem freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform
     [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

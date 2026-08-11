@@ -283,9 +283,11 @@ theorem freeEnergyInfinite_high_temp_h_zero_deviation_sandwich_exp
     G Λ J β hJ hβ hc
   exact ⟨by linarith, h_upper⟩
 
-/-- **∞-vol f ratio upper bound at J=0 trivial slice (GJ §18.3)**:
-under ferromagnetic + bounded-edge-density witness `c`,
+/-- **∞-vol f difference upper bound against the J=0 trivial slice
+(GJ §18.3)**: under ferromagnetic + bounded-edge-density witness `c`,
 `freeEnergyInfinite ⟨J, 0, β⟩ - freeEnergyInfinite ⟨0, 0, β⟩ ≤ β·J·c`.
+The bounded quantity is the difference displayed above, not a ratio;
+the `_ratio_bound` in the name does not describe the statement.
 
 Reformulation of Step 418 deviation bound using the trivial slice
 identity `f_∞⟨0, 0, β⟩ = log 2`. -/
@@ -303,7 +305,9 @@ theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound
   exact freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
     G Λ J β hJ hβ hc
 
-/-- **∞-vol f ratio upper bound at β=0 trivial slice**. -/
+/-- **∞-vol f difference upper bound against the β=0 trivial slice**:
+`freeEnergyInfinite ⟨J, 0, β⟩ - freeEnergyInfinite ⟨J, 0, 0⟩ ≤ β·J·c`.
+As above, the bounded quantity is a difference, not a ratio. -/
 theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound_beta_zero
     [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
