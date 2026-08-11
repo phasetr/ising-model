@@ -46,9 +46,16 @@ Analog of `magnetizationInfinite` / `correlationInfinite`, but for the
 susceptibility χ. Unlike `correlation` (bounded by 1) or
 `magnetization` (bounded by 1), susceptibility is *not automatically
 bounded* as the exhaustion grows: `susceptibilityΛ` unfolds to
-`∑ j, truncated2 …`, so the number of summands grows with the stage
-volume, and this tree proves no bound on it uniform in the stage
-(`susceptibility_nonneg` is the only sign/size fact available).
+`∑ j, truncated2 …`, so the number of summands is nondecreasing in the
+stage volume, and no statement here bounds the family uniformly in the
+stage. Stage-uniform bounds do exist elsewhere in the tree, under
+hypotheses: at high temperature,
+`susceptibilityAlongExhaustion_le_of_high_temp` and
+`susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp`
+(`Inequalities/HighTemp/Susceptibility.lean`; the latter discharges the
+`BddAbove` hypothesis of `susceptibilityInfinite_le_abs_h` below for the
+lattice graph). Further size facts hold on special slices, such as the
+closed form `susceptibilityInfinite_J_zero` at `J = 0`.
 Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
 when the along-exhaustion sequence is unbounded (physically: near or at
 the critical point, where χ diverges in the genuine thermodynamic

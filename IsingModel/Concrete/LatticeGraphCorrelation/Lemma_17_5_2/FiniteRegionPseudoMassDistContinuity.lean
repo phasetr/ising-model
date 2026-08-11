@@ -63,11 +63,13 @@ distance-parametrized per-pair pseudo-mass `pseudoMassFromParamsAtPairDist`.
 
 Each contributing pair uses its own ℓ¹ lattice distance as the profile radius,
 so the radius is faithful to the pair rather than fixed.  No relation between
-this infimum and the inverse correlation length `latticeMass` is proved here;
-even the global envelope reaches `latticeMass` only through the
-constant-carrying sandwich of `globalPseudoMassDist_fullSandwich`.  It is the
-book's continuous object (a *finite* infimum, hence continuous), in contrast to
-the infinite lower envelope `globalPseudoMassDist`.
+this infimum and the inverse correlation length `latticeMass` is proved here.
+For the global envelope the two directions are asymmetric: the lower bound
+`globalPseudoMassDist_le_latticeMass` carries no constant, whereas the reverse
+direction needs one and is restricted to the high-temperature window (the upper
+half of `globalPseudoMassDist_fullSandwich`).  It is the book's continuous
+object (a *finite* infimum, hence continuous), in contrast to the infinite lower
+envelope `globalPseudoMassDist`.
 
 References: Glimm--Jaffe §17.5, Lemma 17.5.2, pp.~311--312. -/
 noncomputable def finiteRegionPseudoMassDist {α d : ℕ} (hα : 1 ≤ α)

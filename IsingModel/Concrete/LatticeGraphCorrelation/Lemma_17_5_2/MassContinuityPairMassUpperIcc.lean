@@ -10,8 +10,9 @@ The per-pair distance pseudo-mass is bounded **above by a single constant** on a
 
 This is the interval-uniform **upper** bound (companion to the lower bound #4360), needed to bound
 the `m^{2α}` factor in the GJ p.312 uniform Lipschitz constant.  Per-β `m⁻(x,z) ≤ −log tanh(βJ)`
-(from the faithful correlation lower bound #4333 + `pseudoMass_le_iff_pseudoMassG_le`); the rate
-`−log tanh(βJ)` is decreasing in β (tanh increasing), so `≤ −log tanh(β₁J)` on the interval.
+(from the direct-path-rate correlation lower bound #4333 +
+`pseudoMass_le_iff_pseudoMassG_le`); the rate `−log tanh(βJ)` is decreasing in β (tanh
+increasing), so `≤ −log tanh(β₁J)` on the interval.
 
 References:
 
@@ -26,8 +27,8 @@ open Real
 /-- **Interval-uniform per-pair m⁻ upper bound** (GJ p.312): for a distinct pair `x ≠ z` and
 `β ∈ Icc β₁ β₂` with `0 < β₁` and `Icc β₁ β₂ ⊆ ConvergenceRegion.window d J`,
 `pseudoMassFromParamsAtPairDist hα (cubicExhaustion d) ⟨J,0,β⟩ x z ≤ −log tanh(β₁·J)` — a single
-constant upper bound uniform over the interval.  Per-β `m⁻(x,z) ≤ −log tanh(βJ)` (faithful rate
-#4333 + `pseudoMass_le_iff_pseudoMassG_le`); the rate is antitone in β. -/
+constant upper bound uniform over the interval.  Per-β `m⁻(x,z) ≤ −log tanh(βJ)` (direct-path
+rate #4333 + `pseudoMass_le_iff_pseudoMassG_le`); the rate is antitone in β. -/
 theorem pseudoMassFromParamsAtPairDist_le_neg_log_tanh_beta1_on_Icc {α d : ℕ} (hα : 1 ≤ α)
     {J β₁ β₂ : ℝ} (hJ : 0 < J) (hβ₁ : 0 < β₁)
     (hIcc : Set.Icc β₁ β₂ ⊆ ConvergenceRegion.window d J)

@@ -10,7 +10,9 @@ on the induced subgraph `inducedGraph G Λ`. Write `ε t` for the excess polymer
 polymer sum with its empty-family term removed; it has no definition of its own, so a
 statement that mentions it carries the summation written out, while the recurrence, the
 low-order sign statements and the edgeless-graph statement mention it nowhere and are
-phrased through `mayerPartialSum`, `mayerExpansionTerm` and `allPolymers`. By definition
+phrased through `mayerPartialSum`, `mayerExpansionTerm` and `allPolymers`. The comments below,
+declaration and section alike, parenthesise the activity, writing `ε(t)` and `ε(0)` for `ε t`
+and `ε 0`; that is a prose shorthand of this file and not a name in the library. By definition
 `polymerFreeEnergy (inducedGraph G Λ) t` is `Real.log` of the full polymer sum
 `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card`; that this also
 equals `Real.log (1 + ε t)` is the content of the decomposition of that sum as `1 + ε t`, a

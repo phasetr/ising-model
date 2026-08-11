@@ -8,7 +8,9 @@ Statements for an ambient graph `G : SimpleGraph V` and a finite volume `Λ : Fi
 on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).edgeFinset`,
 `Ξ t` for `∑ Γ ∈ vdCompatiblePolymerFamilies (inducedGraph G Λ), ∏ P ∈ Γ, t ^ P.card` and
 `ε t` for the same sum over `… .erase ∅`; neither has a definition of its own, and
-`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition.
+`polymerFreeEnergy (inducedGraph G Λ) t = Real.log (Ξ t)` by definition. The declaration
+comment on the decomposition below writes `ε(t)` for `ε t`; that is a prose shorthand of this
+file and not a name in the library.
 
 At order `2` the Mayer expansion term is written out over
 `allPolymers (inducedGraph G Λ) ×ˢ allPolymers (inducedGraph G Λ)`, once with the weight
