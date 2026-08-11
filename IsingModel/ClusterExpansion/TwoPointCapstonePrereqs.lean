@@ -4,11 +4,25 @@ import IsingModel.ComplexAnalyticity.CorrelationRatioForm
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 
 /-!
-# Capstone prerequisites for the two-point cluster-expansion bound
+# Support size of a connected edge set, and the high-temperature ratio in `htSubgraphSum` form
 
-This file collects two small prerequisites for the final high-temperature two-point capstone:
-a support-cardinality estimate for connected edge sets and a public `htSubgraphSum` wrapper around
-an existing complex high-temperature ratio theorem whose internal subgraph sum is private.
+The support of a finite edge set `C : Finset (Sym2 ι)` is the set of vertices lying on some edge
+of `C`, and `C` is edge-connected when any two of its edges are joined by a chain of edges of `C`
+consecutive members of which share a vertex. For a nonempty edge-connected `C` inside the edge
+finset of a graph `G`, the support has cardinality at most `C.card + 1`. The argument forms the
+graph on the support subtype whose edges are the subtype lifts of the edges of `C`, establishes
+its connectedness — first for two vertices lying on one edge of `C`, then along an edge-adjacency
+chain, these being the private steps — and applies the mathlib bound relating the vertex count of
+a connected graph to its edge count.
+
+The remaining content concerns the closed high-temperature expansion at zero external field. The
+boundary equation `oddBoundary X = A`, saying that the vertices met by an odd number of edges of
+`X` are exactly those of `A`, is shown equivalent to the pointwise parity condition
+`∀ v, Even ((if v ∈ A then 1 else 0) + (X.filter (v ∈ ·)).card)` that the closed expansion carries
+inline. That equivalence restates the closed complex expansion with `htSubgraphSum` on both sides
+of the ratio: for every finite `A` and real `J` there is a positive radius inside which
+`correlationComplex G A (J : ℂ) 0 β` equals
+`htSubgraphSum G A (Complex.tanh (β * J)) / htSubgraphSum G ∅ (Complex.tanh (β * J))`.
 -/
 
 namespace IsingModel
