@@ -6,7 +6,8 @@ import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 Sub-current operations, pair-Finset parameterizations, joint factors,
 source-set algebra, and connectivity results leading to the
-Aizenman switching lemma (FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1).
+Aizenman switching lemma (FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 3.2,
+p. 7, eq. (3.5)).
 
 ## References
 

@@ -29,7 +29,8 @@ set_option linter.unusedDecidableInType false in
 the bijection `m ↦ n - m` (involution by `sub_sub_self_of_le`) maps
 `subFinset_with_source n A` bijectively to `subFinset_with_source n B`,
 hence the two source-conditioned sub-current sets have equal cardinality.
-(FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1.) -/
+This is the fixed-total source-swap step of the switching lemma, at witness
+`k = n`: FV Lemma 3.56, p. 145 / Aizenman 1982 Lemma 3.1, p. 7. -/
 theorem Current.subFinset_with_source_card_switching
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -64,7 +65,9 @@ set_option linter.unusedDecidableInType false in
 the bijection `m ↦ n - m` preserves the function `m ↦ w(m) * w(n - m)`
 (since `w(n-m) * w(n-(n-m)) = w(n-m) * w(m)` by `sub_sub_self_of_le` + `mul_comm`),
 so the weighted sums over `subFinset_with_source n A` and `subFinset_with_source n B` are equal.
-(FV Lemma 3.55, p. 144 / Aizenman 1982 Lemma 4.1.) -/
+Since `w(m) * w(n - m) = w(n) * ∏_e (n e).choose (m e)`, this is the binomial
+identity FV (3.81) at witness `k = n`: FV Lemma 3.56, p. 145 /
+Aizenman 1982 Lemma 3.1, p. 7. -/
 theorem Current.sum_subFinset_with_source_weight_mul_weight_switching
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
