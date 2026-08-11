@@ -45,8 +45,11 @@ variable {V : Type*} [DecidableEq V]
 Analog of `magnetizationInfinite` / `correlationInfinite`, but for the
 susceptibility χ. Unlike `correlation` (bounded by 1) or
 `magnetization` (bounded by 1), susceptibility is *not automatically
-bounded* as the exhaustion grows: `|χ_Λ(i)| ≤ 2·|Λ|`, which diverges
-with `|Λ|`. Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
+bounded* as the exhaustion grows: `susceptibilityΛ` unfolds to
+`∑ j, truncated2 …`, so the number of summands grows with the stage
+volume, and this tree proves no bound on it uniform in the stage
+(`susceptibility_nonneg` is the only sign/size fact available).
+Hence the `⨆` on `ℝ` may return the `ciSup` default `0`
 when the along-exhaustion sequence is unbounded (physically: near or at
 the critical point, where χ diverges in the genuine thermodynamic
 limit). Theorems that compare `susceptibilityInfinite` values
@@ -97,7 +100,7 @@ along-exhaustion sequence.
 Stage-wise pointwise inequality `χ_along(h) ≤ χ_along(|h|)` at every
 `n` (A-4c, PR #780) transfers to the `⨆` once the `|h|`-side is
 known to be bounded above. Under the `BddAbove` hypothesis, the
-pointwise comparison plus `ciSup_le_ciSup` gives the result.
+pointwise comparison plus `ciSup_mono` gives the result.
 
 **Necessity of `BddAbove`**: the susceptibility is unbounded at the
 ferromagnetic critical point, where `⨆ χ_along(|h|)` would default to

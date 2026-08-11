@@ -195,8 +195,8 @@ theorem correlationΛ_ge_tanh_pow_card
     (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr hJ) hJ
 
 /-- **Λ-level lower bound `magnetizationΛ ≥ tanh(β·h)`** (ferromagnetic):
-specialization of `correlationΛ_ge_tanh_pow_card` at `A = {i}` where
-`|A|^1 = |A|.card = 1`. -/
+specialization of `correlationΛ_ge_tanh_pow_card` at `A = {i}`
+(`A.card = 1`, so the power reduces to `tanh(β·h)`). -/
 theorem magnetizationΛ_ge_tanh
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
