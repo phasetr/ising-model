@@ -1,5 +1,24 @@
 import IsingModel.ClusterExpansion.MayerSumDiffSupportBound
 
+/-!
+# The complex-activity local Kotecky-Preiss bound for avoiding a polymer support
+
+The estimate proved here is stated at a vertex type `ι` with `[Fintype ι]` and `[DecidableEq ι]`,
+an ambient `G : SimpleGraph ι` with a `DecidableRel` instance for `G.Adj` and a `Fintype`
+instance on its edge set, an edge set `C : Finset (Sym2 ι)`, and a complex activity `z`, which
+enters as an implicit argument.
+
+Its hypotheses are the Kotecky-Preiss smallness conditions measured at the norm of the activity:
+with `rr := (G.maxDegree : ℝ) ^ 2 * (Real.exp 1 * ‖z‖)`, they read `rr < 1` and
+`4 * rr / (1 - rr) ^ 2 < 1`. The conclusion bounds the norm of the difference between
+`∑' n, mayerExpansionTermComplex G n z` and `∑' n, mayerExpansionTermComplex (Gavoid G C) n z` by
+`(1 / (1 - rr)) * (1 - 4 * rr / (1 - rr) ^ 2)⁻¹ ^ 2` times `(polymerSupport C).card`.
+
+This is the same shape as the estimate at a real activity, with the real parameter there played
+by `‖z‖` here; the proof runs the same support-union and fixed-vertex touching argument, whose
+per-vertex `tsum` bound is applied at `t := ‖z‖`.
+-/
+
 namespace IsingModel
 
 open Finset
