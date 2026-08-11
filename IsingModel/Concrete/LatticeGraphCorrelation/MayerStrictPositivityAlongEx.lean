@@ -5,12 +5,12 @@ import IsingModel.AmbientLattice.SpecialCases.MayerStrictPositivity
 # Concrete AlongExhaustion Mayer strict positivity wrappers
 
 Instantiates at `IsingModel.latticeGraph d` the along-exhaustion strict bounds for the
-van-den-Berg polymer-family sum, the strict half of the GJ §18.5 bounds: strict monotonicity,
-as the comparison at `0 ≤ s`, `s < t` and as `StrictMonoOn (Set.Ici 0)`, and then, only under
-`0 < t`, the lower bound `1` for the sum and strict positivity of the same sum with the empty
-family removed. Those last two need `0 < t`: at `t = 0` each polymer, being a nonempty edge
-set, contributes a factor `0`, so only the empty family survives and the two sums are `1` and
-`0`. All four assume the stage polymer set is nonempty.
+vertex-disjoint polymer-family sum, the strict half of the GJ §18.5 bounds: strict
+monotonicity, as the comparison at `0 ≤ s`, `s < t` and as `StrictMonoOn (Set.Ici 0)`, and
+then, only under `0 < t`, the lower bound `1` for the sum and strict positivity of the same
+sum with the empty family removed. Those last two need `0 < t`: at `t = 0` each polymer,
+being a nonempty edge set, contributes a factor `0`, so only the empty family survives and
+the two sums are `1` and `0`. All four assume the stage polymer set is nonempty.
 -/
 
 namespace IsingModel

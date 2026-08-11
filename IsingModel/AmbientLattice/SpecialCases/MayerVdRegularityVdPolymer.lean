@@ -6,9 +6,9 @@ import IsingModel.AmbientLattice.SpecialCases.MayerVdRegularityVdPolymerHasDeriv
 /-!
 # `vdPolymerFamilies_sum` regularity wrappers along an exhaustion
 
-Records continuity and differentiability of the along-exhaustion van-den-Berg polymer-family
-sum (GJ §18.5), which is what lets the cluster expansion be differentiated in the model
-parameters stage by stage.
+Records continuity and differentiability of the along-exhaustion vertex-disjoint
+polymer-family sum (GJ §18.5), which is what lets the cluster expansion be differentiated in
+the model parameters stage by stage.
 -/
 
 namespace IsingModel
