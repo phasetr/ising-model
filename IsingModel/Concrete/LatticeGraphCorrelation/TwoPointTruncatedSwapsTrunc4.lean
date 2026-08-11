@@ -1,20 +1,17 @@
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 
 /-!
-# ℤ^d `truncated4Infinite_latticeGraph_swap_*` wrappers
+# Adjacent-transposition symmetry of the ℤ^d four-point truncated function
 
-Narrow child module for three ℤ^d
-`truncated4Infinite_latticeGraph_swap_*` adjacent-swap symmetry
-wrappers extracted from `TwoPointTruncatedSwaps.lean`:
+For `IsingModel.latticeGraph d`, an arbitrary exhaustion `Λ` of `Fin d → ℤ`, an arbitrary
+parameter record `p : IsingParams ℝ` and arbitrary sites, the value of `truncated4Infinite` is
+unchanged by each transposition of adjacent site arguments: the first with the second, the second
+with the third, and the third with the fourth. Adjacent transpositions generate the symmetric
+group on four letters, so these are the generating cases of full permutation symmetry of the
+truncation in its sites.
 
-* `truncated4Infinite_latticeGraph_swap_ij`,
-* `truncated4Infinite_latticeGraph_swap_jk`,
-* `truncated4Infinite_latticeGraph_swap_kl`.
-
-Each result is a thin pass-through of the ambient
-`Ambient.truncated4Infinite_swap_*` lemma at
-`G := IsingModel.latticeGraph d`. The theorem names are unchanged
-from the former `TwoPointTruncatedSwaps` declarations.
+Each is the specialization of the corresponding ambient swap statement to
+`IsingModel.latticeGraph d`.
 -/
 
 open scoped symmDiff
