@@ -80,17 +80,6 @@
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 
-MISSING_MODULE_DOC	IsingModel/ClusterExpansion/GeometricFiberSum.lean	-	1
-MISSING_MODULE_DOC	IsingModel/ClusterExpansion/MayerSumDiffSupportBound.lean	-	1
-MISSING_MODULE_DOC	IsingModel/ClusterExpansion/MayerSumDiffSupportBoundComplex.lean	-	1
-MISSING_MODULE_DOC	IsingModel/Concrete/LinearBrick/Monotone.lean	-	1
-MISSING_MODULE_DOC	IsingModel/Concrete/StripeBrick2D/Monotone.lean	-	1
-MISSING_MODULE_DOC	IsingModel/TranslationInvariance/ConfigEquiv.lean	-	1
-MISSING_MODULE_DOC	IsingModel/TranslationInvariance/FiniteVolume.lean	-	1
-MISSING_MODULE_DOC	IsingModel/TranslationInvariance/InfiniteCorrelation.lean	-	1
-NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/SiteIndepMagTwoPointTruncated4Symm.lean	3	1
-NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/TwoPointTruncatedHigherTruncated4.lean	3	1
-NARROW_CHILD	IsingModel/Concrete/LatticeGraphCorrelation/TwoPointTruncatedSwapsTrunc4.lean	3	1
 NARROW_CHILD	docs/index.md	-	25
 PAREN_COUNT	docs/index.md	12:declarations	2
 PAREN_COUNT	docs/index.md	13:declarations	1
@@ -108,15 +97,10 @@ PAREN_COUNT	docs/index.md	7:declarations	2
 PAREN_COUNT	docs/index.md	8:declarations	2
 PAREN_COUNT	docs/index.md	8:lemmas	1
 PAREN_COUNT	docs/index.md	9:wrappers	1
-POSSESSIVE_COUNT	IsingModel/Peierls/DualCutInBox.lean	3:properties	1
 POSSESSIVE_COUNT	docs/index.md	2:lemmas	1
 POSSESSIVE_COUNT	docs/index.md	4:lemmas	1
-PREDICATE_COUNT	IsingModel/AmbientComplexAnalyticity/ClosedBallPatches/RelCompact.lean	3:declarations	1
-PREDICATE_COUNT	IsingModel/ClusterExpansion/AlternatingCompleteGraph/SignedSums.lean	2:definitions	1
-PREDICATE_COUNT	IsingModel/ClusterExpansion/TwoPointCapstonePrereqs.lean	2:wrapper	1
 PREDICATE_COUNT	docs/architecture-import-layers.md	3:file	1
 PREDICATE_COUNT	docs/index.md	3:declarations	2
-RELOCATION	IsingModel/AmbientComplexAnalyticity/AscoliData/Constructors/AnalyticSideConditions.lean	->?	1
 RELOCATION	docs/architecture-import-layers.md	->Inequalities/FKGInhomogeneous.lean	1
 RELOCATION	docs/index.md	->?	3
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperature.lean	1
