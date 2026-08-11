@@ -21,7 +21,7 @@ function ≤ 0 for h ≥ 0. This is exactly `ghs_inequality` above. -/
 /-! ## Corollary 4.3.5: n-point inductive upper bound
 
 For ferromagnetic Ising with `h ≥ 0`, the key inductive step
-(Glimm–Jaffe, §4.3, pp. 62–63) bounds an `(n+2)`-point correlation:
+(Glimm–Jaffe, §4.3, p. 63) bounds an `(n+2)`-point correlation:
 
 `⟨σ_{S ∪ {j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + ∑_{T ⊆ S} ⟨σ_{T ∪ {j}}⟩⟨σ_{(S\T) ∪ {k}}⟩`
 
@@ -37,9 +37,9 @@ Iterating this bound gives Cor. 4.3.5:
 where `m` runs over all partial matchings of `{i₁,…,iₙ}`.
 
 References:
-* Glimm–Jaffe, *Quantum Physics*, §4.3, Cor. 4.3.5, p. 62 -/
+* Glimm–Jaffe, *Quantum Physics*, §4.3, Cor. 4.3.5, p. 63 -/
 
-/-- **Cor. 4.3.5** (Glimm–Jaffe, §4.3, p. 62): for `h = 0` and `n + 2`
+/-- **Cor. 4.3.5** (Glimm–Jaffe, §4.3, p. 63): for `h = 0` and `n + 2`
 distinct sites, the `(n+2)`-point function is bounded by sums of products of
 2-point correlations (since 1-point functions vanish at `h = 0`).
 

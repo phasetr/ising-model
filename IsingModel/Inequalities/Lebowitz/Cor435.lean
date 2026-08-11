@@ -4,12 +4,12 @@ import IsingModel.Inequalities.Lebowitz.LebowitzFour
 /-!
 # GJ Corollary 4.3.5, the inductive Lebowitz bound
 
-The intermediate inequality of GJ's proof of Corollary 4.3.5 (p. 62):
+The intermediate inequality of GJ's proof of Corollary 4.3.5 (p. 63):
 for `j, k ∉ S`, `j ≠ k`, ferromagnetic `h ≥ 0`,
 
 `⟨σ_{S∪{j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + ∑_{T ⊆ S} ⟨σ_{T∪{j}}⟩⟨σ_{(S\T)∪{k}}⟩`.
 
-Derivation (GJ p. 62, "Dropping negative terms from the right (B₂ odd) and
+Derivation (GJ p. 63, "Dropping negative terms from the right (B₂ odd) and
 all terms with B₂ even and the A partition nontrivial"): apply
 `cor_4_3_2_tq` with `A = S`, `B = {j,k}`; drop the odd part of the
 right-hand side (GKS-I), cancel the non-trivial even terms pairwise via
@@ -22,7 +22,7 @@ This replaces the former `lebowitz_inductive` axiom in
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.5, p. 62
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.5, p. 63
 -/
 
 namespace IsingModel
@@ -50,7 +50,7 @@ theorem union_singleton_eq_insert (X : Finset ι) (a : ι) :
   rw [Finset.union_comm, Finset.singleton_union]
 
 /-- **The inductive Lebowitz bound** (GJ §4.3, the intermediate inequality
-in the proof of Corollary 4.3.5, p. 62): for ferromagnetic `h ≥ 0`, a set
+in the proof of Corollary 4.3.5, p. 63): for ferromagnetic `h ≥ 0`, a set
 `S` and two sites `j, k ∉ S` with `j ≠ k`,
 `⟨σ_{S∪{j,k}}⟩ ≤ ⟨σ_S⟩⟨σ_jσ_k⟩ + ∑_{T ⊆ S} ⟨σ_{T∪{j}}⟩⟨σ_{(S\T)∪{k}}⟩`.
 Proof: `cor_4_3_2_tq` at `A = S`, `B = {j,k}`; the right-hand odd part is
