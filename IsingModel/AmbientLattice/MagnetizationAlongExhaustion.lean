@@ -279,7 +279,8 @@ field direction) to the thermodynamic limit.  For fixed `J ≥ 0`,
 `β > 0`, the map `h ↦ correlationInfinite G Λ ⟨J, h, β⟩ A` is
 monotone on `Set.Ici 0`.
 
-Reference: Glimm–Jaffe, Proposition 4.2.4. -/
+Reference: Glimm–Jaffe, Proposition 4.2.1, p. 58, applied to the singleton
+couplings that carry `h`. -/
 
 /-- **h-direction monotonicity of `correlationΛ`**: for fixed
 `J ≥ 0`, `β > 0`, the correlation on `Λ : Finset V` is monotone in
@@ -318,7 +319,8 @@ theorem correlationAlongExhaustion_monotone_h
 `J ≥ 0`, `β > 0`, the thermodynamic-limit correlation is monotone in
 the external field `h ∈ Set.Ici 0`.
 
-Glimm–Jaffe, Proposition 4.2.4 at infinite volume. -/
+Glimm–Jaffe, Proposition 4.2.1, p. 58, applied to the singleton couplings,
+at infinite volume. -/
 theorem correlationInfinite_monotone_h
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -340,7 +342,8 @@ direction) to the thermodynamic limit.  For fixed `J ≥ 0`, `h ≥ 0`,
 the map `β ↦ correlationInfinite G Λ ⟨J, h, β⟩ A` is monotone on
 `Set.Ioi 0`.
 
-Reference: Glimm–Jaffe, Proposition 4.2.4 (β-direction). -/
+Reference: the β-direction is a repository extension that Glimm–Jaffe do not
+state; it is reduced to Glimm–Jaffe, Proposition 4.2.1, p. 58, by rescaling. -/
 
 /-- **β-direction monotonicity of `correlationΛ`**: for fixed
 `J ≥ 0`, `h ≥ 0`, the correlation on `Λ : Finset V` is monotone in
@@ -380,7 +383,8 @@ theorem correlationAlongExhaustion_monotone_beta
 `J ≥ 0`, `h ≥ 0`, the thermodynamic-limit correlation is monotone in
 the inverse temperature `β ∈ Set.Ioi 0`.
 
-Glimm–Jaffe, Proposition 4.2.4 at infinite volume (β-direction). -/
+The β-direction at infinite volume: a repository extension reduced to
+Glimm–Jaffe, Proposition 4.2.1, p. 58, by rescaling. -/
 theorem correlationInfinite_monotone_beta
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -402,7 +406,7 @@ direction) to the thermodynamic limit.  For fixed `h ≥ 0`, `β > 0`,
 the map `J ↦ correlationInfinite G Λ ⟨J, h, β⟩ A` is monotone on
 `Set.Ici 0`.
 
-Reference: Glimm–Jaffe, Proposition 4.2.4, p. 58 (J-direction). -/
+Reference: Glimm–Jaffe, Proposition 4.2.1, p. 58 (J-direction). -/
 
 /-- **J-direction monotonicity of `correlationΛ`**: for fixed
 `h ≥ 0`, `β > 0`, the correlation on `Λ : Finset V` is monotone in
@@ -510,7 +514,7 @@ theorem magnetizationAlongExhaustion_monotone_J
 `h ≥ 0`, `β > 0`, the thermodynamic-limit correlation is monotone in
 the coupling constant `J ∈ Set.Ici 0`.
 
-Glimm–Jaffe, Proposition 4.2.4 at infinite volume (J-direction). -/
+Glimm–Jaffe, Proposition 4.2.1, p. 58, at infinite volume (J-direction). -/
 theorem correlationInfinite_monotone_J
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

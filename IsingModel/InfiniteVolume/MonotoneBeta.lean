@@ -19,11 +19,14 @@ parameters. Proof uses the rescaling identity
 `⟨σ^A⟩_{(J,h,β)} = ⟨σ^A⟩_{(βJ, βh, 1)}`
 (analogous to `partitionFunction_beta_rescale` in `Conditioning.lean`)
 to reduce to the already-established `correlation_monotone_J`
-(Prop 4.2.1) and `correlation_monotone_h` (Prop 4.2.4).
+(Prop 4.2.1) and `correlation_monotone_h` (Prop 4.2.1 at the singleton
+couplings).
 
-Reference: Glimm–Jaffe, Propositions 4.2.1 and 4.2.4 (the J- and h-
-monotonicity of correlation); Cor. 10.2.3 is the corresponding statement
-for the partition function `Z`. -/
+Reference: Glimm–Jaffe, Proposition 4.2.1, p. 58 (monotonicity in the
+couplings `J_A`, which yields the J-direction directly and the h-direction
+through the singleton couplings); Glimm–Jaffe do not state the β-direction,
+which is a repository extension obtained from the rescaling identity.
+Cor. 10.2.3 is the corresponding statement for the partition function `Z`. -/
 
 /-- The rescaling identity for the correlation function:
 `⟨σ^A⟩_{(J, h, β)} = ⟨σ^A⟩_{(βJ, βh, 1)}`. Follows from the fact that
@@ -102,13 +105,14 @@ theorem correlation_convergent_beta (G : SimpleGraph ι) [Fintype G.edgeSet]
 Filling the monotonicity/convergence matrix: we had `J → ∞`
 (`correlation_convergent`) and `β → ∞` (`correlation_convergent_beta`);
 this section adds `h → ∞` by the same monotone-bounded argument using
-`correlation_monotone_h` (Prop 4.2.4). -/
+`correlation_monotone_h` (Prop 4.2.1 at the singleton couplings). -/
 
 /-- **Correlation h → ∞ convergence**: for ferromagnetic parameters
 (`J ≥ 0`, `β > 0`), the sequence `n ↦ ⟨σ^A⟩_{(J, n, β)}` converges as
 `n → ∞`.
 
-Proof: Monotone increasing by `correlation_monotone_h` (Prop 4.2.4),
+Proof: Monotone increasing by `correlation_monotone_h`
+(Prop 4.2.1 at the singleton couplings),
 bounded above by `1` via `correlation_le_one`, hence converges by
 `tendsto_atTop_ciSup`. -/
 theorem correlation_convergent_h (G : SimpleGraph ι) [Fintype G.edgeSet]

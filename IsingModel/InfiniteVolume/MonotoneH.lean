@@ -12,13 +12,16 @@ open Finset Real
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ## Monotonicity in external field (Proposition 4.2.4)
+/-! ## Monotonicity in external field (Proposition 4.2.1 at the singleton couplings)
 
 The correlation function `⟨σ^B⟩` is monotone increasing in the external
 field `h`. This follows from GKS-II via the reweighting factor
 `R(σ) = ∏_i exp(β(h₂-h₁) · sign(σ_i))`, which has HNC.
 
-Reference: Glimm–Jaffe, Proposition 4.2.4 (Exercise), p. 58. -/
+Reference: Glimm–Jaffe, Proposition 4.2.1, p. 58 (correlations are monotone
+increasing in the couplings `J_A`), applied to the singleton couplings that
+carry `h`; the same page remarks that the Ising measure stays ferromagnetic
+for `0 ≤ h`. -/
 
 /-- The correlation function as a function of h (external field),
 with J and β fixed. -/
@@ -65,8 +68,9 @@ private theorem correlation_reweighting_h_nonneg
   simp only [← mul_assoc]
   exact cov_hnc_boltzmann_nonneg G ⟨J, h₁, β⟩ hferm _ hR B
 
-/-- **Proposition 4.2.4** (Glimm–Jaffe, p. 58, exercise):
-The correlation function is monotone increasing in h on `[0, ∞)`.
+/-- **h-monotonicity** (Glimm–Jaffe, Proposition 4.2.1, p. 58, applied to the
+singleton couplings): the correlation function is monotone increasing in h
+on `[0, ∞)`.
 
 Proof: For `0 ≤ h₁ ≤ h₂`, use the reweighting factor
 `R = ∏_i exp(β(h₂-h₁) · sign(σ_i))` (which has HNC) and `gks_second`. -/

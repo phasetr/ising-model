@@ -21,9 +21,10 @@ Lift the finite-volume second Griffiths inequality (`gks_second`,
 Ising and any two finite subsets `A, B`,
 `correlationInfinite A * correlationInfinite B ≤ correlationInfinite (A ∆ B)`.
 
-Reference: Glimm-Jaffe, *Quantum Physics* §4.2 Theorem 4.2.3 (GKS-II
-for the infinite-volume limit).  Friedli-Velenik Thm 3.49 for the
-finite-volume version. -/
+Reference: Glimm-Jaffe, *Quantum Physics* §4.1 Theorem 4.1.3, (4.1.11),
+p. 57 (GKS-II), here taken to the infinite-volume limit; in the Ising case
+`σ² = 1` gives the symmetric-difference form used above.  Friedli-Velenik
+Thm 3.49 for the finite-volume version. -/
 
 /-- Helper: if `A ⊆ Λ` and `B ⊆ Λ` then `A ∆ B ⊆ Λ`. -/
 theorem symmDiff_subset_of_subset

@@ -93,10 +93,12 @@ Physics: higher temperature (lower β) → stronger high-temp regime
 
 Proof: `HasExponentialDecay(β₂, α)` with witness `C` implies the same
 for `β₁` using `truncated2Infinite_h_zero` + GKS-II β-monotonicity
-(`correlationInfinite_monotone_beta`, GJ Prop 4.2.4) + GKS-I nonnegativity
+(`correlationInfinite_monotone_beta`, a repository extension reduced to GJ
+§4.2 Prop 4.2.1 by rescaling) + GKS-I nonnegativity
 (`correlationInfinite_nonneg_of_hβJ`).
 
-Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.4 (β-monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.1, p. 58 (coupling
+monotonicity; the β-direction itself is not stated by Glimm–Jaffe). -/
 theorem latticeMass_antitone_beta
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {J : ℝ} (hJ : 0 ≤ J)
@@ -132,9 +134,10 @@ for fixed `β > 0` and `0 ≤ J₁ ≤ J₂`, the lattice mass satisfies
 `latticeMass(J₂) ≤ latticeMass(J₁)`.
 
 Same argument as `latticeMass_antitone_beta` using GKS-II J-monotonicity
-(`correlationInfinite_monotone_J`, GJ Prop 4.2.3) instead.
+(`correlationInfinite_monotone_J`, GJ Prop 4.2.1) instead.
 
-Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.3 (J-monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306; §4.2 Prop 4.2.1, p. 58
+(J-monotonicity). -/
 theorem latticeMass_antitone_J
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {J₁ J₂ : ℝ} (hJ₁ : 0 ≤ J₁) (hJ₁₂ : J₁ ≤ J₂)
