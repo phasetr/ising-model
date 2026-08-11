@@ -146,7 +146,8 @@ theorem freeEnergyΛ_high_temp_expansion_h_zero_closed
 
 /-- **Λ-level Z high-temperature upper bound (GJ §18.3 / FV (3.45))**:
 under `0 ≤ β·J`,
-`Z_Λ(⟨J, 0, β⟩) ≤ 2^(|Λ|+|E_Λ|) · (cosh(βJ))^|E_Λ|`. ℤ^d wrapper of Step 320. -/
+`Z_Λ(⟨J, 0, β⟩) ≤ 2^(|Λ|+|E_Λ|) · (cosh(βJ))^|E_Λ|`. Λ-layer wrapper of
+`partitionFunction_high_temp_expansion_h_zero_upper_bound` (Step 320). -/
 theorem partitionFunctionΛ_high_temp_expansion_h_zero_upper_bound
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
