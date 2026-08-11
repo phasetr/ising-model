@@ -1,14 +1,27 @@
 import IsingModel.AmbientLattice.SpecialCases.FreeEnergy
 
 /-!
-# AmbientLatticeSum freeEnergyInfinite h-symmetry + monotonicity wrappers
+# Field symmetry and parameter monotonicity of the infinite-volume free energy
 
-Narrow child module for the 6 freeEnergyInfinite h-symmetry +
-monotonicity wrappers: `freeEnergyInfinite_neg_h`,
-`freeEnergyInfinite_eq_abs_h`, `freeEnergyInfinite_monotone_J`,
-`freeEnergyInfinite_monotone_h`, `freeEnergyInfinite_monotone_beta`,
-`freeEnergyInfinite_monotone_abs_h`. The theorem names are unchanged
-from the former `AmbientLatticeSum` declarations.
+`freeEnergyInfinite G Λ p` is the `Filter.limsup` along `atTop` of
+`freeEnergyAlongExhaustion G Λ p`, the free energy of the subgraph of `G` induced by the
+stage volume `Λ.volume n`, for an arbitrary ambient graph `G : SimpleGraph V` and an
+arbitrary exhaustion `Λ : Exhaustion V`.
+
+In the field the value is even: negating the field leaves it unchanged, and it may therefore
+be rewritten with `|h|` in place of `h`. Those two statements have no Prop-valued hypothesis
+at all — the coupling, the field and the inverse temperature range over `ℝ` unrestricted —
+and their only instance binders are `[DecidableEq V]` and the stagewise `Fintype` instance on
+the edge set of the induced subgraph.
+
+The monotonicity statements take, in addition, `[Nonempty V]` and a real `c` for which every
+stage with nonempty volume has at most `c` times as many induced edges as vertices, and each
+constrains the two parameters it does not vary: `MonotoneOn` in the coupling on `Set.Ici 0`
+under `0 ≤ h` and `0 < β`; `MonotoneOn` in the field on `Set.Ici 0` under `0 ≤ J` and
+`0 < β`; and `MonotoneOn` in the inverse temperature on `Set.Ioi 0` under `0 ≤ J` and
+`0 ≤ h`. Composing the `|h|` rewrite with monotonicity in the field gives, under `0 ≤ J` and
+`0 < β`, the comparison at `|h₁| ≤ |h₂|` for arbitrary real `h₁` and `h₂`, with no sign
+hypothesis on either field value.
 -/
 
 namespace IsingModel

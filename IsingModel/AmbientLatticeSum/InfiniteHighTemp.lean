@@ -1,5 +1,38 @@
 import IsingModel.AmbientLatticeSum.TrivialSlices
 
+/-!
+# Bounds on the infinite-volume free energy, and its estimates at the zero field
+
+`freeEnergyInfinite G Λ p` is the `Filter.limsup` along `atTop` of the stage sequence
+`freeEnergyAlongExhaustion G Λ p`, whose value at a stage `n` is the free energy of the
+subgraph of `G` induced by the finite volume `Λ.volume n`. The ambient graph
+`G : SimpleGraph V` and the exhaustion `Λ : Exhaustion V` are arbitrary. Every statement
+here takes `[DecidableEq V]`, `[Nonempty V]`, a stagewise `Fintype` instance on the edge set
+of that induced subgraph — two of them in the single statement that carries two ambient
+graphs — and a real `c` for which every stage with nonempty volume has at most `c` times as
+many induced edges as vertices.
+
+One group is stated at an arbitrary `p` under `Ferromagnetic p`, that is under `0 ≤ p.J`,
+`0 ≤ p.h` and `0 < p.β`. It bounds the value from below by `log (2 * cosh (p.β * p.h))` and
+by `log 2`, and, `log 2` being positive, states `0 < freeEnergyInfinite G Λ p` and
+`0 ≤ freeEnergyInfinite G Λ p` outright. The same group compares two ambient graphs:
+`G₁ ≤ G₂` gives `freeEnergyInfinite G₁ Λ p ≤ freeEnergyInfinite G₂ Λ p`. That comparison is
+the only statement in the module carrying two graphs, and so the only one taking two
+stagewise `Fintype` instances; its edge-count hypothesis constrains the larger graph `G₂`
+alone.
+
+The other group is at the zero field, with the ferromagnetic hypothesis unbundled as
+`0 ≤ J` and `0 < β`, and revolves around the two-sided estimate
+`log 2 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩ ≤ log 2 + β * J * c`. That estimate appears as a
+conjunction on its own; extended by the two values `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2`
+and `freeEnergyInfinite G Λ ⟨J, 0, 0⟩ = log 2`; as the upper estimate
+`freeEnergyInfinite G Λ ⟨J, 0, β⟩ - log 2 ≤ β * J * c` on the deviation from `log 2`, alone
+and paired with `0 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩ - log 2`; and as a bound by
+`β * J * c` on the distance from `freeEnergyInfinite G Λ ⟨J, 0, β⟩` to each of those two
+values, once with an absolute value around the difference and once without, each value on
+its own and the two absolute-value forms together.
+-/
+
 namespace IsingModel
 
 open Ambient

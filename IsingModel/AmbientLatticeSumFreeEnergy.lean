@@ -1,19 +1,28 @@
 import IsingModel.AmbientLattice.Exhaustion
 
 /-!
-# AmbientLatticeSum freeEnergyΛ basic wrappers
+# The free energy on a finite volume: bounds, closed forms, symmetry and monotonicity
 
-Narrow child module for the basic freeEnergyΛ /
-freeEnergyAlongExhaustion wrappers (13 theorems):
-`freeEnergyΛ_ge_log_two_cosh`, `freeEnergyΛ_ge_log_two`,
-`freeEnergyΛ_nonneg_of_ferromagnetic`,
-`freeEnergyAlongExhaustion_nonneg_of_ferromagnetic`,
-`freeEnergyΛ_J_zero`, `freeEnergyΛ_beta_zero`,
-`freeEnergyΛ_zero_params`, `freeEnergyΛ_neg_h`,
-`freeEnergyΛ_eq_abs_h`, `freeEnergyΛ_monotone_abs_h`,
-`freeEnergyΛ_monotone_J`, `freeEnergyΛ_monotone_h`,
-`freeEnergyΛ_monotone_beta`. The theorem names are unchanged from
-the former `AmbientLatticeSum` declarations.
+`freeEnergyΛ G Λ p` is the free energy of the subgraph that a finite volume `Λ : Finset V`
+induces in an arbitrary ambient graph `G : SimpleGraph V`, and
+`freeEnergyAlongExhaustion G Λ p` reads it at the stage volume `Λ.volume n` of an exhaustion.
+Every statement here takes `[DecidableEq V]` and a `Fintype` instance on the induced edge
+set — stagewise in the one statement phrased along an exhaustion, on the volume itself in the
+rest — and no statement takes any further instance binder.
+
+Nonemptiness of the volume separates the two halves of the module. The bounds and the closed
+forms assume it: on a nonempty volume the value is at least `log (2 * cosh (β * h))` and at
+least `log 2` under `0 ≤ J`, `0 ≤ h` and `0 < β`, and at least `0` under `Ferromagnetic p`;
+and it equals `log (2 * cosh (β * h))` at `J = 0`, `log 2` at `β = 0`, and `log 2` at
+`J = h = 0`. The one statement phrased along an exhaustion is the nonnegativity bound read at
+a stage whose volume is assumed nonempty.
+
+The symmetry and monotonicity statements assume nothing about the volume. Negating the field
+leaves the value unchanged, so it may be rewritten with `|h|` in place of `h`; under `0 ≤ J`
+and `0 < β` it is monotone in `|h|` — for arbitrary real `h₁` and `h₂` with `|h₁| ≤ |h₂|` —
+and `MonotoneOn` in the field on `Set.Ici 0`; under `0 ≤ h` and `0 < β` it is `MonotoneOn` in
+the coupling on `Set.Ici 0`; and under `0 ≤ J` and `0 ≤ h` it is `MonotoneOn` in the inverse
+temperature on `Set.Ioi 0`.
 -/
 
 namespace IsingModel

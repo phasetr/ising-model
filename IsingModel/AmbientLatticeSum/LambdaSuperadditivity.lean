@@ -1,5 +1,39 @@
 import IsingModel.AmbientLatticeSum.InducedUnion
 
+/-!
+# Super-additivity and volume monotonicity of the partition function and the free energy
+
+Statements about a finite volume `Λ : Finset V` inside an arbitrary ambient graph
+`G : SimpleGraph V`, read through `partitionFunctionΛ G Λ p` and `freeEnergyΛ G Λ p`, the
+partition function and the free energy of the subgraph that `Λ` induces, and through
+`partitionFunctionAlongExhaustion G Λ p`, which reads the former at the stage volume
+`Λ.volume n` of an exhaustion. Every statement takes `[DecidableEq V]` and a `Fintype`
+instance on the induced edge set of each volume it names.
+
+Merging two disjoint volumes can only raise the partition function, its logarithm and the
+free energy weighted by the volume's cardinality; the unweighted `freeEnergyΛ` is compared
+across a union nowhere here. For disjoint `Λ₁` and `Λ₂` under `Ferromagnetic p` the
+partition function is super-multiplicative across the union and its logarithm
+super-additive; the first piece's value is at most the union's, in the multiplicative and in
+the logarithmic form alike; and the free energy weighted by the volume's cardinality obeys
+the same two comparisons, under nonemptiness of the pieces each comparison names — both
+pieces in the two-piece super-additivity, the first piece alone in the comparison against
+the union.
+
+Two statements stand outside that regime and assume no sign condition on `p` at all:
+`partitionFunctionΛ` is unchanged when the volume is replaced by an equal one, and on a
+nonempty volume the cardinality-weighted free energy equals the logarithm of the partition
+function.
+
+Along an exhaustion the same disjoint-union comparison, applied to the shell
+`Λ.volume (n + 1) \ Λ.volume n`, makes both the partition function and its logarithm
+non-decreasing from a stage to its successor and `Monotone` in the stage, under
+`Ferromagnetic p`. Those statements therefore take a `Fintype` instance on the shell's
+induced edge set alongside the stagewise one — for the single stage named where the
+successor form needs it, and as a family in the `Monotone` form. Along its growth axis an
+`Exhaustion` requires only `Monotone`, never strict increase, so the shell may be empty.
+-/
+
 namespace IsingModel
 
 open Ambient
@@ -7,24 +41,6 @@ open Ambient
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: freeEnergyΛ basic wrappers
-
-The 13 basic freeEnergyΛ / freeEnergyAlongExhaustion wrappers now live in
-`IsingModel.AmbientLatticeSumFreeEnergy`.
-The earlier import path is preserved by re-importing the new child.
--/
-
-
-
-/-! ## Moved: partition ≥ ferromagnetic wrappers
-
-The 12 partitionFunction / log_partitionFunction ferromagnetic lower-bound
-wrappers now live in
-`IsingModel.AmbientLatticeSumGeFerromagnetic`.
-The earlier import path is preserved by re-importing the new child.
--/
-
 
 /-- Wrapper of `partitionFunction_inducedGraph_disjUnion_super_multiplicative`
 at the `partitionFunctionΛ` API level. -/

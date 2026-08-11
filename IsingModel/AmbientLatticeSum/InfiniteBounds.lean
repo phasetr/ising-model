@@ -1,5 +1,32 @@
 import IsingModel.AmbientLatticeSum.LambdaSuperadditivity
 
+/-!
+# Upper bounds on the infinite-volume free energy, and its value when the stages converge
+
+`freeEnergyInfinite G Λ p` is the `Filter.limsup` along `atTop` of the stage sequence
+`freeEnergyAlongExhaustion G Λ p`, whose value at a stage `n` is the free energy of the
+subgraph of `G` induced by the finite volume `Λ.volume n`. The ambient graph
+`G : SimpleGraph V` and the exhaustion `Λ : Exhaustion V` are arbitrary throughout, and
+every statement here takes `[DecidableEq V]` together with the stagewise `Fintype` instance
+on the edge set of that induced subgraph.
+
+The upper bounds assume a real `c` for which every stage with nonempty volume has at most
+`c` times as many induced edges as vertices, and take `[Nonempty V]`, the instance under
+which an exhaustion's volumes are eventually nonempty and a stagewise bound therefore
+reaches the `limsup`. Neither varies with the stage: its right-hand side is a single real
+number.
+
+At an arbitrary `p` under `Ferromagnetic p` the bound reads
+`freeEnergyInfinite G Λ p ≤ log 2 + |p.β| * (|p.J| * c + |p.h|)`. At the zero field, with the
+ferromagnetic hypothesis unbundled as `0 ≤ J` and `0 < β`, it reads
+`freeEnergyInfinite G Λ ⟨J, 0, β⟩ ≤ log 2 + β * J * c`; under those two sign hypotheses the
+first right-hand side, evaluated at `h = 0`, is that same real number.
+
+The value equation carries none of that apparatus: no `[Nonempty V]`, no sign hypothesis and
+no hypothesis on edge counts. It says that whenever the stage sequence tends to a real `L`,
+the `limsup` defining `freeEnergyInfinite` is `L`.
+-/
+
 namespace IsingModel
 
 open Ambient

@@ -1,5 +1,45 @@
 import IsingModel.AmbientLatticeSum.InfiniteBounds
 
+/-!
+# Fekete convergence of the free-energy density along an exhaustion
+
+The stage sequence `freeEnergyAlongExhaustion G Λ p` takes at a stage `n` the free energy of
+the subgraph of `G` induced by the finite volume `Λ.volume n`, and `freeEnergyInfinite G Λ p`
+is its `Filter.limsup` along `atTop`. What is proved here is that under hypotheses making
+the tower of volumes additive and the logarithm of the partition function super-additive
+along it, that `limsup` is an actual limit: the stage sequence tends to
+`freeEnergyInfinite G Λ p`.
+
+Three structural hypotheses on the exhaustion `Λ : Exhaustion V` and the parameters
+`p : IsingParams ℝ` recur. The stage cardinalities add,
+`(Λ.volume (m + n)).card = (Λ.volume m).card + (Λ.volume n).card`. The logarithms of the
+stage partition functions are super-additive: the sum of
+`log (partitionFunctionΛ G (Λ.volume m) p)` and `log (partitionFunctionΛ G (Λ.volume n) p)`
+is at most `log (partitionFunctionΛ G (Λ.volume (m + n)) p)`. And the first stage is
+non-degenerate, `(Λ.volume 1).card ≠ 0`. `DisjointTowerHypotheses G Λ p` is a `Prop`-valued
+structure whose fields are exactly those three and which carries no further data.
+
+The convergence statement occurs in three shapes, differing only in how an upper bound on
+the stage sequence arrives and whether the three structural hypotheses arrive singly or
+bundled: as `BddAbove (Set.range (freeEnergyAlongExhaustion G Λ p))` with the three given
+singly; as `BoundedEdgeDensity G Λ`, from which that `BddAbove` is obtained, again with the
+three given singly; and as `BoundedEdgeDensity G Λ` together with a single
+`DisjointTowerHypotheses` record.
+
+No typeclass binder applies to the ambient graph `G : SimpleGraph V` itself, but `G` is not
+left unconstrained: the super-additivity hypothesis on `log (partitionFunctionΛ G …)` names
+it in every shape, singly or through the bundle, and `BoundedEdgeDensity G Λ` names it in the
+two shapes that obtain the upper bound instead of assuming it. The only instance binders
+anywhere in the module are `[DecidableEq V]` and the stagewise `Fintype` instance on the edge
+set of the induced subgraph; in particular nothing here takes `[Nonempty V]`, and no
+statement assumes `Ferromagnetic p` or any sign condition on `p.J`, `p.h` or `p.β`.
+
+Reference: Glimm-Jaffe, *Quantum Physics*, 2nd ed., Springer 1987, §4.6 Proposition 4.6.1,
+p. 68, "as `Λ ↑ ∞`, `f_Λ` converges". The proposition is stated there for a lattice field
+with a nearest neighbour, translation-invariant, ferromagnetic pair interaction, and is not
+proved in that section; the hypotheses above stand in for that framework.
+-/
+
 namespace IsingModel
 
 open Ambient

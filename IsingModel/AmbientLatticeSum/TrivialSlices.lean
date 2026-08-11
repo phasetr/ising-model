@@ -1,5 +1,48 @@
 import IsingModel.AmbientLatticeSum.SuperadditiveConvergence
 
+/-!
+# The free energy on the slices where a parameter vanishes, and Fekete convergence there
+
+For an arbitrary ambient graph `G : SimpleGraph V` and an arbitrary exhaustion
+`Λ : Exhaustion V`, `freeEnergyAlongExhaustion G Λ p` reads at a stage `n` the free energy of
+the subgraph of `G` induced by `Λ.volume n`, and `freeEnergyInfinite G Λ p` is its
+`Filter.limsup` along `atTop`. Nothing in this module assumes `Ferromagnetic p` or any sign
+condition on `p.J`, `p.h` or `p.β`: the slices below are exact parameter values, not
+inequalities.
+
+At `J = h = 0` the logarithm of the partition function on a finite volume `Λ : Finset V` has
+the closed form `↑Λ.card * log 2`, asking nothing of `Λ` beyond the `Fintype` instance on
+the edge set it induces — in particular not that it be nonempty.
+
+`DisjointTowerHypotheses` is built here in three ways. Given a real `c` with
+`log (partitionFunctionΛ G (Λ.volume n) p) = ↑(Λ.volume n).card * c` at every stage, the
+super-additivity field follows from additivity of the stage cardinalities alone, so beyond
+that closed form the builder asks only for that additivity, for `(Λ.volume 1).card ≠ 0` and
+for the two instance binders `DisjointTowerHypotheses` itself carries, `[DecidableEq V]` and
+the stagewise `Fintype` instance on the edge set of the induced subgraph.
+The slices `J = 0` and `β = 0` are instances of it, the constant coming from the closed forms
+`log (partitionFunctionΛ G Λ ⟨0, h, β⟩) = ↑Λ.card * log (2 * cosh (β * h))` and
+`log (partitionFunctionΛ G Λ ⟨J, h, 0⟩) = ↑Λ.card * log 2`. Feeding those records into the
+convergence statement gives, on each of the two slices, convergence of the stage sequence to
+the `freeEnergyInfinite` at those same parameters, out of `BoundedEdgeDensity G Λ`,
+cardinality additivity and a non-degenerate first stage.
+
+A second route to the same slices runs through eventual constancy: a stage sequence
+eventually equal to a real `c` tends to `c`, and then `freeEnergyInfinite` is `c`. Under the
+hypothesis that the stage volumes are eventually nonempty this yields
+`freeEnergyInfinite G Λ ⟨J, h, 0⟩ = log 2`, `freeEnergyInfinite G Λ ⟨0, 0, β⟩ = log 2` and
+`freeEnergyInfinite G Λ ⟨0, h, β⟩ = log (2 * cosh (β * h))`, together with a `Filter.Tendsto`
+companion for the stage sequence on each of those three slices. The three
+`freeEnergyInfinite` equations are restated once more with the eventual hypothesis discharged
+by `[Nonempty V]`; those restatements are the only statements in the module taking
+`[Nonempty V]`.
+
+At `J = 0` the value does not see the ambient graph at all:
+`freeEnergyInfinite G Λ ⟨0, h, β⟩` equals `freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`. That is the
+only statement here naming two graphs, and so the only one taking two stagewise `Fintype`
+instances.
+-/
+
 namespace IsingModel
 
 open Ambient
@@ -7,14 +50,6 @@ open Ambient
 namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
-
-/-! ## Moved: log Z trivial-slice + monotonicity wrappers
-
-The 14 log_partitionFunctionΛ / log_partitionFunctionAlongExhaustion
-trivial-slice + monotonicity wrappers now live in
-`IsingModel.AmbientLatticeSumLogZ`.
-The earlier import path is preserved by re-importing the new child.
--/
 
 /-- **Closed form for `log (partitionFunctionΛ G Λ ⟨0, 0, β⟩)`**:
 at `J = h = 0`, `log Z_Λ = |Λ| · log 2`. Direct from
