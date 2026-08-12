@@ -1543,8 +1543,10 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # `toRangeRelCompactData_direct` in the same namespace, and the #4854
         # pilot left it with no consumer, so it is retired.
         # Issue #4927 removes two redundant pair-bound wrappers after #4926, so
-        # the current broad declaration population is 10563 - 2 = 10561.
-        self.assertEqual(len(broad or []), 10561)
+        # the broad declaration population became 10563 - 2 = 10561.  PR #5036
+        # then replaces ten duplicate order-preservation declarations with five
+        # canonical declarations, for a net reduction of five to 10556.
+        self.assertEqual(len(broad or []), 10556)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1556,7 +1558,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10561 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10556 declarations"]},
         )
 
 
