@@ -47,22 +47,9 @@ polymerFreeEnergyAlongExhaustion_latticeGraph_eq_zero_of_edgeFinset_empty
   Ambient.polymerFreeEnergyAlongExhaustion_eq_zero_of_edgeFinset_empty
     (IsingModel.latticeGraph d) Λ n h_empty t
 
-/-- **ℤ^d along-ex: polymerFreeEnergy preserves order on `[0, ∞)`**. -/
-theorem polymerFreeEnergyAlongExhaustion_latticeGraph_le_of_le_of_nonneg
-    (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
-    [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
-      (Λ.volume n)).edgeSet] (n : ℕ)
-    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t ≤
-      IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s :=
-  Ambient.polymerFreeEnergyAlongExhaustion_le_of_le_of_nonneg
-    (IsingModel.latticeGraph d) Λ n ht hs hts
-
-/-- **ℤ^d along-ex: polymerFreeEnergy strict-form order
-preservation**. -/
-theorem polymerFreeEnergyAlongExhaustion_latticeGraph_le_of_le_strict_form
+/-- On `ℤ^d` along an exhaustion, polymer free energy preserves order when the smaller
+activity is nonnegative. -/
+theorem polymerFreeEnergyAlongExhaustion_latticeGraph_le_of_le_of_nonneg_left
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     [∀ n, Fintype (inducedGraph (IsingModel.latticeGraph d)
       (Λ.volume n)).edgeSet] (n : ℕ)
@@ -71,7 +58,7 @@ theorem polymerFreeEnergyAlongExhaustion_latticeGraph_le_of_le_strict_form
         (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) t ≤
       IsingModel.polymerFreeEnergy
         (inducedGraph (IsingModel.latticeGraph d) (Λ.volume n)) s :=
-  Ambient.polymerFreeEnergyAlongExhaustion_le_of_le_strict_form
+  Ambient.polymerFreeEnergyAlongExhaustion_le_of_le_of_nonneg_left
     (IsingModel.latticeGraph d) Λ n ht hts
 
 end Ambient

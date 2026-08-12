@@ -96,26 +96,15 @@ theorem polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
   IsingModel.polymerFreeEnergy_eq_zero_of_edgeFinset_empty
     (inducedGraph G Λ) h_empty t
 
-/-- **Λ-layer: `polymerFreeEnergy` preserves order on `[0, ∞)`**
-(§18.5 Λ wrap of Step 649). -/
-theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
-    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
-      IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
-  IsingModel.polymerFreeEnergy_le_of_le_of_nonneg
-    (inducedGraph G Λ) ht hs hts
-
-/-- **Λ-layer: `polymerFreeEnergy` strict-form order preservation**
-(§18.5 Λ wrap of Step 650). -/
-theorem polymerFreeEnergy_Λ_le_of_le_strict_form
+/-- At the Λ layer, polymer free energy preserves order when the smaller activity is
+nonnegative. -/
+theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg_left
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
     IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
       IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
-  IsingModel.polymerFreeEnergy_le_of_le_strict_form
+  IsingModel.polymerFreeEnergy_le_of_le_of_nonneg_left
     (inducedGraph G Λ) ht hts
 
 /-- **Λ-layer: `polymerFreeEnergy` tanh-form sandwich** (§18.5 Λ wrap
