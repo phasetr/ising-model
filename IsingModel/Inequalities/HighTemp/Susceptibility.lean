@@ -6,7 +6,15 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # High-temperature susceptibility bounds
 
 Finite-volume, along-exhaustion, and infinite-volume susceptibility bounds in the
-high-temperature regime, plus concrete lattice-graph instances.
+high-temperature regime, plus concrete lattice-graph instances. Every bound here is
+the `βJD/(1-βJD)` ceiling produced by iterating the Simon-Lieb edge-peeling
+inequality (`correlation_sum_le_of_high_temp`).
+
+References: B. Simon, *Correlation inequalities and the decay of correlations in
+ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement of
+Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135;
+Friedli–Velenik §3.7.3. The truncated two-point function that the susceptibility
+sums is Glimm–Jaffe, *Quantum Physics* 2nd ed., §5.1 pp. 72–74.
 -/
 
 namespace IsingModel.Ambient
@@ -43,7 +51,7 @@ Proof: at `h = 0`, `truncated2 = correlation` (`truncated2_h_zero`) and the
 diagonal term vanishes, so the sum reduces to `∑_{j≠i} ⟨σ_iσ_j⟩`,
 bounded by `correlation_sum_le_of_high_temp`.
 
-Reference: Glimm–Jaffe §5.1 pp. 73–74; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityΛ_le_of_high_temp
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -87,7 +95,7 @@ for each stage `n`, `susceptibilityAlongExhaustion G Λ ⟨J,0,β⟩ i n ≤ βJ
 Proof: if `i ∈ Λ.volume n`, apply `susceptibilityΛ_le_of_high_temp`;
 otherwise the value is `0 ≤ βJD/(1-βJD)`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityAlongExhaustion_le_of_high_temp
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -113,7 +121,7 @@ Proof: `susceptibilityInfinite = ⨆_n susceptibilityAlongExhaustion_n`;
 each stage is bounded by `susceptibilityAlongExhaustion_le_of_high_temp`,
 so `ciSup_le` closes the goal.
 
-Reference: Glimm–Jaffe §5.1 pp. 73–74; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityInfinite_le_of_high_temp
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -137,7 +145,7 @@ open IsingModel in
 Proof: apply `susceptibilityInfinite_le_of_high_temp` with `D = 2*d : ℕ`;
 the degree bound follows from `edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityInfinite_latticeGraph_le_of_high_temp
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) :
@@ -159,7 +167,7 @@ and `βJ · ↑(2*d) < 1`:
 Proof: apply `susceptibilityInfinite_le_of_high_temp` with `D = 2*d : ℕ`;
 the degree bound follows from `edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityInfinite_latticeGraph_le_of_high_temp_gen
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -182,7 +190,7 @@ is bounded above by `βJ·↑(2*d)/(1-βJ·↑(2*d))`.
 Proof: apply `susceptibilityAlongExhaustion_le_of_high_temp` with `D = 2*d : ℕ`;
 the degree bound follows from `edgeFilter_card_eq_degree` + `inducedLatticeGraph_degree_le`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hlt : β * J * ↑(2 * d) < 1) (i : Fin d → ℤ) (n : ℕ) :
@@ -205,7 +213,7 @@ is bounded above by `βJ·↑(2*d)/(1-βJ·↑(2*d))`.
 The proof is identical to `susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp`
 but works for an arbitrary `Λ : Ambient.Exhaustion (Fin d → ℤ)`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp_gen
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hβJ : 0 ≤ β * J)
@@ -229,7 +237,7 @@ is bounded above.
 Proof: `susceptibilityAlongExhaustion_latticeGraph_le_of_high_temp_gen` gives a
 uniform upper bound `βJ·2d/(1-βJ·2d)` for every `n`; this witnesses `BddAbove`.
 
-Reference: Glimm–Jaffe §5.1 pp.~73--74 and §17.5 pp.~311--312. -/
+Reference: Simon 1980; Lieb 1980; Glimm–Jaffe §17.5 pp.~311--312. -/
 theorem susceptibilityAlongExhaustion_bddAbove_latticeGraph_of_high_temp
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hβJ : 0 ≤ β * J)

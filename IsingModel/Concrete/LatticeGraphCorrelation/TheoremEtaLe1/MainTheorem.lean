@@ -303,7 +303,7 @@ then the cluster property holds: the truncated two-point function
 `correlationInfinite_polynomial_implies_exponential`, GJ §17.8 Thm 17.8.1)
 → cluster property (by `clusterProperty_latticeGraph_of_HasExponentialDecay`).
 
-Reference: Glimm–Jaffe §5.1 pp. 76–79; §17.8 pp. 316–318. -/
+Reference: Glimm–Jaffe §5.1 pp. 72–74; §17.8 pp. 316–318. -/
 theorem clusterProperty_latticeGraph_of_polynomialDecay
     (d : ℕ) (hd : 1 ≤ d)
     (Λ : Exhaustion (Fin d → ℤ))

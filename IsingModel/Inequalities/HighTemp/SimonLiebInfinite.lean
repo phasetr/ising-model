@@ -6,6 +6,10 @@ import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
 # Infinite-volume Simon-Lieb high-temperature bounds
 
 Nonnegativity and infinite-volume Simon-Lieb wrappers at `h = 0`.
+
+References: B. Simon, *Correlation inequalities and the decay of correlations in
+ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement of
+Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135.
 -/
 
 namespace IsingModel.Ambient
@@ -42,7 +46,7 @@ set_option maxHeartbeats 800000 in
 -- The proof involves `ciSup_le` + `sum_le_sum` + `Finset.sum_image` injectivity,
 -- requiring extended heartbeats beyond the default 200000 limit.
 open SimpleGraph in
-/-- **∞-volume Simon-Lieb inequality** (GJ §5.1, p. 76–79; FV Prop. 9.31, p. 428):
+/-- **∞-volume Simon-Lieb inequality** (Simon 1980; Lieb 1980):
 for `h = 0`, `0 ≤ βJ`, and `i` not adjacent to `j` in `G`,
 `⟨σ_iσ_j⟩_∞ ≤ βJ · ∑_{k~i} ⟨σ_kσ_j⟩_∞`.
 
@@ -53,7 +57,8 @@ but in this formalization `correlationInfinite G Λ p {j,j} = 0`
 
 Proof: `ciSup_le` + per-stage finite-vol Simon-Lieb + monotone convergence.
 
-Reference: Glimm–Jaffe §5.1 pp. 76–79; Friedli–Velenik Prop. 9.31 p. 428. -/
+Reference: Simon 1980, Comm. Math. Phys. 77, 111–126; Lieb 1980, Comm. Math.
+Phys. 77, 127–135. -/
 theorem correlationInfinite_simon_lieb
     (G : SimpleGraph V) [G.LocallyFinite]
     (Λ : Exhaustion V)
@@ -182,7 +187,8 @@ for the `d`-dimensional lattice graph with cubic exhaustion,
 
 Direct application of `correlationInfinite_simon_lieb` to the ℤ^d setting.
 
-Reference: Glimm–Jaffe §5.1 pp. 76–79; Friedli–Velenik Prop. 9.31 p. 428. -/
+Reference: Simon 1980, Comm. Math. Phys. 77, 111–126; Lieb 1980, Comm. Math.
+Phys. 77, 127–135. -/
 theorem correlationInfinite_simon_lieb_latticeGraph
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     {i j : Fin d → ℤ} (hij : i ≠ j) (hnadj : ¬(latticeGraph d).Adj i j) :

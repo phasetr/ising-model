@@ -2,7 +2,7 @@ import IsingModel.GibbsMeasure
 import IsingModel.RandomCurrent.Peeling
 
 /-!
-# Simon-Lieb inequality (GJ §5.1 / FV Prop. 9.31)
+# Simon-Lieb inequality (Simon 1980; Lieb 1980)
 
 Connects the Gibbs-measure correlation function to the random-current
 weight sums, then derives the Simon-Lieb inequality from
@@ -16,7 +16,13 @@ Six supporting lemmas lead to the main result:
 5. `correlation_inducedGraph_eq_weightSum_ratio` — correlation as weightSum ratio.
 6. `correlation_inducedGraph_simon_lieb` — the Simon-Lieb inequality.
 
-References: Glimm–Jaffe §5.1 pp. 76–79; Friedli–Velenik Prop. 9.31 p. 428.
+References: B. Simon, *Correlation inequalities and the decay of correlations in
+ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement of
+Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135. Cited in
+Glimm–Jaffe, *Quantum Physics*, §17.8 Remark 3, p. 317. A `tanh`-weighted form of
+the same peeling bound is stated as eq. (12.27) of Fernández–Fröhlich–Sokal, *Random
+Walks, Critical Phenomena, and Triviality*, §12.2, where it is derived from Griffiths'
+third inequality, which FFS identifies as a special case of the Simon–Lieb inequality.
 -/
 
 namespace IsingModel
@@ -142,7 +148,7 @@ theorem correlation_inducedGraph_eq_weightSum_ratio
   field_simp [h2.ne', hW.ne']
 
 set_option linter.unusedDecidableInType false in
-/-- **Simon-Lieb two-point edge-peeling inequality** (GJ §5.1 / FV Prop. 9.31, p. 428):
+/-- **Simon-Lieb two-point edge-peeling inequality** (Simon 1980; Lieb 1980):
 for `h = 0`, `0 ≤ β J`, and `i ≠ j ∈ Λ`,
 `⟨σ_iσ_j⟩ ≤ βJ · ∑_{e ∋ i} ⟨σ^{{i,j}△endpoints(e)}⟩`.
 This is the two-point, one-step peeling form of the Simon-Lieb inequality.
@@ -211,7 +217,7 @@ Define `T_k = ∑_{j≠k} ⟨σ_kσ_j⟩` and `M = max_k T_k`. Simon-Lieb + symm
 gives `T_k ≤ βJD(1+M)` for all `k`; taking `k = argmax T` yields
 `M(1-βJD) ≤ βJD`, hence `M ≤ βJD/(1-βJD)`.
 
-Reference: Glimm–Jaffe §5.1; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. -/
 theorem correlation_sum_le_of_high_temp
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

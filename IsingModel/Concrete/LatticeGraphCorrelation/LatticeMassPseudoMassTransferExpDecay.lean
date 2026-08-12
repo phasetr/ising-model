@@ -76,8 +76,8 @@ pseudo-mass/lattice-mass bridge: the witness constant and rate are independent o
 the target exhaustion because `truncated2Infinite` is exhaustion-independent under
 ferromagnetic parameters.
 
-References: Glimm--Jaffe §5.1 pp. 74--75 and §17.5 Lemma 17.5.2, pp. 311--312;
-Friedli--Velenik Prop. 9.31 p. 428. -/
+References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Simon 1980,
+Comm. Math. Phys. 77, 111--126; Lieb 1980, Comm. Math. Phys. 77, 127--135. -/
 theorem HasExponentialDecay_transfer_high_temp
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)

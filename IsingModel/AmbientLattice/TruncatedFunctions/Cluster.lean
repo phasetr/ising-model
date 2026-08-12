@@ -27,10 +27,11 @@ condition consolidating
 `truncated2Infinite_tendsto_cofinite_zero_of_summable`, and the
 two trivial slices ($J = 0$ ferromagnetic, $\beta = 0$). The
 general (non-trivial) case requires the Simon–Lieb inequality
-(FV Prop 9.31) or random-current representation, both
+(Simon 1980, Comm. Math. Phys. 77, 111–126; Lieb 1980, Comm.
+Math. Phys. 77, 127–135) or random-current representation, both
 research-level.
 
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 76–79. -/
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
 
 /-- **§5.1 cluster property** for the ∞-volume Ursell 2-point
 function: at every fixed basepoint `i : V`, the function
