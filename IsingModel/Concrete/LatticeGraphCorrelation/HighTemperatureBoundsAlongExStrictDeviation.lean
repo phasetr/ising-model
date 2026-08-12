@@ -1,6 +1,6 @@
 import IsingModel.Lattice
 import IsingModel.Concrete.LatticeGraphBED.LatticeBoundaryBED
-import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroBundle
+import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictBundle
 import IsingModel.AmbientLattice.SpecialCases.HighTemperatureBoundsDeviationStrictFerroZ
 
 /-!

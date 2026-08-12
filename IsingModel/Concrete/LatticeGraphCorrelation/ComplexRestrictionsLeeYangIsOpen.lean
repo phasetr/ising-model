@@ -40,15 +40,6 @@ theorem mem_slitPlane_locus_of_mem_leeYangSubdomain_latticeGraph
   IsingModel.mem_slitPlane_locus_of_mem_leeYangSubdomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ J hh
 
-/-- **ℤ^d `logZ` slitPlane-locus is open** (Λ-induced). -/
-theorem isOpen_logZ_slitPlane_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J β : ℂ) :
-    IsOpen {h : ℂ | IsingModel.partitionFunctionComplex
-      (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J h β
-        ∈ Complex.slitPlane} :=
-  IsingModel.isOpen_logZ_slitPlane_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) J β
-
 /-- **ℤ^d slitPlane-locus open in `(h, β)`** (Λ-induced). -/
 theorem isOpen_slitPlane_locus_h_beta_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (J : ℂ) :
