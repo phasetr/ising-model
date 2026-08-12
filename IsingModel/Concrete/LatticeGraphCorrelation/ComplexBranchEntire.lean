@@ -17,21 +17,6 @@ branch statement here assumes `Λ` nonempty, `0 < β` and `0 < J`. The module al
 namespace IsingModel
 namespace Ambient
 
-/-- **ℤ^d GJ §4.6 Thm 4.6.2 finite-volume (symbolic branch-locus form)**
-(Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem leeYangDomain_subset_branch_locus_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
-    ∀ h ∈ IsingModel.leeYangDomain,
-      ∃ f : ℂ → ℂ, AnalyticAt ℂ f h ∧
-        Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f h)
-          = IsingModel.partitionFunctionComplex
-              (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-              (J : ℂ) h (β : ℂ) :=
-  IsingModel.leeYangDomain_subset_branch_locus
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ
-
 /-- **ℤ^d `freeEnergyComplex` has analytic branch over leeYangDomain**
 (Λ-induced, nonempty `Λ`, ferromagnetic): headline form. -/
 theorem freeEnergyComplex_exists_analyticBranch_latticeGraph
@@ -64,25 +49,6 @@ theorem freeEnergyComplex_exists_analyticBranch_strong_latticeGraph
           (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
           (J : ℂ) h (β : ℂ) :=
   IsingModel.freeEnergyComplex_exists_analyticBranch_strong
-    (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ
-
-/-- **ℤ^d GJ §4.6 Thm 4.6.2 finite-volume (`analyticBranch` packaged form
-over `leeYangDomain`)** (Λ-induced, nonempty `Λ`, ferromagnetic). -/
-theorem analyticBranch_freeEnergyComplex_leeYangDomain_latticeGraph
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Nonempty (↑Λ : Type _)]
-    {β J : ℝ} (hβ : 0 < β) (hJ : 0 < J) :
-    ∀ h₀ ∈ IsingModel.leeYangDomain,
-      ∃ f : ℂ → ℂ,
-          AnalyticAt ℂ f h₀
-        ∧ Complex.exp ((Fintype.card (↑Λ : Type _) : ℂ) * f h₀)
-            = IsingModel.partitionFunctionComplex
-                (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-                (J : ℂ) h₀ (β : ℂ)
-        ∧ f h₀ = IsingModel.freeEnergyComplex
-            (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ)
-            (J : ℂ) h₀ (β : ℂ) :=
-  IsingModel.analyticBranch_freeEnergyComplex_leeYangDomain
     (Ambient.inducedGraph (IsingModel.latticeGraph d) Λ) hβ hJ
 
 /-- **ℤ^d packaged `AnalyticOnNhd` on Lee-Yang subdomain** (Λ-induced,

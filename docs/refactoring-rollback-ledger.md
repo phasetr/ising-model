@@ -125,8 +125,6 @@ The fifteen retired names were:
 The merge explicitly carried forward, rather than resolved, these candidates:
 
 - private concrete twin `Spin.sign_mul_ℝ`;
-- pair `isOpen_logZ_slitPlane_locus_latticeGraph` and
-  `isOpen_freeEnergy_analyticity_locus_latticeGraph`;
 - pair `norm_partitionFunctionComplex_eq_partitionFunction_at_real_latticeGraph` and
   `norm_partitionFunctionComplex_at_real_latticeGraph`.
 

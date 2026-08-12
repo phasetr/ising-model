@@ -1548,8 +1548,9 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # canonical declarations, for a net reduction of five to 10556.  PR
         # #5037 removes eight alpha-equivalent zero-parameter Mayer identities,
         # reducing the population to 10548.  The remaining #5000 free-energy
-        # cleanup removes three more duplicate declarations, leaving 10545.
-        self.assertEqual(len(broad or []), 10545)
+        # cleanup removes three more duplicate declarations, leaving 10545.  The
+        # Complex/high-temperature errata cleanup removes five more, leaving 10540.
+        self.assertEqual(len(broad or []), 10540)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1561,7 +1562,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10545 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10540 declarations"]},
         )
 
 
