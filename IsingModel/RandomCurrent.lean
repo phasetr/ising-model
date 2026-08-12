@@ -20,11 +20,14 @@ Umbrella file importing all random-current sub-modules:
 * `RandomCurrent.Switching` — Aizenman switching lemma infrastructure
   (subFinset, pairFinset, jointFactor, source algebra, connectivity).
 * `RandomCurrent.Peeling` — edge peeling + `weightSum_pair_le_edge_sum`
-  (GJ §5.1 / FV Prop 9.31 p. 428).
+  (Simon 1980; Lieb 1980).
 * `RandomCurrent.Switching.GlobalSwitchingLimit` — the `tsum`/`iSup` lift of
   the bounded global switching identity to `weightSum` (GJ §17.5 brick 2).
 
-References: Glimm–Jaffe §5.1 pp. 76–79; Friedli–Velenik §3.7, Prop 9.31. -/
+References: Glimm–Jaffe §5.1; Friedli–Velenik §3.7. For the `Peeling` bound:
+B. Simon, *Correlation inequalities and the decay of correlations in
+ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement
+of Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135. -/
 
 namespace IsingModel
 namespace Ambient

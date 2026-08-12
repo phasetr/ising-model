@@ -22,8 +22,8 @@ variable {V : Type*} (G : SimpleGraph V)
 /-- **Outer vertex boundary** of a finite Finset `S` in a locally
 finite simple graph: vertices not in `S` that have a neighbour in
 `S`. Formally `S.biUnion G.neighborFinset \ S`. Preparatory notion
-for the Simon–Lieb inequality (Friedli–Velenik Prop 9.31, Glimm–
-Jaffe §5.1). -/
+for the Simon–Lieb inequality (Simon 1980, Comm. Math. Phys. 77,
+111–126; Lieb 1980, Comm. Math. Phys. 77, 127–135). -/
 def outerVertexBoundary [DecidableEq V] [LocallyFinite G]
     (S : Finset V) : Finset V :=
   S.biUnion (fun v => G.neighborFinset v) \ S

@@ -26,7 +26,10 @@ Tracking issue: <https://github.com/phasetr/ising-model/issues/1645>.
 References:
 
 * Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5, Lemma 17.5.2, pp.~311--312.
-* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §5.1, pp.~74--75.
+* B. Simon, *Correlation inequalities and the decay of correlations in
+  ferromagnets*, Comm. Math. Phys. 77 (1980), 111--126.
+* E. H. Lieb, *A refinement of Simon's correlation inequality*, Comm. Math.
+  Phys. 77 (1980), 127--135.
 -/
 
 namespace IsingModel

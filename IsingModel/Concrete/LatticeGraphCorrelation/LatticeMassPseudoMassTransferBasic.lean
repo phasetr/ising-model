@@ -40,8 +40,8 @@ The proof unfolds `pseudoMassFromParamsAtPair`, rewrites `pseudoMassExt` to
 `pseudoMass(c) ≤ t ↔ pseudoMassG α r t ≤ c`. The high-temperature hypotheses
 give `0 ≤ -log(βJ·2d)`.
 
-References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Glimm--Jaffe
-§5.1 pp. 74--75. -/
+References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Simon 1980,
+Comm. Math. Phys. 77, 111--126; Lieb 1980, Comm. Math. Phys. 77, 127--135. -/
 theorem pseudoMassFromParamsAtPair_le_high_temp_rate_of_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -74,8 +74,8 @@ This is the monotonicity step needed after
 `HasExponentialDecay_transfer_high_temp`: smaller decay rates give weaker
 exponential bounds, so they remain valid.
 
-References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Glimm--Jaffe §5.1
-pp. 74--75; Friedli--Velenik Prop. 9.31 p. 428. -/
+References: Glimm--Jaffe §17.5 Lemma 17.5.2, pp. 311--312; Simon 1980,
+Comm. Math. Phys. 77, 111--126; Lieb 1980, Comm. Math. Phys. 77, 127--135. -/
 theorem HasExponentialDecay_pseudoMassFromParamsAtPair_of_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

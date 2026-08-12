@@ -9,7 +9,10 @@ edge-peeling weight bounds, and the main Simon-Lieb edge-peeling inequality
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik Prop 9.31 p. 428.
+* B. Simon, *Correlation inequalities and the decay of correlations in
+  ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126.
+* E. H. Lieb, *A refinement of Simon's correlation inequality*, Comm. Math.
+  Phys. 77 (1980), 127–135.
 -/
 
 namespace IsingModel
@@ -181,7 +184,8 @@ omit [DecidableEq V] in
 /-- **Weight peeling identity**: subtracting one unit from active edge `e₀`
 factors the weight by `β * J / n e₀`. Key identity: `(β*J)^k / k! = β*J/k *
 (β*J)^(k-1) / (k-1)!` applied at `k = n e₀` via `k! = k * (k-1)!`.
-Foundational algebraic step for the Simon-Lieb inequality (GJ §5.1). -/
+Foundational algebraic step for the Simon-Lieb inequality (Simon 1980;
+Lieb 1980). -/
 theorem Current.weight_pred_edge
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -227,7 +231,7 @@ omit [DecidableEq V] in
 /-- **Weight peeling bound**: for `0 ≤ β * J` and `0 < n e₀`, the weight
 satisfies `n.weight β J ≤ β * J * (n - fromEdgeFinset {e₀}).weight β J`.
 Since `n e₀ ≥ 1`, we have `β*J / n e₀ ≤ β*J`. Used in the edge-peeling
-argument for Simon-Lieb (GJ §5.1 / FV Prop 9.31). -/
+argument for Simon-Lieb (Simon 1980; Lieb 1980). -/
 theorem Current.weight_le_mul_pred_edge
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -251,7 +255,7 @@ Proof: `0 < n e₀` implies `fromEdgeFinset {e₀} ≤ n` pointwise, then
 `sub_sources_eq_symmDiff` (PR #870) gives the symmDiff formula, and
 `fromEdgeFinset_singleton_sources` (PR #813) identifies the
 singleton-edge sources with the endpoint pair. Used in the edge-peeling
-step of Simon-Lieb (GJ §5.1 / FV Prop 9.31). -/
+step of Simon-Lieb (Simon 1980; Lieb 1980). -/
 theorem Current.sources_sub_edge_symmDiff
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -463,7 +467,7 @@ for each n with sources `{i,j}`, pick an active edge `e₀` at `i` via
 `supportAt_nonempty_of_mem_sources`, bound `w(n) ≤ β*J * w(n - 1_{e₀})` via
 `weight_le_mul_pred_edge`, then `Finset.single_le_sum` absorbs `w(n - 1_{e₀})` into
 the edge sum. After `Finset.sum_comm`, each inner per-edge sum is bounded by
-`weightSum(symmDiff)` via `sum_filter_le_weightSum_symmDiff`. (GJ §5.1 / FV Prop 9.31) -/
+`weightSum(symmDiff)` via `sum_filter_le_weightSum_symmDiff`. (Simon 1980; Lieb 1980) -/
 theorem Current.weightSum_pair_le_edge_sum
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

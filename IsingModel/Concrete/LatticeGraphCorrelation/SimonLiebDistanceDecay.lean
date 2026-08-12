@@ -2,7 +2,7 @@ import IsingModel.Inequalities.HighTemp.SimonLiebInfinite
 import IsingModel.Concrete.LatticeGraphBED.NeighborDegree
 
 /-!
-# GJ §17.5 / §5.1 — Simon--Lieb one-step decay on the integer lattice
+# GJ §17.5 — Simon--Lieb one-step decay on the integer lattice
 
 This module begins the prefactor-free distance-decay program for the
 infinite-volume two-point function on `ℤ^d` (Issue #2931, Phase 3a).  The
@@ -26,10 +26,12 @@ and the volume-convergence rate (Issue #2931).
 
 References:
 
-* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §5.1, pp. 76--79; §17.5, Theorem
-  17.5.1 proof and Lemma 17.5.2, pp. 311--312.
-* Friedli--Velenik, *Statistical Mechanics of Lattice Systems*, Prop. 9.31,
-  p. 428.
+* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5, Theorem 17.5.1 proof and
+  Lemma 17.5.2, pp. 311--312.
+* B. Simon, *Correlation inequalities and the decay of correlations in
+  ferromagnets*, Comm. Math. Phys. 77 (1980), 111--126.
+* E. H. Lieb, *A refinement of Simon's correlation inequality*, Comm. Math.
+  Phys. 77 (1980), 127--135.
 -/
 
 namespace IsingModel

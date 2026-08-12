@@ -75,15 +75,16 @@ A `Summable`-conditioned corollary, not a standalone Glimm–Jaffe
 result: it presents the §5.1 cluster picture in its distance-based
 form, with the `Summable` hypothesis serving as a placeholder for
 the unconditional summability later supplied in high-temperature regimes by
-the Simon–Lieb stack (Friedli–Velenik Prop 9.31). This PR #783-era capstone
+the Simon–Lieb stack (Simon 1980; Lieb 1980). This PR #783-era capstone
 of the §5.1 cluster-decay infrastructure stack (PR #779 + PR #781 + PR #782)
 remains the conditional distance-form wrapper. The proof is a one-line rewrite
 of the comap filter via `comap_latticeDistance_atTop_eq_cofinite`, followed by
 PR #779's cofinite version.
 
 References: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
-pp. 76–79; Friedli–Velenik *Statistical Mechanics of Lattice
-Systems*, Prop 9.31 (Simon–Lieb inequality). -/
+pp. 76–79; for the Simon–Lieb inequality, Simon 1980, Comm.
+Math. Phys. 77, 111–126 and Lieb 1980, Comm. Math. Phys. 77,
+127–135. -/
 theorem truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable
     (d : ℕ) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     (p : IsingParams ℝ) (i : Fin d → ℤ)

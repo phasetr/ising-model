@@ -20,13 +20,16 @@ open scoped symmDiff
 namespace IsingModel
 namespace Ambient
 
-/-! ## §5.1 Step 110: High-temperature exponential decay (Glimm–Jaffe §5.1 pp. 74–75)
+/-! ## Step 110: High-temperature exponential decay (Simon 1980; Lieb 1980)
 
 Lifts the ∞-volume Simon-Lieb inequality (Step 109) to an explicit
 exponential decay rate: for `βJD < 1` (D = 2d), the two-point
 correlation decays as `C · (βJD)^dist(i,j)` where `C = 1/(1-βJD)`.
 
-References: Glimm–Jaffe §5.1 pp. 74–75; Friedli–Velenik Prop. 9.31 p. 428. -/
+References: B. Simon, *Correlation inequalities and the decay of correlations
+in ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A
+refinement of Simon's correlation inequality*, Comm. Math. Phys. 77 (1980),
+127–135. -/
 
 /-- **Inductive bound (Step 110 core)**: at `h = 0`, `0 ≤ βJ`, `βJD < 1`
 (D = 2d), for `i ≠ j` with `dist(i,j) ≥ n+1`:
@@ -36,7 +39,8 @@ Proof by induction on `n` (universalized over `i, j` for the IH):
 - n = 0: per-stage `⟨σ_iσ_j⟩_n ≤ χ_n(i) ≤ βJD/(1-βJD)` (Step 106).
 - n → n+1: `dist ≥ n+2 → ¬Adj` → Simon-Lieb (Step 109) + triangle + IH.
 
-References: Glimm–Jaffe §5.1 pp. 74–75; Friedli–Velenik Prop. 9.31 p. 428. -/
+References: Simon 1980, Comm. Math. Phys. 77, 111–126; Lieb 1980, Comm. Math.
+Phys. 77, 127–135. -/
 private lemma correlationInfinite_latticeGraph_le_of_dist_ge
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J) (hlt : β * J * ↑(2 * d) < 1)
     {i j : Fin d → ℤ} (hij : i ≠ j)
@@ -152,8 +156,8 @@ private lemma correlationInfinite_latticeGraph_le_of_dist_ge
               (β * J * ↑(2 * d) / (1 - β * J * ↑(2 * d))) := by rw [pow_succ]; ring
 
 open IsingModel in
-/-- **High-temperature exponential decay** (Glimm–Jaffe §5.1 pp. 74–75;
-Friedli–Velenik Prop. 9.31 p. 428): for the `d`-dimensional lattice graph
+/-- **High-temperature exponential decay** (Simon 1980;
+Lieb 1980): for the `d`-dimensional lattice graph
 with cubic exhaustion, `0 ≤ βJ`, and `βJD < 1` (D = 2d),
 `HasExponentialDecay d (cubicExhaustion d) ⟨J,0,β⟩ (-log(βJD))`.
 
@@ -168,7 +172,8 @@ textbook's physically-infinite mass.  The statement remains valid (the bound
 `|⟨σ_iσ_j⟩_∞| ≤ C` follows from the inductive lemma at `βJD = 0`),
 and the physically meaningful regime is `0 < βJD < 1`.
 
-References: Glimm–Jaffe §5.1 pp. 74–75; Friedli–Velenik Prop. 9.31 p. 428. -/
+References: Simon 1980, Comm. Math. Phys. 77, 111–126; Lieb 1980, Comm. Math.
+Phys. 77, 127–135. -/
 theorem hasExponentialDecay_of_high_temp
     {d : ℕ} {β J : ℝ} (hβJ : 0 ≤ β * J)
     (hlt : β * J * ↑(2 * d) < 1) :
