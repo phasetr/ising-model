@@ -71,32 +71,6 @@ theorem mayer_identity_at_J_zero_AlongExhaustion
         (Real.tanh (β * (0 : ℝ))) :=
   mayer_identity_at_J_zero_Λ G (Λ.volume n) β N
 
-/-- **Along-ex: Mayer identity at `J = 0` (polymer_free_energy form)**. -/
-theorem
-mayer_identity_at_J_zero_polymer_free_energy_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (β : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh (β * (0 : ℝ))) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh (β * (0 : ℝ))) :=
-  mayer_identity_at_J_zero_polymer_free_energy_Λ G (Λ.volume n) β N
-
-/-- **Along-ex: Mayer identity at `β = 0` (polymer_free_energy form)**. -/
-theorem
-mayer_identity_at_beta_zero_polymer_free_energy_AlongExhaustion
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (J : ℝ) (N : ℕ) (n : ℕ) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph G (Λ.volume n)) (Real.tanh ((0 : ℝ) * J)) =
-      IsingModel.mayerPartialSum
-        (inducedGraph G (Λ.volume n)) N
-        (Real.tanh ((0 : ℝ) * J)) :=
-  mayer_identity_at_beta_zero_polymer_free_energy_Λ G (Λ.volume n) J N
-
 /-- **Along-ex: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
 theorem
 mayer_identity_at_either_zero_polymer_free_energy_AlongExhaustion

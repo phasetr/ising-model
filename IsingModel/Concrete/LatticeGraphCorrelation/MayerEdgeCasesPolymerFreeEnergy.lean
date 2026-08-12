@@ -28,7 +28,7 @@ mayer_identity_at_J_zero_polymer_free_energy_Λ_latticeGraph
       IsingModel.mayerPartialSum
         (inducedGraph (IsingModel.latticeGraph d) Λ) N
         (Real.tanh (β * (0 : ℝ))) :=
-  Ambient.mayer_identity_at_J_zero_polymer_free_energy_Λ
+  Ambient.polymerFreeEnergy_Λ_eq_mayerPartialSum_at_J_zero
     (IsingModel.latticeGraph d) Λ β N
 
 /-- **ℤ^d Λ: Mayer identity at `β = 0` (polymer_free_energy form)**. -/
@@ -43,7 +43,7 @@ mayer_identity_at_beta_zero_polymer_free_energy_Λ_latticeGraph
       IsingModel.mayerPartialSum
         (inducedGraph (IsingModel.latticeGraph d) Λ) N
         (Real.tanh ((0 : ℝ) * J)) :=
-  Ambient.mayer_identity_at_beta_zero_polymer_free_energy_Λ
+  Ambient.polymerFreeEnergy_Λ_eq_mayerPartialSum_at_beta_zero
     (IsingModel.latticeGraph d) Λ J N
 
 /-- **ℤ^d Λ: Mayer identity at `J = β = 0` (polymer_free_energy form)**. -/
