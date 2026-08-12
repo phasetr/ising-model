@@ -295,8 +295,8 @@ assuming eventually `(Λ.volume n).Nonempty`, the sequence
 First non-trivial ∞-volume convergence under the scope update
 (CLAUDE.local.md: infinite-volume systems are in scope). The J=0 slice sidesteps the
 translation-invariance issue of the general Fekete program because
-the stagewise sequence is eventually constant (PR #174
-`freeEnergyAlongExhaustion_J_zero`); then via
+the stagewise sequence is eventually constant by
+`freeEnergyAlongExhaustion_J_zero`; then via
 `freeEnergyAlongExhaustion_tendsto_of_eventually_const`. -/
 theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty
     (G : SimpleGraph V) (Λ : Exhaustion V)
@@ -313,9 +313,8 @@ theorem freeEnergyAlongExhaustion_J_zero_tendsto_of_eventually_nonempty
 /-- **β=0 slice ∞-vol Tendsto**: `∀ᶠ n, (Λ.volume n).Nonempty ⇒
 Tendsto (freeEnergyAlongExhaustion G Λ ⟨J, h, 0⟩) atTop (𝓝 (log 2))`.
 
-Companion to `_J_zero_tendsto_of_eventually_nonempty` (PR #178):
-at β=0 the stagewise sequence is eventually constantly `log 2`
-(PR #132 `freeEnergyAlongExhaustion_beta_zero`). -/
+Companion to `_J_zero_tendsto_of_eventually_nonempty`: at β=0 the stagewise sequence is
+eventually constantly `log 2` by `freeEnergyAlongExhaustion_beta_zero`. -/
 theorem freeEnergyAlongExhaustion_beta_zero_tendsto_of_eventually_nonempty
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -331,7 +330,7 @@ theorem freeEnergyAlongExhaustion_beta_zero_tendsto_of_eventually_nonempty
 /-- **J=h=0 slice ∞-vol Tendsto**: `∀ᶠ n, (Λ.volume n).Nonempty ⇒
 Tendsto (freeEnergyAlongExhaustion G Λ ⟨0, 0, β⟩) atTop (𝓝 (log 2))`.
 
-Companion to `_J_zero_tendsto_of_eventually_nonempty` (PR #178):
+Companion to `_J_zero_tendsto_of_eventually_nonempty`:
 at J=h=0 the stagewise sequence is eventually constantly `log 2`
 (`freeEnergyAlongExhaustion_zero_params`). -/
 theorem freeEnergyAlongExhaustion_zero_params_tendsto_of_eventually_nonempty
@@ -382,7 +381,7 @@ theorem freeEnergyInfinite_J_zero_of_nonempty
 `freeEnergyInfinite G Λ ⟨0, h, β⟩ = freeEnergyInfinite ⊥ Λ ⟨0, h, β⟩`
 for any ambient graph `G, Λ`, any `h, β`.
 
-Lift of `freeEnergyAlongExhaustion_eq_bot_at_J_zero` (PR #176): the
+Lift of `freeEnergyAlongExhaustion_eq_bot_at_J_zero`: the
 stagewise graph independence propagates through `Filter.limsup` since
 the two sequences are pointwise equal. -/
 theorem freeEnergyInfinite_eq_bot_at_J_zero

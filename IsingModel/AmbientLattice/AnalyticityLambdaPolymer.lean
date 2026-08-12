@@ -193,8 +193,7 @@ theorem mayerPartialSum_Λ_one_nonneg_of_nonneg
     0 ≤ IsingModel.mayerPartialSum (inducedGraph G Λ) 1 t :=
   IsingModel.mayerPartialSum_one_nonneg_of_nonneg (inducedGraph G Λ) ht
 
-/-- **Λ-layer: `mayerExpansionTerm` filter to connected polymer
-sequences** (§18.4 Λ wrap of PR #1521). -/
+/-- **Λ-layer: `mayerExpansionTerm` filter to connected polymer sequences** (§18.4 Λ wrap). -/
 theorem mayerExpansionTerm_Λ_filter_connected
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -206,8 +205,7 @@ theorem mayerExpansionTerm_Λ_filter_connected
         IsingModel.ursellCoefficient ω * IsingModel.clusterSeqActivity t ω :=
   IsingModel.mayerExpansionTerm_filter_connected (inducedGraph G Λ) n t
 
-/-- **Λ-layer: `mayerPartialSum` filter to connected polymer sequences**
-(§18.4 Λ wrap of PR #1522). -/
+/-- **Λ-layer: `mayerPartialSum` filter to connected polymer sequences** (§18.4 Λ wrap). -/
 theorem mayerPartialSum_Λ_filter_connected
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

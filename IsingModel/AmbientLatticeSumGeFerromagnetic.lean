@@ -28,7 +28,7 @@ open Ambient
 variable {V : Type*} [DecidableEq V]
 
 /-- **`partitionFunctionΛ ≥ 1`** for ferromagnetic parameters:
-lifts PR #141 `partitionFunction_ge_one_of_ferromagnetic` to the
+lifts `partitionFunction_ge_one_of_ferromagnetic` to the
 `partitionFunctionΛ` API level. -/
 theorem partitionFunctionΛ_ge_one_of_ferromagnetic
     (G : SimpleGraph V) (Λ : Finset V)
@@ -47,7 +47,7 @@ theorem log_partitionFunctionΛ_nonneg_of_ferromagnetic
   Real.log_nonneg (partitionFunctionΛ_ge_one_of_ferromagnetic G Λ p hf)
 
 /-- **`partitionFunctionAlongExhaustion ≥ 1`** for ferromagnetic
-parameters: pointwise lift of PR #141
+parameters: pointwise lift of
 `partitionFunction_ge_one_of_ferromagnetic`. -/
 theorem partitionFunctionAlongExhaustion_ge_one_of_ferromagnetic
     (G : SimpleGraph V) (Λ : Exhaustion V)

@@ -11,9 +11,8 @@ import Mathlib.Data.Finset.Basic
 /-!
 # Super-additivity of `log Z` on `inducedGraph` over Finset disjoint union
 
-Combining the disjoint-sum super-additivity machinery (PRs #134–#137)
-with the graph isomorphism invariance (PR #138), we lift the
-super-additivity inequality to `inducedGraph` on an actual
+Combining the disjoint-sum super-additivity machinery with graph-isomorphism invariance,
+we lift the super-additivity inequality to `inducedGraph` on an actual
 Finset disjoint union `Λ₁ ∪ Λ₂` of the ambient lattice `V`.
 
 ## Main declarations
@@ -72,16 +71,15 @@ theorem inducedGraph_sum_map_le_union (G : SimpleGraph V)
     simpa [inducedGraph, SimpleGraph.induce] using hxy
 
 /-- **Super-multiplicative form** of `Z` on `inducedGraph` over
-Finset disjoint union (Glimm–Jaffe §4.6 Prop 4.6.1 Step 5 body,
-multiplicative form): for disjoint `Λ₁, Λ₂ : Finset V` and
+Finset disjoint union (the multiplicative form used in Glimm–Jaffe §4.6 Prop 4.6.1):
+for disjoint `Λ₁, Λ₂ : Finset V` and
 ferromagnetic `p`,
 ```
 Z_{inducedGraph G Λ₁}(p) · Z_{inducedGraph G Λ₂}(p)
   ≤ Z_{inducedGraph G (Λ₁ ∪ Λ₂)}(p).
 ```
 
-Mirrors `partitionFunction_mul_le_of_sum_le` (PR #137) in the
-ambient-lattice setting. -/
+Mirrors `partitionFunction_mul_le_of_sum_le` in the ambient-lattice setting. -/
 theorem partitionFunction_inducedGraph_disjUnion_super_multiplicative
     (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
     [Fintype (inducedGraph G Λ₁).edgeSet]
@@ -106,7 +104,7 @@ theorem partitionFunction_inducedGraph_disjUnion_super_multiplicative
           (inducedGraph_sum_map_le_union G hd) p hf
 
 /-- **Super-additivity of `log Z` on `inducedGraph` over Finset
-disjoint union** (Glimm–Jaffe §4.6 Prop 4.6.1 Step 5 body):
+disjoint union** (the additive form used in Glimm–Jaffe §4.6 Prop 4.6.1):
 for disjoint `Λ₁, Λ₂ : Finset V` and ferromagnetic `p`,
 ```
 log Z_{inducedGraph G Λ₁}(p) + log Z_{inducedGraph G Λ₂}(p)
@@ -114,16 +112,15 @@ log Z_{inducedGraph G Λ₁}(p) + log Z_{inducedGraph G Λ₂}(p)
 ```
 
 Proof chain.
-1. By PR #136 `log_partitionFunction_sum`, the LHS equals
+1. By `log_partitionFunction_sum`, the LHS equals
    `log Z_{(inducedGraph G Λ₁).sum (inducedGraph G Λ₂)}`.
-2. By PR #138 `log_partitionFunction_map_equiv`, pushing the
+2. By `log_partitionFunction_map_equiv`, pushing the
    disjoint sum along `(Equiv.Finset.union Λ₁ Λ₂ hd).toEmbedding`
    leaves `log Z` unchanged.
 3. The pushforward is a subgraph of `inducedGraph G (Λ₁ ∪ Λ₂)`
    by `inducedGraph_sum_map_le_union`.
-4. Ferromagnetic subgraph monotonicity of `log Z`
-   (`log_partitionFunction_monotone_subgraph`, PR #137 refactor)
-   closes. -/
+4. Ferromagnetic subgraph monotonicity of `log Z`, via
+   `log_partitionFunction_monotone_subgraph`, closes. -/
 theorem log_partitionFunction_inducedGraph_disjUnion_super_additive
     (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
     [Fintype (inducedGraph G Λ₁).edgeSet]
@@ -153,7 +150,7 @@ set_option linter.unusedFintypeInType false in
 
 Proof: `log Z_Λ₁ ≤ log Z_Λ₁ + log Z_Λ₂` (since `log Z_Λ₂ ≥ 0` by
 `log_partitionFunction_nonneg_of_ferromagnetic`), and the right-hand
-side is `≤ log Z_{Λ₁ ∪ Λ₂}` by the Step 5 super-additivity
+side is `≤ log Z_{Λ₁ ∪ Λ₂}` by the disjoint-union super-additivity
 (`log_partitionFunction_inducedGraph_disjUnion_super_additive`). The
 `[Fintype (inducedGraph G Λ₂).edgeSet]` instance is used internally
 via the super-additivity lemma even though it does not appear in the
@@ -197,7 +194,7 @@ induced subgraphs. Upgrades `inducedGraph_sum_map_le_union` to an equality: the
 `≤` direction is that lemma; the `≥` direction holds because, with no cross
 edges, every edge of `inducedGraph G (Λ₁ ∪ Λ₂)` has both endpoints in the same
 part. This is the structural fact behind the component factorization of a
-bond-deleted (fully separated) finite-volume system (Issue #2965, Phase A). -/
+bond-deleted (fully separated) finite-volume system. -/
 theorem inducedGraph_sum_map_eq_union_of_no_cross (G : SimpleGraph V)
     {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
     (hcross : ∀ a ∈ Λ₁, ∀ b ∈ Λ₂, ¬ G.Adj a b) :
@@ -229,7 +226,7 @@ alone. Combines `correlation_map_equiv` (iso transport) with
 `correlation_sum_inl` (disjoint-sum factorization).
 
 This is the bridge from a fully separated (bond-deleted) finite-volume system to
-the isolated-component correlation (Issue #2965, Phase A). The result is stated
+the isolated-component correlation. The result is stated
 on `(... ).map (Equiv.Finset.union ...)` rather than directly on
 `inducedGraph G (Λ₁ ∪ Λ₂)` because rewriting the graph through the equality would
 require transporting the `Fintype edgeSet` instance; the equality lemma above
@@ -279,7 +276,7 @@ and `correlation_congr_of_eq` (which absorbs the `Fintype` instance change). For
 disjoint `Λ₁, Λ₂` with no `G`-edge between them, an observable supported on `Λ₁`
 has the same correlation in the induced subgraph on the union as in the induced
 subgraph on `Λ₁` alone — the component-factorization bridge in the form directly
-usable for exhaustion stages (Issue #2965, Phase A). -/
+usable for exhaustion stages. -/
 theorem correlation_inducedGraph_union_inl_of_no_cross (G : SimpleGraph V)
     {Λ₁ Λ₂ : Finset V} (hd : Disjoint Λ₁ Λ₂)
     (hcross : ∀ a ∈ Λ₁, ∀ b ∈ Λ₂, ¬ G.Adj a b)
@@ -307,7 +304,7 @@ edge in the deleted set `D` has both endpoints in `S`, then
 subgraph on `S` joins two vertices of `S`, so it lies inside `S` and is never
 among the deleted edges `D`.
 
-For the finite-volume coupling step (Issue #2965, Phase A): deleting the cut
+For the finite-volume coupling step, deleting the cut
 (cross) edges between a region `S` and its complement does not alter the
 correlations *inside* `S`, so the induced subgraph on `S` of the bond-deleted
 model coincides with the induced subgraph on `S` of the original model. -/
@@ -333,8 +330,8 @@ cross edges by `deleteEdges_straddle_no_cross`) composed with
 `correlation_congr_of_eq` of `inducedGraph_deleteEdges_eq_of_not_internal`
 (deleting cut edges leaves the within-`S` induced subgraph unchanged, by
 `straddle_not_mem_of_same_side`). This is the component-factorization bridge for
-the finite-volume coupling step (Issue #2965, Phase A), realized via the Finset
-route that sidesteps the `Equiv.sumCompl` instance pathology (Issue #2980). -/
+the finite-volume coupling step, realized via the Finset route that sidesteps the
+`Equiv.sumCompl` instance pathology. -/
 theorem correlation_inducedGraph_deleteEdges_union_inl [Fintype V] (G : SimpleGraph V)
     (S : Finset V)
     [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
@@ -377,8 +374,7 @@ graph itself**: since `G.induce Set.univ ≃g G` (mathlib `induceUnivIso`, via
 correlation unchanged. This connects `inducedGraph`-based statements (e.g. the
 component-factorization capstone `correlation_inducedGraph_deleteEdges_union_inl`,
 whose left side lives on `inducedGraph _ univ`) back to the raw graph `G` (e.g.
-the ball-boundary increment `correlation_sub_deleteEdges_le_derivBound`)
-(Issue #2965, Phase A). -/
+the ball-boundary increment `correlation_sub_deleteEdges_le_derivBound`). -/
 theorem correlation_induce_univ [Fintype V] (G : SimpleGraph V)
     [Fintype (G.induce (Set.univ : Set V)).edgeSet] [Fintype G.edgeSet]
     (params : IsingParams ℝ) (A : Finset ↥(Set.univ : Set V)) :
@@ -407,7 +403,7 @@ along that relabeling preserves the correlation. Generalizes
 `↑(S ∪ Sᶜ)` (full by `Finset.union_compl`), which lets the component-factorization
 capstone's `inducedGraph _ (S ∪ Sᶜ)` left side connect to the raw bond-deleted
 graph without forcing the propositional Finset equality `S ∪ Sᶜ = univ` at the
-type level (Issue #2965, Phase A per-stage increment assembly). -/
+type level. -/
 theorem correlation_induce_of_forall_mem [Fintype V] (G : SimpleGraph V)
     (s : Set V) (hs : ∀ x, x ∈ s) [Fintype s]
     [Fintype (G.induce s).edgeSet] [Fintype G.edgeSet]
@@ -434,7 +430,7 @@ strengthens `correlation_congr_of_eq` to also absorb differences in the vertex
 the same vertex type, the correlations agree regardless of which `Fintype ι`,
 `Fintype Gᵢ.edgeSet` instances are in play. This is the tool that bridges the
 `Finset.Subtype.fintype` (used by `inducedGraph`) and the `Set`-induce vertex
-`Fintype` in the per-stage-increment assembly (Issue #2965, Phase A). -/
+`Fintype` in the per-stage-increment assembly. -/
 theorem correlation_congr_all {ι : Type*} [DecidableEq ι] {inst₁ inst₂ : Fintype ι}
     {G₁ G₂ : SimpleGraph ι} {e₁ : Fintype G₁.edgeSet} {e₂ : Fintype G₂.edgeSet}
     (hG : G₁ = G₂) (params : IsingParams ℝ) (A : Finset ι) :
@@ -451,7 +447,7 @@ all-instance bridge `correlation_congr_all`, an `S`-supported observable has the
 same correlation in the *raw* bond-deleted graph `G.deleteEdges {straddle S}` as
 in the isolated induced subgraph on `S` of the original model. This is the
 per-stage-increment form that pairs directly with the ball-boundary bond-deletion
-increment `correlation_sub_deleteEdges_le_derivBound` (Issue #2965, Phase A). -/
+increment `correlation_sub_deleteEdges_le_derivBound`. -/
 theorem correlation_deleteEdges_straddle_eq_inducedGraph [Fintype V] (G : SimpleGraph V)
     (S : Finset V)
     [Fintype (inducedGraph (G.deleteEdges {e : Sym2 V |
@@ -496,8 +492,7 @@ a `Finset ↥S` through `Sum.inl`, the `Equiv.Finset.union S Sᶜ` relabeling, a
 subtype inclusion `↥S → V`. This identifies the observable appearing in
 `correlation_deleteEdges_straddle_eq_inducedGraph` with the plain `V`-vertex
 observable — e.g. for `A = {⟨r,_⟩, ⟨s,_⟩}` it is the pair `{r, s}`, matching the
-ball-boundary increment `correlation_sub_deleteEdges_le_derivBound` (Issue #2965,
-Phase A per-stage increment). -/
+ball-boundary increment `correlation_sub_deleteEdges_le_derivBound`. -/
 theorem triple_map_subtypeUnivEquiv_eq [Fintype V] (S : Finset V)
     (A : Finset (↑S : Type _)) :
     ((A.map ⟨Sum.inl, Sum.inl_injective⟩).map
@@ -519,7 +514,7 @@ omit [DecidableEq V] in
 `S` forward along `nestedSubtypeEquiv` recovers the direct induced subgraph
 `inducedGraph G S`. An edge survives iff its (deep) endpoints are `G`-adjacent and
 both in `S`. This is the graph-level foundation for instantiating the per-stage
-increment on cubic exhaustion stages `box_k ⊆ box_{k+1}` (Issue #2965, Phase A);
+increment on cubic exhaustion stages `box_k ⊆ box_{k+1}`;
 the correlation-level transport is `correlation_inducedGraph_induce_preimage` below. -/
 theorem inducedGraph_induce_preimage_map_eq (G : SimpleGraph V) {S T : Finset V}
     (hST : S ⊆ T) :
@@ -542,8 +537,7 @@ applying `correlation_map_equiv` to the *direct* graph `inducedGraph G S` with t
 inverse relabeling `nestedSubtypeEquiv.symm` (so the heavy nested-subtype graph
 appears only as the map *result*, never as the graph `correlation_map_equiv`
 operates on), then bridging via `correlation_congr_all` and the graph equality.
-Instantiates the per-stage increment on cubic exhaustion stages `box_k ⊆ box_{k+1}`
-(Issue #2965). -/
+Instantiates the per-stage increment on cubic exhaustion stages `box_k ⊆ box_{k+1}`. -/
 theorem correlation_inducedGraph_induce_preimage (G : SimpleGraph V) {S T : Finset V}
     (hST : S ⊆ T)
     [Fintype (inducedGraph G S).edgeSet]

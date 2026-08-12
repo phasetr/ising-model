@@ -28,8 +28,8 @@ variable {V : Type*} [DecidableEq V]
 type**, under ferromagnetic parameters.
 
 Direct application of the pointwise bound
-`log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_of_ferromagnetic`
-(PR #165): `|Λ.volume n| · log 2 ≤ log Z_n` for every `n`. Combined
+`log_partitionFunctionAlongExhaustion_ge_card_mul_log_two_of_ferromagnetic`:
+`|Λ.volume n| · log 2 ≤ log Z_n` for every `n`. Combined
 with `Exhaustion.tendsto_card_atTop` (|Λ.volume n| → ∞) and
 `log 2 > 0`, the lower bound tends to `∞`; `Filter.tendsto_atTop_mono`
 lifts this to `log Z_n → ∞`. -/

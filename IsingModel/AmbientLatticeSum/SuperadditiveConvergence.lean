@@ -73,9 +73,7 @@ Hypotheses:
 The hypothesis bundle is the natural formalisation of "disjoint-tower"
 exhaustion: on a lattice with translation symmetry, a box-like
 exhaustion of a fixed block size satisfies `hcard_add` and `hsuper`
-(the latter from `log_partitionFunctionΛ_disjUnion_super_additive`).
-This completes the **Fekete step** of GJ §4.6 Prop 4.6.1
-(partial → Done in this hypothesis regime). -/
+(the latter from `log_partitionFunctionΛ_disjUnion_super_additive`). -/
 theorem freeEnergyAlongExhaustion_tendsto_of_superadditive
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -256,9 +254,10 @@ The bundle is indexed by a `SimpleGraph V`, an `Exhaustion V`, and
 content — that enters separately through `BoundedEdgeDensity` when
 needed.
 
-Intended use: future PRs will provide concrete instances under
-translation invariance (GJ §4.6 p. 68 style) so that the user does
-not need to supply the three hypotheses by hand. -/
+Concrete constructors for the `J = 0` and `β = 0` slices are provided by
+`DisjointTowerHypotheses.of_J_zero` and `DisjointTowerHypotheses.of_beta_zero` in
+`AmbientLatticeSum.TrivialSlices`; general callers may supply the three structural fields
+directly. -/
 structure DisjointTowerHypotheses
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

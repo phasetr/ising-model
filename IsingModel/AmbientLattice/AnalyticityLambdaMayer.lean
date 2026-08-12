@@ -59,8 +59,7 @@ theorem mayerPartialSum_Λ_analyticAt
         IsingModel.mayerPartialSum (inducedGraph G Λ) N s) t :=
   IsingModel.mayerPartialSum_analyticAt (inducedGraph G Λ) N t
 
-/-- **Λ-layer: `mayerPartialSum` is `ContinuousOn`** (§18.6 Λ wrap of
-Step 628). -/
+/-- **Λ-layer: `mayerPartialSum` is `ContinuousOn`** (§18.6 Λ wrap). -/
 theorem mayerPartialSum_Λ_continuousOn
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (s : Set ℝ) :
@@ -68,8 +67,7 @@ theorem mayerPartialSum_Λ_continuousOn
         IsingModel.mayerPartialSum (inducedGraph G Λ) N t) s :=
   IsingModel.mayerPartialSum_continuousOn (inducedGraph G Λ) N s
 
-/-- **Λ-layer: `mayerPartialSum` is `DifferentiableOn ℝ`** (§18.6
-Λ wrap of Step 628). -/
+/-- **Λ-layer: `mayerPartialSum` is `DifferentiableOn ℝ`** (§18.6 Λ wrap). -/
 theorem mayerPartialSum_Λ_differentiableOn
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) (s : Set ℝ) :
@@ -79,8 +77,7 @@ theorem mayerPartialSum_Λ_differentiableOn
 
 /-! ### §18.6 mayerExpansionTerm regularity Λ wraps -/
 
-/-- **Λ-layer: `mayerExpansionTerm` is `Continuous`** (§18.6 Λ wrap
-of Step 588). -/
+/-- **Λ-layer: `mayerExpansionTerm` is `Continuous`** (§18.6 Λ wrap). -/
 theorem mayerExpansionTerm_Λ_continuous
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
@@ -88,8 +85,7 @@ theorem mayerExpansionTerm_Λ_continuous
         IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t) :=
   IsingModel.mayerExpansionTerm_continuous (inducedGraph G Λ) n
 
-/-- **Λ-layer: `mayerExpansionTerm` is `Differentiable ℝ`** (§18.6
-Λ wrap of Step 589). -/
+/-- **Λ-layer: `mayerExpansionTerm` is `Differentiable ℝ`** (§18.6 Λ wrap). -/
 theorem mayerExpansionTerm_Λ_differentiable
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :
@@ -97,8 +93,7 @@ theorem mayerExpansionTerm_Λ_differentiable
         IsingModel.mayerExpansionTerm (inducedGraph G Λ) n t) :=
   IsingModel.mayerExpansionTerm_differentiable (inducedGraph G Λ) n
 
-/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticAt ℝ`** (§18.6 Λ
-wrap of Step 590). -/
+/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticAt ℝ`** (§18.6 Λ wrap). -/
 theorem mayerExpansionTerm_Λ_analyticAt
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) (t : ℝ) :
@@ -106,8 +101,7 @@ theorem mayerExpansionTerm_Λ_analyticAt
         IsingModel.mayerExpansionTerm (inducedGraph G Λ) n s) t :=
   IsingModel.mayerExpansionTerm_analyticAt (inducedGraph G Λ) n t
 
-/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticOnNhd ℝ _ Set.univ`**
-(§18.6 Λ wrap of Step 590). -/
+/-- **Λ-layer: `mayerExpansionTerm` is `AnalyticOnNhd ℝ _ Set.univ`** (§18.6 Λ wrap). -/
 theorem mayerExpansionTerm_Λ_analyticOnNhd
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : ℕ) :

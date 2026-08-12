@@ -92,7 +92,7 @@ disjoint Finset unions (nonempty case):
 ```
 for disjoint nonempty `Λ₁, Λ₂` and ferromagnetic `p`.
 
-This is the Finset-weighted form of the Step 5 super-additivity
+This is the Finset-weighted form of the disjoint-union super-additivity
 inequality, suitable as input for a Fekete-style convergence
 argument. -/
 theorem freeEnergyΛ_weighted_super_additive_of_nonempty
@@ -161,7 +161,7 @@ Proof chain:
 1. `Λ.mono` gives `Λ.volume n ⊆ Λ.volume (n + 1)`;
 2. Split `Λ.volume (n + 1) = Λ.volume n ⊔ (Λ.volume (n + 1) \ Λ.volume n)`
    using `Finset.union_sdiff_of_subset`;
-3. Apply PR #142 `partitionFunctionΛ_le_of_disjoint_union` to the
+3. Apply `partitionFunctionΛ_le_of_disjoint_union` to the
    disjoint split;
 4. Transport the resulting RHS back via
    `partitionFunctionΛ_congr_finset`. -/
@@ -236,8 +236,7 @@ for nonempty `Λ₁` disjoint from `Λ₂`,
 under ferromagnetic parameters.
 
 Derived from `card_mul_freeEnergyΛ_eq_log_partitionFunctionΛ_of_nonempty`
-(PR #140) together with `log_partitionFunctionΛ_le_of_disjoint_union`
-(PR #142). -/
+together with `log_partitionFunctionΛ_le_of_disjoint_union`. -/
 theorem card_mul_freeEnergyΛ_le_of_disjoint_union
     (G : SimpleGraph V) {Λ₁ Λ₂ : Finset V}
     (hne₁ : Λ₁.Nonempty) (hd : Disjoint Λ₁ Λ₂)
