@@ -67,8 +67,9 @@ theorem gibbsExpectation_nonneg_of_numerator_nonneg_latticeGraph
 
 /-- **ℤ^d correlationJ_nonneg direct** (Λ-induced, ferromagnetic): for
 `h ≥ 0`, `β > 0`, and `J ≥ 0`, `0 ≤ correlationJ (inducedGraph … Λ) h β B J`.
-Thin pass-through of `IsingModel.correlationJ_nonneg`; GJ §4.2 Prop 4.2.1
-slice at `correlationJ` (GKS-I). -/
+Thin pass-through of `IsingModel.correlationJ_nonneg`; GKS-I at `correlationJ`
+(GJ §4.1 Theorem 4.1.1, (4.1.9), p. 57 — nonnegativity, not the coupling
+monotonicity of Proposition 4.2.1). -/
 theorem correlationJ_nonneg_latticeGraph
     (d : ℕ) (Λ : Finset (Fin d → ℤ)) (h : ℝ) (hh : 0 ≤ h) (β : ℝ) (hβ : 0 < β)
     (B : Finset (↑Λ : Type _)) (J : ℝ) (hJ : 0 ≤ J) :

@@ -74,10 +74,11 @@ genuine multi-PR research.
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1
-  (`⟨σ_xσ_y⟩² = ℙ^{∅,∅}[x ↔ y]`).
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Proposition 3.1,
+  eq. (3.2), p. 6 (`⟨σ_xσ_y⟩² = ℙ^{∅,∅}[x ↔ y]`), a corollary of the switching
+  lemma (Lemma 3.2, p. 7, eq. (3.5)).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and
-  Triviality* (1992), Chapter 12 (Theorem 9.35, Lemma 9.36).
+  Triviality* (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, §17.5 Theorem 17.5.1 (p. 312).
 -/
 
@@ -94,7 +95,8 @@ with *both* pieces sourcefree (`∂m = ∅` and `∂(M − m) = ∅`),
 `D(M) = ∑_{m ≤ M, ∂m = ∅, ∂(M − m) = ∅} w(m) w(M − m)`. This is the `A = B = ∅`
 case of the doubled inner pairing appearing in Stage A brick 2; it is
 supported on `∂M = ∅` and is the summand of the sourcefree connection
-representation. (Aizenman 1982 Lemma 4.1 / FFS Chapter 12.) -/
+representation. (The fixed-flux inner sum of Aizenman 1982 Lemma 3.1, p. 7 /
+FFS Chapter 12.) -/
 noncomputable def Current.doubledSourcefreeSummand
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -112,7 +114,8 @@ with *both* pieces sourced at `{x, y}` (`∂m = {x,y}` and `∂(M − m) = {x,y}
 since `∂m = ∂(M − m) = {x,y}` forces `∂M = {x,y} △ {x,y} = ∅`, it is supported
 on `∂M = ∅`, and each `∂m = {x,y}` conjunct forces `Reachable x y`. It is the
 feedstock for the *square* of the two-point function
-(`(Z_{x,y})² = ∑'_M W(M)`). (Aizenman 1982 Lemma 4.1 / FFS Chapter 12.) -/
+(`(Z_{x,y})² = ∑'_M W(M)`). (The fixed-flux inner sum of Aizenman 1982
+Lemma 3.1, p. 7 / FFS Chapter 12.) -/
 noncomputable def Current.doubledPairSummand
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -129,7 +132,8 @@ of the both-sourcefree summand,
 `weightSum ∅ · weightSum ∅`, which the Stage A brick 2 identity
 `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset` (with
 `A = B = ∅`) equates to `∑'_M D(M)` by definition of
-`Current.doubledSourcefreeSummand`. (Aizenman 1982 Lemma 4.1 / GJ §17.5.) -/
+`Current.doubledSourcefreeSummand`. (Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) /
+GJ §17.5.) -/
 theorem Current.weightSum_empty_sq_eq_tsum_doubled_sourcefree
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -147,7 +151,8 @@ set_option linter.unusedDecidableInType false in
 `weightSum {x,y} · weightSum {x,y}`, which the Stage A brick 2 identity
 `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset` (with
 `A = B = {x,y}`) equates to `∑'_M W(M)` by definition of
-`Current.doubledPairSummand`. (Aizenman 1982 Lemma 4.1 / GJ §17.5.) -/
+`Current.doubledPairSummand`. (Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) /
+GJ §17.5.) -/
 theorem Current.weightSum_pair_sq_eq_tsum_doubled_pair
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -250,7 +255,8 @@ Proof chain: (ii) squaring the ratio
 fixed-`M` Aizenman switching identity, a global 𝔽₂ cycle-space cardinality with
 no per-current shortcut (the existing `m ↦ M − m` involution is only the trivial
 relabelling on `∂M = ∅`) — and is deferred as an explicit hypothesis (Stage
-C2.1), not an axiom. (Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+C2.1), not an axiom. (Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) / FFS Chapter 12 /
+GJ §17.5.) -/
 theorem Current.correlation_sq_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -301,7 +307,7 @@ the *total* `∅/∅` mass. Proof: rewrite the denominator
 denominator is the total mass; then `eq_div_iff` against it and the gated
 squared capstone
 `Current.correlation_sq_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree`.
-(Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+(Aizenman 1982 Proposition 3.1, eq. (3.2), p. 6 / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.correlation_sq_eq_tsum_reachable_doubledSourcefree_div
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -340,7 +346,7 @@ Proof: `div_le_one` against the positive total mass `∑'_M D(M) > 0` (from **U1
 **U3** (`Current.tsum_reachable_doubledSourcefree_le_weightSum_empty_sq`, itself
 using **U2** summability) after rewriting `(weightSum ∅)² = ∑'_M D(M)` via
 **U1**. The matching lower bound is the genuine Stage C3 content (deferred).
-(Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+(Aizenman 1982 Proposition 3.1, eq. (3.2), p. 6 / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.tsum_reachable_doubledSourcefree_div_tsum_le_one
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

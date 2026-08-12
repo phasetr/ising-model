@@ -53,8 +53,9 @@ reference-count zero into the live capstone. Downstream position: the (future)
 Lemma 5.1 → P2-ii → `hLogLip` → the explicitly-tracked lower-semicontinuity half
 of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread #4418). Because `SL-D₂`
 (the exterior → two-point collapse: conditioned-switching / subgraph-current,
-Aizenman Lemma 4.1) **awaits explicit user authorisation**, D1b does **not**
-complete Lemma 5.1: `SL-D₂` remains the gate, and this module touches none of it.
+cf. Aizenman 1982 §9, Lemma 9.2, p. 25) **awaits explicit user authorisation**,
+D1b does **not** complete Lemma 5.1: `SL-D₂` remains the gate, and this module
+touches none of it.
 The weight `Current.weight` is `∏_e (βJ)^{n_e}/n_e!`, the random-current weight of
 Friedli–Velenik, §3.10.6, p. 144.
 
@@ -63,7 +64,9 @@ Friedli–Velenik, §3.10.6, p. 144.
 * Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
-* Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
+* Aizenman (1982), §9, Lemma 9.2, p. 25, eq. (9.11) and Lemma 9.3, pp. 25-26
+  (subgraph/reduced-interaction conditioning); Fernández–Fröhlich–Sokal (1992),
+  Ch. 12.
 -/
 
 namespace IsingModel

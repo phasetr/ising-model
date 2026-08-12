@@ -56,8 +56,8 @@ bound the excess `E^{x↔y}|M| − E|M|` (the genuine OZ backbone-length estimat
 
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12 (random-current derivative / backbone estimate).
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1 (connection
-  representation).
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Proposition 3.1,
+  eq. (3.2), p. 6 (connection representation).
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5, Theorem 17.5.1, p. 312.
 -/
 
@@ -351,7 +351,8 @@ Differentiating `½(log N − log Z)` by `HasDerivAt.log` on D2/D1 (with
 `Z = (weightSum ∅)² > 0` and `N = ⟨σσ⟩² Z > 0`), `HasDerivAt.sub` and
 `HasDerivAt.const_mul`, then transferring along the eventual identity
 (`Filter.EventuallyEq.hasDerivAt_iff`), yields the claim. (FFS Chapter 12 /
-Aizenman 1982 Lemma 4.1 / GJ §17.5, Theorem 17.5.1, p. 312.) -/
+Aizenman 1982 Proposition 3.1, eq. (3.2), p. 6 / GJ §17.5, Theorem 17.5.1,
+p. 312.) -/
 theorem Current.hasDerivAt_log_correlation_beta (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {x y : ↑Λ} (hxy : x ≠ y)
     (J : ℝ) {β : ℝ} (hβ : 0 < β) (hJ : 0 ≤ J)

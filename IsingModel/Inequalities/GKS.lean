@@ -6,7 +6,8 @@ import IsingModel.Inequalities.NonnegCorrelations
 The first and second Griffiths inequalities for the ferromagnetic Ising model.
 
 References:
-- Glimm–Jaffe, *Quantum Physics*, Theorem 4.1.1 (GKS-I)
+- Glimm–Jaffe, *Quantum Physics*, Theorem 4.1.1, (4.1.9), p. 57 (GKS-I)
+- Glimm–Jaffe, *Quantum Physics*, Theorem 4.1.3, (4.1.11), p. 57 (GKS-II)
 - Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, Theorem 3.49 (GKS-I/II)
 -/
 

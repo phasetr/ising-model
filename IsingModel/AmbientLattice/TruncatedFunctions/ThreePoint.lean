@@ -21,7 +21,7 @@ Lift the finite-volume GHS inequality (`ghs_inequality`,
 For ferromagnetic Ising and pairwise distinct sites,
 $U_3(i, j, k) \le 0$ at infinite volume.
 
-Reference: Glimm–Jaffe §4.3 Corollary 4.3.4, pp. 68ff;
+Reference: Glimm–Jaffe §4.3 Corollary 4.3.4, p. 62;
 Friedli–Velenik §3.6.4. -/
 
 /-- **Truncated 3-point correlation at infinite volume**:

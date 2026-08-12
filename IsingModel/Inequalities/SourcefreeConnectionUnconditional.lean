@@ -13,8 +13,8 @@ square of the two-point function*
 \[
   \langle\sigma_x\sigma_y\rangle_\Lambda^2 = \mathbb{P}^{\emptyset,\emptyset}[x\leftrightarrow y]
 \]
-(Aizenman 1982, Lemma 4.1; Fernández–Fröhlich–Sokal, Ch. 12, Thm 9.35 /
-Lemma 9.36) into an unconditional theorem.
+(Aizenman 1982, Proposition 3.1, eq. (3.2), p. 6) into an unconditional
+theorem.
 
 ## Structure
 
@@ -50,9 +50,11 @@ two-edge path `W = D = t⁴`), axiom-free, no `sorry`.
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7,
+  eq. (3.5) (the switching lemma); Proposition 3.1, eq. (3.2), p. 6 (the
+  sourcefree connection representation).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
-  (1992), Chapter 12 (Theorem 9.35, Lemma 9.36).
+  (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5, Theorem 17.5.1, p. 312.
 -/
 
@@ -82,7 +84,8 @@ graph `M.toSimpleGraph`, the both-`{x,y}`-sourced doubled summand
   `∂(M − m) = symmDiff (∂M) {x,y} = {x,y} ↔ ∂M = ⊥` (`symmDiff_eq_right`),
   contradicting `∂M ≠ ∅`; a `D`-term with `∂m = ∅` would force
   `∂(M − m) = symmDiff (∂M) ∅ = ∂M = ∅`, again a contradiction. Hence
-  `W(M) = 0 = D(M)`. (Aizenman 1982 Lemma 4.1 / FFS Chapter 12.) -/
+  `W(M) = 0 = D(M)`. (Aizenman 1982 Lemma 3.1, p. 7, at `A = B = {x,y}` /
+  FFS Chapter 12.) -/
 theorem Current.doubledPairSummand_eq_doubledSourcefreeSummand_of_reachable
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -152,7 +155,7 @@ set_option linter.unusedDecidableInType false in
 `M.2` supplies the reachability hypothesis of C2.1e
 (`doubledPairSummand_eq_doubledSourcefreeSummand_of_reachable`), giving
 `W(M) = D(M)` termwise; no summability is required.
-(Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+(Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.tsum_reachable_doubledPair_eq_doubledSourcefree
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -176,8 +179,8 @@ Proof: feed the discharged gate C2.2
 (`Current.tsum_reachable_doubledPair_eq_doubledSourcefree`) to the Stage C1
 gated capstone
 `Current.correlation_sq_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree`,
-removing its `hswitch'` hypothesis. (Aizenman 1982 Lemma 4.1 / FFS Chapter 12 /
-GJ §17.5.) -/
+removing its `hswitch'` hypothesis. (Aizenman 1982 Proposition 3.1, eq. (3.2),
+p. 6 / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.correlation_sq_mul_weightSum_empty_sq_eq_tsum_reachable_sourcefree_uncond
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -205,7 +208,7 @@ feed the discharged gate C2.2
 (`Current.tsum_reachable_doubledPair_eq_doubledSourcefree`) to the Stage C1
 gated probability form
 `Current.correlation_sq_eq_tsum_reachable_doubledSourcefree_div`.
-(Aizenman 1982 Lemma 4.1 / FFS Chapter 12 / GJ §17.5.) -/
+(Aizenman 1982 Proposition 3.1, eq. (3.2), p. 6 / FFS Chapter 12 / GJ §17.5.) -/
 theorem Current.correlation_sq_eq_tsum_reachable_doubledSourcefree_div_uncond
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

@@ -44,7 +44,8 @@ separate research wall and is **not** treated here.
 
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
-* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 4.1, §4.
+* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7,
+  eq. (3.5) (the switching lemma).
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5 Theorem 17.5.1 (p. 312).
 
 (Issue #4386, thread #4418.)
@@ -109,8 +110,9 @@ each term as `2βJ · D_{e₀}(M)` with `D_{e₀}` the doubled defect summand
 `Current.edgeIncrementEquiv` turns the numerator into `2βJ · ∑'_K H(K)`.  Finally
 the Stage A product identity
 `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset` (with `A = {u,v}`,
-`B = ∅`) identifies `∑'_K H(K) = weightSum {u,v} · weightSum ∅`.  (Aizenman 1982
-§4 / FFS Chapter 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+`B = ∅`) identifies `∑'_K H(K) = weightSum {u,v} · weightSum ∅`.
+(Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) / FFS Chapter 12; Glimm–Jaffe
+Theorem 17.5.1, issue #4386.) -/
 theorem Current.tsum_edge_mul_doubledSourcefree_eq
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

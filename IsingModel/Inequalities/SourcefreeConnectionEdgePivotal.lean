@@ -39,7 +39,8 @@ piece carries the two endpoints of `e₀` as its defect source pattern:
 
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
-* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 3.1, p. 7
+  (the fixed-flux source swap behind the `m ↦ M − m` involution).
 * Glimm–Jaffe, *Quantum Physics*, §17.5 Theorem 17.5.1 (p. 312).
 
 (Issue #4386, thread #4418.)
@@ -334,8 +335,8 @@ vertex `src` reaches neither `a` nor `b` in `D`, then every `M`-walk out of a
 `D`-neighbourhood of `src` stays inside it — so, since `x` reaches `y` in `M` but
 not in `D`, `x` must reach `a` or `b` in `D` (and symmetrically for `y`).  Mutual
 exclusivity (`excl_a`/`excl_b`, via `¬ D.Reachable x y`) pairs the two arms across
-`e₀`.  (FFS Ch. 12 / Aizenman 1982 Lemma 4.1; Glimm–Jaffe Theorem 17.5.1,
-issue #4386.) -/
+`e₀`.  (FFS Ch. 12 / Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5); Glimm–Jaffe
+Theorem 17.5.1, issue #4386.) -/
 theorem Current.edgePivotal_arms
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
