@@ -6,9 +6,9 @@ import IsingModel.Lattice
 
 Instantiates along an exhaustion at `IsingModel.latticeGraph d` the degenerate behaviour of
 the polymer free energy — it vanishes identically on a stage whose induced graph carries no
-polymer, and likewise on one with no edge — and its preservation of the order `t ≤ s`, once
-with both activities assumed nonnegative and once with only the lower one. These fix the
-boundary cases of the GJ §18.5 cluster expansion on ℤ^d.
+polymer, and likewise on one with no edge — and its preservation of the order `t ≤ s` when
+the lower activity is nonnegative. These fix the boundary cases of the GJ §18.5 cluster
+expansion on ℤ^d.
 -/
 
 namespace IsingModel

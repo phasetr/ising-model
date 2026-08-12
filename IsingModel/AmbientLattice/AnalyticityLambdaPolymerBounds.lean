@@ -12,8 +12,7 @@ on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).
 At a nonnegative activity the polymer free energy is nonnegative, and it is bounded above
 by `E.card * Real.log (1 + t)`, by `E.card * t`, and — once `t ≤ 1` as well — by
 `E.card * Real.log 2`. It is `MonotoneOn` over `Set.Ici 0` with no hypothesis at all, and
-the same ordering is restated twice in comparison form: from `0 ≤ t`, `0 ≤ s` and `t ≤ s`,
-and from `0 ≤ t` and `t ≤ s` alone.
+its comparison form requires only `0 ≤ t` and `t ≤ s`.
 
 It vanishes identically in the activity in two degenerate situations, each stated for every
 real `t`: when `allPolymers (inducedGraph G Λ) = ∅`, and when `E = ∅`.
