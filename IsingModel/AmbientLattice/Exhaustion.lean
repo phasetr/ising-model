@@ -271,19 +271,6 @@ theorem partitionFunctionAlongExhaustion_apply
       = partitionFunctionΛ G (Λ.volume n) p :=
   rfl
 
-/-- **Along-exhaustion free energy as `|Λ_n|⁻¹ · log Z_n`** per stage:
-`freeEnergyAlongExhaustion G Λ p n = (Fintype.card ↑(Λ.volume n))⁻¹ ·
-log (partitionFunctionAlongExhaustion G Λ p n)`. Per-stage
-specialization of `freeEnergyΛ_eq_inv_card_mul_log`. -/
-theorem freeEnergyAlongExhaustion_eq_inv_card_mul_log
-    (G : SimpleGraph V) (Λ : Exhaustion V)
-    [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
-    (p : IsingParams ℝ) (n : ℕ) :
-    freeEnergyAlongExhaustion G Λ p n
-      = (Fintype.card (↑(Λ.volume n) : Type _) : ℝ)⁻¹
-        * Real.log (partitionFunctionAlongExhaustion G Λ p n) :=
-  freeEnergyΛ_eq_inv_card_mul_log G (Λ.volume n) p
-
 /-- **Along-exhaustion free energy with `(Λ.volume n).card` cast**. -/
 theorem freeEnergyAlongExhaustion_eq_inv_Λcard_mul_log
     (G : SimpleGraph V) (Λ : Exhaustion V)
