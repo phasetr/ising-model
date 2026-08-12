@@ -47,8 +47,8 @@ here.
 
 ## References
 
-* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 4.1, §4,
-  Eqs. (4.3)–(4.10).
+* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7,
+  eq. (3.5) (the switching lemma).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5 Theorem 17.5.1 (p. 312).
@@ -155,7 +155,8 @@ term into `2βJ · χ(M) · D_{e₀}(M)`; unfolding `D_{e₀}(M) = H(M − 1_{e�
 Finally the Stage A product identity
 `Current.weightSum_mul_weightSum_eq_tsum_doubled_subFinset` (with `A = {u,v} △ {x,y}`,
 `B = {x,y}`) identifies `∑'_K H'(K) = weightSum ({u,v} △ {x,y}) · weightSum {x,y}`.
-(Aizenman 1982 §4 / FFS Chapter 12; Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+(Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) / FFS Chapter 12; Glimm–Jaffe
+Theorem 17.5.1, issue #4386.) -/
 theorem Current.tsum_reachable_edge_mul_doubledSourcefree_eq
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -388,8 +389,8 @@ the all-current denominator is `Z_∅²` (U1).  The algebraic identity
 `num · p / p² = num / p` (total division, so coincidence cases `Z_{x,y} = 0` are
 absorbed) closes the goal.  This is the unconditional form of the truncated
 four-point ratio (companion note `rc-oz-stageB2c-switching-identity.tex`,
-§3.2-corrected eq. (4pt); Aizenman 1982 §4).  (Glimm–Jaffe Theorem 17.5.1,
-issue #4386.) -/
+§3.2-corrected eq. (4pt); Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5)).
+(Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
 theorem Current.doubledSourcefree_edgeExcess_reachable_eq
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -455,8 +456,8 @@ set_option linter.unusedDecidableInType false in
 \]
 This is the closing capstone of Step P1 (companion note
 `rc-oz-stageB2c-switching-identity.tex`, §3.2-corrected eq. (truncated); Aizenman
-1982 §4, Eqs. (4.3)–(4.10): the current one-point function as a truncated
-correlation).
+1982 Lemma 3.2, p. 7, eq. (3.5), which switches the sources producing the
+truncated correlation).
 
 Proof.  From the `weightSum`-ratio form
 (`Current.doubledSourcefree_edgeExcess_reachable_eq`), the disjointness gives

@@ -27,8 +27,8 @@ gives the parity clauses and, with `sources M = {x, y}`, the source-set split
 corollary. It is `SL-D₁`'s (product Fubini) source/parity *foundation*: it does
 **not** build the restriction/gluing bijection `Φ` nor the `Finset.sum_product`
 Fubini (D1b), and does **not** touch the exterior → two-point collapse. The
-genuine research core **SL-D₂ (conditioned-switching, Aizenman Lemma 4.1) awaits
-explicit user authorisation** and is not started here.
+genuine research core **SL-D₂ (conditioned-switching; cf. Aizenman 1982 §9,
+Lemma 9.2, p. 25) awaits explicit user authorisation** and is not started here.
 
 **Tracked-ingredient status.** Like SL-A/SL-B/SL-C, D1a is a *tracked ingredient*
 (Group 1a authorisation), buildable and axiom-free, with reference-count zero into
@@ -44,7 +44,9 @@ weight.
 * Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
-* Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
+* Aizenman (1982), §9, Lemma 9.2, p. 25, eq. (9.11) and Lemma 9.3, pp. 25-26
+  (subgraph/reduced-interaction conditioning); Fernández–Fröhlich–Sokal (1992),
+  Ch. 12.
 -/
 
 namespace IsingModel
@@ -340,8 +342,9 @@ symmetric unlabelled splits
 bump vanishes (`v ∈ C, b ∉ C ⟹ v ≠ b`, resp. `v ∉ C, a ∈ C ⟹ v ≠ a`); the parity
 clauses are the mod-2 casts (`Current.parity_eq_parityOn_add_ite`). This is the
 D1a foundation of `SL-D₁` (product Fubini); **D1b (the restriction/gluing Fubini)
-and the SL-D₂ conditioned-switching core (Aizenman Lemma 4.1) are follow-ups, the
-latter awaiting explicit user authorisation.** Tracked ingredient (Group 1a),
+and the SL-D₂ conditioned-switching core (cf. Aizenman 1982 §9, Lemma 9.2,
+p. 25) are follow-ups, the latter awaiting explicit user authorisation.**
+Tracked ingredient (Group 1a),
 downstream position: future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem 17.5.1
 (§17.5, issue #4386 / thread #4418); weight source FV §3.10.6. -/
 theorem Current.pivotalFiber_sources_split (G : SimpleGraph V) (Λ : Finset V)
@@ -514,10 +517,11 @@ bridge `p = a`, source `q = x`) and the exterior block (`D = Cᶜ`, bridge `p = 
 source `q = y`), using the D1a parity clauses
 (`Current.parity_eq_parityOn_add_ite`) and the restricted-parity vanishing lemmas;
 the exterior symmetric difference is normalised by `symmDiff_comm`. **D1b (the
-product Fubini) and the SL-D₂ conditioned-switching core (Aizenman Lemma 4.1) are
-follow-ups, the latter awaiting explicit user authorisation.** Tracked ingredient
-(Group 1a), downstream: future Lemma 5.1 → `hLogLip` → lsc half of GJ Theorem
-17.5.1 (§17.5, issue #4386 / thread #4418); weight source FV §3.10.6. -/
+product Fubini) and the SL-D₂ conditioned-switching core (cf. Aizenman 1982 §9,
+Lemma 9.2, p. 25) are follow-ups, the latter awaiting explicit user
+authorisation.** Tracked ingredient (Group 1a), downstream: future Lemma 5.1 →
+`hLogLip` → lsc half of GJ Theorem 17.5.1 (§17.5, issue #4386 / thread #4418);
+weight source FV §3.10.6. -/
 theorem Current.pivotalFiber_sourcesOn_symmDiff (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (e₀ : (inducedGraph G Λ).edgeSet) (M : Current G Λ) (x y a b : ↑Λ)

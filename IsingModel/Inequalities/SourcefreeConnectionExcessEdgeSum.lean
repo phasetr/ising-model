@@ -10,9 +10,9 @@ Glimm–Jaffe Theorem 17.5.1 (issue #4386, thread #4418).  The lower (sign)
 direction — that conditioning on the connection event only *increases* the
 `D`-normalised expected total current — is the sign-collapse brick
 `Current.doubledSourcefree_excess_nonneg` (#4475).  The matching *upper* bound
-`E^{x↔y}|M| − E^∅|M| ≤ C·d(x,y)` (FFS Ch. 12 / Aizenman 1982 Lemma 4.1) is
-approached through a per-edge pivotal decomposition, of which **B1 is the honest
-first brick**.
+`E^{x↔y}|M| − E^∅|M| ≤ C·d(x,y)` (FFS Ch. 12 / Aizenman 1982 Lemma 3.2, p. 7,
+eq. (3.5)) is approached through a per-edge pivotal decomposition, of which
+**B1 is the honest first brick**.
 
 With induced edge set `E = (inducedGraph G Λ).edgeSet` (finite), the total
 current size is `|M| = ∑_{e ∈ E} M e` (`Current.total`), so the total-weighted
@@ -48,7 +48,8 @@ identity; it does *not* address B2 (switching pivotal identity) or B3
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7,
+  eq. (3.5) (the switching lemma).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, §17.5 Theorem 17.5.1 (p. 312).
@@ -94,7 +95,7 @@ Unconditional (no division): `|M| = ∑_e M e` (`Current.total`) casts to
 `∑_e (M e : ℝ)` (`Nat.cast_sum`); `Finset.sum_mul` distributes `D_β(M)` inside the
 finite edge sum, and `Summable.tsum_finsetSum` (per-edge summability B0)
 interchanges the finite edge sum with the `tsum`. (FFS Chapter 12 / Aizenman
-1982 Lemma 4.1.) -/
+1982 Lemma 3.2, p. 7, eq. (3.5).) -/
 theorem Current.tsum_total_mul_doubledSourcefree_eq_sum_edge (G : SimpleGraph V)
     (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] {β J : ℝ}
     (hβ : 0 ≤ β) (hJ : 0 ≤ J) :
@@ -122,7 +123,7 @@ subtype `{M // (M.toSimpleGraph).Reachable x y}`,
 `∑'_{x↔y} |M|·D_β(M) = ∑_{e ∈ E} ∑'_{x↔y} (M e)·D_β(M)`.
 Same proof shape as the all-currents version, with the per-edge summability B0
 transported to the subtype via `Summable.comp_injective` (injectivity of
-`Subtype.val`). (FFS Chapter 12 / Aizenman 1982 Lemma 4.1.) -/
+`Subtype.val`). (FFS Chapter 12 / Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5).) -/
 theorem Current.tsum_reachable_total_mul_doubledSourcefree_eq_sum_edge (G : SimpleGraph V)
     (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (x y : ↑Λ) {β J : ℝ} (hβ : 0 ≤ β) (hJ : 0 ≤ J) :
@@ -171,7 +172,8 @@ non-negative excess `E^{x↔y}|M| − E^∅|M|` as a sum of per-edge ratio-diffe
 contributions; the identification of each per-edge term with
 `2βJ · ℙ^{x↔y}[e \text{ pivotal}]` (B2, switching lemma) and the backbone-tail
 bound (B3, the genuine Wall #2 estimate) are deferred to later bricks.
-(FFS Chapter 12 / Aizenman 1982 Lemma 4.1 / GJ §17.5 Theorem 17.5.1, p. 312.) -/
+(FFS Chapter 12 / Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5) / GJ §17.5
+Theorem 17.5.1, p. 312.) -/
 theorem Current.doubledSourcefree_excess_eq_sum_edge (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ] (x y : ↑Λ) {β J : ℝ}
     (hβ : 0 ≤ β) (hJ : 0 ≤ J) :

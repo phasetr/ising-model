@@ -62,7 +62,7 @@ subtracting term-by-term (`tsum_sub`, both summable via
   contradiction; hence `G' K = 0` and the difference is `Hfull K`.
 
 `tsum_subtype` then collapses `∑'_K 1_{x ↮ y}(K) · Hfull K` to the `x ↮ y`
-subtype sum.  (Aizenman 1982 §4, Eqs. (4.8)–(4.10); FFS Thm 9.35 read in the
+subtype sum.  (Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5), read in the
 general-source direction.)
 
 ## Scope (honest limitation)
@@ -77,15 +77,18 @@ bound.  The upper direction is Wall **B3** (the backbone-tail / pivotal-edge cou
 bound, `E^{x↔y}[#pivotal] ≤ K' · d(x,y)`), which is **gated on exponential decay /
 mass-gap input** and is irreducibly research (separate multi-session build).  The
 genuine **P2-ii backbone bijection** (weight bookkeeping against Aizenman 1982
-Eq. (4.12) / FFS Ch. 12) is likewise **out of scope of this PR**.
+Proposition 9.2, p. 24, eqs. (9.5)–(9.7), the random-walk representation) is
+likewise **out of scope of this PR**.
 
 ## References
 
 * Aizenman, M. (1982) Geometric analysis of φ⁴ fields and Ising models. I,
-  Comm. Math. Phys. **86**, 1–48; §4, Eqs. (4.8)–(4.10) (source switching;
-  truncated four-point representation).
+  Comm. Math. Phys. **86**, 1–48; Lemma 3.2, p. 7, eq. (3.5) (the switching
+  lemma, used here in the general-source direction).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
-  (1992), Thm 9.35 (switching), Ch. 12 (backbone representation).
+  (1992), Ch. 12 (correlation inequalities); eq. (9.35), ch. 9, p. 198, and
+  eq. (9.36), p. 199, are displayed equations (the spin ↔ random-walk
+  fundamental identity), not theorems.
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5 Theorem 17.5.1 (p. 312).
 
 (Issue #4386, thread #4418; math note `rc-oz-stageP2-backbone-bijection.tex`.)
@@ -121,7 +124,7 @@ collapses the indicator to the subtype sum.
 
 Scope: this is an *equality* (lower-flavour / structural); it does **not** advance
 the `h_LogLip` *upper* bound, which is gated on Wall B3 (exponential-decay input).
-(Aizenman 1982 §4, Eqs. (4.8)–(4.10); FFS Thm 9.35; Glimm–Jaffe Theorem 17.5.1,
+(Aizenman 1982 Lemma 3.2, p. 7, eq. (3.5); Glimm–Jaffe Theorem 17.5.1,
 issue #4386.) -/
 theorem Current.truncated4PointMass_symmDiff_eq_tsum_notReachable
     (G : SimpleGraph V) (Λ : Finset V)
@@ -270,8 +273,8 @@ Proof.  Disjointness gives `{u,v} △ {x,y} = {u,v,x,y}`
 
 Scope: an *equality* (lower-flavour); it produces the object consumed by the P2-ii
 backbone bijection but does **not** advance the `h_LogLip` upper bound, which is
-gated on Wall B3 (exponential-decay input).  (Aizenman 1982 §4; FFS Thm 9.35;
-Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
+gated on Wall B3 (exponential-decay input).  (Aizenman 1982 Lemma 3.2, p. 7,
+eq. (3.5); Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
 theorem Current.truncated4PointMass_eq_tsum_notReachable
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
@@ -311,8 +314,8 @@ nonnegative under `0 ≤ β J` (`Current.weight_nonneg`); `Finset.sum_nonneg` an
 Scope: this is a *lower-flavour* corollary (matching
 `Current.doubledSourcefree_excess_nonneg`, #4475); it does **not** deliver any
 *upper* bound and does **not** advance the `h_LogLip` upper Lipschitz bound (gated
-on Wall B3, exponential-decay input).  (Aizenman 1982 §4; Glimm–Jaffe Theorem
-17.5.1, issue #4386.) -/
+on Wall B3, exponential-decay input).  (Aizenman 1982 Lemma 3.2, p. 7,
+eq. (3.5); Glimm–Jaffe Theorem 17.5.1, issue #4386.) -/
 theorem Current.truncated4PointMass_nonneg
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]

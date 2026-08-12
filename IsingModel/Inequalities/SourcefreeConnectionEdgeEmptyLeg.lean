@@ -44,7 +44,8 @@ separate research wall and is **not** treated here.
 
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
-* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 4.1, §4.
+* Aizenman, M. (1982) Geometric analysis of φ⁴ fields, Lemma 3.2, p. 7,
+  eq. (3.5) (the switching lemma).
 * Glimm–Jaffe, *Quantum Physics*, 2nd ed., §17.5 Theorem 17.5.1 (p. 312).
 
 (Issue #4386, thread #4418.)

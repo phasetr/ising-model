@@ -48,7 +48,9 @@ weight of Friedli–Velenik, §3.10.6, p. 144.
 * Friedli–Velenik, *Statistical Mechanics of Lattice Systems*, §3.10.6, p. 144.
 * Glimm–Jaffe, *Quantum Physics* (2nd ed.), Theorem 17.5.1, p. 312 (lsc half,
   issue #4386 / thread #4418).
-* Aizenman (1982), Lemma 4.1; Fernández–Fröhlich–Sokal (1992), Ch. 12.
+* Aizenman (1982), §9, Lemma 9.2, p. 25, eq. (9.11) and Lemma 9.3, pp. 25-26
+  (subgraph/reduced-interaction conditioning); Fernández–Fröhlich–Sokal (1992),
+  Ch. 12.
 -/
 
 namespace IsingModel

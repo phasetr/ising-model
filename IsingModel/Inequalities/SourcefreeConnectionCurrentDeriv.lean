@@ -41,7 +41,8 @@ This brick supplies **only** the differentiation identity; it does *not* close t
 
 ## References
 
-* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, Lemma 4.1.
+* Aizenman, M. (1982). Geometric analysis of φ⁴ fields, §2, eq. (2.4), p. 4
+  (the random-current weight `w(n) = ∏_b (βJ_b)^{n_b}/n_b!`).
 * Fernández–Fröhlich–Sokal, *Random Walks, Critical Phenomena, and Triviality*
   (1992), Chapter 12.
 * Glimm–Jaffe, *Quantum Physics*, §17.5 Theorem 17.5.1 (p. 312).
@@ -94,7 +95,8 @@ coupling `J`, and every `β ≠ 0`,
 Each edge factor `φ_e(β') = (β' J)^{n e} / (n e)!` is a monomial with
 `φ_e'(β) = (n e / β) · φ_e(β)` (needs `β ≠ 0`); the finite product rule
 (`HasDerivAt.finset_prod`) and `Finset.prod_erase_mul` collapse the sum of the
-per-edge factors to `(∑_e n e) / β = |n| / β`. (Aizenman 1982 Lemma 4.1.) -/
+per-edge factors to `(∑_e n e) / β = |n| / β`. (Aizenman 1982 §2, eq. (2.4),
+p. 4.) -/
 theorem Current.hasDerivAt_weight_beta (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (n : Current G Λ) (J : ℝ) {β : ℝ}
     (hβ : β ≠ 0) :
@@ -153,8 +155,8 @@ sourcefree) of `w_β(m) · w_β(M - m)`; each summand differentiates by the prod
 rule and `Current.hasDerivAt_weight_beta` to
 `((|m| + |M - m|) / β) · w_β(m) w_β(M - m) = (|M| / β) · w_β(m) w_β(M - m)`
 (the constant-`|M|` collapse of `Current.total_add_sub_of_le`), so summing
-(`HasDerivAt.sum`) pulls out the common factor `|M| / β`. (Aizenman 1982
-Lemma 4.1 / GJ §17.5.) -/
+(`HasDerivAt.sum`) pulls out the common factor `|M| / β`. (Aizenman 1982 §2,
+eq. (2.4), p. 4 / GJ §17.5.) -/
 theorem Current.hasDerivAt_doubledSourcefreeSummand_beta (G : SimpleGraph V)
     (Λ : Finset V) [Fintype (inducedGraph G Λ).edgeSet] [DecidableEq ↑Λ]
     (M : Current G Λ) (J : ℝ) {β : ℝ} (hβ : β ≠ 0) :
