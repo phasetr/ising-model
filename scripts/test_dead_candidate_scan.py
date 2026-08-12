@@ -1545,8 +1545,10 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         # Issue #4927 removes two redundant pair-bound wrappers after #4926, so
         # the broad declaration population became 10563 - 2 = 10561.  PR #5036
         # then replaces ten duplicate order-preservation declarations with five
-        # canonical declarations, for a net reduction of five to 10556.
-        self.assertEqual(len(broad or []), 10556)
+        # canonical declarations, for a net reduction of five to 10556.  PR
+        # #5037 removes eight alpha-equivalent zero-parameter Mayer identities,
+        # reducing the current population to 10548.
+        self.assertEqual(len(broad or []), 10548)
         selected = [
             dcs.Verdict(name=name, decl=dcs.resolve_candidate(tree(), name, False)[0])
             for name in self.real_names()
@@ -1558,7 +1560,7 @@ class QualifiedGlobCitationTest(unittest.TestCase):
         self.assertTrue(all(not verdict.doc_citations for verdict in selected))
         self.assertEqual(
             labels,
-            {"docs/index.md:1 `IsingModel.*`": ["10556 declarations"]},
+            {"docs/index.md:1 `IsingModel.*`": ["10548 declarations"]},
         )
 
 

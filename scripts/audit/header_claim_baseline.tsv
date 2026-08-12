@@ -106,7 +106,7 @@ RELOCATION	docs/index.md	->?	3
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperature.lean	1
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperatureBounds.lean	2
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/Magnetization.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEdgeCases.lean	3
+RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEdgeCases.lean	2
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean	1
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEpsilonPositivity.lean	1
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerExpansionEdgeCases.lean	1
