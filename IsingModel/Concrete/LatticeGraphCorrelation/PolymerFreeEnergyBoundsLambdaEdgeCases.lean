@@ -6,9 +6,9 @@ import IsingModel.Lattice
 
 Instantiates at fixed volume `Λ` on `IsingModel.latticeGraph d` the degenerate behaviour of
 the polymer free energy — it vanishes identically when the induced graph carries no polymer,
-and likewise when it has no edge — and its preservation of the order `t ≤ s`, once with both
-activities assumed nonnegative and once with only the lower one. These fix the boundary
-cases of the GJ §18.5 cluster expansion on ℤ^d.
+and likewise when it has no edge — and its preservation of the order `t ≤ s` when the lower
+activity is nonnegative. These fix the boundary cases of the GJ §18.5 cluster expansion on
+ℤ^d.
 -/
 
 namespace IsingModel
@@ -36,20 +36,9 @@ theorem polymerFreeEnergy_Λ_latticeGraph_eq_zero_of_edgeFinset_empty
   Ambient.polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
     (IsingModel.latticeGraph d) Λ h_empty t
 
-/-- **ℤ^d Λ: polymerFreeEnergy preserves order on `[0, ∞)`**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_le_of_le_of_nonneg
-    (d : ℕ) (Λ : Finset (Fin d → ℤ))
-    [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
-    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
-    IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ) t ≤
-      IsingModel.polymerFreeEnergy
-        (inducedGraph (IsingModel.latticeGraph d) Λ) s :=
-  Ambient.polymerFreeEnergy_Λ_le_of_le_of_nonneg
-    (IsingModel.latticeGraph d) Λ ht hs hts
-
-/-- **ℤ^d Λ: polymerFreeEnergy strict-form order preservation**. -/
-theorem polymerFreeEnergy_Λ_latticeGraph_le_of_le_strict_form
+/-- At the `ℤ^d` Λ layer, polymer free energy preserves order when the smaller activity is
+nonnegative. -/
+theorem polymerFreeEnergy_Λ_latticeGraph_le_of_le_of_nonneg_left
     (d : ℕ) (Λ : Finset (Fin d → ℤ))
     [Fintype (inducedGraph (IsingModel.latticeGraph d) Λ).edgeSet]
     {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
@@ -57,7 +46,7 @@ theorem polymerFreeEnergy_Λ_latticeGraph_le_of_le_strict_form
         (inducedGraph (IsingModel.latticeGraph d) Λ) t ≤
       IsingModel.polymerFreeEnergy
         (inducedGraph (IsingModel.latticeGraph d) Λ) s :=
-  Ambient.polymerFreeEnergy_Λ_le_of_le_strict_form
+  Ambient.polymerFreeEnergy_Λ_le_of_le_of_nonneg_left
     (IsingModel.latticeGraph d) Λ ht hts
 
 end Ambient

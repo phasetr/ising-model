@@ -12,8 +12,7 @@ on the induced subgraph `inducedGraph G Λ`. Write `E` for `(inducedGraph G Λ).
 At a nonnegative activity the polymer free energy is nonnegative, and it is bounded above
 by `E.card * Real.log (1 + t)`, by `E.card * t`, and — once `t ≤ 1` as well — by
 `E.card * Real.log 2`. It is `MonotoneOn` over `Set.Ici 0` with no hypothesis at all, and
-the same ordering is restated twice in comparison form: from `0 ≤ t`, `0 ≤ s` and `t ≤ s`,
-and from `0 ≤ t` and `t ≤ s` alone.
+its comparison form requires only `0 ≤ t` and `t ≤ s`.
 
 It vanishes identically in the activity in two degenerate situations, each stated for every
 real `t`: when `allPolymers (inducedGraph G Λ) = ∅`, and when `E = ∅`.
@@ -96,26 +95,15 @@ theorem polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
   IsingModel.polymerFreeEnergy_eq_zero_of_edgeFinset_empty
     (inducedGraph G Λ) h_empty t
 
-/-- **Λ-layer: `polymerFreeEnergy` preserves order on `[0, ∞)`**
-(§18.5 Λ wrap of Step 649). -/
-theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg
-    (G : SimpleGraph V) (Λ : Finset V)
-    [Fintype (inducedGraph G Λ).edgeSet]
-    {t s : ℝ} (ht : 0 ≤ t) (hs : 0 ≤ s) (hts : t ≤ s) :
-    IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
-      IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
-  IsingModel.polymerFreeEnergy_le_of_le_of_nonneg
-    (inducedGraph G Λ) ht hs hts
-
-/-- **Λ-layer: `polymerFreeEnergy` strict-form order preservation**
-(§18.5 Λ wrap of Step 650). -/
-theorem polymerFreeEnergy_Λ_le_of_le_strict_form
+/-- At the Λ layer, polymer free energy preserves order when the smaller activity is
+nonnegative. -/
+theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg_left
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
     {t s : ℝ} (ht : 0 ≤ t) (hts : t ≤ s) :
     IsingModel.polymerFreeEnergy (inducedGraph G Λ) t ≤
       IsingModel.polymerFreeEnergy (inducedGraph G Λ) s :=
-  IsingModel.polymerFreeEnergy_le_of_le_strict_form
+  IsingModel.polymerFreeEnergy_le_of_le_of_nonneg_left
     (inducedGraph G Λ) ht hts
 
 /-- **Λ-layer: `polymerFreeEnergy` tanh-form sandwich** (§18.5 Λ wrap
