@@ -69,7 +69,8 @@ tight form here keeps the true two-point, `O(1)` per edge).
 All correlations, weights and currents are the merged repository definitions
 (`correlation`, `Current.weightSum`; FV / GJ conventions).  References:
 Fernández–Fröhlich–Sokal, *Random Walks…* (1992), Ch. 12; Lebowitz four-point
-inequality (`lebowitz_four_zero_field`, the corrected form of GHS/FV eq. (3.45));
+inequality (`lebowitz_four_zero_field`, the zero-field form of Glimm–Jaffe §4.3,
+Corollaries 4.3.2-4.3.3, pp. 60-61);
 Glimm–Jaffe, *Quantum Physics* 2nd ed., §17.5, Theorem 17.5.1, p. 312.
 
 ## Main results

@@ -169,7 +169,10 @@ theorem truncated3_beta_zero (G : SimpleGraph ι) [Fintype G.edgeSet]
         ⟨i, by simp⟩]
   ring
 
-/-- The truncated 2-point function is non-negative by GKS-II. -/
+/-- The truncated 2-point function is non-negative.  For `i ≠ j` this is GKS-II
+(`gks_second`; Glimm–Jaffe Theorem 4.1.3, (4.1.11), p. 57).  For `i = j` GKS-II
+gives nothing, and the branch instead uses GKS-I (`gks_first`; Glimm–Jaffe
+Theorem 4.1.1, (4.1.9), p. 57) together with `|⟨σ^A⟩| ≤ 1`. -/
 theorem truncated2_nonneg (G : SimpleGraph ι) [Fintype G.edgeSet]
     (p : IsingParams ℝ) (hf : Ferromagnetic p) (i j : ι) :
     0 ≤ truncated2 G p i j := by

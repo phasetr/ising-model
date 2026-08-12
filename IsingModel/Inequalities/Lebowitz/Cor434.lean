@@ -20,7 +20,7 @@ edge `jk`. The axiom is deleted in this PR; its only consumer
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.4, p. 61
+* Glimm–Jaffe, *Quantum Physics*, 2nd ed., §4.3, Corollary 4.3.4, p. 62
 * J. L. Lebowitz, *GHS and other inequalities*, Comm. Math. Phys. 35 (1974)
 -/
 
