@@ -82,7 +82,7 @@ of the comap filter via `comap_latticeDistance_atTop_eq_cofinite`, followed by
 PR #779's cofinite version.
 
 References: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1
-pp. 76–79; for the Simon–Lieb inequality, Simon 1980, Comm.
+pp. 72–74; for the Simon–Lieb inequality, Simon 1980, Comm.
 Math. Phys. 77, 111–126 and Lieb 1980, Comm. Math. Phys. 77,
 127–135. -/
 theorem truncated2Infinite_latticeGraph_tendsto_atTop_zero_of_summable

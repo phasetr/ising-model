@@ -31,7 +31,7 @@ general (non-trivial) case requires the Simon–Lieb inequality
 Math. Phys. 77, 127–135) or random-current representation, both
 research-level.
 
-Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 76–79. -/
+Reference: Glimm–Jaffe *Quantum Physics* 2nd ed., §5.1 pp. 72–74. -/
 
 /-- **§5.1 cluster property** for the ∞-volume Ursell 2-point
 function: at every fixed basepoint `i : V`, the function
