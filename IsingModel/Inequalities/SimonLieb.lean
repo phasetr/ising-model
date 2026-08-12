@@ -21,8 +21,8 @@ ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement
 Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135. Cited in
 Glimm–Jaffe, *Quantum Physics*, §17.8 Remark 3, p. 317. A `tanh`-weighted form of
 the same peeling bound is stated as eq. (12.27) of Fernández–Fröhlich–Sokal, *Random
-Walks, Critical Phenomena, and Triviality*, Chapter 12, where it is derived from
-Griffiths' third inequality and identified there as a special case of Simon–Lieb.
+Walks, Critical Phenomena, and Triviality*, §12.2, where it is derived from Griffiths'
+third inequality, which FFS identifies as a special case of the Simon–Lieb inequality.
 -/
 
 namespace IsingModel
