@@ -2,7 +2,7 @@
 layout: default
 title: Phase-transition theorems
 ---
-[Theorem catalogue](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Theorem catalogue](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## §5.1–§5.4: Phase transitions and Peierls' argument
 

@@ -278,7 +278,7 @@ of `boltzmannWeightJ`) that happened to be declared inside a cubic-box file. It
 now lives in `Inequalities/FKGInhomogeneous.lean` next to `interactionEnergyJ`,
 `hamiltonianJ` and `boltzmannWeightJ`, which is the weakest level at which it can
 be stated — the same principle the archived
-[#4506 refactoring record](plans/4506-refactoring-replan.html) applies elsewhere.
+[#4506 refactoring record](plans/4506-refactoring-replan.md) applies elsewhere.
 `PlusScreening` now imports `AmbientLattice/Monotonicity/InducedWeightFactor.lean`
 and `Inequalities/MonotonicityExtremal.lean` instead, and the statement of the
 relocated theorem is byte-identical.

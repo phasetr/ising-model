@@ -2,7 +2,7 @@
 layout: default
 title: Chapters 2–10 coverage
 ---
-[Coverage index](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Coverage index](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## Chapter 2 (Classical Statistical Mechanics)
 

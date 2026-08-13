@@ -42,11 +42,12 @@ convergence window (`window d J ⊆ Ioo 0 (1/(J·2d))`) with no axiom, and the s
 scoped to that window accordingly.
 
 For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress table, see the
-**[project page](https://phasetr.github.io/ising-model/)**.
+**[mathematical documentation](docs/index.md)**.
 
 ## Documentation
 
-- Project page: [https://phasetr.github.io/ising-model/](https://phasetr.github.io/ising-model/)
+- Mathematical documentation: [docs/index.md](docs/index.md)
+- Derived Pages snapshot: [https://phasetr.github.io/ising-model/](https://phasetr.github.io/ising-model/)
 - API documentation (doc-gen4): **temporarily unavailable** (automatic
   publication paused). See note below.
 
@@ -59,7 +60,7 @@ For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress t
 > reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
 > and open `.lake/build/doc/index.html`.
 
-Start with `docs/index.md` for the mathematical documentation. It links the
+Start with [docs/index.md](docs/index.md) for the mathematical documentation. It links the
 canonical status, library-map, bibliography, and topic-oriented theorem
 catalogue pages, plus chapter-owned book-coverage pages. Together they
 record formalized results against their sources in the literature and state the

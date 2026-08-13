@@ -10,7 +10,7 @@ It preserves the static baseline, the predeclared gates, and the measured outcom
 active authorization for further refactoring.  #4793 and #4794, which formerly tracked current
 structural decisions and fresh build-speed reconciliation respectively, have both been deleted on
 GitHub; current policy is stated by the
-[refactoring safeguards](../refactoring-rollback-ledger.html#current-refactoring-safeguards).
+[refactoring safeguards](../refactoring-rollback-ledger.md#current-refactoring-safeguards).
 
 ## Status and issue mapping
 

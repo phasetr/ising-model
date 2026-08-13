@@ -3,7 +3,7 @@ layout: default
 title: References
 ---
 
-[Back to the documentation home](index.html).
+[Back to the documentation home](index.md).
 
 ## References
 

@@ -3,14 +3,14 @@ layout: default
 title: Current status
 ---
 
-[Back to the documentation home](index.html).
+[Back to the documentation home](index.md).
 
 ## Status taxonomy
 
 The mutually exclusive delivery statuses below apply only to the **#4787 reconciliation subset**
 and the current-status ledger on this page. Legacy rows in the
-[theorem catalogue](theorems/index.html) and
-[book-coverage inventory](coverage/index.html) retain historical labels such as `Done` and
+[theorem catalogue](theorems/index.md) and
+[book-coverage inventory](coverage/index.md) retain historical labels such as `Done` and
 `Out of scope`; this page does not normalize those older rows. A green build or a closed tracker is
 supporting evidence, not a substitute for matching the published claim to an existing declaration.
 
@@ -41,8 +41,8 @@ We distinguish three formalization regimes:
    with `Λ : Finset V` finite volumes and an exhaustion `Λₙ ↑ V`.
    Introduced in `IsingModel/AmbientLattice.lean`.
 
-When a GJ theorem is listed in the [theorem catalogue](theorems/index.html) or
-[book-coverage inventory](coverage/index.html) as
+When a GJ theorem is listed in the [theorem catalogue](theorems/index.md) or
+[book-coverage inventory](coverage/index.md) as
 **Implemented**, the adjacent *Regime* column
 specifies which of the three above apply.
 
@@ -53,8 +53,8 @@ specifies which of the three above apply.
 
 This summary keeps implemented results separate from limited contracts and unresolved book
 headlines. Detailed declarations and hypotheses remain in the
-[theorem catalogue](theorems/index.html) and
-[book-coverage inventory](coverage/index.html).
+[theorem catalogue](theorems/index.md) and
+[book-coverage inventory](coverage/index.md).
 
 ### Implemented
 
@@ -81,8 +81,8 @@ headlines. Detailed declarations and hypotheses remain in the
   an open KP high-temperature window, not on the full book range.
 - **§17.6.1, complex field:** `fieldCorrelationInfinite_latticeGraph_analytic_high_temp` gives the
   small-coupling holomorphic local-limit contract recorded in the
-  [theorem catalogue](theorems/index.html) and
-  [book-coverage inventory](coverage/index.html).
+  [theorem catalogue](theorems/index.md) and
+  [book-coverage inventory](coverage/index.md).
 - **§17.6.1, real reduced field:** the two
   `correlationInfinite_latticeGraph_general_*At_field_high_temp` declarations give
   general-observable differentiability for normalized `⟨a,b,1⟩`, small `a`, and
@@ -99,8 +99,8 @@ headlines. Detailed declarations and hypotheses remain in the
   nonperturbative range, and a U3/series derivative identity, sign, or uniform bound remain
   outside the implemented reduced-field theorem. No live owning GitHub issue (formerly #4790,
   closed completed — that issue tracked the finite-volume Option B capstone recorded in the
-  [theorem catalogue](theorems/index.html) and
-  [book-coverage inventory](coverage/index.html), not this residual gap).
+  [theorem catalogue](theorems/index.md) and
+  [book-coverage inventory](coverage/index.md), not this residual gap).
 - **§5.1 cluster property in all pure phases:** removal of the polynomial-decay/high-temperature
   restriction. No live owning GitHub issue.
 
@@ -162,6 +162,6 @@ must not be inferred from the historical Vitali--Porter compatibility module.
   `phi4_single_site_nonneg` are proved in `BallBoundarySimonLieb/Tight.lean` and
   `ContinuousSpin/Phi4AllOdd.lean`, respectively.
 
-See the [theorem catalogue](theorems/index.html),
-[Chapters 2--10 coverage](coverage/chapters-2-10.html), and
-[Chapter 17 coverage](coverage/chapter-17.html) for detailed statements and provenance.
+See the [theorem catalogue](theorems/index.md),
+[Chapters 2--10 coverage](coverage/chapters-2-10.md), and
+[Chapter 17 coverage](coverage/chapter-17.md) for detailed statements and provenance.

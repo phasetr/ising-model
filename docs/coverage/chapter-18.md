@@ -2,7 +2,7 @@
 layout: default
 title: Chapter 18 coverage
 ---
-[Coverage index](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Coverage index](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## Chapter 18 (Cluster expansion)
 

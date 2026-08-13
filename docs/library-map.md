@@ -3,8 +3,8 @@ layout: default
 title: Library map
 ---
 
-[Back to the documentation home](index.html). The intended import direction is specified by the
-[import-DAG layer contract](architecture-import-layers.html).
+[Back to the documentation home](index.md). The intended import direction is specified by the
+[import-DAG layer contract](architecture-import-layers.md).
 
 ## Focused public modules
 
