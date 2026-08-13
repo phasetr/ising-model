@@ -214,6 +214,6 @@ historical rollback topology above and not a record of issue, date, or batch his
   [Chapter 18 coverage catalogue](coverage/chapter-18.html) own their current scope qualifications.
   Rows labelled conditional, analogy, parked, off-book, or out of scope must not be promoted by a
   refactoring proposal.
-- Clustering/analyticity and polymer/Mayer material require separate, scoped investigation because
-  their catalogue rows distinguish finite, infinite-volume, conditional, and analogy-only results.
-  Their presence in a scan grants no implementation authorization.
+- Clustering/analyticity and polymer/Mayer material require separate, scoped investigation and
+  tracking because their catalogue rows distinguish finite, infinite-volume, conditional, and
+  analogy-only results. Their presence in a scan grants no implementation authorization.

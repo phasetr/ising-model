@@ -368,6 +368,21 @@ def load_mutated(*substitutions: Sequence[str]) -> types.ModuleType:
     return module
 
 
+def load_test_mutated(*substitutions: Sequence[str]) -> types.ModuleType:
+    """Reload this calibration pipeline with exact-one textual mutations."""
+    path = Path(__file__).resolve()
+    source = path.read_text(encoding="utf-8")
+    for old, new in substitutions:
+        count = source.count(old)
+        if count != 1:
+            raise AssertionError(f"test mutation matched {count} times, expected 1: {old!r}")
+        source = source.replace(old, new)
+    module = types.ModuleType("test_citation_audit_mutant")
+    module.__file__ = str(path)
+    exec(compile(source, str(path), "exec"), module.__dict__)  # noqa: S102
+    return module
+
+
 def function_source(source: str, name: str) -> str:
     """Return the text of the top-level ``def name`` in ``source``.
 
@@ -3483,6 +3498,28 @@ def calibration_floor(module: types.ModuleType) -> int:
     )
 
 
+def calibration_drop_budget(module: types.ModuleType) -> int:
+    """Apply the 5% rule once to the aggregate frozen coverage measurement."""
+    return module.citation_drop_budget(calibration_measurement(module))
+
+
+def calibration_budget_application_violations(module: types.ModuleType) -> List[str]:
+    """Pin one aggregate application, never a sum of three per-page floors."""
+    aggregate = calibration_drop_budget(module)
+    per_page_sum = sum(
+        module.citation_drop_budget(module.MEASURED_CITATIONS[target])
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )
+    out: List[str] = []
+    if aggregate != 84:
+        out.append(f"aggregate coverage budget is {aggregate}, expected 84")
+    if aggregate == per_page_sum:
+        out.append(
+            f"aggregate coverage budget reused the per-page sum {per_page_sum}"
+        )
+    return out
+
+
 def calibration_group_violations(module: types.ModuleType) -> List[str]:
     """Pin the group membership before aggregate arithmetic can look healthy."""
     expected = (
@@ -4044,7 +4081,8 @@ class RealTreePinTest(unittest.TestCase):
         """
         self.assertEqual(budget_ratio_violations(ca), [])
         self.assertEqual(calibration_measurement(ca), 1_687)
-        self.assertEqual(ca.citation_drop_budget(calibration_measurement(ca)), 84)
+        self.assertEqual(calibration_budget_application_violations(ca), [])
+        self.assertEqual(calibration_drop_budget(ca), 84)
         self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 47)
 
     def test_the_committed_census_is_inside_the_range_the_budget_is_stated_over(
@@ -4129,6 +4167,20 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
     be independent, and a mutation that reddens all of them proves nothing about
     the others.
     """
+
+    def test_summing_three_per_page_budgets_instead_of_one_aggregate_budget_fails(
+        self,
+    ) -> None:
+        """The three 25-item floors may not turn one reviewed 84 into 97."""
+        mutant = load_test_mutated((
+            "    return module.citation_drop_budget(" + "calibration_measurement(module))",
+            '''    return sum(
+        module.citation_drop_budget(module.MEASURED_CITATIONS[target])
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )''',
+        ))
+        self.assertEqual(mutant.calibration_drop_budget(ca), 97)
+        self.assertNotEqual(mutant.calibration_budget_application_violations(ca), [])
 
     def test_group_omission_duplication_swap_and_empty_replacement_fail(self) -> None:
         """Aggregate arithmetic cannot choose a convenient subset or replacement."""
