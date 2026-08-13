@@ -1030,9 +1030,7 @@ class MarkdownBacktickParityTest(unittest.TestCase):
             "## Chapter 18 (Cluster expansion)": "docs/coverage/chapter-18.md",
             "## Chapter 20 (Further directions)": "docs/coverage/chapters-19-20.md",
             "## Status taxonomy": split_owner("docs/status.md"),
-            ("> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` "
-             "is a thin"):
-                split_owner("docs/library-map.md"),
+            "### Import guidance": split_owner("docs/library-map.md"),
             "## References": split_owner("docs/references.md"),
             "## Correlation inequalities (§4.1–§4.7)":
                 split_owner("docs/theorems/correlation.md"),
