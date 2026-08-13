@@ -169,6 +169,38 @@ class ResolutionTest(RepoTest):
         self.assertIn("README_REACHABILITY", codes)
         self.assertNotIn("CANDIDATE_COVERAGE", codes)
 
+    def test_reference_image_identity_and_escaped_closers_are_canonical(self) -> None:
+        text = (
+            "![asset][asset]\n"
+            "\\\\![even image][asset]\n"
+            "\\![ordinary link][asset]\n"
+            "[escaped \\] label][asset]\n"
+            "[key variant][asset\\]key]\n"
+            "[asset]: asset.png\n"
+        )
+        self.base({"docs/asset.png": b"png", "docs/status.md": text})
+        parsed = checker.parse_markdown("docs/status.md", text)
+        self.assertEqual(
+            Counter(parsed.candidate_identities),
+            Counter(parsed.consumed_identities),
+        )
+        self.assertEqual(
+            [identity[2] for identity in parsed.consumed_identities if identity[2].startswith("reference-")],
+            ["reference-image", "reference-image", "reference-link", "reference-link", "reference-link"],
+        )
+        reference_links = [link for link in parsed.links if link.destination == "asset.png"]
+        self.assertEqual(
+            [(link.image, link.label) for link in reference_links],
+            [
+                (True, "asset"),
+                (True, "even image"),
+                (False, "ordinary link"),
+                (False, "escaped \\] label"),
+            ],
+        )
+        self.assertNotIn("CANDIDATE_COVERAGE", self.codes())
+        self.assertEqual(self.codes().count("MISSING_REFERENCE"), 1)
+
     def test_escaped_and_code_comment_openers_cannot_hide_following_links(self) -> None:
         self.base({
             "docs/status.md": (
@@ -422,6 +454,21 @@ class MutationTest(RepoTest):
             "return True",
         ) as module:
             self.assertNotIn("README_REACHABILITY", self.codes(module))
+
+    def test_reference_identity_coordinate_and_kind_are_nonvacuous(self) -> None:
+        text = "![asset][asset]\n[asset]: asset.png\n"
+        self.base({"docs/asset.png": b"png", "docs/status.md": text})
+        self.assertEqual(self.codes(), [])
+        with mutant(
+            '(lineno, opener, _reference_identity(image))',
+            '(lineno, _match.start(), _reference_identity(image))',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
+        with mutant(
+            '(lineno, start, _reference_identity(image))',
+            '(lineno, start, _reference_identity(False))',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [

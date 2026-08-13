@@ -31,7 +31,9 @@ _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 _DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
 _RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
-_RAW_REFERENCE_USE_RE = re.compile(r"!?\[[^]\n]*\]\[[^]\n]*(?:\]|$)")
+_RAW_REFERENCE_USE_RE = re.compile(
+    r"!?\[(?:\\[^\n]|[^]\\\n])*\]\[(?:\\[^\n]|[^]\\\n])*(?:\]|$)"
+)
 _RAW_HTML_LINK_RE = re.compile(
     r"<[^>]+\b(?:href|src)[ \t\n]*=[ \t\n]*(?:(['\"])(.*?)\1|([^\s>]+))[^>]*>", re.I | re.S
 )
@@ -323,6 +325,11 @@ def _reference_opener(line: str, position: int) -> bool:
     return _unescaped(line, position)
 
 
+def _reference_identity(image: bool) -> str:
+    """Canonical candidate kind shared by raw and parsed reference uses."""
+    return "reference-image" if image else "reference-link"
+
+
 def parse_markdown(source: str, text: str) -> ParsedMarkdown:
     """Parse the bounded grammar and enforce raw candidate coverage."""
     inline_links: list[Link] = []
@@ -400,10 +407,20 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
                 findings.append(Finding(source, lineno, "DUPLICATE_REFERENCE", item.destination, f"duplicate label [{key}]"))
             else:
                 definitions[key] = item
-        raw_uses = [match for match in _RAW_REFERENCE_USE_RE.finditer(line) if _reference_opener(line, match.start())]
+        raw_uses: list[tuple[re.Match[str], int, bool]] = []
+        for match in _RAW_REFERENCE_USE_RE.finditer(line):
+            opener = line.find("[", match.start(), match.end())
+            if opener >= 0 and _reference_opener(line, opener):
+                raw_uses.append((match, opener, _image_opener(line, opener)))
         parsed_uses = _reference_uses(line)
-        candidate_identities.extend((lineno, match.start(), "reference") for match in raw_uses)
-        consumed_identities.extend((lineno, start, "reference") for start, _image, _label, _key in parsed_uses)
+        candidate_identities.extend(
+            (lineno, opener, _reference_identity(image))
+            for _match, opener, image in raw_uses
+        )
+        consumed_identities.extend(
+            (lineno, start, _reference_identity(image))
+            for start, image, _label, _key in parsed_uses
+        )
         for _start, image, label, raw_key in parsed_uses:
             key = " ".join(raw_key.casefold().split())
             uses.append((lineno, key, image, label))
