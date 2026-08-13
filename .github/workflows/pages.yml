@@ -91,6 +91,8 @@ jobs:
         run: python3 scripts/test_pages_site_check.py
       - name: Verify canonical Markdown links before rendering
         run: python3 scripts/docs_link_check.py --check
+      - name: Reject Liquid delimiters before Markdown rendering
+        run: python3 scripts/pages_site_check.py source --source ./docs
       - name: Configure Pages
         id: pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5

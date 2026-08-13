@@ -122,6 +122,35 @@ def _expected_pages(source: Path) -> tuple[list[str], list[Finding]]:
     return pages, findings
 
 
+def check_source(source: Path) -> list[Finding]:
+    """Reject raw Liquid openers in the tracked Jekyll source before rendering."""
+    global _LAST_STATS
+    _LAST_STATS = (0, 0, 0)
+    source = source if source.is_absolute() else Path.cwd() / source
+    if not source.is_dir() or source.is_symlink():
+        return [Finding(str(source), "SOURCE", "source is not a regular directory")]
+    names, findings = _tracked_source_names(source)
+    markdown_names = [name for name in names if name.endswith(".md")]
+    if not markdown_names and not findings:
+        findings.append(Finding(str(source), "EMPTY_SOURCE", "no Markdown source pages found"))
+    _LAST_STATS = (len(markdown_names), 0, len(names))
+    for name in markdown_names:
+        path = source / name
+        if path.is_symlink() or not path.is_file():
+            findings.append(Finding(path.as_posix(), "NONREGULAR", "Markdown source is not a regular file"))
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            findings.append(Finding(name, "SOURCE", str(exc)))
+            continue
+        for lineno, line in enumerate(text.splitlines(), 1):
+            for token in ("{{", "{%"):
+                if token in line:
+                    findings.append(Finding(name, "LIQUID_DELIMITER", f"line {lineno}: raw {token!r} is unsafe before Markdown rendering"))
+    return sorted(set(findings))
+
+
 def _expected_source_edges(source: Path) -> tuple[list[dict[str, str]], list[Finding]]:
     """Delegate authored syntax to V5 and map its local docs edges to Jekyll output."""
     import docs_link_check as authored  # The sole authored-source detector.
@@ -478,6 +507,8 @@ def main() -> int:
     live.add_argument("--baseurl", default="/ising-model")
     live.add_argument("--revision", required=True)
     live.add_argument("--generated-at", required=True)
+    source = subparsers.add_parser("source")
+    source.add_argument("--source", type=Path, default=Path("docs"))
     subparsers.add_parser("self-test")
     args = parser.parse_args()
     if args.command == "self-test":
@@ -487,6 +518,8 @@ def main() -> int:
         return _print(prepare_site(args.site, args.source, args.baseurl, args.revision, args.generated_at), "artifact")
     if args.command == "check":
         return _print(check_site(args.site, args.source, args.baseurl, args.revision, args.generated_at), "artifact")
+    if args.command == "source":
+        return _print(check_source(args.source), "source")
     return _print(check_live(args.url, args.source, args.baseurl, args.revision, args.generated_at), "live")
 
 
