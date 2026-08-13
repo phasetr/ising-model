@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
+import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import types
@@ -33,8 +36,11 @@ class SiteTest(unittest.TestCase):
         self.source.mkdir()
         (self.source / "nested").mkdir()
         (self.site / "nested").mkdir(parents=True)
-        (self.source / "index.md").write_text("# Home\n", encoding="utf-8")
-        (self.source / "nested" / "status.md").write_text("# Status\n", encoding="utf-8")
+        (self.source / "index.md").write_text(
+            "# Home\n\n[status](nested/status.md#status)\n\n![asset](asset.png)\n", encoding="utf-8",
+        )
+        (self.source / "nested" / "status.md").write_text("# Status\n\n[home](../index.md#home)\n", encoding="utf-8")
+        (self.source / "asset.png").write_bytes(b"png")
         (self.site / "asset.png").write_bytes(b"png")
         (self.site / "index.html").write_text(
             '<html><body><h1 id="home">Home</h1>'
@@ -47,6 +53,8 @@ class SiteTest(unittest.TestCase):
         )
         self.revision = "a" * 40
         self.generated = "2026-08-13T12:34:56Z"
+        subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
+        subprocess.run(["git", "add", "--", "docs/index.md", "docs/nested/status.md", "docs/asset.png"], cwd=self.root, check=True)
 
     def prepare(self, module: types.ModuleType = checker) -> list[checker.Finding]:
         return module.prepare_site(self.site, self.source, "/ising-model", self.revision, self.generated)
@@ -65,6 +73,7 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(manifest["generated_at"], self.generated)
         self.assertEqual(manifest["baseurl"], "/ising-model")
         self.assertEqual(manifest["pages"], ["index.html", "nested/status.html"])
+        self.assertEqual(len(manifest["source_edges"]), 3)
         self.assertEqual([item["path"] for item in manifest["files"]], ["asset.png", "index.html", "nested/status.html"])
         root = (self.site / "index.html").read_text(encoding="utf-8")
         self.assertEqual(root.count('id="snapshot-provenance"'), 1)
@@ -129,6 +138,28 @@ class SiteTest(unittest.TestCase):
         self.assertIn("DUPLICATE_ANCHOR", codes)
         self.assertIn("MANIFEST", codes)
 
+    def test_total_rendered_edge_loss_and_nonregular_output_fail(self) -> None:
+        self.assertEqual(self.prepare(), [])
+        root = self.site / "index.html"
+        root.write_text(
+            root.read_text(encoding="utf-8")
+            .replace('<a href="nested/status.html#status">status</a>', "status")
+            .replace('<img src="asset.png" alt="asset">', "asset"),
+            encoding="utf-8",
+        )
+        status = self.site / "nested" / "status.html"
+        status.write_text(status.read_text(encoding="utf-8").replace('<a href="../index.html#home">home</a>', "home"), encoding="utf-8")
+        self.assertIn("EDGE_LOSS", self.codes())
+        fifo = self.site / "nonregular"
+        os.mkfifo(fifo)
+        self.assertIn("NONREGULAR", self.codes())
+
+    def test_tracked_discovery_ignores_untracked_markdown(self) -> None:
+        self.assertEqual(self.prepare(), [])
+        (self.source / "untracked.md").write_text("# Untracked\n", encoding="utf-8")
+        (self.site / "untracked.html").write_text("<h1>untracked</h1>", encoding="utf-8")
+        self.assertIn("PAGE_SET", self.codes())
+
     def test_fetch_retries_and_rejects_redirect(self) -> None:
         response = mock.MagicMock()
         response.__enter__.return_value = response
@@ -144,6 +175,11 @@ class SiteTest(unittest.TestCase):
             body, error = checker._fetch("https://example.test/right", retries=1)
         self.assertIsNone(body)
         self.assertIn("redirected", error or "")
+        with mock.patch.object(checker.urllib.request, "urlopen", side_effect=OSError("down")) as request, mock.patch.object(checker.time, "sleep") as sleep:
+            body, error = checker._fetch("https://example.test/right")
+        self.assertEqual((body, error), (None, "down"))
+        self.assertEqual(request.call_count, 3)
+        self.assertEqual(sleep.call_count, 2)
 
     def test_live_pipeline_passes_and_rejects_stale_revision(self) -> None:
         self.assertEqual(self.prepare(), [])
@@ -244,6 +280,36 @@ class MutationTest(SiteTest):
                 with mutant(old, new) as module:
                     self.assertNotIn(code, self.codes(module))
 
+    def test_tracked_edges_fragments_discovery_and_retry_guards_are_nonvacuous(self) -> None:
+        self.assertEqual(self.prepare(), [])
+        root = self.site / "index.html"
+        root.write_text(root.read_text().replace("nested/status.html#status", "nested/status.html#missing"), encoding="utf-8")
+        self.assertIn("MISSING_FRAGMENT", self.codes())
+        with mutant(
+            "if target_page is None or fragment not in target_page.anchors:",
+            "if False:",
+        ) as module:
+            self.assertNotIn("MISSING_FRAGMENT", self.codes(module))
+        root.write_text(root.read_text().replace("nested/status.html#missing", "#home"), encoding="utf-8")
+        self.assertIn("EDGE_LOSS", self.codes())
+        with mutant(
+            "missing_edges = expected_edge_counts - actual_edges",
+            "missing_edges = Counter()",
+        ) as module:
+            self.assertNotIn("EDGE_LOSS", self.codes(module))
+        (self.source / "untracked.md").write_text("# Untracked\n", encoding="utf-8")
+        (self.site / "untracked.html").write_text("<h1>untracked</h1>", encoding="utf-8")
+        self.assertIn("PAGE_SET", self.codes())
+        with mutant(
+            'relative = sorted(name[len(prefix):] for name in names if name.startswith(prefix))',
+            'relative = sorted(path.relative_to(source).as_posix() for path in source.rglob("*") if path.is_file())',
+        ) as module:
+            self.assertNotIn("PAGE_SET", self.codes(module))
+        with mock.patch.object(checker.urllib.request, "urlopen", side_effect=OSError("down")), mock.patch.object(checker.time, "sleep"):
+            self.assertEqual(checker._fetch("https://example.test/right"), (None, "down"))
+        with mutant("return None, last", 'return b"", None') as module, mock.patch.object(module.urllib.request, "urlopen", side_effect=OSError("down")), mock.patch.object(module.time, "sleep"):
+            self.assertNotEqual(module._fetch("https://example.test/right"), (None, "down"))
+
 
 class WorkflowContractTest(unittest.TestCase):
     def test_single_writer_triggers_pins_permissions_and_release_call(self) -> None:
@@ -252,22 +318,68 @@ class WorkflowContractTest(unittest.TestCase):
         lean = (REPO_ROOT / ".github/workflows/lean_action_ci.yml").read_text(encoding="utf-8")
         self.assertIn("workflow_dispatch:", pages)
         self.assertIn("workflow_call:", pages)
+        dispatch = pages.split("workflow_dispatch:", 1)[1].split("workflow_call:", 1)[0]
+        self.assertIn("mode:", dispatch)
+        self.assertNotIn("source_sha:", dispatch)
+        self.assertNotIn("source_ref:", dispatch)
         self.assertNotIn("\n  push:", pages)
         self.assertNotIn("schedule:", pages)
         self.assertNotIn("docgen", pages.lower())
         self.assertEqual(pages.count("actions/deploy-pages@"), 1)
         self.assertIn("cancel-in-progress: false", pages)
+        self.assertEqual(pages.count("persist-credentials: false"), 2)
+        self.assertIn('test "$RUN_REF" = refs/heads/main', pages)
+        self.assertIn('source_sha=$(git rev-parse refs/remotes/origin/main^{commit})', pages)
+        self.assertIn('case "$SOURCE_REF" in refs/tags/v*)', pages)
+        self.assertIn("python3 scripts/test_pages_site_check.py", pages)
+        self.assertIn("python3 scripts/docs_link_check.py --check", pages)
         for sha in checker.ACTION_SHAS:
             self.assertIn(sha, pages + release)
+        external_uses = re.findall(r"uses:[ ]+([^\s]+@[^\s]+)", pages + release)
+        self.assertTrue(external_uses)
+        self.assertTrue(all(re.search(r"@[0-9a-f]{40}$", item) for item in external_uses))
         self.assertIn("uses: ./.github/workflows/pages.yml", release)
-        self.assertIn("needs: lean-release-tag", release)
-        self.assertIn("git tag --points-at", release)
+        self.assertIn("needs: [prepare-release-source, lean-release-tag]", release)
+        self.assertIn("git ls-remote --exit-code", release)
+        self.assertIn("refs/tags/$tag", release)
+        self.assertIn("refs/tags/v[0-9]*", release)
+        self.assertIn('zero=0000000000000000000000000000000000000000', release)
+        self.assertIn('git show "$source_sha:lean-toolchain"', release)
+        self.assertIn('git show "$parent:lean-toolchain"', release)
         self.assertIn("source_sha=$(git rev-parse", release)
+        self.assertIn("if: needs.resolve-release-source.outputs.publish == 'true'", release)
+        self.assertIn("deploy: true", release)
+        write_job = release.split("lean-release-tag:", 1)[1].split("resolve-release-source:", 1)[0]
+        self.assertEqual(write_job.count("contents: write"), 1)
+        self.assertNotIn("git fetch", write_job)
+        resolver = release.split("resolve-release-source:", 1)[1].split("publish-handwritten-pages:", 1)[0]
+        self.assertEqual(resolver.count("contents: read"), 1)
+        self.assertNotIn("contents: write", resolver)
+        self.assertEqual(release.count("persist-credentials: false"), 2)
         self.assertNotIn("pages: write", lean)
         self.assertNotIn("id-token: write", lean)
         self.assertNotIn("docgen-action", lean)
         self.assertIn("python3 scripts/test_pages_site_check.py", lean)
         self.assertEqual((REPO_ROOT / "README.md").read_text().count("Derived handwritten Pages snapshot"), 1)
+
+    def test_identity_and_permission_guards_are_mutation_pinned(self) -> None:
+        pages_path = REPO_ROOT / ".github/workflows/pages.yml"
+        release_path = REPO_ROOT / ".github/workflows/create-release.yml"
+        cases = (
+            (pages_path, 'test "$RUN_REF" = refs/heads/main', 'test -n "$RUN_REF"'),
+            (pages_path, 'case "$SOURCE_REF" in refs/tags/v*)', 'case "$SOURCE_REF" in *)'),
+            (pages_path, 'persist-credentials: false', 'persist-credentials: true'),
+            (release_path, 'git ls-remote --exit-code origin "refs/tags/$tag"', 'false'),
+            (release_path, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 'true'),
+            (release_path, 'test "$source_sha" != "$BEFORE"', 'true'),
+        )
+        for path, guard, weakened in cases:
+            with self.subTest(guard=guard):
+                text = path.read_text(encoding="utf-8")
+                count = text.count(guard)
+                self.assertGreater(count, 0)
+                mutant_text = text.replace(guard, weakened, 1)
+                self.assertEqual(mutant_text.count(guard), count - 1)
 
 
 def run_suite() -> int:

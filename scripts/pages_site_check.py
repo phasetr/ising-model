@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import datetime as dt
 import html
 import hashlib
@@ -12,6 +13,7 @@ import os
 import posixpath
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -33,6 +35,7 @@ ACTION_SHAS = (
     "d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e",  # deploy-pages v4
 )
 REVISION_RE = re.compile(r"[0-9a-f]{40}\Z")
+_LAST_STATS = (0, 0, 0)
 
 
 @dataclass(frozen=True, order=True)
@@ -78,19 +81,88 @@ def _valid_generated_at(value: str) -> bool:
     return parsed.tzinfo is not None
 
 
+def _tracked_source_names(source: Path) -> tuple[list[str], list[Finding]]:
+    try:
+        proc = subprocess.run(
+            ["git", "ls-files", "-z", "--", source.name], cwd=source.parent,
+            capture_output=True, check=False,
+        )
+    except OSError as exc:
+        return [], [Finding(str(source), "TRACKED_SET", str(exc))]
+    if proc.returncode != 0:
+        return [], [Finding(str(source), "TRACKED_SET", proc.stderr.decode("utf-8", errors="replace").strip())]
+    try:
+        names = [item for item in proc.stdout.decode("utf-8").split("\0") if item]
+    except UnicodeDecodeError as exc:
+        return [], [Finding(str(source), "TRACKED_SET", f"non-UTF-8 path: {exc}")]
+    prefix = source.name + "/"
+    relative = sorted(name[len(prefix):] for name in names if name.startswith(prefix))
+    if not relative:
+        return [], [Finding(str(source), "EMPTY_SOURCE", "no tracked source files found")]
+    return relative, []
+
+
 def _expected_pages(source: Path) -> tuple[list[str], list[Finding]]:
     findings: list[Finding] = []
     if not source.is_dir() or source.is_symlink():
         return [], [Finding(str(source), "SOURCE", "source is not a regular directory")]
+    names, tracked_findings = _tracked_source_names(source)
+    findings.extend(tracked_findings)
     pages: list[str] = []
-    for path in sorted(source.rglob("*.md")):
+    for name in names:
+        if not name.endswith(".md"):
+            continue
+        path = source / name
         if path.is_symlink() or not path.is_file():
             findings.append(Finding(path.as_posix(), "NONREGULAR", "Markdown source is not a regular file"))
             continue
-        pages.append(path.relative_to(source).with_suffix(".html").as_posix())
+        pages.append(PurePosixPath(name).with_suffix(".html").as_posix())
     if not pages:
         findings.append(Finding(str(source), "EMPTY_SOURCE", "no Markdown source pages found"))
     return pages, findings
+
+
+def _expected_source_edges(source: Path) -> tuple[list[dict[str, str]], list[Finding]]:
+    """Delegate authored syntax to V5 and map its local docs edges to Jekyll output."""
+    import docs_link_check as authored  # The sole authored-source detector.
+
+    names, findings = _tracked_source_names(source)
+    tracked = set(names)
+    edges: list[dict[str, str]] = []
+    for name in names:
+        if not name.endswith(".md"):
+            continue
+        path = source / name
+        try:
+            parsed = authored.parse_markdown(f"docs/{name}", path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError) as exc:
+            findings.append(Finding(name, "SOURCE_EDGE", str(exc)))
+            continue
+        if parsed.findings:
+            findings.append(Finding(name, "SOURCE_EDGE", "V5 found unsupported source syntax"))
+            continue
+        owner = PurePosixPath(name).with_suffix(".html").as_posix()
+        for link in parsed.links:
+            raw = link.destination
+            if not raw or authored._external(raw):
+                continue
+            target, fragment = authored._resolve(f"docs/{name}", raw)
+            if not target.startswith("docs/"):
+                continue
+            relative = target[len("docs/"):]
+            if relative not in tracked:
+                findings.append(Finding(name, "SOURCE_EDGE", f"untracked target: {raw}"))
+                continue
+            rendered = PurePosixPath(relative).with_suffix(".html").as_posix() if relative.endswith(".md") else relative
+            edges.append({
+                "owner": owner,
+                "kind": "src" if link.image else "href",
+                "target": rendered,
+                "fragment": fragment,
+            })
+    if not edges:
+        findings.append(Finding(str(source), "EMPTY_EDGES", "no tracked local Markdown edges found"))
+    return sorted(edges, key=lambda item: (item["owner"], item["kind"], item["target"], item["fragment"])), findings
 
 
 def _artifact_inventory(site: Path) -> list[dict[str, object]]:
@@ -107,7 +179,10 @@ def _artifact_inventory(site: Path) -> list[dict[str, object]]:
     return inventory
 
 
-def _expected_manifest(site: Path, pages: list[str], baseurl: str, revision: str, generated_at: str) -> dict[str, object]:
+def _expected_manifest(
+    site: Path, pages: list[str], source_edges: list[dict[str, str]],
+    baseurl: str, revision: str, generated_at: str,
+) -> dict[str, object]:
     return {
         "format": 1,
         "kind": "handwritten-only",
@@ -115,6 +190,7 @@ def _expected_manifest(site: Path, pages: list[str], baseurl: str, revision: str
         "source_revision": revision,
         "generated_at": generated_at,
         "pages": pages,
+        "source_edges": source_edges,
         "files": _artifact_inventory(site),
     }
 
@@ -162,6 +238,7 @@ def _local_target(owner: str, raw: str, baseurl: str) -> tuple[str | None, str, 
 
 
 def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_at: str) -> list[Finding]:
+    global _LAST_STATS
     site, source = site.resolve(), source.resolve()
     findings: list[Finding] = []
     if not REVISION_RE.fullmatch(revision):
@@ -172,6 +249,8 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
         findings.append(Finding("<metadata>", "BASEURL", "baseurl must be a non-root absolute path without trailing slash"))
     expected_pages, source_findings = _expected_pages(source)
     findings.extend(source_findings)
+    expected_edges, edge_findings = _expected_source_edges(source)
+    findings.extend(edge_findings)
     if not site.is_dir() or site.is_symlink():
         return sorted(findings + [Finding(str(site), "SITE", "site is not a regular directory")])
     actual_files: set[str] = set()
@@ -180,6 +259,9 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
         relative = PurePosixPath(path.relative_to(site).as_posix())
         if path.is_symlink():
             findings.append(Finding(relative.as_posix(), "NONREGULAR", "artifact contains a symlink"))
+            continue
+        if not path.is_file() and not path.is_dir():
+            findings.append(Finding(relative.as_posix(), "NONREGULAR", "artifact entry is neither a regular file nor directory"))
             continue
         if path.is_file():
             actual_files.add(relative.as_posix())
@@ -191,7 +273,7 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
     if actual_pages != expected_pages:
         findings.append(Finding("<site>", "PAGE_SET", f"expected {expected_pages!r}, got {actual_pages!r}"))
     try:
-        expected_manifest = _expected_manifest(site, expected_pages, baseurl, revision, generated_at)
+        expected_manifest = _expected_manifest(site, expected_pages, expected_edges, baseurl, revision, generated_at)
     except OSError as exc:
         findings.append(Finding(MANIFEST_NAME, "MANIFEST", f"could not inventory artifact: {exc}"))
         expected_manifest = None
@@ -209,6 +291,7 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
         findings.extend(page_findings)
         if page is not None:
             parsed_pages[relative] = page
+    actual_edges: Counter[tuple[str, str, str, str]] = Counter()
     for owner, page in parsed_pages.items():
         for attribute, raw in page.links:
             if not raw:
@@ -221,6 +304,7 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
                 findings.append(Finding(owner, error, raw))
                 continue
             assert target is not None
+            actual_edges[(owner, attribute, target, fragment)] += 1
             if target.lower().endswith(".md"):
                 findings.append(Finding(owner, "RESIDUAL_MARKDOWN", raw))
             if target not in actual_files:
@@ -230,6 +314,15 @@ def check_site(site: Path, source: Path, baseurl: str, revision: str, generated_
                 target_page = parsed_pages.get(target)
                 if target_page is None or fragment not in target_page.anchors:
                     findings.append(Finding(owner, "MISSING_FRAGMENT", raw))
+    expected_edge_counts = Counter(
+        (item["owner"], item["kind"], item["target"], item["fragment"])
+        for item in expected_edges
+    )
+    missing_edges = expected_edge_counts - actual_edges
+    for (owner, kind, target, fragment), count in sorted(missing_edges.items()):
+        suffix = f"#{fragment}" if fragment else ""
+        findings.append(Finding(owner, "EDGE_LOSS", f"{target}{suffix}: missing {count} rendered {kind} edge(s)"))
+    _LAST_STATS = (len(expected_pages), sum(actual_edges.values()), len(actual_files))
     root_path = site / "index.html"
     try:
         root_text = root_path.read_text(encoding="utf-8")
@@ -249,6 +342,8 @@ def prepare_site(site: Path, source: Path, baseurl: str, revision: str, generate
         preliminary.append(Finding("<metadata>", "GENERATED_AT", "timestamp must be an ISO-8601 UTC value"))
     pages, source_findings = _expected_pages(source.resolve())
     preliminary.extend(source_findings)
+    source_edges, edge_findings = _expected_source_edges(source.resolve())
+    preliminary.extend(edge_findings)
     root = site.resolve() / "index.html"
     try:
         text = root.read_text(encoding="utf-8")
@@ -268,7 +363,7 @@ def prepare_site(site: Path, source: Path, baseurl: str, revision: str, generate
         f'generated <time datetime="{generated_at}">{generated_at}</time>.</aside>'
     )
     root.write_text(text.replace("</body>", provenance + "</body>", 1), encoding="utf-8")
-    manifest = _expected_manifest(site.resolve(), pages, baseurl, revision, generated_at)
+    manifest = _expected_manifest(site.resolve(), pages, source_edges, baseurl, revision, generated_at)
     (site.resolve() / MANIFEST_NAME).write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return check_site(site, source, baseurl, revision, generated_at)
 
@@ -338,7 +433,8 @@ def _print(findings: list[Finding], label: str) -> int:
     if findings:
         print(f"handwritten Pages {label}: FAIL ({len(findings)} findings)")
         return 1
-    print(f"handwritten Pages {label}: PASS")
+    pages, edges, files = _LAST_STATS
+    print(f"handwritten Pages {label}: PASS ({pages} pages; {edges} local edges; {files} files visited)")
     return 0
 
 
