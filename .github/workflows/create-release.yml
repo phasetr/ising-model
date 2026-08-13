@@ -4,19 +4,136 @@ on:
   push:
     branches:
       - 'main'
-      - 'master'
     paths:
       - 'lean-toolchain'
 
 jobs:
+  prepare-release-source:
+    name: Prove the intended Lean release tag is new
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      source-ref: ${{ steps.expected.outputs.source-ref }}
+      toolchain: ${{ steps.expected.outputs.toolchain }}
+    steps:
+    - name: Checkout the pushed source without credentials
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      with:
+        ref: ${{ github.sha }}
+        persist-credentials: false
+    - name: Derive the intended tag and require it to be absent
+      id: expected
+      env:
+        EVENT_NAME: ${{ github.event_name }}
+        PUSH_REF: ${{ github.ref }}
+        PUSH_SHA: ${{ github.sha }}
+      run: |
+        test "$EVENT_NAME" = push
+        test "$PUSH_REF" = refs/heads/main
+        test "$(git rev-parse HEAD)" = "$PUSH_SHA"
+        toolchain=$(cat lean-toolchain)
+        test "$(printf '%s\n' "$toolchain" | wc -l | tr -d ' ')" -eq 1
+        tag=${toolchain##*:}
+        case "$tag" in v[0-9]*) ;; *) exit 1 ;; esac
+        existing=$(git ls-remote origin "refs/tags/$tag")
+        test -z "$existing"
+        echo "source-ref=refs/tags/$tag" >> "$GITHUB_OUTPUT"
+        echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
+
   lean-release-tag:
     name: Add Lean release tag
+    needs: prepare-release-source
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
     - name: lean-release-tag action
-      uses: leanprover-community/lean-release-tag@v1
+      if: github.event.before != '0000000000000000000000000000000000000000'
+      uses: leanprover-community/lean-release-tag@9ca7ed09e240259871327bfc3a3a8d8c4bcb41aa # v1
       with:
         do-release: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create the initial annotated tag and release without a null revision range
+      if: github.event.before == '0000000000000000000000000000000000000000'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+        SOURCE_REF: ${{ needs.prepare-release-source.outputs.source-ref }}
+        SOURCE_SHA: ${{ github.sha }}
+      run: |
+        tag=${SOURCE_REF#refs/tags/}
+        tag_object=$(gh api --method POST "repos/$REPOSITORY/git/tags" \
+          -f tag="$tag" -f message="Release $tag" -f object="$SOURCE_SHA" -f type=commit --jq .sha)
+        gh api --method POST "repos/$REPOSITORY/git/refs" -f ref="$SOURCE_REF" -f sha="$tag_object"
+        gh api --method POST "repos/$REPOSITORY/releases" \
+          -f tag_name="$tag" -f name="$tag" -f body="Automated release for Lean version $tag"
+
+  resolve-release-source:
+    name: Resolve the exact new Lean release source
+    needs: [prepare-release-source, lean-release-tag]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      publish: ${{ steps.release-source.outputs.publish }}
+      source-ref: ${{ steps.release-source.outputs.source-ref }}
+      source-sha: ${{ steps.release-source.outputs.source-sha }}
+    steps:
+    - name: Checkout the pushed history for exact tag resolution
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Resolve the exact release tag and peeled source commit
+      id: release-source
+      env:
+        AFTER: ${{ github.sha }}
+        BEFORE: ${{ github.event.before }}
+        EXPECTED_REF: ${{ needs.prepare-release-source.outputs.source-ref }}
+        EXPECTED_TOOLCHAIN: ${{ needs.prepare-release-source.outputs.toolchain }}
+      run: |
+        zero=0000000000000000000000000000000000000000
+        case "$AFTER" in *[!0-9a-f]*|'') exit 1 ;; esac
+        test "${#AFTER}" -eq 40
+        if test "$BEFORE" != "$zero"; then
+          case "$BEFORE" in *[!0-9a-f]*|'') exit 1 ;; esac
+          test "${#BEFORE}" -eq 40
+          git merge-base --is-ancestor "$BEFORE" "$AFTER"
+        fi
+        toolchain=$(git show "$AFTER:lean-toolchain")
+        test "$toolchain" = "$EXPECTED_TOOLCHAIN"
+        source_ref=$EXPECTED_REF
+        case "$source_ref" in refs/tags/v[0-9]*) ;; *) exit 1 ;; esac
+        git fetch --force --prune origin '+refs/tags/*:refs/tags/*'
+        git show-ref --verify --quiet "$source_ref"
+        source_sha=$(git rev-parse "$source_ref^{commit}")
+        test "$(git show "$source_sha:lean-toolchain")" = "$toolchain"
+        git merge-base --is-ancestor "$source_sha" "$AFTER"
+        if test "$BEFORE" = "$zero"; then
+          test "$source_sha" = "$AFTER"
+        else
+          git merge-base --is-ancestor "$BEFORE" "$source_sha"
+          test "$source_sha" != "$BEFORE"
+          parent=$(git rev-parse "$source_sha^")
+          test "$(git show "$parent:lean-toolchain")" != "$toolchain"
+        fi
+        echo "publish=true" >> "$GITHUB_OUTPUT"
+        echo "source-ref=$source_ref" >> "$GITHUB_OUTPUT"
+        echo "source-sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+  publish-handwritten-pages:
+    name: Publish handwritten Pages for the Lean release tag
+    needs: resolve-release-source
+    if: needs.resolve-release-source.outputs.publish == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      invocation_kind: release
+      deploy: true
+      source_ref: ${{ needs.resolve-release-source.outputs.source-ref }}
+      source_sha: ${{ needs.resolve-release-source.outputs.source-sha }}

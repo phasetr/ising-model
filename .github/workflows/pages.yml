@@ -1,0 +1,154 @@
+name: Handwritten Pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Build an artifact for review, or deploy it
+        required: true
+        type: choice
+        default: artifact
+        options:
+          - artifact
+          - deploy
+  workflow_call:
+    inputs:
+      invocation_kind:
+        required: true
+        type: string
+      deploy:
+        required: true
+        type: boolean
+      source_sha:
+        required: true
+        type: string
+      source_ref:
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and check handwritten snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      generated-at: ${{ steps.metadata.outputs.generated-at }}
+      source-sha: ${{ steps.source.outputs.source-sha }}
+      deploy: ${{ steps.source.outputs.deploy }}
+    steps:
+      - name: Checkout exact publication source
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && 'refs/heads/main' || inputs.source_sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Resolve and verify the invocation-specific source identity
+        id: source
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INVOCATION_KIND: ${{ inputs.invocation_kind }}
+          MODE: ${{ inputs.mode }}
+          RELEASE_DEPLOY: ${{ inputs.deploy }}
+          RUN_REF: ${{ github.ref }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          SOURCE_SHA: ${{ inputs.source_sha }}
+        run: |
+          if test "$EVENT_NAME" = workflow_dispatch; then
+            test -z "$INVOCATION_KIND"
+            test "$RUN_REF" = refs/heads/main
+            case "$MODE" in artifact) deploy=false ;; deploy) deploy=true ;; *) exit 1 ;; esac
+            git fetch --no-tags origin refs/heads/main:refs/remotes/origin/main
+            source_ref=refs/heads/main
+            source_sha=$(git rev-parse refs/remotes/origin/main^{commit})
+            test "$(git rev-parse HEAD)" = "$source_sha"
+          else
+            test "$INVOCATION_KIND" = release
+            test -z "$MODE"
+            test "$RELEASE_DEPLOY" = true
+            deploy=true
+            test "$RUN_REF" = refs/heads/main
+            case "$SOURCE_REF" in refs/tags/v*) ;; *) exit 1 ;; esac
+            case "$SOURCE_SHA" in *[!0-9a-f]*|'') exit 1 ;; esac
+            test "${#SOURCE_SHA}" -eq 40
+            test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+            test "$(git rev-parse "$SOURCE_REF^{commit}")" = "$SOURCE_SHA"
+            source_ref=$SOURCE_REF
+            source_sha=$SOURCE_SHA
+          fi
+          echo "source-ref=$source_ref" >> "$GITHUB_OUTPUT"
+          echo "source-sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
+      - name: Run publication verifier fixtures
+        run: python3 scripts/test_pages_site_check.py
+      - name: Verify canonical Markdown links before rendering
+        run: python3 scripts/docs_link_check.py --check
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Verify configured base path
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+        run: test "$BASE_PATH" = "/ising-model"
+      - name: Build with the supported GitHub Pages Jekyll stack
+        uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
+        with:
+          source: ./docs
+          destination: ./_site
+          build_revision: ${{ steps.source.outputs.source-sha }}
+      - name: Record generation time
+        id: metadata
+        run: echo "generated-at=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+      - name: Stamp, inventory, and crawl the handwritten artifact
+        env:
+          GENERATED_AT: ${{ steps.metadata.outputs.generated-at }}
+          SOURCE_SHA: ${{ steps.source.outputs.source-sha }}
+        run: >-
+          python3 scripts/pages_site_check.py prepare
+          --site ./_site --source ./docs --baseurl /ising-model
+          --revision "$SOURCE_SHA" --generated-at "$GENERATED_AT"
+      - name: Upload the one complete Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: ./_site
+          retention-days: 1
+
+  deploy:
+    name: Deploy and verify handwritten snapshot
+    if: needs.build.outputs.deploy == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the checked artifact
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Checkout the verifier at the published revision
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          ref: ${{ needs.build.outputs.source-sha }}
+          persist-credentials: false
+      - name: Verify the live snapshot and exact provenance
+        env:
+          GENERATED_AT: ${{ needs.build.outputs.generated-at }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          SOURCE_SHA: ${{ needs.build.outputs.source-sha }}
+        run: >-
+          python3 scripts/pages_site_check.py live
+          --url "$PAGE_URL" --source ./docs --baseurl /ising-model
+          --revision "$SOURCE_SHA" --generated-at "$GENERATED_AT"
