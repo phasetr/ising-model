@@ -50,16 +50,13 @@ For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress t
 - Derived handwritten Pages snapshot (published manually and for Lean release tags;
   it may lag behind `main`):
   [https://phasetr.github.io/ising-model/](https://phasetr.github.io/ising-model/)
-- API documentation (doc-gen4): **temporarily unavailable** (automatic
-  publication paused). See note below.
+- [Publication policy and generated-API status](docs/publication-policy.md)
 
 > **Note:** the low-frequency Pages publisher contains the handwritten
-> mathematical documentation only. Publication of the doc-gen4 API reference
-> remains paused because its uncached build took roughly an hour and queued
-> behind ordinary merges. A separately measured API pilot is required before
-> it can join the single complete Pages artifact. To build the API
-> reference locally, run `lake -R -Kenv=dev build IsingModel:docs`
-> and open `.lake/build/doc/index.html`.
+> mathematical documentation only. Generated API publication remains paused
+> after an evidence-backed No-Go decision. The root Lake package does not
+> currently provide a supported local API-documentation build command. See the
+> publication policy for the evidence and reopen criteria.
 
 Start with [docs/index.md](docs/index.md) for the mathematical documentation. It links the
 canonical status, library-map, bibliography, and topic-oriented theorem

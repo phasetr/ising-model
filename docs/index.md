@@ -22,6 +22,8 @@ View* (2nd ed., 1987).
   responsibility.
 - [Book coverage](coverage/index.md) organizes the Glimm--Jaffe inventory by chapter and keeps
   its scope qualifications with their canonical chapter owners.
+- [Publication policy](publication-policy.md) defines the tracked-documentation and derived-Pages
+  roles, records the generated-API decision, and states its reopen criteria.
 
 ## Formalized theorems
 
