@@ -187,13 +187,22 @@ class ResolutionTest(RepoTest):
 
     def test_intervals_and_escaped_brackets_are_not_link_candidates(self) -> None:
         self.base({
+            "docs/asset.png": b"png",
             "docs/status.md": (
                 "The intervals (a,b](c,d) and (x,y](z,w) are prose.\n"
+                "[label] ordinary prose then interval (a,b](c,d).\n"
                 "Escaped closers \\](missing.md) remain literal.\n"
                 "Escaped openers \\[x](missing.md) remain literal.\n"
+                "Even slashes \\\\[real](index.md) preserve a real link.\n"
+                "Escaped label [x\\]](index.md) preserves the label closer.\n"
+                "Even image \\\\![asset](asset.png) remains an image.\n"
             ),
         })
         self.assertEqual(self.codes(), [])
+
+    def test_even_slash_empty_alt_image_keeps_image_classification(self) -> None:
+        self.base({"docs/asset.png": b"png", "docs/status.md": "\\\\![](asset.png)\n"})
+        self.assertIn("EMPTY_IMAGE_ALT", self.codes())
 
     def test_multiline_raw_html_and_liquid_links_fail_coverage(self) -> None:
         self.base({
@@ -290,17 +299,16 @@ class MutationTest(RepoTest):
             self.assertIn("SCOPE_MISMATCH", self.codes(module))
 
     def test_candidate_identity_blocks_cross_offset_laundering(self) -> None:
-        text = "[broken]: missing.md trailing\n[x](<https://example.test/a b>)\n"
+        text = "[x](index.md)\n"
         self.base({"docs/status.md": text})
-        self.assertIn("CANDIDATE_COVERAGE", self.codes())
         parsed = checker.parse_markdown("docs/status.md", text)
         self.assertEqual(parsed.candidate_count, parsed.consumed_count)
-        self.assertNotEqual(Counter(parsed.candidate_identities), Counter(parsed.consumed_identities))
+        self.assertEqual(Counter(parsed.candidate_identities), Counter(parsed.consumed_identities))
         with mutant(
-            "if Counter(candidate_identities) != Counter(consumed_identities):",
-            "if len(candidate_identities) != len(consumed_identities):",
+            'consumed_identities.extend((lineno, position, "inline") for position in parsed_positions)',
+            'consumed_identities.extend((lineno, position + 1, "inline") for position in parsed_positions)',
         ) as module:
-            self.assertEqual(self.codes(module), [])
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
 
     def test_raw_fragment_and_comment_lifecycle_guards_are_nonvacuous(self) -> None:
         cases = [
@@ -339,8 +347,14 @@ class MutationTest(RepoTest):
     def test_punctuation_and_multiline_raw_guards_are_nonvacuous(self) -> None:
         cases = [
             (
-                'if opener is not None:',
-                'if False:',
+                'and _unescaped(line, opener - 1)',
+                'and False',
+                "\\\\![](asset.png)\n",
+                "EMPTY_IMAGE_ALT",
+            ),
+            (
+                'if line[position] != "[" or not _unescaped(line, position):',
+                'if True:',
                 "![alt](\n",
                 "CANDIDATE_COVERAGE",
             ),
@@ -357,6 +371,16 @@ class MutationTest(RepoTest):
                 self.assertIn(guarded_code, self.codes())
                 with mutant(old, new) as module:
                     self.assertNotIn(guarded_code, self.codes(module))
+
+    def test_stale_label_opener_discard_is_nonvacuous(self) -> None:
+        text = "[label] ordinary prose then interval (a,b](c,d).\n"
+        self.base({"docs/status.md": text})
+        self.assertEqual(self.codes(), [])
+        with mutant(
+            'if close >= len(line) or not line.startswith("](", close):',
+            'if close >= len(line):',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [

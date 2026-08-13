@@ -30,15 +30,7 @@ CANONICAL_OWNERS = frozenset({
 _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 _DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
-_INLINE_RE = re.compile(
-    r"(?<!\\)(!?)\[([^]\n]*)\]\([ \t]*(<[^>\n]+>|[^\s)]*)"
-    r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
-)
 _REFERENCE_USE_RE = re.compile(r"(!?)\[([^]\n]*)\]\[([^]\n]*)\]")
-_RAW_CANDIDATE_RE = re.compile(
-    r"(?<!\\)!?\[[^]\n]*?\]\([ \t]*(?:<[^>\s]+>|[^\s)]*)"
-    r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
-)
 _RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
 _RAW_REFERENCE_USE_RE = re.compile(r"!?\[[^]\n]*\]\[[^]\n]*(?:\]|$)")
 _RAW_HTML_LINK_RE = re.compile(
@@ -69,6 +61,16 @@ class Link:
     destination: str
     image: bool = False
     label: str = ""
+
+
+@dataclass(frozen=True)
+class InlineConstruct:
+    opener: int
+    punctuation: int
+    end: int | None
+    image: bool
+    label: str
+    destination: str
 
 
 @dataclass(frozen=True)
@@ -198,24 +200,67 @@ def _unescaped(line: str, position: int) -> bool:
     return slashes % 2 == 0
 
 
-def _inline_punctuation_positions(line: str) -> set[int]:
-    """Locate bounded Markdown link/image ``](`` punctuation.
+def _inline_constructs(line: str) -> list[InlineConstruct]:
+    """Parse bounded Markdown link/image punctuation with slash parity.
 
     Only an unescaped ``[`` (optionally preceded by an unescaped ``!``) may
     open the label, and the closing ``]`` must itself be unescaped.  This keeps
     mathematical intervals and escaped literals out of the candidate census.
     """
-    positions: set[int] = set()
-    opener: int | None = None
-    for position, char in enumerate(line):
-        if char == "[" and _unescaped(line, position):
-            opener = position
+    constructs: list[InlineConstruct] = []
+    position = 0
+    while position < len(line):
+        if line[position] != "[" or not _unescaped(line, position):
+            position += 1
             continue
-        if char == "]" and line.startswith("](", position) and _unescaped(line, position):
-            if opener is not None:
-                positions.add(position)
-            opener = None
-    return positions
+        opener = position
+        image = opener > 0 and line[opener - 1] == "!" and _unescaped(line, opener - 1)
+        close = opener + 1
+        while close < len(line):
+            if line[close] == "]" and _unescaped(line, close):
+                break
+            close += 1
+        # The first unescaped close owns this opener.  If it is not followed by
+        # ``(``, discard the opener instead of associating a later interval's
+        # ``](`` with stale label state.
+        if close >= len(line) or not line.startswith("](", close):
+            position = opener + 1
+            continue
+        label = line[opener + 1:close]
+        cursor = close + 2
+        while cursor < len(line) and line[cursor] in " \t":
+            cursor += 1
+        destination_start = cursor
+        if cursor < len(line) and line[cursor] == "<":
+            cursor += 1
+            destination_start = cursor
+            while cursor < len(line) and line[cursor] != ">":
+                cursor += 1
+            if cursor >= len(line):
+                constructs.append(InlineConstruct(opener, close, None, image, label, ""))
+                position = close + 2
+                continue
+            destination = line[destination_start:cursor]
+            cursor += 1
+        else:
+            while cursor < len(line) and line[cursor] not in " \t)":
+                cursor += 1
+            destination = line[destination_start:cursor]
+        while cursor < len(line) and line[cursor] in " \t":
+            cursor += 1
+        if cursor < len(line) and line[cursor] in "\"'":
+            quote = line[cursor]
+            cursor += 1
+            while cursor < len(line) and line[cursor] != quote:
+                cursor += 1
+            if cursor < len(line):
+                cursor += 1
+            while cursor < len(line) and line[cursor] in " \t":
+                cursor += 1
+        end = cursor + 1 if cursor < len(line) and line[cursor] == ")" else None
+        constructs.append(InlineConstruct(opener, close, end, image, label, destination))
+        position = end if end is not None else close + 2
+    return constructs
 
 
 def parse_markdown(source: str, text: str) -> ParsedMarkdown:
@@ -274,22 +319,15 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         # Count syntax independently of destination classification.  External
         # links are consumed by the same grammar, so including both sides keeps
         # this census exact without asking the grammar parser for its input.
-        raw_inline = list(_RAW_CANDIDATE_RE.finditer(line))
-        punctuation_positions = _inline_punctuation_positions(line)
-        parsed_inline = list(_INLINE_RE.finditer(line))
-        raw_positions = {line.find("](", match.start()) for match in raw_inline}
-        parsed_positions = {line.find("](", match.start()) for match in parsed_inline}
-        candidate_identities.extend((lineno, position, "inline") for position in raw_positions)
-        candidate_identities.extend(
-            (lineno, position, "inline") for position in punctuation_positions
-            if position not in raw_positions and position not in parsed_positions
-        )
+        constructs = _inline_constructs(line)
+        parsed_inline = [construct for construct in constructs if construct.end is not None]
+        parsed_positions = {construct.punctuation for construct in parsed_inline}
+        incomplete_positions = {construct.punctuation for construct in constructs if construct.end is None}
+        candidate_identities.extend((lineno, position, "inline") for position in parsed_positions)
+        candidate_identities.extend((lineno, position, "incomplete-inline") for position in incomplete_positions)
         consumed_identities.extend((lineno, position, "inline") for position in parsed_positions)
-        for match in parsed_inline:
-            image = bool(match.group(1))
-            label = match.group(2)
-            destination = match.group(3).strip("<>")
-            inline_links.append(Link(source, lineno, destination, image, label))
+        for construct in parsed_inline:
+            inline_links.append(Link(source, lineno, construct.destination, construct.image, construct.label))
         raw_defs = bool(_RAW_REFERENCE_DEF_RE.match(line))
         definition = _DEFINITION_RE.match(line)
         if raw_defs:
@@ -310,7 +348,7 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             key = " ".join((match.group(3) or match.group(2)).casefold().split())
             uses.append((lineno, key, bool(match.group(1)), match.group(2)))
         # Any local-link punctuation that was not consumed is a hard finding.
-        if punctuation_positions != parsed_positions:
+        if incomplete_positions:
             findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "link punctuation was not consumed by the bounded grammar"))
     masked_text = "\n".join(masked_lines)
     starts = [0]
