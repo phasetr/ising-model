@@ -29,10 +29,9 @@ CANONICAL_OWNERS = frozenset({
 
 _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
-_DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
-_RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
+_RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[.*\]:")
 _RAW_REFERENCE_USE_RE = re.compile(
-    r"!?\[(?:\\[^\n]|[^]\\\n])*\]\[(?:\\[^\n]|[^]\\\n])*(?:\]|$)"
+    r"!?\[(?:\\[^\n]|[^]\\\n])*\]\[(?:\\[^\n]|[^]\\\n])*(?:\]|\\$|$)"
 )
 _RAW_HTML_LINK_RE = re.compile(
     r"<[^>]+\b(?:href|src)[ \t\n]*=[ \t\n]*(?:(['\"])(.*?)\1|([^\s>]+))[^>]*>", re.I | re.S
@@ -320,6 +319,33 @@ def _reference_uses(line: str) -> list[tuple[int, bool, str, str]]:
     return uses
 
 
+def _reference_definition(line: str) -> tuple[str, str] | None:
+    """Parse a reference definition using the use grammar's close parity."""
+    indent = len(line) - len(line.lstrip(" \t"))
+    if indent > 3 or indent >= len(line) or line[indent] != "[":
+        return None
+    close = indent + 1
+    while close < len(line):
+        if line[close] == "]" and _unescaped(line, close):
+            break
+        close += 1
+    if close >= len(line) or close + 1 >= len(line) or line[close + 1] != ":":
+        return None
+    key = line[indent + 1:close]
+    tail = line[close + 2:].strip()
+    if not key or not tail:
+        return None
+    if tail.startswith("<"):
+        if not tail.endswith(">") or len(tail) == 2:
+            return None
+        destination = tail[1:-1]
+    elif any(char.isspace() for char in tail):
+        return None
+    else:
+        destination = tail
+    return key, destination
+
+
 def _reference_opener(line: str, position: int) -> bool:
     """Shared parity guard for raw and parsed reference-use census."""
     return _unescaped(line, position)
@@ -396,13 +422,14 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         for construct in parsed_inline:
             inline_links.append(Link(source, lineno, construct.destination, construct.image, construct.label))
         raw_defs = bool(_RAW_REFERENCE_DEF_RE.match(line))
-        definition = _DEFINITION_RE.match(line)
+        definition = _reference_definition(line)
         if raw_defs:
             candidate_identities.append((lineno, 0, "definition"))
         if definition:
-            consumed_identities.append((lineno, definition.start(), "definition"))
-            key = " ".join(definition.group(1).casefold().split())
-            item = Link(source, lineno, definition.group(2).strip("<>"))
+            consumed_identities.append((lineno, 0, "definition"))
+            raw_key, destination = definition
+            key = " ".join(raw_key.casefold().split())
+            item = Link(source, lineno, destination)
             if key in definitions:
                 findings.append(Finding(source, lineno, "DUPLICATE_REFERENCE", item.destination, f"duplicate label [{key}]"))
             else:

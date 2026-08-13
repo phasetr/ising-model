@@ -201,6 +201,25 @@ class ResolutionTest(RepoTest):
         self.assertNotIn("CANDIDATE_COVERAGE", self.codes())
         self.assertEqual(self.codes().count("MISSING_REFERENCE"), 1)
 
+    def test_escaped_reference_key_resolves_and_dangling_slash_fails_closed(self) -> None:
+        clean = "[text][asset\\]key]\n[asset\\]key]: index.md\n"
+        self.base({"docs/status.md": clean})
+        parsed = checker.parse_markdown("docs/status.md", clean)
+        self.assertEqual([(link.destination, link.label) for link in parsed.links], [("index.md", "text")])
+        self.assertEqual(parsed.findings, ())
+        self.assertEqual(self.codes(), [])
+
+        dangling = "[text][label\\\n"
+        self.base({"docs/status.md": dangling})
+        parsed = checker.parse_markdown("docs/status.md", dangling)
+        self.assertEqual(parsed.candidate_count, 1)
+        self.assertEqual(parsed.consumed_count, 0)
+        self.assertIn("CANDIDATE_COVERAGE", self.codes())
+
+        dangling_definition = "[asset\\]: index.md\n"
+        self.base({"docs/status.md": dangling_definition})
+        self.assertIn("CANDIDATE_COVERAGE", self.codes())
+
     def test_escaped_and_code_comment_openers_cannot_hide_following_links(self) -> None:
         self.base({
             "docs/status.md": (
@@ -469,6 +488,23 @@ class MutationTest(RepoTest):
             '(lineno, start, _reference_identity(False))',
         ) as module:
             self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
+
+    def test_escaped_reference_definition_and_dangling_slash_guards_are_nonvacuous(self) -> None:
+        self.base({"docs/status.md": "[text][asset\\]key]\n[asset\\]key]: index.md\n"})
+        self.assertEqual(self.codes(), [])
+        with mutant(
+            'if line[close] == "]" and _unescaped(line, close):\n            break\n        close += 1\n    if close >= len(line) or close + 1 >= len(line) or line[close + 1] != ":":',
+            'if line[close] == "]":\n            break\n        close += 1\n    if close >= len(line) or close + 1 >= len(line) or line[close + 1] != ":":',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
+
+        self.base({"docs/status.md": "[text][label\\\n"})
+        self.assertIn("CANDIDATE_COVERAGE", self.codes())
+        with mutant(
+            '*(?:\\]|\\\\$|$)',
+            '*(?:\\]|$)',
+        ) as module:
+            self.assertNotIn("CANDIDATE_COVERAGE", self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [
