@@ -11,6 +11,7 @@ import tempfile
 import types
 import unittest
 import uuid
+from collections import Counter
 from contextlib import contextmanager
 from pathlib import Path
 from unittest import mock
@@ -111,6 +112,32 @@ class ResolutionTest(RepoTest):
         self.assertIn("UNPARSED_LOCAL_LINK", codes)
         self.assertIn("CANDIDATE_COVERAGE", codes)
 
+    def test_extensionless_raw_html_and_liquid_destinations_fail(self) -> None:
+        self.base({"docs/status.md": '<a href="LICENSE">license</a>\n{% link LICENSE %}\n'})
+        codes = self.codes()
+        self.assertIn("RAW_LOCAL_HTML", codes)
+        self.assertIn("LIQUID_LOCAL_LINK", codes)
+
+    def test_comments_titles_and_tilde_info_are_handled_as_markdown(self) -> None:
+        self.base({
+            "docs/status.md": (
+                '<!-- [fake](missing.md) <a href="LICENSE"> -->\n'
+                '<!--\n~~~not-a-fence\n{% link LICENSE %}\n-->\n'
+                '[title](index.md "optional title")\n'
+                "~~~language~variant\n[fenced](missing.md)\n~~~\n"
+            ),
+        })
+        self.assertEqual(self.codes(), [])
+
+    def test_fragment_on_tracked_markdown_outside_scope_is_loaded(self) -> None:
+        self.base({
+            "CONTRIBUTING.md": "# Setup\n",
+            "docs/status.md": "[contributor setup](../CONTRIBUTING.md#setup)\n",
+        })
+        findings, visited, _links = checker.check(self.root)
+        self.assertEqual(findings, [])
+        self.assertNotIn("CONTRIBUTING.md", visited)
+
     def test_empty_reference_image_alt_and_non_utf8_markdown_fail(self) -> None:
         self.base({"docs/asset.png": b"png", "docs/status.md": "![][asset]\n[asset]: asset.png\n", "docs/binary.md": b"\xff"})
         codes = self.codes()
@@ -197,10 +224,17 @@ class MutationTest(RepoTest):
         with mutant('MARKDOWN_PATHS = ("README.md", "docs")', 'MARKDOWN_PATHS = ("README.md",)') as module:
             self.assertIn("SCOPE_MISMATCH", self.codes(module))
 
-    def test_candidate_coverage_guard_is_nonvacuous(self) -> None:
-        self.base({"docs/status.md": "[broken]: missing.md trailing\n"})
+    def test_candidate_identity_blocks_cross_offset_laundering(self) -> None:
+        text = "[broken]: missing.md trailing\n[x](<https://example.test/a b>)\n"
+        self.base({"docs/status.md": text})
         self.assertIn("CANDIDATE_COVERAGE", self.codes())
-        with mutant("if candidate_count != consumed_count:", "if False:") as module:
+        parsed = checker.parse_markdown("docs/status.md", text)
+        self.assertEqual(parsed.candidate_count, parsed.consumed_count)
+        self.assertNotEqual(Counter(parsed.candidate_identities), Counter(parsed.consumed_identities))
+        with mutant(
+            "if Counter(candidate_identities) != Counter(consumed_identities):",
+            "if len(candidate_identities) != len(consumed_identities):",
+        ) as module:
             self.assertEqual(self.codes(module), [])
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
