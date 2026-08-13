@@ -9,7 +9,8 @@ This document is the repository-local historical record for the completed issue 
 It preserves the static baseline, the predeclared gates, and the measured outcomes.  It is not an
 active authorization for further refactoring.  #4793 and #4794, which formerly tracked current
 structural decisions and fresh build-speed reconciliation respectively, have both been deleted on
-GitHub; see `docs/index.md` for current tracking.
+GitHub; current policy is stated by the
+[refactoring safeguards](../refactoring-rollback-ledger.html#current-refactoring-safeguards).
 
 ## Status and issue mapping
 
