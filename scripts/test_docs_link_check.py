@@ -178,6 +178,28 @@ class ResolutionTest(RepoTest):
         self.assertIn("EMPTY_IMAGE_ALT", codes)
         self.assertIn("UNREADABLE", codes)
 
+    def test_empty_and_unclosed_inline_and_image_constructs_fail(self) -> None:
+        self.base({"docs/status.md": "![]()\n![alt](\n[x](\n"})
+        codes = self.codes()
+        self.assertIn("EMPTY_IMAGE_ALT", codes)
+        self.assertIn("MISSING_TARGET", codes)
+        self.assertEqual(codes.count("UNPARSED_LOCAL_LINK"), 2)
+        self.assertIn("CANDIDATE_COVERAGE", codes)
+
+    def test_multiline_raw_html_and_liquid_links_fail_coverage(self) -> None:
+        self.base({
+            "docs/status.md": (
+                '<a\n href = "missing.md">broken</a>\n'
+                '<img\n src=asset.png>\n'
+                '{% link\n missing.md %}\n'
+                '{%\n link another.md %}\n'
+            ),
+        })
+        codes = self.codes()
+        self.assertEqual(codes.count("RAW_LOCAL_HTML"), 2)
+        self.assertEqual(codes.count("LIQUID_LOCAL_LINK"), 2)
+        self.assertIn("CANDIDATE_COVERAGE", codes)
+
     def test_reference_use_is_edge_but_unused_local_definition_is_not(self) -> None:
         self.base({"README.md": "[landing]: docs/index.md\n", "docs/status.md": "[missing][owner]\n[owner]: missing.md\n[unused]: index.md\n[external]: https://example.test/\n"})
         codes = self.codes()
@@ -300,6 +322,28 @@ class MutationTest(RepoTest):
         ]
         for old, new, text, guarded_code in cases:
             with self.subTest(guard=guarded_code, old=old):
+                self.base({"docs/status.md": text})
+                self.assertIn(guarded_code, self.codes())
+                with mutant(old, new) as module:
+                    self.assertNotIn(guarded_code, self.codes(module))
+
+    def test_punctuation_and_multiline_raw_guards_are_nonvacuous(self) -> None:
+        cases = [
+            (
+                'if match.start() not in raw_positions and match.start() not in parsed_positions',
+                'if False',
+                "![alt](\n",
+                "CANDIDATE_COVERAGE",
+            ),
+            (
+                'if "\\n" not in match.group(0):',
+                'if True:',
+                '<a\n href="missing.md">broken</a>\n',
+                "RAW_LOCAL_HTML",
+            ),
+        ]
+        for old, new, text, guarded_code in cases:
+            with self.subTest(guard=guarded_code):
                 self.base({"docs/status.md": text})
                 self.assertIn(guarded_code, self.codes())
                 with mutant(old, new) as module:

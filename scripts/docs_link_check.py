@@ -31,20 +31,20 @@ _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 _DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
 _INLINE_RE = re.compile(
-    r"(!?)\[([^]\n]*)\]\([ \t]*(<[^>\n]+>|[^\s)]+)"
+    r"(!?)\[([^]\n]*)\]\([ \t]*(<[^>\n]+>|[^\s)]*)"
     r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
 )
 _REFERENCE_USE_RE = re.compile(r"(!?)\[([^]\n]*)\]\[([^]\n]*)\]")
 _RAW_CANDIDATE_RE = re.compile(
-    r"!?\[[^]\n]*?\]\([ \t]*(?:<[^>\s]+>|[^\s)]+)"
+    r"!?\[[^]\n]*?\]\([ \t]*(?:<[^>\s]+>|[^\s)]*)"
     r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
 )
 _RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
 _RAW_REFERENCE_USE_RE = re.compile(r"!?\[[^]\n]*\]\[[^]\n]*(?:\]|$)")
 _RAW_HTML_LINK_RE = re.compile(
-    r"<[^>]+\b(?:href|src)[ \t]*=[ \t]*(?:(['\"])(.*?)\1|([^\s>]+))[^>]*>", re.I
+    r"<[^>]+\b(?:href|src)[ \t\n]*=[ \t\n]*(?:(['\"])(.*?)\1|([^\s>]+))[^>]*>", re.I | re.S
 )
-_LIQUID_LINK_RE = re.compile(r"{%[ \t]*link[ \t]+([^%]+?)[ \t]*%}")
+_LIQUID_LINK_RE = re.compile(r"{%[ \t\n]*link[ \t\n]+([^%]+?)[ \t\n]*%}", re.S)
 _EXPLICIT_ANCHOR_RE = re.compile(r"<a[ \t]+(?:id|name)[ \t]*=[ \t]*(['\"])([^'\"]+)\1[ \t]*></a>", re.I)
 _SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 
@@ -201,9 +201,11 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
     fence_char = ""
     fence_length = 0
     html_comment = False
+    masked_lines: list[str] = []
     lines = text.splitlines()
     for lineno, raw in enumerate(lines, 1):
         if fence_char:
+            masked_lines.append(" " * len(raw))
             close = re.match(rf"^[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*$", raw)
             if close:
                 fence_char, fence_length = "", 0
@@ -211,10 +213,12 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         if not html_comment:
             opener = _OPEN_FENCE_RE.match(raw)
             if opener:
+                masked_lines.append(" " * len(raw))
                 marker = opener.group(1) or opener.group(3)
                 fence_char, fence_length = marker[0], len(marker)
                 continue
         line, html_comment, unmatched = _mask_inline_code_and_comments(raw, html_comment)
+        masked_lines.append(line)
         if unmatched:
             findings.append(Finding(source, lineno, "MALFORMED_CODE_SPAN", "", "unmatched backtick run"))
             continue
@@ -241,9 +245,16 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         # links are consumed by the same grammar, so including both sides keeps
         # this census exact without asking the grammar parser for its input.
         raw_inline = list(_RAW_CANDIDATE_RE.finditer(line))
-        candidate_identities.extend((lineno, match.start(), "inline") for match in raw_inline)
+        punctuation = list(re.finditer(r"\]\(", line))
         parsed_inline = list(_INLINE_RE.finditer(line))
-        consumed_identities.extend((lineno, match.start(), "inline") for match in parsed_inline)
+        raw_positions = {line.find("](", match.start()) for match in raw_inline}
+        parsed_positions = {line.find("](", match.start()) for match in parsed_inline}
+        candidate_identities.extend((lineno, position, "inline") for position in raw_positions)
+        candidate_identities.extend(
+            (lineno, match.start(), "inline") for match in punctuation
+            if match.start() not in raw_positions and match.start() not in parsed_positions
+        )
+        consumed_identities.extend((lineno, position, "inline") for position in parsed_positions)
         for match in parsed_inline:
             image = bool(match.group(1))
             label = match.group(2)
@@ -269,11 +280,26 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             key = " ".join((match.group(3) or match.group(2)).casefold().split())
             uses.append((lineno, key, bool(match.group(1)), match.group(2)))
         # Any local-link punctuation that was not consumed is a hard finding.
-        if raw_inline and len(raw_inline) != len(parsed_inline):
-            findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "local link candidate was not consumed by the bounded grammar"))
-        if "](" in line and not parsed_inline and any(_local_shaped(token) for token in re.findall(r"\]\(([^\s)]*)", line)):
-            candidate_identities.append((lineno, line.find("]("), "inline"))
-            findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "malformed local inline link"))
+        if len(punctuation) != len(parsed_inline):
+            findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "link punctuation was not consumed by the bounded grammar"))
+    masked_text = "\n".join(masked_lines)
+    starts = [0]
+    for match in re.finditer("\n", masked_text):
+        starts.append(match.end())
+    for kind, pattern, code, detail in (
+        ("raw-html-multiline", _RAW_HTML_LINK_RE, "RAW_LOCAL_HTML", "multiline local href/src is outside the supported Markdown grammar"),
+        ("liquid-multiline", _LIQUID_LINK_RE, "LIQUID_LOCAL_LINK", "multiline Liquid links are not GitHub-native Markdown"),
+    ):
+        for match in pattern.finditer(masked_text):
+            if "\n" not in match.group(0):
+                continue
+            destination = (match.group(2) or match.group(3)) if kind.startswith("raw-html") else match.group(1).strip()
+            if not _raw_local(destination):
+                continue
+            lineno = sum(start <= match.start() for start in starts)
+            column = match.start() - starts[lineno - 1]
+            candidate_identities.append((lineno, column, kind))
+            findings.append(Finding(source, lineno, code, destination, detail))
     if fence_char:
         findings.append(Finding(source, len(lines) or 1, "MALFORMED_FENCE", "", "unclosed fenced code block"))
     if html_comment:
@@ -391,10 +417,13 @@ def check(root: Path = REPO_ROOT) -> tuple[list[Finding], list[str], list[Link]]
     edges: set[tuple[str, str]] = set()
     for link in all_links:
         destination = link.destination
-        if not destination or _external(destination):
-            continue
         if link.image and not link.label.strip():
             findings.append(Finding(link.source, link.line, "EMPTY_IMAGE_ALT", destination, "image alt text must be nonempty"))
+        if not destination:
+            findings.append(Finding(link.source, link.line, "MISSING_TARGET", destination, "link destination is empty"))
+            continue
+        if _external(destination):
+            continue
         parsed_url = urllib.parse.urlsplit(destination)
         if parsed_url.query:
             findings.append(Finding(link.source, link.line, "QUERY_NOT_ALLOWED", destination, "repository-local links may not carry queries"))
