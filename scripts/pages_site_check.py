@@ -5,7 +5,10 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import ctypes
+import ctypes.util
 import datetime as dt
+import errno
 import html
 import hashlib
 import json
@@ -270,6 +273,36 @@ def _copy_stage_file(source: Path, destination: Path, expected: tuple[int, str])
         raise OSError("entry changed while staging")
 
 
+def _rename_stage_noreplace(source: Path, destination: Path) -> None:
+    """Atomically publish a directory without replacing an existing path."""
+    library = ctypes.CDLL(ctypes.util.find_library("c") or None, use_errno=True)
+    source_bytes = os.fsencode(source)
+    destination_bytes = os.fsencode(destination)
+    if sys.platform.startswith("linux"):
+        try:
+            renameat2 = library.renameat2
+        except AttributeError as exc:
+            raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable") from exc
+        renameat2.argtypes = (
+            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,
+        )
+        renameat2.restype = ctypes.c_int
+        result = renameat2(-100, source_bytes, -100, destination_bytes, 1)
+    elif sys.platform == "darwin":
+        try:
+            renamex_np = library.renamex_np
+        except AttributeError as exc:
+            raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable") from exc
+        renamex_np.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)
+        renamex_np.restype = ctypes.c_int
+        result = renamex_np(source_bytes, destination_bytes, 0x00000004)
+    else:
+        raise OSError(errno.ENOTSUP, "atomic no-replace rename is unavailable")
+    if result != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), destination)
+
+
 def stage_site(input_site: Path, site: Path) -> list[Finding]:
     """Publish a verified runner-owned byte copy of container-rendered output."""
     global _LAST_STATS
@@ -354,7 +387,7 @@ def stage_site(input_site: Path, site: Path) -> list[Finding]:
                 findings.append(Finding(str(site), "STAGE_DESTINATION", "destination appeared while staging"))
         if not findings:
             try:
-                os.rename(temporary, destination)
+                _rename_stage_noreplace(temporary, destination)
             except OSError as exc:
                 findings.append(Finding(str(site), "STAGE_RENAME", _stage_error(exc)))
             else:
