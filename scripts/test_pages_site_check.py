@@ -305,12 +305,15 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
         "release credentials": (release, "persist-credentials: false", 2),
         "one deployer": (pages, "actions/deploy-pages@", 1),
         "one artifact": (pages, "actions/upload-pages-artifact@", 1),
-        "new tag": (release, 'git ls-remote --exit-code origin "refs/tags/$tag"', 1),
+        "new tag query": (release, 'existing=$(git ls-remote origin "refs/tags/$tag")', 1),
+        "new tag verdict": (release, 'test -z "$existing"', 1),
         "toolchain equality": (release, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 1),
         "new range": (release, 'test "$source_sha" != "$BEFORE"', 1),
         "main before write": (release, 'test "$PUSH_REF" = refs/heads/main', 1),
+        "push before write": (release, 'test "$EVENT_NAME" = push', 1),
         "zero action bypass": (release, "if: github.event.before != '0000000000000000000000000000000000000000'", 1),
         "zero release path": (release, "if: github.event.before == '0000000000000000000000000000000000000000'", 1),
+        "zero current snapshot": (release, 'test "$source_sha" = "$AFTER"', 1),
         "caller kind": (release, "invocation_kind: release", 1),
         "caller deploy": (release, "deploy: true", 1),
     }
@@ -335,6 +338,21 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
     if not uses or any(re.fullmatch(r"[0-9a-f]{40}", ref) is None for _whole, ref in uses):
         findings.append("immutable action refs")
     return findings
+
+
+def workflow_run_script(workflow: str, step_name: str) -> str:
+    marker = f"    - name: {step_name}\n"
+    block = workflow.split(marker, 1)[1]
+    body = block.split("      run: |\n", 1)[1]
+    lines: list[str] = []
+    for line in body.splitlines():
+        if line.startswith("        "):
+            lines.append(line[8:])
+        elif not line:
+            lines.append("")
+        else:
+            break
+    return "\n".join(lines) + "\n"
 
 
 class MutationTest(SiteTest):
@@ -429,7 +447,7 @@ class WorkflowContractTest(unittest.TestCase):
         self.assertTrue(all(re.search(r"@[0-9a-f]{40}$", item) for item in external_uses))
         self.assertIn("uses: ./.github/workflows/pages.yml", release)
         self.assertIn("needs: [prepare-release-source, lean-release-tag]", release)
-        self.assertIn("git ls-remote --exit-code", release)
+        self.assertIn('existing=$(git ls-remote origin "refs/tags/$tag")', release)
         self.assertIn("refs/tags/$tag", release)
         self.assertIn("refs/tags/v[0-9]*", release)
         self.assertIn('zero=0000000000000000000000000000000000000000', release)
@@ -459,12 +477,14 @@ class WorkflowContractTest(unittest.TestCase):
             (pages_path, 'test "$RUN_REF" = refs/heads/main', 'test -n "$RUN_REF"', 2),
             (pages_path, 'case "$SOURCE_REF" in refs/tags/v*)', 'case "$SOURCE_REF" in *)', 1),
             (pages_path, 'persist-credentials: false', 'persist-credentials: true', 2),
-            (release_path, 'git ls-remote --exit-code origin "refs/tags/$tag"', 'false', 1),
+            (release_path, 'test -z "$existing"', 'true', 1),
             (release_path, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 'true', 1),
             (release_path, 'test "$source_sha" != "$BEFORE"', 'true', 1),
             (release_path, 'test "$PUSH_REF" = refs/heads/main', 'true', 1),
+            (release_path, 'test "$EVENT_NAME" = push', 'true', 1),
             (release_path, "if: github.event.before != '0000000000000000000000000000000000000000'", "if: true", 1),
             (release_path, "if: github.event.before == '0000000000000000000000000000000000000000'", "if: false", 1),
+            (release_path, 'test "$source_sha" = "$AFTER"', 'true', 1),
             (pages_path, 'test -z "$INVOCATION_KIND"', 'true', 1),
             (pages_path, 'test "$INVOCATION_KIND" = release', 'true', 1),
             (pages_path, 'test -z "$MODE"', 'true', 1),
@@ -511,6 +531,72 @@ class WorkflowContractTest(unittest.TestCase):
             emitted = output.read_text(encoding="utf-8")
             self.assertIn(f"source-sha={sha}\n", emitted)
             self.assertIn("deploy=true\n", emitted)
+
+    def test_zero_before_multi_commit_release_is_current_and_mismatches_fail(self) -> None:
+        release = (REPO_ROOT / ".github/workflows/create-release.yml").read_text(encoding="utf-8")
+        prepare = workflow_run_script(release, "Derive the intended tag and require it to be absent")
+        write = workflow_run_script(release, "Create the initial annotated tag and release without a null revision range")
+        resolve = workflow_run_script(release, "Resolve the exact release tag and peeled source commit")
+        zero = "0" * 40
+        with tempfile.TemporaryDirectory(prefix="pages-zero-release-") as raw:
+            root = Path(raw)
+            origin = root / "origin.git"
+            repo = root / "repo"
+            subprocess.run(["git", "init", "--bare", "-q", str(origin)], check=True)
+            subprocess.run(["git", "init", "-q", "-b", "main", str(repo)], check=True)
+            subprocess.run(["git", "config", "user.email", "verify@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "verify"], cwd=repo, check=True)
+            subprocess.run(["git", "remote", "add", "origin", str(origin)], cwd=repo, check=True)
+            (repo / "lean-toolchain").write_text("leanprover/lean4:v4.99-test\n", encoding="utf-8")
+            subprocess.run(["git", "add", "lean-toolchain"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "toolchain"], cwd=repo, check=True)
+            (repo / "history").write_text("same toolchain\n", encoding="utf-8")
+            subprocess.run(["git", "add", "history"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "later snapshot"], cwd=repo, check=True)
+            after = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+            subprocess.run(["git", "push", "-q", "-u", "origin", "main"], cwd=repo, check=True)
+            prepare_output = root / "prepare-output"
+            base_env = dict(os.environ, EVENT_NAME="push", PUSH_REF="refs/heads/main", PUSH_SHA=after,
+                            GITHUB_OUTPUT=str(prepare_output))
+            subprocess.run(["bash", "-eu", "-o", "pipefail", "-c", prepare], cwd=repo, env=base_env, check=True)
+            emitted = dict(line.split("=", 1) for line in prepare_output.read_text().splitlines())
+            self.assertEqual(emitted, {"source-ref": "refs/tags/v4.99-test", "toolchain": "leanprover/lean4:v4.99-test"})
+
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            fake_gh = fake_bin / "gh"
+            fake_gh.write_text(
+                "#!/bin/bash\nset -euo pipefail\n"
+                "if [[ \"$*\" == *'/git/tags'* ]]; then\n"
+                "  tag=; object=; for arg in \"$@\"; do case \"$arg\" in tag=*) tag=${arg#tag=};; object=*) object=${arg#object=};; esac; done\n"
+                "  git tag -a \"$tag\" -m \"Release $tag\" \"$object\"; git rev-parse \"refs/tags/$tag\"\n"
+                "elif [[ \"$*\" == *'/git/refs'* ]]; then\n"
+                "  ref=; sha=; for arg in \"$@\"; do case \"$arg\" in ref=*) ref=${arg#ref=};; sha=*) sha=${arg#sha=};; esac; done\n"
+                "  git push -q origin \"$sha:$ref\"\n"
+                "elif [[ \"$*\" == *'/releases'* ]]; then exit 0; else exit 1; fi\n",
+                encoding="utf-8",
+            )
+            fake_gh.chmod(0o755)
+            write_env = dict(os.environ, PATH=str(fake_bin) + os.pathsep + os.environ["PATH"], GH_TOKEN="token",
+                             REPOSITORY="owner/repo", SOURCE_REF=emitted["source-ref"], SOURCE_SHA=after)
+            subprocess.run(["bash", "-eu", "-o", "pipefail", "-c", write], cwd=repo, env=write_env, check=True)
+            self.assertEqual(subprocess.check_output(["git", "cat-file", "-t", "refs/tags/v4.99-test"], cwd=repo, text=True).strip(), "tag")
+
+            def resolve_run(expected_ref=emitted["source-ref"], expected_toolchain=emitted["toolchain"], expected_after=after):
+                output = root / f"resolve-{uuid.uuid4().hex}"
+                env = dict(os.environ, BEFORE=zero, AFTER=expected_after, EXPECTED_REF=expected_ref,
+                           EXPECTED_TOOLCHAIN=expected_toolchain, GITHUB_OUTPUT=str(output))
+                proc = subprocess.run(["bash", "-eu", "-o", "pipefail", "-c", resolve], cwd=repo, env=env)
+                return proc, output
+
+            passed, output = resolve_run()
+            self.assertEqual(passed.returncode, 0)
+            resolved = dict(line.split("=", 1) for line in output.read_text().splitlines())
+            self.assertEqual(resolved, {"publish": "true", "source-ref": "refs/tags/v4.99-test", "source-sha": after})
+            self.assertNotEqual(resolve_run(expected_toolchain="leanprover/lean4:v-wrong")[0].returncode, 0)
+            self.assertNotEqual(resolve_run(expected_ref="refs/tags/v-wrong")[0].returncode, 0)
+            older = subprocess.check_output(["git", "rev-parse", "HEAD^"], cwd=repo, text=True).strip()
+            self.assertNotEqual(resolve_run(expected_after=older)[0].returncode, 0)
 
 
 def run_suite() -> int:

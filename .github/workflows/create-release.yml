@@ -25,20 +25,19 @@ jobs:
     - name: Derive the intended tag and require it to be absent
       id: expected
       env:
+        EVENT_NAME: ${{ github.event_name }}
         PUSH_REF: ${{ github.ref }}
         PUSH_SHA: ${{ github.sha }}
       run: |
+        test "$EVENT_NAME" = push
         test "$PUSH_REF" = refs/heads/main
         test "$(git rev-parse HEAD)" = "$PUSH_SHA"
         toolchain=$(cat lean-toolchain)
         test "$(printf '%s\n' "$toolchain" | wc -l | tr -d ' ')" -eq 1
         tag=${toolchain##*:}
         case "$tag" in v[0-9]*) ;; *) exit 1 ;; esac
-        if git ls-remote --exit-code origin "refs/tags/$tag" > /dev/null 2>&1; then
-          exit 1
-        else
-          test "$?" -eq 2
-        fi
+        existing=$(git ls-remote origin "refs/tags/$tag")
+        test -z "$existing"
         echo "source-ref=refs/tags/$tag" >> "$GITHUB_OUTPUT"
         echo "toolchain=$toolchain" >> "$GITHUB_OUTPUT"
 
@@ -112,12 +111,12 @@ jobs:
         source_sha=$(git rev-parse "$source_ref^{commit}")
         test "$(git show "$source_sha:lean-toolchain")" = "$toolchain"
         git merge-base --is-ancestor "$source_sha" "$AFTER"
-        if test "$BEFORE" != "$zero"; then
+        if test "$BEFORE" = "$zero"; then
+          test "$source_sha" = "$AFTER"
+        else
           git merge-base --is-ancestor "$BEFORE" "$source_sha"
           test "$source_sha" != "$BEFORE"
-        fi
-        parent=$(git rev-parse "$source_sha^" 2>/dev/null || true)
-        if test -n "$parent"; then
+          parent=$(git rev-parse "$source_sha^")
           test "$(git show "$parent:lean-toolchain")" != "$toolchain"
         fi
         echo "publish=true" >> "$GITHUB_OUTPUT"
