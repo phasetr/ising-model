@@ -3555,7 +3555,7 @@ def budget_headroom_violations(module: types.ModuleType) -> List[str]:
         out.append(
             f"MEASURED_REMEDIATION_DROP is {drop}, which no budget can fail to clear"
         )
-    for target in module.TARGETS:
+    for target in module.BUDGET_CALIBRATION_TARGETS:
         for census in admissible_censuses(module, target):
             budget = module.citation_drop_budget(census)
             if budget <= drop:
@@ -3586,7 +3586,7 @@ def budget_ordering_violations(module: types.ModuleType) -> List[str]:
     is exactly what a rule change breaks.
     """
     out: List[str] = []
-    for target in module.TARGETS:
+    for target in module.BUDGET_CALIBRATION_TARGETS:
         measured = module.MEASURED_CITATIONS[target]
         cap = module.cumulative_loss_cap(measured)
         floor = module.MIN_CITATIONS[target]
@@ -3620,7 +3620,7 @@ def budget_ratio_violations(module: types.ModuleType) -> List[str]:
     handful of commits.
     """
     out: List[str] = []
-    for target in module.TARGETS:
+    for target in module.BUDGET_CALIBRATION_TARGETS:
         measured = module.MEASURED_CITATIONS[target]
         share = module.citation_drop_budget(measured) / measured
         if not 0.03 <= share <= 0.06:
@@ -3784,7 +3784,7 @@ class RealTreePinTest(unittest.TestCase):
         measurement that ordinary remediation is not deciding document content,
         high enough that a gutted document trips it.
         """
-        for target in ca.TARGETS:
+        for target in ca.BUDGET_CALIBRATION_TARGETS:
             floor = ca.MIN_CITATIONS[target]
             measured = ca.MEASURED_CITATIONS[target]
             self.assertGreaterEqual(floor, 0.40 * measured, target)
@@ -3803,8 +3803,13 @@ class RealTreePinTest(unittest.TestCase):
             measured = ca.MEASURED_CITATIONS[target]
             cap = ca.cumulative_loss_cap(measured)
             self.assertLess(ca.MIN_CITATIONS[target], measured - cap, target)
-            # And the cap admits at least three consecutive full budgets, so an
-            # ordinary remediation commit never has to touch the constants.
+        # On calibrated large documents, the cap admits at least three
+        # consecutive full budgets, so an ordinary remediation commit never
+        # has to touch the constants. Small registered targets are instead
+        # protected by their per-target R12 cap and anti-vacuity floor.
+        for target in ca.BUDGET_CALIBRATION_TARGETS:
+            measured = ca.MEASURED_CITATIONS[target]
+            cap = ca.cumulative_loss_cap(measured)
             self.assertGreater(cap, 3 * ca.citation_drop_budget(measured) * 0.9, target)
 
     def test_the_frozen_measurement_is_the_tree_this_tool_was_written_against(self) -> None:
@@ -3815,13 +3820,17 @@ class RealTreePinTest(unittest.TestCase):
         makes impossible is re-anchoring the measurement *silently*, which is
         the one move that would restore the compounding walk.
         """
-        self.assertEqual(ca.MEASURED_CITATIONS, {"docs/index.md": 2698})
+        self.assertEqual(
+            ca.MEASURED_CITATIONS,
+            {"docs/index.md": 2685, "docs/status.md": 13},
+        )
+        self.assertEqual(sum(ca.MEASURED_CITATIONS.values()), 2698)
         self.assertEqual(ca.MEASURED_TRACKED_LEAN, 2018)
         self.assertEqual(ca.MAX_CUMULATIVE_CITATION_LOSS_FRACTION, 0.15)
         self.assertEqual(set(ca.TARGETS) - set(ca.MEASURED_CITATIONS), set())
         self.assertEqual(
             {target: ca.cumulative_loss_cap(ca.MEASURED_CITATIONS[target]) for target in ca.TARGETS},
-            {"docs/index.md": 404},
+            {"docs/index.md": 402, "docs/status.md": 1},
         )
 
     def test_the_frozen_measurement_still_describes_the_live_documents(self) -> None:
@@ -3984,7 +3993,7 @@ class RealTreePinTest(unittest.TestCase):
         self.assertEqual(
             {
                 target: ca.citation_drop_budget(ca.MEASURED_CITATIONS[target])
-                for target in ca.TARGETS
+                for target in ca.BUDGET_CALIBRATION_TARGETS
             },
             {"docs/index.md": 134},
         )
@@ -4020,7 +4029,12 @@ class RealTreePinTest(unittest.TestCase):
 
     def test_default_targets_are_the_published_documents(self) -> None:
         """Shrinking ``TARGETS`` would make the tool pass by looking away."""
-        self.assertEqual(ca.TARGETS, ("docs/index.md",))
+        self.assertEqual(ca.TARGETS, ("docs/index.md", "docs/status.md"))
+
+    def test_budget_calibration_targets_are_explicit(self) -> None:
+        """Small targets use their R12 cap and floor, not R11's 25-item sizing."""
+        self.assertEqual(ca.BUDGET_CALIBRATION_TARGETS, ("docs/index.md",))
+        self.assertEqual(set(ca.BUDGET_CALIBRATION_TARGETS) - set(ca.TARGETS), set())
 
     def test_every_default_target_has_a_measured_floor(self) -> None:
         """A default target without a floor would fall back to the floor of one."""

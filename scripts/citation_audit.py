@@ -383,7 +383,16 @@ BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 # tomorrow is read by the deletion scanner and its stale path citations are
 # unaudited here until it is registered. Registering it is deliberate because
 # the constants it must bring are.
-TARGETS = ("docs/index.md",)
+TARGETS = ("docs/index.md", "docs/status.md")
+
+# R11's absolute floor of 25 was calibrated for large inventory documents. The
+# status page is deliberately small (13 measured citations), so applying the
+# large-document sizing argument to it would make a one-run allowance larger
+# than the document. It remains fully audited: its per-target R12 cap permits at
+# most one cumulative citation loss, and its anti-vacuity floor is six. This
+# tuple controls calibration claims only; it does not remove a target from any
+# audit or erosion check.
+BUDGET_CALIBRATION_TARGETS = ("docs/index.md",)
 
 # Anti-vacuity floors (R8/R9), and **catastrophic backstops only**: they answer
 # "was this document gutted", not "was it edited". A target accidentally emptied
@@ -405,7 +414,7 @@ TARGETS = ("docs/index.md",)
 # incidental, because the ``SELFREF`` class is *defined* as a duplicated legacy
 # citation, so its correct fix always lowers the count. The guard that actually
 # fires per commit is the drop budget below; these two are the cliff behind it.
-MIN_CITATIONS = {"docs/index.md": 1400}
+MIN_CITATIONS = {"docs/index.md": 1400, "docs/status.md": 6}
 MIN_TRACKED_LEAN = 1800
 
 # The measurement this tool was written against, frozen (R12). Unlike the
@@ -418,7 +427,10 @@ MIN_TRACKED_LEAN = 1800
 # Charged only for a target listed here, so an ad-hoc ``--targets`` run against
 # a document nobody measured is not judged against an invented reference. That
 # the *default* targets are all listed is pinned by the test suite.
-MEASURED_CITATIONS = {"docs/index.md": 2698}
+# PR #5043 split the existing frozen measurement between the landing-page
+# inventories and the status page. The sum remains 2,698: moving citations to a
+# new container must not manufacture a fresh cumulative-loss allowance.
+MEASURED_CITATIONS = {"docs/index.md": 2685, "docs/status.md": 13}
 # The tracked-set half of the same measurement. Nothing charges it at runtime,
 # and that is deliberate: remediation edits documents and never deletes ``.lean``
 # files, so there is no per-run erosion of the tracked set to bound, and a gutted

@@ -987,19 +987,19 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn(":1:", warning)
         self.assertIn("pair into no code span", warning)
 
-    def test_the_real_index_raises_no_warning(self) -> None:
-        """Measured on the current index: not one unpairable backtick left.
+    def test_the_real_markdown_raises_no_warning(self) -> None:
+        """Measured on every public Markdown source: no unpairable backtick.
 
         This used to pin the three known defects as the literal line numbers
         they happened to sit on, which cost a fixture edit for every insertion
         above them and asserted nothing at all about the rest of the file. The
         empty measurement is the true post-repair state and is strictly
         stronger: a *newly* introduced delimiter defect anywhere in
-        ``docs/index.md`` now fails here, wherever it lands.
+        any discovered document now fails here, wherever it lands.
         """
-        index = next(source for source in docs() if source.label == "docs/index.md")
-        self.assertEqual(dcs.unpaired_backticks(index.text), {})
-        self.assertEqual(index.malformed, [])
+        for source in docs():
+            self.assertEqual(dcs.unpaired_backticks(source.text), {}, source.label)
+            self.assertEqual(source.malformed, [], source.label)
 
     def test_the_real_index_reads_the_step_213_citations(self) -> None:
         """The elided suffixes of the Step 213 row are tokens again.
