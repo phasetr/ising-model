@@ -278,6 +278,7 @@ def _rename_stage_noreplace(source: Path, destination: Path) -> None:
     library = ctypes.CDLL(ctypes.util.find_library("c") or None, use_errno=True)
     source_bytes = os.fsencode(source)
     destination_bytes = os.fsencode(destination)
+    ctypes.set_errno(0)
     if sys.platform.startswith("linux"):
         try:
             renameat2 = library.renameat2
@@ -389,7 +390,10 @@ def stage_site(input_site: Path, site: Path) -> list[Finding]:
             try:
                 _rename_stage_noreplace(temporary, destination)
             except OSError as exc:
-                findings.append(Finding(str(site), "STAGE_RENAME", _stage_error(exc)))
+                if exc.errno == errno.EEXIST:
+                    findings.append(Finding(str(site), "STAGE_DESTINATION", "destination appeared during publish"))
+                else:
+                    findings.append(Finding(str(site), "STAGE_RENAME", _stage_error(exc)))
             else:
                 published = True
                 _LAST_STATS = (0, len(frozen.directories), len(frozen.files))

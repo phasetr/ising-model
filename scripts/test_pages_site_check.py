@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import importlib.util
 import http.server
@@ -381,27 +382,83 @@ class SiteTest(unittest.TestCase):
 
     def test_stage_commit_never_replaces_destination_created_during_staging(self) -> None:
         rendered = self.root / "_site-container"
-        destination = self.root / "_site-staged"
         shutil.copytree(self.site, rendered)
         real_publish = checker._rename_stage_noreplace
+        for name, nonempty in (("empty", False), ("nonempty", True)):
+            with self.subTest(name=name):
+                destination = self.root / f"_site-{name}"
 
-        def race(source: Path, target: Path) -> None:
-            target.mkdir()
-            (target / "competitor").write_text("preserved", encoding="utf-8")
-            real_publish(source, target)
+                def race(source: Path, target: Path) -> None:
+                    target.mkdir()
+                    if nonempty:
+                        (target / "competitor").write_text("preserved", encoding="utf-8")
+                    real_publish(source, target)
 
-        with mock.patch.object(checker, "_rename_stage_noreplace", side_effect=race):
-            findings = checker.stage_site(rendered, destination)
-        self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
-        self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
-        self.assertFalse((destination / "index.html").exists())
-        self.assertEqual(list(self.root.glob("._site-staged.stage-*")), [])
-        shutil.rmtree(destination)
+                with mock.patch.object(checker, "_rename_stage_noreplace", side_effect=race):
+                    findings = checker.stage_site(rendered, destination)
+                self.assertEqual(
+                    [(item.code, item.detail) for item in findings],
+                    [("STAGE_DESTINATION", "destination appeared during publish")],
+                )
+                if nonempty:
+                    self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+                self.assertFalse((destination / "index.html").exists())
+                self.assertEqual(list(self.root.glob(f".{destination.name}.stage-*")), [])
+                shutil.rmtree(destination)
+        destination = self.root / "_site-unsupported"
         with mock.patch.object(checker.sys, "platform", "unsupported"):
             findings = checker.stage_site(rendered, destination)
         self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
         self.assertIn("unavailable", findings[0].detail)
         self.assertFalse(destination.exists())
+
+    def test_native_noreplace_dispatch_symbols_errno_and_flags_are_exact(self) -> None:
+        source = self.root / "temporary"
+        destination = self.root / "final"
+        source.mkdir()
+        cases = (
+            ("linux", "renameat2", (-100, os.fsencode(source), -100, os.fsencode(destination), 1)),
+            ("darwin", "renamex_np", (os.fsencode(source), os.fsencode(destination), 0x00000004)),
+        )
+        for platform, symbol, expected in cases:
+            with self.subTest(platform=platform):
+                native = mock.Mock(return_value=0)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(checker.sys, "platform", platform),
+                    mock.patch.object(checker.ctypes, "CDLL", return_value=library),
+                    mock.patch.object(checker.ctypes, "set_errno") as set_errno,
+                ):
+                    checker._rename_stage_noreplace(source, destination)
+                set_errno.assert_called_once_with(0)
+                native.assert_called_once_with(*expected)
+                self.assertIs(native.restype, checker.ctypes.c_int)
+                self.assertTrue(native.argtypes)
+
+    def test_native_noreplace_missing_symbol_and_unsupported_errno_fail_closed(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        with (
+            mock.patch.object(checker.sys, "platform", "linux"),
+            mock.patch.object(checker.ctypes, "CDLL", return_value=object()),
+        ):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+        self.assertIn("unavailable", findings[0].detail)
+        self.assertFalse(destination.exists())
+        for native_errno in (errno.ENOSYS, getattr(errno, "EOPNOTSUPP", errno.ENOTSUP)):
+            with self.subTest(native_errno=native_errno):
+                native = mock.Mock(return_value=-1)
+                library = types.SimpleNamespace(renameat2=native)
+                with (
+                    mock.patch.object(checker.sys, "platform", "linux"),
+                    mock.patch.object(checker.ctypes, "CDLL", return_value=library),
+                    mock.patch.object(checker.ctypes, "get_errno", return_value=native_errno),
+                ):
+                    findings = checker.stage_site(rendered, destination)
+                self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+                self.assertFalse(destination.exists())
 
     def test_stage_cli_success_and_failure(self) -> None:
         rendered = self.root / "_site-container"
@@ -825,6 +882,101 @@ class MutationTest(SiteTest):
                         destination.unlink()
                 with mutant(old, new) as module:
                     assertion(module, rendered, destination)
+
+    def test_native_errno_dispatch_signature_and_flags_are_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+
+        with mutant("    ctypes.set_errno(0)\n", "    pass\n") as module:
+            native = mock.Mock(return_value=-1)
+            library = types.SimpleNamespace(renamex_np=native)
+            module.ctypes.set_errno(errno.EEXIST)
+            with (
+                mock.patch.object(module.sys, "platform", "darwin"),
+                mock.patch.object(module.ctypes, "CDLL", return_value=library),
+            ):
+                findings = module.stage_site(rendered, destination)
+            self.assertEqual([item.code for item in findings], ["STAGE_DESTINATION"])
+
+        flag_cases = (
+            (
+                "linux",
+                "        result = renameat2(-100, source_bytes, -100, destination_bytes, 1)",
+                "        result = renameat2(-100, source_bytes, -100, destination_bytes, 0)",
+                "renameat2",
+            ),
+            (
+                "darwin",
+                "        result = renamex_np(source_bytes, destination_bytes, 0x00000004)",
+                "        result = renamex_np(source_bytes, destination_bytes, 0)",
+                "renamex_np",
+            ),
+        )
+        for platform, old, new, symbol in flag_cases:
+            with self.subTest(flag=platform), mutant(old, new) as module:
+                def reject_weakened_flag(*args):
+                    self.assertEqual(args[-1], 0)
+                    module.ctypes.set_errno(errno.ENOSYS)
+                    return -1
+
+                native = mock.Mock(side_effect=reject_weakened_flag)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(module.sys, "platform", platform),
+                    mock.patch.object(module.ctypes, "CDLL", return_value=library),
+                ):
+                    findings = module.stage_site(rendered, destination)
+                self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+                self.assertFalse(destination.exists())
+
+        signature_cases = (
+            (
+                "linux-argtypes",
+                "        renameat2.argtypes = (\n            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,\n        )",
+                "        renameat2.argtypes = ()",
+                "linux",
+                "renameat2",
+                "argtypes",
+            ),
+            (
+                "linux-restype",
+                "        renameat2.restype = ctypes.c_int",
+                "        renameat2.restype = ctypes.c_void_p",
+                "linux",
+                "renameat2",
+                "restype",
+            ),
+            (
+                "darwin-argtypes",
+                "        renamex_np.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)",
+                "        renamex_np.argtypes = ()",
+                "darwin",
+                "renamex_np",
+                "argtypes",
+            ),
+            (
+                "darwin-restype",
+                "        renamex_np.restype = ctypes.c_int",
+                "        renamex_np.restype = ctypes.c_void_p",
+                "darwin",
+                "renamex_np",
+                "restype",
+            ),
+        )
+        for name, old, new, platform, symbol, attribute in signature_cases:
+            with self.subTest(signature=name), mutant(old, new) as module:
+                native = mock.Mock(return_value=0)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(module.sys, "platform", platform),
+                    mock.patch.object(module.ctypes, "CDLL", return_value=library),
+                ):
+                    module._rename_stage_noreplace(self.root / "source", self.root / "destination")
+                if attribute == "argtypes":
+                    self.assertEqual(native.argtypes, ())
+                else:
+                    self.assertIs(native.restype, module.ctypes.c_void_p)
 
     def _assert_stage_mutant_accepts_symlink(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
         link = rendered / "outside"
