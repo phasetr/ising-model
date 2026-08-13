@@ -49,7 +49,7 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ### §18.5 mayer_identity_at edge-case Λ wraps -/
 
-/-- **Λ-layer: Mayer identity at `t = 0`** (Step 600). -/
+/-- **Λ-layer: Mayer identity at `t = 0`**. -/
 theorem mayer_identity_at_zero_Λ
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
@@ -59,7 +59,7 @@ theorem mayer_identity_at_zero_Λ
       IsingModel.mayerPartialSum (inducedGraph G Λ) N 0 :=
   IsingModel.mayer_identity_at_zero (inducedGraph G Λ) N
 
-/-- **Λ-layer: Mayer identity at `β·J = 0`** (Step 609). -/
+/-- **Λ-layer: Mayer identity at `β·J = 0`**. -/
 theorem mayer_identity_at_betaJ_zero_Λ
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -71,7 +71,7 @@ theorem mayer_identity_at_betaJ_zero_Λ
         (Real.tanh (β * J)) :=
   IsingModel.mayer_identity_at_betaJ_zero (inducedGraph G Λ) hβJ N
 
-/-- **Λ-layer: Mayer identity at `β = 0`** (Step 609 specialisation). -/
+/-- **Λ-layer: Mayer identity at `β = 0`**. -/
 theorem mayer_identity_at_beta_zero_Λ
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (J : ℝ) (N : ℕ) :
@@ -82,7 +82,7 @@ theorem mayer_identity_at_beta_zero_Λ
         (Real.tanh ((0 : ℝ) * J)) :=
   IsingModel.mayer_identity_at_beta_zero (inducedGraph G Λ) J N
 
-/-- **Λ-layer: Mayer identity at `J = 0`** (Step 609 specialisation). -/
+/-- **Λ-layer: Mayer identity at `J = 0`**. -/
 theorem mayer_identity_at_J_zero_Λ
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (β : ℝ) (N : ℕ) :
@@ -95,8 +95,7 @@ theorem mayer_identity_at_J_zero_Λ
 
 /-! ### §18.5 polymerFreeEnergy_eq_mayerPartialSum_at edge-case Λ wraps -/
 
-/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at t = 0**
-(Step 611). -/
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at t = 0**. -/
 theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_zero
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] (N : ℕ) :
@@ -105,8 +104,7 @@ theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_zero
   IsingModel.polymerFreeEnergy_eq_mayerPartialSum_at_zero
     (inducedGraph G Λ) N
 
-/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at β·J = 0**
-(Step 617). -/
+/-- **Λ-layer: polymerFreeEnergy = mayerPartialSum at β·J = 0**. -/
 theorem polymerFreeEnergy_Λ_eq_mayerPartialSum_at_betaJ_zero
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

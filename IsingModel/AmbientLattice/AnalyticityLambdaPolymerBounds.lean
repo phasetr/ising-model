@@ -53,8 +53,7 @@ theorem polymerFreeEnergy_Λ_le_card_log_one_plus_of_nonneg
   IsingModel.polymerFreeEnergy_le_card_log_one_plus_of_nonneg
     (inducedGraph G Λ) ht
 
-/-- **Λ-layer: `polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`**
-(§18.5 Λ wrap of Step 634). -/
+/-- **Λ-layer: `polymerFreeEnergy ≤ |E| · t` under `t ≥ 0`** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_le_card_mul_of_nonneg
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -64,8 +63,7 @@ theorem polymerFreeEnergy_Λ_le_card_mul_of_nonneg
   IsingModel.polymerFreeEnergy_le_card_mul_of_nonneg
     (inducedGraph G Λ) ht
 
-/-- **Λ-layer: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`**
-(§18.5 Λ wrap of Step 633). -/
+/-- **Λ-layer: `polymerFreeEnergy` is `MonotoneOn (Set.Ici 0)`** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_monotoneOn_Ici_zero
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet] :
@@ -75,7 +73,7 @@ theorem polymerFreeEnergy_Λ_monotoneOn_Ici_zero
   IsingModel.polymerFreeEnergy_monotoneOn_Ici_zero (inducedGraph G Λ)
 
 /-- **Λ-layer: `polymerFreeEnergy = 0` for empty-polymer induced
-graphs** (§18.5 Λ wrap of Step 621). -/
+graphs** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_eq_zero_of_no_polymers
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -85,8 +83,7 @@ theorem polymerFreeEnergy_Λ_eq_zero_of_no_polymers
   IsingModel.polymerFreeEnergy_eq_zero_of_no_polymers
     (inducedGraph G Λ) h_no t
 
-/-- **Λ-layer: `polymerFreeEnergy = 0` for edgeless induced graphs**
-(§18.5 Λ wrap of Step 623). -/
+/-- **Λ-layer: `polymerFreeEnergy = 0` for edgeless induced graphs** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_eq_zero_of_edgeFinset_empty
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -106,8 +103,7 @@ theorem polymerFreeEnergy_Λ_le_of_le_of_nonneg_left
   IsingModel.polymerFreeEnergy_le_of_le_of_nonneg_left
     (inducedGraph G Λ) ht hts
 
-/-- **Λ-layer: `polymerFreeEnergy` tanh-form sandwich** (§18.5 Λ wrap
-of Step 632). -/
+/-- **Λ-layer: `polymerFreeEnergy` tanh-form sandwich** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_tanh_sandwich
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -120,8 +116,7 @@ theorem polymerFreeEnergy_Λ_tanh_sandwich
         Real.log (1 + Real.tanh (β * J)) :=
   IsingModel.polymerFreeEnergy_tanh_sandwich (inducedGraph G Λ) hβJ
 
-/-- **Λ-layer: `polymerFreeEnergy ≤ |E|·log 2` for `0 ≤ t ≤ 1`**
-(§18.5 Λ wrap of Step 642). -/
+/-- **Λ-layer: `polymerFreeEnergy ≤ |E|·log 2` for `0 ≤ t ≤ 1`** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_le_card_log_two_of_le_one
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -131,8 +126,7 @@ theorem polymerFreeEnergy_Λ_le_card_log_two_of_le_one
   IsingModel.polymerFreeEnergy_le_card_log_two_of_le_one
     (inducedGraph G Λ) ht ht1
 
-/-- **Λ-layer: `polymerFreeEnergy_tanh ≤ |E|·log 2` under `0 ≤ β·J`**
-(§18.5 Λ wrap of Step 643). -/
+/-- **Λ-layer: `polymerFreeEnergy_tanh ≤ |E|·log 2` under `0 ≤ β·J`** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_tanh_le_card_log_two
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -143,8 +137,7 @@ theorem polymerFreeEnergy_Λ_tanh_le_card_log_two
   IsingModel.polymerFreeEnergy_tanh_le_card_log_two
     (inducedGraph G Λ) hβJ
 
-/-- **Λ-layer: `polymerFreeEnergy_tanh` double bound** (§18.5 Λ wrap
-of Step 645). -/
+/-- **Λ-layer: `polymerFreeEnergy_tanh` double bound** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_tanh_double_bound
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

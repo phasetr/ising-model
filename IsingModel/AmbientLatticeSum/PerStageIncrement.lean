@@ -3,7 +3,7 @@ import IsingModel.BallBoundarySimonLieb.Tight
 import IsingModel.AmbientLatticeSum.InducedUnion
 
 /-!
-# Numeric per-stage correlation increment (Issue #2965, Phase A)
+# Numeric per-stage correlation increment
 
 Composes the ball-boundary bond-deletion increment
 `correlation_sub_deleteEdges_le_derivBound` (`WeakBound.lean`) with the
@@ -56,11 +56,11 @@ private theorem pair_map_val_eq (S : Finset V) {r s : V} (hr : r ∈ S) (hs : s 
 
 set_option linter.unusedFintypeInType false in
 /-- **Bond-deleted-graph correlation = isolated induced-subgraph correlation** for
-a pair `{r, s}` interior to `S`: composes `deleteEdges_filter_edgeFinset_eq`
-(#2987), `correlation_congr_all` (#2986), the observable identity
-`triple_map_subtypeUnivEquiv_eq` (#2988) / `pair_map_val_eq`, and the
-component-factorization capstone `correlation_deleteEdges_straddle_eq_inducedGraph`
-(#2986). Stated separately from the increment to keep elaboration light. -/
+a pair `{r, s}` interior to `S`: composes `deleteEdges_filter_edgeFinset_eq`,
+`correlation_congr_all`, the observable identity `triple_map_subtypeUnivEquiv_eq` /
+`pair_map_val_eq`, and the component-factorization capstone
+`correlation_deleteEdges_straddle_eq_inducedGraph`. Stated separately from the increment to
+keep elaboration light. -/
 private theorem correlation_deleteEdges_filter_pair_eq (G : SimpleGraph V)
     [Fintype G.edgeSet] (S : Finset V) (p : IsingParams ℝ) {r s : V}
     (hr : r ∈ S) (hs : s ∈ S)
@@ -95,7 +95,7 @@ set_option linter.unusedFintypeInType false in
 /-- **Numeric per-stage correlation increment**: for a pair `r, s` interior to `S`
 (neither on a cut edge), the full-model pair correlation exceeds the isolated
 induced-subgraph pair correlation by at most the ball-boundary `derivBound` over
-the cut edges. Composes `correlation_sub_deleteEdges_le_derivBound` (#2974) with
+the cut edges. Composes `correlation_sub_deleteEdges_le_derivBound` with
 `correlation_deleteEdges_filter_pair_eq`. -/
 theorem correlation_pair_sub_inducedGraph_le_derivBound (G : SimpleGraph V)
     [Fintype G.edgeSet] (S : Finset V) (p : IsingParams ℝ) (hf : Ferromagnetic p)
@@ -127,7 +127,7 @@ finsets `T₁ ⊆ T₂`. An element `x : ↥T₂` lies in `T₁.subtype (· ∈ 
 `x.val ∈ T₁` (`Finset.mem_subtype`), so the inner-subtype's underlying value
 recovers a member of `T₁`. This is the concrete-layer companion of
 `nestedSubtypeEquiv` used to instantiate the per-stage increment on the cubic
-exhaustion stages `box_k ⊆ box_{k+1}` (Issue #2965, Phase A). -/
+exhaustion stages `box_k ⊆ box_{k+1}`. -/
 def nestedFinsetEquiv {T₁ T₂ : Finset V} (hsub : T₁ ⊆ T₂) :
     (↑(T₁.subtype (· ∈ T₂)) : Type _) ≃ (↑T₁ : Type _) where
   toFun x := ⟨x.val.val, Finset.mem_subtype.mp x.property⟩
@@ -142,11 +142,11 @@ for nested finsets `T₁ ⊆ T₂`, the correlation of the isolated induced subg
 the `T₁`-slice `T₁.subtype (· ∈ T₂)` inside `inducedGraph G T₂` equals the
 correlation of the direct induced subgraph `inducedGraph G T₁`, after relabeling
 the observable along `nestedFinsetEquiv`. Proved by the same technique as
-`correlation_inducedGraph_induce_preimage` (#2991): `correlation_map_equiv` is
+`correlation_inducedGraph_induce_preimage`: `correlation_map_equiv` is
 applied to the *direct* graph `inducedGraph G T₁`, keeping the heavy double-induce
 graph only as the map result, then `correlation_congr_all` absorbs the edge-set
 `Fintype` instances. Instantiates the per-stage increment on cubic stages
-`box_k ⊆ box_{k+1}` (Issue #2965, Phase A). -/
+`box_k ⊆ box_{k+1}`. -/
 theorem correlation_inducedGraph_nested_finset (G : SimpleGraph V) {T₁ T₂ : Finset V}
     (hsub : T₁ ⊆ T₂)
     [Fintype (inducedGraph G T₁).edgeSet]
@@ -184,7 +184,7 @@ private theorem pair_map_nestedFinsetEquiv_symm {T₁ T₂ : Finset V} (hsub : T
 
 set_option linter.unusedFintypeInType false in
 omit [Fintype V] in
-/-- **Two-box per-stage correlation increment** (Issue #2965, Phase A): for nested
+/-- **Two-box per-stage correlation increment**: for nested
 finsets `T₁ ⊆ T₂` and a pair `r, s` interior to `T₁` (neither endpoint on a cut
 edge of the `T₁`-slice), the pair correlation on the larger box exceeds the one on
 the smaller box by at most the ball-boundary `derivBound` over the cut edges of the
@@ -248,8 +248,7 @@ set_option linter.unusedFintypeInType false in
 increment by the *tight* `derivBoundTight` (cross products only, no diagonal
 `⟨σ_r σ_s⟩·⟨σ_k σ_l⟩` term). Composes `correlation_sub_deleteEdges_le_derivBoundTight`
 with `correlation_deleteEdges_filter_pair_eq`. Dropping the diagonal term is what
-makes the per-stage exhaustion increment summable under spatial decay (Issue #2965,
-Phase A→B). -/
+makes the per-stage exhaustion increment summable under spatial decay. -/
 theorem correlation_pair_sub_inducedGraph_le_derivBoundTight (G : SimpleGraph V)
     [Fintype G.edgeSet] (S : Finset V) (p : IsingParams ℝ) (hf : Ferromagnetic p)
     (hh : p.h = 0) (r s : V) (hr : r ∈ S) (hs : s ∈ S) (hrs : r ≠ s)
@@ -277,7 +276,7 @@ theorem correlation_pair_sub_inducedGraph_le_derivBoundTight (G : SimpleGraph V)
 
 set_option linter.unusedFintypeInType false in
 omit [Fintype V] in
-/-- **Tight two-box per-stage correlation increment** (Issue #2965, Phase A→B):
+/-- **Tight two-box per-stage correlation increment**:
 tight analogue of `correlation_pair_two_box_le_derivBound`, bounding the nested-box
 pair correlation increment by the *tight* `derivBoundTight` over the cut edges of
 the `T₁`-slice. Composes the tight single-box increment

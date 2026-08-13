@@ -43,7 +43,7 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 /-- **Λ-layer: strict `freeEnergyΛ` upper bound in cluster-expansion
-convergence regime** (§18.5 Λ wrap of #1527). -/
+convergence regime** (§18.5 Λ wrap). -/
 theorem freeEnergyΛ_lt_log_two_plus_high_temp_correction
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -77,8 +77,7 @@ theorem freeEnergyΛ_lt_log_two_plus_high_temp_correction_ferromagnetic
   freeEnergyΛ_lt_log_two_plus_high_temp_correction
     G Λ J β (mul_nonneg hβ.le hJ) hne h_pow
 
-/-- **Λ-layer: `polymerFreeEnergy` is `ContinuousAt` for `t ≥ 0`**
-(§18.5 Λ wrap of #1517 / Step 611). -/
+/-- **Λ-layer: `polymerFreeEnergy` is `ContinuousAt` for `t ≥ 0`** (§18.5 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_continuousAt
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -119,7 +118,7 @@ theorem polymerFreeEnergy_Λ_differentiableOn_Ici_zero
     (inducedGraph G Λ)
 
 /-- **Λ-layer: `polymerFreeEnergy ∘ tanh ∘ (·*J)` `AnalyticAt ℝ`
-in β** (§18.6 Λ wrap of #1569 Step 613). -/
+in β** (§18.6 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_tanh_analyticAt_beta
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

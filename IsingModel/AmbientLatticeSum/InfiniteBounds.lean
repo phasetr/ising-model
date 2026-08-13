@@ -36,7 +36,7 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 /-- **Uniform upper bound on `freeEnergyInfinite` under bounded edge density**:
-the per-n bound of PR #123 lifts to `limsup`:
+the per-stage bound `freeEnergyAlongExhaustion_le_uniform_upper_bound` lifts to `limsup`:
 `freeEnergyInfinite G Λ p ≤ log 2 + |β|·(|J|·c + |h|)` for ferromagnetic `p`.
 
 Proof outline.
@@ -81,7 +81,7 @@ parameters `p = ⟨J, 0, β⟩` (i.e. `0 ≤ J, 0 < β`),
 
 Combines the per-stage uniform bound
 `freeEnergyAlongExhaustion_high_temp_h_zero_upper_bound_exp_uniform`
-(Step 396) with `Filter.limsup_le_of_le`. The cobounded-under
+with `Filter.limsup_le_of_le`. The cobounded-under
 condition is discharged via the ferromagnetic lower bound
 `freeEnergyAlongExhaustion_ge_log_two_cosh` at `h = 0`.
 

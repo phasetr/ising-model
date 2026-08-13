@@ -40,7 +40,7 @@ namespace Ambient
 
 variable {V : Type*} [DecidableEq V]
 
-/-- **Λ-layer: high-temperature sandwich for `polymerFreeEnergy`** (§18.4 Λ wrap of PR #1526). -/
+/-- **Λ-layer: high-temperature sandwich for `polymerFreeEnergy`** (§18.4 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_high_temp_sandwich
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]
@@ -57,8 +57,7 @@ theorem polymerFreeEnergy_Λ_high_temp_sandwich
     IsingModel.polymerFreeEnergy (inducedGraph G Λ) t < Real.log 2 :=
   IsingModel.polymerFreeEnergy_high_temp_sandwich (inducedGraph G Λ) ht h_pow
 
-/-- **Λ-layer: explicit log Taylor expansion for `polymerFreeEnergy`**
-(§18.4 Λ wrap of PR #1517). -/
+/-- **Λ-layer: explicit log Taylor expansion for `polymerFreeEnergy`** (§18.4 Λ wrap). -/
 theorem polymerFreeEnergy_Λ_hasSum_via_log_of_pow_lt_two
     (G : SimpleGraph V) (Λ : Finset V)
     [Fintype (inducedGraph G Λ).edgeSet]

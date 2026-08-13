@@ -42,7 +42,7 @@ namespace Ambient
 variable {V : Type*} [DecidableEq V]
 
 /-- **Uniform lower bound on `freeEnergyInfinite` under ferromagnetic**:
-the per-n sharp lower bound of PR #125 lifts to `limsup`:
+the per-stage bound `freeEnergyAlongExhaustion_ge_log_two_cosh` lifts to `limsup`:
 `log(2·cosh(β·h)) ≤ freeEnergyInfinite G Λ p`.
 
 Proof outline:
@@ -50,7 +50,8 @@ Proof outline:
 2. The ferromagnetic per-n lower bound
    `freeEnergyAlongExhaustion_ge_log_two_cosh` provides the
    `∀ᶠ`-form of the lower bound.
-3. The `BoundedEdgeDensity`-based upper bound of PR #123 provides
+3. The `BoundedEdgeDensity`-based upper bound
+   `freeEnergyAlongExhaustion_le_uniform_upper_bound` provides
    `IsBoundedUnder (· ≤ ·)` (needed by `le_limsup_of_frequently_le`).
 4. `Filter.le_limsup_of_frequently_le` concludes. -/
 theorem freeEnergyInfinite_ge_log_two_cosh
@@ -104,8 +105,7 @@ theorem freeEnergyInfinite_ge_log_two
 under ferromagnetic `0 ≤ J, 0 < β` + bounded-edge-density witness `c`,
 `log 2 ≤ freeEnergyInfinite G Λ ⟨J, 0, β⟩ ≤ log 2 + β·J·c`.
 
-Combines the upper bound of Step 397
-(`freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`) with
+Combines `freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform` with
 `freeEnergyInfinite_ge_log_two` (which is `log 2 ≤ f_∞` under
 ferromagnetic + BED). The sandwich shows the ∞-vol free energy lies
 in a tight `[log 2, log 2 + β·J·c]` interval — the lower bound is the
@@ -162,7 +162,7 @@ theorem freeEnergyInfinite_high_temp_h_zero_complete_summary_exp
 `freeEnergyInfinite G Λ ⟨J, 0, β⟩ - log 2 ≤ β·J·c`.
 
 Direct from `freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`
-(Step 397) by subtracting `log 2`. Useful as a pre-formed
+by subtracting `log 2`. Useful as a pre-formed
 "high-temperature deviation" estimate quantifying how much the ∞-vol
 free energy can differ from its `J = 0` (free-spin) value `log 2`
 under the linear-`β·J·c` regime.
@@ -187,7 +187,7 @@ theorem freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp
 `|freeEnergyInfinite G Λ ⟨J, 0, β⟩ - freeEnergyInfinite G Λ ⟨0, 0, β⟩| ≤ β·J·c`.
 
 Combines:
-- Step 397 upper `f_∞ ≤ log 2 + β·J·c`.
+- `freeEnergyInfinite_high_temp_h_zero_upper_bound_exp_uniform`.
 - Existing `freeEnergyInfinite_ge_log_two` lower `log 2 ≤ f_∞`.
 - `freeEnergyInfinite_zero_params_of_nonempty` value `f_∞⟨0, 0, β⟩ = log 2`.
 
@@ -223,8 +223,8 @@ theorem freeEnergyInfinite_high_temp_h_zero_continuity_at_J_zero
 `0 ≤ J, 0 < β` + bounded-edge-density witness `c`,
 `|freeEnergyInfinite G Λ ⟨J, 0, β⟩ - freeEnergyInfinite G Λ ⟨J, 0, 0⟩| ≤ β·J·c`.
 
-Same bound as Step 423 (continuity at J=0) since both trivial slices
-give `f_∞ = log 2`. -/
+Same bound as `freeEnergyInfinite_high_temp_h_zero_continuity_at_J_zero` since both
+trivial slices give `f_∞ = log 2`. -/
 theorem freeEnergyInfinite_high_temp_h_zero_continuity_at_beta_zero
     [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -289,8 +289,8 @@ theorem freeEnergyInfinite_high_temp_h_zero_deviation_sandwich_exp
 The bounded quantity is the difference displayed above, not a ratio;
 the `_ratio_bound` in the name does not describe the statement.
 
-Reformulation of Step 418 deviation bound using the trivial slice
-identity `f_∞⟨0, 0, β⟩ = log 2`. -/
+Reformulation of `freeEnergyInfinite_high_temp_h_zero_deviation_bound_exp` using the
+trivial-slice identity `f_∞⟨0, 0, β⟩ = log 2`. -/
 theorem freeEnergyInfinite_high_temp_h_zero_ratio_bound
     [Nonempty V] (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
