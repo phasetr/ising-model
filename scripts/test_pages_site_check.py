@@ -260,11 +260,21 @@ class SiteTest(unittest.TestCase):
         self.assertIn("https://example.test/ising-model/asset.png", requested)
         manifest_path = self.site / checker.MANIFEST_NAME
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        manifest["files"][0]["path"] = "../outside"
-        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
-        with mock.patch.object(checker, "_fetch", side_effect=fetch):
-            findings = checker.check_live("https://example.test/ising-model/", self.source, "/ising-model", self.revision, self.generated)
-        self.assertEqual([item.code for item in findings], ["MANIFEST"])
+        attacks = (
+            "https://attacker.invalid/steal", "//attacker.invalid/steal", "../outside",
+            "%2e%2e/outside", "%2Foutside", "nested%5coutside", "nested\\outside",
+            "asset.png?secret=1", "asset.png#fragment", "C:outside",
+        )
+        for attack in attacks:
+            with self.subTest(attack=attack):
+                poisoned = json.loads(json.dumps(manifest))
+                poisoned["files"][0]["path"] = attack
+                manifest_bytes = json.dumps(poisoned).encode()
+                fetch_mock = mock.Mock(return_value=(manifest_bytes, None))
+                with mock.patch.object(checker, "_fetch", fetch_mock):
+                    findings = checker.check_live("https://example.test/ising-model/", self.source, "/ising-model", self.revision, self.generated)
+                self.assertEqual([item.code for item in findings], ["MANIFEST"])
+                fetch_mock.assert_called_once_with("https://example.test/ising-model/pages-manifest.json")
 
 
 @contextmanager
@@ -415,6 +425,22 @@ class MutationTest(SiteTest):
             self.assertEqual(checker._fetch("https://example.test/right"), (None, "down"))
         with mutant("return None, last", 'return b"", None') as module, mock.patch.object(module.urllib.request, "urlopen", side_effect=OSError("down")), mock.patch.object(module.time, "sleep"):
             self.assertNotEqual(module._fetch("https://example.test/right"), (None, "down"))
+
+    def test_live_manifest_origin_guard_is_mutation_pinned(self) -> None:
+        self.assertEqual(self.prepare(), [])
+        manifest = json.loads((self.site / checker.MANIFEST_NAME).read_text(encoding="utf-8"))
+        manifest["files"][0]["path"] = "https://attacker.invalid/steal"
+        manifest_bytes = json.dumps(manifest).encode()
+        with mutant(
+            "    parsed = urllib.parse.urlsplit(relative)\n    decoded = urllib.parse.unquote(relative)",
+            "    return urllib.parse.urljoin(base, relative), None\n    decoded = urllib.parse.unquote(relative)",
+        ) as module:
+            responses = [(manifest_bytes, None)]
+            fetch_mock = mock.Mock(side_effect=lambda _url: responses.pop(0) if responses else (None, "attacker reached"))
+            with mock.patch.object(module, "_fetch", fetch_mock):
+                findings = module.check_live("https://example.test/ising-model/", self.source, "/ising-model", self.revision, self.generated)
+            self.assertGreater(fetch_mock.call_count, 1)
+            self.assertTrue(any(item.code == "LIVE_FETCH" for item in findings))
 
 
 class WorkflowContractTest(unittest.TestCase):

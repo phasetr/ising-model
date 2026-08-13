@@ -386,6 +386,27 @@ def _fetch(url: str, retries: int = 3) -> tuple[bytes | None, str | None]:
     return None, last
 
 
+def _safe_manifest_path(relative: str, base: str) -> tuple[str | None, str | None]:
+    parsed = urllib.parse.urlsplit(relative)
+    decoded = urllib.parse.unquote(relative)
+    if (
+        not relative or parsed.scheme or parsed.netloc or parsed.query or parsed.fragment
+        or ":" in relative or "\\" in decoded or decoded.startswith("/")
+        or decoded != relative
+        or any(part in ("", ".", "..") for part in PurePosixPath(decoded).parts)
+    ):
+        return None, f"unsafe artifact path: {relative!r}"
+    target = urllib.parse.urljoin(base, relative)
+    base_url, target_url = urllib.parse.urlsplit(base), urllib.parse.urlsplit(target)
+    if (
+        (target_url.scheme, target_url.netloc) != (base_url.scheme, base_url.netloc)
+        or not target_url.path.startswith(base_url.path)
+        or target_url.query or target_url.fragment
+    ):
+        return None, f"artifact URL escapes publication base: {relative!r}"
+    return target, None
+
+
 def check_live(url: str, source: Path, baseurl: str, revision: str, generated_at: str) -> list[Finding]:
     if not url.startswith("https://") or not url.rstrip("/").endswith(baseurl):
         return [Finding(url, "LIVE_URL", "live URL must be HTTPS and end in the configured baseurl")]
@@ -403,20 +424,23 @@ def check_live(url: str, source: Path, baseurl: str, revision: str, generated_at
         if not isinstance(files, list):
             return [Finding(MANIFEST_NAME, "MANIFEST", "files must be a list")]
         paths: list[str] = []
+        fetch_urls: list[str] = []
         for item in files:
             if not isinstance(item, dict) or not isinstance(item.get("path"), str):
                 return [Finding(MANIFEST_NAME, "MANIFEST", "every file entry must have a string path")]
             relative = item["path"]
-            parts = PurePosixPath(relative).parts
-            if not relative or relative.startswith("/") or "\\" in relative or any(part in ("", ".", "..") for part in parts):
-                return [Finding(MANIFEST_NAME, "MANIFEST", f"unsafe artifact path: {relative!r}")]
+            target_url, path_error = _safe_manifest_path(relative, base)
+            if path_error:
+                return [Finding(MANIFEST_NAME, "MANIFEST", path_error)]
+            assert target_url is not None
             paths.append(relative)
+            fetch_urls.append(target_url)
         if len(paths) != len(set(paths)):
             return [Finding(MANIFEST_NAME, "MANIFEST", "file paths must be unique")]
         (site / MANIFEST_NAME).write_bytes(manifest_bytes)
         findings: list[Finding] = []
-        for relative in paths:
-            body, fetch_error = _fetch(urllib.parse.urljoin(base, relative))
+        for relative, target_url in zip(paths, fetch_urls):
+            body, fetch_error = _fetch(target_url)
             if body is None:
                 findings.append(Finding(relative, "LIVE_FETCH", fetch_error or "fetch failed"))
                 continue
