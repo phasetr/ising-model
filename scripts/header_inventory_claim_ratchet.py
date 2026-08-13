@@ -2121,9 +2121,22 @@ BASELINE_HEADER = """\
 """
 
 
-def format_baseline(counts: Counter[tuple[str, str, str]]) -> str:
-    """Render a charged-claim multiset in baseline-file format."""
+def format_baseline(
+    counts: Counter[tuple[str, str, str]], preserved_text: str = ""
+) -> str:
+    """Render the multiset while retaining consumed transfer tombstones.
+
+    Container-transfer declarations are one-shot identities, so regeneration
+    must not erase their history.  Every marker-shaped line is retained; a
+    malformed one remains visible to the fail-closed drift parser rather than
+    being laundered away by formatting.
+    """
     lines = [BASELINE_HEADER]
+    lines.extend(
+        raw
+        for raw in preserved_text.splitlines()
+        if raw.startswith(CONTAINER_TRANSFER_MARKER)
+    )
     for (kind, target, token), count in sorted(counts.items()):
         lines.append(f"{kind}\t{target}\t{token}\t{count}")
     if not counts:
@@ -2377,6 +2390,9 @@ def container_transfer_declarations(
     must contain zero copies, the head exactly one, and the diff exactly one
     added copy. This makes permission a true ``0 -> 1`` identity transition;
     relocation, reuse, duplication, and ambiguous patch presentation fail.
+    An unchanged historical declaration (``1 -> 1`` with no added line) is
+    inert: it grants no allowance and is not an error merely for surviving a
+    merge into the comparison base.
     """
     code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
     if code != 0:
@@ -2403,15 +2419,21 @@ def container_transfer_declarations(
     head_lines = Counter(head_text.splitlines())
     transfers: list[ContainerTransfer] = []
     errors: list[str] = []
-    for raw, head_count in sorted(head_lines.items()):
-        if not raw.startswith(CONTAINER_TRANSFER_MARKER):
-            continue
+    marker_lines = {
+        raw
+        for raw in base_lines.keys() | head_lines.keys()
+        if raw.startswith(CONTAINER_TRANSFER_MARKER)
+    }
+    for raw in sorted(marker_lines):
+        base_count = base_lines.get(raw, 0)
+        head_count = head_lines.get(raw, 0)
+        added_count = added.get(raw, 0)
         match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
         if match is None:
-            errors.append(f"malformed added container-transfer declaration: {raw}")
+            errors.append(f"malformed container-transfer declaration: {raw}")
             continue
-        base_count = base_lines.get(raw, 0)
-        added_count = added.get(raw, 0)
+        if base_count == 1 and head_count == 1 and added_count == 0:
+            continue
         if base_count != 0 or head_count != 1 or added_count != 1:
             errors.append(
                 "container-transfer declaration is not a pure new identity "
@@ -3293,7 +3315,17 @@ def main(argv: list[str] | None = None) -> int:
             for failure in report.conservation:
                 sys.stdout.write(f"# {failure}\n")
             return 1
-        sys.stdout.write(format_baseline(report.charged) if args.baseline
+        preserved = ""
+        if args.baseline and BASELINE_FILE.exists():
+            try:
+                preserved = BASELINE_FILE.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as failure:
+                sys.stdout.write(
+                    f"{SUPPRESSED}# the existing baseline tombstones could not be read: "
+                    f"{failure}\n"
+                )
+                return 1
+        sys.stdout.write(format_baseline(report.charged, preserved) if args.baseline
                          else format_findings(report))
         return 0
 
