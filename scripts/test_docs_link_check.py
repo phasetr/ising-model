@@ -220,6 +220,15 @@ class ResolutionTest(RepoTest):
         self.base({"docs/status.md": dangling_definition})
         self.assertIn("CANDIDATE_COVERAGE", self.codes())
 
+    def test_colon_after_reference_use_is_not_a_definition_candidate(self) -> None:
+        text = "[text][key]: suffix\n[key]: index.md\n"
+        self.base({"docs/status.md": text})
+        parsed = checker.parse_markdown("docs/status.md", text)
+        definitions = [identity for identity in parsed.candidate_identities if identity[2] == "definition"]
+        self.assertEqual(definitions, [(2, 0, "definition")])
+        self.assertEqual(parsed.findings, ())
+        self.assertEqual(self.codes(), [])
+
     def test_escaped_and_code_comment_openers_cannot_hide_following_links(self) -> None:
         self.base({
             "docs/status.md": (
@@ -505,6 +514,14 @@ class MutationTest(RepoTest):
             '*(?:\\]|$)',
         ) as module:
             self.assertNotIn("CANDIDATE_COVERAGE", self.codes(module))
+
+        self.base({"docs/status.md": "[text][key]: suffix\n[key]: index.md\n"})
+        self.assertEqual(self.codes(), [])
+        with mutant(
+            'return close + 1 < len(line) and line[close + 1] == ":"',
+            'if close + 1 < len(line) and line[close + 1] == ":":\n                    return True',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [

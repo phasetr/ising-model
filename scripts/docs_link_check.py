@@ -29,7 +29,6 @@ CANONICAL_OWNERS = frozenset({
 
 _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
-_RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[.*\]:")
 _RAW_REFERENCE_USE_RE = re.compile(
     r"!?\[(?:\\[^\n]|[^]\\\n])*\]\[(?:\\[^\n]|[^]\\\n])*(?:\]|\\$|$)"
 )
@@ -346,6 +345,25 @@ def _reference_definition(line: str) -> tuple[str, str] | None:
     return key, destination
 
 
+def _reference_definition_candidate(line: str) -> bool:
+    """Recognize raw definition punctuation at the first semantic closer."""
+    indent = len(line) - len(line.lstrip(" \t"))
+    if indent > 3 or indent >= len(line) or line[indent] != "[":
+        return False
+    escaped_terminator = False
+    close = indent + 1
+    while close < len(line):
+        if line[close] == "]":
+            if _unescaped(line, close):
+                return close + 1 < len(line) and line[close + 1] == ":"
+            if close + 1 < len(line) and line[close + 1] == ":":
+                escaped_terminator = True
+        close += 1
+    # An escaped would-be terminator is malformed definition punctuation and
+    # must remain in the raw census so the parser fails closed.
+    return escaped_terminator
+
+
 def _reference_opener(line: str, position: int) -> bool:
     """Shared parity guard for raw and parsed reference-use census."""
     return _unescaped(line, position)
@@ -421,7 +439,7 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         consumed_identities.extend((lineno, position, "inline") for position in parsed_positions)
         for construct in parsed_inline:
             inline_links.append(Link(source, lineno, construct.destination, construct.image, construct.label))
-        raw_defs = bool(_RAW_REFERENCE_DEF_RE.match(line))
+        raw_defs = _reference_definition_candidate(line)
         definition = _reference_definition(line)
         if raw_defs:
             candidate_identities.append((lineno, 0, "definition"))
