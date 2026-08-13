@@ -26,7 +26,7 @@ namespace Ambient
 active-range membership supplies positivity of the named pseudo-mass, while the
 irreducible proposition supplies the high-temperature comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -49,7 +49,7 @@ theorem latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
 the active-range proof gives the strict lower endpoint and the named proposition
 gives the target lattice-mass upper endpoint.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -91,7 +91,7 @@ theorem latticeMass_ne_zero_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
 comparison proposition supplies both validating exponential decay and closed
 interval membership for the named rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Icc_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -113,7 +113,7 @@ theorem cubicNamedRate_decay_mem_Icc_of_cubicOriginNamedRateLeHighTemp
 membership upgrades the closed interval supplied by the named proposition to
 the positive half-open interval.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

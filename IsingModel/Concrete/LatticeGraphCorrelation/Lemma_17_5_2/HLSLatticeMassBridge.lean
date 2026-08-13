@@ -16,7 +16,7 @@ public theorem names remain available here and through the top-level
 the standalone `HLSSusceptibilityBridge` module; that wrapper module was also
 retired, while the public theorem names remain available here.
 
-**Reference:** Glimm-Jaffe §17.5 pp. 304-306, Lemma 17.5.2 pp. 311-312;
+**Reference:** Glimm-Jaffe §17.1 pp. 304-306; §17.5 Lemma 17.5.2 pp. 311-312;
 §5.1 and §5.3 for the susceptibility and cluster-property consequences.
 -/
 

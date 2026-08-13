@@ -78,7 +78,7 @@ private lemma exists_latticeDistance_succ_adj
       rw [this, h_rest]; omega
 
 
-/-- **Path lower bound on the two-point function** (GJ §17.5 pp. 304–306):
+/-- **Path lower bound on the two-point function** (GJ §17.1 pp. 304–306):
 for any `r ≠ 0` in ℤ^d, ferromagnetic `J ≥ 0`, `β > 0`, `h = 0`:
 
 `tanh(β J)^(latticeDistance d 0 r) ≤ twoPointFunction d ⟨J, 0, β⟩ r`.
@@ -93,7 +93,7 @@ Proof: strong induction on `n = latticeDistance d 0 r`.
   GKS-II: `twoPointFunction v * correlationInfinite ... {v, r} ≤ twoPointFunction r`
   (via `{0,v} ∆ {v,r} = {0,r}`), so `tanh^{n+1} ≤ twoPointFunction r`.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
 theorem twoPointFunction_ge_tanh_betaJ_pow_dist
     {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
     {r : Fin d → ℤ} (hr : r ≠ 0) :

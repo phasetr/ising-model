@@ -20,7 +20,7 @@ namespace Ambient
 the tanh-power profile bound**: the profile condition supplies the active-range
 membership needed to remove the totalization.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -39,7 +39,7 @@ theorem pseudoMassExt_twoPointFunction_eq_pseudoMass_of_pseudoMassG_le_tanh_pow_
 bound**: the active-range theorem supplies the `Ioo 0 2` argument required by
 `pseudoMass_pos`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -57,7 +57,7 @@ theorem pseudoMass_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist
 bound**: under the profile condition, the anchored two-point function is active,
 so `pseudoMassExt` is strictly positive.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -72,7 +72,7 @@ theorem pseudoMassExt_twoPointFunction_pos_of_pseudoMassG_le_tanh_pow_dist
 /-- **Totalized two-point pseudo-mass non-vanishing from a tanh-power profile
 bound**: a direct non-zero corollary of positivity.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMassExt_twoPointFunction_ne_zero_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)

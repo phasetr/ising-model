@@ -81,7 +81,8 @@ Bound via `le_of_tendsto` applied to the convergent sequence
 which is eventually ≤ `susceptibilityAlongExhaustion n ≤ βJD/(1-βJD)`
 by `sum_correlationAlongExhaustion_le_susceptibilityAlongExhaustion`.
 
-Reference: Glimm–Jaffe §5.1 pp. 73–74; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3. The truncated
+pair-correlation object is Glimm–Jaffe §5.1 pp. 73–74. -/
 theorem truncated2Infinite_summable_of_high_temp
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]
@@ -178,7 +179,8 @@ This is the missing **distance-1 (adjacent)** correlation bound: the Simon–Lie
 alone yields only `≤ 1` at distance 1, whereas the susceptibility ceiling is `< 1` in the
 strict window `βJD < 1/2`.
 
-Reference: Glimm–Jaffe §5.1 pp. 73–74; §17.5 pp. 311–312; Friedli–Velenik §3.7.3. -/
+Reference: Simon 1980; Lieb 1980; Friedli–Velenik §3.7.3; Glimm–Jaffe §17.5
+pp. 311–312. The truncated pair-correlation object is Glimm–Jaffe §5.1 pp. 73–74. -/
 theorem correlationInfinite_le_susceptibility_bound_of_high_temp
     (G : SimpleGraph V) (Λ : Exhaustion V)
     [∀ n, Fintype (inducedGraph G (Λ.volume n)).edgeSet]

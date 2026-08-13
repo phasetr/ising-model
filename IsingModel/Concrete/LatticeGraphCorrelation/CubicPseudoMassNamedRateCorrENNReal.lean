@@ -20,7 +20,7 @@ namespace Ambient
 /-- **Anchored cubic named pseudo-mass nonzero from cubic active range**:
 strict positivity from active-range membership rules out zero.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -37,7 +37,7 @@ theorem cubicOriginPseudoMassFromParamsAtPair_ne_zero_of_cubic_corr_mem
 active-range membership makes the named anchored cubic pseudo-mass strictly
 positive after coercion to `ENNReal`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem ENNReal_ofReal_cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)

@@ -29,7 +29,7 @@ pair `(0,z)` and zero external field.
 This definition is intended to keep downstream theorem statements from
 restating the high-arity concrete pseudo-mass expression.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 noncomputable def cubicOriginPseudoMassFromParamsAtPair {α d : ℕ} (hα : 1 ≤ α)
     {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -69,7 +69,7 @@ Keeping the comparison as an irreducible `Prop` avoids placing the full concrete
 named-rate expression directly in downstream theorem conclusions, where direct
 `cubicTanhProfileBound` wrappers trigger deterministic elaboration timeouts.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 @[irreducible] def cubicOriginNamedRateLeHighTemp {α d : ℕ} (hα : 1 ≤ α)
     {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)

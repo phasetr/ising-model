@@ -38,7 +38,7 @@ turns the numerical condition
 into the cubic-exhaustion correlation lower bound required by the
 profile-comparison bridge.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMassG_le_cubic_correlation_of_le_tanh_pow_dist
     {α d : ℕ} {r β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
     {z : Fin d → ℤ} (hz : z ≠ 0)
@@ -67,7 +67,7 @@ pair correlation.
 This supplies the lower half of the active-range input used by the
 profile-comparison bridge toward GJ §17.5 Lemma 17.5.2.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem correlationInfinite_cubic_pair_pos_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -95,7 +95,7 @@ the anchored two-point function is in the active interval.  Outside the active
 interval, `pseudoMassExt` is zero, so the high-temperature comparison is
 automatic from nonnegativity of the Lean real-log rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMassExt_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -125,7 +125,7 @@ that the anchored two-point function lies in the pseudo-mass active interval
 Lean total real-log rate; the upper endpoint uses the universal bound
 `twoPointFunction ≤ 1`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem twoPointFunction_mem_Ioo_zero_two_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -151,7 +151,7 @@ once the tanh-power profile bound places the anchored two-point function in
 `(0,2)`, the implicit pseudo-mass comparison gives the non-totalized
 `pseudoMass` bound by the high-temperature rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem pseudoMass_twoPointFunction_le_high_temp_rate_of_pseudoMassG_le_tanh_pow_dist
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)

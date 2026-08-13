@@ -25,7 +25,7 @@ if the anchored cubic pair correlation lies in the active pseudo-mass interval
 and dominates `pseudoMassG` at the transferred high-temperature rate, then the
 named anchored cubic pseudo-mass is no larger than that rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -50,7 +50,7 @@ theorem cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubic_pseudoM
 active-range membership and the cubic profile lower bound prove the lightweight
 named high-temperature comparison proposition.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicOriginNamedRateLeHighTemp_of_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -73,7 +73,7 @@ theorem cubicOriginNamedRateLeHighTemp_of_cubic_pseudoMassG_le_corr
 active-range membership of the anchored cubic pair correlation gives strict
 positivity of the named concrete pseudo-mass.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicOriginPseudoMassFromParamsAtPair_pos_of_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -105,7 +105,7 @@ theorem cubicOriginPseudoMassFromParamsAtPair_le_high_temp_rate_of_cubicOriginNa
 the lightweight named comparison proposition feeds the conditional decay
 bridge without exposing the heavy comparison in the theorem statement.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

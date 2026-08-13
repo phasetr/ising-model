@@ -31,7 +31,7 @@ is retained as a compatibility condition while the direct concrete
 `pseudoMassFromParamsAtPair` wrapper remains too expensive to expose in a new
 theorem conclusion.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -53,7 +53,7 @@ theorem latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubic_tanh_profile
 profile-compatible active-range theorem internally and then applies the
 transferred high-temperature positive-mass theorem.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile
     {α d : ℕ} (hd : 1 ≤ d) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -78,7 +78,7 @@ This keeps theorem statements on the lightweight `cubicTanhProfileBound`
 predicate while avoiding the heavier concrete named-rate conclusion that still
 triggers deterministic elaboration timeouts.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubicTanhProfileBound
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -94,7 +94,7 @@ theorem latticeMass_ge_neg_log_of_high_temp_exhaustion_of_cubicTanhProfileBound
 named input form of
 `latticeMass_pos_of_high_temp_exhaustion_of_cubic_tanh_profile`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
     {α d : ℕ} (hd : 1 ≤ d) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -109,7 +109,7 @@ theorem latticeMass_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
 cubic tanh-profile predicate**: conjunction form for downstream Step 117l
 arguments that need both final high-temperature lattice-mass consequences.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_ge_neg_log_and_pos_of_high_temp_exhaustion_of_cubicTanhProfileBound
     {α d : ℕ} (hd : 1 ≤ d) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
