@@ -368,6 +368,21 @@ def load_mutated(*substitutions: Sequence[str]) -> types.ModuleType:
     return module
 
 
+def load_test_mutated(*substitutions: Sequence[str]) -> types.ModuleType:
+    """Reload this calibration pipeline with exact-one textual mutations."""
+    path = Path(__file__).resolve()
+    source = path.read_text(encoding="utf-8")
+    for old, new in substitutions:
+        count = source.count(old)
+        if count != 1:
+            raise AssertionError(f"test mutation matched {count} times, expected 1: {old!r}")
+        source = source.replace(old, new)
+    module = types.ModuleType("test_citation_audit_mutant")
+    module.__file__ = str(path)
+    exec(compile(source, str(path), "exec"), module.__dict__)  # noqa: S102
+    return module
+
+
 def function_source(source: str, name: str) -> str:
     """Return the text of the top-level ``def name`` in ``source``.
 
@@ -3467,7 +3482,69 @@ class MutationTest(unittest.TestCase):
 # module (:class:`RealTreePinTest`).
 
 
-def admissible_censuses(module: types.ModuleType, target: str) -> List[int]:
+def calibration_measurement(module: types.ModuleType) -> int:
+    """Frozen citation total of the explicit coverage calibration group."""
+    return sum(
+        module.MEASURED_CITATIONS[target]
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )
+
+
+def calibration_floor(module: types.ModuleType) -> int:
+    """Aggregate anti-vacuity floor of that same explicit group."""
+    return sum(
+        module.MIN_CITATIONS[target]
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )
+
+
+def calibration_drop_budget(module: types.ModuleType) -> int:
+    """Apply the 5% rule once to the aggregate frozen coverage measurement."""
+    return module.citation_drop_budget(calibration_measurement(module))
+
+
+def calibration_budget_application_violations(module: types.ModuleType) -> List[str]:
+    """Pin one aggregate application, never a sum of three per-page floors."""
+    aggregate = calibration_drop_budget(module)
+    per_page_sum = sum(
+        module.citation_drop_budget(module.MEASURED_CITATIONS[target])
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )
+    out: List[str] = []
+    if aggregate != 84:
+        out.append(f"aggregate coverage budget is {aggregate}, expected 84")
+    if aggregate == per_page_sum:
+        out.append(
+            f"aggregate coverage budget reused the per-page sum {per_page_sum}"
+        )
+    return out
+
+
+def calibration_group_violations(module: types.ModuleType) -> List[str]:
+    """Pin the group membership before aggregate arithmetic can look healthy."""
+    expected = (
+        "docs/coverage/chapters-2-10.md",
+        "docs/coverage/chapter-17.md",
+        "docs/coverage/chapter-18.md",
+    )
+    actual = module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    out: List[str] = []
+    if actual != expected:
+        out.append(f"coverage calibration group is {actual!r}, expected {expected!r}")
+    if len(set(actual)) != len(actual):
+        out.append("coverage calibration group contains a duplicate member")
+    missing = set(actual) - set(module.TARGETS)
+    if missing:
+        out.append(f"coverage calibration members are not audited targets: {sorted(missing)}")
+    if calibration_measurement(module) != 1_687:
+        out.append(
+            "coverage calibration frozen measurement is "
+            f"{calibration_measurement(module)}, expected 1687"
+        )
+    return out
+
+
+def admissible_calibration_censuses(module: types.ModuleType) -> List[int]:
     """Return sampled ``#census`` values ``--update-baseline`` can write.
 
     R12 is charged by :func:`citation_audit.audit` itself, in every mode,
@@ -3490,7 +3567,7 @@ def admissible_censuses(module: types.ModuleType, target: str) -> List[int]:
     (pinned in :func:`budget_rule_violations`), so the endpoints plus a few
     interior points carry the range.
     """
-    measured = module.MEASURED_CITATIONS[target]
+    measured = calibration_measurement(module)
     lowest = measured - module.cumulative_loss_cap(measured)
     return sorted(
         {lowest, lowest + 1, (lowest + measured) // 2, measured - 1, measured}
@@ -3555,14 +3632,13 @@ def budget_headroom_violations(module: types.ModuleType) -> List[str]:
         out.append(
             f"MEASURED_REMEDIATION_DROP is {drop}, which no budget can fail to clear"
         )
-    for target in module.BUDGET_CALIBRATION_TARGETS:
-        for census in admissible_censuses(module, target):
-            budget = module.citation_drop_budget(census)
-            if budget <= drop:
-                out.append(
-                    f"{target}: at census {census} the budget is {budget}, at or below "
-                    f"the measured remediation drop of {drop}"
-                )
+    for census in admissible_calibration_censuses(module):
+        budget = module.citation_drop_budget(census)
+        if budget <= drop:
+            out.append(
+                f"coverage calibration group: at aggregate census {census} the "
+                f"budget is {budget}, at or below the measured remediation drop of {drop}"
+            )
     return out
 
 
@@ -3586,28 +3662,24 @@ def budget_ordering_violations(module: types.ModuleType) -> List[str]:
     is exactly what a rule change breaks.
     """
     out: List[str] = []
-    for target in module.BUDGET_CALIBRATION_TARGETS:
-        measured = module.MEASURED_CITATIONS[target]
-        cap = module.cumulative_loss_cap(measured)
-        floor = module.MIN_CITATIONS[target]
-        censuses = admissible_censuses(module, target)
-        for census in censuses:
-            budget = module.citation_drop_budget(census)
-            if budget >= cap:
-                out.append(
-                    f"{target}: at census {census} one run may spend {budget} of the "
-                    f"cumulative allowance of {cap}"
-                )
-        # The remainder is a fixed share of the census, so it grows with the
-        # document and the loss end is the binding case; growth is checked too
-        # because "the budget is a share" is exactly what a rule change breaks.
-        for census in list(censuses) + [2 * measured, 10 * measured]:
-            left = census - module.citation_drop_budget(census)
-            if left <= floor:
-                out.append(
-                    f"{target}: a full budget at census {census} leaves {left}, "
-                    f"at or below the floor of {floor}"
-                )
+    measured = calibration_measurement(module)
+    cap = module.cumulative_loss_cap(measured)
+    floor = calibration_floor(module)
+    censuses = admissible_calibration_censuses(module)
+    for census in censuses:
+        budget = module.citation_drop_budget(census)
+        if budget >= cap:
+            out.append(
+                f"coverage calibration group: at aggregate census {census} one run "
+                f"may spend {budget} of the cumulative allowance of {cap}"
+            )
+    for census in list(censuses) + [2 * measured, 10 * measured]:
+        left = census - module.citation_drop_budget(census)
+        if left <= floor:
+            out.append(
+                f"coverage calibration group: a full budget at aggregate census "
+                f"{census} leaves {left}, at or below the aggregate floor of {floor}"
+            )
     return out
 
 
@@ -3620,14 +3692,13 @@ def budget_ratio_violations(module: types.ModuleType) -> List[str]:
     handful of commits.
     """
     out: List[str] = []
-    for target in module.BUDGET_CALIBRATION_TARGETS:
-        measured = module.MEASURED_CITATIONS[target]
-        share = module.citation_drop_budget(measured) / measured
-        if not 0.03 <= share <= 0.06:
-            out.append(
-                f"{target}: the budget is {share:.4f} of the frozen measurement, "
-                "outside the reviewed band [0.03, 0.06]"
-            )
+    measured = calibration_measurement(module)
+    share = module.citation_drop_budget(measured) / measured
+    if not 0.03 <= share <= 0.06:
+        out.append(
+            f"coverage calibration group: the budget is {share:.4f} of the frozen "
+            "aggregate measurement, outside the reviewed band [0.03, 0.06]"
+        )
     return out
 
 
@@ -3784,7 +3855,7 @@ class RealTreePinTest(unittest.TestCase):
         measurement that ordinary remediation is not deciding document content,
         high enough that a gutted document trips it.
         """
-        for target in ca.BUDGET_CALIBRATION_TARGETS:
+        for target in ca.COVERAGE_BUDGET_CALIBRATION_GROUP:
             floor = ca.MIN_CITATIONS[target]
             measured = ca.MEASURED_CITATIONS[target]
             self.assertGreaterEqual(floor, 0.40 * measured, target)
@@ -3807,10 +3878,9 @@ class RealTreePinTest(unittest.TestCase):
         # consecutive full budgets, so an ordinary remediation commit never
         # has to touch the constants. Small registered targets are instead
         # protected by their per-target R12 cap and anti-vacuity floor.
-        for target in ca.BUDGET_CALIBRATION_TARGETS:
-            measured = ca.MEASURED_CITATIONS[target]
-            cap = ca.cumulative_loss_cap(measured)
-            self.assertGreater(cap, 3 * ca.citation_drop_budget(measured) * 0.9, target)
+        measured = calibration_measurement(ca)
+        cap = ca.cumulative_loss_cap(measured)
+        self.assertGreater(cap, 3 * ca.citation_drop_budget(measured) * 0.9)
 
     def test_the_frozen_measurement_is_the_tree_this_tool_was_written_against(self) -> None:
         """The constants R12 measures from, pinned so that moving them is a diff.
@@ -3823,8 +3893,10 @@ class RealTreePinTest(unittest.TestCase):
         self.assertEqual(
             ca.MEASURED_CITATIONS,
             {
-                "docs/index.md": 1687,
                 "docs/status.md": 13,
+                "docs/coverage/chapters-2-10.md": 941,
+                "docs/coverage/chapter-17.md": 430,
+                "docs/coverage/chapter-18.md": 316,
                 "docs/theorems/correlation.md": 35,
                 "docs/theorems/free-energy.md": 676,
                 "docs/theorems/phase-transition.md": 257,
@@ -3839,8 +3911,10 @@ class RealTreePinTest(unittest.TestCase):
         self.assertEqual(
             {target: ca.cumulative_loss_cap(ca.MEASURED_CITATIONS[target]) for target in ca.TARGETS},
             {
-                "docs/index.md": 253,
                 "docs/status.md": 1,
+                "docs/coverage/chapters-2-10.md": 141,
+                "docs/coverage/chapter-17.md": 64,
+                "docs/coverage/chapter-18.md": 47,
                 "docs/theorems/correlation.md": 5,
                 "docs/theorems/free-energy.md": 101,
                 "docs/theorems/phase-transition.md": 38,
@@ -4006,13 +4080,9 @@ class RealTreePinTest(unittest.TestCase):
         this test can move, and never against the census.
         """
         self.assertEqual(budget_ratio_violations(ca), [])
-        self.assertEqual(
-            {
-                target: ca.citation_drop_budget(ca.MEASURED_CITATIONS[target])
-                for target in ca.BUDGET_CALIBRATION_TARGETS
-            },
-            {"docs/index.md": 84},
-        )
+        self.assertEqual(calibration_measurement(ca), 1_687)
+        self.assertEqual(calibration_budget_application_violations(ca), [])
+        self.assertEqual(calibration_drop_budget(ca), 84)
         self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 47)
 
     def test_the_committed_census_is_inside_the_range_the_budget_is_stated_over(
@@ -4048,8 +4118,10 @@ class RealTreePinTest(unittest.TestCase):
         self.assertEqual(
             ca.TARGETS,
             (
-                "docs/index.md",
                 "docs/status.md",
+                "docs/coverage/chapters-2-10.md",
+                "docs/coverage/chapter-17.md",
+                "docs/coverage/chapter-18.md",
                 "docs/theorems/correlation.md",
                 "docs/theorems/free-energy.md",
                 "docs/theorems/phase-transition.md",
@@ -4058,10 +4130,21 @@ class RealTreePinTest(unittest.TestCase):
             ),
         )
 
-    def test_budget_calibration_targets_are_explicit(self) -> None:
-        """Small targets use their R12 cap and floor, not R11's 25-item sizing."""
-        self.assertEqual(ca.BUDGET_CALIBRATION_TARGETS, ("docs/index.md",))
-        self.assertEqual(set(ca.BUDGET_CALIBRATION_TARGETS) - set(ca.TARGETS), set())
+    def test_budget_calibration_group_is_the_exact_coverage_partition(self) -> None:
+        """The historical sizing applies once to all citation-bearing owners."""
+        self.assertEqual(calibration_group_violations(ca), [])
+        self.assertEqual(
+            ca.COVERAGE_BUDGET_CALIBRATION_GROUP,
+            (
+                "docs/coverage/chapters-2-10.md",
+                "docs/coverage/chapter-17.md",
+                "docs/coverage/chapter-18.md",
+            ),
+        )
+        self.assertEqual(len(set(ca.COVERAGE_BUDGET_CALIBRATION_GROUP)), 3)
+        self.assertEqual(
+            set(ca.COVERAGE_BUDGET_CALIBRATION_GROUP) - set(ca.TARGETS), set()
+        )
 
     def test_every_default_target_has_a_measured_floor(self) -> None:
         """A default target without a floor would fall back to the floor of one."""
@@ -4084,6 +4167,49 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
     be independent, and a mutation that reddens all of them proves nothing about
     the others.
     """
+
+    def test_summing_three_per_page_budgets_instead_of_one_aggregate_budget_fails(
+        self,
+    ) -> None:
+        """The three 25-item floors may not turn one reviewed 84 into 97."""
+        mutant = load_test_mutated((
+            "    return module.citation_drop_budget(" + "calibration_measurement(module))",
+            '''    return sum(
+        module.citation_drop_budget(module.MEASURED_CITATIONS[target])
+        for target in module.COVERAGE_BUDGET_CALIBRATION_GROUP
+    )''',
+        ))
+        self.assertEqual(mutant.calibration_drop_budget(ca), 97)
+        self.assertNotEqual(mutant.calibration_budget_application_violations(ca), [])
+
+    def test_group_omission_duplication_swap_and_empty_replacement_fail(self) -> None:
+        """Aggregate arithmetic cannot choose a convenient subset or replacement."""
+        original = '''COVERAGE_BUDGET_CALIBRATION_GROUP = (
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+    "docs/coverage/chapter-18.md",
+)'''
+        replacements = (
+            '''COVERAGE_BUDGET_CALIBRATION_GROUP = (
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+)''',
+            '''COVERAGE_BUDGET_CALIBRATION_GROUP = (
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+    "docs/coverage/chapter-17.md",
+)''',
+            '''COVERAGE_BUDGET_CALIBRATION_GROUP = (
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+    "docs/theorems/free-energy.md",
+)''',
+            "COVERAGE_BUDGET_CALIBRATION_GROUP = ()",
+        )
+        for replacement in replacements:
+            with self.subTest(replacement=replacement):
+                mutant = load_mutated((original, replacement))
+                self.assertNotEqual(calibration_group_violations(mutant), [])
 
     def test_a_budget_that_stopped_scaling_is_caught(self) -> None:
         """The rule replaced by its floor -- the shape the census pin allowed.

@@ -120,6 +120,18 @@ def load_mutant(*replacements: tuple[str, str]) -> types.ModuleType:
     return module
 
 
+def load_exact_mutant(*replacements: tuple[str, str]) -> types.ModuleType:
+    """Load mutations whose source target occurs exactly once, or fail loudly."""
+    text = source_text()
+    for old, _new in replacements:
+        count = text.count(old)
+        if count != 1:
+            raise AssertionError(
+                f"mutation target occurs {count} times, expected exactly one: {old!r}"
+            )
+    return load_mutant(*replacements)
+
+
 def lean_source(name: str, text: str, module=ratchet):
     """Return a synthetic Lean :class:`Source` for module ``name``.
 
@@ -2076,9 +2088,52 @@ class DriftTest(unittest.TestCase):
         )
         path.write_text(line + path.read_text(encoding="utf-8"), encoding="utf-8")
 
-    def drift(self) -> ratchet.Drift | None:
+    def declare_container_partition(
+        self,
+        kind: str,
+        old: str,
+        token: str,
+        count: int,
+        destinations: tuple[tuple[str, int], ...],
+    ) -> None:
+        """Add one exact one-shot atomic container-partition declaration."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        rendered = " ; ".join(f"{target} {part}" for target, part in destinations)
+        line = (
+            f"{ratchet.CONTAINER_PARTITION_MARKER} {kind} {old} {token} "
+            f"{count} -> {rendered}\n"
+        )
+        path.write_text(line + path.read_text(encoding="utf-8"), encoding="utf-8")
+
+    def arrange_two_way_partition(self) -> None:
+        """Commit two equal old charges, then split them into one per destination."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim}"))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with partitionable pair")
+        self.git("rm", "-q", "IsingModel/One.lean")
+        self.write("IsingModel/OneA.lean", header(claim))
+        self.write("IsingModel/OneB.lean", header(claim))
+        self.git("add", "IsingModel/OneA.lean", "IsingModel/OneB.lean")
+        self.repin()
+
+    def arrange_three_to_two_partition(self) -> None:
+        """Commit three old charges, then retain exactly two destination charges."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim} {claim}"))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with three old charges")
+        self.write("IsingModel/One.lean", header("Provides the old API."))
+        self.write("IsingModel/OneA.lean", header(claim))
+        self.write("IsingModel/OneB.lean", header(claim))
+        self.git("add", "IsingModel/One.lean", "IsingModel/OneA.lean", "IsingModel/OneB.lean")
+        self.repin()
+
+    def drift(self, module=ratchet) -> ratchet.Drift | None:
         """Return the drift verdict of the scratch repository against its own main."""
-        return ratchet.check_drift(root=self.root, base_ref="main")
+        return module.check_drift(root=self.root, base_ref="main")
 
     def test_an_untouched_checkout_has_no_drift(self) -> None:
         """The control arm."""
@@ -2216,6 +2271,295 @@ class DriftTest(unittest.TestCase):
         drift = self.drift()
         self.assertTrue(drift.ok, drift)
         self.assertEqual(drift.added, ())
+
+    def test_an_exact_atomic_container_partition_passes(self) -> None:
+        """The complete old loss may fund two exact rises, once and atomically."""
+        self.arrange_two_way_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "12",
+            2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertEqual(drift.added, ())
+
+    def test_an_unchanged_historical_partition_is_inert_and_preserved(self) -> None:
+        """After merge and re-pin, a partition tombstone grants no permission."""
+        self.declare_container_partition(
+            "NARROW_CHILD", "old.md", "12", 2,
+            (("new-a.md", 1), ("new-b.md", 1)),
+        )
+        marker = next(
+            line for line in (self.root / ratchet.BASELINE_REPO_PATH).read_text().splitlines()
+            if line.startswith(ratchet.CONTAINER_PARTITION_MARKER)
+        )
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "consume partition identity")
+        self.repin()
+        self.assertIn(marker, (self.root / ratchet.BASELINE_REPO_PATH).read_text())
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "formatter preserves partition tombstone")
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertFalse(any("container partition" in note for note in drift.migration))
+
+    def test_replaying_a_partition_identity_after_repin_fails(self) -> None:
+        """The retained tombstone prevents a consumed identity being re-armed."""
+        args = (
+            "NARROW_CHILD", "old.md", "12", 2,
+            (("new-a.md", 1), ("new-b.md", 1)),
+        )
+        self.declare_container_partition(*args)
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "consume partition identity")
+        self.repin()
+        self.declare_container_partition(*args)
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("not a pure new identity" in error for error in drift.baseline_errors))
+
+    def test_formatter_preserves_malformed_partition_directives(self) -> None:
+        """Whitespace near-misses survive re-pin and then fail closed."""
+        variants = (
+            "  # CONTAINER-PARTITION: NARROW_CHILD old.md 12 2 -> a.md 1 ; b.md 1",
+            "#CONTAINER-PARTITION: NARROW_CHILD old.md 12 2 -> a.md 1 ; b.md 1",
+            "# CONTAINER-PARTITION : NARROW_CHILD old.md 12 2 -> a.md 1 ; b.md 1",
+        )
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            ratchet.format_baseline(
+                ratchet.build_report(root=self.root).charged,
+                "\n".join(variants) + "\n",
+            ),
+            encoding="utf-8",
+        )
+        for variant in variants:
+            self.assertIn(variant, path.read_text())
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(all("malformed" in error for error in drift.baseline_errors))
+
+    def test_partition_omitting_a_destination_fails(self) -> None:
+        """An undeclared rise remains B1; one destination is not a partition."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim} {claim}"))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with three partitionable charges")
+        self.git("rm", "-q", "IsingModel/One.lean")
+        for suffix in ("A", "B", "C"):
+            self.write(f"IsingModel/One{suffix}.lean", header(claim))
+            self.git("add", f"IsingModel/One{suffix}.lean")
+        self.repin()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 3,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("do not sum" in error for error in drift.baseline_errors))
+
+    def test_partition_overstating_a_destination_fails(self) -> None:
+        """A declared destination count must equal its actual rise."""
+        self.arrange_two_way_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 2)),
+        )
+        self.assertFalse(self.drift().ok)
+
+    def test_partition_duplicate_destination_fails(self) -> None:
+        """One destination cannot be paid twice inside an atomic declaration."""
+        self.arrange_two_way_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneA.lean", 1)),
+        )
+        self.assertFalse(self.drift().ok)
+
+    def test_a_partition_partial_old_loss_and_undeclared_gain_fail(self) -> None:
+        """The declared source count is the whole loss and no rise is implicit."""
+        self.arrange_two_way_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "12",
+            1,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("old-key loss 2" in error for error in drift.baseline_errors))
+
+    def test_partition_and_transfer_cannot_cross_spend_a_key(self) -> None:
+        """Source and destination identities are globally single-use across ledgers."""
+        self.arrange_two_way_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "12",
+            2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneA.lean", "12"
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("more than once" in error for error in drift.baseline_errors))
+
+    def test_partition_requires_every_endpoint_to_be_edited(self) -> None:
+        """A marker cannot authorize unrelated or historical containers."""
+        self.declare_container_partition(
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "12",
+            2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("not all edited" in error for error in drift.baseline_errors))
+
+    def test_partition_sum_guard_mutation_is_killed_through_drift(self) -> None:
+        """Removing destination-sum conservation admits a partial partition."""
+        self.arrange_three_to_two_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 3,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        self.assertFalse(self.drift().ok)
+        mutant = load_exact_mutant((
+            '''        if partition.count != sum(count for _path, count in partition.destinations):
+            errors.append(f"container partition destination counts do not sum to source: {label}")
+''',
+            "",
+        ))
+        mutant_drift = self.drift(mutant)
+        self.assertTrue(mutant_drift.ok, mutant_drift)
+
+    def test_partition_whole_loss_guard_mutation_is_killed_through_drift(self) -> None:
+        """Removing whole-loss equality admits payment from only part of a source."""
+        self.arrange_three_to_two_partition()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        self.assertFalse(self.drift().ok)
+        mutant = load_exact_mutant((
+            '''        if partition.count != loss:
+            errors.append(
+                f"container partition does not exactly equal old-key loss {loss}: {label}"
+            )
+''',
+            "",
+        ))
+        self.assertTrue(self.drift(mutant).ok)
+
+    def test_partition_destination_uniqueness_mutation_is_killed_through_drift(self) -> None:
+        """Removing both uniqueness layers lets one destination be paid twice."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim}"))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with duplicate-destination source")
+        self.write("IsingModel/One.lean", header("Provides the old API."))
+        self.write("IsingModel/OneA.lean", header(claim))
+        self.git("add", "IsingModel/One.lean", "IsingModel/OneA.lean")
+        self.repin()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneA.lean", 1)),
+        )
+        self.assertFalse(self.drift().ok)
+        mutant = load_exact_mutant(
+            (
+                '''        if len(set(destination_paths)) != len(destination_paths):
+            errors.append(f"container partition repeats a destination: {label}")
+''',
+                "",
+            ),
+            (
+                '''        for new_key in new_keys_for_partition:
+            if new_key in new_keys or new_key in old_keys:
+                errors.append(f"container partition pays one new key more than once: {label}")
+            new_keys.add(new_key)
+''',
+                '''        for new_key in new_keys_for_partition:
+            new_keys.add(new_key)
+''',
+            ),
+        )
+        self.assertTrue(self.drift(mutant).ok)
+
+    def test_partition_edited_endpoint_guard_mutation_is_killed_through_drift(self) -> None:
+        """The pipeline rejects real deltas hidden from its edited-path evidence."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim}"))
+        self.write("IsingModel/OneA.lean", header("Provides A."))
+        self.write("IsingModel/OneB.lean", header("Provides B."))
+        self.git("add", "-A")
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with editable partition endpoints")
+        self.write("IsingModel/One.lean", header("Provides the old API."))
+        self.write("IsingModel/OneA.lean", header(claim))
+        self.write("IsingModel/OneB.lean", header(claim))
+        self.repin()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        self.git(
+            "update-index", "--assume-unchanged",
+            "IsingModel/OneA.lean", "IsingModel/OneB.lean",
+        )
+        self.assertFalse(self.drift().ok)
+        mutant = load_exact_mutant((
+            '''        if partition.old not in edited or any(path not in edited for path in destination_paths):
+            errors.append(f"container partition endpoints are not all edited: {label}")
+''',
+            "",
+        ))
+        mutant_drift = self.drift(mutant)
+        self.assertTrue(mutant_drift.ok, mutant_drift)
+
+    def test_partition_cross_ledger_guard_mutation_is_killed_through_drift(self) -> None:
+        """A transfer and partition cannot both pay the same destination rise."""
+        claim = "Narrow child module for the 12 foo wrappers."
+        self.write("IsingModel/One.lean", header(f"{claim} {claim}"))
+        self.write("IsingModel/Two.lean", header(claim))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with cross-ledger sources")
+        self.write("IsingModel/One.lean", header("Provides One."))
+        self.write("IsingModel/Two.lean", header("Provides Two."))
+        self.write("IsingModel/OneA.lean", header(claim))
+        self.write("IsingModel/OneB.lean", header(claim))
+        self.git("add", "-A")
+        self.repin()
+        self.declare_container_partition(
+            "NARROW_CHILD", "IsingModel/One.lean", "12", 2,
+            (("IsingModel/OneA.lean", 1), ("IsingModel/OneB.lean", 1)),
+        )
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/Two.lean", "IsingModel/OneA.lean", "12"
+        )
+        self.assertFalse(self.drift().ok)
+        mutant = load_exact_mutant((
+            '''        for new_key in new_keys_for_partition:
+            if new_key in new_keys or new_key in old_keys:
+                errors.append(f"container partition pays one new key more than once: {label}")
+            new_keys.add(new_key)
+''',
+            '''        for new_key in new_keys_for_partition:
+            new_keys.add(new_key)
+''',
+        ))
+        self.assertTrue(self.drift(mutant).ok)
 
     def test_a_transfer_declaration_already_in_the_base_is_not_permission(self) -> None:
         """The same metadata on both sides is history, not a reusable allowance."""

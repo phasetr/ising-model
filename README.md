@@ -61,8 +61,7 @@ For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress t
 
 Start with `docs/index.md` for the mathematical documentation. It links the
 canonical status, library-map, bibliography, and topic-oriented theorem
-catalogue pages; the book-ordered source-coverage inventory remains in the
-index itself. Together they
+catalogue pages, plus chapter-owned book-coverage pages. Together they
 record formalized results against their sources in the literature and state the
 regime each one holds in. They are a curated account of the programme, not an
 index of the library: many declarations, in particular internal steps of a

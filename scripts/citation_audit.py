@@ -384,8 +384,10 @@ BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 # unaudited here until it is registered. Registering it is deliberate because
 # the constants it must bring are.
 TARGETS = (
-    "docs/index.md",
     "docs/status.md",
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+    "docs/coverage/chapter-18.md",
     "docs/theorems/correlation.md",
     "docs/theorems/free-energy.md",
     "docs/theorems/phase-transition.md",
@@ -398,9 +400,16 @@ TARGETS = (
 # large-document sizing argument to it would make a one-run allowance larger
 # than the document. It remains fully audited: its per-target R12 cap permits at
 # most one cumulative citation loss, and its anti-vacuity floor is six. This
-# tuple controls calibration claims only; it does not remove a target from any
-# audit or erosion check.
-BUDGET_CALIBRATION_TARGETS = ("docs/index.md",)
+# group controls calibration claims only; it does not remove a target from any
+# audit or erosion check. These three pages exactly partition the former
+# citation-bearing coverage inventory. R11 remains charged per target in
+# production; only the historical sizing argument is conserved by measuring
+# its 5% once over this explicit group rather than three times over its parts.
+COVERAGE_BUDGET_CALIBRATION_GROUP = (
+    "docs/coverage/chapters-2-10.md",
+    "docs/coverage/chapter-17.md",
+    "docs/coverage/chapter-18.md",
+)
 
 # Anti-vacuity floors (R8/R9), and **catastrophic backstops only**: they answer
 # "was this document gutted", not "was it edited". A target accidentally emptied
@@ -423,8 +432,10 @@ BUDGET_CALIBRATION_TARGETS = ("docs/index.md",)
 # citation, so its correct fix always lowers the count. The guard that actually
 # fires per commit is the drop budget below; these two are the cliff behind it.
 MIN_CITATIONS = {
-    "docs/index.md": 844,
     "docs/status.md": 6,
+    "docs/coverage/chapters-2-10.md": 434,
+    "docs/coverage/chapter-17.md": 265,
+    "docs/coverage/chapter-18.md": 208,
     "docs/theorems/correlation.md": 17,
     "docs/theorems/free-energy.md": 338,
     "docs/theorems/phase-transition.md": 128,
@@ -443,15 +454,18 @@ MIN_TRACKED_LEAN = 1800
 # Charged only for a target listed here, so an ad-hoc ``--targets`` run against
 # a document nobody measured is not judged against an invented reference. That
 # the *default* targets are all listed is pinned by the test suite.
-# PR #5043 split the existing frozen measurement between the landing-page
-# inventories and the status page. PR #5044 then split the 998 citations moved
-# out of the landing-page catalogue among its five topic owners and assigned
-# the remainder to the book inventory still in the landing page. The sum stays
-# 2,698: moving citations to a new container must not manufacture a fresh
-# cumulative-loss allowance.
+# PR #5043 split the frozen measurement between status and the landing-page
+# inventories. PR #5044 split the topical catalogue among five owners. PR #5045
+# moved the remaining book inventory into three citation-bearing chapter owners;
+# its zero-citation navigation/terminal pages are deliberately not registered.
+# The sum stays 2,698: a container move must not manufacture fresh cumulative
+# loss allowance. The three coverage measurements retain the former inventory's
+# exact 1,687 total and its reviewed 47-citation remediation-drop calibration.
 MEASURED_CITATIONS = {
-    "docs/index.md": 1687,
     "docs/status.md": 13,
+    "docs/coverage/chapters-2-10.md": 941,
+    "docs/coverage/chapter-17.md": 430,
+    "docs/coverage/chapter-18.md": 316,
     "docs/theorems/correlation.md": 35,
     "docs/theorems/free-energy.md": 676,
     "docs/theorems/phase-transition.md": 257,
@@ -501,10 +515,10 @@ DEFAULT_MIN_CITATIONS = 1
 # end up frozen.
 #
 # Sized against the frozen numbers rather than against today's census, which is
-# whatever the last accepted deletion left behind: at ``MEASURED_CITATIONS`` the
-# budget is 84 for the calibrated landing page (1,687), and at the lowest census R12 can ever
-# admit -- ``measured - cap``, i.e. 2,294 -- it is still 114. Both ends clear
-# ``MEASURED_REMEDIATION_DROP`` and are
+# whatever the last accepted deletion left behind: the explicit coverage group
+# has the former inventory's frozen 1,687 citations, for a budget of 84, and its
+# aggregate low end admitted by a 15% cumulative cap is 1,434, for a budget of
+# 71. Both ends clear ``MEASURED_REMEDIATION_DROP`` and are
 # far below a gutting. The test suite states that as a claim over the whole
 # range, so an ordinary remediation commit does not have to restate it.
 CITATION_DROP_BUDGET_FRACTION = 0.05
@@ -524,9 +538,9 @@ MIN_CITATION_DROP_BUDGET = 25
 # budget above, which has no other guard: a budget that stops clearing this
 # turns the work the tool exists to support into a hard failure, and a guard
 # that blocks legitimate work is a guard somebody deletes. Raising it honestly
-# is fail-closed in the suite: at or above the low-end budget of 114 the headroom
+# is fail-closed in the suite: at or above the low-end budget of 71 the headroom
 # claim reddens, which is the point at which the sizing gets restated in a diff.
-# 47 leaves 67 of those 114, so a re-measurement much larger than this one is the
+# 47 leaves 24 of those 71, so a re-measurement much larger than this one is the
 # one that has to restate the sizing rather than edit this number again.
 MEASURED_REMEDIATION_DROP = 47
 

@@ -61,7 +61,10 @@
 # checker reconciles it count-for-count and key-for-key against the actual pin
 # delta and requires both paths to be edited. The line changes no discovery,
 # grammar, key or B3 result and is not standing permission after this commit.
-#
+# An atomic fan-out uses `# CONTAINER-PARTITION: CLASS old/path TOKEN COUNT ->
+# new/path COUNT ; other/path COUNT`. It is the only fan-out form: all declared
+# destination rises must sum to the complete old-key loss, and its one-shot
+# lifecycle and cross-ledger key ownership are checked with transfers.
 # CONTAINER-TRANSFER: PREDICATE_COUNT docs/index.md => docs/theorems/free-energy.md 3:declarations x1
 # CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/theorems/phase-transition.md ->Concrete/LatticeGraphCorrelation/CorrelationSymmetrySusceptibility.lean x3
 #
@@ -90,83 +93,160 @@
 #
 # columns: class<TAB>target<TAB>token<TAB>count
 
-NARROW_CHILD	docs/index.md	-	25
-PAREN_COUNT	docs/index.md	12:declarations	2
-PAREN_COUNT	docs/index.md	13:declarations	1
-PAREN_COUNT	docs/index.md	14:declarations	1
-PAREN_COUNT	docs/index.md	1:declaration	3
-PAREN_COUNT	docs/index.md	2:declarations	7
-PAREN_COUNT	docs/index.md	2:lemmas	2
-PAREN_COUNT	docs/index.md	3:declarations	5
-PAREN_COUNT	docs/index.md	3:lemmas	2
-PAREN_COUNT	docs/index.md	4:declarations	3
-PAREN_COUNT	docs/index.md	5:declarations	7
-PAREN_COUNT	docs/index.md	5:lemmas	1
-PAREN_COUNT	docs/index.md	6:declarations	4
-PAREN_COUNT	docs/index.md	7:declarations	2
-PAREN_COUNT	docs/index.md	8:declarations	2
-PAREN_COUNT	docs/index.md	8:lemmas	1
-PAREN_COUNT	docs/index.md	9:wrappers	1
-POSSESSIVE_COUNT	docs/index.md	2:lemmas	1
-POSSESSIVE_COUNT	docs/index.md	4:lemmas	1
+# CONTAINER-PARTITION: NARROW_CHILD docs/index.md - 25 -> docs/coverage/chapters-2-10.md 21 ; docs/coverage/chapter-17.md 4
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 12:declarations x2
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 13:declarations x1
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 14:declarations x1
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 1:declaration x3
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 2:declarations x7
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 2:lemmas x2
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 3:declarations x5
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 3:lemmas x2
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 4:declarations x3
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 5:declarations x7
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 5:lemmas x1
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 6:declarations x4
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 7:declarations x2
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 8:declarations x2
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapters-2-10.md 8:lemmas x1
+# CONTAINER-TRANSFER: PAREN_COUNT docs/index.md => docs/coverage/chapter-18.md 9:wrappers x1
+# CONTAINER-TRANSFER: POSSESSIVE_COUNT docs/index.md => docs/coverage/chapters-2-10.md 2:lemmas x1
+# CONTAINER-TRANSFER: POSSESSIVE_COUNT docs/index.md => docs/coverage/chapters-2-10.md 4:lemmas x1
+# CONTAINER-TRANSFER: PREDICATE_COUNT docs/index.md => docs/coverage/chapters-2-10.md 3:declarations x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->? x3
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/HighTemperature.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/HighTemperatureBounds.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-17.md ->AmbientLattice/SpecialCases/Magnetization.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerEdgeCases.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerEpsilonPositivity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerExpansionEdgeCases.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerRecurrenceHasSum.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerStrictPositivity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerTrivialCases.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerVdIff.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerVdRegularity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerVdRegularityExpansionTerm.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymer.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerTanh.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyAnalyticity.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyBounds.lean x4
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyEpsilonSharpening.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyHighTemperatureBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhSharpening.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/CorrelationExhaustionLimitsCubicMonotone.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumeBasics.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationInequalities.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationMonotonicity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumeEnergyBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumeExtensions.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumePartition.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FiniteVolumePartitionBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean x3
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md ->Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/InfiniteVolumeCorrelationInequalities.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/LambdaCorrelationMonotonicity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-17.md ->Concrete/LatticeGraphCorrelation/LatticeMassHighTempLipschitz.lean x4
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-17.md ->Concrete/LatticeGraphCorrelation/LatticeMassHighTempZeroBoundary.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-17.md ->Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionExhaustionBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyBounds.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyMonotonicity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFreeEnergySuperadditivity.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedFormsCubicLambda.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/PartitionFunctionSymmetry.lean x2
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/SusceptibilityLambda.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md ->Concrete/LatticeGraphCorrelation/TranslationVadd.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md 3->Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md 3->Concrete/LatticeGraphCorrelation/TwoPointFunctionTrivialSlices.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md 3->Concrete/LatticeGraphCorrelation/TwoPointTruncatedSwaps.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapter-18.md 4->Concrete/LatticeGraphCorrelation/HighTemperatureFreeEnergyCorrection.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md 5->Concrete/LatticeGraphCorrelation/TwoPointMagnetizationMonotone.lean x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/coverage/chapters-2-10.md 5->Concrete/LatticeGraphCorrelation/TwoPointTruncatedTrivialSlices.lean x1
+NARROW_CHILD	docs/coverage/chapter-17.md	-	4
+NARROW_CHILD	docs/coverage/chapters-2-10.md	-	21
+PAREN_COUNT	docs/coverage/chapter-18.md	9:wrappers	1
+PAREN_COUNT	docs/coverage/chapters-2-10.md	12:declarations	2
+PAREN_COUNT	docs/coverage/chapters-2-10.md	13:declarations	1
+PAREN_COUNT	docs/coverage/chapters-2-10.md	14:declarations	1
+PAREN_COUNT	docs/coverage/chapters-2-10.md	1:declaration	3
+PAREN_COUNT	docs/coverage/chapters-2-10.md	2:declarations	7
+PAREN_COUNT	docs/coverage/chapters-2-10.md	2:lemmas	2
+PAREN_COUNT	docs/coverage/chapters-2-10.md	3:declarations	5
+PAREN_COUNT	docs/coverage/chapters-2-10.md	3:lemmas	2
+PAREN_COUNT	docs/coverage/chapters-2-10.md	4:declarations	3
+PAREN_COUNT	docs/coverage/chapters-2-10.md	5:declarations	7
+PAREN_COUNT	docs/coverage/chapters-2-10.md	5:lemmas	1
+PAREN_COUNT	docs/coverage/chapters-2-10.md	6:declarations	4
+PAREN_COUNT	docs/coverage/chapters-2-10.md	7:declarations	2
+PAREN_COUNT	docs/coverage/chapters-2-10.md	8:declarations	2
+PAREN_COUNT	docs/coverage/chapters-2-10.md	8:lemmas	1
+POSSESSIVE_COUNT	docs/coverage/chapters-2-10.md	2:lemmas	1
+POSSESSIVE_COUNT	docs/coverage/chapters-2-10.md	4:lemmas	1
 PREDICATE_COUNT	docs/architecture-import-layers.md	3:file	1
-PREDICATE_COUNT	docs/index.md	3:declarations	1
+PREDICATE_COUNT	docs/coverage/chapters-2-10.md	3:declarations	1
 PREDICATE_COUNT	docs/theorems/free-energy.md	3:declarations	1
 RELOCATION	docs/architecture-import-layers.md	->Inequalities/FKGInhomogeneous.lean	1
-RELOCATION	docs/index.md	->?	3
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperature.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperatureBounds.lean	2
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/Magnetization.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEdgeCases.lean	2
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerEpsilonPositivity.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerExpansionEdgeCases.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerRecurrenceHasSum.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerStrictPositivity.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerTrivialCases.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerVdIff.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerVdRegularity.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerVdRegularityExpansionTerm.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymer.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerTanh.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyAnalyticity.lean	2
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyBounds.lean	4
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyEpsilonSharpening.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyHighTemperatureBounds.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhBounds.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhSharpening.lean	1
-RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/CorrelationExhaustionLimitsCubicMonotone.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean	2
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeBasics.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationInequalities.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationMonotonicity.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeEnergyBounds.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeExtensions.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumePartition.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumePartitionBounds.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean	3
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/InfiniteVolumeCorrelationInequalities.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/LambdaCorrelationMonotonicity.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/LatticeMassHighTempLipschitz.lean	4
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/LatticeMassHighTempZeroBoundary.lean	2
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionExhaustionBounds.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyBounds.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyMonotonicity.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergySuperadditivity.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedFormsCubicLambda.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionSymmetry.lean	2
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/SusceptibilityLambda.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/TranslationVadd.lean	1
-RELOCATION	docs/index.md	3->Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean	1
-RELOCATION	docs/index.md	3->Concrete/LatticeGraphCorrelation/TwoPointFunctionTrivialSlices.lean	1
-RELOCATION	docs/index.md	3->Concrete/LatticeGraphCorrelation/TwoPointTruncatedSwaps.lean	1
-RELOCATION	docs/index.md	4->Concrete/LatticeGraphCorrelation/HighTemperatureFreeEnergyCorrection.lean	1
-RELOCATION	docs/index.md	5->Concrete/LatticeGraphCorrelation/TwoPointMagnetizationMonotone.lean	1
-RELOCATION	docs/index.md	5->Concrete/LatticeGraphCorrelation/TwoPointTruncatedTrivialSlices.lean	1
+RELOCATION	docs/coverage/chapter-17.md	->AmbientLattice/SpecialCases/Magnetization.lean	1
+RELOCATION	docs/coverage/chapter-17.md	->Concrete/LatticeGraphCorrelation/LatticeMassHighTempLipschitz.lean	4
+RELOCATION	docs/coverage/chapter-17.md	->Concrete/LatticeGraphCorrelation/LatticeMassHighTempZeroBoundary.lean	2
+RELOCATION	docs/coverage/chapter-17.md	->Concrete/LatticeGraphCorrelation/LatticeMassPseudoMassTransfer.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->?	3
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/HighTemperature.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/HighTemperatureBounds.lean	2
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerEdgeCases.lean	2
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerEpsilonInfrastructure.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerEpsilonPositivity.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerExpansionEdgeCases.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerRecurrenceHasSum.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerStrictPositivity.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerTrivialCases.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerVdIff.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerVdRegularity.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerVdRegularityExpansionTerm.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymer.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/MayerVdRegularityVdPolymerTanh.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyAnalyticity.lean	2
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyBounds.lean	4
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyEpsilonSharpening.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyHighTemperatureBounds.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhBounds.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhSharpening.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean	1
+RELOCATION	docs/coverage/chapter-18.md	->Concrete/LatticeGraphCorrelation/HighTemperatureBounds.lean	1
+RELOCATION	docs/coverage/chapter-18.md	4->Concrete/LatticeGraphCorrelation/HighTemperatureFreeEnergyCorrection.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/CorrelationExhaustionLimitsCubicMonotone.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean	2
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeBasics.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationInequalities.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeCorrelationMonotonicity.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeEnergyBounds.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeExtensions.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumePartition.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FiniteVolumePartitionBounds.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/FreeEnergySpecialCases.lean	3
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/InfiniteVolumeCorrelationInequalities.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/LambdaCorrelationMonotonicity.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionExhaustionBounds.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyBounds.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergyMonotonicity.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFreeEnergySuperadditivity.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedForms.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionClosedFormsCubicLambda.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/PartitionFunctionSymmetry.lean	2
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/SusceptibilityLambda.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	->Concrete/LatticeGraphCorrelation/TranslationVadd.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	3->Concrete/LatticeGraphCorrelation/TwoPointCorrelationInfiniteMonotoneCubicEx.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	3->Concrete/LatticeGraphCorrelation/TwoPointFunctionTrivialSlices.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	3->Concrete/LatticeGraphCorrelation/TwoPointTruncatedSwaps.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	5->Concrete/LatticeGraphCorrelation/TwoPointMagnetizationMonotone.lean	1
+RELOCATION	docs/coverage/chapters-2-10.md	5->Concrete/LatticeGraphCorrelation/TwoPointTruncatedTrivialSlices.lean	1
 RELOCATION	docs/theorems/phase-transition.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetrySusceptibility.lean	3
