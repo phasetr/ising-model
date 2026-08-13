@@ -2202,9 +2202,31 @@ class DriftTest(unittest.TestCase):
         self.declare_container_transfer(*args)
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
-        self.assertEqual(
-            [key for key, _now, _was in drift.added],
-            [("NARROW_CHILD", "IsingModel/OneCore.lean", "12")],
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors),
+            drift,
+        )
+
+    def test_relocating_an_existing_marker_inside_the_baseline_is_not_permission(self) -> None:
+        """Delete-plus-add patch presentation cannot turn old metadata into a grant."""
+        args = (
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "IsingModel/OneCore.lean",
+            "12",
+        )
+        self.declare_container_transfer(*args)
+        marker = (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8").splitlines()[0]
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "record marker at top")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(path.read_text(encoding="utf-8") + marker + "\n", encoding="utf-8")
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors), drift
         )
 
     def test_a_container_marker_without_a_declaration_fails(self) -> None:
@@ -2240,7 +2262,7 @@ class DriftTest(unittest.TestCase):
             )
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
-        self.assertTrue(any("old key more than once" in error for error in drift.baseline_errors), drift)
+        self.assertTrue(any("head=2" in error for error in drift.baseline_errors), drift)
 
     def test_one_old_key_cannot_fan_out_to_many_new_paths(self) -> None:
         """A one-to-many copy grows the corpus and cannot spend one loss twice."""
@@ -2257,6 +2279,44 @@ class DriftTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertTrue(any("old key more than once" in error for error in drift.baseline_errors), drift)
         self.assertTrue(any("total charged population" in error for error in drift.baseline_errors), drift)
+
+    def test_a_partial_old_key_loss_cannot_pay_a_smaller_transfer(self) -> None:
+        """The declaration count equals the whole old loss, not merely part of it."""
+        repeated = header(
+            "Narrow child module for the 12 foo wrappers. "
+            "Narrow child module for the 12 foo wrappers."
+        )
+        self.write("IsingModel/One.lean", repeated)
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with two equal old charges")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.write("IsingModel/OneCore.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.repin()
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("old-key loss 2" in error for error in drift.baseline_errors), drift)
+
+    def test_many_old_keys_cannot_collapse_into_one_new_key(self) -> None:
+        """Two losses cannot both claim the same one-count destination rise."""
+        self.write("IsingModel/Two.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with two old containers")
+        self.git("rm", "-q", "IsingModel/One.lean", "IsingModel/Two.lean")
+        self.write("IsingModel/Combined.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.git("add", "IsingModel/Combined.lean")
+        self.repin()
+        for old in ("IsingModel/One.lean", "IsingModel/Two.lean"):
+            self.declare_container_transfer(
+                "NARROW_CHILD", old, "IsingModel/Combined.lean", "12"
+            )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("new key more than once" in error for error in drift.baseline_errors), drift)
 
     def test_unedited_transfer_endpoints_fail(self) -> None:
         """A syntactically exact declaration cannot authorize an unrelated diff."""

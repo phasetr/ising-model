@@ -2369,27 +2369,54 @@ class ContainerTransferBudget(NamedTuple):
 def container_transfer_declarations(
     root: Path, commit: str
 ) -> tuple[tuple[ContainerTransfer, ...], tuple[str, ...]]:
-    """Parse transfer declarations added by this diff, rejecting malformed markers.
+    """Parse declarations that are new identities in the head, exactly once.
 
-    Reading only added lines makes the declaration one-shot: after merge it is
-    history in the base pin, not standing permission for another path move.
+    A raw ``+`` line is not sufficient: moving an existing comment within the
+    baseline produces a deletion and addition in the patch while leaving the
+    same permission in both trees. For each exact declaration line, the base
+    must contain zero copies, the head exactly one, and the diff exactly one
+    added copy. This makes permission a true ``0 -> 1`` identity transition;
+    relocation, reuse, duplication, and ambiguous patch presentation fail.
     """
     code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
     if code != 0:
         raise UnsoundRun(
             f"`git diff {commit[:12]}` failed, so container-transfer declarations are unknown"
         )
+    code, base_text = _git(root, "show", f"{commit}:{BASELINE_REPO_PATH}")
+    if code != 0:
+        raise UnsoundRun(
+            f"{commit[:12]} records {BASELINE_REPO_PATH} but its transfer declarations "
+            "could not be read"
+        )
+    try:
+        head_text = (root / BASELINE_REPO_PATH).read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as failure:
+        raise UnsoundRun(f"the head baseline's transfer declarations could not be read: {failure}")
+
+    added = Counter(
+        line[1:]
+        for line in out.splitlines()
+        if line.startswith("+") and not line.startswith("+++")
+    )
+    base_lines = Counter(base_text.splitlines())
+    head_lines = Counter(head_text.splitlines())
     transfers: list[ContainerTransfer] = []
     errors: list[str] = []
-    for line in out.splitlines():
-        if not line.startswith("+") or line.startswith("+++"):
-            continue
-        raw = line[1:]
+    for raw, head_count in sorted(head_lines.items()):
         if not raw.startswith(CONTAINER_TRANSFER_MARKER):
             continue
         match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
         if match is None:
             errors.append(f"malformed added container-transfer declaration: {raw}")
+            continue
+        base_count = base_lines.get(raw, 0)
+        added_count = added.get(raw, 0)
+        if base_count != 0 or head_count != 1 or added_count != 1:
+            errors.append(
+                "container-transfer declaration is not a pure new identity "
+                f"(base={base_count}, head={head_count}, added={added_count}): {raw}"
+            )
             continue
         transfers.append(
             ContainerTransfer(
@@ -2443,9 +2470,9 @@ def container_transfer_budget(
         new_keys.add(new_key)
         loss = max(0, before.get(old_key, 0) - after.get(old_key, 0))
         gain = max(0, after.get(new_key, 0) - before.get(new_key, 0))
-        if transfer.count > loss:
+        if transfer.count != loss:
             errors.append(
-                f"container transfer exceeds old-key loss {loss}: {label}"
+                f"container transfer does not exactly equal old-key loss {loss}: {label}"
             )
         if transfer.count != gain:
             errors.append(
