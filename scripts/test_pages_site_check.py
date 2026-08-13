@@ -3,6 +3,8 @@
 
 from __future__ import annotations
 
+import errno
+import hashlib
 import importlib.util
 import http.server
 import json
@@ -202,6 +204,308 @@ class SiteTest(unittest.TestCase):
         subprocess.run(["git", "rm", "--cached", "-q", "--", "docs/index.md", "docs/nested/status.md"], cwd=self.root, check=True)
         self.assertIn("EMPTY_SOURCE", [item.code for item in checker.check_source(self.source)])
 
+    def test_stage_recreates_read_only_rendered_bytes_as_writable(self) -> None:
+        rendered = self.root / "_site-container"
+        staged = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        for path in rendered.rglob("*"):
+            path.chmod(0o555 if path.is_dir() else 0o444)
+        rendered.chmod(0o555)
+        def snapshot(root: Path):
+            return {
+                path.relative_to(root).as_posix(): (
+                    "directory" if path.is_dir() else "file",
+                    path.stat().st_mode & 0o777,
+                    None if path.is_dir() else hashlib.sha256(path.read_bytes()).hexdigest(),
+                )
+                for path in sorted(root.rglob("*"))
+            }
+
+        before = snapshot(rendered)
+        self.assertEqual(checker.stage_site(rendered, staged), [])
+        after_stage = snapshot(staged)
+        self.assertEqual(
+            {path: (kind, digest) for path, (kind, _mode, digest) in after_stage.items()},
+            {path: (kind, digest) for path, (kind, _mode, digest) in before.items()},
+        )
+        self.assertEqual(snapshot(rendered), before)
+        for path in staged.rglob("*"):
+            self.assertEqual(path.stat().st_uid, os.getuid())
+            self.assertTrue(path.stat().st_mode & 0o200)
+        with (staged / "index.html").open("r+b"):
+            pass
+        self.assertEqual(checker.prepare_site(staged, self.source, "/ising-model", self.revision, self.generated), [])
+        self.assertEqual(checker.check_site(staged, self.source, "/ising-model", self.revision, self.generated), [])
+        self.assertEqual(snapshot(rendered), before)
+
+    def test_stage_rejects_overlap_existing_empty_and_nonregular_inputs(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(rendered, rendered)])
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(rendered, rendered / "child")])
+        parent = self.root / "publication"
+        parent.mkdir()
+        nested_input = parent / "input"
+        shutil.copytree(rendered, nested_input)
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(nested_input, parent)])
+        destination = self.root / "existing"
+        destination.write_text("sentinel", encoding="utf-8")
+        self.assertIn("STAGE_DESTINATION", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertEqual(destination.read_text(encoding="utf-8"), "sentinel")
+        destination.unlink()
+        destination.symlink_to(self.root / "missing")
+        self.assertIn("STAGE_DESTINATION", [item.code for item in checker.stage_site(rendered, destination)])
+        destination.unlink()
+        empty = self.root / "empty"
+        empty.mkdir()
+        self.assertIn("EMPTY_SITE", [item.code for item in checker.stage_site(empty, destination)])
+        (empty / "other.html").write_text("other", encoding="utf-8")
+        self.assertIn("STAGE_INDEX", [item.code for item in checker.stage_site(empty, destination)])
+        input_link = self.root / "input-link"
+        input_link.symlink_to(rendered, target_is_directory=True)
+        self.assertIn("STAGE_INPUT", [item.code for item in checker.stage_site(input_link, destination)])
+
+    def test_stage_rejects_links_fifo_stale_temp_and_preserves_external_target(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        external = self.root / "external"
+        external.write_text("untouched", encoding="utf-8")
+        (rendered / "outside-link").symlink_to(external)
+        (rendered / "dangling-link").symlink_to(self.root / "missing")
+        fifo = rendered / "fifo"
+        os.mkfifo(fifo)
+        destination = self.root / "_site-staged"
+        findings = checker.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["NONREGULAR", "NONREGULAR", "NONREGULAR"])
+        self.assertFalse(destination.exists())
+        self.assertEqual(external.read_text(encoding="utf-8"), "untouched")
+        fifo.unlink()
+        (rendered / "outside-link").unlink()
+        (rendered / "dangling-link").unlink()
+        stale = self.root / "._site-staged.stage-stale"
+        stale.mkdir()
+        self.assertIn("STAGE_TEMP", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertTrue(stale.is_dir())
+
+    def test_stage_copy_inventory_rename_errors_are_stable_and_atomic(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        destination = self.root / "_site-staged"
+        with mock.patch.object(checker, "_copy_stage_file", side_effect=OSError("copy refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_COPY", "copy refused")])
+        self.assertFalse(destination.exists())
+        self.assertEqual(list(self.root.glob("._site-staged.stage-*")), [])
+        real_inventory = checker._stage_inventory
+        calls = 0
+
+        def corrupt_inventory(root: Path, logical: str):
+            nonlocal calls
+            calls += 1
+            inventory, findings = real_inventory(root, logical)
+            if calls == 3:
+                inventory = checker.StageInventory(inventory.directories, inventory.files[:-1])
+            return inventory, findings
+
+        with mock.patch.object(checker, "_stage_inventory", side_effect=corrupt_inventory):
+            self.assertIn("STAGE_INVENTORY", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertFalse(destination.exists())
+        with mock.patch.object(checker, "_rename_stage_noreplace", side_effect=OSError("rename refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_RENAME", "rename refused")])
+        self.assertFalse(destination.exists())
+
+    def test_stage_stat_read_create_write_and_writability_errors_are_stable(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+
+        real_lstat = checker.Path.lstat
+        root_stats = 0
+
+        def fail_second_root_stat(path: Path):
+            nonlocal root_stats
+            if path == rendered:
+                root_stats += 1
+                if root_stats == 2:
+                    raise OSError("stat refused")
+            return real_lstat(path)
+
+        with mock.patch.object(checker.Path, "lstat", fail_second_root_stat):
+            findings = checker.stage_site(rendered, destination)
+        self.assertIn(("STAGE_STAT", "stat refused"), [(item.code, item.detail) for item in findings])
+        self.assertFalse(destination.exists())
+
+        with mock.patch.object(checker, "_read_stage_file", side_effect=OSError("read refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertIn(("STAGE_READ", "read refused"), [(item.code, item.detail) for item in findings])
+        self.assertFalse(destination.exists())
+
+        real_open = checker.Path.open
+
+        def fail_create(path: Path, mode: str = "r", *args, **kwargs):
+            if mode == "xb":
+                raise OSError("create refused")
+            return real_open(path, mode, *args, **kwargs)
+
+        with mock.patch.object(checker.Path, "open", fail_create):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_COPY", "create refused")])
+        self.assertFalse(destination.exists())
+
+        real_write = checker._copy_stage_file
+
+        def fail_write(source: Path, target: Path, expected: tuple[int, str]) -> None:
+            if source.name == "asset.png":
+                raise OSError("write refused")
+            real_write(source, target, expected)
+
+        with mock.patch.object(checker, "_copy_stage_file", side_effect=fail_write):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_COPY", "write refused")])
+        self.assertFalse(destination.exists())
+
+        def fail_writable(path: Path, mode: str = "r", *args, **kwargs):
+            if mode == "r+b":
+                raise OSError("writable refused")
+            return real_open(path, mode, *args, **kwargs)
+
+        with mock.patch.object(checker.Path, "open", fail_writable):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_WRITABLE", "writable refused")])
+        self.assertFalse(destination.exists())
+        with mock.patch.object(checker.tempfile, "mkdtemp", side_effect=OSError("stage root refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_COPY", "stage root refused")])
+        self.assertFalse(destination.exists())
+        self.assertEqual(list(self.root.glob("._site-staged.stage-*")), [])
+
+    def test_stage_commit_never_replaces_destination_created_during_staging(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        real_publish = checker._rename_stage_noreplace
+        for name, nonempty in (("empty", False), ("nonempty", True)):
+            with self.subTest(name=name):
+                destination = self.root / f"_site-{name}"
+
+                def race(source: Path, target: Path) -> None:
+                    target.mkdir()
+                    if nonempty:
+                        (target / "competitor").write_text("preserved", encoding="utf-8")
+                    real_publish(source, target)
+
+                with mock.patch.object(checker, "_rename_stage_noreplace", side_effect=race):
+                    findings = checker.stage_site(rendered, destination)
+                self.assertEqual(
+                    [(item.code, item.detail) for item in findings],
+                    [("STAGE_DESTINATION", "destination appeared while staging")],
+                )
+                if nonempty:
+                    self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+                self.assertFalse((destination / "index.html").exists())
+                self.assertEqual(list(self.root.glob(f".{destination.name}.stage-*")), [])
+                shutil.rmtree(destination)
+        destination = self.root / "_site-unsupported"
+        with mock.patch.object(checker.sys, "platform", "unsupported"):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+        self.assertIn("unavailable", findings[0].detail)
+        self.assertFalse(destination.exists())
+
+    def test_native_noreplace_dispatch_symbols_errno_and_flags_are_exact(self) -> None:
+        source = self.root / "temporary"
+        destination = self.root / "final"
+        source.mkdir()
+        cases = (
+            ("linux", "renameat2", (-100, os.fsencode(source), -100, os.fsencode(destination), 1)),
+            ("darwin", "renamex_np", (os.fsencode(source), os.fsencode(destination), 0x00000004)),
+        )
+        for platform, symbol, expected in cases:
+            with self.subTest(platform=platform):
+                native = mock.Mock(return_value=0)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(checker.sys, "platform", platform),
+                    mock.patch.object(checker.ctypes, "CDLL", return_value=library),
+                    mock.patch.object(checker.ctypes, "set_errno") as set_errno,
+                ):
+                    checker._rename_stage_noreplace(source, destination)
+                set_errno.assert_called_once_with(0)
+                native.assert_called_once_with(*expected)
+                self.assertIs(native.restype, checker.ctypes.c_int)
+                self.assertTrue(native.argtypes)
+
+    def test_native_noreplace_missing_symbol_and_unsupported_errno_fail_closed(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        with (
+            mock.patch.object(checker.sys, "platform", "linux"),
+            mock.patch.object(checker.ctypes, "CDLL", return_value=object()),
+        ):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+        self.assertIn("unavailable", findings[0].detail)
+        self.assertFalse(destination.exists())
+        for native_errno in (errno.ENOSYS, getattr(errno, "EOPNOTSUPP", errno.ENOTSUP)):
+            with self.subTest(native_errno=native_errno):
+                native = mock.Mock(return_value=-1)
+                library = types.SimpleNamespace(renameat2=native)
+                with (
+                    mock.patch.object(checker.sys, "platform", "linux"),
+                    mock.patch.object(checker.ctypes, "CDLL", return_value=library),
+                    mock.patch.object(checker.ctypes, "get_errno", return_value=native_errno),
+                ):
+                    findings = checker.stage_site(rendered, destination)
+                self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+                self.assertFalse(destination.exists())
+
+    def test_stage_cleanup_failure_keeps_original_finding_and_competitor(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        real_publish = checker._rename_stage_noreplace
+
+        def race(source: Path, target: Path) -> None:
+            target.mkdir()
+            (target / "competitor").write_text("preserved", encoding="utf-8")
+            real_publish(source, target)
+
+        with (
+            mock.patch.object(checker, "_rename_stage_noreplace", side_effect=race),
+            mock.patch.object(checker.shutil, "rmtree", side_effect=OSError("cleanup refused")),
+        ):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual(
+            [(item.code, item.detail) for item in findings],
+            [
+                ("STAGE_CLEANUP", "cleanup refused"),
+                ("STAGE_DESTINATION", "destination appeared while staging"),
+            ],
+        )
+        self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+        self.assertFalse((destination / "index.html").exists())
+        temporary = list(self.root.glob("._site-staged.stage-*"))
+        self.assertEqual(len(temporary), 1)
+        shutil.rmtree(temporary[0])
+
+    def test_stage_cli_success_and_failure(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        passed = subprocess.run(
+            [sys.executable, str(CHECKER_PATH), "stage", "--input-site", str(rendered), "--site", str(destination)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
+        self.assertIn("handwritten Pages stage: PASS", passed.stdout)
+        failed = subprocess.run(
+            [sys.executable, str(CHECKER_PATH), "stage", "--input-site", str(rendered), "--site", str(destination)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(failed.returncode, 1)
+        self.assertIn("STAGE_DESTINATION", failed.stdout)
+
     def test_fetch_retries_and_rejects_redirect(self) -> None:
         response = mock.MagicMock()
         response.__enter__.return_value = response
@@ -367,6 +671,11 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
         "caller kind": (release, "invocation_kind: release", 1),
         "caller deploy": (release, "deploy: true", 1),
         "source preflight": (pages, "python3 scripts/pages_site_check.py source --source ./docs", 1),
+        "container destination": (pages, "destination: ./_site-container", 1),
+        "ownership stage": (pages, "python3 scripts/pages_site_check.py stage", 1),
+        "stage source": (pages, "--input-site ./_site-container --site ./_site", 1),
+        "prepare final": (pages, "--site ./_site --source ./docs --baseurl /ising-model", 1),
+        "upload final": (pages, "path: ./_site", 1),
     }
     for label, (text, needle, expected) in required_counts.items():
         if text.count(needle) != expected:
@@ -380,6 +689,13 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
     source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
     if source_gate in pages and pages.index(source_gate) > pages.find("actions/jekyll-build-pages@"):
         findings.append("late source preflight")
+    jekyll = "actions/jekyll-build-pages@"
+    stage = "python3 scripts/pages_site_check.py stage"
+    prepare = "python3 scripts/pages_site_check.py prepare"
+    if all(needle in pages for needle in (jekyll, stage, prepare)) and not (
+        pages.index(jekyll) < pages.index(stage) < pages.index(prepare)
+    ):
+        findings.append("ownership stage order")
     if "needs: [prepare-release-source, lean-release-tag]" not in release or "refs/tags/$tag" not in release:
         findings.append("release resolver")
     if "      - 'master'" in release:
@@ -509,6 +825,325 @@ class MutationTest(SiteTest):
             with self.assertRaisesRegex(OSError, "unreadable source"):
                 module.check_source(self.source)
 
+    def test_stage_security_and_conservation_guards_are_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        destination = self.root / "_site-staged"
+        cases = (
+            (
+                "    if _stage_paths_overlap(source, destination):\n        return [Finding(str(site), \"STAGE_OVERLAP\", \"input and destination paths overlap\")]",
+                "    if False:\n        return [Finding(str(site), \"STAGE_OVERLAP\", \"input and destination paths overlap\")]",
+                lambda module: self.assertNotIn("STAGE_OVERLAP", [item.code for item in module.stage_site(rendered, rendered / "child")]),
+            ),
+            (
+                "                else:\n                    findings.append(Finding(relative, \"NONREGULAR\", \"rendered input contains a non-regular entry\"))",
+                "                else:\n                    pass",
+                lambda module: self._assert_stage_mutant_accepts_symlink(module, rendered, destination),
+            ),
+            (
+                "        if staged != frozen:\n            findings.append(Finding(str(site), \"STAGE_INVENTORY\", \"staged paths or byte digests differ from rendered input\"))",
+                "        if False:\n            findings.append(Finding(str(site), \"STAGE_INVENTORY\", \"staged paths or byte digests differ from rendered input\"))",
+                lambda module: self._assert_stage_mutant_misses_inventory(module, rendered, destination),
+            ),
+            (
+                '        _rename_stage_noreplace(temporary, destination)\n',
+                '        shutil.copytree(temporary, destination)\n',
+                lambda module: self._assert_stage_mutant_uses_nonatomic_publish(module, rendered, destination),
+            ),
+        )
+        for old, new, assertion in cases:
+            with self.subTest(old=old):
+                if os.path.lexists(destination):
+                    if destination.is_dir() and not destination.is_symlink():
+                        shutil.rmtree(destination)
+                    else:
+                        destination.unlink()
+                with mutant(old, new) as module:
+                    assertion(module)
+
+    def test_stage_copy_descriptor_writability_and_publish_guards_are_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        cases = (
+            (
+                '    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)\n    descriptor = os.open(source, flags)',
+                '    flags = os.O_RDONLY\n    descriptor = os.open(source, flags)',
+                self._assert_stage_nofollow_guard,
+            ),
+            (
+                '            or (actual.st_dev, actual.st_ino) != (metadata.st_dev, metadata.st_ino)\n',
+                '            or False\n',
+                self._assert_stage_file_identity_guard,
+            ),
+            (
+                '                expected is not None and (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino)\n',
+                '                False\n',
+                self._assert_stage_directory_identity_guard,
+            ),
+            (
+                '        try:\n            with (temporary / "index.html").open("r+b"):\n                pass\n        except OSError as exc:\n            findings.append(Finding("index.html", "STAGE_WRITABLE", _stage_error(exc)))',
+                '        try:\n            pass\n        except OSError as exc:\n            findings.append(Finding("index.html", "STAGE_WRITABLE", _stage_error(exc)))',
+                self._assert_stage_writability_guard,
+            ),
+            (
+                '            _copy_stage_file(source / relative, temporary / relative, (size, digest))',
+                '            pass',
+                self._assert_stage_omitted_copy_detected,
+            ),
+            (
+                '            output_handle.write(chunk)\n            digest.update(chunk)',
+                '            output_handle.write(chunk + b"corrupt")\n            digest.update(chunk)',
+                self._assert_stage_corrupt_copy_detected,
+            ),
+            (
+                '                _rename_stage_noreplace(temporary, destination)',
+                '                os.rename(temporary, destination)',
+                self._assert_stage_publish_race_guard,
+            ),
+        )
+        for old, new, assertion in cases:
+            with self.subTest(old=old):
+                if os.path.lexists(destination):
+                    if destination.is_dir() and not destination.is_symlink():
+                        shutil.rmtree(destination)
+                    else:
+                        destination.unlink()
+                with mutant(old, new) as module:
+                    assertion(module, rendered, destination)
+
+    def test_native_errno_dispatch_signature_and_flags_are_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+
+        with mutant("    ctypes.set_errno(0)\n", "    pass\n") as module:
+            native = mock.Mock(return_value=-1)
+            library = types.SimpleNamespace(renamex_np=native)
+            module.ctypes.set_errno(errno.EEXIST)
+            with (
+                mock.patch.object(module.sys, "platform", "darwin"),
+                mock.patch.object(module.ctypes, "CDLL", return_value=library),
+            ):
+                findings = module.stage_site(rendered, destination)
+            self.assertEqual([item.code for item in findings], ["STAGE_DESTINATION"])
+
+        flag_cases = (
+            (
+                "linux",
+                "        result = renameat2(-100, source_bytes, -100, destination_bytes, 1)",
+                "        result = renameat2(-100, source_bytes, -100, destination_bytes, 0)",
+                "renameat2",
+            ),
+            (
+                "darwin",
+                "        result = renamex_np(source_bytes, destination_bytes, 0x00000004)",
+                "        result = renamex_np(source_bytes, destination_bytes, 0)",
+                "renamex_np",
+            ),
+        )
+        for platform, old, new, symbol in flag_cases:
+            with self.subTest(flag=platform), mutant(old, new) as module:
+                def reject_weakened_flag(*args):
+                    self.assertEqual(args[-1], 0)
+                    module.ctypes.set_errno(errno.ENOSYS)
+                    return -1
+
+                native = mock.Mock(side_effect=reject_weakened_flag)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(module.sys, "platform", platform),
+                    mock.patch.object(module.ctypes, "CDLL", return_value=library),
+                ):
+                    findings = module.stage_site(rendered, destination)
+                self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
+                self.assertFalse(destination.exists())
+
+        signature_cases = (
+            (
+                "linux-argtypes",
+                "        renameat2.argtypes = (\n            ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint,\n        )",
+                "        renameat2.argtypes = ()",
+                "linux",
+                "renameat2",
+                "argtypes",
+            ),
+            (
+                "linux-restype",
+                "        renameat2.restype = ctypes.c_int",
+                "        renameat2.restype = ctypes.c_void_p",
+                "linux",
+                "renameat2",
+                "restype",
+            ),
+            (
+                "darwin-argtypes",
+                "        renamex_np.argtypes = (ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint)",
+                "        renamex_np.argtypes = ()",
+                "darwin",
+                "renamex_np",
+                "argtypes",
+            ),
+            (
+                "darwin-restype",
+                "        renamex_np.restype = ctypes.c_int",
+                "        renamex_np.restype = ctypes.c_void_p",
+                "darwin",
+                "renamex_np",
+                "restype",
+            ),
+        )
+        for name, old, new, platform, symbol, attribute in signature_cases:
+            with self.subTest(signature=name), mutant(old, new) as module:
+                native = mock.Mock(return_value=0)
+                library = types.SimpleNamespace(**{symbol: native})
+                with (
+                    mock.patch.object(module.sys, "platform", platform),
+                    mock.patch.object(module.ctypes, "CDLL", return_value=library),
+                ):
+                    module._rename_stage_noreplace(self.root / "source", self.root / "destination")
+                if attribute == "argtypes":
+                    self.assertEqual(native.argtypes, ())
+                else:
+                    self.assertIs(native.restype, module.ctypes.c_void_p)
+
+    def test_stage_cleanup_finding_is_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        old = '                findings.append(Finding(str(site), "STAGE_CLEANUP", _stage_error(exc)))'
+        with mutant(old, "                pass") as module:
+            def race(_source: Path, target: Path) -> None:
+                target.mkdir()
+                (target / "competitor").write_text("preserved", encoding="utf-8")
+                raise OSError(errno.EEXIST, "already exists")
+
+            with (
+                mock.patch.object(module, "_rename_stage_noreplace", side_effect=race),
+                mock.patch.object(module.shutil, "rmtree", side_effect=OSError("cleanup refused")),
+            ):
+                findings = module.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["STAGE_DESTINATION"])
+        self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+        temporary = list(self.root.glob("._site-staged.stage-*"))
+        self.assertEqual(len(temporary), 1)
+        shutil.rmtree(temporary[0])
+
+    def _assert_stage_mutant_accepts_symlink(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        link = rendered / "outside"
+        link.symlink_to(self.root / "missing")
+        self.assertNotIn("NONREGULAR", [item.code for item in module.stage_site(rendered, destination)])
+        link.unlink()
+
+    def _assert_stage_mutant_misses_inventory(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        real_inventory = module._stage_inventory
+        calls = 0
+
+        def corrupt(root: Path, logical: str):
+            nonlocal calls
+            calls += 1
+            inventory, findings = real_inventory(root, logical)
+            if calls == 3:
+                inventory = module.StageInventory(inventory.directories, inventory.files[:-1])
+            return inventory, findings
+
+        with mock.patch.object(module, "_stage_inventory", side_effect=corrupt):
+            self.assertNotIn("STAGE_INVENTORY", [item.code for item in module.stage_site(rendered, destination)])
+
+    def _assert_stage_mutant_uses_nonatomic_publish(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        with mock.patch.object(module.shutil, "copytree", side_effect=OSError("non-atomic publish reached")):
+            findings = module.stage_site(rendered, destination)
+        self.assertTrue(any(item.detail == "non-atomic publish reached" for item in findings))
+
+    def _assert_stage_nofollow_guard(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        target = rendered / "asset.png"
+        preserved = rendered / "asset-preserved.png"
+        real_open = os.open
+        swapped = False
+
+        def race(path, flags, *args, **kwargs):
+            nonlocal swapped
+            if Path(path) == target and not swapped:
+                swapped = True
+                target.rename(preserved)
+                target.symlink_to(preserved.name)
+            return real_open(path, flags, *args, **kwargs)
+
+        with mock.patch.object(module.os, "open", side_effect=race):
+            findings = module.stage_site(rendered, destination)
+        self.assertNotIn("STAGE_COPY", [item.code for item in findings])
+        target.unlink()
+        preserved.rename(target)
+
+    def _assert_stage_file_identity_guard(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        target = rendered / "asset.png"
+        replacement = self.root / "replacement"
+        replacement.write_bytes(target.read_bytes())
+        real_open = os.open
+        target_opens = 0
+
+        def race(path, flags, *args, **kwargs):
+            nonlocal target_opens
+            if Path(path) == target:
+                target_opens += 1
+            if Path(path) == target and target_opens == 2:
+                target.unlink()
+                replacement.rename(target)
+            return real_open(path, flags, *args, **kwargs)
+
+        with mock.patch.object(module.os, "open", side_effect=race):
+            self.assertEqual(module.stage_site(rendered, destination), [])
+
+    def _assert_stage_writability_guard(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        real_open = module.Path.open
+
+        def fail(path: Path, mode: str = "r", *args, **kwargs):
+            if mode == "r+b":
+                raise OSError("writable refused")
+            return real_open(path, mode, *args, **kwargs)
+
+        with mock.patch.object(module.Path, "open", fail):
+            self.assertNotIn("STAGE_WRITABLE", [item.code for item in module.stage_site(rendered, destination)])
+
+    def _assert_stage_directory_identity_guard(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        target = rendered / "nested"
+        replacement = self.root / "replacement-directory"
+        shutil.copytree(target, replacement)
+        real_open = os.open
+        swapped = False
+
+        def race(path, flags, *args, **kwargs):
+            nonlocal swapped
+            if Path(path) == target and not swapped:
+                swapped = True
+                shutil.rmtree(target)
+                replacement.rename(target)
+            return real_open(path, flags, *args, **kwargs)
+
+        with mock.patch.object(module.os, "open", side_effect=race):
+            self.assertEqual(module.stage_site(rendered, destination), [])
+
+    def _assert_stage_omitted_copy_detected(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        findings = module.stage_site(rendered, destination)
+        self.assertIn("STAGE_INVENTORY", [item.code for item in findings])
+        self.assertFalse(destination.exists())
+
+    def _assert_stage_corrupt_copy_detected(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        findings = module.stage_site(rendered, destination)
+        self.assertIn("STAGE_INVENTORY", [item.code for item in findings])
+        self.assertFalse(destination.exists())
+
+    def _assert_stage_publish_race_guard(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        real_rename = os.rename
+
+        def race(source: Path, target: Path) -> None:
+            target.mkdir()
+            real_rename(source, target)
+
+        with mock.patch.object(module.os, "rename", side_effect=race):
+            self.assertEqual(module.stage_site(rendered, destination), [])
+        self.assertTrue((destination / "index.html").exists())
+
 
 class WorkflowContractTest(unittest.TestCase):
     def test_single_writer_triggers_pins_permissions_and_release_call(self) -> None:
@@ -536,6 +1171,12 @@ class WorkflowContractTest(unittest.TestCase):
         source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
         self.assertEqual(pages.count(source_gate), 1)
         self.assertLess(pages.index(source_gate), pages.index("actions/jekyll-build-pages@"))
+        stage = "python3 scripts/pages_site_check.py stage"
+        self.assertEqual(pages.count(stage), 1)
+        self.assertLess(pages.index("actions/jekyll-build-pages@"), pages.index(stage))
+        self.assertLess(pages.index(stage), pages.index("python3 scripts/pages_site_check.py prepare"))
+        self.assertEqual(pages.count("destination: ./_site-container"), 1)
+        self.assertEqual(pages.count("--input-site ./_site-container --site ./_site"), 1)
         for sha in checker.ACTION_SHAS:
             self.assertIn(sha, pages + release)
         external_uses = re.findall(r"uses:[ ]+([^\s]+@[^\s]+)", pages + release)
@@ -588,6 +1229,9 @@ class WorkflowContractTest(unittest.TestCase):
             (pages_path, "if: needs.build.outputs.deploy == 'true'", "if: inputs.deploy", 1),
             (release_path, "invocation_kind: release", "invocation_kind: manual", 1),
             (pages_path, "python3 scripts/pages_site_check.py source --source ./docs", "true", 1),
+            (pages_path, "destination: ./_site-container", "destination: ./_site", 1),
+            (pages_path, "python3 scripts/pages_site_check.py stage", "true", 1),
+            (pages_path, "--input-site ./_site-container --site ./_site", "--input-site ./_site --site ./_site-container", 1),
         )
         real_pages = pages_path.read_text(encoding="utf-8")
         real_release = release_path.read_text(encoding="utf-8")
@@ -612,6 +1256,14 @@ class WorkflowContractTest(unittest.TestCase):
         )
         self.assertEqual(moved.count(source_gate), 1)
         self.assertIn("late source preflight", workflow_contract_findings(moved, real_release, lean))
+        stage = "python3 scripts/pages_site_check.py stage"
+        late_stage = real_pages.replace(stage, "true", 1).replace(
+            "      - name: Upload the one complete Pages artifact",
+            f"      - name: Late ownership stage\n        run: {stage}\n      - name: Upload the one complete Pages artifact",
+            1,
+        )
+        self.assertEqual(late_stage.count(stage), 1)
+        self.assertIn("ownership stage order", workflow_contract_findings(late_stage, real_release, lean))
 
     def test_reusable_release_identity_accepts_caller_push_event(self) -> None:
         pages = (REPO_ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
