@@ -162,6 +162,46 @@ class SiteTest(unittest.TestCase):
         (self.site / "untracked.html").write_text("<h1>untracked</h1>", encoding="utf-8")
         self.assertIn("PAGE_SET", self.codes())
 
+    def test_source_preflight_rejects_liquid_openers_in_code_and_prose(self) -> None:
+        index = self.source / "index.md"
+        status = self.source / "nested" / "status.md"
+        index.write_text(index.read_text() + "\n`σ^{{i}△{j}}`\n`${{ github.workflow_sha }}`\n", encoding="utf-8")
+        status.write_text(status.read_text() + "\n{% raw %}\n", encoding="utf-8")
+        findings = checker.check_source(self.source)
+        self.assertEqual(
+            [(item.path, item.code, item.detail) for item in findings],
+            [
+                ("index.md", "LIQUID_DELIMITER", "line 7: raw '{{' is unsafe before Markdown rendering"),
+                ("index.md", "LIQUID_DELIMITER", "line 8: raw '{{' is unsafe before Markdown rendering"),
+                ("nested/status.md", "LIQUID_DELIMITER", "line 5: raw '{%' is unsafe before Markdown rendering"),
+            ],
+        )
+        index.write_text("# Safe\n\n`github.workflow_sha`, `σ^{ {i} △ {j} }`, and standalone `}}`\n", encoding="utf-8")
+        status.write_text("# Status\n", encoding="utf-8")
+        self.assertEqual(checker.check_source(self.source), [])
+
+    def test_source_preflight_fails_closed_on_bad_tracked_markdown(self) -> None:
+        status = self.source / "nested" / "status.md"
+        with mock.patch.object(checker.subprocess, "run", side_effect=OSError("git unavailable")):
+            self.assertIn("TRACKED_SET", [item.code for item in checker.check_source(self.source)])
+        with mock.patch.object(checker.Path, "read_text", side_effect=OSError("unreadable source")):
+            findings = checker.check_source(self.source)
+        self.assertEqual(
+            [(item.path, item.code, item.detail) for item in findings],
+            [
+                ("index.md", "SOURCE", "unreadable source"),
+                ("nested/status.md", "SOURCE", "unreadable source"),
+            ],
+        )
+        status.write_bytes(b"\xff")
+        self.assertIn("SOURCE", [item.code for item in checker.check_source(self.source)])
+        status.unlink()
+        status.symlink_to(self.source / "index.md")
+        self.assertIn("NONREGULAR", [item.code for item in checker.check_source(self.source)])
+        status.unlink()
+        subprocess.run(["git", "rm", "--cached", "-q", "--", "docs/index.md", "docs/nested/status.md"], cwd=self.root, check=True)
+        self.assertIn("EMPTY_SOURCE", [item.code for item in checker.check_source(self.source)])
+
     def test_fetch_retries_and_rejects_redirect(self) -> None:
         response = mock.MagicMock()
         response.__enter__.return_value = response
@@ -326,6 +366,7 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
         "zero current snapshot": (release, 'test "$source_sha" = "$AFTER"', 1),
         "caller kind": (release, "invocation_kind: release", 1),
         "caller deploy": (release, "deploy: true", 1),
+        "source preflight": (pages, "python3 scripts/pages_site_check.py source --source ./docs", 1),
     }
     for label, (text, needle, expected) in required_counts.items():
         if text.count(needle) != expected:
@@ -336,6 +377,9 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
         findings.append("caller event assumption")
     if "python3 scripts/test_pages_site_check.py" not in pages or "python3 scripts/docs_link_check.py --check" not in pages:
         findings.append("publication source gates")
+    source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
+    if source_gate in pages and pages.index(source_gate) > pages.find("actions/jekyll-build-pages@"):
+        findings.append("late source preflight")
     if "needs: [prepare-release-source, lean-release-tag]" not in release or "refs/tags/$tag" not in release:
         findings.append("release resolver")
     if "      - 'master'" in release:
@@ -442,6 +486,29 @@ class MutationTest(SiteTest):
             self.assertGreater(fetch_mock.call_count, 1)
             self.assertTrue(any(item.code == "LIVE_FETCH" for item in findings))
 
+    def test_source_liquid_guard_is_mutation_pinned(self) -> None:
+        index = self.source / "index.md"
+        guard = '            for token in ("{{", "{%"):'
+        for opener, weakened in (("{{", '            for token in ("{%",):'), ("{%", '            for token in ("{{",):')):
+            with self.subTest(opener=opener):
+                index.write_text(f"# Unsafe\n\n{opener}\n", encoding="utf-8")
+                self.assertIn("LIQUID_DELIMITER", [item.code for item in checker.check_source(self.source)])
+                with mutant(guard, weakened) as module:
+                    self.assertNotIn("LIQUID_DELIMITER", [item.code for item in module.check_source(self.source)])
+
+    def test_source_read_oserror_guard_is_mutation_pinned(self) -> None:
+        with mock.patch.object(checker.Path, "read_text", side_effect=OSError("unreadable source")):
+            self.assertEqual(
+                [item.code for item in checker.check_source(self.source)],
+                ["SOURCE", "SOURCE"],
+            )
+        with mutant(
+            '            text = path.read_text(encoding="utf-8")\n        except (OSError, UnicodeError) as exc:\n            findings.append(Finding(name, "SOURCE", str(exc)))',
+            '            text = path.read_text(encoding="utf-8")\n        except UnicodeError as exc:\n            findings.append(Finding(name, "SOURCE", str(exc)))',
+        ) as module, mock.patch.object(module.Path, "read_text", side_effect=OSError("unreadable source")):
+            with self.assertRaisesRegex(OSError, "unreadable source"):
+                module.check_source(self.source)
+
 
 class WorkflowContractTest(unittest.TestCase):
     def test_single_writer_triggers_pins_permissions_and_release_call(self) -> None:
@@ -466,6 +533,9 @@ class WorkflowContractTest(unittest.TestCase):
         self.assertIn('case "$SOURCE_REF" in refs/tags/v*)', pages)
         self.assertIn("python3 scripts/test_pages_site_check.py", pages)
         self.assertIn("python3 scripts/docs_link_check.py --check", pages)
+        source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
+        self.assertEqual(pages.count(source_gate), 1)
+        self.assertLess(pages.index(source_gate), pages.index("actions/jekyll-build-pages@"))
         for sha in checker.ACTION_SHAS:
             self.assertIn(sha, pages + release)
         external_uses = re.findall(r"uses:[ ]+([^\s]+@[^\s]+)", pages + release)
@@ -517,6 +587,7 @@ class WorkflowContractTest(unittest.TestCase):
             (pages_path, 'test "$RELEASE_DEPLOY" = true', 'true', 1),
             (pages_path, "if: needs.build.outputs.deploy == 'true'", "if: inputs.deploy", 1),
             (release_path, "invocation_kind: release", "invocation_kind: manual", 1),
+            (pages_path, "python3 scripts/pages_site_check.py source --source ./docs", "true", 1),
         )
         real_pages = pages_path.read_text(encoding="utf-8")
         real_release = release_path.read_text(encoding="utf-8")
@@ -532,6 +603,15 @@ class WorkflowContractTest(unittest.TestCase):
                 pages = mutant_text if path == pages_path else real_pages
                 release = mutant_text if path == release_path else real_release
                 self.assertNotEqual(workflow_contract_findings(pages, release, lean), [])
+
+        source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
+        moved = real_pages.replace(source_gate, "true", 1).replace(
+            "      - name: Record generation time",
+            f"      - name: Late source preflight\n        run: {source_gate}\n      - name: Record generation time",
+            1,
+        )
+        self.assertEqual(moved.count(source_gate), 1)
+        self.assertIn("late source preflight", workflow_contract_findings(moved, real_release, lean))
 
     def test_reusable_release_identity_accepts_caller_push_event(self) -> None:
         pages = (REPO_ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")

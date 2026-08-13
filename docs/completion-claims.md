@@ -54,7 +54,7 @@ Those checks provide independent consistency evidence; the indentation check
 is deliberately not presented as a general YAML parser. Coordinating a
 changed digest therefore cannot authorize changed workflow text.
 
-It checks out only `${{ github.workflow_sha }}` with a full-SHA-pinned checkout
+It checks out only `github.workflow_sha` with a full-SHA-pinned checkout
 action, one-commit depth, and credential persistence disabled. It never checks
 out or executes the pull-request head, merge revision, fork content, artifact,
 cache, dependency installer, or candidate-supplied action. Concurrency is
