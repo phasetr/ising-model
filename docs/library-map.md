@@ -116,14 +116,14 @@ reading aids; import direction remains governed by the linked import-DAG contrac
 
 #### Mayer identities and edge cases
 
-- `IsingModel.Concrete.LatticeGraphCorrelation.MayerAnalyticity` — Concrete `mayerPartialSum` /
-  `mayerExpansionTerm` analytic wrappers.
 - `IsingModel.Concrete.LatticeGraphCorrelation.MayerBasicIdentities` — Concrete Mayer basic at-zero
   / at-one identity wrappers.
 - `IsingModel.Concrete.LatticeGraphCorrelation.MayerEdgeCases` — Concrete Mayer edge-case identity
   and `polymerFreeEnergy = mayerPartialSum` wrappers.
 - `IsingModel.Concrete.LatticeGraphCorrelation.MayerExpansionEdgeCases` — Concrete Mayer expansion
   `n = 2`, no-polymer, edgeless, and absolute-bound wrappers.
+- `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` — Concrete Mayer
+  trivial/no-polymer comparison wrappers.
 
 #### Mayer positivity and summability
 
@@ -140,8 +140,8 @@ reading aids; import direction remains governed by the linked import-DAG contrac
 
 #### Mayer regularity and vd-family analyticity
 
-- `IsingModel.Concrete.LatticeGraphCorrelation.MayerTrivialCases` — Concrete Mayer
-  trivial/no-polymer comparison wrappers.
+- `IsingModel.Concrete.LatticeGraphCorrelation.MayerAnalyticity` — Concrete `mayerPartialSum` /
+  `mayerExpansionTerm` analytic wrappers.
 - `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdIff` — Concrete `vdPolymerFamilies_sum` iff
   characterization wrappers.
 - `IsingModel.Concrete.LatticeGraphCorrelation.MayerVdRegularity` — Concrete `mayerPartialSum` /
@@ -215,14 +215,14 @@ reading aids; import direction remains governed by the linked import-DAG contrac
 
 #### Mayer identities and edge cases
 
-- `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity` — Ambient along-exhaustion
-  `mayerPartialSum` / `mayerExpansionTerm` analytic wrappers.
 - `IsingModel.AmbientLattice.SpecialCases.MayerBasicIdentities` — Ambient along-exhaustion Mayer
   basic at-zero / at-one identity wrappers.
 - `IsingModel.AmbientLattice.SpecialCases.MayerEdgeCases` — Ambient along-exhaustion Mayer edge-case
   identity and `polymerFreeEnergy = mayerPartialSum` wrappers.
 - `IsingModel.AmbientLattice.SpecialCases.MayerExpansionEdgeCases` — Ambient along-exhaustion Mayer
   expansion `n = 2`, no-polymer, edgeless, and absolute-bound wrappers.
+- `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases` — Ambient along-exhaustion Mayer
+  trivial/no-polymer comparison wrappers.
 
 #### Mayer positivity and summability
 
@@ -241,8 +241,8 @@ reading aids; import direction remains governed by the linked import-DAG contrac
 
 #### Mayer regularity and vd families
 
-- `IsingModel.AmbientLattice.SpecialCases.MayerTrivialCases` — Ambient along-exhaustion Mayer
-  trivial/no-polymer comparison wrappers.
+- `IsingModel.AmbientLattice.SpecialCases.MayerAnalyticity` — Ambient along-exhaustion
+  `mayerPartialSum` / `mayerExpansionTerm` analytic wrappers.
 - `IsingModel.AmbientLattice.SpecialCases.MayerVdBounds` — Ambient along-exhaustion
   `vdPolymerFamilies_sum` bound wrappers.
 - `IsingModel.AmbientLattice.SpecialCases.MayerVdIff` — Ambient along-exhaustion
