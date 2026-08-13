@@ -80,13 +80,8 @@ def docs() -> list[dcs.DocSource]:
     return _DOCS
 
 
-def index_source() -> dcs.DocSource:
-    """Return the loaded ``docs/index.md`` source."""
-    return next(source for source in docs() if source.label == "docs/index.md")
-
-
-def index_row(anchor: str) -> int:
-    """Return the 1-based ``docs/index.md`` line number holding ``anchor``.
+def progress_row(anchor: str) -> tuple[dcs.DocSource, int]:
+    """Return the unique progress owner and 1-based line holding ``anchor``.
 
     Fixtures that quote a real progress row used to pin its literal line number,
     which asserted nothing about the row and cost an edit for every insertion
@@ -95,12 +90,13 @@ def index_row(anchor: str) -> int:
     so a fixture cannot silently start measuring a different row, and it fails
     loudly if the row is deleted or duplicated rather than passing vacuously.
     """
-    (lineno,) = [
-        number
-        for number, line in enumerate(index_source().text.split("\n"), 1)
-        if anchor in line
+    ((source, lineno),) = [
+        (source, number)
+        for source in docs()
+        for number, line in enumerate(source.text.split("\n"), 1)
+        if source.label.startswith("docs/") and anchor in line
     ]
-    return lineno
+    return source, lineno
 
 
 def no_evidence(verdict: dcs.Verdict) -> bool:
@@ -432,9 +428,8 @@ class NestedBraceCitationTest(unittest.TestCase):
         line number, so inserting or deleting lines above it cannot move this
         fixture off its subject.
         """
-        index = index_source()
-        lineno = index_row(self.TOKEN)
-        self.assertIn((self.TOKEN, lineno), index.tokens)
+        owner, lineno = progress_row(self.TOKEN)
+        self.assertIn((self.TOKEN, lineno), owner.tokens)
 
         verdicts, _cascade, _labels = dcs.classify(
             tree(), self.TARGETS, docs(), allow_homonym=False
@@ -444,7 +439,7 @@ class NestedBraceCitationTest(unittest.TestCase):
             self.assertEqual(verdict.verdict, dcs.PUBLISHED, verdict.decl.full)
             self.assertTrue(
                 any(
-                    citation.startswith(f"exact docs/index.md:{lineno}:")
+                    citation.startswith(f"exact {owner.label}:{lineno}:")
                     and self.TOKEN in citation
                     for citation in verdict.doc_citations
                 ),
@@ -465,7 +460,7 @@ class SlashAlternationCitationTest(unittest.TestCase):
     and therefore names no declaration.
 
     The ``docs/index.md`` row that carries them is located by
-    :func:`index_row` on the citation text, never by a literal line number.
+    :func:`progress_row` on the citation text, never by a literal line number.
     """
 
     BETA_TOKEN = (
@@ -610,16 +605,17 @@ class SlashAlternationCitationTest(unittest.TestCase):
     def test_real_row_attaches_one_exact_charge_to_each_target(self) -> None:
         """Every target receives the exact public citation from that one row.
 
-        Both shorthands sit on the same row, and :func:`index_row` asserts that
+        Both shorthands sit on the same row, and :func:`progress_row` asserts that
         by unpacking a single match for each; the charge is then read off that
         measured line number instead of a literal.
         """
-        beta_row = index_row(self.BETA_TOKEN)
-        nonpos_row = index_row(self.NONPOS_TOKEN)
+        beta_owner, beta_row = progress_row(self.BETA_TOKEN)
+        nonpos_owner, nonpos_row = progress_row(self.NONPOS_TOKEN)
+        self.assertEqual(beta_owner.label, nonpos_owner.label)
         self.assertEqual(beta_row, nonpos_row)
         counts = [
             sum(
-                citation.startswith(f"exact docs/index.md:{beta_row}:")
+                citation.startswith(f"exact {beta_owner.label}:{beta_row}:")
                 and self.TARGET_TOKENS[verdict.decl.full] in citation
                 for citation in verdict.doc_citations
             )
@@ -834,7 +830,7 @@ class SpacedBraceCitationTest(unittest.TestCase):
             for token, _line in doc.tokens
             if "{" in token and target in dcs.expand_braces(token)
         }
-        self.assertEqual(labels, {"docs/index.md"})
+        self.assertEqual(labels, {"docs/coverage/chapter-17.md"})
 
     def test_the_measured_example_is_a_published_result(self) -> None:
         """The verdict the defect inverted, replayed against the real tree."""
@@ -1012,6 +1008,10 @@ class MarkdownBacktickParityTest(unittest.TestCase):
             "docs/theorems/phase-transition.md",
             "docs/theorems/conditioning.md",
             "docs/theorems/ambient-lattice.md",
+            "docs/coverage/chapters-2-10.md",
+            "docs/coverage/chapter-17.md",
+            "docs/coverage/chapter-18.md",
+            "docs/coverage/chapters-19-20.md",
         }
         expected = {
             label for label in owner_labels if (dcs.REPO_ROOT / label).is_file()
@@ -1024,7 +1024,11 @@ class MarkdownBacktickParityTest(unittest.TestCase):
             return label if label in expected else "docs/index.md"
 
         anchor_owners = {
-            "## Glimm–Jaffe coverage inventory": "docs/index.md",
+            "## Chapter 2 (Classical Statistical Mechanics)":
+                "docs/coverage/chapters-2-10.md",
+            "## Chapter 17 (φ⁴ critical point)": "docs/coverage/chapter-17.md",
+            "## Chapter 18 (Cluster expansion)": "docs/coverage/chapter-18.md",
+            "## Chapter 20 (Further directions)": "docs/coverage/chapters-19-20.md",
             "## Status taxonomy": split_owner("docs/status.md"),
             ("> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` "
              "is a thin"):
@@ -1062,13 +1066,10 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         fixture no longer moves when lines are inserted above it; the tuple
         unpacking asserts that the anchor names exactly one line.
         """
-        index = next(source for source in docs() if source.label == "docs/index.md")
-        (lineno,) = [
-            number
-            for number, line in enumerate(index.text.split("\n"), 1)
-            if "magnetizationAlongExhaustion_continuous_beta_gen" in line
-        ]
-        tokens = {token for token, line in index.tokens if line == lineno}
+        owner, lineno = progress_row(
+            "magnetizationAlongExhaustion_continuous_beta_gen"
+        )
+        tokens = {token for token, line in owner.tokens if line == lineno}
         for token in (
             "_differentiable_beta_gen",
             "_continuous_field_gen",
@@ -1715,10 +1716,9 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
         ``docs/index.md``; ``ROW_SUFFIX`` is deliberately *not* used as the
         anchor, because that suffix is spelled on a dozen other rows.
         """
-        index = index_source()
-        lineno = index_row(self.ROW_HEAD)
-        self.assertIn((self.ROW_HEAD, lineno), index.tokens)
-        self.assertIn((self.ROW_SUFFIX, lineno), index.tokens)
+        owner, lineno = progress_row(self.ROW_HEAD)
+        self.assertIn((self.ROW_HEAD, lineno), owner.tokens)
+        self.assertIn((self.ROW_SUFFIX, lineno), owner.tokens)
         resolved = dcs._resolve_fragment(tree(), self.ROW_HEAD, {})
         self.assertEqual(
             [decl.full for decl in resolved or []],
@@ -1733,7 +1733,7 @@ class ResolvedGlobElisionHeadTest(unittest.TestCase):
             row_shorthand = [
                 citation
                 for citation in verdict.doc_citations
-                if citation.startswith(f"shorthand docs/index.md:{lineno}:")
+                if citation.startswith(f"shorthand {owner.label}:{lineno}:")
                 and f"`{self.ROW_SUFFIX}`" in citation
             ]
             observed.append(

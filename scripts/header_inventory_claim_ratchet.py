@@ -2093,6 +2093,10 @@ BASELINE_HEADER = """\
 # checker reconciles it count-for-count and key-for-key against the actual pin
 # delta and requires both paths to be edited. The line changes no discovery,
 # grammar, key or B3 result and is not standing permission after this commit.
+# An atomic fan-out uses `# CONTAINER-PARTITION: CLASS old/path TOKEN COUNT ->
+# new/path COUNT ; other/path COUNT`. It is the only fan-out form: all declared
+# destination rises must sum to the complete old-key loss, and its one-shot
+# lifecycle and cross-ledger key ownership are checked with transfers.
 #
 # A recount under a corrected detector -- the 713 -> 740 shape above -- is the
 # one movement no prose edit explains that can still be legitimate.  Declaring it
@@ -2126,7 +2130,7 @@ def format_baseline(
 ) -> str:
     """Render the multiset while retaining consumed transfer tombstones.
 
-    Container-transfer declarations are one-shot identities, so regeneration
+    Container-transfer and partition declarations are one-shot identities, so regeneration
     must not erase their history.  Every marker-shaped line is retained; a
     malformed one remains visible to the fail-closed drift parser rather than
     being laundered away by formatting.
@@ -2135,7 +2139,7 @@ def format_baseline(
     lines.extend(
         raw
         for raw in preserved_text.splitlines()
-        if is_container_transfer_directive(raw)
+        if is_container_directive(raw)
     )
     for (kind, target, token), count in sorted(counts.items()):
         lines.append(f"{kind}\t{target}\t{token}\t{count}")
@@ -2236,10 +2240,29 @@ _CONTAINER_TRANSFER_DIRECTIVE = re.compile(
     r"\A[ \t]*#[ \t]*CONTAINER-TRANSFER[ \t]*:"
 )
 
+CONTAINER_PARTITION_MARKER = "# CONTAINER-PARTITION:"
+_CONTAINER_PARTITION_LINE = re.compile(
+    rf"\A{re.escape(CONTAINER_PARTITION_MARKER)} "
+    r"(?P<kind>[A-Z_]+) (?P<old>\S+) (?P<token>\S+) "
+    r"(?P<count>[1-9][0-9]*) -> (?P<destinations>\S+ [1-9][0-9]*"
+    r"(?: ; \S+ [1-9][0-9]*)+)\Z"
+)
+_CONTAINER_PARTITION_DIRECTIVE = re.compile(
+    r"\A[ \t]*#[ \t]*CONTAINER-PARTITION[ \t]*:"
+)
+
 
 def is_container_transfer_directive(line: str) -> bool:
     """Whether ``line`` is a directive candidate that formatting must retain."""
     return _CONTAINER_TRANSFER_DIRECTIVE.match(line) is not None
+
+
+def is_container_directive(line: str) -> bool:
+    """Whether formatting must retain a transfer/partition directive candidate."""
+    return (
+        is_container_transfer_directive(line)
+        or _CONTAINER_PARTITION_DIRECTIVE.match(line) is not None
+    )
 
 
 class UnsoundRun(RuntimeError):
@@ -2385,6 +2408,16 @@ class ContainerTransfer(NamedTuple):
     count: int
 
 
+class ContainerPartition(NamedTuple):
+    """One atomic old-path split into two or more new-path charge keys."""
+
+    kind: str
+    old: str
+    token: str
+    count: int
+    destinations: tuple[tuple[str, int], ...]
+
+
 class ContainerTransferBudget(NamedTuple):
     """B1 allowance and fail-closed diagnostics for container transfers."""
 
@@ -2393,9 +2426,9 @@ class ContainerTransferBudget(NamedTuple):
     narrative: tuple[str, ...]
 
 
-def container_transfer_declarations(
+def container_declarations(
     root: Path, commit: str
-) -> tuple[tuple[ContainerTransfer, ...], tuple[str, ...]]:
+) -> tuple[tuple[ContainerTransfer, ...], tuple[ContainerPartition, ...], tuple[str, ...]]:
     """Parse declarations that are new identities in the head, exactly once.
 
     A raw ``+`` line is not sufficient: moving an existing comment within the
@@ -2432,19 +2465,21 @@ def container_transfer_declarations(
     base_lines = Counter(base_text.splitlines())
     head_lines = Counter(head_text.splitlines())
     transfers: list[ContainerTransfer] = []
+    partitions: list[ContainerPartition] = []
     errors: list[str] = []
     marker_lines = {
         raw
         for raw in base_lines.keys() | head_lines.keys()
-        if is_container_transfer_directive(raw)
+        if is_container_directive(raw)
     }
     for raw in sorted(marker_lines):
         base_count = base_lines.get(raw, 0)
         head_count = head_lines.get(raw, 0)
         added_count = added.get(raw, 0)
-        match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
-        if match is None:
-            errors.append(f"malformed container-transfer declaration: {raw}")
+        transfer_match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
+        partition_match = _CONTAINER_PARTITION_LINE.fullmatch(raw)
+        if transfer_match is None and partition_match is None:
+            errors.append(f"malformed container declaration: {raw}")
             continue
         if base_count == 1 and head_count == 1 and added_count == 0:
             continue
@@ -2454,16 +2489,40 @@ def container_transfer_declarations(
                 f"(base={base_count}, head={head_count}, added={added_count}): {raw}"
             )
             continue
-        transfers.append(
-            ContainerTransfer(
-                match.group("kind"),
-                match.group("old"),
-                match.group("new"),
-                match.group("token"),
-                int(match.group("count")),
+        if transfer_match is not None:
+            transfers.append(
+                ContainerTransfer(
+                    transfer_match.group("kind"),
+                    transfer_match.group("old"),
+                    transfer_match.group("new"),
+                    transfer_match.group("token"),
+                    int(transfer_match.group("count")),
+                )
             )
-        )
-    return tuple(transfers), tuple(errors)
+        else:
+            assert partition_match is not None
+            destinations = tuple(
+                (piece.rsplit(" ", 1)[0], int(piece.rsplit(" ", 1)[1]))
+                for piece in partition_match.group("destinations").split(" ; ")
+            )
+            partitions.append(
+                ContainerPartition(
+                    partition_match.group("kind"),
+                    partition_match.group("old"),
+                    partition_match.group("token"),
+                    int(partition_match.group("count")),
+                    destinations,
+                )
+            )
+    return tuple(transfers), tuple(partitions), tuple(errors)
+
+
+def container_transfer_declarations(
+    root: Path, commit: str
+) -> tuple[tuple[ContainerTransfer, ...], tuple[str, ...]]:
+    """Compatibility view used by focused transfer tests."""
+    transfers, _partitions, errors = container_declarations(root, commit)
+    return transfers, errors
 
 
 def container_transfer_budget(
@@ -2482,7 +2541,7 @@ def container_transfer_budget(
     twice. Any declaration that describes no exact live delta is an error rather
     than an inert comment, and the whole pin may not grow in aggregate.
     """
-    transfers, parse_errors = container_transfer_declarations(root, commit)
+    transfers, partitions, parse_errors = container_declarations(root, commit)
     errors = list(parse_errors)
     allowance: Counter[tuple[str, str, str]] = Counter()
     old_keys: set[tuple[str, str, str]] = set()
@@ -2498,9 +2557,9 @@ def container_transfer_budget(
             errors.append(f"container transfer has identical paths: {label}")
         if transfer.old not in edited or transfer.new not in edited:
             errors.append(f"container transfer endpoints are not both edited: {label}")
-        if old_key in old_keys:
+        if old_key in old_keys or old_key in new_keys:
             errors.append(f"container transfer spends one old key more than once: {label}")
-        if new_key in new_keys:
+        if new_key in new_keys or new_key in old_keys:
             errors.append(f"container transfer pays one new key more than once: {label}")
         old_keys.add(old_key)
         new_keys.add(new_key)
@@ -2516,7 +2575,50 @@ def container_transfer_budget(
             )
         if not errors or not any(label in error for error in errors):
             allowance[new_key] += transfer.count
-    if transfers and sum(after.values()) > sum(before.values()):
+    for partition in partitions:
+        old_key = (partition.kind, partition.old, partition.token)
+        label = (
+            f"{partition.kind} {partition.old} {partition.token} x{partition.count} -> "
+            + "; ".join(f"{path} x{count}" for path, count in partition.destinations)
+        )
+        destination_paths = [path for path, _count in partition.destinations]
+        new_keys_for_partition = [
+            (partition.kind, path, partition.token) for path in destination_paths
+        ]
+        if len(set(destination_paths)) != len(destination_paths):
+            errors.append(f"container partition repeats a destination: {label}")
+        if partition.old in destination_paths:
+            errors.append(f"container partition source is also a destination: {label}")
+        if partition.old not in edited or any(path not in edited for path in destination_paths):
+            errors.append(f"container partition endpoints are not all edited: {label}")
+        if old_key in old_keys or old_key in new_keys:
+            errors.append(f"container partition spends one old key more than once: {label}")
+        old_keys.add(old_key)
+        for new_key in new_keys_for_partition:
+            if new_key in new_keys or new_key in old_keys:
+                errors.append(f"container partition pays one new key more than once: {label}")
+            new_keys.add(new_key)
+        loss = max(0, before.get(old_key, 0) - after.get(old_key, 0))
+        gains = [
+            max(0, after.get(key, 0) - before.get(key, 0))
+            for key in new_keys_for_partition
+        ]
+        if partition.count != loss:
+            errors.append(
+                f"container partition does not exactly equal old-key loss {loss}: {label}"
+            )
+        if partition.count != sum(count for _path, count in partition.destinations):
+            errors.append(f"container partition destination counts do not sum to source: {label}")
+        for (path, declared), gain in zip(partition.destinations, gains):
+            if declared != gain:
+                errors.append(
+                    f"container partition destination {path} does not exactly equal "
+                    f"new-key rise {gain}: {label}"
+                )
+        if not errors or not any(label in error for error in errors):
+            for key, (_path, count) in zip(new_keys_for_partition, partition.destinations):
+                allowance[key] += count
+    if (transfers or partitions) and sum(after.values()) > sum(before.values()):
         errors.append(
             "container transfers may not increase the total charged population: "
             f"{sum(before.values())} -> {sum(after.values())}"
@@ -2525,6 +2627,11 @@ def container_transfer_budget(
         f"container transfer -- {transfer.kind} {transfer.old} => {transfer.new} "
         f"{transfer.token} x{transfer.count}"
         for transfer in transfers
+    ) + tuple(
+        f"container partition -- {partition.kind} {partition.old} "
+        f"{partition.token} x{partition.count} -> "
+        + "; ".join(f"{path} x{count}" for path, count in partition.destinations)
+        for partition in partitions
     )
     if errors:
         allowance.clear()
