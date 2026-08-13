@@ -128,12 +128,6 @@ headlines. Detailed declarations and hypotheses remain in the
 The project has no declared axioms. Representative capstones reduce only to Mathlib's standard
 `propext`, `Classical.choice`, and `Quot.sound` foundations.
 
-The Vitali--Porter convergence theorem
-`IsingModel.FunctionTheory.vitaliPorter_tendstoLocallyUniformlyOn` is proved from Mathlib by the
-in-project complex Montel theorem and identity-theorem uniqueness argument. The historical
-function-theory-axiom module is now a compatibility re-export of that proved theorem; it contains
-no axiom declaration.
-
 Any future proposal for a declared axiom requires an explicit policy decision and documentation. It
 must not be inferred from the historical Vitali--Porter compatibility module.
 
