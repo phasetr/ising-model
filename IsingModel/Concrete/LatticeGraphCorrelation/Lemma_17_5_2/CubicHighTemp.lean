@@ -15,7 +15,8 @@ sandwich capstone.
 
 References:
 
-* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.5, pp.~304--312.
+* Glimm--Jaffe, *Quantum Physics* (2nd ed.), §17.1, pp.~304--306;
+  §17.5, pp.~310--312.
 -/
 
 namespace IsingModel
@@ -34,7 +35,7 @@ both the active-range and the high-temperature comparison are available
 from the existing `cubicTanhProfileBound` infrastructure; the upper-bound
 side (a future Lipschitz + HLS PR) is not addressed here.
 
-References: Glimm--Jaffe §17.5, pp.~304--306 and Lemma 17.5.2,
+References: Glimm--Jaffe §17.1, pp.~304--306 and §17.5 Lemma 17.5.2,
 pp.~311--312. -/
 theorem lemma_17_5_2_cubic_high_temp_lower_capstone
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
@@ -70,7 +71,7 @@ This is the pair-general reference-exhaustion version of
 `lemma_17_5_2_cubic_high_temp_lower_capstone`; the origin-anchored wrapper is a
 convenient special case used by the named cubic pseudo-mass API.
 
-References: Glimm--Jaffe §17.5, pp.~304--306 and Lemma 17.5.2,
+References: Glimm--Jaffe §17.1, pp.~304--306 and §17.5 Lemma 17.5.2,
 pp.~311--312. -/
 theorem lemma_17_5_2_cubic_pair_high_temp_lower_capstone
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)

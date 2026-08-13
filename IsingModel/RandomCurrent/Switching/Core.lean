@@ -11,7 +11,7 @@ p. 7, eq. (3.5)).
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.10.6, pp. 143–145.
+* Friedli–Velenik §3.10.6, pp. 143–145.
 * Aizenman, M. (1982). Geometric analysis of φ⁴ fields.
 -/
 

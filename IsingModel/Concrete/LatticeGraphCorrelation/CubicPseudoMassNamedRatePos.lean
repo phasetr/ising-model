@@ -21,7 +21,7 @@ namespace Ambient
 comparison proposition**: strict positivity is supplied directly, and the
 irreducible proposition supplies the high-temperature comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -41,7 +41,7 @@ theorem latticeMass_pos_of_cubicOriginNamedRateLeHighTemp_pos
 comparison proposition**: direct positivity upgrades the named-proposition
 closed interval to `(0, latticeMass]`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_ofReal_mem_Ioc_latticeMass_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -79,7 +79,7 @@ theorem latticeMass_ne_zero_of_cubicOriginNamedRateLeHighTemp_pos
 positivity**: strict positivity supplies the interval lower endpoint while the
 named proposition supplies decay and the upper endpoint.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Ioc_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

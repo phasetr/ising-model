@@ -94,7 +94,7 @@ theorem HasExponentialDecay_rate_le_neg_log_tanh_betaJ
             rw [h0, Real.exp_zero, mul_one]
   linarith [Real.add_one_le_exp (ε * ↑n₀)]
 
-/-- **Upper bound on the lattice mass** (GJ §17.5 pp. 304–306):
+/-- **Upper bound on the lattice mass** (GJ §17.1 pp. 304–306):
 for `d ≥ 1`, `J > 0`, `β > 0` at `h = 0`,
 `latticeMass d (cubicExhaustion d) ⟨J,0,β⟩ ≤ ENNReal.ofReal (-log(tanh(βJ)))`.
 
@@ -105,7 +105,7 @@ Proof: every admissible nonnegative decay rate is bounded by the path rate
 `-log(tanh(βJ))` via `HasExponentialDecay_rate_le_neg_log_tanh_betaJ`, so the
 same bound holds for the supremum defining `latticeMass`.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306 (2nd ed.). -/
 theorem latticeMass_le_neg_log_tanh_betaJ
     {d : ℕ} (hd : 0 < d) {J β : ℝ} (hJ : 0 < J) (hβ : 0 < β) :
     latticeMass d (Ambient.cubicExhaustion d) (⟨J, 0, β⟩ : IsingParams ℝ)
@@ -115,7 +115,7 @@ theorem latticeMass_le_neg_log_tanh_betaJ
   rintro b ⟨α, hα_dec, rfl⟩
   exact HasExponentialDecay_rate_le_neg_log_tanh_betaJ hd hJ hβ hα_dec
 
-/-- **Lattice mass two-sided bound** (Step 153, GJ §17.5 pp. 304–306):
+/-- **Lattice mass two-sided bound** (Step 153, GJ §17.1 pp. 304–306):
 in the high-temperature regime (`d ≥ 1`, `0 < J`, `0 < β`, `βJ·2d < 1`):
 `ENNReal.ofReal (-log(βJ·2d)) ≤ latticeMass ≤ ENNReal.ofReal (-log(tanh(βJ)))`.
 

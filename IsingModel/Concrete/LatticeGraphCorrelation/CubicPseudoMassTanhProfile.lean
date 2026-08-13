@@ -49,7 +49,7 @@ theorem correlationInfinite_cubic_pair_pos_of_cubicTanhProfileBound
 condition**: the named predicate supplies exactly the two hypotheses consumed by
 the existing cubic profile-to-named-rate comparison bridge.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicTanhProfileBound_cubic_corr_mem_Ioo_and_profile
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -73,7 +73,7 @@ membership and cubic profile lower bound supplied by `cubicTanhProfileBound`.
 This avoids restating the tanh-power formula while keeping downstream proofs on
 the stable cubic profile-to-named-rate bridge input layer.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicTanhProfileBound_elim_cubic_corr_mem_Ioo_and_profile
     {α d : ℕ} {r : ℝ} (hr : 0 < r)
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)

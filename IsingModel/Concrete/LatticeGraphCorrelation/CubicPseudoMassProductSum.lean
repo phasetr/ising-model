@@ -17,7 +17,7 @@ high-temperature comparison**: the named rate supplies an exponential-decay
 witness, and Step 127 gives the explicit convolution bound with some witness
 constant `C`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_pos_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -47,7 +47,7 @@ theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_pos_le_high_temp
 cubic profile bridge supplies the positive named decay rate and the Step 127
 convolution estimate supplies the bound.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -79,7 +79,7 @@ theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_cubic_pseudoMass
 comparison**: active-range membership supplies positivity and the comparison
 supplies the named exponential-decay rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_corr_mem_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -107,7 +107,7 @@ theorem exists_tsum_cubicTruncated2Product_le_of_cubicNamedRate_corr_mem_le_high
 comparison proposition**: the irreducible proposition supplies the validating
 decay comparison and Step 127 supplies the explicit convolution bound.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -132,7 +132,7 @@ theorem exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_
 proposition**: active-range membership supplies positivity and the irreducible
 proposition supplies the validating decay comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem exists_tsum_cubicTruncated2Product_le_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)

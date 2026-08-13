@@ -22,7 +22,7 @@ This is the exhaustion-uniform version of `latticeMass_ge_neg_log_of_high_temp`;
 it combines `HasExponentialDecay_transfer_high_temp` with the `sSup` definition
 of `latticeMass`.
 
-References: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2, pp. 311--312. -/
+References: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2, pp. 311--312. -/
 theorem latticeMass_ge_neg_log_of_high_temp_exhaustion
     {d : ℕ} (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
@@ -43,7 +43,7 @@ if `0 < βJ` and `βJ·2d < 1` with `d ≥ 1`, then every exhaustion has positiv
 The proof uses the transferred high-temperature decay rate
 `-log(βJ·2d)`, which is strictly positive when `0 < βJ·2d < 1`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306. -/
 theorem latticeMass_pos_of_high_temp_exhaustion
     {d : ℕ} (hd : 1 ≤ d) (Λ : Ambient.Exhaustion (Fin d → ℤ))
     {β J : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β) (hβJ : 0 < β * J)

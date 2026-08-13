@@ -8,7 +8,7 @@ Connects the Gibbs-measure correlation function to the random-current
 weight sums, then derives the Simon-Lieb inequality from
 `Current.weightSum_pair_le_edge_sum` (PR #898).
 
-Six supporting lemmas lead to the main result:
+Five supporting lemmas lead to the main result:
 1. `edgeSpin_eq_spinEdgeProduct_of_inducedGraph_edgeSet` — bridge identity.
 2. `boltzmannWeight_inducedGraph_eq_prod_exp_of_h_zero` — Boltzmann weight as edge product.
 3. `pow_card_mul_weightSum_eq_sum_spinProduct_mul_boltzmannWeight` — RC ↔ Gibbs sum.

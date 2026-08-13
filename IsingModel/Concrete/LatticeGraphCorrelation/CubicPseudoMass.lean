@@ -24,7 +24,7 @@ named comparison proposition**: the irreducible proposition supplies the
 high-temperature comparison input once, and strict positivity supplies the
 positive interval, cluster, summability, and Step 127 product-sum consequences.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -69,7 +69,7 @@ theorem cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_pos
 proposition**: active-range membership supplies strict positivity, while the
 irreducible proposition supplies the high-temperature comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_capstone_bundle_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -107,7 +107,7 @@ supplies the irreducible high-temperature comparison proposition, and the
 bundle returns the target decay, interval, `latticeMass`, cluster, summability,
 and Step 127 product-sum consequences.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_capstone_bundle_of_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -147,7 +147,7 @@ active-range membership supplies strict positivity, while the explicit
 high-temperature comparison is converted into the irreducible named proposition
 before the bundle is applied.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_capstone_bundle_of_corr_mem_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -187,7 +187,7 @@ cubic profile lower bound, then the active-range/profile capstone bundle returns
 the target decay, interval, `latticeMass`, cluster, summability, and Step 127
 product-sum consequences.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_capstone_bundle_of_cubic_corr_mem_Ioo_and_profile
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

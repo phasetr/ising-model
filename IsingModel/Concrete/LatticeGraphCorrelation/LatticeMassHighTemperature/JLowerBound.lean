@@ -188,7 +188,7 @@ private lemma inducedSingleEdge_edgeFinset (d : ℕ)
       have h2 : (↑v : Fin d → ℤ) = 0 := congr_arg Subtype.val hv
       exact ⟨Or.inr ⟨h1, h2⟩, fun heq => hr_ne.symm (h2 ▸ h1 ▸ heq)⟩
 
-/-- **J-lower bound on the two-point function** (GJ §17.5 pp. 304–306):
+/-- **J-lower bound on the two-point function** (GJ §17.1 pp. 304–306):
 for adjacent `r` in `latticeGraph d`, ferromagnetic `J ≥ 0`, `β > 0`, `h = 0`:
 
 `tanh(β J) ≤ twoPointFunction d ⟨J, 0, β⟩ r`.
@@ -197,7 +197,7 @@ Proof: (1) the single-edge graph `G_single = fromEdgeSet {⟦(0,r)⟧}` satisfie
 `G_single ≤ latticeGraph d`; (2) `correlationInfinite G_single = tanh(βJ)` by the
 single-edge 2-site computation; (3) apply GKS-II subgraph monotonicity.
 
-Reference: Glimm–Jaffe §17.5 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
+Reference: Glimm–Jaffe §17.1 pp. 304–306 (2nd ed.); §4.2 (GKS-II subgraph monotonicity). -/
 theorem twoPointFunction_ge_tanh_betaJ_of_adj
     {d : ℕ} {J β : ℝ} (hJ : 0 ≤ J) (hβ : 0 < β)
     {r : Fin d → ℤ} (hr : (IsingModel.latticeGraph d).Adj 0 r) :

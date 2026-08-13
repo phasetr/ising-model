@@ -17,7 +17,7 @@ if the named anchored cubic pseudo-mass is bounded above by the transferred
 high-temperature rate, then it is a valid exponential-decay rate for any target
 exhaustion.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -36,7 +36,7 @@ theorem HasExponentialDecay_cubicOriginPseudoMassFromParamsAtPair_of_le_high_tem
 under the high-temperature comparison for the named anchored cubic pseudo-mass,
 that pseudo-mass is bounded above by the target-exhaustion `latticeMass`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -57,7 +57,7 @@ theorem latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_le_high_temp_rat
 the nonnegative `ENNReal.ofReal` named rate lies in `[0, latticeMass]` once the
 high-temperature rate comparison is available.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_ofReal_mem_Icc_latticeMass_of_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

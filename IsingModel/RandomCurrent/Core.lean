@@ -16,7 +16,7 @@ the `Current` type, parity, sources, weights, and related predicates.
 
 ## References
 
-* Glimm–Jaffe, *Quantum Physics*, §5.1; Friedli–Velenik §3.10.6, pp. 143–145.
+* Friedli–Velenik §3.10.6, pp. 143–145.
 -/
 
 namespace IsingModel

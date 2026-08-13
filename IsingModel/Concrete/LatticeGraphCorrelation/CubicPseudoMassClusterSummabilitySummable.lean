@@ -22,7 +22,7 @@ namespace Ambient
 high-temperature comparison**: on the cubic exhaustion, the named rate feeds the
 Step 127 product-summability theorem.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem summable_truncated2Infinite_prod_of_cubicNamedRate_pos_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -42,7 +42,7 @@ theorem summable_truncated2Infinite_prod_of_cubicNamedRate_pos_le_high_temp_rate
 /-- **Cubic product summability from cubic active-range/profile inputs**:
 the profile bridge supplies a positive named decay rate on the cubic exhaustion.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem summable_truncated2Infinite_prod_of_cubicNamedRate_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -69,7 +69,7 @@ theorem summable_truncated2Infinite_prod_of_cubicNamedRate_cubic_pseudoMassG_le_
 comparison**: active-range membership gives positivity and the comparison gives
 the validating decay rate on the cubic exhaustion.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -92,7 +92,7 @@ theorem summable_truncated2Infinite_prod_of_cubicNamedRate_corr_mem_le_high_temp
 comparison proposition**: the irreducible proposition supplies the validating
 decay comparison on the cubic exhaustion.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)
@@ -112,7 +112,7 @@ theorem summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_pos
 proposition**: active-range membership supplies positivity and the irreducible
 proposition supplies the comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem summable_truncated2Infinite_prod_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     [∀ n, Fintype (Ambient.inducedGraph (IsingModel.latticeGraph d)

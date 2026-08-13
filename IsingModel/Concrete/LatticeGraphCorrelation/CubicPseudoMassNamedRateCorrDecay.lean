@@ -24,7 +24,7 @@ comparison**: the conditional comparison supplies both validating exponential
 decay and membership of `ENNReal.ofReal` of the named rate in
 `[0, latticeMass]`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Icc_of_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -47,7 +47,7 @@ theorem cubicNamedRate_decay_mem_Icc_of_le_high_temp_rate
 high-temperature comparison**: positivity upgrades the interval component to
 `(0, latticeMass]` while retaining the same validating decay proof.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -71,7 +71,7 @@ theorem cubicNamedRate_decay_mem_Ioc_of_pos_le_high_temp_rate
 bound**: the active-range/profile inputs supply both the decay proof and
 closed interval membership for the named anchored cubic rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Icc_of_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -99,7 +99,7 @@ theorem cubicNamedRate_decay_mem_Icc_of_cubic_pseudoMassG_le_corr
 lower bound**: active-range membership upgrades the interval component to
 `(0, latticeMass]`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Ioc_of_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -127,7 +127,7 @@ theorem cubicNamedRate_decay_mem_Ioc_of_cubic_pseudoMassG_le_corr
 high-temperature comparison**: active-range membership gives the strict lower
 endpoint, and the named-rate comparison gives both decay and the upper endpoint.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_decay_mem_Ioc_of_corr_mem_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

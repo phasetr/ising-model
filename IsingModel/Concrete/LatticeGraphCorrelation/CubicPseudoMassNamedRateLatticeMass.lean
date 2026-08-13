@@ -19,7 +19,7 @@ namespace Ambient
 the irreducible proposition form is enough to place the named rate below the
 target-exhaustion `latticeMass`.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -39,7 +39,7 @@ theorem latticeMass_ge_cubicOriginPseudoMassFromParamsAtPair_of_cubicOriginNamed
 the `ENNReal.ofReal` named rate lies in `[0, latticeMass]` under the
 irreducible comparison proposition.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem cubicNamedRate_ofReal_mem_Icc_latticeMass_of_cubicOriginNamedRateLeHighTemp
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))

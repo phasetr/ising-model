@@ -8,7 +8,7 @@ import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 
 /-!
-# Random current representation for the Ising model (GJ §5.1 / FV §3.7)
+# Random current representation for the Ising model (FV §3.7)
 
 Umbrella file importing all random-current sub-modules:
 
@@ -24,7 +24,7 @@ Umbrella file importing all random-current sub-modules:
 * `RandomCurrent.Switching.GlobalSwitchingLimit` — the `tsum`/`iSup` lift of
   the bounded global switching identity to `weightSum` (GJ §17.5 brick 2).
 
-References: Glimm–Jaffe §5.1; Friedli–Velenik §3.7. For the `Peeling` bound:
+Reference: Friedli–Velenik §3.7. For the `Peeling` bound:
 B. Simon, *Correlation inequalities and the decay of correlations in
 ferromagnets*, Comm. Math. Phys. 77 (1980), 111–126; E. H. Lieb, *A refinement
 of Simon's correlation inequality*, Comm. Math. Phys. 77 (1980), 127–135. -/

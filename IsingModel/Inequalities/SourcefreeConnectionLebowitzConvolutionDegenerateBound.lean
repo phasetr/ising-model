@@ -52,7 +52,7 @@ The capstone chain is `B1 + B2 + B3 + B4(H_low) → M2 → hLogLip → §17.5.1 
 (explicitly tracked; B4 is the load-bearing OZ core).
 
 References: Glimm–Jaffe, *Quantum Physics* (2nd ed.), §17.5, Theorem 17.5.1,
-p. 312; §17.5 pp. 304–306 (GKS-II geodesic lower bound); Friedli–Velenik,
+p. 312; §17.1 pp. 304–306 (GKS-II geodesic lower bound); Friedli–Velenik,
 Theorem 3.49 (GKS-II); Fernández–Fröhlich–Sokal, *Random Walks…* (1992), Ch. 12
 (backbone-tail, the B4 wall).
 

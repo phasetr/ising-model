@@ -22,7 +22,7 @@ namespace Ambient
 comparison**: a positive named rate validating exponential decay gives the
 target-exhaustion cluster property.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem clusterProperty_of_cubicNamedRate_pos_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -43,7 +43,7 @@ theorem clusterProperty_of_cubicNamedRate_pos_le_high_temp_rate
 /-- **Cluster property from cubic active-range/profile inputs**: the cubic
 profile bridge supplies a positive validating named rate.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem clusterProperty_of_cubicNamedRate_cubic_pseudoMassG_le_corr
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -70,7 +70,7 @@ theorem clusterProperty_of_cubicNamedRate_cubic_pseudoMassG_le_corr
 /-- **Cluster property from cubic active range plus named-rate comparison**:
 active-range membership supplies positivity and the comparison supplies decay.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem clusterProperty_of_cubicNamedRate_corr_mem_le_high_temp_rate
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -94,7 +94,7 @@ theorem clusterProperty_of_cubicNamedRate_corr_mem_le_high_temp_rate
 comparison proposition**: the irreducible proposition supplies the comparison
 input without restating the high-temperature inequality.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem clusterProperty_of_cubicOriginNamedRateLeHighTemp_pos
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
@@ -115,7 +115,7 @@ theorem clusterProperty_of_cubicOriginNamedRateLeHighTemp_pos
 proposition**: active-range membership supplies positivity and the irreducible
 proposition supplies the high-temperature comparison.
 
-Reference: Glimm--Jaffe §17.5 pp. 304--306 and Lemma 17.5.2 pp. 311--312. -/
+Reference: Glimm--Jaffe §17.1 pp. 304--306 and §17.5 Lemma 17.5.2 pp. 311--312. -/
 theorem clusterProperty_of_cubicOriginNamedRateLeHighTemp_cubic_corr_mem
     {α d : ℕ} (hα : 1 ≤ α) {r : ℝ} (hr : 0 < r)
     (Λ : Ambient.Exhaustion (Fin d → ℤ))
