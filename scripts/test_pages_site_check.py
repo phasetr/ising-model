@@ -184,6 +184,15 @@ class SiteTest(unittest.TestCase):
         status = self.source / "nested" / "status.md"
         with mock.patch.object(checker.subprocess, "run", side_effect=OSError("git unavailable")):
             self.assertIn("TRACKED_SET", [item.code for item in checker.check_source(self.source)])
+        with mock.patch.object(checker.Path, "read_text", side_effect=OSError("unreadable source")):
+            findings = checker.check_source(self.source)
+        self.assertEqual(
+            [(item.path, item.code, item.detail) for item in findings],
+            [
+                ("index.md", "SOURCE", "unreadable source"),
+                ("nested/status.md", "SOURCE", "unreadable source"),
+            ],
+        )
         status.write_bytes(b"\xff")
         self.assertIn("SOURCE", [item.code for item in checker.check_source(self.source)])
         status.unlink()
@@ -486,6 +495,19 @@ class MutationTest(SiteTest):
                 self.assertIn("LIQUID_DELIMITER", [item.code for item in checker.check_source(self.source)])
                 with mutant(guard, weakened) as module:
                     self.assertNotIn("LIQUID_DELIMITER", [item.code for item in module.check_source(self.source)])
+
+    def test_source_read_oserror_guard_is_mutation_pinned(self) -> None:
+        with mock.patch.object(checker.Path, "read_text", side_effect=OSError("unreadable source")):
+            self.assertEqual(
+                [item.code for item in checker.check_source(self.source)],
+                ["SOURCE", "SOURCE"],
+            )
+        with mutant(
+            '            text = path.read_text(encoding="utf-8")\n        except (OSError, UnicodeError) as exc:\n            findings.append(Finding(name, "SOURCE", str(exc)))',
+            '            text = path.read_text(encoding="utf-8")\n        except UnicodeError as exc:\n            findings.append(Finding(name, "SOURCE", str(exc)))',
+        ) as module, mock.patch.object(module.Path, "read_text", side_effect=OSError("unreadable source")):
+            with self.assertRaisesRegex(OSError, "unreadable source"):
+                module.check_source(self.source)
 
 
 class WorkflowContractTest(unittest.TestCase):
