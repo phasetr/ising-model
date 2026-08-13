@@ -31,12 +31,12 @@ _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 _DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
 _INLINE_RE = re.compile(
-    r"(!?)\[([^]\n]*)\]\([ \t]*(<[^>\n]+>|[^\s)]*)"
+    r"(?<!\\)(!?)\[([^]\n]*)\]\([ \t]*(<[^>\n]+>|[^\s)]*)"
     r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
 )
 _REFERENCE_USE_RE = re.compile(r"(!?)\[([^]\n]*)\]\[([^]\n]*)\]")
 _RAW_CANDIDATE_RE = re.compile(
-    r"!?\[[^]\n]*?\]\([ \t]*(?:<[^>\s]+>|[^\s)]*)"
+    r"(?<!\\)!?\[[^]\n]*?\]\([ \t]*(?:<[^>\s]+>|[^\s)]*)"
     r"(?:[ \t]+(?:\"[^\"\n]*\"|'[^'\n]*'|\([^()\n]*\)))?[ \t]*\)"
 )
 _RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
@@ -188,6 +188,36 @@ def _mask_inline_code_and_comments(line: str, active: bool) -> tuple[str, bool, 
     return "".join(chars), active, False
 
 
+def _unescaped(line: str, position: int) -> bool:
+    """Return whether punctuation at ``position`` has even slash parity."""
+    slashes = 0
+    cursor = position - 1
+    while cursor >= 0 and line[cursor] == "\\":
+        slashes += 1
+        cursor -= 1
+    return slashes % 2 == 0
+
+
+def _inline_punctuation_positions(line: str) -> set[int]:
+    """Locate bounded Markdown link/image ``](`` punctuation.
+
+    Only an unescaped ``[`` (optionally preceded by an unescaped ``!``) may
+    open the label, and the closing ``]`` must itself be unescaped.  This keeps
+    mathematical intervals and escaped literals out of the candidate census.
+    """
+    positions: set[int] = set()
+    opener: int | None = None
+    for position, char in enumerate(line):
+        if char == "[" and _unescaped(line, position):
+            opener = position
+            continue
+        if char == "]" and line.startswith("](", position) and _unescaped(line, position):
+            if opener is not None:
+                positions.add(position)
+            opener = None
+    return positions
+
+
 def parse_markdown(source: str, text: str) -> ParsedMarkdown:
     """Parse the bounded grammar and enforce raw candidate coverage."""
     inline_links: list[Link] = []
@@ -245,14 +275,14 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
         # links are consumed by the same grammar, so including both sides keeps
         # this census exact without asking the grammar parser for its input.
         raw_inline = list(_RAW_CANDIDATE_RE.finditer(line))
-        punctuation = list(re.finditer(r"\]\(", line))
+        punctuation_positions = _inline_punctuation_positions(line)
         parsed_inline = list(_INLINE_RE.finditer(line))
         raw_positions = {line.find("](", match.start()) for match in raw_inline}
         parsed_positions = {line.find("](", match.start()) for match in parsed_inline}
         candidate_identities.extend((lineno, position, "inline") for position in raw_positions)
         candidate_identities.extend(
-            (lineno, match.start(), "inline") for match in punctuation
-            if match.start() not in raw_positions and match.start() not in parsed_positions
+            (lineno, position, "inline") for position in punctuation_positions
+            if position not in raw_positions and position not in parsed_positions
         )
         consumed_identities.extend((lineno, position, "inline") for position in parsed_positions)
         for match in parsed_inline:
@@ -280,7 +310,7 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             key = " ".join((match.group(3) or match.group(2)).casefold().split())
             uses.append((lineno, key, bool(match.group(1)), match.group(2)))
         # Any local-link punctuation that was not consumed is a hard finding.
-        if len(punctuation) != len(parsed_inline):
+        if punctuation_positions != parsed_positions:
             findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "link punctuation was not consumed by the bounded grammar"))
     masked_text = "\n".join(masked_lines)
     starts = [0]

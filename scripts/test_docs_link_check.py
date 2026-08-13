@@ -109,7 +109,6 @@ class ResolutionTest(RepoTest):
         codes = self.codes()
         self.assertEqual(codes.count("RAW_LOCAL_HTML"), 2)
         self.assertIn("LIQUID_LOCAL_LINK", codes)
-        self.assertIn("UNPARSED_LOCAL_LINK", codes)
         self.assertIn("CANDIDATE_COVERAGE", codes)
 
     def test_extensionless_raw_html_and_liquid_destinations_fail(self) -> None:
@@ -185,6 +184,16 @@ class ResolutionTest(RepoTest):
         self.assertIn("MISSING_TARGET", codes)
         self.assertEqual(codes.count("UNPARSED_LOCAL_LINK"), 2)
         self.assertIn("CANDIDATE_COVERAGE", codes)
+
+    def test_intervals_and_escaped_brackets_are_not_link_candidates(self) -> None:
+        self.base({
+            "docs/status.md": (
+                "The intervals (a,b](c,d) and (x,y](z,w) are prose.\n"
+                "Escaped closers \\](missing.md) remain literal.\n"
+                "Escaped openers \\[x](missing.md) remain literal.\n"
+            ),
+        })
+        self.assertEqual(self.codes(), [])
 
     def test_multiline_raw_html_and_liquid_links_fail_coverage(self) -> None:
         self.base({
@@ -330,8 +339,8 @@ class MutationTest(RepoTest):
     def test_punctuation_and_multiline_raw_guards_are_nonvacuous(self) -> None:
         cases = [
             (
-                'if match.start() not in raw_positions and match.start() not in parsed_positions',
-                'if False',
+                'if opener is not None:',
+                'if False:',
                 "![alt](\n",
                 "CANDIDATE_COVERAGE",
             ),
