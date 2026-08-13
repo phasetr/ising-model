@@ -60,8 +60,9 @@ For the axiom-freeness audit and the Glimm–Jaffe chapter-by-chapter progress t
 > and open `.lake/build/doc/index.html`.
 
 Start with `docs/index.md` for the mathematical documentation. It links the
-canonical status, library-map, and bibliography pages; the theorem catalogue
-and source-coverage inventories remain in the index itself. Together they
+canonical status, library-map, bibliography, and topic-oriented theorem
+catalogue pages; the book-ordered source-coverage inventory remains in the
+index itself. Together they
 record formalized results against their sources in the literature and state the
 regime each one holds in. They are a curated account of the programme, not an
 index of the library: many declarations, in particular internal steps of a

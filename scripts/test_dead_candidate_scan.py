@@ -1007,6 +1007,11 @@ class MarkdownBacktickParityTest(unittest.TestCase):
             "docs/status.md",
             "docs/library-map.md",
             "docs/references.md",
+            "docs/theorems/correlation.md",
+            "docs/theorems/free-energy.md",
+            "docs/theorems/phase-transition.md",
+            "docs/theorems/conditioning.md",
+            "docs/theorems/ambient-lattice.md",
         }
         expected = {
             label for label in owner_labels if (dcs.REPO_ROOT / label).is_file()
@@ -1025,6 +1030,16 @@ class MarkdownBacktickParityTest(unittest.TestCase):
              "is a thin"):
                 split_owner("docs/library-map.md"),
             "## References": split_owner("docs/references.md"),
+            "## Correlation inequalities (§4.1–§4.7)":
+                split_owner("docs/theorems/correlation.md"),
+            "## §4.6: Free energy analyticity and thermodynamic limit":
+                split_owner("docs/theorems/free-energy.md"),
+            "## §5.1–§5.4: Phase transitions and Peierls' argument":
+                split_owner("docs/theorems/phase-transition.md"),
+            "## Chapter 10 (Conditioning inequalities)":
+                split_owner("docs/theorems/conditioning.md"),
+            "## Ambient lattice framework (genuine infinite volume)":
+                split_owner("docs/theorems/ambient-lattice.md"),
         }
         for anchor, owner in anchor_owners.items():
             self.assertEqual(

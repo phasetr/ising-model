@@ -3822,7 +3822,15 @@ class RealTreePinTest(unittest.TestCase):
         """
         self.assertEqual(
             ca.MEASURED_CITATIONS,
-            {"docs/index.md": 2685, "docs/status.md": 13},
+            {
+                "docs/index.md": 1687,
+                "docs/status.md": 13,
+                "docs/theorems/correlation.md": 35,
+                "docs/theorems/free-energy.md": 676,
+                "docs/theorems/phase-transition.md": 257,
+                "docs/theorems/conditioning.md": 8,
+                "docs/theorems/ambient-lattice.md": 22,
+            },
         )
         self.assertEqual(sum(ca.MEASURED_CITATIONS.values()), 2698)
         self.assertEqual(ca.MEASURED_TRACKED_LEAN, 2018)
@@ -3830,7 +3838,15 @@ class RealTreePinTest(unittest.TestCase):
         self.assertEqual(set(ca.TARGETS) - set(ca.MEASURED_CITATIONS), set())
         self.assertEqual(
             {target: ca.cumulative_loss_cap(ca.MEASURED_CITATIONS[target]) for target in ca.TARGETS},
-            {"docs/index.md": 402, "docs/status.md": 1},
+            {
+                "docs/index.md": 253,
+                "docs/status.md": 1,
+                "docs/theorems/correlation.md": 5,
+                "docs/theorems/free-energy.md": 101,
+                "docs/theorems/phase-transition.md": 38,
+                "docs/theorems/conditioning.md": 1,
+                "docs/theorems/ambient-lattice.md": 3,
+            },
         )
 
     def test_the_frozen_measurement_still_describes_the_live_documents(self) -> None:
@@ -3995,7 +4011,7 @@ class RealTreePinTest(unittest.TestCase):
                 target: ca.citation_drop_budget(ca.MEASURED_CITATIONS[target])
                 for target in ca.BUDGET_CALIBRATION_TARGETS
             },
-            {"docs/index.md": 134},
+            {"docs/index.md": 84},
         )
         self.assertEqual(ca.MEASURED_REMEDIATION_DROP, 47)
 
@@ -4029,7 +4045,18 @@ class RealTreePinTest(unittest.TestCase):
 
     def test_default_targets_are_the_published_documents(self) -> None:
         """Shrinking ``TARGETS`` would make the tool pass by looking away."""
-        self.assertEqual(ca.TARGETS, ("docs/index.md", "docs/status.md"))
+        self.assertEqual(
+            ca.TARGETS,
+            (
+                "docs/index.md",
+                "docs/status.md",
+                "docs/theorems/correlation.md",
+                "docs/theorems/free-energy.md",
+                "docs/theorems/phase-transition.md",
+                "docs/theorems/conditioning.md",
+                "docs/theorems/ambient-lattice.md",
+            ),
+        )
 
     def test_budget_calibration_targets_are_explicit(self) -> None:
         """Small targets use their R12 cap and floor, not R11's 25-item sizing."""
@@ -4117,21 +4144,14 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
 
         R12's cap is what bounds the censuses R11 can ever be asked about, so
         widening it is how the floor stops being a backstop without any line
-        near the budget being edited: at 60% the smallest admissible census is
-        1,080 for the markdown, where a full budget of 54 lands at 1,026, below
-        the floor of 1,400. The rule and the share are untouched and stay quiet,
-        which is the point -- the guard that catches this is the one that
-        quantifies over the range.
-
-        The headroom claim is a separate threshold and is stated as such. A
-        widened cap starves the budget only once the smallest admissible census
-        is small enough for the share to fall under
-        :data:`citation_audit.MEASURED_REMEDIATION_DROP`, which for a single
-        2,698-citation target happens between 60% and 70%; at 80% the smallest
-        census is 540 and the budget 27, so both guards speak. Asserting
-        headroom at 60% would be asserting something false about the tool.
+        near the budget being edited. The catalogue split left the calibrated
+        landing page at 1,687 frozen citations and a floor of 844; at a 60% cap
+        its smallest admissible census is 675. A full budget both lands below
+        the floor and falls below the historical remediation drop, so both
+        ordering and headroom guards must speak. At 80% the same two failures
+        remain. The rule and its reviewed share stay quiet in both cases.
         """
-        for share, headroom_fires in (("0.6", False), ("0.8", True)):
+        for share in ("0.6", "0.8"):
             with self.subTest(share=share):
                 mutant = load_mutated(
                     (
@@ -4140,10 +4160,7 @@ class BudgetCalibrationMutationTest(unittest.TestCase):
                     )
                 )
                 self.assertNotEqual(budget_ordering_violations(mutant), [])
-                if headroom_fires:
-                    self.assertNotEqual(budget_headroom_violations(mutant), [])
-                else:
-                    self.assertEqual(budget_headroom_violations(mutant), [])
+                self.assertNotEqual(budget_headroom_violations(mutant), [])
                 self.assertEqual(budget_rule_violations(mutant), [])
                 self.assertEqual(budget_ratio_violations(mutant), [])
 

@@ -2087,6 +2087,13 @@ BASELINE_HEADER = """\
 # pin must be tight against the tree (B3).  Regenerating this file therefore no
 # longer launders a claim: `--check` would pass, the drift check would not.
 #
+# A documentation-only container split may move an unchanged charged sentence
+# to a new public path. Such a move is declared, once, by an added line:
+# `# CONTAINER-TRANSFER: CLASS old/path => new/path TOKEN xCOUNT`. The drift
+# checker reconciles it count-for-count and key-for-key against the actual pin
+# delta and requires both paths to be edited. The line changes no discovery,
+# grammar, key or B3 result and is not standing permission after this commit.
+#
 # A recount under a corrected detector -- the 713 -> 740 shape above -- is the
 # one movement no prose edit explains that can still be legitimate.  Declaring it
 # takes a whole line of this file, added by the same diff, reading exactly
@@ -2193,6 +2200,19 @@ MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
 #: The declaration's whole grammar: the marker, one space, a non-empty reason,
 #: and nothing else on the line.
 _MIGRATION_LINE = re.compile(rf"\A{re.escape(MIGRATION_MARKER)} (?P<reason>\S.*)\Z")
+
+#: A one-commit declaration that a charged sentence moved between public
+#: documentation containers without changing its class, token, or multiplicity.
+#: Unlike :data:`MIGRATION_MARKER`, this never changes what the detector sees;
+#: it only lets B1 attribute an already-measured path-key move to the two files
+#: this diff edits. The strict reconciliation in :func:`container_transfer_budget`
+#: is the authority, not the marker.
+CONTAINER_TRANSFER_MARKER = "# CONTAINER-TRANSFER:"
+_CONTAINER_TRANSFER_LINE = re.compile(
+    rf"\A{re.escape(CONTAINER_TRANSFER_MARKER)} "
+    r"(?P<kind>[A-Z_]+) (?P<old>\S+) => (?P<new>\S+) "
+    r"(?P<token>\S+) x(?P<count>[1-9][0-9]*)\Z"
+)
 
 
 class UnsoundRun(RuntimeError):
@@ -2326,6 +2346,126 @@ def migration_declarations(root: Path, commit: str) -> tuple[str, ...]:
         if declaration is not None:
             reasons.append(declaration.group("reason").strip())
     return tuple(reasons)
+
+
+class ContainerTransfer(NamedTuple):
+    """One declared old-path to new-path transfer of an unchanged charge key."""
+
+    kind: str
+    old: str
+    new: str
+    token: str
+    count: int
+
+
+class ContainerTransferBudget(NamedTuple):
+    """B1 allowance and fail-closed diagnostics for container transfers."""
+
+    allowance: Counter[tuple[str, str, str]]
+    errors: tuple[str, ...]
+    narrative: tuple[str, ...]
+
+
+def container_transfer_declarations(
+    root: Path, commit: str
+) -> tuple[tuple[ContainerTransfer, ...], tuple[str, ...]]:
+    """Parse transfer declarations added by this diff, rejecting malformed markers.
+
+    Reading only added lines makes the declaration one-shot: after merge it is
+    history in the base pin, not standing permission for another path move.
+    """
+    code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
+    if code != 0:
+        raise UnsoundRun(
+            f"`git diff {commit[:12]}` failed, so container-transfer declarations are unknown"
+        )
+    transfers: list[ContainerTransfer] = []
+    errors: list[str] = []
+    for line in out.splitlines():
+        if not line.startswith("+") or line.startswith("+++"):
+            continue
+        raw = line[1:]
+        if not raw.startswith(CONTAINER_TRANSFER_MARKER):
+            continue
+        match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
+        if match is None:
+            errors.append(f"malformed added container-transfer declaration: {raw}")
+            continue
+        transfers.append(
+            ContainerTransfer(
+                match.group("kind"),
+                match.group("old"),
+                match.group("new"),
+                match.group("token"),
+                int(match.group("count")),
+            )
+        )
+    return tuple(transfers), tuple(errors)
+
+
+def container_transfer_budget(
+    root: Path,
+    commit: str,
+    before: Counter[tuple[str, str, str]],
+    after: Counter[tuple[str, str, str]],
+    edited: frozenset[str],
+) -> ContainerTransferBudget:
+    """Authorize only count-for-count, key-for-key moves between edited paths.
+
+    The extractor, target key and B3 remain unchanged. A declaration pays only
+    the exact new-path rise it names, from an at-least-equal fall of the same
+    ``(class, token)`` at one old path. Old and new keys are each single-use, so
+    neither duplicate declarations nor one-to-many fan-out can spend one loss
+    twice. Any declaration that describes no exact live delta is an error rather
+    than an inert comment, and the whole pin may not grow in aggregate.
+    """
+    transfers, parse_errors = container_transfer_declarations(root, commit)
+    errors = list(parse_errors)
+    allowance: Counter[tuple[str, str, str]] = Counter()
+    old_keys: set[tuple[str, str, str]] = set()
+    new_keys: set[tuple[str, str, str]] = set()
+    for transfer in transfers:
+        old_key = (transfer.kind, transfer.old, transfer.token)
+        new_key = (transfer.kind, transfer.new, transfer.token)
+        label = (
+            f"{transfer.kind} {transfer.old} => {transfer.new} "
+            f"{transfer.token} x{transfer.count}"
+        )
+        if transfer.old == transfer.new:
+            errors.append(f"container transfer has identical paths: {label}")
+        if transfer.old not in edited or transfer.new not in edited:
+            errors.append(f"container transfer endpoints are not both edited: {label}")
+        if old_key in old_keys:
+            errors.append(f"container transfer spends one old key more than once: {label}")
+        if new_key in new_keys:
+            errors.append(f"container transfer pays one new key more than once: {label}")
+        old_keys.add(old_key)
+        new_keys.add(new_key)
+        loss = max(0, before.get(old_key, 0) - after.get(old_key, 0))
+        gain = max(0, after.get(new_key, 0) - before.get(new_key, 0))
+        if transfer.count > loss:
+            errors.append(
+                f"container transfer exceeds old-key loss {loss}: {label}"
+            )
+        if transfer.count != gain:
+            errors.append(
+                f"container transfer does not exactly equal new-key rise {gain}: {label}"
+            )
+        if not errors or not any(label in error for error in errors):
+            allowance[new_key] += transfer.count
+    if transfers and sum(after.values()) > sum(before.values()):
+        errors.append(
+            "container transfers may not increase the total charged population: "
+            f"{sum(before.values())} -> {sum(after.values())}"
+        )
+    narrative = tuple(
+        f"container transfer -- {transfer.kind} {transfer.old} => {transfer.new} "
+        f"{transfer.token} x{transfer.count}"
+        for transfer in transfers
+    )
+    if errors:
+        allowance.clear()
+    return ContainerTransferBudget(allowance, tuple(errors), narrative)
 
 
 def _logic_fingerprint(text: str) -> str | None:
@@ -2567,13 +2707,28 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     try:
         edited = changed_paths(root, base)
         migration = migration_budgets(root, base, live)
+        transfer = container_transfer_budget(root, base, baseline, head, edited)
     except UnsoundRun as failure:
         return Drift(base, True, (), (), untight, (str(failure),), (), ())
+    if transfer.errors:
+        return Drift(
+            base,
+            True,
+            (),
+            (),
+            untight,
+            (),
+            tuple(f"container transfer: {error}" for error in transfer.errors),
+            transfer.narrative,
+        )
     added = tuple(
         sorted(
             (key, count, baseline.get(key, 0))
             for key, count in head.items()
-            if count > baseline.get(key, 0) + migration.allowance.get(key, 0)
+            if count
+            > baseline.get(key, 0)
+            + migration.allowance.get(key, 0)
+            + transfer.allowance.get(key, 0)
         )
     )
     unexplained = tuple(
@@ -2585,7 +2740,16 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
             and count - head.get(key, 0) > migration.relief.get(key, 0)
         )
     )
-    return Drift(base, True, added, unexplained, untight, (), (), migration.narrative)
+    return Drift(
+        base,
+        True,
+        added,
+        unexplained,
+        untight,
+        (),
+        (),
+        migration.narrative + transfer.narrative,
+    )
 
 
 class Migration(NamedTuple):
