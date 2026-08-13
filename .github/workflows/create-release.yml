@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'master'
     paths:
       - 'lean-toolchain'
 
@@ -25,7 +24,12 @@ jobs:
         persist-credentials: false
     - name: Derive the intended tag and require it to be absent
       id: expected
+      env:
+        PUSH_REF: ${{ github.ref }}
+        PUSH_SHA: ${{ github.sha }}
       run: |
+        test "$PUSH_REF" = refs/heads/main
+        test "$(git rev-parse HEAD)" = "$PUSH_SHA"
         toolchain=$(cat lean-toolchain)
         test "$(printf '%s\n' "$toolchain" | wc -l | tr -d ' ')" -eq 1
         tag=${toolchain##*:}
@@ -46,10 +50,25 @@ jobs:
       contents: write
     steps:
     - name: lean-release-tag action
+      if: github.event.before != '0000000000000000000000000000000000000000'
       uses: leanprover-community/lean-release-tag@9ca7ed09e240259871327bfc3a3a8d8c4bcb41aa # v1
       with:
         do-release: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create the initial annotated tag and release without a null revision range
+      if: github.event.before == '0000000000000000000000000000000000000000'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPOSITORY: ${{ github.repository }}
+        SOURCE_REF: ${{ needs.prepare-release-source.outputs.source-ref }}
+        SOURCE_SHA: ${{ github.sha }}
+      run: |
+        tag=${SOURCE_REF#refs/tags/}
+        tag_object=$(gh api --method POST "repos/$REPOSITORY/git/tags" \
+          -f tag="$tag" -f message="Release $tag" -f object="$SOURCE_SHA" -f type=commit --jq .sha)
+        gh api --method POST "repos/$REPOSITORY/git/refs" -f ref="$SOURCE_REF" -f sha="$tag_object"
+        gh api --method POST "repos/$REPOSITORY/releases" \
+          -f tag_name="$tag" -f name="$tag" -f body="Automated release for Lean version $tag"
 
   resolve-release-source:
     name: Resolve the exact new Lean release source
@@ -115,6 +134,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/pages.yml
     with:
+      invocation_kind: release
       deploy: true
       source_ref: ${{ needs.resolve-release-source.outputs.source-ref }}
       source_sha: ${{ needs.resolve-release-source.outputs.source-sha }}

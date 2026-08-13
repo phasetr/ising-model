@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import http.server
 import json
 import os
 import re
@@ -11,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import types
 import unittest
 import urllib.parse
@@ -181,6 +183,43 @@ class SiteTest(unittest.TestCase):
         self.assertEqual(request.call_count, 3)
         self.assertEqual(sleep.call_count, 2)
 
+    def test_fetch_retry_success_and_exhaustion_against_local_http_server(self) -> None:
+        class Handler(http.server.BaseHTTPRequestHandler):
+            attempts = 0
+            always_fail = False
+
+            def do_GET(self):
+                type(self).attempts += 1
+                if type(self).always_fail or type(self).attempts < 3:
+                    self.send_response(503)
+                    self.end_headers()
+                    return
+                body = b"ready"
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, _format, *_args):
+                return
+
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        url = f"http://127.0.0.1:{server.server_port}/snapshot"
+        with mock.patch.object(checker.time, "sleep"):
+            self.assertEqual(checker._fetch(url), (b"ready", None))
+        self.assertEqual(Handler.attempts, 3)
+        Handler.attempts = 0
+        Handler.always_fail = True
+        with mock.patch.object(checker.time, "sleep"):
+            body, error = checker._fetch(url)
+        self.assertIsNone(body)
+        self.assertIn("503", error or "")
+        self.assertEqual(Handler.attempts, 3)
+
     def test_live_pipeline_passes_and_rejects_stale_revision(self) -> None:
         self.assertEqual(self.prepare(), [])
 
@@ -247,6 +286,55 @@ def mutant(old: str, new: str):
             yield module
         finally:
             sys.modules.pop(name, None)
+
+
+def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]:
+    """Bounded exact contract shared by the real-tree and mutation tests."""
+    findings: list[str] = []
+    dispatch = pages.split("workflow_dispatch:", 1)[-1].split("workflow_call:", 1)[0]
+    required_counts = {
+        "manual mode": (dispatch, "mode:", 1),
+        "manual ref guard": (pages, 'test "$RUN_REF" = refs/heads/main', 2),
+        "manual kind": (pages, 'test -z "$INVOCATION_KIND"', 1),
+        "release kind": (pages, 'test "$INVOCATION_KIND" = release', 1),
+        "cross-mode mode": (pages, 'test -z "$MODE"', 1),
+        "release deploy": (pages, 'test "$RELEASE_DEPLOY" = true', 1),
+        "validated deploy": (pages, "if: needs.build.outputs.deploy == 'true'", 1),
+        "tag input": (pages, 'case "$SOURCE_REF" in refs/tags/v*)', 1),
+        "Pages credentials": (pages, "persist-credentials: false", 2),
+        "release credentials": (release, "persist-credentials: false", 2),
+        "one deployer": (pages, "actions/deploy-pages@", 1),
+        "one artifact": (pages, "actions/upload-pages-artifact@", 1),
+        "new tag": (release, 'git ls-remote --exit-code origin "refs/tags/$tag"', 1),
+        "toolchain equality": (release, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 1),
+        "new range": (release, 'test "$source_sha" != "$BEFORE"', 1),
+        "main before write": (release, 'test "$PUSH_REF" = refs/heads/main', 1),
+        "zero action bypass": (release, "if: github.event.before != '0000000000000000000000000000000000000000'", 1),
+        "zero release path": (release, "if: github.event.before == '0000000000000000000000000000000000000000'", 1),
+        "caller kind": (release, "invocation_kind: release", 1),
+        "caller deploy": (release, "deploy: true", 1),
+    }
+    for label, (text, needle, expected) in required_counts.items():
+        if text.count(needle) != expected:
+            findings.append(label)
+    if "source_sha:" in dispatch or "source_ref:" in dispatch:
+        findings.append("editable manual source")
+    if 'test "$EVENT_NAME" = workflow_call' in pages or "github.event_name == 'workflow_call'" in pages:
+        findings.append("caller event assumption")
+    if "python3 scripts/test_pages_site_check.py" not in pages or "python3 scripts/docs_link_check.py --check" not in pages:
+        findings.append("publication source gates")
+    if "needs: [prepare-release-source, lean-release-tag]" not in release or "refs/tags/$tag" not in release:
+        findings.append("release resolver")
+    if "      - 'master'" in release:
+        findings.append("non-main release trigger")
+    if 'gh api --method POST "repos/$REPOSITORY/git/tags"' not in release or 'gh api --method POST "repos/$REPOSITORY/releases"' not in release:
+        findings.append("zero-before release semantics")
+    if "pages: write" in lean or "id-token: write" in lean:
+        findings.append("Lean authority")
+    uses = re.findall(r"uses:[ ]+([^\s]+@([^\s]+))", pages + release)
+    if not uses or any(re.fullmatch(r"[0-9a-f]{40}", ref) is None for _whole, ref in uses):
+        findings.append("immutable action refs")
+    return findings
 
 
 class MutationTest(SiteTest):
@@ -316,6 +404,7 @@ class WorkflowContractTest(unittest.TestCase):
         pages = (REPO_ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
         release = (REPO_ROOT / ".github/workflows/create-release.yml").read_text(encoding="utf-8")
         lean = (REPO_ROOT / ".github/workflows/lean_action_ci.yml").read_text(encoding="utf-8")
+        self.assertEqual(workflow_contract_findings(pages, release, lean), [])
         self.assertIn("workflow_dispatch:", pages)
         self.assertIn("workflow_call:", pages)
         dispatch = pages.split("workflow_dispatch:", 1)[1].split("workflow_call:", 1)[0]
@@ -349,6 +438,7 @@ class WorkflowContractTest(unittest.TestCase):
         self.assertIn("source_sha=$(git rev-parse", release)
         self.assertIn("if: needs.resolve-release-source.outputs.publish == 'true'", release)
         self.assertIn("deploy: true", release)
+        self.assertIn("invocation_kind: release", release)
         write_job = release.split("lean-release-tag:", 1)[1].split("resolve-release-source:", 1)[0]
         self.assertEqual(write_job.count("contents: write"), 1)
         self.assertNotIn("git fetch", write_job)
@@ -366,20 +456,61 @@ class WorkflowContractTest(unittest.TestCase):
         pages_path = REPO_ROOT / ".github/workflows/pages.yml"
         release_path = REPO_ROOT / ".github/workflows/create-release.yml"
         cases = (
-            (pages_path, 'test "$RUN_REF" = refs/heads/main', 'test -n "$RUN_REF"'),
-            (pages_path, 'case "$SOURCE_REF" in refs/tags/v*)', 'case "$SOURCE_REF" in *)'),
-            (pages_path, 'persist-credentials: false', 'persist-credentials: true'),
-            (release_path, 'git ls-remote --exit-code origin "refs/tags/$tag"', 'false'),
-            (release_path, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 'true'),
-            (release_path, 'test "$source_sha" != "$BEFORE"', 'true'),
+            (pages_path, 'test "$RUN_REF" = refs/heads/main', 'test -n "$RUN_REF"', 2),
+            (pages_path, 'case "$SOURCE_REF" in refs/tags/v*)', 'case "$SOURCE_REF" in *)', 1),
+            (pages_path, 'persist-credentials: false', 'persist-credentials: true', 2),
+            (release_path, 'git ls-remote --exit-code origin "refs/tags/$tag"', 'false', 1),
+            (release_path, 'test "$toolchain" = "$EXPECTED_TOOLCHAIN"', 'true', 1),
+            (release_path, 'test "$source_sha" != "$BEFORE"', 'true', 1),
+            (release_path, 'test "$PUSH_REF" = refs/heads/main', 'true', 1),
+            (release_path, "if: github.event.before != '0000000000000000000000000000000000000000'", "if: true", 1),
+            (release_path, "if: github.event.before == '0000000000000000000000000000000000000000'", "if: false", 1),
+            (pages_path, 'test -z "$INVOCATION_KIND"', 'true', 1),
+            (pages_path, 'test "$INVOCATION_KIND" = release', 'true', 1),
+            (pages_path, 'test -z "$MODE"', 'true', 1),
+            (pages_path, 'test "$RELEASE_DEPLOY" = true', 'true', 1),
+            (pages_path, "if: needs.build.outputs.deploy == 'true'", "if: inputs.deploy", 1),
+            (release_path, "invocation_kind: release", "invocation_kind: manual", 1),
         )
-        for path, guard, weakened in cases:
+        real_pages = pages_path.read_text(encoding="utf-8")
+        real_release = release_path.read_text(encoding="utf-8")
+        lean = (REPO_ROOT / ".github/workflows/lean_action_ci.yml").read_text(encoding="utf-8")
+        self.assertEqual(workflow_contract_findings(real_pages, real_release, lean), [])
+        for path, guard, weakened, expected_count in cases:
             with self.subTest(guard=guard):
                 text = path.read_text(encoding="utf-8")
                 count = text.count(guard)
-                self.assertGreater(count, 0)
+                self.assertEqual(count, expected_count)
                 mutant_text = text.replace(guard, weakened, 1)
                 self.assertEqual(mutant_text.count(guard), count - 1)
+                pages = mutant_text if path == pages_path else real_pages
+                release = mutant_text if path == release_path else real_release
+                self.assertNotEqual(workflow_contract_findings(pages, release, lean), [])
+
+    def test_reusable_release_identity_accepts_caller_push_event(self) -> None:
+        pages = (REPO_ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
+        block = pages.split("      - name: Resolve and verify the invocation-specific source identity", 1)[1]
+        script = block.split("        run: |\n", 1)[1].split("      - name:", 1)[0]
+        lines = script.splitlines()
+        script = "\n".join(line[10:] for line in lines) + "\n"
+        with tempfile.TemporaryDirectory(prefix="pages-release-event-") as raw:
+            repo = Path(raw)
+            subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.email", "verify@example.invalid"], cwd=repo, check=True)
+            subprocess.run(["git", "config", "user.name", "verify"], cwd=repo, check=True)
+            (repo / "file").write_text("x", encoding="utf-8")
+            subprocess.run(["git", "add", "--", "file"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-qm", "source"], cwd=repo, check=True)
+            sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+            subprocess.run(["git", "tag", "v-test"], cwd=repo, check=True)
+            output = repo / "output"
+            env = dict(os.environ, EVENT_NAME="push", INVOCATION_KIND="release", MODE="",
+                       RELEASE_DEPLOY="true", RUN_REF="refs/heads/main", SOURCE_REF="refs/tags/v-test",
+                       SOURCE_SHA=sha, GITHUB_OUTPUT=str(output))
+            subprocess.run(["bash", "-eu", "-o", "pipefail", "-c", script], cwd=repo, env=env, check=True)
+            emitted = output.read_text(encoding="utf-8")
+            self.assertIn(f"source-sha={sha}\n", emitted)
+            self.assertIn("deploy=true\n", emitted)
 
 
 def run_suite() -> int:
