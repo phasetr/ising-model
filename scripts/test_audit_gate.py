@@ -1751,12 +1751,13 @@ class ScopeCoverageTest(unittest.TestCase):
     def test_the_public_paths_are_really_scanned(self) -> None:
         """Name the material V4 exists for, so its loss cannot be silent.
 
-        ``docs/index.md`` and the README are the English-only
-        public surface; the gate's whole purpose is that Japanese never reaches
-        them.
+        ``docs/**/*.md`` and the README are the English-only public surface;
+        the gate's whole purpose is that Japanese never reaches them.
         """
         scanned = self.scanned()
         for name in ("docs/index.md", "README.md"):
+            self.assertIn(name, scanned)
+        for name in ("docs/status.md", "docs/library-map.md", "docs/references.md"):
             self.assertIn(name, scanned)
         for prefix in ("IsingModel/", "scripts/", "test/", ".github/"):
             self.assertTrue(
