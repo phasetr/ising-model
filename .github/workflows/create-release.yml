@@ -14,9 +14,48 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      release-tag: ${{ steps.release-source.outputs.release-tag }}
+      source-sha: ${{ steps.release-source.outputs.source-sha }}
     steps:
     - name: lean-release-tag action
-      uses: leanprover-community/lean-release-tag@v1
+      uses: leanprover-community/lean-release-tag@9ca7ed09e240259871327bfc3a3a8d8c4bcb41aa # v1
       with:
         do-release: true
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Checkout the pushed history for exact tag resolution
+      uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: 0
+    - name: Resolve the exact release tag and peeled source commit
+      id: release-source
+      env:
+        AFTER: ${{ github.sha }}
+        BEFORE: ${{ github.event.before }}
+      run: |
+        git fetch --force --tags origin
+        mapfile -t tags < <(
+          while read -r commit; do
+            git tag --points-at "$commit" --list 'v*'
+          done < <(git rev-list "$BEFORE..$AFTER")
+        )
+        test "${#tags[@]}" -eq 1
+        source_sha=$(git rev-parse "${tags[0]}^{commit}")
+        git merge-base --is-ancestor "$source_sha" "$AFTER"
+        test "$source_sha" != "$BEFORE"
+        echo "release-tag=${tags[0]}" >> "$GITHUB_OUTPUT"
+        echo "source-sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+  publish-handwritten-pages:
+    name: Publish handwritten Pages for the Lean release tag
+    needs: lean-release-tag
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      deploy: true
+      source_ref: ${{ needs.lean-release-tag.outputs.release-tag }}
+      source_sha: ${{ needs.lean-release-tag.outputs.source-sha }}

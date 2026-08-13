@@ -6,15 +6,13 @@ on:
   pull_request:
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read # Read access to repository contents
-  pages: write # Write access to GitHub Pages
-  id-token: write # Write access to ID tokens
+permissions: {}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: leanprover/lean-action@v1
@@ -22,19 +20,21 @@ jobs:
         run: python3 scripts/test_completion_claim_gate.py
       - name: Live completion-claim adapter self-tests
         run: python3 scripts/test_completion_claim_live.py
+      - name: Handwritten Pages publication self-tests
+        run: python3 scripts/test_pages_site_check.py
       - name: Run GKS numerical tests
         run: lake exe GKSTest
       - name: Build sentinel property suite (Issue #888 Step P3)
         run: lake build test.IsingModel.SentinelProps
       # The gate's own tests run *before* the gate: `--full` only says whether
       # the current tree passes, which stays true when a check is weakened, so
-      # the self tests are what actually defend V1-V4. Both suites are pure
+      # the self tests are what actually defend V1-V5. Both suites are pure
       # Python (no lake, no network) and cost about 20 s and 80 s respectively.
       - name: Audit gate self-tests (test the gate, not just the tree)
         run: python3 scripts/audit_gate.py --self-test
       - name: Dead-candidate scanner self-tests
         run: python3 scripts/dead_candidate_scan.py --self-test
-      - name: Audit gate (V1-V4 axiom/sorry/capstone/no-Japanese checks)
+      - name: Audit gate (V1-V5 axiom/sorry/capstone/no-Japanese/link checks)
         run: python3 scripts/audit_gate.py --full
 
   # Architecture gate for Issue #4833: the import-DAG layer contract. It is a
@@ -95,20 +95,3 @@ jobs:
       # the base branch's pin and requires the diff to explain every movement.
       - name: Inventory-claim baseline drift (the pin moves only by real repair)
         run: python3 scripts/header_inventory_claim_ratchet.py --check-baseline-drift --base-ref origin/main
-
-  # NOTE: docs generation via `leanprover-community/docgen-action` has been
-  # temporarily disabled because every main-push run takes ~1 hour and
-  # CI queues backed up. Re-enable once the docgen step is accelerated
-  # (e.g. by caching or by running on a schedule instead of every push).
-  # See README / docs/index.md for user-facing notice.
-  #
-  # docs:
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v5
-  #     - uses: leanprover/lean-action@v1
-  #     - uses: leanprover-community/docgen-action@main
-  #       with:
-  #         use-github-cache: false
