@@ -13,6 +13,7 @@ import os
 import posixpath
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -52,6 +53,12 @@ class Finding:
 class Page:
     anchors: set[str]
     links: list[tuple[str, str]]
+
+
+@dataclass(frozen=True)
+class StageInventory:
+    directories: tuple[str, ...]
+    files: tuple[tuple[str, int, str], ...]
 
 
 class PageParser(HTMLParser):
@@ -148,6 +155,219 @@ def check_source(source: Path) -> list[Finding]:
             for token in ("{{", "{%"):
                 if token in line:
                     findings.append(Finding(name, "LIQUID_DELIMITER", f"line {lineno}: raw {token!r} is unsafe before Markdown rendering"))
+    return sorted(set(findings))
+
+
+def _stage_error(exc: OSError) -> str:
+    if exc.strerror:
+        return exc.strerror
+    if exc.args:
+        return str(exc.args[0])
+    return exc.__class__.__name__
+
+
+def _read_stage_file(path: Path, expected: os.stat_result) -> tuple[int, str]:
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(path, flags)
+    with os.fdopen(descriptor, "rb") as handle:
+        actual = os.fstat(handle.fileno())
+        if (
+            not stat.S_ISREG(actual.st_mode)
+            or (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino)
+        ):
+            raise OSError("entry changed while staging")
+        digest = hashlib.sha256()
+        size = 0
+        while chunk := handle.read(1024 * 1024):
+            digest.update(chunk)
+            size += len(chunk)
+    return size, digest.hexdigest()
+
+
+def _stage_inventory(root: Path, logical_root: str) -> tuple[StageInventory, list[Finding]]:
+    directories: list[str] = []
+    files: list[tuple[str, int, str]] = []
+    findings: list[Finding] = []
+
+    def visit(directory: Path, prefix: PurePosixPath, expected: os.stat_result | None = None) -> None:
+        descriptor: int | None = None
+        try:
+            flags = os.O_RDONLY | getattr(os, "O_DIRECTORY", 0) | getattr(os, "O_NOFOLLOW", 0)
+            descriptor = os.open(directory, flags)
+            actual = os.fstat(descriptor)
+            if not stat.S_ISDIR(actual.st_mode) or (
+                expected is not None and (actual.st_dev, actual.st_ino) != (expected.st_dev, expected.st_ino)
+            ):
+                raise OSError("directory changed while staging")
+            with os.scandir(descriptor) as iterator:
+                entries = sorted(iterator, key=lambda item: item.name)
+        except OSError as exc:
+            relative = prefix.as_posix() if prefix.parts else logical_root
+            findings.append(Finding(relative, "STAGE_READ", _stage_error(exc)))
+            return
+        try:
+            for entry in entries:
+                relative_path = prefix / entry.name
+                relative = relative_path.as_posix()
+                try:
+                    metadata = entry.stat(follow_symlinks=False)
+                except OSError as exc:
+                    findings.append(Finding(relative, "STAGE_STAT", _stage_error(exc)))
+                    continue
+                if stat.S_ISDIR(metadata.st_mode):
+                    directories.append(relative)
+                    visit(directory / entry.name, relative_path, metadata)
+                elif stat.S_ISREG(metadata.st_mode):
+                    try:
+                        size, digest = _read_stage_file(directory / entry.name, metadata)
+                    except OSError as exc:
+                        findings.append(Finding(relative, "STAGE_READ", _stage_error(exc)))
+                    else:
+                        files.append((relative, size, digest))
+                else:
+                    findings.append(Finding(relative, "NONREGULAR", "rendered input contains a non-regular entry"))
+        finally:
+            assert descriptor is not None
+            os.close(descriptor)
+
+    try:
+        root_metadata = root.lstat()
+    except OSError as exc:
+        findings.append(Finding(logical_root, "STAGE_STAT", _stage_error(exc)))
+    else:
+        visit(root, PurePosixPath(), root_metadata)
+    return StageInventory(tuple(sorted(directories)), tuple(sorted(files))), findings
+
+
+def _stage_paths_overlap(first: Path, second: Path) -> bool:
+    try:
+        common = Path(os.path.commonpath((str(first), str(second))))
+    except ValueError:
+        return True
+    return common == first or common == second
+
+
+def _copy_stage_file(source: Path, destination: Path, expected: tuple[int, str]) -> None:
+    metadata = source.lstat()
+    if not stat.S_ISREG(metadata.st_mode):
+        raise OSError("entry changed while staging")
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+    descriptor = os.open(source, flags)
+    digest = hashlib.sha256()
+    size = 0
+    with os.fdopen(descriptor, "rb") as input_handle, destination.open("xb") as output_handle:
+        actual = os.fstat(input_handle.fileno())
+        if (
+            not stat.S_ISREG(actual.st_mode)
+            or (actual.st_dev, actual.st_ino) != (metadata.st_dev, metadata.st_ino)
+        ):
+            raise OSError("entry changed while staging")
+        while chunk := input_handle.read(1024 * 1024):
+            output_handle.write(chunk)
+            digest.update(chunk)
+            size += len(chunk)
+    if (size, digest.hexdigest()) != expected:
+        raise OSError("entry changed while staging")
+
+
+def stage_site(input_site: Path, site: Path) -> list[Finding]:
+    """Publish a verified runner-owned byte copy of container-rendered output."""
+    global _LAST_STATS
+    _LAST_STATS = (0, 0, 0)
+    source = Path(os.path.abspath(input_site))
+    destination = Path(os.path.abspath(site))
+    findings: list[Finding] = []
+    try:
+        source_metadata = source.lstat()
+    except OSError as exc:
+        return [Finding(str(input_site), "STAGE_INPUT", _stage_error(exc))]
+    if not stat.S_ISDIR(source_metadata.st_mode):
+        return [Finding(str(input_site), "STAGE_INPUT", "rendered input is not a real directory")]
+    if _stage_paths_overlap(source, destination):
+        return [Finding(str(site), "STAGE_OVERLAP", "input and destination paths overlap")]
+    try:
+        destination.lstat()
+    except FileNotFoundError:
+        pass
+    except OSError as exc:
+        return [Finding(str(site), "STAGE_DESTINATION", _stage_error(exc))]
+    else:
+        return [Finding(str(site), "STAGE_DESTINATION", "destination already exists")]
+    parent = destination.parent
+    try:
+        parent_metadata = parent.lstat()
+    except OSError as exc:
+        return [Finding(str(site), "STAGE_DESTINATION", _stage_error(exc))]
+    if not stat.S_ISDIR(parent_metadata.st_mode):
+        return [Finding(str(site), "STAGE_DESTINATION", "destination parent is not a real directory")]
+    temporary_prefix = f".{destination.name}.stage-"
+    try:
+        with os.scandir(parent) as iterator:
+            stale = sorted(entry.name for entry in iterator if entry.name.startswith(temporary_prefix))
+    except OSError as exc:
+        return [Finding(str(site), "STAGE_DESTINATION", _stage_error(exc))]
+    if stale:
+        return [Finding(str(site), "STAGE_TEMP", "stale staging path exists")]
+
+    frozen, inventory_findings = _stage_inventory(source, str(input_site))
+    findings.extend(inventory_findings)
+    if not frozen.files:
+        findings.append(Finding(str(input_site), "EMPTY_SITE", "rendered input has no regular files"))
+    if not any(relative == "index.html" for relative, _size, _digest in frozen.files):
+        findings.append(Finding("index.html", "STAGE_INDEX", "rendered input has no regular index.html"))
+    if findings:
+        return sorted(set(findings))
+
+    temporary: Path | None = None
+    published = False
+    try:
+        temporary = Path(tempfile.mkdtemp(prefix=temporary_prefix, dir=parent))
+        for relative in frozen.directories:
+            source_directory = source / relative
+            metadata = source_directory.lstat()
+            if not stat.S_ISDIR(metadata.st_mode):
+                raise OSError("directory changed while staging")
+            (temporary / relative).mkdir()
+        for relative, size, digest in frozen.files:
+            _copy_stage_file(source / relative, temporary / relative, (size, digest))
+        current, current_findings = _stage_inventory(source, str(input_site))
+        staged, staged_findings = _stage_inventory(temporary, str(site))
+        findings.extend(current_findings)
+        findings.extend(staged_findings)
+        if current != frozen:
+            findings.append(Finding(str(input_site), "STAGE_CHANGED", "rendered input changed while staging"))
+        if staged != frozen:
+            findings.append(Finding(str(site), "STAGE_INVENTORY", "staged paths or byte digests differ from rendered input"))
+        try:
+            with (temporary / "index.html").open("r+b"):
+                pass
+        except OSError as exc:
+            findings.append(Finding("index.html", "STAGE_WRITABLE", _stage_error(exc)))
+        if not findings:
+            try:
+                destination.lstat()
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                findings.append(Finding(str(site), "STAGE_DESTINATION", _stage_error(exc)))
+            else:
+                findings.append(Finding(str(site), "STAGE_DESTINATION", "destination appeared while staging"))
+        if not findings:
+            try:
+                os.rename(temporary, destination)
+            except OSError as exc:
+                findings.append(Finding(str(site), "STAGE_RENAME", _stage_error(exc)))
+            else:
+                published = True
+                _LAST_STATS = (0, len(frozen.directories), len(frozen.files))
+    except OSError as exc:
+        findings.append(Finding(str(site), "STAGE_COPY", _stage_error(exc)))
+    finally:
+        if temporary is not None and not published:
+            try:
+                shutil.rmtree(temporary)
+            except OSError as exc:
+                findings.append(Finding(str(site), "STAGE_CLEANUP", _stage_error(exc)))
     return sorted(set(findings))
 
 
@@ -487,7 +707,10 @@ def _print(findings: list[Finding], label: str) -> int:
         print(f"handwritten Pages {label}: FAIL ({len(findings)} findings)")
         return 1
     pages, edges, files = _LAST_STATS
-    print(f"handwritten Pages {label}: PASS ({pages} pages; {edges} local edges; {files} files visited)")
+    if label == "stage":
+        print(f"handwritten Pages {label}: PASS ({edges} directories; {files} files copied)")
+    else:
+        print(f"handwritten Pages {label}: PASS ({pages} pages; {edges} local edges; {files} files visited)")
     return 0
 
 
@@ -509,6 +732,9 @@ def main() -> int:
     live.add_argument("--generated-at", required=True)
     source = subparsers.add_parser("source")
     source.add_argument("--source", type=Path, default=Path("docs"))
+    stage = subparsers.add_parser("stage")
+    stage.add_argument("--input-site", type=Path, required=True)
+    stage.add_argument("--site", type=Path, required=True)
     subparsers.add_parser("self-test")
     args = parser.parse_args()
     if args.command == "self-test":
@@ -520,6 +746,8 @@ def main() -> int:
         return _print(check_site(args.site, args.source, args.baseurl, args.revision, args.generated_at), "artifact")
     if args.command == "source":
         return _print(check_source(args.source), "source")
+    if args.command == "stage":
+        return _print(stage_site(args.input_site, args.site), "stage")
     return _print(check_live(args.url, args.source, args.baseurl, args.revision, args.generated_at), "live")
 
 

@@ -202,6 +202,113 @@ class SiteTest(unittest.TestCase):
         subprocess.run(["git", "rm", "--cached", "-q", "--", "docs/index.md", "docs/nested/status.md"], cwd=self.root, check=True)
         self.assertIn("EMPTY_SOURCE", [item.code for item in checker.check_source(self.source)])
 
+    def test_stage_recreates_read_only_rendered_bytes_as_writable(self) -> None:
+        rendered = self.root / "_site-container"
+        staged = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        for path in rendered.rglob("*"):
+            path.chmod(0o555 if path.is_dir() else 0o444)
+        rendered.chmod(0o555)
+        before = (rendered / "index.html").read_bytes()
+        self.assertEqual(checker.stage_site(rendered, staged), [])
+        self.assertEqual((staged / "index.html").read_bytes(), before)
+        with (staged / "index.html").open("r+b"):
+            pass
+
+    def test_stage_rejects_overlap_existing_empty_and_nonregular_inputs(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(rendered, rendered)])
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(rendered, rendered / "child")])
+        parent = self.root / "publication"
+        parent.mkdir()
+        nested_input = parent / "input"
+        shutil.copytree(rendered, nested_input)
+        self.assertIn("STAGE_OVERLAP", [item.code for item in checker.stage_site(nested_input, parent)])
+        destination = self.root / "existing"
+        destination.write_text("sentinel", encoding="utf-8")
+        self.assertIn("STAGE_DESTINATION", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertEqual(destination.read_text(encoding="utf-8"), "sentinel")
+        destination.unlink()
+        destination.symlink_to(self.root / "missing")
+        self.assertIn("STAGE_DESTINATION", [item.code for item in checker.stage_site(rendered, destination)])
+        destination.unlink()
+        empty = self.root / "empty"
+        empty.mkdir()
+        self.assertIn("EMPTY_SITE", [item.code for item in checker.stage_site(empty, destination)])
+        (empty / "other.html").write_text("other", encoding="utf-8")
+        self.assertIn("STAGE_INDEX", [item.code for item in checker.stage_site(empty, destination)])
+        input_link = self.root / "input-link"
+        input_link.symlink_to(rendered, target_is_directory=True)
+        self.assertIn("STAGE_INPUT", [item.code for item in checker.stage_site(input_link, destination)])
+
+    def test_stage_rejects_links_fifo_stale_temp_and_preserves_external_target(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        external = self.root / "external"
+        external.write_text("untouched", encoding="utf-8")
+        (rendered / "outside-link").symlink_to(external)
+        (rendered / "dangling-link").symlink_to(self.root / "missing")
+        fifo = rendered / "fifo"
+        os.mkfifo(fifo)
+        destination = self.root / "_site-staged"
+        findings = checker.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["NONREGULAR", "NONREGULAR", "NONREGULAR"])
+        self.assertFalse(destination.exists())
+        self.assertEqual(external.read_text(encoding="utf-8"), "untouched")
+        fifo.unlink()
+        (rendered / "outside-link").unlink()
+        (rendered / "dangling-link").unlink()
+        stale = self.root / "._site-staged.stage-stale"
+        stale.mkdir()
+        self.assertIn("STAGE_TEMP", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertTrue(stale.is_dir())
+
+    def test_stage_copy_inventory_rename_errors_are_stable_and_atomic(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        destination = self.root / "_site-staged"
+        with mock.patch.object(checker, "_copy_stage_file", side_effect=OSError("copy refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_COPY", "copy refused")])
+        self.assertFalse(destination.exists())
+        self.assertEqual(list(self.root.glob("._site-staged.stage-*")), [])
+        real_inventory = checker._stage_inventory
+        calls = 0
+
+        def corrupt_inventory(root: Path, logical: str):
+            nonlocal calls
+            calls += 1
+            inventory, findings = real_inventory(root, logical)
+            if calls == 3:
+                inventory = checker.StageInventory(inventory.directories, inventory.files[:-1])
+            return inventory, findings
+
+        with mock.patch.object(checker, "_stage_inventory", side_effect=corrupt_inventory):
+            self.assertIn("STAGE_INVENTORY", [item.code for item in checker.stage_site(rendered, destination)])
+        self.assertFalse(destination.exists())
+        with mock.patch.object(checker.os, "rename", side_effect=OSError("rename refused")):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual([(item.code, item.detail) for item in findings], [("STAGE_RENAME", "rename refused")])
+        self.assertFalse(destination.exists())
+
+    def test_stage_cli_success_and_failure(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        passed = subprocess.run(
+            [sys.executable, str(CHECKER_PATH), "stage", "--input-site", str(rendered), "--site", str(destination)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(passed.returncode, 0, passed.stdout + passed.stderr)
+        self.assertIn("handwritten Pages stage: PASS", passed.stdout)
+        failed = subprocess.run(
+            [sys.executable, str(CHECKER_PATH), "stage", "--input-site", str(rendered), "--site", str(destination)],
+            text=True, capture_output=True, check=False,
+        )
+        self.assertEqual(failed.returncode, 1)
+        self.assertIn("STAGE_DESTINATION", failed.stdout)
+
     def test_fetch_retries_and_rejects_redirect(self) -> None:
         response = mock.MagicMock()
         response.__enter__.return_value = response
@@ -367,6 +474,11 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
         "caller kind": (release, "invocation_kind: release", 1),
         "caller deploy": (release, "deploy: true", 1),
         "source preflight": (pages, "python3 scripts/pages_site_check.py source --source ./docs", 1),
+        "container destination": (pages, "destination: ./_site-container", 1),
+        "ownership stage": (pages, "python3 scripts/pages_site_check.py stage", 1),
+        "stage source": (pages, "--input-site ./_site-container --site ./_site", 1),
+        "prepare final": (pages, "--site ./_site --source ./docs --baseurl /ising-model", 1),
+        "upload final": (pages, "path: ./_site", 1),
     }
     for label, (text, needle, expected) in required_counts.items():
         if text.count(needle) != expected:
@@ -380,6 +492,13 @@ def workflow_contract_findings(pages: str, release: str, lean: str) -> list[str]
     source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
     if source_gate in pages and pages.index(source_gate) > pages.find("actions/jekyll-build-pages@"):
         findings.append("late source preflight")
+    jekyll = "actions/jekyll-build-pages@"
+    stage = "python3 scripts/pages_site_check.py stage"
+    prepare = "python3 scripts/pages_site_check.py prepare"
+    if all(needle in pages for needle in (jekyll, stage, prepare)) and not (
+        pages.index(jekyll) < pages.index(stage) < pages.index(prepare)
+    ):
+        findings.append("ownership stage order")
     if "needs: [prepare-release-source, lean-release-tag]" not in release or "refs/tags/$tag" not in release:
         findings.append("release resolver")
     if "      - 'master'" in release:
@@ -509,6 +628,68 @@ class MutationTest(SiteTest):
             with self.assertRaisesRegex(OSError, "unreadable source"):
                 module.check_source(self.source)
 
+    def test_stage_security_and_conservation_guards_are_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        shutil.copytree(self.site, rendered)
+        destination = self.root / "_site-staged"
+        cases = (
+            (
+                "    if _stage_paths_overlap(source, destination):\n        return [Finding(str(site), \"STAGE_OVERLAP\", \"input and destination paths overlap\")]",
+                "    if False:\n        return [Finding(str(site), \"STAGE_OVERLAP\", \"input and destination paths overlap\")]",
+                lambda module: self.assertNotIn("STAGE_OVERLAP", [item.code for item in module.stage_site(rendered, rendered / "child")]),
+            ),
+            (
+                "                else:\n                    findings.append(Finding(relative, \"NONREGULAR\", \"rendered input contains a non-regular entry\"))",
+                "                else:\n                    pass",
+                lambda module: self._assert_stage_mutant_accepts_symlink(module, rendered, destination),
+            ),
+            (
+                "        if staged != frozen:\n            findings.append(Finding(str(site), \"STAGE_INVENTORY\", \"staged paths or byte digests differ from rendered input\"))",
+                "        if False:\n            findings.append(Finding(str(site), \"STAGE_INVENTORY\", \"staged paths or byte digests differ from rendered input\"))",
+                lambda module: self._assert_stage_mutant_misses_inventory(module, rendered, destination),
+            ),
+            (
+                '        os.rename(temporary, destination)\n',
+                '        shutil.copytree(temporary, destination)\n',
+                lambda module: self._assert_stage_mutant_uses_nonatomic_publish(module, rendered, destination),
+            ),
+        )
+        for old, new, assertion in cases:
+            with self.subTest(old=old):
+                if os.path.lexists(destination):
+                    if destination.is_dir() and not destination.is_symlink():
+                        shutil.rmtree(destination)
+                    else:
+                        destination.unlink()
+                with mutant(old, new) as module:
+                    assertion(module)
+
+    def _assert_stage_mutant_accepts_symlink(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        link = rendered / "outside"
+        link.symlink_to(self.root / "missing")
+        self.assertNotIn("NONREGULAR", [item.code for item in module.stage_site(rendered, destination)])
+        link.unlink()
+
+    def _assert_stage_mutant_misses_inventory(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        real_inventory = module._stage_inventory
+        calls = 0
+
+        def corrupt(root: Path, logical: str):
+            nonlocal calls
+            calls += 1
+            inventory, findings = real_inventory(root, logical)
+            if calls == 3:
+                inventory = module.StageInventory(inventory.directories, inventory.files[:-1])
+            return inventory, findings
+
+        with mock.patch.object(module, "_stage_inventory", side_effect=corrupt):
+            self.assertNotIn("STAGE_INVENTORY", [item.code for item in module.stage_site(rendered, destination)])
+
+    def _assert_stage_mutant_uses_nonatomic_publish(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
+        with mock.patch.object(module.shutil, "copytree", side_effect=OSError("non-atomic publish reached")):
+            findings = module.stage_site(rendered, destination)
+        self.assertTrue(any(item.detail == "non-atomic publish reached" for item in findings))
+
 
 class WorkflowContractTest(unittest.TestCase):
     def test_single_writer_triggers_pins_permissions_and_release_call(self) -> None:
@@ -536,6 +717,12 @@ class WorkflowContractTest(unittest.TestCase):
         source_gate = "python3 scripts/pages_site_check.py source --source ./docs"
         self.assertEqual(pages.count(source_gate), 1)
         self.assertLess(pages.index(source_gate), pages.index("actions/jekyll-build-pages@"))
+        stage = "python3 scripts/pages_site_check.py stage"
+        self.assertEqual(pages.count(stage), 1)
+        self.assertLess(pages.index("actions/jekyll-build-pages@"), pages.index(stage))
+        self.assertLess(pages.index(stage), pages.index("python3 scripts/pages_site_check.py prepare"))
+        self.assertEqual(pages.count("destination: ./_site-container"), 1)
+        self.assertEqual(pages.count("--input-site ./_site-container --site ./_site"), 1)
         for sha in checker.ACTION_SHAS:
             self.assertIn(sha, pages + release)
         external_uses = re.findall(r"uses:[ ]+([^\s]+@[^\s]+)", pages + release)
@@ -588,6 +775,9 @@ class WorkflowContractTest(unittest.TestCase):
             (pages_path, "if: needs.build.outputs.deploy == 'true'", "if: inputs.deploy", 1),
             (release_path, "invocation_kind: release", "invocation_kind: manual", 1),
             (pages_path, "python3 scripts/pages_site_check.py source --source ./docs", "true", 1),
+            (pages_path, "destination: ./_site-container", "destination: ./_site", 1),
+            (pages_path, "python3 scripts/pages_site_check.py stage", "true", 1),
+            (pages_path, "--input-site ./_site-container --site ./_site", "--input-site ./_site --site ./_site-container", 1),
         )
         real_pages = pages_path.read_text(encoding="utf-8")
         real_release = release_path.read_text(encoding="utf-8")
@@ -612,6 +802,14 @@ class WorkflowContractTest(unittest.TestCase):
         )
         self.assertEqual(moved.count(source_gate), 1)
         self.assertIn("late source preflight", workflow_contract_findings(moved, real_release, lean))
+        stage = "python3 scripts/pages_site_check.py stage"
+        late_stage = real_pages.replace(stage, "true", 1).replace(
+            "      - name: Upload the one complete Pages artifact",
+            f"      - name: Late ownership stage\n        run: {stage}\n      - name: Upload the one complete Pages artifact",
+            1,
+        )
+        self.assertEqual(late_stage.count(stage), 1)
+        self.assertIn("ownership stage order", workflow_contract_findings(late_stage, real_release, lean))
 
     def test_reusable_release_identity_accepts_caller_push_event(self) -> None:
         pages = (REPO_ROOT / ".github/workflows/pages.yml").read_text(encoding="utf-8")
