@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fail-closed audit of ``.lean`` path citations in the audited documents.
 
-``docs/index.md`` names Lean source files by path, and it is the one target
+The canonical progress documents name Lean source files by path, and they are the targets
 today; the tool takes a set of them so a second document can be added without
 touching the rules. Refactors move and delete those files, so a document
 accumulates citations
@@ -383,7 +383,15 @@ BASELINE_FILE = REPO_ROOT / "scripts" / "audit" / "citation_baseline.tsv"
 # tomorrow is read by the deletion scanner and its stale path citations are
 # unaudited here until it is registered. Registering it is deliberate because
 # the constants it must bring are.
-TARGETS = ("docs/index.md", "docs/status.md")
+TARGETS = (
+    "docs/index.md",
+    "docs/status.md",
+    "docs/theorems/correlation.md",
+    "docs/theorems/free-energy.md",
+    "docs/theorems/phase-transition.md",
+    "docs/theorems/conditioning.md",
+    "docs/theorems/ambient-lattice.md",
+)
 
 # R11's absolute floor of 25 was calibrated for large inventory documents. The
 # status page is deliberately small (13 measured citations), so applying the
@@ -414,7 +422,15 @@ BUDGET_CALIBRATION_TARGETS = ("docs/index.md",)
 # incidental, because the ``SELFREF`` class is *defined* as a duplicated legacy
 # citation, so its correct fix always lowers the count. The guard that actually
 # fires per commit is the drop budget below; these two are the cliff behind it.
-MIN_CITATIONS = {"docs/index.md": 1400, "docs/status.md": 6}
+MIN_CITATIONS = {
+    "docs/index.md": 844,
+    "docs/status.md": 6,
+    "docs/theorems/correlation.md": 17,
+    "docs/theorems/free-energy.md": 338,
+    "docs/theorems/phase-transition.md": 128,
+    "docs/theorems/conditioning.md": 4,
+    "docs/theorems/ambient-lattice.md": 11,
+}
 MIN_TRACKED_LEAN = 1800
 
 # The measurement this tool was written against, frozen (R12). Unlike the
@@ -428,9 +444,20 @@ MIN_TRACKED_LEAN = 1800
 # a document nobody measured is not judged against an invented reference. That
 # the *default* targets are all listed is pinned by the test suite.
 # PR #5043 split the existing frozen measurement between the landing-page
-# inventories and the status page. The sum remains 2,698: moving citations to a
-# new container must not manufacture a fresh cumulative-loss allowance.
-MEASURED_CITATIONS = {"docs/index.md": 2685, "docs/status.md": 13}
+# inventories and the status page. PR #5044 then split the 998 citations moved
+# out of the landing-page catalogue among its five topic owners and assigned
+# the remainder to the book inventory still in the landing page. The sum stays
+# 2,698: moving citations to a new container must not manufacture a fresh
+# cumulative-loss allowance.
+MEASURED_CITATIONS = {
+    "docs/index.md": 1687,
+    "docs/status.md": 13,
+    "docs/theorems/correlation.md": 35,
+    "docs/theorems/free-energy.md": 676,
+    "docs/theorems/phase-transition.md": 257,
+    "docs/theorems/conditioning.md": 8,
+    "docs/theorems/ambient-lattice.md": 22,
+}
 # The tracked-set half of the same measurement. Nothing charges it at runtime,
 # and that is deliberate: remediation edits documents and never deletes ``.lean``
 # files, so there is no per-run erosion of the tracked set to bound, and a gutted
@@ -475,7 +502,7 @@ DEFAULT_MIN_CITATIONS = 1
 #
 # Sized against the frozen numbers rather than against today's census, which is
 # whatever the last accepted deletion left behind: at ``MEASURED_CITATIONS`` the
-# budget is 134 for the markdown (2,698), and at the lowest census R12 can ever
+# budget is 84 for the calibrated landing page (1,687), and at the lowest census R12 can ever
 # admit -- ``measured - cap``, i.e. 2,294 -- it is still 114. Both ends clear
 # ``MEASURED_REMEDIATION_DROP`` and are
 # far below a gutting. The test suite states that as a claim over the whole

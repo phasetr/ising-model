@@ -2087,6 +2087,13 @@ BASELINE_HEADER = """\
 # pin must be tight against the tree (B3).  Regenerating this file therefore no
 # longer launders a claim: `--check` would pass, the drift check would not.
 #
+# A documentation-only container split may move an unchanged charged sentence
+# to a new public path. Such a move is declared, once, by an added line:
+# `# CONTAINER-TRANSFER: CLASS old/path => new/path TOKEN xCOUNT`. The drift
+# checker reconciles it count-for-count and key-for-key against the actual pin
+# delta and requires both paths to be edited. The line changes no discovery,
+# grammar, key or B3 result and is not standing permission after this commit.
+#
 # A recount under a corrected detector -- the 713 -> 740 shape above -- is the
 # one movement no prose edit explains that can still be legitimate.  Declaring it
 # takes a whole line of this file, added by the same diff, reading exactly
@@ -2114,9 +2121,22 @@ BASELINE_HEADER = """\
 """
 
 
-def format_baseline(counts: Counter[tuple[str, str, str]]) -> str:
-    """Render a charged-claim multiset in baseline-file format."""
+def format_baseline(
+    counts: Counter[tuple[str, str, str]], preserved_text: str = ""
+) -> str:
+    """Render the multiset while retaining consumed transfer tombstones.
+
+    Container-transfer declarations are one-shot identities, so regeneration
+    must not erase their history.  Every marker-shaped line is retained; a
+    malformed one remains visible to the fail-closed drift parser rather than
+    being laundered away by formatting.
+    """
     lines = [BASELINE_HEADER]
+    lines.extend(
+        raw
+        for raw in preserved_text.splitlines()
+        if is_container_transfer_directive(raw)
+    )
     for (kind, target, token), count in sorted(counts.items()):
         lines.append(f"{kind}\t{target}\t{token}\t{count}")
     if not counts:
@@ -2193,6 +2213,33 @@ MIGRATION_MARKER = "# DETECTOR-MIGRATION:"
 #: The declaration's whole grammar: the marker, one space, a non-empty reason,
 #: and nothing else on the line.
 _MIGRATION_LINE = re.compile(rf"\A{re.escape(MIGRATION_MARKER)} (?P<reason>\S.*)\Z")
+
+#: A one-commit declaration that a charged sentence moved between public
+#: documentation containers without changing its class, token, or multiplicity.
+#: Unlike :data:`MIGRATION_MARKER`, this never changes what the detector sees;
+#: it only lets B1 attribute an already-measured path-key move to the two files
+#: this diff edits. The strict reconciliation in :func:`container_transfer_budget`
+#: is the authority, not the marker.
+CONTAINER_TRANSFER_MARKER = "# CONTAINER-TRANSFER:"
+_CONTAINER_TRANSFER_LINE = re.compile(
+    rf"\A{re.escape(CONTAINER_TRANSFER_MARKER)} "
+    r"(?P<kind>[A-Z_]+) (?P<old>\S+) => (?P<new>\S+) "
+    r"(?P<token>\S+) x(?P<count>[1-9][0-9]*)\Z"
+)
+
+#: Conservative recognition of a baseline comment that is trying to be a
+#: container-transfer directive.  It is deliberately broader than the exact
+#: declaration grammar so formatting cannot erase malformed whitespace around
+#: the directive token, but remains anchored immediately after the comment
+#: opener so quoted examples and ordinary prose are not mistaken for state.
+_CONTAINER_TRANSFER_DIRECTIVE = re.compile(
+    r"\A[ \t]*#[ \t]*CONTAINER-TRANSFER[ \t]*:"
+)
+
+
+def is_container_transfer_directive(line: str) -> bool:
+    """Whether ``line`` is a directive candidate that formatting must retain."""
+    return _CONTAINER_TRANSFER_DIRECTIVE.match(line) is not None
 
 
 class UnsoundRun(RuntimeError):
@@ -2326,6 +2373,162 @@ def migration_declarations(root: Path, commit: str) -> tuple[str, ...]:
         if declaration is not None:
             reasons.append(declaration.group("reason").strip())
     return tuple(reasons)
+
+
+class ContainerTransfer(NamedTuple):
+    """One declared old-path to new-path transfer of an unchanged charge key."""
+
+    kind: str
+    old: str
+    new: str
+    token: str
+    count: int
+
+
+class ContainerTransferBudget(NamedTuple):
+    """B1 allowance and fail-closed diagnostics for container transfers."""
+
+    allowance: Counter[tuple[str, str, str]]
+    errors: tuple[str, ...]
+    narrative: tuple[str, ...]
+
+
+def container_transfer_declarations(
+    root: Path, commit: str
+) -> tuple[tuple[ContainerTransfer, ...], tuple[str, ...]]:
+    """Parse declarations that are new identities in the head, exactly once.
+
+    A raw ``+`` line is not sufficient: moving an existing comment within the
+    baseline produces a deletion and addition in the patch while leaving the
+    same permission in both trees. For each exact declaration line, the base
+    must contain zero copies, the head exactly one, and the diff exactly one
+    added copy. This makes permission a true ``0 -> 1`` identity transition;
+    relocation, reuse, duplication, and ambiguous patch presentation fail.
+    An unchanged historical declaration (``1 -> 1`` with no added line) is
+    inert: it grants no allowance and is not an error merely for surviving a
+    merge into the comparison base.
+    """
+    code, out = _git(root, "diff", "--no-renames", "-U0", commit, "--", BASELINE_REPO_PATH)
+    if code != 0:
+        raise UnsoundRun(
+            f"`git diff {commit[:12]}` failed, so container-transfer declarations are unknown"
+        )
+    code, base_text = _git(root, "show", f"{commit}:{BASELINE_REPO_PATH}")
+    if code != 0:
+        raise UnsoundRun(
+            f"{commit[:12]} records {BASELINE_REPO_PATH} but its transfer declarations "
+            "could not be read"
+        )
+    try:
+        head_text = (root / BASELINE_REPO_PATH).read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as failure:
+        raise UnsoundRun(f"the head baseline's transfer declarations could not be read: {failure}")
+
+    added = Counter(
+        line[1:]
+        for line in out.splitlines()
+        if line.startswith("+") and not line.startswith("+++")
+    )
+    base_lines = Counter(base_text.splitlines())
+    head_lines = Counter(head_text.splitlines())
+    transfers: list[ContainerTransfer] = []
+    errors: list[str] = []
+    marker_lines = {
+        raw
+        for raw in base_lines.keys() | head_lines.keys()
+        if is_container_transfer_directive(raw)
+    }
+    for raw in sorted(marker_lines):
+        base_count = base_lines.get(raw, 0)
+        head_count = head_lines.get(raw, 0)
+        added_count = added.get(raw, 0)
+        match = _CONTAINER_TRANSFER_LINE.fullmatch(raw)
+        if match is None:
+            errors.append(f"malformed container-transfer declaration: {raw}")
+            continue
+        if base_count == 1 and head_count == 1 and added_count == 0:
+            continue
+        if base_count != 0 or head_count != 1 or added_count != 1:
+            errors.append(
+                "container-transfer declaration is not a pure new identity "
+                f"(base={base_count}, head={head_count}, added={added_count}): {raw}"
+            )
+            continue
+        transfers.append(
+            ContainerTransfer(
+                match.group("kind"),
+                match.group("old"),
+                match.group("new"),
+                match.group("token"),
+                int(match.group("count")),
+            )
+        )
+    return tuple(transfers), tuple(errors)
+
+
+def container_transfer_budget(
+    root: Path,
+    commit: str,
+    before: Counter[tuple[str, str, str]],
+    after: Counter[tuple[str, str, str]],
+    edited: frozenset[str],
+) -> ContainerTransferBudget:
+    """Authorize only count-for-count, key-for-key moves between edited paths.
+
+    The extractor, target key and B3 remain unchanged. A declaration pays only
+    the exact new-path rise it names, from an at-least-equal fall of the same
+    ``(class, token)`` at one old path. Old and new keys are each single-use, so
+    neither duplicate declarations nor one-to-many fan-out can spend one loss
+    twice. Any declaration that describes no exact live delta is an error rather
+    than an inert comment, and the whole pin may not grow in aggregate.
+    """
+    transfers, parse_errors = container_transfer_declarations(root, commit)
+    errors = list(parse_errors)
+    allowance: Counter[tuple[str, str, str]] = Counter()
+    old_keys: set[tuple[str, str, str]] = set()
+    new_keys: set[tuple[str, str, str]] = set()
+    for transfer in transfers:
+        old_key = (transfer.kind, transfer.old, transfer.token)
+        new_key = (transfer.kind, transfer.new, transfer.token)
+        label = (
+            f"{transfer.kind} {transfer.old} => {transfer.new} "
+            f"{transfer.token} x{transfer.count}"
+        )
+        if transfer.old == transfer.new:
+            errors.append(f"container transfer has identical paths: {label}")
+        if transfer.old not in edited or transfer.new not in edited:
+            errors.append(f"container transfer endpoints are not both edited: {label}")
+        if old_key in old_keys:
+            errors.append(f"container transfer spends one old key more than once: {label}")
+        if new_key in new_keys:
+            errors.append(f"container transfer pays one new key more than once: {label}")
+        old_keys.add(old_key)
+        new_keys.add(new_key)
+        loss = max(0, before.get(old_key, 0) - after.get(old_key, 0))
+        gain = max(0, after.get(new_key, 0) - before.get(new_key, 0))
+        if transfer.count != loss:
+            errors.append(
+                f"container transfer does not exactly equal old-key loss {loss}: {label}"
+            )
+        if transfer.count != gain:
+            errors.append(
+                f"container transfer does not exactly equal new-key rise {gain}: {label}"
+            )
+        if not errors or not any(label in error for error in errors):
+            allowance[new_key] += transfer.count
+    if transfers and sum(after.values()) > sum(before.values()):
+        errors.append(
+            "container transfers may not increase the total charged population: "
+            f"{sum(before.values())} -> {sum(after.values())}"
+        )
+    narrative = tuple(
+        f"container transfer -- {transfer.kind} {transfer.old} => {transfer.new} "
+        f"{transfer.token} x{transfer.count}"
+        for transfer in transfers
+    )
+    if errors:
+        allowance.clear()
+    return ContainerTransferBudget(allowance, tuple(errors), narrative)
 
 
 def _logic_fingerprint(text: str) -> str | None:
@@ -2567,13 +2770,28 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
     try:
         edited = changed_paths(root, base)
         migration = migration_budgets(root, base, live)
+        transfer = container_transfer_budget(root, base, baseline, head, edited)
     except UnsoundRun as failure:
         return Drift(base, True, (), (), untight, (str(failure),), (), ())
+    if transfer.errors:
+        return Drift(
+            base,
+            True,
+            (),
+            (),
+            untight,
+            (),
+            tuple(f"container transfer: {error}" for error in transfer.errors),
+            transfer.narrative,
+        )
     added = tuple(
         sorted(
             (key, count, baseline.get(key, 0))
             for key, count in head.items()
-            if count > baseline.get(key, 0) + migration.allowance.get(key, 0)
+            if count
+            > baseline.get(key, 0)
+            + migration.allowance.get(key, 0)
+            + transfer.allowance.get(key, 0)
         )
     )
     unexplained = tuple(
@@ -2585,7 +2803,16 @@ def check_drift(root: Path = REPO_ROOT, base_ref: str = "origin/main") -> Drift 
             and count - head.get(key, 0) > migration.relief.get(key, 0)
         )
     )
-    return Drift(base, True, added, unexplained, untight, (), (), migration.narrative)
+    return Drift(
+        base,
+        True,
+        added,
+        unexplained,
+        untight,
+        (),
+        (),
+        migration.narrative + transfer.narrative,
+    )
 
 
 class Migration(NamedTuple):
@@ -3102,7 +3329,17 @@ def main(argv: list[str] | None = None) -> int:
             for failure in report.conservation:
                 sys.stdout.write(f"# {failure}\n")
             return 1
-        sys.stdout.write(format_baseline(report.charged) if args.baseline
+        preserved = ""
+        if args.baseline and BASELINE_FILE.exists():
+            try:
+                preserved = BASELINE_FILE.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as failure:
+                sys.stdout.write(
+                    f"{SUPPRESSED}# the existing baseline tombstones could not be read: "
+                    f"{failure}\n"
+                )
+                return 1
+        sys.stdout.write(format_baseline(report.charged, preserved) if args.baseline
                          else format_findings(report))
         return 0
 

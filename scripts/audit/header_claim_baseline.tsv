@@ -55,6 +55,16 @@
 # pin must be tight against the tree (B3).  Regenerating this file therefore no
 # longer launders a claim: `--check` would pass, the drift check would not.
 #
+# A documentation-only container split may move an unchanged charged sentence
+# to a new public path. Such a move is declared, once, by an added line:
+# `# CONTAINER-TRANSFER: CLASS old/path => new/path TOKEN xCOUNT`. The drift
+# checker reconciles it count-for-count and key-for-key against the actual pin
+# delta and requires both paths to be edited. The line changes no discovery,
+# grammar, key or B3 result and is not standing permission after this commit.
+#
+# CONTAINER-TRANSFER: PREDICATE_COUNT docs/index.md => docs/theorems/free-energy.md 3:declarations x1
+# CONTAINER-TRANSFER: RELOCATION docs/index.md => docs/theorems/phase-transition.md ->Concrete/LatticeGraphCorrelation/CorrelationSymmetrySusceptibility.lean x3
+#
 # A recount under a corrected detector -- the 713 -> 740 shape above -- is the
 # one movement no prose edit explains that can still be legitimate.  Declaring it
 # takes a whole line of this file, added by the same diff, reading exactly
@@ -100,7 +110,8 @@ PAREN_COUNT	docs/index.md	9:wrappers	1
 POSSESSIVE_COUNT	docs/index.md	2:lemmas	1
 POSSESSIVE_COUNT	docs/index.md	4:lemmas	1
 PREDICATE_COUNT	docs/architecture-import-layers.md	3:file	1
-PREDICATE_COUNT	docs/index.md	3:declarations	2
+PREDICATE_COUNT	docs/index.md	3:declarations	1
+PREDICATE_COUNT	docs/theorems/free-energy.md	3:declarations	1
 RELOCATION	docs/architecture-import-layers.md	->Inequalities/FKGInhomogeneous.lean	1
 RELOCATION	docs/index.md	->?	3
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/HighTemperature.lean	1
@@ -127,7 +138,6 @@ RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/PolymerFreeEnergyTanhShar
 RELOCATION	docs/index.md	->AmbientLattice/SpecialCases/VdPolymerFamiliesAnalyticityLog.lean	1
 RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/CorrelationExhaustionLimitsCubicMonotone.lean	1
 RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetry.lean	1
-RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetrySusceptibility.lean	3
 RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/EnergyClosedForms.lean	2
 RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/EnergyClosedFormsHamiltonian.lean	1
 RELOCATION	docs/index.md	->Concrete/LatticeGraphCorrelation/FiniteVolumeBasics.lean	1
@@ -159,3 +169,4 @@ RELOCATION	docs/index.md	3->Concrete/LatticeGraphCorrelation/TwoPointTruncatedSw
 RELOCATION	docs/index.md	4->Concrete/LatticeGraphCorrelation/HighTemperatureFreeEnergyCorrection.lean	1
 RELOCATION	docs/index.md	5->Concrete/LatticeGraphCorrelation/TwoPointMagnetizationMonotone.lean	1
 RELOCATION	docs/index.md	5->Concrete/LatticeGraphCorrelation/TwoPointTruncatedTrivialSlices.lean	1
+RELOCATION	docs/theorems/phase-transition.md	->Concrete/LatticeGraphCorrelation/CorrelationSymmetrySusceptibility.lean	3

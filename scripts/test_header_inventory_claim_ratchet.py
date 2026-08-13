@@ -1152,6 +1152,32 @@ class RatchetTest(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(parsed, base)
 
+    def test_formatting_preserves_container_transfer_tombstones(self) -> None:
+        marker = (
+            f"{ratchet.CONTAINER_TRANSFER_MARKER} NARROW_CHILD old.md => new.md 12 x1"
+        )
+        rendered = ratchet.format_baseline(population((KEY_A, 1)), marker + "\n")
+        self.assertEqual(rendered.count(marker), 1)
+        parsed, errors = ratchet.parse_baseline(rendered)
+        self.assertEqual(errors, [])
+        self.assertEqual(parsed, population((KEY_A, 1)))
+
+    def test_formatting_retains_malformed_directives_but_not_quoted_prose(self) -> None:
+        variants = (
+            "  # CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#  CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER : NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER:  NARROW_CHILD old.md => new.md 12 x1",
+        )
+        quoted = '# Example: "# CONTAINER-TRANSFER: CLASS old => new TOKEN x1"'
+        rendered = ratchet.format_baseline(
+            population((KEY_A, 1)), "\n".join((*variants, quoted)) + "\n"
+        )
+        for variant in variants:
+            self.assertIn(variant, rendered)
+        self.assertNotIn(quoted, rendered)
+
     def test_the_report_never_says_the_headers_are_clean(self) -> None:
         """False assurance is the risk the arbitration named as the biggest one."""
         source = lean_source("M", header("Provides the ambient monotonicity API."))
@@ -2019,7 +2045,12 @@ class DriftTest(unittest.TestCase):
     def repin(self, module=ratchet) -> None:
         """Regenerate the scratch repository's baseline from its own tree."""
         report = module.build_report(root=self.root)
-        self.write(ratchet.BASELINE_REPO_PATH, module.format_baseline(report.charged))
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        preserved = path.read_text(encoding="utf-8") if path.exists() else ""
+        self.write(
+            ratchet.BASELINE_REPO_PATH,
+            module.format_baseline(report.charged, preserved),
+        )
 
     def declare_migration(self, reason: str = "anchor widened, recounted") -> None:
         """Add the migration trailer to the head checkout's pin."""
@@ -2028,6 +2059,22 @@ class DriftTest(unittest.TestCase):
             f"{ratchet.MIGRATION_MARKER} {reason}\n" + path.read_text(encoding="utf-8"),
             encoding="utf-8",
         )
+
+    def declare_container_transfer(
+        self,
+        kind: str,
+        old: str,
+        new: str,
+        token: str,
+        count: int = 1,
+    ) -> None:
+        """Add one exact one-shot container-transfer declaration to the pin."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        line = (
+            f"{ratchet.CONTAINER_TRANSFER_MARKER} {kind} {old} => {new} "
+            f"{token} x{count}\n"
+        )
+        path.write_text(line + path.read_text(encoding="utf-8"), encoding="utf-8")
 
     def drift(self) -> ratchet.Drift | None:
         """Return the drift verdict of the scratch repository against its own main."""
@@ -2158,6 +2205,272 @@ class DriftTest(unittest.TestCase):
         self.assertFalse(drift.ok, drift)
         self.assertEqual([key for key, _now, _was in drift.added],
                          [("NARROW_CHILD", "IsingModel/OneCore.lean", "12")])
+
+    def test_an_exact_declared_container_transfer_passes(self) -> None:
+        """One edited old path pays for one edited new path, count for count."""
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+        )
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertEqual(drift.added, ())
+
+    def test_a_transfer_declaration_already_in_the_base_is_not_permission(self) -> None:
+        """The same metadata on both sides is history, not a reusable allowance."""
+        args = (
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "IsingModel/OneCore.lean",
+            "12",
+        )
+        self.declare_container_transfer(*args)
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "record old declaration")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        self.declare_container_transfer(*args)
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors),
+            drift,
+        )
+
+    def test_an_unchanged_historical_transfer_marker_is_inert(self) -> None:
+        """A merged marker survives on both sides without making a clean tree fail."""
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+        )
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "merge historical transfer marker")
+        drift = self.drift()
+        self.assertTrue(drift.ok, drift)
+        self.assertEqual(drift.baseline_errors, ())
+        self.assertFalse(any("container transfer" in note for note in drift.migration), drift)
+
+    def test_an_unchanged_historical_marker_cannot_pay_for_a_new_claim(self) -> None:
+        """History is ignored, so a later B1 rise still fails on the same checkout."""
+        args = (
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "IsingModel/OneCore.lean",
+            "12",
+        )
+        self.declare_container_transfer(*args)
+        self.repin()
+        marker = next(
+            line
+            for line in (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8").splitlines()
+            if line.startswith(ratchet.CONTAINER_TRANSFER_MARKER)
+        )
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "merge historical transfer marker")
+        self.write("IsingModel/One.lean", header("Narrow child module for the 99 foo wrappers."))
+        self.repin()
+        self.assertIn(marker, (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8"))
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(drift.baseline_errors, ())
+        self.assertEqual(
+            [key for key, _now, _was in drift.added],
+            [("NARROW_CHILD", "IsingModel/One.lean", "99")],
+        )
+
+    def test_repin_cannot_erase_a_tombstone_and_replay_its_identity(self) -> None:
+        """An intervening formatter run leaves the consumed identity on record."""
+        args = (
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "IsingModel/OneCore.lean",
+            "12",
+        )
+        self.declare_container_transfer(*args)
+        marker = (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8").splitlines()[0]
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "consume transfer identity")
+        self.repin()
+        self.assertIn(marker, (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8"))
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "intervening repin")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        self.declare_container_transfer(*args)
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors), drift
+        )
+
+    def test_removing_a_transfer_tombstone_fails_closed(self) -> None:
+        """Deletion cannot make a consumed identity available to a later commit."""
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+        )
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "consume transfer identity")
+        self.repin()
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            "\n".join(
+                line
+                for line in path.read_text(encoding="utf-8").splitlines()
+                if not line.startswith(ratchet.CONTAINER_TRANSFER_MARKER)
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors), drift
+        )
+
+    def test_relocating_an_existing_marker_inside_the_baseline_is_not_permission(self) -> None:
+        """Delete-plus-add patch presentation cannot turn old metadata into a grant."""
+        args = (
+            "NARROW_CHILD",
+            "IsingModel/One.lean",
+            "IsingModel/OneCore.lean",
+            "12",
+        )
+        self.declare_container_transfer(*args)
+        marker = (self.root / ratchet.BASELINE_REPO_PATH).read_text(encoding="utf-8").splitlines()[0]
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "record marker at top")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(path.read_text(encoding="utf-8") + marker + "\n", encoding="utf-8")
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(
+            any("not a pure new identity" in error for error in drift.baseline_errors), drift
+        )
+
+    def test_a_container_marker_without_a_declaration_fails(self) -> None:
+        """The marker alone is malformed, never an empty permission hatch."""
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            f"{ratchet.CONTAINER_TRANSFER_MARKER} reason only\n"
+            + path.read_text(encoding="utf-8"),
+            encoding="utf-8",
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("malformed" in error for error in drift.baseline_errors), drift)
+
+    def test_formatter_preserves_whitespace_variants_for_fail_closed_drift(self) -> None:
+        """Re-pinning cannot discard malformed directive-shaped comments."""
+        variants = (
+            "  # CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#  CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER : NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER:  NARROW_CHILD old.md => new.md 12 x1",
+        )
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            ratchet.format_baseline(
+                ratchet.build_report(root=self.root).charged,
+                "\n".join(variants) + "\n",
+            ),
+            encoding="utf-8",
+        )
+        rendered = path.read_text(encoding="utf-8")
+        for variant in variants:
+            self.assertIn(variant, rendered)
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(len(drift.baseline_errors), len(variants), drift)
+        self.assertTrue(all("malformed" in error for error in drift.baseline_errors), drift)
+
+    def test_a_class_or_token_swap_cannot_pay_a_new_key(self) -> None:
+        """The declaration must name the exact class and token on both sides."""
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "99"
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("new-key rise" in error for error in drift.baseline_errors), drift)
+
+    def test_a_duplicate_declaration_cannot_pay_twice(self) -> None:
+        """Repeating one exact line is duplicate spending, not more evidence."""
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.repin()
+        for _ in range(2):
+            self.declare_container_transfer(
+                "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+            )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("head=2" in error for error in drift.baseline_errors), drift)
+
+    def test_one_old_key_cannot_fan_out_to_many_new_paths(self) -> None:
+        """A one-to-many copy grows the corpus and cannot spend one loss twice."""
+        old = "IsingModel/One.lean"
+        text = (self.root / old).read_text(encoding="utf-8")
+        self.git("rm", "-q", old)
+        self.write("IsingModel/OneA.lean", text)
+        self.write("IsingModel/OneB.lean", text)
+        self.git("add", "IsingModel/OneA.lean", "IsingModel/OneB.lean")
+        self.repin()
+        for new in ("IsingModel/OneA.lean", "IsingModel/OneB.lean"):
+            self.declare_container_transfer("NARROW_CHILD", old, new, "12")
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("old key more than once" in error for error in drift.baseline_errors), drift)
+        self.assertTrue(any("total charged population" in error for error in drift.baseline_errors), drift)
+
+    def test_a_partial_old_key_loss_cannot_pay_a_smaller_transfer(self) -> None:
+        """The declaration count equals the whole old loss, not merely part of it."""
+        repeated = header(
+            "Narrow child module for the 12 foo wrappers. "
+            "Narrow child module for the 12 foo wrappers."
+        )
+        self.write("IsingModel/One.lean", repeated)
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with two equal old charges")
+        self.git("mv", "IsingModel/One.lean", "IsingModel/OneCore.lean")
+        self.write("IsingModel/OneCore.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.repin()
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/OneCore.lean", "12"
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("old-key loss 2" in error for error in drift.baseline_errors), drift)
+
+    def test_many_old_keys_cannot_collapse_into_one_new_key(self) -> None:
+        """Two losses cannot both claim the same one-count destination rise."""
+        self.write("IsingModel/Two.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.repin()
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", "base with two old containers")
+        self.git("rm", "-q", "IsingModel/One.lean", "IsingModel/Two.lean")
+        self.write("IsingModel/Combined.lean", header("Narrow child module for the 12 foo wrappers."))
+        self.git("add", "IsingModel/Combined.lean")
+        self.repin()
+        for old in ("IsingModel/One.lean", "IsingModel/Two.lean"):
+            self.declare_container_transfer(
+                "NARROW_CHILD", old, "IsingModel/Combined.lean", "12"
+            )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("new key more than once" in error for error in drift.baseline_errors), drift)
+
+    def test_unedited_transfer_endpoints_fail(self) -> None:
+        """A syntactically exact declaration cannot authorize an unrelated diff."""
+        self.declare_container_transfer(
+            "NARROW_CHILD", "IsingModel/One.lean", "IsingModel/Two.lean", "12"
+        )
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertTrue(any("not both edited" in error for error in drift.baseline_errors), drift)
 
     def test_a_broken_run_suppresses_the_comparison(self) -> None:
         """The drift mode used to report ``PASS`` on a tree ``--check`` was failing.
