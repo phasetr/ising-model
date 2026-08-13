@@ -25,6 +25,7 @@ LANDING = "docs/index.md"
 CANONICAL_OWNERS = frozenset({
     "docs/status.md", "docs/library-map.md", "docs/refactoring-rollback-ledger.md",
     "docs/references.md", "docs/theorems/index.md", "docs/coverage/index.md",
+    "docs/publication-policy.md",
 })
 
 _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")

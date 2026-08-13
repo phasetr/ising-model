@@ -2768,7 +2768,7 @@ class MainTest(unittest.TestCase):
         code, out = self.run_gate(self.CLEAN)
         self.assertEqual(code, 0)
         self.assertIn("1 Lean files scanned", out)
-        self.assertIn("9 tracked files", out)
+        self.assertIn("10 tracked files", out)
 
     def test_v5s_fixture_suite_is_reached_by_the_audit_self_tests(self) -> None:
         """CI invokes audit self-tests, so that route must defend V5 as well."""

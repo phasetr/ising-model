@@ -315,6 +315,18 @@ class ResolutionTest(RepoTest):
         self.base({"docs/index.md": owners + "\n"})
         self.assertEqual(self.codes().count("OWNER_REACHABILITY"), len(checker.CANONICAL_OWNERS))
 
+    def test_publication_policy_requires_a_direct_landing_edge(self) -> None:
+        policy = "docs/publication-policy.md"
+        self.assertIn(policy, checker.CANONICAL_OWNERS)
+        owners = checker.CANONICAL_OWNERS - {policy}
+        landing = "\n".join(f"[{owner}]({owner.removeprefix('docs/')})" for owner in sorted(owners))
+        self.base({"docs/index.md": landing + "\n"})
+        findings = [finding for finding in self.findings() if finding.code == "OWNER_REACHABILITY"]
+        self.assertEqual([(finding.source, finding.destination) for finding in findings], [(checker.LANDING, policy)])
+
+        with mutant('    "docs/publication-policy.md",\n', "") as module:
+            self.assertNotIn("OWNER_REACHABILITY", self.codes(module))
+
     def test_strict_fence_close_keeps_following_example_masked(self) -> None:
         self.base({"docs/status.md": "~~~md\n~~~not-a-close\n[still fake](missing.md)\n~~~   \n"})
         self.assertEqual(self.codes(), [])
@@ -543,8 +555,8 @@ class RealTreeTest(unittest.TestCase):
         self.assertEqual(findings, [])
         local = [link for link in links if link.destination and not checker._external(link.destination)]
         fragments = [link for link in local if "#" in link.destination]
-        self.assertEqual(len(visited), 21)
-        self.assertEqual(len(local), 79)
+        self.assertEqual(len(visited), 22)
+        self.assertEqual(len(local), 81)
         self.assertEqual(len(fragments), 2)
         self.assertEqual(visited, checker.raw_tracked_markdown()[0])
 
