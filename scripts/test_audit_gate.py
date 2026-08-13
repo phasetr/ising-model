@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Tests for ``scripts/audit_gate.py`` (V1-V4).
+"""Tests for ``scripts/audit_gate.py`` (V1-V5).
 
 Run directly (``python3 scripts/test_audit_gate.py``) or through the gate's own
-``--self-test`` flag. V1-V4 are the repository's correctness gate -- they decide
+``--self-test`` flag. V1-V5 are the repository's correctness gate -- they decide
 whether a push is honest -- and until this suite existed nothing checked *them*.
 That is the same hole the dead-candidate scanner had when it passed three false
 deletion-safety verdicts.
@@ -27,7 +27,7 @@ check here is tested in two directions:
 
 Cost
 ----
-V1, V2 and V4 are pure Python and run against fixtures plus one shared pass over
+V1, V2, V4 and V5 are pure Python and run against fixtures plus real-tree passes
 the real tree (cached in :func:`real_tree_results`, about five seconds total).
 
 V3 shells out to ``lake env lean``, which needs the whole library's oleans and
@@ -184,16 +184,27 @@ def tracked_repo(
 
 @contextmanager
 def whole_repo(files: dict[str, str], module: types.ModuleType | None = None) -> Iterator[Path]:
-    """Build a throwaway repository that V1, V2 and V4 can all be pointed at.
+    """Build a throwaway repository that V1, V2, V4 and V5 can all use.
 
     ``library`` and ``tracked_repo`` each patch ``REPO_ROOT``, so neither can be
-    used to drive ``main``, which runs all four checks against one tree. Paths
+    used to drive ``main``, which runs all five checks against one tree. Paths
     are relative to the repository root (``IsingModel/A.lean``, ``docs/a.md``).
     """
     target = module if module is not None else ag
     with tempfile.TemporaryDirectory() as raw:
         root = Path(raw)
-        for name, text in files.items():
+        complete = dict(files)
+        owners = sorted(ag.docs_link_check.CANONICAL_OWNERS)
+        complete.setdefault("README.md", "[Documentation](docs/index.md)\n")
+        complete.setdefault(
+            "docs/index.md",
+            "\n".join(
+                f"[{owner}]({owner.removeprefix('docs/')})" for owner in owners
+            ) + "\n",
+        )
+        for owner in owners:
+            complete.setdefault(owner, f"# {Path(owner).stem}\n")
+        for name, text in complete.items():
             path = root / name
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding="utf-8")
@@ -2724,6 +2735,13 @@ class MainTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("docs/b.md:1", out)
 
+    def test_a_broken_documentation_link_makes_the_gate_exit_nonzero(self) -> None:
+        """V5 reaches the existing audit-gate command CI already invokes."""
+        code, out = self.run_gate({**self.CLEAN, "docs/a.md": "[bad](missing.html)\n"})
+        self.assertEqual(code, 1)
+        self.assertIn("LOCAL_HTML", out)
+        self.assertIn("audit gate: FAIL", out)
+
     def test_v3_is_skipped_without_lake_and_required_with_full(self) -> None:
         """``--full`` is what makes the capstone audit mandatory in CI."""
         _, skipped = self.run_gate(self.CLEAN)
@@ -2750,7 +2768,13 @@ class MainTest(unittest.TestCase):
         code, out = self.run_gate(self.CLEAN)
         self.assertEqual(code, 0)
         self.assertIn("1 Lean files scanned", out)
-        self.assertIn("2 tracked files", out)
+        self.assertIn("9 tracked files", out)
+
+    def test_v5s_fixture_suite_is_reached_by_the_audit_self_tests(self) -> None:
+        """CI invokes audit self-tests, so that route must defend V5 as well."""
+        from test_docs_link_check import run_suite as run_link_suite
+
+        self.assertEqual(run_link_suite(), 0)
 
     def test_the_self_test_flag_delegates_and_forwards_the_exit_code(self) -> None:
         """``--self-test`` is how CI runs this suite; its result must propagate."""
@@ -2801,7 +2825,7 @@ class MainTest(unittest.TestCase):
         )
 
     def test_the_gate_passes_on_the_current_tree(self) -> None:
-        """V1, V2 and V4 are green here and now (V3 is CI's job)."""
+        """V1, V2, V4 and V5 are green here and now (V3 is CI's job)."""
         real = real_tree_results()
         self.assertEqual((real.v1, real.v2, real.v4), ([], [], []))
 

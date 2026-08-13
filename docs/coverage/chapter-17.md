@@ -2,7 +2,7 @@
 layout: default
 title: Chapter 17 coverage
 ---
-[Coverage index](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Coverage index](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## Chapter 11 (Fields without cutoffs)
 

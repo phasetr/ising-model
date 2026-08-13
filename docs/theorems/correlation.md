@@ -2,7 +2,7 @@
 layout: default
 title: Correlation theorems
 ---
-[Theorem catalogue](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Theorem catalogue](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## Correlation inequalities (§4.1–§4.7)
 

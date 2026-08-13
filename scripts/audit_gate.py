@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Audit gate for the IsingModel Lean library (V1-V4).
+"""Audit gate for the IsingModel Lean library (V1-V5).
 
 Deterministic, dependency-free checks intended to run in CI (and, if wired,
 from a git pre-push hook). Uses only the Python 3 standard library.
@@ -35,20 +35,23 @@ V4  No Japanese text (kana, CJK ideographs and radicals, CJK punctuation,
     material under ``.self-local/`` is untracked (the user's global
     ``.gitignore`` excludes it project-wide) and therefore never appears in
     ``git ls-files`` at all; it needs no special-casing here.
+V5  Repository-local links in tracked README/docs Markdown name tracked source
+    files rather than derived Jekyll output, resolve case-sensitively with
+    valid heading fragments and images, and preserve entry-point reachability.
 
 Usage
 -----
-    python3 scripts/audit_gate.py            # V1 + V2 + V4 always; V3 if lake env present
-    python3 scripts/audit_gate.py --full     # V1 + V2 + V3 + V4 (V3 required; CI mode)
+    python3 scripts/audit_gate.py            # V1 + V2 + V4 + V5 always; V3 if lake env present
+    python3 scripts/audit_gate.py --full     # V1 + V2 + V3 + V4 + V5 (V3 required; CI mode)
     python3 scripts/audit_gate.py --self-test  # test the gate itself (no lake needed)
 
 Exit code 0 iff every executed check passes; 1 otherwise.
 
 Scanned-set honesty
 -------------------
-V1, V2 and V4 each return the list of files they *actually opened*, not the list
-their file enumeration produced, and :func:`main` requires the two to agree
-(:func:`unvisited_failures`). Without that, a single ``continue`` in a check's
+V1, V2 and V4 each return the list of files they *actually opened*, while V5
+returns its visited Markdown set; ``main`` compares each against its enumeration.
+Without that, a single ``continue`` in a check's
 loop body -- ``if "RandomCurrent" in path.parts: continue`` -- removes a whole
 subtree from the scan while the enumeration, every fixture test and the printed
 "2063 files scanned" stay exactly as before. The count reported on a PASS line
@@ -68,6 +71,8 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+
+import docs_link_check
 
 # Repository root = parent of the ``scripts`` directory holding this file.
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -686,7 +691,7 @@ def lake_available() -> bool:
 
 def main() -> int:
     """Run the audit gate and return the process exit code."""
-    parser = argparse.ArgumentParser(description="IsingModel audit gate (V1-V4).")
+    parser = argparse.ArgumentParser(description="IsingModel audit gate (V1-V5).")
     parser.add_argument(
         "--full",
         action="store_true",
@@ -763,6 +768,29 @@ def main() -> int:
             print(f"  {item}")
     else:
         print(f"PASS ({len(v4_visited)} tracked files under {', '.join(V4_PATHS)})")
+
+    print("== V5: tracked Markdown links resolve to repository sources ==")
+    v5, v5_visited, v5_links = docs_link_check.check(REPO_ROOT)
+    expected_v5, enumeration_failures = docs_link_check.tracked_markdown(REPO_ROOT)
+    v5 += enumeration_failures
+    v5 += [
+        docs_link_check.Finding(
+            "<coverage>", 0, "UNVISITED", path, "tracked Markdown was not read"
+        )
+        for path in sorted(set(expected_v5) - set(v5_visited))
+    ]
+    if v5:
+        ok = False
+        print(f"FAIL: {len(v5)} documentation-link problem(s):")
+        for item in sorted(set(v5)):
+            print(f"  {item.render()}")
+    else:
+        local = sum(
+            1
+            for link in v5_links
+            if link.destination and not docs_link_check._external(link.destination)
+        )
+        print(f"PASS ({len(v5_visited)} tracked Markdown files; {local} local links)")
 
     print()
     if ok:

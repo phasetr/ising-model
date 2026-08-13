@@ -2,7 +2,7 @@
 layout: default
 title: Ambient-lattice theorems
 ---
-[Theorem catalogue](index.html) · [Documentation home](../index.html) · [Current status](../status.html)
+[Theorem catalogue](index.md) · [Documentation home](../index.md) · [Current status](../status.md)
 
 ## Ambient lattice framework (genuine infinite volume)
 

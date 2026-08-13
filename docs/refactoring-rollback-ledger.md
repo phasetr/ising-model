@@ -203,15 +203,15 @@ naming the blacklisted item can authorize revival.
 These are current intentions for reading the live theorem inventories, not additions to the
 historical rollback topology above and not a record of issue, date, or batch history.
 
-- A [coverage-catalogue row](coverage/chapters-2-10.html) that enumerates declaration ownership is
+- A [coverage-catalogue row](coverage/chapters-2-10.md) that enumerates declaration ownership is
   the authority for that enumeration;
   preserve its distinction between generic APIs and a specialized owner rather than treating a
   shared suffix as proof that every declaration has the same domain.
 - A candidate list or deletion scan is evidence for scoped investigation, never implementation
   authorization. Routine deletion requires a fresh, explicit work item and verification against
   the current tree.
-- The [Chapter 17 coverage catalogue](coverage/chapter-17.html) and
-  [Chapter 18 coverage catalogue](coverage/chapter-18.html) own their current scope qualifications.
+- The [Chapter 17 coverage catalogue](coverage/chapter-17.md) and
+  [Chapter 18 coverage catalogue](coverage/chapter-18.md) own their current scope qualifications.
   Rows labelled conditional, analogy, parked, off-book, or out of scope must not be promoted by a
   refactoring proposal.
 - Clustering/analyticity and polymer/Mayer material require separate, scoped investigation and
