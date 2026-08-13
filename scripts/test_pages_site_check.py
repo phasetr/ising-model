@@ -398,7 +398,7 @@ class SiteTest(unittest.TestCase):
                     findings = checker.stage_site(rendered, destination)
                 self.assertEqual(
                     [(item.code, item.detail) for item in findings],
-                    [("STAGE_DESTINATION", "destination appeared during publish")],
+                    [("STAGE_DESTINATION", "destination appeared while staging")],
                 )
                 if nonempty:
                     self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
@@ -459,6 +459,35 @@ class SiteTest(unittest.TestCase):
                     findings = checker.stage_site(rendered, destination)
                 self.assertEqual([item.code for item in findings], ["STAGE_RENAME"])
                 self.assertFalse(destination.exists())
+
+    def test_stage_cleanup_failure_keeps_original_finding_and_competitor(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        real_publish = checker._rename_stage_noreplace
+
+        def race(source: Path, target: Path) -> None:
+            target.mkdir()
+            (target / "competitor").write_text("preserved", encoding="utf-8")
+            real_publish(source, target)
+
+        with (
+            mock.patch.object(checker, "_rename_stage_noreplace", side_effect=race),
+            mock.patch.object(checker.shutil, "rmtree", side_effect=OSError("cleanup refused")),
+        ):
+            findings = checker.stage_site(rendered, destination)
+        self.assertEqual(
+            [(item.code, item.detail) for item in findings],
+            [
+                ("STAGE_CLEANUP", "cleanup refused"),
+                ("STAGE_DESTINATION", "destination appeared while staging"),
+            ],
+        )
+        self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+        self.assertFalse((destination / "index.html").exists())
+        temporary = list(self.root.glob("._site-staged.stage-*"))
+        self.assertEqual(len(temporary), 1)
+        shutil.rmtree(temporary[0])
 
     def test_stage_cli_success_and_failure(self) -> None:
         rendered = self.root / "_site-container"
@@ -977,6 +1006,28 @@ class MutationTest(SiteTest):
                     self.assertEqual(native.argtypes, ())
                 else:
                     self.assertIs(native.restype, module.ctypes.c_void_p)
+
+    def test_stage_cleanup_finding_is_mutation_pinned(self) -> None:
+        rendered = self.root / "_site-container"
+        destination = self.root / "_site-staged"
+        shutil.copytree(self.site, rendered)
+        old = '                findings.append(Finding(str(site), "STAGE_CLEANUP", _stage_error(exc)))'
+        with mutant(old, "                pass") as module:
+            def race(_source: Path, target: Path) -> None:
+                target.mkdir()
+                (target / "competitor").write_text("preserved", encoding="utf-8")
+                raise OSError(errno.EEXIST, "already exists")
+
+            with (
+                mock.patch.object(module, "_rename_stage_noreplace", side_effect=race),
+                mock.patch.object(module.shutil, "rmtree", side_effect=OSError("cleanup refused")),
+            ):
+                findings = module.stage_site(rendered, destination)
+        self.assertEqual([item.code for item in findings], ["STAGE_DESTINATION"])
+        self.assertEqual((destination / "competitor").read_text(encoding="utf-8"), "preserved")
+        temporary = list(self.root.glob("._site-staged.stage-*"))
+        self.assertEqual(len(temporary), 1)
+        shutil.rmtree(temporary[0])
 
     def _assert_stage_mutant_accepts_symlink(self, module: types.ModuleType, rendered: Path, destination: Path) -> None:
         link = rendered / "outside"

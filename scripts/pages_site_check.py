@@ -391,7 +391,7 @@ def stage_site(input_site: Path, site: Path) -> list[Finding]:
                 _rename_stage_noreplace(temporary, destination)
             except OSError as exc:
                 if exc.errno == errno.EEXIST:
-                    findings.append(Finding(str(site), "STAGE_DESTINATION", "destination appeared during publish"))
+                    findings.append(Finding(str(site), "STAGE_DESTINATION", "destination appeared while staging"))
                 else:
                     findings.append(Finding(str(site), "STAGE_RENAME", _stage_error(exc)))
             else:
