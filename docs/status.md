@@ -78,7 +78,8 @@ headlines. Detailed declarations and hypotheses remain in the
 - **§17.6.1, β direction:** the general-observable infinite-volume `HasDerivAt` is implemented on
   an open KP high-temperature window, not on the full book range.
 - **§17.6.1, complex field:** `fieldCorrelationInfinite_latticeGraph_analytic_high_temp` gives the
-  small-coupling holomorphic local-limit contract stated above.
+  small-coupling holomorphic local-limit contract recorded in the
+  [theorem and coverage inventories](index.html).
 - **§17.6.1, real reduced field:** the two
   `correlationInfinite_latticeGraph_general_*At_field_high_temp` declarations give
   general-observable differentiability for normalized `⟨a,b,1⟩`, small `a`, and
@@ -94,8 +95,8 @@ headlines. Detailed declarations and hypotheses remain in the
 - **§17.6.1, real field residuals:** `b = 0`, arbitrary physical-parameter rescaling, the full
   nonperturbative range, and a U3/series derivative identity, sign, or uniform bound remain
   outside the implemented reduced-field theorem. No live owning GitHub issue (formerly #4790,
-  closed completed — that issue tracked the finite-volume Option B capstone above, not this
-  residual gap).
+  closed completed — that issue tracked the finite-volume Option B capstone recorded in the
+  [theorem and coverage inventories](index.html), not this residual gap).
 - **§5.1 cluster property in all pure phases:** removal of the polynomial-decay/high-temperature
   restriction. No live owning GitHub issue.
 

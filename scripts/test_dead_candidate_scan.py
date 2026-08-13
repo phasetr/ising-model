@@ -987,17 +987,53 @@ class MarkdownBacktickParityTest(unittest.TestCase):
         self.assertIn(":1:", warning)
         self.assertIn("pair into no code span", warning)
 
-    def test_the_real_markdown_raises_no_warning(self) -> None:
-        """Measured on every public Markdown source: no unpairable backtick.
+    def test_the_progress_documents_raise_no_warning(self) -> None:
+        """Measured on every progress owner that exists: no unpairable backtick.
 
         This used to pin the three known defects as the literal line numbers
         they happened to sit on, which cost a fixture edit for every insertion
         above them and asserted nothing at all about the rest of the file. The
-        empty measurement is the true post-repair state and is strictly
-        stronger: a *newly* introduced delimiter defect anywhere in
-        any discovered document now fails here, wherever it lands.
+        split moves progress prose from the index to three focused owners, so
+        checking only the index would let the same defect return in moved text.
+
+        Select the owners by their public paths rather than scanning unrelated
+        Markdown: other documents can intentionally demonstrate nested fence
+        syntax.  Deriving the expected set from files that exist keeps the
+        fixture meaningful both before and after the split, while the equality
+        proves that every existing owner reached the real-tree reader.
         """
-        for source in docs():
+        owner_labels = {
+            "docs/index.md",
+            "docs/status.md",
+            "docs/library-map.md",
+            "docs/references.md",
+        }
+        expected = {
+            label for label in owner_labels if (dcs.REPO_ROOT / label).is_file()
+        }
+        sources = [source for source in docs() if source.label in owner_labels]
+        self.assertIn("docs/index.md", expected)
+        self.assertEqual({source.label for source in sources}, expected)
+
+        def split_owner(label: str) -> str:
+            return label if label in expected else "docs/index.md"
+
+        anchor_owners = {
+            "## Glimm–Jaffe coverage inventory": "docs/index.md",
+            "## Status taxonomy": split_owner("docs/status.md"),
+            ("> **Import note:** `IsingModel.Concrete.LatticeGraphCorrelation` "
+             "is a thin"):
+                split_owner("docs/library-map.md"),
+            "## References": split_owner("docs/references.md"),
+        }
+        for anchor, owner in anchor_owners.items():
+            self.assertEqual(
+                {source.label for source in sources if anchor in source.text},
+                {owner},
+                anchor,
+            )
+
+        for source in sources:
             self.assertEqual(dcs.unpaired_backticks(source.text), {}, source.label)
             self.assertEqual(source.malformed, [], source.label)
 
