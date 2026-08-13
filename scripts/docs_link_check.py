@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Fail-closed checks for repository-native links in tracked Markdown.
+"""Fail-closed repository-native link checks for tracked Markdown.
 
-The authored documentation is read on GitHub as source.  Repository-local
-links therefore name tracked source files (normally ``.md``), never Jekyll's
-derived ``.html`` output.  This checker deliberately has a narrow remit: local
-target existence, Markdown heading fragments, image targets, and the two entry
-point reachability contracts.  It neither fetches external URLs nor judges the
-documentation's prose.
+The supported grammar is intentionally bounded.  Outside code, this checker
+accepts inline Markdown links/images and reference links/definitions, plus
+explicit ``<a id=...>`` / ``<a name=...>`` fragment owners.  Raw local HTML
+href/src, Liquid link tags, and local-link-shaped text not consumed by that
+grammar are findings rather than silently ignored syntax.
 """
 
 from __future__ import annotations
@@ -22,29 +21,29 @@ from pathlib import Path, PurePosixPath
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MARKDOWN_PATHS = ("README.md", "docs")
 LANDING = "docs/index.md"
-CANONICAL_OWNERS = frozenset(
-    {
-        "docs/status.md",
-        "docs/library-map.md",
-        "docs/refactoring-rollback-ledger.md",
-        "docs/references.md",
-        "docs/theorems/index.md",
-        "docs/coverage/index.md",
-    }
-)
+CANONICAL_OWNERS = frozenset({
+    "docs/status.md", "docs/library-map.md", "docs/refactoring-rollback-ledger.md",
+    "docs/references.md", "docs/theorems/index.md", "docs/coverage/index.md",
+})
 
-_FENCE_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})(?:[^`~]*)$")
+_OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(`{3,}|~{3,})([^`~]*)$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
-_REFERENCE_RE = re.compile(r"^[ \t]{0,3}\[([^]]+)\]:[ \t]*(\S+)")
-_INLINE_LINK_RE = re.compile(r"!?\[[^]\n]*\]\([ \t]*(<[^>]+>|[^\s)]+)")
-_REFERENCE_USE_RE = re.compile(r"!?\[([^]\n]+)\]\[([^]\n]*)\]")
+_DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
+_INLINE_RE = re.compile(r"(!?)\[([^]\n]*)\]\([ \t]*(<[^>]+>|[^\s)]+)[ \t]*\)")
+_REFERENCE_USE_RE = re.compile(r"(!?)\[([^]\n]*)\]\[([^]\n]*)\]")
+_RAW_CANDIDATE_RE = re.compile(r"!?\[[^]\n]*?\]\([^\s)]*\)")
+_RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
+_RAW_REFERENCE_USE_RE = re.compile(r"!?\[[^]\n]*\]\[[^]\n]*(?:\]|$)")
+_RAW_HTML_LINK_RE = re.compile(
+    r"<[^>]+\b(?:href|src)[ \t]*=[ \t]*(?:(['\"])(.*?)\1|([^\s>]+))[^>]*>", re.I
+)
+_LIQUID_LINK_RE = re.compile(r"{%[ \t]*link[ \t]+([^%]+?)[ \t]*%}")
+_EXPLICIT_ANCHOR_RE = re.compile(r"<a[ \t]+(?:id|name)[ \t]*=[ \t]*(['\"])([^'\"]+)\1[ \t]*></a>", re.I)
 _SCHEME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:")
 
 
 @dataclass(frozen=True, order=True)
 class Finding:
-    """One stable, source-located link failure."""
-
     source: str
     line: int
     code: str
@@ -52,137 +51,222 @@ class Finding:
     detail: str
 
     def render(self) -> str:
-        """Return the human-readable diagnostic."""
         target = f" `{self.destination}`" if self.destination else ""
         return f"V5: {self.source}:{self.line}: {self.code}:{target} {self.detail}".rstrip()
 
 
 @dataclass(frozen=True)
 class Link:
-    """A local-or-external destination extracted from Markdown prose."""
-
     source: str
     line: int
     destination: str
+    image: bool = False
+    label: str = ""
 
 
-def tracked_markdown(root: Path = REPO_ROOT) -> tuple[list[str], list[Finding]]:
-    """Return the tracked README/docs Markdown population, failing closed."""
+@dataclass(frozen=True)
+class ParsedMarkdown:
+    links: tuple[Link, ...]
+    findings: tuple[Finding, ...]
+    headings: tuple[str, ...]
+    explicit_anchors: tuple[tuple[str, int], ...]
+    candidate_count: int
+    consumed_count: int
+
+
+def _git_names(root: Path, pathspecs: tuple[str, ...] | None) -> tuple[list[str], list[Finding]]:
+    """Run one stable ``git ls-files`` query and decode it fail-closed."""
+    command = ["git", "ls-files", "-z"]
+    if pathspecs is not None:
+        command += ["--", *pathspecs]
     try:
-        proc = subprocess.run(
-            ["git", "ls-files", "-z", "--", *MARKDOWN_PATHS],
-            cwd=root,
-            capture_output=True,
-            check=False,
-        )
+        proc = subprocess.run(command, cwd=root, capture_output=True, check=False)
     except OSError as exc:
         return [], [Finding("<git>", 0, "TRACKED_SET", "", f"could not run git: {exc}")]
     if proc.returncode != 0:
-        detail = proc.stderr.decode("utf-8", errors="replace").strip()
-        return [], [Finding("<git>", 0, "TRACKED_SET", "", f"git ls-files failed: {detail}")]
+        stderr = proc.stderr.decode("utf-8", errors="replace").strip()
+        return [], [Finding("<git>", 0, "TRACKED_SET", "", f"git ls-files failed: {stderr}")]
     try:
         names = [name for name in proc.stdout.decode("utf-8").split("\0") if name]
     except UnicodeDecodeError as exc:
         return [], [Finding("<git>", 0, "TRACKED_SET", "", f"non-UTF-8 path: {exc}")]
-    names = sorted(name for name in names if name == "README.md" or name.endswith(".md"))
     if not names:
-        return [], [Finding("<git>", 0, "TRACKED_SET", "", "no tracked Markdown matched")]
-    return names, []
+        return [], [Finding("<git>", 0, "TRACKED_SET", "", "git ls-files returned an empty tracked set")]
+    return sorted(names), []
 
 
-def _mask_code(line: str) -> tuple[str, bool]:
-    """Blank paired inline-code spans; report whether a delimiter is unmatched."""
+def _is_doc_markdown(name: str) -> bool:
+    return name == "README.md" or (name.startswith("docs/") and name.endswith(".md"))
+
+
+def tracked_markdown(root: Path = REPO_ROOT) -> tuple[list[str], list[Finding]]:
+    names, failures = _git_names(root, MARKDOWN_PATHS)
+    return sorted(name for name in names if _is_doc_markdown(name)), failures
+
+
+def raw_tracked_markdown(root: Path = REPO_ROOT) -> tuple[list[str], list[Finding]]:
+    """Independently derive scope from every tracked name, not MARKDOWN_PATHS."""
+    names, failures = _git_names(root, None)
+    return sorted(name for name in names if _is_doc_markdown(name)), failures
+
+
+def _mask_inline_code(line: str) -> tuple[str, bool]:
     chars = list(line)
-    index = 0
-    while index < len(chars):
-        if chars[index] != "`":
-            index += 1
+    pos = 0
+    while pos < len(chars):
+        if chars[pos] != "`":
+            pos += 1
             continue
-        end_run = index
-        while end_run < len(chars) and chars[end_run] == "`":
-            end_run += 1
-        marker = "`" * (end_run - index)
-        close = line.find(marker, end_run)
+        end = pos
+        while end < len(chars) and chars[end] == "`":
+            end += 1
+        marker = "`" * (end - pos)
+        close = line.find(marker, end)
         if close < 0:
             return "".join(chars), True
-        for pos in range(index, close + len(marker)):
-            chars[pos] = " "
-        index = close + len(marker)
+        chars[pos:close + len(marker)] = " " * (close + len(marker) - pos)
+        pos = close + len(marker)
     return "".join(chars), False
 
 
-def parse_markdown(source: str, text: str) -> tuple[list[Link], dict[str, Link], list[Finding], list[str]]:
-    """Extract links and headings from prose, ignoring fenced/code examples."""
-    links: list[Link] = []
+def _external(destination: str) -> bool:
+    return bool(_SCHEME_RE.match(destination)) or destination.startswith("//")
+
+
+def _local_shaped(text: str) -> bool:
+    text = text.strip(" <>\"'")
+    return bool(text) and not _external(text) and (
+        text.startswith(('.', '/', '#')) or '/' in text or '\\' in text
+        or re.search(r"\.(?:md|html?|png|jpe?g|gif|svg|pdf)(?:[?#]|$)", text, re.I) is not None
+    )
+
+
+def parse_markdown(source: str, text: str) -> ParsedMarkdown:
+    """Parse the bounded grammar and enforce raw candidate coverage."""
+    inline_links: list[Link] = []
     definitions: dict[str, Link] = {}
+    uses: list[tuple[int, str, bool, str]] = []
     findings: list[Finding] = []
     headings: list[str] = []
-    reference_uses: list[tuple[int, str]] = []
+    anchors: list[tuple[str, int]] = []
+    candidate_count = 0
+    consumed_count = 0
     fence_char = ""
     fence_length = 0
-    for lineno, raw in enumerate(text.splitlines(), 1):
-        fence = _FENCE_RE.match(raw)
-        if fence:
-            marker = fence.group(1)
-            if not fence_char:
-                fence_char, fence_length = marker[0], len(marker)
-            elif marker[0] == fence_char and len(marker) >= fence_length:
+    lines = text.splitlines()
+    for lineno, raw in enumerate(lines, 1):
+        if fence_char:
+            close = re.match(rf"^[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*$", raw)
+            if close:
                 fence_char, fence_length = "", 0
             continue
-        if fence_char:
+        opener = _OPEN_FENCE_RE.match(raw)
+        if opener:
+            marker = opener.group(1)
+            fence_char, fence_length = marker[0], len(marker)
             continue
-        line, unmatched = _mask_code(raw)
+        line, unmatched = _mask_inline_code(raw)
         if unmatched:
             findings.append(Finding(source, lineno, "MALFORMED_CODE_SPAN", "", "unmatched backtick run"))
             continue
+        for match in _RAW_HTML_LINK_RE.finditer(line):
+            destination = match.group(2) or match.group(3)
+            if _local_shaped(destination):
+                candidate_count += 1
+                findings.append(Finding(source, lineno, "RAW_LOCAL_HTML", destination, "local href/src is outside the supported Markdown grammar"))
+        for match in _LIQUID_LINK_RE.finditer(line):
+            destination = match.group(1).strip()
+            if _local_shaped(destination):
+                candidate_count += 1
+                findings.append(Finding(source, lineno, "LIQUID_LOCAL_LINK", destination, "Liquid links are not GitHub-native Markdown"))
+        for match in _EXPLICIT_ANCHOR_RE.finditer(line):
+            anchors.append((match.group(2), lineno))
         heading = _HEADING_RE.match(line)
         if heading:
             headings.append(heading.group(2).strip())
-        definition = _REFERENCE_RE.match(line)
+        # Count syntax independently of destination classification.  External
+        # links are consumed by the same grammar, so including both sides keeps
+        # this census exact without asking the grammar parser for its input.
+        raw_inline = list(_RAW_CANDIDATE_RE.finditer(line))
+        candidate_count += len(raw_inline)
+        parsed_inline = list(_INLINE_RE.finditer(line))
+        consumed_count += len(parsed_inline)
+        for match in parsed_inline:
+            image = bool(match.group(1))
+            label = match.group(2)
+            destination = match.group(3).strip("<>")
+            inline_links.append(Link(source, lineno, destination, image, label))
+        raw_defs = bool(_RAW_REFERENCE_DEF_RE.match(line))
+        definition = _DEFINITION_RE.match(line)
+        if raw_defs:
+            candidate_count += 1
         if definition:
-            label = " ".join(definition.group(1).casefold().split())
-            destination = definition.group(2).strip("<>")
-            item = Link(source, lineno, destination)
-            if label in definitions:
-                findings.append(Finding(source, lineno, "DUPLICATE_REFERENCE", destination, f"duplicate label [{label}]"))
+            consumed_count += 1
+            key = " ".join(definition.group(1).casefold().split())
+            item = Link(source, lineno, definition.group(2).strip("<>"))
+            if key in definitions:
+                findings.append(Finding(source, lineno, "DUPLICATE_REFERENCE", item.destination, f"duplicate label [{key}]"))
             else:
-                definitions[label] = item
-        for match in _INLINE_LINK_RE.finditer(line):
-            links.append(Link(source, lineno, match.group(1).strip("<>")))
-        for match in _REFERENCE_USE_RE.finditer(line):
-            label = match.group(2) or match.group(1)
-            key = " ".join(label.casefold().split())
-            reference_uses.append((lineno, key))
+                definitions[key] = item
+        raw_uses = list(_RAW_REFERENCE_USE_RE.finditer(line))
+        parsed_uses = list(_REFERENCE_USE_RE.finditer(line))
+        candidate_count += len(raw_uses)
+        consumed_count += len(parsed_uses)
+        for match in parsed_uses:
+            key = " ".join((match.group(3) or match.group(2)).casefold().split())
+            uses.append((lineno, key, bool(match.group(1)), match.group(2)))
+        # Any local-link punctuation that was not consumed is a hard finding.
+        if raw_inline and len(raw_inline) != len(parsed_inline):
+            findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "local link candidate was not consumed by the bounded grammar"))
+        if "](" in line and not parsed_inline and any(_local_shaped(token) for token in re.findall(r"\]\(([^\s)]*)", line)):
+            candidate_count += 1
+            findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "malformed local inline link"))
     if fence_char:
-        findings.append(Finding(source, len(text.splitlines()) or 1, "MALFORMED_FENCE", "", "unclosed fenced code block"))
-    for lineno, key in reference_uses:
+        findings.append(Finding(source, len(lines) or 1, "MALFORMED_FENCE", "", "unclosed fenced code block"))
+    used: set[str] = set()
+    for lineno, key, image, label in uses:
         if key not in definitions:
             findings.append(Finding(source, lineno, "MISSING_REFERENCE", key, "reference label has no definition"))
-    return links, definitions, findings, headings
+            continue
+        used.add(key)
+        definition = definitions[key]
+        inline_links.append(Link(source, lineno, definition.destination, image, label))
+    for key, definition in definitions.items():
+        if key not in used and _local_shaped(definition.destination):
+            findings.append(Finding(source, definition.line, "UNUSED_LOCAL_REFERENCE", definition.destination, f"definition [{key}] renders no link"))
+    if candidate_count != consumed_count:
+        findings.append(Finding(source, 0, "CANDIDATE_COVERAGE", "", f"raw candidates {candidate_count} != grammar consumptions {consumed_count}"))
+    return ParsedMarkdown(tuple(inline_links), tuple(findings), tuple(headings), tuple(anchors), candidate_count, consumed_count)
 
 
-def github_slugs(headings: list[str]) -> set[str]:
-    """Return GitHub-style heading identifiers, including duplicate suffixes."""
-    slugs: set[str] = set()
+def _rendered_heading_text(heading: str) -> str:
+    heading = re.sub(r"!\[([^]]*)\]\([^)]*\)", r"\1", heading)
+    heading = re.sub(r"\[([^]]+)\]\([^)]*\)", r"\1", heading)
+    heading = re.sub(r"<[^>]*>", "", heading)
+    return re.sub(r"[*_~`]", "", heading)
+
+
+def github_anchors(headings: tuple[str, ...], explicit: tuple[tuple[str, int], ...], source: str) -> tuple[set[str], list[Finding]]:
+    anchors: set[str] = set()
+    findings: list[Finding] = []
     counts: dict[str, int] = {}
     for heading in headings:
-        plain = re.sub(r"<[^>]*>", "", heading)
-        plain = re.sub(r"[*_~`]", "", plain).strip().lower()
+        plain = _rendered_heading_text(heading).strip().lower()
         base = re.sub(r"[^\w\- ]", "", plain, flags=re.UNICODE).replace(" ", "-")
         count = counts.get(base, 0)
         slug = base if count == 0 else f"{base}-{count}"
         counts[base] = count + 1
-        slugs.add(slug)
-    return slugs
-
-
-def _external(destination: str) -> bool:
-    """Return whether a destination is outside repository-path resolution."""
-    return bool(_SCHEME_RE.match(destination)) or destination.startswith("//")
+        if slug in anchors:
+            findings.append(Finding(source, 0, "DUPLICATE_ANCHOR", slug, "generated anchor is duplicated"))
+        anchors.add(slug)
+    for anchor, lineno in explicit:
+        if anchor in anchors:
+            findings.append(Finding(source, lineno, "DUPLICATE_ANCHOR", anchor, "explicit anchor duplicates another owner"))
+        anchors.add(anchor)
+    return anchors, findings
 
 
 def _resolve(source: str, destination: str) -> tuple[str, str]:
-    """Return normalized repo-relative path and decoded fragment."""
     parsed = urllib.parse.urlsplit(destination)
     decoded = urllib.parse.unquote(parsed.path)
     base = PurePosixPath(source).parent
@@ -200,16 +284,20 @@ def _resolve(source: str, destination: str) -> tuple[str, str]:
 
 
 def check(root: Path = REPO_ROOT) -> tuple[list[Finding], list[str], list[Link]]:
-    """Check the complete tracked Markdown graph."""
     names, findings = tracked_markdown(root)
+    raw_names, raw_failures = raw_tracked_markdown(root)
+    findings += raw_failures
+    if not names:
+        findings.append(Finding("<scope>", 0, "EMPTY_MARKDOWN_SCOPE", "", "no tracked README/docs Markdown"))
+    if names != raw_names:
+        findings.append(Finding("<scope>", 0, "SCOPE_MISMATCH", "", f"scoped {len(names)} != independent raw {len(raw_names)}"))
+    tracked_names, tracked_failures = _git_names(root, None)
+    findings += tracked_failures
     if findings:
-        return findings, [], []
-    tracked_proc = subprocess.run(["git", "ls-files", "-z"], cwd=root, capture_output=True, check=False)
-    if tracked_proc.returncode != 0:
-        return [Finding("<git>", 0, "TRACKED_SET", "", "could not list all tracked targets")], [], []
-    tracked = {name for name in tracked_proc.stdout.decode("utf-8").split("\0") if name}
+        return sorted(set(findings)), [], []
+    tracked = set(tracked_names)
     all_links: list[Link] = []
-    headings_by_source: dict[str, set[str]] = {}
+    anchors_by_source: dict[str, set[str]] = {}
     visited: list[str] = []
     for name in names:
         path = root / name
@@ -221,15 +309,28 @@ def check(root: Path = REPO_ROOT) -> tuple[list[Finding], list[str], list[Link]]
             findings.append(Finding(name, 0, "UNREADABLE", "", str(exc)))
             continue
         visited.append(name)
-        links, definitions, parse_findings, headings = parse_markdown(name, text)
-        findings.extend(parse_findings)
-        all_links.extend(links)
-        all_links.extend(definitions.values())
-        headings_by_source[name] = github_slugs(headings)
+        parsed = parse_markdown(name, text)
+        all_links.extend(parsed.links)
+        findings.extend(parsed.findings)
+        anchors, anchor_findings = github_anchors(parsed.headings, parsed.explicit_anchors, name)
+        anchors_by_source[name] = anchors
+        findings.extend(anchor_findings)
     edges: set[tuple[str, str]] = set()
     for link in all_links:
         destination = link.destination
         if not destination or _external(destination):
+            continue
+        if link.image and not link.label.strip():
+            findings.append(Finding(link.source, link.line, "EMPTY_IMAGE_ALT", destination, "image alt text must be nonempty"))
+        parsed_url = urllib.parse.urlsplit(destination)
+        if parsed_url.query:
+            findings.append(Finding(link.source, link.line, "QUERY_NOT_ALLOWED", destination, "repository-local links may not carry queries"))
+            continue
+        if "\\" in destination:
+            findings.append(Finding(link.source, link.line, "BACKSLASH_PATH", destination, "repository paths use forward slashes"))
+            continue
+        if parsed_url.path.startswith("/"):
+            findings.append(Finding(link.source, link.line, "ROOT_ABSOLUTE_PATH", destination, "repository-local links must be source-relative"))
             continue
         if destination.startswith("#"):
             target, fragment = link.source, urllib.parse.unquote(destination[1:])
@@ -238,52 +339,46 @@ def check(root: Path = REPO_ROOT) -> tuple[list[Finding], list[str], list[Link]]
         if not target:
             findings.append(Finding(link.source, link.line, "PATH_ESCAPE", destination, "target escapes repository"))
             continue
-        path_part = urllib.parse.urlsplit(destination).path.lower()
-        if path_part.endswith(".html"):
+        if parsed_url.path.lower().endswith(".html"):
             findings.append(Finding(link.source, link.line, "LOCAL_HTML", destination, "link must name tracked source, not Jekyll output"))
             continue
         if target not in tracked:
             findings.append(Finding(link.source, link.line, "MISSING_TARGET", destination, f"case-sensitive tracked target `{target}` does not exist"))
             continue
-        if not (root / target).is_file() or (root / target).is_symlink():
+        target_path = root / target
+        if not target_path.is_file() or target_path.is_symlink():
             findings.append(Finding(link.source, link.line, "NONREGULAR_TARGET", destination, f"`{target}` is not a regular file"))
             continue
         edges.add((link.source, target))
         if fragment:
-            if target not in headings_by_source and target.endswith(".md"):
-                try:
-                    parsed = parse_markdown(target, (root / target).read_text(encoding="utf-8"))
-                    headings_by_source[target] = github_slugs(parsed[3])
-                except (OSError, UnicodeError) as exc:
-                    findings.append(Finding(link.source, link.line, "UNREADABLE_TARGET", destination, str(exc)))
-                    continue
-            if fragment not in headings_by_source.get(target, set()):
+            if fragment not in anchors_by_source.get(target, set()):
                 findings.append(Finding(link.source, link.line, "MISSING_FRAGMENT", destination, f"fragment not found in `{target}`"))
     if ("README.md", LANDING) not in edges:
-        findings.append(Finding("README.md", 0, "README_REACHABILITY", LANDING, "README must link directly to the documentation landing"))
+        findings.append(Finding("README.md", 0, "README_REACHABILITY", LANDING, "README must render a direct link to the landing"))
     reached = {target for source, target in edges if source == LANDING}
     for owner in sorted(CANONICAL_OWNERS - reached):
-        findings.append(Finding(LANDING, 0, "OWNER_REACHABILITY", owner, "landing must link directly to canonical owner"))
+        findings.append(Finding(LANDING, 0, "OWNER_REACHABILITY", owner, "landing must render a direct link to canonical owner"))
     return sorted(set(findings)), visited, all_links
 
 
 def main() -> int:
-    """Run the checker or its test suite."""
     parser = argparse.ArgumentParser(description="Check tracked Markdown links")
     parser.add_argument("--check", action="store_true", help="check the tracked tree (default)")
+    parser.add_argument("--root", type=Path, default=REPO_ROOT, help="repository root (test/diagnostic use)")
     parser.add_argument("--self-test", action="store_true", help="run scripts/test_docs_link_check.py")
     args = parser.parse_args()
     if args.self_test:
         from test_docs_link_check import run_suite  # noqa: PLC0415
         return run_suite()
-    findings, visited, links = check()
+    findings, visited, links = check(args.root.resolve())
     if findings:
         for finding in findings:
             print(finding.render())
         print(f"documentation links: FAIL ({len(findings)} findings; {len(visited)} files read)")
         return 1
     local = sum(1 for link in links if link.destination and not _external(link.destination))
-    print(f"documentation links: PASS ({len(visited)} tracked Markdown files; {local} local links)")
+    fragments = sum(1 for link in links if not _external(link.destination) and urllib.parse.urlsplit(link.destination).fragment)
+    print(f"documentation links: PASS ({len(visited)} tracked Markdown files; {local} local links; {fragments} fragments)")
     return 0
 
 
