@@ -119,25 +119,6 @@ def raw_tracked_markdown(root: Path = REPO_ROOT) -> tuple[list[str], list[Findin
     return sorted(name for name in names if _is_doc_markdown(name)), failures
 
 
-def _mask_inline_code(line: str) -> tuple[str, bool]:
-    chars = list(line)
-    pos = 0
-    while pos < len(chars):
-        if chars[pos] != "`":
-            pos += 1
-            continue
-        end = pos
-        while end < len(chars) and chars[end] == "`":
-            end += 1
-        marker = "`" * (end - pos)
-        close = line.find(marker, end)
-        if close < 0:
-            return "".join(chars), True
-        chars[pos:close + len(marker)] = " " * (close + len(marker) - pos)
-        pos = close + len(marker)
-    return "".join(chars), False
-
-
 def _external(destination: str) -> bool:
     return bool(_SCHEME_RE.match(destination)) or destination.startswith("//")
 
@@ -153,11 +134,17 @@ def _local_shaped(text: str) -> bool:
 def _raw_local(destination: str) -> bool:
     """Classify raw HTML/Liquid destinations without an extension proxy."""
     destination = destination.strip(" <>\"'")
-    return bool(destination) and not _external(destination) and not destination.startswith("#")
+    return bool(destination) and not _external(destination)
 
 
-def _mask_html_comments(line: str, active: bool) -> tuple[str, bool]:
-    """Blank HTML comments while preserving offsets and cross-line state."""
+def _mask_inline_code_and_comments(line: str, active: bool) -> tuple[str, bool, bool]:
+    """Blank escapes, code spans, and HTML comments in Markdown order.
+
+    Returns the masked line, the outgoing HTML-comment state, and whether an
+    unmatched backtick run was encountered.  An active comment owns its bytes
+    until ``-->``; otherwise escapes and code spans prevent a literal ``<!--``
+    inside them from changing comment state.
+    """
     chars = list(line)
     pos = 0
     while pos < len(line):
@@ -166,17 +153,39 @@ def _mask_html_comments(line: str, active: bool) -> tuple[str, bool]:
             end = len(line) if close < 0 else close + 3
             chars[pos:end] = " " * (end - pos)
             if close < 0:
-                return "".join(chars), True
+                return "".join(chars), True, False
             active = False
             pos = end
             continue
-        opening = line.find("<!--", pos)
-        if opening < 0:
-            break
-        chars[opening:opening + 4] = " " * 4
-        pos = opening + 4
-        active = True
-    return "".join(chars), active
+        if line[pos] == "\\":
+            slash_end = pos
+            while slash_end < len(line) and line[slash_end] == "\\":
+                slash_end += 1
+            if line.startswith("<!--", slash_end):
+                slash_count = slash_end - pos
+                chars[pos:slash_end] = " " * slash_count
+                if slash_count % 2 == 1:
+                    chars[slash_end:slash_end + 4] = " " * 4
+                    pos = slash_end + 4
+                else:
+                    pos = slash_end
+                continue
+        if line[pos] == "`":
+            end = pos
+            while end < len(line) and line[end] == "`":
+                end += 1
+            marker = "`" * (end - pos)
+            close = line.find(marker, end)
+            if close < 0:
+                return "".join(chars), active, True
+            chars[pos:close + len(marker)] = " " * (close + len(marker) - pos)
+            pos = close + len(marker)
+            continue
+        if line.startswith("<!--", pos):
+            active = True
+            continue
+        pos += 1
+    return "".join(chars), active, False
 
 
 def parse_markdown(source: str, text: str) -> ParsedMarkdown:
@@ -199,13 +208,13 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             if close:
                 fence_char, fence_length = "", 0
             continue
-        uncommented, html_comment = _mask_html_comments(raw, html_comment)
-        opener = _OPEN_FENCE_RE.match(uncommented)
-        if opener:
-            marker = opener.group(1) or opener.group(3)
-            fence_char, fence_length = marker[0], len(marker)
-            continue
-        line, unmatched = _mask_inline_code(uncommented)
+        if not html_comment:
+            opener = _OPEN_FENCE_RE.match(raw)
+            if opener:
+                marker = opener.group(1) or opener.group(3)
+                fence_char, fence_length = marker[0], len(marker)
+                continue
+        line, html_comment, unmatched = _mask_inline_code_and_comments(raw, html_comment)
         if unmatched:
             findings.append(Finding(source, lineno, "MALFORMED_CODE_SPAN", "", "unmatched backtick run"))
             continue
@@ -214,11 +223,15 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             if _raw_local(destination):
                 candidate_identities.append((lineno, match.start(), "raw-html"))
                 findings.append(Finding(source, lineno, "RAW_LOCAL_HTML", destination, "local href/src is outside the supported Markdown grammar"))
+                if destination.startswith("#"):
+                    inline_links.append(Link(source, lineno, destination))
         for match in _LIQUID_LINK_RE.finditer(line):
             destination = match.group(1).strip()
             if _raw_local(destination):
                 candidate_identities.append((lineno, match.start(), "liquid"))
                 findings.append(Finding(source, lineno, "LIQUID_LOCAL_LINK", destination, "Liquid links are not GitHub-native Markdown"))
+                if destination.startswith("#"):
+                    inline_links.append(Link(source, lineno, destination))
         for match in _EXPLICIT_ANCHOR_RE.finditer(line):
             anchors.append((match.group(2), lineno))
         heading = _HEADING_RE.match(line)
@@ -263,6 +276,8 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
             findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "malformed local inline link"))
     if fence_char:
         findings.append(Finding(source, len(lines) or 1, "MALFORMED_FENCE", "", "unclosed fenced code block"))
+    if html_comment:
+        findings.append(Finding(source, len(lines) or 1, "MALFORMED_HTML_COMMENT", "", "unclosed HTML comment"))
     used: set[str] = set()
     for lineno, key, image, label in uses:
         if key not in definitions:

@@ -118,16 +118,50 @@ class ResolutionTest(RepoTest):
         self.assertIn("RAW_LOCAL_HTML", codes)
         self.assertIn("LIQUID_LOCAL_LINK", codes)
 
+    def test_raw_fragment_destinations_are_candidates_and_are_validated(self) -> None:
+        self.base({
+            "docs/status.md": (
+                '# Present\n'
+                '<a href="#present">present</a>\n'
+                '<a href="#missing-html">missing</a>\n'
+                '{% link #missing-liquid %}\n'
+            ),
+        })
+        findings = self.findings()
+        codes = [item.code for item in findings]
+        self.assertIn("RAW_LOCAL_HTML", codes)
+        self.assertIn("LIQUID_LOCAL_LINK", codes)
+        self.assertEqual(codes.count("MISSING_FRAGMENT"), 2)
+        self.assertFalse(any(item.code == "MISSING_FRAGMENT" and item.destination == "#present" for item in findings))
+
     def test_comments_titles_and_tilde_info_are_handled_as_markdown(self) -> None:
         self.base({
             "docs/status.md": (
                 '<!-- [fake](missing.md) <a href="LICENSE"> -->\n'
                 '<!--\n~~~not-a-fence\n{% link LICENSE %}\n-->\n'
+                '<!-- hidden --> [after](index.md)\n'
                 '[title](index.md "optional title")\n'
                 "~~~language~variant\n[fenced](missing.md)\n~~~\n"
             ),
         })
         self.assertEqual(self.codes(), [])
+
+    def test_escaped_and_code_comment_openers_cannot_hide_following_links(self) -> None:
+        self.base({
+            "docs/status.md": (
+                '\\<!-- escaped literal\n'
+                '`<!--` code literal\n'
+                '\\\\<!-- real comment -->\n'
+                '[first](missing-one.md)\n'
+                '[second](missing-two.md)\n'
+            ),
+        })
+        self.assertEqual(self.codes().count("MISSING_TARGET"), 2)
+        self.assertNotIn("MALFORMED_HTML_COMMENT", self.codes())
+
+    def test_unclosed_html_comment_fails_closed(self) -> None:
+        self.base({"docs/status.md": "<!-- open\n[hidden](missing.md)\n"})
+        self.assertIn("MALFORMED_HTML_COMMENT", self.codes())
 
     def test_fragment_on_tracked_markdown_outside_scope_is_loaded(self) -> None:
         self.base({
@@ -236,6 +270,40 @@ class MutationTest(RepoTest):
             "if len(candidate_identities) != len(consumed_identities):",
         ) as module:
             self.assertEqual(self.codes(module), [])
+
+    def test_raw_fragment_and_comment_lifecycle_guards_are_nonvacuous(self) -> None:
+        cases = [
+            (
+                'return bool(destination) and not _external(destination)',
+                'return bool(destination) and not _external(destination) and not destination.startswith("#")',
+                '<a href="#missing">missing</a>\n',
+                "RAW_LOCAL_HTML",
+            ),
+            (
+                'if slash_count % 2 == 1:',
+                'if False:',
+                '\\<!-- literal\n[broken](missing.md)\n',
+                "MISSING_TARGET",
+            ),
+            (
+                'if line[pos] == "`":',
+                'if False:',
+                '`<!--` literal\n[broken](missing.md)\n',
+                "MISSING_TARGET",
+            ),
+            (
+                'if html_comment:',
+                'if False:',
+                '<!-- open\n[hidden](missing.md)\n',
+                "MALFORMED_HTML_COMMENT",
+            ),
+        ]
+        for old, new, text, guarded_code in cases:
+            with self.subTest(guard=guarded_code, old=old):
+                self.base({"docs/status.md": text})
+                self.assertIn(guarded_code, self.codes())
+                with mutant(old, new) as module:
+                    self.assertNotIn(guarded_code, self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [
