@@ -145,6 +145,30 @@ class ResolutionTest(RepoTest):
         })
         self.assertEqual(self.codes(), [])
 
+    def test_parenthesized_titles_cover_plain_angle_empty_and_image_links(self) -> None:
+        self.base({
+            "docs/asset.png": b"png",
+            "docs/status.md": (
+                '[plain](index.md (title))\n'
+                '[nested](index.md (outer (inner)))\n'
+                '[angle](<index.md> (title))\n'
+                '[empty]( (title))\n'
+                '![asset](asset.png (title))\n'
+                '[quoted](index.md "title")\n'
+            ),
+        })
+        codes = self.codes()
+        self.assertEqual(codes, ["MISSING_TARGET"])
+
+    def test_reference_uses_respect_opener_escape_parity_for_reachability(self) -> None:
+        self.base({
+            "README.md": "\\[Documentation][landing]\n[landing]: docs/index.md\n",
+            "docs/status.md": "\\\\[status][self]\n[self]: index.md\n",
+        })
+        codes = self.codes()
+        self.assertIn("README_REACHABILITY", codes)
+        self.assertNotIn("CANDIDATE_COVERAGE", codes)
+
     def test_escaped_and_code_comment_openers_cannot_hide_following_links(self) -> None:
         self.base({
             "docs/status.md": (
@@ -347,8 +371,8 @@ class MutationTest(RepoTest):
     def test_punctuation_and_multiline_raw_guards_are_nonvacuous(self) -> None:
         cases = [
             (
-                'and _unescaped(line, opener - 1)',
-                'and False',
+                'return opener > 0 and line[opener - 1] == "!" and _unescaped(line, opener - 1)',
+                'return False',
                 "\\\\![](asset.png)\n",
                 "EMPTY_IMAGE_ALT",
             ),
@@ -381,6 +405,23 @@ class MutationTest(RepoTest):
             'if close >= len(line):',
         ) as module:
             self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
+
+    def test_parenthesized_title_and_reference_parity_guards_are_nonvacuous(self) -> None:
+        self.base({"docs/status.md": "[x](index.md (outer (inner)))\n"})
+        self.assertEqual(self.codes(), [])
+        with mutant(
+            'elif has_title_separator and cursor < len(line) and line[cursor] == "(":',
+            'elif False:',
+        ) as module:
+            self.assertIn("CANDIDATE_COVERAGE", self.codes(module))
+
+        self.base({"README.md": "\\[Documentation][landing]\n[landing]: docs/index.md\n"})
+        self.assertIn("README_REACHABILITY", self.codes())
+        with mutant(
+            "return _unescaped(line, position)",
+            "return True",
+        ) as module:
+            self.assertNotIn("README_REACHABILITY", self.codes(module))
 
     def test_query_backslash_and_root_guards_are_each_nonvacuous(self) -> None:
         cases = [

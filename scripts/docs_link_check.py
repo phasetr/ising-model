@@ -30,7 +30,6 @@ CANONICAL_OWNERS = frozenset({
 _OPEN_FENCE_RE = re.compile(r"^[ \t]{0,3}(?:(`{3,})([^`]*)|(~{3,})(.*))$")
 _HEADING_RE = re.compile(r"^[ \t]{0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
 _DEFINITION_RE = re.compile(r"^[ \t]{0,3}\[([^]\n]+)\]:[ \t]*(<[^>]+>|\S+)[ \t]*$")
-_REFERENCE_USE_RE = re.compile(r"(!?)\[([^]\n]*)\]\[([^]\n]*)\]")
 _RAW_REFERENCE_DEF_RE = re.compile(r"^[ \t]{0,3}\[[^]\n]+\]:")
 _RAW_REFERENCE_USE_RE = re.compile(r"!?\[[^]\n]*\]\[[^]\n]*(?:\]|$)")
 _RAW_HTML_LINK_RE = re.compile(
@@ -200,6 +199,11 @@ def _unescaped(line: str, position: int) -> bool:
     return slashes % 2 == 0
 
 
+def _image_opener(line: str, opener: int) -> bool:
+    """Classify the optional image marker with the same parity rule."""
+    return opener > 0 and line[opener - 1] == "!" and _unescaped(line, opener - 1)
+
+
 def _inline_constructs(line: str) -> list[InlineConstruct]:
     """Parse bounded Markdown link/image punctuation with slash parity.
 
@@ -214,7 +218,7 @@ def _inline_constructs(line: str) -> list[InlineConstruct]:
             position += 1
             continue
         opener = position
-        image = opener > 0 and line[opener - 1] == "!" and _unescaped(line, opener - 1)
+        image = _image_opener(line, opener)
         close = opener + 1
         while close < len(line):
             if line[close] == "]" and _unescaped(line, close):
@@ -228,10 +232,15 @@ def _inline_constructs(line: str) -> list[InlineConstruct]:
             continue
         label = line[opener + 1:close]
         cursor = close + 2
+        leading_start = cursor
         while cursor < len(line) and line[cursor] in " \t":
             cursor += 1
+        leading_space = cursor > leading_start
         destination_start = cursor
-        if cursor < len(line) and line[cursor] == "<":
+        empty_parenthesized_title = leading_space and cursor < len(line) and line[cursor] == "("
+        if empty_parenthesized_title:
+            destination = ""
+        elif cursor < len(line) and line[cursor] == "<":
             cursor += 1
             destination_start = cursor
             while cursor < len(line) and line[cursor] != ">":
@@ -246,9 +255,11 @@ def _inline_constructs(line: str) -> list[InlineConstruct]:
             while cursor < len(line) and line[cursor] not in " \t)":
                 cursor += 1
             destination = line[destination_start:cursor]
+        whitespace_start = cursor
         while cursor < len(line) and line[cursor] in " \t":
             cursor += 1
-        if cursor < len(line) and line[cursor] in "\"'":
+        has_title_separator = cursor > whitespace_start or empty_parenthesized_title
+        if has_title_separator and cursor < len(line) and line[cursor] in "\"'":
             quote = line[cursor]
             cursor += 1
             while cursor < len(line) and line[cursor] != quote:
@@ -257,10 +268,59 @@ def _inline_constructs(line: str) -> list[InlineConstruct]:
                 cursor += 1
             while cursor < len(line) and line[cursor] in " \t":
                 cursor += 1
+        elif has_title_separator and cursor < len(line) and line[cursor] == "(":
+            depth = 1
+            cursor += 1
+            while cursor < len(line) and depth:
+                if line[cursor] == "(" and _unescaped(line, cursor):
+                    depth += 1
+                elif line[cursor] == ")" and _unescaped(line, cursor):
+                    depth -= 1
+                cursor += 1
+            while cursor < len(line) and line[cursor] in " \t":
+                cursor += 1
         end = cursor + 1 if cursor < len(line) and line[cursor] == ")" else None
         constructs.append(InlineConstruct(opener, close, end, image, label, destination))
         position = end if end is not None else close + 2
     return constructs
+
+
+def _reference_uses(line: str) -> list[tuple[int, bool, str, str]]:
+    """Parse bounded full-reference uses with opener/closer slash parity."""
+    uses: list[tuple[int, bool, str, str]] = []
+    position = 0
+    while position < len(line):
+        if line[position] != "[" or not _reference_opener(line, position):
+            position += 1
+            continue
+        opener = position
+        image = _image_opener(line, opener)
+        label_close = opener + 1
+        while label_close < len(line):
+            if line[label_close] == "]" and _unescaped(line, label_close):
+                break
+            label_close += 1
+        if label_close >= len(line) or label_close + 1 >= len(line) or line[label_close + 1] != "[":
+            position = opener + 1
+            continue
+        key_close = label_close + 2
+        while key_close < len(line):
+            if line[key_close] == "]" and _unescaped(line, key_close):
+                break
+            key_close += 1
+        if key_close >= len(line):
+            position = opener + 1
+            continue
+        label = line[opener + 1:label_close]
+        key = line[label_close + 2:key_close] or label
+        uses.append((opener, image, label, key))
+        position = key_close + 1
+    return uses
+
+
+def _reference_opener(line: str, position: int) -> bool:
+    """Shared parity guard for raw and parsed reference-use census."""
+    return _unescaped(line, position)
 
 
 def parse_markdown(source: str, text: str) -> ParsedMarkdown:
@@ -340,13 +400,13 @@ def parse_markdown(source: str, text: str) -> ParsedMarkdown:
                 findings.append(Finding(source, lineno, "DUPLICATE_REFERENCE", item.destination, f"duplicate label [{key}]"))
             else:
                 definitions[key] = item
-        raw_uses = list(_RAW_REFERENCE_USE_RE.finditer(line))
-        parsed_uses = list(_REFERENCE_USE_RE.finditer(line))
+        raw_uses = [match for match in _RAW_REFERENCE_USE_RE.finditer(line) if _reference_opener(line, match.start())]
+        parsed_uses = _reference_uses(line)
         candidate_identities.extend((lineno, match.start(), "reference") for match in raw_uses)
-        consumed_identities.extend((lineno, match.start(), "reference") for match in parsed_uses)
-        for match in parsed_uses:
-            key = " ".join((match.group(3) or match.group(2)).casefold().split())
-            uses.append((lineno, key, bool(match.group(1)), match.group(2)))
+        consumed_identities.extend((lineno, start, "reference") for start, _image, _label, _key in parsed_uses)
+        for _start, image, label, raw_key in parsed_uses:
+            key = " ".join(raw_key.casefold().split())
+            uses.append((lineno, key, image, label))
         # Any local-link punctuation that was not consumed is a hard finding.
         if incomplete_positions:
             findings.append(Finding(source, lineno, "UNPARSED_LOCAL_LINK", raw.strip(), "link punctuation was not consumed by the bounded grammar"))
