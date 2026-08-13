@@ -2135,7 +2135,7 @@ def format_baseline(
     lines.extend(
         raw
         for raw in preserved_text.splitlines()
-        if raw.startswith(CONTAINER_TRANSFER_MARKER)
+        if is_container_transfer_directive(raw)
     )
     for (kind, target, token), count in sorted(counts.items()):
         lines.append(f"{kind}\t{target}\t{token}\t{count}")
@@ -2226,6 +2226,20 @@ _CONTAINER_TRANSFER_LINE = re.compile(
     r"(?P<kind>[A-Z_]+) (?P<old>\S+) => (?P<new>\S+) "
     r"(?P<token>\S+) x(?P<count>[1-9][0-9]*)\Z"
 )
+
+#: Conservative recognition of a baseline comment that is trying to be a
+#: container-transfer directive.  It is deliberately broader than the exact
+#: declaration grammar so formatting cannot erase malformed whitespace around
+#: the directive token, but remains anchored immediately after the comment
+#: opener so quoted examples and ordinary prose are not mistaken for state.
+_CONTAINER_TRANSFER_DIRECTIVE = re.compile(
+    r"\A[ \t]*#[ \t]*CONTAINER-TRANSFER[ \t]*:"
+)
+
+
+def is_container_transfer_directive(line: str) -> bool:
+    """Whether ``line`` is a directive candidate that formatting must retain."""
+    return _CONTAINER_TRANSFER_DIRECTIVE.match(line) is not None
 
 
 class UnsoundRun(RuntimeError):
@@ -2422,7 +2436,7 @@ def container_transfer_declarations(
     marker_lines = {
         raw
         for raw in base_lines.keys() | head_lines.keys()
-        if raw.startswith(CONTAINER_TRANSFER_MARKER)
+        if is_container_transfer_directive(raw)
     }
     for raw in sorted(marker_lines):
         base_count = base_lines.get(raw, 0)

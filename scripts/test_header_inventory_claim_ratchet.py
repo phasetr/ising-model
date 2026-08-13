@@ -1162,6 +1162,22 @@ class RatchetTest(unittest.TestCase):
         self.assertEqual(errors, [])
         self.assertEqual(parsed, population((KEY_A, 1)))
 
+    def test_formatting_retains_malformed_directives_but_not_quoted_prose(self) -> None:
+        variants = (
+            "  # CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#  CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER : NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER:  NARROW_CHILD old.md => new.md 12 x1",
+        )
+        quoted = '# Example: "# CONTAINER-TRANSFER: CLASS old => new TOKEN x1"'
+        rendered = ratchet.format_baseline(
+            population((KEY_A, 1)), "\n".join((*variants, quoted)) + "\n"
+        )
+        for variant in variants:
+            self.assertIn(variant, rendered)
+        self.assertNotIn(quoted, rendered)
+
     def test_the_report_never_says_the_headers_are_clean(self) -> None:
         """False assurance is the risk the arbitration named as the biggest one."""
         source = lean_source("M", header("Provides the ambient monotonicity API."))
@@ -2344,6 +2360,31 @@ class DriftTest(unittest.TestCase):
         drift = self.drift()
         self.assertFalse(drift.ok, drift)
         self.assertTrue(any("malformed" in error for error in drift.baseline_errors), drift)
+
+    def test_formatter_preserves_whitespace_variants_for_fail_closed_drift(self) -> None:
+        """Re-pinning cannot discard malformed directive-shaped comments."""
+        variants = (
+            "  # CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "#  CONTAINER-TRANSFER: NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER : NARROW_CHILD old.md => new.md 12 x1",
+            "# CONTAINER-TRANSFER:  NARROW_CHILD old.md => new.md 12 x1",
+        )
+        path = self.root / ratchet.BASELINE_REPO_PATH
+        path.write_text(
+            ratchet.format_baseline(
+                ratchet.build_report(root=self.root).charged,
+                "\n".join(variants) + "\n",
+            ),
+            encoding="utf-8",
+        )
+        rendered = path.read_text(encoding="utf-8")
+        for variant in variants:
+            self.assertIn(variant, rendered)
+        drift = self.drift()
+        self.assertFalse(drift.ok, drift)
+        self.assertEqual(len(drift.baseline_errors), len(variants), drift)
+        self.assertTrue(all("malformed" in error for error in drift.baseline_errors), drift)
 
     def test_a_class_or_token_swap_cannot_pay_a_new_key(self) -> None:
         """The declaration must name the exact class and token on both sides."""
